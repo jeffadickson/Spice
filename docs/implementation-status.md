@@ -15,3 +15,5 @@ The fifth slice adds **bounded fixed-step nonlinear diode transient stepping** u
 | Release | no production release claim | license/platform/packaging and all declared M1 exit gates |
 
 Most work packages retain Proposed status because their complete exit criteria are not satisfied. Current checkpoint and source-hash reports, rather than implementation counts, define what has been tested.
+
+The proposed future authoring surface is [the SForge DSL proposal](modern-dsl-proposal.md). It is a requirements/design artifact, not an implemented parser or public compatibility claim.
