@@ -1,0 +1,49 @@
+[DOCUMENT]
+TITLE: Third Reference Slice - Reproducible Variation Campaigns
+
+[TEXT]
+STATEMENT: >>>
+Iterations 101-150 add bounded immutable scalar variations and evidence improvements to the reference engine. They do not claim distributed execution, hostile-input sandboxing, nonlinear device qualification, or a production StressForge integration.
+<<<
+
+[REQUIREMENT]
+UID: REF3-001
+TITLE: Immutable scalar variation
+STATEMENT: >>>
+The reference engine shall derive scalar component variations by cloning and validating the public circuit representation, without mutating compiled plans or changing the base circuit.
+<<<
+COMMENT: >>>
+Implementation: src/variation.rs.
+Verification: tests/variation.rs::replacement_is_immutable_and_validated.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF2-001
+
+[REQUIREMENT]
+UID: REF3-002
+TITLE: Bounded deterministic variation products
+STATEMENT: >>>
+The reference engine shall validate bounded scalar sweep and grid inputs, retain caller declared dimension/value ordering, and give every generated point a stable indexed case identity.
+<<<
+COMMENT: >>>
+Implementation: src/variation.rs, src/sweep.rs.
+Verification: tests/variation.rs::sweep_preserves_declared_order_and_rejects_unbounded_input, tests/variation.rs::grid_has_deterministic_cartesian_order.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF2-009
+
+[REQUIREMENT]
+UID: REF3-003
+TITLE: Point-isolated variation execution
+STATEMENT: >>>
+The reference engine shall report a success or failure for each completed variation point and only observe cooperative cancellation between points.
+<<<
+COMMENT: >>>
+Implementation: src/sweep.rs.
+Verification: tests/variation.rs::scalar_sweep_returns_stable_indexed_cases, tests/variation.rs::cancellation_is_observed_between_sweep_points.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF2-008
