@@ -156,6 +156,13 @@ fn ngspice_compact_sine_source_lowers_to_transient_override() {
 }
 
 #[test]
+fn ngspice_compact_sine_rejects_nonpositive_frequency_when_executed() {
+    let request = import_ngspice_request("title\nV1 out 0 SIN(0,1,0)\nR1 out 0 1k\n.tran 1m 2m\n.end\n", "sine-invalid").unwrap();
+    let error = circuit_simulator::api::run(&request).unwrap_err();
+    assert_eq!(error.code, ErrorCode::InvalidInput);
+}
+
+#[test]
 fn ngspice_compact_pwl_source_lowers_to_transient_override() {
     let request = import_ngspice_request("title\nV1 out 0 PWL(0,0,1m,2)\nR1 out 0 1k\n.tran 1m 2m\n.end\n", "pwl-import").unwrap();
     match request.analysis {
