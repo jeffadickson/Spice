@@ -90,3 +90,13 @@ The items 2 through 5 implementation campaign shall expose one hundred numbered 
 COMMENT: >>>
 Implementation: docs/campaign-2-to-5.html.
 <<<
+
+[REQUIREMENT]
+UID: NGC-010
+TITLE: Whole-checkout corpus inventory
+STATEMENT: >>>
+The ngspice inventory shall enumerate recognized netlists across the supplied checkout, record the top-level source scope as tests, examples or other, and never modify that checkout.
+<<<
+COMMENT: >>>
+Implementation: scripts/Inventory-Ngspice.cs. This distinguishes regression fixtures from illustrative and auxiliary source material before compatibility promotion.
+<<<

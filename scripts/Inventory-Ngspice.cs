@@ -5,9 +5,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
 var root = args.Length == 1 ? args[0] : throw new ArgumentException("Expected ngspice repository root.");
-var tests = Path.Combine(root, "tests");
-if (!Directory.Exists(tests)) throw new DirectoryNotFoundException(tests);
-var files = Directory.EnumerateFiles(tests, "*.*", SearchOption.AllDirectories)
+if (!Directory.Exists(root)) throw new DirectoryNotFoundException(root);
+var files = Directory.EnumerateFiles(root, "*.*", SearchOption.AllDirectories)
     .Where(path => new[] { ".cir", ".sp", ".ckt", ".net" }.Contains(Path.GetExtension(path), StringComparer.OrdinalIgnoreCase))
     .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
     .Select(path =>
@@ -22,6 +21,18 @@ var files = Directory.EnumerateFiles(tests, "*.*", SearchOption.AllDirectories)
             markers.Add(marker);
         }
         var supported = markers.All(marker => new[] { "R", "C", "L", "V", "I", "D", ".end", ".op", ".tran", ".ac", ".options", ".print", ".plot", ".probe" }.Contains(marker, StringComparer.OrdinalIgnoreCase));
-        return new { path = Path.GetRelativePath(root, path).Replace('\\', '/'), sha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))).ToLowerInvariant(), markers, status = supported ? "candidate_basic" : "future_feature" };
+        var relative = Path.GetRelativePath(root, path).Replace('\\', '/');
+        var scope = relative.Split('/')[0].ToLowerInvariant() switch {
+            "tests" => "tests",
+            "examples" => "examples",
+            _ => "other"
+        };
+        return new { path = relative, source_scope = scope, sha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))).ToLowerInvariant(), markers, status = supported ? "candidate_basic" : "future_feature" };
     }).ToArray();
-Console.WriteLine(JsonSerializer.Serialize(new { root = Path.GetFullPath(root), files = files.Length, candidate_basic = files.Count(file => file.status == "candidate_basic"), future_feature = files.Count(file => file.status == "future_feature"), fixtures = files }, new JsonSerializerOptions { WriteIndented = true, TypeInfoResolver = new DefaultJsonTypeInfoResolver() }));
+Console.WriteLine(JsonSerializer.Serialize(new {
+    root = Path.GetFullPath(root), files = files.Length,
+    source_scopes = files.GroupBy(file => file.source_scope).OrderBy(group => group.Key).ToDictionary(group => group.Key, group => group.Count()),
+    candidate_basic = files.Count(file => file.status == "candidate_basic"),
+    future_feature = files.Count(file => file.status == "future_feature"),
+    fixtures = files
+}, new JsonSerializerOptions { WriteIndented = true, TypeInfoResolver = new DefaultJsonTypeInfoResolver() }));
