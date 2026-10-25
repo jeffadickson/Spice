@@ -49,6 +49,9 @@ fn projected_signal_rows_preserve_point_indices() {
     assert_eq!(rows.len(), 2);
     assert_eq!(rows[1].index, 1);
     assert!(rows.iter().all(|row| row.value.is_some()));
+    let wire = serde_json::to_value(&rows[0]).unwrap();
+    assert_eq!(wire["selection"]["unit"], "ohm");
+    assert_eq!(wire["value"], 0.5);
 }
 
 #[test]
