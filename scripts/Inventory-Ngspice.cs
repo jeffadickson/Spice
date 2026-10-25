@@ -20,7 +20,7 @@ var files = Directory.EnumerateFiles(root, "*.*", SearchOption.AllDirectories)
             var marker = head.StartsWith('.') ? head.ToLowerInvariant() : head[..Math.Min(1, head.Length)].ToUpperInvariant();
             markers.Add(marker);
         }
-        var supported = markers.All(marker => new[] { "R", "C", "L", "V", "I", "D", "G", ".end", ".op", ".tran", ".ac", ".options", ".print", ".plot", ".probe" }.Contains(marker, StringComparer.OrdinalIgnoreCase));
+        var supported = markers.All(marker => new[] { "R", "C", "L", "V", "I", "D", "E", "F", "G", "H", ".end", ".op", ".tran", ".ac", ".options", ".print", ".plot", ".probe" }.Contains(marker, StringComparer.OrdinalIgnoreCase));
         var family = markers.Any(marker => marker is "A" or "U" or ".control" or ".endc") ? "control_or_xspice"
             : markers.Any(marker => marker is "M" or "Q" or "J" or "Z" or ".model") ? "compact_models"
             : markers.Any(marker => marker is "X" or ".subckt" or ".ends" or ".include" or ".lib") ? "hierarchy_or_library"
