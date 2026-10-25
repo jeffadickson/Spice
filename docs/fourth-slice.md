@@ -9,3 +9,7 @@ It supports only DC diode operating points. Nonlinear AC bias linearization and 
 The result manifest exposes Newton iteration evidence for nonlinear operating points. Typed C# requests can choose an explicit bounded Newton policy.
 
 The C# and JSON contracts reject unknown diode fields and preserve diode current direction from p to n.
+
+`prompt.md` is the continuation entry point. It records the implemented scope,
+intentional boundaries, validation commands, and next milestones. This readable
+note projects StrictDoc requirement `REF4-005`; the `.sdoc` source is authoritative.
