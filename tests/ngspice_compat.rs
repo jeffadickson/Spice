@@ -167,6 +167,13 @@ fn ngspice_compact_pwl_source_lowers_to_transient_override() {
 }
 
 #[test]
+fn ngspice_compact_pwl_rejects_nonmonotonic_times_when_executed() {
+    let request = import_ngspice_request("title\nV1 out 0 PWL(1m,0,0,2)\nR1 out 0 1k\n.tran 1m 2m\n.end\n", "pwl-invalid").unwrap();
+    let error = circuit_simulator::api::run(&request).unwrap_err();
+    assert_eq!(error.code, ErrorCode::InvalidInput);
+}
+
+#[test]
 fn pulse_waveform_has_exact_plateaus_and_rejects_invalid_periods() {
     let pulse = Waveform::Pulse { low: 0., high: 2., delay_s: 1., rise_s: 1., fall_s: 1., width_s: 2., period_s: 6. };
     assert_eq!(pulse.at(0.).unwrap(), 0.);
