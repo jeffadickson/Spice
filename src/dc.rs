@@ -60,8 +60,12 @@ pub fn operating_point_detailed(
     solver: &dyn LinearSolver,
 ) -> SimResult<(Vec<f64>, Option<crate::newton::NewtonReport>)> {
     if plan.has_nonlinear_devices() {
-        let (values, report) = crate::newton::solve(plan, solver, crate::newton::NewtonOptions::default())?;
+        let (values, report) =
+            crate::newton::solve(plan, solver, crate::newton::NewtonOptions::default())?;
         return Ok((values, Some(report)));
     }
-    Ok((solve_verified(&plan.conductance, &plan.rhs, solver)?.0, None))
+    Ok((
+        solve_verified(&plan.conductance, &plan.rhs, solver)?.0,
+        None,
+    ))
 }

@@ -59,8 +59,8 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
         if tokens.len() != expected {
             return Err(SimError::invalid(format!(
                 "line {}: expected id p n value{}",
-                index + 1
-                , if kind == 'D' { " thermal_voltage" } else { "" }
+                index + 1,
+                if kind == 'D' { " thermal_voltage" } else { "" }
             )));
         }
         let mut node = |label: &str| -> NodeId {
@@ -113,7 +113,8 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
                 p,
                 n,
                 saturation_amps: value,
-                thermal_volts: spice_scalar(tokens[4]).map_err(|e| SimError::invalid(format!("line {}: {}", index + 1, e.message)))?,
+                thermal_volts: spice_scalar(tokens[4])
+                    .map_err(|e| SimError::invalid(format!("line {}: {}", index + 1, e.message)))?,
             },
             _ => unreachable!(),
         });

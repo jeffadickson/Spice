@@ -162,3 +162,13 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 158. Verify forward-biased diode operating point
 159. Reject unlinearized nonlinear AC requests
 160. Checkpoint bounded diode Newton operating points
+161. Reject nonlinear transients pending Newton stepping
+162. Parse explicit diode netlist parameters
+163. Add typed CSharp diode requests
+164. Retain nonlinear convergence evidence
+165. Expose Newton evidence in result manifests
+166. Add typed managed Newton result evidence
+167. Test damped high-bias diode convergence
+168. Enforce Newton iteration budget
+169. Specify bounded diode Newton contracts
+170. Checkpoint typed nonlinear operating-point contracts

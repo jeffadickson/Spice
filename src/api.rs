@@ -1,7 +1,7 @@
 use crate::{
     circuit::Circuit,
     compile::compile,
-    dc::{operating_point, operating_point_detailed},
+    dc::operating_point_detailed,
     error::{SimError, SimResult},
     linalg::{BackendCapabilities, LinearSolver},
     transient::{Sample, TransientOptions, transient},
@@ -86,7 +86,10 @@ pub fn run_with_registry(
         Analysis::OperatingPoint => {
             let (values, report) = operating_point_detailed(&plan, solver)?;
             newton = report;
-            vec![Sample { time_s: 0.0, values }]
+            vec![Sample {
+                time_s: 0.0,
+                values,
+            }]
         }
         Analysis::Transient { options } => transient(&plan, solver, options)?,
         Analysis::Ac { .. } => Vec::new(),

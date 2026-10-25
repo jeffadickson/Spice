@@ -1,14 +1,15 @@
 use circuit_simulator::{
     ac::ac,
+    api::{Analysis, Request, run},
     backend::DenseLu,
     circuit::{Circuit, Element},
     compile::compile,
-    api::{Analysis, Request, run}, dc::{operating_point, operating_point_detailed},
+    dc::{operating_point, operating_point_detailed},
     ids::NodeId,
     model::DiodeModel,
+    netlist::parse,
     newton::{NewtonOptions, linearize, norm_inf, solve, solve_from},
     transient::{TransientOptions, transient},
-    netlist::parse,
 };
 
 #[test]
@@ -26,20 +27,56 @@ fn shockley_diode_has_positive_incremental_conductance() {
 
 #[test]
 fn json_operating_point_manifest_exposes_newton_report_for_diode_case() {
-    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![
-        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 0.2 },
-        Element::Diode { id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
-    ] };
-    let result = run(&Request { schema_version: "1".into(), case_id: "diode-json".into(), circuit, analysis: Analysis::OperatingPoint, backend: "lu".into(), experiment: None }).unwrap();
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "a".into()],
+        elements: vec![
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 0.2,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
+        ],
+    };
+    let result = run(&Request {
+        schema_version: "1".into(),
+        case_id: "diode-json".into(),
+        circuit,
+        analysis: Analysis::OperatingPoint,
+        backend: "lu".into(),
+        experiment: None,
+    })
+    .unwrap();
     assert!(result.newton.is_some());
 }
 
 #[test]
 fn nonlinear_operating_point_retains_newton_convergence_evidence() {
-    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![
-        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 0.2 },
-        Element::Diode { id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
-    ] };
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "a".into()],
+        elements: vec![
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 0.2,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
+        ],
+    };
     let (_, report) = operating_point_detailed(&compile(&circuit).unwrap(), &DenseLu).unwrap();
     assert!(report.unwrap().residual_inf < 1e-9);
 }
@@ -53,10 +90,28 @@ fn netlist_accepts_explicit_diode_parameters() {
 
 #[test]
 fn nonlinear_transient_is_rejected_until_newton_time_stepping_exists() {
-    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![Element::Diode {
-        id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
-    }] };
-    assert!(transient(&compile(&circuit).unwrap(), &DenseLu, &TransientOptions { stop_s: 1e-3, step_s: 1e-4, max_steps: 20 }).is_err());
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "a".into()],
+        elements: vec![Element::Diode {
+            id: "D1".into(),
+            p: NodeId(1),
+            n: NodeId(0),
+            saturation_amps: 1e-12,
+            thermal_volts: 0.02585,
+        }],
+    };
+    assert!(
+        transient(
+            &compile(&circuit).unwrap(),
+            &DenseLu,
+            &TransientOptions {
+                stop_s: 1e-3,
+                step_s: 1e-4,
+                max_steps: 20
+            }
+        )
+        .is_err()
+    );
 }
 
 #[test]
@@ -155,24 +210,70 @@ fn forward_biased_resistor_diode_bias_point_converges() {
 
 #[test]
 fn high_bias_diode_uses_bounded_damping_instead_of_exponential_overflow() {
-    let circuit = Circuit { nodes: vec!["0".into(), "s".into(), "a".into()], elements: vec![
-        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 5. },
-        Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
-        Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
-    ] };
-    let (values, report) = solve(&compile(&circuit).unwrap(), &DenseLu, NewtonOptions::default()).unwrap();
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "s".into(), "a".into()],
+        elements: vec![
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 5.,
+            },
+            Element::Resistor {
+                id: "R1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                ohms: 1000.,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
+        ],
+    };
+    let (values, report) = solve(
+        &compile(&circuit).unwrap(),
+        &DenseLu,
+        NewtonOptions::default(),
+    )
+    .unwrap();
     assert!((0.5..0.9).contains(&values[1]));
     assert!(report.damped_steps > 0);
 }
 
 #[test]
-fn Newton_iteration_budget_is_a_real_failure_boundary() {
-    let circuit = Circuit { nodes: vec!["0".into(), "s".into(), "a".into()], elements: vec![
-        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 5. },
-        Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
-        Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
-    ] };
-    let options = NewtonOptions { max_iterations: 1, ..NewtonOptions::default() };
+fn newton_iteration_budget_is_a_real_failure_boundary() {
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "s".into(), "a".into()],
+        elements: vec![
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 5.,
+            },
+            Element::Resistor {
+                id: "R1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                ohms: 1000.,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
+        ],
+    };
+    let options = NewtonOptions {
+        max_iterations: 1,
+        ..NewtonOptions::default()
+    };
     assert!(solve(&compile(&circuit).unwrap(), &DenseLu, options).is_err());
 }
 
