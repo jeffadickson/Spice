@@ -70,3 +70,13 @@ The SForge lexer shall report token source locations, reject malformed numeric p
 COMMENT: >>>
 Implementation: dotnet/SForge.Language/Lexer.cs. Verification: SForge.Language.Conformance deterministic seed 0x5F0A6E, 2000 generated malformed cases.
 <<<
+
+[REQUIREMENT]
+UID: SFL-008
+TITLE: Validated v0.1 lowering
+STATEMENT: >>>
+The validated v0.1 SForge AST shall lower primitive circuit declarations and transient runs into the existing typed simulator request contract, including the SForge gnd to simulator 0 mapping.
+<<<
+COMMENT: >>>
+Implementation: dotnet/SForge.Language/Lowering.cs. Verification: SForge.Language.Conformance lowers and executes examples/clamp.sforge through the Rust executable.
+<<<

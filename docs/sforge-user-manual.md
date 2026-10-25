@@ -62,4 +62,4 @@ else
     var circuit = (SForge.Language.Circuit)result.Document!.Declarations[0];
 ```
 
-The parser returns a source-span-bearing AST and structured diagnostics. The included semantic validator checks declared nodes, circuit references, `gnd`, and the implemented unit families. It does not run simulation yet. The compiler must next lower the validated AST to the shared IR and select a Rust/ngspice backend.
+The parser returns a source-span-bearing AST and structured diagnostics. The included semantic validator checks declared nodes, circuit references, `gnd`, and the implemented unit families. `SForgeLowering.Lower(document, "startup")` now lowers v0.1 primitive circuits and transient runs into the existing typed Rust-simulator JSON request. It maps SForge `gnd` to the simulator's required node `0`; the conformance test executes the example through the Rust executable.
