@@ -230,11 +230,11 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
         if tokens.first().is_some_and(|token| token.eq_ignore_ascii_case(".ac")) {
             if ac.is_some()
                 || tokens.len() != 5
-                || !(tokens[1].eq_ignore_ascii_case("lin") || tokens[1].eq_ignore_ascii_case("dec"))
+                || !(tokens[1].eq_ignore_ascii_case("lin") || tokens[1].eq_ignore_ascii_case("dec") || tokens[1].eq_ignore_ascii_case("oct"))
             {
                 return Err(SimError::new(
                     ErrorCode::Unsupported,
-                    "ngspice importer supports exactly one .ac lin or dec count start stop directive",
+                    "ngspice importer supports exactly one .ac lin, dec or oct count start stop directive",
                 ));
             }
             let count: usize = tokens[2]
@@ -253,10 +253,15 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
                     .map(|i| start + (stop - start) * i as f64 / (count - 1).max(1) as f64)
                     .collect()
             } else {
-                let decades = (stop / start).log10();
-                let steps = (decades * count as f64).floor() as usize;
+                let units = if tokens[1].eq_ignore_ascii_case("dec") {
+                    (stop / start).log10()
+                } else {
+                    (stop / start).log2()
+                };
+                let steps = (units * count as f64).floor() as usize;
                 if steps > 9_999 { return Err(SimError::invalid("AC decade grid exceeds 10000 points")); }
-                let mut grid: Vec<f64> = (0..=steps).map(|i| start * 10_f64.powf(i as f64 / count as f64)).collect();
+                let radix = if tokens[1].eq_ignore_ascii_case("dec") { 10_f64 } else { 2_f64 };
+                let mut grid: Vec<f64> = (0..=steps).map(|i| start * radix.powf(i as f64 / count as f64)).collect();
                 if grid.last().is_none_or(|last| *last < stop) { grid.push(stop); }
                 grid
             };
