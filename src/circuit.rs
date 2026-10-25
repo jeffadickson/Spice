@@ -38,6 +38,14 @@ pub enum Element {
         n: NodeId,
         amps: f64,
     },
+    /// Shockley diode with current defined from p to n.
+    Diode {
+        id: String,
+        p: NodeId,
+        n: NodeId,
+        saturation_amps: f64,
+        thermal_volts: f64,
+    },
 }
 impl Element {
     pub fn id(&self) -> &str {
@@ -46,7 +54,8 @@ impl Element {
             | Self::Capacitor { id, .. }
             | Self::Inductor { id, .. }
             | Self::Voltage { id, .. }
-            | Self::Current { id, .. } => id,
+            | Self::Current { id, .. }
+            | Self::Diode { id, .. } => id,
         }
     }
     pub fn terminals(&self) -> (NodeId, NodeId) {
@@ -55,7 +64,8 @@ impl Element {
             | Self::Capacitor { p, n, .. }
             | Self::Inductor { p, n, .. }
             | Self::Voltage { p, n, .. }
-            | Self::Current { p, n, .. } => (*p, *n),
+            | Self::Current { p, n, .. }
+            | Self::Diode { p, n, .. } => (*p, *n),
         }
     }
 }
@@ -114,6 +124,16 @@ impl Circuit {
                 }
                 Element::Current { amps, .. } if !amps.is_finite() => {
                     return Err(SimError::invalid("current must be finite"));
+                }
+                Element::Diode {
+                    saturation_amps,
+                    thermal_volts,
+                    ..
+                } if !saturation_amps.is_finite()
+                    || !thermal_volts.is_finite()
+                    || *saturation_amps <= 0.
+                    || *thermal_volts <= 0. => {
+                    return Err(SimError::invalid("diode parameters must be finite and positive"));
                 }
                 _ => {}
             }
