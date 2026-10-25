@@ -69,6 +69,7 @@ fn seeded_ngspice_waveform_deck_mutations_do_not_panic() {
         "title\nV1 out 0 PWL 0 0 1m 2\nR1 out 0 1k\n.tran 1m 2m\n.end\n",
         "title\nV1 out 0 EXP(0,2,1m,1m,4m,1m)\nR1 out 0 1k\n.tran 1m 6m\n.end\n",
         "title\nV1 out 0 DC 0 AC 1 90\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n",
+        "title\n.temp 26.85\n.model DMOD D (IS=1e-14,N=1.5)\nV1 in 0 0.5\nR1 in out 1k\nD1 out 0 DMOD\n.end\n",
     ];
     let mut state = 0x4e475350494345_u64;
     for seed in seeds {
