@@ -58,6 +58,12 @@ fn ngspice_g_card_imports_with_controlled_current_polarity() {
 }
 
 #[test]
+fn ngspice_g_card_rejects_missing_control_terminal() {
+    let error = parse_ngspice_basic("title\nG1 out 0 in 1m\n.end\n").unwrap_err();
+    assert_eq!(error.code, ErrorCode::InvalidInput);
+}
+
+#[test]
 fn ngspice_pulse_source_lowers_to_transient_override() {
     let request = import_ngspice_request("title\nV1 out 0 pulse 0 2 0 1m 1m 2m 6m\nR1 out 0 1k\n.tran 1m 6m\n.end\n", "pulse-import").unwrap();
     match request.analysis {
