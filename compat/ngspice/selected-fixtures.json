@@ -21,6 +21,12 @@
       "required_features": []
     },
     {
+      "path": "tests/resistance/res_array.cir",
+      "family": "linear_or_waveform",
+      "state": "blocked_by_features",
+      "required_features": ["spaced_sine_arguments", "resistor_model_cards", "resistor_geometry", "source_scale_and_multiplicity", "multiple_analysis_requests", "print_expression_lists"]
+    },
+    {
       "path": "examples/measure/func_cap.sp",
       "family": "hierarchy_or_expression",
       "state": "blocked_by_features",
