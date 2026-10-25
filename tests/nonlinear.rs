@@ -1,4 +1,4 @@
-use circuit_simulator::{circuit::{Circuit, Element}, compile::compile, ids::NodeId, linalg::LuSolver, model::DiodeModel, newton::{linearize, norm_inf, solve, NewtonOptions}};
+use circuit_simulator::{circuit::{Circuit, Element}, compile::compile, dc::operating_point, ids::NodeId, linalg::LuSolver, model::DiodeModel, newton::{linearize, norm_inf, solve, NewtonOptions}};
 
 #[test]
 fn shockley_diode_has_positive_incremental_conductance() {
@@ -8,6 +8,15 @@ fn shockley_diode_has_positive_incremental_conductance() {
     assert!(zero.current_amps.abs() < 1e-24);
     assert!(forward.current_amps > 0.);
     assert!(forward.conductance_siemens > zero.conductance_siemens);
+}
+
+#[test]
+fn standard_operating_point_selects_newton_when_diodes_exist() {
+    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 0.2 },
+        Element::Diode { id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
+    ] };
+    assert!((operating_point(&compile(&circuit).unwrap(), &LuSolver).unwrap()[0] - 0.2).abs() < 1e-12);
 }
 
 #[test]

@@ -51,5 +51,8 @@ pub fn verify_solution(a: &Matrix, b: &[f64], x: &[f64]) -> SimResult<f64> {
     Ok(worst)
 }
 pub fn operating_point(plan: &CompiledCircuit, solver: &dyn LinearSolver) -> SimResult<Vec<f64>> {
+    if plan.has_nonlinear_devices() {
+        return Ok(crate::newton::solve(plan, solver, crate::newton::NewtonOptions::default())?.0);
+    }
     Ok(solve_verified(&plan.conductance, &plan.rhs, solver)?.0)
 }
