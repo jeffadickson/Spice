@@ -1,46 +1,50 @@
-# Rust Circuit Simulator
+# Rust Circuit Simulator — reference implementation
 
-Implementation planning baseline — October 24, 2026.
+This repository contains the architecture, a 23-package implementation plan, and the first **bounded linear-circuit reference engine**. It is not a qualified M1 simulator.
 
-A new circuit simulation engine with a Rust-owned core, reusable CPU/GPU numerical backends, model plugins, a versioned API, and first-class C#/F# access. C# is the intended GUI language if a GUI is needed. Starlark is a candidate definition frontend; its selection remains an M0 experiment.
+## Working features
 
-This repository currently contains **architecture, requirements and an implementation plan**. It contains no implemented simulator, validated device models or measured performance claims.
+- Rust core with immutable compiled plans and a per-engine backend registry.
+- Reused nalgebra dense LU and QR; LU supports complex AC. These are two methods in one library, **not two independently qualified solver providers**.
+- Resistors, capacitors, independent constant voltage/current sources; DC, linear AC and fixed-step backward-Euler transient from zero stored-energy state.
+- Strict bounded JSON requests and success/failure envelopes with signal units, complex components and request hashes.
+- Small R/C/V/I text parser, suffixes, interpolation/assertion helpers and an experimental differentiable expression tree.
+- C# asynchronous process client, F# access and a trusted F# circuit builder.
+- Analytic, negative, seeded property/fuzz-smoke and deliberate mutation checks; real coverage data or explicit unsupported-toolchain records.
 
-## Authoritative documents
+## Run
 
-- [Implementation plan](docs/implementation-plan.md) ([StrictDoc source](docs/implementation-plan.sdoc)): work packages, dependencies, milestone gates, evidence and the first execution sequence.
-- [Architecture](docs/architecture.md) ([StrictDoc source](docs/architecture.sdoc)): boundaries, numerical contracts, solver portfolio, plugin trust, .NET API and DSL evaluation.
-- [Development standards](docs/development-standards.md) ([StrictDoc source](docs/development-standards.sdoc)): C#/F# scripts, PowerShell, comments, StrictDoc, coverage and adversarial/random testing.
-- [Backlog overview](BACKLOG.md): a compact dependency and work-package table.
-- [Backlog](backlog.json): machine-readable work-package inventory derived from the implementation plan.
-- [Validation report](evidence/planning-validation.json): document integrity and traceability checks for this planning baseline.
-
-Earlier exploratory drafts outside this repository are historical. Edit these repository documents going forward. Source-of-truth requirements and dependencies live in SDoc; regenerate `backlog.json` after editing work packages.
-
-## First implementation sequence
-
-1. Establish pinned toolchains, CI and coverage/test reporting.
-2. Freeze equation, matrix and request/result contracts against small fixtures.
-3. Compare native solver integration and Rust/C++ adapter costs.
-4. Qualify a CPU sparse backend and basic device assembly.
-5. Deliver operating point, AC and transient through a C#/F# client.
-6. Qualify a second provider before claiming backend interchangeability.
-7. Add compiled-model isolation, then qualified GPU execution and the selected definition frontend.
-
-The full work-package dependency graph and exit criteria are in StrictDoc. Do not scaffold dozens of empty crates or implement every solver adapter before the numerical and managed-client vertical slices work.
-
-## Tools and verification
-
-Rust/C++ is subject to an evidence-based M0 decision; the current architecture recommends Rust with narrow native adapters. Use C# file-based applications or F# Interactive for substantive scripts and PowerShell for shell/file operations. Python is only a documentation-tool runtime exception where StrictDoc requires it.
-
-With StrictDoc 0.30.4 installed in a tooling environment:
+Install the toolchain from `rust-toolchain.toml` and .NET SDK from `global.json`, then execute from this directory:
 
 ```powershell
-strictdoc export docs --output-dir build/docs
+./scripts/Test.ps1
+Get-Content -Raw examples/divider.json | ./target/debug/circuit-simulator.exe
+dotnet run --file examples/Run.cs -- target/debug/circuit-simulator.exe examples/rc.json
+dotnet fsi examples/Run.fsx target/debug/circuit-simulator.exe examples/divider.json
+dotnet fsi examples/BuildCircuit.fsx target/debug/circuit-simulator.exe
+dotnet run --file scripts/Mutation.cs
 ```
 
-The planning baseline has been checked with the StrictDoc parser. Parser success is not an HTML rendering or simulator qualification claim. Runtime coverage and numerical/GPU test reports are unavailable because implementation has not started.
+Linux executable names omit `.exe`. The C# library must be built before F# examples load it. Use `scripts/Test-Coverage.ps1` on a Rust target that includes the profiler runtime. The tested Windows GNU toolchain does not; this limitation is recorded explicitly. The Linux CI coverage job is configured but has not been executed remotely.
 
-## Repository policy
+## Authoritative documents and evidence
 
-Local Git only; no remote is configured. Product/source licensing is an explicit M0 decision. Third-party solvers, model packages and compiler runtimes require component-level license and distribution review before adoption.
+- [Architecture](docs/architecture.md) and [StrictDoc source](docs/architecture.sdoc).
+- [Implementation plan](docs/implementation-plan.md) and [StrictDoc source](docs/implementation-plan.sdoc).
+- [Backlog](BACKLOG.md) and [machine inventory](backlog.json).
+- [Prototype acceptance contracts](docs/prototype-contracts.sdoc).
+- [Development standards](docs/development-standards.sdoc).
+- [Iteration ledger](evidence/iterations.md), checkpoint reports, [mutation outcomes](evidence/mutation.json) and [coverage scope/results](evidence/coverage.json).
+
+The 50 implementation passes are individually committed. Builds are checked at 10/20/30/40/50; qualification claims follow evidence, not iteration count. Most planned work packages remain Proposed or partially explored.
+
+## Deliberate limitations
+
+No sparse/native CPU backend, GPU execution, nonlinear device/Newton engine, inductors, adaptive timesteps, event kernel, OSDI plugins, Arrow results, persistent worker sandbox, C ABI, Starlark interpreter, remote service or GUI is implemented. The expression tree is not yet an integrated behavioral device. No universal vendor-model or StressForge compatibility is claimed.
+
+The text subset allows a single-token first-line title or explicit `title:` line, R/C/V/I four-token devices, `.op`, `.end` and whole-line `*` comments. It rejects includes, control commands and unsupported devices. This is not general SPICE3/dialect compatibility.
+
+Dense reference limits: at most 128 nodes, 1024 elements, 256 MNA unknowns; transient at most 100,000 steps and 2,000,000 retained scalars; AC at most 10,000 frequencies and 1,000,000 complex scalars. Retained JSON is bounded, not streamed; long-running production workflows require the planned streaming layer.
+
+No remote is configured. The source-license decision is still pending; third-party numerical/model licenses and packaging require review before distribution.
+

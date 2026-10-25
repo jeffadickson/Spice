@@ -1,21 +1,20 @@
 //! Bounded linear-circuit reference engine. Sparse/GPU/nonlinear qualification is not claimed.
-pub mod error;
-pub mod ids;
-pub mod circuit;
-pub mod quantity;
-pub mod linalg;
+pub mod ac;
+pub mod api;
+pub mod assertion;
 pub mod backend;
+pub mod circuit;
 pub mod compile;
 pub mod dc;
-pub mod transient;
-pub mod api;
-pub mod ac;
+pub mod error;
+pub mod expression;
 pub mod grid;
+pub mod ids;
+pub mod linalg;
 pub mod measurement;
-pub mod assertion;
+pub mod model;
 pub mod netlist;
 pub mod provenance;
-pub mod expression;
-pub mod model;
+pub mod quantity;
 pub mod registry;
-
+pub mod transient;
