@@ -1,4 +1,5 @@
 namespace Simulator.Client;
+public sealed record SimulationError(string Code,string Message);
 /// <summary>Host-owned materialized result; no borrowed native pointers or hidden waveform interpolation.</summary>
 public sealed record ResultManifest(string SchemaVersion, string CaseId, string Status, bool Complete,
     SignalInfo[] Signals, RealSample[] Samples, AcSample[] AcSamples, MeasurementValue[] Measurements,

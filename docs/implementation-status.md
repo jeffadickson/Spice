@@ -15,4 +15,3 @@ The second slice extends the **bounded linear reference engine**; it does not co
 | Release | no production release claim | license/platform/packaging and all declared M1 exit gates |
 
 Most work packages retain Proposed status because their complete exit criteria are not satisfied. Current checkpoint and source-hash reports, rather than implementation counts, define what has been tested.
-

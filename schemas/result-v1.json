@@ -1,0 +1,346 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Experimental simulator result v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "const": "1"
+        },
+        "case_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "const": "succeeded"
+        },
+        "complete": {
+          "type": "boolean",
+          "const": true
+        },
+        "signals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "quantity",
+              "unit"
+            ]
+          }
+        },
+        "samples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "time_s": {
+                "type": "number"
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "required": [
+              "time_s",
+              "values"
+            ]
+          }
+        },
+        "ac_samples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "frequency_hz": {
+                "type": "number"
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "real": {
+                      "type": "number"
+                    },
+                    "imag": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "real",
+                    "imag"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "frequency_hz",
+              "values"
+            ]
+          }
+        },
+        "measurements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "signal": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "signal",
+              "unit",
+              "status",
+              "value",
+              "reason"
+            ]
+          }
+        },
+        "assertions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "measurement": {
+                "type": "string"
+              },
+              "outcome": {
+                "type": "string"
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "measurement",
+              "outcome",
+              "reason"
+            ]
+          }
+        },
+        "integration": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "method": {
+              "type": "string"
+            },
+            "initialization": {
+              "type": "string"
+            },
+            "accepted_steps": {
+              "type": "integer"
+            },
+            "rejected_steps": {
+              "type": "integer"
+            },
+            "attempts": {
+              "type": "integer"
+            },
+            "max_accepted_error": {
+              "type": "number"
+            },
+            "linear_solves": {
+              "type": "integer"
+            },
+            "prepared_factors": {
+              "type": "integer"
+            },
+            "prepared_reuses": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "method",
+            "initialization",
+            "accepted_steps",
+            "rejected_steps",
+            "attempts",
+            "max_accepted_error",
+            "linear_solves",
+            "prepared_factors",
+            "prepared_reuses"
+          ]
+        },
+        "backend": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "placement": {
+              "type": "string"
+            },
+            "max_unknowns": {
+              "type": "integer"
+            },
+            "sparse": {
+              "type": "boolean"
+            },
+            "gpu": {
+              "type": "boolean"
+            },
+            "complex": {
+              "type": "boolean"
+            },
+            "prepared_real": {
+              "type": "boolean"
+            },
+            "provider_version": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "placement",
+            "max_unknowns",
+            "sparse",
+            "gpu",
+            "complex",
+            "prepared_real",
+            "provider_version"
+          ]
+        },
+        "request_sha256": {
+          "type": "string"
+        },
+        "dc_power": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "devices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "absorbed_w": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "id",
+                  "absorbed_w"
+                ]
+              }
+            },
+            "sum_absorbed_w": {
+              "type": "number"
+            },
+            "sum_absolute_w": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "devices",
+            "sum_absorbed_w",
+            "sum_absolute_w"
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "schema_version",
+        "case_id",
+        "status",
+        "complete",
+        "signals",
+        "samples",
+        "ac_samples",
+        "measurements",
+        "assertions",
+        "backend",
+        "request_sha256"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "status",
+        "complete",
+        "error"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "1"
+        },
+        "status": {
+          "const": "failed"
+        },
+        "complete": {
+          "const": false
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -38,5 +38,7 @@ try { invalid.ReadManifest(); throw new Exception("Failed result treated as succ
 catch (InvalidOperationException) { passed++; }
 try { typedResponse.FinalValue("v(missing)"); throw new Exception("Unknown signal accepted"); }
 catch (KeyNotFoundException) { passed++; }
+Check(invalid.Error?.Code=="invalid_input" && typedResponse.Error is null,"typed error classification");
+passed += await MoreChecks.Run(client);
 Console.WriteLine($"Managed conformance: {passed} checks passed.");
 

@@ -11,6 +11,7 @@ let options=TransientConfiguration(0.0002,1e-6,10000,"trapezoidal",[|1.0;1.0;0.0
 let analysis=TransientConfigured(options)
 let request=SimulationRequest("typed-fsharp-rlc",circuit,analysis,"faer",null)
 let response=SimulationClient(Path.GetFullPath(args.[0])).RunAsync(request).GetAwaiter().GetResult()
+if not response.Succeeded then failwithf "Engine rejected typed RLC: %A" response.Error
 let manifest=response.ReadManifest()
 if not manifest.Complete || not manifest.Backend.Sparse then failwith "Expected complete sparse result."
 printfn "Typed F# RLC: samples=%d, backend=%s" manifest.Samples.Length manifest.Backend.Id

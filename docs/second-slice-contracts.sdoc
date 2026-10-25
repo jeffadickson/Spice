@@ -1,9 +1,11 @@
 [DOCUMENT]
 TITLE: Extended Reference Engine - Acceptance Contracts
+
 [TEXT]
 STATEMENT: >>>
 Implemented scope for iterations 51-100, subject to current evidence. The compiler remains bounded dense storage even when its adapter uses real sparse factorization. These contracts do not claim complete production qualification or every planned capability.
 <<<
+
 [REQUIREMENT]
 UID: REF2-005
 TITLE: Scoped numerical provider agreement
@@ -18,6 +20,7 @@ No GPU, general ill-conditioned-matrix guarantee or large-circuit memory scalabi
 RELATIONS:
 - TYPE: Parent
   VALUE: REF2-001
+
 [REQUIREMENT]
 UID: REF2-006
 TITLE: Consistent linear dynamic analyses
@@ -32,6 +35,7 @@ Local error estimates are not global waveform bounds. Native/nonlinear history r
 RELATIONS:
 - TYPE: Parent
   VALUE: REF2-003
+
 [REQUIREMENT]
 UID: REF2-007
 TITLE: Typed experimental API and validity-aware measurements
@@ -46,6 +50,7 @@ The DTOs cover the experimental JSON profile, not the entire planned API, Arrow 
 RELATIONS:
 - TYPE: Parent
   VALUE: REF2-004
+
 [REQUIREMENT]
 UID: REF2-008
 TITLE: Local result artifact integrity
@@ -60,6 +65,7 @@ This is trusted local filesystem publication, not hostile filesystem sandboxing,
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-DATA-003
+
 [REQUIREMENT]
 UID: REF2-009
 TITLE: Physical diagnostic and expression domain checks
@@ -75,3 +81,16 @@ RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-VERIFY-001
 
+[REQUIREMENT]
+UID: REF2-010
+TITLE: Stable fixed-step endpoint handling
+STATEMENT: >>>
+Configured fixed-step runs shall use an absolute nominal time grid with explicit endpoint-roundoff snapping before source-breakpoint clipping, avoiding artificial tiny terminal steps without weakening numerical residual acceptance.
+<<<
+COMMENT: >>>
+Implementation: src/configured.rs.
+Verification: tests/endpoint.rs compares dense and sparse RLC runs with exactly 200 nominal steps; examples/TypedRlc.fsx exercises the managed boundary. Actual source corners still take precedence over endpoint snapping.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF2-003

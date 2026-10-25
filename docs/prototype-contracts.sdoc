@@ -29,7 +29,7 @@ The reference engine shall offer per-engine solver registration and CPU dense LU
 COMMENT: >>>
 Implementation: src/linalg.rs, src/backend.rs, src/registry.rs, src/dc.rs, src/ac.rs.
 Verification: tests/dc.rs, tests/faults.rs, tests/hardening.rs, tests/analyses.rs.
-Both adapters currently use nalgebra; two independent production solver providers have NOT been qualified. Pattern/factor reuse, sparse and GPU backends are not implemented.
+The original dense adapters share nalgebra. The second slice adds independent faer sparse solves and owned numeric-factor reuse; see second-slice-contracts.sdoc for its narrow conformance scope. Production/provider/platform qualification and GPU support remain incomplete.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -46,7 +46,7 @@ The reference transient engine shall use backward Euler from zero stored-energy 
 COMMENT: >>>
 Implementation: src/transient.rs.
 Verification: tests/transient.rs, tests/faults.rs, tests/hardening.rs.
-Adaptive error control, nonlinear rollback, event processing and persisted partial/checkpoint output are not implemented. Output begins after the first positive step, not at an invented time-zero sample.
+This legacy profile remains fixed step and begins after the first positive step. The separate configured profile adds consistent t=0 state, linear adaptive control and source-corner handling; nonlinear history rollback and persisted transient checkpoints remain unimplemented.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -76,7 +76,7 @@ The reference CLI shall accept at most 1 MiB of versioned JSON input and emit on
 COMMENT: >>>
 Implementation: src/api.rs, src/main.rs, dotnet/Simulator.Client/Client.cs.
 Verification: tests/contracts.rs, dotnet/Simulator.Conformance/Program.cs, examples/Run.cs, examples/Run.fsx, examples/BuildCircuit.fsx.
-This is one-shot JSON process transport, not Arrow streaming, persistent worker isolation, sandboxing, a C ABI or the complete typed SDK. Native executable code is trusted.
+This is one-shot JSON process transport with an experimental typed C#/F# SDK, not Arrow streaming, persistent worker isolation, sandboxing, a C ABI or the complete planned API. Native executable code is trusted.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -93,7 +93,7 @@ The prototype shall retain numerical regression results, reproducible bounded ra
 COMMENT: >>>
 Implementation: tests/, scripts/Mutation.cs, scripts/Test-Coverage.ps1.
 Verification: evidence/checkpoint-*.json, evidence/mutation.json, evidence/coverage.json.
-Bounded fuzz smoke is not coverage-guided libFuzzer qualification. Mutation evidence covers seven chosen operators, not all possible mutants. Windows GNU Rust coverage is unavailable when profiler_builtins is missing; managed coverage does not measure Rust code.
+Bounded fuzz smoke is not coverage-guided libFuzzer qualification. Mutation evidence covers selected operators, not all possible mutants. Windows GNU Rust coverage is unavailable when profiler_builtins is missing; managed coverage does not measure Rust code.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -117,4 +117,3 @@ RELATIONS:
   VALUE: ARCH-DSL-001
 - TYPE: Parent
   VALUE: ARCH-DSL-004
-

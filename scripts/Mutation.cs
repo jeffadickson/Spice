@@ -24,11 +24,12 @@ void Restore()
         File.WriteAllText(target, text);
     }
 }
-async Task<(int Exit, string Log)> Test()
+async Task<(int Exit, string Log)> Test(string? target = null)
 {
     var start = new ProcessStartInfo("cargo") { WorkingDirectory = sandbox,
         UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
     foreach (var arg in new[] { "test", "--locked" }) start.ArgumentList.Add(arg);
+    if (target is not null) { start.ArgumentList.Add("--test"); start.ArgumentList.Add(target); }
     start.Environment["CARGO_TARGET_DIR"] = Path.Combine(root, "target", "mutation");
     using var process = Process.Start(start)!;
     var stdout = process.StandardOutput.ReadToEndAsync();
@@ -55,6 +56,13 @@ var mutants = new (string Name, string File, string Pattern, string Replacement)
     ("pwl-interpolation", "src/waveform.rs", @"\(1\.\s*-\s*f\)\s*\*\s*a\.value\s*\+\s*f\s*\*\s*b\.value", "a.value"),
     ("missing-assertion", "src/assertion.rs", @"_\s*=>\s*Outcome::Indeterminate", "_ => Outcome::Pass")
 };
+// The baseline runs the full suite; each operator then uses its focused regression target.
+var targets = new Dictionary<string,string> {
+    ["stamp-sign"]="dc",["stored-charge"]="transient",["inclusive-boundary"]="analyses",
+    ["milli-scale"]="analyses",["residual-acceptance"]="faults",["cancel-check"]="transient",
+    ["state-commit"]="transient",["flux-sign"]="dynamic",["adaptive-acceptance"]="adaptive",
+    ["sparse-row-order"]="providers",["pwl-interpolation"]="edge_cases",["missing-assertion"]="analyses"
+};
 var reports = new List<object>(); var killed = 0;
 foreach (var mutant in mutants)
 {
@@ -63,11 +71,12 @@ foreach (var mutant in mutants)
     var regex = new Regex(mutant.Pattern);
     if (!regex.IsMatch(source)) throw new Exception("Mutation target missing: " + mutant.Name);
     File.WriteAllText(Path.Combine(sandbox, mutant.File), regex.Replace(source, mutant.Replacement, 1));
-    var test = await Test();
+    var target = targets[mutant.Name];
+    var test = await Test(target);
     var status = test.Exit == -1 ? "timeout" : test.Exit == 0 ? "survived" :
         test.Log.Contains("test result: FAILED") ? "killed" : "invalid";
     if (status == "killed") killed++;
-    reports.Add(new { name = mutant.Name, status, exit_code = test.Exit });
+    reports.Add(new { name = mutant.Name, status, exit_code = test.Exit, test_target=target });
     Console.WriteLine(mutant.Name + ": " + status);
 }
 Restore();

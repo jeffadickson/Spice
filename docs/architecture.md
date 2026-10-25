@@ -1,5 +1,7 @@
+<!-- Readable projection; authoritative source: architecture.sdoc -->
 
-# Rust Circuit Simulator - Clean Architecture and Interface Contracts
+## Rust Circuit Simulator - Clean Architecture and Interface Contracts
+
 Version 0.4, proposed architecture, 2026-10-24. A bounded reference prototype now exists; docs/implementation-status.md and prototype-contracts.sdoc define its limited implemented scope. Proposed architecture capabilities are not all implemented.
 
 This is a standalone design for a new Rust circuit simulator. It defines crate responsibilities, numerical contracts, reusable CPU/GPU solver adapters, model plugins, job execution and Rust/.NET interfaces. It is not an implementation, benchmark result, complete device-model specification or compatibility claim.
@@ -17,42 +19,53 @@ M0 = numerical and interoperability experiments; M1 = qualified CPU DC/AC/transi
 
 **ARCH-GOAL-001**
 
-### Independent core
+## Independent core
+
 The simulator shall use a Rust-owned numerical and circuit core with no dependency on a legacy simulator runtime, graphical interface or command interpreter.
+
 
 Verification: Build and execute the headless native engine without legacy simulator libraries, GUI libraries or a shell interpreter; inspect its dependency graph.
 
 
 **ARCH-GOAL-002**
 
-### Replaceable numerical backends
+## Replaceable numerical backends
+
 The simulator shall expose circuit-independent numerical contracts through which qualified CPU and GPU solver libraries can be exchanged without modifying device equations or public request schemas.
+
 
 Verification: Run the same qualified circuit and matrix cases through independently implemented backend adapters and compare outcomes and residuals.
 
 
 **ARCH-GOAL-003**
 
-### Independent model ecosystem
+## Independent model ecosystem
+
 The simulator shall support built-in Rust models and versioned compiled-model adapters without allowing model-specific layouts, syntax or native library types into the numerical core.
+
 
 Verification: Load a test model through the plugin adapter and inspect core interfaces for forbidden model/plugin types.
 
 
 **ARCH-GOAL-004**
 
-### Automation-first interfaces
+## Automation-first interfaces
+
 The simulator shall expose typed requests, job states, signals, measurements, diagnostics and results to Rust, C# and F# clients without requiring console-output parsing.
+
 
 Verification: Execute an end-to-end RC case from each client and recover typed results and failure reasons.
 
 
 **ARCH-GOAL-005**
 
-### Qualified behavior and honest outcomes
+## Qualified behavior and honest outcomes
+
 The simulator shall distinguish numerical correctness, model validity, execution completeness and assertion outcomes and shall associate release claims with reproducible verification evidence.
 
+
 Verification: Inspect evidence for analytic, nonconvergent, cancelled, out-of-domain and completed-but-failing cases.
+
 
 The central data flow is:
 
@@ -64,6 +77,7 @@ Do not create a universal mutable Circuit object that contains parser state, GUI
 
 
 ## 2. Crates, dependency direction and composition
+
 Proposed workspace layout; boundaries may initially be Rust modules where separate crates provide no immediate benefit. The dependency direction is mandatory even when packaging is consolidated.
 
 - sim-types: typed IDs, units/quantities, source spans, diagnostics and small value types; no runtime or GPU dependencies.
@@ -98,24 +112,29 @@ Native external libraries are dependencies of adapter crates, not source-code te
 
 **ARCH-DEP-001**
 
-### Enforced dependency direction
+## Enforced dependency direction
+
 Workspace checks shall reject dependency cycles and dependencies from core model or numerical API crates on parsers, concrete backend crates, GUI code, worker transports or SDKs.
+
 
 Verification: Inspect Cargo metadata in CI and run a deliberately forbidden dependency fixture against the policy check.
 
-Parent requirement: ARCH-GOAL-001
+Parent: ARCH-GOAL-001
 
 **ARCH-DEP-002**
 
-### Explicit construction and optional dependencies
+## Explicit construction and optional dependencies
+
 The service composition root shall construct per-engine registries and backend factories explicitly. A CPU-only build shall not require GPU runtime initialization, driver installation or vendor GPU redistributables.
+
 
 Verification: Install and run the CPU package on a no-GPU machine and execute concurrent engines with different registries.
 
-Parent requirement: ARCH-GOAL-001
-Parent requirement: ARCH-GOAL-002
+Parent: ARCH-GOAL-001
+Parent: ARCH-GOAL-002
 
 ## 3. Circuit representation and execution ownership
+
 ParsedDeck holds syntax and source spans. ElaboratedCircuit holds resolved topology, model references and effective parameters. ExecutionPlan holds immutable unknown ordering, sparse pattern, stamp maps, signal catalog and state layout. Arc may share these immutable objects across compatible runs.
 
 RunSession exclusively owns time, solution vectors, trial/accepted device state, integration history, random streams, event queue, solver sessions and result writer. ModelPackage owns immutable descriptors and native library lifetime. BackendSession owns native handles, device context, workspace and pending operations; it is not implicitly Send or Sync.
@@ -127,33 +146,40 @@ Structural identity includes topology, unknown/state layout, selected model vers
 
 **ARCH-STATE-001**
 
-### Session-local mutable state
+## Session-local mutable state
+
 All mutable simulation and solver state shall belong to a run or explicitly serialized backend session; no mutable process-global circuit state shall be used.
+
 
 Verification: Run independent circuits concurrently under race detection where available and compare with isolated serial results.
 
-Parent requirement: ARCH-GOAL-001
+Parent: ARCH-GOAL-001
 
 **ARCH-STATE-002**
 
-### Correct reuse and invalidation
+## Correct reuse and invalidation
+
 The compiler shall compute structural and numeric invalidation keys and invalidate all affected model bindings, sparsity, factors, operating points and measurements after a relevant change.
+
 
 Verification: Mutate each parameter class and compare reused execution against a fresh compile, including a model parameter that changes internal state count.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 **ARCH-STATE-003**
 
-### Typed indices and bounded loading
+## Typed indices and bounded loading
+
 The core shall distinguish node, instance, unknown, state, signal and sparse-slot identifiers, validate serialized indices before allocation or access, and enforce declared include/depth/size limits during loading.
+
 
 Verification: Fuzz identifiers, sparse indices and deep hierarchy; assert classified rejection without panics, root escapes or unbounded allocation.
 
-Parent requirement: ARCH-GOAL-001
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-001
+Parent: ARCH-GOAL-005
 
 ## 4. Equation and analysis contracts
+
 Use a modified-nodal differential-algebraic formulation:
 
 F(x, t, p) + dQ(x, t, p)/dt = 0.
@@ -171,50 +197,61 @@ Limiting may be needed for robust iteration. If limited evaluations alter the li
 
 **ARCH-EQ-001**
 
-### Analysis-independent model equations
+## Analysis-independent model equations
+
 Models shall expose residual, charge and derivative contributions independent of DC/AC/transient driver implementations, using one documented sign, unit and source-excitation convention.
+
 
 Verification: Derive RC/RLC DC, AC and transient equations from the same model evaluations and compare analytic results.
 
-Parent requirement: ARCH-GOAL-003
+Parent: ARCH-GOAL-003
 
 **ARCH-EQ-002**
 
-### Central convergence policy
+## Central convergence policy
+
 Newton control shall apply both scaled physical residual and update checks, bounded continuation attempts, finite-value checks and explicit regularization reporting; a linear backend success alone shall never imply circuit convergence.
+
 
 Verification: Test tiny-update/large-residual, singular, overflow, regularized and bistable cases and inspect convergence histories.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 **ARCH-EQ-003**
 
-### Explicit initialization and tolerances
+## Explicit initialization and tolerances
+
 Analyses shall expose operating-point initialization, initial guesses, forced initial conditions and bypass modes separately and shall record effective dimensional absolute tolerances and relative tolerances.
+
 
 Verification: Compare precharged capacitor/inductor cases in every initialization mode and inspect effective settings in results.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 **ARCH-EQ-004**
 
-### Transient acceptance and rollback
+## Transient acceptance and rollback
+
 A transient driver shall commit a step only after nonlinear convergence and its integration error test pass, and shall restore all trial state, random state and events after rejection.
+
 
 Verification: Force rejections and compare against direct execution of the same accepted step sequence, including history-dependent devices.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 **ARCH-EQ-005**
 
-### Discontinuity and sample semantics
+## Discontinuity and sample semantics
+
 The transient engine shall schedule known source breakpoints, process model events with documented simultaneous-event ordering and distinguish accepted solver samples from resampled outputs with explicit left/right event semantics.
+
 
 Verification: Exercise PWL corners, pulse edges and simultaneous switch crossings and compare recorded and interpolated outputs.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 ## 5. Reusable linear solver API
+
 Choose small object-safe Rust interfaces over a generic framework that exposes every vendor method. The following is the direct-solver lifecycle sketch, not compilable or stabilized Rust and not a mandatory interface for iterative solvers:
 
 BackendFactory.capabilities() -> BackendCapabilities
@@ -238,42 +275,51 @@ LinearReport includes backend/version/device, timings, allocations, permutation/
 
 **ARCH-LIN-001**
 
-### Circuit-independent solver contract
+## Circuit-independent solver contract
+
 Linear backend contracts shall accept validated matrices, right-hand sides, numerical options and resource limits without device, netlist, analysis-driver or public API objects.
+
 
 Verification: Run the backend conformance suite as a standalone matrix application with no circuit crates linked.
 
-Parent requirement: ARCH-GOAL-002
+Parent: ARCH-GOAL-002
 
 **ARCH-LIN-002**
 
-### Capabilities and matrix classes
+## Capabilities and matrix classes
+
 Each backend shall declare supported matrix classes, real/complex precision, index limits, solve operations, batching, threading, determinism and asynchronous behavior and reject unsupported combinations before execution.
+
 
 Verification: Run nonsymmetric, indefinite, complex, oversized-index and unsupported-operation fixtures through every adapter.
 
-Parent requirement: ARCH-GOAL-002
+Parent: ARCH-GOAL-002
 
 **ARCH-LIN-003**
 
-### Cache validity and handle ownership
+## Cache validity and handle ownership
+
 Solver handles shall enforce session ownership and explicit invalidation after structural/value changes, failed updates or device reset; cached symbolic work shall never authorize stale numeric-factor reuse.
+
 
 Verification: Mutate values and structure, cross-use handles and inject refactor/device failures; compare to independent fresh solves.
 
-Parent requirement: ARCH-GOAL-002
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-002
+Parent: ARCH-GOAL-005
 
 **ARCH-LIN-004**
 
-### Numerical backend verification
+## Numerical backend verification
+
 Each backend shall pass a shared matrix suite covering residuals, transpose/complex behavior, singularity and ill conditioning before use in qualified circuit analyses; reduced or mixed precision shall require explicit opt-in and separate qualification.
+
 
 Verification: Compare known solutions and normalized backward error against independent references and retain per-backend evidence.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 ## 6. Backend candidates and adoption decisions
+
 These are evaluated candidates, not selected/pinned production dependencies. Capability and license claims must be checked against the exact adopted release and transitive dependencies.
 
 CPU sparse direct: evaluate SuiteSparse KLU first because it is aimed at sparse unsymmetric circuit-simulation systems. Keep its native interface in sim-backend-cpu. SuiteSparse is a collection with component-specific licenses; do not assume the whole collection has a single permissive license. Evaluate a maintained Rust-native sparse direct implementation as an alternative if its numerical coverage, complex support and maintenance pass the same corpus. A tiny dense test solver is not a production sparse replacement.
@@ -311,73 +357,88 @@ Reuse substantially reduces implementation of sparse factorization, precondition
 
 **ARCH-PORT-001**
 
-### Multiple solver roles
+## Multiple solver roles
+
 The solver registry shall support separate direct-linear, iterative-linear/preconditioner, nonlinear and DAE role contracts, with optional extensions and no requirement that every provider implement every role.
+
 
 Verification: Register providers supporting different roles, enumerate their capabilities and reject requests for unavailable roles before solving.
 
-Parent requirement: ARCH-GOAL-002
+Parent: ARCH-GOAL-002
 
 **ARCH-PORT-002**
 
-### Qualified provider variety
+## Qualified provider variety
+
 Before claiming interchangeable linear backends, the project shall qualify at least two independent providers on their shared supported circuit/matrix subset and retain provider-specific extensions and limitations.
+
 
 Verification: Execute the shared real/complex nonsymmetric conformance corpus and publish residual, outcome, accuracy and unsupported-feature comparisons with exact provider versions.
 
-Parent requirement: ARCH-GOAL-002
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-002
+Parent: ARCH-GOAL-005
 
 **ARCH-PORT-003**
 
-### Validated solver compositions
+## Validated solver compositions
+
 The planner shall validate provider combinations against scalar/index types, memory placement, callback requirements, matrix/DAE class, initialization, thread/runtime constraints and supported inner-solver hooks before creating a run.
+
 
 Verification: Test incompatible GPU layouts, ODE-only versus DAE requests, unavailable preconditioners and incompatible runtime builds; verify actionable rejection.
 
-Parent requirement: ARCH-GOAL-002
+Parent: ARCH-GOAL-002
 
 **ARCH-PORT-004**
 
-### One owner per numerical controller
+## One owner per numerical controller
+
 An execution plan shall assign exactly one owner to nonlinear iteration and exactly one owner to timestep/error-control history, and shall define compatible circuit limiting, event, state rollback and physical acceptance hooks for external controllers.
+
 
 Verification: Inspect ownership plans and run rejected-step, event, limiting and cancellation fixtures through a reference and external controller without duplicated commits or competing advancement.
 
-Parent requirement: ARCH-GOAL-002
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-002
+Parent: ARCH-GOAL-005
 
 **ARCH-PORT-005**
 
-### Correct external DAE formulation
+## Correct external DAE formulation
+
 An external DAE adapter shall document and independently verify residual, Jacobian, charge, explicit-time, algebraic-constraint and initialization mappings for its selected formulation; it shall not assume the transient discretized Jacobian is identical to the library's continuous-residual Jacobian callback.
+
 
 Verification: Compare callback derivatives to independent differentiation on voltage-dependent charge models and explicit-time sources; check algebraic constraints and accepted transient results against reference cases.
 
-Parent requirement: ARCH-GOAL-002
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-002
+Parent: ARCH-GOAL-005
 
 **ARCH-PORT-006**
 
-### Validated effective solver configuration
+## Validated effective solver configuration
+
 Solver configuration shall use versioned provider identities, capability-negotiated roles and validated namespaced options, reject unknown settings and record effective composition, controller ownership and build/runtime dependencies in result provenance.
+
 
 Verification: Submit misspelled options, conflicting controllers and changed provider builds; inspect errors, effective manifests and cache invalidation.
 
-Parent requirement: ARCH-GOAL-002
-Parent requirement: ARCH-GOAL-004
+Parent: ARCH-GOAL-002
+Parent: ARCH-GOAL-004
 
 **ARCH-ADOPT-001**
 
-### Backend adoption evidence
+## Backend adoption evidence
+
 Every production numerical dependency shall have a recorded version, component/transitive license review, platform matrix, numerical qualification and reproducible benchmark report; no backend shall be selected solely from advertised speed or API similarity.
+
 
 Verification: Review the adoption decision and ensure all required evidence exists before enabling the backend as stable.
 
-Parent requirement: ARCH-GOAL-002
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-002
+Parent: ARCH-GOAL-005
 
 ## 7. GPU execution, batching and memory
+
 GPU support has two separate axes. Solver placement determines where a matrix is factored and solved. Model placement determines where F/Q/derivatives are evaluated and assembled. CPU model evaluation plus a GPU solve is a supported hybrid plan, with transfers measured at every Newton step. An OSDI CPU shared library does not become GPU executable by selecting a GPU solver.
 
 M1 compiles the solver abstraction and measures CPU workloads. M2 first qualifies a hybrid sparse-direct GPU adapter and independent-case batching. GPU model kernels are a later capability for qualified built-ins or separately compiled model packages. A plugin descriptor declares CPU-only, GPU-capable or both, supported precision and device backends; the planner rejects impossible all-GPU requests.
@@ -393,43 +454,52 @@ A worker owns its device context or an explicitly serialized shared session. A f
 
 **ARCH-GPU-001**
 
-### Explicit placement plan
+## Explicit placement plan
+
 Execution plans shall separately declare model-evaluation, assembly and linear-solve placement, reject unsupported combinations and report selected devices, transfers and fallback decisions.
+
 
 Verification: Test CPU-only plugins with a GPU linear solver, unsupported all-GPU requests and a machine without a GPU.
 
-Parent requirement: ARCH-GOAL-002
-Parent requirement: ARCH-GOAL-003
+Parent: ARCH-GOAL-002
+Parent: ARCH-GOAL-003
 
 **ARCH-GPU-002**
 
-### Measured GPU selection
+## Measured GPU selection
+
 Automatic backend selection shall require validated memory estimates and end-to-end workload thresholds; explicit CPU/GPU selection shall remain available with actionable errors rather than silent substitution when strict selection is requested.
+
 
 Verification: Benchmark single circuits and batches across sizes, include cold/warm and transfer costs, and test strict selection under insufficient memory.
 
-Parent requirement: ARCH-GOAL-002
+Parent: ARCH-GOAL-002
 
 **ARCH-GPU-003**
 
-### Asynchronous lifetime safety
+## Asynchronous lifetime safety
+
 GPU buffers, native handles and plugin packages shall remain owned until dependent operations complete, with bounded queue/memory use and explicit synchronization before host reads or cleanup.
+
 
 Verification: Inject delayed completion, cancellation and allocation errors and inspect use-after-free, leak and stale-read behavior with applicable GPU diagnostics.
 
-Parent requirement: ARCH-GOAL-002
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-002
+Parent: ARCH-GOAL-005
 
 **ARCH-GPU-004**
 
-### Safe backend recovery
+## Safe backend recovery
+
 Device failure shall invalidate affected sessions and factors; a fallback shall restart from a complete accepted checkpoint or fresh run, retain separate attempt provenance and never duplicate already published samples as newly accepted data.
+
 
 Verification: Inject failure between factorization, solve and output commit; verify attempt IDs, data offsets and completeness after CPU retry.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 ## 8. Model API, compiled plugins and trust
+
 The internal ModelDefinition/BoundModel API is ordinary versioned-together Rust; no stable Rust dynamic ABI is promised. External native plugins use a versioned C ABI, initially through the OSDI adapter and later a project-specific ABI only if a real gap justifies maintaining one.
 
 Model definition phase: enumerate terminals, parameters/defaults/units/domains, internal unknowns and states, sparse dependencies, observables, events, noise capabilities, limiting behavior, supported precision and thread-safety/reentrancy. Binding phase: resolve parameters, allocate instance layout and precompute topology/stamp maps. Evaluation phase: consume immutable context plus owned trial-state region and write bounded instance-local output buffers. Commit/rollback phase: promote or discard trial state.
@@ -447,61 +517,74 @@ For performance, isolate the entire run containing native models rather than an 
 
 **ARCH-MOD-001**
 
-### Bounded declarative model interface
+## Bounded declarative model interface
+
 Model interfaces shall declare topology, state, sparsity and capabilities before solving and restrict evaluation outputs to validated local residual, charge, derivative, event and observable buffers.
+
 
 Verification: Check resistor/diode/transistor descriptors, inconsistent sparsity and out-of-range output fixtures and compare derivatives independently.
 
-Parent requirement: ARCH-GOAL-003
+Parent: ARCH-GOAL-003
 
 **ARCH-MOD-002**
 
-### Trial state and side effects
+## Trial state and side effects
+
 Model evaluation shall not perform externally visible side effects and shall support complete trial-state rollback, deterministic seeded random streams and documented limiting corrections where used.
+
 
 Verification: Force step rejection and repeated evaluations and verify identical accepted state, output and random progression.
 
-Parent requirement: ARCH-GOAL-003
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-003
+Parent: ARCH-GOAL-005
 
 **ARCH-MOD-003**
 
-### Stable native boundary
+## Stable native boundary
+
 Native plugin adapters shall validate ABI/version, sizes, alignment, ownership and capabilities, retain library lifetime through all model instances and expose no vendor-native structures outside the adapter.
+
 
 Verification: Reject incompatible ABI and descriptor fixtures; destroy engine/instances in varied orders under native memory diagnostics.
 
-Parent requirement: ARCH-GOAL-003
+Parent: ARCH-GOAL-003
 
 **ARCH-MOD-004**
 
-### Thread-safety declarations
+## Thread-safety declarations
+
 The scheduler shall obey model reentrancy and thread-safety declarations and shall serialize or process-isolate nonreentrant model implementations instead of marking them unconditionally Send/Sync.
+
 
 Verification: Run a deliberately nonreentrant fixture concurrently and verify correct serialization/isolation and numerical agreement.
 
-Parent requirement: ARCH-GOAL-003
+Parent: ARCH-GOAL-003
 
 **ARCH-MOD-005**
 
-### Native execution isolation
+## Native execution isolation
+
 Untrusted native plugins shall execute only under a supported enforced worker sandbox; trusted in-process loading shall require explicit caller selection and shall document its crash/memory-corruption risk.
+
 
 Verification: Crash, hang and attempt forbidden filesystem/network access from a fixture plugin; confirm supervisor survival and policy enforcement or explicit refusal.
 
-Parent requirement: ARCH-GOAL-003
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-003
+Parent: ARCH-GOAL-005
 
 **ARCH-MOD-006**
 
-### Pinned package provenance
+## Pinned package provenance
+
 Model resolution shall use explicit content/version identities and record compiler, ABI, license and qualification metadata; unsupported or encrypted models shall fail explicitly.
+
 
 Verification: Alter a package, remove capability metadata and submit an encrypted model; inspect errors and recorded hashes.
 
-Parent requirement: ARCH-GOAL-003
+Parent: ARCH-GOAL-003
 
 ## 9. Job runtime, safety and reproducibility
+
 Job states: queued -> compiling -> running -> succeeded or failed or resource_exhausted. Cancellation moves queued/compiling/running to cancelling -> cancelled; cancellation racing completion resolves to exactly one terminal state through an atomic transition. Compile failure can terminate without entering running. Limits during any active phase produce a classified terminal result. Progress percentages are optional; simulated time and phase/counters are factual alternatives.
 
 There are distinct compile, run, analysis and attempt IDs. An attempt records a specific backend/settings execution. Backend failure and numerical-setting retries retain history. Campaign seeds derive from stable case and instance identities; schedule order must not change the intended sample assignment. Cross-backend numeric results are tolerance-compared, not assumed bit-identical.
@@ -515,24 +598,29 @@ Checkpoints, when supported, include accepted solution, time, integration order/
 
 **ARCH-RUN-001**
 
-### Classified lifecycle and limits
+## Classified lifecycle and limits
+
 Every job shall end in exactly one terminal state with classified diagnostics, applicable resource limits and complete/partial/unavailable result status, including cancellation and native worker failure.
+
 
 Verification: Exercise state races, limits in each phase, late cancellation, crashed workers and output failures.
 
-Parent requirement: ARCH-GOAL-004
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-004
+Parent: ARCH-GOAL-005
 
 **ARCH-RUN-002**
 
-### Reproducibility and complete checkpoints
+## Reproducibility and complete checkpoints
+
 Results shall record effective settings, seeds and version/content identities; any supported resumed run shall restore complete accepted algorithm/model state and validate compatibility before execution.
+
 
 Verification: Compare schedule-reordered campaigns and interrupted/resumed fixtures under the declared reproducibility envelope; reject incompatible checkpoints.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 ## 10. Rust, C and .NET API contracts
+
 Rust facade semantic sketch:
 
 EngineBuilder::new().models(registry).backends(backends).limits(policy).build()
@@ -559,42 +647,51 @@ StressForge is an external orchestrator adapter: map its real case IDs/parameter
 
 **ARCH-API-001**
 
-### Shared typed application service
+## Shared typed application service
+
 Rust, CLI, C ABI and .NET interfaces shall call the same validated application service and preserve consistent capabilities, effective settings and structured outcome/error semantics.
+
 
 Verification: Run golden request/result cases through each interface, including unsupported features, convergence failure and cancellation.
 
-Parent requirement: ARCH-GOAL-004
+Parent: ARCH-GOAL-004
 
 **ARCH-API-002**
 
-### First-class C# and F# access
+## First-class C# and F# access
+
 The .NET SDK shall provide typed asynchronous control, bounded result/event streaming, cancellation and deterministic disposal, with maintained C# file-based and F# Interactive examples and no Python dependency.
+
 
 Verification: Execute both language examples against local-worker and trusted in-process transports and test slow consumers and disposal during a run.
 
-Parent requirement: ARCH-GOAL-004
+Parent: ARCH-GOAL-004
 
 **ARCH-API-003**
 
-### Safe versioned C interface
+## Safe versioned C interface
+
 The C ABI shall use explicit ownership and version negotiation, validate buffer sizes/handles and contain language-level unwinding; it shall not promise containment of arbitrary native memory corruption.
+
 
 Verification: Exercise stale handles, malformed lengths, injected panics/exceptions, double-release policy and older supported client versions under applicable native diagnostics.
 
-Parent requirement: ARCH-GOAL-004
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-004
+Parent: ARCH-GOAL-005
 
 **ARCH-API-004**
 
-### Bounded versioned worker protocol
+## Bounded versioned worker protocol
+
 The worker protocol shall negotiate versions/capabilities, enforce frame and queue limits, preserve IDs/sequence ordering and use local IPC access controls; unknown incompatible requests shall fail before execution.
+
 
 Verification: Fuzz frames, lengths, ordering and versions; test unauthorized local access and throttled clients.
 
-Parent requirement: ARCH-GOAL-004
+Parent: ARCH-GOAL-004
 
 ## 11. Result data, streaming and publication
+
 ResultManifest includes execution status, completeness, case/analysis/attempt IDs, accepted ranges, axes, signals, measurements, diagnostics, provenance and artifacts. JSON uses explicit validity fields rather than NaN/Infinity tokens. Model validity warnings remain visible even when the numerical run converges.
 
 Each signal has stable scoped ID, display hierarchy, physical quantity, unit, dtype, axis IDs and polarity/reference direction. AC values preserve real/imaginary binary64 components. Each transient case keeps its own adaptive axis; sweep results may be ragged. Interpolation and discontinuity policy are explicit. A presentation layer may downsample for display, but it must not replace full requested analysis data silently.
@@ -608,33 +705,40 @@ Artifacts are staged in a run directory. Flush/close and hash them before atomic
 
 **ARCH-DATA-001**
 
-### Self-describing result schemas
+## Self-describing result schemas
+
 Results shall use versioned manifests and signal/axis descriptors that preserve quantity, units, complex components, hierarchy, references, validity and adaptive sampling without reliance on console output or column position.
+
 
 Verification: Read real/complex/ragged/partial golden results using Rust and .NET readers and reconstruct axes after column reordering.
 
-Parent requirement: ARCH-GOAL-004
+Parent: ARCH-GOAL-004
 
 **ARCH-DATA-002**
 
-### Bounded lossless streaming
+## Bounded lossless streaming
+
 Requested accepted samples shall be streamed with IDs, ordering and explicit buffer ownership under a bounded backpressure policy; cancellation/failure shall terminate the stream with completeness metadata.
+
 
 Verification: Throttle a reader, interrupt a run and detect missing/duplicate batches while measuring memory bounds.
 
-Parent requirement: ARCH-GOAL-004
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-004
+Parent: ARCH-GOAL-005
 
 **ARCH-DATA-003**
 
-### Durable truthful publication
+## Durable truthful publication
+
 A completed manifest shall reference only closed integrity-checked artifacts and shall record provenance and measurement completeness; interrupted, nonconverged or invalid-evidence outcomes shall not appear as qualified assertion passes.
+
 
 Verification: Inject disk-full, corruption and interruption during publication and test missing-crossing, model-domain and partial-window assertions.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 ## 12. Compatibility without architectural inheritance
+
 Dialect adapters translate a documented subset into the canonical IR. Compatibility options live in an explicit CompatibilityProfile, affect elaboration or source semantics deliberately and are included in provenance. They are not global booleans scattered through device and solver code.
 
 Unsupported syntax fails at the source span. Translation may produce a warning when meaning is changed, but must not pretend exact compatibility. Vendor control languages and encrypted models are separate capabilities; no command shell is required for ordinary simulation. Keep a corpus with parse, elaborate, solve and numerical-match outcomes and denominators.
@@ -646,14 +750,17 @@ ngspice/Xyce oracle runners are test-only process adapters using pinned binaries
 
 **ARCH-COMPAT-001**
 
-### Compatibility confined to adapters
+## Compatibility confined to adapters
+
 Syntax/dialect behavior shall be implemented through explicit profiles and canonical-IR translation without legacy runtime types or scattered hidden solver/model switches; unsupported constructs shall produce source-located diagnostics.
+
 
 Verification: Run ambiguous dialect fixtures through each profile and inspect the canonical IR, warnings and effective provenance.
 
-Parent requirement: ARCH-GOAL-001
+Parent: ARCH-GOAL-001
 
 ## 13. Verification, comments and code coverage
+
 Code comments explain public interfaces, assumptions, units, sign conventions, ownership, unsafe invariants and non-obvious numerical choices. StrictDoc requirements link to implementation/tests once they exist. Architecture decisions document why a backend/model/algorithm was adopted and its rejected alternatives where relevant.
 
 Testing layers:
@@ -675,32 +782,39 @@ Coverage does not prove numerical accuracy. Record actual reports, exclusions, t
 
 **ARCH-VERIFY-001**
 
-### Independent numerical and stateful tests
+## Independent numerical and stateful tests
+
 Qualification shall combine independent numerical references, conservation, derivative checks, state/rollback tests and multi-interface conformance; a single legacy simulator shall not be the universal oracle.
+
 
 Verification: Review fixture provenance and demonstrate detection of representative stamp-sign, stale-state and complex-solve defects.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 **ARCH-VERIFY-002**
 
-### Adversarial and randomized testing
+## Adversarial and randomized testing
+
 The verification strategy shall apply malformed-input tests, fuzzing, mutation and randomized/property-based testing to relevant boundaries and logic, preserve reproducible minimized failures and report executed budgets and limitations.
+
 
 Verification: Replay retained seeded failures, fuzz regressions and mutation reports and reconcile them with the release evidence.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 **ARCH-VERIFY-003**
 
-### Coverage and traceability evidence
+## Coverage and traceability evidence
+
 Code changes shall include actual coverage metrics, line/branch data where supported, scopes/exclusions and limitations, with requirement-to-implementation/test traceability and meaningful updated code comments.
+
 
 Verification: Inspect retained coverage artifacts and links for the changed revision; explicitly report unmeasured native/GPU paths rather than infer their coverage.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 ## 14. Implementation sequence and exit gates
+
 M0 feasibility spikes (time-boxed experiments, not production claims):
 
 - Validate DAE sign/charge conventions and limiting corrections on analytic devices.
@@ -726,14 +840,17 @@ First vertical slice: a C# or F# script submits an RC step request, compiles one
 
 **ARCH-RELEASE-001**
 
-### Evidence-gated stability
+## Evidence-gated stability
+
 Releases shall mark only qualified model/backend/analysis combinations stable and publish capability profiles, known limitations, coverage and numerical/performance evidence for their exact versions and supported platforms.
+
 
 Verification: Compare stability flags and distribution contents to the adoption and release evidence; reject undocumented combinations.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 ## 15. Language decision and simulation-definition DSL
+
 Provisional recommendation, not a claim that language choice has been approved: Rust for the owned core/runtime, narrow C/C++ native adapters for established numerical libraries, C# for GUI and the managed SDK, F# or C# for trusted automation, and PowerShell for shell orchestration. A pure-Rust implementation of every dependency is not a goal.
 
 Rust versus C++ is primarily an ownership, integration and team-productivity decision here. Rust provides compiler-checked ownership for the code it controls, which is useful for concurrent sessions, asynchronous buffer lifetimes, cancellation and plugin interfaces. C++ provides direct access to a broad native numerical/GPU ecosystem and may reduce adapter work when most development happens inside those frameworks. Neither language guarantees a better solver or universally faster simulation. Both can call the same native numerical libraries; matrix layout, algorithms, transfers, batching and profiling determine the measured outcome.
@@ -791,64 +908,77 @@ M0 comparison: author the same RC, nested subcircuit, sweep and assertion scenar
 
 **ARCH-LANG-001**
 
-### Evidence-based implementation language decision
+## Evidence-based implementation language decision
+
 The implementation-language decision shall compare Rust and C++ using actual solver/model adapter, ownership, packaging, team-productivity and workload measurements while preserving a language-independent C ABI/worker boundary for C#/F# clients.
+
 
 Verification: Review the M0 decision record and native/managed vertical-slice evidence; distinguish measured outcomes from language preferences.
 
-Parent requirement: ARCH-GOAL-001
-Parent requirement: ARCH-GOAL-004
+Parent: ARCH-GOAL-001
+Parent: ARCH-GOAL-004
 
 **ARCH-DSL-001**
 
-### Canonical definition frontend
+## Canonical definition frontend
+
 A simulation-definition DSL shall produce the same validated canonical circuit and experiment objects as structured inputs and C#/F# builders without owning solver execution or exposing native handles.
+
 
 Verification: Compare canonical plans, effective parameters and validation outcomes for equivalent DSL, JSON and .NET scenarios.
 
-Parent requirement: ARCH-GOAL-001
-Parent requirement: ARCH-GOAL-004
+Parent: ARCH-GOAL-001
+Parent: ARCH-GOAL-004
 
 **ARCH-DSL-002**
 
-### Bounded hermetic language profile
+## Bounded hermetic language profile
+
 The DSL host shall pin its evaluator/profile, restrict host functions/imports to declared capabilities, enforce time/memory/operation/expansion limits and reject unauthorized filesystem, network, environment or process access.
+
 
 Verification: Exercise recursive/large allocations, huge expansions, forbidden imports, path escapes and expensive host calls with reproducible fuzz and budget tests.
 
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-005
 
 **ARCH-DSL-003**
 
-### Dimension-aware definitions and diagnostics
+## Dimension-aware definitions and diagnostics
+
 DSL quantities, references and generated objects shall undergo dimensional, topology and model validation with source locations retained across imports and expansions, using the same numeric/unit semantics as other frontends.
+
 
 Verification: Test prefix ambiguities, incompatible units, temperature distinctions, unresolved references and errors inside generated subcircuits.
 
-Parent requirement: ARCH-GOAL-004
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-004
+Parent: ARCH-GOAL-005
 
 **ARCH-DSL-004**
 
-### Compiled behavioral equation boundary
+## Compiled behavioral equation boundary
+
 Behavioral equations shall use a separately validated expression IR with derivative/domain semantics and qualified execution targets; the general definition interpreter shall not be invoked inside the Newton/device-evaluation hot loop.
+
 
 Verification: Inspect execution paths and compare nonlinear expression values/derivatives against independent analytic or differentiation references on CPU and any claimed GPU target.
 
-Parent requirement: ARCH-GOAL-003
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-003
+Parent: ARCH-GOAL-005
 
 **ARCH-DSL-005**
 
-### Reproducible authoring and explicit trust
+## Reproducible authoring and explicit trust
+
 Compiled plans shall record source/import hashes, evaluator/profile and host-library versions, parameter assignments and seeds; trusted C#/F# orchestration shall remain distinct from execution of untrusted definition modules.
+
 
 Verification: Re-evaluate pinned inputs, invalidate caches after module/library changes and verify the untrusted path cannot invoke trusted script execution.
 
-Parent requirement: ARCH-GOAL-004
-Parent requirement: ARCH-GOAL-005
+Parent: ARCH-GOAL-004
+Parent: ARCH-GOAL-005
 
 ## 16. Open decisions and source references
+
 Open decisions before implementation commitment:
 
 - Project license and compatible CPU/model/backend distribution policy.

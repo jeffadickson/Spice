@@ -1,5 +1,7 @@
+<!-- Readable projection; authoritative source: implementation-plan.sdoc -->
 
-# Circuit Simulator - Implementation Plan and Work Packages
+## Circuit Simulator - Implementation Plan and Work Packages
+
 Version 0.1, planning baseline, 2026-10-24.
 
 Purpose: turn the architecture into executable work with explicit prerequisites, reviewable deliverables and measurable exit gates. This plan is authoritative inside the local repository together with architecture.sdoc and development-standards.sdoc. Earlier external drafts are historical and are not automatically imported into release scope.
@@ -16,6 +18,7 @@ Current decisions: Rust-owned core is the recommended baseline; C/C++ shims reus
 
 
 ## 1. Milestone gates and execution strategy
+
 M0 feasibility exit: equation and matrix conventions reviewed; actual CPU real/complex solve and C#/F# round trip demonstrated; provider/license and runtime packaging decisions recorded; DAE/compiled-model/GPU/DSL experiments classified as feasible, deferred or rejected. No native GPU tests are reported as passed without hardware. A deferred advanced experiment must not block a CPU vertical slice unless it invalidates a core contract.
 
 M1a operating-point slice: a managed client submits a structured resistor/source circuit, obtains a converged operating point and a typed manifest, observes a singular/invalid case, and cancels a bounded worker job. CI retains actual coverage and regression evidence.
@@ -35,8 +38,10 @@ Execution principle: use a small number of modules/crates first and enforce depe
 
 **PLAN-001**
 
-### Establish repository, toolchains and verification harness
+## Establish repository, toolchains and verification harness
+
 The implementation team shall establish pinned Rust/.NET/native build tooling, minimal module boundaries, automated StrictDoc checks and executable test/coverage reporting before substantial simulator code is added.
+
 
 Phase: M0
 Depends-on: none
@@ -45,13 +50,15 @@ Deliverables: toolchain/dependency policy, minimal Rust workspace and managed te
 Verification: Build clean CPU-only examples, execute meaningful smoke/failure tests, parse all StrictDoc files and publish real coverage scopes/tool versions. Check Windows x86-64 and Linux x86-64 first; explicitly review macOS arm64 support before the M1 release profile is frozen.
 Estimate: Small to Medium; revisit after toolchain/native packaging inspection.
 
-Parent requirement: ARCH-DEP-001
-Parent requirement: ARCH-VERIFY-003
+Parent: ARCH-DEP-001
+Parent: ARCH-VERIFY-003
 
 **PLAN-002**
 
-### Freeze equation, unit and model-state conventions
+## Freeze equation, unit and model-state conventions
+
 The numerical lead shall specify and demonstrate residual, charge, derivative, polarity, dimensional scaling, limiting correction and accepted/trial state conventions using independently derived small devices and circuits.
+
 
 Phase: M0
 Depends-on: PLAN-001
@@ -60,13 +67,15 @@ Deliverables: lower-level StrictDoc equations/contracts, R/C/L/source and diode 
 Verification: Compare assembled equations, Jacobians and charge derivatives to analytic/independent references; detect deliberate sign and derivative mutations. Record why solver tolerances do not imply global waveform accuracy.
 Estimate: Medium; limit initial devices to those needed for the first analog slice.
 
-Parent requirement: ARCH-EQ-001
-Parent requirement: ARCH-MOD-002
+Parent: ARCH-EQ-001
+Parent: ARCH-MOD-002
 
 **PLAN-003**
 
-### Evaluate CPU providers and Rust/C++ integration
+## Evaluate CPU providers and Rust/C++ integration
+
 The team shall exercise at least two candidate independent linear providers through narrow adapters and use actual integration, ownership, packaging and workload evidence to confirm the implementation-language and initial CPU-backend decisions.
+
 
 Phase: M0
 Depends-on: PLAN-001, PLAN-002
@@ -75,13 +84,15 @@ Deliverables: sparse real/complex matrix corpus; CPU direct-provider spikes, pre
 Verification: Check residuals, transpose/complex behavior, nonsymmetric/indefinite/singular cases and repeated-value/structural invalidation. Publish clean-build and end-to-end measurements; select rather than assume native-library compatibility.
 Estimate: Medium, time-box unsuccessful provider builds and record rejection reasons.
 
-Parent requirement: ARCH-LANG-001
-Parent requirement: ARCH-PORT-002
+Parent: ARCH-LANG-001
+Parent: ARCH-PORT-002
 
 **PLAN-004**
 
-### Prove Rust-to-.NET result and lifecycle contracts
+## Prove Rust-to-.NET result and lifecycle contracts
+
 The team shall demonstrate typed request/result interchange, explicit ownership and cancellation between the candidate native core and both C# and F# clients before stabilizing the public interface.
+
 
 Phase: M0
 Depends-on: PLAN-001
@@ -90,13 +101,15 @@ Deliverables: versioned schema sketches/golden fixtures, minimal C ABI/worker ro
 Verification: Test malformed lengths, unknown versions, stale handles, slow readers, client disposal, native exceptions/panics and worker crash classification. Run C# file-based and F# Interactive examples without Python.
 Estimate: Medium.
 
-Parent requirement: ARCH-API-001
-Parent requirement: ARCH-API-002
+Parent: ARCH-API-001
+Parent: ARCH-API-002
 
 **PLAN-005**
 
-### Validate external nonlinear/DAE integration fit
+## Validate external nonlinear/DAE integration fit
+
 The numerical lead shall time-box an external nonlinear or DAE integration experiment and establish whether its callback, initialization and controller-ownership semantics fit nonlinear-charge circuit equations.
+
 
 Phase: M0
 Depends-on: PLAN-002, PLAN-003
@@ -105,13 +118,15 @@ Deliverables: SUNDIALS or PETSc adapter experiment, documented residual/Jacobian
 Verification: Independently differentiate the actual continuous-residual callback and compare transient/event/initialization results. Confirm exactly one Newton and one timestep controller own their respective histories.
 Estimate: Research; initially 1-2 engineer-weeks, then adopt, defer or narrow scope.
 
-Parent requirement: ARCH-PORT-004
-Parent requirement: ARCH-PORT-005
+Parent: ARCH-PORT-004
+Parent: ARCH-PORT-005
 
 **PLAN-006**
 
-### Evaluate compiled-model, GPU and DSL boundaries
+## Evaluate compiled-model, GPU and DSL boundaries
+
 The team shall conduct separately bounded model-plugin, GPU-provider and definition-frontend experiments before committing to their M2 implementations, recording unsupported hardware/runtime and licensing constraints truthfully.
+
 
 Phase: M0
 Depends-on: PLAN-002, PLAN-003, PLAN-004
@@ -120,16 +135,18 @@ Deliverables: pinned OSDI descriptor/evaluation mapping for one model; a real GP
 Verification: Check model charge/derivatives and rollback semantics; include transfers in GPU measurements; test DSL import/expansion limits, units and source mapping. A missing GPU is an explicit unexecuted experiment, not a simulated hardware pass.
 Estimate: Research; separate short time boxes totaling initially 2-3 engineer-weeks; can continue after the CPU slice begins if no core-contract risk remains.
 
-Parent requirement: ARCH-MOD-003
-Parent requirement: ARCH-GPU-002
-Parent requirement: ARCH-DSL-001
+Parent: ARCH-MOD-003
+Parent: ARCH-GPU-002
+Parent: ARCH-DSL-001
 
 ## 3. M1a operating-point vertical slice
 
 **PLAN-007**
 
-### Implement immutable circuit and plan compilation
+## Implement immutable circuit and plan compilation
+
 The compiler shall turn validated structured circuit definitions into immutable elaborated circuits and execution plans with typed identities, unknown/state layout, deterministic sparse stamps and invalidation keys.
+
 
 Phase: M1a
 Depends-on: PLAN-002, PLAN-003, PLAN-004
@@ -138,13 +155,15 @@ Deliverables: minimal sim-types/IR/compiler modules, quantity validation, topolo
 Verification: Test invalid references/units, floating islands, ideal constraints, stamp bounds, equivalent node/hierarchy transformations and structural-parameter invalidation using seeded property tests and fuzz fixtures.
 Estimate: Medium to Large.
 
-Parent requirement: ARCH-STATE-002
-Parent requirement: ARCH-STATE-003
+Parent: ARCH-STATE-002
+Parent: ARCH-STATE-003
 
 **PLAN-008**
 
-### Productionize the first CPU backend
+## Productionize the first CPU backend
+
 The selected CPU sparse adapter shall implement validated patterns, factor/solve lifecycle, session ownership, bounded resource/error handling and effective numerical reporting behind the circuit-independent API.
+
 
 Phase: M1a
 Depends-on: PLAN-003
@@ -153,14 +172,16 @@ Deliverables: backend factory/capabilities, direct-linear session, pattern/value
 Verification: Pass the shared matrix corpus and fault/lifetime tests, compare residuals to independent references and report wrapper/native coverage separately. Never report a vendor success code as circuit convergence.
 Estimate: Medium to Large, depending on native packaging.
 
-Parent requirement: ARCH-LIN-001
-Parent requirement: ARCH-LIN-003
-Parent requirement: ARCH-LIN-004
+Parent: ARCH-LIN-001
+Parent: ARCH-LIN-003
+Parent: ARCH-LIN-004
 
 **PLAN-009**
 
-### Implement baseline device evaluation and assembly
+## Implement baseline device evaluation and assembly
+
 Built-in resistor, source, capacitor, inductor and initial nonlinear-device models shall use the declared model contract and instance-local residual/charge/derivative buffers with deterministic assembly.
+
 
 Phase: M1a
 Depends-on: PLAN-002, PLAN-007
@@ -169,13 +190,15 @@ Deliverables: model descriptors, validated parameters/domains, local/global bind
 Verification: Compare device values/derivatives independently, test sign/polarity and malformed model descriptors, and retain mutation tests that kill incorrect stamp/charge contributions.
 Estimate: Large; sequence device subsets rather than wait for the complete list.
 
-Parent requirement: ARCH-MOD-001
-Parent requirement: ARCH-EQ-001
+Parent: ARCH-MOD-001
+Parent: ARCH-EQ-001
 
 **PLAN-010**
 
-### Deliver operating point and bounded nonlinear solve
+## Deliver operating point and bounded nonlinear solve
+
 Operating-point analysis shall combine qualified model equations and linear solves with scaled physical residual/update checks, finite-value validation, bounded continuation and recorded convergence diagnostics.
+
 
 Phase: M1a
 Depends-on: PLAN-007, PLAN-008, PLAN-009
@@ -184,13 +207,15 @@ Deliverables: DC driver, qualified Newton implementation or adopted controller, 
 Verification: Check analytic linear/diode circuits, tiny-update/large-residual rejection, overflow, singularity, hard starts and multiple solutions without uniqueness claims.
 Estimate: Large.
 
-Parent requirement: ARCH-EQ-002
-Parent requirement: ARCH-EQ-003
+Parent: ARCH-EQ-002
+Parent: ARCH-EQ-003
 
 **PLAN-011**
 
-### Implement bounded worker jobs and typed results
+## Implement bounded worker jobs and typed results
+
 The runtime shall expose validated requests, legal job transitions, cancellation, quotas, structured errors and truthful result manifests through a local worker and trusted in-process facade.
+
 
 Phase: M1a
 Depends-on: PLAN-004, PLAN-007, PLAN-010
@@ -199,16 +224,18 @@ Deliverables: job/attempt IDs, CPU thread/resource budgets, local IPC version/fr
 Verification: Run a C#/F# resistor/diode case; test invalid/singular inputs, terminal-state races, late cancellation, blocked consumers, worker crashes and stale handles. Publish API conformance and coverage evidence.
 Estimate: Large.
 
-Parent requirement: ARCH-RUN-001
-Parent requirement: ARCH-API-003
-Parent requirement: ARCH-API-004
+Parent: ARCH-RUN-001
+Parent: ARCH-API-003
+Parent: ARCH-API-004
 
 ## 4. M1b AC, transient and usable results
 
 **PLAN-012**
 
-### Implement AC from operating-point linearization
+## Implement AC from operating-point linearization
+
 AC analysis shall use the recorded operating point and the same device derivatives to assemble and solve the complex small-signal system on explicit frequency axes.
+
 
 Phase: M1b
 Depends-on: PLAN-008, PLAN-009, PLAN-010, PLAN-011
@@ -217,13 +244,15 @@ Deliverables: frequency grids, complex source/excitation rules, G+j*omega*C asse
 Verification: Compare analytic RC/RLC/controlled-source transfer functions and complex values, reject unsupported model capabilities and verify source polarity and frequency units.
 Estimate: Medium to Large.
 
-Parent requirement: ARCH-EQ-001
-Parent requirement: ARCH-DATA-001
+Parent: ARCH-EQ-001
+Parent: ARCH-DATA-001
 
 **PLAN-013**
 
-### Implement transient integration and transactional state
+## Implement transient integration and transactional state
+
 Transient analysis shall support documented initial conditions, adaptive error-controlled integration, event breakpoints and full accepted/trial state rollback with exactly one numerical controller owner.
+
 
 Phase: M1b
 Depends-on: PLAN-009, PLAN-010, PLAN-011
@@ -232,14 +261,16 @@ Deliverables: start with backward Euler, then qualified trapezoidal/BDF scope; p
 Verification: Check analytic RC/RLC, charged initial states, stiff/switching cases, event-edge timing and forced rejection with identical accepted-state replay. Retain state-commit and error-control mutation checks.
 Estimate: Large; high numerical risk and likely multiple qualification iterations.
 
-Parent requirement: ARCH-EQ-004
-Parent requirement: ARCH-EQ-005
-Parent requirement: ARCH-PORT-004
+Parent: ARCH-EQ-004
+Parent: ARCH-EQ-005
+Parent: ARCH-PORT-004
 
 **PLAN-014**
 
-### Deliver streaming, measurement and durable evidence
+## Deliver streaming, measurement and durable evidence
+
 The results layer shall provide bounded Arrow batches, selective recording, typed measurements/assertions and integrity-checked manifests with correct partial/failure and publication semantics.
+
 
 Phase: M1b
 Depends-on: PLAN-011, PLAN-012, PLAN-013
@@ -248,14 +279,16 @@ Deliverables: Arrow stream/file distinction, batch envelopes, signal/axis/comple
 Verification: Test independent Arrow readers, throttling/memory bounds, missing/duplicate batches, disk-full, corrupted artifacts, incomplete windows and atomic manifest publication. Run the RC transient through C# and F# end to end.
 Estimate: Large.
 
-Parent requirement: ARCH-DATA-001
-Parent requirement: ARCH-DATA-002
-Parent requirement: ARCH-DATA-003
+Parent: ARCH-DATA-001
+Parent: ARCH-DATA-002
+Parent: ARCH-DATA-003
 
 **PLAN-015**
 
-### Add a scoped SPICE compatibility frontend
+## Add a scoped SPICE compatibility frontend
+
 A documented SPICE subset shall translate to canonical inputs with source-mapped hierarchy/parameter diagnostics and explicit dialect/profile provenance, without importing a legacy runtime.
+
 
 Phase: M1b
 Depends-on: PLAN-007, PLAN-010
@@ -264,14 +297,16 @@ Deliverables: lexer/parser, include policy, hierarchical parameters, suffix rule
 Verification: Fuzz lexical/expression/include boundaries, test M versus MEG and expansion errors, compare equivalent text/JSON plans and report parse/elaborate/solve compatibility separately.
 Estimate: Large, scope constrained by a reviewed construct whitelist.
 
-Parent requirement: ARCH-COMPAT-001
+Parent: ARCH-COMPAT-001
 
 ## 5. M1 qualification and backend variety
 
 **PLAN-016**
 
-### Qualify a second independent provider and selection policy
+## Qualify a second independent provider and selection policy
+
 The solver registry shall expose at least two independently qualified linear providers on their common supported subset, with explicit capabilities, validated options and composition/fallback provenance.
+
 
 Phase: M1
 Depends-on: PLAN-003, PLAN-008, PLAN-012, PLAN-013
@@ -280,15 +315,17 @@ Deliverables: second adapter, shared conformance results, roles/options schema, 
 Verification: Compare circuit/matrix residuals and outcomes, test unsupported scalar/index/placement combinations, misspelled options and changed-build cache invalidation. Distinguish changed convergence paths from semantic incompatibility.
 Estimate: Medium to Large.
 
-Parent requirement: ARCH-PORT-001
-Parent requirement: ARCH-PORT-002
-Parent requirement: ARCH-PORT-003
-Parent requirement: ARCH-PORT-006
+Parent: ARCH-PORT-001
+Parent: ARCH-PORT-002
+Parent: ARCH-PORT-003
+Parent: ARCH-PORT-006
 
 **PLAN-017**
 
-### Maintain continuous numerical and adversarial qualification
+## Maintain continuous numerical and adversarial qualification
+
 Every implemented slice shall extend an independently justified numerical, stateful, malformed-input, fuzz, mutation and randomized/property corpus and report actual code coverage and limitations.
+
 
 Phase: M1
 Depends-on: PLAN-001, PLAN-002
@@ -297,14 +334,16 @@ Deliverables: ongoing matrix/device/circuit/API suites, bounded PR fuzz/property
 Verification: Demonstrate detection of stamp-sign, derivative, stale-factor, missing-rollback and false-complete-result mutations; adjudicate independent-oracle disagreements rather than auto-update golden values. Separate GPU/native coverage from host wrapper coverage.
 Estimate: Ongoing; reserve explicit capacity in every code work package.
 
-Parent requirement: ARCH-VERIFY-001
-Parent requirement: ARCH-VERIFY-002
-Parent requirement: ARCH-VERIFY-003
+Parent: ARCH-VERIFY-001
+Parent: ARCH-VERIFY-002
+Parent: ARCH-VERIFY-003
 
 **PLAN-018**
 
-### Publish the first qualified CPU release profile
+## Publish the first qualified CPU release profile
+
 The first release shall claim only supported and evidenced models, analyses, APIs, backends and platforms, with clean packaging, executable documentation, coverage/qualification reports and known limitations.
+
 
 Phase: M1
 Depends-on: PLAN-011, PLAN-012, PLAN-013, PLAN-014, PLAN-015, PLAN-016, PLAN-017
@@ -313,14 +352,16 @@ Deliverables: frozen M1 profile, license/notices/SBOM, pinned package builds, Ru
 Verification: Install on every claimed platform without developer native-library paths; run offline CPU/API/failure smoke tests, full approved qualification and previous-supported-schema tests if applicable. Block known correctness-critical defects and unsupported evidence claims.
 Estimate: Medium to Large after component gates pass; release repair time is not assumed zero.
 
-Parent requirement: ARCH-RELEASE-001
+Parent: ARCH-RELEASE-001
 
 ## 6. M2 extensions after the CPU baseline
 
 **PLAN-019**
 
-### Qualify compiled-model packages and native isolation
+## Qualify compiled-model packages and native isolation
+
 Compiled models shall be integrated through a pinned OSDI adapter with verified equation/state mappings, versioned packages, thread-safety policy and enforced worker trust controls before untrusted plugin use is supported.
+
 
 Phase: M2
 Depends-on: PLAN-006, PLAN-009, PLAN-013, PLAN-014, PLAN-017
@@ -329,15 +370,17 @@ Deliverables: ABI mapping specification, package hashes/licenses, model-domain c
 Verification: Compare IV/charge/derivatives/transient/noise where claimed, force rejected steps, load mismatched descriptors and crash/hang/access-forbidden-path fixture plugins. Refuse untrusted mode when configured OS restrictions cannot be enforced.
 Estimate: Large plus model-family-specific qualification.
 
-Parent requirement: ARCH-MOD-003
-Parent requirement: ARCH-MOD-004
-Parent requirement: ARCH-MOD-005
-Parent requirement: ARCH-MOD-006
+Parent: ARCH-MOD-003
+Parent: ARCH-MOD-004
+Parent: ARCH-MOD-005
+Parent: ARCH-MOD-006
 
 **PLAN-020**
 
-### Qualify optional GPU linear and batched execution
+## Qualify optional GPU linear and batched execution
+
 GPU execution shall use qualified optional adapters with explicit model/assembly/solve placement, measured selection thresholds, asynchronous ownership and safe failed-device recovery.
+
 
 Phase: M2
 Depends-on: PLAN-006, PLAN-008, PLAN-013, PLAN-014, PLAN-016, PLAN-017
@@ -346,15 +389,17 @@ Deliverables: one cuDSS or Ginkgo GPU adapter first, real hardware capability/bu
 Verification: Compare residuals/waveforms to CPU within approved bounds, measure memory and transfer costs, inject device/OOM/cancellation faults and verify attempts/sample offsets. Do not impose a common adaptive timestep on unrelated cases merely to batch them.
 Estimate: Large after hardware and package feasibility are demonstrated; GPU model kernels are a separate later proposal.
 
-Parent requirement: ARCH-GPU-001
-Parent requirement: ARCH-GPU-002
-Parent requirement: ARCH-GPU-003
-Parent requirement: ARCH-GPU-004
+Parent: ARCH-GPU-001
+Parent: ARCH-GPU-002
+Parent: ARCH-GPU-003
+Parent: ARCH-GPU-004
 
 **PLAN-021**
 
-### Implement the selected definition DSL and behavioral IR
+## Implement the selected definition DSL and behavioral IR
+
 The selected bounded definition frontend shall compile to the same canonical circuit/experiment plan as .NET/JSON, while behavioral equations use a separately validated differentiable expression representation outside the definition interpreter.
+
 
 Phase: M2
 Depends-on: PLAN-006, PLAN-007, PLAN-013, PLAN-014, PLAN-017
@@ -363,16 +408,18 @@ Deliverables: pinned Starlark or alternative decision, versioned host modules, u
 Verification: Compare RC/subcircuit/sweep/assertion plans across frontends, fuzz imports and expansion limits and independently test nonlinear behavioral derivatives. Prove no definition-interpreter callback occurs in the Newton/device hot loop.
 Estimate: Large; stabilize a narrow domain library before inventing new grammar or an editor.
 
-Parent requirement: ARCH-DSL-001
-Parent requirement: ARCH-DSL-002
-Parent requirement: ARCH-DSL-003
-Parent requirement: ARCH-DSL-004
-Parent requirement: ARCH-DSL-005
+Parent: ARCH-DSL-001
+Parent: ARCH-DSL-002
+Parent: ARCH-DSL-003
+Parent: ARCH-DSL-004
+Parent: ARCH-DSL-005
 
 **PLAN-022**
 
-### Deliver reproducible campaigns and StressForge mapping
+## Deliver reproducible campaigns and StressForge mapping
+
 Campaign execution shall support explicit parameter/corner assignments, stable seeds, bounded resources, incremental outcomes, retained retries and resume from verified completed cases, with actual StressForge compatibility claimed only after repository contract review.
+
 
 Phase: M2
 Depends-on: PLAN-014, PLAN-016, PLAN-017
@@ -381,13 +428,15 @@ Deliverables: campaign plan/manifest, C#/F# driver, typed assertion/evidence out
 Verification: Compare serial/parallel/reordered assignments, kill/restart the campaign, corrupt an artifact and inspect attempt accounting and pass/fail/indeterminate/infrastructure_error distinctions. Test against the actual external project's pinned integration suite before any compatibility claim.
 Estimate: Large; external project scope remains uncertain until its API is reviewed.
 
-Parent requirement: ARCH-RUN-002
-Parent requirement: ARCH-DATA-003
+Parent: ARCH-RUN-002
+Parent: ARCH-DATA-003
 
 **PLAN-023**
 
-### Expand analyses and model families by demand
+## Expand analyses and model families by demand
+
 Noise, sensitivity, electrothermal and additional compact/power-model work shall each receive explicit lower-level requirements, a qualified domain and independent reference evidence before stable capability claims.
+
 
 Phase: M2
 Depends-on: PLAN-018, PLAN-019
@@ -396,10 +445,11 @@ Deliverables: prioritized family/analysis subplans, noise correlation/unit contr
 Verification: Run analysis-specific independent references, derivative/noise/energy checks and API schemas; publish unsupported cases and model-versus-numerical accuracy limits.
 Estimate: Research to Large per analysis/model family; no bundled completion date.
 
-Parent requirement: ARCH-ADOPT-001
-Parent requirement: ARCH-RELEASE-001
+Parent: ARCH-ADOPT-001
+Parent: ARCH-RELEASE-001
 
 ## 7. First execution queue, risks and evidence policy
+
 First queue: PLAN-001 -> PLAN-002; start PLAN-004 once tooling exists; then PLAN-003 -> PLAN-007/008/009 -> PLAN-010 -> PLAN-011. PLAN-005/006 resolve advanced contract risk in bounded experiments, not by growing a second full simulator. PLAN-017 begins with the first contracts and follows every slice. After the M1a managed operating-point example works, prioritize PLAN-012/013/014; complete compatibility and second-provider work before the relevant M1 release claims.
 
 Primary risks and responses:

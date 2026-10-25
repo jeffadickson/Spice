@@ -54,7 +54,7 @@ pub fn publish(root: &Path, run_id: &str, result: &Manifest) -> SimResult<PathBu
     {
         return Err(SimError::invalid("invalid artifact run ID"));
     }
-    if !result.complete || result.status != "succeeded" || result.schema_version!="1" {
+    if !result.complete || result.status != "succeeded" || result.schema_version != "1" {
         return Err(SimError::invalid(
             "publication requires a complete successful result",
         ));
@@ -109,7 +109,9 @@ pub fn publish(root: &Path, run_id: &str, result: &Manifest) -> SimResult<PathBu
 /// Integrity checks are not signatures or sandboxing; storage is a trusted local directory.
 pub fn read_verified(directory: &Path) -> SimResult<serde_json::Value> {
     let marker = File::open(directory.join("manifest.json")).map_err(io)?;
-    if marker.metadata().map_err(io)?.len()>65536{return Err(SimError::invalid("artifact marker exceeds limit"));}
+    if marker.metadata().map_err(io)?.len() > 65536 {
+        return Err(SimError::invalid("artifact marker exceeds limit"));
+    }
     let commit: Commit = serde_json::from_reader(marker.take(65537)).map_err(io)?;
     if commit.schema_version != "1"
         || !commit.complete
@@ -130,7 +132,8 @@ pub fn read_verified(directory: &Path) -> SimResult<serde_json::Value> {
         return Err(SimError::invalid("artifact integrity mismatch"));
     }
     let value: serde_json::Value = serde_json::from_slice(&bytes).map_err(io)?;
-    if value["complete"] != true || value["status"] != "succeeded" || value["schema_version"]!="1" {
+    if value["complete"] != true || value["status"] != "succeeded" || value["schema_version"] != "1"
+    {
         return Err(SimError::invalid("artifact result not complete"));
     }
     Ok(value)

@@ -72,8 +72,9 @@ pub trait LinearSolver: Send + Sync {
 /// Session-local closure intentionally has no Send/Sync promise.
 pub struct PreparedReal {
     matrix: Matrix,
-    solve: Box<dyn Fn(&[f64]) -> SimResult<Vec<f64>>>,
+    solve: Box<PreparedSolve>,
 }
+type PreparedSolve = dyn Fn(&[f64]) -> SimResult<Vec<f64>>;
 impl PreparedReal {
     pub fn new(
         matrix: Matrix,

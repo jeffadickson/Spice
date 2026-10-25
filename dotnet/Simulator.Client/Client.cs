@@ -20,6 +20,9 @@ public sealed record SimulationResponse(string SchemaVersion, string Status, boo
         return manifest;
     }
     public bool Succeeded => Status == "succeeded" && Complete;
+    /// <summary>Engine input/numerical failures are distinct from transport exceptions.</summary>
+    public SimulationError? Error => Payload.TryGetProperty("error", out var error)
+        ? error.Deserialize<SimulationError>(WireFormat.Options) : null;
     /// <summary>Read the final voltage/current by descriptor ID; missing data is an error.</summary>
     public double FinalValue(string signalId)
     {

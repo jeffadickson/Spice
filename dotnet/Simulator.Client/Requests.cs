@@ -69,7 +69,8 @@ public static class WireFormat
 {
     public static JsonSerializerOptions Options { get; } = new() {
         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        TypeInfoResolver=WireContext.Default
     };
 }
 

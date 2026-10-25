@@ -129,6 +129,7 @@ pub fn run_observed(
     observer(&samples[0])?;
     let mut stepper = crate::integrator::Stepper::new(plan, solver, options.method);
     let (mut time, mut proposed) = (0., options.max_step_s);
+    let mut fixed_index = 1usize;
     let (mut steps, mut rejected, mut attempts) = (0, 0, 0);
     let mut max_error = 0_f64;
     while time < options.stop_s {
@@ -154,7 +155,21 @@ pub fn run_observed(
                 "adaptive attempt budget exhausted",
             ));
         }
-        let mut next = (time + proposed).min(options.stop_s);
+        // Absolute fixed-grid times avoid accumulating n rounded additions.
+        // Snap only endpoint roundoff before source clipping, never skip a source corner.
+        let candidate = if options.adaptive.is_none() {
+            while fixed_index as f64 * options.max_step_s <= time {
+                fixed_index += 1;
+            }
+            fixed_index as f64 * options.max_step_s
+        } else {
+            time + proposed
+        };
+        let mut next = candidate.min(options.stop_s);
+        let endpoint_roundoff = 32. * f64::EPSILON * options.stop_s.max(time).max(proposed);
+        if options.stop_s - next <= endpoint_roundoff {
+            next = options.stop_s;
+        }
         if let Some(event) = sources.next_breakpoint(time, next) {
             next = event;
         }

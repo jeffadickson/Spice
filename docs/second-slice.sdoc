@@ -1,9 +1,11 @@
 [DOCUMENT]
 TITLE: Second Reference Slice - Solver Variety and Dynamic Circuits
+
 [TEXT]
 STATEMENT: >>>
 Iterations 51-100 extend the bounded reference engine. Builds occur at 60, 70, 80, 90 and 100. No GPU, native model/plugin, nonlinear transistor or full-release qualification is implied.
 <<<
+
 [REQUIREMENT]
 UID: REF2-001
 TITLE: Independent sparse solver path
@@ -17,6 +19,7 @@ The existing circuit assembler remains bounded dense storage; sparse factorizati
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-PORT-002
+
 [REQUIREMENT]
 UID: REF2-002
 TITLE: Reusable immutable numeric factors
@@ -30,6 +33,7 @@ Verification includes repeated RHS, altered matrices and independently checked r
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-LIN-003
+
 [REQUIREMENT]
 UID: REF2-003
 TITLE: Linear dynamic-circuit extension
@@ -42,6 +46,7 @@ Adaptive linear integration does not establish nonlinear timestep/model rollback
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-EQ-004
+
 [REQUIREMENT]
 UID: REF2-004
 TITLE: Managed contracts and truthful evidence
@@ -56,4 +61,3 @@ RELATIONS:
   VALUE: ARCH-API-002
 - TYPE: Parent
   VALUE: ARCH-VERIFY-003
-

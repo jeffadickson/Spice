@@ -1,12 +1,20 @@
 {
   "status": "measured",
   "tool": "18.12.0+e67518936dc54d459b37375c5eef5dc89f05d535",
-  "scope": "Simulator.Client only; conformance executable excluded from SDK metrics",
-  "source_sha256": "74ab8947bfc19b2bea6b891e5acccb8e6bf32d737d0d2bf12244688b7c09c632",
-  "line_percent": 95.0,
-  "branch_percent": 58.82352941176471,
-  "lines": 60,
-  "covered_lines": 57,
+  "scope": "Owned Simulator.Client .cs files only; unique source lines and mapped branches; generated JSON metadata excluded",
+  "source_sha256": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
+  "source_hashes": {
+    "dotnet/Simulator.Client/Client.cs": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
+    "dotnet/Simulator.Client/WireContext.cs": "164cb64c9bfb31aead338420a9fd65f236c0cbfee6c6fe1331f8ce97fda0c6fe",
+    "dotnet/Simulator.Client/Results.cs": "7eb6a9d75066a87cd00a1f0e90ce04abc1d469cdff8bb2bd145288c55948f144",
+    "dotnet/Simulator.Client/Requests.cs": "ba356119781b38e6e9d17b856bf447a2555ee0c210ae7b696b9bfe3ab9215611"
+  },
+  "line_percent": 97.5609756097561,
+  "branch_percent": 77.27272727272727,
+  "lines": 123,
+  "covered_lines": 120,
+  "branches": 66,
+  "covered_branches": 51,
   "exclusions": [
     "Rust/native runtime code",
     "generated/framework code",

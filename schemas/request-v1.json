@@ -1,261 +1,960 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Experimental reference simulator request v1",
   "type": "object",
-  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "not": {
+        "type": "null"
+      },
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "circuit": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "not": {
+              "type": "null"
+            }
+          },
+          "not": {
+            "type": "null"
+          },
+          "maxItems": 128,
+          "minItems": 1
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "anyOf": [
+              {
+                "properties": {
+                  "kind": {
+                    "const": "resistor",
+                    "not": {
+                      "type": "null"
+                    }
+                  },
+                  "ohms": {
+                    "type": "number",
+                    "not": {
+                      "type": "null"
+                    },
+                    "exclusiveMinimum": 0
+                  },
+                  "id": {
+                    "type": "string",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "p": {
+                    "type": "integer",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minimum": 0,
+                    "maximum": 127
+                  },
+                  "n": {
+                    "type": "integer",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minimum": 0,
+                    "maximum": 127
+                  }
+                },
+                "required": [
+                  "ohms",
+                  "id",
+                  "p",
+                  "n"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "const": "capacitor",
+                    "not": {
+                      "type": "null"
+                    }
+                  },
+                  "farads": {
+                    "type": "number",
+                    "not": {
+                      "type": "null"
+                    },
+                    "exclusiveMinimum": 0
+                  },
+                  "id": {
+                    "type": "string",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "p": {
+                    "type": "integer",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minimum": 0,
+                    "maximum": 127
+                  },
+                  "n": {
+                    "type": "integer",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minimum": 0,
+                    "maximum": 127
+                  }
+                },
+                "required": [
+                  "farads",
+                  "id",
+                  "p",
+                  "n"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "const": "inductor",
+                    "not": {
+                      "type": "null"
+                    }
+                  },
+                  "henries": {
+                    "type": "number",
+                    "not": {
+                      "type": "null"
+                    },
+                    "exclusiveMinimum": 0
+                  },
+                  "id": {
+                    "type": "string",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "p": {
+                    "type": "integer",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minimum": 0,
+                    "maximum": 127
+                  },
+                  "n": {
+                    "type": "integer",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minimum": 0,
+                    "maximum": 127
+                  }
+                },
+                "required": [
+                  "henries",
+                  "id",
+                  "p",
+                  "n"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "const": "voltage",
+                    "not": {
+                      "type": "null"
+                    }
+                  },
+                  "volts": {
+                    "type": "number",
+                    "not": {
+                      "type": "null"
+                    }
+                  },
+                  "id": {
+                    "type": "string",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "p": {
+                    "type": "integer",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minimum": 0,
+                    "maximum": 127
+                  },
+                  "n": {
+                    "type": "integer",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minimum": 0,
+                    "maximum": 127
+                  }
+                },
+                "required": [
+                  "volts",
+                  "id",
+                  "p",
+                  "n"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "const": "current",
+                    "not": {
+                      "type": "null"
+                    }
+                  },
+                  "amps": {
+                    "type": "number",
+                    "not": {
+                      "type": "null"
+                    }
+                  },
+                  "id": {
+                    "type": "string",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "p": {
+                    "type": "integer",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minimum": 0,
+                    "maximum": 127
+                  },
+                  "n": {
+                    "type": "integer",
+                    "not": {
+                      "type": "null"
+                    },
+                    "minimum": 0,
+                    "maximum": 127
+                  }
+                },
+                "required": [
+                  "amps",
+                  "id",
+                  "p",
+                  "n"
+                ],
+                "additionalProperties": false
+              }
+            ],
+            "not": {
+              "type": "null"
+            }
+          },
+          "not": {
+            "type": "null"
+          },
+          "maxItems": 1024
+        }
+      },
+      "required": [
+        "nodes",
+        "elements"
+      ],
+      "not": {
+        "type": "null"
+      },
+      "additionalProperties": false
+    },
+    "analysis": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "kind": {
+              "const": "operating_point",
+              "not": {
+                "type": "null"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "transient",
+              "not": {
+                "type": "null"
+              }
+            },
+            "options": {
+              "type": "object",
+              "properties": {
+                "stop_s": {
+                  "type": "number",
+                  "not": {
+                    "type": "null"
+                  },
+                  "exclusiveMinimum": 0
+                },
+                "step_s": {
+                  "type": "number",
+                  "not": {
+                    "type": "null"
+                  },
+                  "exclusiveMinimum": 0
+                },
+                "max_steps": {
+                  "type": "integer",
+                  "not": {
+                    "type": "null"
+                  },
+                  "minimum": 1,
+                  "maximum": 100000
+                }
+              },
+              "required": [
+                "stop_s",
+                "step_s",
+                "max_steps"
+              ],
+              "not": {
+                "type": "null"
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "options"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "ac",
+              "not": {
+                "type": "null"
+              }
+            },
+            "frequencies_hz": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "not": {
+                  "type": "null"
+                }
+              },
+              "not": {
+                "type": "null"
+              },
+              "maxItems": 10000,
+              "minItems": 1
+            }
+          },
+          "required": [
+            "frequencies_hz"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "transient_configured",
+              "not": {
+                "type": "null"
+              }
+            },
+            "options": {
+              "type": "object",
+              "properties": {
+                "stop_s": {
+                  "type": "number",
+                  "not": {
+                    "type": "null"
+                  },
+                  "exclusiveMinimum": 0
+                },
+                "max_step_s": {
+                  "type": "number",
+                  "not": {
+                    "type": "null"
+                  },
+                  "exclusiveMinimum": 0
+                },
+                "max_steps": {
+                  "type": "integer",
+                  "default": 10000,
+                  "not": {
+                    "type": "null"
+                  },
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "method": {
+                  "type": "string",
+                  "default": "backward_euler",
+                  "not": {
+                    "type": "null"
+                  },
+                  "enum": [
+                    "backward_euler",
+                    "trapezoidal"
+                  ]
+                },
+                "initial_state": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "number",
+                    "not": {
+                      "type": "null"
+                    }
+                  },
+                  "default": null,
+                  "maxItems": 256
+                },
+                "sources": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "not": {
+                          "type": "null"
+                        },
+                        "minLength": 1,
+                        "maxLength": 256
+                      },
+                      "waveform": {
+                        "type": "object",
+                        "required": [
+                          "kind"
+                        ],
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "kind": {
+                                "const": "constant",
+                                "not": {
+                                  "type": "null"
+                                }
+                              },
+                              "value": {
+                                "type": "number",
+                                "not": {
+                                  "type": "null"
+                                }
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "const": "pwl",
+                                "not": {
+                                  "type": "null"
+                                }
+                              },
+                              "points": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "time_s": {
+                                      "type": "number",
+                                      "not": {
+                                        "type": "null"
+                                      },
+                                      "minimum": 0
+                                    },
+                                    "value": {
+                                      "type": "number",
+                                      "not": {
+                                        "type": "null"
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "time_s",
+                                    "value"
+                                  ],
+                                  "not": {
+                                    "type": "null"
+                                  },
+                                  "additionalProperties": false
+                                },
+                                "not": {
+                                  "type": "null"
+                                },
+                                "maxItems": 4096,
+                                "minItems": 1
+                              }
+                            },
+                            "required": [
+                              "points"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "const": "sine",
+                                "not": {
+                                  "type": "null"
+                                }
+                              },
+                              "offset": {
+                                "type": "number",
+                                "not": {
+                                  "type": "null"
+                                }
+                              },
+                              "amplitude": {
+                                "type": "number",
+                                "not": {
+                                  "type": "null"
+                                }
+                              },
+                              "frequency_hz": {
+                                "type": "number",
+                                "not": {
+                                  "type": "null"
+                                },
+                                "exclusiveMinimum": 0
+                              },
+                              "phase_rad": {
+                                "type": "number",
+                                "not": {
+                                  "type": "null"
+                                }
+                              }
+                            },
+                            "required": [
+                              "offset",
+                              "amplitude",
+                              "frequency_hz",
+                              "phase_rad"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ],
+                        "not": {
+                          "type": "null"
+                        }
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "waveform"
+                    ],
+                    "not": {
+                      "type": "null"
+                    },
+                    "additionalProperties": false
+                  },
+                  "default": null,
+                  "not": {
+                    "type": "null"
+                  },
+                  "maxItems": 128
+                },
+                "adaptive": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "relative": {
+                      "type": "number",
+                      "not": {
+                        "type": "null"
+                      },
+                      "exclusiveMinimum": 0,
+                      "exclusiveMaximum": 1
+                    },
+                    "voltage_absolute": {
+                      "type": "number",
+                      "not": {
+                        "type": "null"
+                      },
+                      "exclusiveMinimum": 0
+                    },
+                    "current_absolute": {
+                      "type": "number",
+                      "not": {
+                        "type": "null"
+                      },
+                      "exclusiveMinimum": 0
+                    },
+                    "min_step_s": {
+                      "type": "number",
+                      "not": {
+                        "type": "null"
+                      },
+                      "exclusiveMinimum": 0
+                    },
+                    "max_attempts": {
+                      "type": "integer",
+                      "not": {
+                        "type": "null"
+                      },
+                      "minimum": 1,
+                      "maximum": 1000000
+                    }
+                  },
+                  "required": [
+                    "relative",
+                    "voltage_absolute",
+                    "current_absolute",
+                    "min_step_s",
+                    "max_attempts"
+                  ],
+                  "default": null,
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "stop_s",
+                "max_step_s"
+              ],
+              "not": {
+                "type": "null"
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "options"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "not": {
+        "type": "null"
+      }
+    },
+    "backend": {
+      "type": "string",
+      "default": "lu",
+      "not": {
+        "type": "null"
+      }
+    },
+    "experiment": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "measurements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "not": {
+                  "type": "null"
+                },
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "signal": {
+                "type": "string",
+                "not": {
+                  "type": "null"
+                },
+                "maxLength": 512
+              },
+              "operation": {
+                "type": "object",
+                "required": [
+                  "kind"
+                ],
+                "anyOf": [
+                  {
+                    "properties": {
+                      "kind": {
+                        "const": "value_at",
+                        "not": {
+                          "type": "null"
+                        }
+                      },
+                      "time_s": {
+                        "type": "number",
+                        "not": {
+                          "type": "null"
+                        },
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "time_s"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "const": "minimum",
+                        "not": {
+                          "type": "null"
+                        }
+                      },
+                      "start_s": {
+                        "type": "number",
+                        "not": {
+                          "type": "null"
+                        },
+                        "minimum": 0
+                      },
+                      "stop_s": {
+                        "type": "number",
+                        "not": {
+                          "type": "null"
+                        },
+                        "exclusiveMinimum": 0
+                      }
+                    },
+                    "required": [
+                      "start_s",
+                      "stop_s"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "const": "maximum",
+                        "not": {
+                          "type": "null"
+                        }
+                      },
+                      "start_s": {
+                        "type": "number",
+                        "not": {
+                          "type": "null"
+                        },
+                        "minimum": 0
+                      },
+                      "stop_s": {
+                        "type": "number",
+                        "not": {
+                          "type": "null"
+                        },
+                        "exclusiveMinimum": 0
+                      }
+                    },
+                    "required": [
+                      "start_s",
+                      "stop_s"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "const": "integral",
+                        "not": {
+                          "type": "null"
+                        }
+                      },
+                      "start_s": {
+                        "type": "number",
+                        "not": {
+                          "type": "null"
+                        },
+                        "minimum": 0
+                      },
+                      "stop_s": {
+                        "type": "number",
+                        "not": {
+                          "type": "null"
+                        },
+                        "exclusiveMinimum": 0
+                      }
+                    },
+                    "required": [
+                      "start_s",
+                      "stop_s"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "const": "rms",
+                        "not": {
+                          "type": "null"
+                        }
+                      },
+                      "start_s": {
+                        "type": "number",
+                        "not": {
+                          "type": "null"
+                        },
+                        "minimum": 0
+                      },
+                      "stop_s": {
+                        "type": "number",
+                        "not": {
+                          "type": "null"
+                        },
+                        "exclusiveMinimum": 0
+                      }
+                    },
+                    "required": [
+                      "start_s",
+                      "stop_s"
+                    ],
+                    "additionalProperties": false
+                  }
+                ],
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "signal",
+              "operation"
+            ],
+            "not": {
+              "type": "null"
+            },
+            "additionalProperties": false
+          },
+          "not": {
+            "type": "null"
+          },
+          "maxItems": 256
+        },
+        "assertions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "not": {
+                  "type": "null"
+                },
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "measurement": {
+                "type": "string",
+                "not": {
+                  "type": "null"
+                }
+              },
+              "unit": {
+                "type": "string",
+                "not": {
+                  "type": "null"
+                },
+                "maxLength": 64
+              },
+              "low": {
+                "type": "number",
+                "not": {
+                  "type": "null"
+                }
+              },
+              "high": {
+                "type": "number",
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "measurement",
+              "unit",
+              "low",
+              "high"
+            ],
+            "not": {
+              "type": "null"
+            },
+            "additionalProperties": false
+          },
+          "not": {
+            "type": "null"
+          },
+          "maxItems": 512
+        }
+      },
+      "required": [
+        "measurements",
+        "assertions"
+      ],
+      "default": null,
+      "additionalProperties": false
+    },
+    "schema_version": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "not": {
+        "type": "null"
+      },
+      "const": "1"
+    }
+  },
   "required": [
     "schema_version",
     "case_id",
     "circuit",
     "analysis"
   ],
-  "properties": {
-    "schema_version": {
-      "const": "1"
-    },
-    "case_id": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 256
-    },
-    "backend": {
-      "type": "string",
-      "minLength": 1,
-      "description": "Backend key resolved by the engine registry. CLI currently registers lu and qr."
-    },
-    "circuit": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "nodes",
-        "elements"
-      ],
-      "properties": {
-        "nodes": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 128,
-          "uniqueItems": true,
-          "prefixItems": [
-            {
-              "const": "0"
-            }
-          ],
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "elements": {
-          "type": "array",
-          "maxItems": 1024,
-          "items": {
-            "oneOf": [
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "kind",
-                  "id",
-                  "p",
-                  "n",
-                  "ohms"
-                ],
-                "properties": {
-                  "kind": {
-                    "const": "resistor"
-                  },
-                  "id": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "p": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "n": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "ohms": {
-                    "type": "number",
-                    "exclusiveMinimum": 0
-                  }
-                }
-              },
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "kind",
-                  "id",
-                  "p",
-                  "n",
-                  "farads"
-                ],
-                "properties": {
-                  "kind": {
-                    "const": "capacitor"
-                  },
-                  "id": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "p": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "n": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "farads": {
-                    "type": "number",
-                    "exclusiveMinimum": 0
-                  }
-                }
-              },
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "kind",
-                  "id",
-                  "p",
-                  "n",
-                  "volts"
-                ],
-                "properties": {
-                  "kind": {
-                    "const": "voltage"
-                  },
-                  "id": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "p": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "n": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "volts": {
-                    "type": "number"
-                  }
-                }
-              },
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "kind",
-                  "id",
-                  "p",
-                  "n",
-                  "amps"
-                ],
-                "properties": {
-                  "kind": {
-                    "const": "current"
-                  },
-                  "id": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "p": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "n": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "amps": {
-                    "type": "number"
-                  }
-                }
-              }
-            ]
-          }
-        }
-      }
-    },
-    "analysis": {
-      "oneOf": [
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "kind"
-          ],
-          "properties": {
-            "kind": {
-              "const": "operating_point"
-            }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "kind",
-            "options"
-          ],
-          "properties": {
-            "kind": {
-              "const": "transient"
-            },
-            "options": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "stop_s",
-                "step_s",
-                "max_steps"
-              ],
-              "properties": {
-                "stop_s": {
-                  "type": "number",
-                  "exclusiveMinimum": 0
-                },
-                "step_s": {
-                  "type": "number",
-                  "exclusiveMinimum": 0
-                },
-                "max_steps": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 100000
-                }
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "kind",
-            "frequencies_hz"
-          ],
-          "properties": {
-            "kind": {
-              "const": "ac"
-            },
-            "frequencies_hz": {
-              "type": "array",
-              "minItems": 1,
-              "maxItems": 10000,
-              "items": {
-                "type": "number",
-                "exclusiveMinimum": 0
-              }
-            }
-          }
-        }
-      ]
-    }
-  }
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Experimental simulator request v1",
+  "$comment": "Exported from managed DTOs; Rust additionally validates finite values, UTF-8 byte lengths, dimensions, IDs, source references, initial states, solver capabilities and budgets. Export is not independent schema qualification."
 }

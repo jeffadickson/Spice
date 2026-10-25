@@ -7,4 +7,3 @@ The adapter constructs canonical CSC and uses faer's sparse LU for real/complex 
 The circuit compiler still stores bounded dense matrices (256 unknowns maximum). Sparse factorization is real, but no large-circuit memory-scaling or speedup claim is made. No GPU execution is present. Preparation handles own numeric matrices; changing caller values requires a new factorization.
 
 Sources: https://faer.veganb.tw/docs/sparse-linalg/linsolve/ and https://faer.veganb.tw/docs/sparse-linalg/creating-matrix/ . Exact APIs were checked against the pinned crate.
-

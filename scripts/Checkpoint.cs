@@ -8,6 +8,7 @@ var iteration = args.Length == 1 && int.TryParse(args[0], out var number) ? numb
 if (iteration <= 0 || iteration % 10 != 0) throw new ArgumentException("Checkpoint must be a positive multiple of ten.");
 Directory.CreateDirectory("build/checkpoints");
 var commands = new (string File, string[] Args)[] {
+    ("rustc", ["--version"]), ("dotnet", ["--version"]),
     ("cargo", ["build","--locked"]), ("cargo", ["test","--locked"]),
     ("cargo", ["fmt","--all","--","--check"]),
     ("cargo", ["clippy","--all-targets","--locked","--","-D","warnings"]),
