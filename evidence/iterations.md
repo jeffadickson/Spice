@@ -192,3 +192,11 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 188. Update coverage runtime contract evidence
 189. Document focused nonlinear test workflow
 190. Checkpoint nonlinear variation and policy contracts
+191. Reject malformed diode JSON parameters
+192. Test diode exponential domain boundary
+193. Trace typed nonlinear authoring contract
+194. Document typed nonlinear contract boundaries
+195. Refresh continuation progress marker
+196. Specify reproducible continuation handoff
+197. Project continuation handoff requirement
+198. Record nonlinear completion ledger
