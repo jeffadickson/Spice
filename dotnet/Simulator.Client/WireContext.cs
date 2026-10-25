@@ -7,4 +7,5 @@ namespace Simulator.Client;
 [JsonSerializable(typeof(SimulationRequest))]
 [JsonSerializable(typeof(ResultManifest))]
 [JsonSerializable(typeof(SimulationError))]
+[JsonSerializable(typeof(ScalarSweepResult))]
 internal partial class WireContext : JsonSerializerContext;

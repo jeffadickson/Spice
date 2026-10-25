@@ -37,6 +37,9 @@ public static class MoreChecks
         var rl=new Circuit(["0","in","out"],[new Voltage("V1",1,0,1),new Inductor("L1",1,2,0.001),new Resistor("R1",2,0,100)]);
         var inductor=await client.RunAsync(new("typed-rl",rl,new OperatingPoint(),"faer"));
         Check(Math.Abs(inductor.FinalValue("i(L1)")-0.01)<1e-12,"typed inductor branch current");
+        var sweepJson="""{"schema_version":"1","base_case_id":"typed","sweep_sha256":"abc","sweep":{"element_id":"R1","values":[1.0]},"points":[],"summary":{"total":0,"succeeded":0,"failed":0}}""";
+        var sweep=System.Text.Json.JsonSerializer.Deserialize<ScalarSweepResult>(sweepJson,WireFormat.Options)!;
+        Check(sweep.Sweep.ElementId=="R1" && sweep.Summary.Total==0,"typed scalar sweep envelope");
         return count;
     }
 }
