@@ -55,3 +55,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 51. Specify the second implementation slice and scoped acceptance
 52. Expose explicit complex and preparation capabilities by provider
 53. Validate canonical compressed sparse column matrices
+54. Adapt faer sparse LU as an independent real solver
