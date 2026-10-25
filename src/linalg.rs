@@ -37,6 +37,8 @@ impl Matrix {
 }
 /// Adapters know matrices, never netlists or device classes.
 pub trait LinearSolver: Send + Sync {
+    /// A prepared session owns numeric factors; None means preparation is unsupported.
+    fn prepare(&self,_matrix:&Matrix)->SimResult<Option<PreparedReal>>{Ok(None)}
     fn name(&self) -> &'static str;
     fn solve(&self, matrix: &Matrix, rhs: &[f64]) -> SimResult<Vec<f64>>;
     fn solve_complex(
@@ -61,6 +63,25 @@ pub trait LinearSolver: Send + Sync {
             prepared_real: false,
             provider_version: "caller_defined",
         }
+    }
+}
+
+/// Immutable matrix identity prevents stale-factor reuse after caller mutations.
+/// Session-local closure intentionally has no Send/Sync promise.
+pub struct PreparedReal{
+    matrix:Matrix,
+    solve:Box<dyn Fn(&[f64])->SimResult<Vec<f64>>>
+}
+impl PreparedReal{
+    pub fn new(matrix:Matrix,solve:impl Fn(&[f64])->SimResult<Vec<f64>>+'static)->SimResult<Self>{
+        matrix.validate(&vec![0.0;matrix.n.min(256)])?;Ok(Self{matrix,solve:Box::new(solve)})
+    }
+    pub fn matrix(&self)->&Matrix{&self.matrix}
+    pub fn solve(&self,rhs:&[f64])->SimResult<Vec<f64>>{
+        self.matrix.validate(rhs)?;
+        let x=(self.solve)(rhs)?;
+        if x.len()!=self.matrix.n||x.iter().any(|v|!v.is_finite()){return Err(SimError::new(crate::error::ErrorCode::NumericalFailure,"invalid prepared solution"));}
+        Ok(x)
     }
 }
 
