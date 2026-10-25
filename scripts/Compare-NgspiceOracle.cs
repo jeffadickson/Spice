@@ -4,6 +4,7 @@
 // an oracle from unlabelled table columns.
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Text.RegularExpressions;
 
 if (args.Length != 2) throw new ArgumentException("Expected ngspice and simulator executable paths.");
@@ -38,5 +39,7 @@ var values = document.RootElement.GetProperty("samples")[0].GetProperty("values"
 var observed = values[1].GetDouble();
 const double tolerance = 1e-12;
 var difference = Math.Abs(observed - match);
-Console.WriteLine(JsonSerializer.Serialize(new { fixture, observable = "i(V1)", ngspice = match, simulator = observed, difference, tolerance, passed = difference <= tolerance }));
+Console.WriteLine(JsonSerializer.Serialize(
+    new { fixture, observable = "i(V1)", ngspice = match, simulator = observed, difference, tolerance, passed = difference <= tolerance },
+    new JsonSerializerOptions { TypeInfoResolver = new DefaultJsonTypeInfoResolver() }));
 if (difference > tolerance) Environment.ExitCode = 1;
