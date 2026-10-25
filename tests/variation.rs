@@ -115,6 +115,7 @@ fn grid_has_deterministic_cartesian_order() {
         ],
     };
     let rows = grid.circuits(&circuit).unwrap();
+    assert_eq!(grid.cardinality().unwrap(), 4);
     assert_eq!(
         rows.iter().map(|row| row.0.clone()).collect::<Vec<_>>(),
         vec![vec![10., 1.], vec![10., 2.], vec![20., 1.], vec![20., 2.]]

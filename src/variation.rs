@@ -151,6 +151,12 @@ impl ScalarGrid {
         Ok(())
     }
 
+    /// Return the already validated cardinality without allocating variants.
+    pub fn cardinality(&self) -> SimResult<usize> {
+        self.validate()?;
+        Ok(self.dimensions.iter().map(|dimension| dimension.values.len()).product())
+    }
+
     /// Return each complete immutable circuit and the matching dimension values.
     pub fn circuits(&self, circuit: &Circuit) -> SimResult<Vec<(Vec<f64>, Circuit)>> {
         self.validate()?;
