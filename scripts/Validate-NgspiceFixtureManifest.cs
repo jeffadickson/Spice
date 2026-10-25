@@ -27,6 +27,12 @@ foreach (var fixture in fixtures.EnumerateArray()) {
         || string.IsNullOrWhiteSpace(family) || state is null || !allowedStates.Contains(state)
         || features.ValueKind != JsonValueKind.Array)
         throw new InvalidDataException("fixture must have unique path, family, known state and feature array.");
+    var featureNames = new HashSet<string>(StringComparer.Ordinal);
+    foreach (var feature in features.EnumerateArray()) {
+        var name = feature.GetString();
+        if (string.IsNullOrWhiteSpace(name) || !featureNames.Add(name))
+            throw new InvalidDataException("required features must be nonempty and unique.");
+    }
     if ((state == "oracle_passing" || state == "analytic_oracle_passing")
         && features.GetArrayLength() != 0)
         throw new InvalidDataException("oracle-passing fixture cannot list missing features.");
