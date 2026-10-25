@@ -39,3 +39,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 35. Test seeded random resistor networks against analytic oracles
 36. Add bounded malformed-input fuzz smoke campaigns
 37. Inject malicious backend and invalid transient outcomes
+38. Add isolated code mutation runner with retained outcomes
