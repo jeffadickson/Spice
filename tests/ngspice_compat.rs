@@ -59,6 +59,12 @@ fn ngspice_mixed_transient_and_ac_directives_are_rejected() {
 }
 
 #[test]
+fn ngspice_ac_grid_rejects_nonpositive_start_frequency() {
+    let error = import_ngspice_request("title\nV1 out 0 DC 0 AC 1\nR1 out 0 1k\n.ac lin 2 0 1\n.end\n", "ac-invalid").unwrap_err();
+    assert_eq!(error.code, ErrorCode::InvalidInput);
+}
+
+#[test]
 fn ngspice_ac_source_amplitude_is_used_for_bounded_ac_import() {
     let request = import_ngspice_request("title\nV1 out 0 DC 5 AC 2\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "ac-source").unwrap();
     let result = circuit_simulator::api::run(&request).unwrap();
