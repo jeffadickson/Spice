@@ -166,6 +166,17 @@ fn high_bias_diode_uses_bounded_damping_instead_of_exponential_overflow() {
 }
 
 #[test]
+fn Newton_iteration_budget_is_a_real_failure_boundary() {
+    let circuit = Circuit { nodes: vec!["0".into(), "s".into(), "a".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 5. },
+        Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
+        Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
+    ] };
+    let options = NewtonOptions { max_iterations: 1, ..NewtonOptions::default() };
+    assert!(solve(&compile(&circuit).unwrap(), &DenseLu, options).is_err());
+}
+
+#[test]
 fn zero_bias_diode_converges_without_a_spurious_current() {
     let circuit = Circuit {
         nodes: vec!["0".into(), "a".into()],
