@@ -1,4 +1,5 @@
 use crate::{circuit::{Circuit,Element},error::{SimError,SimResult},ids::NodeId,linalg::Matrix};
+use crate::model::{TwoTerminalModel,ResistorModel,CapacitorModel};
 /// Immutable numeric plan; runtime histories and native handles live elsewhere.
 #[derive(Debug,Clone)]
 pub struct CompiledCircuit{pub circuit:Circuit,pub conductance:Matrix,pub charge:Matrix,pub rhs:Vec<f64>,pub voltage_branches:Vec<String>}
@@ -15,12 +16,12 @@ pub fn compile(circuit:&Circuit)->SimResult<CompiledCircuit>{
     let mut a=Matrix::zeros(dimension)?;let mut rhs=vec![0.0;dimension];let mut branch=circuit.nodes.len()-1;
     let mut charge=Matrix::zeros(dimension)?;
     for e in &circuit.elements{match e{
-        Element::Capacitor{p,n,farads,..}=>stamp_pair(&mut charge,*p,*n,*farads),
+        Element::Capacitor{p,n,farads,..}=>stamp_pair(&mut charge,*p,*n,CapacitorModel(*farads).coefficients()?.capacitance),
         Element::Current{p,n,amps,..}=>{
             if let Some(i)=p.unknown(){rhs[i]-=amps;}
             if let Some(i)=n.unknown(){rhs[i]+=amps;}
         }
-        Element::Resistor{p,n,ohms,..}=>stamp_pair(&mut a,*p,*n,1.0/ohms),
+        Element::Resistor{p,n,ohms,..}=>stamp_pair(&mut a,*p,*n,ResistorModel(*ohms).coefficients()?.conductance),
         Element::Voltage{p,n,volts,..}=>{
             for(node,sign)in[(*p,1.0),(*n,-1.0)]{if let Some(i)=node.unknown(){a.add(i,branch,sign);a.add(branch,i,sign);}}
             rhs[branch]=*volts;branch+=1;

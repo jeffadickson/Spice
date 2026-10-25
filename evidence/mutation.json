@@ -1,0 +1,43 @@
+{
+  "strategy": "seven deliberate source mutations, isolated copied tree; not exhaustive cargo-mutants campaign",
+  "baseline": "passed",
+  "killed": 7,
+  "total": 7,
+  "mutants": [
+    {
+      "name": "stamp-sign",
+      "status": "killed",
+      "exit_code": 101
+    },
+    {
+      "name": "stored-charge",
+      "status": "killed",
+      "exit_code": 101
+    },
+    {
+      "name": "inclusive-boundary",
+      "status": "killed",
+      "exit_code": 101
+    },
+    {
+      "name": "milli-scale",
+      "status": "killed",
+      "exit_code": 101
+    },
+    {
+      "name": "residual-acceptance",
+      "status": "killed",
+      "exit_code": 101
+    },
+    {
+      "name": "cancel-check",
+      "status": "killed",
+      "exit_code": 101
+    },
+    {
+      "name": "state-commit",
+      "status": "killed",
+      "exit_code": 101
+    }
+  ]
+}

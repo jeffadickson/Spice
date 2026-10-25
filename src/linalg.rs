@@ -19,6 +19,9 @@ impl Matrix{
 pub trait LinearSolver:Send+Sync{
     fn name(&self)->&'static str;
     fn solve(&self,matrix:&Matrix,rhs:&[f64])->SimResult<Vec<f64>>;
+    fn solve_complex(&self,_real:&Matrix,_imag:&Matrix,_rhs:&[f64])->SimResult<Vec<num_complex::Complex64>>{
+        Err(crate::error::SimError::new(crate::error::ErrorCode::Unsupported,"backend has no complex implementation"))
+    }
     fn capabilities(&self)->BackendCapabilities{BackendCapabilities{id:self.name(),placement:"cpu",max_unknowns:256,sparse:false,gpu:false}}
 }
 

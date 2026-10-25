@@ -1,4 +1,4 @@
-use crate::{backend::{DenseLu,DenseQr},circuit::Circuit,compile::compile,dc::operating_point,error::{ErrorCode,SimError,SimResult},linalg::{BackendCapabilities,LinearSolver},transient::{Sample,TransientOptions,transient}};
+use crate::{circuit::Circuit,compile::compile,dc::operating_point,error::{SimError,SimResult},linalg::{BackendCapabilities,LinearSolver},transient::{Sample,TransientOptions,transient}};
 use serde::{Deserialize,Serialize};
 #[derive(Debug,Clone,Serialize,Deserialize)]
 #[serde(tag="kind",rename_all="snake_case",deny_unknown_fields)]
@@ -13,8 +13,13 @@ pub struct Signal{pub id:String,pub quantity:&'static str,pub unit:&'static str}
 pub struct Manifest{pub schema_version:&'static str,pub case_id:String,pub status:&'static str,pub complete:bool,pub backend:BackendCapabilities,pub request_sha256:String,pub signals:Vec<Signal>,pub samples:Vec<Sample>,pub ac_samples:Vec<crate::ac::AcSample>}
 /// Immutable request validation precedes compilation. Only explicit CPU reference choices exist.
 pub fn run(request:&Request)->SimResult<Manifest>{
+    run_with_registry(request,&crate::registry::BackendRegistry::reference())
+}
+/// Callers can register providers without changing circuit representations.
+pub fn run_with_registry(request:&Request,registry:&crate::registry::BackendRegistry)->SimResult<Manifest>{
     if request.schema_version!="1"||request.case_id.is_empty()||request.case_id.len()>256{return Err(SimError::invalid("unsupported schema or invalid case_id"));}
-    let solver:&dyn LinearSolver=match request.backend.as_str(){"lu"=>&DenseLu,"qr"=>&DenseQr,_=>return Err(SimError::new(ErrorCode::Unsupported,"unknown backend; use lu or qr"))};
+    let provider=registry.get(&request.backend)?;
+    let solver:&dyn LinearSolver=provider.as_ref();
     let plan=compile(&request.circuit)?;
     let samples=match &request.analysis{
         Analysis::OperatingPoint=>vec![Sample{time_s:0.0,values:operating_point(&plan,solver)?}],
@@ -22,8 +27,7 @@ pub fn run(request:&Request)->SimResult<Manifest>{
         ,Analysis::Ac{..}=>Vec::new()
     };
     let ac_samples=match &request.analysis{Analysis::Ac{frequencies_hz}=>{
-        if request.backend!="lu"{return Err(SimError::new(ErrorCode::Unsupported,"AC reference supports lu only"));}
-        crate::ac::ac(&plan,frequencies_hz)?
+        crate::ac::ac(&plan,frequencies_hz,solver)?
     },_=>Vec::new()};
     let mut signals:Vec<Signal>=request.circuit.nodes.iter().skip(1).map(|name|Signal{id:format!("v({name})"),quantity:"voltage",unit:"V"}).collect();
     signals.extend(plan.voltage_branches.iter().map(|id|Signal{id:format!("i({id})"),quantity:"current",unit:"A"}));

@@ -15,4 +15,7 @@ pub mod measurement;
 pub mod assertion;
 pub mod netlist;
 pub mod provenance;
+pub mod expression;
+pub mod model;
+pub mod registry;
 
