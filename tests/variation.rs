@@ -1,7 +1,10 @@
 use circuit_simulator::{
+    api::Request,
     circuit::{Circuit, Element},
     ids::NodeId,
     variation::{ScalarSweep, replace_scalar},
+    sweep::run_scalar,
+    registry::BackendRegistry,
 };
 
 fn fixture() -> Circuit {
@@ -9,6 +12,17 @@ fn fixture() -> Circuit {
         nodes: vec!["0".into(), "out".into()],
         elements: vec![Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(0), ohms: 10. }],
     }
+}
+
+#[test]
+fn scalar_sweep_returns_stable_indexed_cases() {
+    let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000., 2000.] };
+    let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
+    assert_eq!(points.len(), 2);
+    assert_eq!(points[0].result.as_ref().unwrap().case_id, "divider--s00");
+    assert_eq!(points[1].result.as_ref().unwrap().case_id, "divider--s01");
+    assert!(points.iter().all(|point| point.execution == "succeeded"));
 }
 
 #[test]
