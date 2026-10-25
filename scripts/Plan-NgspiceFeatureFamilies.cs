@@ -22,7 +22,7 @@ F014|Transient breakpoint scheduling|future
 F015|Pulse source waveform|supported
 F016|Sine source waveform|supported
 F017|Piecewise-linear waveform|supported
-F018|Exponential waveform|future
+F018|Exponential waveform|supported
 F019|Frequency-modulated waveform|future
 F020|Behavioral source waveform|future
 F021|AC directive grammar|import_only

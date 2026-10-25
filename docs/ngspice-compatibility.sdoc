@@ -150,3 +150,13 @@ The typed circuit API and bounded ngspice importer shall support an H current-co
 COMMENT: >>>
 Implementation: circuit::Element::Ccvs, compile::compile and netlist::parse. Verification: tests/controlled_sources.rs and tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-016
+TITLE: Bounded exponential source compatibility
+STATEMENT: >>>
+The typed transient API and bounded deck importer shall support the compact six-parameter SPICE EXP source with an initial level, pulsed level, rise delay and time constant, then fall delay and time constant. All values shall be finite, delays shall be ordered and nonnegative, time constants shall be positive, and the source shall publish both transition delays as solver breakpoints.
+<<<
+COMMENT: >>>
+Implementation: waveform::Waveform::Exponential and netlist::import_ngspice_request. Verification: tests/ngspice_compat.rs.
+<<<

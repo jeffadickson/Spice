@@ -339,6 +339,53 @@ fn pulse_waveform_has_exact_plateaus_and_rejects_invalid_periods() {
     .is_err());
 }
 
+#[test]
+fn exponential_waveform_has_spice_rise_and_return_semantics() {
+    let waveform = Waveform::Exponential {
+        initial: 0.,
+        pulsed: 2.,
+        rise_delay_s: 1.,
+        rise_tau_s: 1.,
+        fall_delay_s: 4.,
+        fall_tau_s: 1.,
+    };
+    assert_eq!(waveform.at(0.).unwrap(), 0.);
+    assert!((waveform.at(2.).unwrap() - 2. * (1. - (-1_f64).exp())).abs() < 1e-12);
+    assert!(waveform.at(5.).unwrap() < waveform.at(4.).unwrap());
+    assert!(waveform.at(20.).unwrap().abs() < 1e-6);
+    assert_eq!(waveform.breakpoints(), vec![1., 4.]);
+    assert!(Waveform::Exponential {
+        initial: 0., pulsed: 1., rise_delay_s: 2., rise_tau_s: 1., fall_delay_s: 1., fall_tau_s: 1.,
+    }.validate().is_err());
+}
+
+#[test]
+fn ngspice_compact_exponential_source_lowers_to_transient_override() {
+    let request = import_ngspice_request(
+        "title\nV1 out 0 EXP(0,2,1m,1m,4m,1m)\nR1 out 0 1k\n.tran 1m 6m\n.end\n",
+        "exp-import",
+    )
+    .unwrap();
+    match request.analysis {
+        circuit_simulator::api::Analysis::TransientConfigured { options } => {
+            assert_eq!(options.sources.len(), 1);
+            assert!((options.sources[0].waveform.at(2e-3).unwrap() - 2. * (1. - (-1_f64).exp())).abs() < 1e-12);
+        }
+        _ => panic!("expected configured transient analysis"),
+    }
+}
+
+#[test]
+fn ngspice_compact_exponential_rejects_invalid_fall_order_when_executed() {
+    let request = import_ngspice_request(
+        "title\nV1 out 0 EXP(0,2,4m,1m,1m,1m)\nR1 out 0 1k\n.tran 1m 6m\n.end\n",
+        "exp-invalid",
+    )
+    .unwrap();
+    let error = circuit_simulator::api::run(&request).unwrap_err();
+    assert_eq!(error.code, ErrorCode::InvalidInput);
+}
+
 /// Compact DC assignment and inline comments are common deck conveniences.
 /// Waveform tails deliberately remain outside this importer rather than being
 /// accepted with incorrect constant-source semantics.

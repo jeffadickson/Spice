@@ -324,7 +324,8 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
             let tokens: Vec<_> = line.split_whitespace().collect();
             if tokens.len() == 4 && (tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("sin("))
                 || tokens[3].get(..6).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pulse("))
-                || tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pwl(")))
+                || tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pwl("))
+                || tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("exp(")))
                 && tokens[3].ends_with(')') {
                 let start = if tokens[3].get(..6).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pulse(")) { 6 } else { 4 };
                 let offset = tokens[3][start..tokens[3].len() - 1].split(',').next().unwrap_or_default();
@@ -383,6 +384,18 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
             }
             sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Pwl {
                 points: values.chunks_exact(2).map(|pair| Point { time_s: pair[0], value: pair[1] }).collect(),
+            }});
+        }
+        if tokens.len() == 4 && tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("exp("))
+            && tokens[3].ends_with(')') {
+            let values: SimResult<Vec<f64>> = tokens[3][4..tokens[3].len() - 1].split(',').map(spice_scalar).collect();
+            let values = values?;
+            if values.len() != 6 {
+                return Err(SimError::new(ErrorCode::Unsupported, "bounded EXP source requires six values"));
+            }
+            sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Exponential {
+                initial: values[0], pulsed: values[1], rise_delay_s: values[2], rise_tau_s: values[3],
+                fall_delay_s: values[4], fall_tau_s: values[5],
             }});
         }
     }

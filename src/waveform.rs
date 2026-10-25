@@ -31,6 +31,15 @@ pub enum Waveform {
         width_s: f64,
         period_s: f64,
     },
+    /// SPICE EXP source: an exponential rise followed by an exponential return.
+    Exponential {
+        initial: f64,
+        pulsed: f64,
+        rise_delay_s: f64,
+        rise_tau_s: f64,
+        fall_delay_s: f64,
+        fall_tau_s: f64,
+    },
 }
 impl Waveform {
     pub fn validate(&self) -> SimResult<()> {
@@ -69,6 +78,16 @@ impl Waveform {
             {
                 Err(SimError::invalid("invalid pulse parameters"))
             }
+            Self::Exponential {
+                initial, pulsed, rise_delay_s, rise_tau_s, fall_delay_s, fall_tau_s,
+            } if !initial.is_finite() || !pulsed.is_finite()
+                || !rise_delay_s.is_finite() || *rise_delay_s < 0.
+                || !rise_tau_s.is_finite() || *rise_tau_s <= 0.
+                || !fall_delay_s.is_finite() || *fall_delay_s < *rise_delay_s
+                || !fall_tau_s.is_finite() || *fall_tau_s <= 0. =>
+            {
+                Err(SimError::invalid("invalid exponential source parameters"))
+            }
             _ => Ok(()),
         }
     }
@@ -105,6 +124,17 @@ impl Waveform {
                     } else { *low }
                 }
             }
+            Self::Exponential {
+                initial, pulsed, rise_delay_s, rise_tau_s, fall_delay_s, fall_tau_s,
+            } => {
+                let rise = if time < *rise_delay_s { 0. } else {
+                    1. - (-(time - rise_delay_s) / rise_tau_s).exp()
+                };
+                let fall = if time < *fall_delay_s { 0. } else {
+                    1. - (-(time - fall_delay_s) / fall_tau_s).exp()
+                };
+                initial + (pulsed - initial) * (rise - fall)
+            }
             Self::Pwl { points } => {
                 let index = points.partition_point(|p| p.time_s <= time);
                 if index == 0 {
@@ -124,6 +154,9 @@ impl Waveform {
     pub fn breakpoints(&self) -> Vec<f64> {
         match self {
             Self::Pwl { points } => points.iter().map(|p| p.time_s).collect(),
+            Self::Exponential { rise_delay_s, fall_delay_s, .. } => {
+                vec![*rise_delay_s, *fall_delay_s]
+            }
             _ => Vec::new(),
         }
     }
