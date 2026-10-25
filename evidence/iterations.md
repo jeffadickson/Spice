@@ -203,3 +203,8 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 199. Record StrictDoc handoff validation
 200. Checkpoint bounded nonlinear completion
 201–300. Bounded nonlinear backward-Euler transient stepping, contract review, and build checkpoints at 210 through 300.
+301. Specify modern simulation DSL requirements
+302. Propose SForge simulation DSL
+303. Link DSL proposal from implementation status
+304. Add DSL handoff guidance
+305. Validate modern DSL requirement source
