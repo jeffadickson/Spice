@@ -1,0 +1,62 @@
+[DOCUMENT]
+TITLE: SForge Language Specification Track
+
+[REQUIREMENT]
+UID: SFL-001
+TITLE: Source compatibility is an explicit import mode
+STATEMENT: >>>
+SForge shall treat legacy SPICE source as an explicitly selected import dialect and shall report unsupported, ambiguous or lossy translations structurally.
+<<<
+COMMENT: >>>
+Design review lens: legacy library maintainer. Compatibility is a boundary feature, not the canonical grammar.
+<<<
+
+[REQUIREMENT]
+UID: SFL-002
+TITLE: Circuits are unit-checked declarations
+STATEMENT: >>>
+SForge circuit declarations shall have lexical names, typed terminals and dimension-checked quantities; implicit unit suffix interpretation and silent global parameter capture are prohibited.
+<<<
+COMMENT: >>>
+Design review lens: analog designer. The grammar must preserve familiar devices while making physical meaning explicit.
+<<<
+
+[REQUIREMENT]
+UID: SFL-003
+TITLE: Runs express verification intent
+STATEMENT: >>>
+SForge run declarations shall model analysis, observable selection, assertions, sweeps, random seed and failure policy as typed syntax mapped into the shared simulation IR.
+<<<
+COMMENT: >>>
+Design review lens: verification engineer. A source file must replay a result without hidden console or GUI state.
+<<<
+
+[REQUIREMENT]
+UID: SFL-004
+TITLE: Device extensions are bounded capabilities
+STATEMENT: >>>
+SForge device extensions shall declare terminals, parameters, units, state, supported analyses, derivatives and deterministic capability requirements before any native or GPU implementation is selected.
+<<<
+COMMENT: >>>
+Design review lens: compact-model author. Native code is acceleration, not language semantics.
+<<<
+
+[REQUIREMENT]
+UID: SFL-005
+TITLE: Parser implementation preserves diagnostics
+STATEMENT: >>>
+The first SForge parser shall preserve UTF-8 source spans, recover at declaration boundaries, emit multiple structured diagnostics where safe, and lower only syntactically valid declarations into a parser-independent AST.
+<<<
+COMMENT: >>>
+Design review lens: IDE and automation engineer. Parlot is the initial parser candidate; the AST/diagnostic contract must keep the parser replaceable.
+<<<
+
+[REQUIREMENT]
+UID: SFL-006
+TITLE: Results are portable typed data
+STATEMENT: >>>
+SForge shall map observed values and run provenance to stable typed result schemas independently of the chosen ngspice, Rust, CPU or GPU backend.
+<<<
+COMMENT: >>>
+Design review lens: automation/API engineer. Arrow and Parquet are delivery formats, not simulator-specific text scraping.
+<<<
