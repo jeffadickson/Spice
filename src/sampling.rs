@@ -92,3 +92,21 @@ impl UniformSweepPlan {
         Ok(sweep)
     }
 }
+
+/// Serialized log-uniform scalar sweep recipe for positive-valued devices.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct LogUniformSweepPlan {
+    pub element_id: String,
+    pub seed: u64,
+    pub count: usize,
+    pub range: LogUniformRange,
+}
+
+impl LogUniformSweepPlan {
+    pub fn materialize(&self) -> SimResult<ScalarSweep> {
+        let sweep = ScalarSweep { element_id: self.element_id.clone(), values: log_uniform_values(self.seed, self.count, self.range)? };
+        sweep.validate()?;
+        Ok(sweep)
+    }
+}
