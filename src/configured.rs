@@ -118,6 +118,12 @@ pub fn run_observed(
     cancel: &std::sync::atomic::AtomicBool,
     mut observer: impl FnMut(&Sample) -> SimResult<()>,
 ) -> SimResult<ConfiguredResult> {
+    if plan.has_nonlinear_devices() {
+        return Err(crate::error::SimError::new(
+            crate::error::ErrorCode::Unsupported,
+            "nonlinear configured transient stepping is not implemented",
+        ));
+    }
     options.validate()?;
     let sources = BoundSources::new(plan, &options.sources)?;
     let mut old_rhs = sources.rhs(0.)?;

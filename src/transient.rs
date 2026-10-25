@@ -38,6 +38,12 @@ pub fn transient_controlled(
     options: &TransientOptions,
     cancel: &std::sync::atomic::AtomicBool,
 ) -> SimResult<Vec<Sample>> {
+    if plan.has_nonlinear_devices() {
+        return Err(crate::error::SimError::new(
+            crate::error::ErrorCode::Unsupported,
+            "nonlinear transient Newton stepping is not implemented",
+        ));
+    }
     positive(options.stop_s, "stop_s")?;
     positive(options.step_s, "step_s")?;
     let count = (options.stop_s / options.step_s).ceil().max(1.0);
