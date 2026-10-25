@@ -258,6 +258,12 @@ fn explicit_newton_analysis_rejects_invalid_policy_before_solving() {
 }
 
 #[test]
+fn diode_json_rejects_unknown_parameters() {
+    let text = r#"{"schema_version":"1","case_id":"bad","circuit":{"nodes":["0","a"],"elements":[{"kind":"diode","id":"D1","p":1,"n":0,"saturation_amps":1e-12,"thermal_volts":0.02585,"extra":1}]},"analysis":{"kind":"operating_point"}}"#;
+    assert!(serde_json::from_str::<Request>(text).is_err());
+}
+
+#[test]
 fn nonlinear_operating_point_retains_newton_convergence_evidence() {
     let circuit = Circuit {
         nodes: vec!["0".into(), "a".into()],
