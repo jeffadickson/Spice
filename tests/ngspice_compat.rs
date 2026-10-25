@@ -47,6 +47,12 @@ fn ngspice_ac_linear_directive_lowers_to_typed_request() {
 }
 
 #[test]
+fn ngspice_duplicate_ac_directives_are_rejected() {
+    let error = import_ngspice_request("title\nV1 out 0 DC 0 AC 1\nR1 out 0 1k\n.ac lin 1 1 1\n.ac lin 1 2 2\n.end\n", "ac-duplicate").unwrap_err();
+    assert_eq!(error.code, ErrorCode::Unsupported);
+}
+
+#[test]
 fn ngspice_ac_source_amplitude_is_used_for_bounded_ac_import() {
     let request = import_ngspice_request("title\nV1 out 0 DC 5 AC 2\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "ac-source").unwrap();
     let result = circuit_simulator::api::run(&request).unwrap();
