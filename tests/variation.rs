@@ -22,6 +22,7 @@ fn fixture() -> Circuit {
 #[test]
 fn scalar_kind_is_explicit_for_programmatic_consumers() {
     assert_eq!(scalar_kind(&fixture(), "R1").unwrap(), ScalarKind::Resistance);
+    assert_eq!(ScalarKind::Resistance.unit(), "ohm");
     assert!(scalar_kind(&fixture(), "nope").is_err());
 }
 

@@ -15,6 +15,19 @@ use crate::{
 #[serde(rename_all = "snake_case")]
 pub enum ScalarKind { Resistance, Capacitance, Inductance, Voltage, Current }
 
+impl ScalarKind {
+    /// Canonical SI unit associated with this component scalar.
+    pub const fn unit(self) -> &'static str {
+        match self {
+            Self::Resistance => "ohm",
+            Self::Capacitance => "F",
+            Self::Inductance => "H",
+            Self::Voltage => "V",
+            Self::Current => "A",
+        }
+    }
+}
+
 /// Look up the public scalar category for an element identity.
 pub fn scalar_kind(circuit: &Circuit, element_id: &str) -> SimResult<ScalarKind> {
     let element = circuit.elements.iter().find(|element| element.id() == element_id)
