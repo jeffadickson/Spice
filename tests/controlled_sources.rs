@@ -154,6 +154,19 @@ fn cccs_gain_variation_is_immutable_and_dimensionless() {
 }
 
 #[test]
+fn cccs_power_accounting_balances_the_control_supply() {
+    let circuit = Circuit { nodes: vec!["0".into(), "in".into(), "out".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 2. },
+        Element::Resistor { id: "RCONTROL".into(), p: NodeId(1), n: NodeId(0), ohms: 1. },
+        Element::Cccs { id: "F1".into(), p: NodeId(2), n: NodeId(0), control_id: "V1".into(), gain: 0.5 },
+        Element::Resistor { id: "ROUT".into(), p: NodeId(2), n: NodeId(0), ohms: 1. },
+    ]};
+    let plan = compile(&circuit).unwrap();
+    let x = operating_point(&plan, &DenseLu).unwrap();
+    assert!(dc_power(&plan, &x).unwrap().sum_absorbed_w.abs() < 1e-12);
+}
+
+#[test]
 fn cccs_json_request_is_solved_through_the_public_api() {
     let request: Request = serde_json::from_str(r#"{
       "schema_version":"1","case_id":"cccs-json","circuit":{"nodes":["0","in","out"],"elements":[
@@ -201,6 +214,19 @@ fn ccvs_transresistance_variation_is_immutable() {
     let x = operating_point(&compile(&varied).unwrap(), &DenseLu).unwrap();
     assert!((x[1] - 2.).abs() < 1e-12);
     assert_eq!(scalar_kind(&circuit, "H1").unwrap(), ScalarKind::Transresistance);
+}
+
+#[test]
+fn ccvs_power_accounting_balances_the_control_supply() {
+    let circuit = Circuit { nodes: vec!["0".into(), "in".into(), "out".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 2. },
+        Element::Resistor { id: "RCONTROL".into(), p: NodeId(1), n: NodeId(0), ohms: 1. },
+        Element::Ccvs { id: "H1".into(), p: NodeId(2), n: NodeId(0), control_id: "V1".into(), ohms: 3. },
+        Element::Resistor { id: "ROUT".into(), p: NodeId(2), n: NodeId(0), ohms: 1. },
+    ]};
+    let plan = compile(&circuit).unwrap();
+    let x = operating_point(&plan, &DenseLu).unwrap();
+    assert!(dc_power(&plan, &x).unwrap().sum_absorbed_w.abs() < 1e-12);
 }
 
 #[test]
