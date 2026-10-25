@@ -91,6 +91,18 @@ fn ngspice_ac_source_phase_lowers_to_a_complex_phasor() {
 }
 
 #[test]
+fn ngspice_ac_current_source_phase_preserves_p_to_n_polarity() {
+    let request = import_ngspice_request(
+        "title\nI1 out 0 DC 0 AC 2mA 90\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n",
+        "ac-current-phase",
+    )
+    .unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!(result.ac_samples[0].values[0].real.abs() < 1e-12);
+    assert!((result.ac_samples[0].values[0].imag + 2.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_ac_qualified_resistor_is_used_for_bounded_ac_import() {
     let request = import_ngspice_request("title\nV1 in 0 DC 1 AC 1\nR1 in out 5k\nR2 out 0 5k ac=15k\n.ac lin 1 10 10\n.end\n", "ac-resistor").unwrap();
     let result = circuit_simulator::api::run(&request).unwrap();
