@@ -18,5 +18,19 @@ catch (OperationCanceledException) { passed++; }
 var pair = await Task.WhenAll(client.RunJsonAsync(divider), client.RunJsonAsync(rc));
 Check(pair.All(r => r.Succeeded) && pair[0].FinalValue("v(out)") != pair[1].FinalValue("v(out)"), "instance isolation");
 Check(result.Payload.GetProperty("request_sha256").GetString()!.Length == 64, "provenance");
+var typed = new SimulationRequest("typed-dc",
+    new Circuit(["0","in","out"], [new Voltage("V1",1,0,10),new Resistor("R1",1,2,1000),new Resistor("R2",2,0,1000)]),
+    new OperatingPoint(), "faer");
+var typedResponse = await client.RunAsync(typed);
+var typedManifest = typedResponse.ReadManifest();
+Check(typedManifest.Backend.Sparse && typedManifest.Signals[1].Unit == "V" && typedManifest.Samples[0].Values[1] == 5, "typed request/result");
+var adaptive = await client.RunJsonAsync(await File.ReadAllTextAsync("examples/adaptive-rc.json"));
+var adaptiveManifest = adaptive.ReadManifest();
+Check(adaptiveManifest.Integration!.RejectedSteps > 0 && adaptiveManifest.Assertions[0].Outcome == "pass", "adaptive assertions");
+Check(adaptiveManifest.Measurements[0].Value is > 0.0066 and < 0.0069, "typed measurement");
+try { invalid.ReadManifest(); throw new Exception("Failed result treated as successful"); }
+catch (InvalidOperationException) { passed++; }
+try { typedResponse.FinalValue("v(missing)"); throw new Exception("Unknown signal accepted"); }
+catch (KeyNotFoundException) { passed++; }
 Console.WriteLine($"Managed conformance: {passed} checks passed.");
 
