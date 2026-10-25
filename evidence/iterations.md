@@ -6,3 +6,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 2. Define structured error taxonomy
 3. Introduce typed circuit identifiers
 4. Specify validated structured circuit inputs
+5. Separate dimensional input validation
