@@ -11,7 +11,9 @@ use serde::{Deserialize, Serialize};
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Analysis {
     OperatingPoint,
-    OperatingPointNewton { options: crate::newton::NewtonOptions },
+    OperatingPointNewton {
+        options: crate::newton::NewtonOptions,
+    },
     Transient {
         options: TransientOptions,
     },
@@ -128,7 +130,10 @@ pub fn run_with_registry(
         quantity: "current",
         unit: "A",
     }));
-    let dc_power = if matches!(request.analysis, Analysis::OperatingPoint | Analysis::OperatingPointNewton { .. }) {
+    let dc_power = if matches!(
+        request.analysis,
+        Analysis::OperatingPoint | Analysis::OperatingPointNewton { .. }
+    ) {
         Some(crate::power::dc_power(&plan, &samples[0].values)?)
     } else {
         None

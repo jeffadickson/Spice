@@ -8,8 +8,8 @@ use circuit_simulator::{
     ids::NodeId,
     model::DiodeModel,
     netlist::parse,
-    power::dc_power,
     newton::{NewtonOptions, linearize, norm_inf, solve, solve_from},
+    power::dc_power,
     transient::{TransientOptions, transient},
 };
 
@@ -28,11 +28,30 @@ fn shockley_diode_has_positive_incremental_conductance() {
 
 #[test]
 fn dense_lu_and_qr_agree_on_diode_operating_point() {
-    let circuit = Circuit { nodes: vec!["0".into(), "s".into(), "a".into()], elements: vec![
-        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
-        Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
-        Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
-    ] };
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "s".into(), "a".into()],
+        elements: vec![
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 1.,
+            },
+            Element::Resistor {
+                id: "R1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                ohms: 1000.,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
+        ],
+    };
     let plan = compile(&circuit).unwrap();
     let lu = operating_point(&plan, &DenseLu).unwrap();
     let qr = operating_point(&plan, &DenseQr).unwrap();
@@ -42,11 +61,30 @@ fn dense_lu_and_qr_agree_on_diode_operating_point() {
 #[test]
 fn bounded_diode_parameter_corpus_produces_finite_operating_points() {
     for scale in [0.1, 1., 10.] {
-        let circuit = Circuit { nodes: vec!["0".into(), "s".into(), "a".into()], elements: vec![
-            Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
-            Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. * scale },
-            Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12 * scale, thermal_volts: 0.02585 },
-        ] };
+        let circuit = Circuit {
+            nodes: vec!["0".into(), "s".into(), "a".into()],
+            elements: vec![
+                Element::Voltage {
+                    id: "V1".into(),
+                    p: NodeId(1),
+                    n: NodeId(0),
+                    volts: 1.,
+                },
+                Element::Resistor {
+                    id: "R1".into(),
+                    p: NodeId(1),
+                    n: NodeId(2),
+                    ohms: 1000. * scale,
+                },
+                Element::Diode {
+                    id: "D1".into(),
+                    p: NodeId(2),
+                    n: NodeId(0),
+                    saturation_amps: 1e-12 * scale,
+                    thermal_volts: 0.02585,
+                },
+            ],
+        };
         let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
         assert!(values.iter().all(|value| value.is_finite()));
     }
@@ -54,14 +92,38 @@ fn bounded_diode_parameter_corpus_produces_finite_operating_points() {
 
 #[test]
 fn diode_dc_power_participates_in_balance_diagnostics() {
-    let circuit = Circuit { nodes: vec!["0".into(), "s".into(), "a".into()], elements: vec![
-        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
-        Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
-        Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
-    ] };
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "s".into(), "a".into()],
+        elements: vec![
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 1.,
+            },
+            Element::Resistor {
+                id: "R1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                ohms: 1000.,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
+        ],
+    };
     let plan = compile(&circuit).unwrap();
     let power = dc_power(&plan, &operating_point(&plan, &DenseLu).unwrap()).unwrap();
-    assert!(power.devices.iter().any(|device| device.id == "D1" && device.absorbed_w > 0.));
+    assert!(
+        power
+            .devices
+            .iter()
+            .any(|device| device.id == "D1" && device.absorbed_w > 0.)
+    );
     assert!(power.sum_absorbed_w.abs() < 1e-10);
 }
 
