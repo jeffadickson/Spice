@@ -4,7 +4,7 @@ use crate::{
     ids::NodeId,
     quantity::spice_scalar,
 };
-/// Explicit small subset: optional title, R/C/V/I, .op and .end. No includes or control commands.
+/// Explicit small subset: optional title, R/C/L/D/V/I, .op and .end. No includes or control commands.
 pub fn parse(text: &str) -> SimResult<Circuit> {
     if text.len() > 1_048_576 {
         return Err(SimError::new(
@@ -49,16 +49,18 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
         {
             continue;
         }
-        if !matches!(kind, 'R' | 'C' | 'L' | 'V' | 'I') {
+        if !matches!(kind, 'R' | 'C' | 'L' | 'D' | 'V' | 'I') {
             return Err(SimError::new(
                 ErrorCode::Unsupported,
                 format!("line {}: unsupported element/directive", index + 1),
             ));
         }
-        if tokens.len() != 4 {
+        let expected = if kind == 'D' { 5 } else { 4 };
+        if tokens.len() != expected {
             return Err(SimError::invalid(format!(
-                "line {}: expected id p n value",
+                "line {}: expected id p n value{}",
                 index + 1
+                , if kind == 'D' { " thermal_voltage" } else { "" }
             )));
         }
         let mut node = |label: &str| -> NodeId {
@@ -105,6 +107,13 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
                 p,
                 n,
                 henries: value,
+            },
+            'D' => Element::Diode {
+                id,
+                p,
+                n,
+                saturation_amps: value,
+                thermal_volts: spice_scalar(tokens[4]).map_err(|e| SimError::invalid(format!("line {}: {}", index + 1, e.message)))?,
             },
             _ => unreachable!(),
         });

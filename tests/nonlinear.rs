@@ -8,6 +8,7 @@ use circuit_simulator::{
     model::DiodeModel,
     newton::{NewtonOptions, linearize, norm_inf, solve, solve_from},
     transient::{TransientOptions, transient},
+    netlist::parse,
 };
 
 #[test]
@@ -21,6 +22,13 @@ fn shockley_diode_has_positive_incremental_conductance() {
     assert!(zero.current_amps.abs() < 1e-24);
     assert!(forward.current_amps > 0.);
     assert!(forward.conductance_siemens > zero.conductance_siemens);
+}
+
+#[test]
+fn netlist_accepts_explicit_diode_parameters() {
+    let circuit = parse("diode\nD1 a 0 1p 25.85m\n.end").unwrap();
+    assert!(matches!(circuit.elements[0], Element::Diode { .. }));
+    assert!(parse("diode\nD1 a 0 1p\n.end").is_err());
 }
 
 #[test]
