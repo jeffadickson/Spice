@@ -1,0 +1,17 @@
+{
+  "iteration": 10,
+  "source_commit": "77e86e3",
+  "rustc": "1.99.1",
+  "target": "x86_64-pc-windows-gnu",
+  "build": "passed",
+  "rust_tests_passed": 6,
+  "coverage": "collected at final instrumented checkpoints; not measured at 10",
+  "commands": [
+    "cargo build",
+    "cargo test"
+  ],
+  "limitations": [
+    "dense reference LU only",
+    "Windows host only"
+  ]
+}

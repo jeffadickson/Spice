@@ -15,3 +15,18 @@ impl LinearSolver for DenseLu{
     }
 }
 
+/// Independent algorithm within the same library, not a second qualified provider.
+#[derive(Debug,Default)]
+pub struct DenseQr;
+impl LinearSolver for DenseQr{
+    fn name(&self)->&'static str{"nalgebra_dense_qr_reference"}
+    fn solve(&self,a:&Matrix,b:&[f64])->SimResult<Vec<f64>>{
+        a.validate(b)?;
+        let x=DMatrix::from_row_slice(a.n,a.n,&a.values).qr()
+            .solve(&DVector::from_column_slice(b))
+            .ok_or_else(||SimError::new(ErrorCode::SingularMatrix,"QR has no unique solution"))?;
+        if x.iter().any(|v|!v.is_finite()){return Err(SimError::new(ErrorCode::NumericalFailure,"nonfinite QR solution"));}
+        Ok(x.as_slice().to_vec())
+    }
+}
+

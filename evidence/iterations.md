@@ -12,3 +12,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 8. Compile passive DC circuits into modified nodal equations
 9. Expose operating-point analysis over the solver contract
 10. Add analytic DC and invalid-input regression tests
+11. Add QR reference adapter without claiming provider independence
