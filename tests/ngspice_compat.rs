@@ -202,6 +202,28 @@ fn ngspice_h_card_imports_with_named_branch_current_polarity() {
 }
 
 #[test]
+fn ngspice_f_card_participates_in_bounded_ac_analysis() {
+    let request = import_ngspice_request(
+        "title\nV1 in 0 DC 0 AC 1\nRCONTROL in 0 1\nF1 out 0 V1 0.5\nROUT out 0 1\n.ac lin 1 10 10\n.end\n",
+        "f-ac",
+    )
+    .unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!((result.ac_samples[0].values[1].real - 0.5).abs() < 1e-12);
+}
+
+#[test]
+fn ngspice_h_card_participates_in_bounded_ac_analysis() {
+    let request = import_ngspice_request(
+        "title\nV1 in 0 DC 0 AC 1\nRCONTROL in 0 1\nH1 out 0 V1 3\nROUT out 0 1\n.ac lin 1 10 10\n.end\n",
+        "h-ac",
+    )
+    .unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!((result.ac_samples[0].values[1].real + 3.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_e_card_participates_in_bounded_ac_analysis() {
     let request = import_ngspice_request("title\nV1 in 0 DC 0 AC 1\nE1 out 0 in 0 -3\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "e-ac").unwrap();
     let result = circuit_simulator::api::run(&request).unwrap();
