@@ -1,0 +1,24 @@
+name: reference-engine
+on: [push, pull_request]
+jobs:
+  contracts:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.402'
+      - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt,clippy,llvm-tools-preview
+      - run: ./scripts/Test.ps1
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets --locked -- -D warnings
+      - if: runner.os == 'Linux'
+        run: ./scripts/Test-Coverage.ps1
+# This workflow is configured, not claimed to have run remotely.
+
