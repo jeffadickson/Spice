@@ -33,6 +33,12 @@
       "required_features": ["pole_zero_analysis"]
     },
     {
+      "path": "tests/regression/temper/temper-1.cir",
+      "family": "compact_models",
+      "state": "blocked_by_features",
+      "required_features": ["model_parameter_expressions", "control_blocks"]
+    },
+    {
       "path": "examples/measure/func_cap.sp",
       "family": "hierarchy_or_expression",
       "state": "blocked_by_features",
