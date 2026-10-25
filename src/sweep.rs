@@ -112,6 +112,27 @@ pub fn final_signal_rows(points: &[SweepPoint], signal_id: &str) -> Vec<SignalRo
     }).collect()
 }
 
+/// Project a named engine measurement across all completed points. The returned
+/// unit follows the engine measurement and unavailable values retain a reason.
+#[derive(Debug, Serialize)]
+pub struct MeasurementRow {
+    pub index: usize,
+    pub selection: ScalarSelection,
+    pub unit: Option<String>,
+    pub value: Option<f64>,
+    pub reason: Option<String>,
+}
+
+pub fn measurement_rows(points: &[SweepPoint], measurement_id: &str) -> Vec<MeasurementRow> {
+    points.iter().map(|point| {
+        let measurement = point.result.as_ref().and_then(|result| result.measurements.iter().find(|m| m.id == measurement_id));
+        match measurement {
+            Some(measurement) => MeasurementRow { index: point.index, selection: point.selection.clone(), unit: Some(measurement.unit.clone()), value: measurement.value, reason: measurement.reason.clone() },
+            None => MeasurementRow { index: point.index, selection: point.selection.clone(), unit: None, value: None, reason: Some("measurement is unavailable for sweep point".into()) },
+        }
+    }).collect()
+}
+
 /// A grid execution point retaining values in declared dimension order.
 #[derive(Debug, Serialize)]
 pub struct GridPoint {

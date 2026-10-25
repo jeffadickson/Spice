@@ -4,7 +4,7 @@ use circuit_simulator::{
     ids::NodeId,
     registry::BackendRegistry,
     sweep::{
-        GridSummary, SweepSummary, derived_case_id, final_signal, final_signal_rows, run_grid, run_scalar,
+        GridSummary, SweepSummary, derived_case_id, final_signal, final_signal_rows, measurement_rows, run_grid, run_scalar,
         run_scalar_cancellable,
     },
     variation::{ScalarGrid, ScalarKind, ScalarSweep, replace_scalar, scalar_kind},
@@ -20,6 +20,16 @@ fn fixture() -> Circuit {
             ohms: 10.,
         }],
     }
+}
+
+#[test]
+fn missing_measurements_are_explicitly_unavailable_in_sweep_rows() {
+    let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000.] };
+    let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
+    let rows = measurement_rows(&points, "not-configured");
+    assert_eq!(rows[0].value, None);
+    assert!(rows[0].reason.as_ref().unwrap().contains("unavailable"));
 }
 
 #[test]
