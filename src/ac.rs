@@ -1,4 +1,6 @@
 use crate::{
+    api::AcSourcePhasor,
+    circuit::Element,
     compile::CompiledCircuit,
     error::{ErrorCode, SimError, SimResult},
     linalg::LinearSolver,
@@ -22,10 +24,54 @@ pub fn ac(
     frequencies: &[f64],
     solver: &dyn LinearSolver,
 ) -> SimResult<Vec<AcSample>> {
+    ac_with_source_phasors(plan, frequencies, &[], solver)
+}
+
+/// Solve a small-signal AC grid with optional complex independent-source values.
+pub fn ac_with_source_phasors(
+    plan: &CompiledCircuit,
+    frequencies: &[f64],
+    source_phasors: &[AcSourcePhasor],
+    solver: &dyn LinearSolver,
+) -> SimResult<Vec<AcSample>> {
     if frequencies.is_empty() || frequencies.len() > 10_000 {
         return Err(SimError::invalid("AC grid must contain 1..10000 points"));
     }
     let n = plan.conductance.n;
+    if source_phasors.len() > 128 {
+        return Err(SimError::invalid("AC source phasor budget exceeded"));
+    }
+    let mut rhs_real = plan.rhs.clone();
+    let mut rhs_imag = vec![0.; n];
+    let mut ids = std::collections::BTreeSet::new();
+    for phasor in source_phasors {
+        if phasor.id.is_empty() || !phasor.real.is_finite() || !phasor.imag.is_finite()
+            || !ids.insert(&phasor.id) {
+            return Err(SimError::invalid("invalid or duplicate AC source phasor"));
+        }
+        let element = plan.circuit.elements.iter().find(|element| element.id() == phasor.id)
+            .ok_or_else(|| SimError::invalid("unknown AC source phasor"))?;
+        match element {
+            Element::Voltage { volts, .. } => {
+                let row = plan.branch_index(&phasor.id)
+                    .ok_or_else(|| SimError::invalid("missing AC voltage-source branch"))?;
+                rhs_real[row] += phasor.real - *volts;
+                rhs_imag[row] += phasor.imag;
+            }
+            Element::Current { p, n, amps, .. } => {
+                let real_delta = phasor.real - *amps;
+                if let Some(row) = p.unknown() {
+                    rhs_real[row] -= real_delta;
+                    rhs_imag[row] -= phasor.imag;
+                }
+                if let Some(row) = n.unknown() {
+                    rhs_real[row] += real_delta;
+                    rhs_imag[row] += phasor.imag;
+                }
+            }
+            _ => return Err(SimError::invalid("AC phasor must target an independent source")),
+        }
+    }
     // Nonlinear small-signal AC is evaluated around the converged DC point. The
     // analytic Newton Jacobian contains the incremental diode conductances.
     let conductance = if plan.has_nonlinear_devices() {
@@ -48,7 +94,13 @@ pub fn ac(
         for value in &mut imag.values {
             *value *= omega;
         }
-        let x = solver.solve_complex(&conductance, &imag, &plan.rhs)?;
+        let mut x = solver.solve_complex(&conductance, &imag, &rhs_real)?;
+        if rhs_imag.iter().any(|value| *value != 0.) {
+            let quadrature = solver.solve_complex(&conductance, &imag, &rhs_imag)?;
+            for (value, quadrature_value) in x.iter_mut().zip(quadrature) {
+                *value += Complex64::new(-quadrature_value.im, quadrature_value.re);
+            }
+        }
         if x.len() != n || x.iter().any(|v| !v.re.is_finite() || !v.im.is_finite()) {
             return Err(SimError::new(
                 ErrorCode::NumericalFailure,
@@ -59,8 +111,8 @@ pub fn ac(
             let residual = (0..n)
                 .map(|j| Complex64::new(conductance.at(i, j), imag.at(i, j)) * x[j])
                 .sum::<Complex64>()
-                - plan.rhs[i];
-            let scale = plan.rhs[i].abs()
+                - Complex64::new(rhs_real[i], rhs_imag[i]);
+            let scale = Complex64::new(rhs_real[i], rhs_imag[i]).norm()
                 + (0..n)
                     .map(|j| {
                         (Complex64::new(conductance.at(i, j), imag.at(i, j)) * x[j]).norm()

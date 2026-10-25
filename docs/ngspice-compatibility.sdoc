@@ -190,3 +190,13 @@ The bounded ngspice importer shall classify .print and .plot as import-only dire
 COMMENT: >>>
 Implementation: netlist::parse_ngspice_basic. Verification: tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-020
+TITLE: Complex AC source phasors
+STATEMENT: >>>
+The typed AC request shall accept bounded, unique, finite complex phasors for independent voltage and current sources. A phasor shall replace its source's nominal real small-signal excitation without changing the DC circuit. The ngspice importer shall lower AC amplitude and optional phase in degrees into those phasors and shall preserve p-to-n source polarity.
+<<<
+COMMENT: >>>
+Implementation: api::AcSourcePhasor, ac::ac_with_source_phasors and netlist::import_ngspice_request. Verification: tests/ngspice_compat.rs, tests/analyses.rs and tests/providers.rs.
+<<<

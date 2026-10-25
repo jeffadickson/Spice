@@ -82,6 +82,7 @@ fn qr_complex_capability_is_rejected() {
         circuit,
         analysis: Analysis::Ac {
             frequencies_hz: vec![1.0],
+            source_phasors: vec![],
         },
         backend: "qr".into(),
         experiment: None,

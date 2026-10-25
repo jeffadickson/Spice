@@ -19,10 +19,22 @@ pub enum Analysis {
     },
     Ac {
         frequencies_hz: Vec<f64>,
+        /// Optional source phasors replace the nominal real AC excitation.
+        #[serde(default)]
+        source_phasors: Vec<AcSourcePhasor>,
     },
     TransientConfigured {
         options: crate::configured::TransientConfig,
     },
+}
+
+/// A finite complex small-signal source value using the circuit's p-to-n sign.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AcSourcePhasor {
+    pub id: String,
+    pub real: f64,
+    pub imag: f64,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -111,7 +123,9 @@ pub fn run_with_registry(
         }
     };
     let mut ac_samples = match &request.analysis {
-        Analysis::Ac { frequencies_hz } => crate::ac::ac(&plan, frequencies_hz, solver)?,
+        Analysis::Ac { frequencies_hz, source_phasors } => {
+            crate::ac::ac_with_source_phasors(&plan, frequencies_hz, source_phasors, solver)?
+        }
         _ => Vec::new(),
     };
     let mut signals: Vec<Signal> = request

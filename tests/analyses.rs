@@ -1,5 +1,5 @@
 use circuit_simulator::{
-    api::{Analysis, Request, run},
+    api::{AcSourcePhasor, Analysis, Request, run},
     assertion::{Outcome, within},
     grid::log_grid,
     measurement::value_at,
@@ -16,6 +16,7 @@ fn rc_ac_matches_complex_transfer() {
         circuit: c,
         analysis: Analysis::Ac {
             frequencies_hz: vec![1.0 / (std::f64::consts::TAU * 0.001)],
+            source_phasors: vec![],
         },
         backend: "lu".into(),
         experiment: None,
@@ -25,6 +26,20 @@ fn rc_ac_matches_complex_transfer() {
     assert!((v.real - 0.5).abs() < 1e-12);
     assert!((v.imag + 0.5).abs() < 1e-12);
     assert_eq!(r.request_sha256.len(), 64);
+}
+
+#[test]
+fn ac_source_phasors_reject_non_source_targets_before_solving() {
+    let circuit = parse("title\nR1 out 0 1k\n.end").unwrap();
+    let request = Request {
+        schema_version: "1".into(), case_id: "invalid-ac-phasor".into(), circuit,
+        analysis: Analysis::Ac {
+            frequencies_hz: vec![1.],
+            source_phasors: vec![AcSourcePhasor { id: "R1".into(), real: 1., imag: 0. }],
+        },
+        backend: "lu".into(), experiment: None,
+    };
+    assert_eq!(run(&request).unwrap_err().code, circuit_simulator::error::ErrorCode::InvalidInput);
 }
 #[test]
 fn current_source_polarity() {

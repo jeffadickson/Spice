@@ -41,7 +41,7 @@ fn ngspice_duplicate_transient_directives_are_rejected() {
 fn ngspice_ac_linear_directive_lowers_to_typed_request() {
     let request = import_ngspice_request("title\nV1 out 0 1\nR1 out 0 1k\n.ac lin 3 10 30\n.end\n", "ac-import").unwrap();
     match request.analysis {
-        circuit_simulator::api::Analysis::Ac { frequencies_hz } => assert_eq!(frequencies_hz, vec![10., 20., 30.]),
+        circuit_simulator::api::Analysis::Ac { frequencies_hz, .. } => assert_eq!(frequencies_hz, vec![10., 20., 30.]),
         _ => panic!("expected AC analysis"),
     }
 }
@@ -79,9 +79,15 @@ fn ngspice_ac_current_source_amplitude_uses_declared_polarity() {
 }
 
 #[test]
-fn ngspice_ac_source_phase_is_rejected_until_phasors_are_represented() {
-    let error = import_ngspice_request("title\nV1 out 0 DC 0 AC 1 90\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "ac-phase").unwrap_err();
-    assert_eq!(error.code, ErrorCode::InvalidInput);
+fn ngspice_ac_source_phase_lowers_to_a_complex_phasor() {
+    let request = import_ngspice_request(
+        "title\nV1 out 0 DC 0 AC 1 90\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n",
+        "ac-phase",
+    )
+    .unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!(result.ac_samples[0].values[0].real.abs() < 1e-12);
+    assert!((result.ac_samples[0].values[0].imag - 1.).abs() < 1e-12);
 }
 
 #[test]
@@ -110,7 +116,7 @@ fn ngspice_decade_ac_sweeps_lower_to_logarithmic_grids() {
         "ac-dec",
     ).unwrap();
     match request.analysis {
-        circuit_simulator::api::Analysis::Ac { frequencies_hz } => {
+        circuit_simulator::api::Analysis::Ac { frequencies_hz, .. } => {
             assert_eq!(frequencies_hz.len(), 11);
             assert!((frequencies_hz[10] - 10.).abs() < 1e-12);
         }
@@ -125,7 +131,7 @@ fn ngspice_decade_grid_ends_exactly_at_non_integral_stop() {
         "ac-dec-stop",
     ).unwrap();
     match request.analysis {
-        circuit_simulator::api::Analysis::Ac { frequencies_hz } => {
+        circuit_simulator::api::Analysis::Ac { frequencies_hz, .. } => {
             assert_eq!(frequencies_hz.last().copied(), Some(15.));
             assert!(frequencies_hz.iter().all(|frequency| *frequency <= 15.));
         }
@@ -140,7 +146,7 @@ fn ngspice_octave_ac_sweeps_lower_to_logarithmic_grids() {
         "ac-oct",
     ).unwrap();
     match request.analysis {
-        circuit_simulator::api::Analysis::Ac { frequencies_hz } => {
+        circuit_simulator::api::Analysis::Ac { frequencies_hz, .. } => {
             assert_eq!(frequencies_hz.len(), 3);
             assert!((frequencies_hz[1] - 2_f64.sqrt()).abs() < 1e-12);
         }

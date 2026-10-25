@@ -1,5 +1,5 @@
 use crate::{
-    api::{Analysis, Request},
+    api::{AcSourcePhasor, Analysis, Request},
     circuit::{Circuit, Element},
     error::{ErrorCode, SimError, SimResult},
     ids::NodeId,
@@ -327,19 +327,31 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
     let analysis = match (transient, ac) {
         (Some(_), Some(_)) => return Err(SimError::new(ErrorCode::Unsupported, "only one ngspice analysis directive is supported")),
         (Some(options), None) => Analysis::TransientConfigured { options },
-        (None, Some(frequencies_hz)) => Analysis::Ac { frequencies_hz },
+        (None, Some(frequencies_hz)) => Analysis::Ac { frequencies_hz, source_phasors: Vec::new() },
         (None, None) => Analysis::OperatingPoint,
     };
+    let mut source_phasors = Vec::new();
     let input = if matches!(analysis, Analysis::Ac { .. }) {
         let mut normalized = String::new();
         for line in text.lines() {
             let tokens: Vec<_> = line.split_whitespace().collect();
             if matches!(tokens.first().and_then(|name| name.chars().next()).map(|kind| kind.to_ascii_uppercase()), Some('V' | 'I'))
-                && tokens.len() == 7
+                && (tokens.len() == 7 || tokens.len() == 8)
                 && tokens[3].eq_ignore_ascii_case("dc")
                 && tokens[5].eq_ignore_ascii_case("ac")
             {
                 let amplitude = tokens[6].trim_end_matches(['V', 'v', 'A', 'a']);
+                let amplitude = spice_scalar(amplitude)?;
+                let phase_degrees = if tokens.len() == 8 { spice_scalar(tokens[7])? } else { 0. };
+                if !phase_degrees.is_finite() {
+                    return Err(SimError::invalid("invalid AC source phase"));
+                }
+                let phase_radians = phase_degrees.to_radians();
+                source_phasors.push(AcSourcePhasor {
+                    id: tokens[0].to_ascii_uppercase(),
+                    real: amplitude * phase_radians.cos(),
+                    imag: amplitude * phase_radians.sin(),
+                });
                 normalized.push_str(&format!("{} {} {} {}\n", tokens[0], tokens[1], tokens[2], amplitude));
             } else if tokens.len() == 5
                 && tokens.first().is_some_and(|name| name.starts_with('R') || name.starts_with('r'))
@@ -438,6 +450,7 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
             Analysis::TransientConfigured { options }
         }
         _ if !sources.is_empty() => return Err(SimError::new(ErrorCode::Unsupported, "PULSE sources require a bounded .tran directive")),
+        Analysis::Ac { frequencies_hz, .. } => Analysis::Ac { frequencies_hz, source_phasors },
         other => other,
     };
     Ok(Request {

@@ -32,6 +32,7 @@ fn sparse_and_dense_ac_agree() {
         circuit: c.clone(),
         analysis: Analysis::Ac {
             frequencies_hz: vec![1., 159.15494309189535, 1e5],
+            source_phasors: vec![],
         },
         backend: backend.into(),
         experiment: None,

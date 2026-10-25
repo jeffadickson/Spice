@@ -30,7 +30,7 @@ F022|Linear AC frequency grid|supported_api_only
 F023|AC DEC grid|supported
 F024|AC OCT grid|supported
 F025|AC LIN grid|supported
-F026|AC source amplitude and phase|future
+F026|AC source amplitude and phase|supported
 F027|AC-qualified resistor values|supported
 F028|AC-qualified capacitor values|future
 F029|AC-qualified inductor values|future
