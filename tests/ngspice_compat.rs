@@ -156,6 +156,13 @@ fn ngspice_g_card_imports_with_controlled_current_polarity() {
 }
 
 #[test]
+fn ngspice_g_card_participates_in_bounded_ac_analysis() {
+    let request = import_ngspice_request("title\nV1 in 0 DC 0 AC 1\nG1 out 0 in 0 2m\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "g-ac").unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!((result.ac_samples[0].values[1].real + 2.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_g_card_rejects_missing_control_terminal() {
     let error = parse_ngspice_basic("title\nG1 out 0 in 1m\n.end\n").unwrap_err();
     assert_eq!(error.code, ErrorCode::InvalidInput);
