@@ -72,8 +72,15 @@ pub struct GridSummary {
 
 impl GridSummary {
     pub fn from_points(points: &[GridPoint]) -> Self {
-        let succeeded = points.iter().filter(|point| point.execution == "succeeded").count();
-        Self { total: points.len(), succeeded, failed: points.len() - succeeded }
+        let succeeded = points
+            .iter()
+            .filter(|point| point.execution == "succeeded")
+            .count();
+        Self {
+            total: points.len(),
+            succeeded,
+            failed: points.len() - succeeded,
+        }
     }
 }
 
@@ -92,7 +99,10 @@ pub fn run_grid(
         let mut variant = request.clone();
         variant.case_id = derived_case_id(&request.case_id, 'g', index)?;
         variant.circuit = circuit;
-        let selections = grid.dimensions.iter().zip(&values)
+        let selections = grid
+            .dimensions
+            .iter()
+            .zip(&values)
             .map(|(dimension, value)| dimension.selection(&request.circuit, *value))
             .collect::<SimResult<Vec<_>>>()?;
         match run_with_registry(&variant, registry) {

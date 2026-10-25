@@ -13,7 +13,13 @@ use crate::{
 /// consumer does not need to infer units from an element-ID naming convention.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
 #[serde(rename_all = "snake_case")]
-pub enum ScalarKind { Resistance, Capacitance, Inductance, Voltage, Current }
+pub enum ScalarKind {
+    Resistance,
+    Capacitance,
+    Inductance,
+    Voltage,
+    Current,
+}
 
 impl ScalarKind {
     /// Canonical SI unit associated with this component scalar.
@@ -30,7 +36,10 @@ impl ScalarKind {
 
 /// Look up the public scalar category for an element identity.
 pub fn scalar_kind(circuit: &Circuit, element_id: &str) -> SimResult<ScalarKind> {
-    let element = circuit.elements.iter().find(|element| element.id() == element_id)
+    let element = circuit
+        .elements
+        .iter()
+        .find(|element| element.id() == element_id)
         .ok_or_else(|| SimError::invalid("variation element ID is unknown"))?;
     Ok(match element {
         Element::Resistor { .. } => ScalarKind::Resistance,
@@ -89,10 +98,17 @@ impl ScalarSweep {
     pub fn selection(&self, circuit: &Circuit, value: f64) -> SimResult<ScalarSelection> {
         self.validate()?;
         if !self.values.contains(&value) {
-            return Err(SimError::invalid("selection value is not declared by sweep"));
+            return Err(SimError::invalid(
+                "selection value is not declared by sweep",
+            ));
         }
         let kind = scalar_kind(circuit, &self.element_id)?;
-        Ok(ScalarSelection { element_id: self.element_id.clone(), kind, unit: kind.unit(), value })
+        Ok(ScalarSelection {
+            element_id: self.element_id.clone(),
+            kind,
+            unit: kind.unit(),
+            value,
+        })
     }
 }
 
@@ -154,7 +170,11 @@ impl ScalarGrid {
     /// Return the already validated cardinality without allocating variants.
     pub fn cardinality(&self) -> SimResult<usize> {
         self.validate()?;
-        Ok(self.dimensions.iter().map(|dimension| dimension.values.len()).product())
+        Ok(self
+            .dimensions
+            .iter()
+            .map(|dimension| dimension.values.len())
+            .product())
     }
 
     /// Return each complete immutable circuit and the matching dimension values.

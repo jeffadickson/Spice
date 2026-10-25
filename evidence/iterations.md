@@ -112,3 +112,13 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 108. Summarize scalar sweep outcomes
 109. Test isolated variation point failures
 110. Checkpoint reproducible variation primitives
+111. Expose scalar variation kinds
+112. Declare canonical scalar variation units
+113. Describe selected variation values with units
+114. Reject undeclared scalar selections
+115. Include unit-aware scalar selections in results
+116. Include unit-aware grid selections
+117. Centralize stable variation case identities
+118. Summarize scalar grid outcomes
+119. Expose validated grid cardinality
+120. Checkpoint typed variation result contracts

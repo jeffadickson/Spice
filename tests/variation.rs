@@ -3,7 +3,9 @@ use circuit_simulator::{
     circuit::{Circuit, Element},
     ids::NodeId,
     registry::BackendRegistry,
-    sweep::{GridSummary, SweepSummary, derived_case_id, run_grid, run_scalar, run_scalar_cancellable},
+    sweep::{
+        GridSummary, SweepSummary, derived_case_id, run_grid, run_scalar, run_scalar_cancellable,
+    },
     variation::{ScalarGrid, ScalarKind, ScalarSweep, replace_scalar, scalar_kind},
 };
 
@@ -22,21 +24,30 @@ fn fixture() -> Circuit {
 #[test]
 fn derived_case_ids_are_bounded_and_kind_specific() {
     assert_eq!(derived_case_id("base", 's', 2).unwrap(), "base--s02");
-    assert_ne!(derived_case_id("base", 's', 2).unwrap(), derived_case_id("base", 'g', 2).unwrap());
+    assert_ne!(
+        derived_case_id("base", 's', 2).unwrap(),
+        derived_case_id("base", 'g', 2).unwrap()
+    );
     assert!(derived_case_id("", 's', 0).is_err());
     assert!(derived_case_id("base", 'x', 0).is_err());
 }
 
 #[test]
 fn scalar_kind_is_explicit_for_programmatic_consumers() {
-    assert_eq!(scalar_kind(&fixture(), "R1").unwrap(), ScalarKind::Resistance);
+    assert_eq!(
+        scalar_kind(&fixture(), "R1").unwrap(),
+        ScalarKind::Resistance
+    );
     assert_eq!(ScalarKind::Resistance.unit(), "ohm");
     assert!(scalar_kind(&fixture(), "nope").is_err());
 }
 
 #[test]
 fn selection_carries_identity_value_and_si_unit() {
-    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![10.] };
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![10.],
+    };
     let selection = sweep.selection(&fixture(), 10.).unwrap();
     assert_eq!(selection.element_id, "R1");
     assert_eq!(selection.unit, "ohm");
@@ -90,7 +101,14 @@ fn grid_execution_exposes_each_selected_vector() {
     assert_eq!(points.len(), 2);
     assert_eq!(points[1].selections[0].value, 2000.);
     assert_eq!(points[1].result.as_ref().unwrap().case_id, "divider--g01");
-    assert_eq!(GridSummary::from_points(&points), GridSummary { total: 2, succeeded: 2, failed: 0 });
+    assert_eq!(
+        GridSummary::from_points(&points),
+        GridSummary {
+            total: 2,
+            succeeded: 2,
+            failed: 0
+        }
+    );
 }
 
 #[test]
