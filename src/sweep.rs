@@ -25,12 +25,26 @@ pub fn run_scalar(
     sweep: &ScalarSweep,
     registry: &BackendRegistry,
 ) -> SimResult<Vec<SweepPoint>> {
+    run_scalar_cancellable(request, sweep, registry, &false.into())
+}
+
+/// As [`run_scalar`], with cooperative cancellation checked only between complete
+/// points. A returned vector never contains a partially executed point.
+pub fn run_scalar_cancellable(
+    request: &Request,
+    sweep: &ScalarSweep,
+    registry: &BackendRegistry,
+    cancel: &std::sync::atomic::AtomicBool,
+) -> SimResult<Vec<SweepPoint>> {
     let circuits = sweep.circuits(&request.circuit)?;
     if request.case_id.is_empty() || request.case_id.len() > 220 {
         return Err(SimError::invalid("invalid sweep base case ID"));
     }
     let mut points = Vec::with_capacity(circuits.len());
     for (index, (value, circuit)) in sweep.values.iter().zip(circuits).enumerate() {
+        if cancel.load(std::sync::atomic::Ordering::Relaxed) {
+            return Err(SimError::new(ErrorCode::Cancelled, "sweep cancelled between points"));
+        }
         let mut variant = request.clone();
         variant.case_id = format!("{}--s{:02}", request.case_id, index);
         variant.circuit = circuit;
