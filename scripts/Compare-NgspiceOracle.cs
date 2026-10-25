@@ -21,9 +21,11 @@ static async Task<(int ExitCode, string Output)> Run(string executable, params s
 var root = Directory.GetCurrentDirectory();
 var fixture = Path.Combine(root, "compat", "ngspice", "res_simple.cir");
 var request = Path.Combine(root, "compat", "ngspice", "res_simple.request.json");
-var oracle = await Run(args[0], "-b", "-o", Path.Combine(root, "build", "ngspice-oracles", "comparison.log"), fixture);
+var oracleLog = Path.Combine(root, "build", "ngspice-oracles", "comparison.log");
+var oracle = await Run(args[0], "-b", "-o", oracleLog, fixture);
 if (oracle.ExitCode != 0) throw new InvalidOperationException($"ngspice failed: {oracle.Output}");
-var match = Regex.Matches(oracle.Output, @"\s\d+\s+[\deE+.-]+\s+([\deE+.-]+)")
+var oracleTable = await File.ReadAllTextAsync(oracleLog);
+var match = Regex.Matches(oracleTable, @"\s\d+\s+[\deE+.-]+\s+([\deE+.-]+)")
     .Select(match => double.Parse(match.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture))
     .LastOrDefault();
 var simulator = new ProcessStartInfo(args[1]) { UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
