@@ -1,0 +1,17 @@
+{
+  "iteration": 30,
+  "build": "passed",
+  "rust_tests_passed": 16,
+  "cli_divider_voltage": 5,
+  "cli_source_current": -0.005,
+  "commands": [
+    "cargo build --locked",
+    "cargo test --locked",
+    "CLI divider JSON"
+  ],
+  "limitations": [
+    "dense reference methods share nalgebra",
+    "fixed-step transient",
+    "real source amplitudes reused for AC"
+  ]
+}
