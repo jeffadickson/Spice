@@ -15,12 +15,15 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(Inductor), "inductor")]
 [JsonDerivedType(typeof(Voltage), "voltage")]
 [JsonDerivedType(typeof(Current), "current")]
+[JsonDerivedType(typeof(Diode), "diode")]
 public abstract record Element(string Id, int P, int N);
 public sealed record Resistor(string Id, int P, int N, double Ohms) : Element(Id, P, N);
 public sealed record Capacitor(string Id, int P, int N, double Farads) : Element(Id, P, N);
 public sealed record Inductor(string Id, int P, int N, double Henries) : Element(Id, P, N);
 public sealed record Voltage(string Id, int P, int N, double Volts) : Element(Id, P, N);
 public sealed record Current(string Id, int P, int N, double Amps) : Element(Id, P, N);
+/// <summary>Shockley diode parameters use SI amps and volts; current flows P to N.</summary>
+public sealed record Diode(string Id, int P, int N, double SaturationAmps, double ThermalVolts) : Element(Id, P, N);
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "kind")]
 [JsonDerivedType(typeof(OperatingPoint), "operating_point")]
