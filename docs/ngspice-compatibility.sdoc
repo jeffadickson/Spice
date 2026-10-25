@@ -70,3 +70,13 @@ The typed transient API shall represent a bounded periodic pulse waveform with f
 COMMENT: >>>
 Implementation: src/waveform.rs Waveform::Pulse. Verification: tests/ngspice_compat.rs exact plateau/edge and invalid-period tests.
 <<<
+
+[REQUIREMENT]
+UID: NGC-008
+TITLE: Bounded transient-deck lowering
+STATEMENT: >>>
+The ngspice importer shall lower exactly one two-value .tran directive into a typed configured transient request. Optional transient fields outside that profile shall fail explicitly rather than being discarded.
+<<<
+COMMENT: >>>
+Implementation: src/netlist.rs import_ngspice_request. Verification: tests/ngspice_compat.rs transient lowering test.
+<<<

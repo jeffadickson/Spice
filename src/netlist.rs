@@ -1,4 +1,5 @@
 use crate::{
+    api::{Analysis, Request},
     circuit::{Circuit, Element},
     error::{ErrorCode, SimError, SimResult},
     ids::NodeId,
@@ -172,4 +173,39 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
         normalized.push('\n');
     }
     parse(&normalized)
+}
+
+/// Lowers the bounded ngspice deck profile into the same typed request contract
+/// used by JSON and SForge callers. Only a two-value .tran directive is
+/// accepted; optional arguments fail rather than being ignored.
+pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResult<Request> {
+    let mut transient = None;
+    for source_line in text.lines() {
+        let line = source_line.split(';').next().unwrap_or_default().trim();
+        let tokens: Vec<_> = line.split_whitespace().collect();
+        if tokens.first().is_some_and(|token| token.eq_ignore_ascii_case(".tran")) {
+            if transient.is_some() || tokens.len() != 3 {
+                return Err(SimError::new(
+                    ErrorCode::Unsupported,
+                    "ngspice importer supports exactly one .tran step stop directive",
+                ));
+            }
+            transient = Some(crate::configured::TransientConfig {
+                max_step_s: spice_scalar(tokens[1])?,
+                stop_s: spice_scalar(tokens[2])?,
+                ..Default::default()
+            });
+        }
+    }
+    let analysis = transient
+        .map(|options| Analysis::TransientConfigured { options })
+        .unwrap_or(Analysis::OperatingPoint);
+    Ok(Request {
+        schema_version: "1".into(),
+        case_id: case_id.into(),
+        circuit: parse_ngspice_basic(text)?,
+        analysis,
+        backend: "lu".into(),
+        experiment: None,
+    })
 }

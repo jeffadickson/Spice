@@ -1,6 +1,6 @@
 use circuit_simulator::{
     backend::DenseLu, compile::compile, dc::operating_point, error::ErrorCode,
-    netlist::parse_ngspice_basic,
+    netlist::{import_ngspice_request, parse_ngspice_basic},
     waveform::Waveform,
 };
 
@@ -13,6 +13,22 @@ fn ngspice_res_simple_fixture_matches_dc_reference() {
     let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
     assert!((values[0] - 1.).abs() < 1e-12);
     assert!((values[1] + 1e-4).abs() < 1e-12);
+}
+
+#[test]
+fn ngspice_tran_directive_lowers_to_typed_request() {
+    let request = import_ngspice_request(
+        "title\nV1 out 0 1\nR1 out 0 1k\n.tran 1m 3m\n.end\n",
+        "tran-import",
+    )
+    .unwrap();
+    match request.analysis {
+        circuit_simulator::api::Analysis::TransientConfigured { options } => {
+            assert_eq!(options.max_step_s, 1e-3);
+            assert_eq!(options.stop_s, 3e-3);
+        }
+        _ => panic!("expected configured transient"),
+    }
 }
 
 #[test]
