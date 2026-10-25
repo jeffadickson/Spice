@@ -98,3 +98,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 94. Validate scalar expression division logarithm and exponential domains
 95. Publish bounded local result artifacts with a final integrity manifest
 96. Qualify artifact integrity power balance and new expression domains
+97. Document the extended executable scope and remaining release gaps

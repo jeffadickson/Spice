@@ -1,20 +1,18 @@
-# Implementation status after 50 passes
+# Implementation status after iterations 51–100
 
-The first executable slice is a **linear, small-circuit reference implementation**, not completion of the full 23-package plan.
+The second slice extends the **bounded linear reference engine**; it does not complete the 23-package production plan.
 
-| Plan area | Current evidence | Remaining |
+| Plan area | Implemented evidence | Remaining |
 |---|---|---|
-| PLAN-001 foundations | Rust/.NET build harness, lockfile, local tests and CI configuration | remotely exercised platform matrix, complete coverage setup and distribution license |
-| PLAN-002 equations | Linear R/C/source stamps and analytic checks | inductors, diode/charge limiting, nonlinear state and reviewed full conventions |
-| PLAN-003/008/016 solvers | nalgebra dense LU/QR and registry, independent residual checks | sparse backends and two independent qualified provider libraries |
-| PLAN-004/011 API | bounded one-shot JSON process calls from C#/F# | C ABI, persistent worker lifecycle, sandbox, complete typed contracts |
-| PLAN-007/009 circuit/model boundary | validated immutable plan and minimal linear contribution contract | hierarchy/structural models, complete DAE device interface and plugins |
-| PLAN-010/012/013 analyses | linear DC, complex AC, fixed-step RC transient | nonlinear operating point, adaptive/error-controlled transient and event/rollback suite |
-| PLAN-014 results | JSON signals, hashes and completeness; measurement/assertion helpers | Arrow streaming, durable commit protocol and integrated measurements |
-| PLAN-015 input | tiny explicit R/C/V/I parser | broad SPICE profiles/includes/subcircuits and legally usable vendor corpus |
-| PLAN-017 tests | analytic/negative/random/fuzz-smoke/mutation and managed coverage | coverage-guided fuzzing, broader mutation/coverage, native/GPU qualification |
-| PLAN-018 release | no release claim | all required profile/packaging/qualification gates |
-| PLAN-019..023 extensions | F# authoring and expression IR experiments only | plugins, GPU, selected DSL, campaigns and advanced analyses |
+| Solver variety | nalgebra dense and independent faer sparse LU; real/complex conformance and prepared RHS reuse | broad difficult-matrix corpus, native KLU/cuDSS/Ginkgo adapters, large-circuit sparse assembly |
+| Device equations | R/C/L plus independent sources, signed flux and branch currents, DC power diagnostics | semiconductor models, nonlinear limiting/Jacobians and full device/plugin API |
+| Dynamic analyses | configured initial states, PWL/sine sources, trapezoidal/BE, adaptive step doubling, accepted observers | nonlinear/multistep history, full event/co-simulation rules and complete DAE topology qualification |
+| API/data | typed C#/F# experimental JSON contract, measurements/assertions, capability discovery | Arrow, C ABI, persistent sandboxed worker, complete stable API/migration policy |
+| Campaigns | bounded sequential cases with per-case failures and callbacks | parallel resource scheduling, seeds/statistics, retries/resume, actual StressForge contract |
+| Persistence | bounded trusted-local artifact commit/read with hashes | hostile storage policies, remote/object storage, power-loss durability qualification |
+| Authoring | typed .NET/F# builders and experimental scalar expression derivatives/domains | selected Starlark frontend, full units system and integrated behavioral models |
+| Verification | analytic/provider/metamorphic/fuzz-smoke/mutation tests; scoped managed coverage | supported-host Rust coverage, coverage-guided fuzzing, full native/GPU evidence |
+| Release | no production release claim | license/platform/packaging and all declared M1 exit gates |
 
-The original work-package status fields remain Proposed to avoid treating partial prototype evidence as completion. This table is the more granular progress view. No external runtime source or historical simulator implementation has been inherited.
+Most work packages retain Proposed status because their complete exit criteria are not satisfied. Current checkpoint and source-hash reports, rather than implementation counts, define what has been tested.
 

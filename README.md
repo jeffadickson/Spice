@@ -1,52 +1,52 @@
-# Rust Circuit Simulator — reference implementation
+# Rust Circuit Simulator — extended reference engine
 
-This repository contains the architecture, a 23-package implementation plan, and the first **bounded linear-circuit reference engine**. It is not a qualified M1 simulator.
+A bounded Rust circuit engine with CPU provider adapters and C#/F# access. This is **not a full M1 release**.
 
-## Working features
+## Working scope
 
-- Rust core with immutable compiled plans and a per-engine backend registry.
-- Reused nalgebra dense LU and QR; LU supports complex AC. These are two methods in one library, **not two independently qualified solver providers**.
-- Resistors, capacitors, independent constant voltage/current sources; DC, linear AC and fixed-step backward-Euler transient from zero stored-energy state.
-- Strict bounded JSON requests and success/failure envelopes with signal units, complex components and request hashes.
-- Small R/C/V/I text parser, suffixes, interpolation/assertion helpers and an experimental differentiable expression tree.
-- C# asynchronous process client, F# access and a trusted F# circuit builder.
-- Analytic, negative, seeded property/fuzz-smoke and deliberate mutation checks; real coverage data or explicit unsupported-toolchain records.
+- Independent numerical libraries: nalgebra dense LU/QR and faer sparse LU (real and complex). The assembler still uses dense matrices and a 256-unknown cap; no large-circuit scaling claim is made.
+- Immutable circuit plans, explicit capabilities, prepared numeric-factor reuse and independent residual checks.
+- R/C/L and independent sources; DC, complex AC, legacy fixed-step transient, and configured backward-Euler/trapezoidal transient.
+- Configured consistent initial states, PWL/sine source overrides, source corners, optional adaptive step doubling, accepted-sample observers and integration statistics.
+- Unit-aware measurement/assertion results, DC power diagnostics and bounded sequential campaigns with separate case outcomes.
+- One-shot JSON CLI, capability discovery, typed C# requests/results, and F# builders.
+- Trusted local result artifact publication and SHA-256/byte-count verification.
+- Analytic, malformed-input, seeded property/fuzz-smoke and selected mutation tests with actual coverage scope/limitations.
 
-## Run
+## Build and run
 
-Install the toolchain from `rust-toolchain.toml` and .NET SDK from `global.json`, then execute from this directory:
+Use Rust from `rust-toolchain.toml`, .NET SDK from `global.json`, and run from this directory:
 
 ```powershell
 ./scripts/Test.ps1
-Get-Content -Raw examples/divider.json | ./target/debug/circuit-simulator.exe
-dotnet run --file examples/Run.cs -- target/debug/circuit-simulator.exe examples/rc.json
-dotnet fsi examples/Run.fsx target/debug/circuit-simulator.exe examples/divider.json
-dotnet fsi examples/BuildCircuit.fsx target/debug/circuit-simulator.exe
+./target/debug/circuit-simulator.exe --capabilities
+Get-Content -Raw examples/adaptive-rc.json | ./target/debug/circuit-simulator.exe
+dotnet run --file examples/Typed.cs -- target/debug/circuit-simulator.exe
+dotnet fsi examples/TypedRlc.fsx target/debug/circuit-simulator.exe
+dotnet run --file scripts/Checkpoint.cs -- 100
 dotnet run --file scripts/Mutation.cs
 ```
 
-Managed coverage can be reproduced with `scripts/Test-ManagedCoverage.ps1 -CoverageTool <path-to-dotnet-coverage>` after installing the .NET coverage tool in a tooling directory. Its SDK metrics exclude the conformance executable; they do not measure Rust.
+Linux executable names omit `.exe`. Build the managed library before F# examples load it. `scripts/Test-SecondSlice.ps1` runs the current build/tests and typed examples. Source/revision evidence is under `evidence/`; generated logs and binaries stay outside Git.
 
-Linux executable names omit `.exe`. The C# library must be built before F# examples load it. Use `scripts/Test-Coverage.ps1` on a Rust target that includes the profiler runtime. The tested Windows GNU toolchain does not; this limitation is recorded explicitly. The Linux CI coverage job is configured but has not been executed remotely.
+`scripts/Test-ManagedCoverage.ps1 -CoverageTool <path-to-dotnet-coverage>` measures the client SDK separately from its conformance executable. `scripts/Test-Coverage.ps1` requires a supported Rust profiler runtime. The tested Windows GNU distribution lacks it; unavailable Rust coverage is explicitly recorded, never inferred from managed metrics.
 
-## Authoritative documents and evidence
+## Documents
 
-- [Architecture](docs/architecture.md) and [StrictDoc source](docs/architecture.sdoc).
-- [Implementation plan](docs/implementation-plan.md) and [StrictDoc source](docs/implementation-plan.sdoc).
-- [Backlog](BACKLOG.md) and [machine inventory](backlog.json).
-- [Prototype acceptance contracts](docs/prototype-contracts.sdoc).
-- [Development standards](docs/development-standards.sdoc).
-- [Iteration ledger](evidence/iterations.md), checkpoint reports, [mutation outcomes](evidence/mutation.json) and [coverage scope/results](evidence/coverage.json).
+- [Architecture](docs/architecture.sdoc), [implementation plan](docs/implementation-plan.sdoc), [backlog](BACKLOG.md).
+- [Original bounded profile](docs/prototype-contracts.sdoc), [second-slice requirements](docs/second-slice.sdoc), [extended acceptance contracts](docs/second-slice-contracts.sdoc).
+- [Current implementation status](docs/implementation-status.md), [solver adoption experiment](docs/faer-adoption.md).
+- [Iteration ledger](evidence/iterations.md), checkpoint reports, [mutation results](evidence/mutation.json), [coverage](evidence/coverage.json).
 
-The 50 implementation passes are individually committed. Builds are checked at 10/20/30/40/50; qualification claims follow evidence, not iteration count. Most planned work packages remain Proposed or partially explored.
+## Limits and remaining work
 
-## Deliberate limitations
+No GPU execution, native OSDI plugins, nonlinear semiconductor/Newton engine, Arrow transport, persistent worker sandbox, C ABI, Starlark runtime, remote service or GUI is implemented. Expression IR is not yet an integrated behavioral device. Source DC values are reused as real AC amplitudes; separate AC phase/amplitude settings are deferred. No general vendor-model or StressForge compatibility is claimed.
 
-No sparse/native CPU backend, GPU execution, nonlinear device/Newton engine, inductors, adaptive timesteps, event kernel, OSDI plugins, Arrow results, persistent worker sandbox, C ABI, Starlark interpreter, remote service or GUI is implemented. The expression tree is not yet an integrated behavioral device. No universal vendor-model or StressForge compatibility is claimed.
+The simple text frontend supports R/C/L/V/I, `.op`, `.end`, whole-line comments and a single-token or explicit `title:` first line. It is not a broad SPICE dialect.
 
-The text subset allows a single-token first-line title or explicit `title:` line, R/C/V/I four-token devices, `.op`, `.end` and whole-line `*` comments. It rejects includes, control commands and unsupported devices. This is not general SPICE3/dialect compatibility.
+The legacy transient path uses zero stored-energy startup and records the first positive step. The configured path starts from a DC operating point unless a full consistent MNA state is supplied, and records t=0. Adaptive tolerance controls local step-doubling estimates, not global error or unobserved waveform peaks.
 
-Dense reference limits: at most 128 nodes, 1024 elements, 256 MNA unknowns; transient at most 100,000 steps and 2,000,000 retained scalars; AC at most 10,000 frequencies and 1,000,000 complex scalars. Retained JSON is bounded, not streamed; long-running production workflows require the planned streaming layer.
+The initial size/output budgets remain enforced. The local artifact API requires trusted local storage; integrity hashes are not signatures or a sandbox. Campaigns are bounded and sequential, without crash resume or distributed scheduling.
 
-No remote is configured. The source-license decision is still pending; third-party numerical/model licenses and packaging require review before distribution.
+The full plan remains partially implemented. CI is configured but no remote execution is claimed. No Git remote is configured. Product source licensing and distribution qualification remain open decisions.
 
