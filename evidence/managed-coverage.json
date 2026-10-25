@@ -4,16 +4,16 @@
   "scope": "Owned Simulator.Client .cs files only; unique source lines and mapped branches; generated JSON metadata excluded",
   "source_sha256": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
   "source_hashes": {
-    "dotnet/Simulator.Client/Client.cs": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
     "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
-    "dotnet/Simulator.Client/Results.cs": "7eb6a9d75066a87cd00a1f0e90ce04abc1d469cdff8bb2bd145288c55948f144",
-    "dotnet/Simulator.Client/Requests.cs": "ba356119781b38e6e9d17b856bf447a2555ee0c210ae7b696b9bfe3ab9215611",
+    "dotnet/Simulator.Client/Client.cs": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
+    "dotnet/Simulator.Client/Results.cs": "769035d473128aa2fc34ec501c1829e93bccda6ba087b6baf3fd58de00898a0c",
+    "dotnet/Simulator.Client/Requests.cs": "7ecbe8488096cceea4bd10ed0b35ce2508afdfaaf0ee9417aca3437ae28f6e21",
     "dotnet/Simulator.Client/WireContext.cs": "f1c7a3f8e82e8fcb3671725851a4b154a34c152a8d79c8fd05782e21be432a15"
   },
-  "line_percent": 95.38461538461539,
+  "line_percent": 95.55555555555556,
   "branch_percent": 77.27272727272727,
-  "lines": 130,
-  "covered_lines": 124,
+  "lines": 135,
+  "covered_lines": 129,
   "branches": 66,
   "covered_branches": 51,
   "exclusions": [

@@ -1,0 +1,32 @@
+{
+  "validation_date": "2026-10-24",
+  "iteration_commits": 200,
+  "current_run": [151, 200],
+  "build_checkpoints": [160, 170, 180, 190, 200],
+  "checkpoint_status": "passed",
+  "strictdoc": {
+    "documents": 8,
+    "requirements": 140,
+    "parser": "StrictDoc 0.30.4 passed"
+  },
+  "tests": {
+    "rust_debug": 121,
+    "managed_conformance": 25,
+    "format": "passed",
+    "clippy": "passed with warnings denied"
+  },
+  "mutation": {
+    "selected_operators_killed": 14,
+    "selected_operators_total": 14,
+    "baseline": "full Rust suite passed; focused regression targets per operator"
+  },
+  "coverage": {
+    "managed_status": "measured",
+    "managed_line_percent": 95.55555555555556,
+    "managed_branch_percent": 77.27272727272727,
+    "managed_scope": "Owned Simulator.Client source lines and mapped branches; generated JSON metadata and conformance executable excluded",
+    "rust_status": "unavailable",
+    "rust_reason": "The nightly MSVC coverage toolchain now includes profiler_builtins, but this host lacks Visual C++ Build Tools/Windows SDK link.exe."
+  },
+  "scope": "bounded reference prototype; diode nonlinear support is DC operating point only. Nonlinear AC bias linearization and nonlinear transient stepping remain explicitly unsupported."
+}

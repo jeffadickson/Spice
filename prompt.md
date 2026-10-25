@@ -7,7 +7,7 @@ You are continuing work on **Spice**, a Rust circuit-simulation repository. Work
 - Document public interfaces and numerical conventions. Run meaningful malformed-input, randomized/property, mutation, and coverage checks; report real limitations.
 - Commit locally in small numbered iterations. Build at the stated checkpoint cadence. Do not claim GPU, plugin, Arrow, full SPICE compatibility, or production qualification without evidence.
 
-Current implementation through iteration 199:
+Current implementation through iteration 200:
 
 - Bounded dense MNA engine for R/C/L, independent sources, DC/AC/linear transient.
 - Independent faer sparse and nalgebra dense CPU paths.

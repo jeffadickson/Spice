@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<coverage line-rate="0.9538461538461539" branch-rate="0.7727272727272727" complexity="1768" version="1.9" timestamp="1792897538" lines-covered="124" lines-valid="130" branches-covered="51" branches-valid="66">
+<coverage line-rate="0.9555555555555556" branch-rate="0.7727272727272727" complexity="1900" version="1.9" timestamp="1792901767" lines-covered="129" lines-valid="135" branches-covered="51" branches-valid="66">
   <packages>
-    <package line-rate="0.9538461538461539" branch-rate="0.7727272727272727" complexity="1730" name="Simulator.Client">
+    <package line-rate="0.9555555555555556" branch-rate="0.7727272727272727" complexity="1860" name="Simulator.Client">
       <classes>
         <class line-rate="1" branch-rate="0.9166666666666666" complexity="36" name="Simulator.Client.SimulationResponse" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Client.cs">
           <methods>
@@ -209,18 +209,6 @@
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, int, int)">
               <lines>
-                <line number="18" hits="1" branch="False" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="18" hits="1" branch="False" />
-          </lines>
-        </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Resistor" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
-          <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, int, int, double)">
-              <lines>
                 <line number="19" hits="1" branch="False" />
               </lines>
             </method>
@@ -229,7 +217,7 @@
             <line number="19" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Capacitor" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Resistor" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, int, int, double)">
               <lines>
@@ -241,7 +229,7 @@
             <line number="20" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Inductor" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Capacitor" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, int, int, double)">
               <lines>
@@ -253,7 +241,7 @@
             <line number="21" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Voltage" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Inductor" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, int, int, double)">
               <lines>
@@ -265,7 +253,7 @@
             <line number="22" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Current" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Voltage" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, int, int, double)">
               <lines>
@@ -277,71 +265,69 @@
             <line number="23" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Transient" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Current" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(Simulator.Client.LegacyTransientOptions)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, int, int, double)">
               <lines>
-                <line number="32" hits="1" branch="False" />
+                <line number="24" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="32" hits="1" branch="False" />
+            <line number="24" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.LegacyTransientOptions" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Diode" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double, int)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, int, int, double, double)">
               <lines>
-                <line number="33" hits="1" branch="False" />
+                <line number="26" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="33" hits="1" branch="False" />
+            <line number="26" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Ac" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.OperatingPointNewton" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double[])">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(Simulator.Client.NewtonOptions)">
               <lines>
-                <line number="34" hits="1" branch="False" />
+                <line number="37" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="34" hits="1" branch="False" />
+            <line number="37" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.TransientConfigured" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.NewtonOptions" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(Simulator.Client.TransientConfiguration)">
-              <lines>
-                <line number="35" hits="1" branch="False" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="35" hits="1" branch="False" />
-          </lines>
-        </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.TransientConfiguration" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
-          <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double, int, string, double[], Simulator.Client.SourceOverride[], Simulator.Client.AdaptiveOptions)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(int, double, double)">
               <lines>
                 <line number="38" hits="1" branch="False" />
-                <line number="39" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
             <line number="38" hits="1" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Transient" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(Simulator.Client.LegacyTransientOptions)">
+              <lines>
+                <line number="39" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
             <line number="39" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.AdaptiveOptions" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.LegacyTransientOptions" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double, double, double, int)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double, int)">
               <lines>
                 <line number="40" hits="1" branch="False" />
               </lines>
@@ -351,9 +337,9 @@
             <line number="40" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.SourceOverride" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Ac" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, Simulator.Client.Waveform)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double[])">
               <lines>
                 <line number="41" hits="1" branch="False" />
               </lines>
@@ -363,9 +349,9 @@
             <line number="41" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Point" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.TransientConfigured" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(Simulator.Client.TransientConfiguration)">
               <lines>
                 <line number="42" hits="1" branch="False" />
               </lines>
@@ -375,9 +361,35 @@
             <line number="42" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Constant" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.TransientConfiguration" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double, int, string, double[], Simulator.Client.SourceOverride[], Simulator.Client.AdaptiveOptions)">
+              <lines>
+                <line number="45" hits="1" branch="False" />
+                <line number="46" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="45" hits="1" branch="False" />
+            <line number="46" hits="1" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.AdaptiveOptions" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double, double, double, int)">
+              <lines>
+                <line number="47" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="47" hits="1" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.SourceOverride" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, Simulator.Client.Waveform)">
               <lines>
                 <line number="48" hits="1" branch="False" />
               </lines>
@@ -387,9 +399,9 @@
             <line number="48" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Pwl" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Point" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(Simulator.Client.Point[])">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double)">
               <lines>
                 <line number="49" hits="1" branch="False" />
               </lines>
@@ -399,132 +411,156 @@
             <line number="49" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Sine" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Constant" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double, double, double)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double)">
               <lines>
-                <line number="50" hits="1" branch="False" />
+                <line number="55" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="50" hits="1" branch="False" />
+            <line number="55" hits="1" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Pwl" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(Simulator.Client.Point[])">
+              <lines>
+                <line number="56" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="56" hits="1" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Sine" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double, double, double)">
+              <lines>
+                <line number="57" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="57" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Experiment" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(Simulator.Client.Measurement[], Simulator.Client.Assertion[])">
               <lines>
-                <line number="51" hits="1" branch="False" />
+                <line number="58" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="51" hits="1" branch="False" />
+            <line number="58" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Measurement" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, Simulator.Client.MeasurementOperation)">
               <lines>
-                <line number="52" hits="1" branch="False" />
+                <line number="59" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="52" hits="1" branch="False" />
+            <line number="59" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Assertion" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, string, double, double)">
               <lines>
-                <line number="53" hits="1" branch="False" />
+                <line number="60" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="53" hits="1" branch="False" />
+            <line number="60" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.ValueAt" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double)">
               <lines>
-                <line number="61" hits="1" branch="False" />
+                <line number="68" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="61" hits="1" branch="False" />
+            <line number="68" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Minimum" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double)">
               <lines>
-                <line number="62" hits="1" branch="False" />
+                <line number="69" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="62" hits="1" branch="False" />
+            <line number="69" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Maximum" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double)">
               <lines>
-                <line number="63" hits="1" branch="False" />
+                <line number="70" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="63" hits="1" branch="False" />
+            <line number="70" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Integral" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double)">
               <lines>
-                <line number="64" hits="1" branch="False" />
+                <line number="71" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="64" hits="1" branch="False" />
+            <line number="71" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.Rms" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double)">
               <lines>
-                <line number="65" hits="1" branch="False" />
+                <line number="72" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="65" hits="1" branch="False" />
+            <line number="72" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.WireFormat" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Requests.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".cctor" signature="()">
               <lines>
-                <line number="70" hits="1" branch="False" />
-                <line number="71" hits="1" branch="False" />
-                <line number="72" hits="1" branch="False" />
-                <line number="73" hits="1" branch="False" />
-                <line number="74" hits="1" branch="False" />
+                <line number="77" hits="1" branch="False" />
+                <line number="78" hits="1" branch="False" />
+                <line number="79" hits="1" branch="False" />
+                <line number="80" hits="1" branch="False" />
+                <line number="81" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="70" hits="1" branch="False" />
-            <line number="71" hits="1" branch="False" />
-            <line number="72" hits="1" branch="False" />
-            <line number="73" hits="1" branch="False" />
-            <line number="74" hits="1" branch="False" />
+            <line number="77" hits="1" branch="False" />
+            <line number="78" hits="1" branch="False" />
+            <line number="79" hits="1" branch="False" />
+            <line number="80" hits="1" branch="False" />
+            <line number="81" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.SimulationError" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
@@ -541,11 +577,12 @@
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.ResultManifest" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, string, bool, Simulator.Client.SignalInfo[], Simulator.Client.RealSample[], Simulator.Client.AcSample[], Simulator.Client.MeasurementValue[], Simulator.Client.AssertionValue[], Simulator.Client.IntegrationInfo, Simulator.Client.BackendInfo, string, Simulator.Client.PowerInfo)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, string, bool, Simulator.Client.SignalInfo[], Simulator.Client.RealSample[], Simulator.Client.AcSample[], Simulator.Client.MeasurementValue[], Simulator.Client.AssertionValue[], Simulator.Client.IntegrationInfo, Simulator.Client.BackendInfo, string, Simulator.Client.PowerInfo, Simulator.Client.NewtonInfo)">
               <lines>
                 <line number="4" hits="1" branch="False" />
                 <line number="5" hits="1" branch="False" />
                 <line number="6" hits="1" branch="False" />
+                <line number="7" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
@@ -553,35 +590,12 @@
             <line number="4" hits="1" branch="False" />
             <line number="5" hits="1" branch="False" />
             <line number="6" hits="1" branch="False" />
-          </lines>
-        </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.PowerInfo" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
-          <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(Simulator.Client.DevicePower[], double, double)">
-              <lines>
-                <line number="7" hits="1" branch="False" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
             <line number="7" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.DevicePower" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.NewtonInfo" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, double)">
-              <lines>
-                <line number="8" hits="1" branch="False" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="8" hits="1" branch="False" />
-          </lines>
-        </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.SignalInfo" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
-          <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, string)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(int, double, int)">
               <lines>
                 <line number="9" hits="1" branch="False" />
               </lines>
@@ -591,9 +605,9 @@
             <line number="9" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.RealSample" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.PowerInfo" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double[])">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(Simulator.Client.DevicePower[], double, double)">
               <lines>
                 <line number="10" hits="1" branch="False" />
               </lines>
@@ -603,9 +617,9 @@
             <line number="10" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.ComplexValue" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.DevicePower" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, double)">
               <lines>
                 <line number="11" hits="1" branch="False" />
               </lines>
@@ -615,9 +629,9 @@
             <line number="11" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.AcSample" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.SignalInfo" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, Simulator.Client.ComplexValue[])">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, string)">
               <lines>
                 <line number="12" hits="1" branch="False" />
               </lines>
@@ -627,9 +641,9 @@
             <line number="12" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.MeasurementValue" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.RealSample" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, string, string, System.Nullable&lt;double&gt;, string)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double[])">
               <lines>
                 <line number="13" hits="1" branch="False" />
               </lines>
@@ -639,9 +653,9 @@
             <line number="13" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.AssertionValue" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.ComplexValue" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, string, string)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, double)">
               <lines>
                 <line number="14" hits="1" branch="False" />
               </lines>
@@ -651,32 +665,68 @@
             <line number="14" hits="1" branch="False" />
           </lines>
         </class>
-        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.IntegrationInfo" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.AcSample" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
           <methods>
-            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, int, int, int, double, int, int, int)">
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(double, Simulator.Client.ComplexValue[])">
               <lines>
                 <line number="15" hits="1" branch="False" />
-                <line number="16" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
             <line number="15" hits="1" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.MeasurementValue" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, string, string, System.Nullable&lt;double&gt;, string)">
+              <lines>
+                <line number="16" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
             <line number="16" hits="1" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.AssertionValue" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, string, string)">
+              <lines>
+                <line number="17" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="17" hits="1" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.IntegrationInfo" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, int, int, int, double, int, int, int)">
+              <lines>
+                <line number="18" hits="1" branch="False" />
+                <line number="19" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="18" hits="1" branch="False" />
+            <line number="19" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.BackendInfo" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Results.cs">
           <methods>
             <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, int, bool, bool, bool, bool, string)">
               <lines>
-                <line number="17" hits="1" branch="False" />
-                <line number="18" hits="1" branch="False" />
+                <line number="20" hits="1" branch="False" />
+                <line number="21" hits="1" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="17" hits="1" branch="False" />
-            <line number="18" hits="1" branch="False" />
+            <line number="20" hits="1" branch="False" />
+            <line number="21" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="0" branch-rate="1" complexity="1" name="Simulator.Client.ScalarSelection" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\SweepResults.cs">
