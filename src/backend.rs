@@ -1,11 +1,60 @@
 use crate::{
     error::{ErrorCode, SimError, SimResult},
     linalg::{LinearSolver, Matrix},
+    solver_contract::{SparseComplexSystem, SparseLinearBackend, SparseRealSystem},
 };
 use nalgebra::{DMatrix, DVector};
 /// Dense diagnostic adapter; it is not a production sparse backend.
 #[derive(Debug, Default)]
 pub struct DenseLu;
+
+/// Converts the neutral CSC contract only inside the legacy dense adapter.
+fn real_dense(system: &SparseRealSystem) -> Matrix {
+    let n = system.pattern().dimension();
+    let mut values = vec![0.0; n * n];
+    for ((row, column), value) in system.pattern().slots().zip(system.values()) {
+        values[row * n + column] = *value;
+    }
+    Matrix { n, values }
+}
+
+/// Converts a neutral complex CSC contract only inside the legacy dense adapter.
+fn complex_dense(system: &SparseComplexSystem) -> (Matrix, Matrix) {
+    let n = system.pattern().dimension();
+    let mut real = vec![0.0; n * n];
+    let mut imaginary = vec![0.0; n * n];
+    for ((row, column), value) in system.pattern().slots().zip(system.values()) {
+        real[row * n + column] = value.re;
+        imaginary[row * n + column] = value.im;
+    }
+    (
+        Matrix { n, values: real },
+        Matrix {
+            n,
+            values: imaginary,
+        },
+    )
+}
+
+impl SparseLinearBackend for DenseLu {
+    fn sparse_capabilities(&self) -> crate::linalg::BackendCapabilities {
+        self.capabilities()
+    }
+    fn solve_sparse_real(&self, system: &SparseRealSystem, rhs: &[f64]) -> SimResult<Vec<f64>> {
+        system.validate_rhs(rhs)?;
+        LinearSolver::solve(self, &real_dense(system), rhs)
+    }
+    fn solve_sparse_complex(
+        &self,
+        system: &SparseComplexSystem,
+        rhs: &[f64],
+    ) -> SimResult<Vec<num_complex::Complex64>> {
+        system.validate_rhs(rhs)?;
+        let (real, imaginary) = complex_dense(system);
+        LinearSolver::solve_complex(self, &real, &imaginary, rhs)
+    }
+}
+
 impl LinearSolver for DenseLu {
     fn prepare(&self, a: &Matrix) -> SimResult<Option<crate::linalg::PreparedReal>> {
         a.validate(&vec![0.0; a.n.min(256)])?;

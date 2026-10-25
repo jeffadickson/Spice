@@ -4,7 +4,7 @@ The fifth slice adds **bounded fixed-step nonlinear diode transient stepping** u
 
 | Plan area | Implemented evidence | Remaining |
 |---|---|---|
-| Solver variety | nalgebra dense and independent faer sparse LU; real/complex conformance and prepared RHS reuse | broad difficult-matrix corpus, native KLU/cuDSS/Ginkgo adapters, large-circuit sparse assembly |
+| Solver variety | nalgebra dense and independent faer sparse LU; real/complex conformance, prepared RHS reuse, and a backend-neutral CSC pattern/value contract with shared adapter corpus | broad difficult-matrix corpus, native KLU/cuDSS/Ginkgo adapters, large-circuit sparse assembly |
 | Device equations | R/C/L, a Shockley diode, independent sources, signed flux and branch currents, DC power diagnostics, DC-biased diode small-signal AC | additional semiconductor models, production limiting/Jacobians and full device/plugin API |
 | Dynamic analyses | configured initial states, PWL/sine sources, trapezoidal/BE, adaptive step doubling, accepted observers, fixed-step and configured backward-Euler diode Newton | nonlinear adaptive/source-override handling, full event/co-simulation rules and complete DAE topology qualification |
 | API/data | typed C#/F# experimental JSON contract, measurements/assertions, capability discovery | Arrow, C ABI, persistent sandboxed worker, complete stable API/migration policy |

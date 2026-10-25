@@ -315,6 +315,8 @@ Circuit models, compilers, analyses, public contracts and result schemas shall n
 <<<
 COMMENT: >>>
 Verification: Compile a standalone backend conformance fixture using the linear contracts without circuit/API crates; inspect public and core dependency graphs for concrete backend imports; substitute an adapter test double and assert identical validated matrix/request semantics.
+
+Current spike evidence: src/solver_contract.rs defines the owned canonical CSC pattern/value contract; src/backend.rs and src/backend_faer.rs implement it without exposing vendor types to the request/result API. tests/matrix_conformance.rs runs shared real/complex unsymmetric systems and residual checks against both adapters. This is a bounded reference-engine seam, not a claim that sparse assembly, SIMD execution or GPU adapters are complete.
 <<<
 RELATIONS:
 - TYPE: Parent

@@ -6,8 +6,8 @@
     "src/api.rs": "899e0f0712c40050fe2c48355565f04c29ed968d0936b946d9b96874e472af33",
     "src/artifact.rs": "13180775067ea63a8958572f8c70599d50ba8797db13937e7401eb0145e940c0",
     "src/assertion.rs": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
-    "src/backend.rs": "3296c526ddc29c2d9e0eb6e09801d4a0f5ad9b724cfa5a7229b043434b0abb81",
-    "src/backend_faer.rs": "c3ab4d009207ace184917233e84e3d0ca7666e350287d452e1bf22ba419ae4dc",
+    "src/backend.rs": "b1da0575fcf6a3e6378f62b4a2e41b1f792f8cad0633d3f50cabdfe2947a4705",
+    "src/backend_faer.rs": "62937f876d3bfe69bff14842b46b30e18062b94c5eb7690097c10fa7cb39a46d",
     "src/campaign.rs": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
     "src/circuit.rs": "8ae1ff558f661a5b2a3d8577a8a95e84ba3bb554cbda08e0b7b1e1d235422698",
     "src/compile.rs": "29b3f55a74e484e96653d21198025db5f8afb1f1f48ef4f3f98f5acd4c4cc1c6",
@@ -19,7 +19,7 @@
     "src/grid.rs": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
     "src/ids.rs": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
     "src/integrator.rs": "9d990d1c5a3b6ff723e52afa21771f3294a26f5bfe3efa9467c05742079eefdf",
-    "src/lib.rs": "d291f1645f6c6f6af9e5e1f25427ef6a6d9695db4c2498e3d7da715abbd347fb",
+    "src/lib.rs": "8403da8a5ad2360582d1ddae56b1c027dc3bf4ab503cfc1858fa0b7a16868bd0",
     "src/linalg.rs": "32104a3787f246d3bf327652062fc81cc5dbc02aaf43c7c2b02d94f37638be5a",
     "src/main.rs": "e47f91038165267a70502595805a4df5a9931c02e50f6334d52bce1e8fa74fb2",
     "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
@@ -31,8 +31,9 @@
     "src/quantity.rs": "bd53faa680ee46119020b2fe33ee8c023b8c42cfd216455ef5c205e43450e892",
     "src/registry.rs": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7",
     "src/sampling.rs": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+    "src/solver_contract.rs": "e4c6d1894069002621b09dd4fc7c70cd3162cdd4d257c4a664c410518b3863ad",
     "src/sources.rs": "6d3b7ad12a7fcc882fb3a248256f01e343d20fcf094a110a5912f9e829349122",
-    "src/sparse.rs": "b8cc644592f41f4473394fc49ded2ea815cf1b825134f5534ca7c3d30d380400",
+    "src/sparse.rs": "f9b2b408058375379d2be8a40b3b73700e34fd478b275357227f713352869a59",
     "src/sweep.rs": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
     "src/transient.rs": "1ea0b8679f741f188a7c647e77964f6fc9e74c763ec36abf06f4086d6882f66c",
     "src/variation.rs": "68d0f728eea05d6189b15e0f74bedb610454f3d7e55fd813651675682dda1569",
@@ -52,6 +53,7 @@
     "tests/fuzz_dynamic.rs": "446ca3d03f8932edbdf42135e6e6b4afb88f9d8c96607690a0b62bfbce6c6076",
     "tests/fuzz_smoke.rs": "ec1c20e120bf6e18eeed5808ea8007363a2e9403535a84503d7841049b2ee0aa",
     "tests/hardening.rs": "317cdab0ec40c31501dc30902486ce7db70369af086384de8b5e40eb79ccd9cc",
+    "tests/matrix_conformance.rs": "54e41a436234bd01b87b43310e730b5384219df73a6cc1f166329c60c06d2b12",
     "tests/ngspice_compat.rs": "d17feb936cac251fcea81c84875900f54eefe0cfc5635a8230843bcba9ca4add",
     "tests/nonlinear.rs": "314d0c8afd2145d7a936b4253c3c2c32d5bdfd97a0d0552ce04fec97ce24dc34",
     "tests/properties.rs": "55912c3f745dff6da62a9cc9e8c26299a491bf284bf100c2687b184a5eb8457a",
@@ -62,8 +64,8 @@
     "tests/variation.rs": "5b7523f11e957db4c3953798f272b68ebd14991d750a5d191f0d90937887f4bd"
   },
   "baseline": "passed",
-  "killed": 14,
-  "total": 14,
+  "killed": 15,
+  "total": 15,
   "mutants": [
     {
       "name": "stamp-sign",
@@ -148,6 +150,12 @@
       "status": "killed",
       "exit_code": 101,
       "test_target": "nonlinear"
+    },
+    {
+      "name": "sparse-contract-nonfinite",
+      "status": "killed",
+      "exit_code": 101,
+      "test_target": "matrix_conformance"
     }
   ]
 }

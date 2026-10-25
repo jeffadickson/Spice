@@ -27,6 +27,7 @@ pub mod provenance;
 pub mod quantity;
 pub mod registry;
 pub mod sampling;
+pub mod solver_contract;
 pub mod sources;
 pub mod sparse;
 pub mod sweep;
