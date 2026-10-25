@@ -62,6 +62,21 @@ pub struct GridPoint {
     pub error: Option<SimError>,
 }
 
+/// Accounting summary for a Cartesian-grid execution.
+#[derive(Debug, Default, Serialize, PartialEq, Eq)]
+pub struct GridSummary {
+    pub total: usize,
+    pub succeeded: usize,
+    pub failed: usize,
+}
+
+impl GridSummary {
+    pub fn from_points(points: &[GridPoint]) -> Self {
+        let succeeded = points.iter().filter(|point| point.execution == "succeeded").count();
+        Self { total: points.len(), succeeded, failed: points.len() - succeeded }
+    }
+}
+
 /// Run a bounded Cartesian grid sequentially. This intentionally does not claim
 /// parallel scheduling or arbitrary mid-analysis checkpoint/restart semantics.
 pub fn run_grid(

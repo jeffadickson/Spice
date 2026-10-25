@@ -3,7 +3,7 @@ use circuit_simulator::{
     circuit::{Circuit, Element},
     ids::NodeId,
     registry::BackendRegistry,
-    sweep::{SweepSummary, derived_case_id, run_grid, run_scalar, run_scalar_cancellable},
+    sweep::{GridSummary, SweepSummary, derived_case_id, run_grid, run_scalar, run_scalar_cancellable},
     variation::{ScalarGrid, ScalarKind, ScalarSweep, replace_scalar, scalar_kind},
 };
 
@@ -90,6 +90,7 @@ fn grid_execution_exposes_each_selected_vector() {
     assert_eq!(points.len(), 2);
     assert_eq!(points[1].selections[0].value, 2000.);
     assert_eq!(points[1].result.as_ref().unwrap().case_id, "divider--g01");
+    assert_eq!(GridSummary::from_points(&points), GridSummary { total: 2, succeeded: 2, failed: 0 });
 }
 
 #[test]
