@@ -401,6 +401,22 @@ fn ngspice_compact_dc_and_inline_comment_import() {
 }
 
 #[test]
+fn ngspice_continuation_record_is_folded_before_bounded_lowering() {
+    let circuit = parse_ngspice_basic(
+        "title\nV1 out 0 DC\n+ 2V ; value continuation\nR1 out 0 1k\n.end\n",
+    )
+    .unwrap();
+    let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+    assert!((values[0] - 2.).abs() < 1e-12);
+}
+
+#[test]
+fn ngspice_orphan_continuation_is_rejected() {
+    let error = parse_ngspice_basic("title\n+ 2V\n.end\n").unwrap_err();
+    assert_eq!(error.code, ErrorCode::InvalidInput);
+}
+
+#[test]
 fn ngspice_explicit_dc_source_units_are_normalized() {
     let circuit = parse_ngspice_basic("title\nV1 out 0 DC 2V\nR1 out 0 4k\n.end\n").unwrap();
     let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();

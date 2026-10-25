@@ -57,7 +57,7 @@ F049|Parameter definitions|future
 F050|Parameter expressions|future
 F051|Include directives|future
 F052|Library sections|future
-F053|Continuation lines|future
+F053|Continuation lines|supported
 F054|Quoted identifiers|future
 F055|Case preservation rules|future
 F056|Control blocks|unsupported

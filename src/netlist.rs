@@ -174,18 +174,32 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
 /// output directives needed by the curated BSD-licensed regression fixtures. It
 /// does not claim general ngspice parsing or execute control blocks.
 pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
-    let mut normalized = String::new();
-    for (index, source_line) in text.lines().enumerate() {
-        if index == 0 {
-            continue;
-        }
-        // ngspice accepts a semicolon as an inline comment introducer. Strip it
-        // before directive/device recognition so comment words cannot become
-        // accidental device parameters in this deliberately bounded importer.
+    // Fold only the documented continuation marker before token handling. This
+    // keeps physical input-line limits independent from the bounded grammar.
+    let mut logical_lines: Vec<String> = Vec::new();
+    for source_line in text.lines().skip(1) {
         let line = source_line.split(';').next().unwrap_or_default().trim();
         if line.is_empty() || line.starts_with('*') {
             continue;
         }
+        if let Some(tail) = line.strip_prefix('+') {
+            let prior = logical_lines
+                .last_mut()
+                .ok_or_else(|| SimError::invalid("ngspice continuation has no preceding record"))?;
+            if tail.trim().is_empty() {
+                return Err(SimError::invalid("ngspice continuation is empty"));
+            }
+            prior.push(' ');
+            prior.push_str(tail.trim());
+        } else {
+            logical_lines.push(line.to_owned());
+        }
+    }
+    let mut normalized = String::new();
+    for line in logical_lines {
+        // ngspice accepts a semicolon as an inline comment introducer. Strip it
+        // before directive/device recognition so comment words cannot become
+        // accidental device parameters in this deliberately bounded importer.
         let head = line.split_whitespace().next().unwrap_or_default();
         if [".options", ".tran", ".ac", ".plot", ".print", ".probe"]
             .iter()

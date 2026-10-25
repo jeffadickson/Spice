@@ -160,3 +160,13 @@ The typed transient API and bounded deck importer shall support the compact six-
 COMMENT: >>>
 Implementation: waveform::Waveform::Exponential and netlist::import_ngspice_request. Verification: tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-017
+TITLE: Bounded continuation-record lowering
+STATEMENT: >>>
+The bounded ngspice importer shall fold an explicit plus-prefixed continuation record into its immediately preceding logical record before tokenization. It shall reject orphan or empty continuation records rather than inferring a target record. Inline comments and full-line comments shall remain excluded from the folded input.
+<<<
+COMMENT: >>>
+Implementation: netlist::parse_ngspice_basic. Verification: tests/ngspice_compat.rs.
+<<<
