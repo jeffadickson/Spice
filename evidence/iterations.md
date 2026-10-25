@@ -89,3 +89,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 85. Fuzz sparse layouts and structured transient boundary cases
 86. Expose CLI capability negotiation and reject unsupported startup arguments
 87. Run bounded case campaigns with independent outcome accounting
+88. Exercise typed managed dynamic and failure result contracts
