@@ -1,6 +1,6 @@
 # SForge v0.1 user manual
 
-SForge is a typed source language for circuit simulations. This is an implemented **v0.1 parser**: it recognizes a package, circuits, nodes, resistor/capacitor/voltage-source/diode devices, one transient analysis, observations, and text assertions. Semantic lowering into the Rust simulator is the next step.
+SForge is a typed source language for circuit simulations. This is an implemented **v0.1 parser and lowering path**: it recognizes a package, circuits, nodes, resistor/capacitor/voltage-source/diode devices, one transient analysis, observations, and text assertions; validated programs lower into and execute through the Rust simulator.
 
 The lexer is a first-class component. It recognizes identifiers, finite numeric prefixes, punctuation, whitespace and `#` comments; every emitted token carries an offset plus one-based line/column location. Invalid characters and incomplete exponents are structured lexical diagnostics. Parsing uses Parlot for the identifier contract, while the surrounding v0.1 grammar is a deliberately explicit recursive-descent implementation.
 
@@ -47,7 +47,7 @@ circuit clamp {
 
 run startup on clamp {
   transient { stop: 2ms, max_step: 1us }
-  observe { v(out), i(dclamp), power(dclamp) }
+  observe { v(out), i(dclamp) }
   require max(v(out)) < 0.9V;
 }
 ```
@@ -63,3 +63,5 @@ else
 ```
 
 The parser returns a source-span-bearing AST and structured diagnostics. The included semantic validator checks declared nodes, circuit references, `gnd`, and the implemented unit families. `SForgeLowering.Lower(document, "startup")` now lowers v0.1 primitive circuits and transient runs into the existing typed Rust-simulator JSON request. It maps SForge `gnd` to the simulator's required node `0`; the conformance test executes the example through the Rust executable.
+
+`observe { v(out), i(d1) }` lowers to typed final-sample measurements. The currently supported assertion form is `require max(v(out)) < 0.9V;` (and the equivalent current form); unsupported expressions fail during lowering with the original source expression in the diagnostic. The v0.1 lowering uses configured backward-Euler transient execution so that the initial operating-point sample is available to bounded window measurements.

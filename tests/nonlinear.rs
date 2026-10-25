@@ -4,6 +4,7 @@ use circuit_simulator::{
     backend::{DenseLu, DenseQr},
     circuit::{Circuit, Element},
     compile::compile,
+    configured::{Method, TransientConfig, run as configured_run},
     dc::{operating_point, operating_point_detailed},
     ids::NodeId,
     model::DiodeModel,
@@ -15,6 +16,62 @@ use circuit_simulator::{
     variation::{ScalarKind, replace_scalar, scalar_kind},
     waveform::Waveform,
 };
+
+#[test]
+fn configured_backward_euler_accepts_nonlinear_diode_steps() {
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "s".into(), "a".into()],
+        elements: vec![
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 1.,
+            },
+            Element::Resistor {
+                id: "R1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                ohms: 1000.,
+            },
+            Element::Capacitor {
+                id: "C1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                farads: 1e-6,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
+        ],
+    };
+    let result = configured_run(
+        &compile(&circuit).unwrap(),
+        &DenseLu,
+        &TransientConfig {
+            stop_s: 2e-5,
+            max_step_s: 1e-5,
+            max_steps: 4,
+            method: Method::BackwardEuler,
+            initial_state: None,
+            sources: vec![],
+            adaptive: None,
+        },
+        &false.into(),
+    )
+    .unwrap();
+    assert_eq!(result.samples.len(), 3);
+    assert!(
+        result
+            .samples
+            .iter()
+            .all(|sample| sample.values.iter().all(|value| value.is_finite()))
+    );
+}
 
 #[test]
 fn shockley_diode_has_positive_incremental_conductance() {

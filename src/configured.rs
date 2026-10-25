@@ -118,16 +118,24 @@ pub fn run_observed(
     cancel: &std::sync::atomic::AtomicBool,
     mut observer: impl FnMut(&Sample) -> SimResult<()>,
 ) -> SimResult<ConfiguredResult> {
-    if plan.has_nonlinear_devices() {
+    options.validate()?;
+    if plan.has_nonlinear_devices()
+        && (options.method != Method::BackwardEuler
+            || options.adaptive.is_some()
+            || !options.sources.is_empty())
+    {
         return Err(crate::error::SimError::new(
             crate::error::ErrorCode::Unsupported,
-            "nonlinear configured transient stepping is not implemented",
+            "nonlinear configured transient currently requires backward_euler without adaptive control or source overrides",
         ));
     }
-    options.validate()?;
     let sources = BoundSources::new(plan, &options.sources)?;
     let mut old_rhs = sources.rhs(0.)?;
-    let mut state = initial(plan, &old_rhs, options.initial_state.as_deref(), solver)?;
+    let mut state = if plan.has_nonlinear_devices() && options.initial_state.is_none() {
+        crate::newton::solve(plan, solver, crate::newton::NewtonOptions::default())?.0
+    } else {
+        initial(plan, &old_rhs, options.initial_state.as_deref(), solver)?
+    };
     let mut samples = vec![Sample {
         time_s: 0.,
         values: state.clone(),
@@ -188,14 +196,26 @@ pub fn run_observed(
         let h = next - time;
         let new_rhs = sources.rhs(next)?;
         attempts += 1;
-        let coarse = stepper.advance(
-            &state,
-            h,
-            crate::integrator::RhsPair {
-                previous: &old_rhs,
-                current: &new_rhs,
-            },
-        )?;
+        let coarse = if plan.has_nonlinear_devices() {
+            crate::newton::solve_backward_euler_step(
+                plan,
+                solver,
+                crate::newton::NewtonOptions::default(),
+                &state,
+                h,
+                &new_rhs,
+            )?
+            .0
+        } else {
+            stepper.advance(
+                &state,
+                h,
+                crate::integrator::RhsPair {
+                    previous: &old_rhs,
+                    current: &new_rhs,
+                },
+            )?
+        };
         let accepted = if let Some(adaptive) = &options.adaptive {
             let mid = time + h / 2.;
             if mid <= time || mid >= next {

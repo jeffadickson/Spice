@@ -10,6 +10,6 @@ circuit clamp {
 
 run startup on clamp {
   transient { stop: 2ms, max_step: 1us }
-  observe { v(out), i(dclamp), power(dclamp) }
+  observe { v(out), i(dclamp) }
   require max(v(out)) < 0.9V;
 }

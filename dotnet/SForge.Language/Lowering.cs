@@ -1,4 +1,5 @@
 using Simulator.Client;
+using System.Text.RegularExpressions;
 
 namespace SForge.Language;
 
@@ -18,7 +19,8 @@ public static class SForgeLowering
         var stop = ToSi(transient.Stop, new Dictionary<string, double> { ["s"] = 1, ["ms"] = 1e-3, ["us"] = 1e-6 });
         var step = ToSi(transient.MaxStep, new Dictionary<string, double> { ["s"] = 1, ["ms"] = 1e-3, ["us"] = 1e-6 });
         var simulatorNodes = circuit.Nodes.Select(node => node == "gnd" ? "0" : node).ToArray();
-        return new SimulationRequest(caseId, new Simulator.Client.Circuit(simulatorNodes, elements), new Simulator.Client.Transient(new LegacyTransientOptions(stop, step, 100_000)));
+        var experiment = LowerExperiment(run, stop);
+        return new SimulationRequest(caseId, new Simulator.Client.Circuit(simulatorNodes, elements), new TransientConfigured(new TransientConfiguration(stop, step, 100_000)), Experiment: experiment);
     }
 
     private static Element LowerDevice(Device device, IReadOnlyDictionary<string, int> positions) => device switch
@@ -32,4 +34,30 @@ public static class SForgeLowering
 
     private static double ToSi(Quantity quantity, IReadOnlyDictionary<string, double> units) =>
         units.TryGetValue(quantity.Unit, out var scale) ? quantity.Value * scale : throw new InvalidDataException($"unsupported unit '{quantity.Unit}'");
+
+    /// <summary>Lower observable snapshots and bounded max assertions without evaluating source expressions in the host process.</summary>
+    private static Experiment? LowerExperiment(Run run, double stop)
+    {
+        var measurements = new List<Measurement>();
+        foreach (var observable in run.Observables)
+            measurements.Add(new($"observe_{observable.Kind}_{observable.Target}", Signal(observable), new ValueAt(stop)));
+        var assertions = new List<Assertion>();
+        foreach (var requirement in run.Requirements)
+        {
+            var match = Regex.Match(requirement.Expression, @"^max\((?<kind>[vi])\((?<target>[$_A-Za-z][$_A-Za-z0-9-]*)\)\)\s*<\s*(?<value>[0-9.eE+-]+)(?<unit>[A-Za-z]+)$", RegexOptions.CultureInvariant);
+            if (!match.Success) throw new InvalidDataException($"unsupported require expression '{requirement.Expression}'");
+            var signal = $"{match.Groups["kind"].Value}({match.Groups["target"].Value})";
+            var unit = match.Groups["unit"].Value;
+            var value = double.Parse(match.Groups["value"].Value, System.Globalization.CultureInfo.InvariantCulture) * UnitScale(unit);
+            var id = $"require_max_{match.Groups["kind"].Value}_{match.Groups["target"].Value}";
+            measurements.Add(new(id, signal, new Maximum(0, stop)));
+            assertions.Add(new($"assert_{id}", id, unit is "V" or "mV" ? "V" : "A", -1e300, value));
+        }
+        return measurements.Count == 0 ? null : new Experiment(measurements.ToArray(), assertions.ToArray());
+    }
+    private static string Signal(Observable observable) => observable.Kind switch
+    {
+        "v" => $"v({observable.Target})", "i" => $"i({observable.Target})", _ => throw new InvalidDataException($"unsupported observable '{observable.Kind}'")
+    };
+    private static double UnitScale(string unit) => unit switch { "V" or "A" => 1, "mV" => 1e-3, "mA" => 1e-3, _ => throw new InvalidDataException($"unsupported assertion unit '{unit}'") };
 }

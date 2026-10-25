@@ -80,3 +80,13 @@ The validated v0.1 SForge AST shall lower primitive circuit declarations and tra
 COMMENT: >>>
 Implementation: dotnet/SForge.Language/Lowering.cs. Verification: SForge.Language.Conformance lowers and executes examples/clamp.sforge through the Rust executable.
 <<<
+
+[REQUIREMENT]
+UID: SFL-009
+TITLE: Observable and assertion lowering
+STATEMENT: >>>
+SForge v0.1 shall lower v(node) and i(device) observations to typed result measurements, and shall lower the supported max(signal) < quantity requirement form to a bounded native measurement/assertion pair.
+<<<
+COMMENT: >>>
+Implementation: dotnet/SForge.Language/Lowering.cs. Verification: SForge.Language.Conformance verifies the lowered experiment and successful Rust execution.
+<<<

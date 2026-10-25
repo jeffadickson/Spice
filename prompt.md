@@ -7,14 +7,14 @@ You are continuing work on **Spice**, a Rust circuit-simulation repository. Work
 - Document public interfaces and numerical conventions. Run meaningful malformed-input, randomized/property, mutation, and coverage checks; report real limitations.
 - Commit locally in small numbered iterations. Build at the stated checkpoint cadence. Do not claim GPU, plugin, Arrow, full SPICE compatibility, or production qualification without evidence.
 
-Current implementation through iteration 304:
+Current implementation through the SForge v0.1 lowering and capability-reconciliation slice:
 
 - Bounded dense MNA engine for R/C/L, independent sources, DC/AC/linear transient.
 - Independent faer sparse and nalgebra dense CPU paths.
 - C#/F# JSON clients, artifacts, variation grids and deterministic sampling.
 - New bounded Shockley diode DC operating-point path: analytic residual/Jacobian, damped Newton solve, explicit options, convergence report, diode netlist and C# DTO support.
-- Fixed-step nonlinear backward-Euler transient diode stepping is available with analytic Newton residuals/Jacobians and rollback-safe committed history.
-- Nonlinear AC bias linearization and configured/adaptive nonlinear transient stepping are intentionally unsupported.
+- Fixed-step and configured backward-Euler nonlinear diode stepping are available with analytic Newton residuals/Jacobians and rollback-safe committed history.
+- Nonlinear AC bias linearization plus nonlinear adaptive and source-override transient stepping are intentionally unsupported.
 
 Start by reading `README.md`, `docs/implementation-status.md`, `docs/fourth-slice.sdoc`, `evidence/implementation-validation-150.json`, the latest `evidence/checkpoint-*.json`, and `evidence/iterations.md`.
 
