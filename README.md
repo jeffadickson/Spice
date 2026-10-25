@@ -9,6 +9,7 @@ A bounded Rust circuit engine with CPU provider adapters and C#/F# access. This 
 - R/C/L and independent sources; DC, complex AC, legacy fixed-step transient, and configured backward-Euler/trapezoidal transient.
 - Configured consistent initial states, PWL/sine source overrides, source corners, optional adaptive step doubling, accepted-sample observers and integration statistics.
 - Unit-aware measurement/assertion results, DC power diagnostics and bounded sequential campaigns with separate case outcomes.
+- Immutable scalar sweeps and bounded Cartesian grids, including reproducible seeded uniform and log-uniform value plans with unit-aware per-point results.
 - One-shot JSON CLI, capability discovery, typed C# requests/results, and F# builders.
 - Trusted local result artifact publication and SHA-256/byte-count verification.
 - Analytic, malformed-input, seeded property/fuzz-smoke and selected mutation tests with actual coverage scope/limitations.

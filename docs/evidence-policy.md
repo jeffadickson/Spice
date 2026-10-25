@@ -11,3 +11,5 @@ Managed coverage includes all owned client .cs files, separately excludes the co
 Local result artifact integrity is tested with round trips, collisions and corruption, not by claiming distributed transactions or power-loss durability. No performance speedup, stable production compatibility or GPU qualification follows from the additional iteration count.
 
 The mutation baseline runs the full suite; each mutant runs its relevant integration target. Managed coverage filters exact owned source paths and unions source line locations; generated JSON metadata is excluded. Compiler branches mapped to owned source remain included. Schemas are exported from DTO metadata; no independent JSON Schema validator was run.
+
+Third-slice seeded variation checks prove deterministic transforms for a bounded seed corpus, not statistical distribution quality. The managed scalar-sweep DTOs describe serialized envelopes; the one-shot executable does not yet provide a batch sweep transport.
