@@ -86,7 +86,7 @@ impl BoundSources {
     pub fn rhs(&self, time: f64) -> SimResult<Vec<f64>> {
         let mut rhs = self.base.clone();
         for s in &self.sources {
-            let v = s.waveform.at(time)?;
+            let v = s.waveform.at_validated(time)?;
             match s.target {
                 Target::Voltage { row, base } => rhs[row] += v - base,
                 Target::Current { p, n, base } => {
