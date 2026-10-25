@@ -13,6 +13,7 @@ pub enum Analysis {
     OperatingPoint,
     Transient { options: TransientOptions },
     Ac { frequencies_hz: Vec<f64> },
+    TransientConfigured { options: crate::configured::TransientConfig },
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -44,6 +45,8 @@ pub struct Manifest {
     pub signals: Vec<Signal>,
     pub samples: Vec<Sample>,
     pub ac_samples: Vec<crate::ac::AcSample>,
+    #[serde(skip_serializing_if="Option::is_none")]
+    pub integration:Option<crate::configured::IntegrationReport>,
 }
 /// Immutable request validation precedes compilation. Only explicit CPU reference choices exist.
 pub fn run(request: &Request) -> SimResult<Manifest> {
@@ -60,6 +63,7 @@ pub fn run_with_registry(
     let provider = registry.get(&request.backend)?;
     let solver: &dyn LinearSolver = provider.as_ref();
     let plan = compile(&request.circuit)?;
+    let mut integration=None;
     let samples = match &request.analysis {
         Analysis::OperatingPoint => vec![Sample {
             time_s: 0.0,
@@ -67,6 +71,10 @@ pub fn run_with_registry(
         }],
         Analysis::Transient { options } => transient(&plan, solver, options)?,
         Analysis::Ac { .. } => Vec::new(),
+        Analysis::TransientConfigured{options}=>{
+            let result=crate::configured::run(&plan,solver,options,&false.into())?;
+            integration=Some(result.report);result.samples
+        }
     };
     let ac_samples = match &request.analysis {
         Analysis::Ac { frequencies_hz } => crate::ac::ac(&plan, frequencies_hz, solver)?,
@@ -98,5 +106,6 @@ pub fn run_with_registry(
         signals,
         samples,
         ac_samples,
+        integration,
     })
 }

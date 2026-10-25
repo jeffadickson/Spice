@@ -20,3 +20,7 @@ pub mod quantity;
 pub mod registry;
 pub mod sparse;
 pub mod transient;
+pub mod waveform;
+pub mod sources;
+pub mod configured;
+pub(crate) mod integrator;

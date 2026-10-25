@@ -70,3 +70,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 66. Declare configured transient initialization and integration policies
 67. Assemble backward Euler and trapezoidal linear steps
 68. Execute source-breakpoint-aware runs from consistent initial states
+69. Expose configured dynamics and initialization provenance in JSON
