@@ -18,6 +18,24 @@ pub struct SweepPoint {
     pub error: Option<SimError>,
 }
 
+/// A small, JSON-friendly accounting summary. Counts make partial campaign
+/// outcomes explicit instead of forcing callers to infer failure from absent data.
+#[derive(Debug, Default, Serialize, PartialEq, Eq)]
+pub struct SweepSummary {
+    pub total: usize,
+    pub succeeded: usize,
+    pub failed: usize,
+}
+
+impl SweepSummary {
+    /// Summarize completed points; cancellation is represented by the operation
+    /// error and therefore does not invent a count for an unstarted point.
+    pub fn from_points(points: &[SweepPoint]) -> Self {
+        let succeeded = points.iter().filter(|point| point.execution == "succeeded").count();
+        Self { total: points.len(), succeeded, failed: points.len() - succeeded }
+    }
+}
+
 /// A grid execution point retaining values in declared dimension order.
 #[derive(Debug, Serialize)]
 pub struct GridPoint {
