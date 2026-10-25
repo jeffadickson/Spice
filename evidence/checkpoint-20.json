@@ -1,0 +1,11 @@
+{
+  "iteration": 20,
+  "build": "passed",
+  "rust_tests_passed": 10,
+  "commands": [
+    "cargo build --locked",
+    "cargo test --locked"
+  ],
+  "scope": "DC and fixed-step zero-initial-state RC transient; CPU dense reference LU/QR",
+  "coverage": "final instrumented checkpoints"
+}
