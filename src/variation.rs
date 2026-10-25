@@ -34,3 +34,35 @@ pub fn replace_scalar(circuit: &Circuit, element_id: &str, value: f64) -> SimRes
     varied.validate()?;
     Ok(varied)
 }
+
+/// A finite ordered set of values for one component identity.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ScalarSweep {
+    pub element_id: String,
+    pub values: Vec<f64>,
+}
+
+impl ScalarSweep {
+    /// Validate bounds before any derived circuit is allocated or executed.
+    pub fn validate(&self) -> SimResult<()> {
+        if self.element_id.is_empty()
+            || self.element_id.len() > 256
+            || self.values.is_empty()
+            || self.values.len() > 64
+            || self.values.iter().any(|value| !value.is_finite())
+        {
+            return Err(SimError::invalid("invalid scalar sweep"));
+        }
+        Ok(())
+    }
+
+    /// Materialize variants in caller-declared order, retaining duplicate values.
+    pub fn circuits(&self, circuit: &Circuit) -> SimResult<Vec<Circuit>> {
+        self.validate()?;
+        self.values
+            .iter()
+            .map(|value| replace_scalar(circuit, &self.element_id, *value))
+            .collect()
+    }
+}

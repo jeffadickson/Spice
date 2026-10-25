@@ -1,7 +1,7 @@
 use circuit_simulator::{
     circuit::{Circuit, Element},
     ids::NodeId,
-    variation::replace_scalar,
+    variation::{ScalarSweep, replace_scalar},
 };
 
 fn fixture() -> Circuit {
@@ -9,6 +9,15 @@ fn fixture() -> Circuit {
         nodes: vec!["0".into(), "out".into()],
         elements: vec![Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(0), ohms: 10. }],
     }
+}
+
+#[test]
+fn sweep_preserves_declared_order_and_rejects_unbounded_input() {
+    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![20., 10.] };
+    let values: Vec<_> = sweep.circuits(&fixture()).unwrap().into_iter().map(|c| match c.elements[0] { Element::Resistor { ohms, .. } => ohms, _ => unreachable!() }).collect();
+    assert_eq!(values, vec![20., 10.]);
+    assert!(ScalarSweep { element_id: "R1".into(), values: vec![] }.validate().is_err());
+    assert!(ScalarSweep { element_id: "R1".into(), values: vec![f64::NAN] }.validate().is_err());
 }
 
 #[test]
