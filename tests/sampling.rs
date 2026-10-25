@@ -21,6 +21,16 @@ fn log_uniform_recipe_executes_positive_resistor_values() {
 }
 
 #[test]
+fn seeded_sampling_property_holds_for_a_bounded_seed_corpus() {
+    let range = UniformRange { low: -10., high: 10. };
+    for seed in 0..128u64 {
+        let values = uniform_values(seed, 16, range).unwrap();
+        assert_eq!(values, uniform_values(seed, 16, range).unwrap());
+        assert!(values.iter().all(|value| value.is_finite() && *value >= range.low && *value < range.high));
+    }
+}
+
+#[test]
 fn uniform_recipe_executes_as_regular_scalar_sweep() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
     let plan = UniformSweepPlan { element_id: "R1".into(), seed: 8, count: 2, range: UniformRange { low: 900., high: 1100. } };
