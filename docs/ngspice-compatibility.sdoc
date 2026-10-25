@@ -48,7 +48,7 @@ STATEMENT: >>>
 When a curated fixture is promoted to supported, verification shall compare a documented observable against an independently executed ngspice batch result or another documented analytic oracle. The verifier shall preserve the command, executable identity, fixture hash and tolerance as evidence.
 <<<
 COMMENT: >>>
-Implementation: scripts/Run-NgspiceOracle.cs creates a fixture-hash-named build directory and emits executable path, fixture hash, exit code and complete batch log. This prevents importer acceptance from being mistaken for numerical compatibility.
+Implementation: scripts/Run-NgspiceOracle.cs creates a fixture-hash-named build directory and emits executable path, fixture hash, exit code and complete batch log. scripts/Compare-NgspiceOracle.cs compares the named i(V1) observable for the curated res_simple fixture at a 1e-12 tolerance. This prevents importer acceptance from being mistaken for numerical compatibility.
 <<<
 
 [REQUIREMENT]

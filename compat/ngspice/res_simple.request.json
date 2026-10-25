@@ -1,0 +1,12 @@
+{
+  "schema_version": "1",
+  "case_id": "ngspice-res-simple",
+  "circuit": {
+    "nodes": ["0", "1"],
+    "elements": [
+      { "kind": "resistor", "id": "R1", "p": 1, "n": 0, "ohms": 10000.0 },
+      { "kind": "voltage", "id": "V1", "p": 1, "n": 0, "volts": 1.0 }
+    ]
+  },
+  "analysis": { "kind": "operating_point" }
+}
