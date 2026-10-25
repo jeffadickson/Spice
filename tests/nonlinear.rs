@@ -8,6 +8,7 @@ use circuit_simulator::{
     ids::NodeId,
     model::DiodeModel,
     netlist::parse,
+    power::dc_power,
     newton::{NewtonOptions, linearize, norm_inf, solve, solve_from},
     transient::{TransientOptions, transient},
 };
@@ -23,6 +24,19 @@ fn shockley_diode_has_positive_incremental_conductance() {
     assert!(zero.current_amps.abs() < 1e-24);
     assert!(forward.current_amps > 0.);
     assert!(forward.conductance_siemens > zero.conductance_siemens);
+}
+
+#[test]
+fn diode_dc_power_participates_in_balance_diagnostics() {
+    let circuit = Circuit { nodes: vec!["0".into(), "s".into(), "a".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
+        Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
+        Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
+    ] };
+    let plan = compile(&circuit).unwrap();
+    let power = dc_power(&plan, &operating_point(&plan, &DenseLu).unwrap()).unwrap();
+    assert!(power.devices.iter().any(|device| device.id == "D1" && device.absorbed_w > 0.));
+    assert!(power.sum_absorbed_w.abs() < 1e-10);
 }
 
 #[test]
