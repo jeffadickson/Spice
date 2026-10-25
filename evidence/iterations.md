@@ -95,3 +95,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 91. Make build checkpoints reproducible with captured logs and source hashes
 92. Reject malformed typed result shapes and oversized experiment metadata
 93. Expose independently balanced DC device power diagnostics
+94. Validate scalar expression division logarithm and exponential domains

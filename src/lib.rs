@@ -26,4 +26,5 @@ pub mod registry;
 pub mod sources;
 pub mod sparse;
 pub mod transient;
+pub mod power;
 pub mod waveform;
