@@ -100,7 +100,12 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
                 n,
                 amps: value,
             },
-            'L' => Element::Inductor {id,p,n,henries:value},
+            'L' => Element::Inductor {
+                id,
+                p,
+                n,
+                henries: value,
+            },
             _ => unreachable!(),
         });
         if circuit.elements.len() > 1024 || circuit.nodes.len() > 128 {

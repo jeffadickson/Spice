@@ -1,0 +1,11 @@
+{
+  "build": "passed",
+  "rust_tests_passed": 45,
+  "iteration": 70,
+  "features": [
+    "inductor flux/current",
+    "PWL corners",
+    "consistent initialization",
+    "trapezoidal RC and RLC"
+  ]
+}
