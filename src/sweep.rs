@@ -133,6 +133,24 @@ pub fn measurement_rows(points: &[SweepPoint], measurement_id: &str) -> Vec<Meas
     }).collect()
 }
 
+/// Count assertion outcomes without treating indeterminate as a passing result.
+#[derive(Debug, Default, Serialize, PartialEq, Eq)]
+pub struct AssertionSummary { pub pass: usize, pub fail: usize, pub indeterminate: usize, pub missing: usize }
+
+pub fn assertion_summary(points: &[SweepPoint], assertion_id: &str) -> AssertionSummary {
+    let mut summary = AssertionSummary::default();
+    for point in points {
+        let outcome = point.result.as_ref().and_then(|result| result.assertions.iter().find(|a| a.id == assertion_id));
+        match outcome.map(|assertion| assertion.outcome) {
+            Some(crate::assertion::Outcome::Pass) => summary.pass += 1,
+            Some(crate::assertion::Outcome::Fail) => summary.fail += 1,
+            Some(crate::assertion::Outcome::Indeterminate) => summary.indeterminate += 1,
+            None => summary.missing += 1,
+        }
+    }
+    summary
+}
+
 /// A grid execution point retaining values in declared dimension order.
 #[derive(Debug, Serialize)]
 pub struct GridPoint {

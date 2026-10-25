@@ -4,7 +4,7 @@ use circuit_simulator::{
     ids::NodeId,
     registry::BackendRegistry,
     sweep::{
-        GridSummary, SweepSummary, derived_case_id, final_signal, final_signal_rows, measurement_rows, run_grid, run_scalar,
+        GridSummary, SweepSummary, assertion_summary, derived_case_id, final_signal, final_signal_rows, measurement_rows, run_grid, run_scalar,
         run_scalar_cancellable,
     },
     variation::{ScalarGrid, ScalarKind, ScalarSweep, replace_scalar, scalar_kind},
@@ -20,6 +20,14 @@ fn fixture() -> Circuit {
             ohms: 10.,
         }],
     }
+}
+
+#[test]
+fn absent_assertions_are_counted_as_missing_not_passing() {
+    let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000.] };
+    let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
+    assert_eq!(assertion_summary(&points, "absent").missing, 1);
 }
 
 #[test]
