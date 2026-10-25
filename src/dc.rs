@@ -51,8 +51,17 @@ pub fn verify_solution(a: &Matrix, b: &[f64], x: &[f64]) -> SimResult<f64> {
     Ok(worst)
 }
 pub fn operating_point(plan: &CompiledCircuit, solver: &dyn LinearSolver) -> SimResult<Vec<f64>> {
+    Ok(operating_point_detailed(plan, solver)?.0)
+}
+
+/// Solve an operating point and retain Newton evidence when nonlinear devices exist.
+pub fn operating_point_detailed(
+    plan: &CompiledCircuit,
+    solver: &dyn LinearSolver,
+) -> SimResult<(Vec<f64>, Option<crate::newton::NewtonReport>)> {
     if plan.has_nonlinear_devices() {
-        return Ok(crate::newton::solve(plan, solver, crate::newton::NewtonOptions::default())?.0);
+        let (values, report) = crate::newton::solve(plan, solver, crate::newton::NewtonOptions::default())?;
+        return Ok((values, Some(report)));
     }
-    Ok(solve_verified(&plan.conductance, &plan.rhs, solver)?.0)
+    Ok((solve_verified(&plan.conductance, &plan.rhs, solver)?.0, None))
 }
