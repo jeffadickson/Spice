@@ -33,7 +33,7 @@ For the focused nonlinear diode/Newton contract suite, run `./scripts/Test-Nonli
 
 Linux executable names omit `.exe`. Build the managed library before F# examples load it. `scripts/Test-SecondSlice.ps1` runs the current build/tests and typed examples. Source/revision evidence is under `evidence/`; generated logs and binaries stay outside Git.
 
-`scripts/Test-ManagedCoverage.ps1 -CoverageTool <path-to-dotnet-coverage>` measures the client SDK separately from its conformance executable. `scripts/Test-Coverage.ps1` requires a supported Rust profiler runtime. The tested Windows GNU distribution lacks it; unavailable Rust coverage is explicitly recorded, never inferred from managed metrics.
+`scripts/Test-ManagedCoverage.ps1 -CoverageTool <path-to-dotnet-coverage>` measures the client SDK separately from its conformance executable. `scripts/Test-Coverage.ps1` selects a Rust coverage toolchain with `profiler_builtins`; this host still needs Visual C++ Build Tools and the Windows SDK for `link.exe`. Unavailable Rust coverage is explicitly recorded, never inferred from managed metrics.
 
 ## Documents
 
@@ -44,13 +44,13 @@ Linux executable names omit `.exe`. Build the managed library before F# examples
 
 ## Limits and remaining work
 
-No GPU execution, native OSDI plugins, nonlinear semiconductor/Newton engine, Arrow transport, persistent worker sandbox, C ABI, Starlark runtime, remote service or GUI is implemented. Expression IR is not yet an integrated behavioral device. Source DC values are reused as real AC amplitudes; separate AC phase/amplitude settings are deferred. No general vendor-model or StressForge compatibility is claimed.
+No GPU execution, native OSDI plugins, Arrow transport, persistent worker sandbox, C ABI, general Starlark runtime, remote service or GUI is implemented. A bounded Shockley diode/Newton path and SForge v0.1 parser/lowering path are implemented, but expression IR is not yet an integrated behavioral device. AC source magnitude/phase is supported for the selected import/API path. No general vendor-model or StressForge compatibility is claimed.
 
-The simple text frontend supports R/C/L/V/I, `.op`, `.end`, whole-line comments and a single-token or explicit `title:` first line. It is not a broad SPICE dialect.
+The bounded text/import frontends cover selected R/C/L/V/I, diode, controlled-source, waveform, directive and ground-alias forms. They are not a broad SPICE dialect; unsupported syntax fails explicitly.
 
 The legacy transient path uses zero stored-energy startup and records the first positive step. The configured path starts from a DC operating point unless a full consistent MNA state is supplied, and records t=0. Adaptive tolerance controls local step-doubling estimates, not global error or unobserved waveform peaks.
 
 The initial size/output budgets remain enforced. The local artifact API requires trusted local storage; integrity hashes are not signatures or a sandbox. Campaigns are bounded and sequential, without crash resume or distributed scheduling.
 
-The full plan remains partially implemented. CI is configured but no remote execution is claimed. No Git remote is configured. Product source licensing and distribution qualification remain open decisions.
+The full plan remains partially implemented. CI is configured but no remote execution is claimed. Product source licensing and distribution qualification remain open decisions.
 
