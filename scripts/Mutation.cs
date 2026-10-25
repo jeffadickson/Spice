@@ -54,14 +54,16 @@ var mutants = new (string Name, string File, string Pattern, string Replacement)
     ("adaptive-acceptance", "src/configured.rs", @"error\s*>\s*1\.", "error > 1e9"),
     ("sparse-row-order", "src/sparse.rs", @"w\[0\]\s*>=\s*w\[1\]", "false"),
     ("pwl-interpolation", "src/waveform.rs", @"\(1\.\s*-\s*f\)\s*\*\s*a\.value\s*\+\s*f\s*\*\s*b\.value", "a.value"),
-    ("missing-assertion", "src/assertion.rs", @"_\s*=>\s*Outcome::Indeterminate", "_ => Outcome::Pass")
+    ("missing-assertion", "src/assertion.rs", @"_\s*=>\s*Outcome::Indeterminate", "_ => Outcome::Pass"),
+    ("variation-grid-limit", "src/variation.rs", @"product\s*>\s*64", "false")
 };
 // The baseline runs the full suite; each operator then uses its focused regression target.
 var targets = new Dictionary<string,string> {
     ["stamp-sign"]="dc",["stored-charge"]="transient",["inclusive-boundary"]="analyses",
     ["milli-scale"]="analyses",["residual-acceptance"]="faults",["cancel-check"]="transient",
     ["state-commit"]="transient",["flux-sign"]="dynamic",["adaptive-acceptance"]="adaptive",
-    ["sparse-row-order"]="providers",["pwl-interpolation"]="edge_cases",["missing-assertion"]="analyses"
+    ["sparse-row-order"]="providers",["pwl-interpolation"]="edge_cases",["missing-assertion"]="analyses",
+    ["variation-grid-limit"]="variation"
 };
 var reports = new List<object>(); var killed = 0;
 foreach (var mutant in mutants)
