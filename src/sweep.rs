@@ -25,6 +25,7 @@ pub struct SweepPoint {
 pub struct ScalarSweepRun {
     pub schema_version: &'static str,
     pub base_case_id: String,
+    pub sweep_sha256: String,
     pub sweep: ScalarSweep,
     pub points: Vec<SweepPoint>,
     pub summary: SweepSummary,
@@ -216,6 +217,7 @@ pub struct GridPoint {
 pub struct ScalarGridRun {
     pub schema_version: &'static str,
     pub base_case_id: String,
+    pub grid_sha256: String,
     pub grid: ScalarGrid,
     pub points: Vec<GridPoint>,
     pub summary: GridSummary,
@@ -295,6 +297,7 @@ pub fn execute_grid(
     Ok(ScalarGridRun {
         schema_version: "1",
         base_case_id: request.case_id.clone(),
+        grid_sha256: crate::provenance::typed_hash("scalar-grid", grid)?,
         grid: grid.clone(),
         points,
         summary,
@@ -322,6 +325,7 @@ pub fn execute_scalar(
     Ok(ScalarSweepRun {
         schema_version: "1",
         base_case_id: request.case_id.clone(),
+        sweep_sha256: crate::provenance::typed_hash("scalar-sweep", sweep)?,
         sweep: sweep.clone(),
         points,
         summary,

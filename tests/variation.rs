@@ -37,6 +37,7 @@ fn scalar_grid_envelope_retains_dimension_definition() {
     let grid = ScalarGrid { dimensions: vec![ScalarSweep { element_id: "R1".into(), values: vec![1000.] }] };
     let run = execute_grid(&request, &grid, &BackendRegistry::reference()).unwrap();
     assert_eq!(run.summary.total, 1);
+    assert_eq!(run.grid_sha256.len(), 64);
     assert_eq!(run.grid.dimensions[0].element_id, "R1");
 }
 
@@ -117,6 +118,7 @@ fn scalar_sweep_envelope_is_self_describing() {
     let run = execute_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
     assert_eq!(run.schema_version, "1");
     assert_eq!(run.summary.succeeded, 1);
+    assert_eq!(run.sweep_sha256.len(), 64);
     assert_eq!(serde_json::to_value(run).unwrap()["sweep"]["element_id"], "R1");
 }
 
