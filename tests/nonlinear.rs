@@ -40,6 +40,19 @@ fn dense_lu_and_qr_agree_on_diode_operating_point() {
 }
 
 #[test]
+fn bounded_diode_parameter_corpus_produces_finite_operating_points() {
+    for scale in [0.1, 1., 10.] {
+        let circuit = Circuit { nodes: vec!["0".into(), "s".into(), "a".into()], elements: vec![
+            Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
+            Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. * scale },
+            Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12 * scale, thermal_volts: 0.02585 },
+        ] };
+        let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+        assert!(values.iter().all(|value| value.is_finite()));
+    }
+}
+
+#[test]
 fn diode_dc_power_participates_in_balance_diagnostics() {
     let circuit = Circuit { nodes: vec!["0".into(), "s".into(), "a".into()], elements: vec![
         Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
