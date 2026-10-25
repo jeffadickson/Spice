@@ -7,6 +7,9 @@ use nalgebra::{DMatrix, DVector};
 #[derive(Debug, Default)]
 pub struct DenseLu;
 impl LinearSolver for DenseLu {
+    fn capabilities(&self)->crate::linalg::BackendCapabilities{
+        crate::linalg::BackendCapabilities{id:self.name(),placement:"cpu",max_unknowns:256,sparse:false,gpu:false,complex:true,prepared_real:true,provider_version:"nalgebra 0.34.1"}
+    }
     fn name(&self) -> &'static str {
         "nalgebra_dense_lu_reference"
     }
@@ -66,6 +69,9 @@ impl LinearSolver for DenseLu {
 #[derive(Debug, Default)]
 pub struct DenseQr;
 impl LinearSolver for DenseQr {
+    fn capabilities(&self)->crate::linalg::BackendCapabilities{
+        crate::linalg::BackendCapabilities{id:self.name(),placement:"cpu",max_unknowns:256,sparse:false,gpu:false,complex:false,prepared_real:false,provider_version:"nalgebra 0.34.1"}
+    }
     fn name(&self) -> &'static str {
         "nalgebra_dense_qr_reference"
     }

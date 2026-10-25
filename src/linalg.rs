@@ -57,6 +57,9 @@ pub trait LinearSolver: Send + Sync {
             max_unknowns: 256,
             sparse: false,
             gpu: false,
+            complex: false,
+            prepared_real: false,
+            provider_version: "caller_defined",
         }
     }
 }
@@ -69,4 +72,7 @@ pub struct BackendCapabilities {
     pub max_unknowns: usize,
     pub sparse: bool,
     pub gpu: bool,
+    pub complex: bool,
+    pub prepared_real: bool,
+    pub provider_version: &'static str,
 }
