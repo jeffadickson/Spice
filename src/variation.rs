@@ -66,3 +66,49 @@ impl ScalarSweep {
             .collect()
     }
 }
+
+/// A bounded Cartesian product of scalar sweeps. Dimension order is significant:
+/// the first dimension changes slowest, which makes manifests reproducible.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ScalarGrid {
+    pub dimensions: Vec<ScalarSweep>,
+}
+
+impl ScalarGrid {
+    /// Validate unique element targets and a maximum of 64 generated variants.
+    pub fn validate(&self) -> SimResult<()> {
+        if self.dimensions.is_empty() || self.dimensions.len() > 4 {
+            return Err(SimError::invalid("scalar grid requires 1..4 dimensions"));
+        }
+        let mut names = std::collections::BTreeSet::new();
+        let mut product = 1usize;
+        for dimension in &self.dimensions {
+            dimension.validate()?;
+            if !names.insert(&dimension.element_id) {
+                return Err(SimError::invalid("scalar grid targets must be unique"));
+            }
+            product = product.checked_mul(dimension.values.len()).ok_or_else(|| SimError::invalid("scalar grid size overflow"))?;
+            if product > 64 { return Err(SimError::invalid("scalar grid exceeds 64 variants")); }
+        }
+        Ok(())
+    }
+
+    /// Return each complete immutable circuit and the matching dimension values.
+    pub fn circuits(&self, circuit: &Circuit) -> SimResult<Vec<(Vec<f64>, Circuit)>> {
+        self.validate()?;
+        let mut result = vec![(Vec::new(), circuit.clone())];
+        for dimension in &self.dimensions {
+            let mut next = Vec::new();
+            for (selected, base) in result {
+                for value in &dimension.values {
+                    let mut values = selected.clone();
+                    values.push(*value);
+                    next.push((values, replace_scalar(&base, &dimension.element_id, *value)?));
+                }
+            }
+            result = next;
+        }
+        Ok(result)
+    }
+}

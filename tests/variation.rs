@@ -2,7 +2,7 @@ use circuit_simulator::{
     api::Request,
     circuit::{Circuit, Element},
     ids::NodeId,
-    variation::{ScalarSweep, replace_scalar},
+    variation::{ScalarGrid, ScalarSweep, replace_scalar},
     sweep::{run_scalar, run_scalar_cancellable},
     registry::BackendRegistry,
 };
@@ -12,6 +12,18 @@ fn fixture() -> Circuit {
         nodes: vec!["0".into(), "out".into()],
         elements: vec![Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(0), ohms: 10. }],
     }
+}
+
+#[test]
+fn grid_has_deterministic_cartesian_order() {
+    let mut circuit = fixture();
+    circuit.elements.push(Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. });
+    let grid = ScalarGrid { dimensions: vec![
+        ScalarSweep { element_id: "R1".into(), values: vec![10., 20.] },
+        ScalarSweep { element_id: "V1".into(), values: vec![1., 2.] },
+    ] };
+    let rows = grid.circuits(&circuit).unwrap();
+    assert_eq!(rows.iter().map(|row| row.0.clone()).collect::<Vec<_>>(), vec![vec![10., 1.], vec![10., 2.], vec![20., 1.], vec![20., 2.]]);
 }
 
 #[test]
