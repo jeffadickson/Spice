@@ -182,3 +182,13 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 178. Update nonlinear implementation status
 179. Publish readable nonlinear contract projection
 180. Checkpoint nonlinear solver contract suite
+181. Reject diode source override rebinding
+182. Advertise bounded nonlinear capabilities
+183. Reject invalid explicit Newton policies
+184. Support diode saturation scalar variation
+185. Verify reverse diode saturation behavior
+186. Add repository continuation handoff prompt
+187. Add focused nonlinear contract test entrypoint
+188. Update coverage runtime contract evidence
+189. Document focused nonlinear test workflow
+190. Checkpoint nonlinear variation and policy contracts

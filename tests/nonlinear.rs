@@ -10,9 +10,10 @@ use circuit_simulator::{
     netlist::parse,
     newton::{NewtonOptions, linearize, norm_inf, solve, solve_from},
     power::dc_power,
-    sources::{BoundSources, SourceOverride}, waveform::Waveform,
-    variation::{replace_scalar, scalar_kind, ScalarKind},
+    sources::{BoundSources, SourceOverride},
     transient::{TransientOptions, transient},
+    variation::{ScalarKind, replace_scalar, scalar_kind},
+    waveform::Waveform,
 };
 
 #[test]
@@ -30,21 +31,43 @@ fn shockley_diode_has_positive_incremental_conductance() {
 
 #[test]
 fn scalar_variation_can_adjust_validated_diode_saturation_current() {
-    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![Element::Diode {
-        id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
-    }] };
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "a".into()],
+        elements: vec![Element::Diode {
+            id: "D1".into(),
+            p: NodeId(1),
+            n: NodeId(0),
+            saturation_amps: 1e-12,
+            thermal_volts: 0.02585,
+        }],
+    };
     let varied = replace_scalar(&circuit, "D1", 2e-12).unwrap();
-    assert_eq!(scalar_kind(&circuit, "D1").unwrap(), ScalarKind::DiodeSaturationCurrent);
-    assert!(matches!(varied.elements[0], Element::Diode { saturation_amps, .. } if saturation_amps == 2e-12));
+    assert_eq!(
+        scalar_kind(&circuit, "D1").unwrap(),
+        ScalarKind::DiodeSaturationCurrent
+    );
+    assert!(
+        matches!(varied.elements[0], Element::Diode { saturation_amps, .. } if saturation_amps == 2e-12)
+    );
     assert!(replace_scalar(&circuit, "D1", 0.).is_err());
 }
 
 #[test]
 fn diode_cannot_be_rebound_as_an_independent_source() {
-    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![Element::Diode {
-        id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
-    }] };
-    let overrides = [SourceOverride { id: "D1".into(), waveform: Waveform::Constant { value: 1. } }];
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "a".into()],
+        elements: vec![Element::Diode {
+            id: "D1".into(),
+            p: NodeId(1),
+            n: NodeId(0),
+            saturation_amps: 1e-12,
+            thermal_volts: 0.02585,
+        }],
+    };
+    let overrides = [SourceOverride {
+        id: "D1".into(),
+        waveform: Waveform::Constant { value: 1. },
+    }];
     assert!(BoundSources::new(&compile(&circuit).unwrap(), &overrides).is_err());
 }
 
@@ -114,10 +137,24 @@ fn bounded_diode_parameter_corpus_produces_finite_operating_points() {
 
 #[test]
 fn reverse_biased_diode_stays_near_saturation_current() {
-    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![
-        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: -1. },
-        Element::Diode { id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
-    ] };
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "a".into()],
+        elements: vec![
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: -1.,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
+        ],
+    };
     let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
     let current = 1e-12 * (values[0] / 0.02585).exp_m1();
     assert!((current + 1e-12).abs() < 1e-15);
@@ -194,11 +231,29 @@ fn json_operating_point_manifest_exposes_newton_report_for_diode_case() {
 
 #[test]
 fn explicit_newton_analysis_rejects_invalid_policy_before_solving() {
-    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![Element::Diode {
-        id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
-    }] };
-    let request = Request { schema_version: "1".into(), case_id: "bad-newton".into(), circuit,
-        analysis: Analysis::OperatingPointNewton { options: NewtonOptions { max_iterations: 0, ..NewtonOptions::default() } }, backend: "lu".into(), experiment: None };
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "a".into()],
+        elements: vec![Element::Diode {
+            id: "D1".into(),
+            p: NodeId(1),
+            n: NodeId(0),
+            saturation_amps: 1e-12,
+            thermal_volts: 0.02585,
+        }],
+    };
+    let request = Request {
+        schema_version: "1".into(),
+        case_id: "bad-newton".into(),
+        circuit,
+        analysis: Analysis::OperatingPointNewton {
+            options: NewtonOptions {
+                max_iterations: 0,
+                ..NewtonOptions::default()
+            },
+        },
+        backend: "lu".into(),
+        experiment: None,
+    };
     assert!(run(&request).is_err());
 }
 
