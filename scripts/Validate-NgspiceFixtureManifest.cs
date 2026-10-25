@@ -20,10 +20,12 @@ var allowedStates = new HashSet<string>(StringComparer.Ordinal) {
 };
 foreach (var fixture in fixtures.EnumerateArray()) {
     var fixturePath = fixture.GetProperty("path").GetString();
+    var upstreamHash = fixture.GetProperty("upstream_sha256").GetString();
     var family = fixture.GetProperty("family").GetString();
     var state = fixture.GetProperty("state").GetString();
     var features = fixture.GetProperty("required_features");
     if (string.IsNullOrWhiteSpace(fixturePath) || !paths.Add(fixturePath)
+        || string.IsNullOrWhiteSpace(upstreamHash) || !System.Text.RegularExpressions.Regex.IsMatch(upstreamHash, "^[0-9a-f]{64}$")
         || string.IsNullOrWhiteSpace(family) || state is null || !allowedStates.Contains(state)
         || features.ValueKind != JsonValueKind.Array)
         throw new InvalidDataException("fixture must have unique path, family, known state and feature array.");

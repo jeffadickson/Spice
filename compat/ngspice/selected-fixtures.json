@@ -4,42 +4,49 @@
   "fixtures": [
     {
       "path": "tests/resistance/res_simple.cir",
+      "upstream_sha256": "499df6f0ca39c891a7f27cf26f19dd105e1cfeb4c48c29cdb708be795e687d6d",
       "family": "basic_linear",
       "state": "oracle_passing",
       "required_features": []
     },
     {
       "path": "tests/general/rc.cir",
+      "upstream_sha256": "5b2301eb21382bfe972aad0959661352f9faed1b2c933378f2ff9e5c104872ce",
       "family": "linear_or_waveform",
       "state": "blocked_by_features",
       "required_features": ["pulse_default_arguments", "ac_source_amplitude", "transient"]
     },
     {
       "path": "tests/resistance/res_partition.cir",
+      "upstream_sha256": "a96394ae4fcd07140d19e7f6a7178f6adda68ba9d0b74d88ae309ff969279fb0",
       "family": "linear_or_waveform",
       "state": "oracle_passing",
       "required_features": []
     },
     {
       "path": "tests/resistance/res_array.cir",
+      "upstream_sha256": "618fc4d2f3f3752777327ee685c16da060744017421a7f0ac7d442f80f823ede",
       "family": "linear_or_waveform",
       "state": "blocked_by_features",
       "required_features": ["spaced_sine_arguments", "resistor_model_cards", "resistor_geometry", "source_scale_and_multiplicity", "multiple_analysis_requests", "print_expression_lists"]
     },
     {
       "path": "tests/polezero/filt_multistage.cir",
+      "upstream_sha256": "524cb091e3438801cec51b105dc16f3db6e07f9e973e9e4ace1e05d29aeeabb0",
       "family": "controlled_sources",
       "state": "blocked_by_features",
       "required_features": ["pole_zero_analysis"]
     },
     {
       "path": "tests/regression/temper/temper-1.cir",
+      "upstream_sha256": "a92c616aee6454d452e435faf567551b082359981233574228bd830ccff4c753",
       "family": "compact_models",
       "state": "blocked_by_features",
       "required_features": ["model_parameter_expressions", "control_blocks"]
     },
     {
       "path": "examples/measure/func_cap.sp",
+      "upstream_sha256": "fd5571e803cd542788ea311c6660e00e6751c4632cfa9afa68370e782d967fb0",
       "family": "hierarchy_or_expression",
       "state": "blocked_by_features",
       "required_features": ["parameter_expressions", "functions", "measurements"]
