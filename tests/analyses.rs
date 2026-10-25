@@ -18,6 +18,7 @@ fn rc_ac_matches_complex_transfer() {
             frequencies_hz: vec![1.0 / (std::f64::consts::TAU * 0.001)],
         },
         backend: "lu".into(),
+        experiment: None,
     })
     .unwrap();
     let v = &r.ac_samples[0].values[1];
@@ -34,6 +35,7 @@ fn current_source_polarity() {
         circuit: c,
         analysis: Analysis::OperatingPoint,
         backend: "lu".into(),
+        experiment: None,
     })
     .unwrap();
     assert!((r.samples[0].values[0] - 1.0).abs() < 1e-12);

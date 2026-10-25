@@ -79,3 +79,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 75. Expose accepted-sample observers with cancellation and failure semantics
 76. Report accepted rejected and reused numerical work separately
 77. Define bounded measurements over recorded waveform windows
+78. Integrate measurement validity and unit-checked assertion outcomes

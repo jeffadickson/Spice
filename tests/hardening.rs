@@ -18,6 +18,7 @@ fn node_labels_do_not_change_electrical_results() {
         circuit,
         analysis: Analysis::OperatingPoint,
         backend: "lu".into(),
+        experiment: None,
     };
     let a = run(&request).unwrap();
     request.circuit.nodes[1] = "renamed-in".into();
@@ -36,6 +37,7 @@ fn uniform_resistance_scaling_preserves_voltage() {
         circuit,
         analysis: Analysis::OperatingPoint,
         backend: "lu".into(),
+        experiment: None,
     };
     let x = run(&request(a)).unwrap();
     let y = run(&request(b)).unwrap();
@@ -64,6 +66,7 @@ fn registry_rejects_duplicates_and_allows_custom_ids() {
         circuit,
         analysis: Analysis::OperatingPoint,
         backend: "custom".into(),
+        experiment: None,
     };
     assert_eq!(
         run_with_registry(&r, &registry).unwrap().samples[0].values[0],
@@ -81,6 +84,7 @@ fn qr_complex_capability_is_rejected() {
             frequencies_hz: vec![1.0],
         },
         backend: "qr".into(),
+        experiment: None,
     };
     assert_eq!(run(&r).unwrap_err().code, ErrorCode::Unsupported);
 }

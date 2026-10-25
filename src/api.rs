@@ -30,6 +30,8 @@ pub struct Request {
     pub analysis: Analysis,
     #[serde(default = "default_backend")]
     pub backend: String,
+    #[serde(default)]
+    pub experiment:Option<crate::experiment::ExperimentSpec>,
 }
 fn default_backend() -> String {
     "lu".into()
@@ -53,6 +55,8 @@ pub struct Manifest {
     pub ac_samples: Vec<crate::ac::AcSample>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub integration: Option<crate::configured::IntegrationReport>,
+    pub measurements:Vec<crate::experiment::MeasurementResult>,
+    pub assertions:Vec<crate::experiment::AssertionResult>,
 }
 /// Immutable request validation precedes compilation. Only explicit CPU reference choices exist.
 pub fn run(request: &Request) -> SimResult<Manifest> {
@@ -67,6 +71,7 @@ pub fn run_with_registry(
         return Err(SimError::invalid("unsupported schema or invalid case_id"));
     }
     let provider = registry.get(&request.backend)?;
+    if let Some(experiment)=&request.experiment{experiment.validate()?;}
     let solver: &dyn LinearSolver = provider.as_ref();
     let plan = compile(&request.circuit)?;
     let mut integration = None;
@@ -103,7 +108,7 @@ pub fn run_with_registry(
         quantity: "current",
         unit: "A",
     }));
-    Ok(Manifest {
+    let mut manifest=Manifest {
         schema_version: "1",
         case_id: request.case_id.clone(),
         status: "succeeded",
@@ -114,5 +119,8 @@ pub fn run_with_registry(
         samples,
         ac_samples,
         integration,
-    })
+        measurements:Vec::new(),assertions:Vec::new(),
+    };
+    if let Some(experiment)=&request.experiment{let(m,a)=crate::experiment::evaluate(&manifest,experiment)?;manifest.measurements=m;manifest.assertions=a;}
+    Ok(manifest)
 }

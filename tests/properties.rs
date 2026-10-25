@@ -43,6 +43,7 @@ fn seeded_random_dividers_match_analytic_voltage_and_current() {
             circuit,
             analysis: Analysis::OperatingPoint,
             backend: "lu".into(),
+            experiment: None,
         })
         .unwrap();
         assert!((response.samples[0].values[1] - v * r2 / (r1 + r2)).abs() < 1e-8);

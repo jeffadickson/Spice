@@ -16,6 +16,7 @@ fn inductor_is_short_at_dc_and_has_signed_current() {
         circuit: c,
         analysis: Analysis::OperatingPoint,
         backend: "faer".into(),
+        experiment: None,
     })
     .unwrap();
     let index = result.signals.iter().position(|s| s.id == "i(L1)").unwrap();

@@ -23,4 +23,6 @@ pub mod registry;
 pub mod sources;
 pub mod sparse;
 pub mod transient;
+pub mod adaptive;
+pub mod experiment;
 pub mod waveform;
