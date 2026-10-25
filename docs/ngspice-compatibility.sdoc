@@ -30,3 +30,33 @@ Compatibility tooling shall treat the ngspice checkout as read-only and shall re
 COMMENT: >>>
 The current checkout reports a mixed license context with Modified BSD as the general test/example baseline; inspect upstream COPYING before copying any additional material.
 <<<
+
+[REQUIREMENT]
+UID: NGC-004
+TITLE: One hundred-family compatibility campaign
+STATEMENT: >>>
+The project shall maintain a stable, machine-readable campaign of exactly one hundred named ngspice compatibility feature families. Each family shall have an explicit status selected from supported, import_only, supported_api_only, planned, future or unsupported. A status shall not imply compatibility beyond its stated scope.
+<<<
+COMMENT: >>>
+Implementation: scripts/Plan-NgspiceFeatureFamilies.cs. The list deliberately separates deck import, public typed API capability, planned work and permanently unsupported interactive/plugin mechanisms.
+<<<
+
+[REQUIREMENT]
+UID: NGC-005
+TITLE: Independent executable oracle
+STATEMENT: >>>
+When a curated fixture is promoted to supported, verification shall compare a documented observable against an independently executed ngspice batch result or another documented analytic oracle. The verifier shall preserve the command, executable identity, fixture hash and tolerance as evidence.
+<<<
+COMMENT: >>>
+Implementation: scripts/Run-NgspiceOracle.cs creates a fixture-hash-named build directory and emits executable path, fixture hash, exit code and complete batch log. This prevents importer acceptance from being mistaken for numerical compatibility.
+<<<
+
+[REQUIREMENT]
+UID: NGC-006
+TITLE: Safe compact DC-source import
+STATEMENT: >>>
+The bounded ngspice importer shall normalize DC <value> and DC=<value> source forms and inline semicolon comments. It shall reject source waveform or AC tails that it cannot represent, rather than silently reducing them to DC values.
+<<<
+COMMENT: >>>
+Implementation: src/netlist.rs parse_ngspice_basic. Verification: tests/ngspice_compat.rs compact form and waveform rejection tests.
+<<<

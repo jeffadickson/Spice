@@ -139,7 +139,10 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
         if index == 0 {
             continue;
         }
-        let line = source_line.trim();
+        // ngspice accepts a semicolon as an inline comment introducer. Strip it
+        // before directive/device recognition so comment words cannot become
+        // accidental device parameters in this deliberately bounded importer.
+        let line = source_line.split(';').next().unwrap_or_default().trim();
         if line.is_empty() || line.starts_with('*') {
             continue;
         }
@@ -155,6 +158,15 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
             && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("dc"))
         {
             tokens.remove(3);
+        }
+        // ngspice also permits the compact DC=<value> spelling. Normalize only
+        // this unambiguous form; a source with additional waveform or AC terms
+        // must remain rejected rather than silently losing its behavior.
+        if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
+            && tokens.len() == 4
+            && tokens[3].get(..3).is_some_and(|prefix| prefix.eq_ignore_ascii_case("dc="))
+        {
+            tokens[3] = &tokens[3][3..];
         }
         normalized.push_str(&tokens.join(" "));
         normalized.push('\n');
