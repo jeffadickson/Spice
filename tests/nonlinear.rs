@@ -11,6 +11,7 @@ use circuit_simulator::{
     newton::{NewtonOptions, linearize, norm_inf, solve, solve_from},
     power::dc_power,
     sources::{BoundSources, SourceOverride}, waveform::Waveform,
+    variation::{replace_scalar, scalar_kind, ScalarKind},
     transient::{TransientOptions, transient},
 };
 
@@ -25,6 +26,17 @@ fn shockley_diode_has_positive_incremental_conductance() {
     assert!(zero.current_amps.abs() < 1e-24);
     assert!(forward.current_amps > 0.);
     assert!(forward.conductance_siemens > zero.conductance_siemens);
+}
+
+#[test]
+fn scalar_variation_can_adjust_validated_diode_saturation_current() {
+    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![Element::Diode {
+        id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
+    }] };
+    let varied = replace_scalar(&circuit, "D1", 2e-12).unwrap();
+    assert_eq!(scalar_kind(&circuit, "D1").unwrap(), ScalarKind::DiodeSaturationCurrent);
+    assert!(matches!(varied.elements[0], Element::Diode { saturation_amps, .. } if saturation_amps == 2e-12));
+    assert!(replace_scalar(&circuit, "D1", 0.).is_err());
 }
 
 #[test]
