@@ -1,4 +1,5 @@
 use circuit_simulator::{backend::DenseLu, circuit::{Circuit, Element}, compile::compile, dc::operating_point, ids::NodeId, power::dc_power};
+use circuit_simulator::api::{run, Request};
 
 #[test]
 fn vccs_stamps_controlled_current_with_declared_polarity() {
@@ -41,4 +42,16 @@ fn vccs_power_accounting_balances_the_controlling_supply() {
     let x = operating_point(&plan, &DenseLu).unwrap();
     let report = dc_power(&plan, &x).unwrap();
     assert!(report.sum_absorbed_w.abs() < 1e-12);
+}
+
+#[test]
+fn vccs_json_request_is_solved_through_the_public_api() {
+    let request: Request = serde_json::from_str(r#"{
+      "schema_version":"1","case_id":"vccs-json","circuit":{"nodes":["0","in","out"],"elements":[
+        {"kind":"voltage","id":"V1","p":1,"n":0,"volts":2.0},
+        {"kind":"vccs","id":"G1","p":2,"n":0,"cp":1,"cn":0,"siemens":0.5},
+        {"kind":"resistor","id":"R1","p":2,"n":0,"ohms":1.0}
+      ]},"analysis":{"kind":"operating_point"}}"#).unwrap();
+    let result = run(&request).unwrap();
+    assert!((result.samples[0].values[1] + 1.).abs() < 1e-12);
 }
