@@ -1,0 +1,120 @@
+[DOCUMENT]
+TITLE: Reference Engine - Implemented Scope and Acceptance Contracts
+
+[TEXT]
+STATEMENT: >>>
+Version 0.1. This is a bounded prototype, not an M1 release. Implemented contracts below have source/test mappings in COMMENT fields. Verification is claimed only by the actual checkpoint evidence. Architecture requirements remain Proposed; a small implementation does not satisfy their full qualification scope.
+<<<
+
+[REQUIREMENT]
+UID: REF-001
+TITLE: Validated bounded linear circuits
+STATEMENT: >>>
+The reference engine shall validate explicit ground, unique bounded labels, terminal indices and finite SI parameters for resistors, capacitors and independent DC voltage/current sources before matrix assembly.
+<<<
+COMMENT: >>>
+Implementation: src/circuit.rs, src/compile.rs, src/model.rs.
+Verification: tests/dc.rs, tests/hardening.rs, tests/properties.rs.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-STATE-003
+
+[REQUIREMENT]
+UID: REF-002
+TITLE: Replaceable reference solves with residual checks
+STATEMENT: >>>
+The reference engine shall offer per-engine solver registration and CPU dense LU/QR adapters, reject unsupported complex requests and verify returned physical residuals independently.
+<<<
+COMMENT: >>>
+Implementation: src/linalg.rs, src/backend.rs, src/registry.rs, src/dc.rs, src/ac.rs.
+Verification: tests/dc.rs, tests/faults.rs, tests/hardening.rs, tests/analyses.rs.
+Both adapters currently use nalgebra; two independent production solver providers have NOT been qualified. Pattern/factor reuse, sparse and GPU backends are not implemented.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-LIN-001
+- TYPE: Parent
+  VALUE: ARCH-LIN-004
+
+[REQUIREMENT]
+UID: REF-003
+TITLE: Explicit fixed-step transient profile
+STATEMENT: >>>
+The reference transient engine shall use backward Euler from zero stored-energy initial state with constant sources, bounded steps/output retention, cooperative cancellation and commit only after solve/residual acceptance.
+<<<
+COMMENT: >>>
+Implementation: src/transient.rs.
+Verification: tests/transient.rs, tests/faults.rs, tests/hardening.rs.
+Adaptive error control, nonlinear rollback, event processing and persisted partial/checkpoint output are not implemented. Output begins after the first positive step, not at an invented time-zero sample.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-EQ-004
+
+[REQUIREMENT]
+UID: REF-004
+TITLE: Complex linear AC profile
+STATEMENT: >>>
+The reference AC engine shall assemble G+j*omega*C for positive bounded frequency arrays and expose real/imaginary binary64 values with frequency units, checking the backend solution residual.
+<<<
+COMMENT: >>>
+Implementation: src/ac.rs, src/api.rs.
+Verification: tests/analyses.rs, tests/hardening.rs.
+Existing real source values are reused as real AC amplitudes; separate DC/AC source phase and amplitude specifications are deferred. AC support is provider-dependent.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-EQ-001
+
+[REQUIREMENT]
+UID: REF-005
+TITLE: JSON process transport and managed clients
+STATEMENT: >>>
+The reference CLI shall accept at most 1 MiB of versioned JSON input and emit one JSON success/failure envelope with explicit completeness; C#/F# clients shall access it without a shell and use explicit cancellation/disposal.
+<<<
+COMMENT: >>>
+Implementation: src/api.rs, src/main.rs, dotnet/Simulator.Client/Client.cs.
+Verification: tests/contracts.rs, dotnet/Simulator.Conformance/Program.cs, examples/Run.cs, examples/Run.fsx, examples/BuildCircuit.fsx.
+This is one-shot JSON process transport, not Arrow streaming, persistent worker isolation, sandboxing, a C ABI or the complete typed SDK. Native executable code is trusted.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-API-001
+- TYPE: Parent
+  VALUE: ARCH-API-002
+
+[REQUIREMENT]
+UID: REF-006
+TITLE: Measurable and reproducible validation
+STATEMENT: >>>
+The prototype shall retain numerical regression results, reproducible bounded random/fuzz-smoke campaigns, isolated deliberate code-mutation outcomes and actual coverage metrics or explicit tooling limitations.
+<<<
+COMMENT: >>>
+Implementation: tests/, scripts/Mutation.cs, scripts/Test-Coverage.ps1.
+Verification: evidence/checkpoint-*.json, evidence/mutation.json, evidence/coverage.json.
+Bounded fuzz smoke is not coverage-guided libFuzzer qualification. Mutation evidence covers seven chosen operators, not all possible mutants. Windows GNU Rust coverage is unavailable when profiler_builtins is missing; managed coverage does not measure Rust code.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-002
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: REF-007
+TITLE: Separate authoring and behavioral expression experiments
+STATEMENT: >>>
+The experimental F# builder shall produce the canonical request contract, and the host-owned behavioral expression IR shall evaluate bounded value/derivative expressions without calling a general scripting interpreter.
+<<<
+COMMENT: >>>
+Implementation: examples/BuildCircuit.fsx, src/expression.rs.
+Verification: F# builder execution, tests/expression.rs.
+No Starlark/Rhai interpreter, native model plugin, complete units DSL, GPU code generation or integrated behavioral-source model is implemented.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-DSL-001
+- TYPE: Parent
+  VALUE: ARCH-DSL-004
+
