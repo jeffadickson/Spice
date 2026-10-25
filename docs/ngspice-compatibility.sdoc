@@ -110,3 +110,13 @@ The compatibility project shall maintain a checked-in manifest of selected exter
 COMMENT: >>>
 Implementation: compat/ngspice/selected-fixtures.json.
 <<<
+
+[REQUIREMENT]
+UID: NGC-012
+TITLE: VCCS controlled-source polarity
+STATEMENT: >>>
+The typed circuit API and bounded ngspice importer shall support a voltage-controlled current source whose p-to-n current equals transconductance times the control positive-minus-negative voltage. Control terminals shall be distinct valid nodes and gain shall be finite.
+<<<
+COMMENT: >>>
+Implementation: circuit::Element::Vccs, compile::compile and netlist::parse_ngspice_basic. Verification: tests/controlled_sources.rs and tests/ngspice_compat.rs.
+<<<

@@ -21,3 +21,11 @@ fn vccs_negative_control_voltage_reverses_output_polarity() {
     let x = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
     assert!((x[1] - 1.).abs() < 1e-12);
 }
+
+#[test]
+fn vccs_rejects_identical_control_terminals() {
+    let circuit = Circuit { nodes: vec!["0".into(), "out".into()], elements: vec![
+        Element::Vccs { id: "G1".into(), p: NodeId(1), n: NodeId(0), cp: NodeId(0), cn: NodeId(0), siemens: 1. },
+    ]};
+    assert!(compile(&circuit).is_err());
+}
