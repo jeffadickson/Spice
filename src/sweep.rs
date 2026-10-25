@@ -72,6 +72,29 @@ impl SweepSummary {
     }
 }
 
+/// Read a final real-valued signal from a successful point without requiring
+/// JSON re-parsing. AC-only points are reported as unavailable to the caller.
+pub fn final_signal(point: &SweepPoint, signal_id: &str) -> SimResult<f64> {
+    let result = point
+        .result
+        .as_ref()
+        .ok_or_else(|| SimError::invalid("sweep point did not succeed"))?;
+    let index = result
+        .signals
+        .iter()
+        .position(|signal| signal.id == signal_id)
+        .ok_or_else(|| SimError::invalid("signal is not recorded"))?;
+    let sample = result
+        .samples
+        .last()
+        .ok_or_else(|| SimError::invalid("sweep point has no real samples"))?;
+    sample
+        .values
+        .get(index)
+        .copied()
+        .ok_or_else(|| SimError::invalid("malformed recorded signal row"))
+}
+
 /// A grid execution point retaining values in declared dimension order.
 #[derive(Debug, Serialize)]
 pub struct GridPoint {
