@@ -103,8 +103,8 @@ F095|Convergence diagnostics|supported_api_only
 F096|Floating-point determinism|future
 F097|Malformed-deck fuzzing|supported
 F098|Property-based numerical tests|supported
-F099|Upstream oracle execution|planned
-F100|Corpus regression manifest|planned
+F099|Upstream oracle execution|supported
+F100|Corpus regression manifest|supported
 """;
 var families = text.Split('\n', StringSplitOptions.RemoveEmptyEntries)
     .Select(line => line.Split('|'))
