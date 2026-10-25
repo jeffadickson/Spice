@@ -1,4 +1,4 @@
-# Rust Circuit Simulator — extended reference engine
+# Spice — Rust circuit-simulation reference engine
 
 A bounded Rust circuit engine with CPU provider adapters and C#/F# access. This is **not a full M1 release**.
 
