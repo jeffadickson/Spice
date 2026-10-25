@@ -21,6 +21,16 @@ pub enum Waveform {
         frequency_hz: f64,
         phase_rad: f64,
     },
+    /// Bounded SPICE-style pulse with explicit edge durations in seconds.
+    Pulse {
+        low: f64,
+        high: f64,
+        delay_s: f64,
+        rise_s: f64,
+        fall_s: f64,
+        width_s: f64,
+        period_s: f64,
+    },
 }
 impl Waveform {
     pub fn validate(&self) -> SimResult<()> {
@@ -51,6 +61,14 @@ impl Waveform {
             {
                 Err(SimError::invalid("invalid PWL points/order/budget"))
             }
+            Self::Pulse { low, high, delay_s, rise_s, fall_s, width_s, period_s }
+                if !low.is_finite() || !high.is_finite() || !delay_s.is_finite() || *delay_s < 0.
+                    || !rise_s.is_finite() || *rise_s < 0. || !fall_s.is_finite() || *fall_s < 0.
+                    || !width_s.is_finite() || *width_s < 0. || !period_s.is_finite()
+                    || *period_s <= 0. || rise_s + width_s + fall_s > *period_s =>
+            {
+                Err(SimError::invalid("invalid pulse parameters"))
+            }
             _ => Ok(()),
         }
     }
@@ -76,6 +94,16 @@ impl Waveform {
                     return Err(SimError::invalid("sine phase overflow"));
                 }
                 offset + amplitude * phase.sin()
+            }
+            Self::Pulse { low, high, delay_s, rise_s, fall_s, width_s, period_s } => {
+                if time < *delay_s { *low } else {
+                    let phase = (time - delay_s).rem_euclid(*period_s);
+                    if phase < *rise_s && *rise_s > 0. { low + (high - low) * phase / rise_s }
+                    else if phase < rise_s + width_s { *high }
+                    else if phase < rise_s + width_s + fall_s && *fall_s > 0. {
+                        high + (low - high) * (phase - rise_s - width_s) / fall_s
+                    } else { *low }
+                }
             }
             Self::Pwl { points } => {
                 let index = points.partition_point(|p| p.time_s <= time);

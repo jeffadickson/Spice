@@ -1,6 +1,7 @@
 use circuit_simulator::{
     backend::DenseLu, compile::compile, dc::operating_point, error::ErrorCode,
     netlist::parse_ngspice_basic,
+    waveform::Waveform,
 };
 
 /// Source: ngspice tests/resistance/res_simple.cir, revision e8285746c.
@@ -12,6 +13,16 @@ fn ngspice_res_simple_fixture_matches_dc_reference() {
     let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
     assert!((values[0] - 1.).abs() < 1e-12);
     assert!((values[1] + 1e-4).abs() < 1e-12);
+}
+
+#[test]
+fn pulse_waveform_has_exact_plateaus_and_rejects_invalid_periods() {
+    let pulse = Waveform::Pulse { low: 0., high: 2., delay_s: 1., rise_s: 1., fall_s: 1., width_s: 2., period_s: 6. };
+    assert_eq!(pulse.at(0.).unwrap(), 0.);
+    assert_eq!(pulse.at(2.).unwrap(), 2.);
+    assert_eq!(pulse.at(4.).unwrap(), 2.);
+    assert_eq!(pulse.at(5.).unwrap(), 0.);
+    assert!(Waveform::Pulse { period_s: 0., ..pulse }.validate().is_err());
 }
 
 /// Compact DC assignment and inline comments are common deck conveniences.

@@ -60,3 +60,13 @@ The bounded ngspice importer shall normalize DC <value> and DC=<value> source fo
 COMMENT: >>>
 Implementation: src/netlist.rs parse_ngspice_basic. Verification: tests/ngspice_compat.rs compact form and waveform rejection tests.
 <<<
+
+[REQUIREMENT]
+UID: NGC-007
+TITLE: Pulse waveform semantics
+STATEMENT: >>>
+The typed transient API shall represent a bounded periodic pulse waveform with finite levels, nonnegative delay/rise/fall/width, a positive period and no pulse phase duration exceeding that period.
+<<<
+COMMENT: >>>
+Implementation: src/waveform.rs Waveform::Pulse. Verification: tests/ngspice_compat.rs exact plateau/edge and invalid-period tests.
+<<<
