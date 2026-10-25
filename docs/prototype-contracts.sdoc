@@ -93,7 +93,7 @@ The prototype shall retain numerical regression results, reproducible bounded ra
 COMMENT: >>>
 Implementation: tests/, scripts/Mutation.cs, scripts/Test-Coverage.ps1.
 Verification: evidence/checkpoint-*.json, evidence/mutation.json, evidence/coverage.json.
-Bounded fuzz smoke is not coverage-guided libFuzzer qualification. Mutation evidence covers selected operators, not all possible mutants. Windows GNU Rust coverage is unavailable when profiler_builtins is missing; managed coverage does not measure Rust code.
+Bounded fuzz smoke is not coverage-guided libFuzzer qualification. Mutation evidence covers selected operators, not all possible mutants. The nightly MSVC coverage toolchain includes profiler_builtins; this host still requires link.exe from Visual C++ Build Tools before instrumented Rust coverage can run. Managed coverage does not measure Rust code.
 <<<
 RELATIONS:
 - TYPE: Parent
