@@ -43,3 +43,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 39. Automate actual LLVM source coverage collection
 40. Checkpoint Rust and managed contracts with reproducible test entrypoint
 41. Prototype bounded differentiable behavioral expression IR
+42. Demonstrate trusted FSharp domain builders without a new interpreter
