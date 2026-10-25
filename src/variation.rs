@@ -75,6 +75,24 @@ pub struct ScalarSweep {
     pub values: Vec<f64>,
 }
 
+/// One fully described selected value, suitable for result manifests.
+#[derive(Debug, Clone, PartialEq, serde::Serialize)]
+pub struct ScalarSelection {
+    pub element_id: String,
+    pub kind: ScalarKind,
+    pub unit: &'static str,
+    pub value: f64,
+}
+
+impl ScalarSweep {
+    /// Describe a value using the base circuit's explicit scalar kind and unit.
+    pub fn selection(&self, circuit: &Circuit, value: f64) -> SimResult<ScalarSelection> {
+        self.validate()?;
+        let kind = scalar_kind(circuit, &self.element_id)?;
+        Ok(ScalarSelection { element_id: self.element_id.clone(), kind, unit: kind.unit(), value })
+    }
+}
+
 impl ScalarSweep {
     /// Validate bounds before any derived circuit is allocated or executed.
     pub fn validate(&self) -> SimResult<()> {

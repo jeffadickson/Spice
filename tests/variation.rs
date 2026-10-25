@@ -27,6 +27,14 @@ fn scalar_kind_is_explicit_for_programmatic_consumers() {
 }
 
 #[test]
+fn selection_carries_identity_value_and_si_unit() {
+    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![10.] };
+    let selection = sweep.selection(&fixture(), 10.).unwrap();
+    assert_eq!(selection.element_id, "R1");
+    assert_eq!(selection.unit, "ohm");
+}
+
+#[test]
 fn sweep_summary_makes_per_point_accounting_explicit() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
     let sweep = ScalarSweep {
