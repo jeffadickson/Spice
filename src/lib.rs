@@ -28,6 +28,7 @@ pub mod registry;
 pub mod sources;
 pub mod sparse;
 pub mod sweep;
+pub mod sampling;
 pub mod transient;
 pub mod variation;
 pub mod waveform;
