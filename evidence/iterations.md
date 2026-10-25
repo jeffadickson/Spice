@@ -67,3 +67,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 63. Expose inductor currents and netlist L-element support
 64. Evaluate bounded PWL source definitions with explicit corners
 65. Bind source waveforms without mutating compiled matrices
+66. Declare configured transient initialization and integration policies
