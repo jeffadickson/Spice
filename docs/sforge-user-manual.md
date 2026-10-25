@@ -2,6 +2,8 @@
 
 SForge is a typed source language for circuit simulations. This is an implemented **v0.1 parser**: it recognizes a package, circuits, nodes, resistor/capacitor/voltage-source/diode devices, one transient analysis, observations, and text assertions. Semantic lowering into the Rust simulator is the next step.
 
+The lexer is a first-class component. It recognizes identifiers, finite numeric prefixes, punctuation, whitespace and `#` comments; every emitted token carries an offset plus one-based line/column location. Invalid characters and incomplete exponents are structured lexical diagnostics. Parsing uses Parlot for the identifier contract, while the surrounding v0.1 grammar is a deliberately explicit recursive-descent implementation.
+
 ## Complete v0.1 grammar
 
 ```ebnf
@@ -60,4 +62,4 @@ else
     var circuit = (SForge.Language.Circuit)result.Document!.Declarations[0];
 ```
 
-The parser returns a source-span-bearing AST and structured diagnostics. It does not run simulation yet. The compiler must next validate names/units, lower to the shared IR, and select a Rust/ngspice backend.
+The parser returns a source-span-bearing AST and structured diagnostics. The included semantic validator checks declared nodes, circuit references, `gnd`, and the implemented unit families. It does not run simulation yet. The compiler must next lower the validated AST to the shared IR and select a Rust/ngspice backend.

@@ -13,7 +13,10 @@ public static class SForgeParser
 
     public static ParseResult Parse(string source)
     {
-        var p = new Reader(source ?? string.Empty);
+        source ??= string.Empty;
+        var (_, lexicalDiagnostics) = SForgeLexer.Lex(source);
+        if (lexicalDiagnostics.Count != 0) return new ParseResult(null, lexicalDiagnostics);
+        var p = new Reader(source);
         var declarations = new List<Declaration>(); string? package = null;
         if (p.Word("package")) { package = p.Name(); p.Semicolon(); }
         while (!p.End) { Declaration? declaration = p.Word("circuit") ? p.Circuit() : p.Word("run") ? p.Run() : null; if (declaration is null) p.Error("expected circuit or run declaration"); else declarations.Add(declaration); }
