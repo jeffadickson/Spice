@@ -95,6 +95,23 @@ pub fn final_signal(point: &SweepPoint, signal_id: &str) -> SimResult<f64> {
         .ok_or_else(|| SimError::invalid("malformed recorded signal row"))
 }
 
+/// One query row that keeps a failed point visible as an unavailable value.
+#[derive(Debug, Serialize)]
+pub struct SignalRow {
+    pub index: usize,
+    pub selection: ScalarSelection,
+    pub value: Option<f64>,
+    pub reason: Option<String>,
+}
+
+/// Project a final signal across all points without silently dropping failures.
+pub fn final_signal_rows(points: &[SweepPoint], signal_id: &str) -> Vec<SignalRow> {
+    points.iter().map(|point| match final_signal(point, signal_id) {
+        Ok(value) => SignalRow { index: point.index, selection: point.selection.clone(), value: Some(value), reason: None },
+        Err(error) => SignalRow { index: point.index, selection: point.selection.clone(), value: None, reason: Some(error.message) },
+    }).collect()
+}
+
 /// A grid execution point retaining values in declared dimension order.
 #[derive(Debug, Serialize)]
 pub struct GridPoint {

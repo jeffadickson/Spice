@@ -4,7 +4,7 @@ use circuit_simulator::{
     ids::NodeId,
     registry::BackendRegistry,
     sweep::{
-        GridSummary, SweepSummary, derived_case_id, final_signal, run_grid, run_scalar,
+        GridSummary, SweepSummary, derived_case_id, final_signal, final_signal_rows, run_grid, run_scalar,
         run_scalar_cancellable,
     },
     variation::{ScalarGrid, ScalarKind, ScalarSweep, replace_scalar, scalar_kind},
@@ -20,6 +20,17 @@ fn fixture() -> Circuit {
             ohms: 10.,
         }],
     }
+}
+
+#[test]
+fn projected_signal_rows_preserve_point_indices() {
+    let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000., 2000.] };
+    let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
+    let rows = final_signal_rows(&points, "v(out)");
+    assert_eq!(rows.len(), 2);
+    assert_eq!(rows[1].index, 1);
+    assert!(rows.iter().all(|row| row.value.is_some()));
 }
 
 #[test]
