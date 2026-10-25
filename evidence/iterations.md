@@ -86,3 +86,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 82. Expose typed managed signal measurement and integration results
 83. Author a typed FSharp RLC experiment through the managed SDK
 84. Compare dynamic circuits and measurement policies across providers
+85. Fuzz sparse layouts and structured transient boundary cases
