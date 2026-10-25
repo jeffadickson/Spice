@@ -32,6 +32,12 @@ fn ngspice_tran_directive_lowers_to_typed_request() {
 }
 
 #[test]
+fn ngspice_duplicate_transient_directives_are_rejected() {
+    let error = import_ngspice_request("title\nV1 out 0 1\nR1 out 0 1k\n.tran 1m 2m\n.tran 1m 3m\n.end\n", "tran-duplicate").unwrap_err();
+    assert_eq!(error.code, ErrorCode::Unsupported);
+}
+
+#[test]
 fn ngspice_ac_linear_directive_lowers_to_typed_request() {
     let request = import_ngspice_request("title\nV1 out 0 1\nR1 out 0 1k\n.ac lin 3 10 30\n.end\n", "ac-import").unwrap();
     match request.analysis {
