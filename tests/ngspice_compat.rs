@@ -22,7 +22,17 @@ fn pulse_waveform_has_exact_plateaus_and_rejects_invalid_periods() {
     assert_eq!(pulse.at(2.).unwrap(), 2.);
     assert_eq!(pulse.at(4.).unwrap(), 2.);
     assert_eq!(pulse.at(5.).unwrap(), 0.);
-    assert!(Waveform::Pulse { period_s: 0., ..pulse }.validate().is_err());
+    assert!(Waveform::Pulse {
+        low: 0.,
+        high: 2.,
+        delay_s: 1.,
+        rise_s: 1.,
+        fall_s: 1.,
+        width_s: 2.,
+        period_s: 0.,
+    }
+    .validate()
+    .is_err());
 }
 
 /// Compact DC assignment and inline comments are common deck conveniences.
