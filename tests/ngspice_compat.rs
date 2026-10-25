@@ -144,6 +144,13 @@ fn ngspice_pulse_source_lowers_to_transient_override() {
 }
 
 #[test]
+fn ngspice_pulse_rejects_phase_duration_beyond_period_when_executed() {
+    let request = import_ngspice_request("title\nV1 out 0 pulse 0 1 0 1m 1m 2m 3m\nR1 out 0 1k\n.tran 1m 3m\n.end\n", "pulse-invalid").unwrap();
+    let error = circuit_simulator::api::run(&request).unwrap_err();
+    assert_eq!(error.code, ErrorCode::InvalidInput);
+}
+
+#[test]
 fn ngspice_compact_sine_source_lowers_to_transient_override() {
     let request = import_ngspice_request("title\nV1 out 0 SIN(1,2,1k)\nR1 out 0 1k\n.tran 1m 2m\n.end\n", "sine-import").unwrap();
     match request.analysis {
