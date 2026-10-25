@@ -33,15 +33,22 @@ impl DiodeModel {
         let isat = positive(self.saturation_amps, "diode saturation current")?;
         let vt = positive(self.thermal_volts, "diode thermal voltage")?;
         if !voltage.is_finite() || voltage / vt > 700. {
-            return Err(crate::error::SimError::invalid("diode trial voltage exceeds exponential domain"));
+            return Err(crate::error::SimError::invalid(
+                "diode trial voltage exceeds exponential domain",
+            ));
         }
         let exponential = (voltage / vt).exp();
         let current_amps = isat * (exponential - 1.0);
         let conductance_siemens = isat * exponential / vt;
         if !current_amps.is_finite() || !conductance_siemens.is_finite() {
-            return Err(crate::error::SimError::invalid("nonfinite diode contribution"));
+            return Err(crate::error::SimError::invalid(
+                "nonfinite diode contribution",
+            ));
         }
-        Ok(DiodeLinearization { current_amps, conductance_siemens })
+        Ok(DiodeLinearization {
+            current_amps,
+            conductance_siemens,
+        })
     }
 }
 impl TwoTerminalModel for ResistorModel {

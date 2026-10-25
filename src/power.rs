@@ -31,6 +31,18 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
             Element::Resistor { ohms, .. } => v / ohms,
             Element::Current { amps, .. } => *amps,
             Element::Capacitor { .. } => 0.,
+            Element::Diode {
+                saturation_amps,
+                thermal_volts,
+                ..
+            } => {
+                crate::model::DiodeModel {
+                    saturation_amps: *saturation_amps,
+                    thermal_volts: *thermal_volts,
+                }
+                .linearize(v)?
+                .current_amps
+            }
             Element::Voltage { id, .. } | Element::Inductor { id, .. } => {
                 x[plan
                     .branch_index(id)

@@ -132,8 +132,11 @@ impl Circuit {
                 } if !saturation_amps.is_finite()
                     || !thermal_volts.is_finite()
                     || *saturation_amps <= 0.
-                    || *thermal_volts <= 0. => {
-                    return Err(SimError::invalid("diode parameters must be finite and positive"));
+                    || *thermal_volts <= 0. =>
+                {
+                    return Err(SimError::invalid(
+                        "diode parameters must be finite and positive",
+                    ));
                 }
                 _ => {}
             }

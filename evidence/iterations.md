@@ -152,3 +152,13 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 148. Add focused variation contract test entrypoint
 149. Document variation evidence limits and API scope
 150. Build and qualify the third fifty-iteration reference slice
+151. Define validated Shockley diode model
+152. Add validated diode circuit element
+153. Compile immutable nonlinear diode definitions
+154. Assemble nonlinear diode residuals and Jacobians
+155. Add bounded damped Newton operating-point solver
+156. Route nonlinear operating points through Newton
+157. Validate explicit Newton initial states
+158. Verify forward-biased diode operating point
+159. Reject unlinearized nonlinear AC requests
+160. Checkpoint bounded diode Newton operating points

@@ -30,7 +30,9 @@ impl CompiledCircuit {
         self.conductance.n
     }
     /// Nonlinear device presence selects Newton operating-point solving.
-    pub fn has_nonlinear_devices(&self) -> bool { !self.diodes.is_empty() }
+    pub fn has_nonlinear_devices(&self) -> bool {
+        !self.diodes.is_empty()
+    }
     pub fn branch_index(&self, id: &str) -> Option<usize> {
         self.branch_ids
             .iter()
@@ -88,10 +90,19 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     rhs[i] += amps;
                 }
             }
-            Element::Diode { p, n, saturation_amps, thermal_volts, .. } => diodes.push(CompiledDiode {
+            Element::Diode {
+                p,
+                n,
+                saturation_amps,
+                thermal_volts,
+                ..
+            } => diodes.push(CompiledDiode {
                 p: *p,
                 n: *n,
-                model: DiodeModel { saturation_amps: *saturation_amps, thermal_volts: *thermal_volts },
+                model: DiodeModel {
+                    saturation_amps: *saturation_amps,
+                    thermal_volts: *thermal_volts,
+                },
             }),
             Element::Voltage { p, n, .. } | Element::Inductor { p, n, .. } => {
                 for (node, sign) in [(*p, 1.), (*n, -1.)] {
