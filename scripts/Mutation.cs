@@ -13,6 +13,7 @@ var files = new[] { "Cargo.toml", "Cargo.lock" }.Concat(
     Directory.EnumerateFiles(Path.Combine(root, "src"), "*.rs", SearchOption.AllDirectories)
         .Concat(Directory.EnumerateFiles(Path.Combine(root, "tests"), "*.rs", SearchOption.AllDirectories))
         .Concat(Directory.EnumerateFiles(Path.Combine(root, "examples"), "*.json"))
+        .Concat(Directory.EnumerateFiles(Path.Combine(root, "compat", "ngspice"), "*.*", SearchOption.AllDirectories))
         .Select(p => Path.GetRelativePath(root, p).Replace('\\', '/'))).ToArray();
 var snapshots = files.ToDictionary(p => p, p => File.ReadAllText(Path.Combine(root, p)));
 void Restore()
