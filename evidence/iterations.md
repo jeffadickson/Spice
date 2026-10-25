@@ -172,3 +172,13 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 168. Enforce Newton iteration budget
 169. Specify bounded diode Newton contracts
 170. Checkpoint typed nonlinear operating-point contracts
+171. Allow explicit bounded Newton policies
+172. Add typed Newton option requests
+173. Include diode power in DC balance diagnostics
+174. Compare Newton dense solver adapters
+175. Add bounded diode parameter corpus
+176. Add diode current sign mutation operator
+177. Document bounded nonlinear analysis scope
+178. Update nonlinear implementation status
+179. Publish readable nonlinear contract projection
+180. Checkpoint nonlinear solver contract suite
