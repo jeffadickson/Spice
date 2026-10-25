@@ -1,0 +1,15 @@
+{
+  "rust": {
+    "status": "unavailable",
+    "toolchain": "rustc 1.99.1 x86_64-pc-windows-gnu",
+    "line_percent": null,
+    "branch_percent": null,
+    "reason": "Instrumented build fails E0463: profiler_builtins is not shipped in the selected toolchain",
+    "attempted_command": "scripts/Test-Coverage.ps1",
+    "remediation": "Run coverage on supported MSVC or Linux toolchain; CI configuration will include Linux."
+  },
+  "managed": {
+    "status": "pending",
+    "tool": "dotnet-coverage 18.12.0"
+  }
+}

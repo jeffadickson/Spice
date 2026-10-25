@@ -1,0 +1,11 @@
+{
+  "iteration": 40,
+  "rust_build": "passed",
+  "rust_tests_passed": 25,
+  "managed_build": "passed",
+  "managed_checks_passed": 6,
+  "csharp_example": "passed",
+  "fsharp_example": "passed",
+  "rust_coverage": "unavailable: Windows GNU profiler_builtins missing",
+  "mutation": "initial runner found Windows separator defect; corrected and rerun required"
+}
