@@ -592,3 +592,10 @@ fn diode_rejects_invalid_parameters_and_overflowing_trials() {
         .is_err()
     );
 }
+
+#[test]
+fn diode_exponential_domain_boundary_is_finite() {
+    let diode = DiodeModel { saturation_amps: 1e-15, thermal_volts: 0.02585 };
+    assert!(diode.linearize(700. * 0.02585).is_ok());
+    assert!(diode.linearize(701. * 0.02585).is_err());
+}
