@@ -47,7 +47,7 @@ impl SweepSummary {
 #[derive(Debug, Serialize)]
 pub struct GridPoint {
     pub index: usize,
-    pub values: Vec<f64>,
+    pub selections: Vec<ScalarSelection>,
     pub execution: &'static str,
     pub result: Option<Manifest>,
     pub error: Option<SimError>,
@@ -68,17 +68,20 @@ pub fn run_grid(
         let mut variant = request.clone();
         variant.case_id = format!("{}--g{:02}", request.case_id, index);
         variant.circuit = circuit;
+        let selections = grid.dimensions.iter().zip(&values)
+            .map(|(dimension, value)| dimension.selection(&request.circuit, *value))
+            .collect::<SimResult<Vec<_>>>()?;
         match run_with_registry(&variant, registry) {
             Ok(result) => points.push(GridPoint {
                 index,
-                values,
+                selections,
                 execution: "succeeded",
                 result: Some(result),
                 error: None,
             }),
             Err(error) => points.push(GridPoint {
                 index,
-                values,
+                selections,
                 execution: "failed",
                 result: None,
                 error: Some(error),

@@ -80,7 +80,7 @@ fn grid_execution_exposes_each_selected_vector() {
     };
     let points = run_grid(&request, &grid, &BackendRegistry::reference()).unwrap();
     assert_eq!(points.len(), 2);
-    assert_eq!(points[1].values, vec![2000.]);
+    assert_eq!(points[1].selections[0].value, 2000.);
     assert_eq!(points[1].result.as_ref().unwrap().case_id, "divider--g01");
 }
 
