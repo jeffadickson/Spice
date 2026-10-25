@@ -59,7 +59,7 @@ F051|Include directives|future
 F052|Library sections|future
 F053|Continuation lines|supported
 F054|Quoted identifiers|future
-F055|Case preservation rules|future
+F055|Case preservation rules|supported
 F056|Control blocks|unsupported
 F057|Interactive pipe protocol|unsupported
 F058|Alter commands|unsupported

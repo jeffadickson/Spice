@@ -526,6 +526,14 @@ fn netlist_ground_aliases_normalize_to_the_reference_node() {
 }
 
 #[test]
+fn netlist_identifiers_have_documented_stable_case_normalization() {
+    let circuit = parse_ngspice_basic("title\nvBias Nout 0 1\nrLoad nOUT 0 1k\n.end\n").unwrap();
+    assert_eq!(circuit.nodes, vec!["0", "nout"]);
+    assert_eq!(circuit.elements[0].id(), "VBIAS");
+    assert_eq!(circuit.elements[1].id(), "RLOAD");
+}
+
+#[test]
 fn ngspice_bounded_diode_model_lowers_named_diode_parameters() {
     let circuit = parse_ngspice_basic(
         "title\n.model DMOD D (IS=2e-14 N=2)\nV1 in 0 0.5\nR1 in out 1k\nD1 out 0 DMOD\n.end\n",

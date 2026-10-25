@@ -260,3 +260,13 @@ The bounded ngspice importer shall accept only the noacct .options form, which c
 COMMENT: >>>
 Implementation: netlist::parse_ngspice_basic. Verification: tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-027
+TITLE: Stable netlist identifier case normalization
+STATEMENT: >>>
+The bounded netlist parser shall normalize node labels to lowercase and element identifiers to uppercase. The normalization shall be case-insensitive at input and stable in the public typed circuit, so cross-reference identifiers such as current-controlled source controls are reproducible.
+<<<
+COMMENT: >>>
+Implementation: netlist::parse. Verification: tests/ngspice_compat.rs.
+<<<
