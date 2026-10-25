@@ -23,3 +23,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 19. Provide bounded JSON CLI without stdout log scraping
 20. Test transient analytics and backend agreement
 21. Add complex AC reference solves and residual checks
+22. Generate bounded monotonic frequency grids
