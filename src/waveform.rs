@@ -21,6 +21,15 @@ pub enum Waveform {
         frequency_hz: f64,
         phase_rad: f64,
     },
+    /// Delayed, exponentially damped sinusoid with a phase in radians.
+    DampedSine {
+        offset: f64,
+        amplitude: f64,
+        frequency_hz: f64,
+        delay_s: f64,
+        damping_per_s: f64,
+        phase_rad: f64,
+    },
     /// Bounded SPICE-style pulse with explicit edge durations in seconds.
     Pulse {
         low: f64,
@@ -59,6 +68,16 @@ impl Waveform {
                 || !phase_rad.is_finite() =>
             {
                 Err(SimError::invalid("invalid sine parameters"))
+            }
+            Self::DampedSine {
+                offset, amplitude, frequency_hz, delay_s, damping_per_s, phase_rad,
+            } if !offset.is_finite() || !amplitude.is_finite()
+                || !frequency_hz.is_finite() || *frequency_hz <= 0.
+                || !delay_s.is_finite() || *delay_s < 0.
+                || !damping_per_s.is_finite() || *damping_per_s < 0.
+                || !phase_rad.is_finite() =>
+            {
+                Err(SimError::invalid("invalid damped sine parameters"))
             }
             Self::Pwl { points }
                 if points.is_empty()
@@ -114,6 +133,20 @@ impl Waveform {
                 }
                 offset + amplitude * phase.sin()
             }
+            Self::DampedSine {
+                offset, amplitude, frequency_hz, delay_s, damping_per_s, phase_rad,
+            } => {
+                if time < *delay_s {
+                    *offset
+                } else {
+                    let elapsed = time - delay_s;
+                    let phase = std::f64::consts::TAU * frequency_hz * elapsed + phase_rad;
+                    if !phase.is_finite() {
+                        return Err(SimError::invalid("damped sine phase overflow"));
+                    }
+                    offset + amplitude * (-damping_per_s * elapsed).exp() * phase.sin()
+                }
+            }
             Self::Pulse { low, high, delay_s, rise_s, fall_s, width_s, period_s } => {
                 if time < *delay_s { *low } else {
                     let phase = (time - delay_s).rem_euclid(*period_s);
@@ -157,6 +190,7 @@ impl Waveform {
             Self::Exponential { rise_delay_s, fall_delay_s, .. } => {
                 vec![*rise_delay_s, *fall_delay_s]
             }
+            Self::DampedSine { delay_s, .. } => vec![*delay_s],
             _ => Vec::new(),
         }
     }

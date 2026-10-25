@@ -326,6 +326,23 @@ fn ngspice_whitespace_sine_source_lowers_to_transient_override() {
 }
 
 #[test]
+fn ngspice_delayed_damped_sine_lowers_with_delay_breakpoint_and_phase() {
+    let request = import_ngspice_request(
+        "title\nV1 out 0 SIN 0 2 1k 1m 100 90\nR1 out 0 1k\n.tran 1m 2m\n.end\n",
+        "sine-damped-import",
+    )
+    .unwrap();
+    match request.analysis {
+        circuit_simulator::api::Analysis::TransientConfigured { options } => {
+            assert_eq!(options.sources[0].waveform.breakpoints(), vec![1e-3]);
+            assert_eq!(options.sources[0].waveform.at(0.).unwrap(), 0.);
+            assert!((options.sources[0].waveform.at(1e-3).unwrap() - 2.).abs() < 1e-12);
+        }
+        _ => panic!("expected configured transient analysis"),
+    }
+}
+
+#[test]
 fn ngspice_compact_sine_current_source_preserves_polarity() {
     let request = import_ngspice_request("title\nI1 out 0 SIN(0,2m,1k)\nR1 out 0 1k\n.tran 0.25m 0.25m\n.end\n", "sine-current").unwrap();
     let result = circuit_simulator::api::run(&request).unwrap();

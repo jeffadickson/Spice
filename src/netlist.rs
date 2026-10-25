@@ -238,7 +238,7 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
         }
         if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
             && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("sin"))
-            && tokens.len() == 7
+            && matches!(tokens.len(), 7 | 9 | 10)
         {
             // The transient override retains the waveform; the offset is the
             // bounded circuit's DC initialization value.
@@ -398,7 +398,7 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
     } else {
         text.lines().map(|line| {
             let tokens: Vec<_> = line.split_whitespace().collect();
-            if (tokens.len() == 7 && tokens[3].eq_ignore_ascii_case("sin"))
+            if (matches!(tokens.len(), 7 | 9 | 10) && tokens[3].eq_ignore_ascii_case("sin"))
                 || (tokens.len() == 10 && tokens[3].eq_ignore_ascii_case("exp")) {
                 format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], tokens[4])
             } else if tokens.len() >= 6 && tokens[3].eq_ignore_ascii_case("pwl")
@@ -450,19 +450,12 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
             && tokens[3].ends_with(')') {
             let values: SimResult<Vec<f64>> = tokens[3][4..tokens[3].len() - 1].split(',').map(spice_scalar).collect();
             let values = values?;
-            if values.len() != 3 {
-                return Err(SimError::new(ErrorCode::Unsupported, "bounded SIN source requires offset,amplitude,frequency"));
-            }
-            sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Sine {
-                offset: values[0], amplitude: values[1], frequency_hz: values[2], phase_rad: 0.,
-            }});
+            sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: bounded_sine(values)? });
         }
-        if tokens.len() == 7 && tokens[3].eq_ignore_ascii_case("sin") {
+        if matches!(tokens.len(), 7 | 9 | 10) && tokens[3].eq_ignore_ascii_case("sin") {
             let values: SimResult<Vec<f64>> = tokens[4..].iter().map(|value| spice_scalar(value)).collect();
             let values = values?;
-            sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Sine {
-                offset: values[0], amplitude: values[1], frequency_hz: values[2], phase_rad: 0.,
-            }});
+            sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: bounded_sine(values)? });
         }
         if tokens.len() == 4 && tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pwl("))
             && tokens[3].ends_with(')') {
@@ -521,4 +514,25 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
         backend: "lu".into(),
         experiment: None,
     })
+}
+
+/// Lower the bounded SPICE SIN parameter subsets without guessing omitted terms.
+fn bounded_sine(values: Vec<f64>) -> SimResult<Waveform> {
+    match values.as_slice() {
+        [offset, amplitude, frequency_hz] => Ok(Waveform::Sine {
+            offset: *offset, amplitude: *amplitude, frequency_hz: *frequency_hz, phase_rad: 0.,
+        }),
+        [offset, amplitude, frequency_hz, delay_s, damping_per_s] => Ok(Waveform::DampedSine {
+            offset: *offset, amplitude: *amplitude, frequency_hz: *frequency_hz,
+            delay_s: *delay_s, damping_per_s: *damping_per_s, phase_rad: 0.,
+        }),
+        [offset, amplitude, frequency_hz, delay_s, damping_per_s, phase_degrees] => Ok(Waveform::DampedSine {
+            offset: *offset, amplitude: *amplitude, frequency_hz: *frequency_hz,
+            delay_s: *delay_s, damping_per_s: *damping_per_s, phase_rad: phase_degrees.to_radians(),
+        }),
+        _ => Err(SimError::new(
+            ErrorCode::Unsupported,
+            "bounded SIN source requires 3, 5, or 6 values",
+        )),
+    }
 }

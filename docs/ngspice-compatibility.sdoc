@@ -200,3 +200,13 @@ The typed AC request shall accept bounded, unique, finite complex phasors for in
 COMMENT: >>>
 Implementation: api::AcSourcePhasor, ac::ac_with_source_phasors and netlist::import_ngspice_request. Verification: tests/ngspice_compat.rs, tests/analyses.rs and tests/providers.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-021
+TITLE: Bounded delayed and damped sine sources
+STATEMENT: >>>
+The typed transient API and bounded deck importer shall support three-value, five-value, and six-value SPICE SIN parameter lists. Five and six value forms shall represent finite offset, amplitude, positive frequency, nonnegative delay and damping, and an optional phase in degrees; evaluation shall hold the offset before delay and publish the delay as a solver breakpoint.
+<<<
+COMMENT: >>>
+Implementation: waveform::Waveform::DampedSine and netlist::bounded_sine. Verification: tests/ngspice_compat.rs.
+<<<
