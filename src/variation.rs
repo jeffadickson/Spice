@@ -19,6 +19,7 @@ pub enum ScalarKind {
     Inductance,
     Voltage,
     Current,
+    Transconductance,
     DiodeSaturationCurrent,
 }
 
@@ -31,6 +32,7 @@ impl ScalarKind {
             Self::Inductance => "H",
             Self::Voltage => "V",
             Self::Current => "A",
+            Self::Transconductance => "S",
             Self::DiodeSaturationCurrent => "A",
         }
     }
@@ -49,6 +51,7 @@ pub fn scalar_kind(circuit: &Circuit, element_id: &str) -> SimResult<ScalarKind>
         Element::Inductor { .. } => ScalarKind::Inductance,
         Element::Voltage { .. } => ScalarKind::Voltage,
         Element::Current { .. } => ScalarKind::Current,
+        Element::Vccs { .. } => ScalarKind::Transconductance,
         Element::Diode { .. } => ScalarKind::DiodeSaturationCurrent,
     })
 }
@@ -74,6 +77,7 @@ pub fn replace_scalar(circuit: &Circuit, element_id: &str, value: f64) -> SimRes
         Element::Inductor { henries, .. } => *henries = value,
         Element::Voltage { volts, .. } => *volts = value,
         Element::Current { amps, .. } => *amps = value,
+        Element::Vccs { siemens, .. } => *siemens = value,
         Element::Diode {
             saturation_amps, ..
         } => *saturation_amps = value,

@@ -30,6 +30,9 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
         let current = match element {
             Element::Resistor { ohms, .. } => v / ohms,
             Element::Current { amps, .. } => *amps,
+            Element::Vccs { cp, cn, siemens, .. } => {
+                siemens * (voltage(*cp) - voltage(*cn))
+            }
             Element::Capacitor { .. } => 0.,
             Element::Diode {
                 saturation_amps,
