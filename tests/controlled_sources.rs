@@ -68,6 +68,14 @@ fn vcvs_constrains_output_voltage_with_controlled_polarity() {
 }
 
 #[test]
+fn vcvs_rejects_identical_control_terminals() {
+    let circuit = Circuit { nodes: vec!["0".into(), "out".into()], elements: vec![
+        Element::Vcvs { id: "E1".into(), p: NodeId(1), n: NodeId(0), cp: NodeId(0), cn: NodeId(0), gain: 1. },
+    ]};
+    assert!(compile(&circuit).is_err());
+}
+
+#[test]
 fn vcvs_json_request_is_solved_through_the_public_api() {
     let request: Request = serde_json::from_str(r#"{
       "schema_version":"1","case_id":"vcvs-json","circuit":{"nodes":["0","in","out"],"elements":[
