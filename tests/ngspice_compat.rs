@@ -55,13 +55,18 @@ fn ngspice_ac_qualified_resistor_is_used_for_bounded_ac_import() {
 }
 
 #[test]
-fn ngspice_non_linear_ac_sweeps_fail_instead_of_being_relabelled() {
-    let error = import_ngspice_request(
-        "title\nV1 out 0 1\nR1 out 0 1k\n.ac dec 10 1 1k\n.end\n",
+fn ngspice_decade_ac_sweeps_lower_to_logarithmic_grids() {
+    let request = import_ngspice_request(
+        "title\nV1 out 0 DC 0 AC 1\nR1 out 0 1k\n.ac dec 10 1 10\n.end\n",
         "ac-dec",
-    )
-    .unwrap_err();
-    assert_eq!(error.code, ErrorCode::Unsupported);
+    ).unwrap();
+    match request.analysis {
+        circuit_simulator::api::Analysis::Ac { frequencies_hz } => {
+            assert_eq!(frequencies_hz.len(), 11);
+            assert!((frequencies_hz[10] - 10.).abs() < 1e-12);
+        }
+        _ => panic!("expected AC analysis"),
+    }
 }
 
 #[test]

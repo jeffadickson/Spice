@@ -230,11 +230,11 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
         if tokens.first().is_some_and(|token| token.eq_ignore_ascii_case(".ac")) {
             if ac.is_some()
                 || tokens.len() != 5
-                || !tokens[1].eq_ignore_ascii_case("lin")
+                || !(tokens[1].eq_ignore_ascii_case("lin") || tokens[1].eq_ignore_ascii_case("dec"))
             {
                 return Err(SimError::new(
                     ErrorCode::Unsupported,
-                    "ngspice importer supports exactly one .ac lin count start stop directive",
+                    "ngspice importer supports exactly one .ac lin or dec count start stop directive",
                 ));
             }
             let count: usize = tokens[2]
@@ -248,9 +248,16 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
             if !start.is_finite() || !stop.is_finite() || start <= 0. || stop < start {
                 return Err(SimError::invalid("invalid AC linear frequency range"));
             }
-            let frequencies_hz = (0..count)
-                .map(|i| start + (stop - start) * i as f64 / (count - 1).max(1) as f64)
-                .collect();
+            let frequencies_hz = if tokens[1].eq_ignore_ascii_case("lin") {
+                (0..count)
+                    .map(|i| start + (stop - start) * i as f64 / (count - 1).max(1) as f64)
+                    .collect()
+            } else {
+                let decades = (stop / start).log10();
+                let steps = (decades * count as f64).round() as usize;
+                if steps > 9_999 { return Err(SimError::invalid("AC decade grid exceeds 10000 points")); }
+                (0..=steps).map(|i| start * 10_f64.powf(i as f64 / count as f64)).collect()
+            };
             ac = Some(frequencies_hz);
         }
     }
