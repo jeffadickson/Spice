@@ -175,7 +175,7 @@ Implementation: netlist::parse_ngspice_basic. Verification: tests/ngspice_compat
 UID: NGC-018
 TITLE: Executable fixture-manifest integrity
 STATEMENT: >>>
-The selected ngspice fixture manifest shall have an executable validator that rejects duplicate paths, unknown promotion states, missing source attribution, malformed or duplicate required-feature names, and any oracle-passing fixture that still declares missing features.
+The selected ngspice fixture manifest shall have an executable validator that rejects duplicate, absolute, traversal, or out-of-scope source paths; unknown promotion states; missing source attribution; malformed or duplicate required-feature names; and any oracle-passing fixture that still declares missing features.
 <<<
 COMMENT: >>>
 Implementation: scripts/Validate-NgspiceFixtureManifest.cs. Verification: its successful execution over compat/ngspice/selected-fixtures.json and negative malformed manifests in the development workflow.

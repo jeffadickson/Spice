@@ -27,6 +27,10 @@ foreach (var fixture in fixtures.EnumerateArray()) {
         || string.IsNullOrWhiteSpace(family) || state is null || !allowedStates.Contains(state)
         || features.ValueKind != JsonValueKind.Array)
         throw new InvalidDataException("fixture must have unique path, family, known state and feature array.");
+    var normalizedPath = fixturePath.Replace('\\', '/');
+    if (Path.IsPathRooted(fixturePath) || normalizedPath.Split('/').Any(part => part == "..")
+        || !(normalizedPath.StartsWith("tests/", StringComparison.Ordinal) || normalizedPath.StartsWith("examples/", StringComparison.Ordinal)))
+        throw new InvalidDataException("fixture path must be a relative tests/ or examples/ upstream path.");
     var featureNames = new HashSet<string>(StringComparer.Ordinal);
     foreach (var feature in features.EnumerateArray()) {
         var name = feature.GetString();
