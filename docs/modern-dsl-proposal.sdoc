@@ -1,0 +1,43 @@
+[DOCUMENT]
+TITLE: Spice Modern Simulation DSL Proposal
+
+[REQUIREMENT]
+UID: DSL-001
+TITLE: Structured simulation authoring
+STATEMENT: >>>
+The new simulation DSL shall use explicit declarations for circuits, analyses, observables and runs rather than positional single-letter records and in-band dot commands.
+<<<
+COMMENT: >>>
+Rationale: legacy SPICE grammar overloads device prefix letters and analysis directives. A typed AST permits source locations, schemas, deterministic tooling and programmatic creation.
+<<<
+
+[REQUIREMENT]
+UID: DSL-002
+TITLE: Interoperable legacy boundary
+STATEMENT: >>>
+The DSL shall provide an intentionally bounded SPICE import/export compatibility layer with diagnostics, dialect selection and loss reporting; compatibility shall not constrain the new language grammar or semantic model.
+<<<
+COMMENT: >>>
+Rationale: Xyce documents syntax incompatibilities across SPICE dialects and provides a translator. New authoring must not reproduce that accumulated ambiguity.
+<<<
+
+[REQUIREMENT]
+UID: DSL-003
+TITLE: First-class result contract
+STATEMENT: >>>
+Each run shall declare requested observables and emit self-describing, typed, unit-bearing result tables with analysis, solver, convergence and provenance metadata suitable for Arrow and Parquet APIs.
+<<<
+
+[REQUIREMENT]
+UID: DSL-004
+TITLE: Safe extensibility
+STATEMENT: >>>
+Behavioral models and device plugins shall be capability-declared, versioned and deterministic by default; they shall not receive unrestricted host-process access.
+<<<
+
+[REQUIREMENT]
+UID: DSL-005
+TITLE: Reproducible parameter studies
+STATEMENT: >>>
+Sweeps, corners and seeded random studies shall be declarative values in the language and shall preserve their seed, sampling algorithm, unit domains and failure policy in result provenance.
+<<<
