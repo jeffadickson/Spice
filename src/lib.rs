@@ -18,3 +18,5 @@ pub mod provenance;
 pub mod quantity;
 pub mod registry;
 pub mod transient;
+pub mod sparse;
+pub mod backend_faer;

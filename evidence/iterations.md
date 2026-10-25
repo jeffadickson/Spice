@@ -57,3 +57,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 53. Validate canonical compressed sparse column matrices
 54. Adapt faer sparse LU as an independent real solver
 55. Support complex AC matrices through the sparse adapter
+56. Register independent providers and stable capability discovery

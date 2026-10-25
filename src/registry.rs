@@ -14,6 +14,7 @@ impl BackendRegistry {
         let mut r = Self::default();
         r.register("lu", Arc::new(DenseLu)).unwrap();
         r.register("qr", Arc::new(DenseQr)).unwrap();
+        r.register("faer", Arc::new(crate::backend_faer::FaerSparseLu)).unwrap();
         r
     }
     pub fn register(&mut self, id: &str, provider: Arc<dyn LinearSolver>) -> SimResult<()> {
@@ -30,5 +31,9 @@ impl BackendRegistry {
                 format!("unknown backend {id}"),
             )
         })
+    }
+    /// Sorted discovery is stable; opaque vendor handles never escape.
+    pub fn capabilities(&self)->Vec<(String,crate::linalg::BackendCapabilities)>{
+        self.providers.iter().map(|(id,p)|(id.clone(),p.capabilities())).collect()
     }
 }
