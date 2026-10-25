@@ -6,7 +6,7 @@
       "path": "tests/resistance/res_simple.cir",
       "family": "basic_linear",
       "state": "oracle_passing",
-      "required_features": ["title", "dc_source", "resistor", "transient"]
+      "required_features": []
     },
     {
       "path": "tests/general/rc.cir",
