@@ -14,6 +14,10 @@ pub fn compile(circuit:&Circuit)->SimResult<CompiledCircuit>{
     let dimension=circuit.nodes.len()-1+branches.len();
     let mut a=Matrix::zeros(dimension)?;let mut rhs=vec![0.0;dimension];let mut branch=circuit.nodes.len()-1;
     for e in &circuit.elements{match e{
+        Element::Current{p,n,amps,..}=>{
+            if let Some(i)=p.unknown(){rhs[i]-=amps;}
+            if let Some(i)=n.unknown(){rhs[i]+=amps;}
+        }
         Element::Resistor{p,n,ohms,..}=>stamp_pair(&mut a,*p,*n,1.0/ohms),
         Element::Voltage{p,n,volts,..}=>{
             for(node,sign)in[(*p,1.0),(*n,-1.0)]{if let Some(i)=node.unknown(){a.add(i,branch,sign);a.add(branch,i,sign);}}
