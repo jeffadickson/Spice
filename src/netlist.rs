@@ -180,6 +180,7 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
 /// accepted; optional arguments fail rather than being ignored.
 pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResult<Request> {
     let mut transient = None;
+    let mut ac = None;
     for source_line in text.lines() {
         let line = source_line.split(';').next().unwrap_or_default().trim();
         let tokens: Vec<_> = line.split_whitespace().collect();
@@ -196,10 +197,39 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
                 ..Default::default()
             });
         }
+        if tokens.first().is_some_and(|token| token.eq_ignore_ascii_case(".ac")) {
+            if ac.is_some()
+                || tokens.len() != 5
+                || !tokens[1].eq_ignore_ascii_case("lin")
+            {
+                return Err(SimError::new(
+                    ErrorCode::Unsupported,
+                    "ngspice importer supports exactly one .ac lin count start stop directive",
+                ));
+            }
+            let count: usize = tokens[2]
+                .parse()
+                .map_err(|_| SimError::invalid("invalid AC linear point count"))?;
+            if !(1..=10_000).contains(&count) {
+                return Err(SimError::invalid("AC linear point count must be 1..10000"));
+            }
+            let start = spice_scalar(tokens[3])?;
+            let stop = spice_scalar(tokens[4])?;
+            if !start.is_finite() || !stop.is_finite() || start <= 0. || stop < start {
+                return Err(SimError::invalid("invalid AC linear frequency range"));
+            }
+            let frequencies_hz = (0..count)
+                .map(|i| start + (stop - start) * i as f64 / (count - 1).max(1) as f64)
+                .collect();
+            ac = Some(frequencies_hz);
+        }
     }
-    let analysis = transient
-        .map(|options| Analysis::TransientConfigured { options })
-        .unwrap_or(Analysis::OperatingPoint);
+    let analysis = match (transient, ac) {
+        (Some(_), Some(_)) => return Err(SimError::new(ErrorCode::Unsupported, "only one ngspice analysis directive is supported")),
+        (Some(options), None) => Analysis::TransientConfigured { options },
+        (None, Some(frequencies_hz)) => Analysis::Ac { frequencies_hz },
+        (None, None) => Analysis::OperatingPoint,
+    };
     Ok(Request {
         schema_version: "1".into(),
         case_id: case_id.into(),
