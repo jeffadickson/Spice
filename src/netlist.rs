@@ -278,7 +278,8 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
                 && tokens[3].eq_ignore_ascii_case("dc")
                 && tokens[5].eq_ignore_ascii_case("ac")
             {
-                normalized.push_str(&format!("{} {} {} {}\n", tokens[0], tokens[1], tokens[2], tokens[6]));
+                let amplitude = tokens[6].trim_end_matches(['V', 'v', 'A', 'a']);
+                normalized.push_str(&format!("{} {} {} {}\n", tokens[0], tokens[1], tokens[2], amplitude));
             } else if tokens.len() == 5
                 && tokens.first().is_some_and(|name| name.starts_with('R') || name.starts_with('r'))
                 && tokens[4].get(..3).is_some_and(|prefix| prefix.eq_ignore_ascii_case("ac="))
