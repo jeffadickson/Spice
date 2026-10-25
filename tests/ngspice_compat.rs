@@ -213,6 +213,13 @@ fn ngspice_compact_pulse_source_lowers_to_transient_override() {
 }
 
 #[test]
+fn ngspice_compact_pulse_current_source_preserves_polarity() {
+    let request = import_ngspice_request("title\nI1 out 0 PULSE(0,2m,0,0,0,1m,2m)\nR1 out 0 1k\n.tran 0.5m 0.5m\n.end\n", "pulse-current").unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!((result.samples.last().unwrap().values[0] + 2.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_pulse_rejects_phase_duration_beyond_period_when_executed() {
     let request = import_ngspice_request("title\nV1 out 0 pulse 0 1 0 1m 1m 2m 3m\nR1 out 0 1k\n.tran 1m 3m\n.end\n", "pulse-invalid").unwrap();
     let error = circuit_simulator::api::run(&request).unwrap_err();
