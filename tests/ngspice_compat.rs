@@ -175,6 +175,13 @@ fn ngspice_e_card_imports_with_controlled_voltage_polarity() {
 }
 
 #[test]
+fn ngspice_e_card_participates_in_bounded_ac_analysis() {
+    let request = import_ngspice_request("title\nV1 in 0 DC 0 AC 1\nE1 out 0 in 0 -3\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "e-ac").unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!((result.ac_samples[0].values[1].real + 3.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_pulse_source_lowers_to_transient_override() {
     let request = import_ngspice_request("title\nV1 out 0 pulse 0 2 0 1m 1m 2m 6m\nR1 out 0 1k\n.tran 1m 6m\n.end\n", "pulse-import").unwrap();
     match request.analysis {
