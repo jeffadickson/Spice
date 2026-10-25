@@ -37,3 +37,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 33. Exercise managed success failure cancellation and concurrent cases
 34. Publish request schema and strict unknown-field tests
 35. Test seeded random resistor networks against analytic oracles
+36. Add bounded malformed-input fuzz smoke campaigns
