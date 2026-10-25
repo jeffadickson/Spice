@@ -48,6 +48,13 @@ fn ngspice_ac_source_amplitude_is_used_for_bounded_ac_import() {
 }
 
 #[test]
+fn ngspice_ac_qualified_resistor_is_used_for_bounded_ac_import() {
+    let request = import_ngspice_request("title\nV1 in 0 DC 1 AC 1\nR1 in out 5k\nR2 out 0 5k ac=15k\n.ac lin 1 10 10\n.end\n", "ac-resistor").unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!((result.ac_samples[0].values[1].real - 0.25).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_non_linear_ac_sweeps_fail_instead_of_being_relabelled() {
     let error = import_ngspice_request(
         "title\nV1 out 0 1\nR1 out 0 1k\n.ac dec 10 1 1k\n.end\n",
