@@ -113,6 +113,17 @@ fn bounded_diode_parameter_corpus_produces_finite_operating_points() {
 }
 
 #[test]
+fn reverse_biased_diode_stays_near_saturation_current() {
+    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: -1. },
+        Element::Diode { id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
+    ] };
+    let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+    let current = 1e-12 * (values[0] / 0.02585).exp_m1();
+    assert!((current + 1e-12).abs() < 1e-15);
+}
+
+#[test]
 fn diode_dc_power_participates_in_balance_diagnostics() {
     let circuit = Circuit {
         nodes: vec!["0".into(), "s".into(), "a".into()],
