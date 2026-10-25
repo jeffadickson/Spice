@@ -608,18 +608,48 @@ fn nonlinear_backward_euler_transient_produces_finite_committed_samples() {
     let circuit = Circuit {
         nodes: vec!["0".into(), "s".into(), "a".into()],
         elements: vec![
-            Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
-            Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
-            Element::Capacitor { id: "C1".into(), p: NodeId(2), n: NodeId(0), farads: 1e-6 },
-            Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 1.,
+            },
+            Element::Resistor {
+                id: "R1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                ohms: 1000.,
+            },
+            Element::Capacitor {
+                id: "C1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                farads: 1e-6,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
         ],
     };
-    let samples = transient(&compile(&circuit).unwrap(), &DenseLu, &TransientOptions {
-        stop_s: 2e-5,
-        step_s: 1e-5,
-        max_steps: 4,
-    }).unwrap();
+    let samples = transient(
+        &compile(&circuit).unwrap(),
+        &DenseLu,
+        &TransientOptions {
+            stop_s: 2e-5,
+            step_s: 1e-5,
+            max_steps: 4,
+        },
+    )
+    .unwrap();
     assert_eq!(samples.len(), 2);
-    assert!(samples.iter().all(|sample| sample.values.iter().all(|value| value.is_finite())));
+    assert!(
+        samples
+            .iter()
+            .all(|sample| sample.values.iter().all(|value| value.is_finite()))
+    );
     assert!(samples[1].values[1] > samples[0].values[1]);
 }

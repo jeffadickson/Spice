@@ -74,8 +74,8 @@ pub fn linearize_backward_euler(
         return Err(SimError::invalid("invalid nonlinear transient step inputs"));
     }
     let mut system = linearize(plan, values)?;
-    for row in 0..values.len() {
-        system.residual[row] += plan.rhs[row] - rhs[row];
+    for (row, rhs_value) in rhs.iter().enumerate() {
+        system.residual[row] += plan.rhs[row] - rhs_value;
         for column in 0..values.len() {
             let coefficient = plan.charge.at(row, column) / step_s;
             system.jacobian.add(row, column, coefficient);
@@ -259,22 +259,48 @@ pub fn solve_backward_euler_step(
         let system = linearize_backward_euler(plan, &values, previous, step_s, rhs)?;
         let residual = norm_inf(&system.residual)?;
         if residual <= options.absolute_tolerance + options.relative_tolerance * baseline {
-            return Ok((values, NewtonReport { iterations: iteration, residual_inf: residual, damped_steps }));
+            return Ok((
+                values,
+                NewtonReport {
+                    iterations: iteration,
+                    residual_inf: residual,
+                    damped_steps,
+                },
+            ));
         }
-        let update = solver.solve(&system.jacobian, &system.residual.iter().map(|value| -value).collect::<Vec<_>>())?;
+        let update = solver.solve(
+            &system.jacobian,
+            &system
+                .residual
+                .iter()
+                .map(|value| -value)
+                .collect::<Vec<_>>(),
+        )?;
         let mut accepted = None;
         for attempt in 0..12 {
-            let (candidate, damped) = limited_candidate(plan, &values, &update, 2f64.powi(-attempt));
-            if norm_inf(&linearize_backward_euler(plan, &candidate, previous, step_s, rhs)?.residual)? < residual {
+            let (candidate, damped) =
+                limited_candidate(plan, &values, &update, 2f64.powi(-attempt));
+            if norm_inf(
+                &linearize_backward_euler(plan, &candidate, previous, step_s, rhs)?.residual,
+            )? < residual
+            {
                 accepted = Some((candidate, damped || attempt > 0));
                 break;
             }
         }
         let Some((candidate, damped)) = accepted else {
-            return Err(SimError::new(ErrorCode::NumericalFailure, "nonlinear transient Newton line search failed"));
+            return Err(SimError::new(
+                ErrorCode::NumericalFailure,
+                "nonlinear transient Newton line search failed",
+            ));
         };
-        if damped { damped_steps += 1; }
+        if damped {
+            damped_steps += 1;
+        }
         values = candidate;
     }
-    Err(SimError::new(ErrorCode::NumericalFailure, "nonlinear transient Newton iteration limit exceeded"))
+    Err(SimError::new(
+        ErrorCode::NumericalFailure,
+        "nonlinear transient Newton iteration limit exceeded",
+    ))
 }
