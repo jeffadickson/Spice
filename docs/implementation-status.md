@@ -1,6 +1,6 @@
-# Implementation status after iterations 51–100
+# Implementation status after iterations 101–150
 
-The second slice extends the **bounded linear reference engine**; it does not complete the 23-package production plan.
+The third slice extends the **bounded linear reference engine** with immutable scalar sweeps, bounded Cartesian grids, reproducible seeded uniform/log-uniform plans, per-point results, and typed managed result DTOs. It does not complete the 23-package production plan.
 
 | Plan area | Implemented evidence | Remaining |
 |---|---|---|
@@ -8,7 +8,7 @@ The second slice extends the **bounded linear reference engine**; it does not co
 | Device equations | R/C/L plus independent sources, signed flux and branch currents, DC power diagnostics | semiconductor models, nonlinear limiting/Jacobians and full device/plugin API |
 | Dynamic analyses | configured initial states, PWL/sine sources, trapezoidal/BE, adaptive step doubling, accepted observers | nonlinear/multistep history, full event/co-simulation rules and complete DAE topology qualification |
 | API/data | typed C#/F# experimental JSON contract, measurements/assertions, capability discovery | Arrow, C ABI, persistent sandboxed worker, complete stable API/migration policy |
-| Campaigns | bounded sequential cases with per-case failures and callbacks | parallel resource scheduling, seeds/statistics, retries/resume, actual StressForge contract |
+| Campaigns | bounded sequential cases, scalar sweeps/grids, seeded sampling recipes, per-point failures and programmatic result rows | parallel resource scheduling, statistical qualification, retries/resume, batch CLI transport, actual StressForge contract |
 | Persistence | bounded trusted-local artifact commit/read with hashes | hostile storage policies, remote/object storage, power-loss durability qualification |
 | Authoring | typed .NET/F# builders and experimental scalar expression derivatives/domains | selected Starlark frontend, full units system and integrated behavioral models |
 | Verification | analytic/provider/metamorphic/fuzz-smoke/mutation tests; scoped managed coverage | supported-host Rust coverage, coverage-guided fuzzing, full native/GPU evidence |
