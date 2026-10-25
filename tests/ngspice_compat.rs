@@ -72,6 +72,12 @@ fn ngspice_ac_source_amplitude_is_used_for_bounded_ac_import() {
 }
 
 #[test]
+fn ngspice_ac_source_phase_is_rejected_until_phasors_are_represented() {
+    let error = import_ngspice_request("title\nV1 out 0 DC 0 AC 1 90\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "ac-phase").unwrap_err();
+    assert_eq!(error.code, ErrorCode::InvalidInput);
+}
+
+#[test]
 fn ngspice_ac_qualified_resistor_is_used_for_bounded_ac_import() {
     let request = import_ngspice_request("title\nV1 in 0 DC 1 AC 1\nR1 in out 5k\nR2 out 0 5k ac=15k\n.ac lin 1 10 10\n.end\n", "ac-resistor").unwrap();
     let result = circuit_simulator::api::run(&request).unwrap();
