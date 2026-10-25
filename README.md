@@ -7,6 +7,7 @@ A bounded Rust circuit engine with CPU provider adapters and C#/F# access. This 
 - Independent numerical libraries: nalgebra dense LU/QR and faer sparse LU (real and complex). The assembler still uses dense matrices and a 256-unknown cap; no large-circuit scaling claim is made.
 - Immutable circuit plans, explicit capabilities, prepared numeric-factor reuse and independent residual checks.
 - R/C/L and independent sources; DC, complex AC, legacy fixed-step transient, and configured backward-Euler/trapezoidal transient.
+- A bounded Shockley diode DC operating-point path with analytic damped Newton iterations and convergence evidence. Nonlinear AC and transient analyses currently return explicit unsupported errors.
 - Configured consistent initial states, PWL/sine source overrides, source corners, optional adaptive step doubling, accepted-sample observers and integration statistics.
 - Unit-aware measurement/assertion results, DC power diagnostics and bounded sequential campaigns with separate case outcomes.
 - Immutable scalar sweeps and bounded Cartesian grids, including reproducible seeded uniform and log-uniform value plans with unit-aware per-point results.
