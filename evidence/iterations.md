@@ -10,3 +10,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 6. Define circuit-independent bounded linear algebra
 7. Reuse nalgebra LU through a bounded backend adapter
 8. Compile passive DC circuits into modified nodal equations
+9. Expose operating-point analysis over the solver contract
