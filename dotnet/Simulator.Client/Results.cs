@@ -3,7 +3,10 @@ public sealed record SimulationError(string Code,string Message);
 /// <summary>Host-owned materialized result; no borrowed native pointers or hidden waveform interpolation.</summary>
 public sealed record ResultManifest(string SchemaVersion, string CaseId, string Status, bool Complete,
     SignalInfo[] Signals, RealSample[] Samples, AcSample[] AcSamples, MeasurementValue[] Measurements,
-    AssertionValue[] Assertions, IntegrationInfo? Integration, BackendInfo Backend, string RequestSha256, PowerInfo? DcPower=null);
+    AssertionValue[] Assertions, IntegrationInfo? Integration, BackendInfo Backend, string RequestSha256, PowerInfo? DcPower=null,
+    NewtonInfo? Newton=null);
+/// <summary>Accepted nonlinear DC convergence evidence; absent for linear analyses.</summary>
+public sealed record NewtonInfo(int Iterations, double ResidualInf, int DampedSteps);
 public sealed record PowerInfo(DevicePower[] Devices,double SumAbsorbedW,double SumAbsoluteW);
 public sealed record DevicePower(string Id,double AbsorbedW);
 public sealed record SignalInfo(string Id, string Quantity, string Unit);

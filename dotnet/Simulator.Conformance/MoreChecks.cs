@@ -40,6 +40,7 @@ public static class MoreChecks
         var diodeCircuit=new Circuit(["0","s","a"],[new Voltage("V1",1,0,1),new Resistor("R1",1,2,1000),new Diode("D1",2,0,1e-12,0.02585)]);
         var diode=await client.RunAsync(new("typed-diode",diodeCircuit,new OperatingPoint()));
         Check(diode.Succeeded && diode.FinalValue("v(a)")>0.45,"typed diode operating point");
+        Check(diode.ReadManifest().Newton is not null,"typed Newton evidence");
         var sweepJson="""{"schema_version":"1","base_case_id":"typed","sweep_sha256":"abc","sweep":{"element_id":"R1","values":[1.0]},"points":[],"summary":{"total":0,"succeeded":0,"failed":0}}""";
         var sweep=System.Text.Json.JsonSerializer.Deserialize<ScalarSweepResult>(sweepJson,WireFormat.Options)!;
         Check(sweep.Sweep.ElementId=="R1" && sweep.Summary.Total==0,"typed scalar sweep envelope");
