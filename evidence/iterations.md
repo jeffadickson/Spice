@@ -74,3 +74,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 70. Check inductor flux PWL corners and RLC analytic behavior
 71. Add finite sinusoidal sources and avoid repeated waveform validation
 72. Define voltage and current scaled adaptive error budgets
+73. Use step doubling with explicit rejection and unchanged accepted state
