@@ -4,6 +4,7 @@ use crate::{
     api::{Manifest, Request, run_with_registry},
     error::{ErrorCode, SimError, SimResult},
     registry::BackendRegistry,
+    sampling::UniformSweepPlan,
     variation::{ScalarGrid, ScalarSelection, ScalarSweep},
 };
 use serde::Serialize;
@@ -16,6 +17,16 @@ pub struct SweepPoint {
     pub execution: &'static str,
     pub result: Option<Manifest>,
     pub error: Option<SimError>,
+}
+
+/// Materialize a recorded uniform recipe and execute it with the same explicit
+/// point semantics as a caller-provided scalar sweep.
+pub fn run_uniform_plan(
+    request: &Request,
+    plan: &UniformSweepPlan,
+    registry: &BackendRegistry,
+) -> SimResult<Vec<SweepPoint>> {
+    run_scalar(request, &plan.materialize()?, registry)
 }
 
 /// Create a bounded stable case ID for a generated point. The original case ID
