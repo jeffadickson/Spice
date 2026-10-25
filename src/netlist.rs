@@ -254,9 +254,11 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
                     .collect()
             } else {
                 let decades = (stop / start).log10();
-                let steps = (decades * count as f64).round() as usize;
+                let steps = (decades * count as f64).floor() as usize;
                 if steps > 9_999 { return Err(SimError::invalid("AC decade grid exceeds 10000 points")); }
-                (0..=steps).map(|i| start * 10_f64.powf(i as f64 / count as f64)).collect()
+                let mut grid: Vec<f64> = (0..=steps).map(|i| start * 10_f64.powf(i as f64 / count as f64)).collect();
+                if grid.last().is_none_or(|last| *last < stop) { grid.push(stop); }
+                grid
             };
             ac = Some(frequencies_hz);
         }

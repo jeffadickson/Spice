@@ -70,6 +70,21 @@ fn ngspice_decade_ac_sweeps_lower_to_logarithmic_grids() {
 }
 
 #[test]
+fn ngspice_decade_grid_ends_exactly_at_non_integral_stop() {
+    let request = import_ngspice_request(
+        "title\nV1 out 0 DC 0 AC 1\nR1 out 0 1k\n.ac dec 10 1 15\n.end\n",
+        "ac-dec-stop",
+    ).unwrap();
+    match request.analysis {
+        circuit_simulator::api::Analysis::Ac { frequencies_hz } => {
+            assert_eq!(frequencies_hz.last().copied(), Some(15.));
+            assert!(frequencies_hz.iter().all(|frequency| *frequency <= 15.));
+        }
+        _ => panic!("expected AC analysis"),
+    }
+}
+
+#[test]
 fn ngspice_g_card_imports_with_controlled_current_polarity() {
     let circuit = parse_ngspice_basic("title\nV1 in 0 2\nG1 out 0 in 0 0.5\nR1 out 0 1\n.end\n").unwrap();
     let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
