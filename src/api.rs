@@ -1,7 +1,7 @@
 use crate::{
     circuit::Circuit,
     compile::compile,
-    dc::operating_point,
+    dc::{operating_point, operating_point_detailed},
     error::{SimError, SimResult},
     linalg::{BackendCapabilities, LinearSolver},
     transient::{Sample, TransientOptions, transient},
@@ -59,6 +59,8 @@ pub struct Manifest {
     pub assertions: Vec<crate::experiment::AssertionResult>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub dc_power: Option<crate::power::PowerReport>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub newton: Option<crate::newton::NewtonReport>,
 }
 /// Immutable request validation precedes compilation. Only explicit CPU reference choices exist.
 pub fn run(request: &Request) -> SimResult<Manifest> {
@@ -79,11 +81,13 @@ pub fn run_with_registry(
     let solver: &dyn LinearSolver = provider.as_ref();
     let plan = compile(&request.circuit)?;
     let mut integration = None;
+    let mut newton = None;
     let samples = match &request.analysis {
-        Analysis::OperatingPoint => vec![Sample {
-            time_s: 0.0,
-            values: operating_point(&plan, solver)?,
-        }],
+        Analysis::OperatingPoint => {
+            let (values, report) = operating_point_detailed(&plan, solver)?;
+            newton = report;
+            vec![Sample { time_s: 0.0, values }]
+        }
         Analysis::Transient { options } => transient(&plan, solver, options)?,
         Analysis::Ac { .. } => Vec::new(),
         Analysis::TransientConfigured { options } => {
@@ -129,6 +133,7 @@ pub fn run_with_registry(
         ac_samples,
         integration,
         dc_power,
+        newton,
         measurements: Vec::new(),
         assertions: Vec::new(),
     };

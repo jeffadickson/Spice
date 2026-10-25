@@ -3,7 +3,7 @@ use circuit_simulator::{
     backend::DenseLu,
     circuit::{Circuit, Element},
     compile::compile,
-    dc::{operating_point, operating_point_detailed},
+    api::{Analysis, Request, run}, dc::{operating_point, operating_point_detailed},
     ids::NodeId,
     model::DiodeModel,
     newton::{NewtonOptions, linearize, norm_inf, solve, solve_from},
@@ -22,6 +22,16 @@ fn shockley_diode_has_positive_incremental_conductance() {
     assert!(zero.current_amps.abs() < 1e-24);
     assert!(forward.current_amps > 0.);
     assert!(forward.conductance_siemens > zero.conductance_siemens);
+}
+
+#[test]
+fn json_operating_point_manifest_exposes_newton_report_for_diode_case() {
+    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 0.2 },
+        Element::Diode { id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
+    ] };
+    let result = run(&Request { schema_version: "1".into(), case_id: "diode-json".into(), circuit, analysis: Analysis::OperatingPoint, backend: "lu".into(), experiment: None }).unwrap();
+    assert!(result.newton.is_some());
 }
 
 #[test]
