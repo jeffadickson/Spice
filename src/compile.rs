@@ -58,7 +58,10 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
         .elements
         .iter()
         .filter_map(|e| match e {
-            Element::Voltage { id, .. } | Element::Inductor { id, .. } | Element::Vcvs { id, .. } => Some(id.clone()),
+            Element::Voltage { id, .. }
+            | Element::Inductor { id, .. }
+            | Element::Vcvs { id, .. }
+            | Element::Ccvs { id, .. } => Some(id.clone()),
             _ => None,
         })
         .collect();
@@ -121,7 +124,10 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     thermal_volts: *thermal_volts,
                 },
             }),
-            Element::Voltage { p, n, .. } | Element::Inductor { p, n, .. } | Element::Vcvs { p, n, .. } => {
+            Element::Voltage { p, n, .. }
+            | Element::Inductor { p, n, .. }
+            | Element::Vcvs { p, n, .. }
+            | Element::Ccvs { p, n, .. } => {
                 for (node, sign) in [(*p, 1.), (*n, -1.)] {
                     if let Some(i) = node.unknown() {
                         a.add(i, branch, sign);
@@ -134,6 +140,13 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     Element::Vcvs { cp, cn, gain, .. } => {
                         if let Some(i) = cp.unknown() { a.add(branch, i, -*gain); }
                         if let Some(i) = cn.unknown() { a.add(branch, i, *gain); }
+                    }
+                    Element::Ccvs { control_id, ohms, .. } => {
+                        let control = branches.iter().position(|id| id == control_id)
+                            .map(|index| index + circuit.nodes.len() - 1)
+                            .ok_or_else(|| SimError::invalid("CCVS control must name a branch source"))?;
+                        // The branch equation is Vp-Vn-ohms*Icontrol = 0.
+                        a.add(branch, control, -*ohms);
                     }
                     _ => unreachable!(),
                 }

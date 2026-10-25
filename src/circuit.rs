@@ -64,6 +64,14 @@ pub enum Element {
         control_id: String,
         gain: f64,
     },
+    /// Current-controlled voltage source; V(p)-V(n) equals ohms*i(control_id).
+    Ccvs {
+        id: String,
+        p: NodeId,
+        n: NodeId,
+        control_id: String,
+        ohms: f64,
+    },
     /// Shockley diode with current defined from p to n.
     Diode {
         id: String,
@@ -84,6 +92,7 @@ impl Element {
             | Self::Vccs { id, .. }
             | Self::Vcvs { id, .. }
             | Self::Cccs { id, .. }
+            | Self::Ccvs { id, .. }
             | Self::Diode { id, .. } => id,
         }
     }
@@ -97,6 +106,7 @@ impl Element {
             | Self::Vccs { p, n, .. }
             | Self::Vcvs { p, n, .. }
             | Self::Cccs { p, n, .. }
+            | Self::Ccvs { p, n, .. }
             | Self::Diode { p, n, .. } => (*p, *n),
         }
     }
@@ -158,6 +168,11 @@ impl Circuit {
                     if control_id.is_empty() || !gain.is_finite() =>
                 {
                     return Err(SimError::invalid("invalid CCCS control ID or gain"));
+                }
+                Element::Ccvs { control_id, ohms, .. }
+                    if control_id.is_empty() || !ohms.is_finite() =>
+                {
+                    return Err(SimError::invalid("invalid CCVS control ID or transresistance"));
                 }
                 Element::Resistor { ohms, .. } if !ohms.is_finite() || *ohms <= 0.0 => {
                     return Err(SimError::invalid("resistance must be finite and positive"));

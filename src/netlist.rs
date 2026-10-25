@@ -8,7 +8,7 @@ use crate::{
     waveform::Waveform,
     waveform::Point,
 };
-/// Explicit small subset: optional title, R/C/L/D/V/I/E/F/G, .op and .end.
+/// Explicit small subset: optional title, R/C/L/D/V/I/E/F/G/H, .op and .end.
 /// No includes or control commands are executed.
 pub fn parse(text: &str) -> SimResult<Circuit> {
     if text.len() > 1_048_576 {
@@ -54,13 +54,13 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
         {
             continue;
         }
-        if !matches!(kind, 'R' | 'C' | 'L' | 'D' | 'V' | 'I' | 'E' | 'F' | 'G') {
+        if !matches!(kind, 'R' | 'C' | 'L' | 'D' | 'V' | 'I' | 'E' | 'F' | 'G' | 'H') {
             return Err(SimError::new(
                 ErrorCode::Unsupported,
                 format!("line {}: unsupported element/directive", index + 1),
             ));
         }
-        let expected = match kind { 'D' | 'F' => 5, 'E' | 'G' => 6, _ => 4 };
+        let expected = match kind { 'D' | 'F' | 'H' => 5, 'E' | 'G' => 6, _ => 4 };
         if tokens.len() != expected {
             return Err(SimError::invalid(format!(
                 "line {}: expected id p n value{}",
@@ -81,7 +81,7 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
         let n = node(tokens[2]);
         let cp = if matches!(kind, 'E' | 'G') { Some(node(tokens[3])) } else { None };
         let cn = if matches!(kind, 'E' | 'G') { Some(node(tokens[4])) } else { None };
-        let value = spice_scalar(if matches!(kind, 'E' | 'G') { tokens[5] } else if kind == 'F' { tokens[4] } else { tokens[3] })
+        let value = spice_scalar(if matches!(kind, 'E' | 'G') { tokens[5] } else if matches!(kind, 'F' | 'H') { tokens[4] } else { tokens[3] })
             .map_err(|e| SimError::invalid(format!("line {}: {}", index + 1, e.message)))?;
         let id = name.to_ascii_uppercase();
         circuit.elements.push(match kind {
@@ -147,6 +147,14 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
                 n,
                 control_id: tokens[3].to_ascii_uppercase(),
                 gain: value,
+            },
+            // SPICE H sources use the same named control branch as F sources.
+            'H' => Element::Ccvs {
+                id,
+                p,
+                n,
+                control_id: tokens[3].to_ascii_uppercase(),
+                ohms: value,
             },
             _ => unreachable!(),
         });

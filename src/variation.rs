@@ -22,6 +22,7 @@ pub enum ScalarKind {
     Transconductance,
     VoltageGain,
     CurrentGain,
+    Transresistance,
     DiodeSaturationCurrent,
 }
 
@@ -37,6 +38,7 @@ impl ScalarKind {
             Self::Transconductance => "S",
             Self::VoltageGain => "1",
             Self::CurrentGain => "1",
+            Self::Transresistance => "ohm",
             Self::DiodeSaturationCurrent => "A",
         }
     }
@@ -58,6 +60,7 @@ pub fn scalar_kind(circuit: &Circuit, element_id: &str) -> SimResult<ScalarKind>
         Element::Vccs { .. } => ScalarKind::Transconductance,
         Element::Vcvs { .. } => ScalarKind::VoltageGain,
         Element::Cccs { .. } => ScalarKind::CurrentGain,
+        Element::Ccvs { .. } => ScalarKind::Transresistance,
         Element::Diode { .. } => ScalarKind::DiodeSaturationCurrent,
     })
 }
@@ -86,6 +89,7 @@ pub fn replace_scalar(circuit: &Circuit, element_id: &str, value: f64) -> SimRes
         Element::Vccs { siemens, .. } => *siemens = value,
         Element::Vcvs { gain, .. } => *gain = value,
         Element::Cccs { gain, .. } => *gain = value,
+        Element::Ccvs { ohms, .. } => *ohms = value,
         Element::Diode {
             saturation_amps, ..
         } => *saturation_amps = value,

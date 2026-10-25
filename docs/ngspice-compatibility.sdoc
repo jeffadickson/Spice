@@ -140,3 +140,13 @@ The typed circuit API and bounded ngspice importer shall support an F current-co
 COMMENT: >>>
 Implementation: circuit::Element::Cccs, compile::compile and netlist::parse. Verification: tests/controlled_sources.rs and tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-015
+TITLE: CCVS controlled-voltage compatibility
+STATEMENT: >>>
+The typed circuit API and bounded ngspice importer shall support an H current-controlled voltage source whose output p-minus-n voltage equals transresistance times the p-to-n MNA branch current of a named voltage-defined control element. The source shall use its own explicit MNA branch unknown, reject invalid control identifiers during compilation, and retain transresistance as a finite scalar in ohms.
+<<<
+COMMENT: >>>
+Implementation: circuit::Element::Ccvs, compile::compile and netlist::parse. Verification: tests/controlled_sources.rs and tests/ngspice_compat.rs.
+<<<
