@@ -253,6 +253,13 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
             tokens.truncate(4);
         }
         if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
+            && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("pwl"))
+            && tokens.len() >= 6 && (tokens.len() - 4).is_multiple_of(2)
+        {
+            tokens[3] = tokens[5];
+            tokens.truncate(4);
+        }
+        if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
             && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("dc"))
         {
             tokens.remove(3);
@@ -386,6 +393,9 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
             if (tokens.len() == 7 && tokens[3].eq_ignore_ascii_case("sin"))
                 || (tokens.len() == 10 && tokens[3].eq_ignore_ascii_case("exp")) {
                 format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], tokens[4])
+            } else if tokens.len() >= 6 && tokens[3].eq_ignore_ascii_case("pwl")
+                && (tokens.len() - 4).is_multiple_of(2) {
+                format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], tokens[5])
             } else if tokens.len() == 4 && (tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("sin("))
                 || tokens[3].get(..6).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pulse("))
                 || tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pwl("))
@@ -453,6 +463,14 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
             if values.len() < 2 || values.len() % 2 != 0 {
                 return Err(SimError::new(ErrorCode::Unsupported, "bounded PWL source requires time,value pairs"));
             }
+            sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Pwl {
+                points: values.chunks_exact(2).map(|pair| Point { time_s: pair[0], value: pair[1] }).collect(),
+            }});
+        }
+        if tokens.len() >= 6 && tokens[3].eq_ignore_ascii_case("pwl")
+            && (tokens.len() - 4).is_multiple_of(2) {
+            let values: SimResult<Vec<f64>> = tokens[4..].iter().map(|value| spice_scalar(value)).collect();
+            let values = values?;
             sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Pwl {
                 points: values.chunks_exact(2).map(|pair| Point { time_s: pair[0], value: pair[1] }).collect(),
             }});

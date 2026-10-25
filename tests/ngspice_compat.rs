@@ -339,6 +339,22 @@ fn ngspice_compact_pwl_source_lowers_to_transient_override() {
 }
 
 #[test]
+fn ngspice_whitespace_pwl_source_lowers_to_transient_override() {
+    let request = import_ngspice_request(
+        "title\nV1 out 0 PWL 0 0 1m 2\nR1 out 0 1k\n.tran 1m 2m\n.end\n",
+        "pwl-spaced-import",
+    )
+    .unwrap();
+    match request.analysis {
+        circuit_simulator::api::Analysis::TransientConfigured { options } => {
+            assert!((options.sources[0].waveform.at(0.5e-3).unwrap() - 1.).abs() < 1e-12);
+            assert_eq!(options.sources[0].waveform.breakpoints(), vec![0., 1e-3]);
+        }
+        _ => panic!("expected configured transient analysis"),
+    }
+}
+
+#[test]
 fn ngspice_compact_pwl_current_source_preserves_polarity() {
     let request = import_ngspice_request("title\nI1 out 0 PWL(0,0,1m,2m)\nR1 out 0 1k\n.tran 1m 1m\n.end\n", "pwl-current").unwrap();
     let result = circuit_simulator::api::run(&request).unwrap();
