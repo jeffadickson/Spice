@@ -281,7 +281,14 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
         }
         normalized
     } else {
-        text.into()
+        text.lines().map(|line| {
+            let tokens: Vec<_> = line.split_whitespace().collect();
+            if tokens.len() == 4 && tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("sin("))
+                && tokens[3].ends_with(')') {
+                let offset = tokens[3][4..tokens[3].len() - 1].split(',').next().unwrap_or_default();
+                format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], offset)
+            } else { line.into() }
+        }).collect::<Vec<String>>().join("\n")
     };
     let mut sources = Vec::new();
     for source_line in text.lines() {
@@ -301,6 +308,17 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
                     fall_s: values[4], width_s: values[5], period_s: values[6],
                 },
             });
+        }
+        if tokens.len() == 4 && tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("sin("))
+            && tokens[3].ends_with(')') {
+            let values: SimResult<Vec<f64>> = tokens[3][4..tokens[3].len() - 1].split(',').map(spice_scalar).collect();
+            let values = values?;
+            if values.len() != 3 {
+                return Err(SimError::new(ErrorCode::Unsupported, "bounded SIN source requires offset,amplitude,frequency"));
+            }
+            sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Sine {
+                offset: values[0], amplitude: values[1], frequency_hz: values[2], phase_rad: 0.,
+            }});
         }
     }
     let analysis = match analysis {
