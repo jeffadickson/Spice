@@ -19,19 +19,19 @@ F011|Transient directive grammar|import_only
 F012|Transient time-grid semantics|future
 F013|Transient initial conditions|future
 F014|Transient breakpoint scheduling|future
-F015|Pulse source waveform|future
-F016|Sine source waveform|future
-F017|Piecewise-linear waveform|future
+F015|Pulse source waveform|supported
+F016|Sine source waveform|supported
+F017|Piecewise-linear waveform|supported
 F018|Exponential waveform|future
 F019|Frequency-modulated waveform|future
 F020|Behavioral source waveform|future
 F021|AC directive grammar|import_only
 F022|Linear AC frequency grid|supported_api_only
-F023|AC DEC grid|future
-F024|AC OCT grid|future
-F025|AC LIN grid|future
+F023|AC DEC grid|supported
+F024|AC OCT grid|supported
+F025|AC LIN grid|supported
 F026|AC source amplitude and phase|future
-F027|AC-qualified resistor values|future
+F027|AC-qualified resistor values|supported
 F028|AC-qualified capacitor values|future
 F029|AC-qualified inductor values|future
 F030|Small-signal nonlinear bias|supported_api_only
@@ -81,8 +81,8 @@ F073|Lossless transmission lines|future
 F074|Coupled inductors|future
 F075|Mutual inductance|future
 F076|Polynomial controlled sources|future
-F077|Voltage-controlled sources|future
-F078|Current-controlled sources|future
+F077|Voltage-controlled sources|supported
+F078|Current-controlled sources|supported
 F079|Arbitrary controlled sources|future
 F080|Digital XSPICE code models|future
 F081|Mixed-signal bridges|future
