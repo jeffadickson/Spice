@@ -4,7 +4,7 @@ use circuit_simulator::{
     ids::NodeId,
     registry::BackendRegistry,
     sweep::{SweepSummary, run_grid, run_scalar, run_scalar_cancellable},
-    variation::{ScalarGrid, ScalarSweep, replace_scalar},
+    variation::{ScalarGrid, ScalarKind, ScalarSweep, replace_scalar, scalar_kind},
 };
 
 fn fixture() -> Circuit {
@@ -17,6 +17,12 @@ fn fixture() -> Circuit {
             ohms: 10.,
         }],
     }
+}
+
+#[test]
+fn scalar_kind_is_explicit_for_programmatic_consumers() {
+    assert_eq!(scalar_kind(&fixture(), "R1").unwrap(), ScalarKind::Resistance);
+    assert!(scalar_kind(&fixture(), "nope").is_err());
 }
 
 #[test]

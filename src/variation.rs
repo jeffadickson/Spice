@@ -9,6 +9,25 @@ use crate::{
     error::{SimError, SimResult},
 };
 
+/// Physical meaning of a replaceable scalar. It is retained in reports so a
+/// consumer does not need to infer units from an element-ID naming convention.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ScalarKind { Resistance, Capacitance, Inductance, Voltage, Current }
+
+/// Look up the public scalar category for an element identity.
+pub fn scalar_kind(circuit: &Circuit, element_id: &str) -> SimResult<ScalarKind> {
+    let element = circuit.elements.iter().find(|element| element.id() == element_id)
+        .ok_or_else(|| SimError::invalid("variation element ID is unknown"))?;
+    Ok(match element {
+        Element::Resistor { .. } => ScalarKind::Resistance,
+        Element::Capacitor { .. } => ScalarKind::Capacitance,
+        Element::Inductor { .. } => ScalarKind::Inductance,
+        Element::Voltage { .. } => ScalarKind::Voltage,
+        Element::Current { .. } => ScalarKind::Current,
+    })
+}
+
 /// Return a validated circuit with exactly one scalar component value replaced.
 ///
 /// The component ID is case-sensitive because IDs are stable API identities.
