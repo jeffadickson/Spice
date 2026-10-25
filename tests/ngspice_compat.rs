@@ -122,6 +122,30 @@ fn ngspice_ac_qualified_resistor_is_used_for_bounded_ac_import() {
 }
 
 #[test]
+fn ngspice_ac_qualified_capacitor_is_used_for_bounded_ac_import() {
+    let request = import_ngspice_request(
+        "title\nV1 in 0 DC 1 AC 1\nR1 in out 1k\nC1 out 0 1u ac=2u\n.ac lin 1 159.15494309189535 159.15494309189535\n.end\n",
+        "ac-capacitor",
+    )
+    .unwrap();
+    let value = &circuit_simulator::api::run(&request).unwrap().ac_samples[0].values[1];
+    assert!((value.real - 0.2).abs() < 1e-12);
+    assert!((value.imag + 0.4).abs() < 1e-12);
+}
+
+#[test]
+fn ngspice_ac_qualified_inductor_is_used_for_bounded_ac_import() {
+    let request = import_ngspice_request(
+        "title\nV1 in 0 DC 0 AC 1\nR1 in out 1\nL1 out 0 1m ac=2m\n.ac lin 1 159.15494309189535 159.15494309189535\n.end\n",
+        "ac-inductor",
+    )
+    .unwrap();
+    let value = &circuit_simulator::api::run(&request).unwrap().ac_samples[0].values[1];
+    assert!((value.real - 0.8).abs() < 1e-12);
+    assert!((value.imag - 0.4).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_res_partition_fixture_matches_analytic_ac_reference() {
     let request = import_ngspice_request(
         include_str!("../compat/ngspice/res_partition.cir"),

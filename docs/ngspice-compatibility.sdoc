@@ -220,3 +220,13 @@ The bounded netlist parsers shall normalize the case-insensitive labels gnd and 
 COMMENT: >>>
 Implementation: netlist::parse. Verification: tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-023
+TITLE: AC-qualified reactive component import
+STATEMENT: >>>
+The bounded AC deck importer shall accept a trailing ac=<value> qualifier on resistor, capacitor, and inductor cards. The qualifier shall replace the component scalar only in the lowered AC request; the source deck's DC scalar and the typed circuit's DC semantics shall otherwise remain unchanged.
+<<<
+COMMENT: >>>
+Implementation: netlist::import_ngspice_request. Verification: tests/ngspice_compat.rs.
+<<<
