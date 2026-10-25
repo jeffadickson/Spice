@@ -75,3 +75,17 @@ Verification: prompt.md is reviewed at each final iteration checkpoint.
 RELATIONS:
 - TYPE: Parent
   VALUE: REF-001
+
+[REQUIREMENT]
+UID: REF4-006
+TITLE: Bounded nonlinear backward-Euler stepping
+STATEMENT: >>>
+The reference engine shall solve diode transient requests with a backward-Euler residual and analytic Jacobian, retain the prior accepted state until convergence, and enforce the existing bounded Newton policy.
+<<<
+COMMENT: >>>
+Implementation: src/newton.rs, src/transient.rs.
+Verification: tests/nonlinear.rs::nonlinear_backward_euler_transient_produces_finite_committed_samples.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-002
