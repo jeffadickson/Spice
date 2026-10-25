@@ -240,3 +240,13 @@ The bounded ngspice importer shall lower a named .model <name> D card with posit
 COMMENT: >>>
 Implementation: netlist::bounded_diode_models. Verification: tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-025
+TITLE: Bounded diode temperature import
+STATEMENT: >>>
+The bounded ngspice importer shall accept at most one one-value .temp directive in Celsius. The value shall be converted to a positive Kelvin temperature and used with the Boltzmann-over-charge constant to calculate the nominal diode thermal voltage before ideality scaling. Invalid or repeated temperature directives shall fail explicitly.
+<<<
+COMMENT: >>>
+Implementation: netlist::bounded_temperature. Verification: tests/ngspice_compat.rs.
+<<<

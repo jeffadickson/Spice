@@ -199,7 +199,8 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
             logical_lines.push(line.to_owned());
         }
     }
-    let diode_models = bounded_diode_models(&logical_lines)?;
+    let thermal_voltage = bounded_temperature(&logical_lines)?;
+    let diode_models = bounded_diode_models(&logical_lines, thermal_voltage)?;
     let mut normalized = String::new();
     for line in logical_lines {
         // ngspice accepts a semicolon as an inline comment introducer. Strip it
@@ -225,7 +226,7 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
             }
             continue;
         }
-        if [".options", ".tran", ".ac", ".model"]
+        if [".options", ".tran", ".ac", ".model", ".temp"]
             .iter()
             .any(|directive| head.eq_ignore_ascii_case(directive))
         {
@@ -300,7 +301,10 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
 
 /// Read a small, explicit SPICE diode-model profile before device lowering.
 /// The 300 K nominal thermal voltage is scaled by the model ideality factor.
-fn bounded_diode_models(lines: &[String]) -> SimResult<std::collections::BTreeMap<String, (f64, f64)>> {
+fn bounded_diode_models(
+    lines: &[String],
+    thermal_voltage: f64,
+) -> SimResult<std::collections::BTreeMap<String, (f64, f64)>> {
     let mut models = std::collections::BTreeMap::new();
     for line in lines {
         let tokens: Vec<_> = line.split_whitespace().collect();
@@ -325,11 +329,32 @@ fn bounded_diode_models(lines: &[String]) -> SimResult<std::collections::BTreeMa
         if !saturation_amps.is_finite() || saturation_amps <= 0. || !ideality.is_finite() || ideality <= 0. {
             return Err(SimError::invalid("invalid bounded diode model parameters"));
         }
-        if models.insert(tokens[1].to_ascii_uppercase(), (saturation_amps, 0.025_851_999_786 * ideality)).is_some() {
+        if models.insert(tokens[1].to_ascii_uppercase(), (saturation_amps, thermal_voltage * ideality)).is_some() {
             return Err(SimError::invalid("duplicate bounded diode model"));
         }
     }
     Ok(models)
+}
+
+/// Return the one bounded deck temperature in Celsius, or the 300 K nominal.
+fn bounded_temperature(lines: &[String]) -> SimResult<f64> {
+    let mut celsius = None;
+    for line in lines {
+        let tokens: Vec<_> = line.split_whitespace().collect();
+        if !tokens.first().is_some_and(|token| token.eq_ignore_ascii_case(".temp")) {
+            continue;
+        }
+        if celsius.is_some() || tokens.len() != 2 {
+            return Err(SimError::new(ErrorCode::Unsupported, "bounded importer supports one one-value .temp directive"));
+        }
+        celsius = Some(spice_scalar(tokens[1])?);
+    }
+    let kelvin = celsius.unwrap_or(26.85) + 273.15;
+    if !kelvin.is_finite() || kelvin <= 0. {
+        return Err(SimError::invalid("invalid bounded deck temperature"));
+    }
+    // Boltzmann constant divided by elementary charge, in V/K.
+    Ok(8.617_333_262_145e-5 * kelvin)
 }
 
 /// Lowers the bounded ngspice deck profile into the same typed request contract

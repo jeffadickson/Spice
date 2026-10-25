@@ -536,9 +536,23 @@ fn ngspice_bounded_diode_model_lowers_named_diode_parameters() {
         _ => None,
     }).unwrap();
     assert_eq!(diode.0, 2e-14);
-    assert!((diode.1 - 2. * 0.025_851_999_786).abs() < 1e-15);
+    assert!((diode.1 - 2. * 8.617_333_262_145e-5 * 300.).abs() < 1e-15);
     let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
     assert!(values.iter().all(|value| value.is_finite()));
+}
+
+#[test]
+fn ngspice_bounded_temperature_scales_named_diode_thermal_voltage() {
+    let circuit = parse_ngspice_basic(
+        "title\n.temp 126.85\n.model DMOD D (IS=1e-14 N=1)\nD1 out 0 DMOD\nR1 out 0 1k\n.end\n",
+    )
+    .unwrap();
+    let thermal = circuit.elements.iter().find_map(|element| match element {
+        circuit_simulator::circuit::Element::Diode { thermal_volts, .. } => Some(*thermal_volts),
+        _ => None,
+    }).unwrap();
+    assert!((thermal - 8.617_333_262_145e-5 * 400.).abs() < 1e-15);
+    assert!(parse_ngspice_basic("title\n.temp 20\n.temp 30\n.end\n").is_err());
 }
 
 #[test]

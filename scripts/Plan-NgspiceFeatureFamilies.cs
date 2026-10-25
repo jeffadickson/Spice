@@ -37,7 +37,7 @@ F029|AC-qualified inductor values|supported
 F030|Small-signal nonlinear bias|supported_api_only
 F031|Shockley diode device|supported
 F032|Diode model cards|supported
-F033|Diode temperature controls|future
+F033|Diode temperature controls|supported
 F034|BJT level-1|future
 F035|MOSFET level-1|future
 F036|JFET device|future
