@@ -41,6 +41,16 @@ fn ngspice_ac_linear_directive_lowers_to_typed_request() {
 }
 
 #[test]
+fn ngspice_non_linear_ac_sweeps_fail_instead_of_being_relabelled() {
+    let error = import_ngspice_request(
+        "title\nV1 out 0 1\nR1 out 0 1k\n.ac dec 10 1 1k\n.end\n",
+        "ac-dec",
+    )
+    .unwrap_err();
+    assert_eq!(error.code, ErrorCode::Unsupported);
+}
+
+#[test]
 fn ngspice_g_card_imports_with_controlled_current_polarity() {
     let circuit = parse_ngspice_basic("title\nV1 in 0 2\nG1 out 0 in 0 0.5\nR1 out 0 1\n.end\n").unwrap();
     let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
