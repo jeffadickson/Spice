@@ -72,6 +72,13 @@ fn ngspice_ac_source_amplitude_is_used_for_bounded_ac_import() {
 }
 
 #[test]
+fn ngspice_ac_current_source_amplitude_uses_declared_polarity() {
+    let request = import_ngspice_request("title\nI1 out 0 DC 0 AC 2mA\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "ac-current").unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!((result.ac_samples[0].values[0].real + 2.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_ac_source_phase_is_rejected_until_phasors_are_represented() {
     let error = import_ngspice_request("title\nV1 out 0 DC 0 AC 1 90\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "ac-phase").unwrap_err();
     assert_eq!(error.code, ErrorCode::InvalidInput);
