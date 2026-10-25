@@ -3,6 +3,7 @@ use circuit_simulator::{
     circuit::{Circuit, Element},
     ids::NodeId,
     registry::BackendRegistry,
+    provenance::typed_hash,
     sweep::{
         GridSummary, SweepSummary, assertion_summary, derived_case_id, execute_grid, execute_scalar, final_signal,
         final_signal_rows, measurement_rows, run_grid, run_scalar, run_scalar_cancellable,
@@ -20,6 +21,14 @@ fn fixture() -> Circuit {
             ohms: 10.,
         }],
     }
+}
+
+#[test]
+fn variation_hashes_are_domain_separated() {
+    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000.] };
+    let a = typed_hash("scalar-sweep", &sweep).unwrap();
+    assert_ne!(a, typed_hash("grid", &sweep).unwrap());
+    assert!(typed_hash("Bad Domain", &sweep).is_err());
 }
 
 #[test]
