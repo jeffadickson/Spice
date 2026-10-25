@@ -1,7 +1,7 @@
 use circuit_simulator::{
     ac::ac,
     api::{Analysis, Request, run},
-    backend::DenseLu,
+    backend::{DenseLu, DenseQr},
     circuit::{Circuit, Element},
     compile::compile,
     dc::{operating_point, operating_point_detailed},
@@ -24,6 +24,19 @@ fn shockley_diode_has_positive_incremental_conductance() {
     assert!(zero.current_amps.abs() < 1e-24);
     assert!(forward.current_amps > 0.);
     assert!(forward.conductance_siemens > zero.conductance_siemens);
+}
+
+#[test]
+fn dense_lu_and_qr_agree_on_diode_operating_point() {
+    let circuit = Circuit { nodes: vec!["0".into(), "s".into(), "a".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
+        Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
+        Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
+    ] };
+    let plan = compile(&circuit).unwrap();
+    let lu = operating_point(&plan, &DenseLu).unwrap();
+    let qr = operating_point(&plan, &DenseQr).unwrap();
+    assert!((lu[1] - qr[1]).abs() < 1e-10);
 }
 
 #[test]
