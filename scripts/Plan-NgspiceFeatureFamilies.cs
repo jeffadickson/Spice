@@ -110,6 +110,7 @@ var families = text.Split('\n', StringSplitOptions.RemoveEmptyEntries)
     .Select(line => line.Split('|'))
     .Select(parts => new { id = parts[0], family = parts[1], status = parts[2] })
     .ToArray();
-if (families.Length != 100 || families.Select(family => family.id).Distinct().Count() != 100)
+if (families.Length != 100 || families.Select(family => family.id).Distinct().Count() != 100
+    || families.Where((family, index) => family.id != $"F{index + 1:D3}").Any())
     throw new InvalidOperationException("The compatibility campaign must contain exactly 100 unique family IDs.");
 Console.WriteLine(JsonSerializer.Serialize(families, new JsonSerializerOptions { WriteIndented = true, TypeInfoResolver = new DefaultJsonTypeInfoResolver() }));
