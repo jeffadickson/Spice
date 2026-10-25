@@ -35,3 +35,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 31. Add bounded asynchronous CSharp process client
 32. Add FSharp client example over the same managed transport
 33. Exercise managed success failure cancellation and concurrent cases
+34. Publish request schema and strict unknown-field tests
