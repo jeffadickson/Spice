@@ -7,7 +7,7 @@ You are continuing work on **Spice**, a Rust circuit-simulation repository. Work
 - Document public interfaces and numerical conventions. Run meaningful malformed-input, randomized/property, mutation, and coverage checks; report real limitations.
 - Commit locally in small numbered iterations. Build at the stated checkpoint cadence. Do not claim GPU, plugin, Arrow, full SPICE compatibility, or production qualification without evidence.
 
-Current implementation through iteration 300:
+Current implementation through iteration 304:
 
 - Bounded dense MNA engine for R/C/L, independent sources, DC/AC/linear transient.
 - Independent faer sparse and nalgebra dense CPU paths.
@@ -17,6 +17,8 @@ Current implementation through iteration 300:
 - Nonlinear AC bias linearization and configured/adaptive nonlinear transient stepping are intentionally unsupported.
 
 Start by reading `README.md`, `docs/implementation-status.md`, `docs/fourth-slice.sdoc`, `evidence/implementation-validation-150.json`, the latest `evidence/checkpoint-*.json`, and `evidence/iterations.md`.
+
+For authoring evolution, read `docs/modern-dsl-proposal.sdoc` before designing a parser. SForge is a proposal only: keep the current JSON protocol stable until an AST/IR and migration contract are implemented.
 
 Suggested next technical work:
 
