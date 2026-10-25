@@ -100,3 +100,13 @@ The ngspice inventory shall enumerate recognized netlists across the supplied ch
 COMMENT: >>>
 Implementation: scripts/Inventory-Ngspice.cs. This distinguishes regression fixtures from illustrative and auxiliary source material before compatibility promotion.
 <<<
+
+[REQUIREMENT]
+UID: NGC-011
+TITLE: Selected-fixture dependency manifest
+STATEMENT: >>>
+The compatibility project shall maintain a checked-in manifest of selected external fixtures, their upstream path and revision, promotion state, and exact missing feature dependencies. A fixture shall not be marked oracle-passing while a listed dependency remains unmet.
+<<<
+COMMENT: >>>
+Implementation: compat/ngspice/selected-fixtures.json.
+<<<

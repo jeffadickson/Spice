@@ -1,0 +1,30 @@
+{
+  "source_checkout_revision": "e8285746c",
+  "policy": "Fixtures remain external until copied with attribution and a documented license review.",
+  "fixtures": [
+    {
+      "path": "tests/resistance/res_simple.cir",
+      "family": "basic_linear",
+      "state": "oracle_passing",
+      "required_features": ["title", "dc_source", "resistor", "transient"]
+    },
+    {
+      "path": "tests/general/rc.cir",
+      "family": "linear_or_waveform",
+      "state": "blocked_by_features",
+      "required_features": ["pulse_default_arguments", "ac_source_amplitude", "transient"]
+    },
+    {
+      "path": "tests/resistance/res_partition.cir",
+      "family": "linear_or_waveform",
+      "state": "blocked_by_features",
+      "required_features": ["ac_source_amplitude", "ac_qualified_resistor"]
+    },
+    {
+      "path": "examples/measure/func_cap.sp",
+      "family": "hierarchy_or_expression",
+      "state": "blocked_by_features",
+      "required_features": ["parameter_expressions", "functions", "measurements"]
+    }
+  ]
+}
