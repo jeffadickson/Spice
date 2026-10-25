@@ -1,0 +1,13 @@
+{
+  "scope": "bounded dense assembler; sparse factorization adapter; not a scalability or GPU claim",
+  "providers": [
+    "nalgebra 0.34.1 dense LU/QR",
+    "faer 0.24.4 sparse LU real/complex"
+  ],
+  "repairs": [
+    "CSC iterator lifetime captured explicitly"
+  ],
+  "build": "passed",
+  "iteration": 60,
+  "rust_tests_passed": 40
+}

@@ -7,17 +7,36 @@ use nalgebra::{DMatrix, DVector};
 #[derive(Debug, Default)]
 pub struct DenseLu;
 impl LinearSolver for DenseLu {
-    fn prepare(&self,a:&Matrix)->SimResult<Option<crate::linalg::PreparedReal>>{
-        a.validate(&vec![0.0;a.n.min(256)])?;
-        let lu=DMatrix::from_row_slice(a.n,a.n,&a.values).lu();
-        if !lu.is_invertible(){return Err(SimError::new(ErrorCode::SingularMatrix,"singular prepared LU"));}
-        Ok(Some(crate::linalg::PreparedReal::new(a.clone(),move|b|{
-            let x=lu.solve(&DVector::from_column_slice(b)).ok_or_else(||SimError::new(ErrorCode::SingularMatrix,"prepared LU failure"))?;
-            Ok(x.as_slice().to_vec())
-        })?))
+    fn prepare(&self, a: &Matrix) -> SimResult<Option<crate::linalg::PreparedReal>> {
+        a.validate(&vec![0.0; a.n.min(256)])?;
+        let lu = DMatrix::from_row_slice(a.n, a.n, &a.values).lu();
+        if !lu.is_invertible() {
+            return Err(SimError::new(
+                ErrorCode::SingularMatrix,
+                "singular prepared LU",
+            ));
+        }
+        Ok(Some(crate::linalg::PreparedReal::new(
+            a.clone(),
+            move |b| {
+                let x = lu.solve(&DVector::from_column_slice(b)).ok_or_else(|| {
+                    SimError::new(ErrorCode::SingularMatrix, "prepared LU failure")
+                })?;
+                Ok(x.as_slice().to_vec())
+            },
+        )?))
     }
-    fn capabilities(&self)->crate::linalg::BackendCapabilities{
-        crate::linalg::BackendCapabilities{id:self.name(),placement:"cpu",max_unknowns:256,sparse:false,gpu:false,complex:true,prepared_real:true,provider_version:"nalgebra 0.34.1"}
+    fn capabilities(&self) -> crate::linalg::BackendCapabilities {
+        crate::linalg::BackendCapabilities {
+            id: self.name(),
+            placement: "cpu",
+            max_unknowns: 256,
+            sparse: false,
+            gpu: false,
+            complex: true,
+            prepared_real: true,
+            provider_version: "nalgebra 0.34.1",
+        }
     }
     fn name(&self) -> &'static str {
         "nalgebra_dense_lu_reference"
@@ -78,8 +97,17 @@ impl LinearSolver for DenseLu {
 #[derive(Debug, Default)]
 pub struct DenseQr;
 impl LinearSolver for DenseQr {
-    fn capabilities(&self)->crate::linalg::BackendCapabilities{
-        crate::linalg::BackendCapabilities{id:self.name(),placement:"cpu",max_unknowns:256,sparse:false,gpu:false,complex:false,prepared_real:false,provider_version:"nalgebra 0.34.1"}
+    fn capabilities(&self) -> crate::linalg::BackendCapabilities {
+        crate::linalg::BackendCapabilities {
+            id: self.name(),
+            placement: "cpu",
+            max_unknowns: 256,
+            sparse: false,
+            gpu: false,
+            complex: false,
+            prepared_real: false,
+            provider_version: "nalgebra 0.34.1",
+        }
     }
     fn name(&self) -> &'static str {
         "nalgebra_dense_qr_reference"
