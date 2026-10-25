@@ -47,3 +47,32 @@ Verification: tests/variation.rs::scalar_sweep_returns_stable_indexed_cases, tes
 RELATIONS:
 - TYPE: Parent
   VALUE: REF2-008
+
+[REQUIREMENT]
+UID: REF3-004
+TITLE: Reproducible seeded scalar plans
+STATEMENT: >>>
+The reference engine shall materialize bounded uniform and positive log-uniform scalar plans from a recorded seed, range and algorithm identifier, with deterministic output ordering.
+<<<
+COMMENT: >>>
+Implementation: src/sampling.rs, src/sweep.rs.
+Verification: tests/sampling.rs::seeded_stream_is_reproducible_and_bounded, tests/sampling.rs::seeded_sampling_property_holds_for_a_bounded_seed_corpus.
+The PRNG is not cryptographic and does not qualify statistical distributions beyond the stated deterministic transform.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF3-002
+
+[REQUIREMENT]
+UID: REF3-005
+TITLE: Programmatic variation result projection
+STATEMENT: >>>
+The reference engine shall expose selected scalar identities and units, per-point status, final signal rows, measurement rows and assertion outcome counts without silently treating missing values as passing data.
+<<<
+COMMENT: >>>
+Implementation: src/variation.rs, src/sweep.rs.
+Verification: tests/variation.rs::projected_signal_rows_preserve_point_indices, tests/variation.rs::absent_assertions_are_counted_as_missing_not_passing.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF2-007
