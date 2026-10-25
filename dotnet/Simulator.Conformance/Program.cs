@@ -28,6 +28,12 @@ var adaptive = await client.RunJsonAsync(await File.ReadAllTextAsync("examples/a
 var adaptiveManifest = adaptive.ReadManifest();
 Check(adaptiveManifest.Integration!.RejectedSteps > 0 && adaptiveManifest.Assertions[0].Outcome == "pass", "adaptive assertions");
 Check(adaptiveManifest.Measurements[0].Value is > 0.0066 and < 0.0069, "typed measurement");
+Check(Math.Abs(typedManifest.DcPower!.SumAbsorbedW)<1e-12,"DC power");
+using (var bad = System.Text.Json.JsonDocument.Parse("""{"schema_version":"1","status":"succeeded","complete":true}"""))
+{
+    try { new SimulationResponse("1","succeeded",true,bad.RootElement.Clone()).ReadManifest(); throw new Exception("Malformed manifest accepted"); }
+    catch (System.IO.InvalidDataException) { passed++; }
+}
 try { invalid.ReadManifest(); throw new Exception("Failed result treated as successful"); }
 catch (InvalidOperationException) { passed++; }
 try { typedResponse.FinalValue("v(missing)"); throw new Exception("Unknown signal accepted"); }

@@ -45,9 +45,9 @@ try {
         branch_coverage = $null
         limitations = @('Stable source instrumentation does not provide qualified branch metrics here.',
             '.NET, vendor library internals, GPU and native plugin coverage are not measured.',
-            'No sparse/GPU/native plugin implementation is present.')
+            'Sparse CPU adapters are tested through owned wrappers; vendor internals are excluded. GPU/native plugins remain unimplemented.')
     }
-    $summary | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath evidence/coverage.json -Encoding utf8
+    $summary | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath evidence/rust-coverage.json -Encoding utf8
     $summary | ConvertTo-Json -Depth 8
 } finally {
     $env:RUSTFLAGS = $oldFlags; $env:CARGO_TARGET_DIR = $oldTarget; $env:LLVM_PROFILE_FILE = $oldProfile
