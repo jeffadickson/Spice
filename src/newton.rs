@@ -83,8 +83,17 @@ fn limited_candidate(plan: &CompiledCircuit, current: &[f64], delta: &[f64], alp
 /// Solve F(x)=0 using analytic diode Jacobians, bounded damping and a supplied
 /// independently replaceable linear solver.
 pub fn solve(plan: &CompiledCircuit, solver: &dyn LinearSolver, options: NewtonOptions) -> SimResult<(Vec<f64>, NewtonReport)> {
+    solve_from(plan, solver, options, vec![0.; plan.unknown_count()])
+}
+
+/// Solve from an explicit finite MNA state. This is useful for continuation and
+/// transient work, while the public operating-point path deliberately starts at zero.
+pub fn solve_from(plan: &CompiledCircuit, solver: &dyn LinearSolver, options: NewtonOptions, initial: Vec<f64>) -> SimResult<(Vec<f64>, NewtonReport)> {
     options.validate()?;
-    let mut values = vec![0.; plan.unknown_count()];
+    if initial.len() != plan.unknown_count() || initial.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::invalid("invalid Newton initial state"));
+    }
+    let mut values = initial;
     let baseline = norm_inf(&plan.rhs)?.max(1.);
     let mut damped_steps = 0;
     for iteration in 0..options.max_iterations {

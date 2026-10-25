@@ -1,4 +1,4 @@
-use circuit_simulator::{circuit::{Circuit, Element}, compile::compile, dc::operating_point, ids::NodeId, linalg::LuSolver, model::DiodeModel, newton::{linearize, norm_inf, solve, NewtonOptions}};
+use circuit_simulator::{circuit::{Circuit, Element}, compile::compile, dc::operating_point, ids::NodeId, linalg::LuSolver, model::DiodeModel, newton::{linearize, norm_inf, solve, solve_from, NewtonOptions}};
 
 #[test]
 fn shockley_diode_has_positive_incremental_conductance() {
@@ -8,6 +8,12 @@ fn shockley_diode_has_positive_incremental_conductance() {
     assert!(zero.current_amps.abs() < 1e-24);
     assert!(forward.current_amps > 0.);
     assert!(forward.conductance_siemens > zero.conductance_siemens);
+}
+
+#[test]
+fn newton_rejects_malformed_initial_mna_states() {
+    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(0), ohms: 1. }] };
+    assert!(solve_from(&compile(&circuit).unwrap(), &LuSolver, NewtonOptions::default(), vec![f64::NAN]).is_err());
 }
 
 #[test]
