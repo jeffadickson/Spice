@@ -1,0 +1,32 @@
+[DOCUMENT]
+TITLE: ngspice Corpus Compatibility Track
+
+[REQUIREMENT]
+UID: NGC-001
+TITLE: Full corpus inventory
+STATEMENT: >>>
+The project shall inventory every recognized circuit fixture in a user-provided ngspice checkout without modifying that checkout, recording path, content hash, lexical feature markers and an explicit compatibility status.
+<<<
+COMMENT: >>>
+Implementation: scripts/Inventory-Ngspice.cs. Initial observed baseline: 118 test circuit files at local revision e8285746c.
+<<<
+
+[REQUIREMENT]
+UID: NGC-002
+TITLE: No implied full compatibility
+STATEMENT: >>>
+Each ngspice corpus fixture shall be classified as candidate_basic, supported, unsupported or future_feature. A fixture may be marked supported only after it executes against a documented result oracle.
+<<<
+COMMENT: >>>
+The corpus is a roadmap and regression source, not a blanket behavioral compatibility claim.
+<<<
+
+[REQUIREMENT]
+UID: NGC-003
+TITLE: External corpus integrity
+STATEMENT: >>>
+Compatibility tooling shall treat the ngspice checkout as read-only and shall retain source attribution and license context for copied fixtures or result oracles.
+<<<
+COMMENT: >>>
+The current checkout reports a mixed license context with Modified BSD as the general test/example baseline; inspect upstream COPYING before copying any additional material.
+<<<

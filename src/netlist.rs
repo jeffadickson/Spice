@@ -128,3 +128,36 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
     circuit.validate()?;
     Ok(circuit)
 }
+
+/// Import a deliberately narrow, documented ngspice compatibility subset.
+/// The importer accepts the mandatory title line, DC source marker and analysis/
+/// output directives needed by the curated BSD-licensed regression fixtures. It
+/// does not claim general ngspice parsing or execute control blocks.
+pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
+    let mut normalized = String::new();
+    for (index, source_line) in text.lines().enumerate() {
+        if index == 0 {
+            continue;
+        }
+        let line = source_line.trim();
+        if line.is_empty() || line.starts_with('*') {
+            continue;
+        }
+        let head = line.split_whitespace().next().unwrap_or_default();
+        if [".options", ".tran", ".ac", ".plot", ".print", ".probe"]
+            .iter()
+            .any(|directive| head.eq_ignore_ascii_case(directive))
+        {
+            continue;
+        }
+        let mut tokens: Vec<&str> = line.split_whitespace().collect();
+        if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
+            && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("dc"))
+        {
+            tokens.remove(3);
+        }
+        normalized.push_str(&tokens.join(" "));
+        normalized.push('\n');
+    }
+    parse(&normalized)
+}
