@@ -9,4 +9,10 @@ pub mod compile;
 pub mod dc;
 pub mod transient;
 pub mod api;
+pub mod ac;
+pub mod grid;
+pub mod measurement;
+pub mod assertion;
+pub mod netlist;
+pub mod provenance;
 

@@ -29,3 +29,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 25. Parse explicit engineering suffixes without M versus MEG ambiguity
 26. Translate a bounded R C V I netlist subset into canonical circuits
 27. Hash canonical request provenance into successful results
+28. Expose AC data and typed provenance in API manifests
