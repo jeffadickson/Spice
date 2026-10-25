@@ -1,4 +1,4 @@
-use circuit_simulator::sampling::{SeededSequence, UniformRange, uniform_values};
+use circuit_simulator::sampling::{SeededSequence, UniformRange, UniformSweepPlan, uniform_values};
 
 #[test]
 fn seeded_stream_is_reproducible_and_bounded() {
@@ -10,6 +10,12 @@ fn seeded_stream_is_reproducible_and_bounded() {
         assert_eq!(left, b.uniform(range).unwrap());
         assert!((-2. .. 3.).contains(&left));
     }
+}
+
+#[test]
+fn uniform_sweep_plan_records_reproducible_materialization() {
+    let plan = UniformSweepPlan { element_id: "R1".into(), seed: 7, count: 2, range: UniformRange { low: 1., high: 2. } };
+    assert_eq!(plan.materialize().unwrap().values, plan.materialize().unwrap().values);
 }
 
 #[test]

@@ -1,6 +1,7 @@
 //! Small deterministic sampling primitives for reproducible variation plans.
 
 use crate::error::{SimError, SimResult};
+use crate::variation::ScalarSweep;
 
 /// A specified inclusive-exclusive finite interval.
 #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
@@ -50,4 +51,23 @@ pub fn uniform_values(seed: u64, count: usize, range: UniformRange) -> SimResult
     range.validate()?;
     let mut stream = SeededSequence::new(seed);
     (0..count).map(|_| stream.uniform(range)).collect()
+}
+
+/// Serialized recipe for a scalar sweep. Recording the recipe rather than only
+/// generated values lets a caller reproduce a campaign independently.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UniformSweepPlan {
+    pub element_id: String,
+    pub seed: u64,
+    pub count: usize,
+    pub range: UniformRange,
+}
+
+impl UniformSweepPlan {
+    pub fn materialize(&self) -> SimResult<ScalarSweep> {
+        let sweep = ScalarSweep { element_id: self.element_id.clone(), values: uniform_values(self.seed, self.count, self.range)? };
+        sweep.validate()?;
+        Ok(sweep)
+    }
 }
