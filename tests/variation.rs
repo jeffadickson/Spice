@@ -31,6 +31,15 @@ fn absent_assertions_are_counted_as_missing_not_passing() {
 }
 
 #[test]
+fn resistance_variation_has_expected_divider_monotonicity() {
+    let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![500., 1000., 2000.] };
+    let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
+    let values: Vec<_> = points.iter().map(|point| final_signal(point, "v(out)").unwrap()).collect();
+    assert!(values[0] > values[1] && values[1] > values[2]);
+}
+
+#[test]
 fn missing_measurements_are_explicitly_unavailable_in_sweep_rows() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
     let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000.] };
