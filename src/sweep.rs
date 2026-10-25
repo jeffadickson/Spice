@@ -4,7 +4,7 @@ use crate::{
     api::{Manifest, Request, run_with_registry},
     error::{ErrorCode, SimError, SimResult},
     registry::BackendRegistry,
-    variation::ScalarSweep,
+    variation::{ScalarGrid, ScalarSweep},
 };
 use serde::Serialize;
 
@@ -16,6 +16,35 @@ pub struct SweepPoint {
     pub execution: &'static str,
     pub result: Option<Manifest>,
     pub error: Option<SimError>,
+}
+
+/// A grid execution point retaining values in declared dimension order.
+#[derive(Debug, Serialize)]
+pub struct GridPoint {
+    pub index: usize,
+    pub values: Vec<f64>,
+    pub execution: &'static str,
+    pub result: Option<Manifest>,
+    pub error: Option<SimError>,
+}
+
+/// Run a bounded Cartesian grid sequentially. This intentionally does not claim
+/// parallel scheduling or arbitrary mid-analysis checkpoint/restart semantics.
+pub fn run_grid(request: &Request, grid: &ScalarGrid, registry: &BackendRegistry) -> SimResult<Vec<GridPoint>> {
+    if request.case_id.is_empty() || request.case_id.len() > 220 {
+        return Err(SimError::invalid("invalid grid base case ID"));
+    }
+    let mut points = Vec::new();
+    for (index, (values, circuit)) in grid.circuits(&request.circuit)?.into_iter().enumerate() {
+        let mut variant = request.clone();
+        variant.case_id = format!("{}--g{:02}", request.case_id, index);
+        variant.circuit = circuit;
+        match run_with_registry(&variant, registry) {
+            Ok(result) => points.push(GridPoint { index, values, execution: "succeeded", result: Some(result), error: None }),
+            Err(error) => points.push(GridPoint { index, values, execution: "failed", result: None, error: Some(error) }),
+        }
+    }
+    Ok(points)
 }
 
 /// Execute each declared value in order. The generated case identity includes its

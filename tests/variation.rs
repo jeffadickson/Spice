@@ -3,7 +3,7 @@ use circuit_simulator::{
     circuit::{Circuit, Element},
     ids::NodeId,
     variation::{ScalarGrid, ScalarSweep, replace_scalar},
-    sweep::{run_scalar, run_scalar_cancellable},
+    sweep::{run_grid, run_scalar, run_scalar_cancellable},
     registry::BackendRegistry,
 };
 
@@ -12,6 +12,16 @@ fn fixture() -> Circuit {
         nodes: vec!["0".into(), "out".into()],
         elements: vec![Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(0), ohms: 10. }],
     }
+}
+
+#[test]
+fn grid_execution_exposes_each_selected_vector() {
+    let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    let grid = ScalarGrid { dimensions: vec![ScalarSweep { element_id: "R1".into(), values: vec![1000., 2000.] }] };
+    let points = run_grid(&request, &grid, &BackendRegistry::reference()).unwrap();
+    assert_eq!(points.len(), 2);
+    assert_eq!(points[1].values, vec![2000.]);
+    assert_eq!(points[1].result.as_ref().unwrap().case_id, "divider--g01");
 }
 
 #[test]
