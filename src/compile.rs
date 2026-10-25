@@ -58,7 +58,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
         .elements
         .iter()
         .filter_map(|e| match e {
-            Element::Voltage { id, .. } | Element::Inductor { id, .. } => Some(id.clone()),
+            Element::Voltage { id, .. } | Element::Inductor { id, .. } | Element::Vcvs { id, .. } => Some(id.clone()),
             _ => None,
         })
         .collect();
@@ -114,7 +114,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     thermal_volts: *thermal_volts,
                 },
             }),
-            Element::Voltage { p, n, .. } | Element::Inductor { p, n, .. } => {
+            Element::Voltage { p, n, .. } | Element::Inductor { p, n, .. } | Element::Vcvs { p, n, .. } => {
                 for (node, sign) in [(*p, 1.), (*n, -1.)] {
                     if let Some(i) = node.unknown() {
                         a.add(i, branch, sign);
@@ -124,6 +124,10 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                 match e {
                     Element::Voltage { volts, .. } => rhs[branch] = *volts,
                     Element::Inductor { henries, .. } => charge.add(branch, branch, -henries),
+                    Element::Vcvs { cp, cn, gain, .. } => {
+                        if let Some(i) = cp.unknown() { a.add(branch, i, -*gain); }
+                        if let Some(i) = cn.unknown() { a.add(branch, i, *gain); }
+                    }
                     _ => unreachable!(),
                 }
                 branch += 1;

@@ -55,3 +55,14 @@ fn vccs_json_request_is_solved_through_the_public_api() {
     let result = run(&request).unwrap();
     assert!((result.samples[0].values[1] + 1.).abs() < 1e-12);
 }
+
+#[test]
+fn vcvs_constrains_output_voltage_with_controlled_polarity() {
+    let circuit = Circuit { nodes: vec!["0".into(), "in".into(), "out".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 2. },
+        Element::Vcvs { id: "E1".into(), p: NodeId(2), n: NodeId(0), cp: NodeId(1), cn: NodeId(0), gain: -3. },
+        Element::Resistor { id: "R1".into(), p: NodeId(2), n: NodeId(0), ohms: 1. },
+    ]};
+    let x = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+    assert!((x[1] + 6.).abs() < 1e-12);
+}

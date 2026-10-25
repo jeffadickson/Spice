@@ -47,6 +47,15 @@ pub enum Element {
         cn: NodeId,
         siemens: f64,
     },
+    /// Voltage-controlled voltage source; V(p)-V(n) equals gain*(V(cp)-V(cn)).
+    Vcvs {
+        id: String,
+        p: NodeId,
+        n: NodeId,
+        cp: NodeId,
+        cn: NodeId,
+        gain: f64,
+    },
     /// Shockley diode with current defined from p to n.
     Diode {
         id: String,
@@ -65,6 +74,7 @@ impl Element {
             | Self::Voltage { id, .. }
             | Self::Current { id, .. }
             | Self::Vccs { id, .. }
+            | Self::Vcvs { id, .. }
             | Self::Diode { id, .. } => id,
         }
     }
@@ -76,6 +86,7 @@ impl Element {
             | Self::Voltage { p, n, .. }
             | Self::Current { p, n, .. }
             | Self::Vccs { p, n, .. }
+            | Self::Vcvs { p, n, .. }
             | Self::Diode { p, n, .. } => (*p, *n),
         }
     }
@@ -126,6 +137,12 @@ impl Circuit {
                         || !siemens.is_finite() =>
                 {
                     return Err(SimError::invalid("invalid VCCS control terminals or gain"));
+                }
+                Element::Vcvs { cp, cn, gain, .. }
+                    if cp == cn || cp.0 >= self.nodes.len() || cn.0 >= self.nodes.len()
+                        || !gain.is_finite() =>
+                {
+                    return Err(SimError::invalid("invalid VCVS control terminals or gain"));
                 }
                 Element::Resistor { ohms, .. } if !ohms.is_finite() || *ohms <= 0.0 => {
                     return Err(SimError::invalid("resistance must be finite and positive"));

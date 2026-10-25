@@ -46,7 +46,7 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
                 .linearize(v)?
                 .current_amps
             }
-            Element::Voltage { id, .. } | Element::Inductor { id, .. } => {
+            Element::Voltage { id, .. } | Element::Inductor { id, .. } | Element::Vcvs { id, .. } => {
                 x[plan
                     .branch_index(id)
                     .ok_or_else(|| SimError::invalid("missing power branch"))?]
