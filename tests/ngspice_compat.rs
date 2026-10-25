@@ -232,6 +232,13 @@ fn ngspice_compact_sine_source_lowers_to_transient_override() {
 }
 
 #[test]
+fn ngspice_compact_sine_current_source_preserves_polarity() {
+    let request = import_ngspice_request("title\nI1 out 0 SIN(0,2m,1k)\nR1 out 0 1k\n.tran 0.25m 0.25m\n.end\n", "sine-current").unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!((result.samples.last().unwrap().values[0] + 2.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_compact_sine_rejects_nonpositive_frequency_when_executed() {
     let request = import_ngspice_request("title\nV1 out 0 SIN(0,1,0)\nR1 out 0 1k\n.tran 1m 2m\n.end\n", "sine-invalid").unwrap();
     let error = circuit_simulator::api::run(&request).unwrap_err();
