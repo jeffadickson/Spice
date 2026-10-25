@@ -1,0 +1,27 @@
+# Spice repository handoff prompt
+
+You are continuing work on **Spice**, a Rust circuit-simulation repository. Work from the repository root and preserve its user defaults:
+
+- Use PowerShell for shell/file work and C# or F# for substantive scripts.
+- Keep StrictDoc authoritative. Add stable requirement IDs and source/test evidence for each implemented capability.
+- Document public interfaces and numerical conventions. Run meaningful malformed-input, randomized/property, mutation, and coverage checks; report real limitations.
+- Commit locally in small numbered iterations. Build at the stated checkpoint cadence. Do not claim GPU, plugin, Arrow, full SPICE compatibility, or production qualification without evidence.
+
+Current implementation through iteration 185:
+
+- Bounded dense MNA engine for R/C/L, independent sources, DC/AC/linear transient.
+- Independent faer sparse and nalgebra dense CPU paths.
+- C#/F# JSON clients, artifacts, variation grids and deterministic sampling.
+- New bounded Shockley diode DC operating-point path: analytic residual/Jacobian, damped Newton solve, explicit options, convergence report, diode netlist and C# DTO support.
+- Nonlinear AC and transient requests are intentionally rejected until bias linearization and per-step Newton/history semantics are implemented.
+
+Start by reading `README.md`, `docs/implementation-status.md`, `docs/fourth-slice.sdoc`, `evidence/implementation-validation-150.json`, the latest `evidence/checkpoint-*.json`, and `evidence/iterations.md`.
+
+Suggested next technical work:
+
+1. Implement nonlinear transient MNA with per-step Newton, rollback-safe history and source breakpoints.
+2. Add DC-bias small-signal AC linearization using diode incremental conductance.
+3. Add continuation/source stepping for difficult DC operating points and independent reference fixtures.
+4. Expand device models only after equation, derivative, domain, unit, and convergence contracts are written.
+
+Run `dotnet run --file scripts/Checkpoint.cs -- <multiple-of-10>` for checkpoints. `scripts/Test-Coverage.ps1` now selects a nightly MSVC coverage toolchain containing `profiler_builtins`; this host still needs Visual C++ Build Tools/Windows SDK for `link.exe` before Rust coverage can run.
