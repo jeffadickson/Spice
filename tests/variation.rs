@@ -195,6 +195,20 @@ fn grid_has_deterministic_cartesian_order() {
 }
 
 #[test]
+fn grid_rejects_duplicate_targets_and_excessive_products() {
+    let duplicate = ScalarGrid { dimensions: vec![
+        ScalarSweep { element_id: "R1".into(), values: vec![1.] },
+        ScalarSweep { element_id: "R1".into(), values: vec![2.] },
+    ] };
+    assert!(duplicate.validate().is_err());
+    let oversized = ScalarGrid { dimensions: vec![
+        ScalarSweep { element_id: "R1".into(), values: (0..9).map(|v| v as f64 + 1.).collect() },
+        ScalarSweep { element_id: "V1".into(), values: (0..9).map(|v| v as f64 + 1.).collect() },
+    ] };
+    assert!(oversized.validate().is_err());
+}
+
+#[test]
 fn cancellation_is_observed_between_sweep_points() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
     let sweep = ScalarSweep {
