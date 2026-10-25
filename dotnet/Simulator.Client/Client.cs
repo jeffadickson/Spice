@@ -10,7 +10,14 @@ public sealed record SimulationResponse(string SchemaVersion, string Status, boo
     public ResultManifest ReadManifest()
     {
         if (!Succeeded) throw new InvalidOperationException("No successful result manifest.");
-        return Payload.Deserialize<ResultManifest>(WireFormat.Options) ?? throw new InvalidDataException("Missing manifest.");
+        var manifest = Payload.Deserialize<ResultManifest>(WireFormat.Options) ?? throw new InvalidDataException("Missing manifest.");
+        if (manifest.SchemaVersion != "1" || manifest.Status != "succeeded" || !manifest.Complete ||
+            manifest.Signals is null || manifest.Samples is null || manifest.AcSamples is null ||
+            manifest.Measurements is null || manifest.Assertions is null || manifest.Backend is null ||
+            manifest.Samples.Any(s => s.Values is null || s.Values.Length != manifest.Signals.Length) ||
+            manifest.AcSamples.Any(s => s.Values is null || s.Values.Length != manifest.Signals.Length))
+            throw new InvalidDataException("Malformed or incomplete result manifest.");
+        return manifest;
     }
     public bool Succeeded => Status == "succeeded" && Complete;
     /// <summary>Read the final voltage/current by descriptor ID; missing data is an error.</summary>

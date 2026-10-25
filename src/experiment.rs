@@ -63,7 +63,7 @@ impl ExperimentSpec {
         }
         let mut ids = BTreeSet::new();
         for m in &self.measurements {
-            if m.id.is_empty() || m.id.len() > 256 || !ids.insert(&m.id) {
+            if m.id.is_empty() || m.id.len() > 256 || m.signal.len()>512 || !ids.insert(&m.id) {
                 return Err(SimError::invalid("invalid/duplicate measurement ID"));
             }
             match m.operation {
@@ -86,7 +86,7 @@ impl ExperimentSpec {
         }
         let mut assertions = BTreeSet::new();
         for a in &self.assertions {
-            if a.id.is_empty()
+            if a.id.is_empty() || a.id.len()>256 || a.unit.len()>64
                 || !assertions.insert(&a.id)
                 || !ids.contains(&a.measurement)
                 || !a.low.is_finite()
