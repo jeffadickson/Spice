@@ -1,5 +1,6 @@
 use circuit_simulator::{backend::DenseLu, circuit::{Circuit, Element}, compile::compile, dc::operating_point, ids::NodeId, power::dc_power};
 use circuit_simulator::api::{run, Request};
+use circuit_simulator::variation::{replace_scalar, scalar_kind, ScalarKind};
 
 #[test]
 fn vccs_stamps_controlled_current_with_declared_polarity() {
@@ -85,6 +86,20 @@ fn vcvs_power_accounting_balances_the_controlling_supply() {
     let plan = compile(&circuit).unwrap();
     let x = operating_point(&plan, &DenseLu).unwrap();
     assert!(dc_power(&plan, &x).unwrap().sum_absorbed_w.abs() < 1e-12);
+}
+
+#[test]
+fn vcvs_gain_variation_is_immutable_and_dimensionless() {
+    let circuit = Circuit { nodes: vec!["0".into(), "in".into(), "out".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 2. },
+        Element::Vcvs { id: "E1".into(), p: NodeId(2), n: NodeId(0), cp: NodeId(1), cn: NodeId(0), gain: 1. },
+        Element::Resistor { id: "R1".into(), p: NodeId(2), n: NodeId(0), ohms: 1. },
+    ]};
+    assert_eq!(scalar_kind(&circuit, "E1").unwrap(), ScalarKind::VoltageGain);
+    let varied = replace_scalar(&circuit, "E1", -3.).unwrap();
+    let x = operating_point(&compile(&varied).unwrap(), &DenseLu).unwrap();
+    assert!((x[1] + 6.).abs() < 1e-12);
+    assert_eq!(scalar_kind(&circuit, "E1").unwrap(), ScalarKind::VoltageGain);
 }
 
 #[test]
