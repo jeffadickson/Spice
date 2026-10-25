@@ -27,11 +27,15 @@ public sealed record Diode(string Id, int P, int N, double SaturationAmps, doubl
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "kind")]
 [JsonDerivedType(typeof(OperatingPoint), "operating_point")]
+[JsonDerivedType(typeof(OperatingPointNewton), "operating_point_newton")]
 [JsonDerivedType(typeof(Transient), "transient")]
 [JsonDerivedType(typeof(Ac), "ac")]
 [JsonDerivedType(typeof(TransientConfigured), "transient_configured")]
 public abstract record Analysis;
 public sealed record OperatingPoint : Analysis;
+/// <summary>Explicit bounded nonlinear DC convergence policy.</summary>
+public sealed record OperatingPointNewton(NewtonOptions Options) : Analysis;
+public sealed record NewtonOptions(int MaxIterations = 50, double AbsoluteTolerance = 1e-12, double RelativeTolerance = 1e-9);
 public sealed record Transient(LegacyTransientOptions Options) : Analysis;
 public sealed record LegacyTransientOptions(double StopS, double StepS, int MaxSteps);
 public sealed record Ac(double[] FrequenciesHz) : Analysis;
