@@ -64,6 +64,13 @@ fn ngspice_g_card_rejects_missing_control_terminal() {
 }
 
 #[test]
+fn ngspice_e_card_imports_with_controlled_voltage_polarity() {
+    let circuit = parse_ngspice_basic("title\nV1 in 0 2\nE1 out 0 in 0 -3\nR1 out 0 1\n.end\n").unwrap();
+    let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+    assert!((values[1] + 6.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_pulse_source_lowers_to_transient_override() {
     let request = import_ngspice_request("title\nV1 out 0 pulse 0 2 0 1m 1m 2m 6m\nR1 out 0 1k\n.tran 1m 6m\n.end\n", "pulse-import").unwrap();
     match request.analysis {

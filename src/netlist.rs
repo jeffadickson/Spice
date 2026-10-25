@@ -52,13 +52,13 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
         {
             continue;
         }
-        if !matches!(kind, 'R' | 'C' | 'L' | 'D' | 'V' | 'I' | 'G') {
+        if !matches!(kind, 'R' | 'C' | 'L' | 'D' | 'V' | 'I' | 'E' | 'G') {
             return Err(SimError::new(
                 ErrorCode::Unsupported,
                 format!("line {}: unsupported element/directive", index + 1),
             ));
         }
-        let expected = match kind { 'D' => 5, 'G' => 6, _ => 4 };
+        let expected = match kind { 'D' => 5, 'E' | 'G' => 6, _ => 4 };
         if tokens.len() != expected {
             return Err(SimError::invalid(format!(
                 "line {}: expected id p n value{}",
@@ -77,9 +77,9 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
         };
         let p = node(tokens[1]);
         let n = node(tokens[2]);
-        let cp = if kind == 'G' { Some(node(tokens[3])) } else { None };
-        let cn = if kind == 'G' { Some(node(tokens[4])) } else { None };
-        let value = spice_scalar(if kind == 'G' { tokens[5] } else { tokens[3] })
+        let cp = if matches!(kind, 'E' | 'G') { Some(node(tokens[3])) } else { None };
+        let cn = if matches!(kind, 'E' | 'G') { Some(node(tokens[4])) } else { None };
+        let value = spice_scalar(if matches!(kind, 'E' | 'G') { tokens[5] } else { tokens[3] })
             .map_err(|e| SimError::invalid(format!("line {}: {}", index + 1, e.message)))?;
         let id = name.to_ascii_uppercase();
         circuit.elements.push(match kind {
@@ -128,6 +128,14 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
                 cp: cp.expect("G control positive node"),
                 cn: cn.expect("G control negative node"),
                 siemens: value,
+            },
+            'E' => Element::Vcvs {
+                id,
+                p,
+                n,
+                cp: cp.expect("E control positive node"),
+                cn: cn.expect("E control negative node"),
+                gain: value,
             },
             _ => unreachable!(),
         });
