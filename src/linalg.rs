@@ -7,8 +7,8 @@ impl Matrix{
         if n==0||n>256{return Err(SimError::invalid("matrix dimension must be 1..256"));}
         Ok(Self{n,values:vec![0.0;n*n]})
     }
-    pub fn add(&mut self,row:usize,col:usize,value:f64){self.values[row*self.n+col]+=value;}
-    pub fn at(&self,row:usize,col:usize)->f64{self.values[row*self.n+col]}
+    pub(crate) fn add(&mut self,row:usize,col:usize,value:f64){self.values[row*self.n+col]+=value;}
+    pub(crate) fn at(&self,row:usize,col:usize)->f64{self.values[row*self.n+col]}
     pub fn validate(&self,rhs:&[f64])->SimResult<()>{
         if self.n==0||self.n>256||self.values.len()!=self.n*self.n||rhs.len()!=self.n{return Err(SimError::invalid("invalid linear system dimensions"));}
         if self.values.iter().chain(rhs).any(|v|!v.is_finite()){return Err(SimError::invalid("nonfinite matrix/RHS"));}

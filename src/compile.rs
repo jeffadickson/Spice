@@ -2,7 +2,12 @@ use crate::{circuit::{Circuit,Element},error::{SimError,SimResult},ids::NodeId,l
 use crate::model::{TwoTerminalModel,ResistorModel,CapacitorModel};
 /// Immutable numeric plan; runtime histories and native handles live elsewhere.
 #[derive(Debug,Clone)]
-pub struct CompiledCircuit{pub circuit:Circuit,pub conductance:Matrix,pub charge:Matrix,pub rhs:Vec<f64>,pub voltage_branches:Vec<String>}
+pub struct CompiledCircuit{pub(crate) circuit:Circuit,pub(crate) conductance:Matrix,pub(crate) charge:Matrix,pub(crate) rhs:Vec<f64>,pub(crate) voltage_branches:Vec<String>}
+impl CompiledCircuit{
+    /// Immutable public view; compilation exclusively owns numeric layout invariants.
+    pub fn circuit(&self)->&Circuit{&self.circuit}
+    pub fn unknown_count(&self)->usize{self.conductance.n}
+}
 pub(crate) fn stamp_pair(a:&mut Matrix,p:NodeId,n:NodeId,g:f64){
     if let Some(i)=p.unknown(){a.add(i,i,g);}
     if let Some(i)=n.unknown(){a.add(i,i,g);}

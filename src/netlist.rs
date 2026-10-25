@@ -13,7 +13,9 @@ pub fn parse(text:&str)->SimResult<Circuit>{
         if name.eq_ignore_ascii_case(".end"){if tokens.len()!=1{return Err(SimError::invalid("invalid .end"));}ended=true;continue;}
         if name.eq_ignore_ascii_case(".op")&&tokens.len()==1{continue;}
         let kind=name.chars().next().unwrap().to_ascii_uppercase();
-        if index==0&&tokens.len()!=4&&!name.starts_with('.') {continue;}
+        // Only an explicit title: line or a single-token first line is a title.
+        // A malformed first device line must never be silently discarded.
+        if index==0&&!name.starts_with('.')&&(tokens.len()==1||name.eq_ignore_ascii_case("title:")){continue;}
         if !matches!(kind,'R'|'C'|'V'|'I'){return Err(SimError::new(ErrorCode::Unsupported,format!("line {}: unsupported element/directive",index+1)));}
         if tokens.len()!=4{return Err(SimError::invalid(format!("line {}: expected id p n value",index+1)));}
         let mut node=|label:&str|->NodeId{

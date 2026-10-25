@@ -12,8 +12,9 @@ pub fn transient(plan:&CompiledCircuit,solver:&dyn LinearSolver,options:&Transie
 /// Cooperative cancellation is checked before every linear step.
 pub fn transient_controlled(plan:&CompiledCircuit,solver:&dyn LinearSolver,options:&TransientOptions,cancel:&std::sync::atomic::AtomicBool)->SimResult<Vec<Sample>>{
     positive(options.stop_s,"stop_s")?;positive(options.step_s,"step_s")?;
-    let count=(options.stop_s/options.step_s).ceil();
+    let count=(options.stop_s/options.step_s).ceil().max(1.0);
     if options.max_steps==0||options.max_steps>100_000||count>options.max_steps as f64{return Err(SimError::new(crate::error::ErrorCode::ResourceExhausted,"step budget exceeded"));}
+    if count*plan.conductance.n as f64>2_000_000.0{return Err(SimError::new(crate::error::ErrorCode::ResourceExhausted,"retained waveform scalar budget exceeded"));}
     let mut previous=vec![0.0;plan.conductance.n];
     let mut samples=Vec::with_capacity(count as usize);
     let mut time=0.0;
@@ -21,6 +22,7 @@ pub fn transient_controlled(plan:&CompiledCircuit,solver:&dyn LinearSolver,optio
         if cancel.load(std::sync::atomic::Ordering::Relaxed){return Err(SimError::new(crate::error::ErrorCode::Cancelled,"cancelled before step"));}
         let next=(step as f64*options.step_s).min(options.stop_s);
         let h=next-time;
+        if h<=0.0{break;}
         let mut a=plan.conductance.clone();
         let mut rhs=plan.rhs.clone();
         for i in 0..a.n{for j in 0..a.n{

@@ -46,3 +46,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 42. Demonstrate trusted FSharp domain builders without a new interpreter
 43. Introduce linear model contributions independent of solver choice
 44. Make real and complex backend selection extensible through a registry
+45. Harden plan immutability output budgets and child-process backpressure

@@ -9,6 +9,7 @@ pub struct AcSample{pub frequency_hz:f64,pub values:Vec<ComplexValue>}
 pub fn ac(plan:&CompiledCircuit,frequencies:&[f64],solver:&dyn LinearSolver)->SimResult<Vec<AcSample>>{
     if frequencies.is_empty()||frequencies.len()>10_000{return Err(SimError::invalid("AC grid must contain 1..10000 points"));}
     let n=plan.conductance.n;let mut output=Vec::with_capacity(frequencies.len());
+    if n*frequencies.len()>1_000_000{return Err(SimError::new(ErrorCode::ResourceExhausted,"AC retained scalar budget exceeded"));}
     for &frequency in frequencies{
         positive(frequency,"frequency_hz")?;
         let omega=std::f64::consts::TAU*frequency;

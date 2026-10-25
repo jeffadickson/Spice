@@ -40,7 +40,15 @@ public sealed class SimulationClient(string executable)
             var errors = ReadBoundedAsync(process.StandardError, cancellation);
             await process.StandardInput.WriteAsync(requestJson.AsMemory(), cancellation);
             process.StandardInput.Close();
-            await process.WaitForExitAsync(cancellation);
+            var exit = process.WaitForExitAsync(cancellation);
+            // Observe failed readers promptly: otherwise a full pipe can block child exit.
+            var pending = new List<Task> { output, errors, exit };
+            while (pending.Count != 0)
+            {
+                var completed = await Task.WhenAny(pending);
+                await completed;
+                pending.Remove(completed);
+            }
             var text = await output;
             var diagnostics = await errors;
             using var document = JsonDocument.Parse(text);
