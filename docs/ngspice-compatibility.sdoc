@@ -210,3 +210,13 @@ The typed transient API and bounded deck importer shall support three-value, fiv
 COMMENT: >>>
 Implementation: waveform::Waveform::DampedSine and netlist::bounded_sine. Verification: tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-022
+TITLE: Ground-alias normalization
+STATEMENT: >>>
+The bounded netlist parsers shall normalize the case-insensitive labels gnd and ground to the mandatory numeric reference node 0 before node identity creation. The aliases shall not create separate nodes or alter the p-to-n sign conventions.
+<<<
+COMMENT: >>>
+Implementation: netlist::parse. Verification: tests/ngspice_compat.rs.
+<<<

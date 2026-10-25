@@ -494,6 +494,14 @@ fn ngspice_compact_dc_and_inline_comment_import() {
 }
 
 #[test]
+fn netlist_ground_aliases_normalize_to_the_reference_node() {
+    let circuit = parse_ngspice_basic("title\nV1 out gnd 2\nR1 out ground 1k\n.end\n").unwrap();
+    assert_eq!(circuit.nodes, vec!["0", "out"]);
+    let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+    assert!((values[0] - 2.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_continuation_record_is_folded_before_bounded_lowering() {
     let circuit = parse_ngspice_basic(
         "title\nV1 out 0 DC\n+ 2V ; value continuation\nR1 out 0 1k\n.end\n",

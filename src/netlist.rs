@@ -69,7 +69,11 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
             )));
         }
         let mut node = |label: &str| -> NodeId {
-            let label = label.to_ascii_lowercase();
+            let label = if label.eq_ignore_ascii_case("gnd") || label.eq_ignore_ascii_case("ground") {
+                "0".into()
+            } else {
+                label.to_ascii_lowercase()
+            };
             if let Some(i) = circuit.nodes.iter().position(|v| v == &label) {
                 NodeId(i)
             } else {
