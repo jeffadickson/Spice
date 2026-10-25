@@ -229,6 +229,13 @@ fn ngspice_explicit_dc_source_units_are_normalized() {
 }
 
 #[test]
+fn ngspice_explicit_dc_current_units_are_normalized() {
+    let circuit = parse_ngspice_basic("title\nI1 out 0 DC 2mA\nR1 out 0 1k\n.end\n").unwrap();
+    let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+    assert!((values[0] + 2.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_waveform_tail_is_not_silently_imported() {
     let error = parse_ngspice_basic("title\nV1 out 0 DC=2 SIN(0 1 1k)\nR1 out 0 4k\n.end\n")
         .unwrap_err();
