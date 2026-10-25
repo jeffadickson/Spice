@@ -259,6 +259,25 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
         (None, Some(frequencies_hz)) => Analysis::Ac { frequencies_hz },
         (None, None) => Analysis::OperatingPoint,
     };
+    let input = if matches!(analysis, Analysis::Ac { .. }) {
+        let mut normalized = String::new();
+        for line in text.lines() {
+            let tokens: Vec<_> = line.split_whitespace().collect();
+            if matches!(tokens.first().and_then(|name| name.chars().next()).map(|kind| kind.to_ascii_uppercase()), Some('V' | 'I'))
+                && tokens.len() == 7
+                && tokens[3].eq_ignore_ascii_case("dc")
+                && tokens[5].eq_ignore_ascii_case("ac")
+            {
+                normalized.push_str(&format!("{} {} {} {}\n", tokens[0], tokens[1], tokens[2], tokens[6]));
+            } else {
+                normalized.push_str(line);
+                normalized.push('\n');
+            }
+        }
+        normalized
+    } else {
+        text.into()
+    };
     let mut sources = Vec::new();
     for source_line in text.lines() {
         let line = source_line.split(';').next().unwrap_or_default().trim();
@@ -290,7 +309,7 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
     Ok(Request {
         schema_version: "1".into(),
         case_id: case_id.into(),
-        circuit: parse_ngspice_basic(text)?,
+        circuit: parse_ngspice_basic(&input)?,
         analysis,
         backend: "lu".into(),
         experiment: None,

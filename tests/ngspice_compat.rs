@@ -41,6 +41,13 @@ fn ngspice_ac_linear_directive_lowers_to_typed_request() {
 }
 
 #[test]
+fn ngspice_ac_source_amplitude_is_used_for_bounded_ac_import() {
+    let request = import_ngspice_request("title\nV1 out 0 DC 5 AC 2\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "ac-source").unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!((result.ac_samples[0].values[0].real - 2.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_non_linear_ac_sweeps_fail_instead_of_being_relabelled() {
     let error = import_ngspice_request(
         "title\nV1 out 0 1\nR1 out 0 1k\n.ac dec 10 1 1k\n.end\n",
