@@ -23,6 +23,18 @@ fn sweep_summary_makes_per_point_accounting_explicit() {
 }
 
 #[test]
+fn sweep_retains_failed_points_without_discarding_their_identity() {
+    let mut request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    request.backend = "unregistered".into();
+    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000.] };
+    let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
+    assert_eq!(points[0].execution, "failed");
+    assert_eq!(points[0].index, 0);
+    assert_eq!(points[0].value, 1000.);
+    assert!(points[0].error.is_some());
+}
+
+#[test]
 fn grid_execution_exposes_each_selected_vector() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
     let grid = ScalarGrid { dimensions: vec![ScalarSweep { element_id: "R1".into(), values: vec![1000., 2000.] }] };
