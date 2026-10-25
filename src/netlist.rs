@@ -4,6 +4,8 @@ use crate::{
     error::{ErrorCode, SimError, SimResult},
     ids::NodeId,
     quantity::spice_scalar,
+    sources::SourceOverride,
+    waveform::Waveform,
 };
 /// Explicit small subset: optional title, R/C/L/D/V/I, .op and .end. No includes or control commands.
 pub fn parse(text: &str) -> SimResult<Circuit> {
@@ -166,6 +168,15 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
         }
         let mut tokens: Vec<&str> = line.split_whitespace().collect();
         if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
+            && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("pulse"))
+            && tokens.len() == 10
+        {
+            // The typed transient override owns waveform semantics; retain the
+            // pulse low level as the DC initialization value for compilation.
+            tokens[3] = tokens[4];
+            tokens.truncate(4);
+        }
+        if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
             && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("dc"))
         {
             tokens.remove(3);
@@ -239,6 +250,34 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
         (Some(options), None) => Analysis::TransientConfigured { options },
         (None, Some(frequencies_hz)) => Analysis::Ac { frequencies_hz },
         (None, None) => Analysis::OperatingPoint,
+    };
+    let mut sources = Vec::new();
+    for source_line in text.lines() {
+        let line = source_line.split(';').next().unwrap_or_default().trim();
+        let tokens: Vec<_> = line.split_whitespace().collect();
+        let Some(name) = tokens.first() else { continue };
+        if !matches!(name.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I')) {
+            continue;
+        }
+        if tokens.len() == 10 && tokens[3].eq_ignore_ascii_case("pulse") {
+            let values: SimResult<Vec<f64>> = tokens[4..].iter().map(|value| spice_scalar(value)).collect();
+            let values = values?;
+            sources.push(SourceOverride {
+                id: name.to_ascii_uppercase(),
+                waveform: Waveform::Pulse {
+                    low: values[0], high: values[1], delay_s: values[2], rise_s: values[3],
+                    fall_s: values[4], width_s: values[5], period_s: values[6],
+                },
+            });
+        }
+    }
+    let analysis = match analysis {
+        Analysis::TransientConfigured { mut options } => {
+            options.sources = sources;
+            Analysis::TransientConfigured { options }
+        }
+        _ if !sources.is_empty() => return Err(SimError::new(ErrorCode::Unsupported, "PULSE sources require a bounded .tran directive")),
+        other => other,
     };
     Ok(Request {
         schema_version: "1".into(),

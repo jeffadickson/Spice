@@ -48,6 +48,18 @@ fn ngspice_g_card_imports_with_controlled_current_polarity() {
 }
 
 #[test]
+fn ngspice_pulse_source_lowers_to_transient_override() {
+    let request = import_ngspice_request("title\nV1 out 0 pulse 0 2 0 1m 1m 2m 6m\nR1 out 0 1k\n.tran 1m 6m\n.end\n", "pulse-import").unwrap();
+    match request.analysis {
+        circuit_simulator::api::Analysis::TransientConfigured { options } => {
+            assert_eq!(options.sources.len(), 1);
+            assert_eq!(options.sources[0].id, "V1");
+        }
+        _ => panic!("expected configured transient"),
+    }
+}
+
+#[test]
 fn pulse_waveform_has_exact_plateaus_and_rejects_invalid_periods() {
     let pulse = Waveform::Pulse { low: 0., high: 2., delay_s: 1., rise_s: 1., fall_s: 1., width_s: 2., period_s: 6. };
     assert_eq!(pulse.at(0.).unwrap(), 0.);
