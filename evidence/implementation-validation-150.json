@@ -1,0 +1,34 @@
+{
+  "validation_date": "2026-10-24",
+  "iteration_commits": 150,
+  "current_run": [101, 150],
+  "build_checkpoints": [110, 120, 130, 140, 150],
+  "checkpoint_status": "passed",
+  "strictdoc": {
+    "documents": 7,
+    "requirements": 135,
+    "parent_links": "resolved and acyclic",
+    "parser": "StrictDoc 0.30.4 passed"
+  },
+  "tests": {
+    "rust_debug": 96,
+    "rust_release": 96,
+    "managed_conformance": 22,
+    "format": "passed",
+    "clippy": "passed with warnings denied"
+  },
+  "mutation": {
+    "selected_operators_killed": 13,
+    "selected_operators_total": 13,
+    "baseline": "full Rust suite passed; focused regression targets per operator"
+  },
+  "coverage": {
+    "managed_status": "measured",
+    "managed_line_percent": 95.38461538461539,
+    "managed_branch_percent": 77.27272727272727,
+    "managed_scope": "Owned Simulator.Client .cs source lines and mapped branches; generated JSON metadata and conformance executable excluded",
+    "rust_status": "unavailable",
+    "rust_reason": "Windows GNU Rust toolchain lacks profiler_builtins (E0463)"
+  },
+  "scope": "bounded linear reference engine; variation envelopes are library-level/typed DTO contracts, not a batch CLI, distributed campaign, GPU, nonlinear model, or production StressForge qualification"
+}

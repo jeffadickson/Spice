@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<coverage line-rate="0.975609756097561" branch-rate="0.7727272727272727" complexity="1575" version="1.9" timestamp="1792895047" lines-covered="120" lines-valid="123" branches-covered="51" branches-valid="66">
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<coverage line-rate="0.9538461538461539" branch-rate="0.7727272727272727" complexity="1768" version="1.9" timestamp="1792897538" lines-covered="124" lines-valid="130" branches-covered="51" branches-valid="66">
   <packages>
-    <package line-rate="0.975609756097561" branch-rate="0.7727272727272727" complexity="1539" name="Simulator.Client">
+    <package line-rate="0.9538461538461539" branch-rate="0.7727272727272727" complexity="1730" name="Simulator.Client">
       <classes>
         <class line-rate="1" branch-rate="0.9166666666666666" complexity="36" name="Simulator.Client.SimulationResponse" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Client.cs">
           <methods>
@@ -677,6 +677,70 @@
           <lines>
             <line number="17" hits="1" branch="False" />
             <line number="18" hits="1" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="0" branch-rate="1" complexity="1" name="Simulator.Client.ScalarSelection" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\SweepResults.cs">
+          <methods>
+            <method line-rate="0" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, string, double)">
+              <lines>
+                <line number="4" hits="0" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="4" hits="0" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="0" branch-rate="1" complexity="1" name="Simulator.Client.ScalarSweepPoint" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\SweepResults.cs">
+          <methods>
+            <method line-rate="0" branch-rate="1" complexity="1" name=".ctor" signature="(int, Simulator.Client.ScalarSelection, string, Simulator.Client.ResultManifest, Simulator.Client.SimulationError)">
+              <lines>
+                <line number="7" hits="0" branch="False" />
+                <line number="8" hits="0" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="7" hits="0" branch="False" />
+            <line number="8" hits="0" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.ScalarSweepSummary" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\SweepResults.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(int, int, int)">
+              <lines>
+                <line number="11" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="11" hits="1" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.ScalarSweepResult" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\SweepResults.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, string, string, Simulator.Client.ScalarSweepDefinition, Simulator.Client.ScalarSweepPoint[], Simulator.Client.ScalarSweepSummary)">
+              <lines>
+                <line number="18" hits="1" branch="False" />
+                <line number="19" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="18" hits="1" branch="False" />
+            <line number="19" hits="1" branch="False" />
+          </lines>
+        </class>
+        <class line-rate="1" branch-rate="1" complexity="1" name="Simulator.Client.ScalarSweepDefinition" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\SweepResults.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="1" name=".ctor" signature="(string, double[])">
+              <lines>
+                <line number="22" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="22" hits="1" branch="False" />
           </lines>
         </class>
         <class line-rate="1" branch-rate="0.5" complexity="4" name="Simulator.Client.SimulationResponse.&lt;&gt;c__DisplayClass19_0" filename="C:\Users\jeffd\Documents\Codex\2026-10-24\how\outputs\rust-circuit-simulator\dotnet\Simulator.Client\Client.cs">

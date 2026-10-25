@@ -2,11 +2,12 @@ use circuit_simulator::{
     api::Request,
     circuit::{Circuit, Element},
     ids::NodeId,
-    registry::BackendRegistry,
     provenance::typed_hash,
+    registry::BackendRegistry,
     sweep::{
-        GridSummary, SweepSummary, assertion_summary, derived_case_id, execute_grid, execute_scalar, final_signal,
-        final_signal_rows, measurement_rows, run_grid, run_scalar, run_scalar_cancellable,
+        GridSummary, SweepSummary, assertion_summary, derived_case_id, execute_grid,
+        execute_scalar, final_signal, final_signal_rows, measurement_rows, run_grid, run_scalar,
+        run_scalar_cancellable,
     },
     variation::{ScalarGrid, ScalarKind, ScalarSweep, replace_scalar, scalar_kind},
 };
@@ -25,7 +26,10 @@ fn fixture() -> Circuit {
 
 #[test]
 fn variation_hashes_are_domain_separated() {
-    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000.] };
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![1000.],
+    };
     let a = typed_hash("scalar-sweep", &sweep).unwrap();
     assert_ne!(a, typed_hash("grid", &sweep).unwrap());
     assert!(typed_hash("Bad Domain", &sweep).is_err());
@@ -34,7 +38,12 @@ fn variation_hashes_are_domain_separated() {
 #[test]
 fn scalar_grid_envelope_retains_dimension_definition() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
-    let grid = ScalarGrid { dimensions: vec![ScalarSweep { element_id: "R1".into(), values: vec![1000.] }] };
+    let grid = ScalarGrid {
+        dimensions: vec![ScalarSweep {
+            element_id: "R1".into(),
+            values: vec![1000.],
+        }],
+    };
     let run = execute_grid(&request, &grid, &BackendRegistry::reference()).unwrap();
     assert_eq!(run.summary.total, 1);
     assert_eq!(run.grid_sha256.len(), 64);
@@ -119,7 +128,10 @@ fn scalar_sweep_envelope_is_self_describing() {
     assert_eq!(run.schema_version, "1");
     assert_eq!(run.summary.succeeded, 1);
     assert_eq!(run.sweep_sha256.len(), 64);
-    assert_eq!(serde_json::to_value(run).unwrap()["sweep"]["element_id"], "R1");
+    assert_eq!(
+        serde_json::to_value(run).unwrap()["sweep"]["element_id"],
+        "R1"
+    );
 }
 
 #[test]

@@ -10,7 +10,12 @@ pub fn request_hash<T: serde::Serialize>(request: &T) -> SimResult<String> {
 /// Hash a typed payload in a named domain. Domain separation prevents a sweep
 /// recipe digest from being mistaken for an executable request digest.
 pub fn typed_hash<T: serde::Serialize>(domain: &str, value: &T) -> SimResult<String> {
-    if domain.is_empty() || domain.len() > 64 || !domain.bytes().all(|byte| byte.is_ascii_lowercase() || byte == b'-' || byte == b'_') {
+    if domain.is_empty()
+        || domain.len() > 64
+        || !domain
+            .bytes()
+            .all(|byte| byte.is_ascii_lowercase() || byte == b'-' || byte == b'_')
+    {
         return Err(SimError::invalid("invalid provenance hash domain"));
     }
     let bytes = serde_json::to_vec(value).map_err(|e| SimError::invalid(e.to_string()))?;
