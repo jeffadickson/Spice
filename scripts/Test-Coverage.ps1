@@ -1,5 +1,23 @@
 # Orchestrate Rust/LLVM tools with native PowerShell; substantive mutation logic is C#.
+param([string]$CoverageToolchain = '')
 $ErrorActionPreference = 'Stop'
+$oldToolchain = $env:RUSTUP_TOOLCHAIN
+if ([string]::IsNullOrWhiteSpace($CoverageToolchain)) {
+    $CoverageToolchain = if ($IsWindows) { 'nightly-x86_64-pc-windows-msvc' } else { 'nightly' }
+}
+$env:RUSTUP_TOOLCHAIN = $CoverageToolchain
+$sysroot = (rustc --print sysroot).Trim()
+$hostTarget = ((rustc -vV | Select-String '^host:').ToString()).Substring(6).Trim()
+$runtimeDirectory = Join-Path $sysroot ('lib/rustlib/' + $hostTarget + '/lib')
+$runtime = Get-ChildItem -LiteralPath $runtimeDirectory -Filter 'libprofiler_builtins*.rlib' -ErrorAction SilentlyContinue | Select-Object -First 1
+if (-not $runtime) {
+    $env:RUSTUP_TOOLCHAIN = $oldToolchain
+    throw "Coverage toolchain $CoverageToolchain does not include profiler_builtins."
+}
+if ($IsWindows -and $hostTarget -like '*-msvc' -and -not (Get-Command link.exe -ErrorAction SilentlyContinue)) {
+    $env:RUSTUP_TOOLCHAIN = $oldToolchain
+    throw 'Coverage toolchain has profiler_builtins, but link.exe is missing. Install the Visual C++ Build Tools and Windows SDK.'
+}
 $root = (Get-Location).Path
 $coverageRoot = Join-Path $root 'build/coverage'
 New-Item -ItemType Directory -Force -Path $coverageRoot | Out-Null
@@ -51,5 +69,6 @@ try {
     $summary | ConvertTo-Json -Depth 8
 } finally {
     $env:RUSTFLAGS = $oldFlags; $env:CARGO_TARGET_DIR = $oldTarget; $env:LLVM_PROFILE_FILE = $oldProfile
+    $env:RUSTUP_TOOLCHAIN = $oldToolchain
 }
 

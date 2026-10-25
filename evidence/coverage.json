@@ -1,12 +1,12 @@
 {
   "rust": {
     "status": "unavailable",
-    "toolchain": "rustc 1.99.1 x86_64-pc-windows-gnu",
+    "toolchain": "nightly-x86_64-pc-windows-msvc with profiler_builtins",
     "line_percent": null,
     "branch_percent": null,
-    "reason": "Instrumented build fails E0463: profiler_builtins is not shipped in the selected toolchain",
+    "reason": "The coverage toolchain includes profiler_builtins, but this host lacks the MSVC link.exe required to link instrumented Windows binaries",
     "attempted_command": "scripts/Test-Coverage.ps1",
-    "remediation": "Run coverage on a supported toolchain. Linux CI is configured but has not been executed here."
+    "remediation": "Install Visual C++ Build Tools and a Windows SDK, then rerun scripts/Test-Coverage.ps1. Linux CI is configured but has not been executed here."
   },
   "managed": {
     "status": "measured",
