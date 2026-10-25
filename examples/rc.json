@@ -1,0 +1,43 @@
+{
+  "schema_version": "1",
+  "case_id": "rc-step",
+  "backend": "lu",
+  "circuit": {
+    "nodes": [
+      "0",
+      "in",
+      "out"
+    ],
+    "elements": [
+      {
+        "kind": "voltage",
+        "id": "V1",
+        "p": 1,
+        "n": 0,
+        "volts": 1
+      },
+      {
+        "kind": "resistor",
+        "id": "R1",
+        "p": 1,
+        "n": 2,
+        "ohms": 1000
+      },
+      {
+        "kind": "capacitor",
+        "id": "C1",
+        "p": 2,
+        "n": 0,
+        "farads": 0.000001
+      }
+    ]
+  },
+  "analysis": {
+    "kind": "transient",
+    "options": {
+      "stop_s": 0.005,
+      "step_s": 0.00001,
+      "max_steps": 1000
+    }
+  }
+}
