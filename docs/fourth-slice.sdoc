@@ -1,0 +1,49 @@
+[DOCUMENT]
+TITLE: Fourth Reference Slice - Nonlinear Diode Operating Points
+
+[TEXT]
+STATEMENT: >>>
+Iterations 151-200 introduce a bounded Shockley diode and analytic damped Newton DC operating points. This slice does not qualify semiconductor model parity, nonlinear transient integration, AC bias linearization, model plugins, or production convergence guarantees.
+<<<
+
+[REQUIREMENT]
+UID: REF4-001
+TITLE: Validated diode model and conventions
+STATEMENT: >>>
+The reference engine shall represent a two-terminal Shockley diode with positive finite saturation current and thermal voltage, with terminal current defined from p to n.
+<<<
+COMMENT: >>>
+Implementation: src/circuit.rs, src/model.rs.
+Verification: tests/nonlinear.rs::shockley_diode_has_positive_incremental_conductance, tests/nonlinear.rs::diode_circuit_parameters_are_validated_at_the_public_boundary.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-MOD-002
+
+[REQUIREMENT]
+UID: REF4-002
+TITLE: Analytic bounded Newton operating point
+STATEMENT: >>>
+The reference engine shall solve diode operating points using an analytic residual and Jacobian, bounded line-search damping, finite trial checks and explicit iteration/tolerance limits.
+<<<
+COMMENT: >>>
+Implementation: src/newton.rs, src/dc.rs.
+Verification: tests/nonlinear.rs::forward_biased_resistor_diode_bias_point_converges, tests/nonlinear.rs::high_bias_diode_uses_bounded_damping_instead_of_exponential_overflow, tests/nonlinear.rs::Newton_iteration_budget_is_a_real_failure_boundary.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-EQ-001
+
+[REQUIREMENT]
+UID: REF4-003
+TITLE: Explicit nonlinear analysis boundaries
+STATEMENT: >>>
+The reference engine shall reject nonlinear AC and transient requests until bias linearization and per-step nonlinear integration are implemented, and expose Newton evidence in operating-point results.
+<<<
+COMMENT: >>>
+Implementation: src/ac.rs, src/transient.rs, src/configured.rs, src/api.rs.
+Verification: tests/nonlinear.rs::nonlinear_ac_is_explicitly_unsupported_until_bias_linearization_exists, tests/nonlinear.rs::nonlinear_transient_is_rejected_until_newton_time_stepping_exists.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF-003
