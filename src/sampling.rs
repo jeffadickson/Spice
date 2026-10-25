@@ -11,7 +11,12 @@ pub struct SamplingProvenance {
 }
 
 impl SamplingProvenance {
-    pub const fn splitmix64(seed: u64) -> Self { Self { algorithm: "splitmix64-v1", seed } }
+    pub const fn splitmix64(seed: u64) -> Self {
+        Self {
+            algorithm: "splitmix64-v1",
+            seed,
+        }
+    }
 }
 
 /// A specified inclusive-exclusive finite interval.
@@ -34,11 +39,18 @@ impl UniformRange {
 /// A positive interval sampled uniformly in natural-logarithmic space.
 #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct LogUniformRange { pub low: f64, pub high: f64 }
+pub struct LogUniformRange {
+    pub low: f64,
+    pub high: f64,
+}
 
 impl LogUniformRange {
     pub fn validate(self) -> SimResult<()> {
-        if !self.low.is_finite() || !self.high.is_finite() || self.low <= 0. || self.low >= self.high {
+        if !self.low.is_finite()
+            || !self.high.is_finite()
+            || self.low <= 0.
+            || self.low >= self.high
+        {
             return Err(SimError::invalid("invalid log-uniform sampling range"));
         }
         Ok(())
@@ -48,10 +60,14 @@ impl LogUniformRange {
 /// A deterministic SplitMix64 stream. It is a reproducibility utility, not a
 /// cryptographic random number generator or statistical-quality guarantee.
 #[derive(Debug, Clone)]
-pub struct SeededSequence { state: u64 }
+pub struct SeededSequence {
+    state: u64,
+}
 
 impl SeededSequence {
-    pub const fn new(seed: u64) -> Self { Self { state: seed } }
+    pub const fn new(seed: u64) -> Self {
+        Self { state: seed }
+    }
 
     pub fn next_u64(&mut self) -> u64 {
         self.state = self.state.wrapping_add(0x9e37_79b9_7f4a_7c15);
@@ -72,7 +88,9 @@ impl SeededSequence {
 
 /// Generate a bounded reproducible sequence from a recorded seed and range.
 pub fn uniform_values(seed: u64, count: usize, range: UniformRange) -> SimResult<Vec<f64>> {
-    if count == 0 || count > 64 { return Err(SimError::invalid("sample count must be 1..64")); }
+    if count == 0 || count > 64 {
+        return Err(SimError::invalid("sample count must be 1..64"));
+    }
     range.validate()?;
     let mut stream = SeededSequence::new(seed);
     (0..count).map(|_| stream.uniform(range)).collect()
@@ -81,7 +99,14 @@ pub fn uniform_values(seed: u64, count: usize, range: UniformRange) -> SimResult
 /// Generate positive samples evenly distributed in log space.
 pub fn log_uniform_values(seed: u64, count: usize, range: LogUniformRange) -> SimResult<Vec<f64>> {
     range.validate()?;
-    let values = uniform_values(seed, count, UniformRange { low: range.low.ln(), high: range.high.ln() })?;
+    let values = uniform_values(
+        seed,
+        count,
+        UniformRange {
+            low: range.low.ln(),
+            high: range.high.ln(),
+        },
+    )?;
     Ok(values.into_iter().map(f64::exp).collect())
 }
 
@@ -97,9 +122,14 @@ pub struct UniformSweepPlan {
 }
 
 impl UniformSweepPlan {
-    pub const fn provenance(&self) -> SamplingProvenance { SamplingProvenance::splitmix64(self.seed) }
+    pub const fn provenance(&self) -> SamplingProvenance {
+        SamplingProvenance::splitmix64(self.seed)
+    }
     pub fn materialize(&self) -> SimResult<ScalarSweep> {
-        let sweep = ScalarSweep { element_id: self.element_id.clone(), values: uniform_values(self.seed, self.count, self.range)? };
+        let sweep = ScalarSweep {
+            element_id: self.element_id.clone(),
+            values: uniform_values(self.seed, self.count, self.range)?,
+        };
         sweep.validate()?;
         Ok(sweep)
     }
@@ -116,9 +146,14 @@ pub struct LogUniformSweepPlan {
 }
 
 impl LogUniformSweepPlan {
-    pub const fn provenance(&self) -> SamplingProvenance { SamplingProvenance::splitmix64(self.seed) }
+    pub const fn provenance(&self) -> SamplingProvenance {
+        SamplingProvenance::splitmix64(self.seed)
+    }
     pub fn materialize(&self) -> SimResult<ScalarSweep> {
-        let sweep = ScalarSweep { element_id: self.element_id.clone(), values: log_uniform_values(self.seed, self.count, self.range)? };
+        let sweep = ScalarSweep {
+            element_id: self.element_id.clone(),
+            values: log_uniform_values(self.seed, self.count, self.range)?,
+        };
         sweep.validate()?;
         Ok(sweep)
     }

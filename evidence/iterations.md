@@ -122,3 +122,13 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 118. Summarize scalar grid outcomes
 119. Expose validated grid cardinality
 120. Checkpoint typed variation result contracts
+121. Add deterministic uniform sampling primitives
+122. Generate bounded seeded sample vectors
+123. Materialize recorded uniform sweep plans
+124. Add positive log-uniform sampling
+125. Record log-uniform sweep recipes
+126. Record sampling algorithm provenance
+127. Execute recorded uniform sweep plans
+128. Execute log-uniform sweep plans
+129. Add seeded sampling property corpus
+130. Checkpoint reproducible sampled variation plans

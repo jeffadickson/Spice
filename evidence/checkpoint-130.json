@@ -1,0 +1,146 @@
+{
+  "iteration": 130,
+  "status": "passed",
+  "rust_tests_passed": 87,
+  "managed_checks_passed": 21,
+  "commands": [
+    {
+      "command": "rustc",
+      "arguments": [
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/130-0.log"
+    },
+    {
+      "command": "dotnet",
+      "arguments": [
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/130-1.log"
+    },
+    {
+      "command": "cargo",
+      "arguments": [
+        "build",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/130-2.log"
+    },
+    {
+      "command": "cargo",
+      "arguments": [
+        "test",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/130-3.log"
+    },
+    {
+      "command": "cargo",
+      "arguments": [
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/130-4.log"
+    },
+    {
+      "command": "cargo",
+      "arguments": [
+        "clippy",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/130-5.log"
+    },
+    {
+      "command": "dotnet",
+      "arguments": [
+        "build",
+        "dotnet/Simulator.Conformance/Simulator.Conformance.csproj"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/130-6.log"
+    },
+    {
+      "command": "dotnet",
+      "arguments": [
+        "run",
+        "--no-build",
+        "--project",
+        "dotnet/Simulator.Conformance/Simulator.Conformance.csproj",
+        "--",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\target\\debug\\circuit-simulator.exe"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/130-7.log"
+    }
+  ],
+  "source_hashes": {
+    "src/ac.rs": "a6c3d03a56c81f580d441269b3d9ba0251052e0be43cd4537179ad4ae92b2bd1",
+    "src/adaptive.rs": "07e188bcb169652fe8f398d83da162d64cae3786ff2a68c2b2f6ac9ddd3d24ed",
+    "src/api.rs": "6c0ac35e59fa8d5fa28862947e9ef7051da84f64ad3c9879288b8b2b9a8d09a8",
+    "src/artifact.rs": "13180775067ea63a8958572f8c70599d50ba8797db13937e7401eb0145e940c0",
+    "src/assertion.rs": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+    "src/backend.rs": "3296c526ddc29c2d9e0eb6e09801d4a0f5ad9b724cfa5a7229b043434b0abb81",
+    "src/backend_faer.rs": "c3ab4d009207ace184917233e84e3d0ca7666e350287d452e1bf22ba419ae4dc",
+    "src/campaign.rs": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+    "src/circuit.rs": "6c9a331ae941ee09280085cecb98bdd8b60f7667f5c6660d3c66cf697e401a82",
+    "src/compile.rs": "27027ff6fa1d625d689682574f4d4f4c31ad48c0be1917b318482c831e61a638",
+    "src/configured.rs": "737597d4c89e2f37d3b66cf566f238be8809342872d9e3dc12dd6b09852cf32d",
+    "src/dc.rs": "282dcf87bbc5de177d8135a05d8bd8b70f9f220b181e759cac9fae50b4fc7a7d",
+    "src/error.rs": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+    "src/experiment.rs": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+    "src/expression.rs": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+    "src/grid.rs": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+    "src/ids.rs": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+    "src/integrator.rs": "9d990d1c5a3b6ff723e52afa21771f3294a26f5bfe3efa9467c05742079eefdf",
+    "src/lib.rs": "7a98a401f3aa5362339c0006c98d1e381dc274714f927f9373fa473827b2bf66",
+    "src/linalg.rs": "32104a3787f246d3bf327652062fc81cc5dbc02aaf43c7c2b02d94f37638be5a",
+    "src/main.rs": "6f2eea43f20e3edae07e16465255aa708af6d5439d0204af487f7968137b9d56",
+    "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+    "src/model.rs": "b3d74493f6d18cde6c095d330062f229fbac15d55747de61856bcc6cc137b11d",
+    "src/netlist.rs": "e7772b55c8a1c343a1bc8e8d7ac7c918bf6604abeb51cb9a73a062ca2cdcd013",
+    "src/power.rs": "a6988568131aa6a079da9ce9f3c92ae96dfede4809633a230ac298736794c7e1",
+    "src/provenance.rs": "049b47515dcbbb826771d713dc3bb2088b160c8cc12eb03712de949e0f9d031a",
+    "src/quantity.rs": "bd53faa680ee46119020b2fe33ee8c023b8c42cfd216455ef5c205e43450e892",
+    "src/registry.rs": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7",
+    "src/sampling.rs": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+    "src/sources.rs": "6d3b7ad12a7fcc882fb3a248256f01e343d20fcf094a110a5912f9e829349122",
+    "src/sparse.rs": "b8cc644592f41f4473394fc49ded2ea815cf1b825134f5534ca7c3d30d380400",
+    "src/sweep.rs": "52e1b433d50edc403e1baa6d1a53c0e9970d0417dd52a99b8864eff524ec55c4",
+    "src/transient.rs": "2e93199f2a36064c83a2732b03ab94e9b8ecf748436ac2a6128d264986899df7",
+    "src/variation.rs": "8c2ff0e14faf71eb115b20ed40a821599748f9ca8d81f3fce1b336dfb0f7e30b",
+    "src/waveform.rs": "16887a5498450508890c0d39e8c03de7c53ffea4a23c2f7431f9dff09c951a73",
+    "tests/adaptive.rs": "6189e89b717c76d224249c2bc91d6d24df9e48a1a2a6343bdad2b76456863aee",
+    "tests/analyses.rs": "d179dc16e62f7c1ed8f9718819d4305c4e5d74dc23c3ea5a13188da3c9280061",
+    "tests/campaign_cli.rs": "3d551bac6adcdb9ae2b95116b356c70f6d6028fbb759c3a8c419fcf82f257ce4",
+    "tests/contracts.rs": "7c438f713c141edd4b09934d32430042aa63ce7dd08c4332746df0201aa54a52",
+    "tests/dc.rs": "bc53abf0352e0445a1cb32205f5baa523fa26b314696c13c7925d043a4b03e78",
+    "tests/dynamic.rs": "3f8dea7e04ee020f8439a32ebdc7fe359a7c3d873e1919a36f71d92d683b68ac",
+    "tests/edge_cases.rs": "a4b769e63220f11cb2e06901c5a260f6b562cda8ccc31e82d8cadbf7c4b38df5",
+    "tests/endpoint.rs": "f9b85b0b99a1f2431c9557f979291427cb419cddd5105b2dc9e05088ac7ef88d",
+    "tests/experiment.rs": "8b9751913308a7bb5821f0cd1564119c1fc6cd8902a339deb8135d795ebec04f",
+    "tests/expression.rs": "251ea3e316e44e85f54c508338212af51be44ab2f1a661e4d68a5fcc3659f67a",
+    "tests/faults.rs": "ed7fcdbfee724895589ff45294c3f79b5ef5298abb2b98d89fdd49d42098ab54",
+    "tests/fuzz_dynamic.rs": "f901d34b0029d53f71c1feef85efea9921f4e1b8c569ef6d7b58c588767d96cb",
+    "tests/fuzz_smoke.rs": "ec1c20e120bf6e18eeed5808ea8007363a2e9403535a84503d7841049b2ee0aa",
+    "tests/hardening.rs": "ee87ae1b6acba50b72f11f51deb14a3ba129d0b6b1a6c849128f828af7a88eb1",
+    "tests/properties.rs": "55912c3f745dff6da62a9cc9e8c26299a491bf284bf100c2687b184a5eb8457a",
+    "tests/providers.rs": "935ac289c04b68819f4e7b7ccc7353074bbefe7d8e8c9c3cea95f150216e1cc2",
+    "tests/sampling.rs": "a4adb30c300cc662cf02b679647834808eddf71669c3f57af2d60d358d7e64fe",
+    "tests/storage_power.rs": "782d830e7e30dfd242e89dbdc551a327686745a185ebf72c8185e9073711aeb1",
+    "tests/transient.rs": "371336ac59a5aaf27fe1fd36f55bfd6f678c8414e8354b475c468916d99110ad",
+    "tests/variation.rs": "d6a3e00c4adfdb2fa3a640466741c691f9a2000aca6b7f8b5c669c7928f7fa20"
+  },
+  "scope": "bounded reference prototype; not full release qualification"
+}
