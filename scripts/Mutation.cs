@@ -48,7 +48,12 @@ var mutants = new (string Name, string File, string Pattern, string Replacement)
     ("milli-scale", "src/quantity.rs", @"\(""m"",\s*1e-3\)", "(\"m\",1e3)"),
     ("residual-acceptance", "src/dc.rs", @"worst\s*>\s*1e-10", "worst > 1e10"),
     ("cancel-check", "src/transient.rs", @"if cancel\.load", "if false && cancel.load"),
-    ("state-commit", "src/transient.rs", @"previous\s*=\s*accepted;", "previous = vec![0.0; previous.len()];")
+    ("state-commit", "src/transient.rs", @"previous\s*=\s*accepted;", "previous = vec![0.0; previous.len()];"),
+    ("flux-sign", "src/compile.rs", @"charge\.add\(branch,\s*branch,\s*-henries\)", "charge.add(branch,branch,*henries)"),
+    ("adaptive-acceptance", "src/configured.rs", @"error\s*>\s*1\.", "error > 1e9"),
+    ("sparse-row-order", "src/sparse.rs", @"w\[0\]\s*>=\s*w\[1\]", "false"),
+    ("pwl-interpolation", "src/waveform.rs", @"\(1\.\s*-\s*f\)\s*\*\s*a\.value\s*\+\s*f\s*\*\s*b\.value", "a.value"),
+    ("missing-assertion", "src/assertion.rs", @"_\s*=>\s*Outcome::Indeterminate", "_ => Outcome::Pass")
 };
 var reports = new List<object>(); var killed = 0;
 foreach (var mutant in mutants)
@@ -68,7 +73,7 @@ foreach (var mutant in mutants)
 Restore();
 Directory.CreateDirectory("evidence");
 File.WriteAllText("evidence/mutation.json", JsonSerializer.Serialize(new {
-    strategy = "seven deliberate source mutations, isolated copied tree; not exhaustive cargo-mutants campaign",
+    strategy = "selected deliberate source mutations, isolated copied tree; not exhaustive cargo-mutants campaign",
     source_hashes = snapshots.Where(p => p.Key.StartsWith("src/") || p.Key.StartsWith("tests/"))
         .ToDictionary(p => p.Key, p => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(p.Value))).ToLowerInvariant()),
     baseline = "passed", killed, total = mutants.Length, mutants = reports

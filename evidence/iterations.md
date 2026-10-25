@@ -91,3 +91,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 87. Run bounded case campaigns with independent outcome accounting
 88. Exercise typed managed dynamic and failure result contracts
 89. Extend mutation operators to adaptive flux and sparse-validation defects
+90. Checkpoint typed managed contracts and extended dynamics

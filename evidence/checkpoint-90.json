@@ -1,0 +1,12 @@
+{
+  "build": "passed",
+  "iteration": 90,
+  "rust_tests_passed": 58,
+  "features": [
+    "typed CSharp DTOs",
+    "campaign case accounting",
+    "capabilities CLI",
+    "dynamic fuzz and experiment regressions"
+  ],
+  "managed_checks_passed": 11
+}
