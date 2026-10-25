@@ -169,7 +169,7 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
         let mut tokens: Vec<&str> = line.split_whitespace().collect();
         if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
             && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("pulse"))
-            && tokens.len() == 10
+            && tokens.len() == 11
         {
             // The typed transient override owns waveform semantics; retain the
             // pulse low level as the DC initialization value for compilation.
@@ -259,7 +259,7 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
         if !matches!(name.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I')) {
             continue;
         }
-        if tokens.len() == 10 && tokens[3].eq_ignore_ascii_case("pulse") {
+        if tokens.len() == 11 && tokens[3].eq_ignore_ascii_case("pulse") {
             let values: SimResult<Vec<f64>> = tokens[4..].iter().map(|value| spice_scalar(value)).collect();
             let values = values?;
             sources.push(SourceOverride {
