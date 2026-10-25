@@ -199,6 +199,7 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
             logical_lines.push(line.to_owned());
         }
     }
+    let diode_models = bounded_diode_models(&logical_lines)?;
     let mut normalized = String::new();
     for line in logical_lines {
         // ngspice accepts a semicolon as an inline comment introducer. Strip it
@@ -224,13 +225,22 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
             }
             continue;
         }
-        if [".options", ".tran", ".ac"]
+        if [".options", ".tran", ".ac", ".model"]
             .iter()
             .any(|directive| head.eq_ignore_ascii_case(directive))
         {
             continue;
         }
         let mut tokens: Vec<&str> = line.split_whitespace().collect();
+        if head.chars().next().is_some_and(|kind| kind.eq_ignore_ascii_case(&'D'))
+            && tokens.len() == 4
+        {
+            let (saturation_amps, thermal_volts) = diode_models
+                .get(&tokens[3].to_ascii_uppercase())
+                .ok_or_else(|| SimError::invalid("unknown bounded diode model"))?;
+            normalized.push_str(&format!("{} {} {} {} {}\n", tokens[0], tokens[1], tokens[2], saturation_amps, thermal_volts));
+            continue;
+        }
         if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
             && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("pulse"))
             && tokens.len() == 11
@@ -286,6 +296,40 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
         normalized.push('\n');
     }
     parse(&normalized)
+}
+
+/// Read a small, explicit SPICE diode-model profile before device lowering.
+/// The 300 K nominal thermal voltage is scaled by the model ideality factor.
+fn bounded_diode_models(lines: &[String]) -> SimResult<std::collections::BTreeMap<String, (f64, f64)>> {
+    let mut models = std::collections::BTreeMap::new();
+    for line in lines {
+        let tokens: Vec<_> = line.split_whitespace().collect();
+        if !tokens.first().is_some_and(|token| token.eq_ignore_ascii_case(".model")) {
+            continue;
+        }
+        if tokens.len() < 3 || !tokens[2].eq_ignore_ascii_case("d") {
+            return Err(SimError::new(ErrorCode::Unsupported, "bounded importer supports only diode .model cards"));
+        }
+        let mut saturation_amps = 1e-14;
+        let mut ideality = 1.;
+        for parameter in tokens.iter().skip(3) {
+            let parameter = parameter.trim_matches(['(', ')']);
+            if let Some(value) = parameter.strip_prefix("IS=").or_else(|| parameter.strip_prefix("is=")) {
+                saturation_amps = spice_scalar(value)?;
+            } else if let Some(value) = parameter.strip_prefix("N=").or_else(|| parameter.strip_prefix("n=")) {
+                ideality = spice_scalar(value)?;
+            } else if !parameter.is_empty() {
+                return Err(SimError::new(ErrorCode::Unsupported, "unsupported bounded diode model parameter"));
+            }
+        }
+        if !saturation_amps.is_finite() || saturation_amps <= 0. || !ideality.is_finite() || ideality <= 0. {
+            return Err(SimError::invalid("invalid bounded diode model parameters"));
+        }
+        if models.insert(tokens[1].to_ascii_uppercase(), (saturation_amps, 0.025_851_999_786 * ideality)).is_some() {
+            return Err(SimError::invalid("duplicate bounded diode model"));
+        }
+    }
+    Ok(models)
 }
 
 /// Lowers the bounded ngspice deck profile into the same typed request contract

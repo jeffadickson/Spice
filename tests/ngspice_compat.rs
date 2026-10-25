@@ -526,6 +526,28 @@ fn netlist_ground_aliases_normalize_to_the_reference_node() {
 }
 
 #[test]
+fn ngspice_bounded_diode_model_lowers_named_diode_parameters() {
+    let circuit = parse_ngspice_basic(
+        "title\n.model DMOD D (IS=2e-14 N=2)\nV1 in 0 0.5\nR1 in out 1k\nD1 out 0 DMOD\n.end\n",
+    )
+    .unwrap();
+    let diode = circuit.elements.iter().find_map(|element| match element {
+        circuit_simulator::circuit::Element::Diode { saturation_amps, thermal_volts, .. } => Some((*saturation_amps, *thermal_volts)),
+        _ => None,
+    }).unwrap();
+    assert_eq!(diode.0, 2e-14);
+    assert!((diode.1 - 2. * 0.025_851_999_786).abs() < 1e-15);
+    let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+    assert!(values.iter().all(|value| value.is_finite()));
+}
+
+#[test]
+fn ngspice_bounded_diode_model_rejects_unknown_parameters_and_names() {
+    assert!(parse_ngspice_basic("title\n.model DMOD D (RS=1)\n.end\n").is_err());
+    assert!(parse_ngspice_basic("title\nD1 out 0 MISSING\nR1 out 0 1k\n.end\n").is_err());
+}
+
+#[test]
 fn ngspice_continuation_record_is_folded_before_bounded_lowering() {
     let circuit = parse_ngspice_basic(
         "title\nV1 out 0 DC\n+ 2V ; value continuation\nR1 out 0 1k\n.end\n",

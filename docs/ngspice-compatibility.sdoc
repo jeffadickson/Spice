@@ -230,3 +230,13 @@ The bounded AC deck importer shall accept a trailing ac=<value> qualifier on res
 COMMENT: >>>
 Implementation: netlist::import_ngspice_request. Verification: tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-024
+TITLE: Bounded named diode-model import
+STATEMENT: >>>
+The bounded ngspice importer shall lower a named .model <name> D card with positive finite IS and N parameters into the typed Shockley diode saturation current and 300 K nominal thermal voltage scaled by N. Unknown model names, duplicate model names, non-diode model kinds, unsupported parameters, and invalid values shall fail explicitly.
+<<<
+COMMENT: >>>
+Implementation: netlist::bounded_diode_models. Verification: tests/ngspice_compat.rs.
+<<<
