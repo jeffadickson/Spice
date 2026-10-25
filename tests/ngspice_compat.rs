@@ -224,6 +224,13 @@ fn ngspice_compact_pwl_source_lowers_to_transient_override() {
 }
 
 #[test]
+fn ngspice_compact_pwl_current_source_preserves_polarity() {
+    let request = import_ngspice_request("title\nI1 out 0 PWL(0,0,1m,2m)\nR1 out 0 1k\n.tran 1m 1m\n.end\n", "pwl-current").unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!((result.samples.last().unwrap().values[0] + 2.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_compact_pwl_rejects_nonmonotonic_times_when_executed() {
     let request = import_ngspice_request("title\nV1 out 0 PWL(1m,0,0,2)\nR1 out 0 1k\n.tran 1m 2m\n.end\n", "pwl-invalid").unwrap();
     let error = circuit_simulator::api::run(&request).unwrap_err();
