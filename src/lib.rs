@@ -29,5 +29,5 @@ pub mod sources;
 pub mod sparse;
 pub mod sweep;
 pub mod transient;
-pub mod waveform;
 pub mod variation;
+pub mod waveform;

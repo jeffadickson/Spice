@@ -31,8 +31,15 @@ impl SweepSummary {
     /// Summarize completed points; cancellation is represented by the operation
     /// error and therefore does not invent a count for an unstarted point.
     pub fn from_points(points: &[SweepPoint]) -> Self {
-        let succeeded = points.iter().filter(|point| point.execution == "succeeded").count();
-        Self { total: points.len(), succeeded, failed: points.len() - succeeded }
+        let succeeded = points
+            .iter()
+            .filter(|point| point.execution == "succeeded")
+            .count();
+        Self {
+            total: points.len(),
+            succeeded,
+            failed: points.len() - succeeded,
+        }
     }
 }
 
@@ -48,7 +55,11 @@ pub struct GridPoint {
 
 /// Run a bounded Cartesian grid sequentially. This intentionally does not claim
 /// parallel scheduling or arbitrary mid-analysis checkpoint/restart semantics.
-pub fn run_grid(request: &Request, grid: &ScalarGrid, registry: &BackendRegistry) -> SimResult<Vec<GridPoint>> {
+pub fn run_grid(
+    request: &Request,
+    grid: &ScalarGrid,
+    registry: &BackendRegistry,
+) -> SimResult<Vec<GridPoint>> {
     if request.case_id.is_empty() || request.case_id.len() > 220 {
         return Err(SimError::invalid("invalid grid base case ID"));
     }
@@ -58,8 +69,20 @@ pub fn run_grid(request: &Request, grid: &ScalarGrid, registry: &BackendRegistry
         variant.case_id = format!("{}--g{:02}", request.case_id, index);
         variant.circuit = circuit;
         match run_with_registry(&variant, registry) {
-            Ok(result) => points.push(GridPoint { index, values, execution: "succeeded", result: Some(result), error: None }),
-            Err(error) => points.push(GridPoint { index, values, execution: "failed", result: None, error: Some(error) }),
+            Ok(result) => points.push(GridPoint {
+                index,
+                values,
+                execution: "succeeded",
+                result: Some(result),
+                error: None,
+            }),
+            Err(error) => points.push(GridPoint {
+                index,
+                values,
+                execution: "failed",
+                result: None,
+                error: Some(error),
+            }),
         }
     }
     Ok(points)
@@ -90,19 +113,37 @@ pub fn run_scalar_cancellable(
     let mut points = Vec::with_capacity(circuits.len());
     for (index, (value, circuit)) in sweep.values.iter().zip(circuits).enumerate() {
         if cancel.load(std::sync::atomic::Ordering::Relaxed) {
-            return Err(SimError::new(ErrorCode::Cancelled, "sweep cancelled between points"));
+            return Err(SimError::new(
+                ErrorCode::Cancelled,
+                "sweep cancelled between points",
+            ));
         }
         let mut variant = request.clone();
         variant.case_id = format!("{}--s{:02}", request.case_id, index);
         variant.circuit = circuit;
         let point = match run_with_registry(&variant, registry) {
-            Ok(result) => SweepPoint { index, value: *value, execution: "succeeded", result: Some(result), error: None },
-            Err(error) => SweepPoint { index, value: *value, execution: "failed", result: None, error: Some(error) },
+            Ok(result) => SweepPoint {
+                index,
+                value: *value,
+                execution: "succeeded",
+                result: Some(result),
+                error: None,
+            },
+            Err(error) => SweepPoint {
+                index,
+                value: *value,
+                execution: "failed",
+                result: None,
+                error: Some(error),
+            },
         };
         points.push(point);
     }
     if points.len() > 64 {
-        return Err(SimError::new(ErrorCode::ResourceExhausted, "sweep point limit exceeded"));
+        return Err(SimError::new(
+            ErrorCode::ResourceExhausted,
+            "sweep point limit exceeded",
+        ));
     }
     Ok(points)
 }

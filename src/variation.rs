@@ -88,8 +88,12 @@ impl ScalarGrid {
             if !names.insert(&dimension.element_id) {
                 return Err(SimError::invalid("scalar grid targets must be unique"));
             }
-            product = product.checked_mul(dimension.values.len()).ok_or_else(|| SimError::invalid("scalar grid size overflow"))?;
-            if product > 64 { return Err(SimError::invalid("scalar grid exceeds 64 variants")); }
+            product = product
+                .checked_mul(dimension.values.len())
+                .ok_or_else(|| SimError::invalid("scalar grid size overflow"))?;
+            if product > 64 {
+                return Err(SimError::invalid("scalar grid exceeds 64 variants"));
+            }
         }
         Ok(())
     }
@@ -104,7 +108,10 @@ impl ScalarGrid {
                 for value in &dimension.values {
                     let mut values = selected.clone();
                     values.push(*value);
-                    next.push((values, replace_scalar(&base, &dimension.element_id, *value)?));
+                    next.push((
+                        values,
+                        replace_scalar(&base, &dimension.element_id, *value)?,
+                    ));
                 }
             }
             result = next;

@@ -102,3 +102,13 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 98. Add reproducible second-slice and coverage orchestration
 99. Align original acceptance notes with the extended prototype
 100. Build and qualify the second fifty-iteration reference slice
+101. Add immutable scalar variation primitive
+102. Define bounded scalar sweep inputs
+103. Execute deterministic scalar sweep variants
+104. Add between-point sweep cancellation
+105. Add bounded scalar grid generation
+106. Execute deterministic scalar grids
+107. Specify variation campaign contracts
+108. Summarize scalar sweep outcomes
+109. Test isolated variation point failures
+110. Checkpoint reproducible variation primitives

@@ -2,31 +2,50 @@ use circuit_simulator::{
     api::Request,
     circuit::{Circuit, Element},
     ids::NodeId,
-    variation::{ScalarGrid, ScalarSweep, replace_scalar},
-    sweep::{SweepSummary, run_grid, run_scalar, run_scalar_cancellable},
     registry::BackendRegistry,
+    sweep::{SweepSummary, run_grid, run_scalar, run_scalar_cancellable},
+    variation::{ScalarGrid, ScalarSweep, replace_scalar},
 };
 
 fn fixture() -> Circuit {
     Circuit {
         nodes: vec!["0".into(), "out".into()],
-        elements: vec![Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(0), ohms: 10. }],
+        elements: vec![Element::Resistor {
+            id: "R1".into(),
+            p: NodeId(1),
+            n: NodeId(0),
+            ohms: 10.,
+        }],
     }
 }
 
 #[test]
 fn sweep_summary_makes_per_point_accounting_explicit() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
-    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000., 2000.] };
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![1000., 2000.],
+    };
     let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
-    assert_eq!(SweepSummary::from_points(&points), SweepSummary { total: 2, succeeded: 2, failed: 0 });
+    assert_eq!(
+        SweepSummary::from_points(&points),
+        SweepSummary {
+            total: 2,
+            succeeded: 2,
+            failed: 0
+        }
+    );
 }
 
 #[test]
 fn sweep_retains_failed_points_without_discarding_their_identity() {
-    let mut request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    let mut request: Request =
+        serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
     request.backend = "unregistered".into();
-    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000.] };
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![1000.],
+    };
     let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
     assert_eq!(points[0].execution, "failed");
     assert_eq!(points[0].index, 0);
@@ -37,7 +56,12 @@ fn sweep_retains_failed_points_without_discarding_their_identity() {
 #[test]
 fn grid_execution_exposes_each_selected_vector() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
-    let grid = ScalarGrid { dimensions: vec![ScalarSweep { element_id: "R1".into(), values: vec![1000., 2000.] }] };
+    let grid = ScalarGrid {
+        dimensions: vec![ScalarSweep {
+            element_id: "R1".into(),
+            values: vec![1000., 2000.],
+        }],
+    };
     let points = run_grid(&request, &grid, &BackendRegistry::reference()).unwrap();
     assert_eq!(points.len(), 2);
     assert_eq!(points[1].values, vec![2000.]);
@@ -47,28 +71,51 @@ fn grid_execution_exposes_each_selected_vector() {
 #[test]
 fn grid_has_deterministic_cartesian_order() {
     let mut circuit = fixture();
-    circuit.elements.push(Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. });
-    let grid = ScalarGrid { dimensions: vec![
-        ScalarSweep { element_id: "R1".into(), values: vec![10., 20.] },
-        ScalarSweep { element_id: "V1".into(), values: vec![1., 2.] },
-    ] };
+    circuit.elements.push(Element::Voltage {
+        id: "V1".into(),
+        p: NodeId(1),
+        n: NodeId(0),
+        volts: 1.,
+    });
+    let grid = ScalarGrid {
+        dimensions: vec![
+            ScalarSweep {
+                element_id: "R1".into(),
+                values: vec![10., 20.],
+            },
+            ScalarSweep {
+                element_id: "V1".into(),
+                values: vec![1., 2.],
+            },
+        ],
+    };
     let rows = grid.circuits(&circuit).unwrap();
-    assert_eq!(rows.iter().map(|row| row.0.clone()).collect::<Vec<_>>(), vec![vec![10., 1.], vec![10., 2.], vec![20., 1.], vec![20., 2.]]);
+    assert_eq!(
+        rows.iter().map(|row| row.0.clone()).collect::<Vec<_>>(),
+        vec![vec![10., 1.], vec![10., 2.], vec![20., 1.], vec![20., 2.]]
+    );
 }
 
 #[test]
 fn cancellation_is_observed_between_sweep_points() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
-    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000.] };
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![1000.],
+    };
     let cancelled = std::sync::atomic::AtomicBool::new(true);
-    let error = run_scalar_cancellable(&request, &sweep, &BackendRegistry::reference(), &cancelled).unwrap_err();
+    let error = run_scalar_cancellable(&request, &sweep, &BackendRegistry::reference(), &cancelled)
+        .unwrap_err();
     assert!(error.message.contains("cancelled"));
 }
 
 #[test]
 fn scalar_sweep_returns_stable_indexed_cases() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
-    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000., 2000.] };
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![1000., 2000.],
+    };
     let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
     assert_eq!(points.len(), 2);
     assert_eq!(points[0].result.as_ref().unwrap().case_id, "divider--s00");
@@ -78,11 +125,36 @@ fn scalar_sweep_returns_stable_indexed_cases() {
 
 #[test]
 fn sweep_preserves_declared_order_and_rejects_unbounded_input() {
-    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![20., 10.] };
-    let values: Vec<_> = sweep.circuits(&fixture()).unwrap().into_iter().map(|c| match c.elements[0] { Element::Resistor { ohms, .. } => ohms, _ => unreachable!() }).collect();
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![20., 10.],
+    };
+    let values: Vec<_> = sweep
+        .circuits(&fixture())
+        .unwrap()
+        .into_iter()
+        .map(|c| match c.elements[0] {
+            Element::Resistor { ohms, .. } => ohms,
+            _ => unreachable!(),
+        })
+        .collect();
     assert_eq!(values, vec![20., 10.]);
-    assert!(ScalarSweep { element_id: "R1".into(), values: vec![] }.validate().is_err());
-    assert!(ScalarSweep { element_id: "R1".into(), values: vec![f64::NAN] }.validate().is_err());
+    assert!(
+        ScalarSweep {
+            element_id: "R1".into(),
+            values: vec![]
+        }
+        .validate()
+        .is_err()
+    );
+    assert!(
+        ScalarSweep {
+            element_id: "R1".into(),
+            values: vec![f64::NAN]
+        }
+        .validate()
+        .is_err()
+    );
 }
 
 #[test]
