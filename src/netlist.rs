@@ -316,14 +316,15 @@ fn bounded_diode_models(
         }
         let mut saturation_amps = 1e-14;
         let mut ideality = 1.;
-        for parameter in tokens.iter().skip(3) {
-            let parameter = parameter.trim_matches(['(', ')']);
-            if let Some(value) = parameter.strip_prefix("IS=").or_else(|| parameter.strip_prefix("is=")) {
-                saturation_amps = spice_scalar(value)?;
-            } else if let Some(value) = parameter.strip_prefix("N=").or_else(|| parameter.strip_prefix("n=")) {
-                ideality = spice_scalar(value)?;
-            } else if !parameter.is_empty() {
-                return Err(SimError::new(ErrorCode::Unsupported, "unsupported bounded diode model parameter"));
+        for token in tokens.iter().skip(3) {
+            for parameter in token.trim_matches(['(', ')']).split(',') {
+                if let Some(value) = parameter.strip_prefix("IS=").or_else(|| parameter.strip_prefix("is=")) {
+                    saturation_amps = spice_scalar(value)?;
+                } else if let Some(value) = parameter.strip_prefix("N=").or_else(|| parameter.strip_prefix("n=")) {
+                    ideality = spice_scalar(value)?;
+                } else if !parameter.is_empty() {
+                    return Err(SimError::new(ErrorCode::Unsupported, "unsupported bounded diode model parameter"));
+                }
             }
         }
         if !saturation_amps.is_finite() || saturation_amps <= 0. || !ideality.is_finite() || ideality <= 0. {
