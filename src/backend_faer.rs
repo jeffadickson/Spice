@@ -4,6 +4,17 @@ use faer::{prelude::*,sparse::{SparseColMat,Triplet}};
 #[derive(Debug,Default)]
 pub struct FaerSparseLu;
 impl LinearSolver for FaerSparseLu{
+    fn prepare(&self,a:&Matrix)->SimResult<Option<crate::linalg::PreparedReal>>{
+        let csc=CscMatrix::from_dense(a)?;
+        let entries:Vec<_>=csc.entries().map(|(i,j,v)|Triplet::new(i,j,v)).collect();
+        let sparse=SparseColMat::<usize,f64>::try_new_from_triplets(a.n,a.n,&entries).map_err(|e|SimError::invalid(format!("{e:?}")))?;
+        let lu=sparse.sp_lu().map_err(|e|SimError::new(ErrorCode::SingularMatrix,format!("{e:?}")))?;
+        let n=a.n;
+        Ok(Some(crate::linalg::PreparedReal::new(a.clone(),move|b|{
+            let x=lu.solve(faer::Mat::from_fn(n,1,|i,_|b[i]));
+            Ok((0..n).map(|i|x[(i,0)]).collect())
+        })?))
+    }
     fn solve_complex(&self,real:&Matrix,imag:&Matrix,b:&[f64])->SimResult<Vec<num_complex::Complex64>>{
         real.validate(b)?;imag.validate(b)?;
         if real.n!=imag.n{return Err(SimError::invalid("complex dimensions differ"));}
