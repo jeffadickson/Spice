@@ -72,6 +72,18 @@ fn ngspice_ac_source_amplitude_is_used_for_bounded_ac_import() {
 }
 
 #[test]
+fn ngspice_implicit_dc_ac_source_form_lowers_to_complex_excitation() {
+    let request = import_ngspice_request(
+        "title\nV1 out 0 0 AC 2 90\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n",
+        "ac-implicit-dc",
+    )
+    .unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!(result.ac_samples[0].values[0].real.abs() < 1e-12);
+    assert!((result.ac_samples[0].values[0].imag - 2.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_ac_current_source_amplitude_uses_declared_polarity() {
     let request = import_ngspice_request("title\nI1 out 0 DC 0 AC 2mA\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "ac-current").unwrap();
     let result = circuit_simulator::api::run(&request).unwrap();

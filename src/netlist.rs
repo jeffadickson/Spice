@@ -358,14 +358,22 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
         let mut normalized = String::new();
         for line in text.lines() {
             let tokens: Vec<_> = line.split_whitespace().collect();
-            if matches!(tokens.first().and_then(|name| name.chars().next()).map(|kind| kind.to_ascii_uppercase()), Some('V' | 'I'))
+            let ac_parameters = if matches!(tokens.first().and_then(|name| name.chars().next()).map(|kind| kind.to_ascii_uppercase()), Some('V' | 'I'))
                 && (tokens.len() == 7 || tokens.len() == 8)
                 && tokens[3].eq_ignore_ascii_case("dc")
-                && tokens[5].eq_ignore_ascii_case("ac")
-            {
-                let amplitude = tokens[6].trim_end_matches(['V', 'v', 'A', 'a']);
+                && tokens[5].eq_ignore_ascii_case("ac") {
+                Some((6, 7))
+            } else if matches!(tokens.first().and_then(|name| name.chars().next()).map(|kind| kind.to_ascii_uppercase()), Some('V' | 'I'))
+                && (tokens.len() == 6 || tokens.len() == 7)
+                && tokens[4].eq_ignore_ascii_case("ac") {
+                Some((5, 6))
+            } else {
+                None
+            };
+            if let Some((amplitude_index, phase_index)) = ac_parameters {
+                let amplitude = tokens[amplitude_index].trim_end_matches(['V', 'v', 'A', 'a']);
                 let amplitude = spice_scalar(amplitude)?;
-                let phase_degrees = if tokens.len() == 8 { spice_scalar(tokens[7])? } else { 0. };
+                let phase_degrees = if tokens.len() == phase_index + 1 { spice_scalar(tokens[phase_index])? } else { 0. };
                 if !phase_degrees.is_finite() {
                     return Err(SimError::invalid("invalid AC source phase"));
                 }

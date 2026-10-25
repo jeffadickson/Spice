@@ -30,7 +30,7 @@
       "path": "tests/polezero/filt_multistage.cir",
       "family": "controlled_sources",
       "state": "blocked_by_features",
-      "required_features": ["implicit_dc_ac_source_form", "pole_zero_analysis"]
+      "required_features": ["pole_zero_analysis"]
     },
     {
       "path": "examples/measure/func_cap.sp",
