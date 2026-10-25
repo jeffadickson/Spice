@@ -17,7 +17,7 @@
     {
       "path": "tests/resistance/res_partition.cir",
       "family": "linear_or_waveform",
-      "state": "analytic_oracle_passing",
+      "state": "oracle_passing",
       "required_features": []
     },
     {
