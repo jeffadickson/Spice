@@ -13,3 +13,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 9. Expose operating-point analysis over the solver contract
 10. Add analytic DC and invalid-input regression tests
 11. Add QR reference adapter without claiming provider independence
+12. Expose truthful CPU reference backend capabilities

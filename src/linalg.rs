@@ -19,5 +19,12 @@ impl Matrix{
 pub trait LinearSolver:Send+Sync{
     fn name(&self)->&'static str;
     fn solve(&self,matrix:&Matrix,rhs:&[f64])->SimResult<Vec<f64>>;
+    fn capabilities(&self)->BackendCapabilities{BackendCapabilities{id:self.name(),placement:"cpu",max_unknowns:256,sparse:false,gpu:false}}
+}
+
+/// Capability discovery is explicit; GPU presence never silently changes execution.
+#[derive(Debug,serde::Serialize)]
+pub struct BackendCapabilities{
+    pub id:&'static str,pub placement:&'static str,pub max_unknowns:usize,pub sparse:bool,pub gpu:bool
 }
 
