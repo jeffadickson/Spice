@@ -1,0 +1,76 @@
+{
+  "schema_version": "1",
+  "case_id": "adaptive-discharge",
+  "backend": "faer",
+  "circuit": {
+    "nodes": [
+      "0",
+      "a"
+    ],
+    "elements": [
+      {
+        "kind": "resistor",
+        "id": "R1",
+        "p": 1,
+        "n": 0,
+        "ohms": 1000
+      },
+      {
+        "kind": "capacitor",
+        "id": "C1",
+        "p": 1,
+        "n": 0,
+        "farads": 0.000001
+      }
+    ]
+  },
+  "analysis": {
+    "kind": "transient_configured",
+    "options": {
+      "stop_s": 0.005,
+      "max_step_s": 0.001,
+      "max_steps": 10000,
+      "method": "trapezoidal",
+      "initial_state": [
+        1
+      ],
+      "adaptive": {
+        "relative": 0.00001,
+        "voltage_absolute": 1e-8,
+        "current_absolute": 1e-10,
+        "min_step_s": 1e-9,
+        "max_attempts": 100000
+      }
+    }
+  },
+  "experiment": {
+    "measurements": [
+      {
+        "id": "final",
+        "signal": "v(a)",
+        "operation": {
+          "kind": "value_at",
+          "time_s": 0.005
+        }
+      },
+      {
+        "id": "rms",
+        "signal": "v(a)",
+        "operation": {
+          "kind": "rms",
+          "start_s": 0,
+          "stop_s": 0.005
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "id": "discharged",
+        "measurement": "final",
+        "unit": "V",
+        "low": 0.0066,
+        "high": 0.0069
+      }
+    ]
+  }
+}
