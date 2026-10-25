@@ -22,16 +22,18 @@ pub fn ac(
     frequencies: &[f64],
     solver: &dyn LinearSolver,
 ) -> SimResult<Vec<AcSample>> {
-    if plan.has_nonlinear_devices() {
-        return Err(SimError::new(
-            ErrorCode::Unsupported,
-            "nonlinear AC linearization around a bias point is not implemented",
-        ));
-    }
     if frequencies.is_empty() || frequencies.len() > 10_000 {
         return Err(SimError::invalid("AC grid must contain 1..10000 points"));
     }
     let n = plan.conductance.n;
+    // Nonlinear small-signal AC is evaluated around the converged DC point. The
+    // analytic Newton Jacobian contains the incremental diode conductances.
+    let conductance = if plan.has_nonlinear_devices() {
+        let bias = crate::dc::operating_point(plan, solver)?;
+        crate::newton::linearize(plan, &bias)?.jacobian
+    } else {
+        plan.conductance.clone()
+    };
     let mut output = Vec::with_capacity(frequencies.len());
     if n * frequencies.len() > 1_000_000 {
         return Err(SimError::new(
@@ -46,7 +48,7 @@ pub fn ac(
         for value in &mut imag.values {
             *value *= omega;
         }
-        let x = solver.solve_complex(&plan.conductance, &imag, &plan.rhs)?;
+        let x = solver.solve_complex(&conductance, &imag, &plan.rhs)?;
         if x.len() != n || x.iter().any(|v| !v.re.is_finite() || !v.im.is_finite()) {
             return Err(SimError::new(
                 ErrorCode::NumericalFailure,
@@ -55,13 +57,13 @@ pub fn ac(
         }
         for i in 0..n {
             let residual = (0..n)
-                .map(|j| Complex64::new(plan.conductance.at(i, j), imag.at(i, j)) * x[j])
+                .map(|j| Complex64::new(conductance.at(i, j), imag.at(i, j)) * x[j])
                 .sum::<Complex64>()
                 - plan.rhs[i];
             let scale = plan.rhs[i].abs()
                 + (0..n)
                     .map(|j| {
-                        (Complex64::new(plan.conductance.at(i, j), imag.at(i, j)) * x[j]).norm()
+                        (Complex64::new(conductance.at(i, j), imag.at(i, j)) * x[j]).norm()
                     })
                     .sum::<f64>();
             let relative = residual.norm() / scale.max(f64::MIN_POSITIVE);

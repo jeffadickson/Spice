@@ -90,3 +90,13 @@ SForge v0.1 shall lower v(node) and i(device) observations to typed result measu
 COMMENT: >>>
 Implementation: dotnet/SForge.Language/Lowering.cs. Verification: SForge.Language.Conformance verifies the lowered experiment and successful Rust execution.
 <<<
+
+[REQUIREMENT]
+UID: SFL-010
+TITLE: Direct source execution boundary
+STATEMENT: >>>
+The repository shall provide a command-line SForge runner that parses, validates, lowers and invokes the simulator executable without embedding the C# language runtime inside the Rust process.
+<<<
+COMMENT: >>>
+Implementation: dotnet/SForge.Runner. Verification: runner executes examples/clamp.sforge and emits a successful native manifest.
+<<<

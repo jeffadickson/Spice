@@ -64,4 +64,12 @@ else
 
 The parser returns a source-span-bearing AST and structured diagnostics. The included semantic validator checks declared nodes, circuit references, `gnd`, and the implemented unit families. `SForgeLowering.Lower(document, "startup")` now lowers v0.1 primitive circuits and transient runs into the existing typed Rust-simulator JSON request. It maps SForge `gnd` to the simulator's required node `0`; the conformance test executes the example through the Rust executable.
 
+## Running a source file
+
+```powershell
+dotnet run --project dotnet/SForge.Runner -- examples/clamp.sforge target/debug/circuit-simulator.exe
+```
+
+The runner prints the native result manifest JSON and returns a nonzero exit code for lexical, semantic, lowering, or simulator failure.
+
 `observe { v(out), i(d1) }` lowers to typed final-sample measurements. The currently supported assertion form is `require max(v(out)) < 0.9V;` (and the equivalent current form); unsupported expressions fail during lowering with the original source expression in the diagnostic. The v0.1 lowering uses configured backward-Euler transient execution so that the initial operating-point sample is available to bounded window measurements.

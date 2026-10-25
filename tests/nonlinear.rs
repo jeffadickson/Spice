@@ -378,7 +378,7 @@ fn nonlinear_transient_uses_newton_time_stepping() {
 }
 
 #[test]
-fn nonlinear_ac_is_explicitly_unsupported_until_bias_linearization_exists() {
+fn nonlinear_ac_linearizes_at_the_dc_bias_point() {
     let circuit = Circuit {
         nodes: vec!["0".into(), "a".into()],
         elements: vec![Element::Diode {
@@ -389,7 +389,9 @@ fn nonlinear_ac_is_explicitly_unsupported_until_bias_linearization_exists() {
             thermal_volts: 0.02585,
         }],
     };
-    assert!(ac(&compile(&circuit).unwrap(), &[1.], &DenseLu).is_err());
+    let samples = ac(&compile(&circuit).unwrap(), &[1.], &DenseLu).unwrap();
+    assert_eq!(samples.len(), 1);
+    assert!(samples[0].values.iter().all(|value| value.real.is_finite() && value.imag.is_finite()));
 }
 
 #[test]
