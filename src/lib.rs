@@ -21,6 +21,7 @@ pub mod linalg;
 pub mod measurement;
 pub mod model;
 pub mod netlist;
+pub mod newton;
 pub mod power;
 pub mod provenance;
 pub mod quantity;
