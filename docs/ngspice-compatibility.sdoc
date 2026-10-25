@@ -80,3 +80,13 @@ The ngspice importer shall lower exactly one two-value .tran directive into a ty
 COMMENT: >>>
 Implementation: src/netlist.rs import_ngspice_request. Verification: tests/ngspice_compat.rs transient lowering test.
 <<<
+
+[REQUIREMENT]
+UID: NGC-009
+TITLE: Evidence-backed campaign reviews
+STATEMENT: >>>
+The items 2 through 5 implementation campaign shall expose one hundred numbered points and self-review gates at points 50 and 100 in a local web page. Review entries shall identify their evidence and shall not represent fictional people or activity as real review participants.
+<<<
+COMMENT: >>>
+Implementation: docs/campaign-2-to-5.html.
+<<<
