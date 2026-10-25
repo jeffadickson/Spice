@@ -56,6 +56,38 @@ pub fn linearize(plan: &CompiledCircuit, values: &[f64]) -> SimResult<Linearized
     Ok(LinearizedSystem { residual, jacobian })
 }
 
+/// Assemble a backward-Euler residual/Jacobian for one nonlinear transient step.
+/// `previous` is committed only by the caller after this solve converges; this keeps
+/// rejected trials from mutating capacitor/inductor history.
+pub fn linearize_backward_euler(
+    plan: &CompiledCircuit,
+    values: &[f64],
+    previous: &[f64],
+    step_s: f64,
+    rhs: &[f64],
+) -> SimResult<LinearizedSystem> {
+    if previous.len() != plan.unknown_count()
+        || rhs.len() != plan.unknown_count()
+        || !step_s.is_finite()
+        || step_s <= 0.
+    {
+        return Err(SimError::invalid("invalid nonlinear transient step inputs"));
+    }
+    let mut system = linearize(plan, values)?;
+    for row in 0..values.len() {
+        system.residual[row] += plan.rhs[row] - rhs[row];
+        for column in 0..values.len() {
+            let coefficient = plan.charge.at(row, column) / step_s;
+            system.jacobian.add(row, column, coefficient);
+            system.residual[row] += coefficient * (values[column] - previous[column]);
+        }
+    }
+    if system.residual.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::invalid("nonfinite nonlinear transient residual"));
+    }
+    Ok(system)
+}
+
 /// Infinity norm used for scale-independent Newton convergence and line search.
 pub fn norm_inf(values: &[f64]) -> SimResult<f64> {
     let norm = values
