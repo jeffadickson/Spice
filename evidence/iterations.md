@@ -81,3 +81,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 77. Define bounded measurements over recorded waveform windows
 78. Integrate measurement validity and unit-checked assertion outcomes
 79. Provide a reproducible adaptive experiment request
+80. Verify adaptive rejection observers and integrated experiment results

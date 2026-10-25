@@ -11,11 +11,11 @@ pub fn solve_verified(
 ) -> SimResult<(Vec<f64>, f64)> {
     a.validate(b)?;
     let x = solver.solve(a, b)?;
-    let error=verify_solution(a,b,&x)?;
-    Ok((x,error))
+    let error = verify_solution(a, b, &x)?;
+    Ok((x, error))
 }
 /// Numerical validation remains outside the backend, including cached-factor solves.
-pub fn verify_solution(a:&Matrix,b:&[f64],x:&[f64])->SimResult<f64>{
+pub fn verify_solution(a: &Matrix, b: &[f64], x: &[f64]) -> SimResult<f64> {
     a.validate(b)?;
     if x.len() != a.n || x.iter().any(|v| !v.is_finite()) {
         return Err(SimError::new(

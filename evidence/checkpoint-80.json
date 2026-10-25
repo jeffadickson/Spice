@@ -1,0 +1,11 @@
+{
+  "build": "passed",
+  "iteration": 80,
+  "rust_tests_passed": 50,
+  "features": [
+    "adaptive step doubling",
+    "accepted-sample observer",
+    "prepared-factor cache",
+    "integrated measurements and assertions"
+  ]
+}

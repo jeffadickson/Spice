@@ -1,5 +1,6 @@
 //! Bounded linear-circuit reference engine. Sparse/GPU/nonlinear qualification is not claimed.
 pub mod ac;
+pub mod adaptive;
 pub mod api;
 pub mod assertion;
 pub mod backend;
@@ -9,6 +10,7 @@ pub mod compile;
 pub mod configured;
 pub mod dc;
 pub mod error;
+pub mod experiment;
 pub mod expression;
 pub mod grid;
 pub mod ids;
@@ -23,6 +25,4 @@ pub mod registry;
 pub mod sources;
 pub mod sparse;
 pub mod transient;
-pub mod adaptive;
-pub mod experiment;
 pub mod waveform;
