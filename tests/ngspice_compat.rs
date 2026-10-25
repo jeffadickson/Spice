@@ -417,6 +417,18 @@ fn ngspice_orphan_continuation_is_rejected() {
 }
 
 #[test]
+fn ngspice_bounded_output_directives_are_validated_before_import_only_lowering() {
+    let circuit = parse_ngspice_basic(
+        "title\nV1 out 0 1\nR1 out 0 1k\n.print tran v(out) i(V1)\n.plot ac v(out)\n.probe v(out)\n.end\n",
+    )
+    .unwrap();
+    let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+    assert!((values[0] - 1.).abs() < 1e-12);
+    assert!(parse_ngspice_basic("title\n.print ac\n.end\n").is_err());
+    assert!(parse_ngspice_basic("title\n.probe\n.end\n").is_err());
+}
+
+#[test]
 fn ngspice_explicit_dc_source_units_are_normalized() {
     let circuit = parse_ngspice_basic("title\nV1 out 0 DC 2V\nR1 out 0 4k\n.end\n").unwrap();
     let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();

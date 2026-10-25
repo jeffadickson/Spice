@@ -201,7 +201,26 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
         // before directive/device recognition so comment words cannot become
         // accidental device parameters in this deliberately bounded importer.
         let head = line.split_whitespace().next().unwrap_or_default();
-        if [".options", ".tran", ".ac", ".plot", ".print", ".probe"]
+        let directive_tokens: Vec<_> = line.split_whitespace().collect();
+        if head.eq_ignore_ascii_case(".print") || head.eq_ignore_ascii_case(".plot") {
+            // Preserve this output syntax as import-only metadata for now, but
+            // validate its bounded shape so malformed requests are not erased.
+            if directive_tokens.len() < 3
+                || !["op", "dc", "tran", "ac"].iter().any(|analysis| {
+                    directive_tokens[1].eq_ignore_ascii_case(analysis)
+                })
+            {
+                return Err(SimError::invalid("invalid bounded .print/.plot directive"));
+            }
+            continue;
+        }
+        if head.eq_ignore_ascii_case(".probe") {
+            if directive_tokens.len() < 2 {
+                return Err(SimError::invalid("invalid bounded .probe directive"));
+            }
+            continue;
+        }
+        if [".options", ".tran", ".ac"]
             .iter()
             .any(|directive| head.eq_ignore_ascii_case(directive))
         {

@@ -180,3 +180,13 @@ The selected ngspice fixture manifest shall have an executable validator that re
 COMMENT: >>>
 Implementation: scripts/Validate-NgspiceFixtureManifest.cs. Verification: its successful execution over compat/ngspice/selected-fixtures.json and negative malformed manifests in the development workflow.
 <<<
+
+[REQUIREMENT]
+UID: NGC-019
+TITLE: Bounded output-directive import validation
+STATEMENT: >>>
+The bounded ngspice importer shall classify .print and .plot as import-only directives only when they declare a supported analysis name and at least one output expression, and shall classify .probe as import-only only when it has at least one expression. Malformed output directives shall fail instead of being silently discarded.
+<<<
+COMMENT: >>>
+Implementation: netlist::parse_ngspice_basic. Verification: tests/ngspice_compat.rs.
+<<<
