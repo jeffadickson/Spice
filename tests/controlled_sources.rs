@@ -66,3 +66,15 @@ fn vcvs_constrains_output_voltage_with_controlled_polarity() {
     let x = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
     assert!((x[1] + 6.).abs() < 1e-12);
 }
+
+#[test]
+fn vcvs_json_request_is_solved_through_the_public_api() {
+    let request: Request = serde_json::from_str(r#"{
+      "schema_version":"1","case_id":"vcvs-json","circuit":{"nodes":["0","in","out"],"elements":[
+        {"kind":"voltage","id":"V1","p":1,"n":0,"volts":2.0},
+        {"kind":"vcvs","id":"E1","p":2,"n":0,"cp":1,"cn":0,"gain":-3.0},
+        {"kind":"resistor","id":"R1","p":2,"n":0,"ohms":1.0}
+      ]},"analysis":{"kind":"operating_point"}}"#).unwrap();
+    let result = run(&request).unwrap();
+    assert!((result.samples[0].values[1] + 6.).abs() < 1e-12);
+}
