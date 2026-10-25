@@ -149,6 +149,12 @@ fn ngspice_g_card_rejects_missing_control_terminal() {
 }
 
 #[test]
+fn ngspice_e_card_rejects_missing_control_terminal() {
+    let error = parse_ngspice_basic("title\nE1 out 0 in 2\n.end\n").unwrap_err();
+    assert_eq!(error.code, ErrorCode::InvalidInput);
+}
+
+#[test]
 fn ngspice_e_card_imports_with_controlled_voltage_polarity() {
     let circuit = parse_ngspice_basic("title\nV1 in 0 2\nE1 out 0 in 0 -3\nR1 out 0 1\n.end\n").unwrap();
     let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
