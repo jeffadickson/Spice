@@ -299,6 +299,21 @@ fn ngspice_compact_sine_source_lowers_to_transient_override() {
 }
 
 #[test]
+fn ngspice_whitespace_sine_source_lowers_to_transient_override() {
+    let request = import_ngspice_request(
+        "title\nV1 out 0 SIN 1 2 1k\nR1 out 0 1k\n.tran 1m 2m\n.end\n",
+        "sine-spaced-import",
+    )
+    .unwrap();
+    match request.analysis {
+        circuit_simulator::api::Analysis::TransientConfigured { options } => {
+            assert!((options.sources[0].waveform.at(0.).unwrap() - 1.).abs() < 1e-12);
+        }
+        _ => panic!("expected configured transient analysis"),
+    }
+}
+
+#[test]
 fn ngspice_compact_sine_current_source_preserves_polarity() {
     let request = import_ngspice_request("title\nI1 out 0 SIN(0,2m,1k)\nR1 out 0 1k\n.tran 0.25m 0.25m\n.end\n", "sine-current").unwrap();
     let result = circuit_simulator::api::run(&request).unwrap();
@@ -387,6 +402,21 @@ fn ngspice_compact_exponential_source_lowers_to_transient_override() {
     match request.analysis {
         circuit_simulator::api::Analysis::TransientConfigured { options } => {
             assert_eq!(options.sources.len(), 1);
+            assert!((options.sources[0].waveform.at(2e-3).unwrap() - 2. * (1. - (-1_f64).exp())).abs() < 1e-12);
+        }
+        _ => panic!("expected configured transient analysis"),
+    }
+}
+
+#[test]
+fn ngspice_whitespace_exponential_source_lowers_to_transient_override() {
+    let request = import_ngspice_request(
+        "title\nV1 out 0 EXP 0 2 1m 1m 4m 1m\nR1 out 0 1k\n.tran 1m 6m\n.end\n",
+        "exp-spaced-import",
+    )
+    .unwrap();
+    match request.analysis {
+        circuit_simulator::api::Analysis::TransientConfigured { options } => {
             assert!((options.sources[0].waveform.at(2e-3).unwrap() - 2. * (1. - (-1_f64).exp())).abs() < 1e-12);
         }
         _ => panic!("expected configured transient analysis"),

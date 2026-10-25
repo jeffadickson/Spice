@@ -237,6 +237,22 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
             tokens.truncate(4);
         }
         if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
+            && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("sin"))
+            && tokens.len() == 7
+        {
+            // The transient override retains the waveform; the offset is the
+            // bounded circuit's DC initialization value.
+            tokens[3] = tokens[4];
+            tokens.truncate(4);
+        }
+        if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
+            && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("exp"))
+            && tokens.len() == 10
+        {
+            tokens[3] = tokens[4];
+            tokens.truncate(4);
+        }
+        if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
             && tokens.get(3).is_some_and(|token| token.eq_ignore_ascii_case("dc"))
         {
             tokens.remove(3);
@@ -367,7 +383,10 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
     } else {
         text.lines().map(|line| {
             let tokens: Vec<_> = line.split_whitespace().collect();
-            if tokens.len() == 4 && (tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("sin("))
+            if (tokens.len() == 7 && tokens[3].eq_ignore_ascii_case("sin"))
+                || (tokens.len() == 10 && tokens[3].eq_ignore_ascii_case("exp")) {
+                format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], tokens[4])
+            } else if tokens.len() == 4 && (tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("sin("))
                 || tokens[3].get(..6).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pulse("))
                 || tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pwl("))
                 || tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("exp(")))
@@ -420,6 +439,13 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
                 offset: values[0], amplitude: values[1], frequency_hz: values[2], phase_rad: 0.,
             }});
         }
+        if tokens.len() == 7 && tokens[3].eq_ignore_ascii_case("sin") {
+            let values: SimResult<Vec<f64>> = tokens[4..].iter().map(|value| spice_scalar(value)).collect();
+            let values = values?;
+            sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Sine {
+                offset: values[0], amplitude: values[1], frequency_hz: values[2], phase_rad: 0.,
+            }});
+        }
         if tokens.len() == 4 && tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pwl("))
             && tokens[3].ends_with(')') {
             let values: SimResult<Vec<f64>> = tokens[3][4..tokens[3].len() - 1].split(',').map(spice_scalar).collect();
@@ -438,6 +464,14 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
             if values.len() != 6 {
                 return Err(SimError::new(ErrorCode::Unsupported, "bounded EXP source requires six values"));
             }
+            sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Exponential {
+                initial: values[0], pulsed: values[1], rise_delay_s: values[2], rise_tau_s: values[3],
+                fall_delay_s: values[4], fall_tau_s: values[5],
+            }});
+        }
+        if tokens.len() == 10 && tokens[3].eq_ignore_ascii_case("exp") {
+            let values: SimResult<Vec<f64>> = tokens[4..].iter().map(|value| spice_scalar(value)).collect();
+            let values = values?;
             sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Exponential {
                 initial: values[0], pulsed: values[1], rise_delay_s: values[2], rise_tau_s: values[3],
                 fall_delay_s: values[4], fall_tau_s: values[5],
