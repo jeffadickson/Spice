@@ -1,5 +1,5 @@
 use circuit_simulator::sampling::{LogUniformRange, LogUniformSweepPlan, SeededSequence, UniformRange, UniformSweepPlan, log_uniform_values, uniform_values};
-use circuit_simulator::{api::Request, registry::BackendRegistry, sweep::run_uniform_plan};
+use circuit_simulator::{api::Request, registry::BackendRegistry, sweep::{run_log_uniform_plan, run_uniform_plan}};
 
 #[test]
 fn seeded_stream_is_reproducible_and_bounded() {
@@ -11,6 +11,13 @@ fn seeded_stream_is_reproducible_and_bounded() {
         assert_eq!(left, b.uniform(range).unwrap());
         assert!((-2. .. 3.).contains(&left));
     }
+}
+
+#[test]
+fn log_uniform_recipe_executes_positive_resistor_values() {
+    let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    let plan = LogUniformSweepPlan { element_id: "R1".into(), seed: 8, count: 2, range: LogUniformRange { low: 900., high: 1100. } };
+    assert!(run_log_uniform_plan(&request, &plan, &BackendRegistry::reference()).unwrap().iter().all(|point| point.execution == "succeeded"));
 }
 
 #[test]

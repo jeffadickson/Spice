@@ -4,7 +4,7 @@ use crate::{
     api::{Manifest, Request, run_with_registry},
     error::{ErrorCode, SimError, SimResult},
     registry::BackendRegistry,
-    sampling::UniformSweepPlan,
+    sampling::{LogUniformSweepPlan, UniformSweepPlan},
     variation::{ScalarGrid, ScalarSelection, ScalarSweep},
 };
 use serde::Serialize;
@@ -24,6 +24,15 @@ pub struct SweepPoint {
 pub fn run_uniform_plan(
     request: &Request,
     plan: &UniformSweepPlan,
+    registry: &BackendRegistry,
+) -> SimResult<Vec<SweepPoint>> {
+    run_scalar(request, &plan.materialize()?, registry)
+}
+
+/// Materialize a positive log-uniform recipe and execute it sequentially.
+pub fn run_log_uniform_plan(
+    request: &Request,
+    plan: &LogUniformSweepPlan,
     registry: &BackendRegistry,
 ) -> SimResult<Vec<SweepPoint>> {
     run_scalar(request, &plan.materialize()?, registry)
