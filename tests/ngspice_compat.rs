@@ -55,6 +55,18 @@ fn ngspice_ac_qualified_resistor_is_used_for_bounded_ac_import() {
 }
 
 #[test]
+fn ngspice_res_partition_fixture_matches_analytic_ac_reference() {
+    let request = import_ngspice_request(
+        include_str!("../compat/ngspice/res_partition.cir"),
+        "ngspice-res-partition",
+    )
+    .unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert_eq!(result.ac_samples.len(), 41);
+    assert!(result.ac_samples.iter().all(|sample| (sample.values[1].real - 0.75).abs() < 1e-12));
+}
+
+#[test]
 fn ngspice_decade_ac_sweeps_lower_to_logarithmic_grids() {
     let request = import_ngspice_request(
         "title\nV1 out 0 DC 0 AC 1\nR1 out 0 1k\n.ac dec 10 1 10\n.end\n",

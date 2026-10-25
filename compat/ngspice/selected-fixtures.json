@@ -17,8 +17,8 @@
     {
       "path": "tests/resistance/res_partition.cir",
       "family": "linear_or_waveform",
-      "state": "blocked_by_features",
-      "required_features": ["ac_source_amplitude", "ac_qualified_resistor"]
+      "state": "analytic_oracle_passing",
+      "required_features": []
     },
     {
       "path": "examples/measure/func_cap.sp",
