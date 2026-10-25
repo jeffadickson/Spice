@@ -6,6 +6,12 @@ namespace Simulator.Client;
 /// <summary>Typed response metadata with owned JSON payload for the experimental schema.</summary>
 public sealed record SimulationResponse(string SchemaVersion, string Status, bool Complete, JsonElement Payload)
 {
+    /// <summary>Failed envelopes are not valid successful manifests.</summary>
+    public ResultManifest ReadManifest()
+    {
+        if (!Succeeded) throw new InvalidOperationException("No successful result manifest.");
+        return Payload.Deserialize<ResultManifest>(WireFormat.Options) ?? throw new InvalidDataException("Missing manifest.");
+    }
     public bool Succeeded => Status == "succeeded" && Complete;
     /// <summary>Read the final voltage/current by descriptor ID; missing data is an error.</summary>
     public double FinalValue(string signalId)
@@ -23,6 +29,9 @@ public sealed record SimulationResponse(string SchemaVersion, string Status, boo
 /// <summary>One-shot local executable transport, not yet a persistent worker/C ABI SDK.</summary>
 public sealed class SimulationClient(string executable)
 {
+    /// <summary>Typed authoring path shared by C# and F#; Rust still validates semantics.</summary>
+    public Task<SimulationResponse> RunAsync(SimulationRequest request, CancellationToken cancellation = default) =>
+        RunJsonAsync(JsonSerializer.Serialize(request, WireFormat.Options), cancellation);
     /// <summary>Rust validates the experimental request schema. No shell is invoked.</summary>
     public async Task<SimulationResponse> RunJsonAsync(string requestJson, CancellationToken cancellation = default)
     {
