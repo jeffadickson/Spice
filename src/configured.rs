@@ -24,7 +24,7 @@ impl TransientConfig{
     }
 }
 #[derive(Debug,Serialize)]
-pub struct IntegrationReport{pub method:Method,pub initialization:&'static str,pub accepted_steps:usize,pub rejected_steps:usize,pub attempts:usize,pub max_accepted_error:f64}
+pub struct IntegrationReport{pub method:Method,pub initialization:&'static str,pub accepted_steps:usize,pub rejected_steps:usize,pub attempts:usize,pub max_accepted_error:f64,pub linear_solves:usize,pub prepared_factors:usize,pub prepared_reuses:usize}
 pub struct ConfiguredResult{pub samples:Vec<Sample>,pub report:IntegrationReport}
 fn initial(plan:&CompiledCircuit,b:&[f64],state:Option<&[f64]>,solver:&dyn LinearSolver)->SimResult<Vec<f64>>{
     let Some(x)=state else{return Ok(crate::dc::solve_verified(&plan.conductance,b,solver)?.0)};
@@ -78,6 +78,6 @@ pub fn run_observed(plan:&CompiledCircuit,solver:&dyn LinearSolver,options:&Tran
         state=accepted;old_rhs=new_rhs;time=next;steps+=1;samples.push(Sample{time_s:time,values:state.clone()});
         observer(samples.last().expect("just appended accepted sample"))?;
     }
-    Ok(ConfiguredResult{samples,report:IntegrationReport{method:options.method,initialization:if options.initial_state.is_some(){"explicit_state"}else{"operating_point"},accepted_steps:steps,rejected_steps:rejected,attempts,max_accepted_error:max_error}})
+    Ok(ConfiguredResult{samples,report:IntegrationReport{method:options.method,initialization:if options.initial_state.is_some(){"explicit_state"}else{"operating_point"},accepted_steps:steps,rejected_steps:rejected,attempts,max_accepted_error:max_error,linear_solves:stepper.solve_calls+usize::from(options.initial_state.is_none()),prepared_factors:stepper.prepared_factors,prepared_reuses:stepper.prepared_reuses}})
 }
 

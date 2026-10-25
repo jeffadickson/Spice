@@ -77,3 +77,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 73. Use step doubling with explicit rejection and unchanged accepted state
 74. Cache two prepared numeric matrices within each linear integrator
 75. Expose accepted-sample observers with cancellation and failure semantics
+76. Report accepted rejected and reused numerical work separately
