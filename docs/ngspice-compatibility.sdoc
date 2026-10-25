@@ -130,3 +130,13 @@ The typed circuit API and bounded ngspice importer shall support a voltage-contr
 COMMENT: >>>
 Implementation: circuit::Element::Vcvs, compile::compile and netlist::parse_ngspice_basic. Verification: tests/controlled_sources.rs and tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-014
+TITLE: CCCS controlled-current compatibility
+STATEMENT: >>>
+The typed circuit API and bounded ngspice importer shall support an F current-controlled current source whose p-to-n current equals gain times the p-to-n MNA branch current of a named voltage-defined control element. The control identifier shall be nonempty, the gain finite, and an absent or non-branch control identifier shall fail compilation.
+<<<
+COMMENT: >>>
+Implementation: circuit::Element::Cccs, compile::compile and netlist::parse. Verification: tests/controlled_sources.rs and tests/ngspice_compat.rs.
+<<<

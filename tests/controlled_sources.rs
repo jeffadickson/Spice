@@ -115,3 +115,53 @@ fn vcvs_json_request_is_solved_through_the_public_api() {
     assert_eq!(result.signals[3].id, "i(E1)");
     assert!((result.samples[0].values[3] - 6.).abs() < 1e-12);
 }
+
+#[test]
+fn cccs_stamps_named_control_branch_with_declared_polarity() {
+    let circuit = Circuit { nodes: vec!["0".into(), "in".into(), "out".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 2. },
+        Element::Resistor { id: "RCONTROL".into(), p: NodeId(1), n: NodeId(0), ohms: 1. },
+        Element::Cccs { id: "F1".into(), p: NodeId(2), n: NodeId(0), control_id: "V1".into(), gain: 0.5 },
+        Element::Resistor { id: "ROUT".into(), p: NodeId(2), n: NodeId(0), ohms: 1. },
+    ]};
+    let x = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+    // i(V1) is -2 A for a source delivering current; F1 therefore injects -1 A.
+    assert!((x[1] - 1.).abs() < 1e-12);
+}
+
+#[test]
+fn cccs_rejects_unknown_or_nonbranch_control_ids() {
+    let circuit = Circuit { nodes: vec!["0".into(), "out".into()], elements: vec![
+        Element::Cccs { id: "F1".into(), p: NodeId(1), n: NodeId(0), control_id: "R1".into(), gain: 1. },
+        Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(0), ohms: 1. },
+    ]};
+    assert!(compile(&circuit).is_err());
+}
+
+#[test]
+fn cccs_gain_variation_is_immutable_and_dimensionless() {
+    let circuit = Circuit { nodes: vec!["0".into(), "in".into(), "out".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 2. },
+        Element::Resistor { id: "RCONTROL".into(), p: NodeId(1), n: NodeId(0), ohms: 1. },
+        Element::Cccs { id: "F1".into(), p: NodeId(2), n: NodeId(0), control_id: "V1".into(), gain: 0.5 },
+        Element::Resistor { id: "ROUT".into(), p: NodeId(2), n: NodeId(0), ohms: 1. },
+    ]};
+    assert_eq!(scalar_kind(&circuit, "F1").unwrap(), ScalarKind::CurrentGain);
+    let varied = replace_scalar(&circuit, "F1", -1.).unwrap();
+    let x = operating_point(&compile(&varied).unwrap(), &DenseLu).unwrap();
+    assert!((x[1] + 2.).abs() < 1e-12);
+    assert_eq!(scalar_kind(&circuit, "F1").unwrap(), ScalarKind::CurrentGain);
+}
+
+#[test]
+fn cccs_json_request_is_solved_through_the_public_api() {
+    let request: Request = serde_json::from_str(r#"{
+      "schema_version":"1","case_id":"cccs-json","circuit":{"nodes":["0","in","out"],"elements":[
+        {"kind":"voltage","id":"V1","p":1,"n":0,"volts":2.0},
+        {"kind":"resistor","id":"RCONTROL","p":1,"n":0,"ohms":1.0},
+        {"kind":"cccs","id":"F1","p":2,"n":0,"control_id":"V1","gain":0.5},
+        {"kind":"resistor","id":"ROUT","p":2,"n":0,"ohms":1.0}
+      ]},"analysis":{"kind":"operating_point"}}"#).unwrap();
+    let result = run(&request).unwrap();
+    assert!((result.samples[0].values[1] - 1.).abs() < 1e-12);
+}

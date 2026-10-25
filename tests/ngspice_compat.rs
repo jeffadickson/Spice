@@ -182,6 +182,16 @@ fn ngspice_e_card_imports_with_controlled_voltage_polarity() {
 }
 
 #[test]
+fn ngspice_f_card_imports_with_named_branch_current_polarity() {
+    let circuit = parse_ngspice_basic(
+        "title\nV1 in 0 2\nRCONTROL in 0 1\nF1 out 0 V1 0.5\nROUT out 0 1\n.end\n",
+    )
+    .unwrap();
+    let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+    assert!((values[1] - 1.).abs() < 1e-12);
+}
+
+#[test]
 fn ngspice_e_card_participates_in_bounded_ac_analysis() {
     let request = import_ngspice_request("title\nV1 in 0 DC 0 AC 1\nE1 out 0 in 0 -3\nR1 out 0 1k\n.ac lin 1 10 10\n.end\n", "e-ac").unwrap();
     let result = circuit_simulator::api::run(&request).unwrap();

@@ -100,6 +100,13 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     }
                 }
             }
+            Element::Cccs { p, n, control_id, gain, .. } => {
+                let control = branches.iter().position(|id| id == control_id)
+                    .map(|index| index + circuit.nodes.len() - 1)
+                    .ok_or_else(|| SimError::invalid("CCCS control must name a branch source"))?;
+                if let Some(row) = p.unknown() { a.add(row, control, *gain); }
+                if let Some(row) = n.unknown() { a.add(row, control, -*gain); }
+            }
             Element::Diode {
                 p,
                 n,

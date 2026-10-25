@@ -33,6 +33,10 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
             Element::Vccs { cp, cn, siemens, .. } => {
                 siemens * (voltage(*cp) - voltage(*cn))
             }
+            Element::Cccs { control_id, gain, .. } => {
+                gain * x[plan.branch_index(control_id)
+                    .ok_or_else(|| SimError::invalid("missing CCCS control branch"))?]
+            }
             Element::Capacitor { .. } => 0.,
             Element::Diode {
                 saturation_amps,

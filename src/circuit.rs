@@ -56,6 +56,14 @@ pub enum Element {
         cn: NodeId,
         gain: f64,
     },
+    /// Current-controlled current source; current p -> n equals gain*i(control_id).
+    Cccs {
+        id: String,
+        p: NodeId,
+        n: NodeId,
+        control_id: String,
+        gain: f64,
+    },
     /// Shockley diode with current defined from p to n.
     Diode {
         id: String,
@@ -75,6 +83,7 @@ impl Element {
             | Self::Current { id, .. }
             | Self::Vccs { id, .. }
             | Self::Vcvs { id, .. }
+            | Self::Cccs { id, .. }
             | Self::Diode { id, .. } => id,
         }
     }
@@ -87,6 +96,7 @@ impl Element {
             | Self::Current { p, n, .. }
             | Self::Vccs { p, n, .. }
             | Self::Vcvs { p, n, .. }
+            | Self::Cccs { p, n, .. }
             | Self::Diode { p, n, .. } => (*p, *n),
         }
     }
@@ -143,6 +153,11 @@ impl Circuit {
                         || !gain.is_finite() =>
                 {
                     return Err(SimError::invalid("invalid VCVS control terminals or gain"));
+                }
+                Element::Cccs { control_id, gain, .. }
+                    if control_id.is_empty() || !gain.is_finite() =>
+                {
+                    return Err(SimError::invalid("invalid CCCS control ID or gain"));
                 }
                 Element::Resistor { ohms, .. } if !ohms.is_finite() || *ohms <= 0.0 => {
                     return Err(SimError::invalid("resistance must be finite and positive"));
