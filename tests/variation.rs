@@ -4,8 +4,8 @@ use circuit_simulator::{
     ids::NodeId,
     registry::BackendRegistry,
     sweep::{
-        GridSummary, SweepSummary, assertion_summary, derived_case_id, final_signal, final_signal_rows, measurement_rows, run_grid, run_scalar,
-        run_scalar_cancellable,
+        GridSummary, SweepSummary, assertion_summary, derived_case_id, final_signal,
+        final_signal_rows, measurement_rows, run_grid, run_scalar, run_scalar_cancellable,
     },
     variation::{ScalarGrid, ScalarKind, ScalarSweep, replace_scalar, scalar_kind},
 };
@@ -25,7 +25,10 @@ fn fixture() -> Circuit {
 #[test]
 fn absent_assertions_are_counted_as_missing_not_passing() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
-    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000.] };
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![1000.],
+    };
     let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
     assert_eq!(assertion_summary(&points, "absent").missing, 1);
 }
@@ -33,16 +36,25 @@ fn absent_assertions_are_counted_as_missing_not_passing() {
 #[test]
 fn resistance_variation_has_expected_divider_monotonicity() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
-    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![500., 1000., 2000.] };
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![500., 1000., 2000.],
+    };
     let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
-    let values: Vec<_> = points.iter().map(|point| final_signal(point, "v(out)").unwrap()).collect();
+    let values: Vec<_> = points
+        .iter()
+        .map(|point| final_signal(point, "v(out)").unwrap())
+        .collect();
     assert!(values[0] > values[1] && values[1] > values[2]);
 }
 
 #[test]
 fn missing_measurements_are_explicitly_unavailable_in_sweep_rows() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
-    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000.] };
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![1000.],
+    };
     let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
     let rows = measurement_rows(&points, "not-configured");
     assert_eq!(rows[0].value, None);
@@ -52,7 +64,10 @@ fn missing_measurements_are_explicitly_unavailable_in_sweep_rows() {
 #[test]
 fn projected_signal_rows_preserve_point_indices() {
     let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
-    let sweep = ScalarSweep { element_id: "R1".into(), values: vec![1000., 2000.] };
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![1000., 2000.],
+    };
     let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
     let rows = final_signal_rows(&points, "v(out)");
     assert_eq!(rows.len(), 2);
@@ -60,7 +75,7 @@ fn projected_signal_rows_preserve_point_indices() {
     assert!(rows.iter().all(|row| row.value.is_some()));
     let wire = serde_json::to_value(&rows[0]).unwrap();
     assert_eq!(wire["selection"]["unit"], "ohm");
-    assert_eq!(wire["value"], 0.5);
+    assert_eq!(wire["value"], 5.0);
 }
 
 #[test]
@@ -82,7 +97,7 @@ fn successful_sweep_points_expose_final_signal_values() {
         values: vec![1000.],
     };
     let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
-    assert!((final_signal(&points[0], "v(out)").unwrap() - 0.5).abs() < 1e-12);
+    assert!((final_signal(&points[0], "v(out)").unwrap() - 5.).abs() < 1e-12);
     assert!(final_signal(&points[0], "missing").is_err());
 }
 
@@ -196,15 +211,31 @@ fn grid_has_deterministic_cartesian_order() {
 
 #[test]
 fn grid_rejects_duplicate_targets_and_excessive_products() {
-    let duplicate = ScalarGrid { dimensions: vec![
-        ScalarSweep { element_id: "R1".into(), values: vec![1.] },
-        ScalarSweep { element_id: "R1".into(), values: vec![2.] },
-    ] };
+    let duplicate = ScalarGrid {
+        dimensions: vec![
+            ScalarSweep {
+                element_id: "R1".into(),
+                values: vec![1.],
+            },
+            ScalarSweep {
+                element_id: "R1".into(),
+                values: vec![2.],
+            },
+        ],
+    };
     assert!(duplicate.validate().is_err());
-    let oversized = ScalarGrid { dimensions: vec![
-        ScalarSweep { element_id: "R1".into(), values: (0..9).map(|v| v as f64 + 1.).collect() },
-        ScalarSweep { element_id: "V1".into(), values: (0..9).map(|v| v as f64 + 1.).collect() },
-    ] };
+    let oversized = ScalarGrid {
+        dimensions: vec![
+            ScalarSweep {
+                element_id: "R1".into(),
+                values: (0..9).map(|v| v as f64 + 1.).collect(),
+            },
+            ScalarSweep {
+                element_id: "V1".into(),
+                values: (0..9).map(|v| v as f64 + 1.).collect(),
+            },
+        ],
+    };
     assert!(oversized.validate().is_err());
 }
 

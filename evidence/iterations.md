@@ -132,3 +132,13 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 128. Execute log-uniform sweep plans
 129. Add seeded sampling property corpus
 130. Checkpoint reproducible sampled variation plans
+131. Expose final signals from sweep points
+132. Project final signals into failure-aware rows
+133. Project measurements across sweep points
+134. Aggregate sweep assertion outcomes
+135. Preserve borrowed assertion outcomes during aggregation
+136. Verify programmatic sweep row serialization
+137. Add scalar sweep monotonicity oracle
+138. Trace sampled variation result contracts
+139. Fuzz scalar grid limit boundaries
+140. Checkpoint variation query and sampling contracts

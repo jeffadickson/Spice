@@ -106,10 +106,23 @@ pub struct SignalRow {
 
 /// Project a final signal across all points without silently dropping failures.
 pub fn final_signal_rows(points: &[SweepPoint], signal_id: &str) -> Vec<SignalRow> {
-    points.iter().map(|point| match final_signal(point, signal_id) {
-        Ok(value) => SignalRow { index: point.index, selection: point.selection.clone(), value: Some(value), reason: None },
-        Err(error) => SignalRow { index: point.index, selection: point.selection.clone(), value: None, reason: Some(error.message) },
-    }).collect()
+    points
+        .iter()
+        .map(|point| match final_signal(point, signal_id) {
+            Ok(value) => SignalRow {
+                index: point.index,
+                selection: point.selection.clone(),
+                value: Some(value),
+                reason: None,
+            },
+            Err(error) => SignalRow {
+                index: point.index,
+                selection: point.selection.clone(),
+                value: None,
+                reason: Some(error.message),
+            },
+        })
+        .collect()
 }
 
 /// Project a named engine measurement across all completed points. The returned
@@ -124,23 +137,49 @@ pub struct MeasurementRow {
 }
 
 pub fn measurement_rows(points: &[SweepPoint], measurement_id: &str) -> Vec<MeasurementRow> {
-    points.iter().map(|point| {
-        let measurement = point.result.as_ref().and_then(|result| result.measurements.iter().find(|m| m.id == measurement_id));
-        match measurement {
-            Some(measurement) => MeasurementRow { index: point.index, selection: point.selection.clone(), unit: Some(measurement.unit.clone()), value: measurement.value, reason: measurement.reason.clone() },
-            None => MeasurementRow { index: point.index, selection: point.selection.clone(), unit: None, value: None, reason: Some("measurement is unavailable for sweep point".into()) },
-        }
-    }).collect()
+    points
+        .iter()
+        .map(|point| {
+            let measurement = point
+                .result
+                .as_ref()
+                .and_then(|result| result.measurements.iter().find(|m| m.id == measurement_id));
+            match measurement {
+                Some(measurement) => MeasurementRow {
+                    index: point.index,
+                    selection: point.selection.clone(),
+                    unit: Some(measurement.unit.clone()),
+                    value: measurement.value,
+                    reason: measurement.reason.clone(),
+                },
+                None => MeasurementRow {
+                    index: point.index,
+                    selection: point.selection.clone(),
+                    unit: None,
+                    value: None,
+                    reason: Some("measurement is unavailable for sweep point".into()),
+                },
+            }
+        })
+        .collect()
 }
 
 /// Count assertion outcomes without treating indeterminate as a passing result.
 #[derive(Debug, Default, Serialize, PartialEq, Eq)]
-pub struct AssertionSummary { pub pass: usize, pub fail: usize, pub indeterminate: usize, pub missing: usize }
+pub struct AssertionSummary {
+    pub pass: usize,
+    pub fail: usize,
+    pub indeterminate: usize,
+    pub missing: usize,
+}
 
 pub fn assertion_summary(points: &[SweepPoint], assertion_id: &str) -> AssertionSummary {
     let mut summary = AssertionSummary::default();
     for point in points {
-        let outcome = point.result.as_ref().and_then(|result| result.assertions.iter().find(|a| a.id == assertion_id));
+        let outcome = point
+            .result
+            .as_ref()
+            .and_then(|result| result.assertions.iter().find(|a| a.id == assertion_id));
         match outcome.map(|assertion| &assertion.outcome) {
             Some(crate::assertion::Outcome::Pass) => summary.pass += 1,
             Some(crate::assertion::Outcome::Fail) => summary.fail += 1,
