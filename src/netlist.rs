@@ -49,7 +49,7 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
         {
             continue;
         }
-        if !matches!(kind, 'R' | 'C' | 'V' | 'I') {
+        if !matches!(kind, 'R' | 'C' | 'L' | 'V' | 'I') {
             return Err(SimError::new(
                 ErrorCode::Unsupported,
                 format!("line {}: unsupported element/directive", index + 1),
@@ -100,6 +100,7 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
                 n,
                 amps: value,
             },
+            'L' => Element::Inductor {id,p,n,henries:value},
             _ => unreachable!(),
         });
         if circuit.elements.len() > 1024 || circuit.nodes.len() > 128 {

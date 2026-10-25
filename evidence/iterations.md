@@ -64,3 +64,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 60. Record sparse provider adoption limits and checkpoint inputs
 61. Validate inductors as explicit flux-bearing devices
 62. Compile inductor branch currents and signed flux contributions
+63. Expose inductor currents and netlist L-element support

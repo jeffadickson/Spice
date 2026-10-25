@@ -83,7 +83,7 @@ pub fn run_with_registry(
             unit: "V",
         })
         .collect();
-    signals.extend(plan.voltage_branches.iter().map(|id| Signal {
+    signals.extend(plan.branch_ids.iter().map(|id| Signal {
         id: format!("i({id})"),
         quantity: "current",
         unit: "A",
