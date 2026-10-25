@@ -1,0 +1,15 @@
+package clamp_demo;
+
+circuit clamp {
+  node gnd, vin, out;
+  source supply(vin, gnd) { dc: 1V }
+  resistor limit(vin, out) { resistance: 1kOhm }
+  capacitor hold(out, gnd) { capacitance: 1uF }
+  diode dclamp(out, gnd) { model: idealized }
+}
+
+run startup on clamp {
+  transient { stop: 2ms, max_step: 1us }
+  observe { v(out), i(dclamp), power(dclamp) }
+  require max(v(out)) < 0.9V;
+}
