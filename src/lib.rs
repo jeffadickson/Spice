@@ -7,4 +7,6 @@ pub mod linalg;
 pub mod backend;
 pub mod compile;
 pub mod dc;
+pub mod transient;
+pub mod api;
 
