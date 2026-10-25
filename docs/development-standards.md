@@ -358,6 +358,16 @@ The project shall run hardware-backed GPU conformance tests where supported and 
 Verification: Retain hardware test and coverage reports; explicitly report missing hardware and device instrumentation limits.
 
 
+**DEV-GPU-009**
+
+## Portable acceleration boundaries
+
+The project shall treat AVX-512, AMX and GPU execution as optional backend capabilities, not application requirements. It shall preserve a qualified portable CPU path; prohibit vendor or architecture-specific types from core/public contracts; and introduce automatic accelerated selection only after representative transfer-inclusive measurements establish explicit workload thresholds.
+
+
+Verification: Build and run the common conformance corpus on a baseline CPU-only host; inspect core/public dependencies for accelerator-specific imports; compare explicit portable and accelerated selections on qualified matrices and retained circuit fixtures.
+
+
 ## Delivery reporting
 
 **DEV-REPORT-001**

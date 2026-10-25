@@ -306,6 +306,22 @@ RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-GOAL-005
 
+[REQUIREMENT]
+UID: ARCH-LIN-005
+STATUS: Proposed
+TITLE: Representation and vendor isolation
+STATEMENT: >>>
+Circuit models, compilers, analyses, public contracts and result schemas shall not expose a concrete dense layout, sparse-library type, SIMD intrinsic, accelerator buffer or vendor solver handle. They shall exchange only validated backend-neutral pattern, value, vector, capability and report contracts. A backend adapter exclusively owns representation conversion, placement, transfer, vendor options and native handles.
+<<<
+COMMENT: >>>
+Verification: Compile a standalone backend conformance fixture using the linear contracts without circuit/API crates; inspect public and core dependency graphs for concrete backend imports; substitute an adapter test double and assert identical validated matrix/request semantics.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-002
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
 [[/SECTION]]
 
 [[SECTION]]
