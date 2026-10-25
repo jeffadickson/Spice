@@ -26,6 +26,19 @@ fn standard_operating_point_selects_newton_when_diodes_exist() {
 }
 
 #[test]
+fn forward_biased_resistor_diode_bias_point_converges() {
+    let circuit = Circuit { nodes: vec!["0".into(), "s".into(), "a".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
+        Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
+        Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
+    ] };
+    let values = operating_point(&compile(&circuit).unwrap(), &LuSolver).unwrap();
+    assert!((0.45..0.65).contains(&values[1]));
+    let diode_current = 1e-12 * (values[1] / 0.02585).exp_m1();
+    assert!((diode_current - (1. - values[1]) / 1000.).abs() < 1e-10);
+}
+
+#[test]
 fn zero_bias_diode_converges_without_a_spurious_current() {
     let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![Element::Diode {
         id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
