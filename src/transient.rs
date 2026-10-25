@@ -7,6 +7,10 @@ pub struct TransientOptions{pub stop_s:f64,pub step_s:f64,pub max_steps:usize}
 #[derive(Debug,Clone,Serialize)]
 pub struct Sample{pub time_s:f64,pub values:Vec<f64>}
 pub fn transient(plan:&CompiledCircuit,solver:&dyn LinearSolver,options:&TransientOptions)->SimResult<Vec<Sample>>{
+    transient_controlled(plan,solver,options,&std::sync::atomic::AtomicBool::new(false))
+}
+/// Cooperative cancellation is checked before every linear step.
+pub fn transient_controlled(plan:&CompiledCircuit,solver:&dyn LinearSolver,options:&TransientOptions,cancel:&std::sync::atomic::AtomicBool)->SimResult<Vec<Sample>>{
     positive(options.stop_s,"stop_s")?;positive(options.step_s,"step_s")?;
     let count=(options.stop_s/options.step_s).ceil();
     if options.max_steps==0||options.max_steps>100_000||count>options.max_steps as f64{return Err(SimError::new(crate::error::ErrorCode::ResourceExhausted,"step budget exceeded"));}
@@ -14,6 +18,7 @@ pub fn transient(plan:&CompiledCircuit,solver:&dyn LinearSolver,options:&Transie
     let mut samples=Vec::with_capacity(count as usize);
     let mut time=0.0;
     for step in 1..=count as usize{
+        if cancel.load(std::sync::atomic::Ordering::Relaxed){return Err(SimError::new(crate::error::ErrorCode::Cancelled,"cancelled before step"));}
         let next=(step as f64*options.step_s).min(options.stop_s);
         let h=next-time;
         let mut a=plan.conductance.clone();
