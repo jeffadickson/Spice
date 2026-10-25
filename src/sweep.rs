@@ -19,6 +19,17 @@ pub struct SweepPoint {
     pub error: Option<SimError>,
 }
 
+/// Complete in-memory scalar campaign envelope for programmatic consumers.
+/// It retains the declared values, including duplicates, alongside every point.
+#[derive(Debug, Serialize)]
+pub struct ScalarSweepRun {
+    pub schema_version: &'static str,
+    pub base_case_id: String,
+    pub sweep: ScalarSweep,
+    pub points: Vec<SweepPoint>,
+    pub summary: SweepSummary,
+}
+
 /// Materialize a recorded uniform recipe and execute it with the same explicit
 /// point semantics as a caller-provided scalar sweep.
 pub fn run_uniform_plan(
@@ -271,6 +282,23 @@ pub fn run_scalar(
     registry: &BackendRegistry,
 ) -> SimResult<Vec<SweepPoint>> {
     run_scalar_cancellable(request, sweep, registry, &false.into())
+}
+
+/// Execute a scalar sweep and return a self-describing serializable envelope.
+pub fn execute_scalar(
+    request: &Request,
+    sweep: &ScalarSweep,
+    registry: &BackendRegistry,
+) -> SimResult<ScalarSweepRun> {
+    let points = run_scalar(request, sweep, registry)?;
+    let summary = SweepSummary::from_points(&points);
+    Ok(ScalarSweepRun {
+        schema_version: "1",
+        base_case_id: request.case_id.clone(),
+        sweep: sweep.clone(),
+        points,
+        summary,
+    })
 }
 
 /// As [`run_scalar`], with cooperative cancellation checked only between complete

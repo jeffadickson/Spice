@@ -4,7 +4,7 @@ use circuit_simulator::{
     ids::NodeId,
     registry::BackendRegistry,
     sweep::{
-        GridSummary, SweepSummary, assertion_summary, derived_case_id, final_signal,
+        GridSummary, SweepSummary, assertion_summary, derived_case_id, execute_scalar, final_signal,
         final_signal_rows, measurement_rows, run_grid, run_scalar, run_scalar_cancellable,
     },
     variation::{ScalarGrid, ScalarKind, ScalarSweep, replace_scalar, scalar_kind},
@@ -87,6 +87,19 @@ fn derived_case_ids_are_bounded_and_kind_specific() {
     );
     assert!(derived_case_id("", 's', 0).is_err());
     assert!(derived_case_id("base", 'x', 0).is_err());
+}
+
+#[test]
+fn scalar_sweep_envelope_is_self_describing() {
+    let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    let sweep = ScalarSweep {
+        element_id: "R1".into(),
+        values: vec![1000.],
+    };
+    let run = execute_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
+    assert_eq!(run.schema_version, "1");
+    assert_eq!(run.summary.succeeded, 1);
+    assert_eq!(serde_json::to_value(run).unwrap()["sweep"]["element_id"], "R1");
 }
 
 #[test]
