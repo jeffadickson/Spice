@@ -6,6 +6,7 @@ use crate::{
     quantity::spice_scalar,
     sources::SourceOverride,
     waveform::Waveform,
+    waveform::Point,
 };
 /// Explicit small subset: optional title, R/C/L/D/V/I, .op and .end. No includes or control commands.
 pub fn parse(text: &str) -> SimResult<Circuit> {
@@ -283,7 +284,8 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
     } else {
         text.lines().map(|line| {
             let tokens: Vec<_> = line.split_whitespace().collect();
-            if tokens.len() == 4 && tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("sin("))
+            if tokens.len() == 4 && (tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("sin("))
+                || tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pwl(")))
                 && tokens[3].ends_with(')') {
                 let offset = tokens[3][4..tokens[3].len() - 1].split(',').next().unwrap_or_default();
                 format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], offset)
@@ -318,6 +320,17 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
             }
             sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Sine {
                 offset: values[0], amplitude: values[1], frequency_hz: values[2], phase_rad: 0.,
+            }});
+        }
+        if tokens.len() == 4 && tokens[3].get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("pwl("))
+            && tokens[3].ends_with(')') {
+            let values: SimResult<Vec<f64>> = tokens[3][4..tokens[3].len() - 1].split(',').map(spice_scalar).collect();
+            let values = values?;
+            if values.len() < 2 || values.len() % 2 != 0 {
+                return Err(SimError::new(ErrorCode::Unsupported, "bounded PWL source requires time,value pairs"));
+            }
+            sources.push(SourceOverride { id: name.to_ascii_uppercase(), waveform: Waveform::Pwl {
+                points: values.chunks_exact(2).map(|pair| Point { time_s: pair[0], value: pair[1] }).collect(),
             }});
         }
     }

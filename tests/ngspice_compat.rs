@@ -109,6 +109,17 @@ fn ngspice_compact_sine_source_lowers_to_transient_override() {
 }
 
 #[test]
+fn ngspice_compact_pwl_source_lowers_to_transient_override() {
+    let request = import_ngspice_request("title\nV1 out 0 PWL(0,0,1m,2)\nR1 out 0 1k\n.tran 1m 2m\n.end\n", "pwl-import").unwrap();
+    match request.analysis {
+        circuit_simulator::api::Analysis::TransientConfigured { options } => {
+            assert!((options.sources[0].waveform.at(0.5e-3).unwrap() - 1.).abs() < 1e-12);
+        }
+        _ => panic!("expected configured transient"),
+    }
+}
+
+#[test]
 fn pulse_waveform_has_exact_plateaus_and_rejects_invalid_periods() {
     let pulse = Waveform::Pulse { low: 0., high: 2., delay_s: 1., rise_s: 1., fall_s: 1., width_s: 2., period_s: 6. };
     assert_eq!(pulse.at(0.).unwrap(), 0.);
