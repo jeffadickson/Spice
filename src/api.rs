@@ -1,7 +1,7 @@
 use crate::{
     circuit::Circuit,
     compile::compile,
-    dc::operating_point_detailed,
+    dc::{operating_point_detailed, operating_point_with_options},
     error::{SimError, SimResult},
     linalg::{BackendCapabilities, LinearSolver},
     transient::{Sample, TransientOptions, transient},
@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Analysis {
     OperatingPoint,
+    OperatingPointNewton { options: crate::newton::NewtonOptions },
     Transient {
         options: TransientOptions,
     },
@@ -91,6 +92,14 @@ pub fn run_with_registry(
                 values,
             }]
         }
+        Analysis::OperatingPointNewton { options } => {
+            let (values, report) = operating_point_with_options(&plan, solver, *options)?;
+            newton = report;
+            vec![Sample {
+                time_s: 0.0,
+                values,
+            }]
+        }
         Analysis::Transient { options } => transient(&plan, solver, options)?,
         Analysis::Ac { .. } => Vec::new(),
         Analysis::TransientConfigured { options } => {
@@ -119,7 +128,7 @@ pub fn run_with_registry(
         quantity: "current",
         unit: "A",
     }));
-    let dc_power = if matches!(request.analysis, Analysis::OperatingPoint) {
+    let dc_power = if matches!(request.analysis, Analysis::OperatingPoint | Analysis::OperatingPointNewton { .. }) {
         Some(crate::power::dc_power(&plan, &samples[0].values)?)
     } else {
         None

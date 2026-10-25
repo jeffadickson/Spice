@@ -59,9 +59,16 @@ pub fn operating_point_detailed(
     plan: &CompiledCircuit,
     solver: &dyn LinearSolver,
 ) -> SimResult<(Vec<f64>, Option<crate::newton::NewtonReport>)> {
+    operating_point_with_options(plan, solver, crate::newton::NewtonOptions::default())
+}
+/// Solve with a caller-selected bounded Newton policy.
+pub fn operating_point_with_options(
+    plan: &CompiledCircuit,
+    solver: &dyn LinearSolver,
+    options: crate::newton::NewtonOptions,
+) -> SimResult<(Vec<f64>, Option<crate::newton::NewtonReport>)> {
     if plan.has_nonlinear_devices() {
-        let (values, report) =
-            crate::newton::solve(plan, solver, crate::newton::NewtonOptions::default())?;
+        let (values, report) = crate::newton::solve(plan, solver, options)?;
         return Ok((values, Some(report)));
     }
     Ok((
