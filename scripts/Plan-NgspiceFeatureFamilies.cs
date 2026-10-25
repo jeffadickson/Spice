@@ -100,7 +100,7 @@ F092|Iterative solver provider|future
 F093|Newton damping strategy|supported
 F094|Newton continuation strategy|future
 F095|Convergence diagnostics|supported_api_only
-F096|Floating-point determinism|future
+F096|Floating-point determinism|supported
 F097|Malformed-deck fuzzing|supported
 F098|Property-based numerical tests|supported
 F099|Upstream oracle execution|supported

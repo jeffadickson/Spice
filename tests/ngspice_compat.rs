@@ -534,6 +534,15 @@ fn netlist_identifiers_have_documented_stable_case_normalization() {
 }
 
 #[test]
+fn bounded_ngspice_lowering_is_reproducible_for_the_same_deck() {
+    let deck = "title\nV1 out gnd DC 0 AC 1 90\nR1 out 0 1k\nC1 out 0 1u ac=2u\n.ac dec 10 1 10\n.end\n";
+    let first = import_ngspice_request(deck, "deterministic-import").unwrap();
+    let second = import_ngspice_request(deck, "deterministic-import").unwrap();
+    assert_eq!(serde_json::to_vec(&first).unwrap(), serde_json::to_vec(&second).unwrap());
+    assert_eq!(circuit_simulator::api::run(&first).unwrap().request_sha256, circuit_simulator::api::run(&second).unwrap().request_sha256);
+}
+
+#[test]
 fn ngspice_bounded_diode_model_lowers_named_diode_parameters() {
     let circuit = parse_ngspice_basic(
         "title\n.model DMOD D (IS=2e-14 N=2)\nV1 in 0 0.5\nR1 in out 1k\nD1 out 0 DMOD\n.end\n",

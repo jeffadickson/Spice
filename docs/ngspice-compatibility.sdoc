@@ -270,3 +270,13 @@ The bounded netlist parser shall normalize node labels to lowercase and element 
 COMMENT: >>>
 Implementation: netlist::parse. Verification: tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-028
+TITLE: Reproducible bounded deck lowering
+STATEMENT: >>>
+For identical bounded ngspice deck text and case identifier, repeated import shall produce byte-identical serialized typed requests and the same request provenance hash. The guarantee applies to supported bounded lowering only and does not claim cross-platform floating-point bitwise reproducibility.
+<<<
+COMMENT: >>>
+Implementation: netlist::import_ngspice_request and provenance::request_hash. Verification: tests/ngspice_compat.rs.
+<<<
