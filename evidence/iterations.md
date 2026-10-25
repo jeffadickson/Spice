@@ -82,3 +82,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 78. Integrate measurement validity and unit-checked assertion outcomes
 79. Provide a reproducible adaptive experiment request
 80. Verify adaptive rejection observers and integrated experiment results
+81. Add typed CSharp circuit analysis waveform and experiment requests
