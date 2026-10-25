@@ -57,8 +57,8 @@ pub struct Manifest {
     pub integration: Option<crate::configured::IntegrationReport>,
     pub measurements: Vec<crate::experiment::MeasurementResult>,
     pub assertions: Vec<crate::experiment::AssertionResult>,
-    #[serde(skip_serializing_if="Option::is_none")]
-    pub dc_power:Option<crate::power::PowerReport>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub dc_power: Option<crate::power::PowerReport>,
 }
 /// Immutable request validation precedes compilation. Only explicit CPU reference choices exist.
 pub fn run(request: &Request) -> SimResult<Manifest> {
@@ -112,7 +112,11 @@ pub fn run_with_registry(
         quantity: "current",
         unit: "A",
     }));
-    let dc_power=if matches!(request.analysis,Analysis::OperatingPoint){Some(crate::power::dc_power(&plan,&samples[0].values)?)}else{None};
+    let dc_power = if matches!(request.analysis, Analysis::OperatingPoint) {
+        Some(crate::power::dc_power(&plan, &samples[0].values)?)
+    } else {
+        None
+    };
     let mut manifest = Manifest {
         schema_version: "1",
         case_id: request.case_id.clone(),
