@@ -7,7 +7,7 @@ You are continuing work on **Spice**, a Rust circuit-simulation repository. Work
 - Document public interfaces and numerical conventions. Run meaningful malformed-input, randomized/property, mutation, and coverage checks; report real limitations.
 - Commit locally in small numbered iterations. Build at the stated checkpoint cadence. Do not claim GPU, plugin, Arrow, full SPICE compatibility, or production qualification without evidence.
 
-Current implementation through iteration 195:
+Current implementation through iteration 199:
 
 - Bounded dense MNA engine for R/C/L, independent sources, DC/AC/linear transient.
 - Independent faer sparse and nalgebra dense CPU paths.
@@ -24,4 +24,4 @@ Suggested next technical work:
 3. Add continuation/source stepping for difficult DC operating points and independent reference fixtures.
 4. Expand device models only after equation, derivative, domain, unit, and convergence contracts are written.
 
-Run `dotnet run --file scripts/Checkpoint.cs -- <multiple-of-10>` for checkpoints. `scripts/Test-Coverage.ps1` now selects a nightly MSVC coverage toolchain containing `profiler_builtins`; this host still needs Visual C++ Build Tools/Windows SDK for `link.exe` before Rust coverage can run.
+Run `dotnet run --file scripts/Checkpoint.cs -- <multiple-of-10>` for checkpoints. Re-parse all `.sdoc` files after requirement changes. `scripts/Test-Coverage.ps1` now selects a nightly MSVC coverage toolchain containing `profiler_builtins`; this host still needs Visual C++ Build Tools/Windows SDK for `link.exe` before Rust coverage can run.
