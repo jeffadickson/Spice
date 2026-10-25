@@ -1,0 +1,15 @@
+{
+  "status": "measured",
+  "tool": "18.12.0+e67518936dc54d459b37375c5eef5dc89f05d535",
+  "scope": "Simulator.Client only; conformance executable excluded from SDK metrics",
+  "source_sha256": "74ab8947bfc19b2bea6b891e5acccb8e6bf32d737d0d2bf12244688b7c09c632",
+  "line_percent": 95.0,
+  "branch_percent": 58.82352941176471,
+  "lines": 60,
+  "covered_lines": 57,
+  "exclusions": [
+    "Rust/native runtime code",
+    "generated/framework code",
+    "test executable"
+  ]
+}

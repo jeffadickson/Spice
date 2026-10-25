@@ -4,7 +4,7 @@ Version 0.1, planning baseline, 2026-10-24.
 
 Purpose: turn the architecture into executable work with explicit prerequisites, reviewable deliverables and measurable exit gates. This plan is authoritative inside the local repository together with architecture.sdoc and development-standards.sdoc. Earlier external drafts are historical and are not automatically imported into release scope.
 
-No simulator implementation has started. Every work package is Proposed. Dependencies describe logical prerequisites, not completed work. Parent relations link work packages to the architecture requirements they deliver; they do not prove satisfaction. File/test links will be added only when the corresponding artifacts exist. Work-package IDs remain stable as estimates and scope evolve.
+This plan was adopted before implementation. A bounded reference prototype now exists; implementation-status.md records partial progress. Every full work package remains Proposed until its exit criteria are evidenced. Dependencies describe logical prerequisites, not completed work. Parent relations link work packages to the architecture requirements they deliver; they do not prove satisfaction. Work-package IDs remain stable as estimates and scope evolve.
 
 Metadata convention in each COMMENT: Phase, Depends-on, Accountable-role, Deliverables, Verification and Estimate. Depends-on is a comma-separated list of PLAN-* IDs or none. This convention supports a derived backlog.json; changing that export does not change the authoritative plan. Dependencies must resolve and form an acyclic graph.
 
@@ -415,4 +415,4 @@ Primary risks and responses:
 
 Evidence convention after implementation starts: keep small reviewed manifests/reports/replay fixtures under evidence/ or tests/, identify source/tool/build/model/provider versions and hashes, and store large generated artifacts outside Git with reproducible acquisition/retention rules. A release evidence index maps requirements, tests, coverage and numerical/benchmark reports to the same source revision. No scheduling automation or cloud resources are created by this plan.
 
-Planning validation is limited to document parsing, ID uniqueness, resolved parent/dependency links, acyclic work-package dependencies and inventory consistency. No implementation coverage, native/GPU tests or performance numbers exist yet. Tool installation and compiler presence on this machine do not establish supported release platforms.
+Planning validation is limited to document parsing, ID uniqueness, resolved parent/dependency links, acyclic work-package dependencies and inventory consistency. Prototype test/managed coverage results and Rust coverage limitations are recorded separately under evidence/. No native/GPU qualification or performance claim is made. Tool installation and compiler presence on this machine do not establish supported release platforms.

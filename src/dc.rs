@@ -18,10 +18,16 @@ pub fn solve_verified(
         ));
     }
     let mut worst = 0.0_f64;
-    for i in 0..a.n {
+    for (i, &rhs_value) in b.iter().enumerate() {
         let sum: f64 = (0..a.n).map(|j| a.at(i, j) * x[j]).sum();
-        let scale: f64 = b[i].abs() + (0..a.n).map(|j| (a.at(i, j) * x[j]).abs()).sum::<f64>();
-        let error = (sum - b[i]).abs() / scale.max(f64::MIN_POSITIVE);
+        let scale: f64 = rhs_value.abs() + (0..a.n).map(|j| (a.at(i, j) * x[j]).abs()).sum::<f64>();
+        if !sum.is_finite() || !scale.is_finite() {
+            return Err(SimError::new(
+                ErrorCode::NumericalFailure,
+                "residual accumulation overflow",
+            ));
+        }
+        let error = (sum - rhs_value).abs() / scale.max(f64::MIN_POSITIVE);
         if !error.is_finite() {
             return Err(SimError::new(
                 ErrorCode::NumericalFailure,

@@ -2,7 +2,7 @@
   "schema_version": "0.1",
   "authoritative_source": "docs/implementation-plan.sdoc",
   "generated_date": "2026-10-24",
-  "implementation_status": "not started",
+  "implementation_status": "bounded reference prototype; full packages remain proposed pending exit gates",
   "work_packages": [
     {
       "id": "PLAN-001",

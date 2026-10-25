@@ -69,6 +69,8 @@ Restore();
 Directory.CreateDirectory("evidence");
 File.WriteAllText("evidence/mutation.json", JsonSerializer.Serialize(new {
     strategy = "seven deliberate source mutations, isolated copied tree; not exhaustive cargo-mutants campaign",
+    source_hashes = snapshots.Where(p => p.Key.StartsWith("src/") || p.Key.StartsWith("tests/"))
+        .ToDictionary(p => p.Key, p => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(p.Value))).ToLowerInvariant()),
     baseline = "passed", killed, total = mutants.Length, mutants = reports
 }, new JsonSerializerOptions { WriteIndented = true }));
 if (killed != mutants.Length) Environment.ExitCode = 1;

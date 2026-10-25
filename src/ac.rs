@@ -59,7 +59,7 @@ pub fn ac(
                     })
                     .sum::<f64>();
             let relative = residual.norm() / scale.max(f64::MIN_POSITIVE);
-            if !relative.is_finite() || relative > 1e-10 {
+            if !scale.is_finite() || !relative.is_finite() || relative > 1e-10 {
                 return Err(SimError::new(
                     ErrorCode::NumericalFailure,
                     "AC residual failed",

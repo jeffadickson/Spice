@@ -1,31 +1,6 @@
 
 # Rust Circuit Simulator - Clean Architecture and Interface Contracts
-
-## Architecture at a glance
-
-```mermaid
-flowchart TD
-  Clients["Rust / C# / F# / CLI"] --> Service["Validated service and job runtime"]
-  Service --> Compile["SPICE / DSL / structured input → immutable IR → plan"]
-  Compile --> Analysis["DC / AC / transient analysis sessions"]
-  Analysis --> Models["Model API: residual, charge, derivatives, trial state"]
-  Models --> Builtins["Built-in Rust models"]
-  Models --> Plugins["OSDI adapter and compiled models"]
-  Analysis --> Numerics["Numerical role contracts: nonlinear / DAE / linear"]
-  Numerics --> Linear["Circuit-independent linear solver API"]
-  Linear --> CPU["CPU sparse direct adapter"]
-  Linear --> GPU["GPU direct / iterative adapters"]
-  Analysis --> Results["Bounded result sink → Arrow / measurements / manifest"]
-  Results --> Clients
-```
-
-Arrows show service/data flow, not a complete Cargo dependency graph. Native plugins run inside an isolated worker by default; trusted in-process mode is explicit. GPU model evaluation and GPU matrix solving are independent capabilities.
-
-This is a readable rendition of `architecture.sdoc`; the SDoc file is authoritative. Requirements remain Proposed.
-
-
-
-Version 0.3, proposed architecture, 2026-10-24.
+Version 0.4, proposed architecture, 2026-10-24. A bounded reference prototype now exists; docs/implementation-status.md and prototype-contracts.sdoc define its limited implemented scope. Proposed architecture capabilities are not all implemented.
 
 This is a standalone design for a new Rust circuit simulator. It defines crate responsibilities, numerical contracts, reusable CPU/GPU solver adapters, model plugins, job execution and Rust/.NET interfaces. It is not an implementation, benchmark result, complete device-model specification or compatibility claim.
 
@@ -695,7 +670,7 @@ Testing layers:
 
 Prefer cargo-nextest for Rust execution, with separate runners where needed for doctests; Pester for PowerShell, FsCheck for .NET properties. Select Rust/.NET mutation and coverage tools during M0 based on supported toolchains and mixed native coverage. No specific coverage percentage is assumed approved. Report line/branch coverage where supported and separate core Rust, owned native shim, .NET and device-kernel measurement. Vendor source is inventoried separately, not represented as covered by testing the wrapper.
 
-Coverage does not prove numerical accuracy. Record actual reports, exclusions, tool/revision and unavailable metrics. A mutation score does not replace analytic/reference tests. Benchmarks record full workflow and memory, not only kernels. This document changes no simulator implementation; no runtime coverage or benchmark evidence exists yet.
+Coverage does not prove numerical accuracy. Record actual reports, exclusions, tool/revision and unavailable metrics. A mutation score does not replace analytic/reference tests. Benchmarks record full workflow and memory, not only kernels. Current prototype coverage and testing limitations are recorded under evidence/; neither those results nor this architecture establish complete simulator qualification.
 
 
 **ARCH-VERIFY-001**
@@ -811,7 +786,7 @@ Behavioral source/model equations require another boundary: parse expressions in
 
 The @sim/v1 module is a host-provided versioned capability, not a network fetch. User modules load only from authorized roots or pinned packages; loader policy, source content, implementation/profile, host-library version, parameters and relevant external asset hashes contribute to canonical provenance. A fixed script alone does not guarantee deterministic numerical results across devices, solver versions or parallel reductions.
 
-M0 comparison: author the same RC, nested subcircuit, sweep and assertion scenario through Starlark, F# and JSON; verify canonical equivalence, import/resource restrictions and diagnostics. Add one nonlinear behavioral source to test expression/derivative IR separately. Compare editor experience, dependency/build size, execution budgets and source mapping. Select and stabilize the DSL only after this evidence. No DSL runtime or examples have been implemented or tested yet.
+M0 comparison: author the same RC, nested subcircuit, sweep and assertion scenario through Starlark, F# and JSON; verify canonical equivalence, import/resource restrictions and diagnostics. Add one nonlinear behavioral source to test expression/derivative IR separately. Compare editor experience, dependency/build size, execution budgets and source mapping. Select and stabilize the DSL only after this evidence. The prototype has a tested F# builder and a separate experimental expression tree; Starlark, hierarchy and integrated behavioral devices remain unimplemented.
 
 
 **ARCH-LANG-001**

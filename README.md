@@ -25,6 +25,8 @@ dotnet fsi examples/BuildCircuit.fsx target/debug/circuit-simulator.exe
 dotnet run --file scripts/Mutation.cs
 ```
 
+Managed coverage can be reproduced with `scripts/Test-ManagedCoverage.ps1 -CoverageTool <path-to-dotnet-coverage>` after installing the .NET coverage tool in a tooling directory. Its SDK metrics exclude the conformance executable; they do not measure Rust.
+
 Linux executable names omit `.exe`. The C# library must be built before F# examples load it. Use `scripts/Test-Coverage.ps1` on a Rust target that includes the profiler runtime. The tested Windows GNU toolchain does not; this limitation is recorded explicitly. The Linux CI coverage job is configured but has not been executed remotely.
 
 ## Authoritative documents and evidence

@@ -1,0 +1,87 @@
+{
+  "validation_date": "2026-10-24",
+  "iteration_commits": 50,
+  "ledger_entries": 50,
+  "build_checkpoints": [
+    10,
+    20,
+    30,
+    40,
+    50
+  ],
+  "checkpoint_reports": "passed",
+  "strictdoc_documents": [
+    {
+      "requirements": 56,
+      "sha256": "be01fbfde7f5ec957467631baef5887725164e316d9ff44db8be24a70922ff95",
+      "parser": "StrictDoc 0.30.4 passed",
+      "file": "architecture.sdoc"
+    },
+    {
+      "requirements": 34,
+      "sha256": "e5c9c3cb232230dfbd68c6a80b028f10dda7db6a17d26e15b29a06ed116567c7",
+      "parser": "StrictDoc 0.30.4 passed",
+      "file": "development-standards.sdoc"
+    },
+    {
+      "requirements": 23,
+      "sha256": "ccc83c8679fd0548b57c16cb29be42dcf9a60f6200cb9537a51b78cad8ce55c0",
+      "parser": "StrictDoc 0.30.4 passed",
+      "file": "implementation-plan.sdoc"
+    },
+    {
+      "requirements": 7,
+      "sha256": "6eea656731635ee9b6b1ac45553905d58903b8537fc5f29d5cdf3f85754e1631",
+      "parser": "StrictDoc 0.30.4 passed",
+      "file": "prototype-contracts.sdoc"
+    }
+  ],
+  "unique_requirement_count": 120,
+  "parent_links": "resolved and acyclic",
+  "mutation": "7 of 7 selected mutations killed; exact source hashes verified",
+  "rust_tests": 35,
+  "managed_checks": 6,
+  "format": "passed",
+  "clippy": "passed with warnings denied",
+  "source_sha256": {
+    "src/main.rs": "550cf3f94e3b5ee0d036c73f25b0c5585ac87a671bdfd797ea02980ebdc2ab41",
+    "src/lib.rs": "21fecf7c3f297507d7bc8771542e24c62655c4e46c4527190b81c114d2792730",
+    "src/provenance.rs": "049b47515dcbbb826771d713dc3bb2088b160c8cc12eb03712de949e0f9d031a",
+    "src/error.rs": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+    "src/registry.rs": "66806bb38bd46ac51ee32baed6aeb511c2deb8b124c7f0434156e9fbfb8269ef",
+    "src/linalg.rs": "06d0b1e6c6c4ce0a790652f16b32ed5ac818510d87e60701bd142a05b2760dd1",
+    "scripts/Mutation.cs": "bb71badb3ed705d07167dc4f45d076bd6b1e4ec28a97cef347efadad2491b5ad",
+    "src/quantity.rs": "bd53faa680ee46119020b2fe33ee8c023b8c42cfd216455ef5c205e43450e892",
+    "src/ac.rs": "a6c3d03a56c81f580d441269b3d9ba0251052e0be43cd4537179ad4ae92b2bd1",
+    "src/model.rs": "b3d74493f6d18cde6c095d330062f229fbac15d55747de61856bcc6cc137b11d",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "32d8bca01eca74ff14fc01efd84cd620d38f1ff6e27e262159fce7c698bf54a7",
+    "scripts/Test.ps1": "e7c71488d774e1140977c1cd8c7edcc5dc494bd9ae640cceb9671ab71a908431",
+    "src/compile.rs": "5551ebb588d2f015047c16bf3e3a6537569dfb0560151275ef7664dff01c91f7",
+    "dotnet/Simulator.Client/Client.cs": "74ab8947bfc19b2bea6b891e5acccb8e6bf32d737d0d2bf12244688b7c09c632",
+    "src/dc.rs": "f9958197bba0cd8a9c8e1f75d09a8069a8f86bc72aa19e064166206fae91b5e2",
+    "tests/expression.rs": "251ea3e316e44e85f54c508338212af51be44ab2f1a661e4d68a5fcc3659f67a",
+    "src/circuit.rs": "a5003b574dc6ff38b872fb123d3718290ef4e3394f3428fbfde941cff930d26c",
+    "src/grid.rs": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+    "dotnet/Simulator.Conformance/Simulator.Conformance.csproj": "f6d665702bcc8347056a6e7b48a386f236a0f66dd47168c32b4f3c4b8f024c43",
+    "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+    "tests/properties.rs": "6bcfdfbbda81cb10b883aa3ec0f222ef85ce3762e7057b381389cab5776b18ae",
+    "src/ids.rs": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+    "tests/hardening.rs": "31ff6085a8d035505eecac864da27f563b5653a0d558db2cfb3a9793ea1a9020",
+    "tests/faults.rs": "ed7fcdbfee724895589ff45294c3f79b5ef5298abb2b98d89fdd49d42098ab54",
+    "src/transient.rs": "2e93199f2a36064c83a2732b03ab94e9b8ecf748436ac2a6128d264986899df7",
+    "tests/transient.rs": "371336ac59a5aaf27fe1fd36f55bfd6f678c8414e8354b475c468916d99110ad",
+    "src/api.rs": "2eaf4139ff03ccb7bff57110dc42f0fb323f297c9b5bd931968acc8a102aa639",
+    "scripts/Test-Coverage.ps1": "33c7f62c2322d3148d291accd891c059a713d5cfd869d5ef2536926d54061163",
+    "scripts/Test-ManagedCoverage.ps1": "955c0bf7ed312c86b64038e1756023e2d388a557bc3597bdb75b1b8c630f1f7d",
+    "src/expression.rs": "006566f915c3872e75401c3cd337fd33967a4b1acfac0e61c206347c24e6aa3e",
+    "src/netlist.rs": "36e84d4aee911984e9146c729716ddac316ad2a80818e5b073fc9b0aa93816cb",
+    "tests/dc.rs": "bc53abf0352e0445a1cb32205f5baa523fa26b314696c13c7925d043a4b03e78",
+    "src/backend.rs": "84fd8c35f896604c44090ffdf2779f00165dd0ea0f18d2cd3194fa3625ac4acd",
+    "tests/fuzz_smoke.rs": "ec1c20e120bf6e18eeed5808ea8007363a2e9403535a84503d7841049b2ee0aa",
+    "tests/analyses.rs": "297f8b2f23a452b4cc09acb248cbf7bdee29823be59d17358b7b6a6f9d01be97",
+    "dotnet/Simulator.Conformance/Program.cs": "d71da73da0bc3dc0bfe37d5c0c4e5cfbcb9a193990d1d3029b2eb0c7fd8f6c3c",
+    "tests/contracts.rs": "7c438f713c141edd4b09934d32430042aa63ce7dd08c4332746df0201aa54a52",
+    "src/assertion.rs": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6"
+  },
+  "qualification": "linear reference prototype only; not a full M1 release"
+}

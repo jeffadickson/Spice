@@ -36,5 +36,6 @@
   "numerical_gpu_plugin_qualification": "not executed",
   "html_rendering": "not performed",
   "readable_renditions": "passed; all source UIDs are present in corresponding Markdown documents",
-  "git_whitespace_check": "passed"
+  "git_whitespace_check": "passed",
+  "snapshot_kind": "Historical pre-implementation planning baseline; see implementation-validation.json for current state"
 }

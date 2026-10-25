@@ -1,0 +1,27 @@
+{
+  "iteration": 50,
+  "rust_debug_build": "passed",
+  "rust_release_build": "passed",
+  "rust_tests_passed": 35,
+  "managed_build": "passed",
+  "managed_checks_passed": 6,
+  "format": "passed",
+  "clippy": "passed with -D warnings",
+  "csharp_example": "passed",
+  "fsharp_example": "passed",
+  "fsharp_builder": "passed",
+  "seeded_random_networks": 500,
+  "seeded_arbitrary_input_cases": 2000,
+  "mutated_json_cases": 1665,
+  "managed_line_percent": 95.0,
+  "managed_branch_percent": 58.82352941176471,
+  "rust_coverage": "unavailable: profiler_builtins missing on tested Windows GNU target",
+  "supported_evidence_platform": "Windows x86-64 GNU; Rust 1.99.1; .NET SDK 10.0.402",
+  "remote_ci": "configured but not executed",
+  "scope": "bounded linear reference prototype, not an M1 release",
+  "repairs": [
+    "Clippy range-loop findings fixed with iterators",
+    "Overflow checks added to independently computed residuals",
+    "Mutation runner Windows path normalization corrected"
+  ]
+}
