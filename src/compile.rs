@@ -3,8 +3,15 @@ use crate::{
     error::{SimError, SimResult},
     ids::NodeId,
     linalg::Matrix,
-    model::{CapacitorModel, ResistorModel, TwoTerminalModel},
+    model::{CapacitorModel, DiodeModel, ResistorModel, TwoTerminalModel},
 };
+/// Immutable nonlinear diode definition retained separately from linear MNA terms.
+#[derive(Debug, Clone, Copy)]
+pub(crate) struct CompiledDiode {
+    pub(crate) p: NodeId,
+    pub(crate) n: NodeId,
+    pub(crate) model: DiodeModel,
+}
 /// Immutable G x + d(Q x)/dt = b plan; Q may contain negative flux rows.
 #[derive(Debug, Clone)]
 pub struct CompiledCircuit {
@@ -13,6 +20,7 @@ pub struct CompiledCircuit {
     pub(crate) charge: Matrix,
     pub(crate) rhs: Vec<f64>,
     pub(crate) branch_ids: Vec<String>,
+    pub(crate) diodes: Vec<CompiledDiode>,
 }
 impl CompiledCircuit {
     pub fn circuit(&self) -> &Circuit {
@@ -21,6 +29,8 @@ impl CompiledCircuit {
     pub fn unknown_count(&self) -> usize {
         self.conductance.n
     }
+    /// Nonlinear device presence selects Newton operating-point solving.
+    pub fn has_nonlinear_devices(&self) -> bool { !self.diodes.is_empty() }
     pub fn branch_index(&self, id: &str) -> Option<usize> {
         self.branch_ids
             .iter()
@@ -55,6 +65,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     let mut charge = Matrix::zeros(dimension)?;
     let mut rhs = vec![0.; dimension];
     let mut branch = circuit.nodes.len() - 1;
+    let mut diodes = Vec::new();
     for e in &circuit.elements {
         match e {
             Element::Capacitor { p, n, farads, .. } => stamp_pair(
@@ -77,6 +88,11 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     rhs[i] += amps;
                 }
             }
+            Element::Diode { p, n, saturation_amps, thermal_volts, .. } => diodes.push(CompiledDiode {
+                p: *p,
+                n: *n,
+                model: DiodeModel { saturation_amps: *saturation_amps, thermal_volts: *thermal_volts },
+            }),
             Element::Voltage { p, n, .. } | Element::Inductor { p, n, .. } => {
                 for (node, sign) in [(*p, 1.), (*n, -1.)] {
                     if let Some(i) = node.unknown() {
@@ -107,5 +123,6 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
         charge,
         rhs,
         branch_ids: branches,
+        diodes,
     })
 }
