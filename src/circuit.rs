@@ -8,10 +8,11 @@ pub enum Element{
     Resistor{id:String,p:NodeId,n:NodeId,ohms:f64},
     Voltage{id:String,p:NodeId,n:NodeId,volts:f64},
     Current{id:String,p:NodeId,n:NodeId,amps:f64},
+    Capacitor{id:String,p:NodeId,n:NodeId,farads:f64},
 }
 impl Element{
-    pub fn id(&self)->&str{match self{Self::Resistor{id,..}|Self::Voltage{id,..}|Self::Current{id,..}=>id}}
-    pub fn terminals(&self)->(NodeId,NodeId){match self{Self::Resistor{p,n,..}|Self::Voltage{p,n,..}|Self::Current{p,n,..}=>(*p,*n)}}
+    pub fn id(&self)->&str{match self{Self::Resistor{id,..}|Self::Voltage{id,..}|Self::Current{id,..}|Self::Capacitor{id,..}=>id}}
+    pub fn terminals(&self)->(NodeId,NodeId){match self{Self::Resistor{p,n,..}|Self::Voltage{p,n,..}|Self::Current{p,n,..}|Self::Capacitor{p,n,..}=>(*p,*n)}}
 }
 /// Ordered node labels are unique; nodes[0] must be "0".
 #[derive(Debug,Clone,Serialize,Deserialize)]
@@ -32,6 +33,7 @@ impl Circuit{
                 Element::Resistor{ohms,..} if !ohms.is_finite()||*ohms<=0.0=>return Err(SimError::invalid("resistance must be finite and positive")),
                 Element::Voltage{volts,..} if !volts.is_finite()=>return Err(SimError::invalid("voltage must be finite")),
                 Element::Current{amps,..} if !amps.is_finite()=>return Err(SimError::invalid("current must be finite")),
+                Element::Capacitor{farads,..} if !farads.is_finite()||*farads<=0.0=>return Err(SimError::invalid("capacitance must be finite and positive")),
                 _=>{}
             }
         }Ok(())
