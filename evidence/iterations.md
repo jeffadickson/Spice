@@ -25,3 +25,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 21. Add complex AC reference solves and residual checks
 22. Generate bounded monotonic frequency grids
 23. Implement explicit-window linear waveform measurements
+24. Keep assertion outcomes distinct from execution success
