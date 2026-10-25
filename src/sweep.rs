@@ -211,6 +211,16 @@ pub struct GridPoint {
     pub error: Option<SimError>,
 }
 
+/// Complete in-memory Cartesian campaign envelope.
+#[derive(Debug, Serialize)]
+pub struct ScalarGridRun {
+    pub schema_version: &'static str,
+    pub base_case_id: String,
+    pub grid: ScalarGrid,
+    pub points: Vec<GridPoint>,
+    pub summary: GridSummary,
+}
+
 /// Accounting summary for a Cartesian-grid execution.
 #[derive(Debug, Default, Serialize, PartialEq, Eq)]
 pub struct GridSummary {
@@ -272,6 +282,23 @@ pub fn run_grid(
         }
     }
     Ok(points)
+}
+
+/// Execute a grid and retain its declared dimensions in the output envelope.
+pub fn execute_grid(
+    request: &Request,
+    grid: &ScalarGrid,
+    registry: &BackendRegistry,
+) -> SimResult<ScalarGridRun> {
+    let points = run_grid(request, grid, registry)?;
+    let summary = GridSummary::from_points(&points);
+    Ok(ScalarGridRun {
+        schema_version: "1",
+        base_case_id: request.case_id.clone(),
+        grid: grid.clone(),
+        points,
+        summary,
+    })
 }
 
 /// Execute each declared value in order. The generated case identity includes its

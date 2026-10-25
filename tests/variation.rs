@@ -4,7 +4,7 @@ use circuit_simulator::{
     ids::NodeId,
     registry::BackendRegistry,
     sweep::{
-        GridSummary, SweepSummary, assertion_summary, derived_case_id, execute_scalar, final_signal,
+        GridSummary, SweepSummary, assertion_summary, derived_case_id, execute_grid, execute_scalar, final_signal,
         final_signal_rows, measurement_rows, run_grid, run_scalar, run_scalar_cancellable,
     },
     variation::{ScalarGrid, ScalarKind, ScalarSweep, replace_scalar, scalar_kind},
@@ -20,6 +20,15 @@ fn fixture() -> Circuit {
             ohms: 10.,
         }],
     }
+}
+
+#[test]
+fn scalar_grid_envelope_retains_dimension_definition() {
+    let request: Request = serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    let grid = ScalarGrid { dimensions: vec![ScalarSweep { element_id: "R1".into(), values: vec![1000.] }] };
+    let run = execute_grid(&request, &grid, &BackendRegistry::reference()).unwrap();
+    assert_eq!(run.summary.total, 1);
+    assert_eq!(run.grid.dimensions[0].element_id, "R1");
 }
 
 #[test]
