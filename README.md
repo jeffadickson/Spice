@@ -29,6 +29,8 @@ dotnet run --file scripts/Checkpoint.cs -- 100
 dotnet run --file scripts/Mutation.cs
 ```
 
+For the focused nonlinear diode/Newton contract suite, run `./scripts/Test-Nonlinear.ps1`. Full checkpoints use `dotnet run --file scripts/Checkpoint.cs -- <multiple-of-10>`.
+
 Linux executable names omit `.exe`. Build the managed library before F# examples load it. `scripts/Test-SecondSlice.ps1` runs the current build/tests and typed examples. Source/revision evidence is under `evidence/`; generated logs and binaries stay outside Git.
 
 `scripts/Test-ManagedCoverage.ps1 -CoverageTool <path-to-dotnet-coverage>` measures the client SDK separately from its conformance executable. `scripts/Test-Coverage.ps1` requires a supported Rust profiler runtime. The tested Windows GNU distribution lacks it; unavailable Rust coverage is explicitly recorded, never inferred from managed metrics.
