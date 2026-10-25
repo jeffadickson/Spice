@@ -10,6 +10,7 @@ use circuit_simulator::{
     netlist::parse,
     newton::{NewtonOptions, linearize, norm_inf, solve, solve_from},
     power::dc_power,
+    sources::{BoundSources, SourceOverride}, waveform::Waveform,
     transient::{TransientOptions, transient},
 };
 
@@ -24,6 +25,15 @@ fn shockley_diode_has_positive_incremental_conductance() {
     assert!(zero.current_amps.abs() < 1e-24);
     assert!(forward.current_amps > 0.);
     assert!(forward.conductance_siemens > zero.conductance_siemens);
+}
+
+#[test]
+fn diode_cannot_be_rebound_as_an_independent_source() {
+    let circuit = Circuit { nodes: vec!["0".into(), "a".into()], elements: vec![Element::Diode {
+        id: "D1".into(), p: NodeId(1), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
+    }] };
+    let overrides = [SourceOverride { id: "D1".into(), waveform: Waveform::Constant { value: 1. } }];
+    assert!(BoundSources::new(&compile(&circuit).unwrap(), &overrides).is_err());
 }
 
 #[test]
