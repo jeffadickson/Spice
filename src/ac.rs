@@ -22,6 +22,12 @@ pub fn ac(
     frequencies: &[f64],
     solver: &dyn LinearSolver,
 ) -> SimResult<Vec<AcSample>> {
+    if plan.has_nonlinear_devices() {
+        return Err(SimError::new(
+            ErrorCode::Unsupported,
+            "nonlinear AC linearization around a bias point is not implemented",
+        ));
+    }
     if frequencies.is_empty() || frequencies.len() > 10_000 {
         return Err(SimError::invalid("AC grid must contain 1..10000 points"));
     }
