@@ -61,3 +61,17 @@ Verification: dotnet/Simulator.Conformance/MoreChecks.cs, tests/nonlinear.rs::js
 RELATIONS:
 - TYPE: Parent
   VALUE: REF-005
+
+[REQUIREMENT]
+UID: REF4-005
+TITLE: Reproducible continuation handoff
+STATEMENT: >>>
+The repository shall retain a top-level continuation prompt identifying the implemented nonlinear scope, intentional limitations, validation commands, and the next bounded engineering milestones.
+<<<
+COMMENT: >>>
+Implementation: prompt.md.
+Verification: prompt.md is reviewed at each final iteration checkpoint.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF-001
