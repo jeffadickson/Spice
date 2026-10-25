@@ -18,6 +18,15 @@ pub struct SweepPoint {
     pub error: Option<SimError>,
 }
 
+/// Create a bounded stable case ID for a generated point. The original case ID
+/// is preserved verbatim and the kind/index suffix distinguishes duplicates.
+pub fn derived_case_id(base: &str, kind: char, index: usize) -> SimResult<String> {
+    if base.is_empty() || base.len() > 220 || !matches!(kind, 's' | 'g') || index > 63 {
+        return Err(SimError::invalid("invalid generated case identity"));
+    }
+    Ok(format!("{base}--{kind}{index:02}"))
+}
+
 /// A small, JSON-friendly accounting summary. Counts make partial campaign
 /// outcomes explicit instead of forcing callers to infer failure from absent data.
 #[derive(Debug, Default, Serialize, PartialEq, Eq)]
@@ -66,7 +75,7 @@ pub fn run_grid(
     let mut points = Vec::new();
     for (index, (values, circuit)) in grid.circuits(&request.circuit)?.into_iter().enumerate() {
         let mut variant = request.clone();
-        variant.case_id = format!("{}--g{:02}", request.case_id, index);
+        variant.case_id = derived_case_id(&request.case_id, 'g', index)?;
         variant.circuit = circuit;
         let selections = grid.dimensions.iter().zip(&values)
             .map(|(dimension, value)| dimension.selection(&request.circuit, *value))
@@ -122,7 +131,7 @@ pub fn run_scalar_cancellable(
             ));
         }
         let mut variant = request.clone();
-        variant.case_id = format!("{}--s{:02}", request.case_id, index);
+        variant.case_id = derived_case_id(&request.case_id, 's', index)?;
         variant.circuit = circuit;
         let selection = sweep.selection(&request.circuit, *value)?;
         let point = match run_with_registry(&variant, registry) {

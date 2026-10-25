@@ -3,7 +3,7 @@ use circuit_simulator::{
     circuit::{Circuit, Element},
     ids::NodeId,
     registry::BackendRegistry,
-    sweep::{SweepSummary, run_grid, run_scalar, run_scalar_cancellable},
+    sweep::{SweepSummary, derived_case_id, run_grid, run_scalar, run_scalar_cancellable},
     variation::{ScalarGrid, ScalarKind, ScalarSweep, replace_scalar, scalar_kind},
 };
 
@@ -17,6 +17,14 @@ fn fixture() -> Circuit {
             ohms: 10.,
         }],
     }
+}
+
+#[test]
+fn derived_case_ids_are_bounded_and_kind_specific() {
+    assert_eq!(derived_case_id("base", 's', 2).unwrap(), "base--s02");
+    assert_ne!(derived_case_id("base", 's', 2).unwrap(), derived_case_id("base", 'g', 2).unwrap());
+    assert!(derived_case_id("", 's', 0).is_err());
+    assert!(derived_case_id("base", 'x', 0).is_err());
 }
 
 #[test]
