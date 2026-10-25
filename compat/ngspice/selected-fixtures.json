@@ -27,6 +27,12 @@
       "required_features": ["spaced_sine_arguments", "resistor_model_cards", "resistor_geometry", "source_scale_and_multiplicity", "multiple_analysis_requests", "print_expression_lists"]
     },
     {
+      "path": "tests/polezero/filt_multistage.cir",
+      "family": "controlled_sources",
+      "state": "blocked_by_features",
+      "required_features": ["implicit_dc_ac_source_form", "pole_zero_analysis"]
+    },
+    {
       "path": "examples/measure/func_cap.sp",
       "family": "hierarchy_or_expression",
       "state": "blocked_by_features",
