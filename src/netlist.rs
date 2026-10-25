@@ -199,6 +199,11 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
         {
             tokens[3] = &tokens[3][3..];
         }
+        if matches!(head.chars().next().map(|c| c.to_ascii_uppercase()), Some('V' | 'I'))
+            && tokens.len() == 4
+        {
+            tokens[3] = tokens[3].trim_end_matches(['V', 'v', 'A', 'a']);
+        }
         normalized.push_str(&tokens.join(" "));
         normalized.push('\n');
     }
