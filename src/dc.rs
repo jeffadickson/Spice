@@ -1,4 +1,21 @@
-use crate::{compile::CompiledCircuit,error::SimResult,linalg::LinearSolver};
-/// Ground is implicit; source branch current follows the source terminal order.
-pub fn operating_point(plan:&CompiledCircuit,solver:&dyn LinearSolver)->SimResult<Vec<f64>>{solver.solve(&plan.conductance,&plan.rhs)}
+use crate::{compile::CompiledCircuit,error::{ErrorCode,SimError,SimResult},linalg::{LinearSolver,Matrix}};
+/// Backward error is checked independently; a vendor success status is insufficient.
+pub fn solve_verified(a:&Matrix,b:&[f64],solver:&dyn LinearSolver)->SimResult<(Vec<f64>,f64)>{
+    a.validate(b)?;
+    let x=solver.solve(a,b)?;
+    if x.len()!=a.n||x.iter().any(|v|!v.is_finite()){return Err(SimError::new(ErrorCode::NumericalFailure,"backend returned invalid solution"));}
+    let mut worst=0.0_f64;
+    for i in 0..a.n{
+        let sum:f64=(0..a.n).map(|j|a.at(i,j)*x[j]).sum();
+        let scale:f64=b[i].abs()+(0..a.n).map(|j|(a.at(i,j)*x[j]).abs()).sum::<f64>();
+        let error=(sum-b[i]).abs()/scale.max(f64::MIN_POSITIVE);
+        if !error.is_finite(){return Err(SimError::new(ErrorCode::NumericalFailure,"nonfinite residual"));}
+        worst=worst.max(error);
+    }
+    if worst>1e-10{return Err(SimError::new(ErrorCode::NumericalFailure,format!("backward error {worst} exceeds 1e-10")));}
+    Ok((x,worst))
+}
+pub fn operating_point(plan:&CompiledCircuit,solver:&dyn LinearSolver)->SimResult<Vec<f64>>{
+    Ok(solve_verified(&plan.conductance,&plan.rhs,solver)?.0)
+}
 

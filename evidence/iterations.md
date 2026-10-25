@@ -14,3 +14,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 10. Add analytic DC and invalid-input regression tests
 11. Add QR reference adapter without claiming provider independence
 12. Expose truthful CPU reference backend capabilities
+13. Verify physical residuals independently of backend success
