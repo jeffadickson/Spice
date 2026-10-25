@@ -20,6 +20,20 @@ impl UniformRange {
     }
 }
 
+/// A positive interval sampled uniformly in natural-logarithmic space.
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct LogUniformRange { pub low: f64, pub high: f64 }
+
+impl LogUniformRange {
+    pub fn validate(self) -> SimResult<()> {
+        if !self.low.is_finite() || !self.high.is_finite() || self.low <= 0. || self.low >= self.high {
+            return Err(SimError::invalid("invalid log-uniform sampling range"));
+        }
+        Ok(())
+    }
+}
+
 /// A deterministic SplitMix64 stream. It is a reproducibility utility, not a
 /// cryptographic random number generator or statistical-quality guarantee.
 #[derive(Debug, Clone)]
@@ -51,6 +65,13 @@ pub fn uniform_values(seed: u64, count: usize, range: UniformRange) -> SimResult
     range.validate()?;
     let mut stream = SeededSequence::new(seed);
     (0..count).map(|_| stream.uniform(range)).collect()
+}
+
+/// Generate positive samples evenly distributed in log space.
+pub fn log_uniform_values(seed: u64, count: usize, range: LogUniformRange) -> SimResult<Vec<f64>> {
+    range.validate()?;
+    let values = uniform_values(seed, count, UniformRange { low: range.low.ln(), high: range.high.ln() })?;
+    Ok(values.into_iter().map(f64::exp).collect())
 }
 
 /// Serialized recipe for a scalar sweep. Recording the recipe rather than only

@@ -1,4 +1,4 @@
-use circuit_simulator::sampling::{SeededSequence, UniformRange, UniformSweepPlan, uniform_values};
+use circuit_simulator::sampling::{LogUniformRange, SeededSequence, UniformRange, UniformSweepPlan, log_uniform_values, uniform_values};
 
 #[test]
 fn seeded_stream_is_reproducible_and_bounded() {
@@ -10,6 +10,13 @@ fn seeded_stream_is_reproducible_and_bounded() {
         assert_eq!(left, b.uniform(range).unwrap());
         assert!((-2. .. 3.).contains(&left));
     }
+}
+
+#[test]
+fn log_uniform_sampling_stays_positive_and_bounded() {
+    let range = LogUniformRange { low: 1e-3, high: 1e3 };
+    for value in log_uniform_values(12, 10, range).unwrap() { assert!((range.low..range.high).contains(&value)); }
+    assert!(LogUniformRange { low: 0., high: 1. }.validate().is_err());
 }
 
 #[test]
