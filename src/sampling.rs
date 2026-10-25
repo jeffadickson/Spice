@@ -43,3 +43,11 @@ impl SeededSequence {
         Ok(range.low + (range.high - range.low) * fraction)
     }
 }
+
+/// Generate a bounded reproducible sequence from a recorded seed and range.
+pub fn uniform_values(seed: u64, count: usize, range: UniformRange) -> SimResult<Vec<f64>> {
+    if count == 0 || count > 64 { return Err(SimError::invalid("sample count must be 1..64")); }
+    range.validate()?;
+    let mut stream = SeededSequence::new(seed);
+    (0..count).map(|_| stream.uniform(range)).collect()
+}
