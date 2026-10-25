@@ -76,6 +76,18 @@ fn vcvs_rejects_identical_control_terminals() {
 }
 
 #[test]
+fn vcvs_power_accounting_balances_the_controlling_supply() {
+    let circuit = Circuit { nodes: vec!["0".into(), "in".into(), "out".into()], elements: vec![
+        Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 2. },
+        Element::Vcvs { id: "E1".into(), p: NodeId(2), n: NodeId(0), cp: NodeId(1), cn: NodeId(0), gain: -3. },
+        Element::Resistor { id: "R1".into(), p: NodeId(2), n: NodeId(0), ohms: 1. },
+    ]};
+    let plan = compile(&circuit).unwrap();
+    let x = operating_point(&plan, &DenseLu).unwrap();
+    assert!(dc_power(&plan, &x).unwrap().sum_absorbed_w.abs() < 1e-12);
+}
+
+#[test]
 fn vcvs_json_request_is_solved_through_the_public_api() {
     let request: Request = serde_json::from_str(r#"{
       "schema_version":"1","case_id":"vcvs-json","circuit":{"nodes":["0","in","out"],"elements":[
