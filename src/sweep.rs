@@ -141,7 +141,7 @@ pub fn assertion_summary(points: &[SweepPoint], assertion_id: &str) -> Assertion
     let mut summary = AssertionSummary::default();
     for point in points {
         let outcome = point.result.as_ref().and_then(|result| result.assertions.iter().find(|a| a.id == assertion_id));
-        match outcome.map(|assertion| assertion.outcome) {
+        match outcome.map(|assertion| &assertion.outcome) {
             Some(crate::assertion::Outcome::Pass) => summary.pass += 1,
             Some(crate::assertion::Outcome::Fail) => summary.fail += 1,
             Some(crate::assertion::Outcome::Indeterminate) => summary.indeterminate += 1,
