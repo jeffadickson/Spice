@@ -55,7 +55,8 @@ var mutants = new (string Name, string File, string Pattern, string Replacement)
     ("sparse-row-order", "src/sparse.rs", @"w\[0\]\s*>=\s*w\[1\]", "false"),
     ("pwl-interpolation", "src/waveform.rs", @"\(1\.\s*-\s*f\)\s*\*\s*a\.value\s*\+\s*f\s*\*\s*b\.value", "a.value"),
     ("missing-assertion", "src/assertion.rs", @"_\s*=>\s*Outcome::Indeterminate", "_ => Outcome::Pass"),
-    ("variation-grid-limit", "src/variation.rs", @"product\s*>\s*64", "false")
+    ("variation-grid-limit", "src/variation.rs", @"product\s*>\s*64", "false"),
+    ("diode-current-sign", "src/model.rs", @"exponential\s*-\s*1\.0", "1.0 - exponential")
 };
 // The baseline runs the full suite; each operator then uses its focused regression target.
 var targets = new Dictionary<string,string> {
@@ -63,7 +64,7 @@ var targets = new Dictionary<string,string> {
     ["milli-scale"]="analyses",["residual-acceptance"]="faults",["cancel-check"]="transient",
     ["state-commit"]="transient",["flux-sign"]="dynamic",["adaptive-acceptance"]="adaptive",
     ["sparse-row-order"]="providers",["pwl-interpolation"]="edge_cases",["missing-assertion"]="analyses",
-    ["variation-grid-limit"]="variation"
+    ["variation-grid-limit"]="variation",["diode-current-sign"]="nonlinear"
 };
 var reports = new List<object>(); var killed = 0;
 foreach (var mutant in mutants)
