@@ -3,6 +3,17 @@
 use crate::error::{SimError, SimResult};
 use crate::variation::ScalarSweep;
 
+/// Versioned metadata required to reproduce a pseudo-random materialization.
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct SamplingProvenance {
+    pub algorithm: &'static str,
+    pub seed: u64,
+}
+
+impl SamplingProvenance {
+    pub const fn splitmix64(seed: u64) -> Self { Self { algorithm: "splitmix64-v1", seed } }
+}
+
 /// A specified inclusive-exclusive finite interval.
 #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -86,6 +97,7 @@ pub struct UniformSweepPlan {
 }
 
 impl UniformSweepPlan {
+    pub const fn provenance(&self) -> SamplingProvenance { SamplingProvenance::splitmix64(self.seed) }
     pub fn materialize(&self) -> SimResult<ScalarSweep> {
         let sweep = ScalarSweep { element_id: self.element_id.clone(), values: uniform_values(self.seed, self.count, self.range)? };
         sweep.validate()?;
@@ -104,6 +116,7 @@ pub struct LogUniformSweepPlan {
 }
 
 impl LogUniformSweepPlan {
+    pub const fn provenance(&self) -> SamplingProvenance { SamplingProvenance::splitmix64(self.seed) }
     pub fn materialize(&self) -> SimResult<ScalarSweep> {
         let sweep = ScalarSweep { element_id: self.element_id.clone(), values: log_uniform_values(self.seed, self.count, self.range)? };
         sweep.validate()?;

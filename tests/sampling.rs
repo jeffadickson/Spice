@@ -29,6 +29,7 @@ fn log_uniform_sampling_stays_positive_and_bounded() {
 fn uniform_sweep_plan_records_reproducible_materialization() {
     let plan = UniformSweepPlan { element_id: "R1".into(), seed: 7, count: 2, range: UniformRange { low: 1., high: 2. } };
     assert_eq!(plan.materialize().unwrap().values, plan.materialize().unwrap().values);
+    assert_eq!(plan.provenance().algorithm, "splitmix64-v1");
 }
 
 #[test]
