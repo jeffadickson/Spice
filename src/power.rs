@@ -1,0 +1,26 @@
+use crate::{circuit::Element,compile::CompiledCircuit,error::{SimError,SimResult}};
+use serde::Serialize;
+#[derive(Debug,Serialize)]
+pub struct DevicePower{pub id:String,pub absorbed_w:f64}
+#[derive(Debug,Serialize)]
+pub struct PowerReport{pub devices:Vec<DevicePower>,pub sum_absorbed_w:f64,pub sum_absolute_w:f64}
+/// Absorbed power uses passive sign convention; sources may supply negative power.
+pub fn dc_power(plan:&CompiledCircuit,x:&[f64])->SimResult<PowerReport>{
+    if x.len()!=plan.unknown_count()||x.iter().any(|v|!v.is_finite()){return Err(SimError::invalid("invalid DC power state"));}
+    let voltage=|node:crate::ids::NodeId|node.unknown().map(|i|x[i]).unwrap_or(0.);
+    let mut devices=Vec::new();let mut sum=0.;let mut absolute=0.;
+    for element in &plan.circuit.elements{
+        let(p,n)=element.terminals();let v=voltage(p)-voltage(n);
+        let current=match element{
+            Element::Resistor{ohms,..}=>v/ohms,
+            Element::Current{amps,..}=>*amps,
+            Element::Capacitor{..}=>0.,
+            Element::Voltage{id,..}|Element::Inductor{id,..}=>x[plan.branch_index(id).ok_or_else(||SimError::invalid("missing power branch"))?]
+        };
+        let power=v*current;if !power.is_finite(){return Err(SimError::invalid("power overflow"));}
+        sum+=power;absolute+=power.abs();devices.push(DevicePower{id:element.id().into(),absorbed_w:power});
+    }
+    if !sum.is_finite()||!absolute.is_finite(){return Err(SimError::invalid("power accumulation overflow"));}
+    Ok(PowerReport{devices,sum_absorbed_w:sum,sum_absolute_w:absolute})
+}
+

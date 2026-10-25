@@ -94,3 +94,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 90. Checkpoint typed managed contracts and extended dynamics
 91. Make build checkpoints reproducible with captured logs and source hashes
 92. Reject malformed typed result shapes and oversized experiment metadata
+93. Expose independently balanced DC device power diagnostics
