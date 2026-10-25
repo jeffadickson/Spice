@@ -618,6 +618,12 @@ fn ngspice_bounded_output_directives_are_validated_before_import_only_lowering()
 }
 
 #[test]
+fn ngspice_noacct_option_is_explicitly_accepted_and_other_options_rejected() {
+    assert!(parse_ngspice_basic("title\n.options noacct\nV1 out 0 1\nR1 out 0 1k\n.end\n").is_ok());
+    assert!(parse_ngspice_basic("title\n.options reltol=1e-3\n.end\n").is_err());
+}
+
+#[test]
 fn ngspice_explicit_dc_source_units_are_normalized() {
     let circuit = parse_ngspice_basic("title\nV1 out 0 DC 2V\nR1 out 0 4k\n.end\n").unwrap();
     let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();

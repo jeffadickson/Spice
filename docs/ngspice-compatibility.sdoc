@@ -250,3 +250,13 @@ The bounded ngspice importer shall accept at most one one-value .temp directive 
 COMMENT: >>>
 Implementation: netlist::bounded_temperature. Verification: tests/ngspice_compat.rs.
 <<<
+
+[REQUIREMENT]
+UID: NGC-026
+TITLE: Bounded options-card import
+STATEMENT: >>>
+The bounded ngspice importer shall accept only the noacct .options form, which changes reporting but not numerical circuit semantics. Unsupported options shall fail explicitly rather than being silently discarded.
+<<<
+COMMENT: >>>
+Implementation: netlist::parse_ngspice_basic. Verification: tests/ngspice_compat.rs.
+<<<

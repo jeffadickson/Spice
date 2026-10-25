@@ -226,7 +226,15 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
             }
             continue;
         }
-        if [".options", ".tran", ".ac", ".model", ".temp"]
+        if head.eq_ignore_ascii_case(".options") {
+            // noacct changes ngspice accounting/reporting only, so accepting it
+            // cannot alter the typed circuit or numerical result.
+            if directive_tokens.len() != 2 || !directive_tokens[1].eq_ignore_ascii_case("noacct") {
+                return Err(SimError::new(ErrorCode::Unsupported, "unsupported bounded .options directive"));
+            }
+            continue;
+        }
+        if [".tran", ".ac", ".model", ".temp"]
             .iter()
             .any(|directive| head.eq_ignore_ascii_case(directive))
         {
