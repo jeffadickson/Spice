@@ -37,10 +37,17 @@ fn initial(plan:&CompiledCircuit,b:&[f64],state:Option<&[f64]>,solver:&dyn Linea
     }Ok(x.to_vec())
 }
 pub fn run(plan:&CompiledCircuit,solver:&dyn LinearSolver,options:&TransientConfig,cancel:&std::sync::atomic::AtomicBool)->SimResult<ConfiguredResult>{
+    run_observed(plan,solver,options,cancel,|_|Ok(()))
+}
+/// Trusted Rust consumers can observe accepted samples, including before cancellation.
+/// Callback failure aborts the run; it cannot turn partial data into a success result.
+pub fn run_observed(plan:&CompiledCircuit,solver:&dyn LinearSolver,options:&TransientConfig,cancel:&std::sync::atomic::AtomicBool,mut observer:impl FnMut(&Sample)->SimResult<()>)->SimResult<ConfiguredResult>{
     options.validate()?;
     let sources=BoundSources::new(plan,&options.sources)?;let mut old_rhs=sources.rhs(0.)?;
     let mut state=initial(plan,&old_rhs,options.initial_state.as_deref(),solver)?;
     let mut samples=vec![Sample{time_s:0.,values:state.clone()}];
+    observer(&samples[0])?;
+    let mut stepper=crate::integrator::Stepper::new(plan,solver,options.method);
     let(mut time,mut proposed)=(0.,options.max_step_s);let(mut steps,mut rejected,mut attempts)=(0,0,0);let mut max_error=0_f64;
     while time<options.stop_s{
         if cancel.load(std::sync::atomic::Ordering::Relaxed){return Err(SimError::new(ErrorCode::Cancelled,"configured run cancelled"));}
@@ -50,12 +57,12 @@ pub fn run(plan:&CompiledCircuit,solver:&dyn LinearSolver,options:&TransientConf
         if let Some(event)=sources.next_breakpoint(time,next){next=event;}
         if next<=time{return Err(SimError::new(ErrorCode::ResourceExhausted,"timestep cannot advance"));}
         let h=next-time;let new_rhs=sources.rhs(next)?;attempts+=1;
-        let coarse=crate::integrator::advance(plan,solver,&state,h,crate::integrator::RhsPair{previous:&old_rhs,current:&new_rhs},options.method)?;
+        let coarse=stepper.advance(&state,h,crate::integrator::RhsPair{previous:&old_rhs,current:&new_rhs})?;
         let accepted=if let Some(adaptive)=&options.adaptive{
             let mid=time+h/2.;if mid<=time||mid>=next{return Err(SimError::new(ErrorCode::NumericalFailure,"adaptive midpoint cannot advance"));}
             let mid_rhs=sources.rhs(mid)?;
-            let half=crate::integrator::advance(plan,solver,&state,h/2.,crate::integrator::RhsPair{previous:&old_rhs,current:&mid_rhs},options.method)?;
-            let fine=crate::integrator::advance(plan,solver,&half,next-mid,crate::integrator::RhsPair{previous:&mid_rhs,current:&new_rhs},options.method)?;
+            let half=stepper.advance(&state,h/2.,crate::integrator::RhsPair{previous:&old_rhs,current:&mid_rhs})?;
+            let fine=stepper.advance(&half,next-mid,crate::integrator::RhsPair{previous:&mid_rhs,current:&new_rhs})?;
             let order=if options.method==Method::BackwardEuler{1}else{2};
             let error=adaptive.error(plan,&coarse,&fine,order)?;
             if error>1.{
@@ -69,6 +76,7 @@ pub fn run(plan:&CompiledCircuit,solver:&dyn LinearSolver,options:&TransientConf
         }else{coarse};
         // Only accepted states, RHS values and times become visible to future steps.
         state=accepted;old_rhs=new_rhs;time=next;steps+=1;samples.push(Sample{time_s:time,values:state.clone()});
+        observer(samples.last().expect("just appended accepted sample"))?;
     }
     Ok(ConfiguredResult{samples,report:IntegrationReport{method:options.method,initialization:if options.initial_state.is_some(){"explicit_state"}else{"operating_point"},accepted_steps:steps,rejected_steps:rejected,attempts,max_accepted_error:max_error}})
 }

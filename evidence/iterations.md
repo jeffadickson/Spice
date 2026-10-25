@@ -76,3 +76,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 72. Define voltage and current scaled adaptive error budgets
 73. Use step doubling with explicit rejection and unchanged accepted state
 74. Cache two prepared numeric matrices within each linear integrator
+75. Expose accepted-sample observers with cancellation and failure semantics
