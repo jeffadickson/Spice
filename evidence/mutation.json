@@ -25,7 +25,7 @@
     "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
     "src/model.rs": "42dc1af3ac45663506458d03f06ed80192bc02dddb42dc8649ea980c6e0855c7",
     "src/netlist.rs": "0354c73144681009932d1bbc4d37d04c665be5b424cca4291d3640b03a100821",
-    "src/newton.rs": "fa116170e9412e4874c8b72bf5450792742b08389c03adbdbe4e1fa106dea0ba",
+    "src/newton.rs": "41088c0f9a71075f2e820a2153a2702f06bcb2998e9ad33a017342b0e6d565ed",
     "src/power.rs": "a51e574ee25e4703dfd9f07fdcbc4e5c8d46f6b2697f1342b5c13ae6edcaf29e",
     "src/provenance.rs": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
     "src/quantity.rs": "bd53faa680ee46119020b2fe33ee8c023b8c42cfd216455ef5c205e43450e892",
@@ -55,7 +55,7 @@
     "tests/hardening.rs": "317cdab0ec40c31501dc30902486ce7db70369af086384de8b5e40eb79ccd9cc",
     "tests/matrix_conformance.rs": "54e41a436234bd01b87b43310e730b5384219df73a6cc1f166329c60c06d2b12",
     "tests/ngspice_compat.rs": "d17feb936cac251fcea81c84875900f54eefe0cfc5635a8230843bcba9ca4add",
-    "tests/nonlinear.rs": "314d0c8afd2145d7a936b4253c3c2c32d5bdfd97a0d0552ce04fec97ce24dc34",
+    "tests/nonlinear.rs": "f58345c513140e6ef5fb51ce2b3cf11dd4820b3926c8e97819d24c98228e796f",
     "tests/properties.rs": "55912c3f745dff6da62a9cc9e8c26299a491bf284bf100c2687b184a5eb8457a",
     "tests/providers.rs": "b680666648c60349955a2fdcca3ee6d9da9044ee9a9ae91ea852c3dc1d38f1c7",
     "tests/sampling.rs": "a4adb30c300cc662cf02b679647834808eddf71669c3f57af2d60d358d7e64fe",
@@ -64,8 +64,8 @@
     "tests/variation.rs": "5b7523f11e957db4c3953798f272b68ebd14991d750a5d191f0d90937887f4bd"
   },
   "baseline": "passed",
-  "killed": 15,
-  "total": 15,
+  "killed": 16,
+  "total": 16,
   "mutants": [
     {
       "name": "stamp-sign",
@@ -156,6 +156,12 @@
       "status": "killed",
       "exit_code": 101,
       "test_target": "matrix_conformance"
+    },
+    {
+      "name": "continuation-stage-skip",
+      "status": "killed",
+      "exit_code": 101,
+      "test_target": "nonlinear"
     }
   ]
 }

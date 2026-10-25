@@ -89,3 +89,19 @@ Verification: tests/nonlinear.rs::nonlinear_backward_euler_transient_produces_fi
 RELATIONS:
 - TYPE: Parent
   VALUE: REF4-002
+
+[REQUIREMENT]
+UID: REF4-007
+TITLE: Bounded DC source continuation
+STATEMENT: >>>
+The reference engine shall offer explicit opt-in DC source stepping that scales independent-source excitation, warm-starts each stage from the last accepted MNA state, halves failed increments within validated minimum-step and stage-attempt budgets, and records accepted/rejected stage evidence. Failure at a configured bound shall be an actionable numerical failure, never a silent fallback or altered circuit.
+<<<
+COMMENT: >>>
+Implementation: src/newton.rs, src/dc.rs, src/api.rs, dotnet/Simulator.Client/Requests.cs and Results.cs.
+Verification: tests/nonlinear.rs::source_continuation_records_accepted_warm_start_stages, tests/nonlinear.rs::source_continuation_reports_a_bounded_minimum_step_failure, dotnet/Simulator.Conformance/MoreChecks.cs.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-002
+- TYPE: Parent
+  VALUE: ARCH-EQ-001

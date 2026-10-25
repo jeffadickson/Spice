@@ -29,15 +29,30 @@ fn stamp_vector(values: &mut [f64], p: crate::ids::NodeId, n: crate::ids::NodeId
 
 /// Assemble the MNA residual and analytic diode Jacobian at `values`.
 pub fn linearize(plan: &CompiledCircuit, values: &[f64]) -> SimResult<LinearizedSystem> {
+    linearize_with_rhs(plan, values, &plan.rhs)
+}
+
+/// Assemble against an explicit independent-source right-hand side.
+///
+/// Source continuation owns scaling this vector; the circuit topology, device
+/// equations and Jacobian convention remain unchanged at every stage.
+pub fn linearize_with_rhs(
+    plan: &CompiledCircuit,
+    values: &[f64],
+    rhs: &[f64],
+) -> SimResult<LinearizedSystem> {
     if values.len() != plan.unknown_count() || values.iter().any(|value| !value.is_finite()) {
         return Err(SimError::invalid("invalid Newton trial vector"));
+    }
+    if rhs.len() != values.len() || rhs.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::invalid("invalid Newton source right-hand side"));
     }
     let mut residual = vec![0.; values.len()];
     for (row, residual_value) in residual.iter_mut().enumerate() {
         *residual_value = (0..values.len())
             .map(|column| plan.conductance.at(row, column) * values[column])
             .sum::<f64>()
-            - plan.rhs[row];
+            - rhs[row];
     }
     let mut jacobian = plan.conductance.clone();
     for diode in &plan.diodes {
@@ -106,6 +121,9 @@ pub struct NewtonOptions {
     pub max_iterations: usize,
     pub absolute_tolerance: f64,
     pub relative_tolerance: f64,
+    /// Optional bounded source-stepping policy for difficult DC operating points.
+    #[serde(default)]
+    pub continuation: Option<ContinuationOptions>,
 }
 
 impl Default for NewtonOptions {
@@ -114,6 +132,7 @@ impl Default for NewtonOptions {
             max_iterations: 50,
             absolute_tolerance: 1e-12,
             relative_tolerance: 1e-9,
+            continuation: None,
         }
     }
 }
@@ -133,12 +152,73 @@ impl NewtonOptions {
     }
 }
 
+/// Bounded source-stepping policy. Each accepted stage becomes the next Newton initial state.
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ContinuationOptions {
+    /// Initial fraction of the full independent-source right-hand side.
+    pub initial_step: f64,
+    /// Smallest permitted source-fraction increment after failed stages.
+    pub minimum_step: f64,
+    /// Maximum accepted and rejected source-stage attempts combined.
+    pub max_stages: usize,
+}
+
+impl Default for ContinuationOptions {
+    fn default() -> Self {
+        Self {
+            initial_step: 0.125,
+            minimum_step: 1e-4,
+            max_stages: 64,
+        }
+    }
+}
+
+impl ContinuationOptions {
+    pub fn validate(self) -> SimResult<()> {
+        if !self.initial_step.is_finite()
+            || !self.minimum_step.is_finite()
+            || self.initial_step <= 0.
+            || self.initial_step > 1.
+            || self.minimum_step <= 0.
+            || self.minimum_step > self.initial_step
+            || self.max_stages == 0
+            || self.max_stages > 1024
+        {
+            return Err(SimError::invalid("invalid continuation options"));
+        }
+        Ok(())
+    }
+}
+
 /// Deterministic convergence evidence for an accepted operating point.
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct NewtonReport {
     pub iterations: usize,
     pub residual_inf: f64,
+    pub update_inf: f64,
     pub damped_steps: usize,
+    pub linear_solves: usize,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub continuation: Option<ContinuationReport>,
+}
+
+/// One accepted source-stepping stage retained as reproducible convergence evidence.
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct ContinuationStage {
+    pub source_scale: f64,
+    pub iterations: usize,
+    pub residual_inf: f64,
+    pub update_inf: f64,
+    pub damped_steps: usize,
+}
+
+/// Aggregate source-stepping evidence; rejected attempts are counted but not presented as solves.
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct ContinuationReport {
+    pub accepted_stages: usize,
+    pub rejected_stages: usize,
+    pub stages: Vec<ContinuationStage>,
 }
 
 fn limited_candidate(
@@ -192,11 +272,28 @@ pub fn solve_from(
     if initial.len() != plan.unknown_count() || initial.iter().any(|value| !value.is_finite()) {
         return Err(SimError::invalid("invalid Newton initial state"));
     }
+    if let Some(continuation) = options.continuation {
+        continuation.validate()?;
+        return solve_with_source_continuation(plan, solver, options, continuation, initial);
+    }
+    solve_from_rhs(plan, solver, options, initial, &plan.rhs)
+}
+
+/// Solves one fixed independent-source excitation with explicit residual/update evidence.
+fn solve_from_rhs(
+    plan: &CompiledCircuit,
+    solver: &dyn LinearSolver,
+    options: NewtonOptions,
+    initial: Vec<f64>,
+    rhs: &[f64],
+) -> SimResult<(Vec<f64>, NewtonReport)> {
     let mut values = initial;
-    let baseline = norm_inf(&plan.rhs)?.max(1.);
+    let baseline = norm_inf(rhs)?.max(1.);
     let mut damped_steps = 0;
+    let mut linear_solves = 0;
+    let mut last_update = f64::INFINITY;
     for iteration in 0..options.max_iterations {
-        let system = linearize(plan, &values)?;
+        let system = linearize_with_rhs(plan, &values, rhs)?;
         let residual = norm_inf(&system.residual)?;
         if residual <= options.absolute_tolerance + options.relative_tolerance * baseline {
             return Ok((
@@ -204,12 +301,16 @@ pub fn solve_from(
                 NewtonReport {
                     iterations: iteration,
                     residual_inf: residual,
+                    update_inf: if iteration == 0 { 0. } else { last_update },
                     damped_steps,
+                    linear_solves,
+                    continuation: None,
                 },
             ));
         }
-        let rhs: Vec<f64> = system.residual.iter().map(|value| -value).collect();
-        let delta = solver.solve(&system.jacobian, &rhs)?;
+        let correction_rhs: Vec<f64> = system.residual.iter().map(|value| -value).collect();
+        let delta = solver.solve(&system.jacobian, &correction_rhs)?;
+        linear_solves += 1;
         if delta.len() != values.len() || delta.iter().any(|value| !value.is_finite()) {
             return Err(SimError::new(
                 ErrorCode::NumericalFailure,
@@ -219,13 +320,18 @@ pub fn solve_from(
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-attempt));
-            let candidate_residual = norm_inf(&linearize(plan, &candidate)?.residual)?;
+            let candidate_residual = norm_inf(&linearize_with_rhs(plan, &candidate, rhs)?.residual)?;
             if candidate_residual < residual {
-                accepted = Some((candidate, damped || attempt > 0));
+                let update = candidate
+                    .iter()
+                    .zip(&values)
+                    .map(|(candidate, previous)| candidate - previous)
+                    .collect::<Vec<_>>();
+                accepted = Some((candidate, damped || attempt > 0, norm_inf(&update)?));
                 break;
             }
         }
-        let Some((candidate, damped)) = accepted else {
+        let Some((candidate, damped, update)) = accepted else {
             return Err(SimError::new(
                 ErrorCode::NumericalFailure,
                 "Newton line search failed to reduce residual",
@@ -234,12 +340,79 @@ pub fn solve_from(
         if damped {
             damped_steps += 1;
         }
+        last_update = update;
         values = candidate;
     }
     Err(SimError::new(
         ErrorCode::NumericalFailure,
         "Newton iteration limit exceeded",
     ))
+}
+
+/// Solves progressively scaled independent sources, shrinking failed increments.
+fn solve_with_source_continuation(
+    plan: &CompiledCircuit,
+    solver: &dyn LinearSolver,
+    options: NewtonOptions,
+    continuation: ContinuationOptions,
+    initial: Vec<f64>,
+) -> SimResult<(Vec<f64>, NewtonReport)> {
+    let mut source_scale = 0.0;
+    let mut step = continuation.initial_step;
+    let mut values = initial;
+    let mut attempts = 0;
+    let mut rejected_stages = 0;
+    let mut stages = Vec::new();
+    let mut final_report = None;
+    while source_scale < 1.0 {
+        if attempts >= continuation.max_stages {
+            return Err(SimError::new(
+                ErrorCode::NumericalFailure,
+                format!("source continuation exhausted {} stage attempts at scale {source_scale}", continuation.max_stages),
+            ));
+        }
+        attempts += 1;
+        let target_scale = (source_scale + step).min(1.0);
+        let scaled_rhs = plan.rhs.iter().map(|value| value * target_scale).collect::<Vec<_>>();
+        match solve_from_rhs(plan, solver, options, values.clone(), &scaled_rhs) {
+            Ok((candidate, report)) => {
+                stages.push(ContinuationStage {
+                    source_scale: target_scale,
+                    iterations: report.iterations,
+                    residual_inf: report.residual_inf,
+                    update_inf: report.update_inf,
+                    damped_steps: report.damped_steps,
+                });
+                source_scale = target_scale;
+                values = candidate;
+                final_report = Some(report);
+                step = (step * 2.0).min(1.0 - source_scale);
+            }
+            Err(error) => {
+                if step <= continuation.minimum_step {
+                    return Err(SimError::new(
+                        ErrorCode::NumericalFailure,
+                        format!("source continuation failed at scale {target_scale} with minimum step {}: {}", continuation.minimum_step, error.message),
+                    ));
+                }
+                rejected_stages += 1;
+                step *= 0.5;
+                if step < continuation.minimum_step {
+                    return Err(SimError::new(
+                        ErrorCode::NumericalFailure,
+                        format!("source continuation cannot reduce below minimum step {} after failure at scale {target_scale}: {}", continuation.minimum_step, error.message),
+                    ));
+                }
+            }
+        }
+    }
+    let mut report = final_report.ok_or_else(|| SimError::invalid("source continuation produced no stages"))?;
+    report.continuation = Some(ContinuationReport {
+        accepted_stages: stages.len(),
+        rejected_stages,
+        stages,
+    });
+    Ok((values, report))
 }
 
 /// Solve a bounded backward-Euler nonlinear step from a finite committed state.
@@ -252,9 +425,17 @@ pub fn solve_backward_euler_step(
     rhs: &[f64],
 ) -> SimResult<(Vec<f64>, NewtonReport)> {
     options.validate()?;
+    if options.continuation.is_some() {
+        return Err(SimError::new(
+            ErrorCode::Unsupported,
+            "source continuation is currently limited to DC operating points",
+        ));
+    }
     let mut values = previous.to_vec();
     let baseline = norm_inf(rhs)?.max(1.);
     let mut damped_steps = 0;
+    let mut linear_solves = 0;
+    let mut last_update = f64::INFINITY;
     for iteration in 0..options.max_iterations {
         let system = linearize_backward_euler(plan, &values, previous, step_s, rhs)?;
         let residual = norm_inf(&system.residual)?;
@@ -264,7 +445,10 @@ pub fn solve_backward_euler_step(
                 NewtonReport {
                     iterations: iteration,
                     residual_inf: residual,
+                    update_inf: if iteration == 0 { 0. } else { last_update },
                     damped_steps,
+                    linear_solves,
+                    continuation: None,
                 },
             ));
         }
@@ -276,6 +460,7 @@ pub fn solve_backward_euler_step(
                 .map(|value| -value)
                 .collect::<Vec<_>>(),
         )?;
+        linear_solves += 1;
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) =
@@ -284,11 +469,18 @@ pub fn solve_backward_euler_step(
                 &linearize_backward_euler(plan, &candidate, previous, step_s, rhs)?.residual,
             )? < residual
             {
-                accepted = Some((candidate, damped || attempt > 0));
+                let update_norm = norm_inf(
+                    &candidate
+                        .iter()
+                        .zip(&values)
+                        .map(|(candidate, previous)| candidate - previous)
+                        .collect::<Vec<_>>(),
+                )?;
+                accepted = Some((candidate, damped || attempt > 0, update_norm));
                 break;
             }
         }
-        let Some((candidate, damped)) = accepted else {
+        let Some((candidate, damped, update_norm)) = accepted else {
             return Err(SimError::new(
                 ErrorCode::NumericalFailure,
                 "nonlinear transient Newton line search failed",
@@ -297,6 +489,7 @@ pub fn solve_backward_euler_step(
         if damped {
             damped_steps += 1;
         }
+        last_update = update_norm;
         values = candidate;
     }
     Err(SimError::new(

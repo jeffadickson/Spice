@@ -17,3 +17,8 @@ note projects StrictDoc requirement `REF4-005`; the `.sdoc` source is authoritat
 The fixed-step transient entry point now supports diode circuits through bounded
 backward-Euler Newton steps. Configured/adaptive nonlinear transient stepping,
 source breakpoints, and small-signal AC bias linearization remain future work.
+
+Opt-in DC source continuation scales independent-source excitation through
+bounded stages, warm-starts each stage from the prior accepted state, and records
+accepted/rejected stage evidence. It is not yet a general homotopy, Gmin, or
+nonlinear-transient recovery mechanism.

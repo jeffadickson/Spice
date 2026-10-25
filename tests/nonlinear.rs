@@ -9,7 +9,7 @@ use circuit_simulator::{
     ids::NodeId,
     model::DiodeModel,
     netlist::parse,
-    newton::{NewtonOptions, linearize, norm_inf, solve, solve_from},
+    newton::{ContinuationOptions, NewtonOptions, linearize, norm_inf, solve, solve_from},
     power::dc_power,
     sources::{BoundSources, SourceOverride},
     transient::{TransientOptions, transient},
@@ -711,4 +711,63 @@ fn nonlinear_backward_euler_transient_produces_finite_committed_samples() {
             .all(|sample| sample.values.iter().all(|value| value.is_finite()))
     );
     assert!(samples[1].values[1] > samples[0].values[1]);
+}
+
+#[test]
+fn source_continuation_records_accepted_warm_start_stages() {
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "s".into(), "a".into()],
+        elements: vec![
+            Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
+            Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
+            Element::Diode {
+                id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
+            },
+        ],
+    };
+    let (values, report) = solve(
+        &compile(&circuit).unwrap(),
+        &DenseLu,
+        NewtonOptions {
+            continuation: Some(ContinuationOptions { initial_step: 0.25, minimum_step: 0.01, max_stages: 16 }),
+            ..NewtonOptions::default()
+        },
+    )
+    .unwrap();
+    assert!(values.iter().all(|value| value.is_finite()));
+    let continuation = report.continuation.unwrap();
+    assert!(continuation.accepted_stages >= 3);
+    // Stage reduction is allowed; the report keeps it observable rather than hidden.
+    assert!(continuation.rejected_stages <= 16);
+    assert_eq!(continuation.stages.last().unwrap().source_scale, 1.0);
+    assert!(continuation.stages.windows(2).all(|stages| stages[0].source_scale < stages[1].source_scale));
+    assert!(report.residual_inf < 1e-9);
+    assert!(report.update_inf.is_finite());
+    assert!(report.linear_solves > 0);
+}
+
+#[test]
+fn source_continuation_reports_a_bounded_minimum_step_failure() {
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "s".into(), "a".into()],
+        elements: vec![
+            Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
+            Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
+            Element::Diode {
+                id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
+            },
+        ],
+    };
+    let error = solve(
+        &compile(&circuit).unwrap(),
+        &DenseLu,
+        NewtonOptions {
+            max_iterations: 1,
+            continuation: Some(ContinuationOptions { initial_step: 0.5, minimum_step: 0.5, max_stages: 2 }),
+            ..NewtonOptions::default()
+        },
+    )
+    .unwrap_err();
+    assert!(error.message.contains("source continuation failed"));
+    assert!(error.message.contains("minimum step"));
 }

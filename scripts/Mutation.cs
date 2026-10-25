@@ -59,7 +59,9 @@ var mutants = new (string Name, string File, string Pattern, string Replacement)
     ("variation-grid-limit", "src/variation.rs", @"product\s*>\s*64", "false"),
     ("diode-current-sign", "src/model.rs", @"exponential\s*-\s*1\.0", "1.0 - exponential"),
     // The backend-neutral seam must reject nonfinite coefficients before an adapter receives them.
-    ("sparse-contract-nonfinite", "src/solver_contract.rs", @"!value\.is_finite\(\)", "false")
+    ("sparse-contract-nonfinite", "src/solver_contract.rs", @"!value\.is_finite\(\)", "false"),
+    // Continuation must not silently jump from zero to the final source scale.
+    ("continuation-stage-skip", "src/newton.rs", @"let target_scale = \(source_scale \+ step\)\.min\(1\.0\);", "let target_scale = 1.0;")
 };
 // The baseline runs the full suite; each operator then uses its focused regression target.
 var targets = new Dictionary<string,string> {
@@ -68,7 +70,7 @@ var targets = new Dictionary<string,string> {
     ["state-commit"]="transient",["flux-sign"]="dynamic",["adaptive-acceptance"]="adaptive",
     ["sparse-row-order"]="providers",["pwl-interpolation"]="edge_cases",["missing-assertion"]="analyses",
     ["variation-grid-limit"]="variation",["diode-current-sign"]="nonlinear",
-    ["sparse-contract-nonfinite"]="matrix_conformance"
+    ["sparse-contract-nonfinite"]="matrix_conformance",["continuation-stage-skip"]="nonlinear"
 };
 var reports = new List<object>(); var killed = 0;
 foreach (var mutant in mutants)

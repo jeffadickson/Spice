@@ -35,7 +35,11 @@ public abstract record Analysis;
 public sealed record OperatingPoint : Analysis;
 /// <summary>Explicit bounded nonlinear DC convergence policy.</summary>
 public sealed record OperatingPointNewton(NewtonOptions Options) : Analysis;
-public sealed record NewtonOptions(int MaxIterations = 50, double AbsoluteTolerance = 1e-12, double RelativeTolerance = 1e-9);
+/// <summary>Optional source continuation is explicit so ordinary operating-point semantics remain unchanged.</summary>
+public sealed record NewtonOptions(int MaxIterations = 50, double AbsoluteTolerance = 1e-12,
+    double RelativeTolerance = 1e-9, ContinuationOptions? Continuation = null);
+/// <summary>Bounded DC source-stepping policy; each accepted stage seeds the next stage.</summary>
+public sealed record ContinuationOptions(double InitialStep = 0.125, double MinimumStep = 1e-4, int MaxStages = 64);
 public sealed record Transient(LegacyTransientOptions Options) : Analysis;
 public sealed record LegacyTransientOptions(double StopS, double StepS, int MaxSteps);
 public sealed record Ac(double[] FrequenciesHz) : Analysis;

@@ -17,7 +17,7 @@ Current implementation through the 100-point ngspice-compatibility campaign (rem
 - ngspice deck lowering covers selected directives, continuation lines, ground aliases, bounded subcircuits/parameters/expressions, `.model D`, `.temp`, and explicit bounded options.
 - Source syntax includes compact and whitespace waveform forms for PULSE, SIN, PWL, and EXP. AC source magnitude/phase and R/C/L AC values are represented.
 - Controlled source support includes VCVS, VCCS, CCCS, and CCVS with dedicated compatibility tests.
-- Nonlinear AC bias linearization plus nonlinear adaptive and source-override transient stepping remain intentionally unsupported.
+- Nonlinear AC bias linearization plus nonlinear adaptive and source-override transient stepping remain intentionally unsupported. DC source continuation is available as an explicit bounded Newton option; it is not yet Gmin stepping or general homotopy.
 
 Start by reading `README.md`, `docs/implementation-status.md`, `docs/ngspice-compatibility.sdoc`, `docs/fourth-slice.sdoc`, `docs/campaign-2-to-5.html`, `compat/ngspice/selected-fixtures.json`, `evidence/mutation.json`, and `evidence/iterations.md`.
 
@@ -27,10 +27,9 @@ For authoring evolution, read `docs/modern-dsl-proposal.sdoc` before designing a
 
 Suggested next technical work:
 
-1. Add DC-bias small-signal AC linearization using diode incremental conductance and independent ngspice fixtures.
+1. Add Gmin stepping and dimensional residual/update convergence checks to complement existing source continuation.
 2. Extend nonlinear transient MNA to configured/adaptive stepping, source breakpoints, and reference fixtures.
-3. Add continuation/source stepping for difficult DC operating points.
-4. Grow the selected ngspice corpus cautiously, adding upstream hashes, manifest entries, parser/lowering tests, and oracle comparisons before claiming support.
-5. Expand device models only after equation, derivative, domain, unit, and convergence contracts are written.
+3. Grow the selected ngspice corpus cautiously, adding upstream hashes, manifest entries, parser/lowering tests, and oracle comparisons before claiming support.
+4. Expand device models only after equation, derivative, domain, unit, and convergence contracts are written.
 
 Run `dotnet run --file scripts/Checkpoint.cs -- <multiple-of-10>` for checkpoints. Re-parse all `.sdoc` files after requirement changes. Run `dotnet run scripts/Validate-NgspiceFixtureManifest.cs -- compat/ngspice/selected-fixtures.json` after corpus changes and both `scripts/Compare-Ngspice*Oracle.cs` scripts when their fixtures change. `scripts/Test-Coverage.ps1` now selects a nightly MSVC coverage toolchain containing `profiler_builtins`; this host still needs Visual C++ Build Tools/Windows SDK for `link.exe` before Rust coverage can run.

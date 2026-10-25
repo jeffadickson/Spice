@@ -5,8 +5,14 @@ public sealed record ResultManifest(string SchemaVersion, string CaseId, string 
     SignalInfo[] Signals, RealSample[] Samples, AcSample[] AcSamples, MeasurementValue[] Measurements,
     AssertionValue[] Assertions, IntegrationInfo? Integration, BackendInfo Backend, string RequestSha256, PowerInfo? DcPower=null,
     NewtonInfo? Newton=null);
-/// <summary>Accepted nonlinear DC convergence evidence; absent for linear analyses.</summary>
-public sealed record NewtonInfo(int Iterations, double ResidualInf, int DampedSteps);
+/// <summary>Accepted nonlinear convergence evidence; absent for linear analyses.</summary>
+public sealed record NewtonInfo(int Iterations, double ResidualInf, int DampedSteps, double UpdateInf = 0,
+    int LinearSolves = 0, ContinuationInfo? Continuation = null);
+/// <summary>Aggregate evidence for an opt-in bounded DC source-stepping solve.</summary>
+public sealed record ContinuationInfo(int AcceptedStages, int RejectedStages, ContinuationStageInfo[] Stages);
+/// <summary>One accepted independent-source scale in a continuation solve.</summary>
+public sealed record ContinuationStageInfo(double SourceScale, int Iterations, double ResidualInf,
+    double UpdateInf, int DampedSteps);
 public sealed record PowerInfo(DevicePower[] Devices,double SumAbsorbedW,double SumAbsoluteW);
 public sealed record DevicePower(string Id,double AbsorbedW);
 public sealed record SignalInfo(string Id, string Quantity, string Unit);
