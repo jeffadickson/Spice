@@ -1,0 +1,30 @@
+# Build and tool environments
+/build/
+/target/
+**/bin/
+**/obj/
+/.venv/
+/.tools/
+/work/
+/.vs/
+/.idea/
+
+# Runtime results, caches and large generated test artifacts
+/runs/
+/artifacts/
+/corpus-local/
+**/*.profraw
+**/*.profdata
+**/*.coverage
+**/TestResults/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.user
+*.suo
+*.pfx
+*.key
+
+# Keep reviewed small evidence summaries and replay fixtures under evidence/tests.

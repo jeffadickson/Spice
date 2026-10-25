@@ -1,0 +1,503 @@
+{
+  "schema_version": "0.1",
+  "authoritative_source": "docs/implementation-plan.sdoc",
+  "generated_date": "2026-10-24",
+  "implementation_status": "not started",
+  "work_packages": [
+    {
+      "id": "PLAN-001",
+      "title": "Establish repository, toolchains and verification harness",
+      "status": "Proposed",
+      "phase": "M0",
+      "depends_on": [],
+      "accountable_role": "core engineer and verification lead",
+      "deliverables": "toolchain/dependency policy, minimal Rust workspace and managed test client, documented PowerShell entry points, CI jobs, dependency-direction checks and coverage/mutation tool evaluation. Choose a source license before distributing implementation dependencies; retain component/transitive license records. Repo/docs creation in this planning baseline does not complete the implementation package.",
+      "verification": "Build clean CPU-only examples, execute meaningful smoke/failure tests, parse all StrictDoc files and publish real coverage scopes/tool versions. Check Windows x86-64 and Linux x86-64 first; explicitly review macOS arm64 support before the M1 release profile is frozen.",
+      "estimate": "Small to Medium; revisit after toolchain/native packaging inspection.",
+      "architecture_requirements": [
+        "ARCH-DEP-001",
+        "ARCH-VERIFY-003"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-002",
+      "title": "Freeze equation, unit and model-state conventions",
+      "status": "Proposed",
+      "phase": "M0",
+      "depends_on": [
+        "PLAN-001"
+      ],
+      "accountable_role": "numerical lead",
+      "deliverables": "lower-level StrictDoc equations/contracts, R/C/L/source and diode reference fixtures, derivative checks, known singular cases, initial-condition semantics and fixture-specific error bounds.",
+      "verification": "Compare assembled equations, Jacobians and charge derivatives to analytic/independent references; detect deliberate sign and derivative mutations. Record why solver tolerances do not imply global waveform accuracy.",
+      "estimate": "Medium; limit initial devices to those needed for the first analog slice.",
+      "architecture_requirements": [
+        "ARCH-EQ-001",
+        "ARCH-MOD-002"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-003",
+      "title": "Evaluate CPU providers and Rust/C++ integration",
+      "status": "Proposed",
+      "phase": "M0",
+      "depends_on": [
+        "PLAN-001",
+        "PLAN-002"
+      ],
+      "accountable_role": "numerical lead and interoperability engineer",
+      "deliverables": "sparse real/complex matrix corpus; CPU direct-provider spikes, preferably KLU plus an independently implemented candidate; license/build/index/precision review; measured coarse-call adapter cost; Rust versus C++ decision record. Do not count two wrappers of the same factorization as independent providers.",
+      "verification": "Check residuals, transpose/complex behavior, nonsymmetric/indefinite/singular cases and repeated-value/structural invalidation. Publish clean-build and end-to-end measurements; select rather than assume native-library compatibility.",
+      "estimate": "Medium, time-box unsuccessful provider builds and record rejection reasons.",
+      "architecture_requirements": [
+        "ARCH-LANG-001",
+        "ARCH-PORT-002"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-004",
+      "title": "Prove Rust-to-.NET result and lifecycle contracts",
+      "status": "Proposed",
+      "phase": "M0",
+      "depends_on": [
+        "PLAN-001"
+      ],
+      "accountable_role": "interoperability engineer",
+      "deliverables": "versioned schema sketches/golden fixtures, minimal C ABI/worker round trip, SafeHandle disposal tests, bounded event queue and Arrow .NET batch reading experiment. This spike may use a deterministic fixture operation; label it as a fixture rather than a simulator.",
+      "verification": "Test malformed lengths, unknown versions, stale handles, slow readers, client disposal, native exceptions/panics and worker crash classification. Run C# file-based and F# Interactive examples without Python.",
+      "estimate": "Medium.",
+      "architecture_requirements": [
+        "ARCH-API-001",
+        "ARCH-API-002"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-005",
+      "title": "Validate external nonlinear/DAE integration fit",
+      "status": "Proposed",
+      "phase": "M0",
+      "depends_on": [
+        "PLAN-002",
+        "PLAN-003"
+      ],
+      "accountable_role": "numerical lead",
+      "deliverables": "SUNDIALS or PETSc adapter experiment, documented residual/Jacobian mapping, one nonlinear-charge fixture, algebraic constraint and explicit-time cases, integration-versus-reimplementation decision. Deferred adoption does not imply rejection of the role interface.",
+      "verification": "Independently differentiate the actual continuous-residual callback and compare transient/event/initialization results. Confirm exactly one Newton and one timestep controller own their respective histories.",
+      "estimate": "Research; initially 1-2 engineer-weeks, then adopt, defer or narrow scope.",
+      "architecture_requirements": [
+        "ARCH-PORT-004",
+        "ARCH-PORT-005"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-006",
+      "title": "Evaluate compiled-model, GPU and DSL boundaries",
+      "status": "Proposed",
+      "phase": "M0",
+      "depends_on": [
+        "PLAN-002",
+        "PLAN-003",
+        "PLAN-004"
+      ],
+      "accountable_role": "model engineer, numerical lead and interoperability engineer",
+      "deliverables": "pinned OSDI descriptor/evaluation mapping for one model; a real GPU solve experiment if supported hardware exists; Starlark/F# authoring comparison yielding the same canonical plan. Record separate adopt/defer/reject decisions. C#/F# remains the trusted automation path.",
+      "verification": "Check model charge/derivatives and rollback semantics; include transfers in GPU measurements; test DSL import/expansion limits, units and source mapping. A missing GPU is an explicit unexecuted experiment, not a simulated hardware pass.",
+      "estimate": "Research; separate short time boxes totaling initially 2-3 engineer-weeks; can continue after the CPU slice begins if no core-contract risk remains.",
+      "architecture_requirements": [
+        "ARCH-MOD-003",
+        "ARCH-GPU-002",
+        "ARCH-DSL-001"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-007",
+      "title": "Implement immutable circuit and plan compilation",
+      "status": "Proposed",
+      "phase": "M1a",
+      "depends_on": [
+        "PLAN-002",
+        "PLAN-003",
+        "PLAN-004"
+      ],
+      "accountable_role": "core engineer",
+      "deliverables": "minimal sim-types/IR/compiler modules, quantity validation, topology diagnostics, signal catalog, model bindings, source spans and structural/numeric identity rules. Start with structured input rather than broad netlist compatibility.",
+      "verification": "Test invalid references/units, floating islands, ideal constraints, stamp bounds, equivalent node/hierarchy transformations and structural-parameter invalidation using seeded property tests and fuzz fixtures.",
+      "estimate": "Medium to Large.",
+      "architecture_requirements": [
+        "ARCH-STATE-002",
+        "ARCH-STATE-003"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-008",
+      "title": "Productionize the first CPU backend",
+      "status": "Proposed",
+      "phase": "M1a",
+      "depends_on": [
+        "PLAN-003"
+      ],
+      "accountable_role": "numerical lead",
+      "deliverables": "backend factory/capabilities, direct-linear session, pattern/value invalidation, real/complex support needed for M1, native lifecycle tests and CPU-only packaging.",
+      "verification": "Pass the shared matrix corpus and fault/lifetime tests, compare residuals to independent references and report wrapper/native coverage separately. Never report a vendor success code as circuit convergence.",
+      "estimate": "Medium to Large, depending on native packaging.",
+      "architecture_requirements": [
+        "ARCH-LIN-001",
+        "ARCH-LIN-003",
+        "ARCH-LIN-004"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-009",
+      "title": "Implement baseline device evaluation and assembly",
+      "status": "Proposed",
+      "phase": "M1a",
+      "depends_on": [
+        "PLAN-002",
+        "PLAN-007"
+      ],
+      "accountable_role": "model engineer",
+      "deliverables": "model descriptors, validated parameters/domains, local/global bindings, state layout and observables. Qualify R/source DC first, then C/L dynamic contributions and diode behavior; additional transistor profiles require separate reviewed equations and corpus scope.",
+      "verification": "Compare device values/derivatives independently, test sign/polarity and malformed model descriptors, and retain mutation tests that kill incorrect stamp/charge contributions.",
+      "estimate": "Large; sequence device subsets rather than wait for the complete list.",
+      "architecture_requirements": [
+        "ARCH-MOD-001",
+        "ARCH-EQ-001"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-010",
+      "title": "Deliver operating point and bounded nonlinear solve",
+      "status": "Proposed",
+      "phase": "M1a",
+      "depends_on": [
+        "PLAN-007",
+        "PLAN-008",
+        "PLAN-009"
+      ],
+      "accountable_role": "numerical lead",
+      "deliverables": "DC driver, qualified Newton implementation or adopted controller, source/gmin recovery policy, explicit initial guesses and regularization records. Declare controller choice using M0 evidence; PLAN-005 is required only if that external controller is selected.",
+      "verification": "Check analytic linear/diode circuits, tiny-update/large-residual rejection, overflow, singularity, hard starts and multiple solutions without uniqueness claims.",
+      "estimate": "Large.",
+      "architecture_requirements": [
+        "ARCH-EQ-002",
+        "ARCH-EQ-003"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-011",
+      "title": "Implement bounded worker jobs and typed results",
+      "status": "Proposed",
+      "phase": "M1a",
+      "depends_on": [
+        "PLAN-004",
+        "PLAN-007",
+        "PLAN-010"
+      ],
+      "accountable_role": "core engineer and interoperability engineer",
+      "deliverables": "job/attempt IDs, CPU thread/resource budgets, local IPC version/frame policy, C ABI ownership and managed disposal/cancellation, minimal manifest and measurement descriptors. Native model sandbox claims are deferred until PLAN-019 passes.",
+      "verification": "Run a C#/F# resistor/diode case; test invalid/singular inputs, terminal-state races, late cancellation, blocked consumers, worker crashes and stale handles. Publish API conformance and coverage evidence.",
+      "estimate": "Large.",
+      "architecture_requirements": [
+        "ARCH-RUN-001",
+        "ARCH-API-003",
+        "ARCH-API-004"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-012",
+      "title": "Implement AC from operating-point linearization",
+      "status": "Proposed",
+      "phase": "M1b",
+      "depends_on": [
+        "PLAN-008",
+        "PLAN-009",
+        "PLAN-010",
+        "PLAN-011"
+      ],
+      "accountable_role": "numerical lead",
+      "deliverables": "frequency grids, complex source/excitation rules, G+j*omega*C assembly, axis/signal descriptors and phase/reference conventions.",
+      "verification": "Compare analytic RC/RLC/controlled-source transfer functions and complex values, reject unsupported model capabilities and verify source polarity and frequency units.",
+      "estimate": "Medium to Large.",
+      "architecture_requirements": [
+        "ARCH-EQ-001",
+        "ARCH-DATA-001"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-013",
+      "title": "Implement transient integration and transactional state",
+      "status": "Proposed",
+      "phase": "M1b",
+      "depends_on": [
+        "PLAN-009",
+        "PLAN-010",
+        "PLAN-011"
+      ],
+      "accountable_role": "numerical lead and model engineer",
+      "deliverables": "start with backward Euler, then qualified trapezoidal/BDF scope; predictors, history buffers, local error/scaling, source breakpoints, model events and requested output-grid semantics. External integrator adoption additionally requires PLAN-005 evidence.",
+      "verification": "Check analytic RC/RLC, charged initial states, stiff/switching cases, event-edge timing and forced rejection with identical accepted-state replay. Retain state-commit and error-control mutation checks.",
+      "estimate": "Large; high numerical risk and likely multiple qualification iterations.",
+      "architecture_requirements": [
+        "ARCH-EQ-004",
+        "ARCH-EQ-005",
+        "ARCH-PORT-004"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-014",
+      "title": "Deliver streaming, measurement and durable evidence",
+      "status": "Proposed",
+      "phase": "M1b",
+      "depends_on": [
+        "PLAN-011",
+        "PLAN-012",
+        "PLAN-013"
+      ],
+      "accountable_role": "interoperability engineer and verification lead",
+      "deliverables": "Arrow stream/file distinction, batch envelopes, signal/axis/complex schemas, measurement windows/interpolation, assertion indeterminate policy, staged artifacts, hashes and a managed reader. Add Parquet only when campaign workflows justify it.",
+      "verification": "Test independent Arrow readers, throttling/memory bounds, missing/duplicate batches, disk-full, corrupted artifacts, incomplete windows and atomic manifest publication. Run the RC transient through C# and F# end to end.",
+      "estimate": "Large.",
+      "architecture_requirements": [
+        "ARCH-DATA-001",
+        "ARCH-DATA-002",
+        "ARCH-DATA-003"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-015",
+      "title": "Add a scoped SPICE compatibility frontend",
+      "status": "Proposed",
+      "phase": "M1b",
+      "depends_on": [
+        "PLAN-007",
+        "PLAN-010"
+      ],
+      "accountable_role": "core engineer",
+      "deliverables": "lexer/parser, include policy, hierarchical parameters, suffix rules, construct support table and minimal interoperability corpus. Broad LTspice/PSpice control-language parity remains outside M1.",
+      "verification": "Fuzz lexical/expression/include boundaries, test M versus MEG and expansion errors, compare equivalent text/JSON plans and report parse/elaborate/solve compatibility separately.",
+      "estimate": "Large, scope constrained by a reviewed construct whitelist.",
+      "architecture_requirements": [
+        "ARCH-COMPAT-001"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-016",
+      "title": "Qualify a second independent provider and selection policy",
+      "status": "Proposed",
+      "phase": "M1",
+      "depends_on": [
+        "PLAN-003",
+        "PLAN-008",
+        "PLAN-012",
+        "PLAN-013"
+      ],
+      "accountable_role": "numerical lead",
+      "deliverables": "second adapter, shared conformance results, roles/options schema, session/cache validation and backend selection/reporting. An iterative provider is not presented as a drop-in direct solver without convergence evidence.",
+      "verification": "Compare circuit/matrix residuals and outcomes, test unsupported scalar/index/placement combinations, misspelled options and changed-build cache invalidation. Distinguish changed convergence paths from semantic incompatibility.",
+      "estimate": "Medium to Large.",
+      "architecture_requirements": [
+        "ARCH-PORT-001",
+        "ARCH-PORT-002",
+        "ARCH-PORT-003",
+        "ARCH-PORT-006"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-017",
+      "title": "Maintain continuous numerical and adversarial qualification",
+      "status": "Proposed",
+      "phase": "M1",
+      "depends_on": [
+        "PLAN-001",
+        "PLAN-002"
+      ],
+      "accountable_role": "verification lead",
+      "deliverables": "ongoing matrix/device/circuit/API suites, bounded PR fuzz/property runs, documented longer manually or CI-triggered campaigns, minimized replay fixtures, coverage scopes/exclusions and reviewed project thresholds. This package begins early and does not defer testing until release.",
+      "verification": "Demonstrate detection of stamp-sign, derivative, stale-factor, missing-rollback and false-complete-result mutations; adjudicate independent-oracle disagreements rather than auto-update golden values. Separate GPU/native coverage from host wrapper coverage.",
+      "estimate": "Ongoing; reserve explicit capacity in every code work package.",
+      "architecture_requirements": [
+        "ARCH-VERIFY-001",
+        "ARCH-VERIFY-002",
+        "ARCH-VERIFY-003"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-018",
+      "title": "Publish the first qualified CPU release profile",
+      "status": "Proposed",
+      "phase": "M1",
+      "depends_on": [
+        "PLAN-011",
+        "PLAN-012",
+        "PLAN-013",
+        "PLAN-014",
+        "PLAN-015",
+        "PLAN-016",
+        "PLAN-017"
+      ],
+      "accountable_role": "core engineer and verification lead",
+      "deliverables": "frozen M1 profile, license/notices/SBOM, pinned package builds, Rust/C#/F# examples, capability query, baseline performance/memory report and requirement-evidence inventory. Native plugin/GPU/DSL features may remain experimental or absent.",
+      "verification": "Install on every claimed platform without developer native-library paths; run offline CPU/API/failure smoke tests, full approved qualification and previous-supported-schema tests if applicable. Block known correctness-critical defects and unsupported evidence claims.",
+      "estimate": "Medium to Large after component gates pass; release repair time is not assumed zero.",
+      "architecture_requirements": [
+        "ARCH-RELEASE-001"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-019",
+      "title": "Qualify compiled-model packages and native isolation",
+      "status": "Proposed",
+      "phase": "M2",
+      "depends_on": [
+        "PLAN-006",
+        "PLAN-009",
+        "PLAN-013",
+        "PLAN-014",
+        "PLAN-017"
+      ],
+      "accountable_role": "model engineer and interoperability engineer",
+      "deliverables": "ABI mapping specification, package hashes/licenses, model-domain corpus, library lifetime/serialization policy and per-platform sandbox support matrix. A subprocess alone is not a security sandbox.",
+      "verification": "Compare IV/charge/derivatives/transient/noise where claimed, force rejected steps, load mismatched descriptors and crash/hang/access-forbidden-path fixture plugins. Refuse untrusted mode when configured OS restrictions cannot be enforced.",
+      "estimate": "Large plus model-family-specific qualification.",
+      "architecture_requirements": [
+        "ARCH-MOD-003",
+        "ARCH-MOD-004",
+        "ARCH-MOD-005",
+        "ARCH-MOD-006"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-020",
+      "title": "Qualify optional GPU linear and batched execution",
+      "status": "Proposed",
+      "phase": "M2",
+      "depends_on": [
+        "PLAN-006",
+        "PLAN-008",
+        "PLAN-013",
+        "PLAN-014",
+        "PLAN-016",
+        "PLAN-017"
+      ],
+      "accountable_role": "numerical lead",
+      "deliverables": "one cuDSS or Ginkgo GPU adapter first, real hardware capability/build matrix, transfer-inclusive cold/warm benchmarks, host/device budgets, attempt/checkpoint policy and no-GPU package tests. CPU OSDI code remains CPU code unless independently GPU-compiled and qualified.",
+      "verification": "Compare residuals/waveforms to CPU within approved bounds, measure memory and transfer costs, inject device/OOM/cancellation faults and verify attempts/sample offsets. Do not impose a common adaptive timestep on unrelated cases merely to batch them.",
+      "estimate": "Large after hardware and package feasibility are demonstrated; GPU model kernels are a separate later proposal.",
+      "architecture_requirements": [
+        "ARCH-GPU-001",
+        "ARCH-GPU-002",
+        "ARCH-GPU-003",
+        "ARCH-GPU-004"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-021",
+      "title": "Implement the selected definition DSL and behavioral IR",
+      "status": "Proposed",
+      "phase": "M2",
+      "depends_on": [
+        "PLAN-006",
+        "PLAN-007",
+        "PLAN-013",
+        "PLAN-014",
+        "PLAN-017"
+      ],
+      "accountable_role": "core engineer and model engineer",
+      "deliverables": "pinned Starlark or alternative decision, versioned host modules, unit-aware constructors, authorized imports, budgets/source diagnostics, expression IR/domain/derivative policy and equivalent C#/F# authoring examples.",
+      "verification": "Compare RC/subcircuit/sweep/assertion plans across frontends, fuzz imports and expansion limits and independently test nonlinear behavioral derivatives. Prove no definition-interpreter callback occurs in the Newton/device hot loop.",
+      "estimate": "Large; stabilize a narrow domain library before inventing new grammar or an editor.",
+      "architecture_requirements": [
+        "ARCH-DSL-001",
+        "ARCH-DSL-002",
+        "ARCH-DSL-003",
+        "ARCH-DSL-004",
+        "ARCH-DSL-005"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-022",
+      "title": "Deliver reproducible campaigns and StressForge mapping",
+      "status": "Proposed",
+      "phase": "M2",
+      "depends_on": [
+        "PLAN-014",
+        "PLAN-016",
+        "PLAN-017"
+      ],
+      "accountable_role": "interoperability engineer",
+      "deliverables": "campaign plan/manifest, C#/F# driver, typed assertion/evidence outcomes, statistical policy for supported distributions and pinned actual StressForge mapping when accessible. Campaign restart is distinct from arbitrary mid-transient resume.",
+      "verification": "Compare serial/parallel/reordered assignments, kill/restart the campaign, corrupt an artifact and inspect attempt accounting and pass/fail/indeterminate/infrastructure_error distinctions. Test against the actual external project's pinned integration suite before any compatibility claim.",
+      "estimate": "Large; external project scope remains uncertain until its API is reviewed.",
+      "architecture_requirements": [
+        "ARCH-RUN-002",
+        "ARCH-DATA-003"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-023",
+      "title": "Expand analyses and model families by demand",
+      "status": "Proposed",
+      "phase": "M2",
+      "depends_on": [
+        "PLAN-018",
+        "PLAN-019"
+      ],
+      "accountable_role": "numerical lead and model engineer",
+      "deliverables": "prioritized family/analysis subplans, noise correlation/unit contracts and model-domain/license records. Periodic/RF/distributed work remains a separately approved M3 scope.",
+      "verification": "Run analysis-specific independent references, derivative/noise/energy checks and API schemas; publish unsupported cases and model-versus-numerical accuracy limits.",
+      "estimate": "Research to Large per analysis/model family; no bundled completion date.",
+      "architecture_requirements": [
+        "ARCH-ADOPT-001",
+        "ARCH-RELEASE-001"
+      ],
+      "source": "docs/implementation-plan.sdoc"
+    }
+  ],
+  "valid_topological_order": [
+    "PLAN-001",
+    "PLAN-002",
+    "PLAN-004",
+    "PLAN-003",
+    "PLAN-017",
+    "PLAN-005",
+    "PLAN-006",
+    "PLAN-007",
+    "PLAN-008",
+    "PLAN-009",
+    "PLAN-010",
+    "PLAN-011",
+    "PLAN-015",
+    "PLAN-012",
+    "PLAN-013",
+    "PLAN-014",
+    "PLAN-016",
+    "PLAN-018",
+    "PLAN-019",
+    "PLAN-020",
+    "PLAN-021",
+    "PLAN-022",
+    "PLAN-023"
+  ]
+}
