@@ -14,7 +14,7 @@ fn execute() -> Result<(), SimError> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     if args == ["--capabilities"] {
         return write_json(
-            &serde_json::json!({"schema_version":"1","execution":"bounded_reference","backends":circuit_simulator::registry::BackendRegistry::reference().capabilities(),"analyses":["operating_point","ac","transient","transient_configured"],"transport":"one_shot_json","gpu":false}),
+            &serde_json::json!({"schema_version":"1","execution":"bounded_reference","backends":circuit_simulator::registry::BackendRegistry::reference().capabilities(),"analyses":["operating_point","operating_point_newton","ac","transient","transient_configured"],"nonlinear":{"diode_dc":true,"ac_bias_linearization":false,"transient":false},"transport":"one_shot_json","gpu":false}),
         );
     }
     if !args.is_empty() {

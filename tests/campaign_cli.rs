@@ -39,6 +39,8 @@ fn cli_capabilities_and_invalid_arguments_are_json() {
     assert!(output.status.success());
     let info: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
     assert_eq!(info["gpu"], false);
+    assert_eq!(info["nonlinear"]["diode_dc"], true);
+    assert_eq!(info["nonlinear"]["transient"], false);
     let output = Command::new(executable)
         .arg("--shell")
         .stdin(Stdio::null())
