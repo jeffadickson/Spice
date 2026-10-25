@@ -13,3 +13,7 @@ The C# and JSON contracts reject unknown diode fields and preserve diode current
 `prompt.md` is the continuation entry point. It records the implemented scope,
 intentional boundaries, validation commands, and next milestones. This readable
 note projects StrictDoc requirement `REF4-005`; the `.sdoc` source is authoritative.
+
+The fixed-step transient entry point now supports diode circuits through bounded
+backward-Euler Newton steps. Configured/adaptive nonlinear transient stepping,
+source breakpoints, and small-signal AC bias linearization remain future work.
