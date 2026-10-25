@@ -50,13 +50,13 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
         {
             continue;
         }
-        if !matches!(kind, 'R' | 'C' | 'L' | 'D' | 'V' | 'I') {
+        if !matches!(kind, 'R' | 'C' | 'L' | 'D' | 'V' | 'I' | 'G') {
             return Err(SimError::new(
                 ErrorCode::Unsupported,
                 format!("line {}: unsupported element/directive", index + 1),
             ));
         }
-        let expected = if kind == 'D' { 5 } else { 4 };
+        let expected = match kind { 'D' => 5, 'G' => 6, _ => 4 };
         if tokens.len() != expected {
             return Err(SimError::invalid(format!(
                 "line {}: expected id p n value{}",
@@ -75,7 +75,9 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
         };
         let p = node(tokens[1]);
         let n = node(tokens[2]);
-        let value = spice_scalar(tokens[3])
+        let cp = if kind == 'G' { Some(node(tokens[3])) } else { None };
+        let cn = if kind == 'G' { Some(node(tokens[4])) } else { None };
+        let value = spice_scalar(if kind == 'G' { tokens[5] } else { tokens[3] })
             .map_err(|e| SimError::invalid(format!("line {}: {}", index + 1, e.message)))?;
         let id = name.to_ascii_uppercase();
         circuit.elements.push(match kind {
@@ -116,6 +118,14 @@ pub fn parse(text: &str) -> SimResult<Circuit> {
                 saturation_amps: value,
                 thermal_volts: spice_scalar(tokens[4])
                     .map_err(|e| SimError::invalid(format!("line {}: {}", index + 1, e.message)))?,
+            },
+            'G' => Element::Vccs {
+                id,
+                p,
+                n,
+                cp: cp.expect("G control positive node"),
+                cn: cn.expect("G control negative node"),
+                siemens: value,
             },
             _ => unreachable!(),
         });

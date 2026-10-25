@@ -41,6 +41,13 @@ fn ngspice_ac_linear_directive_lowers_to_typed_request() {
 }
 
 #[test]
+fn ngspice_g_card_imports_with_controlled_current_polarity() {
+    let circuit = parse_ngspice_basic("title\nV1 in 0 2\nG1 out 0 in 0 0.5\nR1 out 0 1\n.end\n").unwrap();
+    let values = operating_point(&compile(&circuit).unwrap(), &DenseLu).unwrap();
+    assert!((values[1] + 1.).abs() < 1e-12);
+}
+
+#[test]
 fn pulse_waveform_has_exact_plateaus_and_rejects_invalid_periods() {
     let pulse = Waveform::Pulse { low: 0., high: 2., delay_s: 1., rise_s: 1., fall_s: 1., width_s: 2., period_s: 6. };
     assert_eq!(pulse.at(0.).unwrap(), 0.);
