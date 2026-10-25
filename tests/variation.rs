@@ -65,7 +65,7 @@ fn sweep_retains_failed_points_without_discarding_their_identity() {
     let points = run_scalar(&request, &sweep, &BackendRegistry::reference()).unwrap();
     assert_eq!(points[0].execution, "failed");
     assert_eq!(points[0].index, 0);
-    assert_eq!(points[0].value, 1000.);
+    assert_eq!(points[0].selection.value, 1000.);
     assert!(points[0].error.is_some());
 }
 

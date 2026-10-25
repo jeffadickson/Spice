@@ -4,7 +4,7 @@ use crate::{
     api::{Manifest, Request, run_with_registry},
     error::{ErrorCode, SimError, SimResult},
     registry::BackendRegistry,
-    variation::{ScalarGrid, ScalarSweep},
+    variation::{ScalarGrid, ScalarSelection, ScalarSweep},
 };
 use serde::Serialize;
 
@@ -12,7 +12,7 @@ use serde::Serialize;
 #[derive(Debug, Serialize)]
 pub struct SweepPoint {
     pub index: usize,
-    pub value: f64,
+    pub selection: ScalarSelection,
     pub execution: &'static str,
     pub result: Option<Manifest>,
     pub error: Option<SimError>,
@@ -121,17 +121,18 @@ pub fn run_scalar_cancellable(
         let mut variant = request.clone();
         variant.case_id = format!("{}--s{:02}", request.case_id, index);
         variant.circuit = circuit;
+        let selection = sweep.selection(&request.circuit, *value)?;
         let point = match run_with_registry(&variant, registry) {
             Ok(result) => SweepPoint {
                 index,
-                value: *value,
+                selection,
                 execution: "succeeded",
                 result: Some(result),
                 error: None,
             },
             Err(error) => SweepPoint {
                 index,
-                value: *value,
+                selection,
                 execution: "failed",
                 result: None,
                 error: Some(error),
