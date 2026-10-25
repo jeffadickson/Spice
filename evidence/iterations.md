@@ -60,3 +60,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 56. Register independent providers and stable capability discovery
 57. Introduce owned prepared-factorization session contracts
 58. Reuse library factorizations across validated right-hand sides
+59. Compare sparse dense and complex providers against analytic systems
