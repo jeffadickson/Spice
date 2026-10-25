@@ -90,6 +90,16 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     rhs[i] += amps;
                 }
             }
+            Element::Vccs { p, n, cp, cn, siemens, .. } => {
+                // KCL receives -g*(Vcp-Vcn) at p and +g*(Vcp-Vcn) at n.
+                for (row_node, row_sign) in [(*p, -1.), (*n, 1.)] {
+                    for (control_node, control_sign) in [(*cp, 1.), (*cn, -1.)] {
+                        if let (Some(row), Some(column)) = (row_node.unknown(), control_node.unknown()) {
+                            a.add(row, column, row_sign * control_sign * siemens);
+                        }
+                    }
+                }
+            }
             Element::Diode {
                 p,
                 n,
