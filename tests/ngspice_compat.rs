@@ -556,6 +556,20 @@ fn ngspice_bounded_diode_model_accepts_compact_comma_parameters() {
 }
 
 #[test]
+fn ngspice_bounded_diode_model_defaults_and_name_lookup_are_case_insensitive() {
+    let circuit = parse_ngspice_basic(
+        "title\n.model dMoD d\nD1 out 0 DMOD\nR1 out 0 1k\n.end\n",
+    )
+    .unwrap();
+    let diode = circuit.elements.iter().find_map(|element| match element {
+        circuit_simulator::circuit::Element::Diode { saturation_amps, thermal_volts, .. } => Some((*saturation_amps, *thermal_volts)),
+        _ => None,
+    }).unwrap();
+    assert_eq!(diode.0, 1e-14);
+    assert!((diode.1 - 8.617_333_262_145e-5 * 300.).abs() < 1e-15);
+}
+
+#[test]
 fn ngspice_bounded_temperature_scales_named_diode_thermal_voltage() {
     let circuit = parse_ngspice_basic(
         "title\n.temp 126.85\n.model DMOD D (IS=1e-14 N=1)\nD1 out 0 DMOD\nR1 out 0 1k\n.end\n",
