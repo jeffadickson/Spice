@@ -38,12 +38,6 @@ pub fn transient_controlled(
     options: &TransientOptions,
     cancel: &std::sync::atomic::AtomicBool,
 ) -> SimResult<Vec<Sample>> {
-    if plan.has_nonlinear_devices() {
-        return Err(crate::error::SimError::new(
-            crate::error::ErrorCode::Unsupported,
-            "nonlinear transient Newton stepping is not implemented",
-        ));
-    }
     positive(options.stop_s, "stop_s")?;
     positive(options.step_s, "step_s")?;
     let count = (options.stop_s / options.step_s).ceil().max(1.0);
@@ -74,16 +68,28 @@ pub fn transient_controlled(
         if h <= 0.0 {
             break;
         }
-        let mut a = plan.conductance.clone();
-        let mut rhs = plan.rhs.clone();
-        for (i, rhs_value) in rhs.iter_mut().enumerate() {
-            for (j, previous_value) in previous.iter().enumerate() {
-                let c = plan.charge.at(i, j) / h;
-                a.add(i, j, c);
-                *rhs_value += c * previous_value;
+        let accepted = if plan.has_nonlinear_devices() {
+            crate::newton::solve_backward_euler_step(
+                plan,
+                solver,
+                crate::newton::NewtonOptions::default(),
+                &previous,
+                h,
+                &plan.rhs,
+            )?
+            .0
+        } else {
+            let mut a = plan.conductance.clone();
+            let mut rhs = plan.rhs.clone();
+            for (i, rhs_value) in rhs.iter_mut().enumerate() {
+                for (j, previous_value) in previous.iter().enumerate() {
+                    let c = plan.charge.at(i, j) / h;
+                    a.add(i, j, c);
+                    *rhs_value += c * previous_value;
+                }
             }
-        }
-        let (accepted, _) = solve_verified(&a, &rhs, solver)?;
+            solve_verified(&a, &rhs, solver)?.0
+        };
         // Commit only after the solve and physical residual checks succeed.
         previous = accepted;
         samples.push(Sample {
