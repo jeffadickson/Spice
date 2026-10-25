@@ -47,3 +47,17 @@ Verification: tests/nonlinear.rs::nonlinear_ac_is_explicitly_unsupported_until_b
 RELATIONS:
 - TYPE: Parent
   VALUE: REF-003
+
+[REQUIREMENT]
+UID: REF4-004
+TITLE: Typed nonlinear authoring and evidence
+STATEMENT: >>>
+The experimental JSON and C# authoring surfaces shall serialize diode and bounded Newton operating-point options, and successful nonlinear DC result manifests shall retain Newton convergence evidence.
+<<<
+COMMENT: >>>
+Implementation: src/api.rs, dotnet/Simulator.Client/Requests.cs, Results.cs.
+Verification: dotnet/Simulator.Conformance/MoreChecks.cs, tests/nonlinear.rs::json_operating_point_manifest_exposes_newton_report_for_diode_case.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF-005
