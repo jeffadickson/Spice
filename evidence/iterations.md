@@ -20,3 +20,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 16. Implement bounded backward Euler transient reference
 17. Add cooperative cancellation before accepted-step work
 18. Define versioned machine request and result manifests
+19. Provide bounded JSON CLI without stdout log scraping
