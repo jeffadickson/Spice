@@ -88,6 +88,9 @@ impl ScalarSweep {
     /// Describe a value using the base circuit's explicit scalar kind and unit.
     pub fn selection(&self, circuit: &Circuit, value: f64) -> SimResult<ScalarSelection> {
         self.validate()?;
+        if !self.values.contains(&value) {
+            return Err(SimError::invalid("selection value is not declared by sweep"));
+        }
         let kind = scalar_kind(circuit, &self.element_id)?;
         Ok(ScalarSelection { element_id: self.element_id.clone(), kind, unit: kind.unit(), value })
     }

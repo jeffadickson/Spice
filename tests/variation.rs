@@ -32,6 +32,7 @@ fn selection_carries_identity_value_and_si_unit() {
     let selection = sweep.selection(&fixture(), 10.).unwrap();
     assert_eq!(selection.element_id, "R1");
     assert_eq!(selection.unit, "ohm");
+    assert!(sweep.selection(&fixture(), 11.).is_err());
 }
 
 #[test]
