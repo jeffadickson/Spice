@@ -77,4 +77,6 @@ fn vcvs_json_request_is_solved_through_the_public_api() {
       ]},"analysis":{"kind":"operating_point"}}"#).unwrap();
     let result = run(&request).unwrap();
     assert!((result.samples[0].values[1] + 6.).abs() < 1e-12);
+    assert_eq!(result.signals[3].id, "i(E1)");
+    assert!((result.samples[0].values[3] - 6.).abs() < 1e-12);
 }
