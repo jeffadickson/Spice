@@ -1,5 +1,107 @@
 //! Independent boundary and difficult-topology evidence for bounded Newton paths.
 use circuit_simulator::newton::linearize_backward_euler;
+use circuit_simulator::newton::solve_from;
+use std::sync::atomic::{AtomicBool, Ordering};
+
+struct OneOvershoot {
+    first: AtomicBool,
+    factor: f64,
+}
+impl LinearSolver for OneOvershoot {
+    fn name(&self) -> &'static str {
+        "one-overshoot-fixture"
+    }
+    fn solve(&self, matrix: &Matrix, rhs: &[f64]) -> SimResult<Vec<f64>> {
+        let mut correction = DenseLu.solve(matrix, rhs)?;
+        if self.first.swap(false, Ordering::Relaxed) {
+            for value in &mut correction {
+                *value *= self.factor;
+            }
+        }
+        Ok(correction)
+    }
+}
+
+#[test]
+fn backtracking_contracts_a_prelimited_direction_and_rejects_overflow_trials() {
+    // An intentionally oversized first direction challenges line search; the
+    // final state still has to satisfy an independent physical equation.
+    let plan = diode_plan();
+    let expected = 0.02585 * (1e6_f64).ln_1p();
+    let solver = OneOvershoot {
+        first: AtomicBool::new(true),
+        factor: 1e30,
+    };
+    let (values, _) = solve_from(
+        &plan,
+        &solver,
+        NewtonOptions::default(),
+        vec![expected - 0.02585 * 4_f64.ln()],
+    )
+    .unwrap();
+    assert!((1e-12 * (values[0] / 0.02585).exp_m1() - 1e-6).abs() < 2e-12);
+
+    let linear = compile(&Circuit {
+        nodes: vec!["0".into(), "x".into()],
+        elements: vec![
+            Element::Resistor {
+                id: "R".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                ohms: 1.,
+            },
+            Element::Current {
+                id: "I".into(),
+                p: NodeId(0),
+                n: NodeId(1),
+                amps: 1.3e308,
+            },
+        ],
+    })
+    .unwrap();
+    let solver = OneOvershoot {
+        first: AtomicBool::new(true),
+        factor: 4.,
+    };
+    let (values, _) = solve_from(&linear, &solver, NewtonOptions::default(), vec![9e307]).unwrap();
+    assert!(((values[0] - 1.3e308) / 1.3e308).abs() < 1e-12);
+}
+
+#[test]
+fn thermal_scaled_damping_recovers_direct_bias_over_a_bounded_vt_range() {
+    for thermal in [1e-5, 1e-4, 1e-3, 0.01, 0.02585, 0.1] {
+        let circuit = Circuit {
+            nodes: vec!["0".into(), "out".into()],
+            elements: vec![
+                Element::Current {
+                    id: "I".into(),
+                    p: NodeId(0),
+                    n: NodeId(1),
+                    amps: 1e-6,
+                },
+                Element::Diode {
+                    id: "D".into(),
+                    p: NodeId(1),
+                    n: NodeId(0),
+                    saturation_amps: 1e-12,
+                    thermal_volts: thermal,
+                },
+            ],
+        };
+        let plan = compile(&circuit).unwrap();
+        for initial in [-10. * thermal, 0., 4. * thermal, 20. * thermal] {
+            let (values, report) =
+                solve_from(&plan, &DenseLu, NewtonOptions::default(), vec![initial]).unwrap();
+            let expected = thermal * (1e6_f64).ln_1p();
+            assert!(
+                (values[0] - expected).abs() < 1e-6 * thermal,
+                "Vt={thermal}, initial={initial}"
+            );
+            assert!((1e-12 * (values[0] / thermal).exp_m1() - 1e-6).abs() < 2e-12);
+            assert!(report.iterations <= 50);
+        }
+    }
+}
 use circuit_simulator::newton::norm_inf;
 use circuit_simulator::newton::{ContinuationOptions, GminContinuationOptions, NewtonOptions};
 use circuit_simulator::{backend::DenseLu, newton::solve_with_rhs};

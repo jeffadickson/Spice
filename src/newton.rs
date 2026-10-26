@@ -430,19 +430,24 @@ fn limited_candidate(
     delta: &[f64],
     alpha: f64,
 ) -> (Vec<f64>, bool) {
-    let mut scale = alpha;
+    let mut limit = 1_f64;
     for diode in &plan.diodes {
         let old = voltage(current, diode.p, diode.n);
         let change = voltage(delta, diode.p, diode.n);
-        // A bounded 0.5 V terminal change avoids exponential overflow while
-        // preserving a single scalar damping factor for the full MNA system.
-        if change.abs() > 0.5 {
-            scale = scale.min(0.5 / change.abs());
+        // Thermal-voltage scaling keeps the same exponent increment across
+        // valid diode parameter ranges. The full MNA vector shares one scale.
+        let maximum_change = (2. * diode.model.thermal_volts).min(0.5);
+        if change.abs() > maximum_change {
+            limit = limit.min(maximum_change / change.abs());
         }
-        if old + scale * change > 17. {
-            scale = scale.min((17. - old) / change);
+        if change > 0. {
+            let ceiling = (700. * diode.model.thermal_volts).min(f64::MAX);
+            limit = limit.min(((ceiling - old).max(0.) / change).min(1.));
         }
     }
+    // Backtracking scales the already-limited direction. min(alpha, limit)
+    // repeats an identical candidate until alpha becomes smaller than limit.
+    let scale = alpha * limit;
     (
         current
             .iter()
@@ -522,8 +527,13 @@ fn solve_from_rhs(
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-attempt));
-            let candidate_system =
-                linearize_with_rhs_gmin(plan, &candidate, rhs, options.gmin_siemens)?;
+            let Ok(candidate_system) =
+                linearize_with_rhs_gmin(plan, &candidate, rhs, options.gmin_siemens)
+            else {
+                // A trial can overflow even with finite provider components.
+                // Smaller steps may remain inside the already-validated model.
+                continue;
+            };
             let candidate_residual =
                 scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;
             if candidate_residual < scaled_residual || candidate_residual <= 1. {
@@ -773,8 +783,11 @@ pub fn solve_backward_euler_step(
         for attempt in 0..12 {
             let (candidate, damped) =
                 limited_candidate(plan, &values, &update, 2f64.powi(-attempt));
-            let candidate_system =
-                linearize_backward_euler(plan, &candidate, previous, step_s, rhs)?;
+            let Ok(candidate_system) =
+                linearize_backward_euler(plan, &candidate, previous, step_s, rhs)
+            else {
+                continue;
+            };
             let candidate_residual =
                 scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;
             if candidate_residual < scaled_residual || candidate_residual <= 1. {
