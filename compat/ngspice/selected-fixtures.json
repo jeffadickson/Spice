@@ -24,6 +24,13 @@
       "required_features": []
     },
     {
+      "path": "tests/filters/lowpass.cir",
+      "upstream_sha256": "a6a8be760d5787ca836990dac5bcfa3b909dd6ea8bf17c5b2f1be7583d3f2172",
+      "family": "linear_ac_filter",
+      "state": "oracle_passing",
+      "required_features": []
+    },
+    {
       "path": "tests/resistance/res_array.cir",
       "upstream_sha256": "618fc4d2f3f3752777327ee685c16da060744017421a7f0ac7d442f80f823ede",
       "family": "linear_or_waveform",

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1",
+  "case_id": "ngspice-lowpass-oracle",
+  "circuit": {
+    "nodes": ["0", "1", "2"],
+    "elements": [
+      {"kind": "voltage", "id": "V1", "p": 1, "n": 0, "volts": 1.0},
+      {"kind": "resistor", "id": "R1", "p": 1, "n": 2, "ohms": 10000.0},
+      {"kind": "resistor", "id": "R2", "p": 2, "n": 0, "ohms": 10000.0},
+      {"kind": "capacitor", "id": "C1", "p": 2, "n": 0, "farads": 1e-9}
+    ]
+  },
+  "analysis": {"kind": "ac", "frequencies_hz": [1000.0]},
+  "backend": "lu"
+}

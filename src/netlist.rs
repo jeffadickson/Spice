@@ -249,9 +249,16 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
             continue;
         }
         if head.eq_ignore_ascii_case(".options") {
-            // noacct changes ngspice accounting/reporting only, so accepting it
-            // cannot alter the typed circuit or numerical result.
-            if directive_tokens.len() != 2 || !directive_tokens[1].eq_ignore_ascii_case("noacct") {
+            // These named options affect listing/output formatting only. Their
+            // accepted combination is intentionally closed: numerical options
+            // must never be silently discarded by bounded lowering.
+            if directive_tokens.len() < 2
+                || directive_tokens[1..].iter().any(|option| {
+                    !["list", "node", "post", "trans", "noacct"]
+                        .iter()
+                        .any(|allowed| option.eq_ignore_ascii_case(allowed))
+                })
+            {
                 return Err(SimError::new(
                     ErrorCode::Unsupported,
                     "unsupported bounded .options directive",
@@ -565,6 +572,30 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
                 && tokens[3].eq_ignore_ascii_case("dc")
                 && tokens[5].eq_ignore_ascii_case("ac")
             {
+                Some((6, 7))
+            } else if matches!(
+                tokens
+                    .first()
+                    .and_then(|name| name.chars().next())
+                    .map(|kind| kind.to_ascii_uppercase()),
+                Some('V' | 'I')
+            ) && tokens.len() == 17
+                && tokens[3].eq_ignore_ascii_case("dc")
+                && tokens[5].eq_ignore_ascii_case("ac")
+                && tokens[7].eq_ignore_ascii_case("sin")
+                && tokens[13].eq_ignore_ascii_case("distof1")
+                && tokens[15].eq_ignore_ascii_case("distof2")
+                && spice_scalar(tokens[4]).is_ok()
+                && spice_scalar(tokens[6]).is_ok()
+                && tokens[8..=12]
+                    .iter()
+                    .all(|value| spice_scalar(value).is_ok())
+                && spice_scalar(tokens[14]).is_ok()
+                && spice_scalar(tokens[16]).is_ok()
+            {
+                // The deck requests AC only. Its fully validated SIN/DISTOF
+                // tail has no small-signal AC effect and is intentionally not
+                // lowered into transient or distortion behavior.
                 Some((6, 7))
             } else if matches!(
                 tokens

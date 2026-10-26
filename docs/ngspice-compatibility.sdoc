@@ -255,7 +255,7 @@ Implementation: netlist::bounded_temperature. Verification: tests/ngspice_compat
 UID: NGC-026
 TITLE: Bounded options-card import
 STATEMENT: >>>
-The bounded ngspice importer shall accept only the noacct .options form, which changes reporting but not numerical circuit semantics. Unsupported options shall fail explicitly rather than being silently discarded.
+The bounded ngspice importer shall accept only the output/reporting option names LIST, NODE, POST, TRANS and noacct, which do not change typed-circuit numerical semantics. Unsupported options shall fail explicitly rather than being silently discarded.
 <<<
 COMMENT: >>>
 Implementation: netlist::parse_ngspice_basic. Verification: tests/ngspice_compat.rs.
@@ -279,4 +279,14 @@ For identical bounded ngspice deck text and case identifier, repeated import sha
 <<<
 COMMENT: >>>
 Implementation: netlist::import_ngspice_request and provenance::request_hash. Verification: tests/ngspice_compat.rs.
+<<<
+
+[REQUIREMENT]
+UID: NGC-029
+TITLE: Bounded AC source auxiliary-tail import
+STATEMENT: >>>
+For a deck that requests only a bounded .ac analysis, the importer shall accept a voltage or current source with DC, AC, five-value SIN, DISTOF1 and DISTOF2 clauses only in the fully validated ordering DC value, AC magnitude, SIN five finite values, DISTOF1 finite value and DISTOF2 finite value. It shall lower the AC magnitude to the typed phasor and shall not claim transient or distortion analysis support from the ignored auxiliary clauses. Any other source tail remains unsupported.
+<<<
+COMMENT: >>>
+Implementation: netlist::import_ngspice_request. Verification: tests/ngspice_compat.rs::ngspice_lowpass_fixture_lowers_to_the_declared_ac_response and scripts/Compare-NgspiceLowpassOracle.cs. The oracle uses a 5e-8 bound because ngspice's human-readable .print table rounds this fixture's two complex components; it is not a general solver-accuracy target.
 <<<

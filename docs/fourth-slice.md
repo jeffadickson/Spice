@@ -32,5 +32,5 @@ adaptive step doubling with commit-only-on-acceptance semantics.
 
 The difficult nonlinear corpus covers high-bias damping, continuation bounds,
 Gmin validation, and source-breakpoint adaptive stepping. The independent
-ngspice oracle remains deliberately narrow: it validates the two attributed,
+ngspice oracle remains deliberately narrow: it validates three attributed,
 representable selected fixtures rather than claiming vendor-model parity.

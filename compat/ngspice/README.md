@@ -13,5 +13,8 @@ directives for fixtures whose circuit topology it can represent.
 
 `scripts/Compare-NgspiceOracle.cs` independently compares `res_simple`'s
 source current. `scripts/Compare-NgspiceAcOracle.cs` independently compares
-the complex `v(2)` observable for `res_partition`; both preserve fixture hash,
-declared observable and numerical tolerance in machine-readable output.
+the complex `v(2)` observable for `res_partition`, and
+`scripts/Compare-NgspiceLowpassOracle.cs` compares the first complex `v(2)`
+point for `lowpass`; all preserve fixture hash, declared observable and
+numerical tolerance in machine-readable output. The lowpass oracle's 5e-8
+bound reflects ngspice `.print` text rounding, not a general accuracy claim.

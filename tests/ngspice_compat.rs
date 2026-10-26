@@ -18,6 +18,26 @@ fn ngspice_res_simple_fixture_matches_dc_reference() {
     assert!((values[1] + 1e-4).abs() < 1e-12);
 }
 
+/// Source: ngspice tests/filters/lowpass.cir, revision e8285746c.
+/// The deck's output-only option names and AC-irrelevant validated SIN/DISTOF
+/// tail are retained in the fixture so bounded lowering cannot accidentally
+/// claim a general .options or distortion-language implementation.
+#[test]
+fn ngspice_lowpass_fixture_lowers_to_the_declared_ac_response() {
+    let request = import_ngspice_request(
+        include_str!("../compat/ngspice/lowpass.cir"),
+        "ngspice-lowpass",
+    )
+    .unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert_eq!(result.ac_samples.len(), 31);
+    let first = &result.ac_samples[0].values[1];
+    // At 1 kHz the 1 nF capacitor perturbs the nominal 10k/10k divider;
+    // the independent ngspice oracle records the exact complex comparison.
+    assert!((first.real - 0.499_507_0).abs() < 1e-6);
+    assert!((first.imag + 0.015_692_5).abs() < 1e-6);
+}
+
 #[test]
 fn ngspice_tran_directive_lowers_to_typed_request() {
     let request = import_ngspice_request(
