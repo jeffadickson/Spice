@@ -17,7 +17,7 @@ Current implementation through the 100-point ngspice-compatibility campaign (rem
 - ngspice deck lowering covers selected directives, continuation lines, ground aliases, bounded subcircuits/parameters/expressions, `.model D`, `.temp`, and explicit bounded options.
 - Source syntax includes compact and whitespace waveform forms for PULSE, SIN, PWL, and EXP. AC source magnitude/phase and R/C/L AC values are represented.
 - Controlled source support includes VCVS, VCCS, CCCS, and CCVS with dedicated compatibility tests.
-- Nonlinear AC bias linearization plus nonlinear adaptive and source-override transient stepping remain intentionally unsupported. DC source continuation is available as an explicit bounded Newton option; it is not yet Gmin stepping or general homotopy.
+- Nonlinear AC bias linearization remains intentionally unsupported. Configured nonlinear backward-Euler supports bounded adaptive/source-override stepping and source breakpoints. DC source continuation and explicit fixed Gmin are available; neither is general homotopy or staged Gmin stepping.
 
 Start by reading `README.md`, `docs/implementation-status.md`, `docs/ngspice-compatibility.sdoc`, `docs/fourth-slice.sdoc`, `docs/campaign-2-to-5.html`, `compat/ngspice/selected-fixtures.json`, `evidence/mutation.json`, and `evidence/iterations.md`.
 

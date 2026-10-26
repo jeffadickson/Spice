@@ -41,6 +41,13 @@ pub fn linearize_with_rhs(
     values: &[f64],
     rhs: &[f64],
 ) -> SimResult<LinearizedSystem> {
+    linearize_with_rhs_gmin(plan, values, rhs, None)
+}
+
+/// Adds only explicitly requested DC Gmin shunts; it never changes a nominal solve silently.
+fn linearize_with_rhs_gmin(
+    plan: &CompiledCircuit, values: &[f64], rhs: &[f64], gmin_siemens: Option<f64>,
+) -> SimResult<LinearizedSystem> {
     if values.len() != plan.unknown_count() || values.iter().any(|value| !value.is_finite()) {
         return Err(SimError::invalid("invalid Newton trial vector"));
     }
@@ -64,6 +71,12 @@ pub fn linearize_with_rhs(
             diode.n,
             contribution.conductance_siemens,
         );
+    }
+    if let Some(gmin) = gmin_siemens {
+        for node in 0..plan.circuit.nodes.len() - 1 {
+            residual[node] += gmin * values[node];
+            jacobian.add(node, node, gmin);
+        }
     }
     if residual.iter().any(|value| !value.is_finite()) {
         return Err(SimError::invalid("nonfinite Newton residual"));
@@ -114,6 +127,31 @@ pub fn norm_inf(values: &[f64]) -> SimResult<f64> {
     Ok(norm)
 }
 
+/// Dimension-aware norms: MNA node rows are current equations; branch rows are voltage equations.
+fn scaled_residual_norm(plan: &CompiledCircuit, residual: &[f64], rhs: &[f64], options: NewtonOptions) -> SimResult<f64> {
+    if residual.len() != rhs.len() || residual.len() != plan.unknown_count() { return Err(SimError::invalid("invalid scaled residual")); }
+    let node_rows = plan.circuit.nodes.len() - 1;
+    let mut worst = 0_f64;
+    for (index, value) in residual.iter().enumerate() {
+        let absolute = if index < node_rows { options.current_absolute_tolerance } else { options.voltage_absolute_tolerance };
+        let scale = absolute + options.relative_tolerance * rhs[index].abs().max(absolute);
+        worst = worst.max(value.abs() / scale);
+    }
+    if worst.is_finite() { Ok(worst) } else { Err(SimError::invalid("nonfinite scaled residual")) }
+}
+
+fn scaled_update_norm(plan: &CompiledCircuit, update: &[f64], values: &[f64], options: NewtonOptions) -> SimResult<f64> {
+    if update.len() != values.len() || update.len() != plan.unknown_count() { return Err(SimError::invalid("invalid scaled update")); }
+    let node_values = plan.circuit.nodes.len() - 1;
+    let mut worst = 0_f64;
+    for (index, value) in update.iter().enumerate() {
+        let absolute = if index < node_values { options.voltage_absolute_tolerance } else { options.current_absolute_tolerance };
+        let scale = absolute + options.relative_tolerance * values[index].abs().max(absolute);
+        worst = worst.max(value.abs() / scale);
+    }
+    if worst.is_finite() { Ok(worst) } else { Err(SimError::invalid("nonfinite scaled update")) }
+}
+
 /// Bounded Newton policy for the reference diode operating-point solver.
 #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -121,9 +159,16 @@ pub struct NewtonOptions {
     pub max_iterations: usize,
     pub absolute_tolerance: f64,
     pub relative_tolerance: f64,
+    #[serde(default = "default_voltage_tolerance")]
+    pub voltage_absolute_tolerance: f64,
+    #[serde(default = "default_current_tolerance")]
+    pub current_absolute_tolerance: f64,
     /// Optional bounded source-stepping policy for difficult DC operating points.
     #[serde(default)]
     pub continuation: Option<ContinuationOptions>,
+    /// Optional explicit DC shunt conductance from each non-reference node to ground.
+    #[serde(default)]
+    pub gmin_siemens: Option<f64>,
 }
 
 impl Default for NewtonOptions {
@@ -132,7 +177,10 @@ impl Default for NewtonOptions {
             max_iterations: 50,
             absolute_tolerance: 1e-12,
             relative_tolerance: 1e-9,
+            voltage_absolute_tolerance: 1e-9,
+            current_absolute_tolerance: 1e-12,
             continuation: None,
+            gmin_siemens: None,
         }
     }
 }
@@ -145,12 +193,19 @@ impl NewtonOptions {
             || !self.relative_tolerance.is_finite()
             || self.absolute_tolerance <= 0.
             || self.relative_tolerance <= 0.
+            || !self.voltage_absolute_tolerance.is_finite() || self.voltage_absolute_tolerance <= 0.
+            || !self.current_absolute_tolerance.is_finite() || self.current_absolute_tolerance <= 0.
         {
             return Err(SimError::invalid("invalid Newton options"));
+        }
+        if self.gmin_siemens.is_some_and(|value| !value.is_finite() || value <= 0. || value > 1.) {
+            return Err(SimError::invalid("invalid gmin_siemens"));
         }
         Ok(())
     }
 }
+fn default_voltage_tolerance() -> f64 { 1e-9 }
+fn default_current_tolerance() -> f64 { 1e-12 }
 
 /// Bounded source-stepping policy. Each accepted stage becomes the next Newton initial state.
 #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
@@ -199,6 +254,8 @@ pub struct NewtonReport {
     pub update_inf: f64,
     pub damped_steps: usize,
     pub linear_solves: usize,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub gmin_siemens: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub continuation: Option<ContinuationReport>,
 }
@@ -288,14 +345,13 @@ fn solve_from_rhs(
     rhs: &[f64],
 ) -> SimResult<(Vec<f64>, NewtonReport)> {
     let mut values = initial;
-    let baseline = norm_inf(rhs)?.max(1.);
     let mut damped_steps = 0;
-    let mut linear_solves = 0;
     let mut last_update = f64::INFINITY;
     for iteration in 0..options.max_iterations {
-        let system = linearize_with_rhs(plan, &values, rhs)?;
+        let system = linearize_with_rhs_gmin(plan, &values, rhs, options.gmin_siemens)?;
         let residual = norm_inf(&system.residual)?;
-        if residual <= options.absolute_tolerance + options.relative_tolerance * baseline {
+        let scaled_residual = scaled_residual_norm(plan, &system.residual, rhs, options)?;
+        if scaled_residual <= 1. && (iteration == 0 || last_update <= 1.) {
             return Ok((
                 values,
                 NewtonReport {
@@ -303,14 +359,14 @@ fn solve_from_rhs(
                     residual_inf: residual,
                     update_inf: if iteration == 0 { 0. } else { last_update },
                     damped_steps,
-                    linear_solves,
+                    linear_solves: iteration,
+                    gmin_siemens: options.gmin_siemens,
                     continuation: None,
                 },
             ));
         }
         let correction_rhs: Vec<f64> = system.residual.iter().map(|value| -value).collect();
         let delta = solver.solve(&system.jacobian, &correction_rhs)?;
-        linear_solves += 1;
         if delta.len() != values.len() || delta.iter().any(|value| !value.is_finite()) {
             return Err(SimError::new(
                 ErrorCode::NumericalFailure,
@@ -320,14 +376,15 @@ fn solve_from_rhs(
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-attempt));
-            let candidate_residual = norm_inf(&linearize_with_rhs(plan, &candidate, rhs)?.residual)?;
-            if candidate_residual < residual {
+            let candidate_system = linearize_with_rhs_gmin(plan, &candidate, rhs, options.gmin_siemens)?;
+            let candidate_residual = scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;
+            if candidate_residual < scaled_residual || candidate_residual <= 1. {
                 let update = candidate
                     .iter()
                     .zip(&values)
                     .map(|(candidate, previous)| candidate - previous)
                     .collect::<Vec<_>>();
-                accepted = Some((candidate, damped || attempt > 0, norm_inf(&update)?));
+                accepted = Some((candidate, damped || attempt > 0, scaled_update_norm(plan, &update, &values, options)?));
                 break;
             }
         }
@@ -347,6 +404,28 @@ fn solve_from_rhs(
         ErrorCode::NumericalFailure,
         "Newton iteration limit exceeded",
     ))
+}
+
+/// Solves one explicitly supplied DC excitation without enabling continuation.
+/// Configured transient initialization uses this to honor source values at t=0.
+pub fn solve_with_rhs(
+    plan: &CompiledCircuit,
+    solver: &dyn LinearSolver,
+    options: NewtonOptions,
+    initial: Vec<f64>,
+    rhs: &[f64],
+) -> SimResult<(Vec<f64>, NewtonReport)> {
+    options.validate()?;
+    if options.continuation.is_some() {
+        return Err(SimError::new(
+            ErrorCode::Unsupported,
+            "source continuation is only valid for the circuit's nominal DC source vector",
+        ));
+    }
+    if initial.len() != plan.unknown_count() || initial.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::invalid("invalid Newton initial state"));
+    }
+    solve_from_rhs(plan, solver, options, initial, rhs)
 }
 
 /// Solves progressively scaled independent sources, shrinking failed increments.
@@ -434,7 +513,6 @@ pub fn solve_backward_euler_step(
     let mut values = previous.to_vec();
     let baseline = norm_inf(rhs)?.max(1.);
     let mut damped_steps = 0;
-    let mut linear_solves = 0;
     let mut last_update = f64::INFINITY;
     for iteration in 0..options.max_iterations {
         let system = linearize_backward_euler(plan, &values, previous, step_s, rhs)?;
@@ -447,7 +525,8 @@ pub fn solve_backward_euler_step(
                     residual_inf: residual,
                     update_inf: if iteration == 0 { 0. } else { last_update },
                     damped_steps,
-                    linear_solves,
+                    linear_solves: iteration,
+                    gmin_siemens: None,
                     continuation: None,
                 },
             ));
@@ -460,7 +539,6 @@ pub fn solve_backward_euler_step(
                 .map(|value| -value)
                 .collect::<Vec<_>>(),
         )?;
-        linear_solves += 1;
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) =

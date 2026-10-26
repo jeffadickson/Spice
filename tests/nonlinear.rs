@@ -771,3 +771,68 @@ fn source_continuation_reports_a_bounded_minimum_step_failure() {
     assert!(error.message.contains("source continuation failed"));
     assert!(error.message.contains("minimum step"));
 }
+
+#[test]
+fn explicit_gmin_is_applied_and_retained_in_convergence_evidence() {
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "s".into(), "a".into()],
+        elements: vec![
+            Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
+            Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
+            Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
+        ],
+    };
+    let (_, report) = solve(
+        &compile(&circuit).unwrap(), &DenseLu,
+        NewtonOptions { gmin_siemens: Some(1e-9), ..NewtonOptions::default() },
+    ).unwrap();
+    assert_eq!(report.gmin_siemens, Some(1e-9));
+    assert!(solve(
+        &compile(&circuit).unwrap(), &DenseLu,
+        NewtonOptions { gmin_siemens: Some(0.), ..NewtonOptions::default() },
+    ).is_err());
+}
+
+#[test]
+fn configured_nonlinear_transient_accepts_source_breakpoints_and_adaptive_trials() {
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "s".into(), "a".into()],
+        elements: vec![
+            Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 0. },
+            Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
+            Element::Capacitor { id: "C1".into(), p: NodeId(2), n: NodeId(0), farads: 1e-6 },
+            Element::Diode {
+                id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
+            },
+        ],
+    };
+    let result = configured_run(
+        &compile(&circuit).unwrap(),
+        &DenseLu,
+        &TransientConfig {
+            stop_s: 2e-5,
+            max_step_s: 1e-5,
+            max_steps: 40,
+            method: Method::BackwardEuler,
+            initial_state: None,
+            sources: vec![SourceOverride {
+                id: "V1".into(),
+                waveform: Waveform::Pwl { points: vec![
+                    circuit_simulator::waveform::Point { time_s: 0., value: 0. },
+                    circuit_simulator::waveform::Point { time_s: 1e-5, value: 1. },
+                    circuit_simulator::waveform::Point { time_s: 2e-5, value: 1. },
+                ] },
+            }],
+            adaptive: Some(circuit_simulator::adaptive::AdaptiveOptions {
+                relative: 0.1, voltage_absolute: 1e-4, current_absolute: 1e-6,
+                min_step_s: 1e-8, max_attempts: 100,
+            }),
+        },
+        &false.into(),
+    )
+    .unwrap();
+    assert!(result.samples.iter().any(|sample| sample.time_s == 1e-5));
+    assert_eq!(result.samples.last().unwrap().time_s, 2e-5);
+    assert!(result.samples.iter().all(|sample| sample.values.iter().all(|value| value.is_finite())));
+    assert!(result.report.linear_solves > result.report.accepted_steps);
+}

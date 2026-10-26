@@ -7,7 +7,7 @@ public sealed record ResultManifest(string SchemaVersion, string CaseId, string 
     NewtonInfo? Newton=null);
 /// <summary>Accepted nonlinear convergence evidence; absent for linear analyses.</summary>
 public sealed record NewtonInfo(int Iterations, double ResidualInf, int DampedSteps, double UpdateInf = 0,
-    int LinearSolves = 0, ContinuationInfo? Continuation = null);
+    int LinearSolves = 0, ContinuationInfo? Continuation = null, double? GminSiemens = null);
 /// <summary>Aggregate evidence for an opt-in bounded DC source-stepping solve.</summary>
 public sealed record ContinuationInfo(int AcceptedStages, int RejectedStages, ContinuationStageInfo[] Stages);
 /// <summary>One accepted independent-source scale in a continuation solve.</summary>

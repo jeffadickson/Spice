@@ -119,20 +119,23 @@ pub fn run_observed(
     mut observer: impl FnMut(&Sample) -> SimResult<()>,
 ) -> SimResult<ConfiguredResult> {
     options.validate()?;
-    if plan.has_nonlinear_devices()
-        && (options.method != Method::BackwardEuler
-            || options.adaptive.is_some()
-            || !options.sources.is_empty())
-    {
+    if plan.has_nonlinear_devices() && options.method != Method::BackwardEuler {
         return Err(crate::error::SimError::new(
             crate::error::ErrorCode::Unsupported,
-            "nonlinear configured transient currently requires backward_euler without adaptive control or source overrides",
+            "nonlinear configured transient currently requires backward_euler",
         ));
     }
     let sources = BoundSources::new(plan, &options.sources)?;
     let mut old_rhs = sources.rhs(0.)?;
     let mut state = if plan.has_nonlinear_devices() && options.initial_state.is_none() {
-        crate::newton::solve(plan, solver, crate::newton::NewtonOptions::default())?.0
+        crate::newton::solve_with_rhs(
+            plan,
+            solver,
+            crate::newton::NewtonOptions::default(),
+            vec![0.; plan.unknown_count()],
+            &old_rhs,
+        )?
+        .0
     } else {
         initial(plan, &old_rhs, options.initial_state.as_deref(), solver)?
     };
@@ -146,6 +149,7 @@ pub fn run_observed(
     let mut fixed_index = 1usize;
     let (mut steps, mut rejected, mut attempts) = (0, 0, 0);
     let mut max_error = 0_f64;
+    let mut nonlinear_linear_solves = 0usize;
     while time < options.stop_s {
         if cancel.load(std::sync::atomic::Ordering::Relaxed) {
             return Err(SimError::new(
@@ -196,26 +200,27 @@ pub fn run_observed(
         let h = next - time;
         let new_rhs = sources.rhs(next)?;
         attempts += 1;
-        let coarse = if plan.has_nonlinear_devices() {
-            crate::newton::solve_backward_euler_step(
+        let (coarse, coarse_solves) = if plan.has_nonlinear_devices() {
+            let (values, report) = crate::newton::solve_backward_euler_step(
                 plan,
                 solver,
                 crate::newton::NewtonOptions::default(),
                 &state,
                 h,
                 &new_rhs,
-            )?
-            .0
+            )?;
+            (values, report.linear_solves)
         } else {
-            stepper.advance(
+            (stepper.advance(
                 &state,
                 h,
                 crate::integrator::RhsPair {
                     previous: &old_rhs,
                     current: &new_rhs,
                 },
-            )?
+            )?, 0)
         };
+        nonlinear_linear_solves += coarse_solves;
         let accepted = if let Some(adaptive) = &options.adaptive {
             let mid = time + h / 2.;
             if mid <= time || mid >= next {
@@ -225,22 +230,23 @@ pub fn run_observed(
                 ));
             }
             let mid_rhs = sources.rhs(mid)?;
-            let half = stepper.advance(
-                &state,
-                h / 2.,
-                crate::integrator::RhsPair {
-                    previous: &old_rhs,
-                    current: &mid_rhs,
-                },
-            )?;
-            let fine = stepper.advance(
-                &half,
-                next - mid,
-                crate::integrator::RhsPair {
-                    previous: &mid_rhs,
-                    current: &new_rhs,
-                },
-            )?;
+            let (half, half_solves) = if plan.has_nonlinear_devices() {
+                let (values, report) = crate::newton::solve_backward_euler_step(
+                    plan, solver, crate::newton::NewtonOptions::default(), &state, h / 2., &mid_rhs,
+                )?;
+                (values, report.linear_solves)
+            } else {
+                (stepper.advance(&state, h / 2., crate::integrator::RhsPair { previous: &old_rhs, current: &mid_rhs })?, 0)
+            };
+            let (fine, fine_solves) = if plan.has_nonlinear_devices() {
+                let (values, report) = crate::newton::solve_backward_euler_step(
+                    plan, solver, crate::newton::NewtonOptions::default(), &half, next - mid, &new_rhs,
+                )?;
+                (values, report.linear_solves)
+            } else {
+                (stepper.advance(&half, next - mid, crate::integrator::RhsPair { previous: &mid_rhs, current: &new_rhs })?, 0)
+            };
+            nonlinear_linear_solves += half_solves + fine_solves;
             let order = if options.method == Method::BackwardEuler {
                 1
             } else {
@@ -293,7 +299,7 @@ pub fn run_observed(
             rejected_steps: rejected,
             attempts,
             max_accepted_error: max_error,
-            linear_solves: stepper.solve_calls + usize::from(options.initial_state.is_none()),
+            linear_solves: stepper.solve_calls + nonlinear_linear_solves + usize::from(options.initial_state.is_none()),
             prepared_factors: stepper.prepared_factors,
             prepared_reuses: stepper.prepared_reuses,
         },

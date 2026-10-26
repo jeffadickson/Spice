@@ -40,12 +40,12 @@ fn cli_capabilities_and_invalid_arguments_are_json() {
     let info: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
     assert_eq!(info["gpu"], false);
     assert_eq!(info["nonlinear"]["diode_dc"], true);
-    // Capabilities are a truthful contract: nonlinear backward-Euler transient
-    // support is now implemented, while adaptive/source-override variants
-    // remain separately advertised as unavailable.
+    // Capabilities are a truthful contract for the bounded nonlinear configured path.
     assert_eq!(info["nonlinear"]["transient"], true);
     assert_eq!(info["nonlinear"]["configured_backward_euler"], true);
-    assert_eq!(info["nonlinear"]["adaptive"], false);
+    assert_eq!(info["nonlinear"]["adaptive"], true);
+    assert_eq!(info["nonlinear"]["source_overrides"], true);
+    assert_eq!(info["nonlinear"]["gmin_dc"], true);
     let output = Command::new(executable)
         .arg("--shell")
         .stdin(Stdio::null())

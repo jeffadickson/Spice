@@ -105,3 +105,31 @@ RELATIONS:
   VALUE: REF4-002
 - TYPE: Parent
   VALUE: ARCH-EQ-001
+
+[REQUIREMENT]
+UID: REF4-008
+TITLE: Explicit regularization and dimensional convergence
+STATEMENT: >>>
+The reference DC Newton path shall apply a Gmin shunt only when explicitly requested, record its conductance in the result evidence, and keep nominal solves unmodified. DC convergence shall require finite, dimension-aware residual and update norms: node-equation residuals use current tolerances, branch-equation residuals use voltage tolerances, and updates use the corresponding unknown dimensions.
+<<<
+COMMENT: >>>
+Implementation: src/newton.rs, dotnet/Simulator.Client/Requests.cs and Results.cs.
+Verification: tests/nonlinear.rs::explicit_gmin_is_applied_and_retained_in_convergence_evidence and bounded diode convergence cases.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-002
+
+[REQUIREMENT]
+UID: REF4-009
+TITLE: Nonlinear configured transient acceptance
+STATEMENT: >>>
+The configured backward-Euler nonlinear transient path shall honor validated independent-source overrides and known source breakpoints, estimate local error by nonlinear step doubling when adaptive control is selected, and commit state/RHS/time only after an accepted coarse or fine result. Unsupported nonlinear integration methods shall fail explicitly.
+<<<
+COMMENT: >>>
+Implementation: src/configured.rs, src/sources.rs, src/newton.rs.
+Verification: tests/nonlinear.rs::configured_nonlinear_transient_accepts_source_breakpoints_and_adaptive_trials.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-006

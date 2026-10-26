@@ -22,3 +22,8 @@ Opt-in DC source continuation scales independent-source excitation through
 bounded stages, warm-starts each stage from the prior accepted state, and records
 accepted/rejected stage evidence. It is not yet a general homotopy, Gmin, or
 nonlinear-transient recovery mechanism.
+
+DC Gmin regularization is explicit and recorded, never silently enabled. DC
+Newton uses dimensional residual/update checks. Configured nonlinear
+backward-Euler runs now support source overrides, source breakpoints, and
+adaptive step doubling with commit-only-on-acceptance semantics.
