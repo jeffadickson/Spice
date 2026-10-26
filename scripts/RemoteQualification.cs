@@ -136,7 +136,8 @@ sealed class RemoteReport {
 }
 sealed record StepEvidence(string Name,string Status,int? ExitCode,string? LocalLogSha256);
 sealed record MutationEvidence(int Killed,int Total);
-sealed record CoverageEvidence(string Status,JsonElement? Lines,JsonElement? Functions,JsonElement? Regions);
+sealed record CoverageEvidence(string Status,JsonElement? Lines,JsonElement? Functions,JsonElement? Regions,
+    string? BranchCoverage=null,string Scope="owned Rust src/*.rs; managed/vendor/GPU excluded");
 sealed class EnduranceEvidence {
     public string Status {get;set;}="";public string SourceCommit {get;set;}="";public bool SourceDirty {get;set;}
     public DateTime StartedUtc {get;set;}public DateTime? FinishedUtc {get;set;}public double BudgetSeconds {get;set;}public double ElapsedSeconds {get;set;}
