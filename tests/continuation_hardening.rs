@@ -1,7 +1,39 @@
 //! Independent boundary and difficult-topology evidence for bounded Newton paths.
 use circuit_simulator::newton::linearize_backward_euler;
 use circuit_simulator::newton::solve_from;
+use std::sync::atomic::AtomicUsize;
 use std::sync::atomic::{AtomicBool, Ordering};
+
+struct ObservedSolves(AtomicUsize);
+impl LinearSolver for ObservedSolves {
+    fn name(&self) -> &'static str {
+        "observed-dense-lu"
+    }
+    fn solve(&self, matrix: &Matrix, rhs: &[f64]) -> SimResult<Vec<f64>> {
+        self.0.fetch_add(1, Ordering::Relaxed);
+        DenseLu.solve(matrix, rhs)
+    }
+}
+
+#[test]
+fn continuation_work_counts_all_provider_calls_including_recovery() {
+    let plan = diode_plan();
+    for options in [
+        NewtonOptions {
+            continuation: Some(ContinuationOptions::default()),
+            ..NewtonOptions::default()
+        },
+        NewtonOptions {
+            gmin_continuation: Some(GminContinuationOptions::default()),
+            ..NewtonOptions::default()
+        },
+    ] {
+        let solver = ObservedSolves(AtomicUsize::new(0));
+        let (_, report) = solve(&plan, &solver, options).unwrap();
+        assert_eq!(report.linear_solves, solver.0.load(Ordering::Relaxed));
+        assert!(report.linear_solves > report.iterations);
+    }
+}
 
 struct OneOvershoot {
     first: AtomicBool,

@@ -162,6 +162,23 @@ fn validate_correction(plan: &CompiledCircuit, correction: &[f64]) -> SimResult<
     Ok(())
 }
 
+/// Private accounting adapter for the real correction path used by Newton.
+/// The counter belongs to one invocation, including failed continuation stages.
+struct CorrectionCounter<'a> {
+    inner: &'a dyn LinearSolver,
+    calls: std::sync::atomic::AtomicUsize,
+}
+impl LinearSolver for CorrectionCounter<'_> {
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
+    fn solve(&self, matrix: &Matrix, rhs: &[f64]) -> SimResult<Vec<f64>> {
+        self.calls
+            .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        self.inner.solve(matrix, rhs)
+    }
+}
+
 /// Dimension-aware norms: MNA node rows are current equations; branch rows are voltage equations.
 fn scaled_residual_norm(
     plan: &CompiledCircuit,
@@ -380,6 +397,8 @@ impl GminContinuationOptions {
 }
 
 /// Deterministic convergence evidence for an accepted operating point.
+/// Iteration/damping fields describe the final stage; linear_solves counts all
+/// real correction calls, including rejected recovery stages and final Gmin removal.
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct NewtonReport {
     pub iterations: usize,
@@ -480,14 +499,25 @@ pub fn solve_from(
     if initial.len() != plan.unknown_count() || initial.iter().any(|value| !value.is_finite()) {
         return Err(SimError::invalid("invalid Newton initial state"));
     }
-    if let Some(continuation) = options.continuation {
+    let counted = CorrectionCounter {
+        inner: solver,
+        calls: std::sync::atomic::AtomicUsize::new(0),
+    };
+    let (values, mut report) = if let Some(continuation) = options.continuation {
         continuation.validate()?;
-        return solve_with_source_continuation(plan, solver, options, continuation, initial);
-    }
-    if let Some(continuation) = options.gmin_continuation {
-        return solve_with_gmin_continuation(plan, solver, options, continuation, initial);
-    }
-    solve_from_rhs(plan, solver, options, initial, &plan.rhs)
+        solve_with_source_continuation(plan, &counted, options, continuation, initial)
+    } else if let Some(continuation) = options.gmin_continuation {
+        solve_with_gmin_continuation(plan, &counted, options, continuation, initial)
+    } else {
+        solve_from_rhs(plan, &counted, options, initial, &plan.rhs)
+    }?;
+    report.linear_solves = counted.calls.load(std::sync::atomic::Ordering::Relaxed);
+    tracing::debug!(
+        final_iterations = report.iterations,
+        linear_solves_total = report.linear_solves,
+        "newton_completed"
+    );
+    Ok((values, report))
 }
 
 /// Solves one fixed independent-source excitation with explicit residual/update evidence.

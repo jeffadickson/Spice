@@ -208,7 +208,7 @@ UID: REF4-015
 STATUS: Draft
 TITLE: Thermal-aware coupled diode convergence qualification
 STATEMENT: >>>
-Newton line search shall contract the already limited MNA direction, scale diode terminal increments by validated thermal voltage and reject invalid trial candidates without accepting a nonfinite state. Coupled diode-chain and bridge-rectifier cases shall be checked across the dense LU, dense QR and faer CPU providers with independent inverse-Shockley, monotonic scalar-root, nodal-current and power oracles. Source and Gmin continuation shall return nominal excitation and an unregularized final state.
+Newton line search shall contract the already limited MNA direction, scale diode terminal increments by validated thermal voltage and reject invalid trial candidates without accepting a nonfinite state. Coupled diode-chain and bridge-rectifier cases shall be checked across the dense LU, dense QR and faer CPU providers with independent inverse-Shockley, monotonic scalar-root, nodal-current and power oracles. Source continuation shall return nominal excitation; staged Gmin continuation shall remove its warm-start shunts before returning a final state. Any explicitly requested fixed Gmin remains separately reported.
 <<<
 COMMENT: >>>
 Derived requirement for the user-authorized qualification campaign. Implementation: src/newton.rs. Verification: tests/continuation_hardening.rs and tests/continuation_networks.rs. Thermal-voltage stress is a mathematical parameter-domain check, not calibration of a physical temperature model. Acceptance and coverage evidence are pending checkpoint 344; no general convergence or sparse nonlinear assembly claim is inferred.
@@ -218,3 +218,18 @@ RELATIONS:
   VALUE: REF4-013
 - TYPE: Parent
   VALUE: REF4-014
+
+
+[REQUIREMENT]
+UID: REF4-016
+STATUS: Draft
+TITLE: Complete continuation correction-work accounting
+STATEMENT: >>>
+A successful Newton recovery report shall count every attempted real linear correction call across accepted and rejected continuation stages, including Gmin removal. Iteration and damping fields shall identify their final-stage scope. The managed result contract shall preserve the total work count without changing the existing wire field names.
+<<<
+COMMENT: >>>
+Derived observability requirement. Implementation: src/newton.rs and dotnet/Simulator.Client/Results.cs. Verification: tests/continuation_hardening.rs::continuation_work_counts_all_provider_calls_including_recovery and dotnet/Simulator.Conformance/MoreChecks.cs. Acceptance evidence pending checkpoint 344.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-013

@@ -11,7 +11,7 @@ public sealed class ClientContracts
         var root = Environment.GetEnvironmentVariable("SPICE_TEST_ROOT") ?? FindRoot();
         var executable = Environment.GetEnvironmentVariable("SPICE_TEST_EXECUTABLE") ??
             Path.Combine(root,"target","debug","circuit-simulator" + (OperatingSystem.IsWindows()?".exe":""));
-        Assert.Equal(28, await ConformanceChecks.Run(executable, root));
+        Assert.Equal(29, await ConformanceChecks.Run(executable, root));
     }
 
     [Theory]

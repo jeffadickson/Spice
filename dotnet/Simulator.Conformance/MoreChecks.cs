@@ -46,6 +46,10 @@ public static class MoreChecks
         var continued=await client.RunAsync(new("typed-diode-continuation",diodeCircuit,
             new OperatingPointNewton(new(Continuation:new ContinuationOptions(0.25,0.01,16)))));
         Check(continued.ReadManifest().Newton?.Continuation?.AcceptedStages>=3,"typed source continuation evidence");
+        var recovery=continued.ReadManifest().Newton!;
+        Check(recovery.LinearSolves>recovery.Iterations &&
+            recovery.LinearSolves>=recovery.Continuation!.Stages.Sum(stage=>stage.Iterations),
+            "typed recovery work includes every accepted stage");
         var sweepJson="""{"schema_version":"1","base_case_id":"typed","sweep_sha256":"abc","sweep":{"element_id":"R1","values":[1.0]},"points":[],"summary":{"total":0,"succeeded":0,"failed":0}}""";
         var sweep=System.Text.Json.JsonSerializer.Deserialize<ScalarSweepResult>(sweepJson,WireFormat.Options)!;
         Check(sweep.Sweep.ElementId=="R1" && sweep.Summary.Total==0,"typed scalar sweep envelope");

@@ -5,7 +5,9 @@ public sealed record ResultManifest(string SchemaVersion, string CaseId, string 
     SignalInfo[] Signals, RealSample[] Samples, AcSample[] AcSamples, MeasurementValue[] Measurements,
     AssertionValue[] Assertions, IntegrationInfo? Integration, BackendInfo Backend, string RequestSha256, PowerInfo? DcPower=null,
     NewtonInfo? Newton=null, ConsistencyInfo? Consistency=null, DiagnosticInfo[]? Diagnostics=null);
-/// <summary>Accepted nonlinear convergence evidence; absent for linear analyses.</summary>
+/// <summary>Accepted nonlinear convergence evidence; absent for linear analyses.
+/// Iterations and DampedSteps describe the final stage. LinearSolves includes
+/// all real correction calls across accepted/rejected recovery stages.</summary>
 public sealed record NewtonInfo(int Iterations, double ResidualInf, int DampedSteps, double UpdateInf = 0,
     int LinearSolves = 0, ContinuationInfo? Continuation = null, double? GminSiemens = null,
     GminContinuationInfo? GminContinuation = null);
