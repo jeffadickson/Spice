@@ -220,6 +220,20 @@ RELATIONS:
   VALUE: REF4-014
 
 [REQUIREMENT]
+UID: REF4-018
+STATUS: Draft
+TITLE: Representable recovery progress and final correction verification
+STATEMENT: >>>
+Source and Gmin recovery shall detect increments lost to floating-point rounding before repeating identical stages. A Newton correction budget shall permit verification of the last allowed correction without allowing another provider call. Recoverable singular/numerical source-stage failures shall preserve rejected-work accounting and nominal final excitation.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation: src/newton.rs. Verification: tests/continuation_hardening.rs source_step_stagnation_cannot_accept_duplicate_stage_scales, subnormal_gmin_stagnation_is_reported_before_repeating_stages, last_permitted_correction_is_checked_before_budget_failure, source_recovery_retries_only_recoverable_faults_and_counts_rejected_work. Checkpoint 354 evidence pending.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-017
+
+[REQUIREMENT]
 UID: REF4-016
 STATUS: Draft
 TITLE: Complete continuation correction-work accounting

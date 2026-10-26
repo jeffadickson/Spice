@@ -6,6 +6,54 @@ use std::sync::atomic::AtomicUsize;
 
 struct ObserveFirstTrial(Mutex<Vec<f64>>);
 
+struct RecoverableOnce {
+    code: ErrorCode,
+    calls: AtomicUsize,
+}
+impl LinearSolver for RecoverableOnce {
+    fn name(&self) -> &'static str {
+        "recoverable-once"
+    }
+    fn solve(&self, matrix: &Matrix, rhs: &[f64]) -> SimResult<Vec<f64>> {
+        if self.calls.fetch_add(1, Ordering::Relaxed) == 0 {
+            Err(circuit_simulator::error::SimError::new(
+                self.code.clone(),
+                "injected conditioning failure",
+            ))
+        } else {
+            DenseLu.solve(matrix, rhs)
+        }
+    }
+}
+
+#[test]
+fn source_recovery_retries_only_recoverable_faults_and_counts_rejected_work() {
+    let plan = diode_plan();
+    let options = NewtonOptions {
+        continuation: Some(ContinuationOptions::default()),
+        ..NewtonOptions::default()
+    };
+    let (reference, _) = solve(&plan, &DenseLu, options).unwrap();
+    for code in [ErrorCode::SingularMatrix, ErrorCode::NumericalFailure] {
+        let provider = RecoverableOnce {
+            code,
+            calls: AtomicUsize::new(0),
+        };
+        let (values, report) = solve(&plan, &provider, options).unwrap();
+        assert!((values[0] - reference[0]).abs() < 1e-10);
+        assert_eq!(report.linear_solves, provider.calls.load(Ordering::Relaxed));
+        let stages = report.continuation.unwrap();
+        assert_eq!(stages.rejected_stages, 1);
+        assert_eq!(stages.stages.last().unwrap().source_scale, 1.);
+        assert!(
+            stages
+                .stages
+                .windows(2)
+                .all(|pair| pair[1].source_scale > pair[0].source_scale)
+        );
+    }
+}
+
 #[test]
 fn last_permitted_correction_is_checked_before_budget_failure() {
     let plan = compile(&Circuit {
