@@ -10,7 +10,8 @@ Reviewed primary sources on 2026-10-26:
 - [FsCheck](https://fscheck.github.io/FsCheck/QuickStart.html) and
   [FsCheck.Xunit 3.5.0](https://www.nuget.org/packages/FsCheck.Xunit/3.5.0)
   fit the existing xUnit managed harness and provide shrinking/seed replay.
-  Integration is planned; a researched dependency is not yet execution evidence.
+  ClientProperties.cs integrates 256 replayable signal-selection/permutation
+  cases per checkpoint (Replay 362,20261027), including empty generated arrays.
 - [Coverlet VSTest integration](https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/VSTestIntegration.md)
   fits the current xUnit v2/VSTest harness. Keep its measurements separate from
   prior dotnet-coverage scopes; a move to Microsoft.Testing.Platform requires
