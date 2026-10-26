@@ -1,0 +1,30 @@
+# Qualification implementation campaign — 2026-10-26
+
+User-authorized scope: continuation hardening, mutation-driven test gaps, direct
+sparse AC, direct sparse transient, and bounded model expansion. Build and verify
+after every ten substantive iterations; push each completed checkpoint to GitHub.
+Perform a deep final review, implement accepted findings and push the final fixes.
+No GitHub Actions dispatch is authorized by this plan.
+
+The request contains an allocation mismatch: five areas times ten is 50, while
+the requested final hundred plus review implies 100 + 1. Allocation clarification
+is pending. Work common to both interpretations starts with ten convergence
+iterations. Do not invent iteration counts or treat review as external experts.
+
+Repository base: 1b8885e (iteration 334). Campaign steps 1–10 correspond to repository
+iterations 335–344; the first full build/checkpoint is 344. Further checkpoints
+advance by ten. The active M1 objective and all previously documented limitations
+remain in force. Per-step focused tests do not replace checkpoint verification.
+
+Initial block (convergence): finite norm handling; nested policy validation;
+provider correction contracts; unsupported-policy rejection; finite BE inputs;
+thermal-domain damping; multi-diode chain evidence; bridge-rectifier evidence;
+continuation stage/work diagnostics; mutation/property/coverage checkpoint.
+These are implementation intentions, not completed work or requirement closure.
+
+Coverage is measured for the completed checkpoint source, with line/branch tooling
+limits reported. Failures and minimized counterexamples remain evidence. Use the
+existing pinned faer/nalgebra providers; external source/model references are
+recorded in checkpoint evidence. Preserve StrictDoc and existing engineering docs;
+any wider Sphinx migration needs a recorded decision rather than replacing them
+implicitly during numerical changes.

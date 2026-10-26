@@ -5,7 +5,9 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 // Run at repo root: dotnet run --file scripts/Checkpoint.cs -- 100
 var iteration = args.Length == 1 && int.TryParse(args[0], out var number) ? number : throw new ArgumentException("Expected iteration number.");
-if (iteration <= 0 || iteration % 10 != 0) throw new ArgumentException("Checkpoint must be a positive multiple of ten.");
+// A campaign can begin between historical decade labels. The campaign ledger
+// owns its ten-change cadence; this runner accepts the actual final iteration.
+if (iteration <= 0) throw new ArgumentException("Checkpoint must be a positive iteration number.");
 Directory.CreateDirectory("build/checkpoints");
 var commands = new (string File, string[] Args)[] {
     ("rustc", ["--version"]), ("dotnet", ["--version"]),

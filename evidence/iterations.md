@@ -232,3 +232,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 331. Supervise generated mutation budgets/shards and validate exported framework accounting.
 332. Record explicit Rust integration-test scope for focused validation.
 333. Preserve per-tool outcome availability, add independent tool modes and exercise synthetic supervisor/real mutation contracts.
+335. Reject every nonfinite Newton infinity-norm component; verify ordered NaN/Inf cases and 512 replayable IEEE patterns (seed 0x4e4557544f4e3335). Focused suite: 2 passed. Coverage/mutations pending checkpoint 344.

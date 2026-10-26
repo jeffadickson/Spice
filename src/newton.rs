@@ -121,6 +121,11 @@ pub fn linearize_backward_euler(
 
 /// Infinity norm used for scale-independent Newton convergence and line search.
 pub fn norm_inf(values: &[f64]) -> SimResult<f64> {
+    // f64::max deliberately returns its other operand for NaN. Reject every
+    // nonfinite component before reducing, or NaN could masquerade as zero.
+    if values.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::invalid("nonfinite Newton norm"));
+    }
     let norm = values
         .iter()
         .fold(0_f64, |worst, value| worst.max(value.abs()));
