@@ -38,3 +38,11 @@ sources: https://www.sphinx-doc.org/en/master/usage/installation.html and
 https://pypi.org/project/Sphinx/9.1.0/. This adds a derived engineering/API projection;
 existing Markdown and canonical StrictDoc sources remain authoritative in place.
 
+Mutation inventory checks use the existing .NET nonbacktracking regex engine,
+with a bounded pattern and timeout, rather than adding a parser dependency.
+Supported filter syntax is the intersection with the pinned native tool's Rust
+regex syntax. Reference: https://learn.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-options#nonbacktracking-mode.
+Owned-package cache refresh follows Cargo's package-scoped clean command; vendor
+dependencies remain cached. This is isolation/correctness work, not a measured
+performance claim.
+

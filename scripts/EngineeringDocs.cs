@@ -31,9 +31,11 @@ foreach(var member in members) {
 Write(Path.Combine(source,"api.rst"),api.ToString());
 await Run(args[1],["-m","sphinx","-W","--keep-going","-b","html","-j","2",source,Path.Combine(build,"html")],"sphinx.log");
 var version=await Run(args[1],["-m","sphinx","--version"],"sphinx-version.log");
-var hashes=Directory.GetFiles("docs/engineering").Concat(Directory.GetFiles("docs","*.sdoc")).Concat(Directory.GetFiles("dotnet/Simulator.Client","*.cs")).Concat(new[]{xml})
+if(version.Trim()!="sphinx-build 9.1.0")throw new InvalidDataException("Sphinx version differs from the cross-platform pin.");
+var pythonVersion=await Run(args[1],["--version"],"python-version.log");
+var hashes=Directory.GetFiles("docs/engineering").Concat(Directory.GetFiles("docs","*.sdoc")).Concat(Directory.GetFiles("dotnet/Simulator.Client","*.cs")).Concat(new[]{xml,"scripts/EngineeringDocs.cs","scripts/Setup-EngineeringDocs.ps1"})
     .ToDictionary(p=>p.Replace('\\','/'),Hash);
-File.WriteAllText("evidence/engineering-docs.json",JsonSerializer.Serialize(new{status="built_with_warnings_as_errors",tool=version.Trim(),
+File.WriteAllText("evidence/engineering-docs.json",JsonSerializer.Serialize(new{status="built_with_warnings_as_errors",tool=version.Trim(),python=pythonVersion.Trim(),
     xml_member_entries=members.Length,source_hashes=hashes,local_html=Path.GetRelativePath(Directory.GetCurrentDirectory(),Path.Combine(build,"html","index.html")),
     limitations=new[]{"Compiled XML text projection, not a complete semantic API-compatibility proof.","StrictDoc parsing is a separate required gate.","Python is required by Sphinx; the C# helper executed managed, not NativeAOT."}},new JsonSerializerOptions{WriteIndented=true}));
 Console.WriteLine("Engineering HTML: "+Path.Combine(build,"html","index.html"));

@@ -1,0 +1,50 @@
+{
+  "status": "completed",
+  "requested_seconds": 600,
+  "elapsed_seconds": 310.7161535,
+  "shard": "0/1",
+  "rust_file": "src/*.rs",
+  "rust_test": "all",
+  "tool": "dotnet",
+  "rust_filter": "",
+  "workers": 1,
+  "cargo_mutants": {
+    "version": "27.1.0",
+    "status": "skipped_explicitly",
+    "exit_code": null,
+    "candidates": 0,
+    "killed": 0,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": null,
+    "log_sha256": null
+  },
+  "stryker": {
+    "version": "5.0.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 200,
+    "killed": 82,
+    "survived": 7,
+    "timed_out": 1,
+    "invalid": 103,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 7,
+    "unattempted": 0,
+    "report_sha256": "1ba480c5ada664504251723f96522f25a894f0806974e8031b2d2a8de92ba4e6",
+    "log_sha256": "946b16ffb3eb156351b83c50eadd2624008211508242b2daf212287777e0e5c1"
+  },
+  "snapshot_source_hashes": {
+    "dotnet/Simulator.Client.Tests/TransportContracts.cs": "b7825f64176153d4c2c23a385b12ad50a9c7d95568b48ee479896f3ed6b4ef2e",
+    "dotnet/Simulator.Client/Client.cs": "42c580856a6481e4bc221ee73228e343b95bae249cb3e72ef4410aff18157611",
+    "dotnet/Simulator.Client.Tests/ManifestContracts.cs": "a4c3fb373e4d496d4827db9e29160a94d45f5b6a6cfb447d750dd40dae264fef"
+  }
+}

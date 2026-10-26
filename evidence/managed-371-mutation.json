@@ -1,0 +1,52 @@
+{
+  "status": "completed",
+  "requested_seconds": 900,
+  "elapsed_seconds": 195.1302054,
+  "shard": "0/1",
+  "rust_file": "src/*.rs",
+  "rust_test": "all",
+  "tool": "dotnet",
+  "rust_filter": "",
+  "workers": 1,
+  "cargo_mutants": {
+    "version": "27.1.0",
+    "status": "skipped_explicitly",
+    "exit_code": null,
+    "candidates": 0,
+    "killed": 0,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": null,
+    "log_sha256": null
+  },
+  "stryker": {
+    "version": "5.0.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 180,
+    "killed": 50,
+    "survived": 14,
+    "timed_out": 1,
+    "invalid": 103,
+    "not_covered": 5,
+    "pending": 0,
+    "other": 0,
+    "ignored": 7,
+    "unattempted": 0,
+    "report_sha256": "7ed0aa2178724d7b606596b3e9f30db4d7e48bad51686bc2701fe15376654852",
+    "log_sha256": "4bede9999a8399e445336215ba8bfb1c34d8d59afceb5ad9decb3ed4f159b6e7"
+  },
+  "source_hashes": {
+    "dotnet/Simulator.Client/Requests.cs": "67322b96b7b15fef97119bf557ada5655ddf43e9bebb6b11c5416d2ba1a92276",
+    "dotnet/Simulator.Client/WireContext.cs": "f1c7a3f8e82e8fcb3671725851a4b154a34c152a8d79c8fd05782e21be432a15",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/Client.cs": "aa3fe70345d03e47df8b53e654316c383fbe52020e3458be56fd3ea5fa810faa",
+    "dotnet/Simulator.Client/Results.cs": "5e41aea7f5dfd6c6237962208bbcb7cec1fb9fcd16acd2fbf909247884a40e8d"
+  }
+}

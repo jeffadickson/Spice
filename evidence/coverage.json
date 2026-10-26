@@ -2,19 +2,19 @@
   "rust": {
     "status": "measured_with_attributed_vendor_warning",
     "platform": "Ubuntu 24.04 x64 under WSL2",
-    "source_commit": "a31c1a08fc8791a2facaaa6ac27b2a762bca7ab7",
+    "source_commit": "b0001154d30875b5d093df327a854a3dacde80d5",
     "toolchain": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
-    "line_percent": 90.42383046781288,
-    "lines": 5002,
-    "covered_lines": 4523,
+    "line_percent": 90.35017906884202,
+    "lines": 5026,
+    "covered_lines": 4541,
     "branch_percent": null,
     "scope": "owned src/*.rs; test and dependency files excluded",
-    "report": "evidence/continuation-354-rust-coverage.json",
+    "report": "evidence/testing-374-rust-coverage.json",
     "limitations": [
       "No qualified Rust branch metrics from this instrumentation.",
       "Windows Rust instrumentation has not been rerun after successful SDK installation.",
       "Vendor internals, managed code and GPU/native plugins excluded.",
-      "LLVM 62 zero-hash mismatches are two duplicated tracing_core dependency functions, no owned symbols; see evidence/llvm-mapping-354.json."
+      "LLVM 64 zero-hash warning records are two repeated tracing_core dependency functions, no owned/unexpected symbols; see evidence/llvm-mapping-374.json."
     ]
   },
   "managed": {
@@ -22,18 +22,18 @@
     "tool": "Coverlet 10.1.0 / ReportGenerator 5.5.11",
     "scope": "Owned Simulator.Client assembly; obj-generated sources excluded",
     "source_hashes": {
-      "dotnet/Simulator.Client/Client.cs": "aa3fe70345d03e47df8b53e654316c383fbe52020e3458be56fd3ea5fa810faa",
-      "dotnet/Simulator.Client/Requests.cs": "67322b96b7b15fef97119bf557ada5655ddf43e9bebb6b11c5416d2ba1a92276",
-      "dotnet/Simulator.Client/Results.cs": "5e41aea7f5dfd6c6237962208bbcb7cec1fb9fcd16acd2fbf909247884a40e8d",
+      "dotnet/Simulator.Client/Client.cs": "42c580856a6481e4bc221ee73228e343b95bae249cb3e72ef4410aff18157611",
+      "dotnet/Simulator.Client/Requests.cs": "054159a50dd5021973568b93a330d8d7d2b2ba5c3c836c6adf4660064705e976",
+      "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
       "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
-      "dotnet/Simulator.Client/WireContext.cs": "f1c7a3f8e82e8fcb3671725851a4b154a34c152a8d79c8fd05782e21be432a15"
+      "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9"
     },
-    "lines": 166,
-    "covered_lines": 158,
-    "line_percent": 95.18072289156626,
-    "branches": 98,
-    "covered_branches": 90,
-    "branch_percent": 91.83673469387755,
+    "lines": 169,
+    "covered_lines": 161,
+    "line_percent": 95.26627218934911,
+    "branches": 112,
+    "covered_branches": 109,
+    "branch_percent": 97.32142857142857,
     "current_report": "evidence/managed-coverlet.json",
     "limitations": [
       "Owned Simulator.Client assembly, excluding obj-generated sources; fixture/test/native/vendor code excluded.",
@@ -42,9 +42,8 @@
     ]
   },
   "additional_unmeasured": [
-    "Supplemental numerical mutation driver",
-    "Complete native installer and PowerShell subprocess paths",
-    "FSharp examples"
+    "ManagedCoverage.cs orchestration and PowerShell subprocess command/branch metrics",
+    "Complete installer/Linux helper paths and FSharp examples"
   ],
   "rust_windows": {
     "status": "not_measured_after_toolchain_install",
@@ -59,6 +58,6 @@
   },
   "qualification_tooling": {
     "current_powershell_command_subset": "evidence/framework-powershell-coverage.json",
-    "current_csharp": "evidence/continuation-344-managed-coverage.json"
+    "current_csharp": "evidence/testing-374-tooling-coverage.json"
   }
 }

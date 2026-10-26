@@ -19,4 +19,17 @@ Describe 'Framework campaign input bounds' {
         @($all|Where-Object {$_ -notin ($a+$b)}).Count|Should Be 0
         @(& $cargo mutants --list --file src/quantity.rs --shard 0/2 --sharding round-robin --colors never) -join "`n" | Should Be ($a -join "`n")
     }
+    It 'refuses a native inventory that escapes the requested name filter before mutation' {
+        $runner=Join-Path $PSScriptRoot '../scripts/FrameworkMutations.cs'
+        $output=& dotnet run --file $runner -- --minutes 1 --tool rust --rust-file src/netlist.rs --rust-test lib --rust-filter '__scope_guard_matches_nothing__' --workers 1 2>&1|Out-String
+        $LASTEXITCODE|Should Not Be 0
+        $marker=[regex]::Match($output,'(?m)^Framework summary: (.+)\r?$')
+        $marker.Success|Should Be $true
+        $path=$marker.Groups[1].Value.Trim()
+        $summary=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json
+        $summary.status|Should Be 'failed'
+        $summary.cargo_mutants.killed|Should Be 0
+        $summary.cargo_mutants.candidates|Should BeGreaterThan 0
+        (Test-Path -LiteralPath (Join-Path (Split-Path $path -Parent) 'cargo-mutants.log'))|Should Be $false
+    }
 }

@@ -10,12 +10,15 @@ public sealed record SimulationResponse(string SchemaVersion, string Status, boo
     public ResultManifest ReadManifest()
     {
         if (!Succeeded) throw new InvalidOperationException("No successful result manifest.");
+        if (SchemaVersion != "1") throw new InvalidDataException("Unsupported outer result version.");
         var manifest = Payload.Deserialize<ResultManifest>(WireFormat.Options) ?? throw new InvalidDataException("Missing manifest.");
         if (manifest.SchemaVersion != "1" || manifest.Status != "succeeded" || !manifest.Complete ||
             manifest.Signals is null || manifest.Samples is null || manifest.AcSamples is null ||
             manifest.Measurements is null || manifest.Assertions is null || manifest.Backend is null ||
-            manifest.Samples.Any(s => s.Values is null || s.Values.Length != manifest.Signals.Length) ||
-            manifest.AcSamples.Any(s => s.Values is null || s.Values.Length != manifest.Signals.Length))
+            manifest.Signals.Any(s => s is null) || manifest.Measurements.Any(m => m is null) ||
+            manifest.Assertions.Any(a => a is null) ||
+            manifest.Samples.Any(s => s is null || s.Values is null || s.Values.Length != manifest.Signals.Length) ||
+            manifest.AcSamples.Any(s => s is null || s.Values is null || s.Values.Length != manifest.Signals.Length || s.Values.Any(v => v is null)))
             throw new InvalidDataException("Malformed or incomplete result manifest.");
         return manifest;
     }

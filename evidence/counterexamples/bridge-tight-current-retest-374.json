@@ -1,0 +1,18 @@
+{
+  "status": "failed",
+  "exit_code": 2,
+  "error": {
+    "code": "numerical_failure",
+    "message": "source continuation exhausted 128 stage attempts at scale 0.482421875"
+  },
+  "newton": null,
+  "scope": "Current CLI replay only; retain original failure and require independent physical acceptance before closure.",
+  "source_commit": "b0001154d30875b5d093df327a854a3dacde80d5",
+  "source_dirty": true,
+  "platform": "Windows x64, rustc 1.99.1 GNU",
+  "source_hashes": {
+    "src/newton.rs": "56b1d9cb10f43ab2f155c0004e59442ad3141e0923f3bb44c7cfaa896279fe5b",
+    "src/model.rs": "bbb8bf169c85b9dc17593d2cbdc95969b64099e0b5c49192fb6eb7333f2281be",
+    "src/backend.rs": "3ab83aab8e9cb2fe0aa55b3ac52bcddb13bc46d4a99d2aa0aeac5163ea50f5dc"
+  }
+}

@@ -1,8 +1,23 @@
 # Generated mutation campaigns
 
 The repository uses cargo-mutants 27.1.0 for Rust and Stryker.NET 5.0.0 for C#.
-These are developer tools, not simulator runtime dependencies. The 22 custom
-numerical regression mutations remain a separate first-stage check.
+These are developer tools, not simulator runtime dependencies. Maintained frameworks
+run first in overnight campaigns; custom numerical regressions are supplemental,
+explicitly selected checks. Historical 22/22 evidence is not a generated mutation score.
+
+Focused Rust selection accepts lib and up to eight comma-separated integration
+targets, for example `-RustTest lib,continuation_hardening`. Use `-Workers 1`
+for a bounded concurrent qualification run. `-RustFilter limited_candidate`
+selects names using the common Rust/.NET nonbacktracking regex subset (maximum
+512 characters); the wrapper checks the actual native inventory before mutation.
+Observed cargo-mutants 27.1.0 field-deletion selection outside a name filter causes
+an explicit preflight failure, rather than silently testing a wider scope.
+
+The dedicated Rust cache retains vendor dependencies but cleans the owned
+circuit-simulator package before each baseline. A real stale-mutant baseline
+failure motivated this rule; Cargo timestamp freshness alone was insufficient.
+Cleanup refuses linked cache paths. Rust and .NET snapshots use separate ordered
+locks and independent outputs; all-tool runs acquire both locks.
 
 From PowerShell 7 at repository root:
 

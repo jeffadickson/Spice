@@ -1,0 +1,71 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "metrics": [
+    {
+      "file": "scripts/FrameworkMutations.cs",
+      "source_sha256": "04decdd3ec09dfb40217f6aa036d9784376b50d67dd9559ee28dd276c8209d12",
+      "scope": "Negative/filter-escape contracts and explicit zero-candidate bookkeeping; not a mutation score.",
+      "local_report": "build/qualification-campaign/helpers-374-final.cobertura.xml",
+      "lines": 128,
+      "covered_lines": 110,
+      "line_percent": 85.9375,
+      "branches": 198,
+      "covered_branches": 130,
+      "branch_percent": 65.65656565656566
+    },
+    {
+      "file": "scripts/EngineeringDocs.cs",
+      "source_sha256": "c51eb6ddac0f87ab54a4dadc42d3c10732ae46a35825c31ebb0e89670a91c8f1",
+      "scope": "Real compiled-XML/Sphinx success path; failure branches largely unmeasured.",
+      "local_report": "build/qualification-campaign/helpers-374-final.cobertura.xml",
+      "lines": 44,
+      "covered_lines": 43,
+      "line_percent": 97.72727272727273,
+      "branches": 52,
+      "covered_branches": 35,
+      "branch_percent": 67.3076923076923
+    },
+    {
+      "file": "scripts/RemoteQualification.cs",
+      "source_sha256": "a3070219fad1666e6b84b1c74a1be877d50bde1f6a8f09deb0f01e28e7ec686d",
+      "scope": "Nine local bare-Git publication/provenance contracts; synthetic evidence only.",
+      "local_report": "build/qualification-campaign/property-tooling-370.cobertura.xml",
+      "lines": 162,
+      "covered_lines": 125,
+      "line_percent": 77.1604938271605,
+      "branches": 270,
+      "covered_branches": 192,
+      "branch_percent": 71.11111111111111
+    },
+    {
+      "file": "scripts/Endurance.cs",
+      "source_sha256": "cb32104035fb16a3c86af33b492b0664c1b3321dcc919c29927d5057f1b6a1f4",
+      "scope": "Input rejection and synthetic framework/property orchestration; not numerical campaign coverage.",
+      "local_report": "build/qualification-campaign/property-tooling-370.cobertura.xml",
+      "lines": 177,
+      "covered_lines": 147,
+      "line_percent": 83.05084745762711,
+      "branches": 136,
+      "covered_branches": 86,
+      "branch_percent": 63.23529411764706
+    },
+    {
+      "file": "scripts/Checkpoint.cs",
+      "source_sha256": "562268a5426a27fd43b87595e2547d3bc414221d2110024167c5db6143aa945f",
+      "scope": "Actual full checkpoint success path.",
+      "local_report": "build/qualification-campaign/checkpoint-374.cobertura.xml",
+      "lines": 41,
+      "covered_lines": 40,
+      "line_percent": 97.5609756097561,
+      "branches": 30,
+      "covered_branches": 21,
+      "branch_percent": 70
+    }
+  ],
+  "limitations": [
+    "Mapped source-line and per-line maximum branch counts; not complete path coverage.",
+    "ManagedCoverage.cs actually ran but its orchestration is not instrumented here; owned client Coverlet metrics are separate.",
+    "PowerShell subprocess command/branch metrics, full native installers, Linux helper paths and vendor internals are unmeasured.",
+    "Synthetic supervisor/publication fixtures do not qualify numerical simulator execution."
+  ]
+}

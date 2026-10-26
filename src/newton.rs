@@ -943,5 +943,12 @@ mod trial_contracts {
         assert_eq!(reverse[0], old - vt);
         assert!(!damped);
         assert!(limited_candidate(&plan, &[old], &[-vt], 0.5).1);
+        // Signed zero is a valid provider correction. A >=0 ceiling predicate
+        // would divide by -0 and introduce an infinite limiter/NaN candidate.
+        for zero in [0., -0.] {
+            let (unchanged, damped) = limited_candidate(&plan, &[old], &[zero], 1.);
+            assert_eq!(unchanged, vec![old]);
+            assert!(!damped);
+        }
     }
 }

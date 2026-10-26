@@ -22,6 +22,9 @@ if(!double.IsFinite(minutes)||minutes<=0||minutes>1440)throw new ArgumentExcepti
 if(selectedTool is not ("all" or "rust" or "dotnet"))throw new ArgumentException("Tool must be all, rust or dotnet.");
 if(workers<1||workers>16)throw new ArgumentException("Workers must be in 1..16.");
 if(rustFilter.Length>512||rustFilter.Contains('\0'))throw new ArgumentException("Rust filter exceeds its bound.");
+var requestedFilter=rustFilter.Length==0?null:new System.Text.RegularExpressions.Regex(rustFilter,
+    System.Text.RegularExpressions.RegexOptions.CultureInvariant|System.Text.RegularExpressions.RegexOptions.NonBacktracking,
+    TimeSpan.FromMilliseconds(100));
 var parts=shard.Split('/');
 if(parts.Length!=2||!int.TryParse(parts[0],out var n)||!int.TryParse(parts[1],out var k)||n<0||k<=n||k>1024)throw new ArgumentException("Shard must be N/K with 0 <= N < K <= 1024.");
 if(!rustFile.StartsWith("src/",StringComparison.Ordinal)||rustFile.Contains("..")||rustFile.Contains('\\'))throw new ArgumentException("Rust filter must stay under src/.");
@@ -100,10 +103,35 @@ try {
         if(test=="lib")rustArguments.Add("--cargo-arg=--lib");
         else {rustArguments.Add("--cargo-arg=--test");rustArguments.Add("--cargo-arg="+test);}
     }
-    // Cargo's fingerprints invalidate changed sources/toolchains. A dedicated
-    // cache avoids rebuilding vendor libraries for every immutable run snapshot.
+    if(requestedFilter is not null) {
+        // The native field-deletion genre has been observed outside --re.
+        // Check its actual name inventory before any mutation, failing closed.
+        var listingArguments=new List<string>{"mutants","--list","--dir",rustRoot,"--file",rustFile,"--re",rustFilter,
+            "--shard",shard,"--sharding","round-robin","--colors","never"};
+        var listing=await Execute(cargo,listingArguments,"cargo-inventory.log",Math.Min(60,Remaining()));
+        var listed=File.ReadAllText(Path.Combine(run,"cargo-inventory.log"));
+        var names=listed.Split('\n').Select(line=>line.Trim()).Where(line=>line.StartsWith("src/",StringComparison.Ordinal)).ToArray();
+        report.CargoMutants.Candidates=names.Length;
+        if(listing.Timeout||listing.Exit!=0||listed.Contains("[log truncated",StringComparison.Ordinal)||names.Any(name=>!requestedFilter.IsMatch(name))) {
+            report.CargoMutants.Status="failed";
+            throw new IOException("Native mutation inventory failed or escaped the requested filter; no mutants executed.");
+        }
+    }
+    var cache=Path.GetFullPath(Path.Combine(root,"target","framework-rust"));
+    var targetRoot=Path.GetFullPath(Path.Combine(root,"target"));
+    if(!cache.StartsWith(targetRoot+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))
+        throw new IOException("Mutation cache escaped the target directory.");
+    foreach(var path in new[]{targetRoot,cache})
+        if(Directory.Exists(path)&&(File.GetAttributes(path)&FileAttributes.ReparsePoint)!=0)
+            throw new IOException("Refusing to clean a linked mutation cache.");
+    // Restoring source timestamps can leave a mutant binary marked Fresh in a
+    // reused Cargo target. Clean only this owned package before each baseline,
+    // retaining fingerprinted vendor dependencies and the isolated target path.
+    var clean=await Execute("cargo",["clean","--package","circuit-simulator"],"cargo-clean-owned.log",
+        Math.Min(60,Remaining()),new(){["CARGO_TARGET_DIR"]=cache},rustRoot);
+    if(clean.Timeout||clean.Exit!=0)throw new IOException("Owned mutation artifacts could not be refreshed.");
     var rust=await Execute(cargo,rustArguments,"cargo-mutants.log",Remaining(),
-        new(){["CARGO_TARGET_DIR"]=Path.Combine(root,"target","framework-rust")});
+        new(){["CARGO_TARGET_DIR"]=cache});
     report.CargoMutants.Status=rust.Timeout?"partial_timeout":rust.Exit is 0 or 2 or 3?"completed":"failed";
     report.CargoMutants.ExitCode=rust.Exit;report.CargoMutants.LogSha256=Hash(Path.Combine(run,"cargo-mutants.log"));
     var native=Path.Combine(run,"rust","mutants.out","outcomes.json");

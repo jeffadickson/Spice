@@ -1,0 +1,54 @@
+{
+  "status": "completed",
+  "requested_seconds": 360,
+  "elapsed_seconds": 323.1931734,
+  "shard": "0/1",
+  "rust_file": "src/newton.rs",
+  "rust_test": "lib,continuation_hardening",
+  "tool": "rust",
+  "rust_filter": "limited_candidate",
+  "workers": 1,
+  "cargo_mutants": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 2,
+    "candidates": 33,
+    "killed": 32,
+    "survived": 1,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "25fd512252f5d00d8a3d447d684c59b38c5bbf4efdd32686d904ba1f200789fd",
+    "log_sha256": "2738b024a1c1407743073eac808458b77da9f16034e9b00c4872e7bbbceda49d"
+  },
+  "stryker": {
+    "version": "5.0.0",
+    "status": "skipped_explicitly",
+    "exit_code": null,
+    "candidates": 0,
+    "killed": 0,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": null,
+    "log_sha256": null
+  },
+  "snapshot_source_hashes": {
+    "tests/continuation_hardening.rs": "2f514ff834932bd5f5d410ed279d23ec517645ccb958f9d16a18a8f6738568df",
+    "src/backend.rs": "3ab83aab8e9cb2fe0aa55b3ac52bcddb13bc46d4a99d2aa0aeac5163ea50f5dc",
+    "src/newton.rs": "56b1d9cb10f43ab2f155c0004e59442ad3141e0923f3bb44c7cfaa896279fe5b",
+    "src/model.rs": "bbb8bf169c85b9dc17593d2cbdc95969b64099e0b5c49192fb6eb7333f2281be"
+  },
+  "survivors": [
+    "src/newton.rs:484:25: replace > with >= in limited_candidate"
+  ]
+}

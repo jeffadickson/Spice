@@ -1,6 +1,7 @@
 {
   "status": "built_with_warnings_as_errors",
   "tool": "sphinx-build 9.1.0",
+  "python": "Python 3.13.15",
   "xml_member_entries": 221,
   "source_hashes": {
     "docs/engineering/conf.py": "fb73f89dd0546fe399755104a2776fafa00c838e75a5cdf643b3befe86c26902",
@@ -10,7 +11,7 @@
     "docs/engineering/scope.rst": "67d62eaf41e3ada5f917b60db973af6d16443ef35306d23c2fcbccf38572fc7c",
     "docs/engineering/testing.rst": "0c591d33ef0cad9fce3d5b3604476af788579023c32e0af843758ef7c0a5304b",
     "docs/architecture.sdoc": "6a68cbef7671e9db51c07a4ef31cda2350fbccbba17ce060106d40674d8683d2",
-    "docs/consistency.sdoc": "9e100905f0c0ad1ea16e4e709f49c1af99a0cc153c255d454f1229bee5c8f3cd",
+    "docs/consistency.sdoc": "0b2f4811ea60a08570e84af7152e92d849e3df411b24b042097780f30fd5e916",
     "docs/development-standards.sdoc": "40969e4f3902706eee1d097916a9385f67fb53e63e881ccc4ff8377d867d157b",
     "docs/fourth-slice.sdoc": "a76868635f98ce97cc79bd68f0b85a6169c8b08aaa7191ce607fcdc56a0381d5",
     "docs/implementation-plan.sdoc": "ccc83c8679fd0548b57c16cb29be42dcf9a60f6200cb9537a51b78cad8ce55c0",
@@ -21,12 +22,14 @@
     "docs/second-slice.sdoc": "48666154d4833a5805c89e411c97da16e4f4bdb626a38453662a3adafdc90195",
     "docs/sforge-language.sdoc": "d0e0691ad306e40a7575b17811effd0c940e0164d098c66136a5e67aad416748",
     "docs/third-slice.sdoc": "4831631874a90d0e5a7e7849d7bc027e0e2ddf096b11f7fe48a829fe5c7bda3a",
-    "dotnet/Simulator.Client/Client.cs": "9be755a9005f6af541d4abe8802212741aedc85b5c3179e37bc3037b831bd054",
+    "dotnet/Simulator.Client/Client.cs": "42c580856a6481e4bc221ee73228e343b95bae249cb3e72ef4410aff18157611",
     "dotnet/Simulator.Client/Requests.cs": "054159a50dd5021973568b93a330d8d7d2b2ba5c3c836c6adf4660064705e976",
     "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
     "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
     "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
-    "dotnet/Simulator.Client/bin/Debug/net10.0/Simulator.Client.xml": "478ed0b4b577259209792476f25c6744098341571ab93a61d4b50a7963e70d2a"
+    "dotnet/Simulator.Client/bin/Debug/net10.0/Simulator.Client.xml": "478ed0b4b577259209792476f25c6744098341571ab93a61d4b50a7963e70d2a",
+    "scripts/EngineeringDocs.cs": "c51eb6ddac0f87ab54a4dadc42d3c10732ae46a35825c31ebb0e89670a91c8f1",
+    "scripts/Setup-EngineeringDocs.ps1": "f31914cea4e93290bacead5b702239d45f73908a1ae98e8f2cf696fe81ff4a59"
   },
   "local_html": "build\\engineering\\windows-x64\\html\\index.html",
   "limitations": [

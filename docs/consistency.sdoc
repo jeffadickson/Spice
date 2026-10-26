@@ -304,6 +304,20 @@ RELATIONS:
   VALUE: REM-003
 
 [REQUIREMENT]
+UID: MUT-003
+STATUS: Draft
+TITLE: Pristine mutation baselines and checked name selection
+STATEMENT: >>>
+Reused mutation build caches shall refresh owned package artifacts before baseline verification so that a previous mutant binary cannot be mistaken for unmutated source. Vendor dependency caches may remain. Cache cleanup shall stay within its checked target directory and refuse linked cache paths. A requested mutation-name filter shall be checked against the native candidate inventory before mutation; unsupported or escaped selection shall fail without executing mutants.
+<<<
+COMMENT: >>>
+Derived qualification finding. Implementation: scripts/FrameworkMutations.cs. Verification: repeated unchanged-source guard runs, the preserved stale-cache baseline failure, and tests/FrameworkMutations.Tests.ps1 scope-escape rejection. Filters use the common Rust/.NET nonbacktracking regex subset; actual native inventory remains authoritative evidence. See evidence/framework-cache-374.json and the checkpoint report; no test score is inferred from zero matching candidates.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MUT-001
+
+[REQUIREMENT]
 UID: PROP-001
 STATUS: Draft
 TITLE: Maintained property runners with shrinking and replay

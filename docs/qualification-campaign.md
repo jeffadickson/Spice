@@ -26,6 +26,13 @@ Checkpoint 364 completes 355–364. See ../evidence/testing-364-qualification.md
 resume at 365 for remaining generated-parser/numerical properties, overnight
 library adoption and mutation follow-up before sparse AC work.
 
+Checkpoint 374 completes 365–374 and the testing allocation. Read
+../evidence/testing-374-qualification.md. Next: 375–394 direct sparse AC.
+The strict bridge remains open; generated mutation survivors and compile-error
+limitations are retained. The final review should examine legacy absolute_tolerance
+semantics and standalone managed-mutation native-resource immutability rather than
+assuming those broader contracts have been qualified by these finite runs.
+
 Coverage is measured for the completed checkpoint source, with line/branch tooling
 limits reported. Failures and minimized counterexamples remain evidence. Use the
 existing pinned faer/nalgebra providers; external source/model references are
