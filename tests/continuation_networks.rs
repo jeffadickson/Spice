@@ -140,3 +140,100 @@ fn seeded_coupled_chain_corpus_matches_inverse_shockley_and_kcl() {
     }
     assert_eq!(cases, 72);
 }
+
+fn bridge(volts: f64, ohms: f64) -> Circuit {
+    let mut elements = vec![
+        Element::Voltage {
+            id: "V".into(),
+            p: NodeId(1),
+            n: NodeId(0),
+            volts,
+        },
+        Element::Resistor {
+            id: "load".into(),
+            p: NodeId(2),
+            n: NodeId(3),
+            ohms,
+        },
+    ];
+    for (id, p, n) in [("D1", 1, 2), ("D2", 0, 2), ("D3", 3, 1), ("D4", 3, 0)] {
+        elements.push(Element::Diode {
+            id: id.into(),
+            p: NodeId(p),
+            n: NodeId(n),
+            saturation_amps: 1e-12,
+            thermal_volts: 0.02585,
+        });
+    }
+    Circuit {
+        nodes: vec!["0".into(), "in".into(), "plus".into(), "minus".into()],
+        elements,
+    }
+}
+
+fn bridge_voltage(volts: f64, ohms: f64) -> f64 {
+    // Symmetry gives Vplus=(Vs+W)/2 and Vminus=(Vs-W)/2. Including both
+    // reverse diode currents, W/R=2*Is*(exp(-W/(2*Vt))*cosh(Vs/(2*Vt))-1).
+    // The scalar residual is strictly increasing on [0,abs(Vs)]; bisection
+    // is independent of the production MNA Jacobian/Newton controller.
+    let mut low = 0.;
+    let mut high = volts.abs();
+    for _ in 0..100 {
+        let mid = (low + high) * 0.5;
+        let current =
+            2e-12 * ((-mid / (2. * 0.02585)).exp() * (volts / (2. * 0.02585)).cosh() - 1.);
+        if mid / ohms > current {
+            high = mid
+        } else {
+            low = mid
+        }
+    }
+    (low + high) * 0.5
+}
+
+#[test]
+fn bridge_rectifier_matches_monotonic_oracle_kcl_and_power_for_both_polarities() {
+    for volts in [-2., -1., -0.5, 0.5, 1., 2.] {
+        let ohms = 1000.;
+        let plan = compile(&bridge(volts, ohms)).unwrap();
+        let expected = bridge_voltage(volts, ohms);
+        for provider in [&DenseLu as &dyn LinearSolver, &DenseQr, &FaerSparseLu] {
+            for options in policies() {
+                let options = NewtonOptions {
+                    current_absolute_tolerance: 1e-12,
+                    ..options
+                };
+                let (x, report) =
+                    solve_from(&plan, provider, options, vec![0.; 4]).unwrap_or_else(|error| {
+                        panic!(
+                            "Vs={volts}, provider={}, options={options:?}: {error:?}",
+                            provider.name()
+                        )
+                    });
+                assert_eq!(report.gmin_siemens, None);
+                let [input, plus, minus, branch] = x.as_slice() else {
+                    panic!("unexpected MNA layout")
+                };
+                assert!((input - volts).abs() < 2e-8);
+                assert!((plus - (volts + expected) * 0.5).abs() < 2e-7);
+                assert!((minus - (volts - expected) * 0.5).abs() < 2e-7);
+                let currents = [input - plus, -plus, minus - input, *minus]
+                    .map(|v| 1e-12 * (v / 0.02585).exp_m1());
+                let load = (plus - minus) / ohms;
+                let kcl = [
+                    branch + currents[0] - currents[2],
+                    load - currents[0] - currents[1],
+                    currents[2] + currents[3] - load,
+                ];
+                for mismatch in kcl {
+                    assert!(mismatch.abs() < 4e-12, "Vs={volts}: KCL {kcl:?}");
+                }
+                let power = volts * branch + (plus - minus) * load + (input - plus) * currents[0]
+                    - plus * currents[1]
+                    + (minus - input) * currents[2]
+                    + minus * currents[3];
+                assert!(power.abs() < 2e-12, "Vs={volts}: power={power}");
+            }
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+  "isat_amps": 1E-12,
+  "relative_tolerance": 1E-09,
+  "future_acceptance": "A later recovery is acceptable only if independently verified; never publish an unverified partial stage as success",
+  "observed_outcome": "NumericalFailure: exhausted stage budget at source scale 0.482421875",
+  "scope": "Known strict-policy counterexample, not a universal impossibility claim",
+  "voltage_absolute_tolerance": 1E-09,
+  "thermal_volts": 0.02585,
+  "newton_max_iterations": 128,
+  "volts": -2,
+  "load_ohms": 1000,
+  "provider": "nalgebra_dense_lu_reference",
+  "initial_state": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "current_absolute_tolerance": 1E-16,
+  "source_continuation": {
+    "max_stages": 128,
+    "initial_step": 0.125,
+    "minimum_step": 1E-06
+  },
+  "case": "bridge_rectifier"
+}
