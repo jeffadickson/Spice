@@ -28,3 +28,12 @@ existing pinned faer/nalgebra providers; external source/model references are
 recorded in checkpoint evidence. Preserve StrictDoc and existing engineering docs;
 any wider Sphinx migration needs a recorded decision rather than replacing them
 implicitly during numerical changes.
+
+Library/reference decision for this campaign: reuse pinned faer 0.24.4 for sparse
+real/complex factorization and the existing nalgebra dense providers for independent
+bounded comparisons. This preserves adapter boundaries and avoids a new native ABI
+and platform-packaging dependency while those existing CPU contracts are qualified.
+Primary references reviewed on 2026-10-26: https://docs.rs/faer/0.24.4/faer/ and the
+ngspice development manual https://ngspice.sourceforge.io/docs/ngspice-manual.pdf
+(version 47+, September 28, 2026). The manual is an equation/convergence reference;
+its development version is not a claim about the installed ngspice oracle version.

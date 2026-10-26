@@ -261,6 +261,9 @@ impl NewtonOptions {
         if let Some(continuation) = self.gmin_continuation {
             continuation.validate()?;
         }
+        if let Some(continuation) = self.continuation {
+            continuation.validate()?;
+        }
         Ok(())
     }
 }
@@ -338,7 +341,8 @@ impl GminContinuationOptions {
             || self.initial_siemens <= 0.
             || self.minimum_siemens <= 0.
             || self.minimum_siemens > self.initial_siemens
-            || !(0. ..1.).contains(&self.reduction_factor)
+            || self.reduction_factor <= 0.
+            || self.reduction_factor >= 1.
             || self.max_stages == 0
             || self.max_stages > 128
         {

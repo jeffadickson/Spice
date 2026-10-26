@@ -1,5 +1,60 @@
 //! Independent boundary and difficult-topology evidence for bounded Newton paths.
 use circuit_simulator::newton::norm_inf;
+use circuit_simulator::newton::{ContinuationOptions, GminContinuationOptions, NewtonOptions};
+
+#[test]
+fn nested_source_policies_are_validated_at_the_options_boundary() {
+    for bad in [0., -1., f64::NAN, f64::INFINITY, 1.1] {
+        assert!(
+            NewtonOptions {
+                continuation: Some(ContinuationOptions {
+                    initial_step: bad,
+                    ..ContinuationOptions::default()
+                }),
+                ..NewtonOptions::default()
+            }
+            .validate()
+            .is_err()
+        );
+    }
+    for count in [0, 1025, usize::MAX] {
+        assert!(
+            NewtonOptions {
+                continuation: Some(ContinuationOptions {
+                    max_stages: count,
+                    ..ContinuationOptions::default()
+                }),
+                ..NewtonOptions::default()
+            }
+            .validate()
+            .is_err()
+        );
+    }
+}
+
+#[test]
+fn gmin_reduction_requires_an_open_positive_unit_interval() {
+    for bad in [-0., 0., -1., 1., f64::NAN, f64::INFINITY] {
+        assert!(
+            GminContinuationOptions {
+                reduction_factor: bad,
+                ..GminContinuationOptions::default()
+            }
+            .validate()
+            .is_err()
+        );
+    }
+    for good in [f64::MIN_POSITIVE, 0.1, 0.5, 1. - f64::EPSILON] {
+        assert!(
+            GminContinuationOptions {
+                reduction_factor: good,
+                ..GminContinuationOptions::default()
+            }
+            .validate()
+            .is_ok()
+        );
+    }
+}
 
 #[test]
 fn nonfinite_norm_components_cannot_disappear_in_a_maximum() {

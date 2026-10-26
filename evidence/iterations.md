@@ -233,3 +233,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 332. Record explicit Rust integration-test scope for focused validation.
 333. Preserve per-tool outcome availability, add independent tool modes and exercise synthetic supervisor/real mutation contracts.
 335. Reject every nonfinite Newton infinity-norm component; verify ordered NaN/Inf cases and 512 replayable IEEE patterns (seed 0x4e4557544f4e3335). Focused suite: 2 passed. Coverage/mutations pending checkpoint 344.
+336. Validate nested source policies at NewtonOptions boundaries and require 0 < Gmin reduction < 1. Focused continuation suites: 9 tests passed; includes signed zero, nonfinite and boundary policies. Coverage/mutations pending checkpoint 344.
