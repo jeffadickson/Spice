@@ -52,7 +52,7 @@ try {
     $raw = @(Get-ChildItem -LiteralPath $profileRoot -Filter '*.profraw' | ForEach-Object FullName)
     & $profdata merge -sparse @raw -o $profile
     if ($LASTEXITCODE -ne 0) { throw 'Profile merge failed' }
-    $arguments = @('export', $executables[0], '-instr-profile=' + $profile)
+    $arguments = @('export', $executables[0], ('-instr-profile=' + $profile))
     foreach ($binary in $executables | Select-Object -Skip 1) { $arguments += @('-object', $binary) }
     $arguments += @(Get-ChildItem -LiteralPath src -Filter '*.rs' | ForEach-Object FullName)
     $export = & $llvmCov @arguments
@@ -74,4 +74,5 @@ try {
     $env:RUSTFLAGS = $oldFlags; $env:CARGO_TARGET_DIR = $oldTarget; $env:LLVM_PROFILE_FILE = $oldProfile
     $env:RUSTUP_TOOLCHAIN = $oldToolchain
 }
+
 

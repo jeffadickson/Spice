@@ -22,6 +22,7 @@ if (-not ($IsWindows -or $IsLinux)) { throw 'This setup profile supports Windows
 if ([Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -ne 'X64') { throw 'This setup profile currently requires x64.' }
 $nativeReady=$true
 if ($IsLinux) { foreach ($command in @('gcc','make','pkg-config','curl','git','python3')) { if (-not (Get-Command $command -ErrorAction SilentlyContinue)) { $nativeReady=$false } } }
+if ($IsLinux -and $nativeReady) { & python3 -c 'import ensurepip,venv' 2>$null; if ($LASTEXITCODE -ne 0) { $nativeReady=$false } }
 if ($Install -and $IsLinux -and -not $nativeReady) {
     if (-not (Get-Command apt-get -ErrorAction SilentlyContinue)) { throw 'Automated Linux package setup currently requires Ubuntu/Debian apt-get.' }
     $packages=@('build-essential','pkg-config','curl','ca-certificates','git','python3','python3-venv','libicu-dev','libssl-dev','zlib1g-dev')
