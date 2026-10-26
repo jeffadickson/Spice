@@ -91,7 +91,7 @@ public sealed class SimulationClient(string executable)
                     !error.TryGetProperty("code", out var code) || code.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(code.GetString()) ||
                     !error.TryGetProperty("message", out var message) || message.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(message.GetString()))))
                 throw new InvalidDataException("Contradictory or incomplete result envelope.");
-            if (process.ExitCode != 0 && status != "failed")
+            if ((process.ExitCode == 0) != (status == "succeeded"))
                 throw new IOException($"Unexpected native exit {process.ExitCode}: {diagnostics}");
             return new(version, status, complete, root.Clone());
         }

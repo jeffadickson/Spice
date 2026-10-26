@@ -58,4 +58,39 @@ public sealed class TransportContracts
     {
         await Assert.ThrowsAsync<InvalidDataException>(() => Fixture().RunJsonAsync(Request(output)));
     }
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(17)]
+    public async Task NonzeroExitCannotPublishSuccess(int exit)
+    {
+        var request = JsonSerializer.Serialize(new {
+            output = """{"schema_version":"1","status":"succeeded","complete":true}""",
+            diagnostics = "synthetic provider diagnostic",
+            exit_code = exit
+        });
+        var error = await Assert.ThrowsAsync<IOException>(() => Fixture().RunJsonAsync(request));
+        Assert.Contains(exit.ToString(), error.Message);
+        Assert.Contains("synthetic provider diagnostic", error.Message);
+    }
+
+    [Fact]
+    public async Task ZeroExitCannotPublishFailure()
+    {
+        await Assert.ThrowsAsync<IOException>(() => Fixture().RunJsonAsync(Request(
+            """{"schema_version":"1","status":"failed","complete":false,"error":{"code":"invalid_input","message":"fixture rejection"}}""")));
+    }
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(17)]
+    public async Task FailedEnvelopePreservesNativeError(int exit)
+    {
+        var response = await Fixture().RunJsonAsync(Request(
+            """{"schema_version":"1","status":"failed","complete":false,"error":{"code":"invalid_input","message":"fixture rejection"}}""", exit));
+        Assert.False(response.Succeeded);
+        Assert.Equal("invalid_input", response.Error!.Code);
+        Assert.Equal("fixture rejection", response.Error.Message);
+        Assert.Throws<InvalidOperationException>(() => response.ReadManifest());
+    }
 }
