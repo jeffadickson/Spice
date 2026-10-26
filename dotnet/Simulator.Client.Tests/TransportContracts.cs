@@ -5,6 +5,52 @@ using Xunit;
 /// <summary>Adversarial native-process envelopes, isolated from the real numerical engine.</summary>
 public sealed class TransportContracts
 {
+    [Fact]
+    public async Task PreCancelledRequestDoesNotStartAProcess()
+    {
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            new SimulationClient("nonexistent-engine").RunJsonAsync("{}", cancellation.Token));
+    }
+
+    [Fact]
+    public async Task CancellationStopsTheStartedChild()
+    {
+        var parent = Path.GetTempPath();
+        Assert.True(Directory.Exists(parent));
+        var directory = Path.Combine(parent, "spice-cancel-" + Guid.NewGuid().ToString("N"));
+        Assert.False(Directory.Exists(directory));
+        Directory.CreateDirectory(directory);
+        var marker = Path.Combine(directory, "pid.txt");
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        var run = Fixture().RunJsonAsync(JsonSerializer.Serialize(new {
+            mode = "hang", pid_file = marker, output = ""
+        }), cancellation.Token);
+        try
+        {
+            // A fixture acknowledgement removes startup races: cancellation
+            // happens after the actual child has started and read its request.
+            using var startup = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            while (!File.Exists(marker)) await Task.Delay(10, startup.Token);
+            var pid = int.Parse(await File.ReadAllTextAsync(marker, startup.Token));
+            cancellation.Cancel();
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => run);
+            try
+            {
+                using var child = System.Diagnostics.Process.GetProcessById(pid);
+                Assert.True(child.HasExited, "Cancellation left the fixture process alive.");
+            }
+            catch (ArgumentException) { /* The exited process is already reaped. */ }
+        }
+        finally
+        {
+            cancellation.Cancel();
+            try { await run; } catch (OperationCanceledException) { }
+            if (File.Exists(marker)) File.Delete(marker);
+            Directory.Delete(directory);
+        }
+    }
     private static SimulationClient Fixture()
     {
         var executable = Path.Combine(AppContext.BaseDirectory, "fixture",
