@@ -5,6 +5,19 @@ using Xunit;
 /// <summary>Adversarial native-process envelopes, isolated from the real numerical engine.</summary>
 public sealed class TransportContracts
 {
+    [Theory]
+    [InlineData("stdout")]
+    [InlineData("stderr")]
+    public async Task OversizedChildStreamsFailWithoutPipeDeadlock(string stream)
+    {
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        var request = JsonSerializer.Serialize(new {
+            flood = stream, output = """{"schema_version":"1","status":"succeeded","complete":true}"""
+        });
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() =>
+            Fixture().RunJsonAsync(request, deadline.Token));
+        Assert.Contains("32 MiB", error.Message);
+    }
     [Fact]
     public async Task PreCancelledRequestDoesNotStartAProcess()
     {

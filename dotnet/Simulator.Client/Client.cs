@@ -103,16 +103,19 @@ public sealed class SimulationClient(string executable)
     }
     private static async Task<string> ReadBoundedAsync(StreamReader reader, CancellationToken cancellation)
     {
-        var builder = new System.Text.StringBuilder();
-        var buffer = new char[8192];
+        // Count wire bytes, not UTF-16 characters: multibyte text must obey
+        // the same 32 MiB bound. Decode only after the bounded stream ends.
+        using var bytes = new MemoryStream();
+        var buffer = new byte[8192];
         int read;
-        while ((read = await reader.ReadAsync(buffer.AsMemory(), cancellation)) != 0)
+        while ((read = await reader.BaseStream.ReadAsync(buffer.AsMemory(), cancellation)) != 0)
         {
-            if (builder.Length + read > 32 * 1024 * 1024)
+            if (bytes.Length + read > 32 * 1024 * 1024)
                 throw new InvalidDataException("Native output exceeded 32 MiB.");
-            builder.Append(buffer, 0, read);
+            bytes.Write(buffer, 0, read);
         }
-        return builder.ToString();
+        try { return new System.Text.UTF8Encoding(false, true).GetString(bytes.GetBuffer(), 0, (int)bytes.Length); }
+        catch (System.Text.DecoderFallbackException error) { throw new InvalidDataException("Native output is not valid UTF-8.", error); }
     }
 }
 

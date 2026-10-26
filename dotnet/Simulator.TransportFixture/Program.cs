@@ -4,6 +4,12 @@ using System.Text.Json;
 // these envelopes are deliberately not numerical simulator qualification.
 using var request = JsonDocument.Parse(await Console.In.ReadToEndAsync());
 var root = request.RootElement;
+if (root.TryGetProperty("flood", out var flood))
+{
+    var writer = flood.GetString() == "stderr" ? Console.Error : Console.Out;
+    var block = new string('x', 8192);
+    for (var i = 0; i < 4097; i++) await writer.WriteAsync(block);
+}
 if (root.TryGetProperty("mode", out var mode) && mode.GetString() == "hang")
 {
     var marker = root.GetProperty("pid_file").GetString()!;
