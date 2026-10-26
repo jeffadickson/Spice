@@ -731,6 +731,12 @@ fn solve_with_source_continuation(
         }
         attempts += 1;
         let target_scale = (source_scale + step).min(1.0);
+        if target_scale <= source_scale {
+            return Err(SimError::new(
+                ErrorCode::NumericalFailure,
+                "source continuation cannot make representable excitation progress",
+            ));
+        }
         let scaled_rhs = plan
             .rhs
             .iter()

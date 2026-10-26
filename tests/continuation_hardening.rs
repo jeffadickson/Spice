@@ -6,6 +6,64 @@ use std::sync::atomic::AtomicUsize;
 
 struct ObserveFirstTrial(Mutex<Vec<f64>>);
 
+struct FirstStageOnly(AtomicUsize);
+impl LinearSolver for FirstStageOnly {
+    fn name(&self) -> &'static str {
+        "first-stage-only"
+    }
+    fn solve(&self, matrix: &Matrix, rhs: &[f64]) -> SimResult<Vec<f64>> {
+        if self.0.fetch_add(1, Ordering::Relaxed) < 2 {
+            DenseLu.solve(matrix, rhs)
+        } else {
+            Err(circuit_simulator::error::SimError::new(
+                ErrorCode::NumericalFailure,
+                "fixture rejects every later source increment",
+            ))
+        }
+    }
+}
+
+#[test]
+fn source_step_stagnation_cannot_accept_duplicate_stage_scales() {
+    let plan = compile(&Circuit {
+        nodes: vec!["0".into(), "x".into()],
+        elements: vec![
+            Element::Resistor {
+                id: "R".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                ohms: 1.,
+            },
+            Element::Current {
+                id: "I".into(),
+                p: NodeId(0),
+                n: NodeId(1),
+                amps: 1.,
+            },
+        ],
+    })
+    .unwrap();
+    let provider = FirstStageOnly(AtomicUsize::new(0));
+    let options = NewtonOptions {
+        continuation: Some(ContinuationOptions {
+            initial_step: 0.5,
+            minimum_step: f64::from_bits(1),
+            max_stages: 1024,
+        }),
+        current_absolute_tolerance: 1e-30,
+        voltage_absolute_tolerance: 1e-30,
+        relative_tolerance: 1e-30,
+        ..NewtonOptions::default()
+    };
+    let error = solve(&plan, &provider, options).unwrap_err();
+    assert_eq!(error.code, ErrorCode::NumericalFailure);
+    assert!(
+        error.message.contains("representable excitation progress"),
+        "{error}"
+    );
+    assert!(provider.0.load(Ordering::Relaxed) < 64);
+}
+
 #[test]
 fn subnormal_gmin_stagnation_is_reported_before_repeating_stages() {
     let tiny = f64::from_bits(1);
