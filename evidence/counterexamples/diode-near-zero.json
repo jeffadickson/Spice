@@ -1,0 +1,14 @@
+{
+  "kind": "near_zero_current_cancellation",
+  "source_before": "adddab3",
+  "source_fixed": "b555958",
+  "property": "diode_near_zero_current_retains_its_differential_limit",
+  "proptest_seed": "0x5350494345333535",
+  "log_exponent": -19.842317683031833,
+  "negative": false,
+  "saturation_amps": 1E-12,
+  "thermal_volts": 0.025,
+  "failure": "Taylor differential-limit bound fails with exp(x)-1 cancellation",
+  "raw_log_sha256": "18a4f1326d6bd2434b7c1acb8d4eb3edfe2797776cd5e98685b620dfbf18a558",
+  "limitation": "The existing persisted regression seed already reproduces this property failure; no new fictitious seed was added."
+}

@@ -5,12 +5,14 @@ if($guard -and $guard -notin @('source-revision','source-hash','framework-summar
 Describe 'Remote qualification evidence publication' {
     $publisher=if ($env:SPICE_REMOTE_PUBLISHER) { $env:SPICE_REMOTE_PUBLISHER } else { Join-Path $PSScriptRoot '../scripts/RemoteQualification.cs' }
     function New-RemoteFixture {
+        param([switch]$Property)
         $base=Join-Path (Split-Path $PSScriptRoot -Parent) ('work/remote-tests/'+[guid]::NewGuid().ToString('N'))
         $source=Join-Path $base 'source';$bare=Join-Path $base 'origin.git';$clone=Join-Path $base 'clone'
         New-Item -ItemType Directory -Force (Join-Path $source 'tests') | Out-Null
         Set-Content (Join-Path $source 'Cargo.toml') '[workspace]'
         Set-Content (Join-Path $source 'Cargo.lock') 'version = 4'
         Set-Content (Join-Path $source 'tests/endurance.rs') '// synthetic publication fixture'
+        if($Property){Set-Content (Join-Path $source 'tests/property_campaign.rs') '// synthetic property-publication fixture'}
         Set-Content (Join-Path $source '.gitignore') "/work/"
         & git init -b main $source *> $null
         & git -C $source add .
@@ -20,9 +22,15 @@ Describe 'Remote qualification evidence publication' {
         & git -C $source push -u origin main *> $null
         & git clone --branch main $bare $clone *> $null
         $sha=(& git -C $clone rev-parse HEAD).Trim()
-        $hashes=@{};foreach($file in @('Cargo.toml','Cargo.lock','tests/endurance.rs')){$hashes[$file]=(Get-FileHash (Join-Path $clone $file) -Algorithm SHA256).Hash.ToLowerInvariant()}
+        $hashes=@{};$inputs=@('Cargo.toml','Cargo.lock','tests/endurance.rs')
+        if($Property){$inputs+='tests/property_campaign.rs'}
+        foreach($file in $inputs){$hashes[$file]=(Get-FileHash (Join-Path $clone $file) -Algorithm SHA256).Hash.ToLowerInvariant()}
         $run=Join-Path $clone 'work/import';New-Item -ItemType Directory -Force $run|Out-Null
         $report=[ordered]@{status='budget_exhausted';source_commit=$sha;source_dirty=$false;started_utc='2026-10-26T00:00:00Z';finished_utc='2026-10-26T10:00:00Z';budget_seconds=36000;elapsed_seconds=36000;cases=1024;batches=1;initial_seed='1';mutation_status='skipped_explicitly';source_hashes=$hashes}
+        if($Property){
+            $report.case_count_kind='completed_requested_property_cases_excludes_replay_and_shrinks'
+            $report.property_library='proptest 1.9.0';$report.property_count=8;$report.property_cases_per_method=128
+        }
         $report|ConvertTo-Json -Depth 5|Set-Content (Join-Path $run 'summary.json')
         return @{Clone=$clone;Bare=$bare;Sha=$sha;Run=$run;Report=$report}
     }
@@ -33,6 +41,34 @@ Describe 'Remote qualification evidence publication' {
         return @{Code=$code;Output=$output}
     }
     if(-not $guard){
+    It 'preserves property runner and requested-case accounting on publication' {
+        $fixture=New-RemoteFixture -Property
+        $result=Invoke-Publisher $fixture
+        if($result.Code -ne 0){throw $result.Output}
+        $branch=(& git -C $fixture.Bare for-each-ref '--format=%(refname:short)' refs/heads/remote-runs/).Trim()
+        $files=@(& git -C $fixture.Bare diff --name-only main $branch)
+        $path=@($files|Where-Object {$_ -like '*/manifest.json'})[0]
+        $payload=(& git -C $fixture.Bare show ('{0}:{1}' -f $branch,$path)) -join [Environment]::NewLine
+        $manifest=$payload|ConvertFrom-Json
+        $manifest.endurance.property_library|Should Be 'proptest 1.9.0'
+        $manifest.endurance.property_count|Should Be 8
+        $manifest.endurance.case_count_kind|Should Be 'completed_requested_property_cases_excludes_replay_and_shrinks'
+    }
+    It 'rejects unknown or inconsistent property provenance before publication' {
+        foreach($mutation in @('kind','library','count','cases','overflow')){
+            $fixture=New-RemoteFixture -Property
+            switch($mutation){
+                'kind' {$fixture.Report.case_count_kind='guessed'}
+                'library' {$fixture.Report.property_library='unqualified'}
+                'count' {$fixture.Report.property_count=0}
+                'cases' {$fixture.Report.cases=1023}
+                'overflow' {$fixture.Report.batches=[ulong]::MaxValue}
+            }
+            $fixture.Report|ConvertTo-Json -Depth 5|Set-Content (Join-Path $fixture.Run 'summary.json')
+            (Invoke-Publisher $fixture).Code|Should Not Be 0
+            @(& git -C $fixture.Bare for-each-ref '--format=%(refname:short)' refs/heads/remote-runs/).Count|Should Be 0
+        }
+    }
     It 'publishes only small explicit evidence files to an identifiable branch' {
         $fixture=New-RemoteFixture
         $result=Invoke-Publisher $fixture

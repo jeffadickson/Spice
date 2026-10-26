@@ -80,7 +80,17 @@ if(run is not null) {
     if(!new[]{"failed","budget_exhausted","budget_exhausted_partial_batch"}.Contains(evidence.Status)||evidence.FinishedUtc is null||evidence.FinishedUtc<evidence.StartedUtc||!double.IsFinite(evidence.BudgetSeconds)||evidence.BudgetSeconds<=0||evidence.BudgetSeconds>86400||!double.IsFinite(evidence.ElapsedSeconds)||evidence.ElapsedSeconds<0||!ulong.TryParse(evidence.InitialSeed,out _))throw new IOException("Malformed or unfinished endurance report.");
     if(!new[]{"passed","failed","not_run","skipped_explicitly","incomplete_timeout"}.Contains(evidence.MutationStatus))throw new IOException("Unknown mutation state.");
     if(import is not null)report.RequestedMinutes=evidence.BudgetSeconds/60.0;
-    foreach(var required in new[]{"Cargo.toml","Cargo.lock","tests/endurance.rs"})if(!evidence.SourceHashes.ContainsKey(required))throw new IOException("Missing source hash: "+required);
+    // Preserve old archived runs while making the new case-count meaning
+    // explicit. Library replay/shrink attempts are not fabricated case counts.
+    var propertyMode=evidence.CaseCountKind=="completed_requested_property_cases_excludes_replay_and_shrinks";
+    if(propertyMode) {
+        if(evidence.PropertyLibrary!="proptest 1.9.0"||evidence.PropertyCount<1||evidence.PropertyCount>128||
+            evidence.PropertyCasesPerMethod<1||evidence.PropertyCasesPerMethod>100000)throw new IOException("Invalid property runner metadata.");
+        var perBatch=(ulong)evidence.PropertyCount*(ulong)evidence.PropertyCasesPerMethod;
+        if(evidence.Batches>ulong.MaxValue/perBatch||evidence.Cases!=evidence.Batches*perBatch)throw new IOException("Inconsistent completed property case count.");
+    } else if(evidence.CaseCountKind!="legacy_seeded_cases"||evidence.PropertyLibrary is not null||evidence.PropertyCount!=0||evidence.PropertyCasesPerMethod!=0)
+        throw new IOException("Unknown or contradictory case-count provenance.");
+    foreach(var required in new[]{"Cargo.toml","Cargo.lock",propertyMode?"tests/property_campaign.rs":"tests/endurance.rs"})if(!evidence.SourceHashes.ContainsKey(required))throw new IOException("Missing source hash: "+required);
     foreach(var (relative,hash) in evidence.SourceHashes) {
         if(relative.Contains('\\')||relative.Split('/').Any(p=>p is "" or "." or "..")||Path.IsPathRooted(relative)||!Regex.IsMatch(hash,"\\A[0-9a-f]{64}\\z"))throw new IOException("Unsafe source hash entry.");
         if(!new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml","global.json","dotnet-tools.json","Makefile"}.Contains(relative)&&!new[]{"src/","tests/","scripts/","compat/","examples/","dotnet/"}.Any(prefix=>relative.StartsWith(prefix,StringComparison.Ordinal)))throw new IOException("Source hash path is outside the source allowlist.");
@@ -164,6 +174,9 @@ sealed class EnduranceEvidence {
     public string Status {get;set;}="";public string SourceCommit {get;set;}="";public bool SourceDirty {get;set;}
     public DateTime StartedUtc {get;set;}public DateTime? FinishedUtc {get;set;}public double BudgetSeconds {get;set;}public double ElapsedSeconds {get;set;}
     public ulong Cases {get;set;}public ulong Batches {get;set;}public ulong CheckpointRetries {get;set;}public string InitialSeed {get;set;}="";public string? PendingSeed {get;set;}
+    public string CaseCountKind {get;set;}="legacy_seeded_cases";
+    public string? PropertyLibrary {get;set;}
+    public int PropertyCount {get;set;}public int PropertyCasesPerMethod {get;set;}
     public string MutationStatus {get;set;}="";public string Rustc {get;set;}="";public string? RustcVerbose {get;set;}public string Dotnet {get;set;}="";
     public Dictionary<string,string> SourceHashes {get;set;}=new();
     public string FrameworkMutationStatus {get;set;}="not_run";public string? FrameworkShard {get;set;}public string? FrameworkSummarySha256 {get;set;}
