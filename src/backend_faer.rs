@@ -98,6 +98,19 @@ impl SparseLinearBackend for FaerSparseLu {
 }
 
 impl LinearSolver for FaerSparseLu {
+    fn solve_complex_rhs(
+        &self,
+        real: &Matrix,
+        imag: &Matrix,
+        rhs: &[num_complex::Complex64],
+    ) -> SimResult<Vec<num_complex::Complex64>> {
+        // Compatibility entry point for bounded dense reference callers. The
+        // direct CSC entry above avoids both of these dense scans.
+        let real = CscMatrix::from_dense(real)?;
+        let imaginary = CscMatrix::from_dense(imag)?;
+        let system = SparseComplexSystem::from_real_parts(&real, &imaginary, 1.)?;
+        self.solve_sparse_complex_rhs(&system, rhs)
+    }
     fn solve_csc(&self, matrix: &CscMatrix, rhs: &[f64]) -> SimResult<Vec<f64>> {
         self.solve_compiled_csc(matrix, rhs)
     }

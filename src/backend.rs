@@ -53,6 +53,15 @@ impl SparseLinearBackend for DenseLu {
         let (real, imaginary) = complex_dense(system);
         LinearSolver::solve_complex(self, &real, &imaginary, rhs)
     }
+    fn solve_sparse_complex_rhs(
+        &self,
+        system: &SparseComplexSystem,
+        rhs: &[num_complex::Complex64],
+    ) -> SimResult<Vec<num_complex::Complex64>> {
+        system.validate_complex_rhs(rhs)?;
+        let (real, imaginary) = complex_dense(system);
+        LinearSolver::solve_complex_rhs(self, &real, &imaginary, rhs)
+    }
 }
 
 impl LinearSolver for DenseLu {
@@ -96,10 +105,25 @@ impl LinearSolver for DenseLu {
         imag: &Matrix,
         rhs: &[f64],
     ) -> SimResult<Vec<num_complex::Complex64>> {
-        real.validate(rhs)?;
-        imag.validate(rhs)?;
+        let complex: Vec<_> = rhs
+            .iter()
+            .map(|v| num_complex::Complex64::new(*v, 0.))
+            .collect();
+        self.solve_complex_rhs(real, imag, &complex)
+    }
+    fn solve_complex_rhs(
+        &self,
+        real: &Matrix,
+        imag: &Matrix,
+        rhs: &[num_complex::Complex64],
+    ) -> SimResult<Vec<num_complex::Complex64>> {
+        real.validate(&vec![0.; real.n.min(256)])?;
+        imag.validate(&vec![0.; imag.n.min(256)])?;
         if real.n != imag.n {
             return Err(SimError::invalid("complex matrix dimensions differ"));
+        }
+        if rhs.len() != real.n || rhs.iter().any(|v| !v.re.is_finite() || !v.im.is_finite()) {
+            return Err(SimError::invalid("invalid complex right-hand side"));
         }
         let values: Vec<_> = real
             .values
@@ -108,10 +132,7 @@ impl LinearSolver for DenseLu {
             .map(|(r, i)| num_complex::Complex64::new(*r, *i))
             .collect();
         let a = DMatrix::from_row_slice(real.n, real.n, &values);
-        let b = DVector::from_iterator(
-            real.n,
-            rhs.iter().map(|v| num_complex::Complex64::new(*v, 0.0)),
-        );
+        let b = DVector::from_column_slice(rhs);
         let x = a
             .lu()
             .solve(&b)

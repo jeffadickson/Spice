@@ -1,5 +1,30 @@
 //! Direct sparse dynamic assembly contracts, independent of provider layouts.
+use circuit_simulator::backend::DenseLu;
 use circuit_simulator::backend_faer::FaerSparseLu;
+
+#[test]
+fn native_complex_rhs_adapters_agree_with_an_independent_solution() {
+    let real = Matrix {
+        n: 2,
+        values: vec![2., 0., -3., 4.],
+    };
+    let imag = Matrix {
+        n: 2,
+        values: vec![0., 14., 10., -22.],
+    };
+    let rhs = [Complex64::new(16., 46.), Complex64::new(-33., -66.)];
+    for provider in [&DenseLu as &dyn LinearSolver, &FaerSparseLu] {
+        let x = provider.solve_complex_rhs(&real, &imag, &rhs).unwrap();
+        assert!((x[0] - Complex64::new(1., 2.)).norm() < 1e-12);
+        assert!((x[1] - Complex64::new(3., -1.)).norm() < 1e-12);
+        assert!(provider.solve_complex_rhs(&real, &imag, &rhs[..1]).is_err());
+        assert!(
+            provider
+                .solve_complex_rhs(&real, &imag, &[Complex64::new(0., f64::NAN), rhs[1]])
+                .is_err()
+        );
+    }
+}
 use circuit_simulator::solver_contract::SparseComplexSystem;
 use circuit_simulator::{error::ErrorCode, sparse::CscMatrix};
 use circuit_simulator::{
