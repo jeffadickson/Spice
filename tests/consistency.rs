@@ -262,3 +262,141 @@ fn debug_logging_keeps_protocol_stdout_clean() {
     assert!(logs.contains("circuit_compiled") && logs.contains("physical_audit_completed"));
     assert!(!logs.contains("\"elements\""));
 }
+
+#[test]
+fn timestep_refinement_compares_shared_samples_without_claiming_global_accuracy() {
+    use circuit_simulator::{
+        audit::compare_refinement,
+        backend::DenseLu,
+        compile::compile,
+        netlist::parse,
+        transient::{TransientOptions, transient},
+    };
+    let c = parse("title\nV1 a 0 1\nR1 a b 1k\nC1 b 0 1u").unwrap();
+    let p = compile(&c).unwrap();
+    let runs: Vec<_> = [0.001, 0.0005, 0.00025]
+        .iter()
+        .map(|h| {
+            transient(
+                &p,
+                &DenseLu,
+                &TransientOptions {
+                    stop_s: 0.004,
+                    step_s: *h,
+                    max_steps: 32,
+                },
+            )
+            .unwrap()
+        })
+        .collect();
+    let a = compare_refinement(&runs[0], &runs[1], 1, 0.1, 1e-8, "V").unwrap();
+    let b = compare_refinement(&runs[1], &runs[2], 1, 0.1, 1e-8, "V").unwrap();
+    assert_eq!(a.status, CheckStatus::Passed);
+    assert!(b.discrepancy.unwrap().abs() < a.discrepancy.unwrap().abs());
+    assert_eq!(
+        compare_refinement(&runs[0], &runs[1], 1, 1e-9, 1e-8, "V")
+            .unwrap()
+            .status,
+        CheckStatus::Failed
+    );
+    assert!(compare_refinement(&runs[0], &runs[1], 99, 0.1, 1e-8, "V").is_err());
+    assert!(compare_refinement(&runs[0], &runs[0], 1, 0.1, 1e-8, "V").is_err());
+}
+
+#[test]
+fn loose_newton_convergence_cannot_bypass_physical_api_checks() {
+    use circuit_simulator::{
+        api::{Analysis, Request, run},
+        error::ErrorCode,
+        netlist::parse,
+        newton::NewtonOptions,
+    };
+    let request = Request {
+        schema_version: "1".into(),
+        case_id: "loose".into(),
+        backend: "lu".into(),
+        experiment: None,
+        circuit: parse("title\nV1 a 0 0.5\nR1 a b 1k\nD1 b 0 1p 0.02585").unwrap(),
+        analysis: Analysis::OperatingPointNewton {
+            options: NewtonOptions {
+                voltage_absolute_tolerance: 1.,
+                current_absolute_tolerance: 1.,
+                relative_tolerance: 1.,
+                ..NewtonOptions::default()
+            },
+        },
+    };
+    let error = run(&request).unwrap_err();
+    assert_eq!(error.code, ErrorCode::NumericalFailure);
+    assert!(error.message.contains("independent audit failed"));
+}
+
+#[test]
+fn seeded_divider_audits_and_malformed_state_fuzz_smoke_are_reproducible() {
+    use circuit_simulator::{
+        audit::dc,
+        circuit::{Circuit, Element},
+        ids::NodeId as N,
+    };
+    // Fixed LCG seed; 128 independently solved resistor dividers and 512 raw-bit
+    // state perturbations. Invalid/nonfinite states must fail safely, never panic.
+    let mut seed = 0x4155_4449_545f_3331u64;
+    let mut next = || {
+        seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
+        seed
+    };
+    let mut last = None;
+    for _ in 0..128 {
+        let r1 = 1. + (next() % 100_000) as f64;
+        let r2 = 1. + (next() % 100_000) as f64;
+        let v = 0.1 + (next() % 10_000) as f64 / 100.;
+        let c = Circuit {
+            nodes: vec!["0".into(), "a".into(), "b".into()],
+            elements: vec![
+                Element::Voltage {
+                    id: "V1".into(),
+                    p: N(1),
+                    n: N(0),
+                    volts: v,
+                },
+                Element::Resistor {
+                    id: "R1".into(),
+                    p: N(1),
+                    n: N(2),
+                    ohms: r1,
+                },
+                Element::Resistor {
+                    id: "R2".into(),
+                    p: N(2),
+                    n: N(0),
+                    ohms: r2,
+                },
+            ],
+        };
+        let x = [v, v * r2 / (r1 + r2), -v / (r1 + r2)];
+        assert!(
+            !dc(&c, &x, AuditOptions::default(), None)
+                .unwrap()
+                .has_failures()
+        );
+        let mut wrong = x;
+        wrong[2] += 0.01;
+        assert!(
+            dc(&c, &wrong, AuditOptions::default(), None)
+                .unwrap()
+                .has_failures()
+        );
+        last = Some(c);
+    }
+    let c = last.unwrap();
+    for _ in 0..512 {
+        let x = [
+            f64::from_bits(next()),
+            f64::from_bits(next()),
+            f64::from_bits(next()),
+        ];
+        if let Ok(report) = dc(&c, &x, AuditOptions::default(), None) {
+            serde_json::to_string(&report).unwrap();
+        }
+    }
+}

@@ -383,3 +383,66 @@ impl AuditReport {
         }
     }
 }
+
+/// Compare an explicitly rerun finer waveform at exactly shared coarse sample
+/// times. This reports observed change, not a rigorous global error estimate.
+/// No interpolation, extrapolation, solver rerun or hidden resource expansion occurs.
+pub fn compare_refinement(
+    coarse: &[crate::transient::Sample],
+    fine: &[crate::transient::Sample],
+    signal: usize,
+    absolute: f64,
+    relative: f64,
+    unit: &'static str,
+) -> SimResult<Check> {
+    if !absolute.is_finite()
+        || absolute <= 0.
+        || !relative.is_finite()
+        || relative <= 0.
+        || !["V", "A"].contains(&unit)
+        || coarse.is_empty()
+        || fine.len() <= coarse.len()
+        || fine.len() > 100_000
+    {
+        return Err(SimError::invalid("invalid refinement comparison"));
+    }
+    for samples in [coarse, fine] {
+        if samples.iter().any(|s| {
+            !s.time_s.is_finite()
+                || s.time_s < 0.
+                || signal >= s.values.len()
+                || !s.values[signal].is_finite()
+        }) || samples.windows(2).any(|w| w[0].time_s >= w[1].time_s)
+        {
+            return Err(SimError::invalid(
+                "invalid refinement axis or selected signal",
+            ));
+        }
+    }
+    if coarse.last().unwrap().time_s != fine.last().unwrap().time_s {
+        return Err(SimError::invalid("refinement stop times differ"));
+    }
+    let mut report = AuditReport { checks: Vec::new() };
+    for sample in coarse {
+        let index = fine
+            .binary_search_by(|s| s.time_s.total_cmp(&sample.time_s))
+            .map_err(|_| {
+                SimError::invalid("refinement requires exactly shared coarse sample times")
+            })?;
+        let (a, b) = (sample.values[signal], fine[index].values[signal]);
+        let mut check = Check::measured(
+            "timestep_refinement",
+            a - b,
+            absolute + relative * a.abs().max(b.abs()),
+            unit,
+        );
+        check.reason = Some(format!(
+            "observed change at time_s={}; not a global error bound",
+            sample.time_s
+        ));
+        report.merge_worst(AuditReport {
+            checks: vec![check],
+        });
+    }
+    Ok(report.checks.remove(0))
+}

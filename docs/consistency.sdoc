@@ -109,3 +109,16 @@ Implementation: src/main.rs, src/api.rs and src/newton.rs; tracing and tracing-s
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-GOAL-004
+
+[REQUIREMENT]
+UID: CONS-009
+TITLE: Explicit timestep-refinement comparison
+STATEMENT: >>>
+The Rust audit API shall compare independently supplied coarse and finer waveforms for a selected voltage or current at exactly shared coarse times, rejecting malformed axes, nonfinite values, missing signals or mismatched stop times. It shall retain the worst normalized discrepancy and identify observed change as distinct from a rigorous global accuracy bound. It shall not silently rerun the solver or interpolate samples.
+<<<
+COMMENT: >>>
+Implementation: src/audit.rs::compare_refinement. Verification: tests/consistency.rs::timestep_refinement_compares_shared_samples_without_claiming_global_accuracy.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: CONS-001

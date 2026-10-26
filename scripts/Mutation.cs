@@ -64,7 +64,12 @@ var mutants = new (string Name, string File, string Pattern, string Replacement)
     ("continuation-stage-skip", "src/newton.rs", @"let target_scale = \(source_scale \+ step\)\.min\(1\.0\);", "let target_scale = 1.0;"),
     // A regularized warm start must never masquerade as a physical operating point.
     ("gmin-final-shunt", "src/newton.rs", @"final_options\.gmin_siemens = None;", "final_options.gmin_siemens = Some(gmin);"),
-    ("gmin-stage-budget", "src/newton.rs", @"stage\.gmin_siemens > continuation\.minimum_siemens", "false")
+    ("gmin-stage-budget", "src/newton.rs", @"stage\.gmin_siemens > continuation\.minimum_siemens", "false"),
+    // Independent audits must detect polarity, energy and acceptance defects.
+    ("audit-kcl-polarity", "src/audit.rs", @"sums\[n\.0\] -= current;", "sums[n.0] += current;"),
+    ("audit-capacitor-current", "src/audit.rs", @"\*current = farads \* \(v - old_v\) / step_s;", "*current = 0.;"),
+    ("audit-api-enforcement", "src/api.rs", @"c\.status == crate::audit::CheckStatus::Failed", "false"),
+    ("audit-check-acceptance", "src/audit.rs", @"discrepancy\.abs\(\) <= tolerance", "true")
 };
 // The baseline runs the full suite; each operator then uses its focused regression target.
 var targets = new Dictionary<string,string> {
@@ -74,7 +79,9 @@ var targets = new Dictionary<string,string> {
     ["sparse-row-order"]="providers",["pwl-interpolation"]="edge_cases",["missing-assertion"]="analyses",
     ["variation-grid-limit"]="variation",["diode-current-sign"]="nonlinear",
     ["sparse-contract-nonfinite"]="matrix_conformance",["continuation-stage-skip"]="nonlinear",
-    ["gmin-final-shunt"]="continuation",["gmin-stage-budget"]="continuation"
+    ["gmin-final-shunt"]="continuation",["gmin-stage-budget"]="continuation",
+    ["audit-kcl-polarity"]="consistency",["audit-capacitor-current"]="consistency",
+    ["audit-api-enforcement"]="consistency",["audit-check-acceptance"]="consistency"
 };
 var reports = new List<object>(); var killed = 0;
 foreach (var mutant in mutants)
