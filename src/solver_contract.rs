@@ -8,7 +8,7 @@
 use crate::{
     error::{SimError, SimResult},
     linalg::BackendCapabilities,
-    sparse::CscPattern,
+    sparse::{CscMatrix, CscPattern},
 };
 use num_complex::Complex64;
 
@@ -52,6 +52,24 @@ pub struct SparseComplexSystem {
     values: Vec<Complex64>,
 }
 impl SparseComplexSystem {
+    /// Assemble G+j*scale*Q directly over canonical compiler patterns. Signed
+    /// flux rows are preserved; no dense matrix or vendor layout is involved.
+    pub fn from_real_parts(real: &CscMatrix, imaginary: &CscMatrix, scale: f64) -> SimResult<Self> {
+        if !scale.is_finite() {
+            return Err(SimError::invalid("nonfinite sparse imaginary scale"));
+        }
+        let pattern = real.pattern().union(imaginary.pattern())?;
+        let values = pattern
+            .slots()
+            .map(|(row, column)| {
+                Complex64::new(
+                    real.coefficient(row, column),
+                    scale * imaginary.coefficient(row, column),
+                )
+            })
+            .collect();
+        Self::new(pattern, values)
+    }
     /// Creates a finite complex sparse system with the same structural contract as real solves.
     pub fn new(pattern: CscPattern, values: Vec<Complex64>) -> SimResult<Self> {
         if values.len() != pattern.nnz()
@@ -77,6 +95,18 @@ impl SparseComplexSystem {
     pub fn validate_rhs(&self, rhs: &[f64]) -> SimResult<()> {
         if rhs.len() != self.pattern.dimension() || rhs.iter().any(|value| !value.is_finite()) {
             return Err(SimError::invalid("invalid sparse complex right-hand side"));
+        }
+        Ok(())
+    }
+
+    /// Validate a genuine complex excitation before any adapter indexing.
+    pub fn validate_complex_rhs(&self, rhs: &[Complex64]) -> SimResult<()> {
+        if rhs.len() != self.pattern.dimension()
+            || rhs
+                .iter()
+                .any(|value| !value.re.is_finite() || !value.im.is_finite())
+        {
+            return Err(SimError::invalid("invalid sparse complex excitation"));
         }
         Ok(())
     }
