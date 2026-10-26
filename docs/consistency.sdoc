@@ -137,3 +137,42 @@ RELATIONS:
   VALUE: ARCH-VERIFY-002
 - TYPE: Parent
   VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: END-001
+TITLE: Bounded isolated endurance campaign
+STATEMENT: >>>
+A manual endurance target shall run a selected mutation campaign once, then changing-seed endurance batches within a configurable monotonic wall-clock budget capped at five hours. It shall use an isolated source snapshot, reject overlapping supervised runs through an exclusive file lock, cap child-process runtimes and retained logs, and report completed cases separately from partial, timed-out or failed work. Compiler/test concurrency shall be bounded. Working source and tracked qualification reports shall not be modified by a campaign.
+<<<
+COMMENT: >>>
+Implementation: Makefile, scripts/Endurance.cs and scripts/Run-Endurance.ps1. Verification: tests/Endurance.Tests.ps1 and evidence/endurance-qualification.md. OS-wide memory enforcement and cleanup after forced supervisor termination are not claimed.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-002
+
+[REQUIREMENT]
+UID: END-002
+TITLE: Reproducible changing-seed endurance evidence
+STATEMENT: >>>
+The endurance harness shall explore bounded parser mutations, sparse layouts, independent analytic divider solutions and diode derivative cases using recorded seeds. Reports shall retain source hashes, revision/dirty state, tool versions, completed-case counts and replay seeds. Failure inputs shall be preserved, with bounded deletion minimization for parser panics. Each source archive shall remain available after later runs; interrupted work shall never be called passing or covered.
+<<<
+COMMENT: >>>
+Implementation: tests/endurance.rs and scripts/Endurance.cs. Verification: manual deterministic seed replay, budget and overlap checks in evidence/endurance-qualification.md. This is seeded fuzz/property testing, not coverage-guided fuzzing or an exhaustive source-mutation campaign.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: END-001
+
+[REQUIREMENT]
+UID: END-003
+TITLE: Nightly invocation and morning evidence review
+STATEMENT: >>>
+The user-authorized scheduled workflow shall start a hidden five-hour-budget campaign at local midnight and review its actual artifacts at 05:05 America/Los_Angeles. Startup and results review shall distinguish active, missing, failed, unfinished and budget-exhausted work; a configured schedule shall not be treated as an executed five-hour qualification run.
+<<<
+COMMENT: >>>
+Implementation: local thread automations spice-nightly-endurance-campaign and spice-morning-endurance-results, invoking scripts/Run-Endurance.ps1. Verification: saved automation configurations and the hidden-worker startup checks retained in evidence/endurance-qualification.md. Local machine/app availability is required; the initial full overnight execution remains pending.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: END-001

@@ -5,6 +5,10 @@ using System.Text.RegularExpressions;
 // Run at repo root: dotnet run --file scripts/Mutation.cs
 // Copies owned source into an ignored sandbox; never edits the working source.
 var root = Directory.GetCurrentDirectory();
+// Cold overnight builds may need a larger per-test limit; the outer campaign still owns its total deadline.
+var timeoutText = Environment.GetEnvironmentVariable("SPICE_MUTATION_TIMEOUT_SECONDS");
+var testTimeoutSeconds = timeoutText is null ? 180 : int.Parse(timeoutText, System.Globalization.CultureInfo.InvariantCulture);
+if (testTimeoutSeconds is <= 0 or > 900) throw new ArgumentException("Mutation timeout must be in 1..900 seconds.");
 var sandbox = Path.GetFullPath(Path.Combine(root, "work", "mutation-sandbox"));
 if (!sandbox.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
     throw new InvalidOperationException("Sandbox escaped repository.");
@@ -31,11 +35,11 @@ async Task<(int Exit, string Log)> Test(string? target = null)
         UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
     foreach (var arg in new[] { "test", "--locked" }) start.ArgumentList.Add(arg);
     if (target is not null) { start.ArgumentList.Add("--test"); start.ArgumentList.Add(target); }
-    start.Environment["CARGO_TARGET_DIR"] = Path.Combine(root, "target", "mutation");
+    start.Environment["CARGO_TARGET_DIR"] = Environment.GetEnvironmentVariable("SPICE_MUTATION_TARGET_DIR") ?? Path.Combine(root, "target", "mutation");
     using var process = Process.Start(start)!;
     var stdout = process.StandardOutput.ReadToEndAsync();
     var stderr = process.StandardError.ReadToEndAsync();
-    using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(3));
+    using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(testTimeoutSeconds));
     try { await process.WaitForExitAsync(timeout.Token); }
     catch (OperationCanceledException) { process.Kill(true); await process.WaitForExitAsync(); return (-1, "timeout"); }
     return (process.ExitCode, await stdout + await stderr);

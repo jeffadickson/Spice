@@ -51,6 +51,7 @@
     "tests/dynamic.rs": "3f8dea7e04ee020f8439a32ebdc7fe359a7c3d873e1919a36f71d92d683b68ac",
     "tests/edge_cases.rs": "a4b769e63220f11cb2e06901c5a260f6b562cda8ccc31e82d8cadbf7c4b38df5",
     "tests/endpoint.rs": "f9b85b0b99a1f2431c9557f979291427cb419cddd5105b2dc9e05088ac7ef88d",
+    "tests/endurance.rs": "b6be43d0e7ebadb88d5b7a05572d1f7dca10946803b5ff2ffb4f29da1a9f66ca",
     "tests/experiment.rs": "8b9751913308a7bb5821f0cd1564119c1fc6cd8902a339deb8135d795ebec04f",
     "tests/expression.rs": "251ea3e316e44e85f54c508338212af51be44ab2f1a661e4d68a5fcc3659f67a",
     "tests/faults.rs": "ed7fcdbfee724895589ff45294c3f79b5ef5298abb2b98d89fdd49d42098ab54",
