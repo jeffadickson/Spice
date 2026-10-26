@@ -99,18 +99,32 @@ pub fn linearize_backward_euler(
 ) -> SimResult<LinearizedSystem> {
     if previous.len() != plan.unknown_count()
         || rhs.len() != plan.unknown_count()
+        || previous.iter().any(|value| !value.is_finite())
+        || rhs.iter().any(|value| !value.is_finite())
         || !step_s.is_finite()
         || step_s <= 0.
     {
         return Err(SimError::invalid("invalid nonlinear transient step inputs"));
     }
-    let mut system = linearize(plan, values)?;
-    for (row, rhs_value) in rhs.iter().enumerate() {
-        system.residual[row] += plan.rhs[row] - rhs_value;
+    // Assemble the requested excitation directly. Cancelling the nominal RHS
+    // afterwards can overflow even when the requested residual is finite.
+    let mut system = linearize_with_rhs(plan, values, rhs)?;
+    for row in 0..values.len() {
         for column in 0..values.len() {
             let coefficient = plan.charge.at(row, column) / step_s;
+            if coefficient == 0. {
+                continue;
+            }
             system.jacobian.add(row, column, coefficient);
-            system.residual[row] += coefficient * (values[column] - previous[column]);
+            let difference = values[column] - previous[column];
+            // If subtraction overflows, separately scaled finite terms may
+            // still represent a finite displacement current.
+            let displacement = if difference.is_finite() {
+                coefficient * difference
+            } else {
+                coefficient * values[column] - coefficient * previous[column]
+            };
+            system.residual[row] += displacement;
         }
     }
     if system.residual.iter().any(|value| !value.is_finite()) {

@@ -1,7 +1,62 @@
 //! Independent boundary and difficult-topology evidence for bounded Newton paths.
+use circuit_simulator::newton::linearize_backward_euler;
 use circuit_simulator::newton::norm_inf;
 use circuit_simulator::newton::{ContinuationOptions, GminContinuationOptions, NewtonOptions};
 use circuit_simulator::{backend::DenseLu, newton::solve_with_rhs};
+
+#[test]
+fn be_rejects_nonfinite_history_and_sources_before_trial_evaluation() {
+    let plan = diode_plan();
+    for bad in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+        for (previous, rhs) in [(vec![bad], vec![0.]), (vec![0.], vec![bad])] {
+            let before = previous[0].to_bits();
+            let error = linearize_backward_euler(&plan, &[0.], &previous, 1e-3, &rhs).unwrap_err();
+            assert_eq!(error.code, ErrorCode::InvalidInput);
+            assert!(error.message.contains("step inputs"));
+            assert_eq!(previous[0].to_bits(), before);
+        }
+    }
+}
+
+#[test]
+fn be_rhs_and_displacement_avoid_spurious_intermediate_overflow() {
+    let resistive = compile(&Circuit {
+        nodes: vec!["0".into(), "x".into()],
+        elements: vec![
+            Element::Resistor {
+                id: "R".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                ohms: 1.,
+            },
+            Element::Current {
+                id: "I".into(),
+                p: NodeId(0),
+                n: NodeId(1),
+                amps: 1e308,
+            },
+        ],
+    })
+    .unwrap();
+    let system = linearize_backward_euler(&resistive, &[0.], &[0.], 1., &[-1e308]).unwrap();
+    assert_eq!(system.residual[0], 1e308);
+    let zero_charge =
+        linearize_backward_euler(&resistive, &[1e308], &[-1e308], 1., &[1e308]).unwrap();
+    assert_eq!(zero_charge.residual[0], 0.);
+    let capacitive = compile(&Circuit {
+        nodes: vec!["0".into(), "x".into()],
+        elements: vec![Element::Capacitor {
+            id: "C".into(),
+            p: NodeId(1),
+            n: NodeId(0),
+            farads: 1e-308,
+        }],
+    })
+    .unwrap();
+    let displacement =
+        linearize_backward_euler(&capacitive, &[1e308], &[-1e308], 1., &[0.]).unwrap();
+    assert!((displacement.residual[0] - 2.).abs() < 1e-14);
+}
 use circuit_simulator::{
     circuit::{Circuit, Element},
     compile::{CompiledCircuit, compile},
