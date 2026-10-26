@@ -146,7 +146,7 @@ STATEMENT: >>>
 The managed public API shall emit XML documentation with missing public comments and configured analyzer warnings treated as build failures. Engineering documentation shall preserve canonical StrictDoc requirements and derive API reference text from compiled XML rather than inventing undocumented capability claims. Narrow compatibility suppressions shall state their rationale.
 <<<
 COMMENT: >>>
-Derived campaign requirement. Implementation begins in dotnet/Simulator.Client/Simulator.Client.csproj and public source comments. Named compatibility suppressions preserve the existing instance schema field and seconds-versus-step-count names; Sphinx generation is pending the engineering documentation step.
+Derived campaign requirement. Implementation begins in dotnet/Simulator.Client/Simulator.Client.csproj and public source comments. Named compatibility suppressions preserve the existing instance schema field and seconds-versus-step-count names; Sphinx generation: scripts/EngineeringDocs.cs and Setup-EngineeringDocs.ps1; evidence/engineering-docs.json records actual warnings-as-errors builds and compiled XML provenance.
 <<<
 RELATIONS:
 - TYPE: Parent

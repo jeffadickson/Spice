@@ -45,6 +45,11 @@ For Proptest/FsCheck shrinking, replay and Coverlet/ReportGenerator reports, see
 [generated testing instructions](docs/property-testing.md). Synthetic transport
 fixture evidence remains separate from real numerical conformance.
 
+For engineering HTML and generated managed API reference, run
+`scripts/Setup-EngineeringDocs.ps1 -Python <existing-Python-3.12+-path>`.
+It restores pinned Sphinx in an isolated environment and builds with warnings as
+errors. Canonical StrictDoc requirements remain in docs/*.sdoc.
+
 For the focused nonlinear diode/Newton contract suite, run `./scripts/Test-Nonlinear.ps1`.
 The active campaign checkpoints are 344, 354, …, 434; see
 [the campaign ledger](docs/qualification-campaign.md).

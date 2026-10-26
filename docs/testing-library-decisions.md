@@ -30,3 +30,11 @@ Compatibility decision: registry metadata reports Proptest 1.12.0 requires Rust 
 
 QR refinement reference: https://netlib.org/lapack/explore-html/d5/da4/group__gerfs.html describes factor-reusing iterative refinement. This adapter retains nalgebra QR factors and uses at most three same-precision correction solves; it does not implement LAPACK error estimation or mixed-precision guarantees. The existing independent componentwise backward-error threshold remains unchanged.
 
+Engineering documentation uses Sphinx 9.1.0 in a separate environment, with
+transitive versions retained in docs/engineering/requirements.lock.txt. Registry
+metadata reports Python >=3.12, matching Ubuntu 24.04's supported setup. Latest
+9.2.0 requires >=3.13 and was not selected for the cross-platform pin. Primary
+sources: https://www.sphinx-doc.org/en/master/usage/installation.html and
+https://pypi.org/project/Sphinx/9.1.0/. This adds a derived engineering/API projection;
+existing Markdown and canonical StrictDoc sources remain authoritative in place.
+
