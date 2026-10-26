@@ -1,0 +1,54 @@
+{
+  "status": "partial_timeout",
+  "requested_seconds": 1200,
+  "elapsed_seconds": 1200.3390774,
+  "shard": "0/1",
+  "rust_file": "src/newton.rs",
+  "rust_test": "all",
+  "tool": "rust",
+  "rust_filter": "limited_candidate",
+  "workers": 1,
+  "cargo_mutants": {
+    "version": "27.1.0",
+    "status": "partial_timeout",
+    "exit_code": -1,
+    "candidates": 33,
+    "killed": 25,
+    "survived": 1,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 7,
+    "report_sha256": "0bf6bdae1bfd78c2f6064f8699503f584722bd2231dba5ceed15d2cb6ceaa103",
+    "log_sha256": "5ed4d593d6a579d327224207e111da3c052d39980870c2adc09dd5200226b2ef"
+  },
+  "stryker": {
+    "version": "5.0.0",
+    "status": "skipped_explicitly",
+    "exit_code": null,
+    "candidates": 0,
+    "killed": 0,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": null,
+    "log_sha256": null
+  },
+  "snapshot_source_hashes": {
+    "src/model.rs": "c7b62d2a541a36c2e7682172e5289d071850a117bdcb1f39233233db78bc4dda",
+    "src/newton.rs": "676e4d91ffd522c72d27faf426b81a2cdc02e2c914704b8145f3dbbc4a8ecb58",
+    "src/backend.rs": "b1da0575fcf6a3e6378f62b4a2e41b1f792f8cad0633d3f50cabdfe2947a4705",
+    "tests/continuation_hardening.rs": "2f514ff834932bd5f5d410ed279d23ec517645ccb958f9d16a18a8f6738568df"
+  },
+  "survivors": [
+    "src/newton.rs:484:25: replace > with >= in limited_candidate"
+  ]
+}

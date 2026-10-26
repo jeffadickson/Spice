@@ -25,10 +25,18 @@ if(rustFilter.Length>512||rustFilter.Contains('\0'))throw new ArgumentException(
 var parts=shard.Split('/');
 if(parts.Length!=2||!int.TryParse(parts[0],out var n)||!int.TryParse(parts[1],out var k)||n<0||k<=n||k>1024)throw new ArgumentException("Shard must be N/K with 0 <= N < K <= 1024.");
 if(!rustFile.StartsWith("src/",StringComparison.Ordinal)||rustFile.Contains("..")||rustFile.Contains('\\'))throw new ArgumentException("Rust filter must stay under src/.");
-if(rustTest!="all"&&(!System.Text.RegularExpressions.Regex.IsMatch(rustTest,@"\A[A-Za-z0-9_-]{1,64}\z")||!File.Exists(Path.Combine("tests",rustTest+".rs"))))throw new ArgumentException("Rust test must be all or a named integration test file.");
+var testTargets=rustTest.Split(',');
+if(testTargets.Length>8||testTargets.Distinct(StringComparer.Ordinal).Count()!=testTargets.Length||
+    (testTargets.Contains("all")&&testTargets.Length!=1)||
+    testTargets.Any(test=>test is not ("all" or "lib")&&
+        (!System.Text.RegularExpressions.Regex.IsMatch(test,@"\A[A-Za-z0-9_-]{1,64}\z")||!File.Exists(Path.Combine("tests",test+".rs")))))
+    throw new ArgumentException("Rust tests must be all, lib, or up to eight distinct named integration tests.");
 var root=Directory.GetCurrentDirectory();
-Directory.CreateDirectory("work");
-using var exclusive=new FileStream("work/framework-mutation.lock",FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None);
+if(!Directory.Exists("work"))Directory.CreateDirectory("work");
+// Rust and managed snapshots/build outputs are isolated. All-tool campaigns
+// acquire both locks in the same order; independent one-worker runs may overlap.
+using var rustLock=selectedTool!="dotnet"?new FileStream("work/framework-rust.lock",FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None):null;
+using var managedLock=selectedTool!="rust"?new FileStream("work/framework-dotnet.lock",FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None):null;
 var run=Path.Combine(root,"work","framework-mutations",DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8]);Directory.CreateDirectory(run);
 var options=new JsonSerializerOptions{WriteIndented=true,PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower};
 var report=new FrameworkReport{RequestedSeconds=minutes*60,Shard=shard,RustFile=rustFile,RustTest=rustTest,Tool=selectedTool,RustFilter=rustFilter,Workers=workers};
@@ -88,8 +96,14 @@ try {
     if(rustFilter.Length!=0){rustArguments.Add("--re");rustArguments.Add(rustFilter);}
     // Test selection must constrain BOTH the compile baseline and test runs;
     // cargo-test-arg alone still compiles every integration binary.
-    if(rustTest!="all"){rustArguments.Add("--cargo-arg=--test");rustArguments.Add("--cargo-arg="+rustTest);}
-    var rust=await Execute(cargo,rustArguments,"cargo-mutants.log",Remaining());
+    if(rustTest!="all")foreach(var test in testTargets) {
+        if(test=="lib")rustArguments.Add("--cargo-arg=--lib");
+        else {rustArguments.Add("--cargo-arg=--test");rustArguments.Add("--cargo-arg="+test);}
+    }
+    // Cargo's fingerprints invalidate changed sources/toolchains. A dedicated
+    // cache avoids rebuilding vendor libraries for every immutable run snapshot.
+    var rust=await Execute(cargo,rustArguments,"cargo-mutants.log",Remaining(),
+        new(){["CARGO_TARGET_DIR"]=Path.Combine(root,"target","framework-rust")});
     report.CargoMutants.Status=rust.Timeout?"partial_timeout":rust.Exit is 0 or 2 or 3?"completed":"failed";
     report.CargoMutants.ExitCode=rust.Exit;report.CargoMutants.LogSha256=Hash(Path.Combine(run,"cargo-mutants.log"));
     var native=Path.Combine(run,"rust","mutants.out","outcomes.json");
