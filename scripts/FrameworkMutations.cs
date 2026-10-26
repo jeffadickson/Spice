@@ -7,15 +7,17 @@ using System.Text.Json;
 
 // Supervise real mutation frameworks, preserving their native reports locally.
 // A timeout is partial evidence, never a killed mutant or a completed campaign.
-var minutes=60d;var shard="0/1";var rustFile="src/*.rs";var rustTest="all";
+var minutes=60d;var shard="0/1";var rustFile="src/*.rs";var rustTest="all";var selectedTool="all";
 for(var i=0;i<args.Length;i++) switch(args[i]) {
     case "--minutes":minutes=double.Parse(args[++i],CultureInfo.InvariantCulture);break;
     case "--shard":shard=args[++i];break;
     case "--rust-file":rustFile=args[++i];break;
     case "--rust-test":rustTest=args[++i];break;
+    case "--tool":selectedTool=args[++i];break;
     default:throw new ArgumentException("Unknown framework argument: "+args[i]);
 }
 if(!double.IsFinite(minutes)||minutes<=0||minutes>1440)throw new ArgumentException("Minutes must be in (0,1440].");
+if(selectedTool is not ("all" or "rust" or "dotnet"))throw new ArgumentException("Tool must be all, rust or dotnet.");
 var parts=shard.Split('/');
 if(parts.Length!=2||!int.TryParse(parts[0],out var n)||!int.TryParse(parts[1],out var k)||n<0||k<=n||k>1024)throw new ArgumentException("Shard must be N/K with 0 <= N < K <= 1024.");
 if(!rustFile.StartsWith("src/",StringComparison.Ordinal)||rustFile.Contains("..")||rustFile.Contains('\\'))throw new ArgumentException("Rust filter must stay under src/.");
@@ -25,7 +27,7 @@ Directory.CreateDirectory("work");
 using var exclusive=new FileStream("work/framework-mutation.lock",FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None);
 var run=Path.Combine(root,"work","framework-mutations",DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8]);Directory.CreateDirectory(run);
 var options=new JsonSerializerOptions{WriteIndented=true,PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower};
-var report=new FrameworkReport{RequestedSeconds=minutes*60,Shard=shard,RustFile=rustFile,RustTest=rustTest};
+var report=new FrameworkReport{RequestedSeconds=minutes*60,Shard=shard,RustFile=rustFile,RustTest=rustTest,Tool=selectedTool};
 var clock=Stopwatch.StartNew();
 double Remaining()=>Math.Max(0,minutes*60-clock.Elapsed.TotalSeconds);
 async Task<(int Exit,bool Timeout)> Execute(string file,IEnumerable<string> arguments,string log,double seconds,Dictionary<string,string>? environment=null,string? directory=null) {
@@ -46,8 +48,11 @@ void Save(){report.ElapsedSeconds=clock.Elapsed.TotalSeconds;File.WriteAllText(P
 Console.WriteLine("Framework summary: "+Path.Combine(run,"summary.json"));Save();
 try {
     var cargo=Environment.GetEnvironmentVariable("SPICE_CARGO_MUTANTS")??Path.Combine(root,".tools","mutation","cargo-mutants"+(OperatingSystem.IsWindows()?".exe":""));
+    if(selectedTool!="dotnet") {
     var version=await Execute(cargo,["mutants","--version"],"cargo-version.log",15);
     if(version.Exit!=0||version.Timeout||!File.ReadAllText(Path.Combine(run,"cargo-version.log")).Contains("27.1.0"))throw new IOException("cargo-mutants version does not match pin.");
+    }
+    if(selectedTool!="rust") {
     var tools=await Execute("dotnet",["tool","list","--local"],"dotnet-tools.log",15);
     if(tools.Exit!=0||tools.Timeout||!File.ReadAllText(Path.Combine(run,"dotnet-tools.log")).Contains("5.0.0"))throw new IOException("Restore pinned Stryker tool first.");
     // Compile the real engine once; managed mutation tests call this executable,
@@ -62,11 +67,13 @@ try {
     foreach(var path in new[]{"dotnet-tools.json","global.json"}.Concat(Directory.EnumerateFiles("dotnet","*",SearchOption.AllDirectories).Where(p=>!p.Split(Path.DirectorySeparatorChar).Any(part=>part is "bin" or "obj" or "TestResults")))) {
         var destination=Path.Combine(managedRoot,path);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Copy(path,destination);
     }
-    var stryker=await Execute("dotnet",["tool","run","dotnet-stryker","--","--config-file","dotnet/Simulator.Client.Tests/stryker-config.json","--test-project","dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj","--output",Path.Combine(run,"stryker")],"stryker.log",Remaining()*.4,new(){["SPICE_TEST_ROOT"]=root,["SPICE_TEST_EXECUTABLE"]=engine},managedRoot);
+    var stryker=await Execute("dotnet",["tool","run","dotnet-stryker","--","--config-file","dotnet/Simulator.Client.Tests/stryker-config.json","--test-project","dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj","--output",Path.Combine(run,"stryker")],"stryker.log",Remaining()*(selectedTool=="dotnet"?1:.4),new(){["SPICE_TEST_ROOT"]=root,["SPICE_TEST_EXECUTABLE"]=engine},managedRoot);
     report.Stryker.Status=stryker.Timeout?"partial_timeout":stryker.Exit==0?"completed":"failed";
     report.Stryker.ExitCode=stryker.Exit;report.Stryker.LogSha256=Hash(Path.Combine(run,"stryker.log"));
     var managed=Directory.Exists(Path.Combine(run,"stryker"))?Directory.GetFiles(Path.Combine(run,"stryker"),"mutation-report.json",SearchOption.AllDirectories):[];
     if(managed.Length==1){using var json=JsonDocument.Parse(File.ReadAllText(managed[0]));foreach(var file in json.RootElement.GetProperty("files").EnumerateObject())foreach(var mutant in file.Value.GetProperty("mutants").EnumerateArray())report.Stryker.Add(mutant.GetProperty("status").GetString()!);report.Stryker.ReportSha256=Hash(managed[0]);}
+    }else report.Stryker.Status="skipped_explicitly";
+    if(selectedTool!="dotnet") {
     // Limit cargo-mutants' copy root to Rust-owned inputs. Its default copy mode
     // also visits work/ and can collide with our exclusive campaign lock.
     var rustRoot=Path.Combine(run,"rust-source");Directory.CreateDirectory(rustRoot);
@@ -74,7 +81,9 @@ try {
         var destination=Path.Combine(rustRoot,path);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Copy(path,destination);
     }
     var rustArguments=new List<string>{"mutants","--dir",rustRoot,"--file",rustFile,"--shard",shard,"--sharding","round-robin","--no-shuffle","--jobs","1","--jobserver-tasks","2","--timeout","120","--build-timeout","900","--output",Path.Combine(run,"rust"),"--colors","never","--cargo-arg=--locked"};
-    if(rustTest!="all"){rustArguments.Add("--cargo-test-arg=--test");rustArguments.Add("--cargo-test-arg="+rustTest);}
+    // Test selection must constrain BOTH the compile baseline and test runs;
+    // cargo-test-arg alone still compiles every integration binary.
+    if(rustTest!="all"){rustArguments.Add("--cargo-arg=--test");rustArguments.Add("--cargo-arg="+rustTest);}
     var rust=await Execute(cargo,rustArguments,"cargo-mutants.log",Remaining());
     report.CargoMutants.Status=rust.Timeout?"partial_timeout":rust.Exit is 0 or 2 or 3?"completed":"failed";
     report.CargoMutants.ExitCode=rust.Exit;report.CargoMutants.LogSha256=Hash(Path.Combine(run,"cargo-mutants.log"));
@@ -82,6 +91,7 @@ try {
     if(File.Exists(native)){using var json=JsonDocument.Parse(File.ReadAllText(native));foreach(var outcome in json.RootElement.GetProperty("outcomes").EnumerateArray())if(outcome.GetProperty("scenario").ValueKind==JsonValueKind.Object)report.CargoMutants.Add(outcome.GetProperty("summary").GetString()!);report.CargoMutants.ReportSha256=Hash(native);}
     var inventory=Path.Combine(run,"rust","mutants.out","mutants.json");
     if(File.Exists(inventory)){using var json=JsonDocument.Parse(File.ReadAllText(inventory));report.CargoMutants.Candidates=json.RootElement.GetArrayLength();}
+    }else report.CargoMutants.Status="skipped_explicitly";
     report.Status=report.Stryker.Status=="failed"||report.CargoMutants.Status=="failed"?"failed":report.Stryker.Status=="partial_timeout"||report.CargoMutants.Status=="partial_timeout"?"partial_timeout":"completed";
 }catch(Exception error){report.Status="failed";File.WriteAllText(Path.Combine(run,"failure.log"),error.ToString());}
 finally{Save();}
@@ -93,6 +103,7 @@ sealed class FrameworkReport {
     public string Status{get;set;}="running";public double RequestedSeconds{get;set;}public double ElapsedSeconds{get;set;}
     public string Shard{get;set;}="";public string RustFile{get;set;}="";
     public string RustTest{get;set;}="all";
+    public string Tool{get;set;}="all";
     public ToolCounts CargoMutants{get;set;}=new(){Version="27.1.0"};public ToolCounts Stryker{get;set;}=new(){Version="5.0.0"};
 }
 /// Native categories remain separate; unrecognized statuses are never counted as kills.

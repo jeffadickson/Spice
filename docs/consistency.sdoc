@@ -251,7 +251,7 @@ STATEMENT: >>>
 Mutation evidence shall distinguish generated candidates, kills, survivors, uncovered code, timeouts, invalid/compile-error mutants, ignored/pending/unknown categories and unattempted candidates. Framework baseline/infrastructure failures shall remain failures; deadline interruption shall remain partial evidence. Reports shall retain tool pins, tested scope/shard, elapsed budget and native report/log hashes; raw framework artifacts shall remain local. Remote publication shall validate bounded framework-summary hashes and category counts before exporting allowlisted path-free fields.
 <<<
 COMMENT: >>>
-Implementation: scripts/FrameworkMutations.cs, Endurance.cs and RemoteQualification.cs. Verification: tests/FrameworkMutations.Tests.ps1, tests/Remote.Tests.ps1, native framework runs and scoped coverage evidence. Timeouts are never counted as test-detected kills, even when a framework score includes them.
+Implementation: scripts/FrameworkMutations.cs, Endurance.cs and RemoteQualification.cs. Verification: tests/FrameworkMutations.Tests.ps1, tests/EnduranceFramework.Tests.ps1, tests/Remote.Tests.ps1, native framework runs and scoped coverage evidence. Timeouts are never counted as test-detected kills, even when a framework score includes them.
 <<<
 RELATIONS:
 - TYPE: Parent

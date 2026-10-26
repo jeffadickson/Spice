@@ -1,5 +1,7 @@
 # Pester integration tests use synthetic reports and a local bare Git remote;
 # they exercise publication without claiming those fixtures are simulator runs.
+$guard=$env:SPICE_REMOTE_GUARD
+if($guard -and $guard -notin @('source-revision','source-hash','framework-summary-hash','framework-counts')){throw 'Unknown focused mutation guard.'}
 Describe 'Remote qualification evidence publication' {
     $publisher=if ($env:SPICE_REMOTE_PUBLISHER) { $env:SPICE_REMOTE_PUBLISHER } else { Join-Path $PSScriptRoot '../scripts/RemoteQualification.cs' }
     function New-RemoteFixture {
@@ -30,6 +32,7 @@ Describe 'Remote qualification evidence publication' {
         finally {Pop-Location}
         return @{Code=$code;Output=$output}
     }
+    if(-not $guard){
     It 'publishes only small explicit evidence files to an identifiable branch' {
         $fixture=New-RemoteFixture
         $result=Invoke-Publisher $fixture
@@ -58,6 +61,8 @@ Describe 'Remote qualification evidence publication' {
         $result.Code|Should Be 1
         @(& git -C $fixture.Bare for-each-ref '--format=%(refname:short)' refs/heads/remote-runs/).Count|Should Be 1
     }
+    }
+    if(-not $guard -or $guard -in @('source-revision','source-hash')){
     It 'rejects stale tested source and malformed hashes' {
         foreach($kind in @('stale','path','hash','wronghash')) {
             $fixture=New-RemoteFixture
@@ -72,21 +77,25 @@ Describe 'Remote qualification evidence publication' {
             @(& git -C $fixture.Bare for-each-ref '--format=%(refname:short)' refs/heads/remote-runs/).Count|Should Be 0
         }
     }
+    }
+    if(-not $guard -or $guard -like 'framework-*'){
     It 'exports generated mutation categories and rejects altered counts or missing provenance' {
-        foreach($kind in @('valid','count','hash','missing','accounting','shard','version')) {
+        foreach($kind in @('valid','count','hash','missing','accounting','shard','version','availability')) {
             $fixture=New-RemoteFixture
             $counts=@{};$native=@{}
             foreach($tool in @('cargo_mutants','stryker')){
                 $row=@{}
                 foreach($key in @('candidates','killed','survived','timed_out','invalid','not_covered','pending','other','ignored','unattempted')){$row[$key]=0;$counts[$tool+'_'+$key]=0}
-                $row.candidates=2;$row.killed=1;$row.survived=1;$counts[$tool+'_candidates']=2;$counts[$tool+'_killed']=1;$counts[$tool+'_survived']=1;$row.version=if($tool -eq 'cargo_mutants'){'27.1.0'}else{'5.0.0'};$native[$tool]=$row
+                $row.candidates=2;$row.killed=1;$row.survived=1;$counts[$tool+'_candidates']=2;$counts[$tool+'_killed']=1;$counts[$tool+'_survived']=1;$row.version=if($tool -eq 'cargo_mutants'){'27.1.0'}else{'5.0.0'};$row.status='completed';$row.report_sha256='a'*64;$native[$tool]=$row
             }
             $native.status='completed';$native.shard='1/16'
             if($kind -eq 'accounting'){$native.cargo_mutants.candidates=0;$counts.cargo_mutants_candidates=0}
             if($kind -eq 'shard'){$native.shard='16/16'}
             $path=Join-Path $fixture.Run 'framework-mutations.json';$native|ConvertTo-Json -Depth 6|Set-Content $path
             $fixture.Report.framework_mutation_status='completed';$fixture.Report.framework_shard=$native.shard;$fixture.Report.framework_mutation_counts=$counts;$fixture.Report.framework_tool_versions=@{cargo_mutants='27.1.0';stryker='5.0.0'}
+            $fixture.Report.framework_tool_statuses=@{cargo_mutants='completed';stryker='completed'};$fixture.Report.framework_native_report_hashes=@{cargo_mutants=('a'*64);stryker=('a'*64)}
             if($kind -eq 'version'){$fixture.Report.framework_tool_versions.stryker='wrong'}
+            if($kind -eq 'availability'){$fixture.Report.framework_native_report_hashes.stryker=$null}
             $fixture.Report.framework_summary_sha256=(Get-FileHash $path).Hash.ToLowerInvariant()
             switch($kind){count{$counts.cargo_mutants_killed=99};hash{$fixture.Report.framework_summary_sha256='0'*64};missing{$fixture.Report.framework_summary_sha256=$null}}
             $fixture.Report|ConvertTo-Json -Depth 6|Set-Content (Join-Path $fixture.Run 'summary.json')
@@ -94,6 +103,8 @@ Describe 'Remote qualification evidence publication' {
             if($kind -eq 'valid'){if($result.Code -ne 0){throw $result.Output};$result.Code|Should Be 0}else{$result.Code|Should Not Be 0}
         }
     }
+    }
+    if(-not $guard){
     It 'rejects unfinished reports and dirty source before publishing' {
         foreach($kind in @('running','dirty')) {
             $fixture=New-RemoteFixture
@@ -101,6 +112,7 @@ Describe 'Remote qualification evidence publication' {
             else {Set-Content (Join-Path $fixture.Clone 'untracked.txt') 'preserve me'}
             (Invoke-Publisher $fixture).Code|Should Not Be 0
         }
+    }
     }
 }
 

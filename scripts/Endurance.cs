@@ -114,7 +114,12 @@ try {
         report.FrameworkSummarySha256=Convert.ToHexString(SHA256.HashData(frameworkBytes)).ToLowerInvariant();
         using(var document=JsonDocument.Parse(frameworkBytes)) {
             report.FrameworkMutationStatus=document.RootElement.GetProperty("status").GetString()!;
-            foreach(var name in new[]{"cargo_mutants","stryker"})report.FrameworkToolVersions[name]=document.RootElement.GetProperty(name).GetProperty("version").GetString()!;
+            foreach(var name in new[]{"cargo_mutants","stryker"}) {
+                var toolReport=document.RootElement.GetProperty(name);
+                report.FrameworkToolVersions[name]=toolReport.GetProperty("version").GetString()!;
+                report.FrameworkToolStatuses[name]=toolReport.GetProperty("status").GetString()!;
+                report.FrameworkNativeReportHashes[name]=toolReport.GetProperty("report_sha256").GetString();
+            }
             foreach(var name in new[]{"cargo_mutants","stryker"})foreach(var count in new[]{"candidates","killed","survived","timed_out","invalid","not_covered","pending","other","ignored","unattempted"})
                 report.FrameworkMutationCounts[name+"_"+count]=document.RootElement.GetProperty(name).GetProperty(count).GetInt32();
         }
@@ -176,6 +181,9 @@ sealed class CampaignReport {
     public string? FrameworkSummarySha256 {get;set;}
     public Dictionary<string,int> FrameworkMutationCounts {get;set;}=new();
     public Dictionary<string,string> FrameworkToolVersions {get;set;}=new();
+    public Dictionary<string,string> FrameworkToolStatuses {get;set;}=new();
+    // Null distinguishes unavailable native outcome counts from a measured zero.
+    public Dictionary<string,string?> FrameworkNativeReportHashes {get;set;}=new();
     public string? SourceCommit { get;set; }
     public bool SourceDirty { get;set; }
     public string? Rustc { get;set; }

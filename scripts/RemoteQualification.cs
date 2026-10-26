@@ -100,12 +100,14 @@ if(run is not null) {
             var completed=expected.Where(pair=>pair.Key.StartsWith(tool+"_",StringComparison.Ordinal)&&pair.Key!=tool+"_candidates"&&pair.Key!=tool+"_unattempted").Sum(pair=>(long)pair.Value);
             if(completed+expected[tool+"_unattempted"]!=expected[tool+"_candidates"])throw new IOException("Inconsistent framework accounting.");
             if(!evidence.FrameworkToolVersions.TryGetValue(tool,out var version)||version!=framework.RootElement.GetProperty(tool).GetProperty("version").GetString())throw new IOException("Framework version mismatch.");
+            if(!evidence.FrameworkToolStatuses.TryGetValue(tool,out var status)||!new[]{"completed","partial_timeout","failed","not_run","skipped_explicitly"}.Contains(status)||status!=framework.RootElement.GetProperty(tool).GetProperty("status").GetString())throw new IOException("Framework tool status mismatch.");
+            if(!evidence.FrameworkNativeReportHashes.TryGetValue(tool,out var nativeHash)||nativeHash!=framework.RootElement.GetProperty(tool).GetProperty("report_sha256").GetString()||(nativeHash is not null&&!Regex.IsMatch(nativeHash,"\\A[0-9a-f]{64}\\z")))throw new IOException("Framework native report availability/hash mismatch.");
         }
-        if(evidence.FrameworkToolVersions.Count!=2||evidence.FrameworkToolVersions["cargo_mutants"]!="27.1.0"||evidence.FrameworkToolVersions["stryker"]!="5.0.0")throw new IOException("Unexpected framework tool pins.");
+        if(evidence.FrameworkToolVersions.Count!=2||evidence.FrameworkToolStatuses.Count!=2||evidence.FrameworkNativeReportHashes.Count!=2||evidence.FrameworkToolVersions["cargo_mutants"]!="27.1.0"||evidence.FrameworkToolVersions["stryker"]!="5.0.0")throw new IOException("Unexpected framework tool metadata.");
         if(evidence.FrameworkShard is null||!Regex.IsMatch(evidence.FrameworkShard,"\\A[0-9]{1,4}/[0-9]{1,4}\\z"))throw new IOException("Unsafe framework shard.");
         var shardParts=evidence.FrameworkShard.Split('/').Select(int.Parse).ToArray();
         if(shardParts[1]<1||shardParts[1]>1024||shardParts[0]>=shardParts[1])throw new IOException("Invalid framework shard.");
-    } else if(evidence.FrameworkMutationCounts.Count!=0||evidence.FrameworkToolVersions.Count!=0||evidence.FrameworkShard is not null||evidence.FrameworkMutationStatus is "completed" or "partial_timeout")throw new IOException("Missing framework provenance.");
+    } else if(evidence.FrameworkMutationCounts.Count!=0||evidence.FrameworkToolVersions.Count!=0||evidence.FrameworkToolStatuses.Count!=0||evidence.FrameworkNativeReportHashes.Count!=0||evidence.FrameworkShard is not null||evidence.FrameworkMutationStatus is "completed" or "partial_timeout")throw new IOException("Missing framework provenance.");
     checksPassed&=evidence.FrameworkMutationStatus!="failed";
     var mutation=Path.Combine(run,"mutation.json");
     if(File.Exists(mutation)) {
@@ -167,5 +169,7 @@ sealed class EnduranceEvidence {
     public string FrameworkMutationStatus {get;set;}="not_run";public string? FrameworkShard {get;set;}public string? FrameworkSummarySha256 {get;set;}
     public Dictionary<string,int> FrameworkMutationCounts {get;set;}=new();
     public Dictionary<string,string> FrameworkToolVersions {get;set;}=new();
+    public Dictionary<string,string> FrameworkToolStatuses {get;set;}=new();
+    public Dictionary<string,string?> FrameworkNativeReportHashes {get;set;}=new();
 }
 sealed record CommandResult(int Exit,bool TimedOut,string Output);

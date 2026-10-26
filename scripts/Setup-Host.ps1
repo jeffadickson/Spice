@@ -100,6 +100,6 @@ if ($Coverage) {
     $env:SPICE_COVERAGE_TOOLCHAIN=$coverageToolchain
     if ($Install -and -not $profiler) { Invoke-SetupCommand rustup @('toolchain','install',$coverageToolchain,'--profile','minimal','--component','llvm-tools-preview') }
 }
-[ordered]@{status='ready';platform=[Runtime.InteropServices.RuntimeInformation]::OSDescription;rustc=$rust;dotnet=(& dotnet --version);strictdoc='0.30.4';native_tools_skipped=[bool]$SkipNativeTools;coverage_requested=[bool]$Coverage;coverage_toolchain=$env:SPICE_COVERAGE_TOOLCHAIN;acquisitions=$acquisitions} | ConvertTo-Json -Depth 6 | Set-Content work/setup/host.json
 if(-not $SkipMutationTools){ & (Join-Path $PSScriptRoot 'Setup-MutationTools.ps1') -Install:$Install }
+[ordered]@{status='ready';platform=[Runtime.InteropServices.RuntimeInformation]::OSDescription;rustc=$rust;dotnet=(& dotnet --version);strictdoc='0.30.4';native_tools_skipped=[bool]$SkipNativeTools;mutation_tools_skipped=[bool]$SkipMutationTools;coverage_requested=[bool]$Coverage;coverage_toolchain=$env:SPICE_COVERAGE_TOOLCHAIN;acquisitions=$acquisitions} | ConvertTo-Json -Depth 6 | Set-Content work/setup/host.json
 Write-Host 'Host dependencies verified. Configuration applies to this process and its children.'
