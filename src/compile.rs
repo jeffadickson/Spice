@@ -14,9 +14,19 @@ pub(crate) struct CompiledDiode {
     pub(crate) model: DiodeModel,
 }
 /// Shared bounded stamping surface used by compile-time sparse accumulation and trial Jacobians.
-pub(crate) trait StampMatrix { fn add_stamp(&mut self, row: usize, column: usize, value: f64); }
-impl StampMatrix for Matrix { fn add_stamp(&mut self, row: usize, column: usize, value: f64) { self.add(row, column, value); } }
-impl StampMatrix for SparseAccumulator { fn add_stamp(&mut self, row: usize, column: usize, value: f64) { self.add(row, column, value); } }
+pub(crate) trait StampMatrix {
+    fn add_stamp(&mut self, row: usize, column: usize, value: f64);
+}
+impl StampMatrix for Matrix {
+    fn add_stamp(&mut self, row: usize, column: usize, value: f64) {
+        self.add(row, column, value);
+    }
+}
+impl StampMatrix for SparseAccumulator {
+    fn add_stamp(&mut self, row: usize, column: usize, value: f64) {
+        self.add(row, column, value);
+    }
+}
 /// Immutable G x + d(Q x)/dt = b plan; Q may contain negative flux rows.
 #[derive(Debug, Clone)]
 pub struct CompiledCircuit {
@@ -38,13 +48,21 @@ impl CompiledCircuit {
         self.conductance.n
     }
     /// Canonical conductance stamp pattern for sparse backend analysis.
-    pub fn conductance_sparse(&self) -> &CscMatrix { &self.conductance_sparse }
+    pub fn conductance_sparse(&self) -> &CscMatrix {
+        &self.conductance_sparse
+    }
     /// Canonical charge/flux stamp pattern for sparse transient backend analysis.
-    pub fn charge_sparse(&self) -> &CscMatrix { &self.charge_sparse }
+    pub fn charge_sparse(&self) -> &CscMatrix {
+        &self.charge_sparse
+    }
     /// Immutable source vector paired with the compiled conductance plan.
-    pub fn rhs(&self) -> &[f64] { &self.rhs }
+    pub fn rhs(&self) -> &[f64] {
+        &self.rhs
+    }
     /// Bounded dense reference materialization used for cross-provider verification.
-    pub fn conductance_reference(&self) -> &Matrix { &self.conductance }
+    pub fn conductance_reference(&self) -> &Matrix {
+        &self.conductance
+    }
     /// Nonlinear device presence selects Newton operating-point solving.
     pub fn has_nonlinear_devices(&self) -> bool {
         !self.diodes.is_empty()
@@ -109,22 +127,43 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     rhs[i] += amps;
                 }
             }
-            Element::Vccs { p, n, cp, cn, siemens, .. } => {
+            Element::Vccs {
+                p,
+                n,
+                cp,
+                cn,
+                siemens,
+                ..
+            } => {
                 // KCL receives +g*(Vcp-Vcn) at p and -g*(Vcp-Vcn) at n.
                 for (row_node, row_sign) in [(*p, 1.), (*n, -1.)] {
                     for (control_node, control_sign) in [(*cp, 1.), (*cn, -1.)] {
-                        if let (Some(row), Some(column)) = (row_node.unknown(), control_node.unknown()) {
+                        if let (Some(row), Some(column)) =
+                            (row_node.unknown(), control_node.unknown())
+                        {
                             a.add(row, column, row_sign * control_sign * siemens);
                         }
                     }
                 }
             }
-            Element::Cccs { p, n, control_id, gain, .. } => {
-                let control = branches.iter().position(|id| id == control_id)
+            Element::Cccs {
+                p,
+                n,
+                control_id,
+                gain,
+                ..
+            } => {
+                let control = branches
+                    .iter()
+                    .position(|id| id == control_id)
                     .map(|index| index + circuit.nodes.len() - 1)
                     .ok_or_else(|| SimError::invalid("CCCS control must name a branch source"))?;
-                if let Some(row) = p.unknown() { a.add(row, control, *gain); }
-                if let Some(row) = n.unknown() { a.add(row, control, -*gain); }
+                if let Some(row) = p.unknown() {
+                    a.add(row, control, *gain);
+                }
+                if let Some(row) = n.unknown() {
+                    a.add(row, control, -*gain);
+                }
             }
             Element::Diode {
                 p,
@@ -154,13 +193,23 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     Element::Voltage { volts, .. } => rhs[branch] = *volts,
                     Element::Inductor { henries, .. } => charge.add(branch, branch, -henries),
                     Element::Vcvs { cp, cn, gain, .. } => {
-                        if let Some(i) = cp.unknown() { a.add(branch, i, -*gain); }
-                        if let Some(i) = cn.unknown() { a.add(branch, i, *gain); }
+                        if let Some(i) = cp.unknown() {
+                            a.add(branch, i, -*gain);
+                        }
+                        if let Some(i) = cn.unknown() {
+                            a.add(branch, i, *gain);
+                        }
                     }
-                    Element::Ccvs { control_id, ohms, .. } => {
-                        let control = branches.iter().position(|id| id == control_id)
+                    Element::Ccvs {
+                        control_id, ohms, ..
+                    } => {
+                        let control = branches
+                            .iter()
+                            .position(|id| id == control_id)
                             .map(|index| index + circuit.nodes.len() - 1)
-                            .ok_or_else(|| SimError::invalid("CCVS control must name a branch source"))?;
+                            .ok_or_else(|| {
+                                SimError::invalid("CCVS control must name a branch source")
+                            })?;
                         // The branch equation is Vp-Vn-ohms*Icontrol = 0.
                         a.add(branch, control, -*ohms);
                     }
@@ -172,7 +221,8 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     }
     let conductance_sparse = a.to_csc()?;
     let charge_sparse = charge.to_csc()?;
-    if conductance_sparse.values()
+    if conductance_sparse
+        .values()
         .iter()
         .chain(charge_sparse.values())
         .chain(&rhs)

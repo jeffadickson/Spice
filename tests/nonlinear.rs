@@ -391,7 +391,12 @@ fn nonlinear_ac_linearizes_at_the_dc_bias_point() {
     };
     let samples = ac(&compile(&circuit).unwrap(), &[1.], &DenseLu).unwrap();
     assert_eq!(samples.len(), 1);
-    assert!(samples[0].values.iter().all(|value| value.real.is_finite() && value.imag.is_finite()));
+    assert!(
+        samples[0]
+            .values
+            .iter()
+            .all(|value| value.real.is_finite() && value.imag.is_finite())
+    );
 }
 
 #[test]
@@ -718,10 +723,24 @@ fn source_continuation_records_accepted_warm_start_stages() {
     let circuit = Circuit {
         nodes: vec!["0".into(), "s".into(), "a".into()],
         elements: vec![
-            Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
-            Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 1.,
+            },
+            Element::Resistor {
+                id: "R1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                ohms: 1000.,
+            },
             Element::Diode {
-                id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
+                id: "D1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
             },
         ],
     };
@@ -729,7 +748,11 @@ fn source_continuation_records_accepted_warm_start_stages() {
         &compile(&circuit).unwrap(),
         &DenseLu,
         NewtonOptions {
-            continuation: Some(ContinuationOptions { initial_step: 0.25, minimum_step: 0.01, max_stages: 16 }),
+            continuation: Some(ContinuationOptions {
+                initial_step: 0.25,
+                minimum_step: 0.01,
+                max_stages: 16,
+            }),
             ..NewtonOptions::default()
         },
     )
@@ -740,7 +763,12 @@ fn source_continuation_records_accepted_warm_start_stages() {
     // Stage reduction is allowed; the report keeps it observable rather than hidden.
     assert!(continuation.rejected_stages <= 16);
     assert_eq!(continuation.stages.last().unwrap().source_scale, 1.0);
-    assert!(continuation.stages.windows(2).all(|stages| stages[0].source_scale < stages[1].source_scale));
+    assert!(
+        continuation
+            .stages
+            .windows(2)
+            .all(|stages| stages[0].source_scale < stages[1].source_scale)
+    );
     assert!(report.residual_inf < 1e-9);
     assert!(report.update_inf.is_finite());
     assert!(report.linear_solves > 0);
@@ -751,10 +779,24 @@ fn source_continuation_reports_a_bounded_minimum_step_failure() {
     let circuit = Circuit {
         nodes: vec!["0".into(), "s".into(), "a".into()],
         elements: vec![
-            Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
-            Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 1.,
+            },
+            Element::Resistor {
+                id: "R1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                ohms: 1000.,
+            },
             Element::Diode {
-                id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
+                id: "D1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
             },
         ],
     };
@@ -763,7 +805,11 @@ fn source_continuation_reports_a_bounded_minimum_step_failure() {
         &DenseLu,
         NewtonOptions {
             max_iterations: 1,
-            continuation: Some(ContinuationOptions { initial_step: 0.5, minimum_step: 0.5, max_stages: 2 }),
+            continuation: Some(ContinuationOptions {
+                initial_step: 0.5,
+                minimum_step: 0.5,
+                max_stages: 2,
+            }),
             ..NewtonOptions::default()
         },
     )
@@ -777,20 +823,48 @@ fn explicit_gmin_is_applied_and_retained_in_convergence_evidence() {
     let circuit = Circuit {
         nodes: vec!["0".into(), "s".into(), "a".into()],
         elements: vec![
-            Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 1. },
-            Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
-            Element::Diode { id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585 },
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 1.,
+            },
+            Element::Resistor {
+                id: "R1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                ohms: 1000.,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
         ],
     };
     let (_, report) = solve(
-        &compile(&circuit).unwrap(), &DenseLu,
-        NewtonOptions { gmin_siemens: Some(1e-9), ..NewtonOptions::default() },
-    ).unwrap();
+        &compile(&circuit).unwrap(),
+        &DenseLu,
+        NewtonOptions {
+            gmin_siemens: Some(1e-9),
+            ..NewtonOptions::default()
+        },
+    )
+    .unwrap();
     assert_eq!(report.gmin_siemens, Some(1e-9));
-    assert!(solve(
-        &compile(&circuit).unwrap(), &DenseLu,
-        NewtonOptions { gmin_siemens: Some(0.), ..NewtonOptions::default() },
-    ).is_err());
+    assert!(
+        solve(
+            &compile(&circuit).unwrap(),
+            &DenseLu,
+            NewtonOptions {
+                gmin_siemens: Some(0.),
+                ..NewtonOptions::default()
+            },
+        )
+        .is_err()
+    );
 }
 
 #[test]
@@ -798,11 +872,30 @@ fn configured_nonlinear_transient_accepts_source_breakpoints_and_adaptive_trials
     let circuit = Circuit {
         nodes: vec!["0".into(), "s".into(), "a".into()],
         elements: vec![
-            Element::Voltage { id: "V1".into(), p: NodeId(1), n: NodeId(0), volts: 0. },
-            Element::Resistor { id: "R1".into(), p: NodeId(1), n: NodeId(2), ohms: 1000. },
-            Element::Capacitor { id: "C1".into(), p: NodeId(2), n: NodeId(0), farads: 1e-6 },
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 0.,
+            },
+            Element::Resistor {
+                id: "R1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                ohms: 1000.,
+            },
+            Element::Capacitor {
+                id: "C1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                farads: 1e-6,
+            },
             Element::Diode {
-                id: "D1".into(), p: NodeId(2), n: NodeId(0), saturation_amps: 1e-12, thermal_volts: 0.02585,
+                id: "D1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
             },
         ],
     };
@@ -817,15 +910,29 @@ fn configured_nonlinear_transient_accepts_source_breakpoints_and_adaptive_trials
             initial_state: None,
             sources: vec![SourceOverride {
                 id: "V1".into(),
-                waveform: Waveform::Pwl { points: vec![
-                    circuit_simulator::waveform::Point { time_s: 0., value: 0. },
-                    circuit_simulator::waveform::Point { time_s: 1e-5, value: 1. },
-                    circuit_simulator::waveform::Point { time_s: 2e-5, value: 1. },
-                ] },
+                waveform: Waveform::Pwl {
+                    points: vec![
+                        circuit_simulator::waveform::Point {
+                            time_s: 0.,
+                            value: 0.,
+                        },
+                        circuit_simulator::waveform::Point {
+                            time_s: 1e-5,
+                            value: 1.,
+                        },
+                        circuit_simulator::waveform::Point {
+                            time_s: 2e-5,
+                            value: 1.,
+                        },
+                    ],
+                },
             }],
             adaptive: Some(circuit_simulator::adaptive::AdaptiveOptions {
-                relative: 0.1, voltage_absolute: 1e-4, current_absolute: 1e-6,
-                min_step_s: 1e-8, max_attempts: 100,
+                relative: 0.1,
+                voltage_absolute: 1e-4,
+                current_absolute: 1e-6,
+                min_step_s: 1e-8,
+                max_attempts: 100,
             }),
         },
         &false.into(),
@@ -833,6 +940,11 @@ fn configured_nonlinear_transient_accepts_source_breakpoints_and_adaptive_trials
     .unwrap();
     assert!(result.samples.iter().any(|sample| sample.time_s == 1e-5));
     assert_eq!(result.samples.last().unwrap().time_s, 2e-5);
-    assert!(result.samples.iter().all(|sample| sample.values.iter().all(|value| value.is_finite())));
+    assert!(
+        result
+            .samples
+            .iter()
+            .all(|sample| sample.values.iter().all(|value| value.is_finite()))
+    );
     assert!(result.report.linear_solves > result.report.accepted_steps);
 }

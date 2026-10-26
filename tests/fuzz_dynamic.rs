@@ -79,9 +79,12 @@ fn seeded_ngspice_waveform_deck_mutations_do_not_panic() {
             let index = (state as usize) % bytes.len();
             bytes[index] ^= (state >> 32) as u8;
             let text = String::from_utf8_lossy(&bytes);
-            assert!(std::panic::catch_unwind(|| {
-                let _ = import_ngspice_request(&text, "seeded-waveform-fuzz");
-            }).is_ok());
+            assert!(
+                std::panic::catch_unwind(|| {
+                    let _ = import_ngspice_request(&text, "seeded-waveform-fuzz");
+                })
+                .is_ok()
+            );
         }
     }
 }

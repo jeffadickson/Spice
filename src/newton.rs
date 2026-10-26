@@ -46,7 +46,10 @@ pub fn linearize_with_rhs(
 
 /// Adds only explicitly requested DC Gmin shunts; it never changes a nominal solve silently.
 fn linearize_with_rhs_gmin(
-    plan: &CompiledCircuit, values: &[f64], rhs: &[f64], gmin_siemens: Option<f64>,
+    plan: &CompiledCircuit,
+    values: &[f64],
+    rhs: &[f64],
+    gmin_siemens: Option<f64>,
 ) -> SimResult<LinearizedSystem> {
     if values.len() != plan.unknown_count() || values.iter().any(|value| !value.is_finite()) {
         return Err(SimError::invalid("invalid Newton trial vector"));
@@ -128,28 +131,58 @@ pub fn norm_inf(values: &[f64]) -> SimResult<f64> {
 }
 
 /// Dimension-aware norms: MNA node rows are current equations; branch rows are voltage equations.
-fn scaled_residual_norm(plan: &CompiledCircuit, residual: &[f64], rhs: &[f64], options: NewtonOptions) -> SimResult<f64> {
-    if residual.len() != rhs.len() || residual.len() != plan.unknown_count() { return Err(SimError::invalid("invalid scaled residual")); }
+fn scaled_residual_norm(
+    plan: &CompiledCircuit,
+    residual: &[f64],
+    rhs: &[f64],
+    options: NewtonOptions,
+) -> SimResult<f64> {
+    if residual.len() != rhs.len() || residual.len() != plan.unknown_count() {
+        return Err(SimError::invalid("invalid scaled residual"));
+    }
     let node_rows = plan.circuit.nodes.len() - 1;
     let mut worst = 0_f64;
     for (index, value) in residual.iter().enumerate() {
-        let absolute = if index < node_rows { options.current_absolute_tolerance } else { options.voltage_absolute_tolerance };
+        let absolute = if index < node_rows {
+            options.current_absolute_tolerance
+        } else {
+            options.voltage_absolute_tolerance
+        };
         let scale = absolute + options.relative_tolerance * rhs[index].abs().max(absolute);
         worst = worst.max(value.abs() / scale);
     }
-    if worst.is_finite() { Ok(worst) } else { Err(SimError::invalid("nonfinite scaled residual")) }
+    if worst.is_finite() {
+        Ok(worst)
+    } else {
+        Err(SimError::invalid("nonfinite scaled residual"))
+    }
 }
 
-fn scaled_update_norm(plan: &CompiledCircuit, update: &[f64], values: &[f64], options: NewtonOptions) -> SimResult<f64> {
-    if update.len() != values.len() || update.len() != plan.unknown_count() { return Err(SimError::invalid("invalid scaled update")); }
+fn scaled_update_norm(
+    plan: &CompiledCircuit,
+    update: &[f64],
+    values: &[f64],
+    options: NewtonOptions,
+) -> SimResult<f64> {
+    if update.len() != values.len() || update.len() != plan.unknown_count() {
+        return Err(SimError::invalid("invalid scaled update"));
+    }
     let node_values = plan.circuit.nodes.len() - 1;
     let mut worst = 0_f64;
     for (index, value) in update.iter().enumerate() {
-        let absolute = if index < node_values { options.voltage_absolute_tolerance } else { options.current_absolute_tolerance };
+        let absolute = if index < node_values {
+            options.voltage_absolute_tolerance
+        } else {
+            options.current_absolute_tolerance
+        };
         let scale = absolute + options.relative_tolerance * values[index].abs().max(absolute);
         worst = worst.max(value.abs() / scale);
     }
-    if worst.is_finite() { Ok(worst) } else { Err(SimError::invalid("nonfinite scaled update")) }
+    if worst.is_finite() {
+        Ok(worst)
+    } else {
+        Err(SimError::invalid("nonfinite scaled update"))
+    }
 }
 
 /// Bounded Newton policy for the reference diode operating-point solver.
@@ -193,19 +226,28 @@ impl NewtonOptions {
             || !self.relative_tolerance.is_finite()
             || self.absolute_tolerance <= 0.
             || self.relative_tolerance <= 0.
-            || !self.voltage_absolute_tolerance.is_finite() || self.voltage_absolute_tolerance <= 0.
-            || !self.current_absolute_tolerance.is_finite() || self.current_absolute_tolerance <= 0.
+            || !self.voltage_absolute_tolerance.is_finite()
+            || self.voltage_absolute_tolerance <= 0.
+            || !self.current_absolute_tolerance.is_finite()
+            || self.current_absolute_tolerance <= 0.
         {
             return Err(SimError::invalid("invalid Newton options"));
         }
-        if self.gmin_siemens.is_some_and(|value| !value.is_finite() || value <= 0. || value > 1.) {
+        if self
+            .gmin_siemens
+            .is_some_and(|value| !value.is_finite() || value <= 0. || value > 1.)
+        {
             return Err(SimError::invalid("invalid gmin_siemens"));
         }
         Ok(())
     }
 }
-fn default_voltage_tolerance() -> f64 { 1e-9 }
-fn default_current_tolerance() -> f64 { 1e-12 }
+fn default_voltage_tolerance() -> f64 {
+    1e-9
+}
+fn default_current_tolerance() -> f64 {
+    1e-12
+}
 
 /// Bounded source-stepping policy. Each accepted stage becomes the next Newton initial state.
 #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
@@ -376,15 +418,21 @@ fn solve_from_rhs(
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-attempt));
-            let candidate_system = linearize_with_rhs_gmin(plan, &candidate, rhs, options.gmin_siemens)?;
-            let candidate_residual = scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;
+            let candidate_system =
+                linearize_with_rhs_gmin(plan, &candidate, rhs, options.gmin_siemens)?;
+            let candidate_residual =
+                scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;
             if candidate_residual < scaled_residual || candidate_residual <= 1. {
                 let update = candidate
                     .iter()
                     .zip(&values)
                     .map(|(candidate, previous)| candidate - previous)
                     .collect::<Vec<_>>();
-                accepted = Some((candidate, damped || attempt > 0, scaled_update_norm(plan, &update, &values, options)?));
+                accepted = Some((
+                    candidate,
+                    damped || attempt > 0,
+                    scaled_update_norm(plan, &update, &values, options)?,
+                ));
                 break;
             }
         }
@@ -447,12 +495,19 @@ fn solve_with_source_continuation(
         if attempts >= continuation.max_stages {
             return Err(SimError::new(
                 ErrorCode::NumericalFailure,
-                format!("source continuation exhausted {} stage attempts at scale {source_scale}", continuation.max_stages),
+                format!(
+                    "source continuation exhausted {} stage attempts at scale {source_scale}",
+                    continuation.max_stages
+                ),
             ));
         }
         attempts += 1;
         let target_scale = (source_scale + step).min(1.0);
-        let scaled_rhs = plan.rhs.iter().map(|value| value * target_scale).collect::<Vec<_>>();
+        let scaled_rhs = plan
+            .rhs
+            .iter()
+            .map(|value| value * target_scale)
+            .collect::<Vec<_>>();
         match solve_from_rhs(plan, solver, options, values.clone(), &scaled_rhs) {
             Ok((candidate, report)) => {
                 stages.push(ContinuationStage {
@@ -471,7 +526,10 @@ fn solve_with_source_continuation(
                 if step <= continuation.minimum_step {
                     return Err(SimError::new(
                         ErrorCode::NumericalFailure,
-                        format!("source continuation failed at scale {target_scale} with minimum step {}: {}", continuation.minimum_step, error.message),
+                        format!(
+                            "source continuation failed at scale {target_scale} with minimum step {}: {}",
+                            continuation.minimum_step, error.message
+                        ),
                     ));
                 }
                 rejected_stages += 1;
@@ -479,13 +537,17 @@ fn solve_with_source_continuation(
                 if step < continuation.minimum_step {
                     return Err(SimError::new(
                         ErrorCode::NumericalFailure,
-                        format!("source continuation cannot reduce below minimum step {} after failure at scale {target_scale}: {}", continuation.minimum_step, error.message),
+                        format!(
+                            "source continuation cannot reduce below minimum step {} after failure at scale {target_scale}: {}",
+                            continuation.minimum_step, error.message
+                        ),
                     ));
                 }
             }
         }
     }
-    let mut report = final_report.ok_or_else(|| SimError::invalid("source continuation produced no stages"))?;
+    let mut report =
+        final_report.ok_or_else(|| SimError::invalid("source continuation produced no stages"))?;
     report.continuation = Some(ContinuationReport {
         accepted_stages: stages.len(),
         rejected_stages,

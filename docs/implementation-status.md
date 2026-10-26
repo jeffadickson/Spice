@@ -1,11 +1,11 @@
-# Implementation status after iterations 201–300
+# Implementation status after iterations 201–301
 
 The fifth slice adds **bounded fixed-step nonlinear diode transient stepping** using backward-Euler residuals and analytic damped Newton iterations. It does not complete the 23-package production plan.
 
 | Plan area | Implemented evidence | Remaining |
 |---|---|---|
-| Solver variety | nalgebra dense and independent faer sparse LU; real/complex conformance, prepared RHS reuse, and a backend-neutral CSC pattern/value contract with shared adapter corpus | broad difficult-matrix corpus, native KLU/cuDSS/Ginkgo adapters, large-circuit sparse assembly |
-| Device equations | R/C/L, a Shockley diode, independent sources, signed flux and branch currents, DC power diagnostics, DC-biased diode small-signal AC, bounded DC source continuation | additional semiconductor models, production limiting/Jacobians, Gmin stepping and full device/plugin API |
+| Solver variety | nalgebra dense and independent faer sparse LU; real/complex conformance, prepared RHS reuse, compiler-owned canonical CSC stamps, and direct faer use for linear DC | broad difficult-matrix corpus, native KLU/cuDSS/Ginkgo adapters, sparse AC/transient and large-circuit qualification |
+| Device equations | R/C/L, a Shockley diode, independent sources, signed flux and branch currents, DC power diagnostics, DC-biased diode small-signal AC, bounded DC source continuation, explicit Gmin, and dimension-aware DC checks | additional semiconductor models, production limiting/Jacobians, Gmin stepping and full device/plugin API |
 | Dynamic analyses | configured initial states, PWL/sine sources, trapezoidal/BE, adaptive step doubling, accepted observers, fixed-step and configured backward-Euler diode Newton including source overrides/breakpoints | full event/co-simulation rules and complete DAE topology qualification |
 | API/data | typed C#/F# experimental JSON contract, measurements/assertions, capability discovery | Arrow, C ABI, persistent sandboxed worker, complete stable API/migration policy |
 | Campaigns | bounded sequential cases, scalar sweeps/grids, seeded sampling recipes, per-point failures and programmatic result rows | parallel resource scheduling, statistical qualification, retries/resume, batch CLI transport, actual StressForge contract |

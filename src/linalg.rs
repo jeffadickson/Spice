@@ -1,4 +1,7 @@
-use crate::error::{SimError, SimResult};
+use crate::{
+    error::{ErrorCode, SimError, SimResult},
+    sparse::CscMatrix,
+};
 /// Row-major binary64 reference matrix, limited before dense allocation.
 #[derive(Debug, Clone)]
 pub struct Matrix {
@@ -43,6 +46,18 @@ pub trait LinearSolver: Send + Sync {
     }
     fn name(&self) -> &'static str;
     fn solve(&self, matrix: &Matrix, rhs: &[f64]) -> SimResult<Vec<f64>>;
+    /// Solves an owned compiler CSC plan without a dense materialization.
+    ///
+    /// Backends that have no direct sparse path return `Unsupported`; analysis
+    /// drivers may then use their documented dense reference fallback. Any
+    /// other error is a real backend failure and must not be hidden by a
+    /// fallback to a different numerical method.
+    fn solve_csc(&self, _matrix: &CscMatrix, _rhs: &[f64]) -> SimResult<Vec<f64>> {
+        Err(SimError::new(
+            ErrorCode::Unsupported,
+            "backend has no direct canonical CSC implementation",
+        ))
+    }
     fn solve_complex(
         &self,
         _real: &Matrix,

@@ -152,27 +152,34 @@ impl Circuit {
                 )));
             }
             match e {
-                Element::Vccs { cp, cn, siemens, .. }
-                    if cp == cn || cp.0 >= self.nodes.len() || cn.0 >= self.nodes.len()
-                        || !siemens.is_finite() =>
+                Element::Vccs {
+                    cp, cn, siemens, ..
+                } if cp == cn
+                    || cp.0 >= self.nodes.len()
+                    || cn.0 >= self.nodes.len()
+                    || !siemens.is_finite() =>
                 {
                     return Err(SimError::invalid("invalid VCCS control terminals or gain"));
                 }
                 Element::Vcvs { cp, cn, gain, .. }
-                    if cp == cn || cp.0 >= self.nodes.len() || cn.0 >= self.nodes.len()
+                    if cp == cn
+                        || cp.0 >= self.nodes.len()
+                        || cn.0 >= self.nodes.len()
                         || !gain.is_finite() =>
                 {
                     return Err(SimError::invalid("invalid VCVS control terminals or gain"));
                 }
-                Element::Cccs { control_id, gain, .. }
-                    if control_id.is_empty() || !gain.is_finite() =>
-                {
+                Element::Cccs {
+                    control_id, gain, ..
+                } if control_id.is_empty() || !gain.is_finite() => {
                     return Err(SimError::invalid("invalid CCCS control ID or gain"));
                 }
-                Element::Ccvs { control_id, ohms, .. }
-                    if control_id.is_empty() || !ohms.is_finite() =>
-                {
-                    return Err(SimError::invalid("invalid CCVS control ID or transresistance"));
+                Element::Ccvs {
+                    control_id, ohms, ..
+                } if control_id.is_empty() || !ohms.is_finite() => {
+                    return Err(SimError::invalid(
+                        "invalid CCVS control ID or transresistance",
+                    ));
                 }
                 Element::Resistor { ohms, .. } if !ohms.is_finite() || *ohms <= 0.0 => {
                     return Err(SimError::invalid("resistance must be finite and positive"));

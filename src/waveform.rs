@@ -70,11 +70,20 @@ impl Waveform {
                 Err(SimError::invalid("invalid sine parameters"))
             }
             Self::DampedSine {
-                offset, amplitude, frequency_hz, delay_s, damping_per_s, phase_rad,
-            } if !offset.is_finite() || !amplitude.is_finite()
-                || !frequency_hz.is_finite() || *frequency_hz <= 0.
-                || !delay_s.is_finite() || *delay_s < 0.
-                || !damping_per_s.is_finite() || *damping_per_s < 0.
+                offset,
+                amplitude,
+                frequency_hz,
+                delay_s,
+                damping_per_s,
+                phase_rad,
+            } if !offset.is_finite()
+                || !amplitude.is_finite()
+                || !frequency_hz.is_finite()
+                || *frequency_hz <= 0.
+                || !delay_s.is_finite()
+                || *delay_s < 0.
+                || !damping_per_s.is_finite()
+                || *damping_per_s < 0.
                 || !phase_rad.is_finite() =>
             {
                 Err(SimError::invalid("invalid damped sine parameters"))
@@ -89,21 +98,47 @@ impl Waveform {
             {
                 Err(SimError::invalid("invalid PWL points/order/budget"))
             }
-            Self::Pulse { low, high, delay_s, rise_s, fall_s, width_s, period_s }
-                if !low.is_finite() || !high.is_finite() || !delay_s.is_finite() || *delay_s < 0.
-                    || !rise_s.is_finite() || *rise_s < 0. || !fall_s.is_finite() || *fall_s < 0.
-                    || !width_s.is_finite() || *width_s < 0. || !period_s.is_finite()
-                    || *period_s <= 0. || rise_s + width_s + fall_s > *period_s =>
+            Self::Pulse {
+                low,
+                high,
+                delay_s,
+                rise_s,
+                fall_s,
+                width_s,
+                period_s,
+            } if !low.is_finite()
+                || !high.is_finite()
+                || !delay_s.is_finite()
+                || *delay_s < 0.
+                || !rise_s.is_finite()
+                || *rise_s < 0.
+                || !fall_s.is_finite()
+                || *fall_s < 0.
+                || !width_s.is_finite()
+                || *width_s < 0.
+                || !period_s.is_finite()
+                || *period_s <= 0.
+                || rise_s + width_s + fall_s > *period_s =>
             {
                 Err(SimError::invalid("invalid pulse parameters"))
             }
             Self::Exponential {
-                initial, pulsed, rise_delay_s, rise_tau_s, fall_delay_s, fall_tau_s,
-            } if !initial.is_finite() || !pulsed.is_finite()
-                || !rise_delay_s.is_finite() || *rise_delay_s < 0.
-                || !rise_tau_s.is_finite() || *rise_tau_s <= 0.
-                || !fall_delay_s.is_finite() || *fall_delay_s < *rise_delay_s
-                || !fall_tau_s.is_finite() || *fall_tau_s <= 0. =>
+                initial,
+                pulsed,
+                rise_delay_s,
+                rise_tau_s,
+                fall_delay_s,
+                fall_tau_s,
+            } if !initial.is_finite()
+                || !pulsed.is_finite()
+                || !rise_delay_s.is_finite()
+                || *rise_delay_s < 0.
+                || !rise_tau_s.is_finite()
+                || *rise_tau_s <= 0.
+                || !fall_delay_s.is_finite()
+                || *fall_delay_s < *rise_delay_s
+                || !fall_tau_s.is_finite()
+                || *fall_tau_s <= 0. =>
             {
                 Err(SimError::invalid("invalid exponential source parameters"))
             }
@@ -134,7 +169,12 @@ impl Waveform {
                 offset + amplitude * phase.sin()
             }
             Self::DampedSine {
-                offset, amplitude, frequency_hz, delay_s, damping_per_s, phase_rad,
+                offset,
+                amplitude,
+                frequency_hz,
+                delay_s,
+                damping_per_s,
+                phase_rad,
             } => {
                 if time < *delay_s {
                     *offset
@@ -147,23 +187,46 @@ impl Waveform {
                     offset + amplitude * (-damping_per_s * elapsed).exp() * phase.sin()
                 }
             }
-            Self::Pulse { low, high, delay_s, rise_s, fall_s, width_s, period_s } => {
-                if time < *delay_s { *low } else {
+            Self::Pulse {
+                low,
+                high,
+                delay_s,
+                rise_s,
+                fall_s,
+                width_s,
+                period_s,
+            } => {
+                if time < *delay_s {
+                    *low
+                } else {
                     let phase = (time - delay_s).rem_euclid(*period_s);
-                    if phase < *rise_s && *rise_s > 0. { low + (high - low) * phase / rise_s }
-                    else if phase < rise_s + width_s { *high }
-                    else if phase < rise_s + width_s + fall_s && *fall_s > 0. {
+                    if phase < *rise_s && *rise_s > 0. {
+                        low + (high - low) * phase / rise_s
+                    } else if phase < rise_s + width_s {
+                        *high
+                    } else if phase < rise_s + width_s + fall_s && *fall_s > 0. {
                         high + (low - high) * (phase - rise_s - width_s) / fall_s
-                    } else { *low }
+                    } else {
+                        *low
+                    }
                 }
             }
             Self::Exponential {
-                initial, pulsed, rise_delay_s, rise_tau_s, fall_delay_s, fall_tau_s,
+                initial,
+                pulsed,
+                rise_delay_s,
+                rise_tau_s,
+                fall_delay_s,
+                fall_tau_s,
             } => {
-                let rise = if time < *rise_delay_s { 0. } else {
+                let rise = if time < *rise_delay_s {
+                    0.
+                } else {
                     1. - (-(time - rise_delay_s) / rise_tau_s).exp()
                 };
-                let fall = if time < *fall_delay_s { 0. } else {
+                let fall = if time < *fall_delay_s {
+                    0.
+                } else {
                     1. - (-(time - fall_delay_s) / fall_tau_s).exp()
                 };
                 initial + (pulsed - initial) * (rise - fall)
@@ -187,7 +250,11 @@ impl Waveform {
     pub fn breakpoints(&self) -> Vec<f64> {
         match self {
             Self::Pwl { points } => points.iter().map(|p| p.time_s).collect(),
-            Self::Exponential { rise_delay_s, fall_delay_s, .. } => {
+            Self::Exponential {
+                rise_delay_s,
+                fall_delay_s,
+                ..
+            } => {
                 vec![*rise_delay_s, *fall_delay_s]
             }
             Self::DampedSine { delay_s, .. } => vec![*delay_s],

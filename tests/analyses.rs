@@ -32,29 +32,50 @@ fn rc_ac_matches_complex_transfer() {
 fn ac_source_phasors_reject_non_source_targets_before_solving() {
     let circuit = parse("title\nR1 out 0 1k\n.end").unwrap();
     let request = Request {
-        schema_version: "1".into(), case_id: "invalid-ac-phasor".into(), circuit,
+        schema_version: "1".into(),
+        case_id: "invalid-ac-phasor".into(),
+        circuit,
         analysis: Analysis::Ac {
             frequencies_hz: vec![1.],
-            source_phasors: vec![AcSourcePhasor { id: "R1".into(), real: 1., imag: 0. }],
+            source_phasors: vec![AcSourcePhasor {
+                id: "R1".into(),
+                real: 1.,
+                imag: 0.,
+            }],
         },
-        backend: "lu".into(), experiment: None,
+        backend: "lu".into(),
+        experiment: None,
     };
-    assert_eq!(run(&request).unwrap_err().code, circuit_simulator::error::ErrorCode::InvalidInput);
+    assert_eq!(
+        run(&request).unwrap_err().code,
+        circuit_simulator::error::ErrorCode::InvalidInput
+    );
 }
 
 #[test]
 fn ac_source_phasors_superpose_real_and_quadrature_sources() {
     let circuit = parse("title\nV1 out 0 0\nI1 0 out 0\nR1 out 0 1\n.end").unwrap();
     let request = Request {
-        schema_version: "1".into(), case_id: "phasor-superposition".into(), circuit,
+        schema_version: "1".into(),
+        case_id: "phasor-superposition".into(),
+        circuit,
         analysis: Analysis::Ac {
             frequencies_hz: vec![1.],
             source_phasors: vec![
-                AcSourcePhasor { id: "V1".into(), real: 2., imag: 3. },
-                AcSourcePhasor { id: "I1".into(), real: 1., imag: -1. },
+                AcSourcePhasor {
+                    id: "V1".into(),
+                    real: 2.,
+                    imag: 3.,
+                },
+                AcSourcePhasor {
+                    id: "I1".into(),
+                    real: 1.,
+                    imag: -1.,
+                },
             ],
         },
-        backend: "lu".into(), experiment: None,
+        backend: "lu".into(),
+        experiment: None,
     };
     let result = run(&request).unwrap();
     // The ideal voltage source fixes v(out), while the current source affects its branch current.

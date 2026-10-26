@@ -15,11 +15,7 @@ pub struct FaerSparseLu;
 impl FaerSparseLu {
     /// Solves a compiler-produced canonical CSC plan without a dense conversion.
     /// Analysis drivers adopt this path only after their generic solver contract is widened.
-    pub fn solve_compiled_csc(
-        &self,
-        matrix: &CscMatrix,
-        rhs: &[f64],
-    ) -> SimResult<Vec<f64>> {
+    pub fn solve_compiled_csc(&self, matrix: &CscMatrix, rhs: &[f64]) -> SimResult<Vec<f64>> {
         let system = SparseRealSystem::new(matrix.pattern().clone(), matrix.values().to_vec())?;
         self.solve_sparse_real(&system, rhs)
     }
@@ -90,6 +86,9 @@ impl SparseLinearBackend for FaerSparseLu {
 }
 
 impl LinearSolver for FaerSparseLu {
+    fn solve_csc(&self, matrix: &CscMatrix, rhs: &[f64]) -> SimResult<Vec<f64>> {
+        self.solve_compiled_csc(matrix, rhs)
+    }
     fn prepare(&self, a: &Matrix) -> SimResult<Option<crate::linalg::PreparedReal>> {
         let csc = CscMatrix::from_dense(a)?;
         let entries: Vec<_> = csc

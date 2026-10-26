@@ -14,6 +14,26 @@ pub fn solve_verified(
     let error = verify_solution(a, b, &x)?;
     Ok((x, error))
 }
+/// Prefer a compiler-owned sparse plan when the chosen provider implements it.
+///
+/// The dense matrix is retained solely as a bounded reference representation
+/// and fallback for providers that explicitly decline canonical CSC. A sparse
+/// provider failure is surfaced rather than silently changing algorithms.
+pub fn solve_compiled_verified(
+    plan: &CompiledCircuit,
+    solver: &dyn LinearSolver,
+) -> SimResult<(Vec<f64>, f64)> {
+    match solver.solve_csc(plan.conductance_sparse(), plan.rhs()) {
+        Ok(x) => Ok((
+            x.clone(),
+            verify_solution(plan.conductance_reference(), plan.rhs(), &x)?,
+        )),
+        Err(error) if error.code == ErrorCode::Unsupported => {
+            solve_verified(plan.conductance_reference(), plan.rhs(), solver)
+        }
+        Err(error) => Err(error),
+    }
+}
 /// Numerical validation remains outside the backend, including cached-factor solves.
 pub fn verify_solution(a: &Matrix, b: &[f64], x: &[f64]) -> SimResult<f64> {
     a.validate(b)?;
@@ -71,8 +91,5 @@ pub fn operating_point_with_options(
         let (values, report) = crate::newton::solve(plan, solver, options)?;
         return Ok((values, Some(report)));
     }
-    Ok((
-        solve_verified(&plan.conductance, &plan.rhs, solver)?.0,
-        None,
-    ))
+    Ok((solve_compiled_verified(plan, solver)?.0, None))
 }

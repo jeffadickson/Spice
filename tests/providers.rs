@@ -94,19 +94,48 @@ fn capability_discovery_is_sorted_and_honest() {
 
 #[test]
 fn compiler_retains_direct_canonical_sparse_stamps_for_backend_analysis() {
-    let plan = circuit_simulator::compile::compile(&parse("title\nV1 in 0 1\nR1 in out 1k\nC1 out 0 1u").unwrap()).unwrap();
+    let plan = circuit_simulator::compile::compile(
+        &parse("title\nV1 in 0 1\nR1 in out 1k\nC1 out 0 1u").unwrap(),
+    )
+    .unwrap();
     assert_eq!(plan.conductance_sparse().dimension(), plan.unknown_count());
     assert_eq!(plan.charge_sparse().dimension(), plan.unknown_count());
     assert!(plan.conductance_sparse().nnz() > 0);
     assert!(plan.charge_sparse().nnz() > 0);
     let dense = plan.conductance_sparse().entries().collect::<Vec<_>>();
-    assert!(dense.iter().any(|(row, column, value)| row == column && *value > 0.));
+    assert!(
+        dense
+            .iter()
+            .any(|(row, column, value)| row == column && *value > 0.)
+    );
 }
 
 #[test]
 fn faer_consumes_compiler_csc_without_dense_reconstruction() {
-    let plan = circuit_simulator::compile::compile(&parse("title\nV1 in 0 1\nR1 in out 1k\nR2 out 0 1k").unwrap()).unwrap();
-    let sparse = FaerSparseLu.solve_compiled_csc(plan.conductance_sparse(), plan.rhs()).unwrap();
-    let dense = DenseLu.solve(plan.conductance_reference(), plan.rhs()).unwrap();
-    for (left, right) in sparse.iter().zip(dense) { assert!((left - right).abs() < 1e-12); }
+    let plan = circuit_simulator::compile::compile(
+        &parse("title\nV1 in 0 1\nR1 in out 1k\nR2 out 0 1k").unwrap(),
+    )
+    .unwrap();
+    let sparse = FaerSparseLu
+        .solve_compiled_csc(plan.conductance_sparse(), plan.rhs())
+        .unwrap();
+    let dense = DenseLu
+        .solve(plan.conductance_reference(), plan.rhs())
+        .unwrap();
+    for (left, right) in sparse.iter().zip(dense) {
+        assert!((left - right).abs() < 1e-12);
+    }
+}
+
+#[test]
+fn linear_dc_prefers_compiled_csc_for_the_sparse_provider() {
+    let plan = circuit_simulator::compile::compile(
+        &parse("title\nV1 in 0 1\nR1 in out 1k\nR2 out 0 1k").unwrap(),
+    )
+    .unwrap();
+    let sparse = circuit_simulator::dc::operating_point(&plan, &FaerSparseLu).unwrap();
+    let dense = circuit_simulator::dc::operating_point(&plan, &DenseLu).unwrap();
+    for (left, right) in sparse.iter().zip(dense) {
+        assert!((left - right).abs() < 1e-12);
+    }
 }

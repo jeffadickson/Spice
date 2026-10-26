@@ -123,9 +123,10 @@ pub fn run_with_registry(
         }
     };
     let mut ac_samples = match &request.analysis {
-        Analysis::Ac { frequencies_hz, source_phasors } => {
-            crate::ac::ac_with_source_phasors(&plan, frequencies_hz, source_phasors, solver)?
-        }
+        Analysis::Ac {
+            frequencies_hz,
+            source_phasors,
+        } => crate::ac::ac_with_source_phasors(&plan, frequencies_hz, source_phasors, solver)?,
         _ => Vec::new(),
     };
     let mut signals: Vec<Signal> = request
@@ -148,25 +149,51 @@ pub fn run_with_registry(
     // p-to-n currents so observation/measurement contracts can address them.
     for diode in &plan.diodes {
         let model = diode.model;
-        let element_id = request.circuit.elements.iter().find_map(|element| match element {
-            crate::circuit::Element::Diode { id, p, n, saturation_amps, thermal_volts }
-                if *p == diode.p && *n == diode.n && *saturation_amps == model.saturation_amps && *thermal_volts == model.thermal_volts => Some(id.clone()),
-            _ => None,
-        }).ok_or_else(|| SimError::invalid("compiled diode lacks source identity"))?;
-        signals.push(Signal { id: format!("i({element_id})"), quantity: "current", unit: "A" });
+        let element_id = request
+            .circuit
+            .elements
+            .iter()
+            .find_map(|element| match element {
+                crate::circuit::Element::Diode {
+                    id,
+                    p,
+                    n,
+                    saturation_amps,
+                    thermal_volts,
+                } if *p == diode.p
+                    && *n == diode.n
+                    && *saturation_amps == model.saturation_amps
+                    && *thermal_volts == model.thermal_volts =>
+                {
+                    Some(id.clone())
+                }
+                _ => None,
+            })
+            .ok_or_else(|| SimError::invalid("compiled diode lacks source identity"))?;
+        signals.push(Signal {
+            id: format!("i({element_id})"),
+            quantity: "current",
+            unit: "A",
+        });
         for sample in &mut samples {
-            let voltage = diode.p.unknown().map(|i| sample.values[i]).unwrap_or(0.) - diode.n.unknown().map(|i| sample.values[i]).unwrap_or(0.);
-            sample.values.push(diode.model.linearize(voltage)?.current_amps);
+            let voltage = diode.p.unknown().map(|i| sample.values[i]).unwrap_or(0.)
+                - diode.n.unknown().map(|i| sample.values[i]).unwrap_or(0.);
+            sample
+                .values
+                .push(diode.model.linearize(voltage)?.current_amps);
         }
         if !ac_samples.is_empty() {
             let bias = crate::dc::operating_point(&plan, solver)?;
-            let voltage = diode.p.unknown().map(|i| bias[i]).unwrap_or(0.) - diode.n.unknown().map(|i| bias[i]).unwrap_or(0.);
+            let voltage = diode.p.unknown().map(|i| bias[i]).unwrap_or(0.)
+                - diode.n.unknown().map(|i| bias[i]).unwrap_or(0.);
             let conductance = diode.model.linearize(voltage)?.conductance_siemens;
             for sample in &mut ac_samples {
                 let p = diode.p.unknown().map(|i| &sample.values[i]);
                 let n = diode.n.unknown().map(|i| &sample.values[i]);
-                let real = conductance * (p.map(|v| v.real).unwrap_or(0.) - n.map(|v| v.real).unwrap_or(0.));
-                let imag = conductance * (p.map(|v| v.imag).unwrap_or(0.) - n.map(|v| v.imag).unwrap_or(0.));
+                let real = conductance
+                    * (p.map(|v| v.real).unwrap_or(0.) - n.map(|v| v.real).unwrap_or(0.));
+                let imag = conductance
+                    * (p.map(|v| v.imag).unwrap_or(0.) - n.map(|v| v.imag).unwrap_or(0.));
                 sample.values.push(crate::ac::ComplexValue { real, imag });
             }
         }
@@ -175,7 +202,10 @@ pub fn run_with_registry(
         request.analysis,
         Analysis::OperatingPoint | Analysis::OperatingPointNewton { .. }
     ) {
-        Some(crate::power::dc_power(&plan, &samples[0].values[..plan.unknown_count()])?)
+        Some(crate::power::dc_power(
+            &plan,
+            &samples[0].values[..plan.unknown_count()],
+        )?)
     } else {
         None
     };

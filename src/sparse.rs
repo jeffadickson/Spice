@@ -14,7 +14,10 @@ pub(crate) struct SparseAccumulator {
 impl SparseAccumulator {
     pub(crate) fn new(n: usize) -> SimResult<Self> {
         Matrix::zeros(n)?;
-        Ok(Self { n, entries: BTreeMap::new() })
+        Ok(Self {
+            n,
+            entries: BTreeMap::new(),
+        })
     }
     pub(crate) fn add(&mut self, row: usize, column: usize, value: f64) {
         *self.entries.entry((row, column)).or_insert(0.) += value;
@@ -22,11 +25,18 @@ impl SparseAccumulator {
     pub(crate) fn to_csc(&self) -> SimResult<CscMatrix> {
         let mut columns = vec![Vec::<(usize, f64)>::new(); self.n];
         for (&(row, column), &value) in &self.entries {
-            if value != 0. { columns[column].push((row, value)); }
+            if value != 0. {
+                columns[column].push((row, value));
+            }
         }
-        let mut pointers = vec![0]; let mut rows = Vec::new(); let mut values = Vec::new();
+        let mut pointers = vec![0];
+        let mut rows = Vec::new();
+        let mut values = Vec::new();
         for column in columns {
-            for (row, value) in column { rows.push(row); values.push(value); }
+            for (row, value) in column {
+                rows.push(row);
+                values.push(value);
+            }
             pointers.push(rows.len());
         }
         CscMatrix::new(self.n, pointers, rows, values)
@@ -154,7 +164,9 @@ impl CscMatrix {
     /// Bounded reference materialization; production sparse adapters consume CSC directly.
     pub(crate) fn to_dense(&self) -> SimResult<Matrix> {
         let mut matrix = Matrix::zeros(self.dimension())?;
-        for (row, column, value) in self.entries() { matrix.add(row, column, value); }
+        for (row, column, value) in self.entries() {
+            matrix.add(row, column, value);
+        }
         Ok(matrix)
     }
 }

@@ -45,15 +45,23 @@ pub fn ac_with_source_phasors(
     let mut rhs_imag = vec![0.; n];
     let mut ids = std::collections::BTreeSet::new();
     for phasor in source_phasors {
-        if phasor.id.is_empty() || !phasor.real.is_finite() || !phasor.imag.is_finite()
-            || !ids.insert(&phasor.id) {
+        if phasor.id.is_empty()
+            || !phasor.real.is_finite()
+            || !phasor.imag.is_finite()
+            || !ids.insert(&phasor.id)
+        {
             return Err(SimError::invalid("invalid or duplicate AC source phasor"));
         }
-        let element = plan.circuit.elements.iter().find(|element| element.id() == phasor.id)
+        let element = plan
+            .circuit
+            .elements
+            .iter()
+            .find(|element| element.id() == phasor.id)
             .ok_or_else(|| SimError::invalid("unknown AC source phasor"))?;
         match element {
             Element::Voltage { volts, .. } => {
-                let row = plan.branch_index(&phasor.id)
+                let row = plan
+                    .branch_index(&phasor.id)
                     .ok_or_else(|| SimError::invalid("missing AC voltage-source branch"))?;
                 rhs_real[row] += phasor.real - *volts;
                 rhs_imag[row] += phasor.imag;
@@ -69,7 +77,11 @@ pub fn ac_with_source_phasors(
                     rhs_imag[row] += phasor.imag;
                 }
             }
-            _ => return Err(SimError::invalid("AC phasor must target an independent source")),
+            _ => {
+                return Err(SimError::invalid(
+                    "AC phasor must target an independent source",
+                ));
+            }
         }
     }
     // Nonlinear small-signal AC is evaluated around the converged DC point. The
@@ -114,9 +126,7 @@ pub fn ac_with_source_phasors(
                 - Complex64::new(rhs_real[i], rhs_imag[i]);
             let scale = Complex64::new(rhs_real[i], rhs_imag[i]).norm()
                 + (0..n)
-                    .map(|j| {
-                        (Complex64::new(conductance.at(i, j), imag.at(i, j)) * x[j]).norm()
-                    })
+                    .map(|j| (Complex64::new(conductance.at(i, j), imag.at(i, j)) * x[j]).norm())
                     .sum::<f64>();
             let relative = residual.norm() / scale.max(f64::MIN_POSITIVE);
             if !scale.is_finite() || !relative.is_finite() || relative > 1e-10 {

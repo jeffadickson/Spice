@@ -211,14 +211,17 @@ pub fn run_observed(
             )?;
             (values, report.linear_solves)
         } else {
-            (stepper.advance(
-                &state,
-                h,
-                crate::integrator::RhsPair {
-                    previous: &old_rhs,
-                    current: &new_rhs,
-                },
-            )?, 0)
+            (
+                stepper.advance(
+                    &state,
+                    h,
+                    crate::integrator::RhsPair {
+                        previous: &old_rhs,
+                        current: &new_rhs,
+                    },
+                )?,
+                0,
+            )
         };
         nonlinear_linear_solves += coarse_solves;
         let accepted = if let Some(adaptive) = &options.adaptive {
@@ -232,19 +235,49 @@ pub fn run_observed(
             let mid_rhs = sources.rhs(mid)?;
             let (half, half_solves) = if plan.has_nonlinear_devices() {
                 let (values, report) = crate::newton::solve_backward_euler_step(
-                    plan, solver, crate::newton::NewtonOptions::default(), &state, h / 2., &mid_rhs,
+                    plan,
+                    solver,
+                    crate::newton::NewtonOptions::default(),
+                    &state,
+                    h / 2.,
+                    &mid_rhs,
                 )?;
                 (values, report.linear_solves)
             } else {
-                (stepper.advance(&state, h / 2., crate::integrator::RhsPair { previous: &old_rhs, current: &mid_rhs })?, 0)
+                (
+                    stepper.advance(
+                        &state,
+                        h / 2.,
+                        crate::integrator::RhsPair {
+                            previous: &old_rhs,
+                            current: &mid_rhs,
+                        },
+                    )?,
+                    0,
+                )
             };
             let (fine, fine_solves) = if plan.has_nonlinear_devices() {
                 let (values, report) = crate::newton::solve_backward_euler_step(
-                    plan, solver, crate::newton::NewtonOptions::default(), &half, next - mid, &new_rhs,
+                    plan,
+                    solver,
+                    crate::newton::NewtonOptions::default(),
+                    &half,
+                    next - mid,
+                    &new_rhs,
                 )?;
                 (values, report.linear_solves)
             } else {
-                (stepper.advance(&half, next - mid, crate::integrator::RhsPair { previous: &mid_rhs, current: &new_rhs })?, 0)
+                (
+                    stepper.advance(
+                        &half,
+                        next - mid,
+                        crate::integrator::RhsPair {
+                            previous: &mid_rhs,
+                            current: &new_rhs,
+                        },
+                    )?,
+                    0,
+                )
             };
             nonlinear_linear_solves += half_solves + fine_solves;
             let order = if options.method == Method::BackwardEuler {
@@ -299,7 +332,9 @@ pub fn run_observed(
             rejected_steps: rejected,
             attempts,
             max_accepted_error: max_error,
-            linear_solves: stepper.solve_calls + nonlinear_linear_solves + usize::from(options.initial_state.is_none()),
+            linear_solves: stepper.solve_calls
+                + nonlinear_linear_solves
+                + usize::from(options.initial_state.is_none()),
             prepared_factors: stepper.prepared_factors,
             prepared_reuses: stepper.prepared_reuses,
         },
