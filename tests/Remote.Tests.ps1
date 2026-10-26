@@ -1,7 +1,7 @@
 # Pester integration tests use synthetic reports and a local bare Git remote;
 # they exercise publication without claiming those fixtures are simulator runs.
 Describe 'Remote qualification evidence publication' {
-    $publisher=Join-Path $PSScriptRoot '../scripts/RemoteQualification.cs'
+    $publisher=if ($env:SPICE_REMOTE_PUBLISHER) { $env:SPICE_REMOTE_PUBLISHER } else { Join-Path $PSScriptRoot '../scripts/RemoteQualification.cs' }
     function New-RemoteFixture {
         $base=Join-Path (Split-Path $PSScriptRoot -Parent) ('work/remote-tests/'+[guid]::NewGuid().ToString('N'))
         $source=Join-Path $base 'source';$bare=Join-Path $base 'origin.git';$clone=Join-Path $base 'clone'
@@ -59,12 +59,13 @@ Describe 'Remote qualification evidence publication' {
         @(& git -C $fixture.Bare for-each-ref '--format=%(refname:short)' refs/heads/remote-runs/).Count|Should Be 1
     }
     It 'rejects stale tested source and malformed hashes' {
-        foreach($kind in @('stale','path','hash')) {
+        foreach($kind in @('stale','path','hash','wronghash')) {
             $fixture=New-RemoteFixture
             switch($kind){
                 stale {$fixture.Report.source_commit='0000000000000000000000000000000000000000'}
                 path {$fixture.Report.source_hashes['../secret']='a'*64}
                 hash {$fixture.Report.source_hashes['Cargo.toml']='bad'}
+                wronghash {$fixture.Report.source_hashes['Cargo.toml']='0'*64}
             }
             $fixture.Report|ConvertTo-Json -Depth 5|Set-Content (Join-Path $fixture.Run 'summary.json')
             (Invoke-Publisher $fixture).Code|Should Not Be 0

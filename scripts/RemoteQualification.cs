@@ -32,6 +32,7 @@ async Task<CommandResult> Command(string file,IEnumerable<string> arguments,stri
     var start=new ProcessStartInfo(file) { WorkingDirectory=root,UseShellExecute=false,RedirectStandardOutput=true,RedirectStandardError=true,CreateNoWindow=true };
     foreach(var arg in arguments)start.ArgumentList.Add(arg);
     start.Environment["GIT_TERMINAL_PROMPT"]="0";
+    start.Environment["CARGO_BUILD_JOBS"]="2"; start.Environment["RUST_TEST_THREADS"]="2";
     using var process=Process.Start(start)??throw new IOException("Could not start "+file);
     async Task<string> Drain(StreamReader stream) { var text=new System.Text.StringBuilder();var buffer=new char[4096];int size;while((size=await stream.ReadAsync(buffer))>0)if(text.Length<1_048_576)text.Append(buffer,0,Math.Min(size,1_048_576-text.Length));return text.ToString(); }
     var stdout=Drain(process.StandardOutput);var stderr=Drain(process.StandardError);var timeout=false;
