@@ -141,7 +141,7 @@ sealed record CoverageEvidence(string Status,JsonElement? Lines,JsonElement? Fun
 sealed class EnduranceEvidence {
     public string Status {get;set;}="";public string SourceCommit {get;set;}="";public bool SourceDirty {get;set;}
     public DateTime StartedUtc {get;set;}public DateTime? FinishedUtc {get;set;}public double BudgetSeconds {get;set;}public double ElapsedSeconds {get;set;}
-    public ulong Cases {get;set;}public ulong Batches {get;set;}public string InitialSeed {get;set;}="";public string? PendingSeed {get;set;}
+    public ulong Cases {get;set;}public ulong Batches {get;set;}public ulong CheckpointRetries {get;set;}public string InitialSeed {get;set;}="";public string? PendingSeed {get;set;}
     public string MutationStatus {get;set;}="";public string Rustc {get;set;}="";public string? RustcVerbose {get;set;}public string Dotnet {get;set;}="";
     public Dictionary<string,string> SourceHashes {get;set;}=new();
 }

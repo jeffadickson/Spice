@@ -39,7 +39,17 @@ var options=new JsonSerializerOptions { WriteIndented=true,PropertyNamingPolicy=
 void Save() {
     report.ElapsedSeconds=clock.Elapsed.TotalSeconds;
     var temporary=reportPath+".tmp";
-    File.WriteAllText(temporary,JsonSerializer.Serialize(report,options)); File.Move(temporary,reportPath,true);
+    File.WriteAllText(temporary,JsonSerializer.Serialize(report,options));
+    // Windows readers/antivirus can briefly deny atomic replacement. Retain the
+    // complete temporary file and retry for at most two seconds; permanent errors
+    // still fail rather than silently discard checkpoint evidence.
+    var retry=Stopwatch.StartNew();
+    while(true) {
+        try { File.Move(temporary,reportPath,true); break; }
+        catch(Exception error) when((error is IOException or UnauthorizedAccessException)&&retry.Elapsed<TimeSpan.FromSeconds(2)) {
+            report.CheckpointRetries++; Thread.Sleep(20);
+        }
+    }
 }
 TimeSpan Remaining()=>TimeSpan.FromSeconds(Math.Max(0,report.BudgetSeconds-clock.Elapsed.TotalSeconds));
 async Task<ProcessResult> Execute(string file,IEnumerable<string> arguments,string cwd,TimeSpan timeout,Dictionary<string,string>? env=null) {
@@ -139,6 +149,7 @@ sealed class CampaignReport {
     public string? PendingSeed { get;set; }
     public ulong Cases { get;set; }
     public ulong Batches { get;set; }
+    public ulong CheckpointRetries { get;set; }
     public string MutationStatus { get;set; }="not_run";
     public string? SourceCommit { get;set; }
     public bool SourceDirty { get;set; }

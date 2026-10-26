@@ -215,3 +215,16 @@ Implementation: scripts/RemoteQualification.cs. Verification: tests/Remote.Tests
 RELATIONS:
 - TYPE: Parent
   VALUE: REM-002
+
+[REQUIREMENT]
+UID: END-004
+TITLE: Recoverable checkpoint sharing contention
+STATEMENT: >>>
+Checkpoint replacement shall retry transient file access failures for at most two seconds, retain valid JSON and record retries. Permanent failures shall remain failures rather than silently losing evidence.
+<<<
+COMMENT: >>>
+Implementation: scripts/Endurance.cs. Verification: scripts/Test-CheckpointContention.ps1 and evidence/checkpoint-contention.json deliberately deny delete sharing for 500 milliseconds during a live campaign.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: END-002
