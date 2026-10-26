@@ -6,6 +6,43 @@ use std::sync::atomic::AtomicUsize;
 
 struct ObserveFirstTrial(Mutex<Vec<f64>>);
 
+#[test]
+fn last_permitted_correction_is_checked_before_budget_failure() {
+    let plan = compile(&Circuit {
+        nodes: vec!["0".into(), "x".into()],
+        elements: vec![
+            Element::Resistor {
+                id: "R".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                ohms: 1.,
+            },
+            Element::Current {
+                id: "I".into(),
+                p: NodeId(0),
+                n: NodeId(1),
+                amps: 1e-10,
+            },
+        ],
+    })
+    .unwrap();
+    let options = NewtonOptions {
+        max_iterations: 1,
+        ..NewtonOptions::default()
+    };
+    let provider = ObservedSolves(AtomicUsize::new(0));
+    let (values, report) = solve(&plan, &provider, options).unwrap();
+    assert!((values[0] - 1e-10).abs() < 1e-25);
+    assert_eq!(report.iterations, 1);
+    assert_eq!(provider.0.load(Ordering::Relaxed), 1);
+    let provider = ObservedSolves(AtomicUsize::new(0));
+    let (values, report) =
+        solve_backward_euler_step(&plan, &provider, options, &[0.], 1e-3, plan.rhs()).unwrap();
+    assert!((values[0] - 1e-10).abs() < 1e-25);
+    assert_eq!(report.iterations, 1);
+    assert_eq!(provider.0.load(Ordering::Relaxed), 1);
+}
+
 struct FirstStageOnly(AtomicUsize);
 impl LinearSolver for FirstStageOnly {
     fn name(&self) -> &'static str {

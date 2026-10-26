@@ -598,7 +598,7 @@ fn solve_from_rhs(
     let mut values = initial;
     let mut damped_steps = 0;
     let mut last_update = f64::INFINITY;
-    for iteration in 0..options.max_iterations {
+    for iteration in 0..=options.max_iterations {
         let system = linearize_with_rhs_gmin(plan, &values, rhs, options.gmin_siemens)?;
         let residual = norm_inf(&system.residual)?;
         tracing::trace!(iteration, residual_inf = residual, "newton_iteration");
@@ -617,6 +617,11 @@ fn solve_from_rhs(
                     gmin_continuation: None,
                 },
             ));
+        }
+        // Check the last permitted correction before declaring exhaustion,
+        // without spending an additional provider call.
+        if iteration == options.max_iterations {
+            break;
         }
         let correction_rhs: Vec<f64> = system.residual.iter().map(|value| -value).collect();
         let delta = solver.solve(&system.jacobian, &correction_rhs)?;
@@ -869,7 +874,7 @@ pub fn solve_backward_euler_step(
     let mut values = previous.to_vec();
     let mut damped_steps = 0;
     let mut last_update = f64::INFINITY;
-    for iteration in 0..options.max_iterations {
+    for iteration in 0..=options.max_iterations {
         let system = linearize_backward_euler(plan, &values, previous, step_s, rhs)?;
         let residual = norm_inf(&system.residual)?;
         tracing::trace!(iteration, residual_inf = residual, "newton_iteration");
@@ -888,6 +893,9 @@ pub fn solve_backward_euler_step(
                     gmin_continuation: None,
                 },
             ));
+        }
+        if iteration == options.max_iterations {
+            break;
         }
         let update = solver.solve(
             &system.jacobian,
