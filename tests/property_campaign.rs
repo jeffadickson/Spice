@@ -1,5 +1,9 @@
 //! Library-generated cases with shrinking, persisted counterexamples and replay.
 use circuit_simulator::newton::norm_inf;
+use circuit_simulator::{
+    api::Request,
+    netlist::{import_ngspice_request, parse},
+};
 use proptest::prelude::*;
 use proptest::test_runner::{Config, FileFailurePersistence, RngSeed};
 
@@ -28,5 +32,24 @@ proptest! {
             let expected = values.iter().map(|v| v.abs()).fold(0., f64::max);
             prop_assert_eq!(result.unwrap(), expected);
         }
+    }
+
+    #[test]
+    fn malformed_parser_inputs_reject_without_panicking(bytes in prop::collection::vec(any::<u8>(), 0..2048)) {
+        let text = String::from_utf8_lossy(&bytes);
+        let _ = parse(&text);
+        let _ = import_ngspice_request(&text, "proptest");
+        if let Ok(request) = serde_json::from_slice::<Request>(&bytes) {
+            let _ = request.circuit.validate();
+        }
+        // A rejected input is expected. Only panic/resource-contract failures
+        // fail this property; acceptance does not assert numerical correctness.
+    }
+
+    #[test]
+    fn unicode_netlist_tokens_have_total_diagnostics(identifier in ".{0,128}") {
+        let text = format!("title\n{identifier} a 0 1\n.end\n");
+        let _ = parse(&text);
+        let _ = import_ngspice_request(&text, "unicode-proptest");
     }
 }
