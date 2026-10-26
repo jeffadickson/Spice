@@ -39,6 +39,34 @@ fn small_phasor_replaces_large_nominal_without_cancellation() {
 struct DirectOnly(AtomicUsize);
 
 #[test]
+fn independent_complex_residual_rejects_bad_provider_results() {
+    use circuit_simulator::{ac::verify_complex_system, sparse::CscPattern};
+    let system = SparseComplexSystem::new(
+        CscPattern::new(1, vec![0, 1], vec![0]).unwrap(),
+        vec![Complex64::new(2., 3.)],
+    )
+    .unwrap();
+    let exact = [Complex64::new(1., -2.)];
+    let rhs = [Complex64::new(8., -1.)];
+    assert_eq!(verify_complex_system(&system, &rhs, &exact).unwrap(), 0.);
+    for values in [
+        vec![],
+        vec![Complex64::new(0., 0.)],
+        vec![Complex64::new(f64::NAN, 0.)],
+        vec![Complex64::new(f64::MAX, f64::MAX)],
+    ] {
+        assert!(verify_complex_system(&system, &rhs, &values).is_err());
+    }
+    assert!(verify_complex_system(&system, &[], &exact).is_err());
+    let zero =
+        SparseComplexSystem::new(CscPattern::new(1, vec![0, 0], vec![]).unwrap(), vec![]).unwrap();
+    assert_eq!(
+        verify_complex_system(&zero, &[Complex64::new(0., 0.)], &exact).unwrap(),
+        0.
+    );
+}
+
+#[test]
 fn sparse_incremental_diode_stamps_match_terminal_equations() {
     use circuit_simulator::newton::conductance_at_bias_csc;
     let plan = compile(

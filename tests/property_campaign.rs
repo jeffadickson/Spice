@@ -30,6 +30,26 @@ fn configuration() -> Config {
 proptest! {
     #![proptest_config(configuration())]
     #[test]
+    fn generated_rc_ac_matches_complex_transfer(
+        resistance_log in 0.0_f64..5., capacitance_log in -9.0_f64..-4.,
+        ratio_log in -3.0_f64..3., real in -10.0_f64..10., imag in -10.0_f64..10.
+    ) {
+        use circuit_simulator::{ac::ac_with_source_phasors, api::AcSourcePhasor};
+        use num_complex::Complex64;
+        let resistance = 10_f64.powf(resistance_log);
+        let capacitance = 10_f64.powf(capacitance_log);
+        let ratio = 10_f64.powf(ratio_log);
+        let frequency = ratio / (std::f64::consts::TAU * resistance * capacitance);
+        let plan = compile(&parse(&format!("title\nV1 in 0 1\nR1 in out {resistance}\nC1 out 0 {capacitance}\n.end")).unwrap()).unwrap();
+        let source = AcSourcePhasor { id: "V1".into(), real, imag };
+        let expected = Complex64::new(real, imag) / Complex64::new(1., ratio);
+        for provider in [&DenseLu as &dyn LinearSolver, &FaerSparseLu] {
+            let samples = ac_with_source_phasors(&plan, &[frequency], std::slice::from_ref(&source), provider).unwrap();
+            let actual = Complex64::new(samples[0].values[1].real, samples[0].values[1].imag);
+            prop_assert!((actual - expected).norm() < 1e-10 * (1. + expected.norm()));
+        }
+    }
+    #[test]
     fn norm_obeys_finite_ieee_contract(bits in prop::collection::vec(any::<u64>(), 0..256)) {
         let values: Vec<_> = bits.into_iter().map(f64::from_bits).collect();
         let result = norm_inf(&values);
