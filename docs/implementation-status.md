@@ -1,5 +1,11 @@
 # Implementation status after iterations 201–301
 
+Current campaign checkpoint: iterations 335–344 harden continuation/provider
+boundaries and add independent coupled-diode oracles. See
+[checkpoint evidence](../evidence/continuation-344-qualification.md) and
+[the active campaign](qualification-campaign.md). Full checkpoint: 257 Rust tests,
+29 managed checks; nine focused cargo-mutants survivors remain unresolved.
+
 The fifth slice adds **bounded fixed-step nonlinear diode transient stepping** using backward-Euler residuals and analytic damped Newton iterations. It does not complete the 23-package production plan.
 
 | Plan area | Implemented evidence | Remaining |

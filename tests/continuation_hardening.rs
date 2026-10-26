@@ -1,7 +1,63 @@
 //! Independent boundary and difficult-topology evidence for bounded Newton paths.
 use circuit_simulator::newton::linearize_backward_euler;
 use circuit_simulator::newton::solve_from;
+use std::sync::Mutex;
 use std::sync::atomic::AtomicUsize;
+
+struct ObserveFirstTrial(Mutex<Vec<f64>>);
+impl LinearSolver for ObserveFirstTrial {
+    fn name(&self) -> &'static str {
+        "trial-observer"
+    }
+    fn solve(&self, matrix: &Matrix, rhs: &[f64]) -> SimResult<Vec<f64>> {
+        let mut seen = self.0.lock().unwrap();
+        seen.push(matrix.values[0]);
+        if seen.len() == 2 {
+            return Err(circuit_simulator::error::SimError::new(
+                ErrorCode::Cancelled,
+                "fixture stops after observing the first accepted trial",
+            ));
+        }
+        DenseLu.solve(matrix, rhs)
+    }
+}
+
+#[test]
+fn accepted_initial_diode_trial_respects_two_thermal_voltage_limit() {
+    for thermal in [1e-5, 0.02585, 0.1] {
+        let plan = compile(&Circuit {
+            nodes: vec!["0".into(), "x".into()],
+            elements: vec![
+                Element::Current {
+                    id: "I".into(),
+                    p: NodeId(0),
+                    n: NodeId(1),
+                    amps: 1e-6,
+                },
+                Element::Diode {
+                    id: "D".into(),
+                    p: NodeId(1),
+                    n: NodeId(0),
+                    saturation_amps: 1e-12,
+                    thermal_volts: thermal,
+                },
+            ],
+        })
+        .unwrap();
+        let observer = ObserveFirstTrial(Mutex::new(Vec::new()));
+        assert_eq!(
+            solve(&plan, &observer, NewtonOptions::default())
+                .unwrap_err()
+                .code,
+            ErrorCode::Cancelled
+        );
+        let observed = observer.0.lock().unwrap();
+        assert_eq!(observed.len(), 2);
+        // For one diode, J=Is*exp(V/Vt)/Vt. The ratio independently
+        // reconstructs the first accepted exponent increment.
+        assert!((observed[1] / observed[0] - 2_f64.exp()).abs() < 1e-12);
+    }
+}
 use std::sync::atomic::{AtomicBool, Ordering};
 
 struct ObservedSolves(AtomicUsize);

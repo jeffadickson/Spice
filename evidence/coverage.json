@@ -2,17 +2,17 @@
   "rust": {
     "status": "measured",
     "platform": "Ubuntu 24.04 x64 under WSL2",
-    "source_commit": "d8ac66ac779ff357fa7a167a4629a292021dc81a",
+    "source_commit": "8a6b624d433d64c586ae5c6227d8422ee58485ae",
     "toolchain": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
-    "line_percent": 89.95293636177614,
-    "lines": 4887,
-    "covered_lines": 4396,
+    "line_percent": 90.32454361054766,
+    "lines": 4930,
+    "covered_lines": 4453,
     "branch_percent": null,
     "scope": "owned src/*.rs; test and dependency files excluded",
-    "report": "evidence/rust-coverage-linux.json",
+    "report": "evidence/continuation-344-rust-coverage.json",
     "limitations": [
       "No qualified Rust branch metrics from this instrumentation.",
-      "Windows Rust coverage remains unavailable without MSVC linker/SDK.",
+      "Windows Rust instrumentation has not been rerun after successful SDK installation.",
       "Vendor internals, managed code and GPU/native plugins excluded."
     ]
   },
@@ -22,7 +22,7 @@
     "scope": "Owned Simulator.Client .cs files only; unique source lines and mapped branches; generated JSON metadata excluded",
     "source_sha256": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
     "source_hashes": {
-      "dotnet/Simulator.Client/Results.cs": "6a918d82ce4874393245160e9a3b1e8a9a1ab3be6879fd9043edbf8ba6079bd1",
+      "dotnet/Simulator.Client/Results.cs": "5e41aea7f5dfd6c6237962208bbcb7cec1fb9fcd16acd2fbf909247884a40e8d",
       "dotnet/Simulator.Client/WireContext.cs": "f1c7a3f8e82e8fcb3671725851a4b154a34c152a8d79c8fd05782e21be432a15",
       "dotnet/Simulator.Client/Client.cs": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
       "dotnet/Simulator.Client/Requests.cs": "67322b96b7b15fef97119bf557ada5655ddf43e9bebb6b11c5416d2ba1a92276",
@@ -39,11 +39,11 @@
       "generated/framework code",
       "test executable"
     ],
-    "current_report": "evidence/framework-tooling-coverage.json"
+    "current_report": "evidence/continuation-344-managed-coverage.json"
   },
   "additional_unmeasured": [
-    "Selected numerical mutation driver and checkpoint orchestration",
-    "Complete native installer paths and all PowerShell subprocess execution",
+    "Supplemental numerical mutation driver",
+    "Complete native installer and PowerShell subprocess paths",
     "FSharp examples"
   ],
   "rust_windows": {
@@ -59,6 +59,6 @@
   },
   "qualification_tooling": {
     "current_powershell_command_subset": "evidence/framework-powershell-coverage.json",
-    "current_csharp": "evidence/framework-tooling-coverage.json"
+    "current_csharp": "evidence/continuation-344-managed-coverage.json"
   }
 }

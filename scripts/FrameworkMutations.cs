@@ -7,17 +7,21 @@ using System.Text.Json;
 
 // Supervise real mutation frameworks, preserving their native reports locally.
 // A timeout is partial evidence, never a killed mutant or a completed campaign.
-var minutes=60d;var shard="0/1";var rustFile="src/*.rs";var rustTest="all";var selectedTool="all";
+var minutes=60d;var shard="0/1";var rustFile="src/*.rs";var rustTest="all";var selectedTool="all";var rustFilter="";var workers=2;
 for(var i=0;i<args.Length;i++) switch(args[i]) {
     case "--minutes":minutes=double.Parse(args[++i],CultureInfo.InvariantCulture);break;
     case "--shard":shard=args[++i];break;
     case "--rust-file":rustFile=args[++i];break;
     case "--rust-test":rustTest=args[++i];break;
     case "--tool":selectedTool=args[++i];break;
+    case "--rust-filter":rustFilter=args[++i];break;
+    case "--workers":workers=int.Parse(args[++i],CultureInfo.InvariantCulture);break;
     default:throw new ArgumentException("Unknown framework argument: "+args[i]);
 }
 if(!double.IsFinite(minutes)||minutes<=0||minutes>1440)throw new ArgumentException("Minutes must be in (0,1440].");
 if(selectedTool is not ("all" or "rust" or "dotnet"))throw new ArgumentException("Tool must be all, rust or dotnet.");
+if(workers<1||workers>16)throw new ArgumentException("Workers must be in 1..16.");
+if(rustFilter.Length>512||rustFilter.Contains('\0'))throw new ArgumentException("Rust filter exceeds its bound.");
 var parts=shard.Split('/');
 if(parts.Length!=2||!int.TryParse(parts[0],out var n)||!int.TryParse(parts[1],out var k)||n<0||k<=n||k>1024)throw new ArgumentException("Shard must be N/K with 0 <= N < K <= 1024.");
 if(!rustFile.StartsWith("src/",StringComparison.Ordinal)||rustFile.Contains("..")||rustFile.Contains('\\'))throw new ArgumentException("Rust filter must stay under src/.");
@@ -27,13 +31,13 @@ Directory.CreateDirectory("work");
 using var exclusive=new FileStream("work/framework-mutation.lock",FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None);
 var run=Path.Combine(root,"work","framework-mutations",DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8]);Directory.CreateDirectory(run);
 var options=new JsonSerializerOptions{WriteIndented=true,PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower};
-var report=new FrameworkReport{RequestedSeconds=minutes*60,Shard=shard,RustFile=rustFile,RustTest=rustTest,Tool=selectedTool};
+var report=new FrameworkReport{RequestedSeconds=minutes*60,Shard=shard,RustFile=rustFile,RustTest=rustTest,Tool=selectedTool,RustFilter=rustFilter,Workers=workers};
 var clock=Stopwatch.StartNew();
 double Remaining()=>Math.Max(0,minutes*60-clock.Elapsed.TotalSeconds);
 async Task<(int Exit,bool Timeout)> Execute(string file,IEnumerable<string> arguments,string log,double seconds,Dictionary<string,string>? environment=null,string? directory=null) {
     var start=new ProcessStartInfo(file){WorkingDirectory=directory??root,UseShellExecute=false,RedirectStandardOutput=true,RedirectStandardError=true,CreateNoWindow=true};
     foreach(var arg in arguments)start.ArgumentList.Add(arg);
-    start.Environment["CARGO_BUILD_JOBS"]="2";start.Environment["RUST_TEST_THREADS"]="2";
+    start.Environment["CARGO_BUILD_JOBS"]=workers.ToString(CultureInfo.InvariantCulture);start.Environment["RUST_TEST_THREADS"]=workers.ToString(CultureInfo.InvariantCulture);
     if(environment is not null)foreach(var pair in environment)start.Environment[pair.Key]=pair.Value;
     using var process=Process.Start(start)??throw new IOException("Could not start "+file);
     // Drain both pipes after truncating retained text, avoiding child deadlocks.
@@ -67,7 +71,7 @@ try {
     foreach(var path in new[]{"dotnet-tools.json","global.json"}.Concat(Directory.EnumerateFiles("dotnet","*",SearchOption.AllDirectories).Where(p=>!p.Split(Path.DirectorySeparatorChar).Any(part=>part is "bin" or "obj" or "TestResults")))) {
         var destination=Path.Combine(managedRoot,path);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Copy(path,destination);
     }
-    var stryker=await Execute("dotnet",["tool","run","dotnet-stryker","--","--config-file","dotnet/Simulator.Client.Tests/stryker-config.json","--test-project","dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj","--output",Path.Combine(run,"stryker")],"stryker.log",Remaining()*(selectedTool=="dotnet"?1:.4),new(){["SPICE_TEST_ROOT"]=root,["SPICE_TEST_EXECUTABLE"]=engine},managedRoot);
+    var stryker=await Execute("dotnet",["tool","run","dotnet-stryker","--","--config-file","dotnet/Simulator.Client.Tests/stryker-config.json","--test-project","dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj","--concurrency",workers.ToString(CultureInfo.InvariantCulture),"--output",Path.Combine(run,"stryker")],"stryker.log",Remaining()*(selectedTool=="dotnet"?1:.4),new(){["SPICE_TEST_ROOT"]=root,["SPICE_TEST_EXECUTABLE"]=engine},managedRoot);
     report.Stryker.Status=stryker.Timeout?"partial_timeout":stryker.Exit==0?"completed":"failed";
     report.Stryker.ExitCode=stryker.Exit;report.Stryker.LogSha256=Hash(Path.Combine(run,"stryker.log"));
     var managed=Directory.Exists(Path.Combine(run,"stryker"))?Directory.GetFiles(Path.Combine(run,"stryker"),"mutation-report.json",SearchOption.AllDirectories):[];
@@ -80,7 +84,8 @@ try {
     foreach(var path in new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml"}.Concat(new[]{"src","tests","examples","compat"}.SelectMany(folder=>Directory.EnumerateFiles(folder,"*",SearchOption.AllDirectories)))) {
         var destination=Path.Combine(rustRoot,path);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Copy(path,destination);
     }
-    var rustArguments=new List<string>{"mutants","--dir",rustRoot,"--file",rustFile,"--shard",shard,"--sharding","round-robin","--no-shuffle","--jobs","1","--jobserver-tasks","2","--timeout","120","--build-timeout","900","--output",Path.Combine(run,"rust"),"--colors","never","--cargo-arg=--locked"};
+    var rustArguments=new List<string>{"mutants","--dir",rustRoot,"--file",rustFile,"--shard",shard,"--sharding","round-robin","--no-shuffle","--jobs","1","--jobserver-tasks",workers.ToString(CultureInfo.InvariantCulture),"--timeout","120","--build-timeout","900","--output",Path.Combine(run,"rust"),"--colors","never","--cargo-arg=--locked"};
+    if(rustFilter.Length!=0){rustArguments.Add("--re");rustArguments.Add(rustFilter);}
     // Test selection must constrain BOTH the compile baseline and test runs;
     // cargo-test-arg alone still compiles every integration binary.
     if(rustTest!="all"){rustArguments.Add("--cargo-arg=--test");rustArguments.Add("--cargo-arg="+rustTest);}
@@ -104,6 +109,8 @@ sealed class FrameworkReport {
     public string Shard{get;set;}="";public string RustFile{get;set;}="";
     public string RustTest{get;set;}="all";
     public string Tool{get;set;}="all";
+    public string RustFilter{get;set;}="";
+    public int Workers{get;set;}=2;
     public ToolCounts CargoMutants{get;set;}=new(){Version="27.1.0"};public ToolCounts Stryker{get;set;}=new(){Version="5.0.0"};
 }
 /// Native categories remain separate; unrecognized statuses are never counted as kills.

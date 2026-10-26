@@ -23,7 +23,13 @@ if ($IsWindows -and $hostTarget -like '*-msvc' -and -not (Get-Command link.exe -
 }
 $root = (Get-Location).Path
 $coverageRoot = Join-Path $root 'build/coverage'
-New-Item -ItemType Directory -Force -Path $coverageRoot | Out-Null
+if (-not (Test-Path -LiteralPath $root -PathType Container)) { throw 'Coverage checkout directory is missing.' }
+if (-not (Test-Path -LiteralPath (Split-Path $coverageRoot -Parent) -PathType Container)) {
+    New-Item -ItemType Directory -Path (Split-Path $coverageRoot -Parent) | Out-Null
+}
+if (-not (Test-Path -LiteralPath $coverageRoot -PathType Container)) {
+    New-Item -ItemType Directory -Path $coverageRoot | Out-Null
+}
 $oldFlags = $env:RUSTFLAGS
 $oldTarget = $env:CARGO_TARGET_DIR
 $oldProfile = $env:LLVM_PROFILE_FILE
@@ -32,6 +38,7 @@ try {
     $env:CARGO_TARGET_DIR = Join-Path $root 'target/coverage'
     # A unique run directory prevents stale profile counts from contaminating this run.
     $profileRoot = Join-Path $coverageRoot ([guid]::NewGuid().ToString('N'))
+    if (Test-Path -LiteralPath $profileRoot -PathType Container) { throw 'Coverage profile directory unexpectedly exists.' }
     New-Item -ItemType Directory -Path $profileRoot | Out-Null
     $env:LLVM_PROFILE_FILE = Join-Path $profileRoot 'run-%m-%p.profraw'
     cargo test --locked
@@ -61,12 +68,19 @@ try {
     $totals = $data.data[0].totals
     $summary = [ordered]@{
         tool = 'rustc instrumentation and matching LLVM tools'; rustc = (rustc --version)
-        source_commit = (git rev-parse HEAD); scope = 'owned src/*.rs; test and dependency files excluded'
+        source_commit = (git rev-parse HEAD)
+        source_dirty = [bool](git status --porcelain)
+        source_hashes = @{}
+        scope = 'owned src/*.rs; test and dependency files excluded'
         lines = $totals.lines; functions = $totals.functions; regions = $totals.regions
         branch_coverage = $null
         limitations = @('Stable source instrumentation does not provide qualified branch metrics here.',
             '.NET, vendor library internals, GPU and native plugin coverage are not measured.',
             'Sparse CPU adapters are tested through owned wrappers; vendor internals are excluded. GPU/native plugins remain unimplemented.')
+    }
+    foreach ($source in @(Get-ChildItem -LiteralPath src -Filter '*.rs') + @(Get-ChildItem -LiteralPath tests -Filter '*.rs')) {
+        $relative = [IO.Path]::GetRelativePath($root, $source.FullName).Replace('\','/')
+        $summary.source_hashes[$relative] = (Get-FileHash -LiteralPath $source.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
     }
     $summary | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath evidence/rust-coverage.json -Encoding utf8
     $summary | ConvertTo-Json -Depth 8

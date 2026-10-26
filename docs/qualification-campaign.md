@@ -18,7 +18,9 @@ Initial block (convergence): finite norm handling; nested policy validation;
 provider correction contracts; unsupported-policy rejection; finite BE inputs;
 thermal-domain damping; multi-diode chain evidence; bridge-rectifier evidence;
 continuation stage/work diagnostics; mutation/property/coverage checkpoint.
-These are implementation intentions, not completed work or requirement closure.
+Iterations 335–344 are complete; checkpoint evidence is in
+../evidence/continuation-344-qualification.md. Nine generated mutation survivors
+and the tight bridge counterexample remain open. Next: 345–354 continuation work.
 
 Coverage is measured for the completed checkpoint source, with line/branch tooling
 limits reported. Failures and minimized counterexamples remain evidence. Use the

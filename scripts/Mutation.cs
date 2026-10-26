@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 // Run at repo root: dotnet run --file scripts/Mutation.cs
 // Copies owned source into an ignored sandbox; never edits the working source.
 var root = Directory.GetCurrentDirectory();
+if (args.Length > 1 || (args.Length == 1 && args[0] != "--list"))
+    throw new ArgumentException("Only --list is supported.");
 // Cold overnight builds may need a larger per-test limit; the outer campaign still owns its total deadline.
 var timeoutText = Environment.GetEnvironmentVariable("SPICE_MUTATION_TIMEOUT_SECONDS");
 var testTimeoutSeconds = timeoutText is null ? 180 : int.Parse(timeoutText, System.Globalization.CultureInfo.InvariantCulture);
@@ -12,7 +14,10 @@ if (testTimeoutSeconds is <= 0 or > 900) throw new ArgumentException("Mutation t
 var sandbox = Path.GetFullPath(Path.Combine(root, "work", "mutation-sandbox"));
 if (!sandbox.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
     throw new InvalidOperationException("Sandbox escaped repository.");
-Directory.CreateDirectory(sandbox);
+if (!Directory.Exists(root)) throw new DirectoryNotFoundException(root);
+foreach (var required in new[] { "src", "tests", "examples", "compat/ngspice" })
+    if (!Directory.Exists(Path.Combine(root, required))) throw new DirectoryNotFoundException(required);
+if (!Directory.Exists(sandbox)) Directory.CreateDirectory(sandbox);
 var files = new[] { "Cargo.toml", "Cargo.lock" }.Concat(
     Directory.EnumerateFiles(Path.Combine(root, "src"), "*.rs", SearchOption.AllDirectories)
         .Concat(Directory.EnumerateFiles(Path.Combine(root, "tests"), "*.rs", SearchOption.AllDirectories))
@@ -25,7 +30,8 @@ void Restore()
     foreach (var (path, text) in snapshots)
     {
         var target = Path.Combine(sandbox, path);
-        Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+        var parent = Path.GetDirectoryName(target)!;
+        if (!Directory.Exists(parent)) Directory.CreateDirectory(parent);
         File.WriteAllText(target, text);
     }
 }
@@ -44,9 +50,6 @@ async Task<(int Exit, string Log)> Test(string? target = null)
     catch (OperationCanceledException) { process.Kill(true); await process.WaitForExitAsync(); return (-1, "timeout"); }
     return (process.ExitCode, await stdout + await stderr);
 }
-Restore();
-var baseline = await Test();
-if (baseline.Exit != 0) throw new Exception("Mutation baseline failed: " + baseline.Log);
 var mutants = new (string Name, string File, string Pattern, string Replacement)[] {
     ("stamp-sign", "src/compile.rs", @"a\.add_stamp\(i,\s*i,\s*g\)", "a.add_stamp(i,i,-g)"),
     ("stored-charge", "src/transient.rs", @"plan\.charge\.at\(i,\s*j\)\s*/\s*h", "0.0"),
@@ -73,7 +76,16 @@ var mutants = new (string Name, string File, string Pattern, string Replacement)
     ("audit-kcl-polarity", "src/audit.rs", @"sums\[n\.0\] -= current;", "sums[n.0] += current;"),
     ("audit-capacitor-current", "src/audit.rs", @"\*current = farads \* \(v - old_v\) / step_s;", "*current = 0.;"),
     ("audit-api-enforcement", "src/api.rs", @"c\.status == crate::audit::CheckStatus::Failed", "false"),
-    ("audit-check-acceptance", "src/audit.rs", @"discrepancy\.abs\(\) <= tolerance", "true")
+    ("audit-check-acceptance", "src/audit.rs", @"discrepancy\.abs\(\) <= tolerance", "true"),
+    // Campaign 335–344 guards challenge finite norms, provider contracts,
+    // thermal trial bounds, source assembly and complete recovery accounting.
+    ("newton-nan-norm", "src/newton.rs", @"if values\.iter\(\)\.any\(\|value\| !value\.is_finite\(\)\) \{", "if false {"),
+    ("gmin-zero-reduction", "src/newton.rs", @"self\.reduction_factor <= 0\.", "self.reduction_factor < 0."),
+    ("be-provider-correction", "src/newton.rs", @"validate_correction\(plan, &update\)\?;", "let _ = &update;"),
+    ("limited-direction-backtrack", "src/newton.rs", @"let scale = alpha \* limit;", "let scale = alpha.min(limit);"),
+    ("thermal-trial-bound", "src/newton.rs", @"\(2\. \* diode\.model\.thermal_volts\)\.min\(0\.5\)", "0.5"),
+    ("be-requested-rhs", "src/newton.rs", @"let mut system = linearize_with_rhs\(plan, values, rhs\)\?;", "let mut system = linearize(plan, values)?;"),
+    ("recovery-work-total", "src/newton.rs", @"report\.linear_solves = counted\.calls\.load\(std::sync::atomic::Ordering::Relaxed\);", "report.linear_solves = report.iterations;")
 };
 // The baseline runs the full suite; each operator then uses its focused regression target.
 var targets = new Dictionary<string,string> {
@@ -85,8 +97,25 @@ var targets = new Dictionary<string,string> {
     ["sparse-contract-nonfinite"]="matrix_conformance",["continuation-stage-skip"]="nonlinear",
     ["gmin-final-shunt"]="continuation",["gmin-stage-budget"]="continuation",
     ["audit-kcl-polarity"]="consistency",["audit-capacitor-current"]="consistency",
-    ["audit-api-enforcement"]="consistency",["audit-check-acceptance"]="consistency"
+    ["audit-api-enforcement"]="consistency",["audit-check-acceptance"]="consistency",
+    ["newton-nan-norm"]="continuation_hardening",["gmin-zero-reduction"]="continuation_hardening",
+    ["be-provider-correction"]="continuation_hardening",["limited-direction-backtrack"]="continuation_hardening",
+    ["thermal-trial-bound"]="continuation_hardening",["be-requested-rhs"]="continuation_hardening",
+    ["recovery-work-total"]="continuation_hardening"
 };
+// Validate every site before paying for a baseline build. List mode is a real
+// source-pattern preflight, not mutation execution or a passing mutation score.
+foreach (var mutant in mutants) {
+    if (!targets.ContainsKey(mutant.Name) || !Regex.IsMatch(snapshots[mutant.File], mutant.Pattern))
+        throw new InvalidOperationException("Mutation target missing: " + mutant.Name);
+}
+if (args.Length == 1) {
+    foreach (var mutant in mutants) Console.WriteLine(mutant.Name + ": " + targets[mutant.Name]);
+    return;
+}
+Restore();
+var baseline = await Test();
+if (baseline.Exit != 0) throw new Exception("Mutation baseline failed: " + baseline.Log);
 var reports = new List<object>(); var killed = 0;
 foreach (var mutant in mutants)
 {
@@ -104,7 +133,7 @@ foreach (var mutant in mutants)
     Console.WriteLine(mutant.Name + ": " + status);
 }
 Restore();
-Directory.CreateDirectory("evidence");
+if (!Directory.Exists("evidence")) Directory.CreateDirectory("evidence");
 File.WriteAllText("evidence/mutation.json", JsonSerializer.Serialize(new {
     strategy = "selected deliberate source mutations, isolated copied tree; not exhaustive cargo-mutants campaign",
     source_hashes = snapshots.Where(p => p.Key.StartsWith("src/") || p.Key.StartsWith("tests/"))

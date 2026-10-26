@@ -88,7 +88,7 @@ fn assert_chain(values: &[f64], parameters: &[(f64, f64)], amps: f64) {
 #[test]
 fn unequal_series_diodes_recover_across_both_policies_and_cpu_providers() {
     let providers: [&dyn LinearSolver; 3] = [&DenseLu, &DenseQr, &FaerSparseLu];
-    for count in [2, 4, 8] {
+    for count in [2_usize, 4, 8] {
         let parameters: Vec<_> = (0..count)
             .map(|i| (10_f64.powi(-13 + (i % 3) as i32), 0.01 + 0.005 * i as f64))
             .collect();

@@ -8,7 +8,9 @@ var iteration = args.Length == 1 && int.TryParse(args[0], out var number) ? numb
 // A campaign can begin between historical decade labels. The campaign ledger
 // owns its ten-change cadence; this runner accepts the actual final iteration.
 if (iteration <= 0) throw new ArgumentException("Checkpoint must be a positive iteration number.");
-Directory.CreateDirectory("build/checkpoints");
+if (!File.Exists("Cargo.toml")) throw new ArgumentException("Run from the Spice repository root.");
+if (!Directory.Exists("build")) Directory.CreateDirectory("build");
+if (!Directory.Exists("build/checkpoints")) Directory.CreateDirectory("build/checkpoints");
 var commands = new (string File, string[] Args)[] {
     ("rustc", ["--version"]), ("dotnet", ["--version"]),
     ("cargo", ["build","--locked"]), ("cargo", ["test","--locked"]),
