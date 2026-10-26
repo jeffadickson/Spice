@@ -25,13 +25,24 @@ pub struct DiodeLinearization {
 }
 
 impl DiodeModel {
+    /// Validates the immutable Shockley parameters before an instance is bound
+    /// or evaluated. Both quantities are SI scalars and must remain positive:
+    /// a zero or negative value has no physical/equation meaning in this
+    /// bounded model profile.
+    pub fn validate(self) -> SimResult<()> {
+        positive(self.saturation_amps, "diode saturation current")?;
+        positive(self.thermal_volts, "diode thermal voltage")?;
+        Ok(())
+    }
+
     /// Validate parameters and evaluate the Shockley current/Jacobian.
     ///
     /// The caller must voltage-limit trial values before this method. The finite
     /// exponential guard prevents a numerical overflow becoming silent circuit data.
     pub fn linearize(self, voltage: f64) -> SimResult<DiodeLinearization> {
-        let isat = positive(self.saturation_amps, "diode saturation current")?;
-        let vt = positive(self.thermal_volts, "diode thermal voltage")?;
+        self.validate()?;
+        let isat = self.saturation_amps;
+        let vt = self.thermal_volts;
         if !voltage.is_finite() || voltage / vt > 700. {
             return Err(crate::error::SimError::invalid(
                 "diode trial voltage exceeds exponential domain",

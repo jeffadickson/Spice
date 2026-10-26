@@ -86,6 +86,37 @@ fn shockley_diode_has_positive_incremental_conductance() {
     assert!(forward.conductance_siemens > zero.conductance_siemens);
 }
 
+/// The analytic conductance is Newton's Jacobian and the AC small-signal
+/// conductance. Check it against a central finite difference across a seeded,
+/// reproducible parameter/bias corpus rather than only one nominal diode.
+#[test]
+fn seeded_shockley_jacobian_matches_finite_difference() {
+    let mut state = 0xD10D_E123_5EED_u64;
+    for case_index in 0..128 {
+        state = state.wrapping_mul(6364136223846793005).wrapping_add(1);
+        let saturation_amps = 1e-15 * 10_f64.powf((state >> 32) as f64 / u32::MAX as f64 * 6.);
+        state = state.wrapping_mul(6364136223846793005).wrapping_add(1);
+        let thermal_volts = 0.015 + (state >> 32) as f64 / u32::MAX as f64 * 0.045;
+        state = state.wrapping_mul(6364136223846793005).wrapping_add(1);
+        let voltage = -0.3 + (state >> 32) as f64 / u32::MAX as f64 * 0.9;
+        let diode = DiodeModel {
+            saturation_amps,
+            thermal_volts,
+        };
+        diode.validate().unwrap();
+        let step = thermal_volts * 1e-6;
+        let minus = diode.linearize(voltage - step).unwrap().current_amps;
+        let plus = diode.linearize(voltage + step).unwrap().current_amps;
+        let finite_difference = (plus - minus) / (2. * step);
+        let analytic = diode.linearize(voltage).unwrap().conductance_siemens;
+        let tolerance = analytic.abs() * 1e-8 + 1e-18;
+        assert!(
+            (finite_difference - analytic).abs() <= tolerance,
+            "case {case_index}: finite difference {finite_difference}, analytic {analytic}"
+        );
+    }
+}
+
 #[test]
 fn scalar_variation_can_adjust_validated_diode_saturation_current() {
     let circuit = Circuit {

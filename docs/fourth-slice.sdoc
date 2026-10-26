@@ -21,6 +21,19 @@ RELATIONS:
   VALUE: ARCH-MOD-002
 
 [REQUIREMENT]
+UID: REF4-011
+TITLE: Shockley derivative qualification
+STATEMENT: >>>
+The bounded diode model shall expose a parameter-validation operation and provide an analytic incremental conductance equal, within a documented finite-difference tolerance, to the derivative of its p-to-n Shockley current throughout the accepted finite evaluation domain. This requirement qualifies the implemented diode Jacobian only; it does not claim a general semiconductor-model framework or vendor model parity.
+<<<
+COMMENT: >>>
+Implementation: src/model.rs::DiodeModel::validate and linearize. Verification: tests/nonlinear.rs::seeded_shockley_jacobian_matches_finite_difference.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-001
+
+[REQUIREMENT]
 UID: REF4-002
 TITLE: Analytic bounded Newton operating point
 STATEMENT: >>>
