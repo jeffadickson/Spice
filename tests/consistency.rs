@@ -400,3 +400,48 @@ fn seeded_divider_audits_and_malformed_state_fuzz_smoke_are_reproducible() {
         }
     }
 }
+
+#[test]
+fn topology_errors_fail_before_solve_and_quiet_logs_leave_stdout_json() {
+    use circuit_simulator::{
+        api::{Request, run},
+        circuit::Element,
+        error::ErrorCode,
+        ids::NodeId,
+    };
+    use std::{
+        io::Write,
+        process::{Command, Stdio},
+    };
+    let mut request: Request =
+        serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    request.circuit.elements.push(Element::Voltage {
+        id: "V2".into(),
+        p: NodeId(1),
+        n: NodeId(0),
+        volts: 99.,
+    });
+    let error = run(&request).unwrap_err();
+    assert_eq!(error.code, ErrorCode::InvalidInput);
+    assert!(
+        error
+            .message
+            .contains("conflicting_parallel_voltage_sources")
+    );
+    let mut child = Command::new(env!("CARGO_BIN_EXE_circuit-simulator"))
+        .env("RUST_LOG", "off")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    child
+        .stdin
+        .take()
+        .unwrap()
+        .write_all(include_bytes!("../examples/divider.json"))
+        .unwrap();
+    let output = child.wait_with_output().unwrap();
+    assert!(output.status.success() && output.stderr.is_empty());
+    let _: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+}

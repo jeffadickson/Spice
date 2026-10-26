@@ -7,13 +7,21 @@ A bounded Rust circuit engine with CPU provider adapters and C#/F# access. This 
 - Independent numerical libraries: nalgebra dense LU/QR and faer sparse LU (real and complex). The assembler still uses dense matrices and a 256-unknown cap; no large-circuit scaling claim is made.
 - Immutable circuit plans, explicit capabilities, prepared numeric-factor reuse and independent residual checks.
 - R/C/L and independent sources; DC, complex AC, legacy fixed-step transient, and configured backward-Euler/trapezoidal transient.
-- A bounded Shockley diode DC operating-point path with analytic damped Newton iterations and convergence evidence. Nonlinear AC and transient analyses currently return explicit unsupported errors.
+- A bounded Shockley diode with damped Newton DC, DC-biased small-signal AC and qualified backward-Euler nonlinear transient paths; broader nonlinear methods remain unsupported.
 - Configured consistent initial states, PWL/sine source overrides, source corners, optional adaptive step doubling, accepted-sample observers and integration statistics.
 - Unit-aware measurement/assertion results, DC power diagnostics and bounded sequential campaigns with separate case outcomes.
 - Immutable scalar sweeps and bounded Cartesian grids, including reproducible seeded uniform and log-uniform value plans with unit-aware per-point results.
 - One-shot JSON CLI, capability discovery, typed C# requests/results, and F# builders.
 - Trusted local result artifact publication and SHA-256/byte-count verification.
 - Analytic, malformed-input, seeded property/fuzz-smoke and selected mutation tests with actual coverage scope/limitations.
+
+Independent audits now check DC KCL, voltage constraints and power, plus legacy
+constant-source backward-Euler step energy/current constraints. Successful JSON
+manifests include `consistency` and `diagnostics`; unavailable physical checks
+and global accuracy are explicitly `not_checked`. See
+[evidence and limits](evidence/consistency-qualification.md) and
+[requirements](docs/consistency.sdoc). For JSON diagnostic logs on stderr, set
+`$env:RUST_LOG='circuit_simulator=debug'`; stdout remains result JSON.
 
 ## Build and run
 

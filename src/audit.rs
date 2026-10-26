@@ -44,6 +44,7 @@ impl Check {
             reason: (!finite).then(|| "nonfinite discrepancy or invalid bound".into()),
         }
     }
+    /// Record a capability or accuracy claim for which this run has no evidence.
     pub fn not_checked(id: impl Into<String>, unit: &'static str, reason: &str) -> Self {
         Self {
             id: id.into(),
@@ -77,6 +78,7 @@ impl Default for AuditOptions {
     }
 }
 impl AuditOptions {
+    /// Reject nonpositive or nonfinite dimensional and relative bounds.
     pub fn validate(self) -> SimResult<()> {
         if [
             self.current_absolute_a,
@@ -100,6 +102,7 @@ pub struct AuditReport {
     pub checks: Vec<Check>,
 }
 impl AuditReport {
+    /// Unavailable checks do not constitute a failure or establish a pass.
     pub fn has_failures(&self) -> bool {
         self.checks.iter().any(|c| c.status == CheckStatus::Failed)
     }

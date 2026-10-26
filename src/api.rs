@@ -170,7 +170,11 @@ pub fn run_with_registry(
                     options,
                 )?;
                 for check in &mut step.checks {
-                    check.reason = Some(format!("accepted time_s={}", sample.time_s));
+                    check.reason = Some(format!(
+                        "{}; accepted time_s={}",
+                        check.reason.as_deref().unwrap_or("independent step audit"),
+                        sample.time_s
+                    ));
                 }
                 report.merge_worst(step);
                 previous.clone_from(&sample.values);

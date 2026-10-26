@@ -3,9 +3,10 @@
   "source_hashes": {
     "src/ac.rs": "b032b6755f06267e3106b15f34ba39e667f6b06a67371402abe7ffc689f41632",
     "src/adaptive.rs": "07e188bcb169652fe8f398d83da162d64cae3786ff2a68c2b2f6ac9ddd3d24ed",
-    "src/api.rs": "2f3c6959be2b438c28733108f2ba7e8468dbb9471a243b3e53599314e951949b",
+    "src/api.rs": "90b424d39b15ca262d13a4214f73f4e896a17c35d6a957475aeefc9734c9c1ff",
     "src/artifact.rs": "13180775067ea63a8958572f8c70599d50ba8797db13937e7401eb0145e940c0",
     "src/assertion.rs": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+    "src/audit.rs": "438355a9e16b9ffbf6e51376e1042dad9c56fa4054535e9c122f96ecd224035a",
     "src/backend.rs": "b1da0575fcf6a3e6378f62b4a2e41b1f792f8cad0633d3f50cabdfe2947a4705",
     "src/backend_faer.rs": "fe3a3d7a4ccb25ae9cd83f9c4c88bbe120f0226ab1dfae856c2e3917dbacf2da",
     "src/campaign.rs": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
@@ -19,13 +20,13 @@
     "src/grid.rs": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
     "src/ids.rs": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
     "src/integrator.rs": "9d990d1c5a3b6ff723e52afa21771f3294a26f5bfe3efa9467c05742079eefdf",
-    "src/lib.rs": "8403da8a5ad2360582d1ddae56b1c027dc3bf4ab503cfc1858fa0b7a16868bd0",
+    "src/lib.rs": "ddb92378ef046c9bf62b57469efa9eb4546584da5d2c83ce8a53d38665fafcde",
     "src/linalg.rs": "ca12adadf840404a9ecc33f07a437b064522be2838fade3ab93b84d9c074f131",
-    "src/main.rs": "b4db46e5303534b3753e61988e5c24dca91f73bd5e53a2a7fcea81d2754ebdd1",
+    "src/main.rs": "731b42065ee40f7f6a6554a64a1c1502fdd4b2ec25d1a4b0119f077f11c545ad",
     "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
     "src/model.rs": "c7b62d2a541a36c2e7682172e5289d071850a117bdcb1f39233233db78bc4dda",
     "src/netlist.rs": "907f2a9aacf6e50d707d089a73cb635a75b153c808598fd31c5e59bf0745b9ab",
-    "src/newton.rs": "f66e47d1a9228424600216967b0a38727b900f287ece4e4d631528cb387a859d",
+    "src/newton.rs": "b22d8f8a4b99a2d450b7fd082a7f10836ec20aa7506e1de9ca30451f46d04fa0",
     "src/power.rs": "bc493995d4e372aef9b4732ce6ef5e27d3841bbfe2c3e021f2c29845e32b32e4",
     "src/provenance.rs": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
     "src/quantity.rs": "bd53faa680ee46119020b2fe33ee8c023b8c42cfd216455ef5c205e43450e892",
@@ -35,12 +36,14 @@
     "src/sources.rs": "6d3b7ad12a7fcc882fb3a248256f01e343d20fcf094a110a5912f9e829349122",
     "src/sparse.rs": "7a7eb42b068e140d825d3bc7535e16f487364c9c2bd6fcc8faee79ce00ecb759",
     "src/sweep.rs": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+    "src/topology.rs": "e44a5fed6c58fc092bded030a2ca9a66b6334103a3ce364e0dfe205ad9010df4",
     "src/transient.rs": "1ea0b8679f741f188a7c647e77964f6fc9e74c763ec36abf06f4086d6882f66c",
     "src/variation.rs": "68d0f728eea05d6189b15e0f74bedb610454f3d7e55fd813651675682dda1569",
     "src/waveform.rs": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
     "tests/adaptive.rs": "6189e89b717c76d224249c2bc91d6d24df9e48a1a2a6343bdad2b76456863aee",
     "tests/analyses.rs": "d92f21fd6603487fa77462fedb5d6ebaa2a04c2266324128b5a2c7b6c081536c",
     "tests/campaign_cli.rs": "6747f47cd04f4714a5666d60a229e4d46259c45bf69570a212ee1a6243544c51",
+    "tests/consistency.rs": "71bb8a26c0c60dc4c6780dbd49eca316a97f2a4a2930fb8b9e28250e96981f14",
     "tests/continuation.rs": "f0c70bdc37a42d667d528fdfad18a9cdfe6a96232fcca8bfe05a4a63fa6ef571",
     "tests/contracts.rs": "7c438f713c141edd4b09934d32430042aa63ce7dd08c4332746df0201aa54a52",
     "tests/controlled_sources.rs": "880fb98f09df44b2c49bcba6d3d51f702e58acc04afe6ec94fb70d31fe216715",
@@ -65,8 +68,8 @@
     "tests/variation.rs": "5b7523f11e957db4c3953798f272b68ebd14991d750a5d191f0d90937887f4bd"
   },
   "baseline": "passed",
-  "killed": 18,
-  "total": 18,
+  "killed": 22,
+  "total": 22,
   "mutants": [
     {
       "name": "stamp-sign",
@@ -175,6 +178,30 @@
       "status": "killed",
       "exit_code": 101,
       "test_target": "continuation"
+    },
+    {
+      "name": "audit-kcl-polarity",
+      "status": "killed",
+      "exit_code": 101,
+      "test_target": "consistency"
+    },
+    {
+      "name": "audit-capacitor-current",
+      "status": "killed",
+      "exit_code": 101,
+      "test_target": "consistency"
+    },
+    {
+      "name": "audit-api-enforcement",
+      "status": "killed",
+      "exit_code": 101,
+      "test_target": "consistency"
+    },
+    {
+      "name": "audit-check-acceptance",
+      "status": "killed",
+      "exit_code": 101,
+      "test_target": "consistency"
     }
   ]
 }

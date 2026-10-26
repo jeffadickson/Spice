@@ -6,7 +6,9 @@
     "branch_percent": null,
     "reason": "The coverage toolchain includes profiler_builtins, but this host lacks the MSVC link.exe required to link instrumented Windows binaries",
     "attempted_command": "scripts/Test-Coverage.ps1",
-    "remediation": "Install Visual C++ Build Tools and a Windows SDK, then rerun scripts/Test-Coverage.ps1. Linux CI is configured but has not been executed here."
+    "remediation": "Install Visual C++ Build Tools and a Windows SDK, then rerun scripts/Test-Coverage.ps1. Linux CI is configured but has not been executed here.",
+    "attempted_checkpoint": 320,
+    "unmeasured_current_scope": "All owned Rust including src/audit.rs, src/topology.rs, tracing instrumentation and tests; changed-line/branch metrics unavailable on this host"
   },
   "managed": {
     "status": "measured",
@@ -14,15 +16,16 @@
     "scope": "Owned Simulator.Client .cs files only; unique source lines and mapped branches; generated JSON metadata excluded",
     "source_sha256": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
     "source_hashes": {
+      "dotnet/Simulator.Client/Results.cs": "6a918d82ce4874393245160e9a3b1e8a9a1ab3be6879fd9043edbf8ba6079bd1",
+      "dotnet/Simulator.Client/WireContext.cs": "f1c7a3f8e82e8fcb3671725851a4b154a34c152a8d79c8fd05782e21be432a15",
       "dotnet/Simulator.Client/Client.cs": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
-      "dotnet/Simulator.Client/WireContext.cs": "164cb64c9bfb31aead338420a9fd65f236c0cbfee6c6fe1331f8ce97fda0c6fe",
-      "dotnet/Simulator.Client/Results.cs": "7eb6a9d75066a87cd00a1f0e90ce04abc1d469cdff8bb2bd145288c55948f144",
-      "dotnet/Simulator.Client/Requests.cs": "ba356119781b38e6e9d17b856bf447a2555ee0c210ae7b696b9bfe3ab9215611"
+      "dotnet/Simulator.Client/Requests.cs": "67322b96b7b15fef97119bf557ada5655ddf43e9bebb6b11c5416d2ba1a92276",
+      "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857"
     },
-    "line_percent": 97.5609756097561,
+    "line_percent": 92.71523178807946,
     "branch_percent": 77.27272727272727,
-    "lines": 123,
-    "covered_lines": 120,
+    "lines": 151,
+    "covered_lines": 140,
     "branches": 66,
     "covered_branches": 51,
     "exclusions": [

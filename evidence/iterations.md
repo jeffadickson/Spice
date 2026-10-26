@@ -209,3 +209,13 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 304. Add DSL handoff guidance
 305. Validate modern DSL requirement source
 310. Qualify current-driven source/Gmin recovery, physical final-solve rejection, seeded independent oracles, bounded stage failures, and targeted Gmin mutations; retain checkpoint and coverage limitations.
+311. Define explicit dimensional physical-audit contracts and outcomes.
+312. Reconstruct DC element currents and independently audit node KCL.
+313. Check independent and controlled voltage constraints.
+314. Check absorbed DC power including explicit Gmin dissipation.
+315. Diagnose bounded DC reference paths and direct ideal-source contradictions.
+316. Audit backward-Euler current, voltage and discrete energy with numerical dissipation.
+317. Enforce physical audit outcomes and expose typed Rust/C# manifest evidence.
+318. Add structured tracing on stderr with caller-owned library subscribers.
+319. Compare explicit timestep-refinement runs and challenge audits with seeded/fuzz/mutation cases.
+320. Verify the ten-iteration consistency slice, document coverage availability and preserve broader qualification scope.

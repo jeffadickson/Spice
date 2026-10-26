@@ -11,6 +11,7 @@ The fifth slice adds **bounded fixed-step nonlinear diode transient stepping** u
 | Campaigns | bounded sequential cases, scalar sweeps/grids, seeded sampling recipes, per-point failures and programmatic result rows | parallel resource scheduling, statistical qualification, retries/resume, batch CLI transport, actual StressForge contract |
 | Persistence | bounded trusted-local artifact commit/read with hashes | hostile storage policies, remote/object storage, power-loss durability qualification |
 | Authoring | typed .NET/F# builders, SForge v0.1 lexer/parser/validator and lowering of primitive transient circuits, observables and bounded assertions | full units system, broader expression grammar, selected Starlark frontend and integrated behavioral models |
+| Consistency | independent DC KCL/source/power checks, legacy BE discrete-energy checks, bounded topology diagnostics, typed manifests and stderr tracing | AC/configured-transient physical audits, full topology rank diagnostics and rigorous global accuracy bounds |
 | Verification | analytic/provider/metamorphic/fuzz-smoke/mutation tests; scoped managed coverage | supported-host Rust coverage, coverage-guided fuzzing, full native/GPU evidence |
 | Release | no production release claim | license/platform/packaging and all declared M1 exit gates |
 

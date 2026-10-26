@@ -8,7 +8,7 @@ You are continuing work on **Spice**, a Rust circuit-simulation repository. Work
 - Commit locally in small numbered iterations. Build at the stated checkpoint cadence. Do not claim GPU, plugin, Arrow, full SPICE compatibility, or production qualification without evidence.
 
 Current implementation through the M1 qualification tranche extensions (remote
-`main` at checkpoint 310 after `9c5dd7a`):
+`main` at checkpoint 320 after the ten-iteration consistency slice):
 
 - Bounded dense MNA engine for R/C/L, independent sources, DC/AC/linear transient.
 - Independent faer sparse and nalgebra dense CPU paths.
@@ -21,9 +21,11 @@ Current implementation through the M1 qualification tranche extensions (remote
 - Configured nonlinear backward-Euler supports bounded adaptive/source-override stepping and source breakpoints. DC source continuation, explicit fixed Gmin, and bounded staged Gmin continuation are available. Gmin continuation records every regularized warm-start stage and always finishes with an unregularized physical solve; it is mutually exclusive with source continuation.
 - Compiler-owned canonical CSC stamps are consumed directly by faer for linear DC. Dense matrices remain bounded reference/fallback representations; sparse AC/transient and large-circuit performance are not claimed.
 
+The 311-320 slice adds independent DC/legacy-BE physical audits, bounded topology diagnostics, typed audit manifests, explicit refinement comparisons and structured stderr tracing. Read docs/consistency.sdoc and evidence/consistency-qualification.md for scope and evidence; AC/configured-transient physical auditing and global accuracy remain explicitly not_checked.
+
 Start by reading `README.md`, `docs/implementation-status.md`, `docs/ngspice-compatibility.sdoc`, `docs/fourth-slice.sdoc`, `docs/campaign-2-to-5.html`, `compat/ngspice/selected-fixtures.json`, `evidence/mutation.json`, and `evidence/iterations.md`.
 
-Current evidence: `cargo test --locked -q`, Clippy with warnings denied, 11 StrictDoc parses, and selected-fixture manifest validation passed. Independent ngspice checks pass for `res_simple` current and `res_partition` AC voltage at 1e-12; `lowpass` AC passes at 5e-8 because ngspice's `.print` output rounds its complex components. Checkpoint 310 passed 229 Rust tests and 26 managed conformance checks. The selected mutation campaign killed 18/18 defects; results are retained in evidence/mutation.json; see evidence/continuation-qualification.md for the added Gmin operators and physical oracles. Fuzz-smoke, malformed-input, and randomized/property tests are included in the Rust suite. Coverage has not been measured on this host: `scripts/Test-Coverage.ps1` reaches a coverage toolchain with `profiler_builtins` but cannot link without MSVC `link.exe`; do not state a line or branch percentage until Visual C++ Build Tools and the Windows SDK are installed.
+Current evidence: checkpoint 320 passed 242 Rust tests, 28 managed checks, formatting and Clippy with warnings denied; all 12 StrictDoc documents parsed. The selected-fixture manifest and named external oracles retain their prior qualification evidence; this slice did not rerun ngspice. Independent ngspice checks pass for `res_simple` current and `res_partition` AC voltage at 1e-12; `lowpass` AC passes at 5e-8 because ngspice's `.print` output rounds its complex components. The 22/22 selected mutations were killed; checkpoint-320.json and evidence/mutation.json retain the exact counts and source hashes; see evidence/continuation-qualification.md for the added Gmin operators and physical oracles. Fuzz-smoke, malformed-input, and randomized/property tests are included in the Rust suite. Managed client coverage was rerun: 140/151 owned lines and 51/66 mapped branches; see evidence/managed-coverage.json. Rust coverage has not been measured on this host: `scripts/Test-Coverage.ps1` reaches a coverage toolchain with `profiler_builtins` but cannot link without MSVC `link.exe`; do not state a Rust line or branch percentage until Visual C++ Build Tools and the Windows SDK are installed.
 
 For authoring evolution, read `docs/modern-dsl-proposal.sdoc` before designing a parser. SForge is a proposal only: keep the current JSON protocol stable until an AST/IR and migration contract are implemented.
 
