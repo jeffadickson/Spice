@@ -230,6 +230,7 @@ pub fn dc(
     }
     let currents = dc_currents(circuit, state)?;
     let mut checks = kcl_checks(circuit, state, &currents, options, gmin);
+    checks.extend(constraint_checks(circuit, state, options)?);
     if gmin.is_some() {
         checks.push(Check::not_checked(
             "unregularized_physics",
@@ -238,4 +239,35 @@ pub fn dc(
         ));
     }
     Ok(AuditReport { checks })
+}
+
+/// Check voltage-defined source equations separately from node conservation.
+fn constraint_checks(
+    circuit: &Circuit,
+    state: &[f64],
+    options: AuditOptions,
+) -> SimResult<Vec<Check>> {
+    let mut checks = Vec::new();
+    for element in &circuit.elements {
+        let (p, n) = element.terminals();
+        let actual = voltage(state, p) - voltage(state, n);
+        let expected = match element {
+            Element::Voltage { volts, .. } => *volts,
+            Element::Inductor { .. } => 0.,
+            Element::Vcvs { cp, cn, gain, .. } => {
+                gain * (voltage(state, *cp) - voltage(state, *cn))
+            }
+            Element::Ccvs {
+                control_id, ohms, ..
+            } => ohms * branch_current(circuit, state, control_id)?,
+            _ => continue,
+        };
+        checks.push(Check::measured(
+            format!("constraint:{}", element.id()),
+            actual - expected,
+            options.voltage_absolute_v + options.relative * (actual.abs() + expected.abs()),
+            "V",
+        ));
+    }
+    Ok(checks)
 }

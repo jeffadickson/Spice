@@ -31,3 +31,16 @@ Implementation: src/audit.rs::dc and dc_currents. Verification: tests/consistenc
 RELATIONS:
 - TYPE: Parent
   VALUE: CONS-001
+
+[REQUIREMENT]
+UID: CONS-003
+TITLE: Independent voltage constraints
+STATEMENT: >>>
+The DC audit shall check independent voltage sources, VCVS, CCVS and DC inductor voltage constraints separately from KCL using voltage-dimensional bounds. A KCL-consistent state violating an ideal voltage source shall fail.
+<<<
+COMMENT: >>>
+Implementation: src/audit.rs::constraint_checks. Verification: tests/consistency.rs voltage_constraint_catches_a_kcl_consistent_wrong_solution and controlled_voltage_and_inductor_constraints_are_audited.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: CONS-002
