@@ -40,4 +40,22 @@ public sealed class TransportContracts
     {
         await Assert.ThrowsAnyAsync<JsonException>(() => Fixture().RunJsonAsync(Request("{")));
     }
+
+    [Theory]
+    [InlineData("null")]
+    [InlineData("[]")]
+    [InlineData("{}")]
+    [InlineData("""{"schema_version":1,"status":"succeeded","complete":true}""")]
+    [InlineData("""{"schema_version":"1","status":"unknown","complete":true}""")]
+    [InlineData("""{"schema_version":"1","status":"succeeded","complete":false}""")]
+    [InlineData("""{"schema_version":"1","status":"succeeded","complete":"true"}""")]
+    [InlineData("""{"schema_version":"1","status":"failed","complete":true,"error":{"code":"x","message":"m"}}""")]
+    [InlineData("""{"schema_version":"1","status":"failed","complete":false}""")]
+    [InlineData("""{"schema_version":"1","status":"failed","complete":false,"error":null}""")]
+    [InlineData("""{"schema_version":"1","status":"failed","complete":false,"error":{"code":null,"message":"m"}}""")]
+    [InlineData("""{"schema_version":"1","status":"succeeded","complete":true,"error":{"code":"x","message":"m"}}""")]
+    public async Task RejectsMalformedOrContradictoryEnvelopes(string output)
+    {
+        await Assert.ThrowsAsync<InvalidDataException>(() => Fixture().RunJsonAsync(Request(output)));
+    }
 }

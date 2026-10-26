@@ -72,12 +72,28 @@ public sealed class SimulationClient(string executable)
             var diagnostics = await errors;
             using var document = JsonDocument.Parse(text);
             var root = document.RootElement;
-            var version = root.GetProperty("schema_version").GetString()!;
-            if (version != "1") throw new InvalidDataException("Unsupported result version.");
-            var status = root.GetProperty("status").GetString()!;
+            // Validate types before reading them so malformed child output has
+            // one transport-contract error rather than incidental JSON failures.
+            if (root.ValueKind != JsonValueKind.Object ||
+                !root.TryGetProperty("schema_version", out var versionValue) ||
+                versionValue.ValueKind != JsonValueKind.String || versionValue.GetString() != "1")
+                throw new InvalidDataException("Unsupported or malformed result version.");
+            var version = versionValue.GetString()!;
+            if (!root.TryGetProperty("status", out var statusValue) || statusValue.ValueKind != JsonValueKind.String ||
+                !root.TryGetProperty("complete", out var completion) || completion.ValueKind is not (JsonValueKind.True or JsonValueKind.False))
+                throw new InvalidDataException("Malformed result envelope.");
+            var status = statusValue.GetString()!;
+            var complete = completion.GetBoolean();
+            var hasError = root.TryGetProperty("error", out var error);
+            if (status is not ("succeeded" or "failed") || complete != (status == "succeeded") ||
+                (status == "succeeded" && hasError) ||
+                (status == "failed" && (!hasError || error.ValueKind != JsonValueKind.Object ||
+                    !error.TryGetProperty("code", out var code) || code.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(code.GetString()) ||
+                    !error.TryGetProperty("message", out var message) || message.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(message.GetString()))))
+                throw new InvalidDataException("Contradictory or incomplete result envelope.");
             if (process.ExitCode != 0 && status != "failed")
                 throw new IOException($"Unexpected native exit {process.ExitCode}: {diagnostics}");
-            return new(version, status, root.GetProperty("complete").GetBoolean(), root.Clone());
+            return new(version, status, complete, root.Clone());
         }
         finally
         {
