@@ -2,6 +2,11 @@
 use circuit_simulator::newton::norm_inf;
 use circuit_simulator::{
     api::Request,
+    backend::{DenseLu, DenseQr},
+    backend_faer::FaerSparseLu,
+    compile::compile,
+    dc::operating_point,
+    linalg::LinearSolver,
     netlist::{import_ngspice_request, parse},
 };
 use proptest::prelude::*;
@@ -51,5 +56,25 @@ proptest! {
         let text = format!("title\n{identifier} a 0 1\n.end\n");
         let _ = parse(&text);
         let _ = import_ngspice_request(&text, "unicode-proptest");
+    }
+
+    #[test]
+    fn generated_dividers_match_analytical_voltage_and_current(
+        exponent1 in -1.0_f64..6., exponent2 in -1.0_f64..6., volts in -100.0_f64..100.
+    ) {
+        let r1=10_f64.powf(exponent1);
+        let r2=10_f64.powf(exponent2);
+        let circuit=parse(&format!("title\nV1 a 0 {volts}\nR1 a b {r1}\nR2 b 0 {r2}\n.end\n")).unwrap();
+        let plan=compile(&circuit).unwrap();
+        let current=volts/(r1+r2);
+        let expected=current*r2;
+        for provider in [&DenseLu as &dyn LinearSolver, &DenseQr, &FaerSparseLu] {
+            let values=operating_point(&plan,provider).unwrap();
+            prop_assert!((values[1]-expected).abs() < 1e-7);
+            prop_assert!((values[2]+current).abs() < 1e-7*(1.+current.abs()));
+            let upper=(values[0]-values[1])/r1;
+            let lower=values[1]/r2;
+            prop_assert!((upper-lower).abs() < 1e-7*(1.+current.abs()));
+        }
     }
 }

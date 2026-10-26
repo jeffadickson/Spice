@@ -27,3 +27,6 @@ for numerical acceptance because checked equations/tolerances are stronger than
 automatically accepting serialized output snapshots.
 
 Compatibility decision: registry metadata reports Proptest 1.12.0 requires Rust 1.88, above this project's declared 1.87 minimum. Pin 1.9.0 (declared minimum 1.82) instead; the active compiler is 1.99.1. No MSRV build is claimed until actually tested.
+
+QR refinement reference: https://netlib.org/lapack/explore-html/d5/da4/group__gerfs.html describes factor-reusing iterative refinement. This adapter retains nalgebra QR factors and uses at most three same-precision correction solves; it does not implement LAPACK error estimation or mixed-precision guarantees. The existing independent componentwise backward-error threshold remains unchanged.
+

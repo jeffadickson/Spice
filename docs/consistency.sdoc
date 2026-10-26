@@ -139,6 +139,20 @@ RELATIONS:
   VALUE: ARCH-VERIFY-003
 
 [REQUIREMENT]
+UID: PROP-002
+STATUS: Draft
+TITLE: Generated independent numerical oracles and retained failures
+STATEMENT: >>>
+Generated numerical campaigns shall compare bounded circuit results with independent analytical equations and retain minimized failing inputs and provider identity. Numerical hardening shall not silently relax independent backward-error or physical tolerances to hide generated failures. Any refinement shall be bounded and preserve explicit failure when verification does not pass.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation: tests/property_campaign.rs and bounded QR refinement in src/backend.rs. The persisted divider case in tests/regressions/property_campaign.txt exposed componentwise backward-error rejection before refinement. Actual provider/domain evidence is recorded per checkpoint.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: PROP-001
+
+[REQUIREMENT]
 UID: MAN-001
 STATUS: Draft
 TITLE: Managed native-transport boundary qualification

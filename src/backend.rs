@@ -163,10 +163,33 @@ impl LinearSolver for DenseQr {
     }
     fn solve(&self, a: &Matrix, b: &[f64]) -> SimResult<Vec<f64>> {
         a.validate(b)?;
-        let x = DMatrix::from_row_slice(a.n, a.n, &a.values)
-            .qr()
-            .solve(&DVector::from_column_slice(b))
+        let matrix = DMatrix::from_row_slice(a.n, a.n, &a.values);
+        let factor = matrix.clone().qr();
+        let rhs = DVector::from_column_slice(b);
+        let mut x = factor
+            .solve(&rhs)
             .ok_or_else(|| SimError::new(ErrorCode::SingularMatrix, "QR has no unique solution"))?;
+        // Reuse the independent QR factor for a bounded same-precision
+        // iterative refinement. Mixed-unit/ill-conditioned MNA rows can lose
+        // small voltages despite a small global residual; the outer componentwise
+        // backward-error and physical-oracle checks still decide acceptance.
+        for _ in 0..3 {
+            let residual = &rhs - &matrix * &x;
+            if residual.iter().all(|value| *value == 0.) {
+                break;
+            }
+            let correction = factor.solve(&residual).ok_or_else(|| {
+                SimError::new(
+                    ErrorCode::SingularMatrix,
+                    "QR refinement has no unique solution",
+                )
+            })?;
+            let candidate = &x + correction;
+            if candidate.iter().any(|value| !value.is_finite()) {
+                break;
+            }
+            x = candidate;
+        }
         if x.iter().any(|v| !v.is_finite()) {
             return Err(SimError::new(
                 ErrorCode::NumericalFailure,
