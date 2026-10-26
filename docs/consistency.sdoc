@@ -139,6 +139,20 @@ RELATIONS:
   VALUE: ARCH-VERIFY-003
 
 [REQUIREMENT]
+UID: MAN-001
+STATUS: Draft
+TITLE: Managed native-transport boundary qualification
+STATEMENT: >>>
+The managed client shall reject malformed or unsupported native envelopes, inconsistent completion/error states and unexpected process exits. Request/output bounds and cancellation shall be tested against an isolated subprocess fixture as well as real-engine conformance. Synthetic fixture outcomes shall remain distinct from numerical simulator evidence.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation: dotnet/Simulator.Client/Client.cs. Verification: dotnet/Simulator.Client.Tests/TransportContracts.cs and the test-only Simulator.TransportFixture project. Initial fixture tests cover supported/unsupported versions and malformed JSON; additional boundaries and coverage remain pending.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: END-001
 TITLE: Bounded isolated endurance campaign
 STATEMENT: >>>
