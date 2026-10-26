@@ -18,3 +18,16 @@ Implementation: src/audit.rs Check, AuditOptions and AuditReport. Verification: 
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-VERIFY-001
+
+[REQUIREMENT]
+UID: CONS-002
+TITLE: Independent DC current conservation
+STATEMENT: >>>
+The DC audit shall reconstruct supported element currents without assembled matrices or production model evaluation, check KCL at every node including ground, and reject malformed or nonfinite MNA states. Fixed Gmin shall be explicitly included with unregularized physics marked not_checked.
+<<<
+COMMENT: >>>
+Implementation: src/audit.rs::dc and dc_currents. Verification: tests/consistency.rs::independent_kcl_detects_perturbed_current_and_rejects_malformed_states.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: CONS-001
