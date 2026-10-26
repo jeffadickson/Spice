@@ -9,6 +9,7 @@ use circuit_simulator::{
     linalg::LinearSolver,
     netlist::{import_ngspice_request, parse},
 };
+use circuit_simulator::{linalg::Matrix, sparse::CscMatrix};
 use proptest::prelude::*;
 use proptest::test_runner::{Config, FileFailurePersistence, RngSeed};
 
@@ -75,6 +76,37 @@ proptest! {
             let upper=(values[0]-values[1])/r1;
             let lower=values[1]/r2;
             prop_assert!((upper-lower).abs() < 1e-7*(1.+current.abs()));
+        }
+    }
+
+    #[test]
+    fn canonical_sparse_products_match_independent_dense_products(
+        (n, coefficients) in (1_usize..12).prop_flat_map(|n| (Just(n), prop::collection::vec(-10_i16..10, n*n)))
+    ) {
+        let values: Vec<_> = coefficients.into_iter().map(f64::from).collect();
+        let matrix=Matrix { n, values };
+        let sparse=CscMatrix::from_dense(&matrix).unwrap();
+        let mut actual=vec![0.;n];
+        for (row,column,value) in sparse.entries() {
+            actual[row]+=value*(column+1) as f64;
+        }
+        for (row, observed) in actual.iter().enumerate() {
+            let expected: f64=(0..n).map(|column| matrix.values[row*n+column]*(column+1) as f64).sum();
+            prop_assert_eq!(*observed,expected);
+        }
+    }
+
+    #[test]
+    fn arbitrary_csc_boundaries_never_expose_invalid_slots(
+        n in 0_usize..260,
+        pointers in prop::collection::vec(any::<usize>(),0..64),
+        rows in prop::collection::vec(any::<usize>(),0..64),
+        bits in prop::collection::vec(any::<u64>(),0..64)
+    ) {
+        let values=bits.into_iter().map(f64::from_bits).collect();
+        if let Ok(matrix)=CscMatrix::new(n,pointers,rows,values) {
+            prop_assert_eq!(matrix.entries().count(),matrix.nnz());
+            prop_assert!(matrix.entries().all(|(row,column,value)| row<n && column<n && value.is_finite()));
         }
     }
 }
