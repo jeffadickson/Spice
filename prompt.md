@@ -8,7 +8,7 @@ You are continuing work on **Spice**, a Rust circuit-simulation repository. Work
 - Commit locally in small numbered iterations. Build at the stated checkpoint cadence. Do not claim GPU, plugin, Arrow, full SPICE compatibility, or production qualification without evidence.
 
 Current implementation through the M1 qualification tranche extensions (remote
-`main` at `7c57d9d` when this prompt was updated):
+`main` at checkpoint 310 after `9c5dd7a`):
 
 - Bounded dense MNA engine for R/C/L, independent sources, DC/AC/linear transient.
 - Independent faer sparse and nalgebra dense CPU paths.
@@ -23,13 +23,13 @@ Current implementation through the M1 qualification tranche extensions (remote
 
 Start by reading `README.md`, `docs/implementation-status.md`, `docs/ngspice-compatibility.sdoc`, `docs/fourth-slice.sdoc`, `docs/campaign-2-to-5.html`, `compat/ngspice/selected-fixtures.json`, `evidence/mutation.json`, and `evidence/iterations.md`.
 
-Current evidence: `cargo test --locked -q`, Clippy with warnings denied, 11 StrictDoc parses, and selected-fixture manifest validation passed. Independent ngspice checks pass for `res_simple` current and `res_partition` AC voltage at 1e-12; `lowpass` AC passes at 5e-8 because ngspice's `.print` output rounds its complex components. The selected mutation campaign killed 16/16 deliberate defects. Fuzz-smoke, malformed-input, and randomized/property tests are included in the Rust suite. Coverage has not been measured on this host: `scripts/Test-Coverage.ps1` reaches a coverage toolchain with `profiler_builtins` but cannot link without MSVC `link.exe`; do not state a line or branch percentage until Visual C++ Build Tools and the Windows SDK are installed.
+Current evidence: `cargo test --locked -q`, Clippy with warnings denied, 11 StrictDoc parses, and selected-fixture manifest validation passed. Independent ngspice checks pass for `res_simple` current and `res_partition` AC voltage at 1e-12; `lowpass` AC passes at 5e-8 because ngspice's `.print` output rounds its complex components. Checkpoint 310 passed 229 Rust tests and 26 managed conformance checks. The selected mutation campaign killed 18/18 defects; results are retained in evidence/mutation.json; see evidence/continuation-qualification.md for the added Gmin operators and physical oracles. Fuzz-smoke, malformed-input, and randomized/property tests are included in the Rust suite. Coverage has not been measured on this host: `scripts/Test-Coverage.ps1` reaches a coverage toolchain with `profiler_builtins` but cannot link without MSVC `link.exe`; do not state a line or branch percentage until Visual C++ Build Tools and the Windows SDK are installed.
 
 For authoring evolution, read `docs/modern-dsl-proposal.sdoc` before designing a parser. SForge is a proposal only: keep the current JSON protocol stable until an AST/IR and migration contract are implemented.
 
 Suggested next technical work:
 
-1. Add difficult-circuit evidence for source and Gmin continuation; do not infer broad convergence guarantees from nominal diode cases.
+1. Extend difficult-circuit evidence beyond the current-driven diode recovery, impossible physical reverse bias, and bounded stage-exhaustion cases in tests/continuation.rs; see evidence/continuation-qualification.md. Do not infer broad convergence guarantees from this small topology.
 2. Extend direct sparse use to AC/transient only after real/complex dynamic assembly, factor lifecycle, and conformance evidence exist.
 3. Grow the selected ngspice corpus cautiously, adding upstream hashes, copied attribution, parser/lowering tests, and named oracle comparisons before claiming support.
 4. Expand device models only after equation, derivative, domain, unit, limiting/correction, and convergence contracts are written.

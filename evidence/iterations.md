@@ -208,3 +208,4 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 303. Link DSL proposal from implementation status
 304. Add DSL handoff guidance
 305. Validate modern DSL requirement source
+310. Qualify current-driven source/Gmin recovery, physical final-solve rejection, seeded independent oracles, bounded stage failures, and targeted Gmin mutations; retain checkpoint and coverage limitations.
