@@ -92,6 +92,10 @@ pub fn run_with_registry(
     if request.schema_version != "1" || request.case_id.is_empty() || request.case_id.len() > 256 {
         return Err(SimError::invalid("unsupported schema or invalid case_id"));
     }
+    let span =
+        tracing::info_span!("simulation", case_id = %request.case_id, backend = %request.backend);
+    let _entered = span.enter();
+    tracing::debug!("request_validated");
     let provider = registry.get(&request.backend)?;
     if let Some(experiment) = &request.experiment {
         experiment.validate()?;
@@ -104,7 +108,11 @@ pub fn run_with_registry(
             diagnostic.code, diagnostic.subject
         )));
     }
+    for diagnostic in &diagnostics {
+        tracing::warn!(code = diagnostic.code, subject = %diagnostic.subject, "topology_diagnostic");
+    }
     let plan = compile(&request.circuit)?;
+    tracing::debug!(unknowns = plan.unknown_count(), "circuit_compiled");
     let mut integration = None;
     let mut newton = None;
     let mut samples = match &request.analysis {
@@ -192,6 +200,10 @@ pub fn run_with_registry(
             ),
         ));
     }
+    tracing::debug!(
+        checks = consistency.checks.len(),
+        "physical_audit_completed"
+    );
     let mut signals: Vec<Signal> = request
         .circuit
         .nodes
@@ -295,5 +307,10 @@ pub fn run_with_registry(
         manifest.measurements = m;
         manifest.assertions = a;
     }
+    tracing::info!(
+        samples = manifest.samples.len(),
+        ac_samples = manifest.ac_samples.len(),
+        "simulation_completed"
+    );
     Ok(manifest)
 }

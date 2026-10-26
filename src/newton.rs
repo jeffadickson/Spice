@@ -463,6 +463,7 @@ fn solve_from_rhs(
     for iteration in 0..options.max_iterations {
         let system = linearize_with_rhs_gmin(plan, &values, rhs, options.gmin_siemens)?;
         let residual = norm_inf(&system.residual)?;
+        tracing::trace!(iteration, residual_inf = residual, "newton_iteration");
         let scaled_residual = scaled_residual_norm(plan, &system.residual, rhs, options)?;
         if scaled_residual <= 1. && (iteration == 0 || last_update <= 1.) {
             return Ok((
@@ -541,6 +542,11 @@ fn solve_with_gmin_continuation(
         stage_options.gmin_continuation = None;
         stage_options.gmin_siemens = Some(gmin);
         let (candidate, report) = solve_from_rhs(plan, solver, stage_options, values, &plan.rhs)?;
+        tracing::debug!(
+            gmin_siemens = gmin,
+            iterations = report.iterations,
+            "gmin_stage_accepted"
+        );
         stages.push(GminContinuationStage {
             gmin_siemens: gmin,
             iterations: report.iterations,
@@ -564,6 +570,7 @@ fn solve_with_gmin_continuation(
     let mut final_options = options;
     final_options.gmin_continuation = None;
     final_options.gmin_siemens = None;
+    tracing::debug!("gmin_physical_final_solve");
     let (values, mut report) = solve_from_rhs(plan, solver, final_options, values, &plan.rhs)?;
     report.gmin_continuation = Some(GminContinuationReport {
         stages,
@@ -628,6 +635,11 @@ fn solve_with_source_continuation(
             .collect::<Vec<_>>();
         match solve_from_rhs(plan, solver, options, values.clone(), &scaled_rhs) {
             Ok((candidate, report)) => {
+                tracing::debug!(
+                    source_scale = target_scale,
+                    iterations = report.iterations,
+                    "source_stage_accepted"
+                );
                 stages.push(ContinuationStage {
                     source_scale: target_scale,
                     iterations: report.iterations,
@@ -650,6 +662,7 @@ fn solve_with_source_continuation(
                         ),
                     ));
                 }
+                tracing::debug!(source_scale = target_scale, error_code = ?error.code, "source_stage_rejected");
                 rejected_stages += 1;
                 step *= 0.5;
                 if step < continuation.minimum_step {
@@ -696,6 +709,7 @@ pub fn solve_backward_euler_step(
     for iteration in 0..options.max_iterations {
         let system = linearize_backward_euler(plan, &values, previous, step_s, rhs)?;
         let residual = norm_inf(&system.residual)?;
+        tracing::trace!(iteration, residual_inf = residual, "newton_iteration");
         let scaled_residual = scaled_residual_norm(plan, &system.residual, rhs, options)?;
         if scaled_residual <= 1. && (iteration == 0 || last_update <= 1.) {
             return Ok((

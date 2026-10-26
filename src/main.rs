@@ -39,7 +39,19 @@ fn execute() -> Result<(), SimError> {
     write_json(&run(&request)?)
 }
 fn main() {
+    // The executable owns logging policy. Library callers install their own
+    // subscriber; JSON protocol stdout must never contain diagnostic events.
+    let _ = tracing_subscriber::fmt()
+        .with_env_filter(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("warn")),
+        )
+        .json()
+        .with_writer(io::stderr)
+        .with_ansi(false)
+        .try_init();
     if let Err(error) = execute() {
+        tracing::error!(error_code = ?error.code, "request_failed");
         let _ = write_json(
             &serde_json::json!({"schema_version":"1","status":"failed","complete":false,"error":error}),
         );

@@ -96,3 +96,16 @@ Implementation: src/api.rs and dotnet/Simulator.Client/Results.cs. Verification:
 RELATIONS:
 - TYPE: Parent
   VALUE: CONS-001
+
+[REQUIREMENT]
+UID: CONS-008
+TITLE: Structured opt-in diagnostic logging
+STATEMENT: >>>
+Rust library code shall emit structured tracing events without installing a global subscriber. The CLI shall install a JSON stderr subscriber filtered by RUST_LOG with warn fallback and leave stdout as protocol JSON only. Events shall identify request/backend context, topology diagnostics, compilation size, audit completion, and bounded continuation stages; Newton iteration residuals shall require trace level. Events shall not dump raw netlists, solution vectors or whole requests.
+<<<
+COMMENT: >>>
+Implementation: src/main.rs, src/api.rs and src/newton.rs; tracing and tracing-subscriber versions are locked in Cargo.lock. Verification: tests/consistency.rs::debug_logging_keeps_protocol_stdout_clean.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
