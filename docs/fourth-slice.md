@@ -4,7 +4,9 @@
 
 The engine now has a bounded Shockley-diode DC operating-point path. It uses analytic residuals and Jacobians with damped Newton iterations, explicit finite-domain checks, and bounded iteration counts.
 
-It supports only DC diode operating points. Nonlinear AC bias linearization and nonlinear transient stepping are explicitly rejected until they have their own validated implementations.
+It supports DC diode operating points, small-signal AC bias linearization, and
+bounded backward-Euler nonlinear transient stepping. Broader semiconductor
+models and integration methods remain outside this slice.
 
 The result manifest exposes Newton iteration evidence for nonlinear operating points. Typed C# requests can choose an explicit bounded Newton policy.
 
@@ -23,8 +25,8 @@ bounded stages, warm-starts each stage from the prior accepted state, and record
 accepted/rejected stage evidence. It is not yet a general homotopy, Gmin, or
 nonlinear-transient recovery mechanism.
 
-DC Gmin regularization is explicit and recorded, never silently enabled. DC
-Newton uses dimensional residual/update checks. Configured nonlinear
+DC Gmin regularization is explicit and recorded, never silently enabled. DC and
+backward-Euler Newton use dimension-aware residual/update checks. Configured nonlinear
 backward-Euler runs now support source overrides, source breakpoints, and
 adaptive step doubling with commit-only-on-acceptance semantics.
 

@@ -573,13 +573,13 @@ pub fn solve_backward_euler_step(
         ));
     }
     let mut values = previous.to_vec();
-    let baseline = norm_inf(rhs)?.max(1.);
     let mut damped_steps = 0;
     let mut last_update = f64::INFINITY;
     for iteration in 0..options.max_iterations {
         let system = linearize_backward_euler(plan, &values, previous, step_s, rhs)?;
         let residual = norm_inf(&system.residual)?;
-        if residual <= options.absolute_tolerance + options.relative_tolerance * baseline {
+        let scaled_residual = scaled_residual_norm(plan, &system.residual, rhs, options)?;
+        if scaled_residual <= 1. && (iteration == 0 || last_update <= 1.) {
             return Ok((
                 values,
                 NewtonReport {
@@ -605,17 +605,17 @@ pub fn solve_backward_euler_step(
         for attempt in 0..12 {
             let (candidate, damped) =
                 limited_candidate(plan, &values, &update, 2f64.powi(-attempt));
-            if norm_inf(
-                &linearize_backward_euler(plan, &candidate, previous, step_s, rhs)?.residual,
-            )? < residual
-            {
-                let update_norm = norm_inf(
-                    &candidate
-                        .iter()
-                        .zip(&values)
-                        .map(|(candidate, previous)| candidate - previous)
-                        .collect::<Vec<_>>(),
-                )?;
+            let candidate_system =
+                linearize_backward_euler(plan, &candidate, previous, step_s, rhs)?;
+            let candidate_residual =
+                scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;
+            if candidate_residual < scaled_residual || candidate_residual <= 1. {
+                let update_values = candidate
+                    .iter()
+                    .zip(&values)
+                    .map(|(candidate, previous)| candidate - previous)
+                    .collect::<Vec<_>>();
+                let update_norm = scaled_update_norm(plan, &update_values, &values, options)?;
                 accepted = Some((candidate, damped || attempt > 0, update_norm));
                 break;
             }

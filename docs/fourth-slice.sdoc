@@ -110,11 +110,11 @@ RELATIONS:
 UID: REF4-008
 TITLE: Explicit regularization and dimensional convergence
 STATEMENT: >>>
-The reference DC Newton path shall apply a Gmin shunt only when explicitly requested, record its conductance in the result evidence, and keep nominal solves unmodified. DC convergence shall require finite, dimension-aware residual and update norms: node-equation residuals use current tolerances, branch-equation residuals use voltage tolerances, and updates use the corresponding unknown dimensions.
+The reference DC and nonlinear backward-Euler Newton paths shall apply a Gmin shunt only when explicitly requested for DC, record its conductance in the result evidence, and keep nominal solves unmodified. Convergence shall require finite, dimension-aware residual and update norms: node-equation residuals use current tolerances, branch-equation residuals use voltage tolerances, and updates use the corresponding unknown dimensions.
 <<<
 COMMENT: >>>
 Implementation: src/newton.rs, dotnet/Simulator.Client/Requests.cs and Results.cs.
-Verification: tests/nonlinear.rs::explicit_gmin_is_applied_and_retained_in_convergence_evidence and bounded diode convergence cases.
+Verification: tests/nonlinear.rs::explicit_gmin_is_applied_and_retained_in_convergence_evidence, tests/nonlinear.rs::nonlinear_backward_euler_transient_produces_finite_committed_samples and bounded diode convergence cases.
 <<<
 RELATIONS:
 - TYPE: Parent
