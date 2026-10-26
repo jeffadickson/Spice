@@ -1,6 +1,6 @@
 {
   "rust": {
-    "status": "provisional_mapping_warning",
+    "status": "measured_with_attributed_vendor_warning",
     "platform": "Ubuntu 24.04 x64 under WSL2",
     "source_commit": "a31c1a08fc8791a2facaaa6ac27b2a762bca7ab7",
     "toolchain": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
@@ -14,33 +14,32 @@
       "No qualified Rust branch metrics from this instrumentation.",
       "Windows Rust instrumentation has not been rerun after successful SDK installation.",
       "Vendor internals, managed code and GPU/native plugins excluded.",
-      "LLVM warns about 62 functions with mismatched data; attribution pending. Checkpoint 344 had the same warning."
+      "LLVM 62 zero-hash mismatches are two duplicated tracing_core dependency functions, no owned symbols; see evidence/llvm-mapping-354.json."
     ]
   },
   "managed": {
     "status": "measured",
-    "tool": "18.12.0+e67518936dc54d459b37375c5eef5dc89f05d535",
-    "scope": "Owned Simulator.Client .cs files only; unique source lines and mapped branches; generated JSON metadata excluded",
-    "source_sha256": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
+    "tool": "Coverlet 10.1.0 / ReportGenerator 5.5.11",
+    "scope": "Owned Simulator.Client assembly; obj-generated sources excluded",
     "source_hashes": {
-      "dotnet/Simulator.Client/Results.cs": "5e41aea7f5dfd6c6237962208bbcb7cec1fb9fcd16acd2fbf909247884a40e8d",
-      "dotnet/Simulator.Client/WireContext.cs": "f1c7a3f8e82e8fcb3671725851a4b154a34c152a8d79c8fd05782e21be432a15",
-      "dotnet/Simulator.Client/Client.cs": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
+      "dotnet/Simulator.Client/Client.cs": "aa3fe70345d03e47df8b53e654316c383fbe52020e3458be56fd3ea5fa810faa",
       "dotnet/Simulator.Client/Requests.cs": "67322b96b7b15fef97119bf557ada5655ddf43e9bebb6b11c5416d2ba1a92276",
-      "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857"
+      "dotnet/Simulator.Client/Results.cs": "5e41aea7f5dfd6c6237962208bbcb7cec1fb9fcd16acd2fbf909247884a40e8d",
+      "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+      "dotnet/Simulator.Client/WireContext.cs": "f1c7a3f8e82e8fcb3671725851a4b154a34c152a8d79c8fd05782e21be432a15"
     },
-    "line_percent": 93.37748344370861,
-    "branch_percent": 78.78787878787878,
-    "lines": 151.0,
-    "covered_lines": 141.0,
-    "branches": 66.0,
-    "covered_branches": 52.0,
-    "exclusions": [
-      "Rust/native runtime code",
-      "generated/framework code",
-      "test executable"
-    ],
-    "current_report": "evidence/continuation-354-managed-coverage.json"
+    "lines": 166,
+    "covered_lines": 158,
+    "line_percent": 95.18072289156626,
+    "branches": 98,
+    "covered_branches": 90,
+    "branch_percent": 91.83673469387755,
+    "current_report": "evidence/managed-coverlet.json",
+    "limitations": [
+      "Owned Simulator.Client assembly, excluding obj-generated sources; fixture/test/native/vendor code excluded.",
+      "Coverlet branch mapping differs from historical dotnet-coverage; percentages are not directly comparable.",
+      "File-based coverage orchestration was managed execution, not NativeAOT."
+    ]
   },
   "additional_unmeasured": [
     "Supplemental numerical mutation driver",

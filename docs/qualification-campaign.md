@@ -22,6 +22,9 @@ Iterations 335–354 are complete; checkpoint evidence is in
 ../evidence/continuation-354-qualification.md. A new native mutation run is still
 active, and LLVM mapping warnings and the tight bridge counterexample remain open.
 Next: 355–374 library-based testing and mutation-driven gaps.
+Checkpoint 364 completes 355–364. See ../evidence/testing-364-qualification.md;
+resume at 365 for remaining generated-parser/numerical properties, overnight
+library adoption and mutation follow-up before sparse AC work.
 
 Coverage is measured for the completed checkpoint source, with line/branch tooling
 limits reported. Failures and minimized counterexamples remain evidence. Use the

@@ -28,6 +28,10 @@ complete qualified coverage. Rust branch coverage and current Windows Rust
 instrumentation remain unavailable. Managed coverage remains 141/151 mapped owned
 lines, 52/66 mapped branches; Checkpoint.cs 40/41 lines, 21/30 branches.
 
+Follow-up at checkpoint 364: llvm-mapping-354.json attributes all 62 records to
+two duplicated zero-hash tracing_core dependency functions, with no owned-symbol
+or unexpected mismatch. The warning remains part of the raw export evidence.
+
 Cargo-mutants 27.1.0 is running a new limited_candidate campaign with all unit and
 integration tests, one worker and a 20-minute bound. No result counts are claimed
 at publication of this checkpoint. Raw run:

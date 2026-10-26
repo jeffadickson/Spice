@@ -41,6 +41,10 @@ For another Windows or Ubuntu computer, follow [automatic setup, testing and res
 
 For overnight seeded fuzz/property testing, use `make endurance` (five-hour maximum) or the PowerShell launcher; see [campaign controls and replay](docs/endurance.md).
 
+For Proptest/FsCheck shrinking, replay and Coverlet/ReportGenerator reports, see
+[generated testing instructions](docs/property-testing.md). Synthetic transport
+fixture evidence remains separate from real numerical conformance.
+
 For the focused nonlinear diode/Newton contract suite, run `./scripts/Test-Nonlinear.ps1`.
 The active campaign checkpoints are 344, 354, …, 434; see
 [the campaign ledger](docs/qualification-campaign.md).

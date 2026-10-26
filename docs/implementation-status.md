@@ -1,5 +1,10 @@
 # Implementation status after iterations 201–301
 
+Testing campaign 355–364 adds Proptest/FsCheck library generation and shrinking,
+isolated subprocess contracts for the .NET client, and Coverlet/ReportGenerator.
+See [replay instructions](property-testing.md); the legacy overnight loop still
+requires migration. Full SPICE/GPU/production qualification remains open.
+
 Current campaign checkpoint: iterations 335–344 harden continuation/provider
 boundaries and add independent coupled-diode oracles. See
 [checkpoint evidence](../evidence/continuation-344-qualification.md) and
