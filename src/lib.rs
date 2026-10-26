@@ -4,6 +4,7 @@ pub mod adaptive;
 pub mod api;
 pub mod artifact;
 pub mod assertion;
+pub mod audit;
 pub mod backend;
 pub mod backend_faer;
 pub mod campaign;

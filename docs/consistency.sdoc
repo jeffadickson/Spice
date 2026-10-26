@@ -1,0 +1,20 @@
+[DOCUMENT]
+TITLE: Independent Circuit Consistency Audits
+
+[TEXT]
+STATEMENT: >>>
+This bounded audit profile supplements numerical residuals with element-level physical checks. Passing checks establish consistency within recorded tolerances, not model validity, uniqueness, global waveform accuracy or production qualification. Iterations 311-320 implement this profile; broader sparse, model and ngspice qualification remains active.
+<<<
+
+[REQUIREMENT]
+UID: CONS-001
+TITLE: Explicit bounded audit evidence
+STATEMENT: >>>
+Audits shall expose passed, failed and not_checked outcomes with SI discrepancy, effective tolerance and a reason when unavailable. Invalid tolerance settings shall be rejected and nonfinite check arithmetic shall fail with JSON-safe null metrics.
+<<<
+COMMENT: >>>
+Implementation: src/audit.rs Check, AuditOptions and AuditReport. Verification: tests/consistency.rs::audit_metrics_are_json_safe_and_bounds_are_validated.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-001
