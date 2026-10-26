@@ -7,23 +7,25 @@ using System.Text.Json;
 
 // Supervise real mutation frameworks, preserving their native reports locally.
 // A timeout is partial evidence, never a killed mutant or a completed campaign.
-var minutes=60d;var shard="0/1";var rustFile="src/*.rs";
+var minutes=60d;var shard="0/1";var rustFile="src/*.rs";var rustTest="all";
 for(var i=0;i<args.Length;i++) switch(args[i]) {
     case "--minutes":minutes=double.Parse(args[++i],CultureInfo.InvariantCulture);break;
     case "--shard":shard=args[++i];break;
     case "--rust-file":rustFile=args[++i];break;
+    case "--rust-test":rustTest=args[++i];break;
     default:throw new ArgumentException("Unknown framework argument: "+args[i]);
 }
 if(!double.IsFinite(minutes)||minutes<=0||minutes>1440)throw new ArgumentException("Minutes must be in (0,1440].");
 var parts=shard.Split('/');
 if(parts.Length!=2||!int.TryParse(parts[0],out var n)||!int.TryParse(parts[1],out var k)||n<0||k<=n||k>1024)throw new ArgumentException("Shard must be N/K with 0 <= N < K <= 1024.");
 if(!rustFile.StartsWith("src/",StringComparison.Ordinal)||rustFile.Contains("..")||rustFile.Contains('\\'))throw new ArgumentException("Rust filter must stay under src/.");
+if(rustTest!="all"&&(!System.Text.RegularExpressions.Regex.IsMatch(rustTest,@"\A[A-Za-z0-9_-]{1,64}\z")||!File.Exists(Path.Combine("tests",rustTest+".rs"))))throw new ArgumentException("Rust test must be all or a named integration test file.");
 var root=Directory.GetCurrentDirectory();
 Directory.CreateDirectory("work");
 using var exclusive=new FileStream("work/framework-mutation.lock",FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None);
 var run=Path.Combine(root,"work","framework-mutations",DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8]);Directory.CreateDirectory(run);
 var options=new JsonSerializerOptions{WriteIndented=true,PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower};
-var report=new FrameworkReport{RequestedSeconds=minutes*60,Shard=shard,RustFile=rustFile};
+var report=new FrameworkReport{RequestedSeconds=minutes*60,Shard=shard,RustFile=rustFile,RustTest=rustTest};
 var clock=Stopwatch.StartNew();
 double Remaining()=>Math.Max(0,minutes*60-clock.Elapsed.TotalSeconds);
 async Task<(int Exit,bool Timeout)> Execute(string file,IEnumerable<string> arguments,string log,double seconds,Dictionary<string,string>? environment=null,string? directory=null) {
@@ -71,7 +73,9 @@ try {
     foreach(var path in new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml"}.Concat(new[]{"src","tests","examples","compat"}.SelectMany(folder=>Directory.EnumerateFiles(folder,"*",SearchOption.AllDirectories)))) {
         var destination=Path.Combine(rustRoot,path);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Copy(path,destination);
     }
-    var rust=await Execute(cargo,["mutants","--dir",rustRoot,"--file",rustFile,"--shard",shard,"--sharding","round-robin","--no-shuffle","--jobs","1","--jobserver-tasks","2","--timeout","120","--build-timeout","900","--output",Path.Combine(run,"rust"),"--colors","never","--cargo-arg=--locked"],"cargo-mutants.log",Remaining());
+    var rustArguments=new List<string>{"mutants","--dir",rustRoot,"--file",rustFile,"--shard",shard,"--sharding","round-robin","--no-shuffle","--jobs","1","--jobserver-tasks","2","--timeout","120","--build-timeout","900","--output",Path.Combine(run,"rust"),"--colors","never","--cargo-arg=--locked"};
+    if(rustTest!="all"){rustArguments.Add("--cargo-test-arg=--test");rustArguments.Add("--cargo-test-arg="+rustTest);}
+    var rust=await Execute(cargo,rustArguments,"cargo-mutants.log",Remaining());
     report.CargoMutants.Status=rust.Timeout?"partial_timeout":rust.Exit is 0 or 2 or 3?"completed":"failed";
     report.CargoMutants.ExitCode=rust.Exit;report.CargoMutants.LogSha256=Hash(Path.Combine(run,"cargo-mutants.log"));
     var native=Path.Combine(run,"rust","mutants.out","outcomes.json");
@@ -88,6 +92,7 @@ static string Hash(string path)=>Convert.ToHexString(SHA256.HashData(File.ReadAl
 sealed class FrameworkReport {
     public string Status{get;set;}="running";public double RequestedSeconds{get;set;}public double ElapsedSeconds{get;set;}
     public string Shard{get;set;}="";public string RustFile{get;set;}="";
+    public string RustTest{get;set;}="all";
     public ToolCounts CargoMutants{get;set;}=new(){Version="27.1.0"};public ToolCounts Stryker{get;set;}=new(){Version="5.0.0"};
 }
 /// Native categories remain separate; unrecognized statuses are never counted as kills.

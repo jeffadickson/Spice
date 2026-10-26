@@ -2,7 +2,7 @@
 Describe 'Framework campaign input bounds' {
     It 'rejects invalid budgets, shards and escaping source filters' {
         $runner=Join-Path $PSScriptRoot '../scripts/FrameworkMutations.cs'
-        foreach($arguments in @(@('--minutes','NaN'),@('--minutes','0'),@('--minutes','1441'),@('--shard','-1/16'),@('--shard','16/16'),@('--shard','1/0'),@('--rust-file','src/../secret'),@('--unknown'))) {
+        foreach($arguments in @(@('--minutes','NaN'),@('--minutes','0'),@('--minutes','1441'),@('--shard','-1/16'),@('--shard','16/16'),@('--shard','1/0'),@('--rust-file','src/../secret'),@('--rust-test','../secret'),@('--rust-test','missing-suite'),@('--unknown'))) {
             & dotnet run --file $runner -- @arguments *> $null
             $LASTEXITCODE|Should Not Be 0
         }
