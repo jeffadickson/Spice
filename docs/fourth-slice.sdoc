@@ -173,3 +173,18 @@ Verification: tests/nonlinear.rs nonlinear convergence cases; manifest validatio
 RELATIONS:
 - TYPE: Parent
   VALUE: REF4-002
+
+[REQUIREMENT]
+UID: REF4-013
+TITLE: Difficult current-driven continuation qualification
+STATEMENT: >>>
+The bounded continuation corpus shall retain a current-driven Shockley diode with a poorly conditioned zero-bias start that fails direct Newton under the declared eight-iteration policy but recovers with source and Gmin continuation across the dense LU, dense QR and faer CPU adapters. Verification shall independently check inverse-Shockley voltage and physical KCL after removing Gmin, bounded stage exhaustion, and rejection of a regularized warm start whose physical reverse bias has no solution. A fixed-seed bounded current corpus shall check both continuation policies without implying universal convergence.
+<<<
+COMMENT: >>>
+Implementation: src/newton.rs. Verification: tests/continuation.rs; scripts/Mutation.cs gmin-final-shunt and gmin-stage-budget operators. Evidence: evidence/continuation-qualification.md. Faer Newton Jacobians still pass through the bounded dense adapter surface; this evidence does not qualify direct sparse nonlinear assembly.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-012
+- TYPE: Parent
+  VALUE: REF4-008

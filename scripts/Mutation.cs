@@ -44,7 +44,7 @@ Restore();
 var baseline = await Test();
 if (baseline.Exit != 0) throw new Exception("Mutation baseline failed: " + baseline.Log);
 var mutants = new (string Name, string File, string Pattern, string Replacement)[] {
-    ("stamp-sign", "src/compile.rs", @"a\.add\(i,\s*i,\s*g\)", "a.add(i,i,-g)"),
+    ("stamp-sign", "src/compile.rs", @"a\.add_stamp\(i,\s*i,\s*g\)", "a.add_stamp(i,i,-g)"),
     ("stored-charge", "src/transient.rs", @"plan\.charge\.at\(i,\s*j\)\s*/\s*h", "0.0"),
     ("inclusive-boundary", "src/assertion.rs", @"v\s*<=\s*high", "v < high"),
     ("milli-scale", "src/quantity.rs", @"\(""m"",\s*1e-3\)", "(\"m\",1e3)"),
@@ -61,7 +61,10 @@ var mutants = new (string Name, string File, string Pattern, string Replacement)
     // The backend-neutral seam must reject nonfinite coefficients before an adapter receives them.
     ("sparse-contract-nonfinite", "src/solver_contract.rs", @"!value\.is_finite\(\)", "false"),
     // Continuation must not silently jump from zero to the final source scale.
-    ("continuation-stage-skip", "src/newton.rs", @"let target_scale = \(source_scale \+ step\)\.min\(1\.0\);", "let target_scale = 1.0;")
+    ("continuation-stage-skip", "src/newton.rs", @"let target_scale = \(source_scale \+ step\)\.min\(1\.0\);", "let target_scale = 1.0;"),
+    // A regularized warm start must never masquerade as a physical operating point.
+    ("gmin-final-shunt", "src/newton.rs", @"final_options\.gmin_siemens = None;", "final_options.gmin_siemens = Some(gmin);"),
+    ("gmin-stage-budget", "src/newton.rs", @"stage\.gmin_siemens > continuation\.minimum_siemens", "false")
 };
 // The baseline runs the full suite; each operator then uses its focused regression target.
 var targets = new Dictionary<string,string> {
@@ -70,7 +73,8 @@ var targets = new Dictionary<string,string> {
     ["state-commit"]="transient",["flux-sign"]="dynamic",["adaptive-acceptance"]="adaptive",
     ["sparse-row-order"]="providers",["pwl-interpolation"]="edge_cases",["missing-assertion"]="analyses",
     ["variation-grid-limit"]="variation",["diode-current-sign"]="nonlinear",
-    ["sparse-contract-nonfinite"]="matrix_conformance",["continuation-stage-skip"]="nonlinear"
+    ["sparse-contract-nonfinite"]="matrix_conformance",["continuation-stage-skip"]="nonlinear",
+    ["gmin-final-shunt"]="continuation",["gmin-stage-budget"]="continuation"
 };
 var reports = new List<object>(); var killed = 0;
 foreach (var mutant in mutants)
@@ -97,4 +101,3 @@ File.WriteAllText("evidence/mutation.json", JsonSerializer.Serialize(new {
     baseline = "passed", killed, total = mutants.Length, mutants = reports
 }, new JsonSerializerOptions { WriteIndented = true }));
 if (killed != mutants.Length) Environment.ExitCode = 1;
-
