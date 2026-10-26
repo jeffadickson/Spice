@@ -57,3 +57,16 @@ Implementation: src/audit.rs::power_check. Verification: tests/consistency.rs::p
 RELATIONS:
 - TYPE: Parent
   VALUE: CONS-002
+
+[REQUIREMENT]
+UID: CONS-005
+TITLE: Bounded topology preflight
+STATEMENT: >>>
+Preflight shall identify directly conflicting parallel independent voltage sources with polarity normalization and warn about nodes lacking an obvious DC reference path. Connectivity warnings shall not reject explicitly initialized transient or controlled-source circuits. Diagnostics shall have stable codes, severity and affected identifiers; complete rank or DAE classification is outside this profile.
+<<<
+COMMENT: >>>
+Implementation: src/topology.rs. Verification: tests/consistency.rs::topology_warns_about_capacitor_only_paths_and_identifies_source_conflicts.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-001

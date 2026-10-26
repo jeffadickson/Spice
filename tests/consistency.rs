@@ -134,3 +134,24 @@ fn power_audit_includes_shunt_dissipation_and_detects_wrong_source_current() {
         CheckStatus::Failed
     );
 }
+
+#[test]
+fn topology_warns_about_capacitor_only_paths_and_identifies_source_conflicts() {
+    use circuit_simulator::{netlist::parse, topology::inspect};
+    let c = parse("title\nI1 0 a 1m\nC1 a 0 1u").unwrap();
+    assert!(
+        inspect(&c)
+            .unwrap()
+            .iter()
+            .any(|d| d.code == "no_obvious_dc_reference_path" && d.subject == "a")
+    );
+    let c = parse("title\nV1 a 0 1\nV2 0 a -2").unwrap();
+    assert!(
+        inspect(&c)
+            .unwrap()
+            .iter()
+            .any(|d| d.code == "conflicting_parallel_voltage_sources" && d.severity == "error")
+    );
+    let c = parse("title\nV1 a 0 1\nV2 0 a -1").unwrap();
+    assert!(inspect(&c).unwrap().is_empty());
+}

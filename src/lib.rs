@@ -32,6 +32,7 @@ pub mod solver_contract;
 pub mod sources;
 pub mod sparse;
 pub mod sweep;
+pub mod topology;
 pub mod transient;
 pub mod variation;
 pub mod waveform;
