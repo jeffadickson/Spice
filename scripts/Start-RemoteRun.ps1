@@ -28,7 +28,7 @@ if (Test-Path -LiteralPath $checkout) {
 Invoke-RemoteGit @('-C',$checkout,'fetch','--','origin',$Reference)
 Invoke-RemoteGit @('-C',$checkout,'checkout','--detach','FETCH_HEAD')
 Set-Location -LiteralPath $checkout
-& ./scripts/Setup-Host.ps1 -Install:(-not $NoInstall) -Coverage:(-not $SkipCoverage) -SkipNativeTools:$SkipNativeTools
+& ./scripts/Setup-Host.ps1 -Install:(-not $NoInstall) -Coverage:(-not $SkipCoverage) -SkipNativeTools:$SkipNativeTools -SkipMutationTools:$SkipMutation
 if (-not $?) { throw 'Host setup failed.' }
 $arguments=@('run','--file','scripts/RemoteQualification.cs','--','--minutes',$Minutes.ToString([cultureinfo]::InvariantCulture),'--label',$MachineLabel)
 if ($NoPublish) { $arguments+='--no-publish' }

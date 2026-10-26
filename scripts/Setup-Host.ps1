@@ -1,4 +1,4 @@
-param([switch]$Install,[switch]$Coverage,[switch]$SkipNativeTools)
+param([switch]$Install,[switch]$Coverage,[switch]$SkipNativeTools,[switch]$SkipMutationTools)
 # Host setup is shell/package-manager orchestration. Required upstream .NET/Rust
 # installers are the runtime exceptions to the C#/F# scripting default.
 $ErrorActionPreference='Stop'
@@ -101,4 +101,5 @@ if ($Coverage) {
     if ($Install -and -not $profiler) { Invoke-SetupCommand rustup @('toolchain','install',$coverageToolchain,'--profile','minimal','--component','llvm-tools-preview') }
 }
 [ordered]@{status='ready';platform=[Runtime.InteropServices.RuntimeInformation]::OSDescription;rustc=$rust;dotnet=(& dotnet --version);strictdoc='0.30.4';native_tools_skipped=[bool]$SkipNativeTools;coverage_requested=[bool]$Coverage;coverage_toolchain=$env:SPICE_COVERAGE_TOOLCHAIN;acquisitions=$acquisitions} | ConvertTo-Json -Depth 6 | Set-Content work/setup/host.json
+if(-not $SkipMutationTools){ & (Join-Path $PSScriptRoot 'Setup-MutationTools.ps1') -Install:$Install }
 Write-Host 'Host dependencies verified. Configuration applies to this process and its children.'

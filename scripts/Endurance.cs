@@ -80,7 +80,7 @@ try {
     var rustVerbose=await Execute("rustc",["-vV"],root,Cap(15)); report.RustcVerbose=rustVerbose.Log.Trim();
     var dotnet=await Execute("dotnet",["--version"],root,Cap(15)); report.Dotnet=dotnet.Log.Trim();
     if(git.Exit!=0||dirty.Exit!=0||rust.Exit!=0||dotnet.Exit!=0) throw new IOException("Campaign provenance discovery failed.");
-    var files=new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml","global.json","Makefile","scripts/Mutation.cs","scripts/Endurance.cs","scripts/Run-Endurance.ps1","scripts/HostTools.ps1"}.Concat(new[]{"src","tests","examples","compat"}.SelectMany(folder=>Directory.EnumerateFiles(Path.Combine(root,folder),"*",SearchOption.AllDirectories).Select(path=>Path.GetRelativePath(root,path)))).ToArray();
+    var files=new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml","global.json","dotnet-tools.json","Makefile","scripts/Mutation.cs","scripts/FrameworkMutations.cs","scripts/Endurance.cs","scripts/Run-Endurance.ps1","scripts/HostTools.ps1"}.Concat(new[]{"src","tests","examples","compat","dotnet"}.SelectMany(folder=>Directory.EnumerateFiles(Path.Combine(root,folder),"*",SearchOption.AllDirectories).Where(path=>!Path.GetRelativePath(root,path).Split(Path.DirectorySeparatorChar).Any(part=>part is "bin" or "obj" or "TestResults")).Select(path=>Path.GetRelativePath(root,path)))).ToArray();
     foreach(var file in files) {
         var bytes=File.ReadAllBytes(Path.Combine(root,file));
         report.SourceHashes[file.Replace('\\','/')]=Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
@@ -99,7 +99,27 @@ try {
         if(result.Exit!=0) { report.MutationStatus="failed"; throw new IOException("Selected mutation campaign failed; inspect mutation.log and snapshot/evidence/mutation.json."); }
         report.MutationStatus="passed";
         File.Copy(Path.Combine(snapshot,"evidence","mutation.json"),Path.Combine(run,"mutation.json"));
-    } else report.MutationStatus="skipped_explicitly";
+        // Reserve half the remaining budget for generated mutations, leaving the
+        // other half for seeded numerical/parser batches. Rotate deterministic
+        // round-robin shards by the recorded seed rather than retest one prefix.
+        report.Phase="framework_mutations";report.FrameworkShard=$"{seed%16}/16";Save();
+        var tool=Environment.GetEnvironmentVariable("SPICE_CARGO_MUTANTS")??Path.Combine(root,".tools","mutation","cargo-mutants"+(OperatingSystem.IsWindows()?".exe":""));
+        var framework=await Execute("dotnet",["run","--file","scripts/FrameworkMutations.cs","--","--minutes",(Remaining().TotalMinutes*.5).ToString(CultureInfo.InvariantCulture),"--shard",report.FrameworkShard],snapshot,Remaining()*.55,new(){["SPICE_CARGO_MUTANTS"]=tool,["CARGO_TARGET_DIR"]=Path.Combine(root,"target","endurance")});
+        File.WriteAllText(Path.Combine(run,"framework.log"),framework.Log);
+        var marker=System.Text.RegularExpressions.Regex.Match(framework.Log,@"(?m)^Framework summary: (.+)\r?$");
+        if(!marker.Success)throw new IOException("Framework mutation report was not emitted.");
+        var frameworkPath=marker.Groups[1].Value.Trim();
+        if(new FileInfo(frameworkPath).Length>65536)throw new IOException("Framework summary exceeds bound.");
+        var frameworkBytes=File.ReadAllBytes(frameworkPath);File.WriteAllBytes(Path.Combine(run,"framework-mutations.json"),frameworkBytes);
+        report.FrameworkSummarySha256=Convert.ToHexString(SHA256.HashData(frameworkBytes)).ToLowerInvariant();
+        using(var document=JsonDocument.Parse(frameworkBytes)) {
+            report.FrameworkMutationStatus=document.RootElement.GetProperty("status").GetString()!;
+            foreach(var name in new[]{"cargo_mutants","stryker"})report.FrameworkToolVersions[name]=document.RootElement.GetProperty(name).GetProperty("version").GetString()!;
+            foreach(var name in new[]{"cargo_mutants","stryker"})foreach(var count in new[]{"candidates","killed","survived","timed_out","invalid","not_covered","pending","other","ignored","unattempted"})
+                report.FrameworkMutationCounts[name+"_"+count]=document.RootElement.GetProperty(name).GetProperty(count).GetInt32();
+        }
+        if(framework.TimedOut||framework.Exit!=0)throw new IOException("Generated mutation tooling failed; inspect framework.log.");
+    } else {report.MutationStatus="skipped_explicitly";report.FrameworkMutationStatus="skipped_explicitly";}
     report.Phase="build_endurance"; Save();
     var environment=new Dictionary<string,string>{["CARGO_TARGET_DIR"]=Path.Combine(root,"target","endurance"),["CARGO_BUILD_JOBS"]="2",["RUST_TEST_THREADS"]="2",["RUST_LOG"]="off"};
     var build=await Execute("cargo",["test","--locked","--test","endurance","--no-run","--message-format=json"],snapshot,Cap(900),environment);
@@ -151,6 +171,11 @@ sealed class CampaignReport {
     public ulong Batches { get;set; }
     public ulong CheckpointRetries { get;set; }
     public string MutationStatus { get;set; }="not_run";
+    public string FrameworkMutationStatus {get;set;}="not_run";
+    public string? FrameworkShard {get;set;}
+    public string? FrameworkSummarySha256 {get;set;}
+    public Dictionary<string,int> FrameworkMutationCounts {get;set;}=new();
+    public Dictionary<string,string> FrameworkToolVersions {get;set;}=new();
     public string? SourceCommit { get;set; }
     public bool SourceDirty { get;set; }
     public string? Rustc { get;set; }

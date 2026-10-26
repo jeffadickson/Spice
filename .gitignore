@@ -28,3 +28,8 @@
 *.key
 
 # Keep reviewed small evidence summaries and replay fixtures under evidence/tests.
+
+# Native mutation-framework outputs remain local.
+/mutants.out/
+/mutants.out.old/
+**/StrykerOutput/

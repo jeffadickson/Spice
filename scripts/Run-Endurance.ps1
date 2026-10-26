@@ -20,6 +20,7 @@ if ($Background) {
 Import-SpiceTools -Root (Get-Location).Path
 $pinned=(Select-String -LiteralPath rust-toolchain.toml -Pattern '^channel = "([^"]+)"').Matches.Groups[1].Value
 if ((rustc --version) -notmatch ('^rustc '+[regex]::Escape($pinned)+'\s')) { throw 'Campaign compiler does not match rust-toolchain.toml.' }
+if(-not $SkipMutation){ & (Join-Path $PSScriptRoot 'Setup-MutationTools.ps1') }
 $arguments=@('run','--file','scripts/Endurance.cs','--','--minutes',$Minutes.ToString([cultureinfo]::InvariantCulture))
 if ($Seed) { $arguments+=@('--seed',$Seed) }
 if ($SkipMutation) { $arguments+='--skip-mutation' }

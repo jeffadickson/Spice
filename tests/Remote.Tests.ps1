@@ -72,6 +72,28 @@ Describe 'Remote qualification evidence publication' {
             @(& git -C $fixture.Bare for-each-ref '--format=%(refname:short)' refs/heads/remote-runs/).Count|Should Be 0
         }
     }
+    It 'exports generated mutation categories and rejects altered counts or missing provenance' {
+        foreach($kind in @('valid','count','hash','missing','accounting','shard','version')) {
+            $fixture=New-RemoteFixture
+            $counts=@{};$native=@{}
+            foreach($tool in @('cargo_mutants','stryker')){
+                $row=@{}
+                foreach($key in @('candidates','killed','survived','timed_out','invalid','not_covered','pending','other','ignored','unattempted')){$row[$key]=0;$counts[$tool+'_'+$key]=0}
+                $row.candidates=2;$row.killed=1;$row.survived=1;$counts[$tool+'_candidates']=2;$counts[$tool+'_killed']=1;$counts[$tool+'_survived']=1;$row.version=if($tool -eq 'cargo_mutants'){'27.1.0'}else{'5.0.0'};$native[$tool]=$row
+            }
+            $native.status='completed';$native.shard='1/16'
+            if($kind -eq 'accounting'){$native.cargo_mutants.candidates=0;$counts.cargo_mutants_candidates=0}
+            if($kind -eq 'shard'){$native.shard='16/16'}
+            $path=Join-Path $fixture.Run 'framework-mutations.json';$native|ConvertTo-Json -Depth 6|Set-Content $path
+            $fixture.Report.framework_mutation_status='completed';$fixture.Report.framework_shard=$native.shard;$fixture.Report.framework_mutation_counts=$counts;$fixture.Report.framework_tool_versions=@{cargo_mutants='27.1.0';stryker='5.0.0'}
+            if($kind -eq 'version'){$fixture.Report.framework_tool_versions.stryker='wrong'}
+            $fixture.Report.framework_summary_sha256=(Get-FileHash $path).Hash.ToLowerInvariant()
+            switch($kind){count{$counts.cargo_mutants_killed=99};hash{$fixture.Report.framework_summary_sha256='0'*64};missing{$fixture.Report.framework_summary_sha256=$null}}
+            $fixture.Report|ConvertTo-Json -Depth 6|Set-Content (Join-Path $fixture.Run 'summary.json')
+            $result=Invoke-Publisher $fixture
+            if($kind -eq 'valid'){if($result.Code -ne 0){throw $result.Output};$result.Code|Should Be 0}else{$result.Code|Should Not Be 0}
+        }
+    }
     It 'rejects unfinished reports and dirty source before publishing' {
         foreach($kind in @('running','dirty')) {
             $fixture=New-RemoteFixture

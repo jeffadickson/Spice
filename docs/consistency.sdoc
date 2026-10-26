@@ -228,3 +228,33 @@ Implementation: scripts/Endurance.cs. Verification: scripts/Test-CheckpointConte
 RELATIONS:
 - TYPE: Parent
   VALUE: END-002
+
+[REQUIREMENT]
+UID: MUT-001
+TITLE: Pinned generated Rust and managed mutation testing
+STATEMENT: >>>
+The qualification tooling shall run pinned cargo-mutants on owned Rust sources and pinned Stryker.NET on executable managed-client behavior through discoverable real-engine contracts. The 22 selected numerical mutants shall remain distinct regression evidence. An endurance campaign shall allocate at most half its remaining budget after those checks to framework runs, then use remaining time for seeded fuzz/property batches. Rust round-robin shard selection shall be recorded and reproducible from the campaign seed.
+<<<
+COMMENT: >>>
+Implementation: scripts/FrameworkMutations.cs, Endurance.cs, Setup-MutationTools.ps1, dotnet-tools.json, dotnet/Simulator.Client.Tests and shared ConformanceChecks.cs. Verification: evidence/framework-mutation-qualification.md. A candidate inventory is not a tested-mutant count; sharded/time-bounded work is not an exhaustive mutation campaign.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: END-001
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: MUT-002
+TITLE: Separate mutation outcomes and bounded remote evidence
+STATEMENT: >>>
+Mutation evidence shall distinguish generated candidates, kills, survivors, uncovered code, timeouts, invalid/compile-error mutants, ignored/pending/unknown categories and unattempted candidates. Framework baseline/infrastructure failures shall remain failures; deadline interruption shall remain partial evidence. Reports shall retain tool pins, tested scope/shard, elapsed budget and native report/log hashes; raw framework artifacts shall remain local. Remote publication shall validate bounded framework-summary hashes and category counts before exporting allowlisted path-free fields.
+<<<
+COMMENT: >>>
+Implementation: scripts/FrameworkMutations.cs, Endurance.cs and RemoteQualification.cs. Verification: tests/FrameworkMutations.Tests.ps1, tests/Remote.Tests.ps1, native framework runs and scoped coverage evidence. Timeouts are never counted as test-detected kills, even when a framework score includes them.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MUT-001
+- TYPE: Parent
+  VALUE: REM-003

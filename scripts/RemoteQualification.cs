@@ -83,10 +83,30 @@ if(run is not null) {
     foreach(var required in new[]{"Cargo.toml","Cargo.lock","tests/endurance.rs"})if(!evidence.SourceHashes.ContainsKey(required))throw new IOException("Missing source hash: "+required);
     foreach(var (relative,hash) in evidence.SourceHashes) {
         if(relative.Contains('\\')||relative.Split('/').Any(p=>p is "" or "." or "..")||Path.IsPathRooted(relative)||!Regex.IsMatch(hash,"\\A[0-9a-f]{64}\\z"))throw new IOException("Unsafe source hash entry.");
-        if(!new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml","global.json","Makefile"}.Contains(relative)&&!new[]{"src/","tests/","scripts/","compat/","examples/"}.Any(prefix=>relative.StartsWith(prefix,StringComparison.Ordinal)))throw new IOException("Source hash path is outside the source allowlist.");
+        if(!new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml","global.json","dotnet-tools.json","Makefile"}.Contains(relative)&&!new[]{"src/","tests/","scripts/","compat/","examples/","dotnet/"}.Any(prefix=>relative.StartsWith(prefix,StringComparison.Ordinal)))throw new IOException("Source hash path is outside the source allowlist.");
         if(!File.Exists(relative)||Hash(relative)!=hash)throw new IOException("Tested source hash mismatch: "+relative);
     }
     checksPassed&=evidence.Status.StartsWith("budget_exhausted",StringComparison.Ordinal)&&evidence.Cases>0&&evidence.MutationStatus is not ("failed" or "incomplete_timeout");
+    if(!new[]{"not_run","skipped_explicitly","completed","partial_timeout","failed"}.Contains(evidence.FrameworkMutationStatus))throw new IOException("Unknown framework mutation state.");
+    if(evidence.FrameworkSummarySha256 is not null) {
+        var frameworkPath=Path.Combine(run,"framework-mutations.json");
+        if(!Regex.IsMatch(evidence.FrameworkSummarySha256,"\\A[0-9a-f]{64}\\z")||!File.Exists(frameworkPath)||new FileInfo(frameworkPath).Length>65536||Hash(frameworkPath)!=evidence.FrameworkSummarySha256)throw new IOException("Framework summary hash mismatch.");
+        using var framework=JsonDocument.Parse(File.ReadAllText(frameworkPath));
+        if(framework.RootElement.GetProperty("status").GetString()!=evidence.FrameworkMutationStatus||framework.RootElement.GetProperty("shard").GetString()!=evidence.FrameworkShard)throw new IOException("Framework summary metadata mismatch.");
+        var expected=new Dictionary<string,int>();
+        foreach(var tool in new[]{"cargo_mutants","stryker"})foreach(var count in new[]{"candidates","killed","survived","timed_out","invalid","not_covered","pending","other","ignored","unattempted"})expected[tool+"_"+count]=framework.RootElement.GetProperty(tool).GetProperty(count).GetInt32();
+        if(expected.Any(pair=>pair.Value<0||!evidence.FrameworkMutationCounts.TryGetValue(pair.Key,out var value)||value!=pair.Value)||expected.Count!=evidence.FrameworkMutationCounts.Count)throw new IOException("Framework count mismatch.");
+        foreach(var tool in new[]{"cargo_mutants","stryker"}) {
+            var completed=expected.Where(pair=>pair.Key.StartsWith(tool+"_",StringComparison.Ordinal)&&pair.Key!=tool+"_candidates"&&pair.Key!=tool+"_unattempted").Sum(pair=>(long)pair.Value);
+            if(completed+expected[tool+"_unattempted"]!=expected[tool+"_candidates"])throw new IOException("Inconsistent framework accounting.");
+            if(!evidence.FrameworkToolVersions.TryGetValue(tool,out var version)||version!=framework.RootElement.GetProperty(tool).GetProperty("version").GetString())throw new IOException("Framework version mismatch.");
+        }
+        if(evidence.FrameworkToolVersions.Count!=2||evidence.FrameworkToolVersions["cargo_mutants"]!="27.1.0"||evidence.FrameworkToolVersions["stryker"]!="5.0.0")throw new IOException("Unexpected framework tool pins.");
+        if(evidence.FrameworkShard is null||!Regex.IsMatch(evidence.FrameworkShard,"\\A[0-9]{1,4}/[0-9]{1,4}\\z"))throw new IOException("Unsafe framework shard.");
+        var shardParts=evidence.FrameworkShard.Split('/').Select(int.Parse).ToArray();
+        if(shardParts[1]<1||shardParts[1]>1024||shardParts[0]>=shardParts[1])throw new IOException("Invalid framework shard.");
+    } else if(evidence.FrameworkMutationCounts.Count!=0||evidence.FrameworkToolVersions.Count!=0||evidence.FrameworkShard is not null||evidence.FrameworkMutationStatus is "completed" or "partial_timeout")throw new IOException("Missing framework provenance.");
+    checksPassed&=evidence.FrameworkMutationStatus!="failed";
     var mutation=Path.Combine(run,"mutation.json");
     if(File.Exists(mutation)) {
         using var document=JsonDocument.Parse(await File.ReadAllTextAsync(mutation));var value=document.RootElement;
@@ -144,5 +164,8 @@ sealed class EnduranceEvidence {
     public ulong Cases {get;set;}public ulong Batches {get;set;}public ulong CheckpointRetries {get;set;}public string InitialSeed {get;set;}="";public string? PendingSeed {get;set;}
     public string MutationStatus {get;set;}="";public string Rustc {get;set;}="";public string? RustcVerbose {get;set;}public string Dotnet {get;set;}="";
     public Dictionary<string,string> SourceHashes {get;set;}=new();
+    public string FrameworkMutationStatus {get;set;}="not_run";public string? FrameworkShard {get;set;}public string? FrameworkSummarySha256 {get;set;}
+    public Dictionary<string,int> FrameworkMutationCounts {get;set;}=new();
+    public Dictionary<string,string> FrameworkToolVersions {get;set;}=new();
 }
 sealed record CommandResult(int Exit,bool TimedOut,string Output);
