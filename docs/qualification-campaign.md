@@ -7,9 +7,7 @@ Perform a deep final review, implement accepted findings and push the final fixe
 No GitHub Actions dispatch is authorized by this plan.
 
 The request contains an allocation mismatch: five areas times ten is 50, while
-the requested final hundred plus review implies 100 + 1. Allocation clarification
-is pending. Work common to both interpretations starts with ten convergence
-iterations. Do not invent iteration counts or treat review as external experts.
+the requested final hundred plus review implies 100 + 1. A clarification prompt is open. Working assumption follows the user's final hundred-plus-review target: 20 iterations per area, 100 implementation/qualification iterations plus one final review/fix iteration. This is an explicit interpretation, not a claimed user reply. Adjust if corrected. Do not invent iteration counts or treat review as external experts.
 
 Repository base: 1b8885e (iteration 334). Campaign steps 1–10 correspond to repository
 iterations 335–344; the first full build/checkpoint is 344. Further checkpoints
@@ -37,3 +35,6 @@ Primary references reviewed on 2026-10-26: https://docs.rs/faer/0.24.4/faer/ and
 ngspice development manual https://ngspice.sourceforge.io/docs/ngspice-manual.pdf
 (version 47+, September 28, 2026). The manual is an equation/convergence reference;
 its development version is not a claim about the installed ngspice oracle version.
+
+Working allocation: continuation 335–354; test gaps 355–374; sparse AC 375–394; sparse transient 395–414; bounded models 415–434; final deep review/fixes 435. Checkpoints/pushes: 344, 354, 364, 374, 384, 394, 404, 414, 424 and 434, then final review push.
+

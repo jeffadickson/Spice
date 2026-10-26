@@ -202,3 +202,19 @@ Derived implementation requirement for the user-authorized convergence-hardening
 RELATIONS:
 - TYPE: Parent
   VALUE: REF4-008
+
+[REQUIREMENT]
+UID: REF4-015
+STATUS: Draft
+TITLE: Thermal-aware coupled diode convergence qualification
+STATEMENT: >>>
+Newton line search shall contract the already limited MNA direction, scale diode terminal increments by validated thermal voltage and reject invalid trial candidates without accepting a nonfinite state. Coupled diode-chain and bridge-rectifier cases shall be checked across the dense LU, dense QR and faer CPU providers with independent inverse-Shockley, monotonic scalar-root, nodal-current and power oracles. Source and Gmin continuation shall return nominal excitation and an unregularized final state.
+<<<
+COMMENT: >>>
+Derived requirement for the user-authorized qualification campaign. Implementation: src/newton.rs. Verification: tests/continuation_hardening.rs and tests/continuation_networks.rs. Thermal-voltage stress is a mathematical parameter-domain check, not calibration of a physical temperature model. Acceptance and coverage evidence are pending checkpoint 344; no general convergence or sparse nonlinear assembly claim is inferred.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-013
+- TYPE: Parent
+  VALUE: REF4-014
