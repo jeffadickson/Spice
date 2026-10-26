@@ -1,4 +1,5 @@
 //! Direct sparse dynamic assembly contracts, independent of provider layouts.
+use circuit_simulator::backend_faer::FaerSparseLu;
 use circuit_simulator::solver_contract::SparseComplexSystem;
 use circuit_simulator::{error::ErrorCode, sparse::CscMatrix};
 use circuit_simulator::{
@@ -7,6 +8,32 @@ use circuit_simulator::{
 };
 use num_complex::Complex64;
 use std::sync::atomic::{AtomicUsize, Ordering};
+
+#[test]
+fn faer_direct_complex_csc_solves_a_genuine_complex_excitation() {
+    let g = CscMatrix::new(2, vec![0, 2, 3], vec![0, 1, 1], vec![2., -3., 4.]).unwrap();
+    let q = CscMatrix::new(2, vec![0, 1, 3], vec![1, 0, 1], vec![5., 7., -11.]).unwrap();
+    let system = SparseComplexSystem::from_real_parts(&g, &q, 2.).unwrap();
+    // Direct multiplication of the independently chosen x=(1+2j,3-j).
+    let values = FaerSparseLu
+        .solve_complex_csc(
+            &system,
+            &[Complex64::new(16., 46.), Complex64::new(-33., -66.)],
+        )
+        .unwrap();
+    assert!((values[0] - Complex64::new(1., 2.)).norm() < 1e-12);
+    assert!((values[1] - Complex64::new(3., -1.)).norm() < 1e-12);
+    assert!(FaerSparseLu.solve_complex_csc(&system, &[]).is_err());
+    let empty = CscMatrix::new(1, vec![0, 0], vec![], vec![]).unwrap();
+    let singular = SparseComplexSystem::from_real_parts(&empty, &empty, 1.).unwrap();
+    assert_eq!(
+        FaerSparseLu
+            .solve_complex_csc(&singular, &[Complex64::new(1., 1.)])
+            .unwrap_err()
+            .code,
+        ErrorCode::SingularMatrix
+    );
+}
 
 struct LegacyComplex {
     calls: AtomicUsize,

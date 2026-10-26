@@ -55,6 +55,18 @@ impl SparseLinearBackend for FaerSparseLu {
         rhs: &[f64],
     ) -> SimResult<Vec<num_complex::Complex64>> {
         system.validate_rhs(rhs)?;
+        let complex: Vec<_> = rhs
+            .iter()
+            .map(|value| num_complex::Complex64::new(*value, 0.))
+            .collect();
+        self.solve_sparse_complex_rhs(system, &complex)
+    }
+    fn solve_sparse_complex_rhs(
+        &self,
+        system: &SparseComplexSystem,
+        rhs: &[num_complex::Complex64],
+    ) -> SimResult<Vec<num_complex::Complex64>> {
+        system.validate_complex_rhs(rhs)?;
         let entries: Vec<_> = system
             .pattern()
             .slots()
@@ -68,9 +80,9 @@ impl SparseLinearBackend for FaerSparseLu {
         let lu = sparse.sp_lu().map_err(|error| {
             SimError::new(ErrorCode::SingularMatrix, format!("sparse LU: {error:?}"))
         })?;
-        let solution = lu.solve(faer::Mat::from_fn(n, 1, |row, _| {
-            num_complex::Complex64::new(rhs[row], 0.0)
-        }));
+        // One numeric factor handles both RHS components; no second
+        // quadrature factorization or dense reference materialization.
+        let solution = lu.solve(faer::Mat::from_fn(n, 1, |row, _| rhs[row]));
         let values: Vec<_> = (0..n).map(|row| solution[(row, 0)]).collect();
         if values
             .iter()
@@ -88,6 +100,13 @@ impl SparseLinearBackend for FaerSparseLu {
 impl LinearSolver for FaerSparseLu {
     fn solve_csc(&self, matrix: &CscMatrix, rhs: &[f64]) -> SimResult<Vec<f64>> {
         self.solve_compiled_csc(matrix, rhs)
+    }
+    fn solve_complex_csc(
+        &self,
+        system: &SparseComplexSystem,
+        rhs: &[num_complex::Complex64],
+    ) -> SimResult<Vec<num_complex::Complex64>> {
+        self.solve_sparse_complex_rhs(system, rhs)
     }
     fn prepare(&self, a: &Matrix) -> SimResult<Option<crate::linalg::PreparedReal>> {
         let csc = CscMatrix::from_dense(a)?;
