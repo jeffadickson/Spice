@@ -27,7 +27,10 @@ if (root.TryGetProperty("mode", out var mode) && mode.GetString() == "hang")
 {
     var marker = root.GetProperty("pid_file").GetString()!;
     if (!Directory.Exists(Path.GetDirectoryName(marker))) throw new DirectoryNotFoundException();
-    await File.WriteAllTextAsync(marker, Environment.ProcessId.ToString());
+    // Publish acknowledgement only after closing the writer; File.Exists
+    // during WriteAllTextAsync is not a readiness guarantee on Windows.
+    await File.WriteAllTextAsync(marker + ".tmp", Environment.ProcessId.ToString());
+    File.Move(marker + ".tmp", marker);
     await Task.Delay(Timeout.Infinite);
 }
 if (root.TryGetProperty("diagnostics", out var diagnostics))

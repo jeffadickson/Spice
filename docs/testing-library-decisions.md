@@ -15,7 +15,9 @@ Reviewed primary sources on 2026-10-26:
 - [Coverlet VSTest integration](https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/VSTestIntegration.md)
   fits the current xUnit v2/VSTest harness. Keep its measurements separate from
   prior dotnet-coverage scopes; a move to Microsoft.Testing.Platform requires
-  an explicit compatibility decision. Coverlet/ReportGenerator adoption is pending.
+  an explicit compatibility decision. ManagedCoverage.cs collects with pinned
+  coverlet.collector 10.1.0 and ReportGenerator 5.5.11, retaining raw reports locally
+  and a bounded source-hashed summary under evidence/. Prior scopes remain historical.
 
 Cargo-mutants and Stryker.NET remain the mutation engines. The custom selected
 numerical mutations are supplemental. Existing hand-written deterministic

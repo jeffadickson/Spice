@@ -1,0 +1,24 @@
+{
+  "collector": "coverlet.collector 10.1.0",
+  "report_generator": "5.5.11",
+  "source_commit": "c1ed0a2b74445eaf897b85e6656bf0e65e791e58",
+  "source_dirty": true,
+  "source_hashes": {
+    "dotnet/Simulator.Client/Client.cs": "aa3fe70345d03e47df8b53e654316c383fbe52020e3458be56fd3ea5fa810faa",
+    "dotnet/Simulator.Client/Requests.cs": "67322b96b7b15fef97119bf557ada5655ddf43e9bebb6b11c5416d2ba1a92276",
+    "dotnet/Simulator.Client/Results.cs": "5e41aea7f5dfd6c6237962208bbcb7cec1fb9fcd16acd2fbf909247884a40e8d",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "f1c7a3f8e82e8fcb3671725851a4b154a34c152a8d79c8fd05782e21be432a15"
+  },
+  "lines": 166,
+  "covered_lines": 158,
+  "branches": 98,
+  "covered_branches": 90,
+  "report_sha256": "b7e7e6ea122ab780281531373e14c00ba2c62977c4d71ae070f0e3c7c2ee7a82",
+  "local_report": "build/managed-coverage/d60d5654d497472ea6016e9a87570133/eaa1b0ee-3245-4373-9a5c-d495877e56ba/coverage.cobertura.xml",
+  "limitations": [
+    "Owned Simulator.Client assembly, excluding obj-generated sources; fixture/test/native/vendor code excluded.",
+    "Coverlet branch mapping differs from historical dotnet-coverage; percentages are not directly comparable.",
+    "File-based coverage orchestration was managed execution, not NativeAOT."
+  ]
+}
