@@ -27,3 +27,8 @@ DC Gmin regularization is explicit and recorded, never silently enabled. DC
 Newton uses dimensional residual/update checks. Configured nonlinear
 backward-Euler runs now support source overrides, source breakpoints, and
 adaptive step doubling with commit-only-on-acceptance semantics.
+
+The difficult nonlinear corpus covers high-bias damping, continuation bounds,
+Gmin validation, and source-breakpoint adaptive stepping. The independent
+ngspice oracle remains deliberately narrow: it validates the two attributed,
+representable selected fixtures rather than claiming vendor-model parity.

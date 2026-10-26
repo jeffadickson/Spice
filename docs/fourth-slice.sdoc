@@ -133,3 +133,17 @@ Verification: tests/nonlinear.rs::configured_nonlinear_transient_accepts_source_
 RELATIONS:
 - TYPE: Parent
   VALUE: REF4-006
+
+[REQUIREMENT]
+UID: REF4-010
+TITLE: Difficult nonlinear qualification corpus
+STATEMENT: >>>
+The reference nonlinear corpus shall retain bounded cases for high-bias damping, source-continuation stage reduction, invalid Gmin rejection, nonlinear source-breakpoint transient stepping and adaptive accepted-state rollback. Where an attributed ngspice fixture is representable by the bounded engine, its observable shall be compared by an explicit named oracle; unsupported upstream fixtures remain manifest-tracked rather than treated as passing.
+<<<
+COMMENT: >>>
+Implementation: tests/nonlinear.rs, compat/ngspice/selected-fixtures.json, scripts/Compare-NgspiceOracle.cs and Compare-NgspiceAcOracle.cs.
+Verification: tests/nonlinear.rs nonlinear convergence cases; manifest validation; local ngspice oracle comparisons for res_simple and res_partition.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-002
