@@ -11,7 +11,43 @@ use circuit_simulator::{
 use num_complex::Complex64;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
+#[test]
+fn small_phasor_replaces_large_nominal_without_cancellation() {
+    use circuit_simulator::{ac::ac_with_source_phasors, api::AcSourcePhasor, backend::DenseLu};
+    for text in [
+        "title\nV1 out 0 1e308\nR1 out 0 1k\n.end",
+        "title\nI1 0 out 1e308\nR1 out 0 1k\n.end",
+    ] {
+        let plan = compile(&parse(text).unwrap()).unwrap();
+        let voltage = text.contains("V1");
+        let phasor = AcSourcePhasor {
+            id: if voltage { "V1" } else { "I1" }.into(),
+            real: 1.,
+            imag: 2.,
+        };
+        for provider in [&FaerSparseLu as &dyn LinearSolver, &DenseLu] {
+            let samples =
+                ac_with_source_phasors(&plan, &[1.], std::slice::from_ref(&phasor), provider)
+                    .unwrap();
+            let expected = if voltage { 1. } else { 1000. };
+            assert!((samples[0].values[0].real - expected).abs() < 1e-10);
+            assert!((samples[0].values[0].imag - 2. * expected).abs() < 1e-10);
+        }
+    }
+}
+
 struct DirectOnly(AtomicUsize);
+
+#[test]
+fn invalid_grid_is_rejected_before_nonlinear_bias_work() {
+    let plan = compile(&parse("title\nV1 in 0 1\nR1 in out 1k\nD1 out 0 1p 25.85m\n.end").unwrap())
+        .unwrap();
+    let provider = DirectOnly(AtomicUsize::new(0));
+    for bad in [0., -1., f64::NAN, f64::INFINITY, f64::MAX] {
+        assert!(ac(&plan, &[1., bad], &provider).is_err());
+    }
+    assert_eq!(provider.0.load(Ordering::Relaxed), 0);
+}
 impl LinearSolver for DirectOnly {
     fn name(&self) -> &'static str {
         "direct-complex-only"

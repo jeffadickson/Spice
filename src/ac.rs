@@ -43,48 +43,74 @@ pub fn ac_with_source_phasors(
     if source_phasors.len() > 128 {
         return Err(SimError::invalid("AC source phasor budget exceeded"));
     }
-    let mut rhs_real = plan.rhs.clone();
-    let mut rhs_imag = vec![0.; n];
-    let mut ids = std::collections::BTreeSet::new();
+    // Validate the entire request before any DC bias or provider work.
+    if n * frequencies.len() > 1_000_000 {
+        return Err(SimError::new(
+            ErrorCode::ResourceExhausted,
+            "AC retained scalar budget exceeded",
+        ));
+    }
+    for &frequency in frequencies {
+        positive(frequency, "frequency_hz")?;
+        if !(std::f64::consts::TAU * frequency).is_finite() {
+            return Err(SimError::invalid("AC angular frequency overflow"));
+        }
+    }
+    let mut overrides = std::collections::BTreeMap::new();
     for phasor in source_phasors {
         if phasor.id.is_empty()
             || !phasor.real.is_finite()
             || !phasor.imag.is_finite()
-            || !ids.insert(&phasor.id)
+            || overrides
+                .insert(phasor.id.as_str(), Complex64::new(phasor.real, phasor.imag))
+                .is_some()
         {
             return Err(SimError::invalid("invalid or duplicate AC source phasor"));
         }
-        let element = plan
-            .circuit
-            .elements
-            .iter()
-            .find(|element| element.id() == phasor.id)
-            .ok_or_else(|| SimError::invalid("unknown AC source phasor"))?;
+        if !plan.circuit.elements.iter().any(|element| {
+            element.id() == phasor.id
+                && matches!(element, Element::Voltage { .. } | Element::Current { .. })
+        }) {
+            return Err(SimError::invalid(
+                "AC phasor must target an independent source",
+            ));
+        }
+    }
+    // Assemble from the selected amplitudes, never subtract the nominal value
+    // from an already assembled RHS: that loses small overrides by cancellation.
+    // The raw API retains its historical nominal-as-AC-amplitude convention.
+    let mut rhs = vec![Complex64::new(0., 0.); n];
+    for element in &plan.circuit.elements {
         match element {
-            Element::Voltage { volts, .. } => {
+            Element::Voltage { id, volts, .. } => {
                 let row = plan
-                    .branch_index(&phasor.id)
+                    .branch_index(id)
                     .ok_or_else(|| SimError::invalid("missing AC voltage-source branch"))?;
-                rhs_real[row] += phasor.real - *volts;
-                rhs_imag[row] += phasor.imag;
+                rhs[row] = overrides
+                    .get(id.as_str())
+                    .copied()
+                    .unwrap_or(Complex64::new(*volts, 0.));
             }
-            Element::Current { p, n, amps, .. } => {
-                let real_delta = phasor.real - *amps;
+            Element::Current { id, p, n, amps } => {
+                let amplitude = overrides
+                    .get(id.as_str())
+                    .copied()
+                    .unwrap_or(Complex64::new(*amps, 0.));
                 if let Some(row) = p.unknown() {
-                    rhs_real[row] -= real_delta;
-                    rhs_imag[row] -= phasor.imag;
+                    rhs[row] -= amplitude;
                 }
                 if let Some(row) = n.unknown() {
-                    rhs_real[row] += real_delta;
-                    rhs_imag[row] += phasor.imag;
+                    rhs[row] += amplitude;
                 }
             }
-            _ => {
-                return Err(SimError::invalid(
-                    "AC phasor must target an independent source",
-                ));
-            }
+            _ => {}
         }
+    }
+    if rhs
+        .iter()
+        .any(|value| !value.re.is_finite() || !value.im.is_finite())
+    {
+        return Err(SimError::invalid("AC source assembly overflow"));
     }
     // Nonlinear small-signal AC is evaluated around the converged DC point. The
     // analytic Newton Jacobian contains the incremental diode conductances.
@@ -100,18 +126,7 @@ pub fn ac_with_source_phasors(
         Some(matrix) => CscMatrix::from_dense(matrix)?,
         None => plan.conductance_sparse().clone(),
     };
-    let rhs: Vec<_> = rhs_real
-        .iter()
-        .zip(&rhs_imag)
-        .map(|(re, im)| Complex64::new(*re, *im))
-        .collect();
     let mut output = Vec::with_capacity(frequencies.len());
-    if n * frequencies.len() > 1_000_000 {
-        return Err(SimError::new(
-            ErrorCode::ResourceExhausted,
-            "AC retained scalar budget exceeded",
-        ));
-    }
     for &frequency in frequencies {
         positive(frequency, "frequency_hz")?;
         let omega = std::f64::consts::TAU * frequency;

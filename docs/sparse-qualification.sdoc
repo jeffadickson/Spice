@@ -44,3 +44,17 @@ Derived campaign requirement. Implementation: src/ac.rs. Verification: tests/spa
 RELATIONS:
 - TYPE: Parent
   VALUE: SPARSE-002
+
+[REQUIREMENT]
+UID: SPARSE-004
+STATUS: Draft
+TITLE: AC request validation and excitation replacement
+STATEMENT: >>>
+AC shall validate the complete frequency grid, angular-frequency finiteness, output budget and independent-source overrides before bias/provider work. Excitation shall be assembled from selected complex amplitudes rather than subtracting large nominal terms, reject accumulation overflow, and preserve the raw API nominal-amplitude convention when no override is supplied.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation: src/ac.rs. Verification: tests/sparse_ac.rs large-nominal voltage/current override regressions across faer and dense LU, and invalid full-grid rejection before nonlinear bias. Iteration 381 first reproduced an incorrect real output with nominal 1e308 and override 1+2j.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-003
