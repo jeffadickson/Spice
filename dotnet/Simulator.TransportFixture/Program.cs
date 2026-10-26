@@ -1,14 +1,27 @@
 using System.Text.Json;
 
+// The protocol is UTF-8 on every platform, independent of the Windows console
+// code page inherited by an apphost launched without an interactive console.
+Console.InputEncoding = new System.Text.UTF8Encoding(false, true);
+Console.OutputEncoding = new System.Text.UTF8Encoding(false);
+
 // Synthetic subprocess protocol fixture. Input controls only its own output;
 // these envelopes are deliberately not numerical simulator qualification.
 using var request = JsonDocument.Parse(await Console.In.ReadToEndAsync());
 var root = request.RootElement;
 if (root.TryGetProperty("flood", out var flood))
 {
-    var writer = flood.GetString() == "stderr" ? Console.Error : Console.Out;
-    var block = new string('x', 8192);
-    for (var i = 0; i < 4097; i++) await writer.WriteAsync(block);
+    var stream = flood.GetString()!;
+    var writer = stream.StartsWith("stderr", StringComparison.Ordinal) ? Console.Error : Console.Out;
+    var block = new string(stream.EndsWith("unicode", StringComparison.Ordinal) ? 'é' : 'x', 8192);
+    var count = root.TryGetProperty("blocks", out var blocks) ? blocks.GetInt32() : 4097;
+    for (var i = 0; i < count; i++) await writer.WriteAsync(block);
+}
+if (root.TryGetProperty("invalid_utf8", out var invalid))
+{
+    var stream = invalid.GetString() == "stderr" ? Console.OpenStandardError() : Console.OpenStandardOutput();
+    await stream.WriteAsync(new byte[] { 0xc3, 0x28 });
+    await stream.FlushAsync();
 }
 if (root.TryGetProperty("mode", out var mode) && mode.GetString() == "hang")
 {

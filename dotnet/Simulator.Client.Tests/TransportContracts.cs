@@ -8,6 +8,36 @@ public sealed class TransportContracts
     [Theory]
     [InlineData("stdout")]
     [InlineData("stderr")]
+    public async Task RejectsInvalidUtf8OnEitherPipe(string stream)
+    {
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Fixture().RunJsonAsync(
+            JsonSerializer.Serialize(new { invalid_utf8 = stream, output = "" })));
+        Assert.Contains("UTF-8", error.Message);
+    }
+
+    [Fact]
+    public async Task MultibyteDiagnosticsUseTheByteLimit()
+    {
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Fixture().RunJsonAsync(
+            JsonSerializer.Serialize(new { flood = "stderr-unicode", blocks = 2049,
+                output = """{"schema_version":"1","status":"succeeded","complete":true}""" }), deadline.Token));
+        Assert.Contains("32 MiB", error.Message);
+    }
+
+    [Fact]
+    public async Task ExactRequestAndDiagnosticLimitsRemainAccepted()
+    {
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        var request = JsonSerializer.Serialize(new { flood = "stderr", blocks = 4096,
+            output = """{"schema_version":"1","status":"succeeded","complete":true}""" });
+        request += new string(' ', 1_048_576 - request.Length);
+        var response = await Fixture().RunJsonAsync(request, deadline.Token);
+        Assert.True(response.Succeeded);
+    }
+    [Theory]
+    [InlineData("stdout")]
+    [InlineData("stderr")]
     public async Task OversizedChildStreamsFailWithoutPipeDeadlock(string stream)
     {
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(15));
