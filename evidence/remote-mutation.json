@@ -1,8 +1,8 @@
 {
-  "strategy": "two deliberate provenance mutations in copied C# scripts",
-  "source_sha256": "bb4e1b6bdd3d9042aa2373b46b21efed22a9669f3fc84b9b6a17c12f1332a8af",
-  "killed": 2,
-  "total": 2,
+  "strategy": "four deliberate provenance/accounting mutations in copied C# scripts; separate from Stryker client mutations",
+  "source_sha256": "daa6234096ac314ab050ade4a63ea7e4910c0e843a27d05b6191a70c30724a35",
+  "killed": 4,
+  "total": 4,
   "mutants": [
     {
       "name": "source-revision",
@@ -11,6 +11,16 @@
     },
     {
       "name": "source-hash",
+      "status": "killed",
+      "exit_code": 1
+    },
+    {
+      "name": "framework-summary-hash",
+      "status": "killed",
+      "exit_code": 1
+    },
+    {
+      "name": "framework-counts",
       "status": "killed",
       "exit_code": 1
     }

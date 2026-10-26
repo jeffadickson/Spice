@@ -1,11 +1,19 @@
 # Overnight endurance campaign
 
 `make endurance` defaults to five hours; the explicit duration may be configured up to 24 hours. The supervisor runs the selected
-source mutations once, then spends the remaining budget on changing-seed batches:
-parser/deck mutations, sparse-layout validation, analytic resistor dividers with
-independent physical audits, and diode derivative checks. It stops on failure.
-This is seeded fuzz/property testing, not coverage-guided libFuzzer or exhaustive
-cargo-mutants. Repeating the same 22 source mutants is not counted as new breadth.
+source mutations once, allocates half the remaining budget to pinned cargo-mutants
+and Stryker.NET, then uses remaining time for changing-seed batches: parser/deck
+mutations, sparse-layout validation, analytic resistor dividers with independent
+physical audits, and diode derivative checks. Framework baseline/infrastructure
+failures stop the campaign; survivors remain findings and deadline-limited framework
+work remains partial. This is seeded fuzz/property testing, not coverage-guided
+libFuzzer. Neither a bounded shard nor the 22 targeted checks are exhaustive.
+
+Read [framework mutation setup and reports](mutation-frameworks.md) before the
+first run. The default launcher verifies both tools; use make mutation-tools to
+install pinned versions. SkipMutation explicitly skips targeted and generated
+mutations. Short smoke budgets should use that switch; cold compilation and
+framework discovery may consume a small budget before any mutants are tested.
 
 Commands from the repository root:
 

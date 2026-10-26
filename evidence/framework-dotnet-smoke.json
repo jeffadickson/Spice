@@ -1,0 +1,388 @@
+{
+  "scope": "Completed Stryker.NET 5.0.0 managed snapshot; Client.cs only; six xUnit cases including 28 real-engine checks",
+  "snapshot_source_hashes": {
+    "dotnet/Simulator.Client/Requests.cs": "67322b96b7b15fef97119bf557ada5655ddf43e9bebb6b11c5416d2ba1a92276",
+    "dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj": "86fdfd9e3438de4f1605b5bd11f38578eba5dd8b380ea0e17bd7cab0c0a74314",
+    "dotnet/Simulator.Client/Results.cs": "6a918d82ce4874393245160e9a3b1e8a9a1ab3be6879fd9043edbf8ba6079bd1",
+    "dotnet/SForge.Language/SemanticValidator.cs": "747bdb4b39a6c176a897fe15dfd86d8a64fe3a066d11032cd1dc1500256c651b",
+    "dotnet/SForge.Language/Lexer.cs": "bac6c61deca04e3378b84d3ccec2e389cf8bc294f7988bcc0ec34183c8ee96a2",
+    "dotnet/Simulator.Client/Client.cs": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
+    "dotnet/Simulator.Conformance/Program.cs": "e33e7c131f9231c2a60ddc1cc1123194a05beb1b9b0eb927d4a9c65d1ab653bc",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "32d8bca01eca74ff14fc01efd84cd620d38f1ff6e27e262159fce7c698bf54a7",
+    "dotnet/Simulator.Client.Tests/stryker-config.json": "9b2705fae961511a6b7903becbd1b2a5270c6d2603c069f97eb8697dc0f50820",
+    "dotnet/SForge.Runner/Program.cs": "aa781313176604b5a608a0a8c9506e593a37ce4b9ab3ed36e5ecb786741a94fe",
+    "dotnet/Simulator.Client.Tests/ClientContracts.cs": "1ea59fa7b8a1bb81097e300be5941f82b7eb549610e3c9eb0d112d14a5bcfeb1",
+    "dotnet/SForge.Language/Lowering.cs": "bc76a8301fef95a3b1d9e3603c28e506c77e8356bbb8a79ebd8be8891c9298f4",
+    "dotnet/SForge.Language/Parser.cs": "d82275beb0fbe0f440d7643352dd58f63beccb03cc867a95d29f9c5264f81899",
+    "dotnet/Simulator.Conformance/Simulator.Conformance.csproj": "f6d665702bcc8347056a6e7b48a386f236a0f66dd47168c32b4f3c4b8f024c43",
+    "dotnet/SForge.Language/SForge.Language.csproj": "5576409cdcb22ca72bef2d89beedfff6dd86cac06fe44a70114ed702b1b1aa71",
+    "dotnet/SForge.Runner/SForge.Runner.csproj": "fc55b96cdefa6c7d0c2eabbe04fc5e2fcfebb062510a2a7ca8ceca5e67343cf6",
+    "dotnet/SForge.Language.Conformance/SForge.Language.Conformance.csproj": "41e9ca574ac5d4a736aba27ff3e344f8556c3c912f0fea529c711acec79cb6b2",
+    "dotnet/SForge.Language/Ast.cs": "bec6a74acc5f838c23b2dafaa8d17abd90f994b3cd863459097a798f2f2bdbb7",
+    "dotnet/Simulator.Client/WireContext.cs": "f1c7a3f8e82e8fcb3671725851a4b154a34c152a8d79c8fd05782e21be432a15",
+    "dotnet/SForge.Language.Conformance/Program.cs": "dc42d7b2ead3f660c1a9d72eefd063248e6a50f6a2fa62e4b441b9ac4e441862",
+    "dotnet/Simulator.Conformance/MoreChecks.cs": "5cc7e714d9e8200833b06fcf7c5c4f4c15b6d071e58ad4999acf23874438336d",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Conformance/ConformanceChecks.cs": "f4ad91e28d204f43475939767b48a8c284c94d5018791b2bc84a8922fa3788c3"
+  },
+  "result": {
+    "version": "5.0.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 117,
+    "killed": 63,
+    "survived": 21,
+    "timed_out": 3,
+    "invalid": 5,
+    "not_covered": 15,
+    "pending": 0,
+    "other": 0,
+    "ignored": 10,
+    "unattempted": 0,
+    "report_sha256": "fc9ad66c62447fa09d61a812c6b6cb1a8dae4fc01bd24f8c28667e3f65a6ccdb",
+    "log_sha256": "c9c1639c1b778962ef168e77f4d552a165cd417496079e10e96ca2180bd6e9ab"
+  },
+  "survivors_for_review": [
+    {
+      "file": "Client.cs",
+      "mutator": "String mutation",
+      "location": {
+        "start": {
+          "line": 12,
+          "column": 61
+        },
+        "end": {
+          "line": 12,
+          "column": 93
+        }
+      },
+      "replacement": "\"\"",
+      "id": "3"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Logical mutation",
+      "location": {
+        "start": {
+          "line": 14,
+          "column": 13
+        },
+        "end": {
+          "line": 16,
+          "column": 101
+        }
+      },
+      "replacement": "manifest.SchemaVersion != \"1\" || manifest.Status != \"succeeded\" || !manifest.Complete ||\n            manifest.Signals is null || manifest.Samples is null || manifest.AcSamples is null ||\n            manifest.Measurements is null || manifest.Assertions is null && manifest.Backend is null",
+      "id": "8"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Logical mutation",
+      "location": {
+        "start": {
+          "line": 14,
+          "column": 13
+        },
+        "end": {
+          "line": 16,
+          "column": 73
+        }
+      },
+      "replacement": "manifest.SchemaVersion != \"1\" || manifest.Status != \"succeeded\" || !manifest.Complete ||\n            manifest.Signals is null || manifest.Samples is null || manifest.AcSamples is null ||\n            manifest.Measurements is null && manifest.Assertions is null",
+      "id": "9"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Logical mutation",
+      "location": {
+        "start": {
+          "line": 14,
+          "column": 13
+        },
+        "end": {
+          "line": 16,
+          "column": 42
+        }
+      },
+      "replacement": "manifest.SchemaVersion != \"1\" || manifest.Status != \"succeeded\" || !manifest.Complete ||\n            manifest.Signals is null || manifest.Samples is null || manifest.AcSamples is null &&\n            manifest.Measurements is null",
+      "id": "10"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Logical mutation",
+      "location": {
+        "start": {
+          "line": 14,
+          "column": 13
+        },
+        "end": {
+          "line": 15,
+          "column": 95
+        }
+      },
+      "replacement": "manifest.SchemaVersion != \"1\" || manifest.Status != \"succeeded\" || !manifest.Complete ||\n            manifest.Signals is null || manifest.Samples is null && manifest.AcSamples is null",
+      "id": "11"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Logical mutation",
+      "location": {
+        "start": {
+          "line": 14,
+          "column": 13
+        },
+        "end": {
+          "line": 15,
+          "column": 65
+        }
+      },
+      "replacement": "manifest.SchemaVersion != \"1\" || manifest.Status != \"succeeded\" || !manifest.Complete ||\n            manifest.Signals is null && manifest.Samples is null",
+      "id": "12"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Logical mutation",
+      "location": {
+        "start": {
+          "line": 14,
+          "column": 13
+        },
+        "end": {
+          "line": 15,
+          "column": 37
+        }
+      },
+      "replacement": "manifest.SchemaVersion != \"1\" || manifest.Status != \"succeeded\" || !manifest.Complete &&\n            manifest.Signals is null",
+      "id": "13"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Logical mutation",
+      "location": {
+        "start": {
+          "line": 14,
+          "column": 13
+        },
+        "end": {
+          "line": 14,
+          "column": 98
+        }
+      },
+      "replacement": "manifest.SchemaVersion != \"1\" || manifest.Status != \"succeeded\" && !manifest.Complete",
+      "id": "14"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Logical mutation",
+      "location": {
+        "start": {
+          "line": 14,
+          "column": 13
+        },
+        "end": {
+          "line": 14,
+          "column": 76
+        }
+      },
+      "replacement": "manifest.SchemaVersion != \"1\" && manifest.Status != \"succeeded\"",
+      "id": "15"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Logical mutation",
+      "location": {
+        "start": {
+          "line": 17,
+          "column": 39
+        },
+        "end": {
+          "line": 17,
+          "column": 101
+        }
+      },
+      "replacement": "s.Values is null && s.Values.Length != manifest.Signals.Length",
+      "id": "28"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Logical mutation",
+      "location": {
+        "start": {
+          "line": 18,
+          "column": 41
+        },
+        "end": {
+          "line": 18,
+          "column": 103
+        }
+      },
+      "replacement": "s.Values is null && s.Values.Length != manifest.Signals.Length",
+      "id": "32"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "String mutation",
+      "location": {
+        "start": {
+          "line": 19,
+          "column": 44
+        },
+        "end": {
+          "line": 19,
+          "column": 86
+        }
+      },
+      "replacement": "\"\"",
+      "id": "36"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Statement mutation",
+      "location": {
+        "start": {
+          "line": 48,
+          "column": 9
+        },
+        "end": {
+          "line": 48,
+          "column": 53
+        }
+      },
+      "replacement": ";",
+      "id": "61"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Equality mutation",
+      "location": {
+        "start": {
+          "line": 49,
+          "column": 13
+        },
+        "end": {
+          "line": 49,
+          "column": 76
+        }
+      },
+      "replacement": "System.Text.Encoding.UTF8.GetByteCount(requestJson) >= 1_048_576",
+      "id": "63"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "String mutation",
+      "location": {
+        "start": {
+          "line": 50,
+          "column": 41
+        },
+        "end": {
+          "line": 50,
+          "column": 65
+        }
+      },
+      "replacement": "\"\"",
+      "id": "66"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Boolean mutation",
+      "location": {
+        "start": {
+          "line": 53,
+          "column": 85
+        },
+        "end": {
+          "line": 53,
+          "column": 89
+        }
+      },
+      "replacement": "false",
+      "id": "72"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Collection initializer mutation",
+      "location": {
+        "start": {
+          "line": 64,
+          "column": 27
+        },
+        "end": {
+          "line": 64,
+          "column": 66
+        }
+      },
+      "replacement": "new List<Task> {}",
+      "id": "77"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Statement mutation",
+      "location": {
+        "start": {
+          "line": 68,
+          "column": 17
+        },
+        "end": {
+          "line": 68,
+          "column": 33
+        }
+      },
+      "replacement": ";",
+      "id": "81"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "LogicalNotExpression to un-LogicalNotExpression mutation",
+      "location": {
+        "start": {
+          "line": 85,
+          "column": 17
+        },
+        "end": {
+          "line": 85,
+          "column": 35
+        }
+      },
+      "replacement": "process.HasExited",
+      "id": "98"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Equality mutation",
+      "location": {
+        "start": {
+          "line": 95,
+          "column": 17
+        },
+        "end": {
+          "line": 95,
+          "column": 57
+        }
+      },
+      "replacement": "builder.Length + read >= 32 * 1024 * 1024",
+      "id": "107"
+    },
+    {
+      "file": "Client.cs",
+      "mutator": "Arithmetic mutation",
+      "location": {
+        "start": {
+          "line": 95,
+          "column": 17
+        },
+        "end": {
+          "line": 95,
+          "column": 38
+        }
+      },
+      "replacement": "builder.Length - read",
+      "id": "109"
+    }
+  ],
+  "limitations": [
+    "Latest selector-mode validation timed out without a native report; this report preserves the earlier completed managed run.",
+    "Timeouts are separate from kills; do not use the headline score as a test-detected kill percentage.",
+    "DTO-only sources and standalone C# automation are not in Stryker mutation scope."
+  ]
+}

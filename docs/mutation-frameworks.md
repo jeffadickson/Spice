@@ -1,0 +1,76 @@
+# Generated mutation campaigns
+
+The repository uses cargo-mutants 27.1.0 for Rust and Stryker.NET 5.0.0 for C#.
+These are developer tools, not simulator runtime dependencies. The 22 custom
+numerical regression mutations remain a separate first-stage check.
+
+From PowerShell 7 at repository root:
+
+    make mutation-tools
+    ./scripts/Run-FrameworkMutations.ps1 -Minutes 60
+    ./scripts/Run-FrameworkMutations.ps1 -Minutes 20 -Shard 3/16
+    ./scripts/Run-FrameworkMutations.ps1 -Minutes 10 -RustFile src/quantity.rs -RustTest analyses
+    ./scripts/Run-FrameworkMutations.ps1 -Minutes 60 -Tool rust
+    ./scripts/Run-FrameworkMutations.ps1 -Minutes 20 -Tool dotnet
+    make mutation-rust MINUTES=60
+    make mutation-dotnet MINUTES=20
+    make endurance MINUTES=300
+
+Setup-MutationTools.ps1 -Install downloads the pinned official cargo-mutants
+release for Windows/Linux x64, verifies its recorded upstream SHA-256, and restores
+Stryker from the committed root dotnet-tools.json manifest. Verification-only setup
+checks tool pins without downloads. Setup-Host and Start-RemoteRun include this
+step by default; their explicit mutation skip excludes these tools. Initial OS
+approval/Git authentication prerequisites remain in [remote-runs.md](remote-runs.md).
+
+Tool selects all (default), rust or dotnet; skipped tools are explicit. The standalone framework supervisor has a 60-minute default (make uses MINUTES,
+whose default is 300). It builds the real native test dependency, gives Stryker
+40% of the remaining budget, then gives cargo-mutants the rest. A single-tool run gives that tool the remaining budget. The outer endurance
+supervisor runs the targeted mutants first, assigns half its remaining time to
+that framework supervisor, then executes seeded numerical/parser batches. Setup
+and tool verification are outside the campaign clock. Process startup/cleanup can
+add bounded overhead; completed duration is reported, not inferred from a target.
+
+Rust defaults to owned src/*.rs and all generated candidates (shard 0/1). The default test scope is the full suite. An explicit RustTest integration-test name selects a narrower baseline and mutant test target, recorded as rust_test in the summary. Focused evidence does not establish full-suite mutation coverage. The
+endurance workflow uses deterministic round-robin shard (seed modulo 16)/16;
+indices are ZERO-BASED: 0/16 through 15/16. Reuse the exact source revision, shard,
+filter and tool version to replay the selection. Native cargo-mutants reports
+retain individual mutant locations, diffs and outcomes. Order is deterministic,
+not shuffled. A rotating shard improves breadth but does not guarantee all
+candidates finish; unattempted counts remain explicit.
+
+Managed scope is Client.cs: transport, input/output bounds and result validation.
+The xUnit project shares the existing 28 real-engine conformance checks and adds
+completion-field and UTF-8 size-boundary cases. DTO/schema-only files, generated
+JSON metadata and standalone C# tooling are outside the Stryker mutation scope.
+Stryker runs against copied managed sources/binaries and a fixed native executable;
+it does not mutate Rust. cargo-mutants uses its own source copies. Standalone runs
+have an exclusive lock within their checkout; avoid launching two mutation tools
+against the same output tree manually.
+
+work/framework-mutations/<run>/summary.json records pins, scope, shard, requested
+and elapsed budget, per-tool status, separate categories and native report/log
+hashes. Native JSON reports, diffs, minimized/replay fixtures where applicable and
+logs remain local. Endurance archives its summary and exports only bounded count
+fields plus its hash. The Git result publisher verifies summary hash/metadata/counts
+before adding these fields to the existing allowlisted remote manifest. Per-tool status and nullable native-report hashes distinguish unavailable outcome counts from measured zero.
+
+Interpret categories separately: killed, survived, timeout, compile-error/invalid,
+no-coverage, ignored, pending, unknown and unattempted. A timeout does not establish
+a test-detected kill. Stryker's headline score can include timeouts; do not present
+that score as a kill-only percentage. Survivors require review for missing tests,
+equivalent behavior or meaningful specification gaps. Baseline failures are tooling
+failures; deadline interruption is partial work. If interruption prevents a native
+report, zero recorded categories mean unavailable counts, not zero candidates.
+No universal mutation score or production qualification is claimed.
+
+Official references: [cargo-mutants](https://mutants.rs/) and
+[Stryker.NET configuration](https://stryker-mutator.io/docs/stryker-net/configuration/).
+Requirements MUT-001/MUT-002 and actual evidence are in
+[the qualification report](../evidence/framework-mutation-qualification.md).
+
+Native framework logs/reports and build caches remain local and may grow with the campaign; the supervisors do not enforce an OS-wide disk or memory quota. Stream-log retention and exported manifests have separate bounds.
+
+
+The initial Rust smoke exposed generated constructors that cannot compile for the SimResult alias. These remain unviable outcomes, not kills or a test score. Framework tuning for that alias is still pending; the targeted numerical mutants remain complementary coverage.
+

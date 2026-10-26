@@ -66,3 +66,5 @@ The initial size/output budgets remain enforced. The local artifact API requires
 
 The full plan remains partially implemented. CI is configured but no remote execution is claimed. Product source licensing and distribution qualification remain open decisions.
 
+
+Generated Rust/C# mutations: see [mutation framework instructions](docs/mutation-frameworks.md).

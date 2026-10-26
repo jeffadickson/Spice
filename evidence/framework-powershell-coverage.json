@@ -1,0 +1,20 @@
+{
+  "tool": "Pester 3.4 command tracing",
+  "source_hashes": {
+    "scripts/Run-Endurance.ps1": "2aad1a0b863db298d0314b7ebe28b293dd1c47b4bc85dd6424fd74199f337559",
+    "scripts/Run-FrameworkMutations.ps1": "6c2dc92dc52639e53abf6080ee430c7c4ab4384438396e71885936e3f92b88fc",
+    "scripts/Setup-Host.ps1": "d3643fc93662bf1f2c818f83345441c222ca82ebf04be4f3e6fd3721522c214f",
+    "scripts/Start-RemoteRun.ps1": "f390a3c44598026543776d1461a69adff6e56cf6f314c2dec7525b53598fa245",
+    "scripts/Test-Remote.ps1": "bb6a18a0278e4d3137ebfc086638c7825d7d79a2f8e11c6907d647b15bcba143",
+    "scripts/Setup-MutationTools.ps1": "6359c5e7899b54247f3d91dc0ed6637f5d3ff42c214d0761d8aaaaa2fe4eded2"
+  },
+  "commands_analyzed": 412,
+  "commands_hit": 105,
+  "command_percent": 25.485436893203882,
+  "branch_percent": null,
+  "scope": "Six PowerShell orchestration files during twelve tooling contracts; subprocess script execution is outside tracing scope",
+  "limitations": [
+    "Command tracing is not statement/branch coverage.",
+    "Native installation/download branches and process-boundary launcher paths remain unmeasured."
+  ]
+}

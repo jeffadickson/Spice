@@ -28,37 +28,37 @@
       "dotnet/Simulator.Client/Requests.cs": "67322b96b7b15fef97119bf557ada5655ddf43e9bebb6b11c5416d2ba1a92276",
       "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857"
     },
-    "line_percent": 92.71523178807946,
-    "branch_percent": 77.27272727272727,
-    "lines": 151,
-    "covered_lines": 140,
-    "branches": 66,
-    "covered_branches": 51,
+    "line_percent": 93.37748344370861,
+    "branch_percent": 78.78787878787878,
+    "lines": 151.0,
+    "covered_lines": 141.0,
+    "branches": 66.0,
+    "covered_branches": 52.0,
     "exclusions": [
       "Rust/native runtime code",
       "generated/framework code",
       "test executable"
-    ]
+    ],
+    "current_report": "evidence/framework-tooling-coverage.json"
   },
   "additional_unmeasured": [
-    "CSharp mutation drivers",
-    "FSharp examples",
-    "Native installer paths; PowerShell command subset only"
+    "Selected numerical mutation driver and checkpoint orchestration",
+    "Complete native installer paths and all PowerShell subprocess execution",
+    "FSharp examples"
   ],
   "rust_windows": {
-    "status": "unavailable",
+    "status": "not_measured_after_toolchain_install",
     "toolchain": "nightly-x86_64-pc-windows-msvc with profiler_builtins",
     "line_percent": null,
     "branch_percent": null,
-    "reason": "The coverage toolchain includes profiler_builtins, but this host lacks the MSVC link.exe required to link instrumented Windows binaries",
+    "reason": "Build Tools/SDK installed and native compile/link/run smoke passed; Windows Rust instrumentation has not yet been rerun.",
     "attempted_command": "scripts/Test-Coverage.ps1",
-    "remediation": "Install Visual C++ Build Tools and a Windows SDK, then rerun scripts/Test-Coverage.ps1. Linux/WSL2 coverage was measured separately in evidence/rust-coverage-linux.json.",
+    "remediation": "Rerun scripts/Test-Coverage.ps1 and retain actual Windows metrics. Linux measurements remain separate.",
     "attempted_checkpoint": 320,
     "unmeasured_current_scope": "All owned Rust including src/audit.rs, src/topology.rs, tracing instrumentation and tests; changed-line/branch metrics unavailable on this host"
   },
   "qualification_tooling": {
-    "supervisor": "evidence/remote-endurance-coverage.json",
-    "publisher": "evidence/remote-publisher-coverage.json",
-    "powershell_command_subset": "evidence/remote-powershell-coverage.json"
+    "current_powershell_command_subset": "evidence/framework-powershell-coverage.json",
+    "current_csharp": "evidence/framework-tooling-coverage.json"
   }
 }

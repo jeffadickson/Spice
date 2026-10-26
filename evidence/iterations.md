@@ -228,3 +228,7 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 327. Correct LLVM export argument construction and Linux virtual-environment preflight.
 328. State coverage scope and unavailable branch metrics explicitly.
 329. Recover bounded checkpoint file-sharing contention; preserve failed partial campaigns and restart the requested full hour.
+330. Pin mutation tools and expose shared managed conformance checks through xUnit.
+331. Supervise generated mutation budgets/shards and validate exported framework accounting.
+332. Record explicit Rust integration-test scope for focused validation.
+333. Preserve per-tool outcome availability, add independent tool modes and exercise synthetic supervisor/real mutation contracts.

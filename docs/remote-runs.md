@@ -138,3 +138,9 @@ Tooling checks:
 
 Measured scopes and actual host execution limits are recorded in
 evidence/remote-workflow-qualification.md.
+
+Generated mutation tools are installed/verified automatically unless SkipMutation
+is selected. Endurance now runs targeted checks, a budgeted cargo-mutants/Stryker
+phase, then seeded batches. Exported framework counts/hash/shard are distinct from
+the legacy 22-mutation score. See [mutation-frameworks.md](mutation-frameworks.md)
+for scope, zero-based shard replay, partial-run handling and native report locations.

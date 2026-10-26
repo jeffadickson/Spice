@@ -1,0 +1,66 @@
+{
+  "requirements": [
+    "MUT-001",
+    "MUT-002"
+  ],
+  "source_hashes": {
+    "scripts/RemoteQualification.cs": "daa6234096ac314ab050ade4a63ea7e4910c0e843a27d05b6191a70c30724a35",
+    "scripts/Test-RemoteMutations.cs": "b75e8c2401dfd470e91700a8710084c8b83b7e15ed3afa160ccc8616abd42509",
+    "tests/EnduranceFramework.Tests.ps1": "83895a32f603c237eaf63d1a989d73307ea61ee13b6754f3cb0621a3cc5c9fc0",
+    "scripts/Setup-MutationTools.ps1": "6359c5e7899b54247f3d91dc0ed6637f5d3ff42c214d0761d8aaaaa2fe4eded2",
+    "scripts/Test-Remote.ps1": "bb6a18a0278e4d3137ebfc086638c7825d7d79a2f8e11c6907d647b15bcba143",
+    "dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj": "86fdfd9e3438de4f1605b5bd11f38578eba5dd8b380ea0e17bd7cab0c0a74314",
+    "scripts/Setup-Host.ps1": "d3643fc93662bf1f2c818f83345441c222ca82ebf04be4f3e6fd3721522c214f",
+    "scripts/FrameworkMutations.cs": "2be302806942aed91ee4d9d3d595b43c40b3326f25eb33218b98e02feafda611",
+    "scripts/Endurance.cs": "c91c202b3bc45454cb3782a4606fb3de44d24456ff3fec0c536ceabdf7c33ea2",
+    "dotnet/Simulator.Client.Tests/stryker-config.json": "9b2705fae961511a6b7903becbd1b2a5270c6d2603c069f97eb8697dc0f50820",
+    "dotnet-tools.json": "660d71ccad8f888d71f03aeb17dc8ec73537377c5ba6ce95cf22a635196c418a",
+    "scripts/Run-Endurance.ps1": "2aad1a0b863db298d0314b7ebe28b293dd1c47b4bc85dd6424fd74199f337559",
+    "dotnet/Simulator.Client.Tests/ClientContracts.cs": "1ea59fa7b8a1bb81097e300be5941f82b7eb549610e3c9eb0d112d14a5bcfeb1",
+    "tests/FrameworkMutations.Tests.ps1": "6b9d7c6a26b8e58f6dea11d2cce72e0fcb5ff5af9a193a116290207dd78972e0",
+    "tests/Remote.Tests.ps1": "a44ca6be18d874ca7ecf3c43ce7d0fbf7aa8b124314b6d6ffb7d35b3de24c422",
+    "scripts/Run-FrameworkMutations.ps1": "6c2dc92dc52639e53abf6080ee430c7c4ab4384438396e71885936e3f92b88fc"
+  },
+  "checkpoint": "evidence/checkpoint-330.json",
+  "rust_tests_passed": 242,
+  "rust_tests_ignored": 1,
+  "managed_checks": 28,
+  "xunit_cases": 6,
+  "tooling_contracts_passed": 12,
+  "tooling_contracts_failed": 0,
+  "deliberate_guard_mutants_killed": 4,
+  "deliberate_guard_mutants_total": 4,
+  "strictdoc_documents": 12,
+  "strictdoc_ids": 213,
+  "strictdoc_parent_links": 196,
+  "rust_inventory_candidates": 3264,
+  "rust_smoke_report": "evidence/framework-rust-smoke.json",
+  "dotnet_smoke_report": "evidence/framework-dotnet-smoke.json",
+  "coverage_reports": [
+    "evidence/framework-tooling-coverage.json",
+    "evidence/framework-powershell-coverage.json"
+  ],
+  "setup": {
+    "ubuntu_2404_wsl2_x64": "passed",
+    "windows_x64": "passed",
+    "linux_framework_execution": "not_run"
+  },
+  "real_endurance_validation": {
+    "mutation_status": "incomplete_timeout",
+    "budget_seconds": 720,
+    "framework_status": "not_run",
+    "cases": 0,
+    "source_commit": "76259ff70e6f71a5d22f4d49e552daa4ae584d76",
+    "status": "failed",
+    "published_branch": "remote-runs/windows-x64-framework-integration-12m/20261026T172936Z-96c5ad0f-76259ff70e6f",
+    "elapsed_seconds": 720.4495914,
+    "source_dirty": false
+  },
+  "synthetic_supervisor_fixture": "passed; not simulator/numerical/framework mutation evidence",
+  "limits": [
+    "No completed real combined generated-mutation/fuzz overnight campaign yet.",
+    "Stryker survivors await adjudication.",
+    "SimResult alias creates unviable cargo-mutants candidates.",
+    "Timeouts, ignored and compiler-invalid outcomes are not test-detected kills."
+  ]
+}

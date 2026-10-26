@@ -1,0 +1,61 @@
+{
+  "scope": "Current cargo-mutants 27.1.0; quantity.rs only; analyses integration test only; bounded partial run",
+  "supervisor_source_hash": "2be302806942aed91ee4d9d3d595b43c40b3326f25eb33218b98e02feafda611",
+  "source_hashes": {
+    "src/quantity.rs": "bd53faa680ee46119020b2fe33ee8c023b8c42cfd216455ef5c205e43450e892",
+    "Cargo.lock": "482bf75fad858b31797fcf5415548491f478f64b9db588752034ca7b50ab88ee",
+    "scripts/FrameworkMutations.cs": "2be302806942aed91ee4d9d3d595b43c40b3326f25eb33218b98e02feafda611",
+    "Cargo.toml": "5d20829a72e466a66ffc116cb2e20bdd007b4ee343cf2b9f49793dd3ba037fc4",
+    "tests/analyses.rs": "d92f21fd6603487fa77462fedb5d6ebaa2a04c2266324128b5a2c7b6c081536c"
+  },
+  "result": {
+    "status": "partial_timeout",
+    "requested_seconds": 480,
+    "elapsed_seconds": 480.2256299,
+    "shard": "0/1",
+    "rust_file": "src/quantity.rs",
+    "rust_test": "analyses",
+    "tool": "rust",
+    "cargo_mutants": {
+      "version": "27.1.0",
+      "status": "partial_timeout",
+      "exit_code": -1,
+      "candidates": 36,
+      "killed": 5,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 30,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 1,
+      "report_sha256": "81a40dc53c714ea78ff9d09331722c0ebb424e2991c40e749363729a3234d504",
+      "log_sha256": "cb2d95dda5ca83ddac8e01ca9bdb80cf571f05b826a57d8aa71e5e689caf7272"
+    },
+    "stryker": {
+      "version": "5.0.0",
+      "status": "skipped_explicitly",
+      "exit_code": null,
+      "candidates": 0,
+      "killed": 0,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": null,
+      "log_sha256": null
+    }
+  },
+  "limitations": [
+    "Five kills are not a whole-project mutation score.",
+    "Thirty unviable mutations include unsupported SimResult alias constructors (E0599/E0271/E0277); compiler rejection is not a test-detected kill.",
+    "One candidate remained unattempted at the deadline.",
+    "The full project inventory had 3264 candidates; they were not all tested."
+  ],
+  "supervisor_run_source_dirty": true
+}

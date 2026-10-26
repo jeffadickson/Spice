@@ -1,0 +1,140 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "scope": "Owned C# sources; scoped bounded tests only; vendor/tool internals excluded",
+  "metrics": [
+    {
+      "file": "scripts/FrameworkMutations.cs",
+      "source_sha256": "2be302806942aed91ee4d9d3d595b43c40b3326f25eb33218b98e02feafda611",
+      "scope": "Current Rust-only run, .NET-only partial run, malformed-input contracts",
+      "lines": 87,
+      "covered_lines": 87,
+      "line_percent": 100,
+      "branches": 136,
+      "covered_branches": 96,
+      "branch_percent": 70.58823529411765,
+      "local_collector_reports": [
+        "build/coverage/framework-rust-final.cobertura.xml",
+        "work/managed-framework-validation/build/framework-dotnet-final.cobertura.xml",
+        "build/coverage/framework-contracts-complete.cobertura.xml"
+      ]
+    },
+    {
+      "file": "scripts/Endurance.cs",
+      "source_sha256": "c91c202b3bc45454cb3782a4606fb3de44d24456ff3fec0c536ceabdf7c33ea2",
+      "scope": "Current synthetic orchestration fixture; fixture counts are not simulator qualification",
+      "lines": 153,
+      "covered_lines": 138,
+      "line_percent": 90.19607843137256,
+      "branches": 114,
+      "covered_branches": 77,
+      "branch_percent": 67.54385964912281,
+      "local_collector_reports": [
+        "build/coverage/framework-contracts-complete.cobertura.xml"
+      ]
+    },
+    {
+      "file": "scripts/RemoteQualification.cs",
+      "source_sha256": "daa6234096ac314ab050ade4a63ea7e4910c0e843a27d05b6191a70c30724a35",
+      "scope": "Current local-Git publication and rejection contracts",
+      "lines": 153,
+      "covered_lines": 116,
+      "line_percent": 75.81699346405229,
+      "branches": 244,
+      "covered_branches": 166,
+      "branch_percent": 68.0327868852459,
+      "local_collector_reports": [
+        "build/coverage/framework-contracts-complete.cobertura.xml"
+      ]
+    },
+    {
+      "file": "scripts/Test-RemoteMutations.cs",
+      "source_sha256": "b75e8c2401dfd470e91700a8710084c8b83b7e15ed3afa160ccc8616abd42509",
+      "scope": "Four deliberate guard mutations with focused contracts",
+      "lines": 25,
+      "covered_lines": 25,
+      "line_percent": 100,
+      "branches": 20,
+      "covered_branches": 13,
+      "branch_percent": 65,
+      "local_collector_reports": [
+        "build/coverage/framework-guard-mutator-complete.cobertura.xml"
+      ]
+    },
+    {
+      "file": "dotnet/Simulator.Conformance/ConformanceChecks.cs",
+      "source_sha256": "7f2069aac6bb9791114247cd5b9cbe63c80a503e930d297807790ebfdbb89708",
+      "scope": "Real-engine xUnit contracts",
+      "lines": 44,
+      "covered_lines": 44,
+      "line_percent": 100,
+      "branches": 34,
+      "covered_branches": 23,
+      "branch_percent": 67.6470588235294,
+      "local_collector_reports": [
+        "build/coverage/client-xunit-final.cobertura.xml"
+      ]
+    },
+    {
+      "file": "dotnet/Simulator.Client/Client.cs",
+      "source_sha256": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
+      "scope": "Real-engine xUnit contracts; owned client sources",
+      "lines": 73,
+      "covered_lines": 71,
+      "line_percent": 97.26027397260275,
+      "branches": 66,
+      "covered_branches": 52,
+      "branch_percent": 78.78787878787878,
+      "local_collector_reports": [
+        "build/coverage/client-xunit-final.cobertura.xml"
+      ]
+    },
+    {
+      "file": "dotnet/Simulator.Client/Requests.cs",
+      "source_sha256": "67322b96b7b15fef97119bf557ada5655ddf43e9bebb6b11c5416d2ba1a92276",
+      "scope": "Real-engine xUnit contracts; owned client sources",
+      "lines": 43,
+      "covered_lines": 41,
+      "line_percent": 95.34883720930233,
+      "branches": 0,
+      "covered_branches": 0,
+      "branch_percent": null,
+      "local_collector_reports": [
+        "build/coverage/client-xunit-final.cobertura.xml"
+      ]
+    },
+    {
+      "file": "dotnet/Simulator.Client/Results.cs",
+      "source_sha256": "6a918d82ce4874393245160e9a3b1e8a9a1ab3be6879fd9043edbf8ba6079bd1",
+      "scope": "Real-engine xUnit contracts; owned client sources",
+      "lines": 28,
+      "covered_lines": 25,
+      "line_percent": 89.28571428571429,
+      "branches": 0,
+      "covered_branches": 0,
+      "branch_percent": null,
+      "local_collector_reports": [
+        "build/coverage/client-xunit-final.cobertura.xml"
+      ]
+    },
+    {
+      "file": "dotnet/Simulator.Client/SweepResults.cs",
+      "source_sha256": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+      "scope": "Real-engine xUnit contracts; owned client sources",
+      "lines": 7,
+      "covered_lines": 4,
+      "line_percent": 57.142857142857146,
+      "branches": 0,
+      "covered_branches": 0,
+      "branch_percent": null,
+      "local_collector_reports": [
+        "build/coverage/client-xunit-final.cobertura.xml"
+      ]
+    }
+  ],
+  "limitations": [
+    "Rust coverage is separately reported; no Rust branch percentage inferred.",
+    "Native installers, Checkpoint.cs and complete orchestration failure paths are unmeasured.",
+    "Per-line maxima merge duplicate mapped state-machine branch locations; not proof of path completeness.",
+    "Endurance coverage uses a clearly synthetic orchestration fixture, not physical/numerical qualification."
+  ]
+}
