@@ -202,3 +202,31 @@ fn backward_euler_energy_audit_includes_integration_dissipation() {
         .has_failures()
     );
 }
+
+#[test]
+fn manifests_distinguish_physical_checks_and_unavailable_evidence() {
+    use circuit_simulator::api::{Analysis, Request, run};
+    let mut request: Request =
+        serde_json::from_str(include_str!("../examples/divider.json")).unwrap();
+    let manifest = run(&request).unwrap();
+    assert!(!manifest.consistency.has_failures());
+    assert!(
+        manifest
+            .consistency
+            .checks
+            .iter()
+            .any(|c| c.id == "global_accuracy" && c.status == CheckStatus::NotChecked)
+    );
+    request.analysis = Analysis::Ac {
+        frequencies_hz: vec![1.],
+        source_phasors: vec![],
+    };
+    assert!(
+        run(&request)
+            .unwrap()
+            .consistency
+            .checks
+            .iter()
+            .all(|c| c.status == CheckStatus::NotChecked)
+    );
+}

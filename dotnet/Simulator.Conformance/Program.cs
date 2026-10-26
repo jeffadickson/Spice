@@ -29,6 +29,8 @@ var adaptiveManifest = adaptive.ReadManifest();
 Check(adaptiveManifest.Integration!.RejectedSteps > 0 && adaptiveManifest.Assertions[0].Outcome == "pass", "adaptive assertions");
 Check(adaptiveManifest.Measurements[0].Value is > 0.0066 and < 0.0069, "typed measurement");
 Check(Math.Abs(typedManifest.DcPower!.SumAbsorbedW)<1e-12,"DC power");
+Check(typedManifest.Consistency!.Checks.Any(c => c.Id == "power_balance" && c.Status == "passed" && c.Unit == "W" && c.Tolerance > 0), "typed physical audit" );
+Check(typedManifest.Consistency.Checks.Any(c => c.Id == "global_accuracy" && c.Status == "not_checked" && c.Reason is not null), "typed audit limits" );
 using (var bad = System.Text.Json.JsonDocument.Parse("""{"schema_version":"1","status":"succeeded","complete":true}"""))
 {
     try { new SimulationResponse("1","succeeded",true,bad.RootElement.Clone()).ReadManifest(); throw new Exception("Malformed manifest accepted"); }

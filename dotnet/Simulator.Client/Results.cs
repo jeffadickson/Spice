@@ -4,7 +4,7 @@ public sealed record SimulationError(string Code,string Message);
 public sealed record ResultManifest(string SchemaVersion, string CaseId, string Status, bool Complete,
     SignalInfo[] Signals, RealSample[] Samples, AcSample[] AcSamples, MeasurementValue[] Measurements,
     AssertionValue[] Assertions, IntegrationInfo? Integration, BackendInfo Backend, string RequestSha256, PowerInfo? DcPower=null,
-    NewtonInfo? Newton=null);
+    NewtonInfo? Newton=null, ConsistencyInfo? Consistency=null, DiagnosticInfo[]? Diagnostics=null);
 /// <summary>Accepted nonlinear convergence evidence; absent for linear analyses.</summary>
 public sealed record NewtonInfo(int Iterations, double ResidualInf, int DampedSteps, double UpdateInf = 0,
     int LinearSolves = 0, ContinuationInfo? Continuation = null, double? GminSiemens = null,
@@ -29,3 +29,9 @@ public sealed record IntegrationInfo(string Method, string Initialization, int A
 public sealed record BackendInfo(string Id, string Placement, int MaxUnknowns, bool Sparse, bool Gpu,
     bool Complex, bool PreparedReal, string ProviderVersion);
 
+
+/// <summary>Independent physical checks with explicit unavailable evidence and SI bounds.</summary>
+public sealed record ConsistencyInfo(ConsistencyCheck[] Checks);
+public sealed record ConsistencyCheck(string Id, string Status, double? Discrepancy, double? Tolerance, string Unit, string? Reason);
+/// <summary>Bounded preflight findings; warnings do not imply full topology classification.</summary>
+public sealed record DiagnosticInfo(string Code, string Severity, string Subject, string Message);

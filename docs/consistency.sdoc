@@ -83,3 +83,16 @@ Implementation: src/audit.rs::backward_euler_step and AuditReport::merge_worst. 
 RELATIONS:
 - TYPE: Parent
   VALUE: CONS-001
+
+[REQUIREMENT]
+UID: CONS-007
+TITLE: Public audit and diagnostic evidence
+STATEMENT: >>>
+Successful API manifests shall include bounded preflight diagnostics and independent consistency checks. DC and legacy constant-source backward-Euler transient states shall be audited before derived signals are appended; failed physical checks shall return numerical_failure. AC/configured transient physical audits and global accuracy shall be explicitly not_checked. C# consumers shall receive typed additive result fields.
+<<<
+COMMENT: >>>
+Implementation: src/api.rs and dotnet/Simulator.Client/Results.cs. Verification: tests/consistency.rs::manifests_distinguish_physical_checks_and_unavailable_evidence and dotnet/Simulator.Conformance/Program.cs typed audit checks.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: CONS-001

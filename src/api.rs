@@ -59,6 +59,9 @@ pub struct Signal {
 }
 #[derive(Debug, Serialize)]
 pub struct Manifest {
+    /// Independent physical checks; unavailable checks are explicit, never inferred passes.
+    pub consistency: crate::audit::AuditReport,
+    pub diagnostics: Vec<crate::topology::Diagnostic>,
     pub schema_version: &'static str,
     pub case_id: String,
     pub status: &'static str,
@@ -94,6 +97,13 @@ pub fn run_with_registry(
         experiment.validate()?;
     }
     let solver: &dyn LinearSolver = provider.as_ref();
+    let diagnostics = crate::topology::inspect(&request.circuit)?;
+    if let Some(diagnostic) = diagnostics.iter().find(|d| d.severity == "error") {
+        return Err(SimError::invalid(format!(
+            "{}: {}",
+            diagnostic.code, diagnostic.subject
+        )));
+    }
     let plan = compile(&request.circuit)?;
     let mut integration = None;
     let mut newton = None;
@@ -129,6 +139,59 @@ pub fn run_with_registry(
         } => crate::ac::ac_with_source_phasors(&plan, frequencies_hz, source_phasors, solver)?,
         _ => Vec::new(),
     };
+    // Audit raw MNA states before adding derived public signals. This layer uses
+    // element equations, not the matrices whose assembly it is checking.
+    let options = crate::audit::AuditOptions::default();
+    let mut consistency = match &request.analysis {
+        Analysis::OperatingPoint | Analysis::OperatingPointNewton { .. } => crate::audit::dc(
+            &request.circuit,
+            &samples[0].values,
+            options,
+            newton.as_ref().and_then(|r| r.gmin_siemens),
+        )?,
+        Analysis::Transient { .. } => {
+            let mut report = crate::audit::AuditReport { checks: Vec::new() };
+            let mut previous = vec![0.; plan.unknown_count()];
+            let mut time = 0.;
+            for sample in &samples {
+                let mut step = crate::audit::backward_euler_step(
+                    &request.circuit,
+                    &previous,
+                    &sample.values,
+                    sample.time_s - time,
+                    options,
+                )?;
+                for check in &mut step.checks {
+                    check.reason = Some(format!("accepted time_s={}", sample.time_s));
+                }
+                report.merge_worst(step);
+                previous.clone_from(&sample.values);
+                time = sample.time_s;
+            }
+            report
+        }
+        _ => crate::audit::AuditReport {
+            checks: vec![crate::audit::Check::not_checked(
+                "independent_physical_audit",
+                "",
+                "AC and configured transient physical audits are outside this bounded profile; existing numerical residual checks still apply",
+            )],
+        },
+    };
+    consistency.checks.push(crate::audit::Check::not_checked("global_accuracy", "", "physical consistency does not bound global error; refinement and independent reference evidence are required"));
+    if let Some(check) = consistency
+        .checks
+        .iter()
+        .find(|c| c.status == crate::audit::CheckStatus::Failed)
+    {
+        return Err(SimError::new(
+            crate::error::ErrorCode::NumericalFailure,
+            format!(
+                "independent audit failed {}: discrepancy {:?} {}, tolerance {:?}",
+                check.id, check.discrepancy, check.unit, check.tolerance
+            ),
+        ));
+    }
     let mut signals: Vec<Signal> = request
         .circuit
         .nodes
@@ -210,6 +273,8 @@ pub fn run_with_registry(
         None
     };
     let mut manifest = Manifest {
+        consistency,
+        diagnostics,
         schema_version: "1",
         case_id: request.case_id.clone(),
         status: "succeeded",
