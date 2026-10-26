@@ -91,3 +91,14 @@ fn capability_discovery_is_sorted_and_honest() {
     assert!(!c[2].1.complex);
     assert!(c.iter().all(|x| !x.1.gpu));
 }
+
+#[test]
+fn compiler_retains_direct_canonical_sparse_stamps_for_backend_analysis() {
+    let plan = circuit_simulator::compile::compile(&parse("title\nV1 in 0 1\nR1 in out 1k\nC1 out 0 1u").unwrap()).unwrap();
+    assert_eq!(plan.conductance_sparse().dimension(), plan.unknown_count());
+    assert_eq!(plan.charge_sparse().dimension(), plan.unknown_count());
+    assert!(plan.conductance_sparse().nnz() > 0);
+    assert!(plan.charge_sparse().nnz() > 0);
+    let dense = plan.conductance_sparse().entries().collect::<Vec<_>>();
+    assert!(dense.iter().any(|(row, column, value)| row == column && *value > 0.));
+}

@@ -4,6 +4,7 @@ use crate::{
     ids::NodeId,
     linalg::Matrix,
     model::{CapacitorModel, DiodeModel, ResistorModel, TwoTerminalModel},
+    sparse::{CscMatrix, SparseAccumulator},
 };
 /// Immutable nonlinear diode definition retained separately from linear MNA terms.
 #[derive(Debug, Clone, Copy)]
@@ -12,12 +13,19 @@ pub(crate) struct CompiledDiode {
     pub(crate) n: NodeId,
     pub(crate) model: DiodeModel,
 }
+/// Shared bounded stamping surface used by compile-time sparse accumulation and trial Jacobians.
+pub(crate) trait StampMatrix { fn add_stamp(&mut self, row: usize, column: usize, value: f64); }
+impl StampMatrix for Matrix { fn add_stamp(&mut self, row: usize, column: usize, value: f64) { self.add(row, column, value); } }
+impl StampMatrix for SparseAccumulator { fn add_stamp(&mut self, row: usize, column: usize, value: f64) { self.add(row, column, value); } }
 /// Immutable G x + d(Q x)/dt = b plan; Q may contain negative flux rows.
 #[derive(Debug, Clone)]
 pub struct CompiledCircuit {
     pub(crate) circuit: Circuit,
     pub(crate) conductance: Matrix,
     pub(crate) charge: Matrix,
+    /// Canonical directly stamped forms; dense fields above are bounded reference materializations.
+    pub(crate) conductance_sparse: CscMatrix,
+    pub(crate) charge_sparse: CscMatrix,
     pub(crate) rhs: Vec<f64>,
     pub(crate) branch_ids: Vec<String>,
     pub(crate) diodes: Vec<CompiledDiode>,
@@ -29,6 +37,10 @@ impl CompiledCircuit {
     pub fn unknown_count(&self) -> usize {
         self.conductance.n
     }
+    /// Canonical conductance stamp pattern for sparse backend analysis.
+    pub fn conductance_sparse(&self) -> &CscMatrix { &self.conductance_sparse }
+    /// Canonical charge/flux stamp pattern for sparse transient backend analysis.
+    pub fn charge_sparse(&self) -> &CscMatrix { &self.charge_sparse }
     /// Nonlinear device presence selects Newton operating-point solving.
     pub fn has_nonlinear_devices(&self) -> bool {
         !self.diodes.is_empty()
@@ -40,16 +52,16 @@ impl CompiledCircuit {
             .map(|i| i + self.circuit.nodes.len() - 1)
     }
 }
-pub(crate) fn stamp_pair(a: &mut Matrix, p: NodeId, n: NodeId, g: f64) {
+pub(crate) fn stamp_pair(a: &mut impl StampMatrix, p: NodeId, n: NodeId, g: f64) {
     if let Some(i) = p.unknown() {
-        a.add(i, i, g);
+        a.add_stamp(i, i, g);
     }
     if let Some(i) = n.unknown() {
-        a.add(i, i, g);
+        a.add_stamp(i, i, g);
     }
     if let (Some(i), Some(j)) = (p.unknown(), n.unknown()) {
-        a.add(i, j, -g);
-        a.add(j, i, -g);
+        a.add_stamp(i, j, -g);
+        a.add_stamp(j, i, -g);
     }
 }
 pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
@@ -66,8 +78,8 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
         })
         .collect();
     let dimension = circuit.nodes.len() - 1 + branches.len();
-    let mut a = Matrix::zeros(dimension)?;
-    let mut charge = Matrix::zeros(dimension)?;
+    let mut a = SparseAccumulator::new(dimension)?;
+    let mut charge = SparseAccumulator::new(dimension)?;
     let mut rhs = vec![0.; dimension];
     let mut branch = circuit.nodes.len() - 1;
     let mut diodes = Vec::new();
@@ -154,9 +166,11 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
             }
         }
     }
-    if a.values
+    let conductance_sparse = a.to_csc()?;
+    let charge_sparse = charge.to_csc()?;
+    if conductance_sparse.values()
         .iter()
-        .chain(&charge.values)
+        .chain(charge_sparse.values())
         .chain(&rhs)
         .any(|v| !v.is_finite())
     {
@@ -164,8 +178,10 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     }
     Ok(CompiledCircuit {
         circuit: circuit.clone(),
-        conductance: a,
-        charge,
+        conductance: conductance_sparse.to_dense()?,
+        charge: charge_sparse.to_dense()?,
+        conductance_sparse,
+        charge_sparse,
         rhs,
         branch_ids: branches,
         diodes,

@@ -2,6 +2,36 @@ use crate::{
     error::{SimError, SimResult},
     linalg::Matrix,
 };
+use std::collections::BTreeMap;
+
+/// Compiler-owned deterministic sparse stamp accumulator.
+/// Duplicate device stamps are summed before a canonical CSC plan is published.
+#[derive(Debug)]
+pub(crate) struct SparseAccumulator {
+    n: usize,
+    entries: BTreeMap<(usize, usize), f64>,
+}
+impl SparseAccumulator {
+    pub(crate) fn new(n: usize) -> SimResult<Self> {
+        Matrix::zeros(n)?;
+        Ok(Self { n, entries: BTreeMap::new() })
+    }
+    pub(crate) fn add(&mut self, row: usize, column: usize, value: f64) {
+        *self.entries.entry((row, column)).or_insert(0.) += value;
+    }
+    pub(crate) fn to_csc(&self) -> SimResult<CscMatrix> {
+        let mut columns = vec![Vec::<(usize, f64)>::new(); self.n];
+        for (&(row, column), &value) in &self.entries {
+            if value != 0. { columns[column].push((row, value)); }
+        }
+        let mut pointers = vec![0]; let mut rows = Vec::new(); let mut values = Vec::new();
+        for column in columns {
+            for (row, value) in column { rows.push(row); values.push(value); }
+            pointers.push(rows.len());
+        }
+        CscMatrix::new(self.n, pointers, rows, values)
+    }
+}
 /// Backend-neutral canonical CSC structure with sorted unique rows per column.
 ///
 /// The pattern deliberately contains no numerical values. It can therefore be
@@ -120,5 +150,11 @@ impl CscMatrix {
             .slots()
             .zip(self.values.iter().copied())
             .map(|((i, j), value)| (i, j, value))
+    }
+    /// Bounded reference materialization; production sparse adapters consume CSC directly.
+    pub(crate) fn to_dense(&self) -> SimResult<Matrix> {
+        let mut matrix = Matrix::zeros(self.dimension())?;
+        for (row, column, value) in self.entries() { matrix.add(row, column, value); }
+        Ok(matrix)
     }
 }
