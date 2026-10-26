@@ -1,0 +1,18 @@
+{
+  "strategy": "two deliberate provenance mutations in copied C# scripts",
+  "source_sha256": "bb4e1b6bdd3d9042aa2373b46b21efed22a9669f3fc84b9b6a17c12f1332a8af",
+  "killed": 2,
+  "total": 2,
+  "mutants": [
+    {
+      "name": "source-revision",
+      "status": "killed",
+      "exit_code": 1
+    },
+    {
+      "name": "source-hash",
+      "status": "killed",
+      "exit_code": 1
+    }
+  ]
+}

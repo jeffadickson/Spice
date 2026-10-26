@@ -1,14 +1,20 @@
 {
   "rust": {
-    "status": "unavailable",
-    "toolchain": "nightly-x86_64-pc-windows-msvc with profiler_builtins",
-    "line_percent": null,
+    "status": "measured",
+    "platform": "Ubuntu 24.04 x64 under WSL2",
+    "source_commit": "d8ac66ac779ff357fa7a167a4629a292021dc81a",
+    "toolchain": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "line_percent": 89.95293636177614,
+    "lines": 4887,
+    "covered_lines": 4396,
     "branch_percent": null,
-    "reason": "The coverage toolchain includes profiler_builtins, but this host lacks the MSVC link.exe required to link instrumented Windows binaries",
-    "attempted_command": "scripts/Test-Coverage.ps1",
-    "remediation": "Install Visual C++ Build Tools and a Windows SDK, then rerun scripts/Test-Coverage.ps1. Linux CI is configured but has not been executed here.",
-    "attempted_checkpoint": 320,
-    "unmeasured_current_scope": "All owned Rust including src/audit.rs, src/topology.rs, tracing instrumentation and tests; changed-line/branch metrics unavailable on this host"
+    "scope": "owned src/*.rs; test and dependency files excluded",
+    "report": "evidence/rust-coverage-linux.json",
+    "limitations": [
+      "No qualified Rust branch metrics from this instrumentation.",
+      "Windows Rust coverage remains unavailable without MSVC linker/SDK.",
+      "Vendor internals, managed code and GPU/native plugins excluded."
+    ]
   },
   "managed": {
     "status": "measured",
@@ -35,8 +41,24 @@
     ]
   },
   "additional_unmeasured": [
-    "PowerShell orchestration scripts",
-    "CSharp mutation tooling",
-    "FSharp examples"
-  ]
+    "CSharp mutation drivers",
+    "FSharp examples",
+    "Native installer paths; PowerShell command subset only"
+  ],
+  "rust_windows": {
+    "status": "unavailable",
+    "toolchain": "nightly-x86_64-pc-windows-msvc with profiler_builtins",
+    "line_percent": null,
+    "branch_percent": null,
+    "reason": "The coverage toolchain includes profiler_builtins, but this host lacks the MSVC link.exe required to link instrumented Windows binaries",
+    "attempted_command": "scripts/Test-Coverage.ps1",
+    "remediation": "Install Visual C++ Build Tools and a Windows SDK, then rerun scripts/Test-Coverage.ps1. Linux/WSL2 coverage was measured separately in evidence/rust-coverage-linux.json.",
+    "attempted_checkpoint": 320,
+    "unmeasured_current_scope": "All owned Rust including src/audit.rs, src/topology.rs, tracing instrumentation and tests; changed-line/branch metrics unavailable on this host"
+  },
+  "qualification_tooling": {
+    "supervisor": "evidence/remote-endurance-coverage.json",
+    "publisher": "evidence/remote-publisher-coverage.json",
+    "powershell_command_subset": "evidence/remote-powershell-coverage.json"
+  }
 }

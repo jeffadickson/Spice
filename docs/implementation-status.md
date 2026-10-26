@@ -12,9 +12,12 @@ The fifth slice adds **bounded fixed-step nonlinear diode transient stepping** u
 | Persistence | bounded trusted-local artifact commit/read with hashes | hostile storage policies, remote/object storage, power-loss durability qualification |
 | Authoring | typed .NET/F# builders, SForge v0.1 lexer/parser/validator and lowering of primitive transient circuits, observables and bounded assertions | full units system, broader expression grammar, selected Starlark frontend and integrated behavioral models |
 | Consistency | independent DC KCL/source/power checks, legacy BE discrete-energy checks, bounded topology diagnostics, typed manifests and stderr tracing | AC/configured-transient physical audits, full topology rank diagnostics and rigorous global accuracy bounds |
-| Verification | analytic/provider/metamorphic/fuzz-smoke/mutation tests; scoped managed coverage | supported-host Rust coverage, coverage-guided fuzzing, full native/GPU evidence |
+| Verification | analytic/provider/metamorphic/fuzz-smoke/mutation tests; scoped managed coverage | broader host/branch coverage, coverage-guided fuzzing, full native/GPU evidence |
 | Release | no production release claim | license/platform/packaging and all declared M1 exit gates |
 
 Most work packages retain Proposed status because their complete exit criteria are not satisfied. Current checkpoint and source-hash reports, rather than implementation counts, define what has been tested.
 
 SForge has an implemented v0.1 parser/lowering path; [the SForge DSL proposal](modern-dsl-proposal.md) remains the wider design artifact, not a claim of general SPICE compatibility.
+
+Portable qualification tooling (iterations 323–329) provides Windows/Ubuntu-Debian PowerShell setup, configurable bounded campaigns, provenance validation and automatic isolated result-branch publication. See [remote-run instructions](remote-runs.md) and [qualification evidence](../evidence/remote-workflow-qualification.md). Ubuntu 24.04 WSL2 owned Rust source line coverage is 89.95%; branch coverage is unavailable. Windows GNU and WSL short workflows ran; successful Windows MSVC installation and a completed full-hour/nightly campaign remain unqualified. A live checkpoint contention probe recovered 13 retries and completed 510,976 cases; this checks evidence writing rather than numerical accuracy.
+

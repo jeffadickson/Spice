@@ -1,6 +1,6 @@
 # Overnight endurance campaign
 
-`make endurance` runs for up to five hours. The supervisor runs the selected
+`make endurance` defaults to five hours; the explicit duration may be configured up to 24 hours. The supervisor runs the selected
 source mutations once, then spends the remaining budget on changing-seed batches:
 parser/deck mutations, sparse-layout validation, analytic resistor dividers with
 independent physical audits, and diode derivative checks. It stops on failure.
@@ -57,6 +57,8 @@ domains are bounded. No OS-wide memory cap, coverage guidance or forced-terminat
 cleanup guarantee is claimed. A forcibly terminated supervisor leaves an unfinished
 summary; inspect for remaining children before restarting. Archives/caches need
 periodic disk-space review; no automatic deletion of failure evidence is configured.
+
+For automated clone/setup/test/result-branch upload on another machine, see [the remote-run guide](remote-runs.md).
 
 The requested local schedule is midnight to approximately 5 a.m. in
 America/Los_Angeles, with a morning results check. The machine must be available

@@ -1,0 +1,28 @@
+{
+  "tool": "rustc instrumentation and matching LLVM tools",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "source_commit": "d8ac66ac779ff357fa7a167a4629a292021dc81a",
+  "scope": "owned src/*.rs; test and dependency files excluded",
+  "lines": {
+    "count": 4887,
+    "covered": 4396,
+    "percent": 89.95293636177614
+  },
+  "functions": {
+    "count": 474,
+    "covered": 422,
+    "percent": 89.0295358649789
+  },
+  "regions": {
+    "count": 7401,
+    "covered": 6715,
+    "notcovered": 686,
+    "percent": 90.73098229968923
+  },
+  "branch_coverage": null,
+  "limitations": [
+    "Stable source instrumentation does not provide qualified branch metrics here.",
+    ".NET, vendor library internals, GPU and native plugin coverage are not measured.",
+    "Sparse CPU adapters are tested through owned wrappers; vendor internals are excluded. GPU/native plugins remain unimplemented."
+  ]
+}

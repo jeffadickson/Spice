@@ -1,6 +1,6 @@
 {
   "status": "budget_exhausted",
-  "cases": 567296,
-  "checkpoint_retries": 15,
-  "elapsed_seconds": 59.0114607
+  "cases": 510976,
+  "checkpoint_retries": 13,
+  "elapsed_seconds": 59.0769399
 }

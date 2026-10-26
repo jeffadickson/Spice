@@ -1,0 +1,16 @@
+{
+  "tool": "Pester 3.4 command tracing",
+  "scope": "five PowerShell tooling files; verification-only host contracts in this process",
+  "commands": 487,
+  "executed_commands": 110,
+  "command_percent": 22.587268993839835,
+  "instrumented_lines": 218,
+  "hit_lines": 49,
+  "line_percent": 22.477064220183486,
+  "branch_percent": null,
+  "limitations": [
+    "Line counts are unique lines carrying instrumented commands, not all physical source lines.",
+    "Native installers, subprocess launcher execution, coverage export and branch metrics are not measured in this Pester scope."
+  ],
+  "source_commit": "50f8107beb8df313061f4737fdadaf1db69b0466"
+}

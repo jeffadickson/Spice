@@ -1,0 +1,275 @@
+{
+  "scope": "portable tooling validation and bounded actual Windows GNU / Ubuntu 24.04 WSL2 execution; not full M1 or production qualification",
+  "source_hashes": {
+    "scripts/Start-RemoteRun.ps1": "2d425d73c1351fad9be9e7a539bcdbb594cdea776409d3f92f90fb7d4a2047ae",
+    "scripts/Run-Endurance.ps1": "f4c7872f9364d2ce2f0062ac4d3c1602d57fb7d01c5f177d398fff47c36abc70",
+    "scripts/HostTools.ps1": "010679355e71b46dc1b3277fbf280f81e04e459b0255c69412cfb4b5e9ebf79e",
+    "scripts/Setup-Host.ps1": "fe2b7faae3f894cd556c808ffd9f5356abcd3d7a03c028c561ef919be4a04b1a",
+    "scripts/RemoteQualification.cs": "bb4e1b6bdd3d9042aa2373b46b21efed22a9669f3fc84b9b6a17c12f1332a8af",
+    "scripts/Endurance.cs": "9eb43e322dcbdf9e7f4d628cf881a31d7f81ea2fec8f2072317c8a375d456186",
+    "scripts/Test-Coverage.ps1": "ad773b83bd62564e15c7fcb6a6eddd0e62f7a0b02c7ccec33c57c70be647455f"
+  },
+  "pester": {
+    "failed": 0,
+    "instrumented_host_subset_passed": 2,
+    "passed": 8
+  },
+  "published_runs": [
+    {
+      "branch": "remote-runs/linux-x64-wsl-ubuntu2404/20261026T143339Z-4af7e7d8-5b671e0e324f",
+      "source_commit": "5b671e0e324ffc8c75424fd0fed80633bf6efbd2",
+      "mode": "full_workflow",
+      "outcome": "test_failure",
+      "steps": [
+        {
+          "name": "contracts",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "e494ba00657903488f72318f53a4f14571ec4f309385bac43267e4089b686307"
+        },
+        {
+          "name": "strictdoc",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "b50eb53c81c1d6d24e6f5eaf92bc02fdc74e8889db8e9732705a2d39220c3548"
+        },
+        {
+          "name": "endurance",
+          "status": "failed",
+          "exit_code": 1,
+          "local_log_sha256": "e1f243a4a66317665840d222e2c918a4a38270d99c805b6ee0d46258e34ae0dc"
+        }
+      ],
+      "cases": 0,
+      "duration_seconds": 60.3062142,
+      "mutation_status": "skipped_explicitly",
+      "coverage": {
+        "status": "not_measured",
+        "lines": null,
+        "functions": null,
+        "regions": null
+      }
+    },
+    {
+      "branch": "remote-runs/linux-x64-wsl-ubuntu2404/20261026T143817Z-1727e365-50f8107beb8d",
+      "source_commit": "50f8107beb8df313061f4737fdadaf1db69b0466",
+      "mode": "full_workflow",
+      "outcome": "completed_with_declared_limits",
+      "steps": [
+        {
+          "name": "contracts",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "ce62ddaebb17b13045615e06ccc405649eff39d687b59f501404f89c553eea5a"
+        },
+        {
+          "name": "strictdoc",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "b50eb53c81c1d6d24e6f5eaf92bc02fdc74e8889db8e9732705a2d39220c3548"
+        },
+        {
+          "name": "endurance",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "cda7b33baabca5519e83d821df4829d93b7e1125146910f47439a53a2c495707"
+        }
+      ],
+      "cases": 4131840,
+      "duration_seconds": 299.0064414,
+      "mutation_status": "skipped_explicitly",
+      "coverage": {
+        "status": "not_measured",
+        "lines": null,
+        "functions": null,
+        "regions": null
+      }
+    },
+    {
+      "branch": "remote-runs/windows-x64-local-validation/20261026T142640Z-13733c69-1e4097b0a27f",
+      "source_commit": "1e4097b0a27fe5641e0cf4a50011687d23bde8b9",
+      "mode": "full_workflow",
+      "outcome": "test_failure",
+      "steps": [
+        {
+          "name": "contracts",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "c73239dd699acd8907ecf577bad924e49bf029620d47dc8c8b001139452f24b5"
+        },
+        {
+          "name": "strictdoc",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "4eb6fd07496d4157e7fd9a302358673376c8f9cc0787aa0df66794b43c485e36"
+        },
+        {
+          "name": "endurance",
+          "status": "failed",
+          "exit_code": 1,
+          "local_log_sha256": "404c684ba3de8889f9cd9a406cee31b59949c1ea388393499a78d7f377778777"
+        }
+      ],
+      "cases": 0,
+      "duration_seconds": 60.1426795,
+      "mutation_status": "skipped_explicitly",
+      "coverage": {
+        "status": "not_measured",
+        "lines": null,
+        "functions": null,
+        "regions": null
+      }
+    },
+    {
+      "branch": "remote-runs/windows-x64-local-validation/20261026T143547Z-99e5ff55-50f8107beb8d",
+      "source_commit": "50f8107beb8df313061f4737fdadaf1db69b0466",
+      "mode": "full_workflow",
+      "outcome": "test_failure",
+      "steps": [
+        {
+          "name": "contracts",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "cc334ec3b8bc18dd252ff4d47b2a3e0a37d7fea1c7120f559197531f37c9c645"
+        },
+        {
+          "name": "strictdoc",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "4eb6fd07496d4157e7fd9a302358673376c8f9cc0787aa0df66794b43c485e36"
+        },
+        {
+          "name": "endurance",
+          "status": "failed",
+          "exit_code": 1,
+          "local_log_sha256": "bd2a04d3a130bbcbc2b91bb38969417632aa6fd7172c38252cf394707123b50a"
+        }
+      ],
+      "cases": 0,
+      "duration_seconds": 300.18619,
+      "mutation_status": "skipped_explicitly",
+      "coverage": {
+        "status": "not_measured",
+        "lines": null,
+        "functions": null,
+        "regions": null
+      }
+    },
+    {
+      "branch": "remote-runs/windows-x64-local-validation/20261026T144851Z-c8b1aee9-50f8107beb8d",
+      "source_commit": "50f8107beb8df313061f4737fdadaf1db69b0466",
+      "mode": "full_workflow",
+      "outcome": "completed_with_declared_limits",
+      "steps": [
+        {
+          "name": "contracts",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "ce46a05f5d0899bf70ec13c94ecac09e6ef3034da40a514a1e245ab25e59000b"
+        },
+        {
+          "name": "strictdoc",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "4eb6fd07496d4157e7fd9a302358673376c8f9cc0787aa0df66794b43c485e36"
+        },
+        {
+          "name": "endurance",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "a76407c4de31aa4feeef02d9f32812ca6b369b13e8a4cea4753b895c0bbb40cf"
+        }
+      ],
+      "cases": 659456,
+      "duration_seconds": 59.0675363,
+      "mutation_status": "skipped_explicitly",
+      "coverage": {
+        "status": "not_measured",
+        "lines": null,
+        "functions": null,
+        "regions": null
+      }
+    },
+    {
+      "branch": "remote-runs/linux-x64-wsl-ubuntu2404/20261026T150615Z-7a579347-260a4c3d8824",
+      "source_commit": "260a4c3d8824c4608ab426c8239ee919e066b3a3",
+      "mode": "full_workflow",
+      "outcome": "completed_with_declared_limits",
+      "steps": [
+        {
+          "name": "contracts",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "60395769b5fcbd08def448d6a0f8d73f19c308497f24e3e47e21b3f36d067b1d"
+        },
+        {
+          "name": "strictdoc",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "b50eb53c81c1d6d24e6f5eaf92bc02fdc74e8889db8e9732705a2d39220c3548"
+        },
+        {
+          "name": "endurance",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "0b533200f704a163eafdeb5e8fd998c6b5963f817757500b579537a44fd600c1"
+        },
+        {
+          "name": "rust_coverage",
+          "status": "passed",
+          "exit_code": 0,
+          "local_log_sha256": "3ec3bf052f8314843ea0dbaf4d3967de29e3cf50db347fd704207b754385c14e"
+        }
+      ],
+      "cases": 1753088,
+      "duration_seconds": 59.0141405,
+      "mutation_status": "skipped_explicitly",
+      "coverage": {
+        "status": "measured",
+        "lines": {
+          "count": 4887,
+          "covered": 4396,
+          "percent": 89.95293636177614
+        },
+        "functions": {
+          "count": 474,
+          "covered": 422,
+          "percent": 89.0295358649789
+        },
+        "regions": {
+          "count": 7401,
+          "covered": 6715,
+          "notcovered": 686,
+          "percent": 90.73098229968923
+        },
+        "branch_coverage": null,
+        "scope": "owned Rust src/*.rs; managed/vendor/GPU excluded"
+      }
+    }
+  ],
+  "coverage_reports": [
+    "evidence/rust-coverage-linux.json",
+    "evidence/remote-publisher-coverage.json",
+    "evidence/remote-endurance-coverage.json",
+    "evidence/remote-powershell-coverage.json"
+  ],
+  "mutation_report": "evidence/remote-mutation.json",
+  "platform_limits": [
+    "Windows native MSVC/SDK acquisition still needs administrator approval and was not qualified by a successful installation here.",
+    "Linux setup installed user-local Rust/StrictDoc; native tools and .NET SDK were already available.",
+    "WSL2 is identified explicitly; no other Linux distribution, architecture, GPU or bare-metal claim."
+  ],
+  "hour_campaign_snapshot": {
+    "as_of_utc": "2026-10-26T15:19:20.3783457Z",
+    "run": "20261026T151710Z-0e09f0ae",
+    "source_commit": "e85c1e2eff7ffd2dae1764d15da77fcb5df5caec",
+    "status": "running",
+    "phase": "selected_mutations",
+    "cases": 0,
+    "mutation_status": "not_run",
+    "started_utc": "2026-10-26T15:17:10.4597085Z",
+    "budget_seconds": 3600,
+    "followup_local": "2026-10-26 09:20 America/Los_Angeles",
+    "prior_attempts": "Both failed partial attempts retained; compiler heap corruption and checkpoint access denied; neither counted as completed hour"
+  }
+}

@@ -37,6 +37,8 @@ dotnet run --file scripts/Checkpoint.cs -- 100
 dotnet run --file scripts/Mutation.cs
 ```
 
+For another Windows or Ubuntu computer, follow [automatic setup, testing and result-branch publication](docs/remote-runs.md).
+
 For overnight seeded fuzz/property testing, use `make endurance` (five-hour maximum) or the PowerShell launcher; see [campaign controls and replay](docs/endurance.md).
 
 For the focused nonlinear diode/Newton contract suite, run `./scripts/Test-Nonlinear.ps1`. Full checkpoints use `dotnet run --file scripts/Checkpoint.cs -- <multiple-of-10>`.

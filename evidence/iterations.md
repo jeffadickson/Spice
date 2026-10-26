@@ -221,3 +221,10 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 320. Verify the ten-iteration consistency slice, document coverage availability and preserve broader qualification scope.
 321. Add replayable seeded endurance batches and configurable isolated mutation-test runtime limits.
 322. Add bounded overnight supervision, make targets, retained coverage/verification evidence and user-selected nightly scheduling.
+323. Add pinned portable host setup and provenance-checked remote result publication.
+324. Correct Linux PATH handling and challenge host/publication contracts.
+325. Bound build/test concurrency and kill source-revision/hash bypass mutants.
+326. Prefer pinned compiler coverage when profiler runtime is available.
+327. Correct LLVM export argument construction and Linux virtual-environment preflight.
+328. State coverage scope and unavailable branch metrics explicitly.
+329. Recover bounded checkpoint file-sharing contention; preserve failed partial campaigns and restart the requested full hour.

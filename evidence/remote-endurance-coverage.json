@@ -1,0 +1,15 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "scope": "scripts/Endurance.cs; one-minute seed-329 intentional checkpoint contention; mutations skipped",
+  "source_sha256": "9eb43e322dcbdf9e7f4d628cf881a31d7f81ea2fec8f2072317c8a375d456186",
+  "lines": 126,
+  "covered_lines": 112,
+  "line_percent": 88.88888888888889,
+  "branches": 92,
+  "covered_branches": 63,
+  "branch_percent": 68.47826086956522,
+  "limitations": [
+    "Unique owned source lines and mapped branches; generated state-machine locations merged by source line.",
+    "Full native installer and all pipeline failure paths are not measured by this scope."
+  ]
+}
