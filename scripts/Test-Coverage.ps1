@@ -1,6 +1,9 @@
 # Orchestrate Rust/LLVM tools with native PowerShell; substantive mutation logic is C#.
 param([string]$CoverageToolchain = '')
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'HostTools.ps1')
+Import-SpiceTools -Root (Split-Path $PSScriptRoot -Parent)
+if ($IsWindows) { Import-SpiceMsvc }
 $oldToolchain = $env:RUSTUP_TOOLCHAIN
 if ([string]::IsNullOrWhiteSpace($CoverageToolchain)) {
     $CoverageToolchain = if ($IsWindows) { 'nightly-x86_64-pc-windows-msvc' } else { 'nightly' }

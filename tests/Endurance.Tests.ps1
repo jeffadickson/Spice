@@ -2,7 +2,7 @@
 Describe 'Endurance launcher validation' {
     $launcher=Join-Path $PSScriptRoot '../scripts/Run-Endurance.ps1'
     It 'rejects invalid or oversized wall-clock budgets' {
-        foreach ($minutes in @('0','-1','301','NaN')) {
+        foreach ($minutes in @('0','-1','1441','NaN')) {
             & pwsh -NoProfile -File $launcher -Minutes $minutes *> $null
             $LASTEXITCODE | Should Not Be 0
         }

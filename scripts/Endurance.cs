@@ -16,7 +16,7 @@ for (var i=0;i<args.Length;i++) {
         default: throw new ArgumentException("Unknown campaign argument: "+args[i]);
     }
 }
-if (!double.IsFinite(minutes)||minutes<=0||minutes>300) throw new ArgumentException("Minutes must be in (0,300].");
+if (!double.IsFinite(minutes)||minutes<=0||minutes>1440) throw new ArgumentException("Minutes must be in (0,1440].");
 var root=Directory.GetCurrentDirectory();
 if (!File.Exists(Path.Combine(root,"Cargo.toml"))) throw new ArgumentException("Run from the Spice repository root.");
 Directory.CreateDirectory(Path.Combine(root,"work"));
@@ -67,9 +67,10 @@ try {
     var git=await Execute("git",["rev-parse","HEAD"],root,Cap(15)); report.SourceCommit=git.Log.Trim();
     var dirty=await Execute("git",["status","--porcelain"],root,Cap(15)); report.SourceDirty=dirty.Log.Trim().Length!=0;
     var rust=await Execute("rustc",["--version"],root,Cap(15)); report.Rustc=rust.Log.Trim();
+    var rustVerbose=await Execute("rustc",["-vV"],root,Cap(15)); report.RustcVerbose=rustVerbose.Log.Trim();
     var dotnet=await Execute("dotnet",["--version"],root,Cap(15)); report.Dotnet=dotnet.Log.Trim();
     if(git.Exit!=0||dirty.Exit!=0||rust.Exit!=0||dotnet.Exit!=0) throw new IOException("Campaign provenance discovery failed.");
-    var files=new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml","global.json","Makefile","scripts/Mutation.cs","scripts/Endurance.cs","scripts/Run-Endurance.ps1"}.Concat(new[]{"src","tests","examples","compat"}.SelectMany(folder=>Directory.EnumerateFiles(Path.Combine(root,folder),"*",SearchOption.AllDirectories).Select(path=>Path.GetRelativePath(root,path)))).ToArray();
+    var files=new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml","global.json","Makefile","scripts/Mutation.cs","scripts/Endurance.cs","scripts/Run-Endurance.ps1","scripts/HostTools.ps1"}.Concat(new[]{"src","tests","examples","compat"}.SelectMany(folder=>Directory.EnumerateFiles(Path.Combine(root,folder),"*",SearchOption.AllDirectories).Select(path=>Path.GetRelativePath(root,path)))).ToArray();
     foreach(var file in files) {
         var bytes=File.ReadAllBytes(Path.Combine(root,file));
         report.SourceHashes[file.Replace('\\','/')]=Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
@@ -142,6 +143,7 @@ sealed class CampaignReport {
     public string? SourceCommit { get;set; }
     public bool SourceDirty { get;set; }
     public string? Rustc { get;set; }
+    public string? RustcVerbose { get;set; }
     public string? Dotnet { get;set; }
     public string Snapshot { get;set; }="";
     public string BuildWorkspace { get;set; }="";

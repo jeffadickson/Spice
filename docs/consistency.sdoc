@@ -142,7 +142,7 @@ RELATIONS:
 UID: END-001
 TITLE: Bounded isolated endurance campaign
 STATEMENT: >>>
-A manual endurance target shall run a selected mutation campaign once, then changing-seed endurance batches within a configurable monotonic wall-clock budget capped at five hours. It shall use an isolated source snapshot, reject overlapping supervised runs through an exclusive file lock, cap child-process runtimes and retained logs, and report completed cases separately from partial, timed-out or failed work. Compiler/test concurrency shall be bounded. Working source and tracked qualification reports shall not be modified by a campaign.
+A manual endurance target shall run a selected mutation campaign once, then changing-seed endurance batches within a configurable monotonic wall-clock budget capped at 24 hours with a five-hour default. It shall use an isolated source snapshot, reject overlapping supervised runs through an exclusive file lock, cap child-process runtimes and retained logs, and report completed cases separately from partial, timed-out or failed work. Compiler/test concurrency shall be bounded. Working source and tracked qualification reports shall not be modified by a campaign.
 <<<
 COMMENT: >>>
 Implementation: Makefile, scripts/Endurance.cs and scripts/Run-Endurance.ps1. Verification: tests/Endurance.Tests.ps1 and evidence/endurance-qualification.md. OS-wide memory enforcement and cleanup after forced supervisor termination are not claimed.
@@ -176,3 +176,42 @@ Implementation: local thread automations spice-nightly-endurance-campaign and sp
 RELATIONS:
 - TYPE: Parent
   VALUE: END-001
+
+[REQUIREMENT]
+UID: REM-001
+TITLE: Configurable cross-host qualification bootstrap
+STATEMENT: >>>
+The qualification workflow shall accept a finite positive endurance budget up to 24 hours, defaulting to five hours, and provide PowerShell setup for Windows x64 and Ubuntu/Debian x64. It shall read pinned SDK/compiler/documentation-tool versions, configure process-local tool paths, use official installer sources and record acquisition hashes. Required administrator approval and private-repository authentication shall remain explicit prerequisites, not silently bypassed. Setup shall have a verification-only mode.
+<<<
+COMMENT: >>>
+Implementation: scripts/Setup-Host.ps1, HostTools.ps1, Start-RemoteRun.ps1, Run-Endurance.ps1 and Endurance.cs. Verification: tests/Endurance.Tests.ps1, tests/Remote.Tests.ps1 and evidence/remote-workflow-qualification.md. A Linux implementation does not by itself establish Linux execution evidence.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: END-001
+
+[REQUIREMENT]
+UID: REM-002
+TITLE: Identifiable isolated remote result branches
+STATEMENT: >>>
+The remote workflow shall use a dedicated clean checkout and check publication access before long testing. It shall publish bounded allowlisted evidence to a unique remote-runs/platform-architecture-label/time-source-revision branch, preserving main and source files. Reports shall distinguish full qualification workflow execution from imported endurance-only evidence and preserve failed/unavailable/not-measured outcomes.
+<<<
+COMMENT: >>>
+Implementation: scripts/Start-RemoteRun.ps1 and RemoteQualification.cs. Verification: tests/Remote.Tests.ps1 local bare-Git publication and rejection cases. Bootstrap refuses directories it did not create. No force push, automatic merge or credential-in-URL workflow is provided.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-RUN-002
+
+[REQUIREMENT]
+UID: REM-003
+TITLE: Bounded provenance-checked evidence export
+STATEMENT: >>>
+Remote publication shall verify finished endurance metadata against the checkout revision and declared source hashes, reject malformed or unsafe paths and dirty/stale source, and stage only a manifest and checksum file. The manifest shall be capped at 256 KiB and contain structured outcomes, source identity, tools, seeds, durations, coverage availability and log hashes. Raw logs, credentials, binaries, absolute work paths and large corpora shall remain local.
+<<<
+COMMENT: >>>
+Implementation: scripts/RemoteQualification.cs. Verification: tests/Remote.Tests.ps1 synthetic local-Git fixtures; real-workflow and coverage scope recorded in evidence/remote-workflow-qualification.md. Evidence is reviewable run output, not a cryptographic attestation of test execution.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REM-002
