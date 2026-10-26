@@ -30,7 +30,7 @@ if ($Install -and $IsLinux -and -not $nativeReady) {
 }
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     if (-not $Install) { throw 'Git is missing; rerun Setup-Host.ps1 -Install.' }
-    if ($IsWindows) { Invoke-SetupCommand winget @('install','--id','Git.Git','--exact','--source','winget','--silent','--accept-package-agreements','--accept-source-agreements'); $env:Path='C:/Program Files/Git/cmd;'+$env:Path }
+    if ($IsWindows) { Invoke-SetupCommand winget @('install','--id','Git.Git','--exact','--source','winget','--silent','--accept-package-agreements','--accept-source-agreements'); $env:PATH='C:/Program Files/Git/cmd;'+$env:PATH }
 }
 if ($IsWindows -and -not $SkipNativeTools) {
     Import-SpiceMsvc

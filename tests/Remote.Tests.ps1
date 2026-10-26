@@ -80,3 +80,22 @@ Describe 'Remote qualification evidence publication' {
         }
     }
 }
+
+Describe 'Host configuration contracts' {
+    It 'updates the case-sensitive PATH variable without changing user profiles' {
+        $root=Join-Path (Split-Path $PSScriptRoot -Parent) ('work/host-path-tests/'+[guid]::NewGuid().ToString('N'))
+        New-Item -ItemType Directory -Force (Join-Path $root '.tools/rust/cargo/bin')|Out-Null
+        $before=@{};foreach($name in @('PATH','CARGO_HOME','RUSTUP_HOME','DOTNET_ROOT')){$before[$name]=[Environment]::GetEnvironmentVariable($name)}
+        try {
+            . (Join-Path $PSScriptRoot '../scripts/HostTools.ps1')
+            Import-SpiceTools -Root $root
+            $env:PATH.StartsWith((Join-Path $root '.tools/rust/cargo/bin'),[StringComparison]::Ordinal)|Should Be $true
+        } finally {foreach($name in $before.Keys){[Environment]::SetEnvironmentVariable($name,$before[$name])}}
+    }
+    It 'verifies the prepared host without acquiring installers' {
+        & (Join-Path $PSScriptRoot '../scripts/Setup-Host.ps1') -SkipNativeTools
+        $report=Get-Content -Raw (Join-Path $PSScriptRoot '../work/setup/host.json')|ConvertFrom-Json
+        $report.status|Should Be 'ready'
+        @($report.acquisitions).Count|Should Be 0
+    }
+}

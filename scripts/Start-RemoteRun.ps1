@@ -9,7 +9,7 @@ if ([Uri]::TryCreate($Repository,[UriKind]::Absolute,[ref]$uri) -and $uri.UserIn
 function Invoke-RemoteGit([string[]]$Arguments) { & git @Arguments; if ($LASTEXITCODE -ne 0) { throw 'Git checkout operation failed.' } }
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     if ($NoInstall) { throw 'Git is required.' }
-    if ($IsWindows) { & winget install --id Git.Git --exact --source winget --silent --accept-package-agreements --accept-source-agreements; if ($LASTEXITCODE -ne 0) { throw 'Git installation failed.' }; $env:Path='C:/Program Files/Git/cmd;'+$env:Path }
+    if ($IsWindows) { & winget install --id Git.Git --exact --source winget --silent --accept-package-agreements --accept-source-agreements; if ($LASTEXITCODE -ne 0) { throw 'Git installation failed.' }; $env:PATH='C:/Program Files/Git/cmd;'+$env:PATH }
     elseif ($IsLinux -and (Get-Command apt-get -ErrorAction SilentlyContinue)) { & sudo apt-get update; if ($LASTEXITCODE -ne 0) { throw 'apt update failed.' }; & sudo apt-get install -y git; if ($LASTEXITCODE -ne 0) { throw 'Git installation failed.' } }
     else { throw 'Install Git before invoking this bootstrap on this platform.' }
 }
