@@ -6,7 +6,6 @@ use crate::{
     linalg::LinearSolver,
     quantity::positive,
     solver_contract::SparseComplexSystem,
-    sparse::CscMatrix,
 };
 use num_complex::Complex64;
 use serde::Serialize;
@@ -112,19 +111,13 @@ pub fn ac_with_source_phasors(
     {
         return Err(SimError::invalid("AC source assembly overflow"));
     }
-    // Nonlinear small-signal AC is evaluated around the converged DC point. The
-    // analytic Newton Jacobian contains the incremental diode conductances.
-    let nonlinear_reference = if plan.has_nonlinear_devices() {
+    // DC convergence is still the bounded Newton/reference path; incremental
+    // AC conductance stamps and every subsequent complex solve stay sparse.
+    let conductance_sparse = if plan.has_nonlinear_devices() {
         let bias = crate::dc::operating_point(plan, solver)?;
-        Some(crate::newton::linearize(plan, &bias)?.jacobian)
+        crate::newton::conductance_at_bias_csc(plan, &bias)?
     } else {
-        None
-    };
-    // Linear plans stay sparse. Nonlinear bias conversion remains an explicit
-    // bounded reference path until direct diode Jacobian stamps are qualified.
-    let conductance_sparse = match &nonlinear_reference {
-        Some(matrix) => CscMatrix::from_dense(matrix)?,
-        None => plan.conductance_sparse().clone(),
+        plan.conductance_sparse().clone()
     };
     let mut output = Vec::with_capacity(frequencies.len());
     for &frequency in frequencies {
@@ -136,14 +129,12 @@ pub fn ac_with_source_phasors(
         let (x, direct) = match solver.solve_complex_csc(&system, &rhs) {
             Ok(values) => (values, true),
             Err(error) if error.code == ErrorCode::Unsupported => {
-                let conductance = nonlinear_reference
-                    .as_ref()
-                    .unwrap_or(plan.conductance_reference());
+                let conductance = conductance_sparse.to_dense()?;
                 let mut imag = plan.charge.clone();
                 for value in &mut imag.values {
                     *value *= omega;
                 }
-                (solver.solve_complex_rhs(conductance, &imag, &rhs)?, false)
+                (solver.solve_complex_rhs(&conductance, &imag, &rhs)?, false)
             }
             Err(error) => return Err(error),
         };

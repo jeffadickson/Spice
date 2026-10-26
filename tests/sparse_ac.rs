@@ -39,6 +39,35 @@ fn small_phasor_replaces_large_nominal_without_cancellation() {
 struct DirectOnly(AtomicUsize);
 
 #[test]
+fn sparse_incremental_diode_stamps_match_terminal_equations() {
+    use circuit_simulator::newton::conductance_at_bias_csc;
+    let plan = compile(
+        &parse("title\nV1 in 0 1\nR1 in out 1k\nD1 out in 1p 25.85m\nD2 out 0 2p 30m\n.end")
+            .unwrap(),
+    )
+    .unwrap();
+    let bias = [0.2, 0.3, 0.];
+    let sparse = conductance_at_bias_csc(&plan, &bias).unwrap();
+    let mut actual = [[0.; 3]; 3];
+    for ((row, column), value) in sparse.pattern().slots().zip(sparse.values()) {
+        actual[row][column] = *value;
+    }
+    let g1 = 1e-12 / 0.02585 * (0.1_f64 / 0.02585).exp();
+    let g2 = 2e-12 / 0.03 * (0.3_f64 / 0.03).exp();
+    let expected = [
+        [0.001 + g1, -0.001 - g1, 1.],
+        [-0.001 - g1, 0.001 + g1 + g2, 0.],
+        [1., 0., 0.],
+    ];
+    for (actual, expected) in actual.iter().flatten().zip(expected.iter().flatten()) {
+        assert!((actual - expected).abs() < 1e-15);
+    }
+    assert!(conductance_at_bias_csc(&plan, &[]).is_err());
+    assert!(conductance_at_bias_csc(&plan, &[f64::NAN, 0., 0.]).is_err());
+    assert!(conductance_at_bias_csc(&plan, &[0., 1000., 0.]).is_err());
+}
+
+#[test]
 fn invalid_grid_is_rejected_before_nonlinear_bias_work() {
     let plan = compile(&parse("title\nV1 in 0 1\nR1 in out 1k\nD1 out 0 1p 25.85m\n.end").unwrap())
         .unwrap();

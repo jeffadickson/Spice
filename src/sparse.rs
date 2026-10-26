@@ -13,7 +13,10 @@ pub(crate) struct SparseAccumulator {
 }
 impl SparseAccumulator {
     pub(crate) fn new(n: usize) -> SimResult<Self> {
-        Matrix::zeros(n)?;
+        // Validate the bounded profile without allocating a discarded dense matrix.
+        if !(1..=256).contains(&n) {
+            return Err(SimError::invalid("invalid sparse accumulator dimension"));
+        }
         Ok(Self {
             n,
             entries: BTreeMap::new(),

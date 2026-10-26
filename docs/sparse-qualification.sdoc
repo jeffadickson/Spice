@@ -58,3 +58,17 @@ Derived campaign requirement. Implementation: src/ac.rs. Verification: tests/spa
 RELATIONS:
 - TYPE: Parent
   VALUE: SPARSE-003
+
+[REQUIREMENT]
+UID: SPARSE-005
+STATUS: Draft
+TITLE: Direct incremental diode conductance
+STATEMENT: >>>
+At a validated finite bias vector, diode small-signal conductance shall stamp directly into compiler-owned CSC conductance using the analytic terminal derivative and both terminal polarities. Invalid dimensions, nonfinite bias, model-domain violations and stamp overflow shall fail. This capability does not imply a sparse nonlinear DC controller.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation: src/newton.rs::conductance_at_bias_csc and src/ac.rs. Verification: tests/sparse_ac.rs independent two-diode terminal matrix and malformed/domain cases; existing nonlinear AC regression. SparseAccumulator dimension validation no longer allocates a discarded dense matrix.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-003

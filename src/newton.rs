@@ -32,6 +32,37 @@ pub fn linearize(plan: &CompiledCircuit, values: &[f64]) -> SimResult<Linearized
     linearize_with_rhs(plan, values, &plan.rhs)
 }
 
+/// Assemble incremental conductance directly in CSC at a finite bias vector.
+/// This omits source/residual work and preserves diode terminal polarity.
+/// DC bias convergence remains the caller's responsibility.
+pub fn conductance_at_bias_csc(
+    plan: &CompiledCircuit,
+    values: &[f64],
+) -> SimResult<crate::sparse::CscMatrix> {
+    if values.len() != plan.unknown_count() || values.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::invalid("invalid incremental bias vector"));
+    }
+    let mut stamps = crate::sparse::SparseAccumulator::new(plan.unknown_count())?;
+    for ((row, column), value) in plan
+        .conductance_sparse()
+        .pattern()
+        .slots()
+        .zip(plan.conductance_sparse().values())
+    {
+        stamps.add(row, column, *value);
+    }
+    for diode in &plan.diodes {
+        let contribution = diode.model.linearize(voltage(values, diode.p, diode.n))?;
+        crate::compile::stamp_pair(
+            &mut stamps,
+            diode.p,
+            diode.n,
+            contribution.conductance_siemens,
+        );
+    }
+    stamps.to_csc()
+}
+
 /// Assemble against an explicit independent-source right-hand side.
 ///
 /// Source continuation owns scaling this vector; the circuit topology, device
