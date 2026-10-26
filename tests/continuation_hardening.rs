@@ -6,6 +6,23 @@ use std::sync::atomic::AtomicUsize;
 
 struct ObserveFirstTrial(Mutex<Vec<f64>>);
 
+#[test]
+fn subnormal_gmin_stagnation_is_reported_before_repeating_stages() {
+    let tiny = f64::from_bits(1);
+    let options = NewtonOptions {
+        gmin_continuation: Some(GminContinuationOptions {
+            initial_siemens: 2. * tiny,
+            minimum_siemens: tiny,
+            reduction_factor: 1. - f64::EPSILON,
+            max_stages: 128,
+        }),
+        ..NewtonOptions::default()
+    };
+    let error = solve(&diode_plan(), &DenseLu, options).unwrap_err();
+    assert_eq!(error.code, ErrorCode::NumericalFailure);
+    assert!(error.message.contains("representable conductance progress"));
+}
+
 struct TerminalProvider {
     code: ErrorCode,
     calls: AtomicUsize,

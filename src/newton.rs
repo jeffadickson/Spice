@@ -652,7 +652,14 @@ fn solve_with_gmin_continuation(
         if gmin <= continuation.minimum_siemens {
             break;
         }
-        gmin = (gmin * continuation.reduction_factor).max(continuation.minimum_siemens);
+        let next_gmin = (gmin * continuation.reduction_factor).max(continuation.minimum_siemens);
+        if next_gmin >= gmin {
+            return Err(SimError::new(
+                ErrorCode::NumericalFailure,
+                "Gmin continuation cannot make representable conductance progress",
+            ));
+        }
+        gmin = next_gmin;
     }
     if stages
         .last()
