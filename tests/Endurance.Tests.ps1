@@ -11,4 +11,8 @@ Describe 'Endurance launcher validation' {
         & pwsh -NoProfile -File $launcher -Seed 'bad-seed' *> $null
         $LASTEXITCODE | Should Not Be 0
     }
+    It 'rejects conflicting mutation switches' {
+        & pwsh -NoProfile -File $launcher -SkipMutation -SelectedRegressions *> $null
+        $LASTEXITCODE | Should Not Be 0
+    }
 }

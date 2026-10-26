@@ -10,6 +10,7 @@ Describe 'Endurance generated-framework orchestration' {
         Set-Content (Join-Path $fixture 'Cargo.lock') "version = 4`n[[package]]`nname = 'supervisor-fixture'`nversion = '0.1.0'"
         Set-Content (Join-Path $fixture 'src/lib.rs') '// Synthetic supervisor fixture; no simulator equations.'
         Set-Content (Join-Path $fixture 'tests/endurance.rs') '#[test] #[ignore] fn seeded_batch(){ println!("ENDURANCE cases=1024 seed={}",std::env::var("SPICE_CAMPAIGN_SEED").unwrap()); }'
+        Set-Content (Join-Path $fixture 'tests/property_campaign.rs') '#[test] fn synthetic_property_inventory(){ /* orchestration fixture, not Proptest execution */ }'
         Set-Content (Join-Path $fixture '.gitignore') "/work/`n/target/"
         Set-Content (Join-Path $fixture 'scripts/Mutation.cs') 'System.IO.Directory.CreateDirectory("evidence");System.IO.File.WriteAllText("evidence/mutation.json","{\"killed\":0,\"total\":0}");'
         $stub=@'
@@ -34,12 +35,16 @@ Console.WriteLine("Framework summary: "+path);
         $report=Get-Content -Raw $path|ConvertFrom-Json
         $report.status|Should Match '^budget_exhausted'
         $report.source_dirty|Should Be $false
-        $report.mutation_status|Should Be 'passed'
+        $report.mutation_status|Should Be 'skipped_explicitly'
         $report.framework_mutation_status|Should Be 'completed'
         $report.framework_shard|Should Be '10/16'
         @($report.framework_mutation_counts.PSObject.Properties).Count|Should Be 20
         $report.framework_tool_versions.stryker|Should Be '5.0.0'
         $report.cases|Should BeGreaterThan 0
+        $report.property_count|Should Be 1
+        $report.property_cases_per_method|Should Be 128
+        ($report.cases % 128)|Should Be 0
+        $report.case_count_kind|Should Be 'completed_requested_property_cases_excludes_replay_and_shrinks'
         $native=Join-Path (Split-Path $path -Parent) 'framework-mutations.json'
         $report.framework_summary_sha256|Should Be (Get-FileHash $native).Hash.ToLowerInvariant()
     }

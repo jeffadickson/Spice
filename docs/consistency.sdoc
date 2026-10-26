@@ -261,7 +261,7 @@ RELATIONS:
 UID: MUT-001
 TITLE: Pinned generated Rust and managed mutation testing
 STATEMENT: >>>
-The qualification tooling shall run pinned cargo-mutants on owned Rust sources and pinned Stryker.NET on executable managed-client behavior through discoverable real-engine contracts. The 22 selected numerical mutants shall remain distinct regression evidence. An endurance campaign shall allocate at most half its remaining budget after those checks to framework runs, then use remaining time for seeded fuzz/property batches. Rust round-robin shard selection shall be recorded and reproducible from the campaign seed.
+The qualification tooling shall run pinned cargo-mutants on owned Rust sources and pinned Stryker.NET on executable managed-client behavior through discoverable real-engine contracts. These maintained frameworks shall be the primary mutation phase, receiving at most half the remaining campaign budget before library-generated property batches. Hand-selected numerical mutations shall remain separate, explicitly selected supplemental regression evidence rather than consuming the default campaign before the frameworks. Rust round-robin shard selection shall be recorded and reproducible from the campaign seed.
 <<<
 COMMENT: >>>
 Implementation: scripts/FrameworkMutations.cs, Endurance.cs, Setup-MutationTools.ps1, dotnet-tools.json, dotnet/Simulator.Client.Tests and shared ConformanceChecks.cs. Verification: evidence/framework-mutation-qualification.md. A candidate inventory is not a tested-mutant count; sharded/time-bounded work is not an exhaustive mutation campaign.
