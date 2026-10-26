@@ -135,6 +135,19 @@ pub fn norm_inf(values: &[f64]) -> SimResult<f64> {
     Ok(norm)
 }
 
+/// Provider success is insufficient: every MNA correction must match the plan
+/// and remain finite before any diode terminal indexing or history trial.
+fn validate_correction(plan: &CompiledCircuit, correction: &[f64]) -> SimResult<()> {
+    if correction.len() != plan.unknown_count() || correction.iter().any(|value| !value.is_finite())
+    {
+        return Err(SimError::new(
+            ErrorCode::NumericalFailure,
+            "Newton linear solve returned invalid update",
+        ));
+    }
+    Ok(())
+}
+
 /// Dimension-aware norms: MNA node rows are current equations; branch rows are voltage equations.
 fn scaled_residual_norm(
     plan: &CompiledCircuit,
@@ -491,12 +504,7 @@ fn solve_from_rhs(
         }
         let correction_rhs: Vec<f64> = system.residual.iter().map(|value| -value).collect();
         let delta = solver.solve(&system.jacobian, &correction_rhs)?;
-        if delta.len() != values.len() || delta.iter().any(|value| !value.is_finite()) {
-            return Err(SimError::new(
-                ErrorCode::NumericalFailure,
-                "Newton linear solve returned invalid update",
-            ));
-        }
+        validate_correction(plan, &delta)?;
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-attempt));
@@ -743,6 +751,7 @@ pub fn solve_backward_euler_step(
                 .map(|value| -value)
                 .collect::<Vec<_>>(),
         )?;
+        validate_correction(plan, &update)?;
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) =

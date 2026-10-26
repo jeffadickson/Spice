@@ -1,6 +1,78 @@
 //! Independent boundary and difficult-topology evidence for bounded Newton paths.
 use circuit_simulator::newton::norm_inf;
 use circuit_simulator::newton::{ContinuationOptions, GminContinuationOptions, NewtonOptions};
+use circuit_simulator::{
+    circuit::{Circuit, Element},
+    compile::{CompiledCircuit, compile},
+    error::{ErrorCode, SimResult},
+    ids::NodeId,
+    linalg::{LinearSolver, Matrix},
+    newton::{solve, solve_backward_euler_step},
+};
+
+fn diode_plan() -> CompiledCircuit {
+    compile(&Circuit {
+        nodes: vec!["0".into(), "out".into()],
+        elements: vec![
+            Element::Current {
+                id: "I1".into(),
+                p: NodeId(0),
+                n: NodeId(1),
+                amps: 1e-6,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
+        ],
+    })
+    .unwrap()
+}
+
+struct BadCorrection(u8);
+impl LinearSolver for BadCorrection {
+    fn name(&self) -> &'static str {
+        "malformed-correction-fixture"
+    }
+    fn solve(&self, matrix: &Matrix, _rhs: &[f64]) -> SimResult<Vec<f64>> {
+        Ok(match self.0 {
+            0 => vec![],
+            1 => vec![0.; matrix.n + 1],
+            2 => vec![f64::NAN; matrix.n],
+            _ => vec![f64::INFINITY; matrix.n],
+        })
+    }
+}
+
+#[test]
+fn malformed_provider_corrections_fail_dc_and_be_without_panic() {
+    let plan = diode_plan();
+    for kind in 0..4 {
+        let solver = BadCorrection(kind);
+        assert_eq!(
+            solve(&plan, &solver, NewtonOptions::default())
+                .unwrap_err()
+                .code,
+            ErrorCode::NumericalFailure
+        );
+        assert_eq!(
+            solve_backward_euler_step(
+                &plan,
+                &solver,
+                NewtonOptions::default(),
+                &[0.],
+                1e-3,
+                plan.rhs()
+            )
+            .unwrap_err()
+            .code,
+            ErrorCode::NumericalFailure
+        );
+    }
+}
 
 #[test]
 fn nested_source_policies_are_validated_at_the_options_boundary() {
