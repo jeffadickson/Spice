@@ -41,6 +41,10 @@ impl CompiledCircuit {
     pub fn conductance_sparse(&self) -> &CscMatrix { &self.conductance_sparse }
     /// Canonical charge/flux stamp pattern for sparse transient backend analysis.
     pub fn charge_sparse(&self) -> &CscMatrix { &self.charge_sparse }
+    /// Immutable source vector paired with the compiled conductance plan.
+    pub fn rhs(&self) -> &[f64] { &self.rhs }
+    /// Bounded dense reference materialization used for cross-provider verification.
+    pub fn conductance_reference(&self) -> &Matrix { &self.conductance }
     /// Nonlinear device presence selects Newton operating-point solving.
     pub fn has_nonlinear_devices(&self) -> bool {
         !self.diodes.is_empty()

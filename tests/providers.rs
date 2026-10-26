@@ -102,3 +102,11 @@ fn compiler_retains_direct_canonical_sparse_stamps_for_backend_analysis() {
     let dense = plan.conductance_sparse().entries().collect::<Vec<_>>();
     assert!(dense.iter().any(|(row, column, value)| row == column && *value > 0.));
 }
+
+#[test]
+fn faer_consumes_compiler_csc_without_dense_reconstruction() {
+    let plan = circuit_simulator::compile::compile(&parse("title\nV1 in 0 1\nR1 in out 1k\nR2 out 0 1k").unwrap()).unwrap();
+    let sparse = FaerSparseLu.solve_compiled_csc(plan.conductance_sparse(), plan.rhs()).unwrap();
+    let dense = DenseLu.solve(plan.conductance_reference(), plan.rhs()).unwrap();
+    for (left, right) in sparse.iter().zip(dense) { assert!((left - right).abs() < 1e-12); }
+}
