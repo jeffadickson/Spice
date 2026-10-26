@@ -49,4 +49,3 @@ Generated mutation tooling uses cargo-mutants 27.1.0 and Stryker.NET 5.0.0. Nigh
 Current campaign: read docs/qualification-campaign.md and evidence/continuation-344-qualification.md. Iterations 335–344 complete; resume at 345. Preserve the tight bridge counterexample and nine generated mutation survivors. Continue authorized ten-step checkpoint pushes through 434 and final review/fixes 435 under the documented 100+1 interpretation.
 
 Checkpoint 354: continuation steps 335–354 complete; resume at 355. Read evidence/continuation-354-qualification.md. Linux coverage percentages are provisional because LLVM reported 62 function mapping mismatches in both recent exports. Cargo-mutants run 20261026T223639Z-47d7e857 remains active; review its real counts when complete. Do not overwrite or relabel prior evidence.
-

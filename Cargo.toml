@@ -16,3 +16,6 @@ tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 [lints.rust]
 unsafe_code = "forbid"
 
+[dev-dependencies]
+proptest = { version = "=1.9.0", default-features = false, features = ["std"] }
+

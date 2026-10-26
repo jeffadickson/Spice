@@ -258,3 +258,17 @@ RELATIONS:
   VALUE: MUT-001
 - TYPE: Parent
   VALUE: REM-003
+
+[REQUIREMENT]
+UID: PROP-001
+STATUS: Draft
+TITLE: Maintained property runners with shrinking and replay
+STATEMENT: >>>
+Generated Rust and managed property campaigns shall use maintained property-testing libraries, bounded cases and process deadlines, record replay seeds and preserve minimized failing cases. Malformed inputs shall be exercised without treating graceful rejection as successful numerical simulation. Library configuration and actual execution shall be reported separately.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation begins with tests/property_campaign.rs using Proptest. Managed FsCheck integration and long-run supervisor adoption remain pending. Evidence is recorded per checkpoint; no coverage-guided fuzzing claim is implied by property generation.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
