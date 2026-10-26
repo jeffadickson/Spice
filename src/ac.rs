@@ -5,6 +5,8 @@ use crate::{
     error::{ErrorCode, SimError, SimResult},
     linalg::LinearSolver,
     quantity::positive,
+    solver_contract::SparseComplexSystem,
+    sparse::CscMatrix,
 };
 use num_complex::Complex64;
 use serde::Serialize;
@@ -86,12 +88,23 @@ pub fn ac_with_source_phasors(
     }
     // Nonlinear small-signal AC is evaluated around the converged DC point. The
     // analytic Newton Jacobian contains the incremental diode conductances.
-    let conductance = if plan.has_nonlinear_devices() {
+    let nonlinear_reference = if plan.has_nonlinear_devices() {
         let bias = crate::dc::operating_point(plan, solver)?;
-        crate::newton::linearize(plan, &bias)?.jacobian
+        Some(crate::newton::linearize(plan, &bias)?.jacobian)
     } else {
-        plan.conductance.clone()
+        None
     };
+    // Linear plans stay sparse. Nonlinear bias conversion remains an explicit
+    // bounded reference path until direct diode Jacobian stamps are qualified.
+    let conductance_sparse = match &nonlinear_reference {
+        Some(matrix) => CscMatrix::from_dense(matrix)?,
+        None => plan.conductance_sparse().clone(),
+    };
+    let rhs: Vec<_> = rhs_real
+        .iter()
+        .zip(&rhs_imag)
+        .map(|(re, im)| Complex64::new(*re, *im))
+        .collect();
     let mut output = Vec::with_capacity(frequencies.len());
     if n * frequencies.len() > 1_000_000 {
         return Err(SimError::new(
@@ -102,40 +115,30 @@ pub fn ac_with_source_phasors(
     for &frequency in frequencies {
         positive(frequency, "frequency_hz")?;
         let omega = std::f64::consts::TAU * frequency;
-        let mut imag = plan.charge.clone();
-        for value in &mut imag.values {
-            *value *= omega;
-        }
-        let mut x = solver.solve_complex(&conductance, &imag, &rhs_real)?;
-        if rhs_imag.iter().any(|value| *value != 0.) {
-            let quadrature = solver.solve_complex(&conductance, &imag, &rhs_imag)?;
-            for (value, quadrature_value) in x.iter_mut().zip(quadrature) {
-                *value += Complex64::new(-quadrature_value.im, quadrature_value.re);
+        let system =
+            SparseComplexSystem::from_real_parts(&conductance_sparse, plan.charge_sparse(), omega)?;
+        system.validate_complex_rhs(&rhs)?;
+        let (x, direct) = match solver.solve_complex_csc(&system, &rhs) {
+            Ok(values) => (values, true),
+            Err(error) if error.code == ErrorCode::Unsupported => {
+                let conductance = nonlinear_reference
+                    .as_ref()
+                    .unwrap_or(plan.conductance_reference());
+                let mut imag = plan.charge.clone();
+                for value in &mut imag.values {
+                    *value *= omega;
+                }
+                (solver.solve_complex_rhs(conductance, &imag, &rhs)?, false)
             }
-        }
-        if x.len() != n || x.iter().any(|v| !v.re.is_finite() || !v.im.is_finite()) {
-            return Err(SimError::new(
-                ErrorCode::NumericalFailure,
-                "invalid complex solution",
-            ));
-        }
-        for i in 0..n {
-            let residual = (0..n)
-                .map(|j| Complex64::new(conductance.at(i, j), imag.at(i, j)) * x[j])
-                .sum::<Complex64>()
-                - Complex64::new(rhs_real[i], rhs_imag[i]);
-            let scale = Complex64::new(rhs_real[i], rhs_imag[i]).norm()
-                + (0..n)
-                    .map(|j| (Complex64::new(conductance.at(i, j), imag.at(i, j)) * x[j]).norm())
-                    .sum::<f64>();
-            let relative = residual.norm() / scale.max(f64::MIN_POSITIVE);
-            if !scale.is_finite() || !relative.is_finite() || relative > 1e-10 {
-                return Err(SimError::new(
-                    ErrorCode::NumericalFailure,
-                    "AC residual failed",
-                ));
-            }
-        }
+            Err(error) => return Err(error),
+        };
+        let backward_error = verify_complex_system(&system, &rhs, &x)?;
+        tracing::debug!(
+            frequency_hz = frequency,
+            direct_sparse = direct,
+            backward_error,
+            "ac_point_completed"
+        );
         output.push(AcSample {
             frequency_hz: frequency,
             values: x
@@ -148,4 +151,35 @@ pub fn ac_with_source_phasors(
         });
     }
     Ok(output)
+}
+
+/// Independently check componentwise backward error by traversing canonical
+/// sparse coefficients. Vendor success and vector finiteness alone are insufficient.
+pub fn verify_complex_system(
+    system: &SparseComplexSystem,
+    rhs: &[Complex64],
+    values: &[Complex64],
+) -> SimResult<f64> {
+    system.validate_complex_rhs(rhs)?;
+    let n = system.pattern().dimension();
+    crate::linalg::validate_complex_solution(n, values)?;
+    let mut sums = vec![Complex64::new(0., 0.); n];
+    let mut scales: Vec<_> = rhs.iter().map(|v| v.norm()).collect();
+    for ((row, column), coefficient) in system.pattern().slots().zip(system.values()) {
+        let term = *coefficient * values[column];
+        sums[row] += term;
+        scales[row] += term.norm();
+    }
+    let mut worst = 0_f64;
+    for row in 0..n {
+        let relative = (sums[row] - rhs[row]).norm() / scales[row].max(f64::MIN_POSITIVE);
+        if !scales[row].is_finite() || !relative.is_finite() || relative > 1e-10 {
+            return Err(SimError::new(
+                ErrorCode::NumericalFailure,
+                "AC residual failed",
+            ));
+        }
+        worst = worst.max(relative);
+    }
+    Ok(worst)
 }

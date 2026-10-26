@@ -30,3 +30,17 @@ Derived campaign requirement. Implementation begins with src/linalg.rs and src/s
 RELATIONS:
 - TYPE: Parent
   VALUE: SPARSE-001
+
+[REQUIREMENT]
+UID: SPARSE-003
+STATUS: Draft
+TITLE: Direct sparse AC traversal and independent residuals
+STATEMENT: >>>
+Linear AC shall assemble G+j*omega*Q from compiler CSC plans and prefer the selected provider's direct complex CSC operation. Explicit Unsupported may use that provider's bounded dense reference path; other errors shall remain failures. Each output shall pass independent sparse componentwise backward-error verification at 1e-10 before publication.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation: src/ac.rs. Verification: tests/sparse_ac.rs direct-only provider, analytical RC transfer and terminal failure cases. Nonlinear bias conversion and wider circuit/oracle evidence remain pending.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-002
