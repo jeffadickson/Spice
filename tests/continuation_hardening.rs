@@ -1,6 +1,7 @@
 //! Independent boundary and difficult-topology evidence for bounded Newton paths.
 use circuit_simulator::newton::norm_inf;
 use circuit_simulator::newton::{ContinuationOptions, GminContinuationOptions, NewtonOptions};
+use circuit_simulator::{backend::DenseLu, newton::solve_with_rhs};
 use circuit_simulator::{
     circuit::{Circuit, Element},
     compile::{CompiledCircuit, compile},
@@ -9,6 +10,49 @@ use circuit_simulator::{
     linalg::{LinearSolver, Matrix},
     newton::{solve, solve_backward_euler_step},
 };
+
+#[test]
+fn dc_recovery_policies_are_not_silently_ignored_by_other_entry_points() {
+    let plan = diode_plan();
+    let recovery = [
+        NewtonOptions {
+            continuation: Some(ContinuationOptions::default()),
+            ..NewtonOptions::default()
+        },
+        NewtonOptions {
+            gmin_continuation: Some(GminContinuationOptions::default()),
+            ..NewtonOptions::default()
+        },
+    ];
+    for options in recovery {
+        assert_eq!(
+            solve_with_rhs(&plan, &DenseLu, options, vec![0.], plan.rhs())
+                .unwrap_err()
+                .code,
+            ErrorCode::Unsupported
+        );
+        assert_eq!(
+            solve_backward_euler_step(&plan, &DenseLu, options, &[0.], 1e-3, plan.rhs())
+                .unwrap_err()
+                .code,
+            ErrorCode::Unsupported
+        );
+    }
+    let fixed = NewtonOptions {
+        gmin_siemens: Some(1e-3),
+        ..NewtonOptions::default()
+    };
+    assert_eq!(
+        solve_backward_euler_step(&plan, &DenseLu, fixed, &[0.], 1e-3, plan.rhs())
+            .unwrap_err()
+            .code,
+        ErrorCode::Unsupported
+    );
+    // Fixed, explicitly recorded regularization remains meaningful for a
+    // caller-supplied DC excitation and must not be rejected with continuation.
+    let (_, report) = solve_with_rhs(&plan, &DenseLu, fixed, vec![0.], plan.rhs()).unwrap();
+    assert_eq!(report.gmin_siemens, Some(1e-3));
+}
 
 fn diode_plan() -> CompiledCircuit {
     compile(&Circuit {

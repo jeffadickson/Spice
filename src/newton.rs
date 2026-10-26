@@ -606,10 +606,10 @@ pub fn solve_with_rhs(
     rhs: &[f64],
 ) -> SimResult<(Vec<f64>, NewtonReport)> {
     options.validate()?;
-    if options.continuation.is_some() {
+    if options.continuation.is_some() || options.gmin_continuation.is_some() {
         return Err(SimError::new(
             ErrorCode::Unsupported,
-            "source continuation is only valid for the circuit's nominal DC source vector",
+            "continuation is only valid for the circuit's nominal DC source vector",
         ));
     }
     if initial.len() != plan.unknown_count() || initial.iter().any(|value| !value.is_finite()) {
@@ -714,10 +714,13 @@ pub fn solve_backward_euler_step(
     rhs: &[f64],
 ) -> SimResult<(Vec<f64>, NewtonReport)> {
     options.validate()?;
-    if options.continuation.is_some() {
+    if options.continuation.is_some()
+        || options.gmin_continuation.is_some()
+        || options.gmin_siemens.is_some()
+    {
         return Err(SimError::new(
             ErrorCode::Unsupported,
-            "source continuation is currently limited to DC operating points",
+            "continuation and Gmin regularization are limited to DC operating points",
         ));
     }
     let mut values = previous.to_vec();
