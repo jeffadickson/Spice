@@ -1,0 +1,18 @@
+[DOCUMENT]
+TITLE: Direct Sparse Dynamic CPU Qualification
+
+[REQUIREMENT]
+UID: SPARSE-001
+STATUS: Draft
+TITLE: Canonical dynamic sparse combinations
+STATEMENT: >>>
+Dynamic real and complex assembly shall combine compiler-owned canonical CSC patterns without a dense scan, preserve structural slots through numerical cancellation, and reject dimension, nonfinite scale/value and overflow violations. Retained dense representations remain bounded references and explicit fallbacks rather than evidence of large-circuit scalability.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation begins with src/sparse.rs::CscPattern::union and CscMatrix::combine_scaled. Verification: tests/sparse_dynamic.rs. Complex AC assembly and provider adoption require subsequent evidence; checkpoint 384 is pending.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: PLAN-010
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003

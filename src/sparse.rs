@@ -99,6 +99,42 @@ impl CscPattern {
             (self.col_ptr[j]..self.col_ptr[j + 1]).map(move |k| (self.rows[k], j))
         })
     }
+
+    /// Canonical structural union without a dense scan. Numerical cancellation
+    /// never removes a slot, so dynamic coefficient changes retain this identity.
+    pub fn union(&self, other: &Self) -> SimResult<Self> {
+        if self.n != other.n {
+            return Err(SimError::invalid("CSC union dimensions differ"));
+        }
+        let mut pointers = vec![0];
+        let mut rows = Vec::with_capacity((self.nnz() + other.nnz()).min(self.n * self.n));
+        for column in 0..self.n {
+            let mut left = self.col_ptr[column];
+            let mut right = other.col_ptr[column];
+            let left_end = self.col_ptr[column + 1];
+            let right_end = other.col_ptr[column + 1];
+            while left < left_end || right < right_end {
+                let row = match (
+                    self.rows.get(left).filter(|_| left < left_end),
+                    other.rows.get(right).filter(|_| right < right_end),
+                ) {
+                    (Some(&a), Some(&b)) => a.min(b),
+                    (Some(&a), None) => a,
+                    (None, Some(&b)) => b,
+                    (None, None) => unreachable!("nonempty merge remainder"),
+                };
+                rows.push(row);
+                if left < left_end && self.rows[left] == row {
+                    left += 1;
+                }
+                if right < right_end && other.rows[right] == row {
+                    right += 1;
+                }
+            }
+            pointers.push(rows.len());
+        }
+        Self::new(self.n, pointers, rows)
+    }
 }
 
 /// Canonical real CSC values paired with a validated backend-neutral pattern.
@@ -154,6 +190,39 @@ impl CscMatrix {
     /// Coefficients ordered by `pattern().slots()`.
     pub fn values(&self) -> &[f64] {
         &self.values
+    }
+
+    /// Linear combination over the canonical union, retaining zero-valued
+    /// structural slots. Coefficients and every resulting value must be finite.
+    pub fn combine_scaled(
+        &self,
+        other: &Self,
+        left_scale: f64,
+        right_scale: f64,
+    ) -> SimResult<Self> {
+        if !left_scale.is_finite() || !right_scale.is_finite() {
+            return Err(SimError::invalid("nonfinite CSC combination scale"));
+        }
+        let pattern = self.pattern.union(&other.pattern)?;
+        let values = pattern
+            .slots()
+            .map(|(row, column)| {
+                left_scale * self.coefficient(row, column)
+                    + right_scale * other.coefficient(row, column)
+            })
+            .collect();
+        Self::from_pattern(pattern, values)
+    }
+
+    /// Lookup for an already validated union slot; missing entries are known
+    /// mathematical zeros, not unknown device data.
+    pub(crate) fn coefficient(&self, row: usize, column: usize) -> f64 {
+        let begin = self.pattern.col_ptr[column];
+        let end = self.pattern.col_ptr[column + 1];
+        self.pattern.rows[begin..end]
+            .binary_search(&row)
+            .map(|index| self.values[begin + index])
+            .unwrap_or(0.)
     }
     pub fn entries(&self) -> impl Iterator<Item = (usize, usize, f64)> + '_ {
         self.pattern
