@@ -128,4 +128,16 @@ pub trait SparseLinearBackend {
         system: &SparseComplexSystem,
         rhs: &[f64],
     ) -> SimResult<Vec<Complex64>>;
+    /// Genuine complex RHS, retaining a validated compatibility implementation
+    /// for adapters that only implement the historical real-excitation method.
+    fn solve_sparse_complex_rhs(
+        &self,
+        system: &SparseComplexSystem,
+        rhs: &[Complex64],
+    ) -> SimResult<Vec<Complex64>> {
+        system.validate_complex_rhs(rhs)?;
+        crate::linalg::complex_rhs_via_real(system.pattern().dimension(), rhs, |part| {
+            self.solve_sparse_complex(system, part)
+        })
+    }
 }

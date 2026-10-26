@@ -1,7 +1,70 @@
 //! Direct sparse dynamic assembly contracts, independent of provider layouts.
 use circuit_simulator::solver_contract::SparseComplexSystem;
 use circuit_simulator::{error::ErrorCode, sparse::CscMatrix};
+use circuit_simulator::{
+    error::{SimError, SimResult},
+    linalg::{LinearSolver, Matrix},
+};
 use num_complex::Complex64;
+use std::sync::atomic::{AtomicUsize, Ordering};
+
+struct LegacyComplex {
+    calls: AtomicUsize,
+    short_second: bool,
+}
+impl LinearSolver for LegacyComplex {
+    fn name(&self) -> &'static str {
+        "legacy-complex-fixture"
+    }
+    fn solve(&self, _: &Matrix, _: &[f64]) -> SimResult<Vec<f64>> {
+        Err(SimError::new(ErrorCode::Unsupported, "unused"))
+    }
+    fn solve_complex(&self, _: &Matrix, _: &Matrix, rhs: &[f64]) -> SimResult<Vec<Complex64>> {
+        let call = self.calls.fetch_add(1, Ordering::Relaxed);
+        if self.short_second && call == 1 {
+            return Ok(vec![]);
+        }
+        Ok(vec![Complex64::new(rhs[0], -rhs[0])])
+    }
+}
+
+#[test]
+fn legacy_complex_rhs_superposition_validates_each_provider_vector() {
+    let matrix = Matrix {
+        n: 1,
+        values: vec![0.5],
+    };
+    let legacy = LegacyComplex {
+        calls: AtomicUsize::new(0),
+        short_second: false,
+    };
+    let result = legacy
+        .solve_complex_rhs(&matrix, &matrix, &[Complex64::new(2., 3.)])
+        .unwrap();
+    assert_eq!(result, vec![Complex64::new(5., 1.)]);
+    assert_eq!(legacy.calls.load(Ordering::Relaxed), 2);
+    let broken = LegacyComplex {
+        calls: AtomicUsize::new(0),
+        short_second: true,
+    };
+    assert_eq!(
+        broken
+            .solve_complex_rhs(&matrix, &matrix, &[Complex64::new(2., 3.)])
+            .unwrap_err()
+            .code,
+        ErrorCode::NumericalFailure
+    );
+    let invalid = LegacyComplex {
+        calls: AtomicUsize::new(0),
+        short_second: false,
+    };
+    assert!(
+        invalid
+            .solve_complex_rhs(&matrix, &matrix, &[Complex64::new(0., f64::NAN)])
+            .is_err()
+    );
+    assert_eq!(invalid.calls.load(Ordering::Relaxed), 0);
+}
 
 #[test]
 fn complex_dynamic_union_preserves_signed_flux_and_conjugacy() {

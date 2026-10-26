@@ -16,3 +16,17 @@ RELATIONS:
   VALUE: PLAN-010
 - TYPE: Parent
   VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: SPARSE-002
+STATUS: Draft
+TITLE: Complex sparse excitation and provider failure boundaries
+STATEMENT: >>>
+The solver seam shall accept finite complex excitation vectors and validate every provider response before combining or exposing it. Real-excitation compatibility may superpose two solves; direct complex providers shall support one factorization per requested system. Only explicit Unsupported may trigger a same-provider reference fallback; numerical, resource and transport failures shall propagate.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation begins with src/linalg.rs and src/solver_contract.rs. Verification: tests/sparse_dynamic.rs legacy vector/shape/finite contracts. Native one-factor complex RHS and AC driver evidence are pending subsequent steps.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-001

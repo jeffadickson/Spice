@@ -58,6 +58,33 @@ pub trait LinearSolver: Send + Sync {
             "backend has no direct canonical CSC implementation",
         ))
     }
+    /// Direct canonical complex CSC solve. Only Unsupported permits an analysis
+    /// to use this same provider's documented dense-reference fallback.
+    fn solve_complex_csc(
+        &self,
+        _system: &crate::solver_contract::SparseComplexSystem,
+        _rhs: &[num_complex::Complex64],
+    ) -> SimResult<Vec<num_complex::Complex64>> {
+        Err(SimError::new(
+            ErrorCode::Unsupported,
+            "backend has no direct complex CSC implementation",
+        ))
+    }
+    /// Genuine complex excitation. The compatibility default superposes two
+    /// real-excitation solves; native complex providers override it to reuse one factor.
+    fn solve_complex_rhs(
+        &self,
+        real: &Matrix,
+        imag: &Matrix,
+        rhs: &[num_complex::Complex64],
+    ) -> SimResult<Vec<num_complex::Complex64>> {
+        real.validate(&vec![0.; real.n.min(256)])?;
+        imag.validate(&vec![0.; imag.n.min(256)])?;
+        if real.n != imag.n {
+            return Err(SimError::invalid("complex matrix dimensions differ"));
+        }
+        complex_rhs_via_real(real.n, rhs, |part| self.solve_complex(real, imag, part))
+    }
     fn solve_complex(
         &self,
         _real: &Matrix,
@@ -81,6 +108,48 @@ pub trait LinearSolver: Send + Sync {
             provider_version: "caller_defined",
         }
     }
+}
+
+/// Compatibility glue only; shape/finite checks apply to each response before
+/// zip can hide a short quadrature vector. Provider errors propagate unchanged.
+pub(crate) fn complex_rhs_via_real(
+    n: usize,
+    rhs: &[num_complex::Complex64],
+    solve: impl Fn(&[f64]) -> SimResult<Vec<num_complex::Complex64>>,
+) -> SimResult<Vec<num_complex::Complex64>> {
+    if rhs.len() != n || rhs.iter().any(|v| !v.re.is_finite() || !v.im.is_finite()) {
+        return Err(SimError::invalid("invalid complex right-hand side"));
+    }
+    let real: Vec<_> = rhs.iter().map(|v| v.re).collect();
+    let imag: Vec<_> = rhs.iter().map(|v| v.im).collect();
+    let mut values = solve(&real)?;
+    validate_complex_solution(n, &values)?;
+    if imag.iter().any(|v| *v != 0.) {
+        let quadrature = solve(&imag)?;
+        validate_complex_solution(n, &quadrature)?;
+        for (value, q) in values.iter_mut().zip(quadrature) {
+            *value += num_complex::Complex64::new(-q.im, q.re);
+        }
+        validate_complex_solution(n, &values)?;
+    }
+    Ok(values)
+}
+
+pub(crate) fn validate_complex_solution(
+    n: usize,
+    values: &[num_complex::Complex64],
+) -> SimResult<()> {
+    if values.len() != n
+        || values
+            .iter()
+            .any(|v| !v.re.is_finite() || !v.im.is_finite())
+    {
+        return Err(SimError::new(
+            ErrorCode::NumericalFailure,
+            "backend returned invalid complex solution",
+        ));
+    }
+    Ok(())
 }
 
 /// Immutable matrix identity prevents stale-factor reuse after caller mutations.
