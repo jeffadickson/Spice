@@ -18,7 +18,7 @@ Current implementation through the M1 qualification tranche extensions (remote
 - ngspice deck lowering covers selected directives, continuation lines, ground aliases, bounded subcircuits/parameters/expressions, `.model D`, `.temp`, and explicit bounded options.
 - Source syntax includes compact and whitespace waveform forms for PULSE, SIN, PWL, and EXP. AC source magnitude/phase and R/C/L AC values are represented.
 - Controlled source support includes VCVS, VCCS, CCCS, and CCVS with dedicated compatibility tests.
-- Configured nonlinear backward-Euler supports bounded adaptive/source-override stepping and source breakpoints. DC source continuation and explicit fixed Gmin are available; neither is general homotopy or staged Gmin stepping.
+- Configured nonlinear backward-Euler supports bounded adaptive/source-override stepping and source breakpoints. DC source continuation, explicit fixed Gmin, and bounded staged Gmin continuation are available. Gmin continuation records every regularized warm-start stage and always finishes with an unregularized physical solve; it is mutually exclusive with source continuation.
 - Compiler-owned canonical CSC stamps are consumed directly by faer for linear DC. Dense matrices remain bounded reference/fallback representations; sparse AC/transient and large-circuit performance are not claimed.
 
 Start by reading `README.md`, `docs/implementation-status.md`, `docs/ngspice-compatibility.sdoc`, `docs/fourth-slice.sdoc`, `docs/campaign-2-to-5.html`, `compat/ngspice/selected-fixtures.json`, `evidence/mutation.json`, and `evidence/iterations.md`.
@@ -29,7 +29,7 @@ For authoring evolution, read `docs/modern-dsl-proposal.sdoc` before designing a
 
 Suggested next technical work:
 
-1. Implement staged Gmin continuation only with a documented physical-final-solve policy and difficult-circuit evidence.
+1. Add difficult-circuit evidence for source and Gmin continuation; do not infer broad convergence guarantees from nominal diode cases.
 2. Extend direct sparse use to AC/transient only after real/complex dynamic assembly, factor lifecycle, and conformance evidence exist.
 3. Grow the selected ngspice corpus cautiously, adding upstream hashes, copied attribution, parser/lowering tests, and named oracle comparisons before claiming support.
 4. Expand device models only after equation, derivative, domain, unit, limiting/correction, and convergence contracts are written.
