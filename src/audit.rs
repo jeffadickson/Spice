@@ -301,3 +301,85 @@ fn power_check(
         "W",
     )
 }
+
+/// Audit one accepted backward-Euler step with constant nominal sources. The
+/// discrete identity includes BE numerical dissipation, 0.5*C*deltaV^2 and
+/// 0.5*L*deltaI^2, rather than incorrectly requiring exact continuous energy.
+pub fn backward_euler_step(
+    circuit: &Circuit,
+    previous: &[f64],
+    state: &[f64],
+    step_s: f64,
+    options: AuditOptions,
+) -> SimResult<AuditReport> {
+    options.validate()?;
+    validate_state(circuit, previous)?;
+    validate_state(circuit, state)?;
+    if !step_s.is_finite() || step_s <= 0. {
+        return Err(SimError::invalid("invalid audit timestep"));
+    }
+    let mut currents = dc_currents(circuit, state)?;
+    let mut energy = 0.;
+    let mut energy_scale = 0.;
+    let mut checks = constraint_checks(circuit, state, options)?;
+    for (element, current) in circuit.elements.iter().zip(&mut currents) {
+        let (p, n) = element.terminals();
+        let v = voltage(state, p) - voltage(state, n);
+        let old_v = voltage(previous, p) - voltage(previous, n);
+        let term = match element {
+            Element::Capacitor { farads, .. } => {
+                *current = farads * (v - old_v) / step_s;
+                farads * v * (v - old_v)
+            }
+            Element::Inductor { henries, .. } => {
+                let old_i = branch_current(circuit, previous, element.id())?;
+                let expected = henries * (*current - old_i) / step_s;
+                checks.retain(|c| c.id != format!("constraint:{}", element.id()));
+                checks.push(Check::measured(
+                    format!("constraint:{}", element.id()),
+                    v - expected,
+                    options.voltage_absolute_v + options.relative * (v.abs() + expected.abs()),
+                    "V",
+                ));
+                henries * *current * (*current - old_i)
+            }
+            _ => step_s * v * *current,
+        };
+        energy += term;
+        energy_scale += term.abs();
+    }
+    checks.extend(kcl_checks(circuit, state, &currents, options, None));
+    checks.push(Check::measured(
+        "be_energy_balance",
+        energy,
+        options.energy_absolute_j + options.relative * energy_scale,
+        "J",
+    ));
+    Ok(AuditReport { checks })
+}
+
+impl AuditReport {
+    /// Retain the worst normalized discrepancy per identifier across a waveform.
+    /// Space is bounded by circuit size rather than sample count.
+    pub fn merge_worst(&mut self, other: Self) {
+        fn severity(c: &Check) -> f64 {
+            if c.status == CheckStatus::Failed && (c.discrepancy.is_none() || c.tolerance.is_none())
+            {
+                return f64::INFINITY;
+            }
+            match (c.discrepancy, c.tolerance) {
+                (Some(d), Some(t)) => d.abs() / t.max(f64::MIN_POSITIVE),
+                _ => -1.,
+            }
+        }
+        for check in other.checks {
+            if let Some(existing) = self.checks.iter_mut().find(|c| c.id == check.id) {
+                if severity(&check) > severity(existing) {
+                    *existing = check;
+                }
+            } else {
+                self.checks.push(check);
+            }
+        }
+    }
+}

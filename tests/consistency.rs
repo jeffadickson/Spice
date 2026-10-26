@@ -155,3 +155,50 @@ fn topology_warns_about_capacitor_only_paths_and_identifies_source_conflicts() {
     let c = parse("title\nV1 a 0 1\nV2 0 a -1").unwrap();
     assert!(inspect(&c).unwrap().is_empty());
 }
+
+#[test]
+fn backward_euler_energy_audit_includes_integration_dissipation() {
+    use circuit_simulator::{audit::backward_euler_step, netlist::parse};
+    let c = parse("title\nV1 a 0 1\nR1 a b 1k\nC1 b 0 1u").unwrap();
+    let old = [0., 0., 0.];
+    let next = [1., 0.5, -0.0005];
+    let report = backward_euler_step(&c, &old, &next, 0.001, AuditOptions::default()).unwrap();
+    assert!(!report.has_failures());
+    assert!(
+        backward_euler_step(
+            &c,
+            &old,
+            &[1., 0.6, -0.0004],
+            0.001,
+            AuditOptions::default()
+        )
+        .unwrap()
+        .has_failures()
+    );
+    for dt in [0., -1., f64::NAN, f64::INFINITY] {
+        assert!(backward_euler_step(&c, &old, &next, dt, AuditOptions::default()).is_err());
+    }
+    let c = parse("title\nV1 a 0 1\nR1 a b 1\nL1 b 0 1m").unwrap();
+    assert!(
+        !backward_euler_step(
+            &c,
+            &old,
+            &[1., 0.5, -0.5, 0.5],
+            0.001,
+            AuditOptions::default()
+        )
+        .is_ok()
+    );
+    let old = [0., 0., 0., 0.];
+    assert!(
+        !backward_euler_step(
+            &c,
+            &old,
+            &[1., 0.5, -0.5, 0.5],
+            0.001,
+            AuditOptions::default()
+        )
+        .unwrap()
+        .has_failures()
+    );
+}
