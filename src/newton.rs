@@ -502,48 +502,6 @@ fn limited_candidate(
     )
 }
 
-#[cfg(test)]
-mod trial_contracts {
-    use super::limited_candidate;
-    use crate::{
-        circuit::{Circuit, Element},
-        compile::compile,
-        ids::NodeId,
-    };
-
-    #[test]
-    fn trial_ceiling_and_damping_evidence_have_exact_boundary_semantics() {
-        let vt = 0.025;
-        let plan = compile(&Circuit {
-            nodes: vec!["0".into(), "x".into()],
-            elements: vec![Element::Diode {
-                id: "D".into(),
-                p: NodeId(1),
-                n: NodeId(0),
-                saturation_amps: 1e-300,
-                thermal_volts: vt,
-            }],
-        })
-        .unwrap();
-        // Close to the accepted exponent ceiling, the domain bound is tighter
-        // than the two-Vt increment. Backtracking must contract that bound.
-        let old = 699.5 * vt;
-        let ceiling = 700. * vt;
-        let (full, damped) = limited_candidate(&plan, &[old], &[2. * vt], 1.);
-        assert!((full[0] - ceiling).abs() < 1e-14);
-        assert!(damped);
-        let (half, damped) = limited_candidate(&plan, &[old], &[2. * vt], 0.5);
-        assert!((half[0] - (old + (ceiling - old) * 0.5)).abs() < 1e-14);
-        assert!(damped);
-        // A safe negative correction is not limited. Its evidence flag must
-        // distinguish a full step from an explicitly backtracked step.
-        let (reverse, damped) = limited_candidate(&plan, &[old], &[-vt], 1.);
-        assert_eq!(reverse[0], old - vt);
-        assert!(!damped);
-        assert!(limited_candidate(&plan, &[old], &[-vt], 0.5).1);
-    }
-}
-
 /// Solve F(x)=0 using analytic diode Jacobians, bounded damping and a supplied
 /// independently replaceable linear solver.
 pub fn solve(
@@ -944,4 +902,46 @@ pub fn solve_backward_euler_step(
         ErrorCode::NumericalFailure,
         "nonlinear transient Newton iteration limit exceeded",
     ))
+}
+
+#[cfg(test)]
+mod trial_contracts {
+    use super::limited_candidate;
+    use crate::{
+        circuit::{Circuit, Element},
+        compile::compile,
+        ids::NodeId,
+    };
+
+    #[test]
+    fn trial_ceiling_and_damping_evidence_have_exact_boundary_semantics() {
+        let vt = 0.025;
+        let plan = compile(&Circuit {
+            nodes: vec!["0".into(), "x".into()],
+            elements: vec![Element::Diode {
+                id: "D".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                saturation_amps: 1e-300,
+                thermal_volts: vt,
+            }],
+        })
+        .unwrap();
+        // Close to the accepted exponent ceiling, the domain bound is tighter
+        // than the two-Vt increment. Backtracking must contract that bound.
+        let old = 699.5 * vt;
+        let ceiling = 700. * vt;
+        let (full, damped) = limited_candidate(&plan, &[old], &[2. * vt], 1.);
+        assert!((full[0] - ceiling).abs() < 1e-14);
+        assert!(damped);
+        let (half, damped) = limited_candidate(&plan, &[old], &[2. * vt], 0.5);
+        assert!((half[0] - (old + (ceiling - old) * 0.5)).abs() < 1e-14);
+        assert!(damped);
+        // A safe negative correction is not limited. Its evidence flag must
+        // distinguish a full step from an explicitly backtracked step.
+        let (reverse, damped) = limited_candidate(&plan, &[old], &[-vt], 1.);
+        assert_eq!(reverse[0], old - vt);
+        assert!(!damped);
+        assert!(limited_candidate(&plan, &[old], &[-vt], 0.5).1);
+    }
 }

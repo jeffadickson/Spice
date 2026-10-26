@@ -1,19 +1,20 @@
 {
   "rust": {
-    "status": "measured",
+    "status": "provisional_mapping_warning",
     "platform": "Ubuntu 24.04 x64 under WSL2",
-    "source_commit": "8a6b624d433d64c586ae5c6227d8422ee58485ae",
+    "source_commit": "a31c1a08fc8791a2facaaa6ac27b2a762bca7ab7",
     "toolchain": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
-    "line_percent": 90.32454361054766,
-    "lines": 4930,
-    "covered_lines": 4453,
+    "line_percent": 90.42383046781288,
+    "lines": 5002,
+    "covered_lines": 4523,
     "branch_percent": null,
     "scope": "owned src/*.rs; test and dependency files excluded",
-    "report": "evidence/continuation-344-rust-coverage.json",
+    "report": "evidence/continuation-354-rust-coverage.json",
     "limitations": [
       "No qualified Rust branch metrics from this instrumentation.",
       "Windows Rust instrumentation has not been rerun after successful SDK installation.",
-      "Vendor internals, managed code and GPU/native plugins excluded."
+      "Vendor internals, managed code and GPU/native plugins excluded.",
+      "LLVM warns about 62 functions with mismatched data; attribution pending. Checkpoint 344 had the same warning."
     ]
   },
   "managed": {
@@ -39,7 +40,7 @@
       "generated/framework code",
       "test executable"
     ],
-    "current_report": "evidence/continuation-344-managed-coverage.json"
+    "current_report": "evidence/continuation-354-managed-coverage.json"
   },
   "additional_unmeasured": [
     "Supplemental numerical mutation driver",

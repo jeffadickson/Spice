@@ -33,6 +33,9 @@ executing them; that preflight is not mutation detection evidence.
 
 Linux/WSL rustc 1.99.1 instrumentation measured 4,453/4,930 owned source lines
 (90.32%), excluding dependencies/tests. Rust branch coverage is unavailable.
+Follow-up review at checkpoint 354 found an LLVM warning about 62 functions with
+mismatched data in this export too. Treat this percentage as provisional until
+that warning is attributed; matching source hashes do not resolve mapping warnings.
 Windows Rust instrumentation has not been rerun after SDK installation.
 Managed owned-source coverage is 141/151 mapped lines and 52/66 branches;
 Checkpoint.cs is 40/41 lines and 21/30 branches, and FrameworkMutations.cs is

@@ -1,0 +1,73 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "reports": [
+    "build/qualification-campaign/checkpoint-354.cobertura.xml"
+  ],
+  "metrics": [
+    {
+      "file": "dotnet/Simulator.Client/Client.cs",
+      "source_sha256": "626e3c95f827f8cd946f750c0db6d3970fda83333acc438b81fcfa7df2166671",
+      "lines": 73,
+      "covered_lines": 71,
+      "line_percent": 97.26027397260275,
+      "branches": 66,
+      "covered_branches": 52,
+      "branch_percent": 78.78787878787878
+    },
+    {
+      "file": "dotnet/Simulator.Client/Requests.cs",
+      "source_sha256": "67322b96b7b15fef97119bf557ada5655ddf43e9bebb6b11c5416d2ba1a92276",
+      "lines": 43,
+      "covered_lines": 41,
+      "line_percent": 95.34883720930233,
+      "branches": 0,
+      "covered_branches": 0,
+      "branch_percent": null
+    },
+    {
+      "file": "dotnet/Simulator.Client/Results.cs",
+      "source_sha256": "5e41aea7f5dfd6c6237962208bbcb7cec1fb9fcd16acd2fbf909247884a40e8d",
+      "lines": 28,
+      "covered_lines": 25,
+      "line_percent": 89.28571428571429,
+      "branches": 0,
+      "covered_branches": 0,
+      "branch_percent": null
+    },
+    {
+      "file": "dotnet/Simulator.Client/SweepResults.cs",
+      "source_sha256": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+      "lines": 7,
+      "covered_lines": 4,
+      "line_percent": 57.142857142857146,
+      "branches": 0,
+      "covered_branches": 0,
+      "branch_percent": null
+    },
+    {
+      "file": "dotnet/Simulator.Client/WireContext.cs",
+      "source_sha256": "f1c7a3f8e82e8fcb3671725851a4b154a34c152a8d79c8fd05782e21be432a15",
+      "lines": 0,
+      "covered_lines": 0,
+      "line_percent": null,
+      "branches": 0,
+      "covered_branches": 0,
+      "branch_percent": null
+    },
+    {
+      "file": "scripts/Checkpoint.cs",
+      "source_sha256": "562268a5426a27fd43b87595e2547d3bc414221d2110024167c5db6143aa945f",
+      "lines": 41,
+      "covered_lines": 40,
+      "line_percent": 97.5609756097561,
+      "branches": 30,
+      "covered_branches": 21,
+      "branch_percent": 70
+    }
+  ],
+  "limitations": [
+    "Owned mapped lines only; generated metadata and vendor/tool internals excluded.",
+    "Checkpoint success path and focused Rust-only framework execution; remaining failure paths unmeasured.",
+    "Mapped branch maxima do not establish path completeness. File-based helpers were not NativeAOT compiled."
+  ]
+}
