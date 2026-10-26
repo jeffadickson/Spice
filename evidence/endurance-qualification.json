@@ -1,0 +1,91 @@
+{
+  "scope": "short-run endurance infrastructure validation; not a completed five-hour campaign",
+  "source_hashes": {
+    "scripts/Run-Endurance.ps1": "52322b0ed94a94c41375a7da235800dcfdad29c255b5f614554f92d8ce822983",
+    "Makefile": "7b733a9a3fdecfe82b1436cdc9de0736076f4b2818eb7fb7140973ddc3849329",
+    "scripts/Endurance.cs": "b2557a35b8fdf498369d9992e76d44b19a0f031e5d13fd05b4080ca488376bd3",
+    "scripts/Mutation.cs": "693e0461352748adc10f38c567bf3b817636735261515ba2ab352b2303590b01",
+    "tests/Endurance.Tests.ps1": "b70ac592e881399fd24b1a32e473d479f47a47ff555efff0e8d2e2e35511b290",
+    "tests/endurance.rs": "b6be43d0e7ebadb88d5b7a05572d1f7dca10946803b5ff2ffb4f29da1a9f66ca"
+  },
+  "short_runs": [
+    {
+      "run": "20261026T134319Z-2d96e67e",
+      "status": "failed",
+      "seconds": 180.1448784,
+      "cases": 0,
+      "batches": 0,
+      "seed": "1",
+      "mutation_status": "skipped_explicitly",
+      "tested_runner_hash": "0c61fca763f052cfd5d4528b20759c8bfa550af3c05319a4868d04fc78a3cc65",
+      "error": "System.IO.IOException: Endurance build failed or exhausted its budget; inspect build.log.\r\n   at Program.<Main>$(String[] args)"
+    },
+    {
+      "run": "20261026T134915Z-70694dda",
+      "status": "budget_exhausted",
+      "seconds": 179.0558836,
+      "cases": 745472,
+      "batches": 728,
+      "seed": "1",
+      "mutation_status": "skipped_explicitly",
+      "tested_runner_hash": "3105d7f51d78701a1d2fab5087ae57d7800fe1feb2d05725e7d4e4365625c48e",
+      "error": null
+    },
+    {
+      "run": "20261026T135306Z-ff2f0c2d",
+      "status": "budget_exhausted",
+      "seconds": 59.0598022,
+      "cases": 326656,
+      "batches": 319,
+      "seed": "42",
+      "mutation_status": "skipped_explicitly",
+      "tested_runner_hash": "b2557a35b8fdf498369d9992e76d44b19a0f031e5d13fd05b4080ca488376bd3",
+      "error": null
+    },
+    {
+      "run": "20261026T135438Z-29a0e800",
+      "status": "budget_exhausted",
+      "seconds": 59.0013182,
+      "cases": 327680,
+      "batches": 320,
+      "seed": "42",
+      "mutation_status": "skipped_explicitly",
+      "tested_runner_hash": "b2557a35b8fdf498369d9992e76d44b19a0f031e5d13fd05b4080ca488376bd3",
+      "error": null
+    }
+  ],
+  "pester": {
+    "passed": 2,
+    "failed": 0
+  },
+  "strictdoc": {
+    "resolved_parents": 188,
+    "unique_ids": 207,
+    "documents": 12
+  },
+  "rust_suite": "cargo test --locked -q passed; endurance batch ignored in default suite and run explicitly",
+  "clippy": "passed with warnings denied",
+  "selected_mutations": {
+    "report": "evidence/mutation.json",
+    "total": 22,
+    "killed": 22
+  },
+  "failure_probe": {
+    "seed": "0",
+    "scope": "deliberate sentinel panic in copied harness, original source hash preserved",
+    "minimized_value": "V",
+    "minimized_bytes": 1,
+    "log": "build/endurance-failure-probe.log"
+  },
+  "overlap_rejection": "verified via exclusive file lock",
+  "invalid_mutation_timeout": "0 rejected with expected 1..900 diagnostic",
+  "coverage": "evidence/endurance-coverage.json",
+  "schedules": {
+    "launch_local_time": "00:00",
+    "timezone": "America/Los_Angeles",
+    "review_local_time": "05:05",
+    "status": "ACTIVE; configured, no overnight invocation claimed",
+    "launch": "spice-nightly-endurance-campaign",
+    "review": "spice-morning-endurance-results"
+  }
+}

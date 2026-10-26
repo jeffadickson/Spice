@@ -1,0 +1,18 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "scope": "scripts/Endurance.cs only; successful one-minute seed-42 campaign with mutations explicitly skipped",
+  "source_sha256": "b2557a35b8fdf498369d9992e76d44b19a0f031e5d13fd05b4080ca488376bd3",
+  "lines": 118,
+  "covered_lines": 104,
+  "line_percent": 88.13559322033899,
+  "branches": 88,
+  "covered_branches": 60,
+  "branch_percent": 68.18181818181819,
+  "limitations": [
+    "No Rust line/branch coverage: MSVC link.exe remains missing.",
+    "Mutation.cs and PowerShell launcher coverage are not measured; launcher contracts ran in Pester.",
+    "Mutation-phase, parser-panic minimization and forced-termination paths are not covered by this successful short runner measurement.",
+    "No completed five-hour campaign has run yet."
+  ],
+  "raw_report": "evidence/endurance-coverage.cobertura.xml"
+}

@@ -29,6 +29,8 @@ Current evidence: checkpoint 320 passed 242 Rust tests, 28 managed checks, forma
 
 For authoring evolution, read `docs/modern-dsl-proposal.sdoc` before designing a parser. SForge is a proposal only: keep the current JSON protocol stable until an AST/IR and migration contract are implemented.
 
+An overnight campaign is now configured for midnight local time (five-hour maximum) with a 05:05 review. Use make endurance or scripts/Run-Endurance.ps1. Read docs/endurance.md and evidence/endurance-qualification.md; no completed five-hour run is claimed. Campaigns test immutable source archives and keep generated artifacts in ignored work/target paths.
+
 Suggested next technical work:
 
 1. Extend difficult-circuit evidence beyond the current-driven diode recovery, impossible physical reverse bias, and bounded stage-exhaustion cases in tests/continuation.rs; see evidence/continuation-qualification.md. Do not infer broad convergence guarantees from this small topology.

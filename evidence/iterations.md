@@ -219,3 +219,5 @@ Each entry corresponds to a local Git commit. Build checkpoints: 10, 20, 30, 40,
 318. Add structured tracing on stderr with caller-owned library subscribers.
 319. Compare explicit timestep-refinement runs and challenge audits with seeded/fuzz/mutation cases.
 320. Verify the ten-iteration consistency slice, document coverage availability and preserve broader qualification scope.
+321. Add replayable seeded endurance batches and configurable isolated mutation-test runtime limits.
+322. Add bounded overnight supervision, make targets, retained coverage/verification evidence and user-selected nightly scheduling.

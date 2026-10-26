@@ -37,6 +37,8 @@ dotnet run --file scripts/Checkpoint.cs -- 100
 dotnet run --file scripts/Mutation.cs
 ```
 
+For overnight seeded fuzz/property testing, use `make endurance` (five-hour maximum) or the PowerShell launcher; see [campaign controls and replay](docs/endurance.md).
+
 For the focused nonlinear diode/Newton contract suite, run `./scripts/Test-Nonlinear.ps1`. Full checkpoints use `dotnet run --file scripts/Checkpoint.cs -- <multiple-of-10>`.
 
 Linux executable names omit `.exe`. Build the managed library before F# examples load it. `scripts/Test-SecondSlice.ps1` runs the current build/tests and typed examples. Source/revision evidence is under `evidence/`; generated logs and binaries stay outside Git.
