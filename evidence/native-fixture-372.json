@@ -1,0 +1,14 @@
+{
+  "status": "compiled_and_echo_executed",
+  "runtime": "win-x64",
+  "sdk": "10.0.403",
+  "source_commit": "a47648a23e31e3be7a8499bc478591182a9a56cc",
+  "source_sha256": "da079637a66a7a1250423eb69705fa2d1aafdc195c8af70533df62a0bee52bf7",
+  "executable_sha256": "9690e02e6d3ded78415c878526ff2c3f529ed3f9913a5888dc700b4953137522",
+  "build_log_sha256": "2525dfc4f736227b39dc16f297053fc7f5271af42ad7f56cc74470c4762132d6",
+  "command": "dotnet publish dotnet/Simulator.TransportFixture/Simulator.TransportFixture.csproj -c Release -r win-x64 -p:PublishAot=true -o build/native-transport-fixture/win-x64",
+  "limitations": [
+    "Synthetic UTF-8 echo fixture only, not the simulator or coverage/remote helper NativeAOT qualification.",
+    "Linux NativeAOT build and full adversarial fixture suite under NativeAOT have not run."
+  ]
+}

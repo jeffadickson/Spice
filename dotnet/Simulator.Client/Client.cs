@@ -19,6 +19,7 @@ public sealed record SimulationResponse(string SchemaVersion, string Status, boo
             throw new InvalidDataException("Malformed or incomplete result manifest.");
         return manifest;
     }
+    /// <summary>True only for a successful, complete envelope; physical accuracy requires separate evidence.</summary>
     public bool Succeeded => Status == "succeeded" && Complete;
     /// <summary>Engine input/numerical failures are distinct from transport exceptions.</summary>
     public SimulationError? Error => Payload.TryGetProperty("error", out var error)
