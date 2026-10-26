@@ -3,7 +3,7 @@ TITLE: Fourth Reference Slice - Nonlinear Diode Operating Points
 
 [TEXT]
 STATEMENT: >>>
-Iterations 151-200 introduce a bounded Shockley diode and analytic damped Newton DC operating points. This slice does not qualify semiconductor model parity, nonlinear transient integration, AC bias linearization, model plugins, or production convergence guarantees.
+Iterations 151-200 introduced a bounded Shockley diode and analytic damped Newton DC operating points. Later bounded extensions add AC bias linearization and backward-Euler nonlinear transient stepping. This slice does not qualify semiconductor model parity, model plugins, general nonlinear integration methods, or production convergence guarantees.
 <<<
 
 [REQUIREMENT]
@@ -49,13 +49,13 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: REF4-003
-TITLE: Explicit nonlinear analysis boundaries
+TITLE: Explicit nonlinear analysis capability boundaries
 STATEMENT: >>>
-The reference engine shall reject nonlinear AC and transient requests until bias linearization and per-step nonlinear integration are implemented, and expose Newton evidence in operating-point results.
+The reference engine shall form nonlinear AC from a converged DC bias and analytic diode incremental conductances, and shall solve diode transient requests only through the bounded backward-Euler Newton path. Unsupported nonlinear transient methods shall fail explicitly. Successful nonlinear operating points shall expose Newton evidence.
 <<<
 COMMENT: >>>
-Implementation: src/ac.rs, src/transient.rs, src/configured.rs, src/api.rs.
-Verification: tests/nonlinear.rs::nonlinear_ac_is_explicitly_unsupported_until_bias_linearization_exists, tests/nonlinear.rs::nonlinear_transient_is_rejected_until_newton_time_stepping_exists.
+Implementation: src/ac.rs, src/transient.rs, src/configured.rs, src/newton.rs and src/api.rs.
+Verification: tests/nonlinear.rs::nonlinear_ac_linearizes_at_the_dc_bias_point, tests/nonlinear.rs::nonlinear_backward_euler_transient_produces_finite_committed_samples, tests/nonlinear.rs::configured_backward_euler_accepts_nonlinear_diode_steps and configured-method rejection cases.
 <<<
 RELATIONS:
 - TYPE: Parent
