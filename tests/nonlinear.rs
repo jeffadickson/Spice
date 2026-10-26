@@ -9,7 +9,10 @@ use circuit_simulator::{
     ids::NodeId,
     model::DiodeModel,
     netlist::parse,
-    newton::{ContinuationOptions, NewtonOptions, linearize, norm_inf, solve, solve_from},
+    newton::{
+        ContinuationOptions, GminContinuationOptions, NewtonOptions, linearize, norm_inf, solve,
+        solve_from,
+    },
     power::dc_power,
     sources::{BoundSources, SourceOverride},
     transient::{TransientOptions, transient},
@@ -896,6 +899,53 @@ fn explicit_gmin_is_applied_and_retained_in_convergence_evidence() {
         )
         .is_err()
     );
+}
+
+#[test]
+fn gmin_continuation_retains_stages_but_returns_an_unregularized_solution() {
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "s".into(), "a".into()],
+        elements: vec![
+            Element::Voltage {
+                id: "V1".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                volts: 1.,
+            },
+            Element::Resistor {
+                id: "R1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                ohms: 1000.,
+            },
+            Element::Diode {
+                id: "D1".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.02585,
+            },
+        ],
+    };
+    let (values, report) = solve(
+        &compile(&circuit).unwrap(),
+        &DenseLu,
+        NewtonOptions {
+            gmin_continuation: Some(GminContinuationOptions {
+                initial_siemens: 1e-3,
+                minimum_siemens: 1e-9,
+                reduction_factor: 0.1,
+                max_stages: 8,
+            }),
+            ..NewtonOptions::default()
+        },
+    )
+    .unwrap();
+    let stages = report.gmin_continuation.unwrap();
+    assert!(stages.final_unregularized);
+    assert_eq!(stages.stages.last().unwrap().gmin_siemens, 1e-9);
+    assert_eq!(report.gmin_siemens, None);
+    assert!(values.iter().all(|value| value.is_finite()));
 }
 
 #[test]

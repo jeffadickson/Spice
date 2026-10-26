@@ -34,6 +34,19 @@ RELATIONS:
   VALUE: REF4-001
 
 [REQUIREMENT]
+UID: REF4-012
+TITLE: Bounded Gmin continuation with physical final solve
+STATEMENT: >>>
+The reference DC Newton path shall offer explicit bounded Gmin continuation. Each finite positive Gmin stage may warm-start the next stage, but the reported operating point shall always be produced by a final solve with no Gmin shunt. The result shall retain accepted stage conductances and identify the unregularized final solve; fixed Gmin and Gmin continuation are mutually exclusive.
+<<<
+COMMENT: >>>
+Implementation: src/newton.rs, dotnet/Simulator.Client/Requests.cs and Results.cs. Verification: tests/nonlinear.rs::gmin_continuation_retains_stages_but_returns_an_unregularized_solution.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-008
+
+[REQUIREMENT]
 UID: REF4-002
 TITLE: Analytic bounded Newton operating point
 STATEMENT: >>>

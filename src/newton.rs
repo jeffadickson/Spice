@@ -202,6 +202,9 @@ pub struct NewtonOptions {
     /// Optional explicit DC shunt conductance from each non-reference node to ground.
     #[serde(default)]
     pub gmin_siemens: Option<f64>,
+    /// Optional staged Gmin warm-start policy; the final stage is always unregularized.
+    #[serde(default)]
+    pub gmin_continuation: Option<GminContinuationOptions>,
 }
 
 impl Default for NewtonOptions {
@@ -214,6 +217,7 @@ impl Default for NewtonOptions {
             current_absolute_tolerance: 1e-12,
             continuation: None,
             gmin_siemens: None,
+            gmin_continuation: None,
         }
     }
 }
@@ -238,6 +242,14 @@ impl NewtonOptions {
             .is_some_and(|value| !value.is_finite() || value <= 0. || value > 1.)
         {
             return Err(SimError::invalid("invalid gmin_siemens"));
+        }
+        if self.gmin_siemens.is_some() && self.gmin_continuation.is_some() {
+            return Err(SimError::invalid(
+                "gmin_siemens and gmin_continuation are exclusive",
+            ));
+        }
+        if let Some(continuation) = self.gmin_continuation {
+            continuation.validate()?;
         }
         Ok(())
     }
@@ -288,6 +300,44 @@ impl ContinuationOptions {
     }
 }
 
+/// Bounded DC Gmin stepping. Accepted regularized stages warm-start one final,
+/// physically unregularized Newton solve; they are never returned as the result.
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GminContinuationOptions {
+    pub initial_siemens: f64,
+    pub minimum_siemens: f64,
+    pub reduction_factor: f64,
+    pub max_stages: usize,
+}
+impl Default for GminContinuationOptions {
+    fn default() -> Self {
+        Self {
+            initial_siemens: 1e-3,
+            minimum_siemens: 1e-12,
+            reduction_factor: 0.1,
+            max_stages: 16,
+        }
+    }
+}
+impl GminContinuationOptions {
+    pub fn validate(self) -> SimResult<()> {
+        if !self.initial_siemens.is_finite()
+            || !self.minimum_siemens.is_finite()
+            || !self.reduction_factor.is_finite()
+            || self.initial_siemens <= 0.
+            || self.minimum_siemens <= 0.
+            || self.minimum_siemens > self.initial_siemens
+            || !(0. ..1.).contains(&self.reduction_factor)
+            || self.max_stages == 0
+            || self.max_stages > 128
+        {
+            return Err(SimError::invalid("invalid Gmin continuation options"));
+        }
+        Ok(())
+    }
+}
+
 /// Deterministic convergence evidence for an accepted operating point.
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct NewtonReport {
@@ -300,6 +350,8 @@ pub struct NewtonReport {
     pub gmin_siemens: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub continuation: Option<ContinuationReport>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub gmin_continuation: Option<GminContinuationReport>,
 }
 
 /// One accepted source-stepping stage retained as reproducible convergence evidence.
@@ -318,6 +370,17 @@ pub struct ContinuationReport {
     pub accepted_stages: usize,
     pub rejected_stages: usize,
     pub stages: Vec<ContinuationStage>,
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct GminContinuationStage {
+    pub gmin_siemens: f64,
+    pub iterations: usize,
+    pub residual_inf: f64,
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct GminContinuationReport {
+    pub stages: Vec<GminContinuationStage>,
+    pub final_unregularized: bool,
 }
 
 fn limited_candidate(
@@ -375,6 +438,9 @@ pub fn solve_from(
         continuation.validate()?;
         return solve_with_source_continuation(plan, solver, options, continuation, initial);
     }
+    if let Some(continuation) = options.gmin_continuation {
+        return solve_with_gmin_continuation(plan, solver, options, continuation, initial);
+    }
     solve_from_rhs(plan, solver, options, initial, &plan.rhs)
 }
 
@@ -404,6 +470,7 @@ fn solve_from_rhs(
                     linear_solves: iteration,
                     gmin_siemens: options.gmin_siemens,
                     continuation: None,
+                    gmin_continuation: None,
                 },
             ));
         }
@@ -452,6 +519,52 @@ fn solve_from_rhs(
         ErrorCode::NumericalFailure,
         "Newton iteration limit exceeded",
     ))
+}
+
+fn solve_with_gmin_continuation(
+    plan: &CompiledCircuit,
+    solver: &dyn LinearSolver,
+    options: NewtonOptions,
+    continuation: GminContinuationOptions,
+    initial: Vec<f64>,
+) -> SimResult<(Vec<f64>, NewtonReport)> {
+    let mut values = initial;
+    let mut gmin = continuation.initial_siemens;
+    let mut stages = Vec::new();
+    for _ in 0..continuation.max_stages {
+        let mut stage_options = options;
+        stage_options.gmin_continuation = None;
+        stage_options.gmin_siemens = Some(gmin);
+        let (candidate, report) = solve_from_rhs(plan, solver, stage_options, values, &plan.rhs)?;
+        stages.push(GminContinuationStage {
+            gmin_siemens: gmin,
+            iterations: report.iterations,
+            residual_inf: report.residual_inf,
+        });
+        values = candidate;
+        if gmin <= continuation.minimum_siemens {
+            break;
+        }
+        gmin = (gmin * continuation.reduction_factor).max(continuation.minimum_siemens);
+    }
+    if stages
+        .last()
+        .is_some_and(|stage| stage.gmin_siemens > continuation.minimum_siemens)
+    {
+        return Err(SimError::new(
+            ErrorCode::NumericalFailure,
+            "Gmin continuation stage budget exhausted",
+        ));
+    }
+    let mut final_options = options;
+    final_options.gmin_continuation = None;
+    final_options.gmin_siemens = None;
+    let (values, mut report) = solve_from_rhs(plan, solver, final_options, values, &plan.rhs)?;
+    report.gmin_continuation = Some(GminContinuationReport {
+        stages,
+        final_unregularized: true,
+    });
+    Ok((values, report))
 }
 
 /// Solves one explicitly supplied DC excitation without enabling continuation.
@@ -590,6 +703,7 @@ pub fn solve_backward_euler_step(
                     linear_solves: iteration,
                     gmin_siemens: None,
                     continuation: None,
+                    gmin_continuation: None,
                 },
             ));
         }

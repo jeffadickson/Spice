@@ -38,9 +38,13 @@ public sealed record OperatingPointNewton(NewtonOptions Options) : Analysis;
 /// <summary>Optional source continuation is explicit so ordinary operating-point semantics remain unchanged.</summary>
 public sealed record NewtonOptions(int MaxIterations = 50, double AbsoluteTolerance = 1e-12,
     double RelativeTolerance = 1e-9, ContinuationOptions? Continuation = null, double? GminSiemens = null,
-    double VoltageAbsoluteTolerance = 1e-9, double CurrentAbsoluteTolerance = 1e-12);
+    double VoltageAbsoluteTolerance = 1e-9, double CurrentAbsoluteTolerance = 1e-12,
+    GminContinuationOptions? GminContinuation = null);
 /// <summary>Bounded DC source-stepping policy; each accepted stage seeds the next stage.</summary>
 public sealed record ContinuationOptions(double InitialStep = 0.125, double MinimumStep = 1e-4, int MaxStages = 64);
+/// <summary>Bounded DC Gmin warm starts followed by one mandatory unregularized final solve.</summary>
+public sealed record GminContinuationOptions(double InitialSiemens = 1e-3, double MinimumSiemens = 1e-12,
+    double ReductionFactor = 0.1, int MaxStages = 16);
 public sealed record Transient(LegacyTransientOptions Options) : Analysis;
 public sealed record LegacyTransientOptions(double StopS, double StepS, int MaxSteps);
 public sealed record Ac(double[] FrequenciesHz) : Analysis;
