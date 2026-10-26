@@ -6,6 +6,50 @@ use std::sync::atomic::AtomicUsize;
 
 struct ObserveFirstTrial(Mutex<Vec<f64>>);
 
+struct TerminalProvider {
+    code: ErrorCode,
+    calls: AtomicUsize,
+}
+impl LinearSolver for TerminalProvider {
+    fn name(&self) -> &'static str {
+        "terminal-provider"
+    }
+    fn solve(&self, _: &Matrix, _: &[f64]) -> SimResult<Vec<f64>> {
+        self.calls.fetch_add(1, Ordering::Relaxed);
+        Err(circuit_simulator::error::SimError::new(
+            self.code.clone(),
+            "original provider diagnostic",
+        ))
+    }
+}
+
+#[test]
+fn continuation_preserves_terminal_provider_errors_without_retry() {
+    for code in [
+        ErrorCode::Cancelled,
+        ErrorCode::ResourceExhausted,
+        ErrorCode::Unsupported,
+        ErrorCode::InvalidInput,
+        ErrorCode::IoError,
+    ] {
+        for source in [true, false] {
+            let provider = TerminalProvider {
+                code: code.clone(),
+                calls: AtomicUsize::new(0),
+            };
+            let options = NewtonOptions {
+                continuation: source.then(ContinuationOptions::default),
+                gmin_continuation: (!source).then(GminContinuationOptions::default),
+                ..NewtonOptions::default()
+            };
+            let error = solve(&diode_plan(), &provider, options).unwrap_err();
+            assert_eq!(error.code, code);
+            assert_eq!(error.message, "original provider diagnostic");
+            assert_eq!(provider.calls.load(Ordering::Relaxed), 1);
+        }
+    }
+}
+
 #[test]
 fn overflowing_finite_tolerances_cannot_report_zero_residual() {
     let options = NewtonOptions {

@@ -749,6 +749,15 @@ fn solve_with_source_continuation(
                 step = (step * 2.0).min(1.0 - source_scale);
             }
             Err(error) => {
+                // A smaller source increment can repair conditioning or a
+                // nonlinear failure, not cancellation, transport or contracts.
+                if !matches!(
+                    error.code,
+                    ErrorCode::NumericalFailure | ErrorCode::SingularMatrix
+                ) {
+                    tracing::debug!(source_scale = target_scale, error_code = ?error.code, "source_stage_terminal_error");
+                    return Err(error);
+                }
                 if step <= continuation.minimum_step {
                     return Err(SimError::new(
                         ErrorCode::NumericalFailure,

@@ -232,3 +232,17 @@ Derived observability requirement. Implementation: src/newton.rs and dotnet/Simu
 RELATIONS:
 - TYPE: Parent
   VALUE: REF4-013
+
+[REQUIREMENT]
+UID: REF4-017
+STATUS: Draft
+TITLE: Checked convergence scales and recovery error classes
+STATEMENT: >>>
+Nonlinear convergence shall reject nonfinite computed tolerance scales and ratios rather than accepting false zero norms. Source continuation shall retry only numerical or singular-matrix failures; cancellation, resource, transport and input/provider contract failures shall preserve their original error class and diagnostic without repeated provider calls.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation: src/newton.rs::scaled_component and solve_with_source_continuation. Verification: tests/continuation_hardening.rs::overflowing_finite_tolerances_cannot_report_zero_residual and continuation_preserves_terminal_provider_errors_without_retry. Checkpoint 354 evidence pending; no global convergence guarantee.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-014
