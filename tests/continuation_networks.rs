@@ -111,6 +111,56 @@ fn antiparallel_diodes_match_signed_asinh_oracle() {
     }
 }
 
+#[test]
+fn parallel_diode_permutations_preserve_aggregate_shockley_solution() {
+    let saturations = [1e-14, 3e-12, 7e-11];
+    let total: f64 = saturations.iter().sum();
+    for amps in [1e-9, 1e-6, 1e-3] {
+        let expected = 0.03 * (amps / total).ln_1p();
+        for reverse_order in [false, true] {
+            let mut elements: Vec<_> = saturations
+                .iter()
+                .enumerate()
+                .map(|(index, &saturation_amps)| Element::Diode {
+                    id: format!("D{index}"),
+                    p: NodeId(1),
+                    n: NodeId(0),
+                    saturation_amps,
+                    thermal_volts: 0.03,
+                })
+                .collect();
+            if reverse_order {
+                elements.reverse();
+            }
+            elements.push(Element::Current {
+                id: "I".into(),
+                p: NodeId(0),
+                n: NodeId(1),
+                amps,
+            });
+            let plan = compile(&Circuit {
+                nodes: vec!["0".into(), "x".into()],
+                elements,
+            })
+            .unwrap();
+            for provider in [&DenseLu as &dyn LinearSolver, &DenseQr, &FaerSparseLu] {
+                for options in policies() {
+                    let (values, _) = solve_from(&plan, provider, options, vec![-0.1]).unwrap();
+                    assert!((values[0] - expected).abs() < 2e-7);
+                    let currents: Vec<_> = saturations
+                        .iter()
+                        .map(|isat| isat * (values[0] / 0.03).exp_m1())
+                        .collect();
+                    assert!((currents.iter().sum::<f64>() - amps).abs() < 1e-12);
+                    for i in 0..3 {
+                        assert!((currents[i] / amps - saturations[i] / total).abs() < 1e-7);
+                    }
+                }
+            }
+        }
+    }
+}
+
 fn assert_chain(values: &[f64], parameters: &[(f64, f64)], amps: f64) {
     let mut expected = 0.;
     let mut currents = Vec::new();
