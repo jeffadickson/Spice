@@ -59,6 +59,58 @@ fn chain(parameters: &[(f64, f64)], amps: f64) -> Circuit {
     }
 }
 
+#[test]
+fn antiparallel_diodes_match_signed_asinh_oracle() {
+    // Opposed identical diodes give I=2*Is*sinh(V/Vt), including reverse drive.
+    // This is a solvable reverse-bias topology, unlike the lone-diode case.
+    for amps in [-1e-3_f64, -1e-6, -1e-10, 1e-10, 1e-6, 1e-3] {
+        let isat = 1e-12;
+        let vt = 0.02585;
+        let plan = compile(&Circuit {
+            nodes: vec!["0".into(), "x".into()],
+            elements: vec![
+                Element::Current {
+                    id: "drive".into(),
+                    p: NodeId(0),
+                    n: NodeId(1),
+                    amps,
+                },
+                Element::Diode {
+                    id: "forward".into(),
+                    p: NodeId(1),
+                    n: NodeId(0),
+                    saturation_amps: isat,
+                    thermal_volts: vt,
+                },
+                Element::Diode {
+                    id: "reverse".into(),
+                    p: NodeId(0),
+                    n: NodeId(1),
+                    saturation_amps: isat,
+                    thermal_volts: vt,
+                },
+            ],
+        })
+        .unwrap();
+        let expected = vt * (amps / (2. * isat)).asinh();
+        for provider in [&DenseLu as &dyn LinearSolver, &DenseQr, &FaerSparseLu] {
+            for options in policies() {
+                let (values, report) =
+                    solve_from(&plan, provider, options, vec![-amps.signum() * 0.1]).unwrap();
+                assert!(
+                    (values[0] - expected).abs() < 2e-7,
+                    "{}: {amps}",
+                    provider.name()
+                );
+                let current = isat * ((values[0] / vt).exp_m1() - (-values[0] / vt).exp_m1());
+                assert!((current - amps).abs() < 1e-12);
+                assert!(values[0] * current > 0.);
+                assert_eq!(report.gmin_siemens, None);
+            }
+        }
+    }
+}
+
 fn assert_chain(values: &[f64], parameters: &[(f64, f64)], amps: f64) {
     let mut expected = 0.;
     let mut currents = Vec::new();
