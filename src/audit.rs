@@ -231,6 +231,7 @@ pub fn dc(
     let currents = dc_currents(circuit, state)?;
     let mut checks = kcl_checks(circuit, state, &currents, options, gmin);
     checks.extend(constraint_checks(circuit, state, options)?);
+    checks.push(power_check(circuit, state, &currents, options, gmin));
     if gmin.is_some() {
         checks.push(Check::not_checked(
             "unregularized_physics",
@@ -270,4 +271,33 @@ fn constraint_checks(
         ));
     }
     Ok(checks)
+}
+
+/// Passive sign convention: supplying sources contribute negative absorbed power.
+fn power_check(
+    circuit: &Circuit,
+    state: &[f64],
+    currents: &[f64],
+    options: AuditOptions,
+    gmin: Option<f64>,
+) -> Check {
+    let mut sum = 0.;
+    let mut scale = 0.;
+    for (element, current) in circuit.elements.iter().zip(currents) {
+        let (p, n) = element.terminals();
+        let power = (voltage(state, p) - voltage(state, n)) * current;
+        sum += power;
+        scale += power.abs();
+    }
+    for value in state.iter().take(circuit.nodes.len() - 1) {
+        let power = gmin.unwrap_or(0.) * value * value;
+        sum += power;
+        scale += power.abs();
+    }
+    Check::measured(
+        "power_balance",
+        sum,
+        options.power_absolute_w + options.relative * scale,
+        "W",
+    )
 }

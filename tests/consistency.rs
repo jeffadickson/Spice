@@ -89,3 +89,48 @@ fn controlled_voltage_and_inductor_constraints_are_audited() {
         );
     }
 }
+
+#[test]
+fn power_audit_includes_shunt_dissipation_and_detects_wrong_source_current() {
+    use circuit_simulator::{
+        audit::dc,
+        backend::DenseLu,
+        compile::compile,
+        netlist::parse,
+        newton::{NewtonOptions, solve},
+    };
+    let c = parse("title\nV1 a 0 1\nR1 a b 1k\nD1 b 0 1p 0.02585").unwrap();
+    let (mut x, _) = solve(
+        &compile(&c).unwrap(),
+        &DenseLu,
+        NewtonOptions {
+            gmin_siemens: Some(1e-3),
+            ..NewtonOptions::default()
+        },
+    )
+    .unwrap();
+    let report = dc(&c, &x, AuditOptions::default(), Some(1e-3)).unwrap();
+    assert!(!report.has_failures());
+    assert!(
+        report
+            .checks
+            .iter()
+            .any(|c| c.id == "unregularized_physics" && c.status == CheckStatus::NotChecked)
+    );
+    assert!(
+        dc(&c, &x, AuditOptions::default(), None)
+            .unwrap()
+            .has_failures()
+    );
+    *x.last_mut().unwrap() += 0.001;
+    assert_eq!(
+        dc(&c, &x, AuditOptions::default(), Some(1e-3))
+            .unwrap()
+            .checks
+            .iter()
+            .find(|c| c.id == "power_balance")
+            .unwrap()
+            .status,
+        CheckStatus::Failed
+    );
+}

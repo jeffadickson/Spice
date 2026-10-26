@@ -44,3 +44,16 @@ Implementation: src/audit.rs::constraint_checks. Verification: tests/consistency
 RELATIONS:
 - TYPE: Parent
   VALUE: CONS-002
+
+[REQUIREMENT]
+UID: CONS-004
+TITLE: DC power conservation
+STATEMENT: >>>
+The independent DC audit shall sum absorbed element power using passive sign convention and include explicit Gmin dissipation. It shall report a power-dimensional absolute-plus-relative bound and fail nonfinite arithmetic. Shunt-regularized success shall not imply an unregularized physical solution.
+<<<
+COMMENT: >>>
+Implementation: src/audit.rs::power_check. Verification: tests/consistency.rs::power_audit_includes_shunt_dissipation_and_detects_wrong_source_current.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: CONS-002
