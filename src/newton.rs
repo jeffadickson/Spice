@@ -248,6 +248,11 @@ impl NewtonOptions {
                 "gmin_siemens and gmin_continuation are exclusive",
             ));
         }
+        if self.continuation.is_some() && self.gmin_continuation.is_some() {
+            return Err(SimError::invalid(
+                "source continuation and gmin_continuation are exclusive",
+            ));
+        }
         if let Some(continuation) = self.gmin_continuation {
             continuation.validate()?;
         }

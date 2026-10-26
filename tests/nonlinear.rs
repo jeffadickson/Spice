@@ -949,6 +949,16 @@ fn gmin_continuation_retains_stages_but_returns_an_unregularized_solution() {
 }
 
 #[test]
+fn source_and_gmin_continuation_cannot_compete_for_dc_stage_ownership() {
+    let options = NewtonOptions {
+        continuation: Some(ContinuationOptions::default()),
+        gmin_continuation: Some(GminContinuationOptions::default()),
+        ..NewtonOptions::default()
+    };
+    assert!(options.validate().is_err());
+}
+
+#[test]
 fn configured_nonlinear_transient_accepts_source_breakpoints_and_adaptive_trials() {
     let circuit = Circuit {
         nodes: vec!["0".into(), "s".into(), "a".into()],
