@@ -14,7 +14,8 @@ var commands = new (string File, string[] Args)[] {
     ("cargo", ["clippy","--all-targets","--locked","--","-D","warnings"]),
     ("dotnet", ["build","dotnet/Simulator.Conformance/Simulator.Conformance.csproj"]),
     ("dotnet", ["run","--no-build","--project","dotnet/Simulator.Conformance/Simulator.Conformance.csproj","--",
-        Path.GetFullPath("target/debug/circuit-simulator" + (OperatingSystem.IsWindows() ? ".exe" : ""))])
+        Path.GetFullPath("target/debug/circuit-simulator" + (OperatingSystem.IsWindows() ? ".exe" : ""))]),
+    ("dotnet", ["test","dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj"])
 };
 var results = new List<object>(); var rustTests = 0; var managedChecks = 0;
 foreach (var (file, arguments) in commands)
