@@ -6,7 +6,7 @@ Import-SpiceTools -Root (Split-Path $PSScriptRoot -Parent)
 if ($IsWindows) { Import-SpiceMsvc }
 $oldToolchain = $env:RUSTUP_TOOLCHAIN
 if ([string]::IsNullOrWhiteSpace($CoverageToolchain)) {
-    $CoverageToolchain = if ($IsWindows) { 'nightly-x86_64-pc-windows-msvc' } else { 'nightly' }
+    $CoverageToolchain = if ($env:SPICE_COVERAGE_TOOLCHAIN) { $env:SPICE_COVERAGE_TOOLCHAIN } elseif ($IsWindows) { 'nightly-x86_64-pc-windows-msvc' } else { 'nightly' }
 }
 $env:RUSTUP_TOOLCHAIN = $CoverageToolchain
 $sysroot = (rustc --print sysroot).Trim()

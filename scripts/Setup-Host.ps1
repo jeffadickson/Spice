@@ -87,6 +87,17 @@ if (-not (Test-Path $venvPython)) {
 }
 $env:SPICE_STRICTDOC_PYTHON=$venvPython
 Invoke-SetupCommand $venvPython @('-c','from strictdoc.backend.sdoc.reader import SDReader; from importlib.metadata import version; assert version("strictdoc")=="0.30.4"')
-if ($Coverage -and $Install) { $coverageToolchain=if($IsWindows){'nightly-x86_64-pc-windows-msvc'}else{'nightly'}; Invoke-SetupCommand rustup @('toolchain','install',$coverageToolchain,'--profile','minimal','--component','llvm-tools-preview') }
-[ordered]@{status='ready';platform=[Runtime.InteropServices.RuntimeInformation]::OSDescription;rustc=$rust;dotnet=(& dotnet --version);strictdoc='0.30.4';native_tools_skipped=[bool]$SkipNativeTools;coverage_requested=[bool]$Coverage;acquisitions=$acquisitions} | ConvertTo-Json -Depth 6 | Set-Content work/setup/host.json
+$env:SPICE_COVERAGE_TOOLCHAIN=$null
+if ($Coverage) {
+    # Prefer the product compiler when this host ships its coverage runtime.
+    $sysroot=(& rustc --print sysroot).Trim()
+    $targetLine=(& rustc -vV|Select-String '^host:').ToString()
+    $hostTarget=$targetLine.Substring(6).Trim()
+    $runtime=Join-Path $sysroot ("lib/rustlib/$hostTarget/lib")
+    $profiler=Get-ChildItem -LiteralPath $runtime -Filter 'libprofiler_builtins*.rlib'|Select-Object -First 1
+    $coverageToolchain=if($profiler){"$pinned-$hostTarget"}elseif($IsWindows){'nightly-x86_64-pc-windows-msvc'}else{'nightly'}
+    $env:SPICE_COVERAGE_TOOLCHAIN=$coverageToolchain
+    if ($Install -and -not $profiler) { Invoke-SetupCommand rustup @('toolchain','install',$coverageToolchain,'--profile','minimal','--component','llvm-tools-preview') }
+}
+[ordered]@{status='ready';platform=[Runtime.InteropServices.RuntimeInformation]::OSDescription;rustc=$rust;dotnet=(& dotnet --version);strictdoc='0.30.4';native_tools_skipped=[bool]$SkipNativeTools;coverage_requested=[bool]$Coverage;coverage_toolchain=$env:SPICE_COVERAGE_TOOLCHAIN;acquisitions=$acquisitions} | ConvertTo-Json -Depth 6 | Set-Content work/setup/host.json
 Write-Host 'Host dependencies verified. Configuration applies to this process and its children.'
