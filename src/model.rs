@@ -49,7 +49,9 @@ impl DiodeModel {
             ));
         }
         let exponential = (voltage / vt).exp();
-        let current_amps = isat * (exponential - 1.0);
+        // exp_m1 preserves the small-signal current when exp(v/Vt) rounds
+        // to one; the separately evaluated exponential is the exact derivative.
+        let current_amps = isat * (voltage / vt).exp_m1();
         let conductance_siemens = isat * exponential / vt;
         if !current_amps.is_finite() || !conductance_siemens.is_finite() {
             return Err(crate::error::SimError::invalid(

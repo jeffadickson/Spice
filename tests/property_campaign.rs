@@ -1,4 +1,5 @@
 //! Library-generated cases with shrinking, persisted counterexamples and replay.
+use circuit_simulator::model::DiodeModel;
 use circuit_simulator::newton::norm_inf;
 use circuit_simulator::{
     api::Request,
@@ -108,5 +109,35 @@ proptest! {
             prop_assert_eq!(matrix.entries().count(),matrix.nnz());
             prop_assert!(matrix.entries().all(|(row,column,value)| row<n && column<n && value.is_finite()));
         }
+    }
+
+    #[test]
+    fn diode_jacobians_match_central_differences_over_generated_si_parameters(
+        log_isat in -15.0_f64..-8., log_vt in -5.0_f64..-0.3, exponent in -20.0_f64..20.
+    ) {
+        let vt=10_f64.powf(log_vt);
+        let model=DiodeModel{saturation_amps:10_f64.powf(log_isat),thermal_volts:vt};
+        let voltage=vt*exponent;
+        let h=vt*1e-4;
+        let analytic=model.linearize(voltage).unwrap().conductance_siemens;
+        let plus=model.linearize(voltage+h).unwrap().current_amps;
+        let minus=model.linearize(voltage-h).unwrap().current_amps;
+        let numerical=(plus-minus)/(2.*h);
+        // In deep reverse bias, differencing two currents near -Is loses
+        // significance. Bound that oracle's rounding amplification explicitly;
+        // this does not alter any production solver acceptance tolerance.
+        let roundoff=16.*f64::EPSILON*(plus.abs()+minus.abs())/(2.*h);
+        prop_assert!((analytic-numerical).abs() <= 1e-7*analytic+roundoff+1e-30);
+        prop_assert!(analytic>0.);
+    }
+
+    #[test]
+    fn diode_near_zero_current_retains_its_differential_limit(log_exponent in -20.0_f64..-4., negative in any::<bool>()) {
+        let x=10_f64.powf(log_exponent)*if negative {-1.}else{1.};
+        let model=DiodeModel{saturation_amps:1e-12,thermal_volts:0.025};
+        let current=model.linearize(x*model.thermal_volts).unwrap().current_amps;
+        // Taylor's theorem bounds exp(x)-1 relative to x for |x|<=1e-4.
+        // This independent small-signal bound detects exp(x)-1 cancellation.
+        prop_assert!((current/(model.saturation_amps*x)-1.).abs() <= x.abs()+1e-14);
     }
 }

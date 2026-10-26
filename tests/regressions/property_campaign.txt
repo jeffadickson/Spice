@@ -5,3 +5,4 @@
 # It is recommended to check this file in to source control so that
 # everyone who runs the test benefits from these saved cases.
 cc 0f91abaa3c28dbaff5be87dfc6ad98b69e3d419e4343e17bf5155c98df09965b # shrinks to exponent1 = 5.931013986326426, exponent2 = 0.0, volts = -45.062082744055054
+cc 2e53bf965525e31058b94962d5eb7fc59ab521378392e32f2f9a7b3a339e344d # shrinks to log_isat = -8.0, log_vt = -0.3, exponent = -18.79553687902499
