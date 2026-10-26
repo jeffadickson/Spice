@@ -5,6 +5,19 @@ use std::sync::Mutex;
 use std::sync::atomic::AtomicUsize;
 
 struct ObserveFirstTrial(Mutex<Vec<f64>>);
+
+#[test]
+fn overflowing_finite_tolerances_cannot_report_zero_residual() {
+    let options = NewtonOptions {
+        current_absolute_tolerance: f64::MAX,
+        relative_tolerance: 2.,
+        ..NewtonOptions::default()
+    };
+    assert!(options.validate().is_ok());
+    let error = solve(&diode_plan(), &DenseLu, options).unwrap_err();
+    assert_eq!(error.code, ErrorCode::InvalidInput);
+    assert!(error.message.contains("tolerance scale"));
+}
 impl LinearSolver for ObserveFirstTrial {
     fn name(&self) -> &'static str {
         "trial-observer"

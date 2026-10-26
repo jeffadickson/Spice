@@ -180,6 +180,23 @@ impl LinearSolver for CorrectionCounter<'_> {
 }
 
 /// Dimension-aware norms: MNA node rows are current equations; branch rows are voltage equations.
+/// Overflow in a finite tolerance calculation must never become a zero ratio.
+fn scaled_component(value: f64, reference: f64, absolute: f64, relative: f64) -> SimResult<f64> {
+    let scale = absolute + relative * reference.abs().max(absolute);
+    let ratio = value.abs() / scale;
+    if !value.is_finite()
+        || !reference.is_finite()
+        || !scale.is_finite()
+        || scale <= 0.
+        || !ratio.is_finite()
+    {
+        return Err(SimError::invalid(
+            "nonfinite Newton tolerance scale or ratio",
+        ));
+    }
+    Ok(ratio)
+}
+
 fn scaled_residual_norm(
     plan: &CompiledCircuit,
     residual: &[f64],
@@ -197,8 +214,12 @@ fn scaled_residual_norm(
         } else {
             options.voltage_absolute_tolerance
         };
-        let scale = absolute + options.relative_tolerance * rhs[index].abs().max(absolute);
-        worst = worst.max(value.abs() / scale);
+        worst = worst.max(scaled_component(
+            *value,
+            rhs[index],
+            absolute,
+            options.relative_tolerance,
+        )?);
     }
     if worst.is_finite() {
         Ok(worst)
@@ -224,8 +245,12 @@ fn scaled_update_norm(
         } else {
             options.current_absolute_tolerance
         };
-        let scale = absolute + options.relative_tolerance * values[index].abs().max(absolute);
-        worst = worst.max(value.abs() / scale);
+        worst = worst.max(scaled_component(
+            *value,
+            values[index],
+            absolute,
+            options.relative_tolerance,
+        )?);
     }
     if worst.is_finite() {
         Ok(worst)
