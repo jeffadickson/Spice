@@ -61,7 +61,13 @@ impl<'a> Stepper<'a> {
         if let Some(index) = self.cache.iter().position(|(k, _)| *k == key) {
             self.prepared_reuses += 1;
             let values = self.cache[index].1.solve(b)?;
-            verify_csc_solution(matrix, b, &values)?;
+            let backward_error = verify_csc_solution(matrix, b, &values)?;
+            tracing::debug!(
+                step_s = h,
+                backward_error,
+                prepared_reuses = self.prepared_reuses,
+                "linear_transient_factor_reused"
+            );
             return Ok(values);
         }
         let factors = match self.solver.prepare_csc(matrix) {
@@ -109,7 +115,12 @@ impl<'a> Stepper<'a> {
         let backward_error = verify_csc_solution(matrix, b, &values)?;
         self.cache.push_front((key, factors));
         if self.cache.len() > 2 {
-            self.cache.pop_back();
+            if let Some((evicted, _)) = self.cache.pop_back() {
+                tracing::debug!(
+                    step_s = f64::from_bits(evicted),
+                    "linear_transient_factor_evicted"
+                );
+            }
         }
         tracing::debug!(
             step_s = h,
@@ -118,5 +129,71 @@ impl<'a> Stepper<'a> {
             "linear_transient_factor_prepared"
         );
         Ok(values)
+    }
+}
+
+#[cfg(test)]
+mod cache_contracts {
+    use super::*;
+
+    #[test]
+    fn bounded_cache_reuses_exact_keys_and_refactors_after_eviction() {
+        let plan = crate::compile::compile(
+            &crate::netlist::parse("title\nR1 out 0 2\nC1 out 0 3\n.end").unwrap(),
+        )
+        .unwrap();
+        let mut stepper = Stepper::new(
+            &plan,
+            &crate::backend_faer::FaerSparseLu,
+            Method::BackwardEuler,
+        );
+        let mut state = vec![1.];
+        let mut expected = 1.;
+        for h in [0.25, 0.5, 0.25, 1., 0.5, 0.25] {
+            state = stepper
+                .advance(
+                    &state,
+                    h,
+                    RhsPair {
+                        previous: &[0.],
+                        current: &[0.],
+                    },
+                )
+                .unwrap();
+            expected /= 1. + h / 6.;
+            assert!((state[0] - expected).abs() < 1e-12);
+            assert!(stepper.cache.len() <= 2);
+        }
+        assert_eq!(stepper.prepared_factors, 4);
+        assert_eq!(stepper.prepared_reuses, 2);
+        assert_eq!(stepper.solve_calls, 6);
+    }
+
+    #[test]
+    fn adjacent_step_values_are_distinct_cache_identities() {
+        let plan = crate::compile::compile(
+            &crate::netlist::parse("title\nR1 out 0 2\nC1 out 0 3\n.end").unwrap(),
+        )
+        .unwrap();
+        let mut stepper = Stepper::new(
+            &plan,
+            &crate::backend_faer::FaerSparseLu,
+            Method::BackwardEuler,
+        );
+        let adjacent = f64::from_bits(0.25_f64.to_bits() + 1);
+        for h in [0.25, adjacent, 0.25, adjacent] {
+            stepper
+                .advance(
+                    &[1.],
+                    h,
+                    RhsPair {
+                        previous: &[0.],
+                        current: &[0.],
+                    },
+                )
+                .unwrap();
+        }
+        assert_eq!(stepper.prepared_factors, 2);
+        assert_eq!(stepper.prepared_reuses, 2);
     }
 }
