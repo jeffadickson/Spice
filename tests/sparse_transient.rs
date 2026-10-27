@@ -11,6 +11,27 @@ use circuit_simulator::{
 struct DirectReal;
 
 #[test]
+fn faer_prepares_canonical_numeric_factors_for_multiple_excitations() {
+    let matrix = CscMatrix::new(2, vec![0, 2, 4], vec![0, 1, 0, 1], vec![2., 3., -1., 4.]).unwrap();
+    let prepared = FaerSparseLu.prepare_csc(&matrix).unwrap().unwrap();
+    assert_eq!(prepared.matrix().pattern(), matrix.pattern());
+    assert_eq!(prepared.matrix().values(), matrix.values());
+    for (rhs, expected) in [
+        ([0., 11.], [1., 2.]),
+        ([3., -1.], [1., -1.]),
+        ([0., 0.], [0., 0.]),
+    ] {
+        let values = prepared.solve(&rhs).unwrap();
+        for (value, expected) in values.iter().zip(expected) {
+            assert!((value - expected).abs() < 1e-12);
+        }
+    }
+    assert!(prepared.solve(&[1.]).is_err());
+    let singular = CscMatrix::new(2, vec![0, 1, 1], vec![0], vec![1.]).unwrap();
+    assert!(FaerSparseLu.prepare_csc(&singular).is_err());
+}
+
+#[test]
 fn prepared_sparse_sessions_own_identity_and_check_every_callback_boundary() {
     use circuit_simulator::linalg::PreparedSparseReal;
     use std::{cell::Cell, rc::Rc};

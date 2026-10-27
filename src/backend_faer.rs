@@ -98,6 +98,29 @@ impl SparseLinearBackend for FaerSparseLu {
 }
 
 impl LinearSolver for FaerSparseLu {
+    fn prepare_csc(
+        &self,
+        matrix: &CscMatrix,
+    ) -> SimResult<Option<crate::linalg::PreparedSparseReal>> {
+        let n = matrix.dimension();
+        let entries: Vec<_> = matrix
+            .entries()
+            .map(|(row, column, value)| Triplet::new(row, column, value))
+            .collect();
+        let sparse = SparseColMat::<usize, f64>::try_new_from_triplets(n, n, &entries)
+            .map_err(|error| SimError::invalid(format!("{error:?}")))?;
+        // The closure owns one numeric factor; changing RHS never refactors.
+        let lu = sparse
+            .sp_lu()
+            .map_err(|error| SimError::new(ErrorCode::SingularMatrix, format!("{error:?}")))?;
+        Ok(Some(crate::linalg::PreparedSparseReal::new(
+            matrix.clone(),
+            move |rhs| {
+                let values = lu.solve(faer::Mat::from_fn(n, 1, |row, _| rhs[row]));
+                Ok((0..n).map(|row| values[(row, 0)]).collect())
+            },
+        )))
+    }
     fn solve_complex_rhs(
         &self,
         real: &Matrix,
@@ -122,23 +145,12 @@ impl LinearSolver for FaerSparseLu {
         self.solve_sparse_complex_rhs(system, rhs)
     }
     fn prepare(&self, a: &Matrix) -> SimResult<Option<crate::linalg::PreparedReal>> {
-        let csc = CscMatrix::from_dense(a)?;
-        let entries: Vec<_> = csc
-            .entries()
-            .map(|(i, j, v)| Triplet::new(i, j, v))
-            .collect();
-        let sparse = SparseColMat::<usize, f64>::try_new_from_triplets(a.n, a.n, &entries)
-            .map_err(|e| SimError::invalid(format!("{e:?}")))?;
-        let lu = sparse
-            .sp_lu()
-            .map_err(|e| SimError::new(ErrorCode::SingularMatrix, format!("{e:?}")))?;
-        let n = a.n;
+        let Some(prepared) = self.prepare_csc(&CscMatrix::from_dense(a)?)? else {
+            return Ok(None);
+        };
         Ok(Some(crate::linalg::PreparedReal::new(
             a.clone(),
-            move |b| {
-                let x = lu.solve(faer::Mat::from_fn(n, 1, |i, _| b[i]));
-                Ok((0..n).map(|i| x[(i, 0)]).collect())
-            },
+            move |rhs| prepared.solve(rhs),
         )?))
     }
     fn solve_complex(
