@@ -23,16 +23,68 @@ pub fn solve_compiled_verified(
     plan: &CompiledCircuit,
     solver: &dyn LinearSolver,
 ) -> SimResult<(Vec<f64>, f64)> {
-    match solver.solve_csc(plan.conductance_sparse(), plan.rhs()) {
-        Ok(x) => Ok((
-            x.clone(),
-            verify_solution(plan.conductance_reference(), plan.rhs(), &x)?,
-        )),
+    solve_csc_verified(plan.conductance_sparse(), plan.rhs(), solver)
+}
+
+/// Solve canonical CSC with independent sparse residual validation. Only an
+/// explicit Unsupported permits the same provider's bounded dense fallback.
+pub fn solve_csc_verified(
+    matrix: &crate::sparse::CscMatrix,
+    rhs: &[f64],
+    solver: &dyn LinearSolver,
+) -> SimResult<(Vec<f64>, f64)> {
+    validate_sparse_rhs(matrix, rhs)?;
+    let values = match solver.solve_csc(matrix, rhs) {
+        Ok(values) => values,
         Err(error) if error.code == ErrorCode::Unsupported => {
-            solve_verified(plan.conductance_reference(), plan.rhs(), solver)
+            solver.solve(&matrix.to_dense()?, rhs)?
         }
-        Err(error) => Err(error),
+        Err(error) => return Err(error),
+    };
+    let error = verify_csc_solution(matrix, rhs, &values)?;
+    Ok((values, error))
+}
+
+fn validate_sparse_rhs(matrix: &crate::sparse::CscMatrix, rhs: &[f64]) -> SimResult<()> {
+    if rhs.len() != matrix.dimension() || rhs.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::invalid("invalid sparse real excitation"));
     }
+    Ok(())
+}
+
+/// Componentwise backward error from CSC entries, independent of factorization.
+/// A finite scale and 1e-10 acceptance are shared with the dense reference policy.
+pub fn verify_csc_solution(
+    matrix: &crate::sparse::CscMatrix,
+    rhs: &[f64],
+    values: &[f64],
+) -> SimResult<f64> {
+    validate_sparse_rhs(matrix, rhs)?;
+    if values.len() != matrix.dimension() || values.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::new(
+            ErrorCode::NumericalFailure,
+            "invalid sparse real solution",
+        ));
+    }
+    let mut sums = vec![0.; matrix.dimension()];
+    let mut scales: Vec<_> = rhs.iter().map(|value| value.abs()).collect();
+    for (row, column, coefficient) in matrix.entries() {
+        let product = coefficient * values[column];
+        sums[row] += product;
+        scales[row] += product.abs();
+    }
+    let mut worst = 0_f64;
+    for row in 0..matrix.dimension() {
+        let error = (sums[row] - rhs[row]).abs() / scales[row].max(f64::MIN_POSITIVE);
+        if !scales[row].is_finite() || !error.is_finite() || error > 1e-10 {
+            return Err(SimError::new(
+                ErrorCode::NumericalFailure,
+                "sparse real residual failed",
+            ));
+        }
+        worst = worst.max(error);
+    }
+    Ok(worst)
 }
 /// Numerical validation remains outside the backend, including cached-factor solves.
 pub fn verify_solution(a: &Matrix, b: &[f64], x: &[f64]) -> SimResult<f64> {

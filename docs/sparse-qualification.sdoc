@@ -2,6 +2,20 @@
 TITLE: Direct Sparse Dynamic CPU Qualification
 
 [REQUIREMENT]
+UID: SPARSE-009
+STATUS: Draft
+TITLE: Independent sparse real solution acceptance
+STATEMENT: >>>
+Real CSC analysis drivers shall validate excitation and provider output dimensions/finiteness and independently traverse CSC entries to evaluate componentwise backward error at 1e-10. Acceptance shall be invariant under representable equation scaling; nonfinite accumulation shall fail. Only explicit Unsupported shall permit same-provider dense fallback.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation: src/dc.rs::solve_csc_verified and verify_csc_solution; linear DC now shares this direct verifier. Verification: tests/sparse_transient.rs independently multiplied unsymmetric equations, scaled acceptance/rejection, malformed/overflow cases and terminal error propagation. Dynamic adoption follows in later iterations.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-001
+
+[REQUIREMENT]
 UID: SPARSE-008
 STATUS: Draft
 TITLE: Typed optional AC excitation
