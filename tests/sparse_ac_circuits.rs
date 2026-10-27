@@ -10,6 +10,50 @@ fn complex(value: &circuit_simulator::ac::ComplexValue) -> Complex64 {
 }
 
 #[test]
+fn biased_diode_ac_current_matches_independent_incremental_admittance() {
+    // An ideal clamp fixes DC terminal voltage independently of Newton. Reversing
+    // the diode changes its derivative while its AC terminal stamp stays passive.
+    for (terminals, bias) in [("out 0", 0.3_f64), ("0 out", -0.3_f64)] {
+        let plan = compile(
+            &parse(&format!(
+                "title\nV1 out 0 0.3\nD1 {terminals} 1p 25m\nC1 out 0 1u\n.end"
+            ))
+            .unwrap(),
+        )
+        .unwrap();
+        let source = AcSourcePhasor {
+            id: "V1".into(),
+            real: 1.,
+            imag: 2.,
+        };
+        let conductance = 1e-12 / 0.025 * (bias / 0.025).exp();
+        for provider in [&DenseLu as &dyn LinearSolver, &FaerSparseLu] {
+            for sample in ac_with_source_phasors(
+                &plan,
+                &[10., 1000.],
+                std::slice::from_ref(&source),
+                provider,
+            )
+            .unwrap()
+            {
+                let amplitude = Complex64::new(1., 2.);
+                let expected_current = -amplitude
+                    * Complex64::new(
+                        conductance,
+                        std::f64::consts::TAU * sample.frequency_hz * 1e-6,
+                    );
+                assert!((complex(&sample.values[0]) - amplitude).norm() < 1e-12);
+                assert!(
+                    (complex(&sample.values[plan.branch_index("V1").unwrap()]) - expected_current)
+                        .norm()
+                        < 1e-12
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn owned_oracle_decks_import_to_the_declared_complex_equations() {
     use circuit_simulator::{api::Analysis, netlist::import_ngspice_request};
     for (deck, expected_source) in [
