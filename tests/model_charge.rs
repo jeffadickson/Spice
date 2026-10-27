@@ -2,6 +2,68 @@
 use circuit_simulator::charge::constant_capacitance;
 
 #[test]
+fn composite_profile_matches_explicit_parallel_elements_across_analyses_and_polarities() {
+    use circuit_simulator::{api::run, circuit::Element};
+    for backend in ["lu", "faer"] {
+        for reversed in [false, true] {
+            for analysis in [
+                serde_json::json!({"kind":"operating_point"}),
+                serde_json::json!({"kind":"ac","frequencies_hz":[1.,1000.],"source_phasors":[{"id":"V1","real":1.,"imag":-0.5}]}),
+                serde_json::json!({"kind":"transient","options":{"stop_s":0.3,"step_s":0.1,"max_steps":3}}),
+                serde_json::json!({"kind":"transient_configured","options":{"stop_s":0.3,"max_step_s":0.1,"max_steps":4,"initial_state":[0.1,0.]}}),
+            ] {
+                let mut composite = profile_request(analysis, backend);
+                if let Element::DiodeWithCapacitance { p, n, .. } =
+                    &mut composite.circuit.elements[1]
+                {
+                    if reversed {
+                        std::mem::swap(p, n);
+                    }
+                }
+                let mut separate = composite.clone();
+                let Element::DiodeWithCapacitance {
+                    ref id,
+                    p,
+                    n,
+                    saturation_amps,
+                    thermal_volts,
+                    farads,
+                } = composite.circuit.elements[1]
+                else {
+                    panic!("Expected profile")
+                };
+                separate.circuit.elements[1] = Element::Diode {
+                    id: id.clone(),
+                    p,
+                    n,
+                    saturation_amps,
+                    thermal_volts,
+                };
+                separate.circuit.elements.push(Element::Capacitor {
+                    id: "C1".into(),
+                    p,
+                    n,
+                    farads,
+                });
+                let a = run(&composite).unwrap();
+                let b = run(&separate).unwrap();
+                assert_eq!(a.samples.len(), b.samples.len());
+                for (a, b) in a.samples.iter().zip(&b.samples) {
+                    for (x, y) in a.values[..2].iter().zip(&b.values[..2]) {
+                        assert!((x - y).abs() < 1e-13);
+                    }
+                }
+                for (a, b) in a.ac_samples.iter().zip(&b.ac_samples) {
+                    for (x, y) in a.values[..2].iter().zip(&b.values[..2]) {
+                        assert!((x.real - y.real).abs() < 1e-13 && (x.imag - y.imag).abs() < 1e-13);
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[test]
 fn explicit_initial_algebraic_kcl_includes_nonlinear_conduction_before_observation() {
     use circuit_simulator::{
         backend::DenseLu,

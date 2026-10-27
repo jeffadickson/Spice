@@ -136,3 +136,17 @@ Implementation: src/configured.rs::initial. Verification: tests/model_charge.rs:
 RELATIONS:
 - TYPE: Parent
   VALUE: MODEL-002
+
+[REQUIREMENT]
+UID: MODEL-010
+STATUS: Draft
+TITLE: Compositional behavioral equivalence
+STATEMENT: >>>
+Within the constant-charge profile, a composite instance shall match an explicit Shockley diode and parallel capacitor for shared MNA state observables under DC, AC and supported BE integration, including reversed diode terminals and both qualified providers.
+<<<
+COMMENT: >>>
+Verification: tests/model_charge.rs::composite_profile_matches_explicit_parallel_elements_across_analyses_and_polarities. Equation/Jacobian and independent analytical checks remain necessary because composition shares numerical implementation.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-002
