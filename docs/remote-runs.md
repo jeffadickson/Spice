@@ -144,3 +144,18 @@ is selected. Endurance now runs targeted checks, a budgeted cargo-mutants/Stryke
 phase, then seeded batches. Exported framework counts/hash/shard are distinct from
 the legacy 22-mutation score. See [mutation-frameworks.md](mutation-frameworks.md)
 for scope, zero-based shard replay, partial-run handling and native report locations.
+
+New manifests use LF JSON structural newlines before hashing. Consumers must
+verify stored Git blob bytes, not assume checkout text has identical newlines.
+Five historical Windows result manifests from the October 27 review have
+checksum mismatches consistent with CRLF-to-LF normalization; they remain
+unchanged historical evidence and are not checksum-validated artifacts.
+
+The campaign records UTC and monotonic elapsed time, its deadline, late completed
+requested cases and temporary power-request status. Windows requests system-required
+power for the campaign lifetime, then releases it; explicit sleep and OS policy can
+override that request. Linux sleep prevention is unavailable. After wake, expired
+work is stopped and late batches are excluded from completed counts. An overrun
+above five seconds of cleanup allowance is `budget_overrun`, exits unsuccessfully
+and is published as failure evidence. Import also checks elapsed time independently
+for older producers. None of these fields establish active CPU testing time.

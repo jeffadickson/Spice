@@ -1,0 +1,15 @@
+{
+  "tool": "Pester 3.4.0",
+  "command": "./scripts/Test-Remote.ps1 under dotnet-coverage 18.12",
+  "passed": 21,
+  "failed": 0,
+  "skipped": 0,
+  "elapsed_seconds": 936.48,
+  "scope": "Endurance clocks/power/arguments, actual synthetic bare-Git publication/provenance, exact-name selection rejection, real candidate inventory/sharding, synthetic supervisor",
+  "limitations": [
+    "Synthetic case counts are orchestration fixtures, not numerical simulator results.",
+    "Earlier run using unpinned Pester 5 failed on discovery/assertion compatibility; Test-Remote.ps1 now explicitly pins 3.4.0.",
+    "Redundant uninstrumented retry interrupted during host memory pressure; this completed instrumented run is the evidence.",
+    "No forced real OS suspension injected."
+  ]
+}

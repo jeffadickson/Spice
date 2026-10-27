@@ -1,0 +1,8 @@
+{
+  "tool": "Pester 3.4.0",
+  "guard": "canonical-json",
+  "passed": 3,
+  "failed": 0,
+  "regression_before_fix": "Raw stored Git manifest bytes failed the producer checksum; CRLF-to-LF publication conversion reproduced.",
+  "scope": "Actual synthetic local bare Git publication; no old result branches rewritten."
+}

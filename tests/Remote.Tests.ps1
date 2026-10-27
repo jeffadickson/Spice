@@ -1,7 +1,7 @@
 # Pester integration tests use synthetic reports and a local bare Git remote;
 # they exercise publication without claiming those fixtures are simulator runs.
 $guard=$env:SPICE_REMOTE_GUARD
-if($guard -and $guard -notin @('source-revision','source-hash','framework-summary-hash','framework-counts')){throw 'Unknown focused mutation guard.'}
+if($guard -and $guard -notin @('source-revision','source-hash','framework-summary-hash','framework-counts','canonical-json','deadline-budget')){throw 'Unknown focused mutation guard.'}
 Describe 'Remote qualification evidence publication' {
     $publisher=if ($env:SPICE_REMOTE_PUBLISHER) { $env:SPICE_REMOTE_PUBLISHER } else { Join-Path $PSScriptRoot '../scripts/RemoteQualification.cs' }
     function New-RemoteFixture {
@@ -39,6 +39,52 @@ Describe 'Remote qualification evidence publication' {
         try {$output=& dotnet run --file $publisher -- --minutes 600 --label integration --import-run $Fixture.Run @Extra 2>&1|Out-String;$code=$LASTEXITCODE}
         finally {Pop-Location}
         return @{Code=$code;Output=$output}
+    }
+    if(-not $guard -or $guard -eq 'canonical-json'){
+    It 'preserves manifest checksum across the actual Git blob boundary' {
+        $fixture=New-RemoteFixture
+        $result=Invoke-Publisher $fixture
+        if($result.Code -ne 0){throw $result.Output}
+        $branch=(& git -C $fixture.Bare for-each-ref '--format=%(refname:short)' refs/heads/remote-runs/).Trim()
+        $paths=@(& git -C $fixture.Bare ls-tree -r --name-only $branch)
+        $manifestPath=@($paths|Where-Object {$_ -like '*/manifest.json'})[0]
+        function Read-BlobBytes([string]$Path) {
+            # Object IDs avoid Windows' long rev:path stat fallback. Read raw
+            # bytes so newline conversion cannot hide a publication defect.
+            $entry=& git -C $fixture.Bare ls-tree -r $branch -- $Path
+            $blob=($entry -split '\s+')[2]
+            $start=[Diagnostics.ProcessStartInfo]::new('git')
+            $start.WorkingDirectory=$fixture.Bare;$start.UseShellExecute=$false
+            $start.RedirectStandardOutput=$true;$start.CreateNoWindow=$true
+            foreach($arg in @('cat-file','blob',$blob)){$start.ArgumentList.Add($arg)}
+            $process=[Diagnostics.Process]::Start($start)
+            $bytes=[IO.MemoryStream]::new()
+            try {$process.StandardOutput.BaseStream.CopyTo($bytes);$process.WaitForExit();if($process.ExitCode -ne 0){throw 'Blob read failed'};return ,$bytes.ToArray()}
+            finally {$bytes.Dispose();$process.Dispose()}
+        }
+        $bytes=Read-BlobBytes $manifestPath
+        $checksums=[Text.Encoding]::UTF8.GetString((Read-BlobBytes ($manifestPath.Replace('manifest.json','checksums.json'))))|ConvertFrom-Json
+        [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($bytes)).ToLowerInvariant()|Should Be $checksums.'manifest.json'
+        [Array]::IndexOf($bytes,[byte]13)|Should Be -1
+    }
+    }
+    if(-not $guard -or $guard -eq 'deadline-budget'){
+    It 'publishes deadline overruns as failure evidence even for older producer statuses' {
+        foreach($status in @('budget_exhausted','budget_overrun')) {
+            $fixture=New-RemoteFixture
+            $fixture.Report.status=$status
+            $fixture.Report.elapsed_seconds=$fixture.Report.budget_seconds+6
+            $fixture.Report|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $fixture.Run 'summary.json')
+            $result=Invoke-Publisher $fixture
+            if($result.Code -ne 1){throw $result.Output}
+            $branch=(& git -C $fixture.Bare for-each-ref '--format=%(refname:short)' refs/heads/remote-runs/).Trim()
+            $entry=@(& git -C $fixture.Bare ls-tree -r $branch|Where-Object {$_ -match '/manifest.json$'})[0]
+            $blob=($entry -split '\s+')[2]
+            $manifest=((& git -C $fixture.Bare cat-file blob $blob) -join "`n")|ConvertFrom-Json
+            $manifest.outcome|Should Be 'test_failure'
+            $manifest.endurance.status|Should Be $status
+        }
+    }
     }
     if(-not $guard){
     It 'preserves property runner and requested-case accounting on publication' {

@@ -1,0 +1,41 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "collector_sha256": "3b050020dad12e9886642d48de4d8841d28715597f0b479a41e71d9ad31e3a7f",
+  "metrics": [
+    {
+      "file": "scripts/Endurance.cs",
+      "source_sha256": "be2cffdc8ec9083f874de89e339ecb52d3cbb8d651f949c2350872b5c6f80868",
+      "lines": 255,
+      "covered_lines": 221,
+      "line_percent": 86.66666666666667,
+      "branches": 208,
+      "covered_branches": 134,
+      "branch_percent": 64.42307692307692
+    },
+    {
+      "file": "scripts/RemoteQualification.cs",
+      "source_sha256": "0424ac25527b9d66308189ce99d7f55590d6a2641b77345f05b3745c46268645",
+      "lines": 162,
+      "covered_lines": 125,
+      "line_percent": 77.1604938271605,
+      "branches": 272,
+      "covered_branches": 196,
+      "branch_percent": 72.05882352941177
+    },
+    {
+      "file": "scripts/FrameworkMutations.cs",
+      "source_sha256": "41a60b12feed0ca8a6d9be463c16035b21854da1ef20c09918d0672b99bda9f5",
+      "lines": 180,
+      "covered_lines": 106,
+      "line_percent": 58.888888888888886,
+      "branches": 264,
+      "covered_branches": 142,
+      "branch_percent": 53.78787878787879
+    }
+  ],
+  "limitations": [
+    "Scoped managed tooling execution; synthetic fixture counts are not simulator qualification.",
+    "Per-line maxima for duplicate branch mappings; not complete path coverage.",
+    "PowerShell, native children, vendor internals and unexecuted platform/failure paths are unmeasured."
+  ]
+}

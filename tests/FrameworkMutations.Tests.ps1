@@ -1,5 +1,23 @@
 # Negative process-boundary checks must reject malformed work before starting tools.
 Describe 'Framework campaign input bounds' {
+    It 'rejects malformed exact selections before native tools run' {
+        $root=Split-Path $PSScriptRoot -Parent
+        if(-not(Test-Path -LiteralPath $root -PathType Container)){throw 'Checkout unavailable'}
+        $path=Join-Path $root ('work/invalid-selection-'+[guid]::NewGuid().ToString('N')+'.json')
+        if(-not(Test-Path -LiteralPath (Split-Path $path -Parent) -PathType Container)){throw 'Work directory unavailable'}
+        try {
+            foreach($json in @('[]','null','[null]','["src/../escape"]','["src/a","src/a"]',('["'+('x'*513)+'"]'))) {
+                Set-Content -LiteralPath $path -Value $json
+                & dotnet run --file (Join-Path $root 'scripts/FrameworkMutations.cs') -- --rust-names-file $path *> $null
+                $LASTEXITCODE|Should Not Be 0
+            }
+            Set-Content -LiteralPath $path -Value '["src/a"]'
+            foreach($extra in @(@('--rust-filter','a'),@('--shard','1/2'))) {
+                & dotnet run --file (Join-Path $root 'scripts/FrameworkMutations.cs') -- --rust-names-file $path @extra *> $null
+                $LASTEXITCODE|Should Not Be 0
+            }
+        } finally {Remove-Item -LiteralPath $path -ErrorAction SilentlyContinue}
+    }
     It 'rejects invalid budgets, shards and escaping source filters' {
         $runner=Join-Path $PSScriptRoot '../scripts/FrameworkMutations.cs'
         foreach($arguments in @(@('--minutes','NaN'),@('--minutes','0'),@('--minutes','1441'),@('--shard','-1/16'),@('--shard','16/16'),@('--shard','1/0'),@('--rust-file','src/../secret'),@('--rust-test','../secret'),@('--rust-test','missing-suite'),@('--rust-test','lib,lib'),@('--rust-test','all,lib'),@('--rust-test','lib,missing-suite'),@('--rust-test',('lib,'*9)),@('--tool','unknown'),@('--workers','0'),@('--workers','17'),@('--rust-filter',('x'*513)),@('--unknown'))) {

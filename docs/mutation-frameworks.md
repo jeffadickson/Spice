@@ -96,3 +96,20 @@ Managed sources/build outputs remain isolated. `--snapshot-self-test` checks
 original-file independence and deliberate snapshot-tamper rejection. Native input
 hashes are retained in the framework summary. This is input identity evidence,
 not operating-system sandboxing or full helper mutation coverage.
+
+For bounded survivor replay, `--rust-names-file <JSON-array>` selects 1–64 unique
+exact native names and requires the native inventory to match before execution.
+It cannot be combined with `--rust-filter` or a non-default shard. The selection
+hash and names are retained in the summary. `Prepare-SurvivorReplay.cs` relocates
+the original cohort only when its five-line source context has one unchanged
+match; changed or ambiguous context requires human review. Stable identities live
+in `evidence/overnight-survivor-triage.json`.
+
+Pinned cargo-mutants 27.1.0 emits struct-field deletions despite regex selection.
+The October 27 replay explicitly lists two supplemental field deletions so the
+inventory can still be checked exactly. They are reported separately from the
+35-survivor cohort. The first rejected preflight and upstream limitation are
+recorded in `evidence/triage-native-selection-workaround.json`; no escaped
+candidate is silently accepted and no tool upgrade or mutation suppression is
+implied. Equivalent or masked survivors need documented reasoning and remain
+separate from test-detected kills.

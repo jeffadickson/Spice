@@ -4,6 +4,16 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+
+if(args is ["--budget-self-test"]) { CampaignBudget.CheckContracts(); return; }
+if(args is ["--power-probe"]) {
+    var request=SystemPowerRequest.Acquire();Console.WriteLine(request.Status);
+    request.Dispose();Console.WriteLine("released="+request.Released);
+    if(OperatingSystem.IsWindows()&&request.Released!=true)Environment.ExitCode=1;
+    return;
+}
 
 // A wall-clock supervisor over an isolated source snapshot. Never mutates the
 // caller's source or promotes overnight results to release qualification.
@@ -34,12 +44,17 @@ if(Directory.Exists(snapshot)) {
     Directory.Delete(snapshot,true);
 }
 EnsureDirectory(snapshot);
-var report=new CampaignReport { StartedUtc=DateTime.UtcNow, BudgetSeconds=minutes*60, InitialSeed=seed.ToString(CultureInfo.InvariantCulture), Snapshot=archive, BuildWorkspace=snapshot };
-var clock=Stopwatch.StartNew();
+using var powerRequest=SystemPowerRequest.Acquire();
+var budget=new CampaignBudget(TimeSpan.FromMinutes(minutes),TimeProvider.System);
+var report=new CampaignReport { StartedUtc=budget.StartedUtc.UtcDateTime, DeadlineUtc=budget.DeadlineUtc.UtcDateTime,
+    SleepPrevention=powerRequest.Status, BudgetSeconds=minutes*60, InitialSeed=seed.ToString(CultureInfo.InvariantCulture), Snapshot=archive, BuildWorkspace=snapshot };
 var reportPath=Path.Combine(run,"summary.json");
 var options=new JsonSerializerOptions { WriteIndented=true,PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower };
 void Save() {
-    report.ElapsedSeconds=clock.Elapsed.TotalSeconds;
+    report.ElapsedSeconds=budget.Elapsed.TotalSeconds;
+    report.MonotonicElapsedSeconds=budget.MonotonicElapsed.TotalSeconds;
+    report.UtcElapsedSeconds=budget.UtcElapsed.TotalSeconds;
+    report.BudgetOverrunSeconds=budget.Overrun.TotalSeconds;
     var temporary=reportPath+".tmp";
     File.WriteAllText(temporary,JsonSerializer.Serialize(report,options));
     // Windows readers/antivirus can briefly deny atomic replacement. Retain the
@@ -53,7 +68,7 @@ void Save() {
         }
     }
 }
-TimeSpan Remaining()=>TimeSpan.FromSeconds(Math.Max(0,report.BudgetSeconds-clock.Elapsed.TotalSeconds));
+TimeSpan Remaining()=>budget.Remaining;
 async Task<ProcessResult> Execute(string file,IEnumerable<string> arguments,string cwd,TimeSpan timeout,Dictionary<string,string>? env=null) {
     if (timeout<=TimeSpan.Zero) return new(-1,"",true);
     var start=new ProcessStartInfo(file) { WorkingDirectory=cwd,UseShellExecute=false,RedirectStandardOutput=true,RedirectStandardError=true,CreateNoWindow=true };
@@ -61,16 +76,26 @@ async Task<ProcessResult> Execute(string file,IEnumerable<string> arguments,stri
     if(env is not null) foreach(var (key,value) in env) start.Environment[key]=value;
     using var child=Process.Start(start)??throw new IOException("Could not start "+file);
     // Drain both pipes concurrently, bounding retained text to 1 MiB per stream.
+    using var readers=new CancellationTokenSource();
     async Task<string> Read(StreamReader reader) {
         var buffer=new char[4096]; var text=new StringBuilder(); int read; long total=0;
-        while((read=await reader.ReadAsync(buffer))>0) { total+=read; if(text.Length<1_048_576) text.Append(buffer,0,Math.Min(read,1_048_576-text.Length)); }
+        try { while((read=await reader.ReadAsync(buffer.AsMemory(),readers.Token))>0) { total+=read; if(text.Length<1_048_576) text.Append(buffer,0,Math.Min(read,1_048_576-text.Length)); } }
+        catch(OperationCanceledException) when(readers.IsCancellationRequested) { text.Append("\n[pipe deadline]\n"); }
         if(total>1_048_576) text.Append("\n[log truncated at 1 MiB]\n");
         return text.ToString();
     }
-    var stdout=Read(child.StandardOutput); var stderr=Read(child.StandardError); var timedOut=false;
-    using var limit=new CancellationTokenSource(timeout);
-    try { await child.WaitForExitAsync(limit.Token); }
-    catch(OperationCanceledException) { timedOut=true; child.Kill(true); await child.WaitForExitAsync(); }
+    var stdout=Read(child.StandardOutput);var stderr=Read(child.StandardError);
+    var completion=Task.WhenAll(stdout,stderr,child.WaitForExitAsync());
+    var childBudget=new CampaignBudget(timeout,TimeProvider.System);
+    // Recheck absolute UTC as well as monotonic elapsed time after every wake.
+    // Timer cancellation alone cannot execute while the OS has suspended us.
+    while(!completion.IsCompleted&&Remaining()>TimeSpan.Zero&&childBudget.Remaining>TimeSpan.Zero) {
+        var delay=Remaining()<childBudget.Remaining?Remaining():childBudget.Remaining;
+        await Task.WhenAny(completion,Task.Delay(delay<TimeSpan.FromSeconds(1)?delay:TimeSpan.FromSeconds(1)));
+    }
+    var timedOut=!completion.IsCompleted;
+    if(timedOut) {readers.Cancel();if(!child.HasExited)child.Kill(true);}
+    await completion;
     return new(child.ExitCode,await stdout+"\n"+await stderr,timedOut);
 }
 TimeSpan Cap(int seconds)=>Remaining()<TimeSpan.FromSeconds(seconds)?Remaining():TimeSpan.FromSeconds(seconds);
@@ -123,9 +148,9 @@ try {
         if(framework.TimedOut||framework.Exit!=0)throw new IOException("Generated mutation tooling failed; inspect framework.log.");
         if(selectedRegressions) {
             report.Phase="selected_mutations";Save();
-            var budget=Remaining()*.25;
-            if(budget>TimeSpan.FromMinutes(15))budget=TimeSpan.FromMinutes(15);
-            var selected=await Execute("dotnet",["run","--file","scripts/Mutation.cs"],snapshot,budget,new(){["SPICE_MUTATION_TARGET_DIR"]=Path.Combine(root,"target","endurance-mutation"),["SPICE_MUTATION_TIMEOUT_SECONDS"]="900",["CARGO_BUILD_JOBS"]="2",["RUST_TEST_THREADS"]="2"});
+            var regressionBudget=Remaining()*.25;
+            if(regressionBudget>TimeSpan.FromMinutes(15))regressionBudget=TimeSpan.FromMinutes(15);
+            var selected=await Execute("dotnet",["run","--file","scripts/Mutation.cs"],snapshot,regressionBudget,new(){["SPICE_MUTATION_TARGET_DIR"]=Path.Combine(root,"target","endurance-mutation"),["SPICE_MUTATION_TIMEOUT_SECONDS"]="900",["CARGO_BUILD_JOBS"]="2",["RUST_TEST_THREADS"]="2"});
             File.WriteAllText(Path.Combine(run,"mutation.log"),selected.Log);
             if(selected.TimedOut){report.MutationStatus="incomplete_timeout";throw new TimeoutException("Supplemental selected regressions exhausted their budget.");}
             if(selected.Exit!=0){report.MutationStatus="failed";throw new IOException("Supplemental selected regressions failed.");}
@@ -169,6 +194,13 @@ try {
             if(File.Exists(regression))File.Copy(regression,Path.Combine(failure,"property_campaign.txt"));
             throw new IOException("Property batch failed; replay pending_seed and retained library regression seeds.");
         }
+        if(Remaining()<=TimeSpan.Zero) {
+            // A process can complete during suspension or delayed scheduling.
+            // Preserve its seed/log, but do not count work outside the deadline.
+            report.LateCompletedRequestedCases+=(ulong)(report.PropertyCount*report.PropertyCasesPerMethod);
+            File.WriteAllText(Path.Combine(run,"last-batch.log"),result.Log);
+            report.Status="budget_exhausted_partial_batch";break;
+        }
         // Count only requested successful cases. Extra replay/shrink attempts
         // are deliberately not guessed or compared with legacy ad-hoc throughput.
         report.Cases+=(ulong)(report.PropertyCount*report.PropertyCasesPerMethod); report.Batches++; report.PendingSeed=null; Save();
@@ -177,7 +209,12 @@ try {
     if(report.Status=="running") report.Status="budget_exhausted";
 } catch(Exception error) {
     report.Status="failed"; report.Error=error.ToString(); Environment.ExitCode=1;
-} finally { report.Phase="finished"; report.FinishedUtc=DateTime.UtcNow; Save(); }
+} finally {
+    powerRequest.Dispose();report.SleepPreventionReleased=powerRequest.Released;
+    report.Status=budget.FinalStatus(report.Status);
+    if(report.Status=="budget_overrun")Environment.ExitCode=1;
+    report.Phase="finished";report.FinishedUtc=DateTime.UtcNow;Save();
+}
 Console.WriteLine(JsonSerializer.Serialize(report,options));
 
 // Create only missing directories after checking each parent. Source snapshot
@@ -197,6 +234,13 @@ sealed class CampaignReport {
     public DateTime? FinishedUtc { get;set; }
     public double BudgetSeconds { get;set; }
     public double ElapsedSeconds { get;set; }
+    public DateTime DeadlineUtc {get;set;}
+    public double MonotonicElapsedSeconds {get;set;}
+    public double UtcElapsedSeconds {get;set;}
+    public double BudgetOverrunSeconds {get;set;}
+    public string SleepPrevention {get;set;}="not_requested";
+    public bool? SleepPreventionReleased {get;set;}
+    public ulong LateCompletedRequestedCases {get;set;}
     public string InitialSeed { get;set; }="";
     public string? PendingSeed { get;set; }
     public ulong Cases { get;set; }
@@ -226,3 +270,80 @@ sealed class CampaignReport {
     public string? Error { get;set; }
 }
 record ProcessResult(int Exit,string Log,bool TimedOut);
+
+// Domain glue over the BCL clock: neither a backward UTC correction nor a
+// monotonic clock paused by suspension is allowed to extend the campaign.
+sealed class CampaignBudget(TimeSpan duration,TimeProvider provider)
+{
+    private readonly long started=provider.GetTimestamp();
+    private TimeSpan maximumElapsed;
+    public DateTimeOffset StartedUtc {get;}=provider.GetUtcNow();
+    public DateTimeOffset DeadlineUtc=>StartedUtc+duration;
+    public TimeSpan MonotonicElapsed=>provider.GetElapsedTime(started);
+    public TimeSpan UtcElapsed=>TimeSpan.FromTicks(Math.Max(0,(provider.GetUtcNow()-StartedUtc).Ticks));
+    public TimeSpan Elapsed {
+        get {
+            var observed=MonotonicElapsed>UtcElapsed?MonotonicElapsed:UtcElapsed;
+            // A corrected forward UTC jump must not subsequently restore budget.
+            if(observed>maximumElapsed)maximumElapsed=observed;
+            return maximumElapsed;
+        }
+    }
+    public TimeSpan Remaining=>TimeSpan.FromTicks(Math.Max(0,(duration-Elapsed).Ticks));
+    public TimeSpan Overrun=>TimeSpan.FromTicks(Math.Max(0,(Elapsed-duration).Ticks));
+    // Five seconds is explicitly cleanup/reporting allowance, not test budget.
+    public string FinalStatus(string status)=>status.StartsWith("budget_exhausted",StringComparison.Ordinal)&&Overrun>TimeSpan.FromSeconds(5)?"budget_overrun":status;
+    public static void CheckContracts() {
+        var time=new SplitClock();var budget=new CampaignBudget(TimeSpan.FromSeconds(60),time);
+        time.Advance(20,20);if(budget.Remaining!=TimeSpan.FromSeconds(40))throw new Exception("Ordinary budget failed.");
+        time.Advance(0,120);if(budget.Remaining!=TimeSpan.Zero||budget.FinalStatus("budget_exhausted")!="budget_overrun")throw new Exception("Suspend/UTC jump extended deadline.");
+        time.Advance(0,-120);if(budget.Remaining!=TimeSpan.Zero)throw new Exception("UTC correction restored expired budget.");
+        time=new SplitClock();budget=new CampaignBudget(TimeSpan.FromSeconds(60),time);
+        time.Advance(60,-3600);if(budget.Remaining!=TimeSpan.Zero||budget.Elapsed!=TimeSpan.FromSeconds(60))throw new Exception("Backward UTC extended monotonic budget.");
+        time.Advance(6,0);if(budget.FinalStatus("failed")!="failed"||budget.FinalStatus("budget_exhausted_partial_batch")!="budget_overrun")throw new Exception("Overrun classification failed.");
+        Console.WriteLine("Four split-clock deadline contracts passed.");
+    }
+    // Deliberately independent test clocks model OS suspension/time correction;
+    // production uses TimeProvider.System. No production time source is replaced.
+    private sealed class SplitClock:TimeProvider {
+        private long timestamp;private DateTimeOffset utc=new(2026,1,1,0,0,0,TimeSpan.Zero);
+        public override long TimestampFrequency=>TimeSpan.TicksPerSecond;
+        public override long GetTimestamp()=>timestamp;
+        public override DateTimeOffset GetUtcNow()=>utc;
+        public void Advance(int monotonicSeconds,int utcSeconds){timestamp+=TimeSpan.FromSeconds(monotonicSeconds).Ticks;utc+=TimeSpan.FromSeconds(utcSeconds);}
+    }
+}
+
+// Process-owned Windows power requests survive async thread switches. They do
+// not change persistent power policy, keep the display on, or override user sleep.
+sealed class SystemPowerRequest:IDisposable
+{
+    private SafeFileHandle? handle;private IntPtr reason;
+    public string Status {get;private set;}="not_requested_on_this_platform";
+    public bool? Released {get;private set;}
+    public static SystemPowerRequest Acquire() {
+        var request=new SystemPowerRequest();
+        if(!OperatingSystem.IsWindows())return request;
+        request.reason=Marshal.StringToHGlobalUni("Spice bounded qualification campaign is active");
+        var context=new ReasonContext {Version=0,Flags=1,SimpleReason=request.reason};
+        request.handle=PowerCreateRequest(ref context);
+        if(request.handle.IsInvalid)request.Status="windows_request_unavailable_"+Marshal.GetLastWin32Error();
+        else if(!PowerSetRequest(request.handle,0))request.Status="windows_request_denied_"+Marshal.GetLastWin32Error();
+        else {request.Status="windows_system_required_requested";return request;}
+        request.Dispose();return request;
+    }
+    public void Dispose() {
+        if(handle is not null) {
+            if(!handle.IsInvalid&&Status=="windows_system_required_requested")Released=PowerClearRequest(handle,0);
+            handle.Dispose();handle=null;
+        }
+        if(reason!=IntPtr.Zero){Marshal.FreeHGlobal(reason);reason=IntPtr.Zero;}
+    }
+    // Space for the complete 64-bit native union, not only its simple-string arm.
+    [StructLayout(LayoutKind.Explicit,Size=32)] private struct ReasonContext {
+        [FieldOffset(0)] public uint Version;[FieldOffset(4)] public uint Flags;[FieldOffset(8)] public IntPtr SimpleReason;
+    }
+    [DllImport("kernel32.dll",SetLastError=true)] private static extern SafeFileHandle PowerCreateRequest(ref ReasonContext context);
+    [DllImport("kernel32.dll",SetLastError=true)] [return:MarshalAs(UnmanagedType.Bool)] private static extern bool PowerSetRequest(SafeFileHandle handle,int type);
+    [DllImport("kernel32.dll",SetLastError=true)] [return:MarshalAs(UnmanagedType.Bool)] private static extern bool PowerClearRequest(SafeFileHandle handle,int type);
+}

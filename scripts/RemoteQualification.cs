@@ -27,7 +27,9 @@ if(platform=="unsupported") throw new PlatformNotSupportedException();
 var identity=platform+"-"+RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant()+"-"+label.ToLowerInvariant();
 var runId=DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8];
 var local=Path.Combine(root,"work","remote-runs",runId);Directory.CreateDirectory(local);
-var json=new JsonSerializerOptions { WriteIndented=true,PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower };
+// Git stores these text artifacts with LF. Hash the same canonical bytes that
+// survive publication, independent of the producing host's default newline.
+var json=new JsonSerializerOptions { WriteIndented=true,NewLine="\n",PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower };
 async Task<CommandResult> Command(string file,IEnumerable<string> arguments,string log,int seconds=1800) {
     var start=new ProcessStartInfo(file) { WorkingDirectory=root,UseShellExecute=false,RedirectStandardOutput=true,RedirectStandardError=true,CreateNoWindow=true };
     foreach(var arg in arguments)start.ArgumentList.Add(arg);
@@ -77,7 +79,7 @@ if(run is not null) {
     report.Endurance=JsonSerializer.Deserialize<EnduranceEvidence>(await File.ReadAllTextAsync(path),json)??throw new IOException("Invalid endurance summary.");
     var evidence=report.Endurance;
     if(evidence.SourceCommit!=source||evidence.SourceDirty)throw new IOException("Endurance source revision/cleanliness does not match this checkout.");
-    if(!new[]{"failed","budget_exhausted","budget_exhausted_partial_batch"}.Contains(evidence.Status)||evidence.FinishedUtc is null||evidence.FinishedUtc<evidence.StartedUtc||!double.IsFinite(evidence.BudgetSeconds)||evidence.BudgetSeconds<=0||evidence.BudgetSeconds>86400||!double.IsFinite(evidence.ElapsedSeconds)||evidence.ElapsedSeconds<0||!ulong.TryParse(evidence.InitialSeed,out _))throw new IOException("Malformed or unfinished endurance report.");
+    if(!new[]{"failed","budget_overrun","budget_exhausted","budget_exhausted_partial_batch"}.Contains(evidence.Status)||evidence.FinishedUtc is null||evidence.FinishedUtc<evidence.StartedUtc||!double.IsFinite(evidence.BudgetSeconds)||evidence.BudgetSeconds<=0||evidence.BudgetSeconds>86400||!double.IsFinite(evidence.ElapsedSeconds)||evidence.ElapsedSeconds<0||!ulong.TryParse(evidence.InitialSeed,out _))throw new IOException("Malformed or unfinished endurance report.");
     if(!new[]{"passed","failed","not_run","skipped_explicitly","incomplete_timeout"}.Contains(evidence.MutationStatus))throw new IOException("Unknown mutation state.");
     if(import is not null)report.RequestedMinutes=evidence.BudgetSeconds/60.0;
     // Preserve old archived runs while making the new case-count meaning
@@ -96,7 +98,9 @@ if(run is not null) {
         if(!new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml","global.json","dotnet-tools.json","Makefile"}.Contains(relative)&&!new[]{"src/","tests/","scripts/","compat/","examples/","dotnet/"}.Any(prefix=>relative.StartsWith(prefix,StringComparison.Ordinal)))throw new IOException("Source hash path is outside the source allowlist.");
         if(!File.Exists(relative)||Hash(relative)!=hash)throw new IOException("Tested source hash mismatch: "+relative);
     }
-    checksPassed&=evidence.Status.StartsWith("budget_exhausted",StringComparison.Ordinal)&&evidence.Cases>0&&evidence.MutationStatus is not ("failed" or "incomplete_timeout");
+    // Older producers did not classify suspension overruns. Derive this limit
+    // independently rather than trusting a successful-looking status string.
+    checksPassed&=evidence.Status.StartsWith("budget_exhausted",StringComparison.Ordinal)&&evidence.ElapsedSeconds<=evidence.BudgetSeconds+5&&evidence.Cases>0&&evidence.MutationStatus is not ("failed" or "incomplete_timeout");
     if(!new[]{"not_run","skipped_explicitly","completed","partial_timeout","failed"}.Contains(evidence.FrameworkMutationStatus))throw new IOException("Unknown framework mutation state.");
     if(evidence.FrameworkSummarySha256 is not null) {
         var frameworkPath=Path.Combine(run,"framework-mutations.json");
@@ -173,6 +177,9 @@ sealed record CoverageEvidence(string Status,JsonElement? Lines,JsonElement? Fun
 sealed class EnduranceEvidence {
     public string Status {get;set;}="";public string SourceCommit {get;set;}="";public bool SourceDirty {get;set;}
     public DateTime StartedUtc {get;set;}public DateTime? FinishedUtc {get;set;}public double BudgetSeconds {get;set;}public double ElapsedSeconds {get;set;}
+    public DateTime? DeadlineUtc {get;set;}public double? MonotonicElapsedSeconds {get;set;}public double? UtcElapsedSeconds {get;set;}
+    public double? BudgetOverrunSeconds {get;set;}public ulong? LateCompletedRequestedCases {get;set;}
+    public string? SleepPrevention {get;set;}public bool? SleepPreventionReleased {get;set;}
     public ulong Cases {get;set;}public ulong Batches {get;set;}public ulong CheckpointRetries {get;set;}public string InitialSeed {get;set;}="";public string? PendingSeed {get;set;}
     public string CaseCountKind {get;set;}="legacy_seeded_cases";
     public string? PropertyLibrary {get;set;}

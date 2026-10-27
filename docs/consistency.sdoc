@@ -372,3 +372,59 @@ Implementation: scripts/ValidateRequirements.cs, also used by RemoteQualificatio
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: REM-004
+STATUS: Draft
+TITLE: Git-stable evidence bytes
+STATEMENT: >>>
+New remote manifests and checksum documents shall serialize as UTF-8 with LF structural newlines so their byte checksums survive the repository's Git text policy. Verification shall read actual stored Git blobs, not reconstructed checkout text. Historical mismatched evidence shall remain unchanged and explicitly flagged.
+<<<
+COMMENT: >>>
+Implementation: scripts/RemoteQualification.cs uses BCL JsonSerializerOptions.NewLine. Verification: tests/Remote.Tests.ps1 actual bare-remote blob checksum regression, observed failing before the fix on Windows. The five old Windows artifacts remain immutable; CRLF reconstruction diagnoses their mismatch without repairing or validating the stored checksums.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REM-003
+
+[REQUIREMENT]
+UID: END-005
+STATUS: Draft
+TITLE: Suspension-aware campaign deadline and temporary power request
+STATEMENT: >>>
+Campaign remaining time shall not increase because UTC moves backward or monotonic time pauses across suspension. Child-process and pipe waits shall recheck elapsed deadlines after wake, and successful late batches shall retain replay evidence without adding completed-case counts. A finished budget-exhausted report more than five seconds beyond its budget shall become budget_overrun with a nonzero exit. Five seconds is cleanup allowance, not additional testing time. Windows campaigns shall request system-required power only for their lifetime, record request/release availability and leave persistent power policy unchanged. Explicit sleep and OS policy may override requests; Linux prevention remains unavailable.
+<<<
+COMMENT: >>>
+Implementation: scripts/Endurance.cs over BCL TimeProvider and Windows PowerCreateRequest/PowerSetRequest/PowerClearRequest. Verification: split-clock self-tests, actual Windows acquire/release probe and synthetic supervisor tests. Windows system events show the original host slept 2026-10-27T10:00:57Z to 13:22:01Z; no five active hours are inferred from the old run. Remote qualification independently rejects over-budget evidence as a passing workflow. Real forced suspension is not injected.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: END-001
+
+[REQUIREMENT]
+UID: MUT-005
+STATUS: Draft
+TITLE: Traceable survivor inventory and bounded exact replay
+STATEMENT: >>>
+Each retained overnight survivor shall have a stable triage ID, original tested source and native report hash, mutation identity, affected requirement, classification, and actual replay evidence or an explicit unverified state. Tests shall challenge independent behavior without weakening acceptance tolerances to improve mutation counts. Exact-name replay shall verify the native inventory before execution; equivalent or masked behavior shall not be counted as caught without evidence.
+<<<
+COMMENT: >>>
+Inventory: evidence/overnight-survivor-triage.json for the 35 Rust survivors from run 20261027T070556Z-1d243795, source 742341b, shard 15/16. Implementation and replay evidence are developed in this task; Draft status is not closure.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MUT-002
+
+[REQUIREMENT]
+UID: INT-WORK-001
+STATUS: Draft
+TITLE: Actual nonlinear initialization work accounting
+STATEMENT: >>>
+Configured transient work reports shall include every linear provider solve used by nonlinear operating-point initialization and adaptive coarse/half/fine attempts. Explicit initial states shall not add an initialization solve. Work counters shall describe executed work, including rejected attempts, rather than inferred step counts.
+<<<
+COMMENT: >>>
+Implementation: src/configured.rs retains the initialization Newton report. Verification: tests/overnight_survivors.rs independently counts provider calls for implicit and explicit initial states. The original implementation reported one initialization solve when the independent provider observed six; the new regression failed before correction. This is accounting evidence, not a numerical-conformance claim.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003

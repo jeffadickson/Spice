@@ -24,6 +24,7 @@ if(args is ["--snapshot-self-test"]) {
 // Supervise real mutation frameworks, preserving their native reports locally.
 // A timeout is partial evidence, never a killed mutant or a completed campaign.
 var minutes=60d;var shard="0/1";var rustFile="src/*.rs";var rustTest="all";var selectedTool="all";var rustFilter="";var workers=2;
+string? rustNamesFile=null;string[]? selectedNames=null;string? selectionHash=null;
 for(var i=0;i<args.Length;i++) switch(args[i]) {
     case "--minutes":minutes=double.Parse(args[++i],CultureInfo.InvariantCulture);break;
     case "--shard":shard=args[++i];break;
@@ -31,6 +32,7 @@ for(var i=0;i<args.Length;i++) switch(args[i]) {
     case "--rust-test":rustTest=args[++i];break;
     case "--tool":selectedTool=args[++i];break;
     case "--rust-filter":rustFilter=args[++i];break;
+    case "--rust-names-file":rustNamesFile=args[++i];break;
     case "--workers":workers=int.Parse(args[++i],CultureInfo.InvariantCulture);break;
     default:throw new ArgumentException("Unknown framework argument: "+args[i]);
 }
@@ -38,7 +40,24 @@ if(!double.IsFinite(minutes)||minutes<=0||minutes>1440)throw new ArgumentExcepti
 if(selectedTool is not ("all" or "rust" or "dotnet"))throw new ArgumentException("Tool must be all, rust or dotnet.");
 if(workers<1||workers>16)throw new ArgumentException("Workers must be in 1..16.");
 if(rustFilter.Length>512||rustFilter.Contains('\0'))throw new ArgumentException("Rust filter exceeds its bound.");
-var requestedFilter=rustFilter.Length==0?null:new System.Text.RegularExpressions.Regex(rustFilter,
+if(rustNamesFile is not null) {
+    if(rustFilter.Length!=0||shard!="0/1")throw new ArgumentException("Exact names cannot be combined with a regex or shard.");
+    var path=Path.GetFullPath(rustNamesFile);
+    if(!File.Exists(path)||new FileInfo(path).Length>32768)throw new ArgumentException("Missing/oversized exact-name selection.");
+    var bytes=File.ReadAllBytes(path);selectionHash=Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+    using var names=JsonDocument.Parse(bytes);
+    if(names.RootElement.ValueKind!=JsonValueKind.Array)throw new ArgumentException("Expected an array of exact native names.");
+    selectedNames=names.RootElement.EnumerateArray().Select(item=>item.GetString()??throw new ArgumentException("Null mutant name.")).ToArray();
+    if(selectedNames.Length is <1 or >64||selectedNames.Distinct(StringComparer.Ordinal).Count()!=selectedNames.Length||
+        selectedNames.Any(name=>name.Length>512||!name.StartsWith("src/",StringComparison.Ordinal)||name.Contains("..",StringComparison.Ordinal)||name.Any(char.IsControl)))
+        throw new ArgumentException("Invalid exact-name selection.");
+    rustFilter="^(?:"+string.Join("|",selectedNames.Select(System.Text.RegularExpressions.Regex.Escape))+")$";
+    if(rustFilter.Length>8192)throw new ArgumentException("Exact-name expression exceeds its bound.");
+}
+// Exact selections use ordinal membership; compiling their large union in the
+// local symbolic regex engine can exceed its automaton bound unnecessarily.
+var selectedSet=selectedNames?.ToHashSet(StringComparer.Ordinal);
+var requestedFilter=rustFilter.Length==0||selectedSet is not null?null:new System.Text.RegularExpressions.Regex(rustFilter,
     System.Text.RegularExpressions.RegexOptions.CultureInvariant|System.Text.RegularExpressions.RegexOptions.NonBacktracking,
     TimeSpan.FromMilliseconds(100));
 var parts=shard.Split('/');
@@ -59,6 +78,7 @@ using var managedLock=selectedTool!="rust"?new FileStream("work/framework-dotnet
 var run=Path.Combine(root,"work","framework-mutations",DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8]);Directory.CreateDirectory(run);
 var options=new JsonSerializerOptions{WriteIndented=true,PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower};
 var report=new FrameworkReport{RequestedSeconds=minutes*60,Shard=shard,RustFile=rustFile,RustTest=rustTest,Tool=selectedTool,RustFilter=rustFilter,Workers=workers};
+report.RustSelectedNames=selectedNames;report.RustSelectionSha256=selectionHash;
 var clock=Stopwatch.StartNew();
 double Remaining()=>Math.Max(0,minutes*60-clock.Elapsed.TotalSeconds);
 async Task<(int Exit,bool Timeout)> Execute(string file,IEnumerable<string> arguments,string log,double seconds,Dictionary<string,string>? environment=null,string? directory=null) {
@@ -130,7 +150,7 @@ try {
         if(test=="lib")rustArguments.Add("--cargo-arg=--lib");
         else {rustArguments.Add("--cargo-arg=--test");rustArguments.Add("--cargo-arg="+test);}
     }
-    if(requestedFilter is not null) {
+    if(requestedFilter is not null||selectedSet is not null) {
         // The native field-deletion genre has been observed outside --re.
         // Check its actual name inventory before any mutation, failing closed.
         var listingArguments=new List<string>{"mutants","--list","--dir",rustRoot,"--file",rustFile,"--re",rustFilter,
@@ -139,10 +159,12 @@ try {
         var listed=File.ReadAllText(Path.Combine(run,"cargo-inventory.log"));
         var names=listed.Split('\n').Select(line=>line.Trim()).Where(line=>line.StartsWith("src/",StringComparison.Ordinal)).ToArray();
         report.CargoMutants.Candidates=names.Length;
-        if(listing.Timeout||listing.Exit!=0||listed.Contains("[log truncated",StringComparison.Ordinal)||names.Any(name=>!requestedFilter.IsMatch(name))) {
+        if(listing.Timeout||listing.Exit!=0||listed.Contains("[log truncated",StringComparison.Ordinal)||names.Any(name=>selectedSet is not null?!selectedSet.Contains(name):!requestedFilter!.IsMatch(name))) {
             report.CargoMutants.Status="failed";
             throw new IOException("Native mutation inventory failed or escaped the requested filter; no mutants executed.");
         }
+        if(selectedNames is not null&&!new HashSet<string>(selectedNames,StringComparer.Ordinal).SetEquals(names))
+            throw new IOException("Exact native selection is missing or gained names; no mutants executed.");
     }
     var cache=Path.GetFullPath(Path.Combine(root,"target","framework-rust"));
     var targetRoot=Path.GetFullPath(Path.Combine(root,"target"));
@@ -190,6 +212,7 @@ sealed class FrameworkReport {
     public string Tool{get;set;}="all";
     public string RustFilter{get;set;}="";
     public int Workers{get;set;}=2;
+    public string[]? RustSelectedNames{get;set;}public string? RustSelectionSha256{get;set;}
     public Dictionary<string,string> ManagedInputHashes{get;set;}=new(StringComparer.Ordinal);
     public ToolCounts CargoMutants{get;set;}=new(){Version="27.1.0"};public ToolCounts Stryker{get;set;}=new(){Version="5.0.0"};
 }
