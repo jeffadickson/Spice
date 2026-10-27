@@ -2,6 +2,48 @@
 use circuit_simulator::charge::constant_capacitance;
 
 #[test]
+fn explicit_capacitance_variation_preserves_conduction_and_immutable_source() {
+    use circuit_simulator::{
+        compile::compile,
+        variation::{
+            ScalarKind, diode_capacitance_selection, replace_diode_capacitance, replace_scalar,
+            scalar_kind,
+        },
+    };
+    let request = profile_request(serde_json::json!({"kind":"operating_point"}), "lu");
+    let original = serde_json::to_string(&request.circuit).unwrap();
+    let selected = diode_capacitance_selection(&request.circuit, "D1").unwrap();
+    assert_eq!(selected.kind, ScalarKind::DiodeCapacitance);
+    assert_eq!(selected.unit, "F");
+    assert_eq!(selected.value, 1e-6);
+    assert_eq!(
+        scalar_kind(&request.circuit, "D1").unwrap(),
+        ScalarKind::DiodeSaturationCurrent
+    );
+    let varied = replace_diode_capacitance(&request.circuit, "D1", 2e-6).unwrap();
+    assert_eq!(serde_json::to_string(&request.circuit).unwrap(), original);
+    assert_eq!(compile(&varied).unwrap().charge_sparse().values(), &[2e-6]);
+    assert_eq!(
+        compile(&varied).unwrap().conductance_reference().values,
+        compile(&request.circuit)
+            .unwrap()
+            .conductance_reference()
+            .values
+    );
+    let varied = replace_scalar(&varied, "D1", 2e-12).unwrap();
+    assert_eq!(
+        diode_capacitance_selection(&varied, "D1").unwrap().value,
+        2e-6
+    );
+    for value in [0., -1., f64::NAN, f64::INFINITY] {
+        assert!(replace_diode_capacitance(&request.circuit, "D1", value).is_err());
+    }
+    for id in ["missing", "V1", "d1"] {
+        assert!(replace_diode_capacitance(&request.circuit, id, 1e-6).is_err());
+    }
+}
+
+#[test]
 fn bounded_named_charge_profile_requires_explicit_zero_grading_and_supported_terms() {
     use circuit_simulator::{
         circuit::Element,

@@ -2,6 +2,20 @@
 TITLE: Bounded Diode Constant-Charge Profile
 
 [REQUIREMENT]
+UID: MODEL-006
+STATUS: Draft
+TITLE: Explicit immutable capacitance variation metadata
+STATEMENT: >>>
+Diode parallel-capacitance variation shall identify its farad-valued parameter explicitly, return a validated new circuit and preserve conduction parameters and the original source circuit. The legacy default diode scalar remains saturation current in amperes. Legacy diode profiles shall not be silently upgraded, and no previously compiled factorization may be reused after changing C.
+<<<
+COMMENT: >>>
+Implementation: src/variation.rs::diode_capacitance_selection and replace_diode_capacitance. Verification: tests/model_charge.rs metadata, source immutability, unchanged G/changed Q, independent saturation replacement and malformed target/value rejection. JSON scalar sweep's existing default scalar semantics remain unchanged.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-002
+
+[REQUIREMENT]
 UID: MODEL-005
 STATUS: Draft
 TITLE: Charge history, derivative and observer boundaries

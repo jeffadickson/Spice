@@ -24,6 +24,7 @@ pub enum ScalarKind {
     CurrentGain,
     Transresistance,
     DiodeSaturationCurrent,
+    DiodeCapacitance,
 }
 
 impl ScalarKind {
@@ -40,6 +41,7 @@ impl ScalarKind {
             Self::CurrentGain => "1",
             Self::Transresistance => "ohm",
             Self::DiodeSaturationCurrent => "A",
+            Self::DiodeCapacitance => "F",
         }
     }
 }
@@ -98,6 +100,56 @@ pub fn replace_scalar(circuit: &Circuit, element_id: &str, value: f64) -> SimRes
         | Element::DiodeWithCapacitance {
             saturation_amps, ..
         } => *saturation_amps = value,
+    }
+    varied.validate()?;
+    Ok(varied)
+}
+
+/// Describe the explicit parallel-capacitance parameter without changing the
+/// legacy default diode scalar (saturation current). The selected unit is farads.
+pub fn diode_capacitance_selection(
+    circuit: &Circuit,
+    element_id: &str,
+) -> SimResult<ScalarSelection> {
+    circuit.validate()?;
+    let element = circuit
+        .elements
+        .iter()
+        .find(|element| element.id() == element_id)
+        .ok_or_else(|| SimError::invalid("unknown diode capacitance target"))?;
+    let Element::DiodeWithCapacitance { farads, .. } = element else {
+        return Err(SimError::invalid(
+            "capacitance target requires explicit diode-with-capacitance profile",
+        ));
+    };
+    Ok(ScalarSelection {
+        element_id: element_id.to_owned(),
+        kind: ScalarKind::DiodeCapacitance,
+        unit: "F",
+        value: *farads,
+    })
+}
+
+/// Return a newly validated circuit with only the explicit diode parallel C
+/// replaced. Never upgrade a legacy diode or mutate/reuse a compiled plan.
+pub fn replace_diode_capacitance(
+    circuit: &Circuit,
+    element_id: &str,
+    farads: f64,
+) -> SimResult<Circuit> {
+    diode_capacitance_selection(circuit, element_id)?;
+    if !farads.is_finite() || farads <= 0. {
+        return Err(SimError::invalid(
+            "diode capacitance variation must be finite and positive",
+        ));
+    }
+    let mut varied = circuit.clone();
+    for element in &mut varied.elements {
+        if element.id() == element_id {
+            if let Element::DiodeWithCapacitance { farads: value, .. } = element {
+                *value = farads;
+            }
+        }
     }
     varied.validate()?;
     Ok(varied)
