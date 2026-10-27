@@ -89,3 +89,10 @@ Native framework logs/reports and build caches remain local and may grow with th
 
 The initial Rust smoke exposed generated constructors that cannot compile for the SimResult alias. These remain unviable outcomes, not kills or a test score. Framework tuning for that alias is still pending; the targeted numerical mutants remain complementary coverage.
 
+
+Standalone Stryker runs now copy the native engine and three conformance JSON
+fixtures into a private run snapshot and verify hashes before/after execution.
+Managed sources/build outputs remain isolated. `--snapshot-self-test` checks
+original-file independence and deliberate snapshot-tamper rejection. Native input
+hashes are retained in the framework summary. This is input identity evidence,
+not operating-system sandboxing or full helper mutation coverage.

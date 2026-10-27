@@ -5,6 +5,22 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
+if(args is ["--snapshot-self-test"]) {
+    var temporary=Path.Combine(Path.GetTempPath(),"spice-snapshot-"+Guid.NewGuid().ToString("N"));
+    Directory.CreateDirectory(temporary);
+    try {
+        var source=Path.Combine(temporary,"source");var frozen=Path.Combine(temporary,"frozen");
+        File.WriteAllText(source,"original");var hash=FreezeFile(source,frozen);
+        File.WriteAllText(source,"changed original");
+        VerifyFrozen(frozen,hash);
+        File.WriteAllText(frozen,"changed snapshot");
+        try {VerifyFrozen(frozen,hash);throw new InvalidOperationException("Snapshot tampering accepted.");}
+        catch(IOException) { }
+        Console.WriteLine("Snapshot isolation and tamper rejection passed.");
+    } finally {Directory.Delete(temporary,true);}
+    return;
+}
+
 // Supervise real mutation frameworks, preserving their native reports locally.
 // A timeout is partial evidence, never a killed mutant or a completed campaign.
 var minutes=60d;var shard="0/1";var rustFile="src/*.rs";var rustTest="all";var selectedTool="all";var rustFilter="";var workers=2;
@@ -82,7 +98,18 @@ try {
     foreach(var path in new[]{"dotnet-tools.json","global.json"}.Concat(Directory.EnumerateFiles("dotnet","*",SearchOption.AllDirectories).Where(p=>!p.Split(Path.DirectorySeparatorChar).Any(part=>part is "bin" or "obj" or "TestResults")))) {
         var destination=Path.Combine(managedRoot,path);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Copy(path,destination);
     }
-    var stryker=await Execute("dotnet",["tool","run","dotnet-stryker","--","--config-file","dotnet/Simulator.Client.Tests/stryker-config.json","--test-project","dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj","--concurrency",workers.ToString(CultureInfo.InvariantCulture),"--output",Path.Combine(run,"stryker")],"stryker.log",Remaining()*(selectedTool=="dotnet"?1:.4),new(){["SPICE_TEST_ROOT"]=root,["SPICE_TEST_EXECUTABLE"]=engine},managedRoot);
+    // Freeze the real native dependency and fixture inputs too: otherwise a
+    // concurrent rebuild/edit in the original checkout changes mutant semantics.
+    var inputsRoot=Path.Combine(run,"managed-inputs");Directory.CreateDirectory(inputsRoot);
+    var nativeName="circuit-simulator"+(OperatingSystem.IsWindows()?".exe":"");
+    var frozenEngine=Path.Combine(inputsRoot,nativeName);
+    report.ManagedInputHashes[nativeName]=FreezeFile(engine,frozenEngine);
+    foreach(var relative in new[]{"examples/divider.json","examples/rc.json","examples/adaptive-rc.json"}) {
+        var destination=Path.Combine(inputsRoot,relative);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+        report.ManagedInputHashes[relative]=FreezeFile(Path.Combine(root,relative),destination);
+    }
+    var stryker=await Execute("dotnet",["tool","run","dotnet-stryker","--","--config-file","dotnet/Simulator.Client.Tests/stryker-config.json","--test-project","dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj","--concurrency",workers.ToString(CultureInfo.InvariantCulture),"--output",Path.Combine(run,"stryker")],"stryker.log",Remaining()*(selectedTool=="dotnet"?1:.4),new(){["SPICE_TEST_ROOT"]=inputsRoot,["SPICE_TEST_EXECUTABLE"]=frozenEngine},managedRoot);
+    foreach(var pair in report.ManagedInputHashes)VerifyFrozen(Path.Combine(inputsRoot,pair.Key),pair.Value);
     report.Stryker.Status=stryker.Timeout?"partial_timeout":stryker.Exit==0?"completed":"failed";
     report.Stryker.ExitCode=stryker.Exit;report.Stryker.LogSha256=Hash(Path.Combine(run,"stryker.log"));
     var managed=Directory.Exists(Path.Combine(run,"stryker"))?Directory.GetFiles(Path.Combine(run,"stryker"),"mutation-report.json",SearchOption.AllDirectories):[];
@@ -144,6 +171,16 @@ try {
 finally{Save();}
 if(report.Status=="failed")Environment.ExitCode=1;
 static string Hash(string path)=>Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))).ToLowerInvariant();
+// Verify both source-copy stability and later snapshot integrity. A mismatch
+// invalidates the campaign instead of publishing incomparable mutant counts.
+static string FreezeFile(string source,string destination) {
+    var before=Hash(source);File.Copy(source,destination);
+    if(Hash(source)!=before||Hash(destination)!=before)throw new IOException("Mutation input changed during snapshot.");
+    return before;
+}
+static void VerifyFrozen(string path,string hash) {
+    if(Hash(path)!=hash)throw new IOException("Mutation input snapshot changed during execution.");
+}
 
 /// Small path-free evidence suitable for the remote manifest allowlist.
 sealed class FrameworkReport {
@@ -153,6 +190,7 @@ sealed class FrameworkReport {
     public string Tool{get;set;}="all";
     public string RustFilter{get;set;}="";
     public int Workers{get;set;}=2;
+    public Dictionary<string,string> ManagedInputHashes{get;set;}=new(StringComparer.Ordinal);
     public ToolCounts CargoMutants{get;set;}=new(){Version="27.1.0"};public ToolCounts Stryker{get;set;}=new(){Version="5.0.0"};
 }
 /// Native categories remain separate; unrecognized statuses are never counted as kills.
