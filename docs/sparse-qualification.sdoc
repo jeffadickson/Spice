@@ -2,6 +2,20 @@
 TITLE: Direct Sparse Dynamic CPU Qualification
 
 [REQUIREMENT]
+UID: SPARSE-011
+STATUS: Draft
+TITLE: Immutable prepared sparse factors
+STATEMENT: >>>
+Prepared real CSC sessions shall own immutable pattern/coefficient identity and vendor factor lifetime, validate each excitation before invoking the factor callback, independently verify every output and preserve callback errors. Session-local handles need not promise cross-thread transfer. Cache reuse shall never substitute factors for a different numerical system.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation begins with src/linalg.rs::PreparedSparseReal and LinearSolver::prepare_csc. Verification: tests/sparse_transient.rs ownership, callback-count, shape/finite/residual boundaries. Native provider preparation and driver cache identity follow separately.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-009
+
+[REQUIREMENT]
 UID: SPARSE-010
 STATUS: Draft
 TITLE: Sparse linear dynamic assembly

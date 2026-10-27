@@ -40,6 +40,14 @@ impl Matrix {
 }
 /// Adapters know matrices, never netlists or device classes.
 pub trait LinearSolver: Send + Sync {
+    /// Prepare owned canonical sparse factors. Unsupported permits the same
+    /// provider's reference preparation path; None means direct uncached solves.
+    fn prepare_csc(&self, _matrix: &CscMatrix) -> SimResult<Option<PreparedSparseReal>> {
+        Err(SimError::new(
+            ErrorCode::Unsupported,
+            "backend has no sparse preparation",
+        ))
+    }
     /// A prepared session owns numeric factors; None means preparation is unsupported.
     fn prepare(&self, _matrix: &Matrix) -> SimResult<Option<PreparedReal>> {
         Ok(None)
@@ -159,6 +167,37 @@ pub struct PreparedReal {
     solve: Box<PreparedSolve>,
 }
 type PreparedSolve = dyn Fn(&[f64]) -> SimResult<Vec<f64>>;
+
+/// Session-local factor callback and its immutable canonical matrix identity.
+/// No Send/Sync guarantee is imposed on vendor factor handles. Every reuse
+/// independently verifies its output against the owned CSC coefficients.
+pub struct PreparedSparseReal {
+    matrix: CscMatrix,
+    solve: Box<PreparedSolve>,
+}
+impl PreparedSparseReal {
+    /// Own a validated CSC system and a callback retaining its numeric factors.
+    pub fn new(matrix: CscMatrix, solve: impl Fn(&[f64]) -> SimResult<Vec<f64>> + 'static) -> Self {
+        Self {
+            matrix,
+            solve: Box::new(solve),
+        }
+    }
+    /// Immutable coefficient/pattern identity belonging to these factors.
+    pub fn matrix(&self) -> &CscMatrix {
+        &self.matrix
+    }
+    /// Validate excitation before callback invocation and independently check
+    /// every returned vector; callback errors remain terminal.
+    pub fn solve(&self, rhs: &[f64]) -> SimResult<Vec<f64>> {
+        if rhs.len() != self.matrix.dimension() || rhs.iter().any(|value| !value.is_finite()) {
+            return Err(SimError::invalid("invalid prepared sparse excitation"));
+        }
+        let values = (self.solve)(rhs)?;
+        crate::dc::verify_csc_solution(&self.matrix, rhs, &values)?;
+        Ok(values)
+    }
+}
 impl PreparedReal {
     pub fn new(
         matrix: Matrix,

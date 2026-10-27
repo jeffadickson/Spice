@@ -11,6 +11,36 @@ use circuit_simulator::{
 struct DirectReal;
 
 #[test]
+fn prepared_sparse_sessions_own_identity_and_check_every_callback_boundary() {
+    use circuit_simulator::linalg::PreparedSparseReal;
+    use std::{cell::Cell, rc::Rc};
+    let calls = Rc::new(Cell::new(0));
+    let observed = Rc::clone(&calls);
+    let mut original = vec![2.];
+    let matrix = CscMatrix::new(1, vec![0, 1], vec![0], original.clone()).unwrap();
+    let prepared = PreparedSparseReal::new(matrix, move |rhs| {
+        observed.set(observed.get() + 1);
+        Ok(vec![rhs[0] / 2.])
+    });
+    original[0] = 99.;
+    assert_eq!(prepared.matrix().values(), &[2.]);
+    assert!(prepared.solve(&[]).is_err());
+    assert!(prepared.solve(&[f64::NAN]).is_err());
+    assert_eq!(calls.get(), 0);
+    assert_eq!(prepared.solve(&[4.]).unwrap(), [2.]);
+    assert_eq!(prepared.solve(&[-6.]).unwrap(), [-3.]);
+    assert_eq!(calls.get(), 2);
+    for bad in [vec![], vec![0.], vec![f64::INFINITY]] {
+        let matrix = CscMatrix::new(1, vec![0, 1], vec![0], vec![2.]).unwrap();
+        assert!(
+            PreparedSparseReal::new(matrix, move |_| Ok(bad.clone()))
+                .solve(&[4.])
+                .is_err()
+        );
+    }
+}
+
+#[test]
 fn legacy_be_uses_direct_sparse_solves_and_matches_discrete_rc_equation() {
     use circuit_simulator::{
         compile::compile,
