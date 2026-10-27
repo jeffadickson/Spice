@@ -11,6 +11,30 @@ use circuit_simulator::{
 struct DirectReal;
 
 #[test]
+fn selecting_a_source_does_not_reorder_finite_nominal_cancellation() {
+    use circuit_simulator::{
+        compile::compile,
+        netlist::parse,
+        sources::{BoundSources, SourceOverride},
+        waveform::Waveform,
+    };
+    let plan = compile(
+        &parse("title\nR1 out 0 1\nI1 0 out -1e308\nI2 0 out 1e308\nI3 0 out 1e308\n.end").unwrap(),
+    )
+    .unwrap();
+    assert_eq!(plan.rhs(), &[1e308]);
+    let sources = BoundSources::new(
+        &plan,
+        &[SourceOverride {
+            id: "I1".into(),
+            waveform: Waveform::Constant { value: -1e308 },
+        }],
+    )
+    .unwrap();
+    assert_eq!(sources.rhs(0.).unwrap(), [1e308]);
+}
+
+#[test]
 fn dynamic_numeric_cancellation_is_a_singular_failure_without_trial_commit() {
     use circuit_simulator::{
         compile::compile,

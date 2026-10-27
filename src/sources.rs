@@ -5,7 +5,7 @@ use crate::{
     waveform::Waveform,
 };
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SourceOverride {
@@ -33,6 +33,7 @@ impl BoundSources {
         }
         let mut ids = BTreeSet::new();
         let mut sources = Vec::new();
+        let mut selected = BTreeMap::new();
         let mut breakpoints = Vec::new();
         for source in overrides {
             if !ids.insert(source.id.as_str()) {
@@ -61,18 +62,23 @@ impl BoundSources {
                 },
                 _ => return Err(SimError::invalid("override must target independent source")),
             };
-            sources.push(BoundSource {
-                target,
-                waveform: source.waveform.clone(),
-            });
+            selected.insert(
+                source.id.as_str(),
+                BoundSource {
+                    target,
+                    waveform: source.waveform.clone(),
+                },
+            );
         }
         breakpoints.sort_by(f64::total_cmp);
         breakpoints.dedup();
-        // Assemble only unbound nominal sources. Subtracting a large nominal
-        // value from plan.rhs would erase a small waveform override by cancellation.
+        // Preserve original current-source order, including nominal constants.
+        // Grouping unbound currents before overrides can introduce an overflow
+        // that the original finite signed accumulation did not have.
         let mut base = vec![0.; plan.unknown_count()];
         for element in &plan.circuit.elements {
-            if ids.contains(element.id()) {
+            if let Some(source) = selected.remove(element.id()) {
+                sources.push(source);
                 continue;
             }
             match element {
@@ -83,12 +89,13 @@ impl BoundSources {
                     base[row] = *volts;
                 }
                 Element::Current { p, n, amps, .. } => {
-                    if let Some(row) = p.unknown() {
-                        base[row] -= amps;
-                    }
-                    if let Some(row) = n.unknown() {
-                        base[row] += amps;
-                    }
+                    sources.push(BoundSource {
+                        target: Target::Current {
+                            p: p.unknown(),
+                            n: n.unknown(),
+                        },
+                        waveform: Waveform::Constant { value: *amps },
+                    });
                 }
                 _ => {}
             }
@@ -103,6 +110,9 @@ impl BoundSources {
         })
     }
     pub fn rhs(&self, time: f64) -> SimResult<Vec<f64>> {
+        if !time.is_finite() || time < 0. {
+            return Err(SimError::invalid("invalid source time"));
+        }
         let mut rhs = self.base.clone();
         for s in &self.sources {
             let v = s.waveform.at_validated(time)?;

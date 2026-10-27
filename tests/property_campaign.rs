@@ -30,6 +30,25 @@ fn configuration() -> Config {
 proptest! {
     #![proptest_config(configuration())]
     #[test]
+    fn generated_selected_current_sources_preserve_kcl_and_nominal_order(
+        currents in prop::array::uniform3(-1000_i16..1000), replacement in -1000_i16..1000,
+        selected in 0_usize..3, exponent in -100_i32..100
+    ) {
+        use circuit_simulator::{sources::{BoundSources, SourceOverride}, waveform::Waveform};
+        let scale = 10_f64.powi(exponent);
+        let nominal = currents.map(|value| f64::from(value) * scale);
+        let replacement = f64::from(replacement) * scale;
+        let plan = compile(&parse(&format!("title\nR1 out 0 1\nI1 0 out {}\nI2 out 0 {}\nI3 0 out {}\n.end", nominal[0], nominal[1], nominal[2])).unwrap()).unwrap();
+        let sources = BoundSources::new(&plan, &[SourceOverride { id: format!("I{}", selected + 1), waveform: Waveform::Constant { value: replacement } }]).unwrap();
+        let mut chosen = nominal;
+        chosen[selected] = replacement;
+        let expected = chosen[0] - chosen[1] + chosen[2];
+        let actual = sources.rhs(0.).unwrap()[0];
+        prop_assert!((actual - expected).abs() <= 16. * f64::EPSILON * chosen.iter().map(|value| value.abs()).sum::<f64>().max(f64::MIN_POSITIVE));
+        prop_assert!(sources.rhs(f64::NAN).is_err());
+        prop_assert!(sources.rhs(-1.).is_err());
+    }
+    #[test]
     fn generated_sparse_dynamic_rc_matches_exact_discrete_recurrence(
         resistance_log in 0.0_f64..5., ratio_log in -2.0_f64..2.,
         step_exponent in -15_i32..-5, steps in 1_usize..33, trapezoidal in any::<bool>()
