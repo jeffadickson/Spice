@@ -81,17 +81,29 @@ fn initial(
     solver: &dyn LinearSolver,
 ) -> SimResult<Vec<f64>> {
     let Some(x) = state else {
-        return Ok(crate::dc::solve_verified(&plan.conductance, b, solver)?.0);
+        return Ok(crate::dc::solve_csc_verified(plan.conductance_sparse(), b, solver)?.0);
     };
     if x.len() != plan.unknown_count() || x.iter().any(|v| !v.is_finite()) {
         return Err(SimError::invalid("invalid initial state shape/values"));
     }
+    if b.len() != x.len() || b.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::invalid("invalid initial excitation"));
+    }
+    let mut algebraic = vec![true; x.len()];
+    for (row, _, value) in plan.charge_sparse().entries() {
+        if value != 0. {
+            algebraic[row] = false;
+        }
+    }
+    let mut sums = vec![0.; x.len()];
+    for (row, column, value) in plan.conductance_sparse().entries() {
+        if algebraic[row] {
+            sums[row] += value * x[column];
+        }
+    }
     for (i, &rhs) in b.iter().enumerate() {
-        if (0..x.len()).all(|j| plan.charge.at(i, j) == 0.) {
-            let residual = (0..x.len())
-                .map(|j| plan.conductance.at(i, j) * x[j])
-                .sum::<f64>()
-                - rhs;
+        if algebraic[i] {
+            let residual = sums[i] - rhs;
             if !residual.is_finite() || residual.abs() > 1e-10 * (1. + rhs.abs()) {
                 return Err(SimError::invalid(format!(
                     "initial algebraic constraint failed at row {i}"

@@ -35,7 +35,7 @@ impl BoundSources {
         let mut sources = Vec::new();
         let mut breakpoints = Vec::new();
         for source in overrides {
-            if !ids.insert(&source.id) {
+            if !ids.insert(source.id.as_str()) {
                 return Err(SimError::invalid("duplicate source override"));
             }
             source.waveform.validate()?;
@@ -72,7 +72,7 @@ impl BoundSources {
         // value from plan.rhs would erase a small waveform override by cancellation.
         let mut base = vec![0.; plan.unknown_count()];
         for element in &plan.circuit.elements {
-            if ids.contains(&element.id().to_string()) {
+            if ids.contains(element.id()) {
                 continue;
             }
             match element {

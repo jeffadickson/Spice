@@ -11,6 +11,34 @@ use circuit_simulator::{
 struct DirectReal;
 
 #[test]
+fn configured_equilibrium_initialization_is_direct_sparse_with_selected_sources() {
+    use circuit_simulator::{
+        compile::compile,
+        configured::{self, TransientConfig},
+        netlist::parse,
+        sources::SourceOverride,
+        waveform::Waveform,
+    };
+    let plan =
+        compile(&parse("title\nR1 out 0 2\nC1 out 0 3\nI1 0 out 1e308\n.end").unwrap()).unwrap();
+    let options = TransientConfig {
+        stop_s: 1.,
+        max_step_s: 0.25,
+        max_steps: 4,
+        sources: vec![SourceOverride {
+            id: "I1".into(),
+            waveform: Waveform::Constant { value: 1. },
+        }],
+        ..Default::default()
+    };
+    let result = configured::run(&plan, &DirectReal, &options, &false.into()).unwrap();
+    assert_eq!(result.report.initialization, "operating_point");
+    for sample in result.samples {
+        assert!((sample.values[0] - 2.).abs() < 1e-12);
+    }
+}
+
+#[test]
 fn trapezoidal_nonzero_previous_excitation_matches_closed_form_charging() {
     use circuit_simulator::{
         compile::compile,
