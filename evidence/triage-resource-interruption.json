@@ -1,0 +1,17 @@
+{
+  "run": "work/framework-mutations/20261027T145145Z-ffad0b99",
+  "status": "interrupted_resource_failure",
+  "caught": 7,
+  "native_unviable": 3,
+  "unattempted": 27,
+  "reason": "Windows error 1455: paging file too small; metadata mmap and linker allocation failures. Native Unviable outcomes are infrastructure failures, not test kills or established intrinsic invalid mutants.",
+  "other_failed_verification": "work/triage-final-rust.log",
+  "coverage": "Initial Linux tests completed but extraction was interrupted; that attempt is not used. Later completed current-source coverage is evidence/triage-rust-coverage.json.",
+  "original_overnight_unviable_log_scan": {
+    "scanned": 86,
+    "missing": 0,
+    "explicit_allocation_signatures": 0,
+    "limitations": "Absence of these signatures does not establish intrinsic invalidity or test detection."
+  },
+  "healthy_replay_evidence": "evidence/triage-survivor-replay.json"
+}

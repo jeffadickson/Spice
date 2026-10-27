@@ -1,4 +1,22 @@
-# Spice qualification handoff — completed campaign
+# Spice qualification handoff — survivor triage after completed campaign
+
+The October 27 follow-up addresses overnight results; it does not restart the
+completed iteration quota below. Read evidence/overnight-survivor-triage.json,
+evidence/overnight-managed-survivor-triage.json and the triage evidence reports.
+Stable IDs retain original source/run identity and actual replay outcomes.
+Resource failures and unattempted work require replay; they are not kills.
+Raw artifacts remain in ignored work/. No new full overnight run or source push
+is implied by the follow-up. Preserve the existing scheduled campaign and review.
+
+Follow-up source checkpoints are d77bd6d (campaign/publication controls) and
+216859d (nonlinear initialization solve accounting plus 22 regression tests).
+The original 35-survivor cohort now has 31 caught and four retained conditional
+equivalents; two supplemental importer mutations are caught by existing tests.
+Read evidence/overnight-survivor-review.md and evidence/triage-survivor-replay.json
+for exact scopes, hashes, interrupted work and limitations. Use the current-name
+selection in docs/mutation-frameworks.md; historical subsets have different scope
+or locations. Reopen equivalence dispositions when source/preconditions change.
+The next scheduled campaign must supply fresh full-duration confirmation.
 
 The user-authorized five-area campaign is complete under the documented 100+1
 interpretation: repository iterations 335–434 plus final review/fixes 435. Read

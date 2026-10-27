@@ -1,0 +1,21 @@
+{
+  "id": "DOTNET-SURV-001",
+  "original_id": "194",
+  "source_commit": "742341b0b6eca2904d3c56eef042f72b552a9a2e",
+  "run_id": "20261027T070556Z-1d243795",
+  "native_report_sha256": "918248b5bf9c4d2e6c84fe35c4f4fde686c66e554c0fd545471a8bd352b284b7",
+  "file": "dotnet/Simulator.Client/Client.cs",
+  "line": 122,
+  "replacement": "true",
+  "classification": "equivalent_in_current_decode_only_path",
+  "reason": "UTF8Encoding(emitUTF8Identifier, throwOnInvalidBytes) is only used for GetString; emitUTF8Identifier affects encoding preamble, not decoding. The strict invalid-byte argument remains true. No mutation suppression added.",
+  "verification": "Source inspection of ReadBoundedAsync and existing malformed UTF-8 contracts; no new Stryker replay yet",
+  "requirement": "MUT-005",
+  "primary_reference": "https://learn.microsoft.com/en-us/dotnet/api/system.text.utf8encoding.getpreamble?view=net-10.0",
+  "current_source_sha256": "1f5bfeaa871cef2bc6dfd2647072217cf1d52cbb778abc624778bdf5f03d914a",
+  "affected_requirements": [
+    "MAN-001",
+    "ARCH-API-004"
+  ],
+  "original_source_sha256": "1f5bfeaa871cef2bc6dfd2647072217cf1d52cbb778abc624778bdf5f03d914a"
+}

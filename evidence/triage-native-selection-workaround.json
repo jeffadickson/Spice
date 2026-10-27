@@ -1,0 +1,12 @@
+{
+  "tool": "cargo-mutants 27.1.0",
+  "cohort_count": 35,
+  "explicit_supplemental_names": [
+    "src/netlist.rs:571:17: delete field max_step_s from struct crate::configured::TransientConfig expression in import_ngspice_request",
+    "src/netlist.rs:572:17: delete field stop_s from struct crate::configured::TransientConfig expression in import_ngspice_request"
+  ],
+  "preflight_run": "20261027T144142Z-a13f60e4",
+  "preflight_status": "failed_before_any_mutation",
+  "reason": "Pinned tool ignores regex filters for two struct-field deletions. Explicitly declare those additional names, keep their outcomes outside the 35-survivor cohort, and retain fail-closed inventory equality.",
+  "upstream": "https://mutants.rs/changelog.html"
+}

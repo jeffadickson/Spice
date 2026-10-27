@@ -409,7 +409,7 @@ STATEMENT: >>>
 Each retained overnight survivor shall have a stable triage ID, original tested source and native report hash, mutation identity, affected requirement, classification, and actual replay evidence or an explicit unverified state. Tests shall challenge independent behavior without weakening acceptance tolerances to improve mutation counts. Exact-name replay shall verify the native inventory before execution; equivalent or masked behavior shall not be counted as caught without evidence.
 <<<
 COMMENT: >>>
-Inventory: evidence/overnight-survivor-triage.json for the 35 Rust survivors from run 20261027T070556Z-1d243795, source 742341b, shard 15/16. Implementation and replay evidence are developed in this task; Draft status is not closure.
+Inventory: evidence/overnight-survivor-triage.json for the 35 Rust survivors from run 20261027T070556Z-1d243795, source 742341b, shard 15/16. Replay: evidence/triage-survivor-replay.json and evidence/overnight-survivor-review.md retain 31 test-detected kills and four conditional source-reviewed equivalents on matching current-source snapshots. Draft status is not universal qualification or formal proof.
 <<<
 RELATIONS:
 - TYPE: Parent

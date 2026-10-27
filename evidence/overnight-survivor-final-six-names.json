@@ -1,0 +1,10 @@
+[
+  "src/api.rs:92:68: replace || with && in run_with_registry",
+  "src/api.rs:254:17: replace - with + in run_with_registry",
+  "src/artifact.rs:112:45: replace > with == in read_verified",
+  "src/audit.rs:419:23: replace > with == in compare_refinement",
+  "src/backend.rs:183:9: replace <impl LinearSolver for DenseQr>::name -> &'static str with \"\"",
+  "src/circuit.rs:153:34: replace || with && in Circuit::validate",
+  "src/netlist.rs:571:17: delete field max_step_s from struct crate::configured::TransientConfig expression in import_ngspice_request",
+  "src/netlist.rs:572:17: delete field stop_s from struct crate::configured::TransientConfig expression in import_ngspice_request"
+]

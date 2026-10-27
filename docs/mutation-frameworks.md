@@ -113,3 +113,25 @@ recorded in `evidence/triage-native-selection-workaround.json`; no escaped
 candidate is silently accepted and no tool upgrade or mutation suppression is
 implied. Equivalent or masked survivors need documented reasoning and remain
 separate from test-detected kills.
+
+To repeat the full retained cohort on the current source from an existing checkout:
+
+```powershell
+$checkout=(& git rev-parse --show-toplevel).Trim()
+if($LASTEXITCODE -ne 0 -or -not(Test-Path -LiteralPath $checkout -PathType Container)){throw 'Existing checkout unavailable'}
+Set-Location -LiteralPath $checkout
+dotnet run --file scripts/FrameworkMutations.cs -- --tool rust --minutes 45 --workers 1 --rust-test lib,overnight_survivors,ngspice_compat --rust-names-file evidence/overnight-survivor-current-names.json
+if($LASTEXITCODE -ne 0){throw 'Inspect the emitted framework summary and native logs'}
+```
+
+Use the current-name file for this command. The initial and retry selection
+files preserve historical subsets and source locations; they are not interchangeable
+with the final source. Future source edits can invalidate exact locations and
+require the checked relocation process again. A completed framework run can
+contain survivors or unviable mutants; inspect its categories before drawing any
+conclusion about detection. Run this serially with other compilation-heavy jobs
+on memory-constrained hosts. Windows error 1455 and linker allocation failures
+invalidate compile-based conclusions and require a healthy replay.
+The `ngspice_compat` suite covers the two supplemental importer-field deletions;
+omitting it from a focused survivor run can make those extras survive even though
+the full regression suite already checks both imported time parameters.

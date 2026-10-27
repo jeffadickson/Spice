@@ -1,0 +1,60 @@
+{
+  "run_id": "20261027T070556Z-1d243795",
+  "raw_summary_sha256": "e2fdff57dfa8d9571f2796e9370e6adc69f85fc96a7180633fcb29a7a36546f1",
+  "source_commit": "742341b0b6eca2904d3c56eef042f72b552a9a2e",
+  "source_dirty": false,
+  "recorded_status": "budget_exhausted",
+  "started_utc": "2026-10-27T07:05:56.1723205Z",
+  "finished_utc": "2026-10-27T13:22:02.776472Z",
+  "budget_seconds": 18000,
+  "elapsed_seconds": 22566.5107341,
+  "overrun_seconds": 4566.5107341,
+  "completed_requested_cases": 12449792,
+  "completed_batches": 6079,
+  "property_methods": 16,
+  "cases_per_method": 128,
+  "initial_seed": "6272588092136166575",
+  "last_completed_seed_derived": "3971496431024587951",
+  "pending_seed": null,
+  "framework_counts": {
+    "cargo_mutants_candidates": 231,
+    "cargo_mutants_killed": 110,
+    "cargo_mutants_survived": 35,
+    "cargo_mutants_timed_out": 0,
+    "cargo_mutants_invalid": 86,
+    "cargo_mutants_not_covered": 0,
+    "cargo_mutants_pending": 0,
+    "cargo_mutants_other": 0,
+    "cargo_mutants_ignored": 0,
+    "cargo_mutants_unattempted": 0,
+    "stryker_candidates": 200,
+    "stryker_killed": 89,
+    "stryker_survived": 1,
+    "stryker_timed_out": 0,
+    "stryker_invalid": 103,
+    "stryker_not_covered": 0,
+    "stryker_pending": 0,
+    "stryker_other": 0,
+    "stryker_ignored": 7,
+    "stryker_unattempted": 0
+  },
+  "native_report_hashes": {
+    "cargo_mutants": "367e84108968e754413c1676f577ae63588b929be72cde7a740b8ea6a8f8f248",
+    "stryker": "918248b5bf9c4d2e6c84fe35c4f4fde686c66e554c0fd545471a8bd352b284b7"
+  },
+  "sleep_evidence": {
+    "provider": "Microsoft-Windows-Power-Troubleshooter",
+    "event_id": 1,
+    "record_id": 10907,
+    "reported_at_utc": "2026-10-27T13:22:02.809625Z",
+    "sleep_time_utc": "2026-10-27T10:00:57.4716620Z",
+    "wake_time_utc": "2026-10-27T13:22:01.4685132Z",
+    "raw_xml_sha256": "17f74d426b4c9f135cebf2b376cb10b71ce26c8271105645891967e40d7dc621"
+  },
+  "limitations": [
+    "Recorded budget_exhausted does not establish five active testing hours; observed elapsed exceeds budget and the host suspended.",
+    "Counts are requested successful property cases, excluding extra replay/shrink attempts.",
+    "No property failure found; missing fresh coverage is not passing coverage.",
+    "Raw source/archive/framework/native artifacts remain local; historical records unchanged."
+  ]
+}

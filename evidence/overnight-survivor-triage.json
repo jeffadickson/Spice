@@ -1,0 +1,1091 @@
+{
+  "source_commit": "742341b0b6eca2904d3c56eef042f72b552a9a2e",
+  "run_id": "20261027T070556Z-1d243795",
+  "shard": "15/16",
+  "original_outcomes_sha256": "367e84108968e754413c1676f577ae63588b929be72cde7a740b8ea6a8f8f248",
+  "survivors": [
+    {
+      "id": "RUST-SURV-001",
+      "original_name": "src/adaptive.rs:48:39: replace / with * in AdaptiveOptions::error",
+      "file": "src/adaptive.rs",
+      "function": "AdaptiveOptions::error",
+      "line": 48,
+      "column": 39,
+      "replacement": "*",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__adaptive.rs_line_49_col_39.log",
+        "tested_source_sha256": "9e9e55cdb4cfef83adcac6e9f88855a21965f4740876f7ff00ee4884a9fea654",
+        "detected_test_failures": [
+          "adaptive::survivor_contracts::trapezoidal_step_doubling_uses_the_second_order_richardson_divisor"
+        ]
+      },
+      "current_name": "src/adaptive.rs:49:39: replace / with * in AdaptiveOptions::error",
+      "current_line": 49,
+      "current_source_sha256": "9e9e55cdb4cfef83adcac6e9f88855a21965f4740876f7ff00ee4884a9fea654",
+      "affected_requirements": [
+        "ARCH-EQ-004"
+      ],
+      "regression_tests": [
+        "src/adaptive.rs::survivor_contracts::trapezoidal_step_doubling_uses_the_second_order_richardson_divisor"
+      ]
+    },
+    {
+      "id": "RUST-SURV-002",
+      "original_name": "src/api.rs:92:68: replace || with && in run_with_registry",
+      "file": "src/api.rs",
+      "function": "run_with_registry",
+      "line": 92,
+      "column": 68,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T154112Z-c8b6fc37",
+        "outcomes_sha256": "79f897ab71beb1bdf590e0a02c222130dae4549bb931f55a0fff03a1bd6b141c",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__api.rs_line_92_col_68.log",
+        "tested_source_sha256": "efc595fbe65cf4a55f542114b4851547204117a7e57038509a189ab1f324acd5",
+        "detected_test_failures": [
+          "each_request_identity_and_element_identity_bound_is_independent"
+        ]
+      },
+      "current_name": "src/api.rs:92:68: replace || with && in run_with_registry",
+      "current_line": 92,
+      "current_source_sha256": "efc595fbe65cf4a55f542114b4851547204117a7e57038509a189ab1f324acd5",
+      "affected_requirements": [
+        "ARCH-STATE-003"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::each_request_identity_and_element_identity_bound_is_independent"
+      ]
+    },
+    {
+      "id": "RUST-SURV-003",
+      "original_name": "src/api.rs:254:17: replace - with + in run_with_registry",
+      "file": "src/api.rs",
+      "function": "run_with_registry",
+      "line": 254,
+      "column": 17,
+      "replacement": "+",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T154112Z-c8b6fc37",
+        "outcomes_sha256": "79f897ab71beb1bdf590e0a02c222130dae4549bb931f55a0fff03a1bd6b141c",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__api.rs_line_254_col_17.log",
+        "tested_source_sha256": "efc595fbe65cf4a55f542114b4851547204117a7e57038509a189ab1f324acd5",
+        "detected_test_failures": [
+          "complex_diode_current_uses_differential_bias_with_both_terminals_active"
+        ]
+      },
+      "current_name": "src/api.rs:254:17: replace - with + in run_with_registry",
+      "current_line": 254,
+      "current_source_sha256": "efc595fbe65cf4a55f542114b4851547204117a7e57038509a189ab1f324acd5",
+      "affected_requirements": [
+        "ARCH-LIN-004"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::complex_diode_current_uses_differential_bias_with_both_terminals_active"
+      ]
+    },
+    {
+      "id": "RUST-SURV-004",
+      "original_name": "src/artifact.rs:112:45: replace > with == in read_verified",
+      "file": "src/artifact.rs",
+      "function": "read_verified",
+      "line": 112,
+      "column": 45,
+      "replacement": "==",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T154112Z-c8b6fc37",
+        "outcomes_sha256": "79f897ab71beb1bdf590e0a02c222130dae4549bb931f55a0fff03a1bd6b141c",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__artifact.rs_line_112_col_45.log",
+        "tested_source_sha256": "13180775067ea63a8958572f8c70599d50ba8797db13937e7401eb0145e940c0",
+        "detected_test_failures": [
+          "artifact_marker_bound_precedes_json_whitespace_acceptance"
+        ]
+      },
+      "current_name": "src/artifact.rs:112:45: replace > with == in read_verified",
+      "current_line": 112,
+      "current_source_sha256": "13180775067ea63a8958572f8c70599d50ba8797db13937e7401eb0145e940c0",
+      "affected_requirements": [
+        "ARCH-DATA-003"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::artifact_marker_bound_precedes_json_whitespace_acceptance"
+      ]
+    },
+    {
+      "id": "RUST-SURV-005",
+      "original_name": "src/audit.rs:419:23: replace > with == in compare_refinement",
+      "file": "src/audit.rs",
+      "function": "compare_refinement",
+      "line": 419,
+      "column": 23,
+      "replacement": "==",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T154112Z-c8b6fc37",
+        "outcomes_sha256": "79f897ab71beb1bdf590e0a02c222130dae4549bb931f55a0fff03a1bd6b141c",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__audit.rs_line_419_col_23.log",
+        "tested_source_sha256": "b0ef5eee6820d350c7969ca1851454bf56789901e31ab255492af2aea87e0227",
+        "detected_test_failures": [
+          "refinement_retention_limit_is_inclusive_and_rejects_overshoot"
+        ]
+      },
+      "current_name": "src/audit.rs:419:23: replace > with == in compare_refinement",
+      "current_line": 419,
+      "current_source_sha256": "b0ef5eee6820d350c7969ca1851454bf56789901e31ab255492af2aea87e0227",
+      "affected_requirements": [
+        "CONS-009"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::refinement_retention_limit_is_inclusive_and_rejects_overshoot"
+      ]
+    },
+    {
+      "id": "RUST-SURV-006",
+      "original_name": "src/backend.rs:183:9: replace <impl LinearSolver for DenseQr>::name -> &'static str with \"\"",
+      "file": "src/backend.rs",
+      "function": "<impl LinearSolver for DenseQr>::name",
+      "line": 183,
+      "column": 9,
+      "replacement": "\"\"",
+      "genre": "FnValue",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T154112Z-c8b6fc37",
+        "outcomes_sha256": "79f897ab71beb1bdf590e0a02c222130dae4549bb931f55a0fff03a1bd6b141c",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__backend.rs_line_183_col_9.log",
+        "tested_source_sha256": "7932ea5401a57cdea15cf13c02bbe3fe962dcc89f16eb948f876313e0ed0027d",
+        "detected_test_failures": [
+          "each_request_identity_and_element_identity_bound_is_independent"
+        ]
+      },
+      "current_name": "src/backend.rs:183:9: replace <impl LinearSolver for DenseQr>::name -> &'static str with \"\"",
+      "current_line": 183,
+      "current_source_sha256": "7932ea5401a57cdea15cf13c02bbe3fe962dcc89f16eb948f876313e0ed0027d",
+      "affected_requirements": [
+        "ARCH-LIN-002"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::each_request_identity_and_element_identity_bound_is_independent"
+      ]
+    },
+    {
+      "id": "RUST-SURV-007",
+      "original_name": "src/circuit.rs:153:34: replace || with && in Circuit::validate",
+      "file": "src/circuit.rs",
+      "function": "Circuit::validate",
+      "line": 153,
+      "column": 34,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T154112Z-c8b6fc37",
+        "outcomes_sha256": "79f897ab71beb1bdf590e0a02c222130dae4549bb931f55a0fff03a1bd6b141c",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__circuit.rs_line_153_col_34.log",
+        "tested_source_sha256": "7597d72df62ee3f943cc614b563e0a884d605e7c5bc3e3790e94cc35d988d159",
+        "detected_test_failures": [
+          "each_request_identity_and_element_identity_bound_is_independent"
+        ]
+      },
+      "current_name": "src/circuit.rs:153:34: replace || with && in Circuit::validate",
+      "current_line": 153,
+      "current_source_sha256": "7597d72df62ee3f943cc614b563e0a884d605e7c5bc3e3790e94cc35d988d159",
+      "affected_requirements": [
+        "ARCH-STATE-003"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::each_request_identity_and_element_identity_bound_is_independent"
+      ]
+    },
+    {
+      "id": "RUST-SURV-008",
+      "original_name": "src/circuit.rs:171:21: replace || with && in Circuit::validate",
+      "file": "src/circuit.rs",
+      "function": "Circuit::validate",
+      "line": 171,
+      "column": 21,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__circuit.rs_line_171_col_21.log",
+        "tested_source_sha256": "7597d72df62ee3f943cc614b563e0a884d605e7c5bc3e3790e94cc35d988d159",
+        "detected_test_failures": [
+          "invalid_controlled_gains_fail_with_other_parameters_valid"
+        ]
+      },
+      "current_name": "src/circuit.rs:171:21: replace || with && in Circuit::validate",
+      "current_line": 171,
+      "current_source_sha256": "7597d72df62ee3f943cc614b563e0a884d605e7c5bc3e3790e94cc35d988d159",
+      "affected_requirements": [
+        "ARCH-STATE-003"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::invalid_controlled_gains_fail_with_other_parameters_valid"
+      ]
+    },
+    {
+      "id": "RUST-SURV-009",
+      "original_name": "src/circuit.rs:190:44: replace || with && in Circuit::validate",
+      "file": "src/circuit.rs",
+      "function": "Circuit::validate",
+      "line": 190,
+      "column": 44,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__circuit.rs_line_190_col_44.log",
+        "tested_source_sha256": "7597d72df62ee3f943cc614b563e0a884d605e7c5bc3e3790e94cc35d988d159",
+        "detected_test_failures": [
+          "invalid_controlled_gains_fail_with_other_parameters_valid"
+        ]
+      },
+      "current_name": "src/circuit.rs:190:44: replace || with && in Circuit::validate",
+      "current_line": 190,
+      "current_source_sha256": "7597d72df62ee3f943cc614b563e0a884d605e7c5bc3e3790e94cc35d988d159",
+      "affected_requirements": [
+        "ARCH-STATE-003"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::invalid_controlled_gains_fail_with_other_parameters_valid"
+      ]
+    },
+    {
+      "id": "RUST-SURV-010",
+      "original_name": "src/compile.rs:140:61: delete - in compile",
+      "file": "src/compile.rs",
+      "function": "compile",
+      "line": 140,
+      "column": 61,
+      "replacement": "",
+      "genre": "UnaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__compile.rs_line_140_col_61.log",
+        "tested_source_sha256": "71b077204f37aee834a4bccb5ca1f4d4570c857434de98748faed3cb26176339",
+        "detected_test_failures": [
+          "floating_vccs_terminal_currents_have_equal_opposite_polarity"
+        ]
+      },
+      "current_name": "src/compile.rs:140:61: delete - in compile",
+      "current_line": 140,
+      "current_source_sha256": "71b077204f37aee834a4bccb5ca1f4d4570c857434de98748faed3cb26176339",
+      "affected_requirements": [
+        "ARCH-EQ-001"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::floating_vccs_terminal_currents_have_equal_opposite_polarity"
+      ]
+    },
+    {
+      "id": "RUST-SURV-011",
+      "original_name": "src/configured.rs:50:32: replace || with && in TransientConfig::validate",
+      "file": "src/configured.rs",
+      "function": "TransientConfig::validate",
+      "line": 50,
+      "column": 32,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__configured.rs_line_50_col_32.log",
+        "tested_source_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+        "detected_test_failures": [
+          "fixed_policy_bounds_accept_the_limit_and_reject_either_invalid_side"
+        ]
+      },
+      "current_name": "src/configured.rs:50:32: replace || with && in TransientConfig::validate",
+      "current_line": 50,
+      "current_source_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+      "affected_requirements": [
+        "ARCH-RUN-001"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::fixed_policy_bounds_accept_the_limit_and_reject_either_invalid_side"
+      ]
+    },
+    {
+      "id": "RUST-SURV-012",
+      "original_name": "src/configured.rs:192:85: replace > with == in run_observed",
+      "file": "src/configured.rs",
+      "function": "run_observed",
+      "line": 192,
+      "column": 85,
+      "replacement": "==",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__configured.rs_line_198_col_85.log",
+        "tested_source_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+        "detected_test_failures": [
+          "configured_retention_overshoot_is_rejected_without_requiring_exact_equality"
+        ]
+      },
+      "current_name": "src/configured.rs:198:85: replace > with == in run_observed",
+      "current_line": 198,
+      "current_source_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+      "affected_requirements": [
+        "ARCH-RUN-001"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::configured_retention_overshoot_is_rejected_without_requiring_exact_equality"
+      ]
+    },
+    {
+      "id": "RUST-SURV-013",
+      "original_name": "src/configured.rs:314:52: replace + with - in run_observed",
+      "file": "src/configured.rs",
+      "function": "run_observed",
+      "line": 314,
+      "column": 52,
+      "replacement": "-",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__configured.rs_line_320_col_52.log",
+        "tested_source_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+        "detected_test_failures": [
+          "nonlinear_work_accounting_matches_actual_provider_calls_including_initialization"
+        ]
+      },
+      "current_name": "src/configured.rs:320:52: replace + with - in run_observed",
+      "current_line": 320,
+      "current_source_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+      "affected_requirements": [
+        "INT-WORK-001"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::nonlinear_work_accounting_matches_actual_provider_calls_including_initialization"
+      ]
+    },
+    {
+      "id": "RUST-SURV-014",
+      "original_name": "src/configured.rs:336:22: replace * with + in run_observed",
+      "file": "src/configured.rs",
+      "function": "run_observed",
+      "line": 336,
+      "column": 22,
+      "replacement": "+",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__configured.rs_line_342_col_22.log",
+        "tested_source_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+        "detected_test_failures": [
+          "adaptive_step_growth_matches_independent_richardson_policy"
+        ]
+      },
+      "current_name": "src/configured.rs:342:22: replace * with + in run_observed",
+      "current_line": 342,
+      "current_source_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+      "affected_requirements": [
+        "ARCH-EQ-004"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::adaptive_step_growth_matches_independent_richardson_policy"
+      ]
+    },
+    {
+      "id": "RUST-SURV-015",
+      "original_name": "src/dc.rs:75:52: replace * with / in verify_solution",
+      "file": "src/dc.rs",
+      "function": "verify_solution",
+      "line": 75,
+      "column": 52,
+      "replacement": "/",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__dc.rs_line_75_col_52.log",
+        "tested_source_sha256": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+        "detected_test_failures": [
+          "dense_acceptance_uses_products_not_reciprocals_of_solution_components"
+        ]
+      },
+      "current_name": "src/dc.rs:75:52: replace * with / in verify_solution",
+      "current_line": 75,
+      "current_source_sha256": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+      "affected_requirements": [
+        "ARCH-LIN-004"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::dense_acceptance_uses_products_not_reciprocals_of_solution_components"
+      ]
+    },
+    {
+      "id": "RUST-SURV-016",
+      "original_name": "src/error.rs:33:9: replace <impl fmt::Display for SimError>::fmt -> fmt::Result with Ok(Default::default())",
+      "file": "src/error.rs",
+      "function": "<impl fmt::Display for SimError>::fmt",
+      "line": 33,
+      "column": 9,
+      "replacement": "Ok(Default::default())",
+      "genre": "FnValue",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__error.rs_line_33_col_9.log",
+        "tested_source_sha256": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+        "detected_test_failures": [
+          "each_request_identity_and_element_identity_bound_is_independent"
+        ]
+      },
+      "current_name": "src/error.rs:33:9: replace <impl fmt::Display for SimError>::fmt -> fmt::Result with Ok(Default::default())",
+      "current_line": 33,
+      "current_source_sha256": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+      "affected_requirements": [
+        "ARCH-RUN-001"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::each_request_identity_and_element_identity_bound_is_independent"
+      ]
+    },
+    {
+      "id": "RUST-SURV-017",
+      "original_name": "src/experiment.rs:79:25: replace || with && in ExperimentSpec::validate",
+      "file": "src/experiment.rs",
+      "function": "ExperimentSpec::validate",
+      "line": 79,
+      "column": 25,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__experiment.rs_line_79_col_25.log",
+        "tested_source_sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+        "detected_test_failures": [
+          "negative_measurement_window_is_invalid_even_when_ordered"
+        ]
+      },
+      "current_name": "src/experiment.rs:79:25: replace || with && in ExperimentSpec::validate",
+      "current_line": 79,
+      "current_source_sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+      "affected_requirements": [
+        "ARCH-STATE-003"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::negative_measurement_window_is_invalid_even_when_ordered"
+      ]
+    },
+    {
+      "id": "RUST-SURV-018",
+      "original_name": "src/expression.rs:40:52: replace + with * in Expr::inner",
+      "file": "src/expression.rs",
+      "function": "Expr::inner",
+      "line": 40,
+      "column": 52,
+      "replacement": "*",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__expression.rs_line_40_col_52.log",
+        "tested_source_sha256": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+        "detected_test_failures": [
+          "numerator_division_recursion_cannot_bypass_depth_limit"
+        ]
+      },
+      "current_name": "src/expression.rs:40:52: replace + with * in Expr::inner",
+      "current_line": 40,
+      "current_source_sha256": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+      "affected_requirements": [
+        "ARCH-MOD-001"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::numerator_division_recursion_cannot_bypass_depth_limit"
+      ]
+    },
+    {
+      "id": "RUST-SURV-019",
+      "original_name": "src/linalg.rs:13:19: replace || with && in Matrix::zeros",
+      "file": "src/linalg.rs",
+      "function": "Matrix::zeros",
+      "line": 13,
+      "column": 19,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__linalg.rs_line_13_col_19.log",
+        "tested_source_sha256": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+        "detected_test_failures": [
+          "fixed_policy_bounds_accept_the_limit_and_reject_either_invalid_side"
+        ]
+      },
+      "current_name": "src/linalg.rs:13:19: replace || with && in Matrix::zeros",
+      "current_line": 13,
+      "current_source_sha256": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+      "affected_requirements": [
+        "ARCH-LIN-001"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::fixed_policy_bounds_accept_the_limit_and_reject_either_invalid_side"
+      ]
+    },
+    {
+      "id": "RUST-SURV-020",
+      "original_name": "src/measurement.rs:26:42: replace < with <= in value_at",
+      "file": "src/measurement.rs",
+      "function": "value_at",
+      "line": 26,
+      "column": 42,
+      "replacement": "<=",
+      "genre": "BinaryOperator",
+      "status": "survived_source_reviewed_equivalent",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "MissedMutant",
+        "log": "log/src__measurement.rs_line_26_col_42.log",
+        "tested_source_sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+        "detected_test_failures": []
+      },
+      "current_name": "src/measurement.rs:26:42: replace < with <= in value_at",
+      "current_line": 26,
+      "current_source_sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+      "reasoning": "Exact sample times return before interpolation; validated finite strictly increasing axes exclude duplicate equality in the lower-bracket loop.",
+      "affected_requirements": [
+        "ARCH-EQ-005"
+      ]
+    },
+    {
+      "id": "RUST-SURV-021",
+      "original_name": "src/netlist.rs:195:42: replace || with && in parse",
+      "file": "src/netlist.rs",
+      "function": "parse",
+      "line": 195,
+      "column": 42,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__netlist.rs_line_195_col_42.log",
+        "tested_source_sha256": "d272200324b62aaa2aefe2f4870897c36c4f47662390bf2529da885900922dda",
+        "detected_test_failures": [
+          "parser_stops_at_its_resource_boundary_before_later_bad_records"
+        ]
+      },
+      "current_name": "src/netlist.rs:195:42: replace || with && in parse",
+      "current_line": 195,
+      "current_source_sha256": "d272200324b62aaa2aefe2f4870897c36c4f47662390bf2529da885900922dda",
+      "affected_requirements": [
+        "ARCH-STATE-003"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::parser_stops_at_its_resource_boundary_before_later_bad_records"
+      ]
+    },
+    {
+      "id": "RUST-SURV-022",
+      "original_name": "src/newton.rs:275:37: replace || with && in scaled_update_norm",
+      "file": "src/newton.rs",
+      "function": "scaled_update_norm",
+      "line": 275,
+      "column": 37,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__newton.rs_line_275_col_37.log",
+        "tested_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+        "detected_test_failures": [
+          "newton::survivor_norm_contracts::scaled_updates_reject_either_inconsistent_dimension"
+        ]
+      },
+      "current_name": "src/newton.rs:275:37: replace || with && in scaled_update_norm",
+      "current_line": 275,
+      "current_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+      "affected_requirements": [
+        "ARCH-EQ-002"
+      ],
+      "regression_tests": [
+        "src/newton.rs::survivor_norm_contracts::scaled_updates_reject_either_inconsistent_dimension"
+      ]
+    },
+    {
+      "id": "RUST-SURV-023",
+      "original_name": "src/newton.rs:346:13: replace || with && in NewtonOptions::validate",
+      "file": "src/newton.rs",
+      "function": "NewtonOptions::validate",
+      "line": 346,
+      "column": 13,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__newton.rs_line_346_col_13.log",
+        "tested_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+        "detected_test_failures": [
+          "fixed_policy_bounds_accept_the_limit_and_reject_either_invalid_side"
+        ]
+      },
+      "current_name": "src/newton.rs:346:13: replace || with && in NewtonOptions::validate",
+      "current_line": 346,
+      "current_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+      "affected_requirements": [
+        "ARCH-EQ-002"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::fixed_policy_bounds_accept_the_limit_and_reject_either_invalid_side"
+      ]
+    },
+    {
+      "id": "RUST-SURV-024",
+      "original_name": "src/newton.rs:413:34: replace > with >= in ContinuationOptions::validate",
+      "file": "src/newton.rs",
+      "function": "ContinuationOptions::validate",
+      "line": 413,
+      "column": 34,
+      "replacement": ">=",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__newton.rs_line_413_col_34.log",
+        "tested_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+        "detected_test_failures": [
+          "fixed_policy_bounds_accept_the_limit_and_reject_either_invalid_side"
+        ]
+      },
+      "current_name": "src/newton.rs:413:34: replace > with >= in ContinuationOptions::validate",
+      "current_line": 413,
+      "current_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+      "affected_requirements": [
+        "ARCH-EQ-002"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::fixed_policy_bounds_accept_the_limit_and_reject_either_invalid_side"
+      ]
+    },
+    {
+      "id": "RUST-SURV-025",
+      "original_name": "src/newton.rs:524:25: replace > with >= in limited_candidate",
+      "file": "src/newton.rs",
+      "function": "limited_candidate",
+      "line": 524,
+      "column": 25,
+      "replacement": ">=",
+      "genre": "BinaryOperator",
+      "status": "survived_source_reviewed_equivalent",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "MissedMutant",
+        "log": "log/src__newton.rs_line_524_col_25.log",
+        "tested_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+        "detected_test_failures": []
+      },
+      "current_name": "src/newton.rs:524:25: replace > with >= in limited_candidate",
+      "current_line": 524,
+      "current_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+      "reasoning": "At finite positive equality max/change is one and min cannot increase an existing scale <= 1. If overflow makes both change and max infinite, their NaN quotient is ignored by f64::min when the existing scale is finite. Current callers initialize finite backtracking alpha <= 1, so candidate and damping flag remain unchanged. This is source-reviewed equivalence in the current call paths, not a test-detected kill or machine-checked proof.",
+      "affected_requirements": [
+        "ARCH-EQ-002"
+      ],
+      "regression_tests": [
+        "src/newton.rs::survivor_norm_contracts::equality_at_limiter_ceiling_and_backtracking_flags_preserve_their_invariants"
+      ],
+      "primary_reference": "https://doc.rust-lang.org/std/primitive.f64.html#method.min"
+    },
+    {
+      "id": "RUST-SURV-026",
+      "original_name": "src/newton.rs:647:39: replace > with == in solve_from_rhs",
+      "file": "src/newton.rs",
+      "function": "solve_from_rhs",
+      "line": 647,
+      "column": 39,
+      "replacement": "==",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__newton.rs_line_647_col_39.log",
+        "tested_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+        "detected_test_failures": [
+          "smooth_small_bias_newton_is_not_reported_as_damped"
+        ]
+      },
+      "current_name": "src/newton.rs:647:39: replace > with == in solve_from_rhs",
+      "current_line": 647,
+      "current_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+      "affected_requirements": [
+        "ARCH-EQ-002"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::smooth_small_bias_newton_is_not_reported_as_damped"
+      ]
+    },
+    {
+      "id": "RUST-SURV-027",
+      "original_name": "src/newton.rs:925:63: replace > with < in solve_backward_euler_step",
+      "file": "src/newton.rs",
+      "function": "solve_backward_euler_step",
+      "line": 925,
+      "column": 63,
+      "replacement": "<",
+      "genre": "BinaryOperator",
+      "status": "survived_source_reviewed_equivalent",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "MissedMutant",
+        "log": "log/src__newton.rs_line_925_col_63.log",
+        "tested_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+        "detected_test_failures": []
+      },
+      "current_name": "src/newton.rs:925:63: replace > with < in solve_backward_euler_step",
+      "current_line": 925,
+      "current_source_sha256": "64c91dbce9984c239c14c067a8fb45b0e06d2d142a8a2b4df8b32b95dfcd6a0a",
+      "reasoning": "Every backtracking attempt > 0 has alpha < 1; limited_candidate already marks scale < 1 as damped, masking the additional attempt predicate.",
+      "affected_requirements": [
+        "ARCH-EQ-002"
+      ],
+      "regression_tests": [
+        "src/newton.rs::survivor_norm_contracts::equality_at_limiter_ceiling_and_backtracking_flags_preserve_their_invariants"
+      ]
+    },
+    {
+      "id": "RUST-SURV-028",
+      "original_name": "src/sampling.rs:75:16: replace ^ with & in SeededSequence::next_u64",
+      "file": "src/sampling.rs",
+      "function": "SeededSequence::next_u64",
+      "line": 75,
+      "column": 16,
+      "replacement": "&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__sampling.rs_line_75_col_16.log",
+        "tested_source_sha256": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+        "detected_test_failures": [
+          "splitmix_stream_matches_published_reference_vectors"
+        ]
+      },
+      "current_name": "src/sampling.rs:75:16: replace ^ with & in SeededSequence::next_u64",
+      "current_line": 75,
+      "current_source_sha256": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+      "affected_requirements": [
+        "PROP-002"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::splitmix_stream_matches_published_reference_vectors"
+      ]
+    },
+    {
+      "id": "RUST-SURV-029",
+      "original_name": "src/sweep.rs:344:60: replace > with == in run_scalar_cancellable",
+      "file": "src/sweep.rs",
+      "function": "run_scalar_cancellable",
+      "line": 344,
+      "column": 60,
+      "replacement": "==",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__sweep.rs_line_344_col_60.log",
+        "tested_source_sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+        "detected_test_failures": [
+          "exact_sweep_id_limit_is_accepted_and_overlength_is_rejected"
+        ]
+      },
+      "current_name": "src/sweep.rs:344:60: replace > with == in run_scalar_cancellable",
+      "current_line": 344,
+      "current_source_sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+      "affected_requirements": [
+        "ARCH-RUN-001"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::exact_sweep_id_limit_is_accepted_and_overlength_is_rejected"
+      ]
+    },
+    {
+      "id": "RUST-SURV-030",
+      "original_name": "src/topology.rs:37:39: replace < with <= in inspect",
+      "file": "src/topology.rs",
+      "function": "inspect",
+      "line": 37,
+      "column": 39,
+      "replacement": "<=",
+      "genre": "BinaryOperator",
+      "status": "survived_source_reviewed_equivalent",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "MissedMutant",
+        "log": "log/src__topology.rs_line_37_col_39.log",
+        "tested_source_sha256": "e44a5fed6c58fc092bded030a2ca9a66b6334103a3ce364e0dfe205ad9010df4",
+        "detected_test_failures": []
+      },
+      "current_name": "src/topology.rs:37:39: replace < with <= in inspect",
+      "current_line": 37,
+      "current_source_sha256": "e44a5fed6c58fc092bded030a2ca9a66b6334103a3ce364e0dfe205ad9010df4",
+      "reasoning": "Circuit validation rejects voltage sources with identical terminals before topology canonicalization; equality is unreachable on validated input.",
+      "affected_requirements": [
+        "CONS-005"
+      ]
+    },
+    {
+      "id": "RUST-SURV-031",
+      "original_name": "src/transient.rs:50:42: replace > with >= in transient_controlled",
+      "file": "src/transient.rs",
+      "function": "transient_controlled",
+      "line": 50,
+      "column": 42,
+      "replacement": ">=",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__transient.rs_line_50_col_42.log",
+        "tested_source_sha256": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a",
+        "detected_test_failures": [
+          "exact_legacy_retention_boundary_is_accepted_before_cooperative_cancellation"
+        ]
+      },
+      "current_name": "src/transient.rs:50:42: replace > with >= in transient_controlled",
+      "current_line": 50,
+      "current_source_sha256": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a",
+      "affected_requirements": [
+        "ARCH-RUN-001"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::exact_legacy_retention_boundary_is_accepted_before_cooperative_cancellation"
+      ]
+    },
+    {
+      "id": "RUST-SURV-032",
+      "original_name": "src/waveform.rs:86:17: replace || with && in Waveform::validate",
+      "file": "src/waveform.rs",
+      "function": "Waveform::validate",
+      "line": 86,
+      "column": 17,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__waveform.rs_line_86_col_17.log",
+        "tested_source_sha256": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+        "detected_test_failures": [
+          "pulse_falling_edge_uses_its_declared_duration_and_damping_domains_are_separate"
+        ]
+      },
+      "current_name": "src/waveform.rs:86:17: replace || with && in Waveform::validate",
+      "current_line": 86,
+      "current_source_sha256": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+      "affected_requirements": [
+        "ARCH-EQ-005"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::pulse_falling_edge_uses_its_declared_duration_and_damping_domains_are_separate"
+      ]
+    },
+    {
+      "id": "RUST-SURV-033",
+      "original_name": "src/waveform.rs:86:35: replace < with == in Waveform::validate",
+      "file": "src/waveform.rs",
+      "function": "Waveform::validate",
+      "line": 86,
+      "column": 35,
+      "replacement": "==",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__waveform.rs_line_86_col_35.log",
+        "tested_source_sha256": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+        "detected_test_failures": [
+          "pulse_falling_edge_uses_its_declared_duration_and_damping_domains_are_separate"
+        ]
+      },
+      "current_name": "src/waveform.rs:86:35: replace < with == in Waveform::validate",
+      "current_line": 86,
+      "current_source_sha256": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+      "affected_requirements": [
+        "ARCH-EQ-005"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::pulse_falling_edge_uses_its_declared_duration_and_damping_domains_are_separate"
+      ]
+    },
+    {
+      "id": "RUST-SURV-034",
+      "original_name": "src/waveform.rs:134:17: replace || with && in Waveform::validate",
+      "file": "src/waveform.rs",
+      "function": "Waveform::validate",
+      "line": 134,
+      "column": 17,
+      "replacement": "&&",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__waveform.rs_line_134_col_17.log",
+        "tested_source_sha256": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+        "detected_test_failures": [
+          "pulse_falling_edge_uses_its_declared_duration_and_damping_domains_are_separate"
+        ]
+      },
+      "current_name": "src/waveform.rs:134:17: replace || with && in Waveform::validate",
+      "current_line": 134,
+      "current_source_sha256": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+      "affected_requirements": [
+        "ARCH-EQ-005"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::pulse_falling_edge_uses_its_declared_duration_and_damping_domains_are_separate"
+      ]
+    },
+    {
+      "id": "RUST-SURV-035",
+      "original_name": "src/waveform.rs:208:74: replace / with * in Waveform::at_validated",
+      "file": "src/waveform.rs",
+      "function": "Waveform::at_validated",
+      "line": 208,
+      "column": 74,
+      "replacement": "*",
+      "genre": "BinaryOperator",
+      "status": "caught_by_replay",
+      "requirement": "MUT-005",
+      "verification": {
+        "run": "work/framework-mutations/20261027T152359Z-0a4f7ada",
+        "outcomes_sha256": "7b6e92aaccc81bd6435e1c4097714fd0bcfc3b0685fc2737b69401654184efb4",
+        "native_outcome": "CaughtMutant",
+        "log": "log/src__waveform.rs_line_208_col_74.log",
+        "tested_source_sha256": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+        "detected_test_failures": [
+          "pulse_falling_edge_uses_its_declared_duration_and_damping_domains_are_separate"
+        ]
+      },
+      "current_name": "src/waveform.rs:208:74: replace / with * in Waveform::at_validated",
+      "current_line": 208,
+      "current_source_sha256": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+      "affected_requirements": [
+        "ARCH-EQ-005"
+      ],
+      "regression_tests": [
+        "tests/overnight_survivors.rs::pulse_falling_edge_uses_its_declared_duration_and_damping_domains_are_separate"
+      ]
+    }
+  ],
+  "final_counts": {
+    "original_cohort": 35,
+    "caught": 31,
+    "retained_source_reviewed_equivalent": 4,
+    "unresolved": 0
+  },
+  "equivalence_limit": "Manual source review under current validation/runtime/call preconditions, not a machine-checked proof. Reopen dispositions when source hashes or preconditions change."
+}

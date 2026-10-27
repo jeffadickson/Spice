@@ -133,6 +133,12 @@ Retain failed artifacts locally and promote minimized regressions through review
 
 Tooling checks:
 
+These developer contracts currently require Pester 3.4.0; the launcher explicitly
+selects it because Pester 5 changes assertion and discovery semantics. Verify the
+installed version with `Get-Module -ListAvailable Pester` before running them.
+They are separate from the standalone simulator qualification workflow; installing
+a newer Pester alone does not validate these legacy contracts.
+
     ./scripts/Test-Remote.ps1
     dotnet run --file scripts/Test-RemoteMutations.cs
 
