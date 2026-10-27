@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "ngspice_version": "******\r\n** ngspice-47\u002B : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n",
+  "deck_sha256": "4341fba574909ad98f5569d50a4a896af3172843a0b6aa56846ad78b00776cab",
+  "executed_deck_sha256": "4341fba574909ad98f5569d50a4a896af3172843a0b6aa56846ad78b00776cab",
+  "request_sha256": "dd5e2da344ad7e647c2f170b59a99bb3a297211873c330fe7719d831dc3cfe44",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "engine_sha256": "7fe2e5d799fc8a5a826695915fb45f62185b236e19b65223cf1f3c8f949f6007",
+  "helper_sha256": "83cb319b1f5b113304806da3c08ac0ec4680e1a954578f3db7d8d8a558b0c321",
+  "comparisons": [
+    {
+      "backend": "lu",
+      "frequency_hz": 1,
+      "observable": "v(2)",
+      "expected_real": 0.75,
+      "expected_imag": 0,
+      "actual_real": 0.75,
+      "actual_imag": 0,
+      "maximum_component_difference": 0,
+      "tolerance": 1E-12
+    },
+    {
+      "backend": "faer",
+      "frequency_hz": 1,
+      "observable": "v(2)",
+      "expected_real": 0.75,
+      "expected_imag": 0,
+      "actual_real": 0.75,
+      "actual_imag": 0,
+      "maximum_component_difference": 0,
+      "tolerance": 1E-12
+    }
+  ],
+  "limitations": "Finite named observables; absolute component tolerance, no full SPICE or global conditioning claim."
+}
