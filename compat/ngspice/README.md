@@ -60,3 +60,11 @@ general temperature-dependent junction model. Compare named `v(out)` at
 bound; printed precision and ngspice's residual default Gmin limit the finite
 comparison. The imported request also passes an independent small-signal
 transfer equation with the declared temperature.
+
+`qualification-diode-charge-transient.cir` is an original, explicitly M=0,
+27 C nominal-temperature diode RC experiment. Named v(out) comparisons use
+1/2/5 ms and a 1e-4 V bound (BE truncation, ngspice interpolation/printing and
+external Gmin included). The typed request uses 2 us BE and explicit physically
+consistent initial MNA state; the deck uses ngspice UIC. This does not claim
+UIC importer support or equivalent integration algorithms. A separate 1 us BE
+shared-time refinement and passive/monotone envelope check runs in model_charge.

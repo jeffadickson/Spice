@@ -1,0 +1,51 @@
+{
+  "schema_version": "1",
+  "case_id": "diode-charge-transient",
+  "circuit": {
+    "nodes": [
+      "0",
+      "in",
+      "out"
+    ],
+    "elements": [
+      {
+        "n": 0,
+        "id": "V1",
+        "kind": "voltage",
+        "volts": 0.1,
+        "p": 1
+      },
+      {
+        "n": 2,
+        "id": "R1",
+        "kind": "resistor",
+        "ohms": 1000,
+        "p": 1
+      },
+      {
+        "farads": 1E-06,
+        "saturation_amps": 1E-06,
+        "p": 2,
+        "id": "D1",
+        "thermal_volts": 0.025864925786328215,
+        "n": 0,
+        "kind": "diode_with_capacitance"
+      }
+    ]
+  },
+  "analysis": {
+    "options": {
+      "method": "backward_euler",
+      "initial_state": [
+        0.1,
+        0.0,
+        -0.0001
+      ],
+      "max_step_s": 2E-06,
+      "stop_s": 0.005,
+      "max_steps": 3000
+    },
+    "kind": "transient_configured"
+  },
+  "backend": "faer"
+}

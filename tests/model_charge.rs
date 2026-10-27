@@ -2,6 +2,45 @@
 use circuit_simulator::charge::constant_capacitance;
 
 #[test]
+fn named_diode_transient_refines_on_shared_times_and_remains_passive() {
+    use circuit_simulator::api::{Analysis, Request, run};
+    let request: Request = serde_json::from_str(include_str!(
+        "../compat/ngspice/qualification-diode-charge-transient.request.json"
+    ))
+    .unwrap();
+    let coarse = run(&request).unwrap();
+    let mut refined = request.clone();
+    let Analysis::TransientConfigured { ref mut options } = refined.analysis else {
+        panic!("Expected configured")
+    };
+    options.max_step_s = 1e-6;
+    options.max_steps = 6000;
+    let fine = run(&refined).unwrap();
+    for series in [&coarse.samples, &fine.samples] {
+        assert!(
+            series
+                .iter()
+                .all(|sample| (0. ..0.1).contains(&sample.values[1]))
+        );
+        assert!(
+            series
+                .windows(2)
+                .all(|pair| pair[1].values[1] + 1e-12 >= pair[0].values[1])
+        );
+    }
+    for time in [0.001, 0.002, 0.005] {
+        let at = |samples: &[circuit_simulator::transient::Sample]| {
+            samples
+                .iter()
+                .find(|sample| (sample.time_s - time).abs() < 1e-12)
+                .unwrap()
+                .values[1]
+        };
+        assert!((at(&coarse.samples) - at(&fine.samples)).abs() < 5e-5);
+    }
+}
+
+#[test]
 fn composite_profile_rejects_unimplemented_configured_trapezoidal() {
     let request = profile_request(
         serde_json::json!({"kind":"transient_configured","options":{
