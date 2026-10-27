@@ -10,6 +10,52 @@ fn complex(value: &circuit_simulator::ac::ComplexValue) -> Complex64 {
 }
 
 #[test]
+fn owned_oracle_decks_import_to_the_declared_complex_equations() {
+    use circuit_simulator::{api::Analysis, netlist::import_ngspice_request};
+    for (deck, expected_source) in [
+        (
+            include_str!("../compat/ngspice/qualification-series-rlc.cir"),
+            Complex64::new(1., 0.5),
+        ),
+        (
+            include_str!("../compat/ngspice/qualification-vccs.cir"),
+            Complex64::new(-0.75, 1.25),
+        ),
+    ] {
+        let request = import_ngspice_request(deck, "owned-oracle").unwrap();
+        let Analysis::Ac {
+            frequencies_hz,
+            source_phasors,
+        } = request.analysis
+        else {
+            panic!("Expected AC")
+        };
+        assert_eq!(frequencies_hz.len(), 3);
+        let source = &source_phasors[0];
+        assert!((Complex64::new(source.real, source.imag) - expected_source).norm() < 1e-14);
+        let plan = compile(&request.circuit).unwrap();
+        let samples =
+            ac_with_source_phasors(&plan, &frequencies_hz, &source_phasors, &FaerSparseLu).unwrap();
+        for sample in samples {
+            let omega = std::f64::consts::TAU * sample.frequency_hz;
+            let (index, denominator, numerator) = if deck.contains("G1") {
+                (1, Complex64::new(1., omega * 0.001), -2.)
+            } else {
+                (
+                    2,
+                    Complex64::new(1. - omega * omega * 0.01 * 1e-6, omega * 100. * 1e-6),
+                    1.,
+                )
+            };
+            assert!(
+                (complex(&sample.values[index]) - expected_source * numerator / denominator).norm()
+                    < 1e-11
+            );
+        }
+    }
+}
+
+#[test]
 fn series_rlc_voltage_and_signed_branch_currents_match_impedance() {
     let plan = compile(
         &parse("title\nV1 in 0 1\nR1 in mid 100\nL1 mid out 10m\nC1 out 0 1u\n.end").unwrap(),

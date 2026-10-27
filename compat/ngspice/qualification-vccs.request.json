@@ -1,0 +1,19 @@
+{
+  "schema_version": "1",
+  "case_id": "qualification-vccs",
+  "circuit": {
+    "nodes": ["0", "in", "out"],
+    "elements": [
+      {"kind": "voltage", "id": "V1", "p": 1, "n": 0, "volts": 0},
+      {"kind": "resistor", "id": "RIN", "p": 1, "n": 0, "ohms": 1000},
+      {"kind": "vccs", "id": "G1", "p": 2, "n": 0, "cp": 1, "cn": 0, "siemens": 0.002},
+      {"kind": "resistor", "id": "RLOAD", "p": 2, "n": 0, "ohms": 1000},
+      {"kind": "capacitor", "id": "CLOAD", "p": 2, "n": 0, "farads": 1e-6}
+    ]
+  },
+  "analysis": {
+    "kind": "ac", "frequencies_hz": [10, 100, 1000],
+    "source_phasors": [{"id": "V1", "real": -0.75, "imag": 1.25}]
+  },
+  "backend": "faer"
+}

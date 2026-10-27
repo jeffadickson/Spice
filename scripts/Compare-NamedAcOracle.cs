@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Simulator.Client;
 
@@ -15,12 +16,16 @@ if (args is ["--self-test"])
     if (good[100] != new System.Numerics.Complex(1.5, -0.5)) throw new InvalidDataException("Parser regression.");
     foreach (var text in new[] { "Index frequency v(other)\n0 100 1, 0\n",
         "Index frequency v(out)\n0 100 NaN, 0\n",
-        "Index frequency v(out)\n0 100 1, 0\n1 100 2, 0\n" })
+        "Index frequency v(out)\n0 100 1, 0\n1 100 2, 0\n",
+        "Index frequency v(out)\n-1 100 1, 0\n",
+        "Index frequency v(out)\n0 -100 1, 0\n",
+        "Index frequency v(out)\n0 100 invalid, 0\n",
+        "Index frequency v(out)\n0 100 1, Infinity\n" })
     {
         try { Parse(text, "v(out)"); throw new InvalidOperationException("Malformed oracle accepted."); }
         catch (InvalidDataException) { }
     }
-    Console.WriteLine("Named AC parser: four contracts passed.");
+    Console.WriteLine("Named AC parser: eight contracts passed.");
     return;
 }
 if (args.Length != 6) throw new ArgumentException("Expected ngspice, engine, deck, request, named observable, absolute tolerance.");
@@ -49,16 +54,23 @@ var version = await Run(ngspice, ["--version"], run);
 await Run(ngspice, ["-n", "-b", "-o", log, executed], run);
 if (!File.Exists(log) || new FileInfo(log).Length > 8_388_608) throw new InvalidDataException("Missing/oversized oracle table.");
 var reference = Parse(File.ReadAllText(log), args[4]);
-var request = JsonSerializer.Deserialize<SimulationRequest>(File.ReadAllText(requestPath), WireFormat.Options)
-    ?? throw new InvalidDataException("Missing typed request.");
-if (request.Analysis is not Ac ac) throw new InvalidDataException("Expected AC request.");
+// Oracle input is the native public JSON contract. The typed SDK intentionally
+// exposes fewer element families and must not reject valid native VCCS decks.
+var request = JsonNode.Parse(File.ReadAllText(requestPath)) as JsonObject
+    ?? throw new InvalidDataException("Missing native request.");
+if (request["analysis"]?["kind"]?.GetValue<string>() != "ac" ||
+    request["analysis"]?["frequencies_hz"] is not JsonArray frequencies ||
+    frequencies.Count is < 1 or > 10000) throw new InvalidDataException("Expected bounded AC request.");
 var comparisons = new List<object>();
+var passed = true;
 foreach (var backend in new[] { "lu", "faer" })
 {
     using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-    var manifest = (await new SimulationClient(engine).RunAsync(request with { Backend = backend }, timeout.Token)).ReadManifest();
+    var selected = (JsonObject)request.DeepClone();
+    selected["backend"] = backend;
+    var manifest = (await new SimulationClient(engine).RunJsonAsync(selected.ToJsonString(), timeout.Token)).ReadManifest();
     var column = Array.FindIndex(manifest.Signals, signal => signal.Id.Equals(args[4], StringComparison.OrdinalIgnoreCase));
-    if (column < 0 || manifest.AcSamples.Length != ac.FrequenciesHz.Length) throw new InvalidDataException("Missing named simulator output.");
+    if (column < 0 || manifest.AcSamples.Length != frequencies.Count) throw new InvalidDataException("Missing named simulator output.");
     foreach (var sample in manifest.AcSamples)
     {
         var matches = reference.Where(pair => Math.Abs(pair.Key - sample.FrequencyHz) <= 1e-12 * sample.FrequencyHz).ToArray();
@@ -69,11 +81,11 @@ foreach (var backend in new[] { "lu", "faer" })
         comparisons.Add(new { backend, frequency_hz = sample.FrequencyHz, observable = args[4],
             expected_real = expected.Real, expected_imag = expected.Imaginary,
             actual_real = value.Real, actual_imag = value.Imag, maximum_component_difference = difference, tolerance });
-        if (!double.IsFinite(difference) || difference > tolerance) throw new InvalidDataException("Named AC oracle disagreement.");
+        passed &= double.IsFinite(difference) && difference <= tolerance;
     }
 }
 string Hash(string file) => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(file))).ToLowerInvariant();
-var report = new { status = "passed", ngspice_version = version, deck_sha256 = Hash(deck),
+var report = new { status = passed ? "passed" : "failed", ngspice_version = version, deck_sha256 = Hash(deck),
     executed_deck_sha256 = Hash(executed), request_sha256 = Hash(requestPath),
     ngspice_sha256 = Hash(ngspice), engine_sha256 = Hash(engine), helper_sha256 = Hash("scripts/Compare-NamedAcOracle.cs"),
     comparisons, limitations = "Finite named observables; absolute component tolerance, no full SPICE or global conditioning claim." };
@@ -82,6 +94,7 @@ if (!Directory.Exists(evidence)) throw new DirectoryNotFoundException(evidence);
 var destination = Path.Combine(evidence, "named-ac-" + Path.GetFileNameWithoutExtension(deck) + ".json");
 File.WriteAllText(destination, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
 Console.WriteLine(destination);
+if (!passed) Environment.ExitCode = 1;
 
 static Dictionary<double, System.Numerics.Complex> Parse(string text, string observable)
 {
@@ -97,8 +110,12 @@ static Dictionary<double, System.Numerics.Complex> Parse(string text, string obs
         }
         if (!active || string.IsNullOrWhiteSpace(line) || line.Trim().All(c => c == '-')) continue;
         var fields = line.Replace(",", " ").Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
-        if (fields.Length != 4 || !int.TryParse(fields[0], out _)) { active = false; continue; }
-        var numbers = fields.Skip(1).Select(s => double.Parse(s, CultureInfo.InvariantCulture)).ToArray();
+        if (fields.Length != 4 || !int.TryParse(fields[0], out var index)) { active = false; continue; }
+        if (index < 0) throw new InvalidDataException("Negative oracle row index.");
+        var numbers = new double[3];
+        for (var column = 0; column < numbers.Length; column++)
+            if (!double.TryParse(fields[column + 1], NumberStyles.Float, CultureInfo.InvariantCulture, out numbers[column]))
+                throw new InvalidDataException("Malformed numeric oracle column.");
         if (numbers.Any(v => !double.IsFinite(v)) || numbers[0] <= 0 || !rows.TryAdd(numbers[0], new(numbers[1], numbers[2])))
             throw new InvalidDataException("Invalid/duplicate oracle row.");
     }

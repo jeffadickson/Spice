@@ -27,3 +27,9 @@ direct faer. Use `scripts/Compare-NamedAcOracle.cs` with its deck/request,
 limits that external comparison. Independent higher-precision impedance checks
 are in `tests/sparse_ac_circuits.rs`. The runner disables user spiceinit and
 records verbatim deck, request, engine, oracle and helper hashes.
+
+`qualification-vccs` adds an original controlled-current-source reactive-load
+case at 10/100/1000 Hz with -0.75+1.25j excitation. Its named `v(out)`
+comparison uses the explicit `5e-6` absolute component bound for printed values
+up to three volts. Both original decks also pass bounded importer-to-analytical
+equation checks; this is not upstream corpus compatibility by attribution.
