@@ -228,29 +228,16 @@ pub fn run_with_registry(
     // p-to-n currents so observation/measurement contracts can address them.
     for diode in &plan.diodes {
         let model = diode.model;
-        let element_id = request
-            .circuit
-            .elements
-            .iter()
-            .find_map(|element| match element {
-                crate::circuit::Element::Diode {
-                    id,
-                    p,
-                    n,
-                    saturation_amps,
-                    thermal_volts,
-                } if *p == diode.p
-                    && *n == diode.n
-                    && *saturation_amps == model.saturation_amps
-                    && *thermal_volts == model.thermal_volts =>
-                {
-                    Some(id.clone())
-                }
-                _ => None,
-            })
-            .ok_or_else(|| SimError::invalid("compiled diode lacks source identity"))?;
+        // Composite profiles expose conduction explicitly. A transient initial
+        // state does not generally determine dV/dt, so a total device current
+        // must not be invented for a constant-charge profile.
+        let signal_id = if model.capacitance().is_some() {
+            format!("i_conduction({})", diode.id)
+        } else {
+            format!("i({})", diode.id)
+        };
         signals.push(Signal {
-            id: format!("i({element_id})"),
+            id: signal_id,
             quantity: "current",
             unit: "A",
         });

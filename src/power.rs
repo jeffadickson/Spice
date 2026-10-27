@@ -45,6 +45,11 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
                 saturation_amps,
                 thermal_volts,
                 ..
+            }
+            | Element::DiodeWithCapacitance {
+                saturation_amps,
+                thermal_volts,
+                ..
             } => {
                 crate::model::DiodeModel {
                     saturation_amps: *saturation_amps,

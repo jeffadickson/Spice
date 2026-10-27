@@ -162,6 +162,11 @@ fn dc_currents(circuit: &Circuit, state: &[f64]) -> SimResult<Vec<f64>> {
                     saturation_amps,
                     thermal_volts,
                     ..
+                }
+                | Element::DiodeWithCapacitance {
+                    saturation_amps,
+                    thermal_volts,
+                    ..
                 } => saturation_amps * (v / thermal_volts).exp_m1(),
                 Element::Vccs {
                     cp, cn, siemens, ..
@@ -330,6 +335,12 @@ pub fn backward_euler_step(
         let v = voltage(state, p) - voltage(state, n);
         let old_v = voltage(previous, p) - voltage(previous, n);
         let term = match element {
+            Element::DiodeWithCapacitance { farads, .. } => {
+                let conduction = *current;
+                let displacement = farads * (v - old_v) / step_s;
+                *current += displacement;
+                farads * v * (v - old_v) + step_s * v * conduction
+            }
             Element::Capacitor { farads, .. } => {
                 *current = farads * (v - old_v) / step_s;
                 farads * v * (v - old_v)

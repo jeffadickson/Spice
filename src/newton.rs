@@ -511,12 +511,12 @@ fn limited_candidate(
         let change = voltage(delta, diode.p, diode.n);
         // Thermal-voltage scaling keeps the same exponent increment across
         // valid diode parameter ranges. The full MNA vector shares one scale.
-        let maximum_change = (2. * diode.model.thermal_volts).min(0.5);
+        let maximum_change = (2. * diode.model.thermal_volts()).min(0.5);
         if change.abs() > maximum_change {
             limit = limit.min(maximum_change / change.abs());
         }
         if change > 0. {
-            let ceiling = (700. * diode.model.thermal_volts).min(f64::MAX);
+            let ceiling = (700. * diode.model.thermal_volts()).min(f64::MAX);
             limit = limit.min(((ceiling - old).max(0.) / change).min(1.));
         }
     }

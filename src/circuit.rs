@@ -80,6 +80,15 @@ pub enum Element {
         saturation_amps: f64,
         thermal_volts: f64,
     },
+    /// Unchanged Shockley conduction plus explicit constant parallel capacitance.
+    DiodeWithCapacitance {
+        id: String,
+        p: NodeId,
+        n: NodeId,
+        saturation_amps: f64,
+        thermal_volts: f64,
+        farads: f64,
+    },
 }
 impl Element {
     pub fn id(&self) -> &str {
@@ -93,7 +102,8 @@ impl Element {
             | Self::Vcvs { id, .. }
             | Self::Cccs { id, .. }
             | Self::Ccvs { id, .. }
-            | Self::Diode { id, .. } => id,
+            | Self::Diode { id, .. }
+            | Self::DiodeWithCapacitance { id, .. } => id,
         }
     }
     pub fn terminals(&self) -> (NodeId, NodeId) {
@@ -107,7 +117,8 @@ impl Element {
             | Self::Vcvs { p, n, .. }
             | Self::Cccs { p, n, .. }
             | Self::Ccvs { p, n, .. }
-            | Self::Diode { p, n, .. } => (*p, *n),
+            | Self::Diode { p, n, .. }
+            | Self::DiodeWithCapacitance { p, n, .. } => (*p, *n),
         }
     }
 }
@@ -196,7 +207,19 @@ impl Circuit {
                 Element::Current { amps, .. } if !amps.is_finite() => {
                     return Err(SimError::invalid("current must be finite"));
                 }
+                Element::DiodeWithCapacitance { farads, .. }
+                    if !farads.is_finite() || *farads <= 0. =>
+                {
+                    return Err(SimError::invalid(
+                        "diode parallel capacitance must be finite and positive",
+                    ));
+                }
                 Element::Diode {
+                    saturation_amps,
+                    thermal_volts,
+                    ..
+                }
+                | Element::DiodeWithCapacitance {
                     saturation_amps,
                     thermal_volts,
                     ..

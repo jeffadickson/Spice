@@ -17,6 +17,49 @@ pub struct DiodeModel {
     pub thermal_volts: f64,
 }
 
+/// Explicit current/charge composition; the legacy Shockley parameters remain
+/// unchanged. ConstantCharge is a parallel linear charge law, not a depletion model.
+#[derive(Debug, Clone, Copy)]
+pub enum DiodeProfile {
+    Shockley(DiodeModel),
+    ConstantCharge { conduction: DiodeModel, farads: f64 },
+}
+impl DiodeProfile {
+    /// Validate both independent parameter domains before compilation.
+    pub fn validate(self) -> SimResult<()> {
+        self.conduction().validate()?;
+        if let Self::ConstantCharge { farads, .. } = self {
+            crate::charge::constant_capacitance(farads, 0.)?;
+        }
+        Ok(())
+    }
+    /// The unchanged conduction-current equation and its derivative. Charge
+    /// finiteness is checked here; its dynamic Jacobian is stamped separately in Q.
+    pub fn linearize(self, voltage: f64) -> SimResult<DiodeLinearization> {
+        if let Self::ConstantCharge { farads, .. } = self {
+            crate::charge::constant_capacitance(farads, voltage)?;
+        }
+        self.conduction().linearize(voltage)
+    }
+    /// Existing thermal-voltage trial limiting applies to the conduction equation.
+    pub fn thermal_volts(self) -> f64 {
+        self.conduction().thermal_volts
+    }
+    /// Explicit constant parallel capacitance, absent for a legacy diode.
+    pub fn capacitance(self) -> Option<f64> {
+        match self {
+            Self::Shockley(_) => None,
+            Self::ConstantCharge { farads, .. } => Some(farads),
+        }
+    }
+    fn conduction(self) -> DiodeModel {
+        match self {
+            Self::Shockley(model) => model,
+            Self::ConstantCharge { conduction, .. } => conduction,
+        }
+    }
+}
+
 /// A locally linearized diode current contribution at a trial terminal voltage.
 #[derive(Debug, Clone, Copy)]
 pub struct DiodeLinearization {

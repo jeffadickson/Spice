@@ -89,6 +89,13 @@ fn initial(
     if b.len() != x.len() || b.iter().any(|value| !value.is_finite()) {
         return Err(SimError::invalid("invalid initial excitation"));
     }
+    // Even a dynamic initial row must remain inside its model's current/charge
+    // domain before an observer can see it. Algebraic consistency is checked below.
+    for diode in &plan.diodes {
+        let voltage = diode.p.unknown().map(|index| x[index]).unwrap_or(0.)
+            - diode.n.unknown().map(|index| x[index]).unwrap_or(0.);
+        diode.model.linearize(voltage)?;
+    }
     let mut algebraic = vec![true; x.len()];
     for (row, _, value) in plan.charge_sparse().entries() {
         if value != 0. {

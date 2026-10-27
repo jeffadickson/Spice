@@ -3,15 +3,16 @@ use crate::{
     error::{SimError, SimResult},
     ids::NodeId,
     linalg::Matrix,
-    model::{CapacitorModel, DiodeModel, ResistorModel, TwoTerminalModel},
+    model::{CapacitorModel, DiodeModel, DiodeProfile, ResistorModel, TwoTerminalModel},
     sparse::{CscMatrix, SparseAccumulator},
 };
 /// Immutable nonlinear diode definition retained separately from linear MNA terms.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub(crate) struct CompiledDiode {
+    pub(crate) id: String,
     pub(crate) p: NodeId,
     pub(crate) n: NodeId,
-    pub(crate) model: DiodeModel,
+    pub(crate) model: DiodeProfile,
 }
 /// Shared bounded stamping surface used by compile-time sparse accumulation and trial Jacobians.
 pub(crate) trait StampMatrix {
@@ -166,19 +167,42 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                 }
             }
             Element::Diode {
+                id,
                 p,
                 n,
                 saturation_amps,
                 thermal_volts,
                 ..
-            } => diodes.push(CompiledDiode {
-                p: *p,
-                n: *n,
-                model: DiodeModel {
+            }
+            | Element::DiodeWithCapacitance {
+                id,
+                p,
+                n,
+                saturation_amps,
+                thermal_volts,
+                ..
+            } => {
+                let conduction = DiodeModel {
                     saturation_amps: *saturation_amps,
                     thermal_volts: *thermal_volts,
-                },
-            }),
+                };
+                let model = if let Element::DiodeWithCapacitance { farads, .. } = e {
+                    stamp_pair(&mut charge, *p, *n, *farads);
+                    DiodeProfile::ConstantCharge {
+                        conduction,
+                        farads: *farads,
+                    }
+                } else {
+                    DiodeProfile::Shockley(conduction)
+                };
+                model.validate()?;
+                diodes.push(CompiledDiode {
+                    id: id.clone(),
+                    p: *p,
+                    n: *n,
+                    model,
+                });
+            }
             Element::Voltage { p, n, .. }
             | Element::Inductor { p, n, .. }
             | Element::Vcvs { p, n, .. }
