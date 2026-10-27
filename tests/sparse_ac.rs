@@ -38,6 +38,51 @@ fn small_phasor_replaces_large_nominal_without_cancellation() {
 
 struct DirectOnly(AtomicUsize);
 
+#[test]
+fn complex_current_between_two_live_nodes_obeys_both_terminal_kcl_signs() {
+    use circuit_simulator::{ac::ac_with_source_phasors, api::AcSourcePhasor, backend::DenseLu};
+    let plan = compile(&parse("title\nRA a 0 2\nRB b 0 3\nI1 a b 0\n.end").unwrap()).unwrap();
+    for provider in [&DenseLu as &dyn LinearSolver, &FaerSparseLu] {
+        let source = AcSourcePhasor {
+            id: "I1".into(),
+            real: 2.,
+            imag: -1.,
+        };
+        let samples = ac_with_source_phasors(&plan, &[1.], &[source], provider).unwrap();
+        assert_eq!(samples[0].values[0].real, -4.);
+        assert_eq!(samples[0].values[0].imag, 2.);
+        assert_eq!(samples[0].values[1].real, 6.);
+        assert_eq!(samples[0].values[1].imag, -3.);
+    }
+}
+
+#[test]
+fn phasor_validation_independently_rejects_each_bad_field_and_rhs_overflow() {
+    use circuit_simulator::{ac::ac_with_source_phasors, api::AcSourcePhasor};
+    let plan = compile(&parse("title\nR1 a 0 1\nI1 0 a 0\nI2 0 a 0\n.end").unwrap()).unwrap();
+    let provider = DirectOnly(AtomicUsize::new(0));
+    let source = |id: &str, real, imag| AcSourcePhasor {
+        id: id.into(),
+        real,
+        imag,
+    };
+    for sources in [
+        vec![source("", 1., 0.)],
+        vec![source("missing", 1., 0.)],
+        vec![source("R1", 1., 0.)],
+        vec![source("I1", f64::NAN, 0.)],
+        vec![source("I1", 0., f64::NAN)],
+        vec![source("I1", f64::INFINITY, 0.)],
+        vec![source("I1", 0., f64::NEG_INFINITY)],
+        vec![source("I1", 0., 0.), source("I1", 1., 2.)],
+        vec![source("I1", f64::MAX, 0.), source("I2", f64::MAX, 0.)],
+        vec![source("I1", 0., f64::MAX), source("I2", 0., f64::MAX)],
+    ] {
+        assert!(ac_with_source_phasors(&plan, &[1.], &sources, &provider).is_err());
+    }
+    assert_eq!(provider.0.load(Ordering::Relaxed), 0);
+}
+
 // A budget probe for zero-excitation resistor networks. This is deliberately
 // not numerical-provider qualification: exact zero satisfies every equation.
 struct ZeroBudgetProbe(AtomicUsize);
