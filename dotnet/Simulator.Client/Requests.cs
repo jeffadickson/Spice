@@ -68,7 +68,14 @@ public sealed record Transient(LegacyTransientOptions Options) : Analysis;
 /// <summary>Stop/step times in seconds and an explicit accepted-step budget.</summary>
 public sealed record LegacyTransientOptions(double StopS, double StepS, int MaxSteps);
 /// <summary>Small-signal frequency sweep in hertz, around the DC bias for nonlinear circuits.</summary>
-public sealed record Ac(double[] FrequenciesHz, AcSourcePhasor[]? SourcePhasors = null) : Analysis;
+[method: JsonConstructor]
+public sealed record Ac(double[] FrequenciesHz, AcSourcePhasor[]? SourcePhasors = null) : Analysis
+{
+    /// <summary>Retain the original one-argument constructor signature for existing clients.</summary>
+    public Ac(double[] FrequenciesHz) : this(FrequenciesHz, null) { }
+    /// <summary>Retain the original one-value deconstruction signature in addition to the phasor form.</summary>
+    public void Deconstruct(out double[] FrequenciesHz) => FrequenciesHz = this.FrequenciesHz;
+}
 /// <summary>Replace one independent source AC amplitude in volts or amperes;
 /// real/imaginary components use exp(j*omega*t). The DC bias value is unchanged.</summary>
 public sealed record AcSourcePhasor(string Id, double Real, double Imag);

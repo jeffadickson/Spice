@@ -6,6 +6,20 @@ using Xunit;
 public sealed class AcContracts
 {
     [Fact]
+    public void HistoricalConstructorAndDeconstructionSignaturesRemainPresent()
+    {
+        double[] frequencies = [10, 100];
+        var constructor = typeof(Ac).GetConstructor([typeof(double[])]);
+        Assert.NotNull(constructor);
+        var ac = Assert.IsType<Ac>(constructor.Invoke([frequencies]));
+        ac.Deconstruct(out var actual);
+        Assert.Same(frequencies, actual);
+        Assert.Null(ac.SourcePhasors);
+        var request = Request(ac);
+        var decoded = JsonSerializer.Deserialize<SimulationRequest>(JsonSerializer.Serialize(request, WireFormat.Options), WireFormat.Options)!;
+        Assert.Equal(frequencies, Assert.IsType<Ac>(decoded.Analysis).FrequenciesHz);
+    }
+    [Fact]
     public void OptionalPhasorsRetainHistoricalWireShape()
     {
         var request = Request(new Ac([1.0]));
