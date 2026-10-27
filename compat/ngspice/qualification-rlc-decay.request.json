@@ -1,0 +1,16 @@
+{
+  "schema_version": "1", "case_id": "qualification-rlc-decay",
+  "circuit": {
+    "nodes": ["0", "out", "mid"],
+    "elements": [
+      {"kind": "resistor", "id": "R1", "p": 1, "n": 2, "ohms": 2},
+      {"kind": "inductor", "id": "L1", "p": 2, "n": 0, "henries": 4},
+      {"kind": "capacitor", "id": "C1", "p": 1, "n": 0, "farads": 3}
+    ]
+  },
+  "analysis": {"kind": "transient_configured", "options": {
+    "stop_s": 4, "max_step_s": 0.00390625, "max_steps": 1100,
+    "method": "trapezoidal", "initial_state": [1, 1, 0]
+  }},
+  "backend": "faer"
+}

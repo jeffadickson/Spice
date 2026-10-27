@@ -1,0 +1,86 @@
+{
+  "status": "passed",
+  "ngspice_version": "******\r\n** ngspice-47\u002B : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n",
+  "deck_sha256": "e236c67f80aa67901799f905c0c6b1596c38cb4bbd418b773d4ff575860d4ef5",
+  "executed_deck_sha256": "e236c67f80aa67901799f905c0c6b1596c38cb4bbd418b773d4ff575860d4ef5",
+  "request_sha256": "50800334b8c38ada200be3f03dc2ef864c0e2bdff1c508bd1b298f44b2c41e48",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "engine_sha256": "22a707f01ed9e174fc280f4b63c36a3cc7a818a17d68cb8e7010761944060ab4",
+  "helper_sha256": "98fbe336ae03193cd1344a24df58f81c161e5ba046178be7a66db4e54affa35c",
+  "comparisons": [
+    {
+      "backend": "lu",
+      "time_s": 0.25,
+      "observable": "v(out)",
+      "expected": 0.9975021209461881,
+      "actual": 0.9975021199529447,
+      "difference": 9.932433764348048E-10,
+      "tolerance": 2E-06
+    },
+    {
+      "backend": "lu",
+      "time_s": 1,
+      "observable": "v(out)",
+      "expected": 0.964727187107675,
+      "actual": 0.9647272440425838,
+      "difference": 5.6934908787553695E-08,
+      "tolerance": 2E-06
+    },
+    {
+      "backend": "lu",
+      "time_s": 2,
+      "observable": "v(out)",
+      "expected": 0.880504439938556,
+      "actual": 0.8805044406126168,
+      "difference": 6.740608071709175E-10,
+      "tolerance": 2E-06
+    },
+    {
+      "backend": "lu",
+      "time_s": 4,
+      "observable": "v(out)",
+      "expected": 0.6560302,
+      "actual": 0.6560302083063148,
+      "difference": 8.306314747130727E-09,
+      "tolerance": 2E-06
+    },
+    {
+      "backend": "faer",
+      "time_s": 0.25,
+      "observable": "v(out)",
+      "expected": 0.9975021209461881,
+      "actual": 0.9975021199529401,
+      "difference": 9.932479283492057E-10,
+      "tolerance": 2E-06
+    },
+    {
+      "backend": "faer",
+      "time_s": 1,
+      "observable": "v(out)",
+      "expected": 0.964727187107675,
+      "actual": 0.9647272440425646,
+      "difference": 5.693488958069537E-08,
+      "tolerance": 2E-06
+    },
+    {
+      "backend": "faer",
+      "time_s": 2,
+      "observable": "v(out)",
+      "expected": 0.880504439938556,
+      "actual": 0.8805044406125822,
+      "difference": 6.740261682125492E-10,
+      "tolerance": 2E-06
+    },
+    {
+      "backend": "faer",
+      "time_s": 4,
+      "observable": "v(out)",
+      "expected": 0.6560302,
+      "actual": 0.6560302083062538,
+      "difference": 8.306253795886676E-09,
+      "tolerance": 2E-06
+    }
+  ],
+  "interpolation": "Piecewise linear on each recorded grid; no extrapolation. Print rounding and finite time steps limit comparison.",
+  "limitations": "Finite named cases, not full SPICE, rigorous global error or arbitrary event conformance."
+}

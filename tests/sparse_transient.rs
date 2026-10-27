@@ -11,6 +11,40 @@ use circuit_simulator::{
 struct DirectReal;
 
 #[test]
+fn signed_rlc_sparse_decay_obeys_analytic_response_and_discrete_energy() {
+    use circuit_simulator::{
+        api::{Analysis, Request},
+        compile::compile,
+        configured,
+    };
+    let request: Request = serde_json::from_str(include_str!(
+        "../compat/ngspice/qualification-rlc-decay.request.json"
+    ))
+    .unwrap();
+    let Analysis::TransientConfigured { options } = request.analysis else {
+        panic!("Expected configured transient")
+    };
+    let plan = compile(&request.circuit).unwrap();
+    for provider in [&DenseLu as &dyn LinearSolver, &PreparedOnly(0.into())] {
+        let result = configured::run(&plan, provider, &options, &false.into()).unwrap();
+        let omega = (1. / 48_f64).sqrt();
+        for sample in &result.samples {
+            let time = sample.time_s;
+            let expected =
+                (-0.25 * time).exp() * ((omega * time).cos() + 0.25 / omega * (omega * time).sin());
+            assert!((sample.values[0] - expected).abs() < 5e-7);
+            assert!(((sample.values[0] - sample.values[1]) / 2. - sample.values[2]).abs() < 1e-12);
+        }
+        for pair in result.samples.windows(2) {
+            let energy = |values: &[f64]| 1.5 * values[0] * values[0] + 2. * values[2] * values[2];
+            let midpoint_current = 0.5 * (pair[0].values[2] + pair[1].values[2]);
+            let loss = (pair[1].time_s - pair[0].time_s) * 2. * midpoint_current.powi(2);
+            assert!((energy(&pair[1].values) - energy(&pair[0].values) + loss).abs() < 1e-12);
+        }
+    }
+}
+
+#[test]
 fn original_rc_ramp_deck_import_matches_independent_continuous_response() {
     use circuit_simulator::{
         api::Analysis, compile::compile, configured, netlist::import_ngspice_request,

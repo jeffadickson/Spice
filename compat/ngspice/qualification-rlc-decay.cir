@@ -1,0 +1,8 @@
+Spice owned signed RLC natural decay qualification
+R1 out mid 2
+L1 mid 0 4 IC=0
+C1 out 0 3
+.ic v(out)=1 v(mid)=1
+.tran 0.00390625 4 uic
+.print tran v(out)
+.end

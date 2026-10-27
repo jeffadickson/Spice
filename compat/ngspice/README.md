@@ -43,3 +43,11 @@ documented BE policy, tested against an analytical ramp response with its own
 finite-grid bound. The curated upstream `tests/general/rc.cir` remains blocked:
 default PULSE durations/cycle overlap and exact event semantics are not silently
 mapped onto this original PWL case.
+
+`qualification-rlc-decay` is an original initial-condition RLC case. The
+explicit typed state [v(out),v(mid),i(L1)]=[1,1,0] corresponds to the deck's UIC
+request; importer support for UIC/IC syntax is not claimed. Compare named
+`v(out)` at 0.25/1/2/4 seconds with `2e-6` absolute bound. The ngspice UIC
+grid need not include t=0, so the runner never invents an initial reference row.
+Independent damped-response, branch-KCL and trapezoidal discrete-energy checks
+are in `tests/sparse_transient.rs`.
