@@ -30,6 +30,46 @@ fn configuration() -> Config {
 proptest! {
     #![proptest_config(configuration())]
     #[test]
+    fn generated_sparse_dynamic_rc_matches_exact_discrete_recurrence(
+        resistance_log in 0.0_f64..5., ratio_log in -2.0_f64..2.,
+        step_exponent in -15_i32..-5, steps in 1_usize..33, trapezoidal in any::<bool>()
+    ) {
+        use circuit_simulator::configured::{self, Method, TransientConfig};
+        let h = 2_f64.powi(step_exponent);
+        let ratio = 10_f64.powf(ratio_log);
+        let resistance = 10_f64.powf(resistance_log);
+        let capacitance = h / (ratio * resistance);
+        let plan = compile(&parse(&format!("title\nR1 out 0 {resistance}\nC1 out 0 {capacitance}\n.end")).unwrap()).unwrap();
+        let method = if trapezoidal { Method::Trapezoidal } else { Method::BackwardEuler };
+        let options = TransientConfig { stop_s: h * steps as f64, max_step_s: h, max_steps: steps, method, initial_state: Some(vec![1.]), ..Default::default() };
+        let decay = if trapezoidal { (2. - ratio) / (2. + ratio) } else { 1. / (1. + ratio) };
+        for provider in [&DenseLu as &dyn LinearSolver, &FaerSparseLu] {
+            let result = configured::run(&plan, provider, &options, &false.into()).unwrap();
+            prop_assert_eq!(result.samples.len(), steps + 1);
+            for (index, sample) in result.samples.iter().enumerate() {
+                prop_assert!((sample.values[0] - decay.powi(index as i32)).abs() < 1e-10);
+            }
+            prop_assert_eq!(result.report.prepared_factors, 1);
+            prop_assert_eq!(result.report.prepared_reuses, steps - 1);
+        }
+    }
+
+    #[test]
+    fn arbitrary_dynamic_inputs_return_total_finite_diagnostics(
+        h in any::<u64>(), old in prop::collection::vec(any::<u64>(), 0..5),
+        prior in prop::collection::vec(any::<u64>(), 0..5),
+        current in prop::collection::vec(any::<u64>(), 0..5)
+    ) {
+        use circuit_simulator::{configured::Method, linear_dynamic::assemble};
+        let plan = compile(&parse("title\nR1 out 0 1\nC1 out 0 1\n.end").unwrap()).unwrap();
+        let convert = |bits: Vec<u64>| bits.into_iter().map(f64::from_bits).collect::<Vec<_>>();
+        let old = convert(old); let prior = convert(prior); let current = convert(current);
+        if let Ok(system) = assemble(&plan, Method::Trapezoidal, &old, f64::from_bits(h), &prior, &current) {
+            prop_assert_eq!(system.rhs.len(), 1);
+            prop_assert!(system.rhs.iter().chain(system.matrix.values()).all(|value| value.is_finite()));
+        }
+    }
+    #[test]
     fn generated_rc_ac_matches_complex_transfer(
         resistance_log in 0.0_f64..5., capacitance_log in -9.0_f64..-4.,
         ratio_log in -3.0_f64..3., real in -10.0_f64..10., imag in -10.0_f64..10.
