@@ -10,6 +10,99 @@ use circuit_simulator::{
 
 struct DirectReal;
 
+struct MisleadingPreparation(u8);
+impl LinearSolver for MisleadingPreparation {
+    fn name(&self) -> &'static str {
+        "misleading-preparation"
+    }
+    fn solve(&self, _: &Matrix, _: &[f64]) -> SimResult<Vec<f64>> {
+        panic!("terminal failure fell back")
+    }
+    fn prepare_csc(
+        &self,
+        matrix: &CscMatrix,
+    ) -> SimResult<Option<circuit_simulator::linalg::PreparedSparseReal>> {
+        use circuit_simulator::linalg::PreparedSparseReal;
+        match self.0 {
+            0 => Err(SimError::new(
+                ErrorCode::IoError,
+                "preparation transport failure",
+            )),
+            1 => Ok(Some(PreparedSparseReal::new(
+                CscMatrix::new(1, vec![0, 1], vec![0], vec![99.]).unwrap(),
+                |_| panic!("mismatched factor callback invoked"),
+            ))),
+            2 => Ok(Some(PreparedSparseReal::new(matrix.clone(), |_| {
+                Ok(vec![0.])
+            }))),
+            3 => Ok(None),
+            4 => Err(SimError::new(
+                ErrorCode::Unsupported,
+                "preparation unavailable",
+            )),
+            5 => Ok(Some(PreparedSparseReal::new(matrix.clone(), |_| {
+                Err(SimError::new(ErrorCode::Cancelled, "factor cancelled"))
+            }))),
+            6 => Ok(Some(PreparedSparseReal::new(matrix.clone(), |_| {
+                Ok(vec![])
+            }))),
+            _ => Ok(Some(PreparedSparseReal::new(matrix.clone(), |_| {
+                Ok(vec![f64::NAN])
+            }))),
+        }
+    }
+    fn solve_csc(&self, _: &CscMatrix, _: &[f64]) -> SimResult<Vec<f64>> {
+        Err(SimError::new(
+            ErrorCode::ResourceExhausted,
+            "direct provider budget",
+        ))
+    }
+}
+
+#[test]
+fn configured_prepared_failures_never_publish_a_trial_or_hide_identity_errors() {
+    use circuit_simulator::{
+        compile::compile,
+        configured::{self, TransientConfig},
+        netlist::parse,
+    };
+    let plan = compile(&parse("title\nR1 out 0 2\nC1 out 0 3\n.end").unwrap()).unwrap();
+    let options = TransientConfig {
+        stop_s: 0.25,
+        max_step_s: 0.25,
+        max_steps: 1,
+        initial_state: Some(vec![1.]),
+        ..Default::default()
+    };
+    for (mode, expected) in [
+        (0, ErrorCode::IoError),
+        (1, ErrorCode::NumericalFailure),
+        (2, ErrorCode::NumericalFailure),
+        (3, ErrorCode::ResourceExhausted),
+        (4, ErrorCode::ResourceExhausted),
+        (5, ErrorCode::Cancelled),
+        (6, ErrorCode::NumericalFailure),
+        (7, ErrorCode::NumericalFailure),
+    ] {
+        let mut observed = Vec::new();
+        let error = configured::run_observed(
+            &plan,
+            &MisleadingPreparation(mode),
+            &options,
+            &false.into(),
+            |sample| {
+                observed.push((sample.time_s, sample.values.clone()));
+                Ok(())
+            },
+        )
+        .err()
+        .expect("bad preparation must fail");
+        assert_eq!(error.code, expected);
+        assert_eq!(observed, [(0., vec![1.])]);
+        assert_eq!(options.initial_state.as_deref(), Some(&[1.][..]));
+    }
+}
+
 struct PreparedOnly(std::sync::atomic::AtomicUsize);
 impl LinearSolver for PreparedOnly {
     fn name(&self) -> &'static str {
