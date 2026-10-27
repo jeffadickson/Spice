@@ -11,6 +11,7 @@ using Simulator.Client;
 // is declared evidence processing, not hidden simulator accuracy or extrapolation.
 if (args is ["--self-test"])
 {
+    CheckInputBounds();
     var rows = Parse("Index time v(out)\n0 0 0\n1 1 2\n", "v(out)");
     if (At(rows, 0.25) != 0.5) throw new InvalidDataException("Interpolation regression.");
     foreach (var text in new[] { "Index time v(other)\n0 0 0\n", "Index time v(out)\n0 -1 0\n",
@@ -40,13 +41,13 @@ if (!Directory.Exists(parent)) Directory.CreateDirectory(parent);
 var run = Path.Combine(parent, Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(run);
 var executed = Path.Combine(run, "oracle.cir");
-File.Copy(files[2], executed);
+File.WriteAllBytes(executed, ReadBoundedInput(files[2]));
 var log = Path.Combine(run, "ngspice.log");
 var version = await Run(files[0], ["--version"], run);
 await Run(files[0], ["-n", "-b", "-o", log, executed], run);
 if (!File.Exists(log) || new FileInfo(log).Length > 8_388_608) throw new InvalidDataException("Missing/oversized table.");
 var reference = Parse(File.ReadAllText(log), args[4]);
-var request = JsonNode.Parse(File.ReadAllText(files[3])) as JsonObject ?? throw new InvalidDataException("Missing request.");
+var request = JsonNode.Parse(ReadBoundedInput(files[3])) as JsonObject ?? throw new InvalidDataException("Missing request.");
 if (request["analysis"]?["kind"]?.GetValue<string>() != "transient_configured") throw new InvalidDataException("Expected configured transient.");
 var comparisons = new List<object>();
 var passed = true;
@@ -146,4 +147,30 @@ static async Task<string> Run(string executable, string[] arguments, string dire
         return await output + await errors;
     }
     finally { if (!process.HasExited) { process.Kill(true); await process.WaitForExitAsync(); } }
+}
+
+// Bound raw deck/request allocation before parsing or copying. Read exactly one
+// immutable-size snapshot; truncated/growing files cannot bypass the byte cap.
+static byte[] ReadBoundedInput(string path)
+{
+    using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+    if (stream.Length > 1_048_576) throw new InvalidDataException("Oracle input exceeds 1 MiB.");
+    var bytes = new byte[checked((int)stream.Length)];
+    stream.ReadExactly(bytes);
+    if (stream.ReadByte() != -1) throw new InvalidDataException("Oracle input changed while reading.");
+    return bytes;
+}
+
+static void CheckInputBounds()
+{
+    var path = Path.GetTempFileName();
+    try
+    {
+        File.WriteAllBytes(path, [1, 2, 3]);
+        if (!ReadBoundedInput(path).SequenceEqual(new byte[] {1, 2, 3})) throw new InvalidDataException("Input snapshot regression.");
+        using (var stream = new FileStream(path, FileMode.Open, FileAccess.Write)) stream.SetLength(1_048_577);
+        try { ReadBoundedInput(path); throw new InvalidOperationException("Oversized input accepted."); }
+        catch (InvalidDataException) { }
+    }
+    finally { File.Delete(path); }
 }

@@ -12,6 +12,7 @@ using Simulator.Client;
 // observable from the position of an unrelated numeric column.
 if (args is ["--self-test"])
 {
+    CheckInputBounds();
     var good = Parse("Index frequency v(out)\n0 100 1.5, -0.5\n", "v(out)");
     if (good[100] != new System.Numerics.Complex(1.5, -0.5)) throw new InvalidDataException("Parser regression.");
     foreach (var text in new[] { "Index frequency v(other)\n0 100 1, 0\n",
@@ -48,7 +49,7 @@ Directory.CreateDirectory(run);
 var executed = Path.Combine(run, "oracle.cir");
 // Preserve the input verbatim and disable user spiceinit scripts. Printed
 // precision is a fixture limitation and must be reflected in its tolerance.
-File.Copy(deck, executed);
+File.WriteAllBytes(executed, ReadBoundedInput(deck));
 var log = Path.Combine(run, "ngspice.log");
 var version = await Run(ngspice, ["--version"], run);
 await Run(ngspice, ["-n", "-b", "-o", log, executed], run);
@@ -56,7 +57,7 @@ if (!File.Exists(log) || new FileInfo(log).Length > 8_388_608) throw new Invalid
 var reference = Parse(File.ReadAllText(log), args[4]);
 // Oracle input is the native public JSON contract. The typed SDK intentionally
 // exposes fewer element families and must not reject valid native VCCS decks.
-var request = JsonNode.Parse(File.ReadAllText(requestPath)) as JsonObject
+var request = JsonNode.Parse(ReadBoundedInput(requestPath)) as JsonObject
     ?? throw new InvalidDataException("Missing native request.");
 if (request["analysis"]?["kind"]?.GetValue<string>() != "ac" ||
     request["analysis"]?["frequencies_hz"] is not JsonArray frequencies ||
@@ -151,4 +152,30 @@ static async Task<string> Run(string executable, string[] arguments, string dire
         return await output + await errors;
     }
     finally { if (!process.HasExited) { process.Kill(true); await process.WaitForExitAsync(); } }
+}
+
+// Bound raw deck/request allocation before parsing or copying. Read exactly one
+// immutable-size snapshot; truncated/growing files cannot bypass the byte cap.
+static byte[] ReadBoundedInput(string path)
+{
+    using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+    if (stream.Length > 1_048_576) throw new InvalidDataException("Oracle input exceeds 1 MiB.");
+    var bytes = new byte[checked((int)stream.Length)];
+    stream.ReadExactly(bytes);
+    if (stream.ReadByte() != -1) throw new InvalidDataException("Oracle input changed while reading.");
+    return bytes;
+}
+
+static void CheckInputBounds()
+{
+    var path = Path.GetTempFileName();
+    try
+    {
+        File.WriteAllBytes(path, [1, 2, 3]);
+        if (!ReadBoundedInput(path).SequenceEqual(new byte[] {1, 2, 3})) throw new InvalidDataException("Input snapshot regression.");
+        using (var stream = new FileStream(path, FileMode.Open, FileAccess.Write)) stream.SetLength(1_048_577);
+        try { ReadBoundedInput(path); throw new InvalidOperationException("Oversized input accepted."); }
+        catch (InvalidDataException) { }
+    }
+    finally { File.Delete(path); }
 }
