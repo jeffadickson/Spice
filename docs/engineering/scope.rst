@@ -12,8 +12,13 @@ reported. Finite norms, computed tolerance scales, provider correction dimension
 terminal error classes and representable recovery progress are checked.
 
 Faer 0.24.4 and nalgebra 0.34.1 remain the CPU dependencies. Direct sparse DC
-assembly is implemented. Sparse AC/transient qualification and additional model
-profiles remain active campaign work. Dense fallback/reference paths retain the
+assembly is implemented. AC now assembles complex CSC directly from G and Q,
+including diode incremental conductance after bounded DC bias. Faer accepts a
+genuine complex RHS with one factorization per frequency; independent sparse
+backward-error checks reject bad provider results. Analytical RC generation and
+terminal-failure contracts cover a finite domain; wider AC corpus, factor reuse,
+sparse transient and additional model profiles remain active campaign work.
+Dense fallback/reference paths retain the
 256-unknown bound. No GPU implementation, global convergence, full SPICE parity,
 large-circuit performance or production qualification is claimed.
 

@@ -34,7 +34,7 @@ An overnight campaign is now configured for midnight local time (five-hour maxim
 Suggested next technical work:
 
 1. Extend difficult-circuit evidence beyond the current-driven diode recovery, impossible physical reverse bias, and bounded stage-exhaustion cases in tests/continuation.rs; see evidence/continuation-qualification.md. Do not infer broad convergence guarantees from this small topology.
-2. Extend direct sparse use to AC/transient only after real/complex dynamic assembly, factor lifecycle, and conformance evidence exist.
+2. Continue sparse AC qualification after iterations 375–383 direct assembly/complex RHS and analytical contracts; checkpoint 384 measurement is pending. Faer uses one complex factor per frequency, without prepared complex reuse. DC nonlinear bias remains bounded reference Newton. Sparse transient is still pending.
 3. Grow the selected ngspice corpus cautiously, adding upstream hashes, copied attribution, parser/lowering tests, and named oracle comparisons before claiming support.
 4. Expand device models only after equation, derivative, domain, unit, limiting/correction, and convergence contracts are written.
 

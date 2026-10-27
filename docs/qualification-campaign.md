@@ -51,3 +51,9 @@ its development version is not a claim about the installed ngspice oracle versio
 
 Working allocation: continuation 335–354; test gaps 355–374; sparse AC 375–394; sparse transient 395–414; bounded models 415–434; final deep review/fixes 435. Checkpoints/pushes: 344, 354, 364, 374, 384, 394, 404, 414, 424 and 434, then final review push.
 
+Checkpoint 384 completes the first sparse AC tranche; see
+../evidence/sparse-384-qualification.md. Resume at 385: resolve actual AC mutation
+boundary gaps, widen analytical/provider cases and named external oracles.
+The isolated 20-minute cargo-mutants AC run remains active on fa964ad; retain its
+final summary at the next checkpoint. Fresh coverage source/test hashes match.
+

@@ -20,4 +20,5 @@ StrictDoc remains authoritative; Sphinx is an engineering/API projection.
 * :download:`Architecture <requirements/architecture.sdoc>`
 * :download:`Nonlinear contracts <requirements/fourth-slice.sdoc>`
 * :download:`Consistency and qualification <requirements/consistency.sdoc>`
+* :download:`Sparse dynamic qualification <requirements/sparse-qualification.sdoc>`
 * :download:`Development standards <requirements/development-standards.sdoc>`

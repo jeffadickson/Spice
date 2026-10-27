@@ -3,12 +3,16 @@
 Current checkpoint 374 completes campaign steps 1–40. See
 [qualified scope and remaining findings](../evidence/testing-374-qualification.md).
 Source/Gmin hardening and maintained generated-test workflows are implemented;
-direct sparse AC/transient and further model qualification remain next.
+direct sparse AC has an implemented first tranche (375–383): canonical dynamic
+union, genuine complex RHS, direct linear/diode incremental CSC and independent
+backward-error checks. Checkpoint 384 measurement is pending; wider named AC
+oracles, sparse transient and further model qualification remain active.
 
 Testing campaign 355–364 adds Proptest/FsCheck library generation and shrinking,
 isolated subprocess contracts for the .NET client, and Coverlet/ReportGenerator.
-See [replay instructions](property-testing.md); the legacy overnight loop still
-requires migration. Full SPICE/GPU/production qualification remains open.
+See [replay instructions](property-testing.md); checkpoint 374 migrated overnight
+batches to Proptest and made maintained mutation frameworks primary. Full
+SPICE/GPU/production qualification remains open.
 
 Earlier checkpoint: iterations 335–344 harden continuation/provider
 boundaries and add independent coupled-diode oracles. See

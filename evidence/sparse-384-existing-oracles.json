@@ -1,0 +1,52 @@
+{
+  "source_revision": "fa964ad784f2cf742ee2a32565c09ea2ddda8a22",
+  "ngspice_version": "******\n** ngspice-47+ : Circuit level simulation program\n** Compiled with KLU Direct Linear Solver\n** The U. C. Berkeley CAD Group\n** Copyright 1985-1994, Regents of the University of California.\n** Copyright 2001-2026, The ngspice team.\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\n******",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "simulator_sha256": "7fe2e5d799fc8a5a826695915fb45f62185b236e19b65223cf1f3c8f949f6007",
+  "comparisons": [
+    {
+      "fixture": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\compat\\ngspice\\res_simple.cir",
+      "observable": "i(V1)",
+      "ngspice": -0.0001,
+      "simulator": -0.0001,
+      "difference": 0,
+      "tolerance": 1E-12,
+      "passed": true
+    },
+    {
+      "fixture": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\compat\\ngspice\\res_partition.cir",
+      "fixture_sha256": "4341fba574909ad98f5569d50a4a896af3172843a0b6aa56846ad78b00776cab",
+      "observable": "v(2)",
+      "ngspice": {
+        "real": 0.75,
+        "imaginary": 0
+      },
+      "simulator": {
+        "real": 0.75,
+        "imaginary": 0
+      },
+      "real_difference": 0,
+      "imaginary_difference": 0,
+      "tolerance": 1E-12,
+      "passed": true
+    },
+    {
+      "fixture": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\compat\\ngspice\\lowpass.cir",
+      "fixture_sha256": "295778205a961ed53cc98d7d48e13fe0ccb8f529f76b795f5f842ac6bd293791",
+      "observable": "v(2) at 1 kHz",
+      "ngspice": {
+        "real": 0.499507,
+        "imaginary": -0.0156925
+      },
+      "simulator": {
+        "real": 0.49950700634518,
+        "imaginary": -0.015692475415506477
+      },
+      "real_difference": 6.345180048050736E-09,
+      "imaginary_difference": 2.4584493524271167E-08,
+      "tolerance": 5E-08,
+      "passed": true
+    }
+  ],
+  "limitations": "Existing selected named observables only; legacy requests select dense LU; direct faer named oracles remain next."
+}

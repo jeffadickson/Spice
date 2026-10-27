@@ -1,0 +1,16 @@
+{
+  "status": "running_partial_snapshot",
+  "source_revision": "fa964ad784f2cf742ee2a32565c09ea2ddda8a22",
+  "run": "20261026T235838Z-bf71b794",
+  "snapshot_utc": "2026-10-27T00:04:00.4929826Z",
+  "scope": "src/ac.rs; sparse_ac,analyses,nonlinear,property_campaign",
+  "inventory": 80,
+  "completed": 21,
+  "caught": 2,
+  "survived": 5,
+  "unviable": 14,
+  "timeout": 0,
+  "survivors": [],
+  "raw_outcomes_sha256": "7dd170ed2d12a31fc3c6a14b05e0f41bb6519f27dc5a09fe9e5f1bc0308d6d12",
+  "limitations": "In-flight partial snapshot. Unattempted candidates and compile errors are not kills. Final report will follow in next checkpoint."
+}
