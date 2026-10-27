@@ -992,3 +992,32 @@ mod trial_contracts {
         }
     }
 }
+
+#[cfg(test)]
+mod survivor_norm_contracts {
+    use super::*;
+    #[test]
+    fn scaled_updates_reject_either_inconsistent_dimension() {
+        let plan = crate::compile::compile(
+            &crate::netlist::parse("title\nV1 out 0 1m\nD1 out 0 1p 25m").unwrap(),
+        )
+        .unwrap();
+        assert!(scaled_update_norm(&plan, &[], &[], Default::default()).is_err());
+        assert!(scaled_update_norm(&plan, &[0., 0.], &[0.], Default::default()).is_err());
+    }
+    #[test]
+    fn equality_at_limiter_ceiling_and_backtracking_flags_preserve_their_invariants() {
+        let plan = crate::compile::compile(
+            &crate::netlist::parse("title\nV1 out 0 1m\nD1 out 0 1p 25m").unwrap(),
+        )
+        .unwrap();
+        let delta = [0.05, 0.125];
+        let (candidate, damped) = limited_candidate(&plan, &[0., 0.], &delta, 1.);
+        assert_eq!(candidate, delta);
+        assert!(!damped);
+        for alpha in [0.5, 0.25, 0.125] {
+            let (_, damped) = limited_candidate(&plan, &[0., 0.], &delta, alpha);
+            assert!(damped);
+        }
+    }
+}

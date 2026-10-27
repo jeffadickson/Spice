@@ -159,18 +159,24 @@ pub fn run_observed(
     }
     let sources = BoundSources::new(plan, &options.sources)?;
     let mut old_rhs = sources.rhs(0.)?;
-    let mut state = if plan.has_nonlinear_devices() && options.initial_state.is_none() {
-        crate::newton::solve_with_rhs(
-            plan,
-            solver,
-            crate::newton::NewtonOptions::default(),
-            vec![0.; plan.unknown_count()],
-            &old_rhs,
-        )?
-        .0
-    } else {
-        initial(plan, &old_rhs, options.initial_state.as_deref(), solver)?
-    };
+    let (mut state, initialization_solves) =
+        if plan.has_nonlinear_devices() && options.initial_state.is_none() {
+            let (state, report) = crate::newton::solve_with_rhs(
+                plan,
+                solver,
+                crate::newton::NewtonOptions::default(),
+                vec![0.; plan.unknown_count()],
+                &old_rhs,
+            )?;
+            // A nonlinear operating point can require several provider calls;
+            // counting it as one hides work before the first transient step.
+            (state, report.linear_solves)
+        } else {
+            (
+                initial(plan, &old_rhs, options.initial_state.as_deref(), solver)?,
+                usize::from(options.initial_state.is_none()),
+            )
+        };
     let mut samples = vec![Sample {
         time_s: 0.,
         values: state.clone(),
@@ -364,9 +370,7 @@ pub fn run_observed(
             rejected_steps: rejected,
             attempts,
             max_accepted_error: max_error,
-            linear_solves: stepper.solve_calls
-                + nonlinear_linear_solves
-                + usize::from(options.initial_state.is_none()),
+            linear_solves: stepper.solve_calls + nonlinear_linear_solves + initialization_solves,
             prepared_factors: stepper.prepared_factors,
             prepared_reuses: stepper.prepared_reuses,
         },

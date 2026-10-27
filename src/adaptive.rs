@@ -14,6 +14,7 @@ pub struct AdaptiveOptions {
     pub min_step_s: f64,
     pub max_attempts: usize,
 }
+
 impl AdaptiveOptions {
     pub fn validate(&self, max_step: f64) -> SimResult<()> {
         positive(self.relative, "relative tolerance")?;
@@ -52,5 +53,28 @@ impl AdaptiveOptions {
             norm = norm.max(value);
         }
         Ok(norm)
+    }
+}
+
+#[cfg(test)]
+mod survivor_contracts {
+    use super::*;
+    #[test]
+    fn trapezoidal_step_doubling_uses_the_second_order_richardson_divisor() {
+        let plan = crate::compile::compile(
+            &crate::netlist::parse("title\nV1 in 0 1\nR1 in out 1\nC1 out 0 1").unwrap(),
+        )
+        .unwrap();
+        let options = AdaptiveOptions {
+            relative: 0.1,
+            voltage_absolute: 0.1,
+            current_absolute: 0.01,
+            min_step_s: 1e-6,
+            max_attempts: 100,
+        };
+        let coarse = [0., 0., 0.];
+        let fine = [0., 0.9, 0.];
+        assert!((options.error(&plan, &coarse, &fine, 2).unwrap() - 30. / 19.).abs() < 1e-12);
+        assert!((options.error(&plan, &coarse, &fine, 1).unwrap() - 90. / 19.).abs() < 1e-12);
     }
 }

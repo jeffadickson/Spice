@@ -1,0 +1,22 @@
+{
+  "command": "cargo test --all-targets",
+  "exit_code": 0,
+  "passed": 367,
+  "failed": 0,
+  "completed_test_binaries": 38,
+  "property_methods": 16,
+  "property_cases_per_method": 1024,
+  "requested_property_cases": 16384,
+  "property_seed": "202610270815",
+  "new_survivor_tests": 19,
+  "private_survivor_tests": 3,
+  "clippy": "cargo clippy --all-targets -- -D warnings: passed",
+  "fmt": "cargo fmt --check: passed",
+  "limits": [
+    "cargo-nextest unavailable in the active tool environment; cargo test used.",
+    "Earlier allocation failure preserved; this is the successful one-worker retry."
+  ],
+  "linux_instrumented_passed": 367,
+  "coverage_current_source_hashes_verified": 77,
+  "ignored": 1
+}
