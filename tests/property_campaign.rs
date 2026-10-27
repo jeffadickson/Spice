@@ -30,6 +30,39 @@ fn configuration() -> Config {
 proptest! {
     #![proptest_config(configuration())]
     #[test]
+    fn generated_constant_charge_obeys_scaling_symmetry_and_differential_law(
+        capacitance_log in -18.0_f64..-3., voltage in -1000.0_f64..1000., scale_log in -3.0_f64..3.
+    ) {
+        use circuit_simulator::charge::constant_capacitance;
+        let c=10_f64.powf(capacitance_log);
+        let factor=10_f64.powf(scale_log);
+        let original=constant_capacitance(c,voltage).unwrap();
+        let reversed=constant_capacitance(c,-voltage).unwrap();
+        prop_assert_eq!(reversed.charge_coulombs,-original.charge_coulombs);
+        prop_assert_eq!(reversed.energy_joules,original.energy_joules);
+        let transformed=constant_capacitance(c*factor,voltage/factor).unwrap();
+        prop_assert!((transformed.charge_coulombs-original.charge_coulombs).abs() <= 16.*f64::EPSILON*original.charge_coulombs.abs().max(f64::MIN_POSITIVE));
+        prop_assert!((transformed.energy_joules*factor-original.energy_joules).abs() <= 32.*f64::EPSILON*original.energy_joules.max(f64::MIN_POSITIVE));
+        let h=(voltage.abs()*1e-6).max(1e-9);
+        let derivative=(constant_capacitance(c,voltage+h).unwrap().charge_coulombs-
+            constant_capacitance(c,voltage-h).unwrap().charge_coulombs)/(2.*h);
+        prop_assert!((derivative-original.capacitance_farads).abs() < 1e-8*c);
+    }
+
+    #[test]
+    fn arbitrary_charge_ieee_inputs_preserve_total_finite_domain_diagnostics(c in any::<u64>(),v in any::<u64>()) {
+        use circuit_simulator::charge::constant_capacitance;
+        let c=f64::from_bits(c); let v=f64::from_bits(v);
+        let result=constant_capacitance(c,v);
+        if !c.is_finite() || c<=0. || !v.is_finite() { prop_assert!(result.is_err()); }
+        if let Ok(value)=result {
+            prop_assert!(value.charge_coulombs.is_finite());
+            prop_assert!(value.energy_joules.is_finite()&&value.energy_joules>=0.);
+            prop_assert_eq!(value.capacitance_farads,c);
+            if value.charge_coulombs!=0. { prop_assert_eq!(value.charge_coulombs.signum(),v.signum()); }
+        }
+    }
+    #[test]
     fn generated_selected_current_sources_preserve_kcl_and_nominal_order(
         currents in prop::array::uniform3(-1000_i16..1000), replacement in -1000_i16..1000,
         selected in 0_usize..3, exponent in -100_i32..100
