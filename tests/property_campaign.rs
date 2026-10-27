@@ -30,6 +30,33 @@ fn configuration() -> Config {
 proptest! {
     #![proptest_config(configuration())]
     #[test]
+    fn generated_composite_be_matches_signed_two_terminal_equations(
+        c_exp in -12_i32..-3, is_exp in -15_i32..-5,
+        ratio in -6_f64..6., prior_ratio in -6_f64..6.,
+        vt in 0.015_f64..0.06, h in 0.001_f64..1., common in -2_f64..2.
+    ) {
+        let c=10_f64.powi(c_exp); let isat=10_f64.powi(is_exp);
+        let voltage=vt*ratio; let prior=vt*prior_ratio;
+        let current=isat*ratio.exp_m1()+c*(voltage-prior)/h;
+        let request:Request=serde_json::from_value(serde_json::json!({
+            "schema_version":"1","case_id":"generated-composite",
+            "circuit":{"nodes":["0","p","n"],"elements":[
+                {"kind":"voltage","id":"VP","p":1,"n":0,"volts":common+voltage},
+                {"kind":"voltage","id":"VN","p":2,"n":0,"volts":common},
+                {"kind":"diode_with_capacitance","id":"D1","p":1,"n":2,"saturation_amps":isat,"thermal_volts":vt,"farads":c}
+            ]},"analysis":{"kind":"operating_point"}
+        })).unwrap();
+        let plan=compile(&request.circuit).unwrap();
+        let state=[common+voltage,common,-current,current];
+        let previous=[common+prior,common,0.,0.];
+        let system=circuit_simulator::newton::linearize_backward_euler(&plan,&state,&previous,h,plan.rhs()).unwrap();
+        let scale=isat*ratio.exp()+c/h;
+        prop_assert!(system.residual.iter().all(|r| r.abs()<1e-12*(1.+scale)));
+        let conductance=isat*ratio.exp()/vt+c/h;
+        prop_assert!((system.jacobian.values[0]-conductance).abs()<1e-11*(1.+conductance));
+        prop_assert!((system.jacobian.values[1]+conductance).abs()<1e-11*(1.+conductance));
+    }
+    #[test]
     fn generated_constant_charge_obeys_scaling_symmetry_and_differential_law(
         capacitance_log in -18.0_f64..-3., voltage in -1000.0_f64..1000., scale_log in -3.0_f64..3.
     ) {
