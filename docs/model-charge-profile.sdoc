@@ -89,7 +89,21 @@ STATEMENT: >>>
 Any ngspice diode CJO mapping shall require explicit constant grading M=0 and reject unsupported voltage-dependent/transport/series/geometry semantics rather than silently approximating them. Original qualification decks and selected upstream corpus evidence shall retain attribution, input/tool hashes, named observables, temperatures and tolerances.
 <<<
 COMMENT: >>>
-Derived draft; parser and external-reference implementation/evidence are pending. Existing bounded diode import remains unchanged at iteration 415.
+Derived draft. Iterations 418/422 implement explicit constant grading import and retain a named external AC comparison in evidence/named-ac-qualification-diode-constant-charge.json. Tests independently derive the transfer at the declared nominal temperature; this does not qualify depletion or transport models.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-002
+
+[REQUIREMENT]
+UID: MODEL-008
+STATUS: Draft
+TITLE: Typed composite model interoperability
+STATEMENT: >>>
+The typed client shall expose the constant-charge profile as an additive wire discriminator, retain the legacy diode shape, document SI and conduction-only observables, and verify independent DC, complex AC and backward-Euler equations through both qualified providers.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Client/Requests.cs source-generated polymorphism. Verification: dotnet/Simulator.Client.Tests/ChargeContracts.cs and examples/TypedCharge.cs. Runtime validation belongs to the engine; DTO construction alone is not numerical validation.
 <<<
 RELATIONS:
 - TYPE: Parent

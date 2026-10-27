@@ -21,6 +21,7 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(Voltage), "voltage")]
 [JsonDerivedType(typeof(Current), "current")]
 [JsonDerivedType(typeof(Diode), "diode")]
+[JsonDerivedType(typeof(DiodeWithCapacitance), "diode_with_capacitance")]
 public abstract record Element(string Id, int P, int N);
 /// <summary>Positive resistance in ohms; validated by the engine before assembly.</summary>
 public sealed record Resistor(string Id, int P, int N, double Ohms) : Element(Id, P, N);
@@ -34,6 +35,11 @@ public sealed record Voltage(string Id, int P, int N, double Volts) : Element(Id
 public sealed record Current(string Id, int P, int N, double Amps) : Element(Id, P, N);
 /// <summary>Shockley diode parameters use SI amps and volts; current flows P to N.</summary>
 public sealed record Diode(string Id, int P, int N, double SaturationAmps, double ThermalVolts) : Element(Id, P, N);
+/// <summary>Shockley conduction in parallel with constant Q=C*V; SI amps, volts and
+/// strictly positive farads. This bounded profile has no depletion or transport charge.
+/// Derived i_conduction(id) excludes displacement; total current requires circuit KCL.</summary>
+public sealed record DiodeWithCapacitance(string Id, int P, int N, double SaturationAmps,
+    double ThermalVolts, double Farads) : Element(Id, P, N);
 
 /// <summary>Explicitly selected bounded analysis; unsupported policies fail rather than silently changing methods.</summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "kind")]
