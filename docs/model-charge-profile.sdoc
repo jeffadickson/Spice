@@ -122,3 +122,17 @@ Implementation: src/compile.rs and src/api.rs. Verification: tests/model_charge.
 RELATIONS:
 - TYPE: Parent
   VALUE: MODEL-002
+
+[REQUIREMENT]
+UID: MODEL-009
+STATUS: Draft
+TITLE: Nonlinear explicit initial consistency
+STATEMENT: >>>
+Before observing an explicit initial state, configured integration shall include nonlinear conduction in algebraic KCL while permitting dynamic rows to supply unspecified displacement current. Invalid shape, model domain or algebraic constraints shall fail before any observer.
+<<<
+COMMENT: >>>
+Implementation: src/configured.rs::initial. Verification: tests/model_charge.rs::explicit_initial_algebraic_kcl_includes_nonlinear_conduction_before_observation, signed forward/reverse states and zero observer calls on rejection. Dynamic model-domain cases remain independently tested.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-002

@@ -108,6 +108,19 @@ fn initial(
             sums[row] += value * x[column];
         }
     }
+    // Algebraic KCL includes conduction. Dynamic rows may supply displacement
+    // current and are deliberately excluded by the acceptance mask below.
+    for diode in &plan.diodes {
+        let voltage = diode.p.unknown().map(|index| x[index]).unwrap_or(0.)
+            - diode.n.unknown().map(|index| x[index]).unwrap_or(0.);
+        let current = diode.model.linearize(voltage)?.current_amps;
+        if let Some(row) = diode.p.unknown() {
+            sums[row] += current;
+        }
+        if let Some(row) = diode.n.unknown() {
+            sums[row] -= current;
+        }
+    }
     for (i, &rhs) in b.iter().enumerate() {
         if algebraic[i] {
             let residual = sums[i] - rhs;

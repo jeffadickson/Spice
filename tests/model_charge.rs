@@ -2,6 +2,55 @@
 use circuit_simulator::charge::constant_capacitance;
 
 #[test]
+fn explicit_initial_algebraic_kcl_includes_nonlinear_conduction_before_observation() {
+    use circuit_simulator::{
+        backend::DenseLu,
+        circuit::{Circuit, Element},
+        compile::compile,
+        configured::{self, TransientConfig},
+    };
+    for reversed in [false, true] {
+        let (p, n) = if reversed { (0, 1) } else { (1, 0) };
+        let current = 1e-3 * ((if reversed { -4_f64 } else { 4_f64 }).exp_m1());
+        let branch = if reversed { current } else { -current };
+        let circuit = Circuit {
+            nodes: vec!["0".into(), "out".into()],
+            elements: vec![
+                Element::Voltage {
+                    id: "V1".into(),
+                    p: circuit_simulator::ids::NodeId(1),
+                    n: circuit_simulator::ids::NodeId(0),
+                    volts: 0.1,
+                },
+                Element::Diode {
+                    id: "D1".into(),
+                    p: circuit_simulator::ids::NodeId(p),
+                    n: circuit_simulator::ids::NodeId(n),
+                    saturation_amps: 1e-3,
+                    thermal_volts: 0.025,
+                },
+            ],
+        };
+        let plan = compile(&circuit).unwrap();
+        for (initial, valid) in [(vec![0.1, 0.], false), (vec![0.1, branch], true)] {
+            let options = TransientConfig {
+                stop_s: 0.1,
+                max_step_s: 0.1,
+                initial_state: Some(initial),
+                ..Default::default()
+            };
+            let mut observed = 0;
+            let result = configured::run_observed(&plan, &DenseLu, &options, &false.into(), |_| {
+                observed += 1;
+                Ok(())
+            });
+            assert_eq!(result.is_ok(), valid);
+            assert_eq!(observed > 0, valid);
+        }
+    }
+}
+
+#[test]
 fn original_constant_charge_oracle_import_has_declared_temperature_and_transfer() {
     use circuit_simulator::{
         ac::ac_with_source_phasors, api::Analysis, backend_faer::FaerSparseLu, compile::compile,
