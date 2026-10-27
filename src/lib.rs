@@ -19,6 +19,7 @@ pub mod grid;
 pub mod ids;
 pub(crate) mod integrator;
 pub mod linalg;
+pub mod linear_dynamic;
 pub mod measurement;
 pub mod model;
 pub mod netlist;

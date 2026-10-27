@@ -2,6 +2,20 @@
 TITLE: Direct Sparse Dynamic CPU Qualification
 
 [REQUIREMENT]
+UID: SPARSE-010
+STATUS: Draft
+TITLE: Sparse linear dynamic assembly
+STATEMENT: >>>
+Linear BE/trapezoidal assembly shall combine canonical G and signed Q directly, preserve algebraic row excitation and committed-history immutability, and reject malformed/nonfinite/overflowing inputs. Linear-only assembly shall explicitly reject nonlinear plans. Acceptance and factor dispatch remain separate from assembly.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation: src/linear_dynamic.rs. Verification: tests/sparse_transient.rs independently derived capacitor/inductor/algebraic row coefficients and histories, malformed and reciprocal-overflow cases. Driver and prepared-factor adoption follow separately.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-009
+
+[REQUIREMENT]
 UID: SPARSE-009
 STATUS: Draft
 TITLE: Independent sparse real solution acceptance

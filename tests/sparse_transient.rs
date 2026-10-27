@@ -9,6 +9,65 @@ use circuit_simulator::{
 };
 
 struct DirectReal;
+
+#[test]
+fn dynamic_sparse_steps_preserve_signed_flux_and_algebraic_rows() {
+    use circuit_simulator::{
+        compile::compile, configured::Method, linear_dynamic::assemble, netlist::parse,
+    };
+    let plan =
+        compile(&parse("title\nV1 in 0 1\nR1 in out 2\nC1 out 0 3\nL1 out 0 4\n.end").unwrap())
+            .unwrap();
+    let previous = [1., 2., 3., 4.];
+    // Node in, node out, source branch, inductor branch. Q_out,out=3,
+    // Q_L,L=-4; the voltage constraint and input KCL are algebraic.
+    for (method, alpha, expected) in [
+        (Method::BackwardEuler, 2., [0., 12., 1., -32.]),
+        (Method::Trapezoidal, 4., [0., 19.5, 1., -66.]),
+    ] {
+        let system = assemble(&plan, method, &previous, 0.5, plan.rhs(), plan.rhs()).unwrap();
+        assert_eq!(system.rhs, expected);
+        let mut observed = [[0.; 4]; 4];
+        for (row, column, value) in system.matrix.entries() {
+            observed[row][column] = value;
+        }
+        assert_eq!(
+            observed,
+            [
+                [0.5, -0.5, 1., 0.],
+                [-0.5, 0.5 + 3. * alpha, 0., 1.],
+                [1., 0., 0., 0.],
+                [0., 1., 0., -4. * alpha],
+            ]
+        );
+    }
+    assert_eq!(previous, [1., 2., 3., 4.]);
+    for step in [0., -1., f64::NAN, f64::INFINITY, f64::from_bits(1)] {
+        assert!(
+            assemble(
+                &plan,
+                Method::BackwardEuler,
+                &previous,
+                step,
+                plan.rhs(),
+                plan.rhs()
+            )
+            .is_err()
+        );
+    }
+    assert!(
+        assemble(
+            &plan,
+            Method::BackwardEuler,
+            &[],
+            1.,
+            plan.rhs(),
+            plan.rhs()
+        )
+        .is_err()
+    );
+    assert!(assemble(&plan, Method::Trapezoidal, &previous, 1., &[], plan.rhs()).is_err());
+}
 impl LinearSolver for DirectReal {
     fn name(&self) -> &'static str {
         "direct-real-only"
