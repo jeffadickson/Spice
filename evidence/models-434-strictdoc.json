@@ -1,0 +1,23 @@
+{
+  "strictdoc": "0.30.4",
+  "documents": 14,
+  "unique_ids": 252,
+  "parent_relations": 239,
+  "source_hashes": {
+    "architecture.sdoc": "6a68cbef7671e9db51c07a4ef31cda2350fbccbba17ce060106d40674d8683d2",
+    "consistency.sdoc": "702780cf9ed0e85ec28ec9e24de6ae5169c44ff002db477267f29d9af1a09436",
+    "development-standards.sdoc": "40969e4f3902706eee1d097916a9385f67fb53e63e881ccc4ff8377d867d157b",
+    "fourth-slice.sdoc": "a76868635f98ce97cc79bd68f0b85a6169c8b08aaa7191ce607fcdc56a0381d5",
+    "implementation-plan.sdoc": "ccc83c8679fd0548b57c16cb29be42dcf9a60f6200cb9537a51b78cad8ce55c0",
+    "model-charge-profile.sdoc": "eca2a48eea195091b7684e928e4b1d84dbd140cc77da443bede48b891310ac08",
+    "modern-dsl-proposal.sdoc": "0b05b04e68f5cf5fd52cc71fe953949418a8695f72661fb97c4414de86cedfcf",
+    "ngspice-compatibility.sdoc": "05a620d7b200a01726042ee58596383747bd3efb9f50f8adb08947a255138f8d",
+    "prototype-contracts.sdoc": "797510755a63f58085daada535b9b183440ab70ddbe1ff53d91fdefa45b7d32a",
+    "second-slice-contracts.sdoc": "db30b5a26705f8a25ce753fe47242681d4cb6c37c625db7d501fe5301ad777d3",
+    "second-slice.sdoc": "48666154d4833a5805c89e411c97da16e4f4bdb626a38453662a3adafdc90195",
+    "sforge-language.sdoc": "d0e0691ad306e40a7575b17811effd0c940e0164d098c66136a5e67aad416748",
+    "sparse-qualification.sdoc": "ed742b13bc6758d982df9029f9bdfb0afae49e60bd23dd42a1075ebe521d0907",
+    "third-slice.sdoc": "4831631874a90d0e5a7e7849d7bc027e0e2ddf096b11f7fe48a829fe5c7bda3a"
+  },
+  "limitations": "SDReader parsing executed separately; UID/parent checks do not establish requirement acceptance or implementation closure."
+}

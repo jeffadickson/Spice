@@ -332,7 +332,7 @@ RELATIONS:
   VALUE: ARCH-VERIFY-003
 
 [REQUIREMENT]
-UID: MUT-003
+UID: MUT-004
 STATUS: Draft
 TITLE: Immutable standalone managed mutation inputs
 STATEMENT: >>>

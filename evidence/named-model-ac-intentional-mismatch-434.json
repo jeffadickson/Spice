@@ -1,0 +1,80 @@
+{
+  "status": "failed",
+  "ngspice_version": "******\r\n** ngspice-47+ : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n",
+  "deck_sha256": "beb35ef506e3370ea76a679c6c9bda7c3aa2534960e4a4c2c5732d3e0467d29a",
+  "executed_deck_sha256": "beb35ef506e3370ea76a679c6c9bda7c3aa2534960e4a4c2c5732d3e0467d29a",
+  "request_sha256": "44e3a01a011682600937e0476e0f5d58cbce21106e5d332a80a6248a749ba2e2",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "engine_sha256": "a0f1a8c40d508e9ef3c2c99c882079b2445d782c409f450feed499b495728d26",
+  "helper_sha256": "609431d5196e08746bd77343f7b14e5d10ce0195c55006ac2e141792b6d95d09",
+  "comparisons": [
+    {
+      "backend": "lu",
+      "frequency_hz": 100,
+      "observable": "v(out)",
+      "expected_real": 0.9180362,
+      "expected_imag": -0.0739597,
+      "actual_real": 0,
+      "actual_imag": 0,
+      "maximum_component_difference": 0.9180362,
+      "tolerance": 1E-06
+    },
+    {
+      "backend": "lu",
+      "frequency_hz": 1000,
+      "observable": "v(out)",
+      "expected_real": 0.1030705,
+      "expected_imag": -0.142117,
+      "actual_real": 0,
+      "actual_imag": 0,
+      "maximum_component_difference": 0.142117,
+      "tolerance": 1E-06
+    },
+    {
+      "backend": "lu",
+      "frequency_hz": 10000,
+      "observable": "v(out)",
+      "expected_real": 0.008218598,
+      "expected_imag": -0.0157796,
+      "actual_real": 0,
+      "actual_imag": 0,
+      "maximum_component_difference": 0.0157796,
+      "tolerance": 1E-06
+    },
+    {
+      "backend": "faer",
+      "frequency_hz": 100,
+      "observable": "v(out)",
+      "expected_real": 0.9180362,
+      "expected_imag": -0.0739597,
+      "actual_real": 0,
+      "actual_imag": 0,
+      "maximum_component_difference": 0.9180362,
+      "tolerance": 1E-06
+    },
+    {
+      "backend": "faer",
+      "frequency_hz": 1000,
+      "observable": "v(out)",
+      "expected_real": 0.1030705,
+      "expected_imag": -0.142117,
+      "actual_real": 0,
+      "actual_imag": 0,
+      "maximum_component_difference": 0.142117,
+      "tolerance": 1E-06
+    },
+    {
+      "backend": "faer",
+      "frequency_hz": 10000,
+      "observable": "v(out)",
+      "expected_real": 0.008218598,
+      "expected_imag": -0.0157796,
+      "actual_real": 0,
+      "actual_imag": 0,
+      "maximum_component_difference": 0.0157796,
+      "tolerance": 1E-06
+    }
+  ],
+  "limitations": "Finite named observables; absolute component tolerance, no full SPICE or global conditioning claim.",
+  "intentional_negative_probe": true
+}

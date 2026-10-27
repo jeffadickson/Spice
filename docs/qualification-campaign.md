@@ -1,5 +1,10 @@
 # Qualification implementation campaign — 2026-10-26
 
+Checkpoint 434 completes all 100 implementation/qualification steps under the
+documented interpretation. Read ../evidence/models-434-qualification.md. Perform
+the authorized final deep review/fixes as 435, verify changed scopes, review the
+active Stryker run, reconcile handoff/status documents and push the final result.
+
 Checkpoint 424 completes 415–424; read ../evidence/models-424-qualification.md.
 Resume at 425 for model equivalence, domain/initialization and broader evidence,
 then 434 and final deep review/fixes 435. The new explicit constant-charge diode

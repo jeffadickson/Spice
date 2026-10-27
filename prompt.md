@@ -1,3 +1,5 @@
+Checkpoint 434 completes all 100 implementation steps; perform final deep review/fixes 435 next. Read evidence/models-434-qualification.md. Fresh Stryker run 20261027T012716Z-e12a0f1b is pending; do not invent its counts.
+
 # Spice repository handoff prompt
 
 You are continuing work on **Spice**, a Rust circuit-simulation repository. Work from the repository root and preserve its user defaults:

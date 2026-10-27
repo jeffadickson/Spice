@@ -1,0 +1,35 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "metrics": [
+    {
+      "file": "scripts/Compare-NamedAcOracle.cs",
+      "source_sha256": "609431d5196e08746bd77343f7b14e5d10ce0195c55006ac2e141792b6d95d09",
+      "scope": "Parser, positive/oversized input snapshots, intentional failed-report probe and actual named diode AC across LU/faer. Race/timeout guards are unexercised.",
+      "local_report": "build/qualification-campaign/434-named-models.cobertura.xml",
+      "lines": 148,
+      "covered_lines": 146,
+      "line_percent": 98.64864864864865,
+      "branches": 136,
+      "covered_branches": 101,
+      "branch_percent": 74.26470588235294
+    },
+    {
+      "file": "scripts/Compare-NamedTransientOracle.cs",
+      "source_sha256": "a688509c3f14ac42b572819263d8c9f8b3af3f8724f3d341d067c47844d9736b",
+      "scope": "Parser/interpolation, positive/oversized input snapshots and actual named diode transient across LU/faer. Race/timeout guards are unexercised.",
+      "local_report": "build/qualification-campaign/434-named-models.cobertura.xml",
+      "lines": 144,
+      "covered_lines": 141,
+      "line_percent": 97.91666666666667,
+      "branches": 162,
+      "covered_branches": 120,
+      "branch_percent": 74.07407407407408
+    }
+  ],
+  "limitations": [
+    "Mapped source-line and per-line maximum branch counts; not complete path coverage.",
+    "Owned client Coverlet metrics are separate; native executable and vendor internals are excluded.",
+    "PowerShell subprocess command/branch metrics, full native installers, Linux helper paths and vendor internals are unmeasured.",
+    "Synthetic supervisor/publication fixtures do not qualify numerical simulator execution."
+  ]
+}
