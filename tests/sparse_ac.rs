@@ -184,6 +184,26 @@ fn independent_complex_residual_rejects_bad_provider_results() {
 }
 
 #[test]
+fn complex_backward_error_is_invariant_under_equation_scaling() {
+    use circuit_simulator::{ac::verify_complex_system, sparse::CscPattern};
+    // A relative acceptance test must divide by the equation scale. Exact
+    // solutions alone cannot distinguish an accidental multiplication here.
+    for scale in [1e-120, 1e-9, 1e9, 1e120] {
+        let system = SparseComplexSystem::new(
+            CscPattern::new(1, vec![0, 1], vec![0]).unwrap(),
+            vec![Complex64::new(scale, 0.)],
+        )
+        .unwrap();
+        let rhs = [Complex64::new(scale, 0.)];
+        let near = [Complex64::new(1. + 5e-11, 0.)];
+        let inaccurate = [Complex64::new(1.01, 0.)];
+        let error = verify_complex_system(&system, &rhs, &near).unwrap();
+        assert!((error - 2.5e-11).abs() < 1e-16);
+        assert!(verify_complex_system(&system, &rhs, &inaccurate).is_err());
+    }
+}
+
+#[test]
 fn sparse_incremental_diode_stamps_match_terminal_equations() {
     use circuit_simulator::newton::conductance_at_bias_csc;
     let plan = compile(
