@@ -10,7 +10,13 @@
   "survived": 5,
   "unviable": 14,
   "timeout": 0,
-  "survivors": [],
+  "survivors": [
+    "src/ac.rs:38:31: replace || with && in ac_with_source_phasors",
+    "src/ac.rs:38:52: replace > with == in ac_with_source_phasors",
+    "src/ac.rs:38:52: replace > with >= in ac_with_source_phasors",
+    "src/ac.rs:42:29: replace > with == in ac_with_source_phasors",
+    "src/ac.rs:42:29: replace > with >= in ac_with_source_phasors"
+  ],
   "raw_outcomes_sha256": "7dd170ed2d12a31fc3c6a14b05e0f41bb6519f27dc5a09fe9e5f1bc0308d6d12",
   "limitations": "In-flight partial snapshot. Unattempted candidates and compile errors are not kills. Final report will follow in next checkpoint."
 }

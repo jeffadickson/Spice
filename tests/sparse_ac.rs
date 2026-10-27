@@ -38,6 +38,78 @@ fn small_phasor_replaces_large_nominal_without_cancellation() {
 
 struct DirectOnly(AtomicUsize);
 
+// A budget probe for zero-excitation resistor networks. This is deliberately
+// not numerical-provider qualification: exact zero satisfies every equation.
+struct ZeroBudgetProbe(AtomicUsize);
+impl LinearSolver for ZeroBudgetProbe {
+    fn name(&self) -> &'static str {
+        "zero-budget-probe"
+    }
+    fn solve(&self, _: &Matrix, _: &[f64]) -> SimResult<Vec<f64>> {
+        panic!("unexpected real solve")
+    }
+    fn solve_complex_csc(
+        &self,
+        system: &SparseComplexSystem,
+        rhs: &[Complex64],
+    ) -> SimResult<Vec<Complex64>> {
+        assert!(rhs.iter().all(|v| *v == Complex64::new(0., 0.)));
+        self.0.fetch_add(1, Ordering::Relaxed);
+        Ok(vec![Complex64::new(0., 0.); system.pattern().dimension()])
+    }
+}
+
+#[test]
+fn ac_grid_and_retained_scalar_limits_are_inclusive_and_checked_first() {
+    let provider = ZeroBudgetProbe(AtomicUsize::new(0));
+    let make_plan = |count| {
+        let mut text = String::from("title\n");
+        for index in 1..=count {
+            text += &format!("R{index} n{index} 0 1\n");
+        }
+        compile(&parse(&(text + ".end")).unwrap()).unwrap()
+    };
+    let plan = make_plan(100);
+    assert!(ac(&plan, &[], &provider).is_err());
+    assert!(ac(&plan, &vec![1.; 10_001], &provider).is_err());
+    assert!(ac(&plan, &vec![1.; 10_002], &provider).is_err());
+    assert_eq!(
+        ac(&make_plan(101), &vec![1.; 10_000], &provider)
+            .unwrap_err()
+            .code,
+        ErrorCode::ResourceExhausted
+    );
+    assert_eq!(provider.0.load(Ordering::Relaxed), 0);
+    assert_eq!(
+        ac(&plan, &vec![1.; 10_000], &provider).unwrap().len(),
+        10_000
+    );
+    assert_eq!(provider.0.load(Ordering::Relaxed), 10_000);
+}
+
+#[test]
+fn ac_override_count_limit_accepts_128_and_rejects_larger_before_provider() {
+    use circuit_simulator::{ac::ac_with_source_phasors, api::AcSourcePhasor};
+    let mut text = String::from("title\nR1 out 0 1\n");
+    let mut sources = Vec::new();
+    for index in 1..=130 {
+        text += &format!("I{index} out 0 0\n");
+        sources.push(AcSourcePhasor {
+            id: format!("I{index}"),
+            real: 0.,
+            imag: 0.,
+        });
+    }
+    let plan = compile(&parse(&(text + ".end")).unwrap()).unwrap();
+    let provider = ZeroBudgetProbe(AtomicUsize::new(0));
+    for count in [129, 130] {
+        assert!(ac_with_source_phasors(&plan, &[1.], &sources[..count], &provider).is_err());
+    }
+    assert_eq!(provider.0.load(Ordering::Relaxed), 0);
+    assert!(ac_with_source_phasors(&plan, &[1.], &sources[..128], &provider).is_ok());
+    assert_eq!(provider.0.load(Ordering::Relaxed), 1);
+}
+
 #[test]
 fn independent_complex_residual_rejects_bad_provider_results() {
     use circuit_simulator::{ac::verify_complex_system, sparse::CscPattern};
