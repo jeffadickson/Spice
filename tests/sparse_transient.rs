@@ -11,6 +11,66 @@ use circuit_simulator::{
 struct DirectReal;
 
 #[test]
+fn trapezoidal_nonzero_previous_excitation_matches_closed_form_charging() {
+    use circuit_simulator::{
+        compile::compile,
+        configured::{self, Method, TransientConfig},
+        netlist::parse,
+        sources::SourceOverride,
+        waveform::Waveform,
+    };
+    let plan =
+        compile(&parse("title\nR1 out 0 2\nC1 out 0 3\nI1 0 out 1e308\n.end").unwrap()).unwrap();
+    let options = TransientConfig {
+        stop_s: 1.,
+        max_step_s: 0.25,
+        max_steps: 4,
+        method: Method::Trapezoidal,
+        initial_state: Some(vec![0.]),
+        sources: vec![SourceOverride {
+            id: "I1".into(),
+            waveform: Waveform::Constant { value: 1. },
+        }],
+        ..Default::default()
+    };
+    for provider in [&DenseLu as &dyn LinearSolver, &PreparedOnly(0.into())] {
+        let result = configured::run(&plan, provider, &options, &false.into()).unwrap();
+        for (index, sample) in result.samples.iter().enumerate() {
+            let expected = 2. * (1. - (47. / 49_f64).powi(index as i32));
+            assert!((sample.values[0] - expected).abs() < 1e-12);
+        }
+        assert_eq!(result.report.prepared_factors, 1);
+        assert_eq!(result.report.prepared_reuses, 3);
+    }
+}
+
+#[test]
+fn transient_override_replaces_large_nominal_without_cancellation() {
+    use circuit_simulator::{
+        compile::compile,
+        netlist::parse,
+        sources::{BoundSources, SourceOverride},
+        waveform::Waveform,
+    };
+    for (deck, id, row, expected) in [
+        ("title\nV1 out 0 1e308\nR1 out 0 1\n.end", "V1", 1, 1.),
+        ("title\nI1 0 out 1e308\nR1 out 0 1\n.end", "I1", 0, 1.),
+        ("title\nI1 out 0 1e308\nR1 out 0 1\n.end", "I1", 0, -1.),
+    ] {
+        let plan = compile(&parse(deck).unwrap()).unwrap();
+        let sources = BoundSources::new(
+            &plan,
+            &[SourceOverride {
+                id: id.into(),
+                waveform: Waveform::Constant { value: 1. },
+            }],
+        )
+        .unwrap();
+        assert_eq!(sources.rhs(0.).unwrap()[row], expected);
+    }
+}
+
+#[test]
 fn sparse_adaptive_rejections_preserve_decay_and_only_observe_accepted_history() {
     use circuit_simulator::{
         adaptive::AdaptiveOptions,

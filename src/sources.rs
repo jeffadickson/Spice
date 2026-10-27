@@ -13,15 +13,8 @@ pub struct SourceOverride {
     pub waveform: Waveform,
 }
 enum Target {
-    Voltage {
-        row: usize,
-        base: f64,
-    },
-    Current {
-        p: Option<usize>,
-        n: Option<usize>,
-        base: f64,
-    },
+    Voltage { row: usize },
+    Current { p: Option<usize>, n: Option<usize> },
 }
 struct BoundSource {
     target: Target,
@@ -57,16 +50,14 @@ impl BoundSources {
                 .find(|e| e.id() == source.id)
                 .ok_or_else(|| SimError::invalid("unknown source override"))?;
             let target = match element {
-                Element::Voltage { volts, .. } => Target::Voltage {
+                Element::Voltage { .. } => Target::Voltage {
                     row: plan
                         .branch_index(&source.id)
                         .ok_or_else(|| SimError::invalid("missing source branch"))?,
-                    base: *volts,
                 },
-                Element::Current { p, n, amps, .. } => Target::Current {
+                Element::Current { p, n, .. } => Target::Current {
                     p: p.unknown(),
                     n: n.unknown(),
-                    base: *amps,
                 },
                 _ => return Err(SimError::invalid("override must target independent source")),
             };
@@ -77,8 +68,36 @@ impl BoundSources {
         }
         breakpoints.sort_by(f64::total_cmp);
         breakpoints.dedup();
+        // Assemble only unbound nominal sources. Subtracting a large nominal
+        // value from plan.rhs would erase a small waveform override by cancellation.
+        let mut base = vec![0.; plan.unknown_count()];
+        for element in &plan.circuit.elements {
+            if ids.contains(&element.id().to_string()) {
+                continue;
+            }
+            match element {
+                Element::Voltage { id, volts, .. } => {
+                    let row = plan
+                        .branch_index(id)
+                        .ok_or_else(|| SimError::invalid("missing nominal source branch"))?;
+                    base[row] = *volts;
+                }
+                Element::Current { p, n, amps, .. } => {
+                    if let Some(row) = p.unknown() {
+                        base[row] -= amps;
+                    }
+                    if let Some(row) = n.unknown() {
+                        base[row] += amps;
+                    }
+                }
+                _ => {}
+            }
+        }
+        if base.iter().any(|value| !value.is_finite()) {
+            return Err(SimError::invalid("unbound source accumulation overflow"));
+        }
         Ok(Self {
-            base: plan.rhs.clone(),
+            base,
             sources,
             breakpoints,
         })
@@ -88,13 +107,13 @@ impl BoundSources {
         for s in &self.sources {
             let v = s.waveform.at_validated(time)?;
             match s.target {
-                Target::Voltage { row, base } => rhs[row] += v - base,
-                Target::Current { p, n, base } => {
+                Target::Voltage { row } => rhs[row] = v,
+                Target::Current { p, n } => {
                     if let Some(i) = p {
-                        rhs[i] -= v - base;
+                        rhs[i] -= v;
                     }
                     if let Some(i) = n {
-                        rhs[i] += v - base;
+                        rhs[i] += v;
                     }
                 }
             }

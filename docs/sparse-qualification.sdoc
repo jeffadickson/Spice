@@ -2,6 +2,20 @@
 TITLE: Direct Sparse Dynamic CPU Qualification
 
 [REQUIREMENT]
+UID: SPARSE-012
+STATUS: Draft
+TITLE: Selected transient excitation without nominal cancellation
+STATEMENT: >>>
+Bound transient sources shall assemble unbound nominal sources and selected waveform amplitudes directly, preserving current terminal signs without subtracting nominal contributions from a preassembled RHS. Trapezoidal dynamic rows shall include both previous and current excitation. Nonfinite accumulation shall fail before a step is committed.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation: src/sources.rs and src/linear_dynamic.rs. Verification: tests/sparse_transient.rs reproduced 1e308-to-1 voltage/current override cancellation and closed-form nonzero-source trapezoidal charging across LU/direct faer. The checkpoint-404 += to -= survivor targets this history contract.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-010
+
+[REQUIREMENT]
 UID: SPARSE-011
 STATUS: Draft
 TITLE: Immutable prepared sparse factors
