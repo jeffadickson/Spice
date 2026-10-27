@@ -2,6 +2,20 @@
 TITLE: Bounded Diode Constant-Charge Profile
 
 [REQUIREMENT]
+UID: MODEL-007
+STATUS: Draft
+TITLE: Independent composite physical audits
+STATEMENT: >>>
+DC physical audits shall use the conduction equation and zero steady displacement. Nominal-source BE audits shall independently include C*deltaV/h in terminal current and the constant-capacitance discrete energy term plus conduction dissipation. Missing displacement, changed capacitance and either terminal polarity shall not produce a false pass. Unchecked analysis policies shall remain labeled as such.
+<<<
+COMMENT: >>>
+Implementation: src/audit.rs and src/power.rs. Verification: tests/model_charge.rs independent forward/reverse DC/BE states, omission/wrong-C perturbations, KCL and discrete-energy outcomes. AC/configured-transient automatic physical audits remain outside the existing automatic audit scope.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-002
+
+[REQUIREMENT]
 UID: MODEL-006
 STATUS: Draft
 TITLE: Explicit immutable capacitance variation metadata

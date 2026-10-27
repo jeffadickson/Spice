@@ -2,6 +2,85 @@
 use circuit_simulator::charge::constant_capacitance;
 
 #[test]
+fn independent_composite_audits_detect_missing_displacement_and_wrong_capacitance() {
+    use circuit_simulator::{
+        audit::{self, AuditOptions, CheckStatus},
+        circuit::Element,
+    };
+    for sign in [1., -1.] {
+        let mut request = profile_request(serde_json::json!({"kind":"operating_point"}), "lu");
+        if sign < 0. {
+            if let Element::DiodeWithCapacitance { p, n, .. } = &mut request.circuit.elements[1] {
+                std::mem::swap(p, n);
+            }
+        }
+        let voltage = sign * 0.1;
+        let conduction = 1e-12 * (voltage / 0.025_f64).exp_m1();
+        let dc = [0.1, -sign * conduction];
+        assert!(
+            !audit::dc(&request.circuit, &dc, AuditOptions::default(), None)
+                .unwrap()
+                .has_failures()
+        );
+        let displacement = 1e-6 * voltage / 0.1;
+        let accepted = [0.1, -sign * (conduction + displacement)];
+        let report = audit::backward_euler_step(
+            &request.circuit,
+            &[0., 0.],
+            &accepted,
+            0.1,
+            AuditOptions::default(),
+        )
+        .unwrap();
+        assert!(!report.has_failures());
+        let energy = report
+            .checks
+            .iter()
+            .find(|check| check.id == "be_energy_balance")
+            .unwrap();
+        assert_eq!(energy.status, CheckStatus::Passed);
+        assert!(energy.discrepancy.unwrap().abs() < 1e-20);
+        let missing = audit::backward_euler_step(
+            &request.circuit,
+            &[0., 0.],
+            &dc,
+            0.1,
+            AuditOptions::default(),
+        )
+        .unwrap();
+        assert!(
+            missing
+                .checks
+                .iter()
+                .any(|check| check.id.starts_with("kcl:") && check.status == CheckStatus::Failed)
+        );
+        assert_eq!(
+            missing
+                .checks
+                .iter()
+                .find(|check| check.id == "be_energy_balance")
+                .unwrap()
+                .status,
+            CheckStatus::Failed
+        );
+        if let Element::DiodeWithCapacitance { farads, .. } = &mut request.circuit.elements[1] {
+            *farads = 2e-6;
+        }
+        assert!(
+            audit::backward_euler_step(
+                &request.circuit,
+                &[0., 0.],
+                &accepted,
+                0.1,
+                AuditOptions::default()
+            )
+            .unwrap()
+            .has_failures()
+        );
+    }
+}
+
+#[test]
 fn explicit_capacitance_variation_preserves_conduction_and_immutable_source() {
     use circuit_simulator::{
         compile::compile,
