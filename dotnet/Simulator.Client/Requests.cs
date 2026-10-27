@@ -62,7 +62,10 @@ public sealed record Transient(LegacyTransientOptions Options) : Analysis;
 /// <summary>Stop/step times in seconds and an explicit accepted-step budget.</summary>
 public sealed record LegacyTransientOptions(double StopS, double StepS, int MaxSteps);
 /// <summary>Small-signal frequency sweep in hertz, around the DC bias for nonlinear circuits.</summary>
-public sealed record Ac(double[] FrequenciesHz) : Analysis;
+public sealed record Ac(double[] FrequenciesHz, AcSourcePhasor[]? SourcePhasors = null) : Analysis;
+/// <summary>Replace one independent source AC amplitude in volts or amperes;
+/// real/imaginary components use exp(j*omega*t). The DC bias value is unchanged.</summary>
+public sealed record AcSourcePhasor(string Id, double Real, double Imag);
 /// <summary>Configured dynamic integration with explicit method, history and source policy.</summary>
 public sealed record TransientConfigured(TransientConfiguration Options) : Analysis;
 
