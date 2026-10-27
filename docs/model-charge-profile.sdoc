@@ -1,0 +1,53 @@
+[DOCUMENT]
+TITLE: Bounded Diode Constant-Charge Profile
+
+[TEXT]
+STATEMENT: >>>
+Derived campaign scope, Draft. Compose the existing bounded Shockley current law with an explicit constant parallel capacitance. Q=C*V, dQ/dV=C and E=C*V^2/2 use P-to-N voltage, positive-terminal coulombs, farads and joules. Reuse existing capacitor validation and signed Q stamps; no new numerical dependency is justified for this linear charge law. Existing diode constructors/wire representation shall remain intact through an explicit new profile.
+
+Primary reference reviewed 2026-10-26: https://ngspice.sourceforge.io/docs/ngspice-manual.pdf, development manual 47+, September 28 2026, sections 7.2.1/7.2.2. Its diode charge depends on CJO/VJ/M and transport time TT; M defaults to 0.5. The proposed narrow CJO mapping requires explicit M=0 and no unsupported nonzero transport/series terms. This is not the default voltage-dependent junction model. Installed external-oracle provenance remains separate from the manual version.
+<<<
+
+[REQUIREMENT]
+UID: MODEL-001
+STATUS: Draft
+TITLE: Constant parallel charge equation and finite SI contributions
+STATEMENT: >>>
+The bounded constant-capacitance profile shall require finite positive C and finite terminal V, return signed Q=C*V, derivative C and nonnegative E=C*V^2/2, and reject nonfinite contributions without clipping. Energy evaluation shall avoid avoidable V-squared intermediate overflow. It shall not infer unknown physical parameters or claim voltage-dependent depletion/transport charge.
+<<<
+COMMENT: >>>
+Implementation: src/charge.rs reuses model::CapacitorModel. Verification: tests/model_charge.rs analytic signs/units/derivative/even energy, invalid domains, representable scaled energy and overflow rejection. Generated/model-composition evidence follows.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: PLAN-002
+- TYPE: Parent
+  VALUE: ARCH-EQ-001
+
+[REQUIREMENT]
+UID: MODEL-002
+STATUS: Draft
+TITLE: Explicit diode and constant-charge composition
+STATEMENT: >>>
+A distinct diode-with-capacitance profile shall compose the unchanged Shockley current/Jacobian with constant parallel Q stamps, preserving terminal polarity and legacy diode construction/wire behavior. DC, biased AC and bounded nonlinear BE shall consume the same validated parameters; unsupported integration/model options shall fail explicitly.
+<<<
+COMMENT: >>>
+Derived implementation requirement. Native variant, compilation, public APIs, independent physical audits and analysis evidence are pending later campaign iterations; this requirement is not closed by the charge primitive alone.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-001
+
+[REQUIREMENT]
+UID: MODEL-003
+STATUS: Draft
+TITLE: Narrow declared netlist charge profile mapping
+STATEMENT: >>>
+Any ngspice diode CJO mapping shall require explicit constant grading M=0 and reject unsupported voltage-dependent/transport/series/geometry semantics rather than silently approximating them. Original qualification decks and selected upstream corpus evidence shall retain attribution, input/tool hashes, named observables, temperatures and tolerances.
+<<<
+COMMENT: >>>
+Derived draft; parser and external-reference implementation/evidence are pending. Existing bounded diode import remains unchanged at iteration 415.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-002

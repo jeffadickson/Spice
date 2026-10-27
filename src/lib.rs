@@ -8,6 +8,7 @@ pub mod audit;
 pub mod backend;
 pub mod backend_faer;
 pub mod campaign;
+pub mod charge;
 pub mod circuit;
 pub mod compile;
 pub mod configured;
