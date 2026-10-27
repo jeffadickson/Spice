@@ -11,6 +11,34 @@ use circuit_simulator::{
 struct DirectReal;
 
 #[test]
+fn legacy_be_uses_direct_sparse_solves_and_matches_discrete_rc_equation() {
+    use circuit_simulator::{
+        compile::compile,
+        netlist::parse,
+        transient::{TransientOptions, transient},
+    };
+    let plan =
+        compile(&parse("title\nV1 in 0 1\nR1 in out 1k\nC1 out 0 1u\n.end").unwrap()).unwrap();
+    let options = TransientOptions {
+        stop_s: 0.001,
+        step_s: 0.00025,
+        max_steps: 4,
+    };
+    let samples = transient(&plan, &DirectReal, &options).unwrap();
+    assert_eq!(samples.len(), 4);
+    for (index, sample) in samples.iter().enumerate() {
+        let expected = 1. - (1. / 1.25_f64).powi(index as i32 + 1);
+        assert!((sample.values[1] - expected).abs() < 1e-12);
+    }
+    assert_eq!(
+        transient(&plan, &TerminalReal(ErrorCode::Cancelled), &options)
+            .unwrap_err()
+            .code,
+        ErrorCode::Cancelled
+    );
+}
+
+#[test]
 fn dynamic_sparse_steps_preserve_signed_flux_and_algebraic_rows() {
     use circuit_simulator::{
         compile::compile, configured::Method, linear_dynamic::assemble, netlist::parse,

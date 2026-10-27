@@ -1,6 +1,6 @@
 use crate::{
     compile::CompiledCircuit,
-    dc::solve_verified,
+    dc::solve_csc_verified,
     error::{SimError, SimResult},
     linalg::LinearSolver,
     quantity::positive,
@@ -79,16 +79,23 @@ pub fn transient_controlled(
             )?
             .0
         } else {
-            let mut a = plan.conductance.clone();
-            let mut rhs = plan.rhs.clone();
-            for (i, rhs_value) in rhs.iter_mut().enumerate() {
-                for (j, previous_value) in previous.iter().enumerate() {
-                    let c = plan.charge.at(i, j) / h;
-                    a.add(i, j, c);
-                    *rhs_value += c * previous_value;
-                }
-            }
-            solve_verified(&a, &rhs, solver)?.0
+            let system = crate::linear_dynamic::assemble(
+                plan,
+                crate::configured::Method::BackwardEuler,
+                &previous,
+                h,
+                &plan.rhs,
+                &plan.rhs,
+            )?;
+            let (values, backward_error) = solve_csc_verified(&system.matrix, &system.rhs, solver)?;
+            tracing::debug!(
+                step,
+                time_s = next,
+                step_s = h,
+                backward_error,
+                "linear_transient_step_completed"
+            );
+            values
         };
         // Commit only after the solve and physical residual checks succeed.
         previous = accepted;

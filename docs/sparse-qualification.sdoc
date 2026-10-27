@@ -10,6 +10,7 @@ Linear BE/trapezoidal assembly shall combine canonical G and signed Q directly, 
 <<<
 COMMENT: >>>
 Derived campaign requirement. Implementation: src/linear_dynamic.rs. Verification: tests/sparse_transient.rs independently derived capacitor/inductor/algebraic row coefficients and histories, malformed and reciprocal-overflow cases. Driver and prepared-factor adoption follow separately.
+Legacy BE adoption: src/transient.rs; direct-only provider RC discrete recurrence and terminal error regression in tests/sparse_transient.rs. Configured/prepared adoption remains subsequent work.
 <<<
 RELATIONS:
 - TYPE: Parent
