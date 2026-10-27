@@ -10,6 +10,61 @@ use circuit_simulator::{
 
 struct DirectReal;
 
+struct PreparedOnly(std::sync::atomic::AtomicUsize);
+impl LinearSolver for PreparedOnly {
+    fn name(&self) -> &'static str {
+        "prepared-csc-only"
+    }
+    fn solve(&self, _: &Matrix, _: &[f64]) -> SimResult<Vec<f64>> {
+        panic!("dense solve")
+    }
+    fn prepare(&self, _: &Matrix) -> SimResult<Option<circuit_simulator::linalg::PreparedReal>> {
+        panic!("dense preparation")
+    }
+    fn solve_csc(&self, _: &CscMatrix, _: &[f64]) -> SimResult<Vec<f64>> {
+        panic!("uncached CSC solve")
+    }
+    fn prepare_csc(
+        &self,
+        matrix: &CscMatrix,
+    ) -> SimResult<Option<circuit_simulator::linalg::PreparedSparseReal>> {
+        self.0.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        FaerSparseLu.prepare_csc(matrix)
+    }
+}
+
+#[test]
+fn configured_sparse_factors_are_reused_for_be_and_trapezoidal_steps() {
+    use circuit_simulator::{
+        compile::compile,
+        configured::{self, Method, TransientConfig},
+        netlist::parse,
+    };
+    let plan = compile(&parse("title\nR1 out 0 2\nC1 out 0 3\n.end").unwrap()).unwrap();
+    for (method, ratio) in [
+        (Method::BackwardEuler, 24. / 25.),
+        (Method::Trapezoidal, 47. / 49.),
+    ] {
+        let provider = PreparedOnly(0.into());
+        let options = TransientConfig {
+            stop_s: 1.,
+            max_step_s: 0.25,
+            max_steps: 4,
+            method,
+            initial_state: Some(vec![1.]),
+            ..Default::default()
+        };
+        let result = configured::run(&plan, &provider, &options, &false.into()).unwrap();
+        assert_eq!(result.report.prepared_factors, 1);
+        assert_eq!(result.report.prepared_reuses, 3);
+        assert_eq!(provider.0.load(std::sync::atomic::Ordering::Relaxed), 1);
+        for (index, sample) in result.samples.iter().enumerate() {
+            // Configured output includes its explicitly supplied initial sample.
+            assert!((sample.values[0] - f64::powi(ratio, index as i32)).abs() < 1e-12);
+        }
+    }
+}
+
 #[test]
 fn faer_prepares_canonical_numeric_factors_for_multiple_excitations() {
     let matrix = CscMatrix::new(2, vec![0, 2, 4], vec![0, 1, 0, 1], vec![2., 3., -1., 4.]).unwrap();

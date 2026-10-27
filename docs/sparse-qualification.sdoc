@@ -10,6 +10,7 @@ Prepared real CSC sessions shall own immutable pattern/coefficient identity and 
 <<<
 COMMENT: >>>
 Derived campaign requirement. Implementation begins with src/linalg.rs::PreparedSparseReal and LinearSolver::prepare_csc. Verification: tests/sparse_transient.rs ownership, callback-count, shape/finite/residual boundaries. Native provider preparation and driver cache identity follow separately.
+Native faer preparation is implemented; configured Stepper caches owned sparse/reference sessions only after exact coefficient/pattern identity checks. Direct-only prepared RC BE/trapezoidal tests check one factor and three reuses on an exact binary step grid.
 <<<
 RELATIONS:
 - TYPE: Parent
