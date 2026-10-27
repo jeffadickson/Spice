@@ -60,6 +60,20 @@ RELATIONS:
   VALUE: SPARSE-003
 
 [REQUIREMENT]
+UID: SPARSE-006
+STATUS: Draft
+TITLE: Signed dynamic and controlled-source AC conformance
+STATEMENT: >>>
+Qualified complex CPU paths shall preserve signed inductor branch currents and the declared control/terminal polarities of E/F/G/H source families. Verification shall compare named voltages and branch currents against independent impedance/transfer equations at multiple frequencies and complex source amplitudes.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Verification: tests/sparse_ac_circuits.rs series RLC including resonance, source-current sign and inductor-current direction, and all four controlled source families. These finite tests do not establish arbitrary topology or conditioning coverage.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-003
+
+[REQUIREMENT]
 UID: SPARSE-005
 STATUS: Draft
 TITLE: Direct incremental diode conductance
