@@ -8,6 +8,13 @@ LU/faer comparisons. Dense compiler references and nonlinear DC bias remain
 bounded; complex prepared reuse is not implemented. Sparse transient, further
 model contracts and final review remain active. Read the current campaign ledger
 and checkpoint evidence for actual mutation/coverage limitations.
+
+Iterations 395–403 implement direct sparse linear BE/trapezoidal assembly and
+independent real-CSC acceptance, owned faer real factors and configured exact-step
+caching. Finite tests cover factor identity, terminal failures, accepted observers,
+adaptive rejection and fresh PWL excitation. Generated RC recurrences and arbitrary
+dynamic inputs use Proptest shrinking/replay. Checkpoint 404 measurement is pending;
+nonlinear transient Newton remains a bounded reference path.
 Testing campaign 355–364 adds Proptest/FsCheck library generation and shrinking,
 isolated subprocess contracts for the .NET client, and Coverlet/ReportGenerator.
 See [replay instructions](property-testing.md); checkpoint 374 migrated overnight

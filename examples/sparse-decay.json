@@ -1,0 +1,19 @@
+{
+  "schema_version": "1",
+  "case_id": "sparse-prepared-rc-decay",
+  "circuit": {
+    "nodes": ["0", "out"],
+    "elements": [
+      {"kind": "resistor", "id": "R1", "p": 1, "n": 0, "ohms": 2},
+      {"kind": "capacitor", "id": "C1", "p": 1, "n": 0, "farads": 3}
+    ]
+  },
+  "analysis": {
+    "kind": "transient_configured",
+    "options": {
+      "stop_s": 1, "max_step_s": 0.25, "max_steps": 4,
+      "method": "backward_euler", "initial_state": [1]
+    }
+  },
+  "backend": "faer"
+}

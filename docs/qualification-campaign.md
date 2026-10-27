@@ -64,3 +64,18 @@ residual scale-invariance regression still needs its generated mutant replay.
 Retain both final results at checkpoint 404. Do not relabel the prior partial
 80-candidate run or DTO additions as complete mutation coverage.
 
+Final-review carry-forward: inspect the new PreparedSparseReal acceptance call
+from linalg into dc and move the numerical verifier to a shared contract layer
+if needed to preserve dependency direction. Check the extended C# Ac positional
+record's old one-argument constructor/deconstruction compatibility; optional
+parameters preserve call syntax but do not alone preserve those binary/method
+signatures. Retain the earlier absolute_tolerance, QR best-refinement and
+standalone mutation native-resource immutability review items as well.
+
+Checkpoint 404 completes 395–404; read ../evidence/sparse-404-qualification.md.
+Resume at 405 for the trapezoidal previous-excitation mutant and changing-source
+contracts, then broader signed transient/oracle evidence. AC follow-ups are now
+complete (18/28 caught, three survivors/seven unviable; residual replay 2/2 caught).
+The dynamic operator selection completed 19/20 caught with a concrete source-history
+test gap; do not treat either scoped selection as whole-core mutation coverage.
+

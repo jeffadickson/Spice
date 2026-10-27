@@ -57,6 +57,11 @@ The runnable `examples/continued-bridge.json` demonstrates source continuation
 with total correction-work reporting. Its bounded physical-oracle and mutation
 evidence is in [checkpoint 344](evidence/continuation-344-qualification.md).
 
+The runnable `examples/sparse-decay.json` uses direct faer CSC preparation on an
+exact 0.25-second grid: BE decay is (24/25)^k, with one factor and three reuses.
+It is a finite discrete-equation example, not a continuous-error or speed claim.
+`examples/TypedAc.cs` demonstrates typed complex AC amplitudes.
+
 Linux executable names omit `.exe`. Build the managed library before F# examples load it. `scripts/Test-SecondSlice.ps1` runs the current build/tests and typed examples. Source/revision evidence is under `evidence/`; generated logs and binaries stay outside Git.
 
 `scripts/Test-ManagedCoverage.ps1 -CoverageTool <path-to-dotnet-coverage>` measures the client SDK separately from its conformance executable. `scripts/Test-Coverage.ps1` selects a Rust coverage toolchain with `profiler_builtins`; this host still needs Visual C++ Build Tools and the Windows SDK for `link.exe`. Unavailable Rust coverage is explicitly recorded, never inferred from managed metrics.

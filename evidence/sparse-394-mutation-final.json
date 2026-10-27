@@ -1,0 +1,51 @@
+{
+  "status": "completed",
+  "requested_seconds": 600,
+  "elapsed_seconds": 369.3550709,
+  "shard": "0/1",
+  "rust_file": "src/ac.rs",
+  "rust_test": "sparse_ac",
+  "tool": "rust",
+  "rust_filter": "src/ac.rs:(38|42|46|61|62|99|110):",
+  "workers": 1,
+  "cargo_mutants": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 2,
+    "candidates": 28,
+    "killed": 18,
+    "survived": 3,
+    "timed_out": 0,
+    "invalid": 7,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "127490dc9a857f054a291e6ca2787288c1eafcae3b0fa120d921a35ced2ea57e",
+    "log_sha256": "c60a07200970afb42b83d87ae532c88e8558bd6b32666eeb8e2becca45bef02f"
+  },
+  "stryker": {
+    "version": "5.0.0",
+    "status": "skipped_explicitly",
+    "exit_code": null,
+    "candidates": 0,
+    "killed": 0,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": null,
+    "log_sha256": null
+  },
+  "snapshot_ac_test_sha256": "094f042ace4b4332d809e04efdd3880df4c90faf3150911e5c06c07b13617a93",
+  "survivors": [
+    "src/ac.rs:62:13: replace || with && in ac_with_source_phasors",
+    "src/ac.rs:61:13: replace || with && in ac_with_source_phasors",
+    "src/ac.rs:110:44: replace || with && in ac_with_source_phasors"
+  ]
+}

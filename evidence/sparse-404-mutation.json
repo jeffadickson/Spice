@@ -1,0 +1,59 @@
+{
+  "status": "completed",
+  "requested_seconds": 600,
+  "elapsed_seconds": 493.3694429,
+  "shard": "0/1",
+  "rust_file": "src/linear_dynamic.rs",
+  "rust_test": "sparse_transient,property_campaign",
+  "tool": "rust",
+  "rust_filter": "replace (\\|\\||&&|[+*/-]=?|>|<)",
+  "workers": 1,
+  "cargo_mutants": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 2,
+    "candidates": 20,
+    "killed": 19,
+    "survived": 1,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "8b98ae53563883157b53713f62b46a85713c5ffe78c582fc22e8f2f5c9e2cec1",
+    "log_sha256": "e2282d83d0e4d3ff098fb2aeeb52698511e1286cbd6da82361c41cc2cf0af28e"
+  },
+  "stryker": {
+    "version": "5.0.0",
+    "status": "skipped_explicitly",
+    "exit_code": null,
+    "candidates": 0,
+    "killed": 0,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": null,
+    "log_sha256": null
+  },
+  "source_revision": "20ee36c2ac0a0717317351189b8a54256264cf62",
+  "survivors": [
+    "src/linear_dynamic.rs:64:26: replace += with -= in assemble"
+  ],
+  "snapshot_source_hashes": {
+    "src/linear_dynamic.rs": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+    "src/integrator.rs": "75956c4983524ec53cbf5346a8dea97d3396f6d840d7e511d7e94c9b3be9a69b",
+    "src/linalg.rs": "e80d003c761e096bc32a368682c898bbe3254d5e8e311438f78d72cc18b4d64c",
+    "src/backend_faer.rs": "78bc0c368402d64f3046b5cae0f942a84f8507bdcefaa15d50e44109ad71fe1f",
+    "src/dc.rs": "749a063f62b52897efdf2cae1270298f34695591031cec889211ce878b659703",
+    "src/transient.rs": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a",
+    "tests/sparse_transient.rs": "2720ef135189646af2aa3a28ec46a8066c35049ba723b97112c30267f9058fd9",
+    "tests/property_campaign.rs": "f98f373db224b279e1cae3bc07206e0ceaee4c80a227581ff4cb46756a325319"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "example_sha256": "f506ee7b20647d5bca5710fe83c39756e380ce3c8a2fbdc7877fbbcb30c17000",
+  "native_sha256": "b2762fd829f3c8e72885d34a676187d000b4ce81e4f3dc1395dee3573f0813f3",
+  "integration": {
+    "method": "backward_euler",
+    "initialization": "explicit_state",
+    "accepted_steps": 4,
+    "rejected_steps": 0,
+    "attempts": 4,
+    "max_accepted_error": 0.0,
+    "linear_solves": 4,
+    "prepared_factors": 1,
+    "prepared_reuses": 3
+  },
+  "final_voltage": 0.8493465600000001,
+  "expected_voltage": 0.8493465599999999,
+  "stderr_sha256": "5a4f89e45645cb6b4639c325c05ece0fbaefb9beb28356a79edb633f13a02d35",
+  "stdout_json_only": true
+}

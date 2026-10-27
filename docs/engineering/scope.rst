@@ -16,8 +16,15 @@ assembly is implemented. AC now assembles complex CSC directly from G and Q,
 including diode incremental conductance after bounded DC bias. Faer accepts a
 genuine complex RHS with one factorization per frequency; independent sparse
 backward-error checks reject bad provider results. Analytical RC generation and
-terminal-failure contracts cover a finite domain; named ngspice resistor/lowpass and original RLC/VCCS comparisons add finite external evidence. Complex factor reuse,
-sparse transient and additional model profiles remain active campaign work.
+terminal-failure contracts cover a finite domain; named ngspice resistor/lowpass
+and original RLC/VCCS comparisons add finite external evidence.
+Prepared complex factor reuse remains unimplemented.
+Configured linear BE/trapezoidal and legacy linear BE now assemble CSC directly.
+Faer prepared real factors own canonical numerical identity; configured stepping
+retains two exact-step systems and verifies each returned vector independently.
+An exact binary RC example requires one factor and three reuses. Adaptive and PWL
+finite cases exercise rejected-history isolation and changing RHS values.
+Wider transient oracle/model profiles remain active campaign work.
 Dense fallback/reference paths retain the
 256-unknown bound. No GPU implementation, global convergence, full SPICE parity,
 large-circuit performance or production qualification is claimed.

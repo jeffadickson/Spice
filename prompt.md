@@ -35,6 +35,7 @@ Suggested next technical work:
 
 1. Extend difficult-circuit evidence beyond the current-driven diode recovery, impossible physical reverse bias, and bounded stage-exhaustion cases in tests/continuation.rs; see evidence/continuation-qualification.md. Do not infer broad convergence guarantees from this small topology.
 2. Continue sparse AC qualification after iterations 375–383 direct assembly/complex RHS and analytical contracts; checkpoint 384 measurement is recorded, and checkpoint 394 completes the finite AC tranche. Read evidence/sparse-394-qualification.md when available. Next is direct sparse transient (395–414). Faer uses one complex factor per frequency, without prepared complex reuse. DC nonlinear bias remains bounded reference Newton. Sparse transient is still pending.
+Checkpoint 404 now implements the first sparse transient tranche: read evidence/sparse-404-qualification.md and resume at 405. Linear legacy BE/configured BE/trapezoidal consume direct CSC; configured faer factors are owned and cached by exact step. Close the previous-excitation mutation gap and tighten source-history/oracle evidence next. Nonlinear Newton remains the reference path.
 3. Grow the selected ngspice corpus cautiously, adding upstream hashes, copied attribution, parser/lowering tests, and named oracle comparisons before claiming support.
 4. Expand device models only after equation, derivative, domain, unit, limiting/correction, and convergence contracts are written.
 
