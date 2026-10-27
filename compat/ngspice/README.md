@@ -33,3 +33,13 @@ case at 10/100/1000 Hz with -0.75+1.25j excitation. Its named `v(out)`
 comparison uses the explicit `5e-6` absolute component bound for printed values
 up to three volts. Both original decks also pass bounded importer-to-analytical
 equation checks; this is not upstream corpus compatibility by attribution.
+
+`qualification-rc-ramp` is an original finite-ramp transient case. Compare
+`v(out)` at 0/0.125/0.25/0.5/1 seconds using
+`scripts/Compare-NamedTransientOracle.cs`, its deck/request and `2e-6`
+absolute bound. Both recorded grids are interpolated explicitly; print rounding
+and finite stepping limit the comparison. The importer separately selects its
+documented BE policy, tested against an analytical ramp response with its own
+finite-grid bound. The curated upstream `tests/general/rc.cir` remains blocked:
+default PULSE durations/cycle overlap and exact event semantics are not silently
+mapped onto this original PWL case.

@@ -11,6 +11,36 @@ use circuit_simulator::{
 struct DirectReal;
 
 #[test]
+fn original_rc_ramp_deck_import_matches_independent_continuous_response() {
+    use circuit_simulator::{
+        api::Analysis, compile::compile, configured, netlist::import_ngspice_request,
+    };
+    let request = import_ngspice_request(
+        include_str!("../compat/ngspice/qualification-rc-ramp.cir"),
+        "ramp-oracle",
+    )
+    .unwrap();
+    let Analysis::TransientConfigured { options } = request.analysis else {
+        panic!("Expected configured transient")
+    };
+    let plan = compile(&request.circuit).unwrap();
+    for provider in [&DenseLu as &dyn LinearSolver, &DirectReal] {
+        let result = configured::run(&plan, provider, &options, &false.into()).unwrap();
+        for sample in result.samples {
+            let time = sample.time_s;
+            let expected = if time <= 0.25 {
+                (time + 6. * (-time / 6.).exp_m1()) / 0.25
+            } else {
+                1. - 24. * (0.25_f64 / 6.).exp_m1() * (-time / 6.).exp()
+            };
+            // Import currently selects BE; its finite-grid error is measured
+            // separately from the tighter hand-authored trapezoidal oracle request.
+            assert!((sample.values[1] - expected).abs() < 4e-4);
+        }
+    }
+}
+
+#[test]
 fn configured_equilibrium_initialization_is_direct_sparse_with_selected_sources() {
     use circuit_simulator::{
         compile::compile,

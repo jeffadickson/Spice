@@ -1,0 +1,19 @@
+{
+  "schema_version": "1", "case_id": "qualification-rc-ramp",
+  "circuit": {
+    "nodes": ["0", "in", "out"],
+    "elements": [
+      {"kind": "voltage", "id": "V1", "p": 1, "n": 0, "volts": 0},
+      {"kind": "resistor", "id": "R1", "p": 1, "n": 2, "ohms": 2},
+      {"kind": "capacitor", "id": "C1", "p": 2, "n": 0, "farads": 3}
+    ]
+  },
+  "analysis": {"kind": "transient_configured", "options": {
+    "stop_s": 1, "max_step_s": 0.00390625, "max_steps": 300,
+    "method": "trapezoidal",
+    "sources": [{"id": "V1", "waveform": {"kind": "pwl", "points": [
+      {"time_s": 0, "value": 0}, {"time_s": 0.25, "value": 1}, {"time_s": 1, "value": 1}
+    ]}}]
+  }},
+  "backend": "faer"
+}
