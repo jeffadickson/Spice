@@ -11,6 +11,109 @@ use circuit_simulator::{
 struct DirectReal;
 
 #[test]
+fn empty_numeric_rows_and_columns_are_independently_classified_across_cpu_entry_points() {
+    use circuit_simulator::solver_contract::SparseComplexSystem;
+    use num_complex::Complex64;
+    for values in [vec![0., 0., 1., 2.], vec![0., 1., 0., 2.]] {
+        let dense = Matrix { n: 2, values };
+        let sparse = CscMatrix::from_dense(&dense).unwrap();
+        assert_eq!(
+            FaerSparseLu.solve_csc(&sparse, &[1., 1.]).unwrap_err().code,
+            ErrorCode::SingularMatrix
+        );
+        assert_eq!(
+            FaerSparseLu.solve(&dense, &[1., 1.]).unwrap_err().code,
+            ErrorCode::SingularMatrix
+        );
+        assert_eq!(
+            FaerSparseLu.prepare_csc(&sparse).err().unwrap().code,
+            ErrorCode::SingularMatrix
+        );
+        assert_eq!(
+            FaerSparseLu.prepare(&dense).err().unwrap().code,
+            ErrorCode::SingularMatrix
+        );
+        let complex = SparseComplexSystem::new(
+            sparse.pattern().clone(),
+            sparse
+                .values()
+                .iter()
+                .map(|value| Complex64::new(*value, 0.))
+                .collect(),
+        )
+        .unwrap();
+        assert_eq!(
+            FaerSparseLu
+                .solve_complex_csc(&complex, &[Complex64::new(1., 0.); 2])
+                .unwrap_err()
+                .code,
+            ErrorCode::SingularMatrix
+        );
+        assert_eq!(
+            FaerSparseLu
+                .solve_complex(&dense, &Matrix::zeros(2).unwrap(), &[1., 1.])
+                .unwrap_err()
+                .code,
+            ErrorCode::SingularMatrix
+        );
+    }
+}
+
+#[test]
+fn pure_imaginary_numeric_support_is_not_mistaken_for_an_empty_complex_system() {
+    use circuit_simulator::{solver_contract::SparseComplexSystem, sparse::CscPattern};
+    use num_complex::Complex64;
+    let system = SparseComplexSystem::new(
+        CscPattern::new(2, vec![0, 1, 2], vec![0, 1]).unwrap(),
+        vec![Complex64::new(0., 1.), Complex64::new(0., 2.)],
+    )
+    .unwrap();
+    let values = FaerSparseLu
+        .solve_complex_csc(&system, &[Complex64::new(1., 0.), Complex64::new(2., 0.)])
+        .unwrap();
+    assert_eq!(values, [Complex64::new(0., -1.); 2]);
+}
+
+#[test]
+fn linear_dynamic_assembly_rejects_model_omission_and_finite_history_overflow() {
+    use circuit_simulator::{
+        compile::compile, configured::Method, linear_dynamic::assemble, netlist::parse,
+    };
+    let diode = compile(&parse("title\nR1 out 0 1\nD1 out 0 1p 25m\n.end").unwrap()).unwrap();
+    assert_eq!(
+        assemble(&diode, Method::BackwardEuler, &[0.], 1., &[0.], &[0.])
+            .err()
+            .unwrap()
+            .code,
+        ErrorCode::Unsupported
+    );
+    let linear = compile(&parse("title\nR1 out 0 1\nC1 out 0 2\n.end").unwrap()).unwrap();
+    assert!(
+        assemble(
+            &linear,
+            Method::BackwardEuler,
+            &[f64::MAX],
+            1.,
+            &[0.],
+            &[0.]
+        )
+        .is_err()
+    );
+    assert!(assemble(&linear, Method::Trapezoidal, &[0.], 1., &[f64::NAN], &[0.]).is_err());
+    assert!(
+        assemble(
+            &linear,
+            Method::Trapezoidal,
+            &[0.],
+            1.,
+            &[0.],
+            &[f64::INFINITY]
+        )
+        .is_err()
+    );
+}
+
+#[test]
 fn selecting_a_source_does_not_reorder_finite_nominal_cancellation() {
     use circuit_simulator::{
         compile::compile,
