@@ -1,0 +1,57 @@
+{
+  "status": "completed",
+  "requested_seconds": 600,
+  "elapsed_seconds": 232.314696,
+  "shard": "0/1",
+  "rust_file": "src/configured.rs",
+  "rust_test": "lib,model_charge,nonlinear,sparse_transient",
+  "tool": "rust",
+  "rust_filter": "replace [+-]= with [+-]= in initial",
+  "workers": 1,
+  "managed_input_hashes": {},
+  "cargo_mutants": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 3,
+    "killed": 3,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "f5760d4152b38ca5d07352389dc6aed0f43578920dee7a112bc4a26cb8c48df5",
+    "log_sha256": "da04a1169df61b2fc8866890b90776a96394c295cfc61627b00d7830f18ef6b3"
+  },
+  "stryker": {
+    "version": "5.0.0",
+    "status": "skipped_explicitly",
+    "exit_code": null,
+    "candidates": 0,
+    "killed": 0,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": null,
+    "log_sha256": null
+  },
+  "source_hashes": {
+    "src/configured.rs": "7f99e8826b1d80c20f57422c8801a8eaf2b11d570c891cb0764bd4c7403757ee",
+    "tests/model_charge.rs": "a97a485eab0dea306f8f9e09190b4ecded274f0f9118e25a95455bf20b2f9feb",
+    "tests/nonlinear.rs": "c1f2f7ba6a2f2272142280e79b8ea2a83d72c6b9acea09cc97d61f1ca101c127",
+    "tests/sparse_transient.rs": "9d592f4547339da235f107ad966b75666cb098eb40387671670909cecf72b47b"
+  },
+  "source_revision": "dc71c94",
+  "limitations": [
+    "Three selected initial signed-accumulation operators only, not all configured integration or model code.",
+    "Generated return replacements and other mutation categories remain outside this selection."
+  ]
+}

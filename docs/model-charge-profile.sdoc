@@ -150,3 +150,17 @@ Verification: tests/model_charge.rs::composite_profile_matches_explicit_parallel
 RELATIONS:
 - TYPE: Parent
   VALUE: MODEL-002
+
+[REQUIREMENT]
+UID: MODEL-011
+STATUS: Draft
+TITLE: Bounded external oracle input snapshots
+STATEMENT: >>>
+Named external oracle helpers shall bound deck/request snapshots to 1 MiB before copying or parsing, retain named physical observables and explicit comparison tolerances, and fail for missing, oversized or changing inputs rather than producing an unchecked pass.
+<<<
+COMMENT: >>>
+Implementation: scripts/Compare-NamedAcOracle.cs and Compare-NamedTransientOracle.cs. Verification: helper self-tests cover positive and oversized snapshots plus malformed tables; named constant-charge AC/transient reports retain hashes, declared temperature and finite comparison bounds. Truncated/growing-read guards are implemented but not deterministically race-injected.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-003

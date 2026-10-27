@@ -330,3 +330,17 @@ Derived campaign requirement. Implementation begins with tests/property_campaign
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: MUT-003
+STATUS: Draft
+TITLE: Immutable standalone managed mutation inputs
+STATEMENT: >>>
+Standalone managed mutation campaigns shall freeze the native engine and consumed conformance fixtures into a run-owned snapshot, record hashes, and verify unchanged snapshot contents after execution. Source-copy instability or later snapshot changes shall invalidate the campaign independently of mutant counts.
+<<<
+COMMENT: >>>
+Implementation: scripts/FrameworkMutations.cs. Verification: --snapshot-self-test checks source-file independence and deliberate snapshot tamper rejection. Full framework execution retains managed_input_hashes. Existing Endurance source archives and source/test hashes remain separate provenance layers.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MUT-002
