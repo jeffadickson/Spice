@@ -1,6 +1,20 @@
 [DOCUMENT]
 TITLE: Bounded Diode Constant-Charge Profile
 
+[REQUIREMENT]
+UID: MODEL-005
+STATUS: Draft
+TITLE: Charge history, derivative and observer boundaries
+STATEMENT: >>>
+Constant-charge diode BE residuals/Jacobians shall retain both terminal signs and C/h derivatives without changing accepted history. Current and previous charge states shall remain representable independently of time-step scaling. Model-domain violations in an explicit initial state shall fail before observer publication. Existing thermal-voltage conduction limiting remains explicit; no broader limiting guarantee is inferred.
+<<<
+COMMENT: >>>
+Implementation: src/newton.rs and src/configured.rs. Verification: tests/model_charge.rs independent two-terminal BE equations, central-difference Jacobian, overflowing previous charge hidden by large h and invalid initial observer rejection. Broader convergence/limiting sweeps follow separately.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-002
+
 [TEXT]
 STATEMENT: >>>
 Derived campaign scope, Draft. Compose the existing bounded Shockley current law with an explicit constant parallel capacitance. Q=C*V, dQ/dV=C and E=C*V^2/2 use P-to-N voltage, positive-terminal coulombs, farads and joules. Reuse existing capacitor validation and signed Q stamps; no new numerical dependency is justified for this linear charge law. Existing diode constructors/wire representation shall remain intact through an explicit new profile.

@@ -1,6 +1,110 @@
 //! Independent equation/unit/domain contracts for the bounded charge profile.
 use circuit_simulator::charge::constant_capacitance;
 
+#[test]
+fn composite_be_jacobian_has_independent_two_terminal_charge_derivatives() {
+    use circuit_simulator::{
+        circuit::{Circuit, Element},
+        compile::compile,
+        ids::NodeId,
+        newton::linearize_backward_euler,
+    };
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "a".into(), "b".into()],
+        elements: vec![
+            Element::Resistor {
+                id: "RA".into(),
+                p: NodeId(1),
+                n: NodeId(0),
+                ohms: 2.,
+            },
+            Element::Resistor {
+                id: "RB".into(),
+                p: NodeId(2),
+                n: NodeId(0),
+                ohms: 3.,
+            },
+            Element::DiodeWithCapacitance {
+                id: "D1".into(),
+                p: NodeId(1),
+                n: NodeId(2),
+                saturation_amps: 1e-12,
+                thermal_volts: 0.025,
+                farads: 2e-6,
+            },
+        ],
+    };
+    let plan = compile(&circuit).unwrap();
+    let values = [0.1, 0.02];
+    let previous = [0.05, -0.01];
+    let system = linearize_backward_euler(&plan, &values, &previous, 0.01, &[0., 0.]).unwrap();
+    let voltage = values[0] - values[1];
+    let current =
+        1e-12 * (voltage / 0.025).exp_m1() + 2e-6 * (voltage - (previous[0] - previous[1])) / 0.01;
+    assert!((system.residual[0] - (values[0] / 2. + current)).abs() < 1e-15);
+    assert!((system.residual[1] - (values[1] / 3. - current)).abs() < 1e-15);
+    let derivative = 1e-12 / 0.025 * (voltage / 0.025).exp() + 2e-6 / 0.01;
+    let expected = [
+        0.5 + derivative,
+        -derivative,
+        -derivative,
+        1. / 3. + derivative,
+    ];
+    for (actual, expected) in system.jacobian.values.iter().zip(expected) {
+        assert!((actual - expected).abs() < 1e-15);
+    }
+    for column in 0..2 {
+        let mut plus = values;
+        let mut minus = values;
+        plus[column] += 1e-6;
+        minus[column] -= 1e-6;
+        let fp = linearize_backward_euler(&plan, &plus, &previous, 0.01, &[0., 0.])
+            .unwrap()
+            .residual;
+        let fm = linearize_backward_euler(&plan, &minus, &previous, 0.01, &[0., 0.])
+            .unwrap()
+            .residual;
+        for row in 0..2 {
+            assert!(((fp[row] - fm[row]) / 2e-6 - expected[row * 2 + column]).abs() < 1e-10);
+        }
+    }
+}
+
+#[test]
+fn unrepresentable_profile_charge_is_rejected_before_history_or_initial_observation() {
+    use circuit_simulator::{
+        backend::DenseLu,
+        circuit::Element,
+        compile::compile,
+        configured::{self, TransientConfig},
+        newton::linearize_backward_euler,
+    };
+    let mut request = profile_request(serde_json::json!({"kind":"operating_point"}), "lu");
+    if let Element::Voltage { volts, .. } = &mut request.circuit.elements[0] {
+        *volts = 2.;
+    }
+    if let Element::DiodeWithCapacitance { farads, .. } = &mut request.circuit.elements[1] {
+        *farads = f64::MAX;
+    }
+    let plan = compile(&request.circuit).unwrap();
+    assert!(linearize_backward_euler(&plan, &[0., 0.], &[2., 0.], 100., &[0., 2.]).is_err());
+    let options = TransientConfig {
+        stop_s: 0.1,
+        max_step_s: 0.1,
+        initial_state: Some(vec![2., 0.]),
+        ..Default::default()
+    };
+    let mut observed = 0;
+    assert!(
+        configured::run_observed(&plan, &DenseLu, &options, &false.into(), |_| {
+            observed += 1;
+            Ok(())
+        })
+        .is_err()
+    );
+    assert_eq!(observed, 0);
+}
+
 fn profile_request(analysis: serde_json::Value, backend: &str) -> circuit_simulator::api::Request {
     serde_json::from_value(serde_json::json!({
         "schema_version":"1", "case_id":"constant-charge-profile", "backend":backend,

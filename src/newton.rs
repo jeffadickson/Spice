@@ -137,6 +137,13 @@ pub fn linearize_backward_euler(
     {
         return Err(SimError::invalid("invalid nonlinear transient step inputs"));
     }
+    // Accepted charge history must be representable independently of the
+    // chosen step size. Scaling an overflowing Q by a large h must not hide it.
+    for diode in &plan.diodes {
+        if let Some(farads) = diode.model.capacitance() {
+            crate::charge::constant_capacitance(farads, voltage(previous, diode.p, diode.n))?;
+        }
+    }
     // Assemble the requested excitation directly. Cancelling the nominal RHS
     // afterwards can overflow even when the requested residual is finite.
     let mut system = linearize_with_rhs(plan, values, rhs)?;
