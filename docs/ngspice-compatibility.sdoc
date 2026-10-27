@@ -2,6 +2,34 @@
 TITLE: ngspice Corpus Compatibility Track
 
 [REQUIREMENT]
+UID: NGC-030
+STATUS: Draft
+TITLE: Explicit constant-charge diode model lowering
+STATEMENT: >>>
+The bounded importer shall accept positive CJO/CJ0 only with explicit M=0, map it to the diode_with_capacitance profile, accept explicitly zero RS/TT, and reject nonzero grading/series/transport, unknown parameters and duplicate canonical parameter names. CJO=0 with M=0 shall map to a known zero-charge legacy diode. Basic D lines may add one positive farad value after the explicit thermal voltage.
+<<<
+COMMENT: >>>
+Implementation: src/netlist.rs typed bounded diode model parameters and basic parser. Verification: tests/model_charge.rs supported compact/mixed-case/alias forms, temperature/ideality units, required M=0, zero-charge mapping and malformed/unsupported parameter cases. Geometry and general depletion charge remain unsupported.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-003
+
+[REQUIREMENT]
+UID: NGC-031
+STATUS: Draft
+TITLE: Raw deck byte bound before normalization
+STATEMENT: >>>
+Both bounded ngspice parsing entry points shall reject raw text above 1 MiB before allocating logical-line/model normalization structures. Comments and unsupported records shall not bypass the input byte budget.
+<<<
+COMMENT: >>>
+Implementation: src/netlist.rs::parse_ngspice_basic and import_ngspice_request. Verification: tests/model_charge.rs oversized comment deck; existing generated parser diagnostics remain applicable.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-030
+
+[REQUIREMENT]
 UID: NGC-001
 TITLE: Full corpus inventory
 STATEMENT: >>>

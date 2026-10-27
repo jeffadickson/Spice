@@ -2,6 +2,81 @@
 use circuit_simulator::charge::constant_capacitance;
 
 #[test]
+fn bounded_named_charge_profile_requires_explicit_zero_grading_and_supported_terms() {
+    use circuit_simulator::{
+        circuit::Element,
+        netlist::{parse, parse_ngspice_basic},
+    };
+    let basic = parse("title\nD1 out 0 1p 25m 2n\nR1 out 0 1k\n.end").unwrap();
+    assert!(
+        matches!(basic.elements[0],Element::DiodeWithCapacitance { farads, .. } if farads==2e-9)
+    );
+    for card in [
+        ".model DM D (IS=1p N=2 CJO=2n M=0)",
+        ".model DM D(Is=1p,n=2,cj0=2n,m=0,rs=0,tt=0)",
+    ] {
+        let circuit = parse_ngspice_basic(&format!(
+            "title\n.temp 26.85\n{card}\nD1 out 0 DM\nR1 out 0 1k\n.end"
+        ))
+        .unwrap();
+        let Element::DiodeWithCapacitance {
+            saturation_amps,
+            thermal_volts,
+            farads,
+            ..
+        } = circuit.elements[0]
+        else {
+            panic!("Expected profile")
+        };
+        assert_eq!(saturation_amps, 1e-12);
+        assert_eq!(farads, 2e-9);
+        assert!((thermal_volts - 2. * 8.617_333_262_145e-5 * 300.).abs() < 1e-15);
+    }
+    for parameters in [
+        "CJO=1n",
+        "M=0",
+        "CJO=1n M=0.5",
+        "CJO=-1n M=0",
+        "CJO=1n M=0 TT=1n",
+        "CJO=1n M=0 RS=1",
+        "CJO=1n M=0 VJ=1",
+        "CJO=1n CJ0=2n M=0",
+        "IS=1p is=2p",
+        "CJO=1n M=0 M=0",
+    ] {
+        assert!(
+            parse_ngspice_basic(&format!(
+                "title\n.model DM D({parameters})\nD1 out 0 DM\nR1 out 0 1k\n.end"
+            ))
+            .is_err(),
+            "{parameters}"
+        );
+    }
+    let zero = parse_ngspice_basic("title\n.model DM D(CJO=0 M=0)\nD1 out 0 DM\nR1 out 0 1k\n.end")
+        .unwrap();
+    assert!(matches!(zero.elements[0], Element::Diode { .. }));
+}
+
+#[test]
+fn raw_deck_byte_budget_applies_before_comment_or_model_normalization() {
+    use circuit_simulator::{
+        error::ErrorCode,
+        netlist::{import_ngspice_request, parse_ngspice_basic},
+    };
+    let oversized = format!("title\n*{}\n.end", "x".repeat(1_048_576));
+    assert_eq!(
+        parse_ngspice_basic(&oversized).unwrap_err().code,
+        ErrorCode::ResourceExhausted
+    );
+    assert_eq!(
+        import_ngspice_request(&oversized, "oversized")
+            .unwrap_err()
+            .code,
+        ErrorCode::ResourceExhausted
+    );
+}
+
+#[test]
 fn composite_be_jacobian_has_independent_two_terminal_charge_derivatives() {
     use circuit_simulator::{
         circuit::{Circuit, Element},
