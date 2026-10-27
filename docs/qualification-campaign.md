@@ -57,3 +57,10 @@ boundary gaps, widen analytical/provider cases and named external oracles.
 The isolated 20-minute cargo-mutants AC run remains active on fa964ad; retain its
 final summary at the next checkpoint. Fresh coverage source/test hashes match.
 
+Checkpoint 394 completes 385–394 and the finite AC allocation. See
+../evidence/sparse-394-qualification.md. Resume at 395 for sparse transient;
+the selected 28-candidate AC follow-up remains active, and the newly added
+residual scale-invariance regression still needs its generated mutant replay.
+Retain both final results at checkpoint 404. Do not relabel the prior partial
+80-candidate run or DTO additions as complete mutation coverage.
+

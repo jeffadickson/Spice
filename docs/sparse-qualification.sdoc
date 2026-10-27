@@ -2,6 +2,20 @@
 TITLE: Direct Sparse Dynamic CPU Qualification
 
 [REQUIREMENT]
+UID: SPARSE-008
+STATUS: Draft
+TITLE: Typed optional AC excitation
+STATEMENT: >>>
+The C# public request contract shall optionally express independent-source real/imaginary AC amplitudes in SI with the exp(j*omega*t) convention. Omission shall retain the historical serialized request shape. The native boundary shall retain responsibility for semantic validation, and AC override shall not change the nonlinear DC bias excitation.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation: dotnet/Simulator.Client/Requests.cs and generated WireContext metadata. Verification: dotnet/Simulator.Client.Tests/AcContracts.cs omitted-field and real-engine LU/faer analytical response, examples/TypedAc.cs. Native controlled-source families remain broader than the typed SDK; the oracle helper consumes native public JSON explicitly.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-004
+
+[REQUIREMENT]
 UID: SPARSE-001
 STATUS: Draft
 TITLE: Canonical dynamic sparse combinations
@@ -9,7 +23,7 @@ STATEMENT: >>>
 Dynamic real and complex assembly shall combine compiler-owned canonical CSC patterns without a dense scan, preserve structural slots through numerical cancellation, and reject dimension, nonfinite scale/value and overflow violations. Retained dense representations remain bounded references and explicit fallbacks rather than evidence of large-circuit scalability.
 <<<
 COMMENT: >>>
-Derived campaign requirement. Implementation begins with src/sparse.rs::CscPattern::union and CscMatrix::combine_scaled. Verification: tests/sparse_dynamic.rs. Complex AC assembly and provider adoption require subsequent evidence; checkpoint 384 is pending.
+Derived campaign requirement. Implementation begins with src/sparse.rs::CscPattern::union and CscMatrix::combine_scaled. Verification: tests/sparse_dynamic.rs. Complex assembly/direct AC provider adoption are implemented; checkpoint 384 evidence is in evidence/sparse-384-qualification.md. Wider verification remains incremental.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -25,7 +39,7 @@ STATEMENT: >>>
 The solver seam shall accept finite complex excitation vectors and validate every provider response before combining or exposing it. Real-excitation compatibility may superpose two solves; direct complex providers shall support one factorization per requested system. Only explicit Unsupported may trigger a same-provider reference fallback; numerical, resource and transport failures shall propagate.
 <<<
 COMMENT: >>>
-Derived campaign requirement. Implementation begins with src/linalg.rs and src/solver_contract.rs. Verification: tests/sparse_dynamic.rs legacy vector/shape/finite contracts. Native one-factor complex RHS and AC driver evidence are pending subsequent steps.
+Derived campaign requirement. Implementation begins with src/linalg.rs and src/solver_contract.rs. Verification: tests/sparse_dynamic.rs legacy vector/shape/finite contracts. Native one-factor complex RHS and AC driver evidence are in tests/sparse_ac.rs, tests/sparse_ac_circuits.rs and checkpoint 384/394 reports.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -39,7 +53,7 @@ STATEMENT: >>>
 Linear AC shall assemble G+j*omega*Q from compiler CSC plans and prefer the selected provider's direct complex CSC operation. Explicit Unsupported may use that provider's bounded dense reference path; other errors shall remain failures. Each output shall pass independent sparse componentwise backward-error verification at 1e-10 before publication.
 <<<
 COMMENT: >>>
-Derived campaign requirement. Implementation: src/ac.rs. Verification: tests/sparse_ac.rs direct-only provider, analytical RC transfer and terminal failure cases. Nonlinear bias conversion and wider circuit/oracle evidence remain pending.
+Derived campaign requirement. Implementation: src/ac.rs. Verification: tests/sparse_ac.rs direct-only provider, analytical RC transfer and terminal failure cases. Incremental diode stamps are direct CSC after bounded DC bias. Wider circuit/oracle evidence is recorded in tests/sparse_ac_circuits.rs and evidence/named-ac-*.json; no broad topology qualification is inferred.
 <<<
 RELATIONS:
 - TYPE: Parent

@@ -1,0 +1,25 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "metrics": [
+    {
+      "file": "scripts/Compare-NamedAcOracle.cs",
+      "source_sha256": "ffd51f973319320b0f56e9ae9d943859d8e70318e2cd4e4854a821cb61518b4d",
+      "scope": "Eight parser contracts, one intentional mismatch with failed report, and actual four named AC cases across LU/faer. Timeout/pipe bounds and arbitrary ngspice formats remain unqualified.",
+      "local_report": "build/qualification-campaign/394-named-ac.cobertura.xml",
+      "lines": 128,
+      "covered_lines": 126,
+      "line_percent": 98.4375,
+      "branches": 0,
+      "covered_branches": 0,
+      "branch_percent": null
+    }
+  ],
+  "limitations": [
+    "Mapped source-line and per-line maximum branch counts; not complete path coverage.",
+    "Owned client Coverlet metrics are separate; native executable and vendor internals are excluded.",
+    "PowerShell subprocess command/branch metrics, full native installers, Linux helper paths and vendor internals are unmeasured.",
+    "Synthetic supervisor/publication fixtures do not qualify numerical simulator execution.",
+    "This collection exported no qualified branch counters for the file app; branches=0 means unavailable, not complete branch coverage.",
+    "ReportGenerator XML conversion gave a different line-map union (127/128); retained direct collector Cobertura is 126/128. Generated-source-file warnings concern excluded SDK metadata."
+  ]
+}

@@ -1,13 +1,13 @@
 # Implementation status after iterations 201–301
 
-Current checkpoint 374 completes campaign steps 1–40. See
-[qualified scope and remaining findings](../evidence/testing-374-qualification.md).
-Source/Gmin hardening and maintained generated-test workflows are implemented;
-direct sparse AC has an implemented first tranche (375–383): canonical dynamic
-union, genuine complex RHS, direct linear/diode incremental CSC and independent
-backward-error checks. Checkpoint 384 measurement is pending; wider named AC
-oracles, sparse transient and further model qualification remain active.
-
+Current checkpoint 394 verifies campaign steps 1–60. Source/Gmin hardening,
+maintained generated-test workflows and the bounded direct sparse AC tranche are
+implemented. AC evidence includes complex RHS, diode incremental CSC, resource
+boundaries, analytical RC/RLC/controlled-source/diode checks and named ngspice
+LU/faer comparisons. Dense compiler references and nonlinear DC bias remain
+bounded; complex prepared reuse is not implemented. Sparse transient, further
+model contracts and final review remain active. Read the current campaign ledger
+and checkpoint evidence for actual mutation/coverage limitations.
 Testing campaign 355–364 adds Proptest/FsCheck library generation and shrinking,
 isolated subprocess contracts for the .NET client, and Coverlet/ReportGenerator.
 See [replay instructions](property-testing.md); checkpoint 374 migrated overnight

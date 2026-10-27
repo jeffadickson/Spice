@@ -1,0 +1,15 @@
+{
+  "status": "running_partial_snapshot",
+  "run": "20261027T001842Z-7219c428",
+  "snapshot_utc": "2026-10-27T00:21:01.7823677Z",
+  "scope": "AC selected validation/current-source lines; sparse_ac target",
+  "inventory": 28,
+  "completed": 10,
+  "caught": 3,
+  "survived": 0,
+  "unviable": 7,
+  "timed_out": 0,
+  "raw_outcomes_sha256": "29321bb65852f6cc73fd42a84b1fc964a287b07dd4da8c006f147b71f4a89166",
+  "snapshot_ac_test_sha256": "094f042ace4b4332d809e04efdd3880df4c90faf3150911e5c06c07b13617a93",
+  "limitations": "In-flight selection. Snapshot predates the added scale-invariance test; selected lines exclude residual normalization. Retain final result at next checkpoint."
+}
