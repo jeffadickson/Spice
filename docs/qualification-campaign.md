@@ -97,3 +97,13 @@ then checkpoints 424/434 and final deep review/fixes 435. The dynamic operator
 selection now completes 20/20 caught; other mutation and qualification limits
 remain separate.
 
+
+## Completed final review — 435
+
+The 100+1 campaign is complete. Read ../evidence/final-435-review.md for findings,
+implemented fixes, exact final scopes and remaining gaps. Final build: 345 Rust
+checks, 29 managed conformance checks and 70 Windows/Linux xUnit cases. Actual
+Stryker replay: 88 caught, one survivor, one timeout, 103 compile errors and seven
+ignored of 200; the categories remain separate. Derived requirements/work-package
+acceptance are not automatically closed. Future work must use a new task scope,
+not restart this quota. No CI dispatch or new full endurance hour/night is claimed.

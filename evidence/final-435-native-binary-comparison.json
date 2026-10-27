@@ -1,0 +1,8 @@
+{
+  "frozen_sha256": "8b16c57e7176cf90f4c91c1ab95e33aeb325156c9b8ee951f8fc0c009efee504",
+  "current_sha256": "6eb2e6546c6191a7045f38540026efa722a4f26afac7e51e0a09f716efc91564",
+  "frozen_bytes": 114066557,
+  "current_bytes": 114462885,
+  "binary_identity_matches": false,
+  "interpretation": "The immutable Stryker native dependency and the later ordinary native artifact differ. Preserve both identities; do not equate them or infer a cause. Final native source/test hashes and numerical checks are recorded separately."
+}

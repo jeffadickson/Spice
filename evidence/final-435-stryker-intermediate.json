@@ -1,0 +1,72 @@
+{
+  "status": "completed",
+  "requested_seconds": 900,
+  "elapsed_seconds": 432.1353218,
+  "shard": "0/1",
+  "rust_file": "src/*.rs",
+  "rust_test": "all",
+  "tool": "dotnet",
+  "rust_filter": "",
+  "workers": 1,
+  "managed_input_hashes": {
+    "circuit-simulator.exe": "ada2eefab08b8dcb34c137e313de1da0f6e25468fa235f16c1d91d029a50e12d",
+    "examples/divider.json": "45c269a471691024c36f0cc988653cdcab4914bc33de184210935e99b23e9d71",
+    "examples/rc.json": "8dbaed5c8fc8df663ff6c5b2c9af0425a767d7f3409398d058cba97c2965f31d",
+    "examples/adaptive-rc.json": "80ad2f6145a3e682586cf79455c877b4e0173cae6b0dcdb285532b95d80ef3cf"
+  },
+  "cargo_mutants": {
+    "version": "27.1.0",
+    "status": "skipped_explicitly",
+    "exit_code": null,
+    "candidates": 0,
+    "killed": 0,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": null,
+    "log_sha256": null
+  },
+  "stryker": {
+    "version": "5.0.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 200,
+    "killed": 84,
+    "survived": 5,
+    "timed_out": 1,
+    "invalid": 103,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 7,
+    "unattempted": 0,
+    "report_sha256": "f1a9a4ee898b7ae5728b6da31efce4b5db25426a6f7becd324aa68e6e08b2b62",
+    "log_sha256": "d03fb89195c923c8d3a4ced5b7e02a79508b4f206e0b700706ba3712c7891871"
+  },
+  "managed_source_hashes": {
+    "Simulator.Client/Client.cs": "42c580856a6481e4bc221ee73228e343b95bae249cb3e72ef4410aff18157611",
+    "Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "Simulator.Client.Tests/AcContracts.cs": "4695699a993afd366d514d2028db1368ad15209a28ba75871a1ce6c405a4dd78",
+    "Simulator.Client.Tests/ChargeContracts.cs": "9a11fa17ed68b315b018113038b0b41c74e200c4139b7b47352210ad5d405dda",
+    "Simulator.Client.Tests/ClientContracts.cs": "9a27d986de2e7fc880152f52190342f86fe3dc8d870222f3d222b45664326e9d",
+    "Simulator.Client.Tests/ClientProperties.cs": "dab43f2a63ad038fe3c22abdabacaab7fa5397b9e0eb26baf781c4a1274c9496",
+    "Simulator.Client.Tests/ManifestContracts.cs": "5615463b76577fc1ddd7d914450be8756647abc2152f46cdc41699e4ab9551f7",
+    "Simulator.Client.Tests/TransportContracts.cs": "bb75b0b4d39c55473ce6787613f0ba4b49556f9b0bacb876f51aaea920f6f0df",
+    "Simulator.Conformance/ConformanceChecks.cs": "7f2069aac6bb9791114247cd5b9cbe63c80a503e930d297807790ebfdbb89708",
+    "Simulator.Conformance/MoreChecks.cs": "2cb0919e93f6ad0548a797a26da6751172511d089bf23f7914e14b9b3ca69091",
+    "Simulator.Conformance/Program.cs": "e33e7c131f9231c2a60ddc1cc1123194a05beb1b9b0eb927d4a9c65d1ab653bc",
+    "Simulator.TransportFixture/Program.cs": "da079637a66a7a1250423eb69705fa2d1aafdc195c8af70533df62a0bee52bf7"
+  },
+  "limitations": [
+    "Intermediate replay before explicit AOT serializer overloads and mixed-array/failed-envelope tests; not final source mutation coverage.",
+    "One loop mutation timed out and five survivors remained; categories are not kills."
+  ]
+}

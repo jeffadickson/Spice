@@ -1,0 +1,81 @@
+{
+  "status": "completed",
+  "requested_seconds": 900,
+  "elapsed_seconds": 289.6313836,
+  "shard": "0/1",
+  "rust_file": "src/*.rs",
+  "rust_test": "all",
+  "tool": "dotnet",
+  "rust_filter": "",
+  "workers": 1,
+  "managed_input_hashes": {
+    "circuit-simulator.exe": "8b16c57e7176cf90f4c91c1ab95e33aeb325156c9b8ee951f8fc0c009efee504",
+    "examples/divider.json": "45c269a471691024c36f0cc988653cdcab4914bc33de184210935e99b23e9d71",
+    "examples/rc.json": "8dbaed5c8fc8df663ff6c5b2c9af0425a767d7f3409398d058cba97c2965f31d",
+    "examples/adaptive-rc.json": "80ad2f6145a3e682586cf79455c877b4e0173cae6b0dcdb285532b95d80ef3cf"
+  },
+  "cargo_mutants": {
+    "version": "27.1.0",
+    "status": "skipped_explicitly",
+    "exit_code": null,
+    "candidates": 0,
+    "killed": 0,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": null,
+    "log_sha256": null
+  },
+  "stryker": {
+    "version": "5.0.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 200,
+    "killed": 88,
+    "survived": 1,
+    "timed_out": 1,
+    "invalid": 103,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 7,
+    "unattempted": 0,
+    "report_sha256": "e4ce8d73e303fe7bd9ce4993f7012c8b8ec089ee0c80bbf0dae914fae4d93277",
+    "log_sha256": "81f24c22e664e5ec768d0a751cb247ddbe1b3883bbc3b4fabaf9757e81adb102"
+  },
+  "managed_source_hashes": {
+    "dotnet/Simulator.Client/Client.cs": "1f5bfeaa871cef2bc6dfd2647072217cf1d52cbb778abc624778bdf5f03d914a",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Client.Tests/AcContracts.cs": "4695699a993afd366d514d2028db1368ad15209a28ba75871a1ce6c405a4dd78",
+    "dotnet/Simulator.Client.Tests/ChargeContracts.cs": "9a11fa17ed68b315b018113038b0b41c74e200c4139b7b47352210ad5d405dda",
+    "dotnet/Simulator.Client.Tests/ClientContracts.cs": "9a27d986de2e7fc880152f52190342f86fe3dc8d870222f3d222b45664326e9d",
+    "dotnet/Simulator.Client.Tests/ClientProperties.cs": "dab43f2a63ad038fe3c22abdabacaab7fa5397b9e0eb26baf781c4a1274c9496",
+    "dotnet/Simulator.Client.Tests/ManifestContracts.cs": "f12369b27d8903c2d155a59c7b73cf53d8e3b89566cc4fd5c18b035652f5bd2a",
+    "dotnet/Simulator.Client.Tests/TransportContracts.cs": "bb75b0b4d39c55473ce6787613f0ba4b49556f9b0bacb876f51aaea920f6f0df",
+    "dotnet/Simulator.Conformance/ConformanceChecks.cs": "7f2069aac6bb9791114247cd5b9cbe63c80a503e930d297807790ebfdbb89708",
+    "dotnet/Simulator.Conformance/MoreChecks.cs": "2cb0919e93f6ad0548a797a26da6751172511d089bf23f7914e14b9b3ca69091",
+    "dotnet/Simulator.Conformance/Program.cs": "e33e7c131f9231c2a60ddc1cc1123194a05beb1b9b0eb927d4a9c65d1ab653bc",
+    "dotnet/Simulator.TransportFixture/Program.cs": "da079637a66a7a1250423eb69705fa2d1aafdc195c8af70533df62a0bee52bf7"
+  },
+  "source_revision": "3d7360de5299b98cf2479e0499b4df93cd5f018a",
+  "limitations": [
+    "Client.cs only; DTOs, file-app helpers and native code are outside this mutation scope.",
+    "The frozen native dependency hash differs from the later ordinary artifact; native build identities are not equated.",
+    "The single UTF8Encoding preamble-flag survivor is likely equivalent for decoding-only use, not formally proved and not counted as caught.",
+    "One stream-loop equality mutant timed out. Timeouts, 103 compile errors and seven ignored are not caught mutants."
+  ],
+  "project_hashes": {
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779",
+    "dotnet-tools.json": "9660d1321ca67b64880b2702b26fe4fcf7b95815da90c53c0f9bd9a39d2a7346",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "84d66c3c98bddddcd65037643b0cd3b18d35c414fed665fb9f15bcc96f55180f",
+    "dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj": "178189062a63ff836cd6c6ad5bdf6daa02b22e48af78a3c1eb9236e48addea20"
+  }
+}

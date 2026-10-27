@@ -1,0 +1,25 @@
+{
+  "status": "published_and_executed",
+  "sdk": "10.0.403",
+  "runtime_identifier": "win-x64",
+  "publish_command": "dotnet publish examples/TypedCharge.cs -c Release -r win-x64 -p:PublishAot=true -o build/typed-charge-aot",
+  "execution_command": "build/typed-charge-aot/TypedCharge.exe target/debug/circuit-simulator.exe",
+  "native_executable_sha256": "e583f374f9ebadaf697a592ecd9fe3d163cc945902d9fd797614cb995feeb0ea",
+  "engine_sha256": "6eb2e6546c6191a7045f38540026efa722a4f26afac7e51e0a09f716efc91564",
+  "publish_log_sha256": "6e77d86cf11f6665e8883231c517e083fae105a3ecf3cefcbe0dd0918af2ee61",
+  "run_log_sha256": "4a1d48c9e53b8bc0e1e397fb95a454996286b3657ea5a8c9da1c4590538c6298",
+  "source_hashes": {
+    "dotnet/Simulator.Client/Client.cs": "1f5bfeaa871cef2bc6dfd2647072217cf1d52cbb778abc624778bdf5f03d914a",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "84d66c3c98bddddcd65037643b0cd3b18d35c414fed665fb9f15bcc96f55180f",
+    "examples/TypedCharge.cs": "971ea09551520f9682b7202fca619196e0fc19f90ab7cdff911cba9f93078fae"
+  },
+  "initial_failure": "IL2026 and IL3050 for options-only JSON serializer overloads; replaced with explicit generated JsonTypeInfo overloads and enabled IsAotCompatible analyzers.",
+  "verification": "Native program independently asserts g(V)+j*omega*C branch values and conduction descriptor, then prints the observed result.",
+  "limitations": [
+    "One Windows x64 typed constant-charge AC example, not whole-SDK or cross-platform NativeAOT qualification.",
+    "Development file-app helpers still execute managed; required StrictDoc/Sphinx Python runtimes remain."
+  ],
+  "execution_dependency_unchanged_before_after": true
+}

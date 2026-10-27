@@ -1,65 +1,87 @@
-Checkpoint 434 completes all 100 implementation steps; perform final deep review/fixes 435 next. Read evidence/models-434-qualification.md. Fresh Stryker run 20261027T012716Z-e12a0f1b is pending; do not invent its counts.
+# Spice qualification handoff — completed campaign
 
-# Spice repository handoff prompt
+The user-authorized five-area campaign is complete under the documented 100+1
+interpretation: repository iterations 335–434 plus final review/fixes 435. Read
+AGENTS.md, docs/implementation-plan.sdoc, docs/architecture.sdoc,
+docs/development-standards.sdoc, docs/qualification-campaign.md, current Git state
+and evidence/final-435-review.md before new changes. Do not restart the completed
+quota or infer full M1 closure from this finite campaign.
 
-You are continuing work on **Spice**, a Rust circuit-simulation repository. Work from the repository root and preserve its user defaults:
+The active engineering objective remains convergence hardening, direct sparse
+assembly/CPU-provider qualification, bounded model contracts and selected ngspice
+corpus/oracle growth. Use PowerShell and C#/F#, small verified commits, StrictDoc
+stable IDs/traceability, meaningful mutation/property/malformed-input checks and
+honest coverage. Preserve unknown local work. GitHub CI remains undispatched.
+Future push/iteration cadence must follow the new task rather than replaying this
+completed request. The existing Spice results-branch workflow remains authorized
+only within its documented scope; raw artifacts stay local.
 
-- Use PowerShell for shell/file work and C# or F# for substantive scripts.
-- Keep StrictDoc authoritative. Add stable requirement IDs and source/test evidence for each implemented capability.
-- Document public interfaces and numerical conventions. Run meaningful malformed-input, randomized/property, mutation, and coverage checks; report real limitations.
-- Commit locally in small numbered iterations. Build at the stated checkpoint cadence. Do not claim GPU, plugin, Arrow, full SPICE compatibility, or production qualification without evidence.
+Implemented finite slices:
 
-Current implementation through the M1 qualification tranche extensions (remote
-`main` numerical core at checkpoint 320, qualification tooling through iteration 333):
+- Source/Gmin continuation validates nested policies, finite scales, correction
+  shapes, terminal failures and representable progress; staged Gmin always ends
+  with the unregularized physical solve. Preserve the tight bridge counterexample.
+- Direct canonical CSC AC/linear BE/trapezoidal, genuine complex excitation,
+  independent residuals, owned faer real factors and exact-step cache. Prepared
+  complex reuse and general rank qualification remain open; dense references and
+  nonlinear Newton retain the bounded reference path.
+- Explicit diode_with_capacitance composes Shockley conduction with positive
+  constant Q=C*V. Independent derivatives, history/domain/unit/audit, generated,
+  composition and named ngspice checks exist. i_conduction(id) excludes displacement.
+  No depletion/transport/series or general temperature-scaled IS is implemented.
+- The ngspice importer now preserves DC bias independently of AC excitation and
+  assigns zero AC drive to DC-only sources. CJO/CJ0 requires explicit M=0 and
+  zero supported RS/TT. Original diode AC/transient oracles retain nominal
+  temperature, interpolation/rounding/BE bounds; UIC importer support is not implied.
+- Typed C# profile/phasors preserve legacy diode shape and Ac constructor and
+  deconstruction signatures. Core serialization uses explicit generated metadata;
+  trimming/AOT analyzers pass and a Windows x64 TypedCharge native publish/run
+  asserts independent equations. Whole-SDK/Linux AOT remains unqualified.
 
-- Bounded dense MNA engine for R/C/L, independent sources, DC/AC/linear transient.
-- Independent faer sparse and nalgebra dense CPU paths.
-- C#/F# JSON clients, artifacts, variation grids and deterministic sampling.
-- Bounded Shockley diode DC operating-point path: validated SI parameters, analytic residual/Jacobian, finite-difference derivative corpus, damped Newton solve, explicit options, convergence report, diode netlist and C# DTO support.
-- Diode AC bias linearization plus fixed-step and configured backward-Euler nonlinear diode stepping are available with analytic Newton residuals/Jacobians and rollback-safe committed history. Other nonlinear integration methods fail explicitly.
-- ngspice deck lowering covers selected directives, continuation lines, ground aliases, bounded subcircuits/parameters/expressions, `.model D`, `.temp`, and explicit bounded options.
-- Source syntax includes compact and whitespace waveform forms for PULSE, SIN, PWL, and EXP. AC source magnitude/phase and R/C/L AC values are represented.
-- Controlled source support includes VCVS, VCCS, CCCS, and CCVS with dedicated compatibility tests.
-- Configured nonlinear backward-Euler supports bounded adaptive/source-override stepping and source breakpoints. DC source continuation, explicit fixed Gmin, and bounded staged Gmin continuation are available. Gmin continuation records every regularized warm-start stage and always finishes with an unregularized physical solve; it is mutually exclusive with source continuation.
-- Compiler-owned canonical CSC stamps are consumed directly by faer for linear DC. Dense matrices remain bounded reference/fallback representations; sparse AC/transient and large-circuit performance are not claimed.
+Final measured evidence:
 
-The 311-320 slice adds independent DC/legacy-BE physical audits, bounded topology diagnostics, typed audit manifests, explicit refinement comparisons and structured stderr tracing. Read docs/consistency.sdoc and evidence/consistency-qualification.md for scope and evidence; AC/configured-transient physical auditing and global accuracy remain explicitly not_checked.
+- 345 Rust tests, 29 managed conformance checks, 70 Windows and 70 Linux xUnit cases.
+- Proptest: 16 properties at 4096 requested cases each, 65536 total requested;
+  default seed 0x5350494345333535, replay/shrink work counted separately.
+- Owned Rust lines 5342/5783 (92.37%); native branches unavailable. All 77 LLVM
+  warnings match five attributed dependency symbols, no owned/unclassified symbols.
+- Owned client Coverlet: 166/174 lines, 109/112 branches. Helper/vendor scopes are
+  separate. Coverage alone is not correctness or qualification.
+- Final Stryker: 200 candidates, 88 caught, one survived, one timeout, 103 compile
+  errors, seven ignored. The BOM-flag survivor is likely equivalent for decoding
+  only, not formally proved. Do not count timeouts/invalid/ignored as caught.
+  Client/test snapshot hashes match final source; the frozen native dependency
+  has a distinct recorded binary hash from a later ordinary build. Do not equate
+  binary identities or infer deterministic builds from source identity.
+- Earlier native selections remain source-scoped: charge ten caught/four unviable
+  of fourteen, initial signs three caught of three, dynamic operators twenty caught
+  of twenty. Preserve historical AC/Newton survivors and all outcome categories.
+- StrictDoc 0.30.4: 14 documents, 256 unique IDs, 243 resolved parent relations.
+  scripts/ValidateRequirements.cs runs the real parser plus global identity checks;
+  successful parsing does not establish behavioral closure. Sphinx 9.1 projects
+  230 compiled XMLDoc entries with warnings as errors.
+- Nine synthetic remote-publication Pester tests pass. No new full-hour/five-hour
+  campaign or full remote workflow is claimed by these short checks.
 
-Start by reading `README.md`, `docs/implementation-status.md`, `docs/ngspice-compatibility.sdoc`, `docs/fourth-slice.sdoc`, `docs/campaign-2-to-5.html`, `compat/ngspice/selected-fixtures.json`, `evidence/mutation.json`, and `evidence/iterations.md`.
+For reproduction, locate the existing checkout on this host; verify its directory
+before changing into it. From that checkout, use scripts/HostTools.ps1 and the
+pinned runtime, then scripts/Checkpoint.cs -- 435, scripts/ManagedCoverage.cs and
+scripts/ValidateRequirements.cs -- --python <configured StrictDoc Python> --report
+<existing evidence directory>/requirements.json. Native coverage uses
+scripts/Test-Coverage.ps1 with the existing WSL native checkout/toolchain. Keep
+Windows/Linux outputs isolated. Read docs/mutation-frameworks.md, property-testing.md
+and remote-runs.md for replay, setup, configurable budgets and result publication.
 
-Current evidence: checkpoint 320 passed 242 Rust tests, 28 managed checks, formatting and Clippy with warnings denied; all 12 StrictDoc documents parsed. The selected-fixture manifest and named external oracles retain their prior qualification evidence; this slice did not rerun ngspice. Independent ngspice checks pass for `res_simple` current and `res_partition` AC voltage at 1e-12; `lowpass` AC passes at 5e-8 because ngspice's `.print` output rounds its complex components. The 22/22 selected mutations were killed; checkpoint-320.json and evidence/mutation.json retain the exact counts and source hashes; see evidence/continuation-qualification.md for the added Gmin operators and physical oracles. Fuzz-smoke, malformed-input, and randomized/property tests are included in the Rust suite. Managed client coverage was rerun: 140/151 owned lines and 51/66 mapped branches; see evidence/managed-coverage.json. Historical checkpoint-320 Windows coverage was blocked by MSVC tooling. Build Tools/SDK installation and a native compile/link/run probe have since succeeded; Windows Rust instrumentation still needs measurement.
+The historical e85c1e2 one-hour campaign completed 3599.04 seconds and 50,987,008
+custom seeded cases, 22/22 selected custom mutants, with its own published results
+branch. Preserve the two failed partial predecessors. Never relabel that hour as
+cargo-mutants/Stryker evidence. Nightly midnight five-hour scheduling is unchanged.
 
-For authoring evolution, read `docs/modern-dsl-proposal.sdoc` before designing a parser. SForge is a proposal only: keep the current JSON protocol stable until an AST/IR and migration contract are implemented.
-
-An overnight campaign is now configured for midnight local time (five-hour maximum) with a 05:05 review. Use make endurance or scripts/Run-Endurance.ps1. Read docs/endurance.md and evidence/endurance-qualification.md; no completed five-hour run is claimed. Campaigns test immutable source archives and keep generated artifacts in ignored work/target paths.
-
-Checkpoint 424 completes 415–424: read evidence/models-424-qualification.md and
-resume at 425, with checkpoint 434 and final review/fixes 435 still required.
-339 Rust tests, 29 managed checks and 64 Windows/Linux xUnit cases pass. Fresh
-Rust lines 5290/5738, Coverlet lines 164/172 and branches 109/112; native branches
-unavailable. Charge mutations: ten caught, four unviable, no survivor of fourteen.
-
-Suggested next technical work:
-
-1. Extend difficult-circuit evidence beyond the current-driven diode recovery, impossible physical reverse bias, and bounded stage-exhaustion cases in tests/continuation.rs; see evidence/continuation-qualification.md. Do not infer broad convergence guarantees from this small topology.
-2. Read evidence/sparse-394-qualification.md and evidence/sparse-404-qualification.md for finite direct sparse AC/linear transient evidence. Iterations 405–413 add source-history, numeric-support and named transient oracle cases; checkpoint 414 measurement is pending. Then continue bounded models 415–434 and final deep review/fixes 435. Prepared complex reuse remains unimplemented; nonlinear DC/transient Newton remains bounded reference work.
-Checkpoint 404 now implements the first sparse transient tranche: read evidence/sparse-404-qualification.md and resume at 405. Linear legacy BE/configured BE/trapezoidal consume direct CSC; configured faer factors are owned and cached by exact step. Close the previous-excitation mutation gap and tighten source-history/oracle evidence next. Nonlinear Newton remains the reference path.
-Checkpoint 414 now completes the finite sparse transient allocation: read evidence/sparse-414-qualification.md and resume at 415 for bounded models, followed by 424/434 checkpoints and final deep review/fixes 435. Dynamic operator replay completes 20/20 caught; no whole-core mutation, full rank, full SPICE/GPU or production claim follows.
-3. Grow the selected ngspice corpus cautiously, adding upstream hashes, copied attribution, parser/lowering tests, and named oracle comparisons before claiming support.
-4. Expand device models only after equation, derivative, domain, unit, limiting/correction, and convergence contracts are written.
-
-Run `dotnet run --file scripts/Checkpoint.cs -- <positive-checkpoint-iteration; current campaign 344,354,...434>` for checkpoints. Re-parse all `.sdoc` files after requirement changes. Run `dotnet run scripts/Validate-NgspiceFixtureManifest.cs -- compat/ngspice/selected-fixtures.json` after corpus changes and both `scripts/Compare-Ngspice*Oracle.cs` scripts when their fixtures change. `scripts/Test-Coverage.ps1` now selects a nightly MSVC coverage toolchain containing `profiler_builtins`; Build Tools and the Windows SDK are now installed; rerun instrumentation before reporting Windows Rust coverage.
-
-Iterations 323–333 add portable setup, bounded result-branch publication, checkpoint sharing retries and pinned cargo-mutants/Stryker.NET integration. Read docs/remote-runs.md, docs/mutation-frameworks.md, docs/consistency.sdoc (MUT-001/MUT-002) and their evidence reports. Linux/WSL2 Rust line coverage is measured at 4,396/4,887 (89.95%); Rust branch coverage is unavailable. Visual Studio Build Tools/SDK installation has since succeeded and a native compile/link/run probe passed; Windows instrumented Rust coverage still needs to be rerun before a percentage is claimed.
-
-The requested one-hour run on e85c1e2 finished at 3,599.04 seconds, 50,987,008 seeded cases, 22/22 selected mutants detected; it predates framework integration. Its remote-runs/windows-x64-hour-20261026/20261026T163309Z-fd18724d-e85c1e2eff7f branch is published. Earlier partial failures remain preserved. Never relabel that hour as cargo-mutants/Stryker evidence.
-
-Generated mutation tooling uses cargo-mutants 27.1.0 and Stryker.NET 5.0.0. Current nightly/remote endurance runs prioritize the generated frameworks, then Proptest library batches; selected custom regressions are explicit opt-in. Framework counts remain separate: survivors, timeouts, invalid, uncovered, ignored and unattempted mutants are not test-detected kills. Short framework runs and measured coverage scopes are in evidence/framework-mutation-qualification.md; no completed five-hour campaign, exhaustive source mutation, full SPICE/GPU or production qualification is claimed.
-
-Current campaign: read docs/qualification-campaign.md and evidence/continuation-344-qualification.md. Iterations 335–344 complete; resume at 345. Preserve the tight bridge counterexample and nine generated mutation survivors. Continue authorized ten-step checkpoint pushes through 434 and final review/fixes 435 under the documented 100+1 interpretation.
-
-Checkpoint 354: continuation steps 335–354 complete; resume at 355. Read evidence/continuation-354-qualification.md. Linux coverage percentages are provisional because LLVM reported 62 function mapping mismatches in both recent exports. Cargo-mutants run 20261026T223639Z-47d7e857 remains active; review its real counts when complete. Do not overwrite or relabel prior evidence.
-
-Checkpoint 364 completes steps 21–30 (355–364); resume at 365. Read evidence/testing-364-qualification.md and docs/property-testing.md. LLVM mismatch attribution now identifies only two duplicated tracing_core dependency functions, no owned symbols; keep raw warnings. Coverlet measured 158/166 owned client lines and 90/98 branches. The native all-test limited_candidate campaign is still pending and Stryker must be rerun after the new managed tests.
-
-Checkpoint 374 completes campaign steps 1–40 (335–374); resume at 375 for direct sparse AC. Read evidence/testing-374-qualification.md. Full build: 274 Rust tests, 29 managed checks, 58 xUnit cases. Native focused mutation: 32 caught/one survivor of 33; Stryker: 82 caught, seven survived, one timeout, 103 compile errors and seven ignored of 200. Preserve all categories separately. Owned-package mutation caches are refreshed before baseline, and escaped native name filters fail before mutation. Current Linux coverage is 4541/5026 lines with attributed dependency warnings; managed Coverlet is 161/169 lines and 109/112 branches. Two-minute Proptest smoke metadata retains its actual e839b20 provenance, not the latest source. The 1e-16 A bridge replay still fails; preserve it. No new full-hour/five-hour or GPU/production qualification is claimed. Final review/fixes remain iteration 435 under the documented interpretation.
+Concrete future work: broaden difficult topology/oracle evidence, triage retained
+mutation survivors/invalid generation, qualify additional numerical/provider error
+paths and native branches where supported, add prepared complex reuse or general
+rank diagnostics only with requirements/evidence, then consider further explicitly
+bounded semiconductor models. Automatic AC/configured physical audits, full DAE
+qualification, coverage-guided fuzzing, broad SPICE syntax/devices, GPU and
+production release gates remain open. The unitless legacy absolute_tolerance is
+validated compatibility data; actual convergence uses voltage/current tolerances.

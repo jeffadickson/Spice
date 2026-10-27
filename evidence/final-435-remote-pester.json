@@ -1,0 +1,8 @@
+{
+  "tool": "Pester 3.4.0",
+  "suite": "tests/Remote.Tests.ps1",
+  "passed": 9,
+  "failed": 0,
+  "skipped": 0,
+  "limitations": "Synthetic local bare-remote publication fixtures; no external GitHub CI or numerical campaign execution."
+}

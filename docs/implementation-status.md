@@ -1,7 +1,7 @@
 # Implementation status
 
 The 100-step qualification campaign (repository iterations 335–434) is complete;
-final review/fixes 435 are being verified. The StrictDoc implementation plan's full
+final review/fixes 435 are complete with recorded verification. The StrictDoc implementation plan's full
 work packages retain Proposed status; these finite slices do not close M1 release
 gates. Use the latest checkpoint/evidence hashes rather than historical counts.
 
@@ -21,10 +21,10 @@ SForge v0.1 remains a bounded primitive-transient authoring/lowering path; its
 proposal is broader than implemented behavior. Campaigns remain bounded/sequential;
 no general parallel numerical scheduling or production plugin sandbox is implied.
 
-Checkpoint 434 evidence: [models-434-qualification.md](../evidence/models-434-qualification.md).
-Fresh measured scopes there are Rust 5310/5750 owned lines, client 166/174 lines
-and 109/112 branches; native branches are unavailable. These are checkpoint
-metrics, not automatically the metrics for later review edits.
+Final evidence: [final-435-review.md](../evidence/final-435-review.md).
+Fresh measured scopes are Rust 5342/5783 owned lines, client 166/174 lines
+and 109/112 branches; native branches are unavailable. Counts and scopes are
+separate from correctness, whole-project qualification and vendor coverage.
 
 The historical e85c1e2 one-hour run completed 3599.04 seconds and 50,987,008
 custom seeded cases with 22/22 selected custom mutants; it predates framework

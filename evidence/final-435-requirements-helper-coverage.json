@@ -1,0 +1,28 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "metrics": [
+    {
+      "file": "scripts/ValidateRequirements.cs",
+      "source_sha256": "3917facf81da105c2a17447d9f37bf25d8f40750fab8ac8a8986ee6a006675f7",
+      "scope": "Positive/duplicate/unresolved-parent identity probes and actual pinned StrictDoc parsing. Missing-tool, parser error, input-growth and process-timeout paths are not injected.",
+      "local_report": "build/qualification-campaign/435-requirements.cobertura.xml",
+      "lines": 60,
+      "covered_lines": 57,
+      "line_percent": 95,
+      "branches": 62,
+      "covered_branches": 45,
+      "branch_percent": 72.58064516129032
+    }
+  ],
+  "limitations": [
+    "Mapped source-line and per-line maximum branch counts; not complete path coverage.",
+    "Owned client Coverlet metrics are separate; native executable and vendor internals are excluded.",
+    "PowerShell subprocess command/branch metrics, full native installers, Linux helper paths and vendor internals are unmeasured.",
+    "Synthetic supervisor/publication fixtures do not qualify numerical simulator execution."
+  ],
+  "executed_command_sequence": [
+    "dotnet run --file scripts/ValidateRequirements.cs -- --self-test",
+    "dotnet run --file scripts/ValidateRequirements.cs -- --python <configured StrictDoc Python> --report evidence/final-435-strictdoc.json"
+  ],
+  "collection": "Both commands executed under one dotnet-coverage 18.12 process/subprocess session, direct Cobertura output. The local PowerShell driver only serializes those invocations."
+}

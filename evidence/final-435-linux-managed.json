@@ -1,0 +1,52 @@
+{
+  "status": "passed",
+  "source_revision": "3d7360de5299b98cf2479e0499b4df93cd5f018a",
+  "sdk": "10.0.402",
+  "command": "dotnet test dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj",
+  "passed": 70,
+  "failed": 0,
+  "skipped": 0,
+  "duration_reported_seconds": 8,
+  "engine_sha256": "c0a19307a0a3956cb47a687b2bf798f0b4a7b31b819c31ae1492f40fd4826ade",
+  "source_hashes": {
+    "dotnet/Simulator.Client/Client.cs": "1f5bfeaa871cef2bc6dfd2647072217cf1d52cbb778abc624778bdf5f03d914a",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Client.Tests/AcContracts.cs": "4695699a993afd366d514d2028db1368ad15209a28ba75871a1ce6c405a4dd78",
+    "dotnet/Simulator.Client.Tests/ChargeContracts.cs": "9a11fa17ed68b315b018113038b0b41c74e200c4139b7b47352210ad5d405dda",
+    "dotnet/Simulator.Client.Tests/ClientContracts.cs": "a9b82db1782b37b2e6a976e9e45bec519ccb77484df1f1b94ad1dff5e7d8d601",
+    "dotnet/Simulator.Client.Tests/ClientProperties.cs": "dab43f2a63ad038fe3c22abdabacaab7fa5397b9e0eb26baf781c4a1274c9496",
+    "dotnet/Simulator.Client.Tests/ManifestContracts.cs": "f12369b27d8903c2d155a59c7b73cf53d8e3b89566cc4fd5c18b035652f5bd2a",
+    "dotnet/Simulator.Client.Tests/TransportContracts.cs": "bb75b0b4d39c55473ce6787613f0ba4b49556f9b0bacb876f51aaea920f6f0df",
+    "dotnet/Simulator.Conformance/ConformanceChecks.cs": "9fc479bd949295794436181eaf2b9ca697f299500d7125ca3130e7e2c369e1dd",
+    "dotnet/Simulator.Conformance/MoreChecks.cs": "2cb0919e93f6ad0548a797a26da6751172511d089bf23f7914e14b9b3ca69091",
+    "dotnet/Simulator.Conformance/Program.cs": "faadba429c626608454ed8ee9f59004e4ef36dde4b2bc1676b86de5f56dcce7b",
+    "dotnet/Simulator.TransportFixture/Program.cs": "da079637a66a7a1250423eb69705fa2d1aafdc195c8af70533df62a0bee52bf7"
+  },
+  "limitations": "Functional Linux execution, not a coverage collection. Native engine built with Rust instrumentation; managed profiles excluded from Rust coverage run.",
+  "normalized_source_hashes": {
+    "dotnet/Simulator.Client/Client.cs": "1f5bfeaa871cef2bc6dfd2647072217cf1d52cbb778abc624778bdf5f03d914a",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Client.Tests/AcContracts.cs": "4695699a993afd366d514d2028db1368ad15209a28ba75871a1ce6c405a4dd78",
+    "dotnet/Simulator.Client.Tests/ChargeContracts.cs": "9a11fa17ed68b315b018113038b0b41c74e200c4139b7b47352210ad5d405dda",
+    "dotnet/Simulator.Client.Tests/ClientContracts.cs": "a9b82db1782b37b2e6a976e9e45bec519ccb77484df1f1b94ad1dff5e7d8d601",
+    "dotnet/Simulator.Client.Tests/ClientProperties.cs": "dab43f2a63ad038fe3c22abdabacaab7fa5397b9e0eb26baf781c4a1274c9496",
+    "dotnet/Simulator.Client.Tests/ManifestContracts.cs": "f12369b27d8903c2d155a59c7b73cf53d8e3b89566cc4fd5c18b035652f5bd2a",
+    "dotnet/Simulator.Client.Tests/TransportContracts.cs": "bb75b0b4d39c55473ce6787613f0ba4b49556f9b0bacb876f51aaea920f6f0df",
+    "dotnet/Simulator.Conformance/ConformanceChecks.cs": "9fc479bd949295794436181eaf2b9ca697f299500d7125ca3130e7e2c369e1dd",
+    "dotnet/Simulator.Conformance/MoreChecks.cs": "2cb0919e93f6ad0548a797a26da6751172511d089bf23f7914e14b9b3ca69091",
+    "dotnet/Simulator.Conformance/Program.cs": "faadba429c626608454ed8ee9f59004e4ef36dde4b2bc1676b86de5f56dcce7b",
+    "dotnet/Simulator.TransportFixture/Program.cs": "da079637a66a7a1250423eb69705fa2d1aafdc195c8af70533df62a0bee52bf7"
+  },
+  "normalization": "UTF-8 text without BOM, CRLF replaced by LF; raw source hashes remain retained separately.",
+  "manifest_hashes": {
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "84d66c3c98bddddcd65037643b0cd3b18d35c414fed665fb9f15bcc96f55180f",
+    "dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj": "06b8f8f15b9de2f999a745f23d68f676c36a9c37e78b79247d788fc856d3b814"
+  }
+}

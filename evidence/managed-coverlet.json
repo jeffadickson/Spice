@@ -1,11 +1,11 @@
 {
   "collector": "coverlet.collector 10.1.0",
   "report_generator": "5.5.11",
-  "source_commit": "316f722e797ef28be511aaaf92e02c92f729c227",
+  "source_commit": "3d7360de5299b98cf2479e0499b4df93cd5f018a",
   "source_dirty": true,
   "source_hashes": {
-    "dotnet/Simulator.Client/Client.cs": "42c580856a6481e4bc221ee73228e343b95bae249cb3e72ef4410aff18157611",
-    "dotnet/Simulator.Client/Requests.cs": "75a5c35344060ac191d10143777ee3899d584d980b2a3152e20061446866e324",
+    "dotnet/Simulator.Client/Client.cs": "1f5bfeaa871cef2bc6dfd2647072217cf1d52cbb778abc624778bdf5f03d914a",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
     "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
     "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
     "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9"
@@ -15,8 +15,8 @@
     "dotnet/Simulator.Client.Tests/ChargeContracts.cs": "9a11fa17ed68b315b018113038b0b41c74e200c4139b7b47352210ad5d405dda",
     "dotnet/Simulator.Client.Tests/ClientContracts.cs": "9a27d986de2e7fc880152f52190342f86fe3dc8d870222f3d222b45664326e9d",
     "dotnet/Simulator.Client.Tests/ClientProperties.cs": "dab43f2a63ad038fe3c22abdabacaab7fa5397b9e0eb26baf781c4a1274c9496",
-    "dotnet/Simulator.Client.Tests/ManifestContracts.cs": "a4c3fb373e4d496d4827db9e29160a94d45f5b6a6cfb447d750dd40dae264fef",
-    "dotnet/Simulator.Client.Tests/TransportContracts.cs": "b7825f64176153d4c2c23a385b12ad50a9c7d95568b48ee479896f3ed6b4ef2e",
+    "dotnet/Simulator.Client.Tests/ManifestContracts.cs": "f12369b27d8903c2d155a59c7b73cf53d8e3b89566cc4fd5c18b035652f5bd2a",
+    "dotnet/Simulator.Client.Tests/TransportContracts.cs": "bb75b0b4d39c55473ce6787613f0ba4b49556f9b0bacb876f51aaea920f6f0df",
     "dotnet/Simulator.Conformance/ConformanceChecks.cs": "7f2069aac6bb9791114247cd5b9cbe63c80a503e930d297807790ebfdbb89708",
     "dotnet/Simulator.Conformance/MoreChecks.cs": "2cb0919e93f6ad0548a797a26da6751172511d089bf23f7914e14b9b3ca69091",
     "dotnet/Simulator.Conformance/Program.cs": "e33e7c131f9231c2a60ddc1cc1123194a05beb1b9b0eb927d4a9c65d1ab653bc",
@@ -30,8 +30,8 @@
   "covered_lines": 166,
   "branches": 112,
   "covered_branches": 109,
-  "report_sha256": "af3902c7bc81b7fe10c73788c4cd13fa5157a81c08f96b6e7d0a895f8e8c7311",
-  "local_report": "build/managed-coverage/c959a238fdf14f158b0cd7050632e28c/76fc18a1-cd1e-4d1c-95e2-572c95b5813c/coverage.cobertura.xml",
+  "report_sha256": "f4a81ac60d329ed11099902b37982188be384087c1fed182fa462f50ae62aa97",
+  "local_report": "build/managed-coverage/96e9f05865f347b28c155b226dc6d73f/256a9ece-d003-41b7-8e7d-41d100a06a0d/coverage.cobertura.xml",
   "limitations": [
     "Owned Simulator.Client assembly, excluding obj-generated sources; fixture/test/native/vendor code excluded.",
     "Coverlet branch mapping differs from historical dotnet-coverage; percentages are not directly comparable.",

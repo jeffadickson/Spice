@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "command": "PROPTEST_CASES=4096 cargo test --test property_campaign",
+  "properties": 16,
+  "requested_cases_per_property": 4096,
+  "requested_cases_total": 65536,
+  "seed": "0x5350494345333535",
+  "source_sha256": "0fa9c55012f8258a090ed2a2d4c875466b45291cc677d0a14249a9469394e0f8",
+  "log_sha256": "63e0138dc72e82c4fd12a829fb56ca180d389940f23e4626832840cef73b49ff",
+  "limitations": "Requested library cases; replay/shrinks are additional and not counted here. This is Proptest generation, not coverage-guided fuzzing or exhaustive correctness."
+}
