@@ -1,4 +1,5 @@
-//! Bounded linear-circuit reference engine. Sparse/GPU/nonlinear qualification is not claimed.
+//! Bounded circuit engine with finite sparse CPU and nonlinear evidence.
+//! Full SPICE, GPU, global convergence and production qualification are not claimed.
 pub mod ac;
 pub mod adaptive;
 pub mod api;

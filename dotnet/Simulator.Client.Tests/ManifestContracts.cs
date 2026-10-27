@@ -83,7 +83,14 @@ public sealed class ManifestContracts
     public void NullManifestAndUnknownOuterVersionCannotBeRead()
     {
         Assert.NotEmpty(Assert.Throws<InvalidDataException>(() => Response(null).ReadManifest()).Message);
-        Assert.Throws<InvalidDataException>(() => Response(Valid(), "2").ReadManifest());
+        Assert.NotEmpty(Assert.Throws<InvalidDataException>(() => Response(Valid(), "2").ReadManifest()).Message);
+    }
+
+    [Fact]
+    public void MissingFinalDescriptorHasTheDeclaredKeyError()
+    {
+        var response = Response(Valid());
+        Assert.Throws<KeyNotFoundException>(() => response.FinalValue("v(missing)"));
     }
 
     [Fact]

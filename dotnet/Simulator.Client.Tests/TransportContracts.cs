@@ -5,6 +5,15 @@ using Xunit;
 /// <summary>Adversarial native-process envelopes, isolated from the real numerical engine.</summary>
 public sealed class TransportContracts
 {
+    [Fact]
+    public async Task OneByteAboveDiagnosticLimitFails()
+    {
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Fixture().RunJsonAsync(
+            JsonSerializer.Serialize(new { flood = "stderr", blocks = 4096, diagnostics = "x",
+                output = """{"schema_version":"1","status":"succeeded","complete":true}""" }), deadline.Token));
+        Assert.Contains("32 MiB", error.Message);
+    }
     [Theory]
     [InlineData("stdout")]
     [InlineData("stderr")]

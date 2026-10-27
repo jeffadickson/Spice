@@ -54,6 +54,8 @@ public sealed record OperatingPoint : Analysis;
 /// <summary>Explicit bounded nonlinear DC convergence policy.</summary>
 public sealed record OperatingPointNewton(NewtonOptions Options) : Analysis;
 /// <summary>Optional source continuation is explicit so ordinary operating-point semantics remain unchanged.</summary>
+/// <remarks>AbsoluteTolerance is a validated legacy wire field. Convergence uses
+/// VoltageAbsoluteTolerance and CurrentAbsoluteTolerance with their SI dimensions.</remarks>
 public sealed record NewtonOptions(int MaxIterations = 50, double AbsoluteTolerance = 1e-12,
     double RelativeTolerance = 1e-9, ContinuationOptions? Continuation = null, double? GminSiemens = null,
     double VoltageAbsoluteTolerance = 1e-9, double CurrentAbsoluteTolerance = 1e-12,

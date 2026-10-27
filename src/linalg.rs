@@ -194,7 +194,7 @@ impl PreparedSparseReal {
             return Err(SimError::invalid("invalid prepared sparse excitation"));
         }
         let values = (self.solve)(rhs)?;
-        crate::dc::verify_csc_solution(&self.matrix, rhs, &values)?;
+        crate::solver_contract::verify_csc_solution(&self.matrix, rhs, &values)?;
         Ok(values)
     }
 }

@@ -30,6 +30,35 @@ fn configuration() -> Config {
 proptest! {
     #![proptest_config(configuration())]
     #[test]
+    fn qr_refinement_never_worsens_componentwise_error(
+        off in prop::collection::vec(-1_f64..1.,9),
+        scales in prop::collection::vec(-6_i32..6,3),
+        expected in prop::collection::vec(-2_f64..2.,3)
+    ) {
+        // Strict row diagonal dominance ensures a unique system. Independent
+        // row scales challenge mixed units without choosing singular samples.
+        let mut coefficients=off;
+        for row in 0..3 {
+            coefficients[row*3+row]+=4.;
+            for column in 0..3 {coefficients[row*3+column]*=10_f64.powi(scales[row]);}
+        }
+        let matrix=Matrix {n:3,values:coefficients.clone()};
+        let rhs:Vec<_>=(0..3).map(|row| (0..3).map(|col| coefficients[row*3+col]*expected[col]).sum()).collect();
+        let raw=nalgebra::DMatrix::from_row_slice(3,3,&coefficients).qr().solve(&nalgebra::DVector::from_column_slice(&rhs)).unwrap();
+        // Measure independently without applying acceptance: even a unique,
+        // scaled system can have an unrefined vector outside the 1e-10 policy.
+        // Exact-zero rows can normalize tiny rounding residuals to one.
+        let error=|values:&[f64]| coefficients.chunks_exact(3).zip(&rhs).map(|(row,b)| {
+            let products:Vec<_>=row.iter().zip(values).map(|(a,x)| a*x).collect();
+            (products.iter().sum::<f64>()-b).abs()
+                /(b.abs()+products.iter().map(|v| v.abs()).sum::<f64>()).max(f64::MIN_POSITIVE)
+        }).fold(0_f64,f64::max);
+        let before=error(raw.as_slice());
+        let improved=DenseQr.solve(&matrix,&rhs).unwrap();
+        let after=error(&improved);
+        prop_assert!(after<=before*(1.+1e-14)+f64::MIN_POSITIVE);
+    }
+    #[test]
     fn generated_composite_be_matches_signed_two_terminal_equations(
         c_exp in -12_i32..-3, is_exp in -15_i32..-5,
         ratio in -6_f64..6., prior_ratio in -6_f64..6.,

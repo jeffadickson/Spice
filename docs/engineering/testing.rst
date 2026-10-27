@@ -21,3 +21,10 @@ Coverlet 10.1.0 and ReportGenerator 5.5.11 measure the owned managed client.
 Rust LLVM line coverage excludes test/vendor internals; branch metrics remain
 unavailable in the qualified instrumentation. Always retain source/tool identity,
 exact coverage scope, warnings, seeds and unresolved counterexamples.
+
+Use ``scripts/ValidateRequirements.cs -- --python <StrictDoc Python> --report
+<existing-parent>/requirements.json`` from the checkout. Real StrictDoc parses
+the grammar; the C# supervisor also rejects duplicate stable IDs and unresolved
+parents across documents and checks unchanged source hashes. Its ``--self-test``
+exercises positive, duplicate and missing-parent cases. This gate validates
+structure and identity, not behavioral requirement closure.

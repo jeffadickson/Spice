@@ -344,3 +344,31 @@ Implementation: scripts/FrameworkMutations.cs. Verification: --snapshot-self-tes
 RELATIONS:
 - TYPE: Parent
   VALUE: MUT-002
+
+[REQUIREMENT]
+UID: NUM-001
+STATUS: Draft
+TITLE: Bounded nonworsening QR refinement
+STATEMENT: >>>
+The reference QR adapter shall retain a nonworsening independent componentwise backward error during at most three same-precision refinement corrections, reject nonfinite corrections, and leave final numerical acceptance to the analysis. Equal-error corrections may continue within the fixed budget. Unique algebraic solutions shall not be treated as guarantees of representable numerical accuracy.
+<<<
+COMMENT: >>>
+Implementation: src/backend.rs. Verification: tests/property_campaign.rs::qr_refinement_never_worsens_componentwise_error, mixed row scales and independently computed error; final-435-qr-counterexample.json retains a rejected test hypothesis about raw QR accuracy. Existing analytical circuit regressions remain independent acceptance evidence.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: REQCHECK-001
+STATUS: Draft
+TITLE: Parsed requirements with global stable identity
+STATEMENT: >>>
+Qualification requirements validation shall execute the pinned real StrictDoc parser, reject duplicate UIDs and unresolved parent references across the document set, and verify source hashes remain unchanged during validation. Successful structure validation shall not imply behavioral requirement closure.
+<<<
+COMMENT: >>>
+Implementation: scripts/ValidateRequirements.cs, also used by RemoteQualification.cs. Verification: positive/duplicate/missing-parent helper self-tests and actual repository parsing; the earlier draft MUT-003 collision was corrected to MUT-004 before checkpoint 434 publication.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003

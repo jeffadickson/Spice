@@ -1,52 +1,42 @@
 # Implementation status
 
-Current checkpoint 394 verifies campaign steps 1–60. Source/Gmin hardening,
-maintained generated-test workflows and the bounded direct sparse AC tranche are
-implemented. AC evidence includes complex RHS, diode incremental CSC, resource
-boundaries, analytical RC/RLC/controlled-source/diode checks and named ngspice
-LU/faer comparisons. Dense compiler references and nonlinear DC bias remain
-bounded; complex prepared reuse is not implemented. Sparse transient, further
-model contracts and final review remain active. Read the current campaign ledger
-and checkpoint evidence for actual mutation/coverage limitations.
+The 100-step qualification campaign (repository iterations 335–434) is complete;
+final review/fixes 435 are being verified. The StrictDoc implementation plan's full
+work packages retain Proposed status; these finite slices do not close M1 release
+gates. Use the latest checkpoint/evidence hashes rather than historical counts.
 
-Iterations 395–403 implement direct sparse linear BE/trapezoidal assembly and
-independent real-CSC acceptance, owned faer real factors and configured exact-step
-caching. Finite tests cover factor identity, terminal failures, accepted observers,
-adaptive rejection and fresh PWL excitation. Generated RC recurrences and arbitrary
-dynamic inputs use Proptest shrinking/replay. Checkpoint 404 measurement is pending;
-nonlinear transient Newton remains a bounded reference path.
-Testing campaign 355–364 adds Proptest/FsCheck library generation and shrinking,
-isolated subprocess contracts for the .NET client, and Coverlet/ReportGenerator.
-See [replay instructions](property-testing.md); checkpoint 374 migrated overnight
-batches to Proptest and made maintained mutation frameworks primary. Full
-SPICE/GPU/production qualification remains open.
-
-Earlier checkpoint: iterations 335–344 harden continuation/provider
-boundaries and add independent coupled-diode oracles. See
-[checkpoint evidence](../evidence/continuation-344-qualification.md) and
-[the active campaign](qualification-campaign.md). Full checkpoint: 257 Rust tests,
-29 managed checks; nine focused cargo-mutants survivors remain unresolved.
-
-The fifth slice adds **bounded fixed-step nonlinear diode transient stepping** using backward-Euler residuals and analytic damped Newton iterations. It does not complete the 23-package production plan.
-
-| Plan area | Implemented evidence | Remaining |
+| Area | Implemented and finitely tested | Remaining |
 |---|---|---|
-| Solver variety | nalgebra dense and independent faer sparse LU; real/complex conformance, prepared RHS reuse, compiler-owned canonical CSC stamps, and direct faer use for linear DC | broad difficult-matrix corpus, native KLU/cuDSS/Ginkgo adapters, sparse AC/transient and large-circuit qualification |
-| Device equations | R/C/L, a Shockley diode, independent sources, signed flux and branch currents, DC power diagnostics, DC-biased diode small-signal AC, bounded DC source continuation, explicit/staged Gmin, dimension-aware DC checks, and current-driven continuation recovery/physical-final-solve evidence | additional semiconductor models, broader difficult-circuit qualification, production limiting/Jacobians and full device/plugin API |
-| Dynamic analyses | configured initial states, PWL/sine sources, trapezoidal/BE, adaptive step doubling, accepted observers, fixed-step and configured backward-Euler diode Newton including source overrides/breakpoints | full event/co-simulation rules and complete DAE topology qualification |
-| API/data | typed C#/F# experimental JSON contract, measurements/assertions, capability discovery | Arrow, C ABI, persistent sandboxed worker, complete stable API/migration policy |
-| Campaigns | bounded sequential cases, scalar sweeps/grids, seeded sampling recipes, per-point failures and programmatic result rows | parallel resource scheduling, statistical qualification, retries/resume, batch CLI transport, actual StressForge contract |
-| Persistence | bounded trusted-local artifact commit/read with hashes | hostile storage policies, remote/object storage, power-loss durability qualification |
-| Authoring | typed .NET/F# builders, SForge v0.1 lexer/parser/validator and lowering of primitive transient circuits, observables and bounded assertions | full units system, broader expression grammar, selected Starlark frontend and integrated behavioral models |
-| Consistency | independent DC KCL/source/power checks, legacy BE discrete-energy checks, bounded topology diagnostics, typed manifests and stderr tracing | AC/configured-transient physical audits, full topology rank diagnostics and rigorous global accuracy bounds |
-| Verification | analytic/provider/metamorphic/fuzz-smoke/mutation tests; scoped managed coverage | broader host/branch coverage, coverage-guided fuzzing, full native/GPU evidence |
-| Release | no production release claim | license/platform/packaging and all declared M1 exit gates |
+| Convergence | bounded analytic diode Newton, dimensioned norms, source continuation, fixed/staged Gmin and mandatory physical final solve; terminal faults and stagnation checks | broader difficult topology/model corpus and general convergence guarantees |
+| CPU sparse | canonical CSC DC/complex AC/linear BE/trapezoidal, owned faer real factors, exact-step cache, independent residuals and selected provider failures | general rank diagnostics, prepared complex reuse, broader matrix/performance qualification |
+| Models | R/C/L, controlled/independent sources, Shockley diode and explicit constant parallel Q=C*V diode profile; equation/derivative/domain/unit/history/audit checks | depletion/transport/temperature-dependent IS, other semiconductors and full plugin model API |
+| Dynamics | configured initial constraints, PWL/sine and bounded other source imports, linear BE/trapezoidal and nonlinear BE, adaptive step doubling and accepted observers | nonlinear trapezoidal, complete DAE/event/co-simulation and global error bounds |
+| API | typed C#/F# experimental JSON, optional complex excitation, additive typed charge profile, measurements/assertions, descriptors and capability limits | complete stable API/migration policy, Arrow, C ABI and persistent isolated worker |
+| Oracles | selected attributed upstream fixtures plus original named AC/transient cases through LU/faer; explicit temperature, interpolation and rounding bounds | broad ngspice language/device compatibility and larger independently curated corpus |
+| Consistency | independent DC KCL/source/power and legacy BE energy audits, bounded topology checks, provider output acceptance and stderr tracing | automatic AC/configured physical audits, complete topology/rank and rigorous global accuracy |
+| Verification | Proptest/FsCheck shrinking/replay, maintained cargo-mutants/Stryker, malformed/negative cases, scoped LLVM/Coverlet/helper coverage, StrictDoc/Sphinx | coverage-guided fuzzing, native branch metrics, broader host/helper/vendor qualification |
+| Remote campaigns | configurable budgets, Windows/Linux PowerShell setup, immutable provenance, bounded result branches and local raw artifacts | packaged release, broader interrupted-run recovery and completed current five-hour evidence |
 
-Most work packages retain Proposed status because their complete exit criteria are not satisfied. Current checkpoint and source-hash reports, rather than implementation counts, define what has been tested.
+SForge v0.1 remains a bounded primitive-transient authoring/lowering path; its
+proposal is broader than implemented behavior. Campaigns remain bounded/sequential;
+no general parallel numerical scheduling or production plugin sandbox is implied.
 
-SForge has an implemented v0.1 parser/lowering path; [the SForge DSL proposal](modern-dsl-proposal.md) remains the wider design artifact, not a claim of general SPICE compatibility.
+Checkpoint 434 evidence: [models-434-qualification.md](../evidence/models-434-qualification.md).
+Fresh measured scopes there are Rust 5310/5750 owned lines, client 166/174 lines
+and 109/112 branches; native branches are unavailable. These are checkpoint
+metrics, not automatically the metrics for later review edits.
 
-Portable qualification tooling (iterations 323–329) provides Windows/Ubuntu-Debian PowerShell setup, configurable bounded campaigns, provenance validation and automatic isolated result-branch publication. See [remote-run instructions](remote-runs.md) and [qualification evidence](../evidence/remote-workflow-qualification.md). Ubuntu 24.04 WSL2 owned Rust source line coverage is 89.95%; branch coverage is unavailable. Windows GNU and WSL short workflows ran; successful Windows MSVC installation and a completed full-hour/nightly campaign remain unqualified. A live checkpoint contention probe recovered 13 retries and completed 510,976 cases; this checks evidence writing rather than numerical accuracy.
+The historical e85c1e2 one-hour run completed 3599.04 seconds and 50,987,008
+custom seeded cases with 22/22 selected custom mutants; it predates framework
+integration. Two earlier partial failures remain preserved. Never relabel that
+hour as cargo-mutants/Stryker evidence. Current campaigns use maintained mutation
+frameworks then library property batches; timeouts, survivors and unviable mutants
+remain distinct from caught mutants.
 
+Windows Build Tools/SDK installation and native link/AOT fixture probes succeeded;
+Windows instrumented Rust coverage remains unmeasured. WSL native Rust coverage
+and Windows/Linux functional managed tests have actual checkpoint reports.
 
-Iteration 330 adds pinned generated mutation tooling: cargo-mutants for Rust and Stryker.NET for managed Client.cs behavior, backed by discoverable xUnit real-engine contracts. Nightly and remote runs reserve a bounded framework phase before seeded fuzz/property batches. See [tooling instructions](mutation-frameworks.md) and [actual scoped evidence](../evidence/framework-mutation-qualification.md). Generated candidates, kills and other outcomes remain distinct; neither the prior 22/22 suite nor the successful one-hour pre-framework run establish broad mutation coverage. The Windows Build Tools/SDK linker prerequisite has now been installed and independently smoke-tested; Windows Rust instrumentation metrics remain pending.
+No full SPICE parity, GPU implementation, universal convergence, global error
+bound, large-circuit speedup or production qualification is claimed. Raw campaign
+artifacts remain local; completed checkpoint commits are pushed without CI dispatch.

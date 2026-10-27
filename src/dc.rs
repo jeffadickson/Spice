@@ -59,32 +59,7 @@ pub fn verify_csc_solution(
     rhs: &[f64],
     values: &[f64],
 ) -> SimResult<f64> {
-    validate_sparse_rhs(matrix, rhs)?;
-    if values.len() != matrix.dimension() || values.iter().any(|value| !value.is_finite()) {
-        return Err(SimError::new(
-            ErrorCode::NumericalFailure,
-            "invalid sparse real solution",
-        ));
-    }
-    let mut sums = vec![0.; matrix.dimension()];
-    let mut scales: Vec<_> = rhs.iter().map(|value| value.abs()).collect();
-    for (row, column, coefficient) in matrix.entries() {
-        let product = coefficient * values[column];
-        sums[row] += product;
-        scales[row] += product.abs();
-    }
-    let mut worst = 0_f64;
-    for row in 0..matrix.dimension() {
-        let error = (sums[row] - rhs[row]).abs() / scales[row].max(f64::MIN_POSITIVE);
-        if !scales[row].is_finite() || !error.is_finite() || error > 1e-10 {
-            return Err(SimError::new(
-                ErrorCode::NumericalFailure,
-                "sparse real residual failed",
-            ));
-        }
-        worst = worst.max(error);
-    }
-    Ok(worst)
+    crate::solver_contract::verify_csc_solution(matrix, rhs, values)
 }
 /// Numerical validation remains outside the backend, including cached-factor solves.
 pub fn verify_solution(a: &Matrix, b: &[f64], x: &[f64]) -> SimResult<f64> {

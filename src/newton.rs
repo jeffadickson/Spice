@@ -302,6 +302,8 @@ fn scaled_update_norm(
 #[serde(deny_unknown_fields)]
 pub struct NewtonOptions {
     pub max_iterations: usize,
+    /// Retained and validated for legacy wire compatibility. Convergence uses
+    /// the explicit voltage/current tolerances below, not this unitless field.
     pub absolute_tolerance: f64,
     pub relative_tolerance: f64,
     #[serde(default = "default_voltage_tolerance")]

@@ -194,6 +194,7 @@ impl LinearSolver for DenseQr {
         // iterative refinement. Mixed-unit/ill-conditioned MNA rows can lose
         // small voltages despite a small global residual; the outer componentwise
         // backward-error and physical-oracle checks still decide acceptance.
+        let mut best_error = qr_backward_error(&matrix, &rhs, &x);
         for _ in 0..3 {
             let residual = &rhs - &matrix * &x;
             if residual.iter().all(|value| *value == 0.) {
@@ -209,6 +210,13 @@ impl LinearSolver for DenseQr {
             if candidate.iter().any(|value| !value.is_finite()) {
                 break;
             }
+            let error = qr_backward_error(&matrix, &rhs, &candidate);
+            // Equal normalized errors may still improve tiny components enough
+            // for a later correction; permit ties within the fixed three-step budget.
+            if error > best_error {
+                break;
+            }
+            best_error = error;
             x = candidate;
         }
         if x.iter().any(|v| !v.is_finite()) {
@@ -219,4 +227,25 @@ impl LinearSolver for DenseQr {
         }
         Ok(x.as_slice().to_vec())
     }
+}
+
+/// Refinement is accepted only when independent componentwise backward error
+/// improves. Same-precision corrections may stagnate or worsen an earlier solve.
+fn qr_backward_error(matrix: &DMatrix<f64>, rhs: &DVector<f64>, values: &DVector<f64>) -> f64 {
+    let mut worst = 0_f64;
+    for row in 0..matrix.nrows() {
+        let mut sum = 0.;
+        let mut scale = rhs[row].abs();
+        for column in 0..matrix.ncols() {
+            let product = matrix[(row, column)] * values[column];
+            sum += product;
+            scale += product.abs();
+        }
+        let error = (sum - rhs[row]).abs() / scale.max(f64::MIN_POSITIVE);
+        if !scale.is_finite() || !error.is_finite() {
+            return f64::INFINITY;
+        }
+        worst = worst.max(error);
+    }
+    worst
 }

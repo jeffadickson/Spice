@@ -200,3 +200,17 @@ Derived campaign requirement. Implementation: src/newton.rs::conductance_at_bias
 RELATIONS:
 - TYPE: Parent
   VALUE: SPARSE-003
+
+[REQUIREMENT]
+UID: SPARSE-015
+STATUS: Draft
+TITLE: Analysis-neutral independent acceptance
+STATEMENT: >>>
+Prepared sparse providers shall use an analysis-neutral independent CSC residual policy without depending on DC analysis. Existing public DC verifier signatures shall delegate compatibly to the same finite-scale 1e-10 acceptance policy.
+<<<
+COMMENT: >>>
+Implementation: src/solver_contract.rs, src/linalg.rs, src/dc.rs. Verification: existing sparse transient scale/overflow, prepared callback, provider fault and exact dynamic contracts; final full regressions preserve public behavior.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-009

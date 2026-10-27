@@ -1,0 +1,30 @@
+{
+  "kind": "rejected_test_hypothesis",
+  "test": "qr_refinement_never_worsens_componentwise_error",
+  "default_seed": "0x5350494345333535",
+  "original_hypothesis": "Every row-scaled diagonally dominant raw QR vector passes the 1e-10 componentwise verifier.",
+  "off": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.7218128042897421,
+    0.0,
+    0.0
+  ],
+  "row_exponents": [
+    -6,
+    0,
+    1
+  ],
+  "expected_solution": [
+    0.0,
+    0.0,
+    -0.21348873243596608
+  ],
+  "observed_raw_componentwise_error": 1.0,
+  "reproduction": "Add four to each diagonal of off, scale each row by 10^row_exponents, form b=A*expected_solution, then use nalgebra QR before refinement. Exact-zero RHS rows can normalize tiny rounding residuals to one.",
+  "disposition": "Retain the input; measure nonworsening error without assuming raw numerical acceptance. Final acceptance remains separate. This is a test assumption failure, not a newly demonstrated simulator failure."
+}

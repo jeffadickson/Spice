@@ -21,6 +21,11 @@ before returning the physical solution; explicitly requested fixed Gmin remains
 reported. Finite norms, computed tolerance scales, provider correction dimensions,
 terminal error classes and representable recovery progress are checked.
 
+``NewtonOptions.absolute_tolerance`` / C# ``AbsoluteTolerance`` remains a
+validated legacy wire field. Dimension-aware convergence uses the explicit
+voltage/current tolerances, not this unitless field. Retaining it supports
+existing requests; users should set the dimensioned tolerances explicitly.
+
 Faer 0.24.4 and nalgebra 0.34.1 remain the CPU dependencies. Direct sparse DC
 assembly is implemented. AC now assembles complex CSC directly from G and Q,
 including diode incremental conductance after bounded DC bias. Faer accepts a

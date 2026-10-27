@@ -1,12 +1,8 @@
-//! Backend-neutral sparse-system seam for future CPU SIMD and accelerator adapters.
-//!
-//! This is intentionally a small spike: the reference circuit assembler still
-//! produces bounded dense matrices, while adapters can now accept a validated
-//! canonical sparse pattern and a separate coefficient vector. Device models,
-//! analyses and public request schemas do not depend on this module's adapters.
+//! Backend-neutral canonical systems and independent numerical acceptance.
+//! Analyses and prepared providers share these checks without depending on DC policy.
 
 use crate::{
-    error::{SimError, SimResult},
+    error::{ErrorCode, SimError, SimResult},
     linalg::BackendCapabilities,
     sparse::{CscMatrix, CscPattern},
 };
@@ -140,4 +136,41 @@ pub trait SparseLinearBackend {
             self.solve_sparse_complex(system, part)
         })
     }
+}
+
+/// Componentwise CSC backward error, independent of factorization or analysis.
+/// Reject nonfinite accumulation and errors above the shared 1e-10 policy.
+pub fn verify_csc_solution(
+    matrix: &crate::sparse::CscMatrix,
+    rhs: &[f64],
+    values: &[f64],
+) -> SimResult<f64> {
+    if rhs.len() != matrix.dimension() || rhs.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::invalid("invalid sparse real excitation"));
+    }
+    if values.len() != matrix.dimension() || values.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::new(
+            ErrorCode::NumericalFailure,
+            "invalid sparse real solution",
+        ));
+    }
+    let mut sums = vec![0.; matrix.dimension()];
+    let mut scales: Vec<_> = rhs.iter().map(|value| value.abs()).collect();
+    for (row, column, coefficient) in matrix.entries() {
+        let product = coefficient * values[column];
+        sums[row] += product;
+        scales[row] += product.abs();
+    }
+    let mut worst = 0_f64;
+    for row in 0..matrix.dimension() {
+        let error = (sums[row] - rhs[row]).abs() / scales[row].max(f64::MIN_POSITIVE);
+        if !scales[row].is_finite() || !error.is_finite() || error > 1e-10 {
+            return Err(SimError::new(
+                ErrorCode::NumericalFailure,
+                "sparse real residual failed",
+            ));
+        }
+        worst = worst.max(error);
+    }
+    Ok(worst)
 }

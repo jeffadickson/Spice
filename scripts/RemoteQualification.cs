@@ -59,7 +59,7 @@ if(import is null) {
     checksPassed=await Step("contracts","pwsh",["-NoProfile","-File","scripts/Test.ps1"]);
     var python=Environment.GetEnvironmentVariable("SPICE_STRICTDOC_PYTHON");
     if(python is null) {report.Steps.Add(new("strictdoc","unavailable",null,null));checksPassed=false;}
-    else checksPassed=await Step("strictdoc",python,["-c","from pathlib import Path; from strictdoc.backend.sdoc.reader import SDReader; files=list(Path('docs').glob('*.sdoc')); [SDReader.read(p.read_text(encoding='utf-8-sig'),str(p)) for p in files]; print(f'Parsed {len(files)} documents')"])&&checksPassed;
+    else checksPassed=await Step("strictdoc","dotnet",["run","--file","scripts/ValidateRequirements.cs","--","--python",python,"--report",Path.Combine(local,"requirements.json")])&&checksPassed;
     if(checksPassed) {
         var arguments=new List<string>{"run","--file","scripts/Endurance.cs","--","--minutes",minutes.ToString(CultureInfo.InvariantCulture)};
         if(skipMutation)arguments.Add("--skip-mutation");
