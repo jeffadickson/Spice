@@ -10,6 +10,106 @@ use circuit_simulator::{
 
 struct DirectReal;
 
+#[test]
+fn sparse_adaptive_rejections_preserve_decay_and_only_observe_accepted_history() {
+    use circuit_simulator::{
+        adaptive::AdaptiveOptions,
+        compile::compile,
+        configured::{self, Method, TransientConfig},
+        netlist::parse,
+    };
+    let plan = compile(&parse("title\nR1 out 0 2\nC1 out 0 3\n.end").unwrap()).unwrap();
+    let provider = PreparedOnly(0.into());
+    let options = TransientConfig {
+        stop_s: 1.,
+        max_step_s: 0.5,
+        max_steps: 10000,
+        method: Method::Trapezoidal,
+        initial_state: Some(vec![1.]),
+        adaptive: Some(AdaptiveOptions {
+            relative: 1e-7,
+            voltage_absolute: 1e-12,
+            current_absolute: 1e-12,
+            min_step_s: 1e-7,
+            max_attempts: 10000,
+        }),
+        ..Default::default()
+    };
+    let mut observed = Vec::new();
+    let result = configured::run_observed(&plan, &provider, &options, &false.into(), |sample| {
+        observed.push(sample.time_s);
+        Ok(())
+    })
+    .unwrap();
+    assert!(result.report.rejected_steps > 0);
+    assert!(result.report.max_accepted_error <= 1.);
+    assert_eq!(
+        observed,
+        result.samples.iter().map(|s| s.time_s).collect::<Vec<_>>()
+    );
+    assert!(observed.windows(2).all(|pair| pair[1] > pair[0]));
+    assert!((result.samples.last().unwrap().values[0] - (-1. / 6_f64).exp()).abs() < 1e-6);
+    assert_eq!(
+        provider.0.load(std::sync::atomic::Ordering::Relaxed),
+        result.report.prepared_factors
+    );
+}
+
+#[test]
+fn changing_pwl_excitation_reuses_one_sparse_factor_without_reusing_old_rhs() {
+    use circuit_simulator::{
+        compile::compile,
+        configured::{self, TransientConfig},
+        netlist::parse,
+        sources::SourceOverride,
+        waveform::{Point, Waveform},
+    };
+    let plan = compile(&parse("title\nR1 out 0 2\nC1 out 0 3\nI1 0 out 0\n.end").unwrap()).unwrap();
+    let options = TransientConfig {
+        stop_s: 1.,
+        max_step_s: 0.25,
+        max_steps: 4,
+        initial_state: Some(vec![0.]),
+        sources: vec![SourceOverride {
+            id: "I1".into(),
+            waveform: Waveform::Pwl {
+                points: vec![
+                    Point {
+                        time_s: 0.,
+                        value: 0.,
+                    },
+                    Point {
+                        time_s: 0.25,
+                        value: 1.,
+                    },
+                    Point {
+                        time_s: 0.5,
+                        value: 1.,
+                    },
+                    Point {
+                        time_s: 0.75,
+                        value: -1.,
+                    },
+                    Point {
+                        time_s: 1.,
+                        value: 0.,
+                    },
+                ],
+            },
+        }],
+        ..Default::default()
+    };
+    let provider = PreparedOnly(0.into());
+    let result = configured::run(&plan, &provider, &options, &false.into()).unwrap();
+    let mut expected = 0.;
+    for (sample, current) in result.samples.iter().skip(1).zip([1., 1., -1., 0.]) {
+        expected = (12. * expected + current) / 12.5;
+        assert!((sample.values[0] - expected).abs() < 1e-12);
+    }
+    assert_eq!(result.report.prepared_factors, 1);
+    assert_eq!(result.report.prepared_reuses, 3);
+}
+
 struct MisleadingPreparation(u8);
 impl LinearSolver for MisleadingPreparation {
     fn name(&self) -> &'static str {
