@@ -6,6 +6,32 @@ using Xunit;
 /// <summary>Materialized output contracts targeted at real Stryker survivor findings.</summary>
 public sealed class ManifestContracts
 {
+    [Fact]
+    public void FailedEnvelopeCannotExposeOtherwiseValidRealSamples()
+    {
+        var failed = Response(Valid()) with { Status = "failed", Complete = false };
+        Assert.NotEmpty(Assert.Throws<InvalidOperationException>(() => failed.ReadManifest()).Message);
+        Assert.Throws<InvalidOperationException>(() => failed.FinalValue("v(x)"));
+    }
+
+    [Fact]
+    public void MixedValidAndNullSignalEntriesCannotPass()
+    {
+        var payload = Valid();
+        payload["signals"]!.AsArray().Add((JsonNode?)null);
+        payload["samples"]![0]!["values"] = new JsonArray(1, 2);
+        Assert.Throws<InvalidDataException>(() => Response(payload).ReadManifest());
+    }
+
+    [Fact]
+    public void MixedValidAndNullComplexValuesCannotPass()
+    {
+        var payload = Valid();
+        payload["signals"]!.AsArray().Add(JsonNode.Parse("""{"id":"v(y)","quantity":"voltage","unit":"V"}"""));
+        payload["samples"]![0]!["values"] = new JsonArray(1, 2);
+        payload["ac_samples"] = JsonNode.Parse("""[{"frequency_hz":1,"values":[{"real":1,"imag":0},null]}]""");
+        Assert.Throws<InvalidDataException>(() => Response(payload).ReadManifest());
+    }
     private static JsonObject Valid() => JsonNode.Parse("""
         {"schema_version":"1","case_id":"manifest-fixture","status":"succeeded","complete":true,
          "signals":[{"id":"v(x)","quantity":"voltage","unit":"V"}],
