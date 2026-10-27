@@ -18,3 +18,12 @@ the complex `v(2)` observable for `res_partition`, and
 point for `lowpass`; all preserve fixture hash, declared observable and
 numerical tolerance in machine-readable output. The lowpass oracle's 5e-8
 bound reflects ngspice `.print` text rounding, not a general accuracy claim.
+
+The `qualification-*` decks are original Spice qualification inputs, not copied
+upstream corpus files. `qualification-series-rlc` compares the named `v(out)`
+at 100/1000/10000 Hz with a 1+0.5j source against ngspice through both LU and
+direct faer. Use `scripts/Compare-NamedAcOracle.cs` with its deck/request,
+`v(out)` and absolute component tolerance `5e-7`; printed decimal precision
+limits that external comparison. Independent higher-precision impedance checks
+are in `tests/sparse_ac_circuits.rs`. The runner disables user spiceinit and
+records verbatim deck, request, engine, oracle and helper hashes.

@@ -1,0 +1,8 @@
+Spice owned series RLC complex excitation qualification
+V1 in 0 DC 0 AC 1.118033988749895 26.56505117707799
+R1 in mid 100
+L1 mid out 10m
+C1 out 0 1u
+.ac dec 1 100 10000
+.print ac v(out)
+.end

@@ -1,0 +1,18 @@
+{
+  "schema_version": "1",
+  "case_id": "qualification-series-rlc",
+  "circuit": {
+    "nodes": ["0", "in", "mid", "out"],
+    "elements": [
+      {"kind": "voltage", "id": "V1", "p": 1, "n": 0, "volts": 0},
+      {"kind": "resistor", "id": "R1", "p": 1, "n": 2, "ohms": 100},
+      {"kind": "inductor", "id": "L1", "p": 2, "n": 3, "henries": 0.01},
+      {"kind": "capacitor", "id": "C1", "p": 3, "n": 0, "farads": 1e-6}
+    ]
+  },
+  "analysis": {
+    "kind": "ac", "frequencies_hz": [100, 1000, 10000],
+    "source_phasors": [{"id": "V1", "real": 1, "imag": 0.5}]
+  },
+  "backend": "faer"
+}

@@ -60,6 +60,20 @@ RELATIONS:
   VALUE: SPARSE-003
 
 [REQUIREMENT]
+UID: SPARSE-007
+STATUS: Draft
+TITLE: Named independent AC oracle evidence
+STATEMENT: >>>
+External AC comparisons shall identify the complex signal by name and frequency, select each qualified CPU provider explicitly, disable user initialization scripts, retain immutable input/executable provenance and reject missing/ambiguous/nonfinite reference rows. Tolerances shall reflect actual reference output precision rather than an assumed digit setting. Original qualification decks shall remain distinguished from attributed upstream corpus copies.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Implementation/verification: scripts/Compare-NamedAcOracle.cs parser negative contracts and actual LU/faer resistor partition, lowpass and original series-RLC comparisons; evidence/named-ac-*.json. Broader selected upstream corpus expansion remains separate.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-003
+
+[REQUIREMENT]
 UID: SPARSE-006
 STATUS: Draft
 TITLE: Signed dynamic and controlled-source AC conformance
