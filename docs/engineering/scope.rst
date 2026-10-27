@@ -24,7 +24,7 @@ Faer prepared real factors own canonical numerical identity; configured stepping
 retains two exact-step systems and verifies each returned vector independently.
 An exact binary RC example requires one factor and three reuses. Adaptive and PWL
 finite cases exercise rejected-history isolation and changing RHS values.
-Wider transient oracle/model profiles remain active campaign work.
+Named RC ramp and signed RLC decay comparisons against ngspice add finite transient evidence with explicit interpolation/print limits. Exact empty numeric rows/columns fail before faer factorization; this is not a general rank test. Wider model profiles remain active campaign work.
 Dense fallback/reference paths retain the
 256-unknown bound. No GPU implementation, global convergence, full SPICE parity,
 large-circuit performance or production qualification is claimed.

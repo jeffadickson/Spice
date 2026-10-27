@@ -1,0 +1,23 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "metrics": [
+    {
+      "file": "scripts/Compare-NamedTransientOracle.cs",
+      "source_sha256": "98fbe336ae03193cd1344a24df58f81c161e5ba046178be7a66db4e54affa35c",
+      "scope": "Six parser/interpolation contracts, intentional failed comparison publication, and actual RC-ramp/RLC-decay cases across LU/faer. Timeout/pipe bounds and arbitrary ngspice formats remain unqualified.",
+      "local_report": "build/qualification-campaign/414-named-transient.cobertura.xml",
+      "lines": 124,
+      "covered_lines": 121,
+      "line_percent": 97.58064516129032,
+      "branches": 156,
+      "covered_branches": 118,
+      "branch_percent": 75.64102564102564
+    }
+  ],
+  "limitations": [
+    "Mapped source-line and per-line maximum branch counts; not complete path coverage.",
+    "Owned client Coverlet metrics are separate; native executable and vendor internals are excluded.",
+    "PowerShell subprocess command/branch metrics, full native installers, Linux helper paths and vendor internals are unmeasured.",
+    "Synthetic supervisor/publication fixtures do not qualify numerical simulator execution."
+  ]
+}

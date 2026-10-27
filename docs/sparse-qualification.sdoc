@@ -23,7 +23,7 @@ STATEMENT: >>>
 External transient comparisons shall identify the real observable and shared times explicitly, validate finite reference rows and reject ambiguous printed times or extrapolation. Piecewise-linear interpolation and print/time-step limitations shall be reported. Oracle processes, retained logs and comparison counts shall be bounded; failed numerical comparisons shall retain hashed evidence and nonzero exit status.
 <<<
 COMMENT: >>>
-Derived campaign requirement. Implementation: scripts/Compare-NamedTransientOracle.cs. Verification begins with six malformed/interpolation self-test contracts; actual named circuit comparisons and scope-specific coverage follow before qualification.
+Derived campaign requirement. Implementation: scripts/Compare-NamedTransientOracle.cs. Verification: six malformed/interpolation self-test contracts and actual named RC-ramp/RLC-decay LU/faer comparisons in evidence/named-transient-*.json. Scope-specific helper coverage and failure-report probes are recorded at checkpoint 414.
 <<<
 RELATIONS:
 - TYPE: Parent

@@ -79,3 +79,10 @@ complete (18/28 caught, three survivors/seven unviable; residual replay 2/2 caug
 The dynamic operator selection completed 19/20 caught with a concrete source-history
 test gap; do not treat either scoped selection as whole-core mutation coverage.
 
+Checkpoint 414 completes 405–414 and the finite linear sparse transient allocation.
+Read ../evidence/sparse-414-qualification.md. Resume at 415 for a bounded model
+vertical slice with explicit charge/domain/unit/derivative/limiting contracts,
+then checkpoints 424/434 and final deep review/fixes 435. The dynamic operator
+selection now completes 20/20 caught; other mutation and qualification limits
+remain separate.
+

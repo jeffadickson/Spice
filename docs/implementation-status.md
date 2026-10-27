@@ -1,4 +1,4 @@
-# Implementation status after iterations 201–301
+# Implementation status
 
 Current checkpoint 394 verifies campaign steps 1–60. Source/Gmin hardening,
 maintained generated-test workflows and the bounded direct sparse AC tranche are
