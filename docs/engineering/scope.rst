@@ -6,6 +6,16 @@ source values. A bounded Shockley diode supports analytic current/Jacobian
 evaluation, damped Newton DC, bias-linearized AC and backward-Euler dynamics.
 Other model families and broader integration policies require separate contracts.
 
+An explicit ``diode_with_capacitance`` profile composes Shockley conduction with
+constant Q=C*V, dQ/dV=C and E=C*V²/2. Positive farads are mandatory; the legacy
+diode wire shape remains separate. Its ``i_conduction(id)`` observable excludes
+displacement; constrained source branches provide independent total-current
+evidence. DC, biased AC, legacy and configured BE have finite tests. Nonlinear
+configured trapezoidal is explicitly unsupported. No depletion, transport or
+temperature-dependent saturation law is implied. The bounded importer accepts
+CJO/CJ0 only with explicit M=0 and zero supported RS/TT. Typed usage is in
+``examples/TypedCharge.cs``; its C# DTO remains subject to engine validation.
+
 Source continuation returns nominal excitation. Staged Gmin removes its shunt
 before returning the physical solution; explicitly requested fixed Gmin remains
 reported. Finite norms, computed tolerance scales, provider correction dimensions,

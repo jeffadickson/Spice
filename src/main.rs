@@ -14,7 +14,7 @@ fn execute() -> Result<(), SimError> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     if args == ["--capabilities"] {
         return write_json(
-            &serde_json::json!({"schema_version":"1","execution":"bounded_reference","backends":circuit_simulator::registry::BackendRegistry::reference().capabilities(),"analyses":["operating_point","operating_point_newton","ac","transient","transient_configured"],"nonlinear":{"diode_dc":true,"ac_bias_linearization":true,"transient":true,"configured_backward_euler":true,"adaptive":true,"source_overrides":true,"gmin_dc":true},"transport":"one_shot_json","gpu":false}),
+            &serde_json::json!({"schema_version":"1","execution":"bounded_reference","backends":circuit_simulator::registry::BackendRegistry::reference().capabilities(),"analyses":["operating_point","operating_point_newton","ac","transient","transient_configured"],"nonlinear":{"diode_dc":true,"ac_bias_linearization":true,"transient":true,"configured_backward_euler":true,"adaptive":true,"source_overrides":true,"gmin_dc":true},"models":{"diode":{"conduction":"shockley","charge":"none"},"diode_with_capacitance":{"conduction":"shockley","charge":"constant_q_cv","depletion":false,"transport_charge":false,"configured_trapezoidal":false}},"transport":"one_shot_json","gpu":false}),
         );
     }
     if !args.is_empty() {

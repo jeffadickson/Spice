@@ -46,6 +46,19 @@ fn cli_capabilities_and_invalid_arguments_are_json() {
     assert_eq!(info["nonlinear"]["adaptive"], true);
     assert_eq!(info["nonlinear"]["source_overrides"], true);
     assert_eq!(info["nonlinear"]["gmin_dc"], true);
+    assert_eq!(
+        info["models"]["diode_with_capacitance"]["charge"],
+        "constant_q_cv"
+    );
+    assert_eq!(info["models"]["diode_with_capacitance"]["depletion"], false);
+    assert_eq!(
+        info["models"]["diode_with_capacitance"]["transport_charge"],
+        false
+    );
+    assert_eq!(
+        info["models"]["diode_with_capacitance"]["configured_trapezoidal"],
+        false
+    );
     let output = Command::new(executable)
         .arg("--shell")
         .stdin(Stdio::null())

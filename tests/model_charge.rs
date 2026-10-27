@@ -2,6 +2,20 @@
 use circuit_simulator::charge::constant_capacitance;
 
 #[test]
+fn composite_profile_rejects_unimplemented_configured_trapezoidal() {
+    let request = profile_request(
+        serde_json::json!({"kind":"transient_configured","options":{
+            "stop_s":0.1,"max_step_s":0.1,"max_steps":2,"method":"trapezoidal"
+        }}),
+        "faer",
+    );
+    assert_eq!(
+        circuit_simulator::api::run(&request).unwrap_err().code,
+        circuit_simulator::error::ErrorCode::Unsupported
+    );
+}
+
+#[test]
 fn composite_profile_matches_explicit_parallel_elements_across_analyses_and_polarities() {
     use circuit_simulator::{api::run, circuit::Element};
     for backend in ["lu", "faer"] {
