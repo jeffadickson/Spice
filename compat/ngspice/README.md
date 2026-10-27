@@ -51,3 +51,12 @@ request; importer support for UIC/IC syntax is not claimed. Compare named
 grid need not include t=0, so the runner never invents an initial reference row.
 Independent damped-response, branch-KCL and trapezoidal discrete-energy checks
 are in `tests/sparse_transient.rs`.
+
+`qualification-diode-constant-charge` is an original zero-bias AC case at an
+explicit 27 C, matching ngspice's nominal temperature. Its CJO mapping explicitly
+sets M=0, RS=0 and TT=0. The native fixed-IS/thermal-voltage profile is not a
+general temperature-dependent junction model. Compare named `v(out)` at
+100/1000/10000 Hz through the named AC runner with `1e-6` absolute component
+bound; printed precision and ngspice's residual default Gmin limit the finite
+comparison. The imported request also passes an independent small-signal
+transfer equation with the declared temperature.

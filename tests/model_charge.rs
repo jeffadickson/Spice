@@ -2,6 +2,40 @@
 use circuit_simulator::charge::constant_capacitance;
 
 #[test]
+fn original_constant_charge_oracle_import_has_declared_temperature_and_transfer() {
+    use circuit_simulator::{
+        ac::ac_with_source_phasors, api::Analysis, backend_faer::FaerSparseLu, compile::compile,
+        netlist::import_ngspice_request,
+    };
+    use num_complex::Complex64;
+    let request = import_ngspice_request(
+        include_str!("../compat/ngspice/qualification-diode-constant-charge.cir"),
+        "charge-oracle",
+    )
+    .unwrap();
+    let Analysis::Ac {
+        frequencies_hz,
+        source_phasors,
+    } = request.analysis
+    else {
+        panic!("Expected AC")
+    };
+    let plan = compile(&request.circuit).unwrap();
+    let vt = 8.617_333_262_145e-5 * 300.15;
+    for sample in
+        ac_with_source_phasors(&plan, &frequencies_hz, &source_phasors, &FaerSparseLu).unwrap()
+    {
+        let expected = Complex64::new(1., 0.5)
+            / Complex64::new(
+                1. + 1000. * 1e-6 / vt,
+                std::f64::consts::TAU * sample.frequency_hz * 0.001,
+            );
+        let actual = &sample.values[1];
+        assert!((Complex64::new(actual.real, actual.imag) - expected).norm() < 1e-11);
+    }
+}
+
+#[test]
 fn independent_composite_audits_detect_missing_displacement_and_wrong_capacitance() {
     use circuit_simulator::{
         audit::{self, AuditOptions, CheckStatus},

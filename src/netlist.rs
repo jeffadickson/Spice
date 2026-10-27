@@ -715,7 +715,16 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
                 });
                 normalized.push_str(&format!(
                     "{} {} {} {}\n",
-                    tokens[0], tokens[1], tokens[2], amplitude
+                    tokens[0],
+                    tokens[1],
+                    tokens[2],
+                    // DC bias and small-signal excitation are independent.
+                    // Keeping the bias is essential before nonlinear AC linearization.
+                    tokens[if tokens[3].eq_ignore_ascii_case("dc") {
+                        4
+                    } else {
+                        3
+                    }]
                 ));
             } else if tokens.len() == 5
                 && tokens.first().is_some_and(|name| {
@@ -976,6 +985,26 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
             });
         }
     }
+    let circuit = parse_ngspice_basic(&input)?;
+    if matches!(analysis, Analysis::Ac { .. }) {
+        // SPICE sources without an AC clause contribute bias only. The raw typed
+        // API retains its separate historical nominal-amplitude convention.
+        for element in &circuit.elements {
+            match element {
+                crate::circuit::Element::Voltage { id, .. }
+                | crate::circuit::Element::Current { id, .. }
+                    if !source_phasors.iter().any(|source| source.id == *id) =>
+                {
+                    source_phasors.push(AcSourcePhasor {
+                        id: id.clone(),
+                        real: 0.,
+                        imag: 0.,
+                    });
+                }
+                _ => {}
+            }
+        }
+    }
     let analysis = match analysis {
         Analysis::TransientConfigured { mut options } => {
             options.sources = sources;
@@ -996,7 +1025,7 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
     Ok(Request {
         schema_version: "1".into(),
         case_id: case_id.into(),
-        circuit: parse_ngspice_basic(&input)?,
+        circuit,
         analysis,
         backend: "lu".into(),
         experiment: None,

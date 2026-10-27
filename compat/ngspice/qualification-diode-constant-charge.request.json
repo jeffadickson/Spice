@@ -1,0 +1,52 @@
+{
+  "schema_version": "1",
+  "case_id": "qualification-diode-constant-charge",
+  "backend": "faer",
+  "circuit": {
+    "nodes": [
+      "0",
+      "in",
+      "out"
+    ],
+    "elements": [
+      {
+        "kind": "voltage",
+        "id": "V1",
+        "p": 1,
+        "n": 0,
+        "volts": 0
+      },
+      {
+        "kind": "resistor",
+        "id": "R1",
+        "p": 1,
+        "n": 2,
+        "ohms": 1000
+      },
+      {
+        "kind": "diode_with_capacitance",
+        "id": "D1",
+        "p": 2,
+        "n": 0,
+        "saturation_amps": 1E-06,
+        "thermal_volts": 0.025864925786328215,
+        "farads": 1E-06
+      }
+    ]
+  },
+  "analysis": {
+    "kind": "ac",
+    "frequencies_hz": [
+      100,
+      1000,
+      10000
+    ],
+    "source_phasors": [
+      {
+        "id": "V1",
+        "real": 1,
+        "imag": 0.5
+      }
+    ]
+  }
+}

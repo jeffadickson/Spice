@@ -2,6 +2,20 @@
 TITLE: ngspice Corpus Compatibility Track
 
 [REQUIREMENT]
+UID: NGC-032
+STATUS: Draft
+TITLE: Independent AC bias and excitation
+STATEMENT: >>>
+The bounded AC importer shall retain independent-source DC values for nonlinear bias, lower explicit AC magnitudes and phases separately, and assign zero small-signal excitation to sources without an AC clause. The raw typed API's nominal-amplitude convention shall remain unchanged.
+<<<
+COMMENT: >>>
+Implementation: src/netlist.rs::import_ngspice_request. Verification: tests/ngspice_compat.rs DC/AC separation and zero-excitation cases; tests/model_charge.rs independent nonlinear-bias transfer; evidence/named-ac-qualification-diode-constant-charge.json external comparison. Derived requirement remains Draft.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-003
+
+[REQUIREMENT]
 UID: NGC-030
 STATUS: Draft
 TITLE: Explicit constant-charge diode model lowering

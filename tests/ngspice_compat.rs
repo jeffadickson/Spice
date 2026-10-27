@@ -116,8 +116,27 @@ fn ngspice_ac_source_amplitude_is_used_for_bounded_ac_import() {
         "ac-source",
     )
     .unwrap();
+    assert!(matches!(
+        request.circuit.elements[0],
+        circuit_simulator::circuit::Element::Voltage { volts: 5., .. }
+    ));
     let result = circuit_simulator::api::run(&request).unwrap();
     assert!((result.ac_samples[0].values[0].real - 2.).abs() < 1e-12);
+}
+
+#[test]
+fn ngspice_dc_only_sources_have_zero_small_signal_excitation() {
+    let request = import_ngspice_request(
+        "title\nV1 left 0 DC 5\nI1 right 0 2m\nR1 left right 1k\nR2 right 0 1k\n.ac lin 1 10 10\n.end\n",
+        "bias-only-ac",
+    ).unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    assert!(
+        result.ac_samples[0]
+            .values
+            .iter()
+            .all(|value| value.real.abs() < 1e-15 && value.imag.abs() < 1e-15)
+    );
 }
 
 #[test]
