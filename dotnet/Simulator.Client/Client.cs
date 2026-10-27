@@ -11,7 +11,8 @@ public sealed record SimulationResponse(string SchemaVersion, string Status, boo
     {
         if (!Succeeded) throw new InvalidOperationException("No successful result manifest.");
         if (SchemaVersion != "1") throw new InvalidDataException("Unsupported outer result version.");
-        var manifest = Payload.Deserialize<ResultManifest>(WireFormat.Options) ?? throw new InvalidDataException("Missing manifest.");
+        // Explicit type metadata keeps trimmed/NativeAOT builds on the same wire contract.
+        var manifest = Payload.Deserialize(WireContext.Default.ResultManifest) ?? throw new InvalidDataException("Missing manifest.");
         if (manifest.SchemaVersion != "1" || manifest.Status != "succeeded" || !manifest.Complete ||
             manifest.Signals is null || manifest.Samples is null || manifest.AcSamples is null ||
             manifest.Measurements is null || manifest.Assertions is null || manifest.Backend is null ||
@@ -26,7 +27,7 @@ public sealed record SimulationResponse(string SchemaVersion, string Status, boo
     public bool Succeeded => Status == "succeeded" && Complete;
     /// <summary>Engine input/numerical failures are distinct from transport exceptions.</summary>
     public SimulationError? Error => Payload.TryGetProperty("error", out var error)
-        ? error.Deserialize<SimulationError>(WireFormat.Options) : null;
+        ? error.Deserialize(WireContext.Default.SimulationError) : null;
     /// <summary>Read the final voltage/current by descriptor ID; missing data is an error.</summary>
     public double FinalValue(string signalId)
     {
@@ -45,7 +46,7 @@ public sealed class SimulationClient(string executable)
 {
     /// <summary>Typed authoring path shared by C# and F#; Rust still validates semantics.</summary>
     public Task<SimulationResponse> RunAsync(SimulationRequest request, CancellationToken cancellation = default) =>
-        RunJsonAsync(JsonSerializer.Serialize(request, WireFormat.Options), cancellation);
+        RunJsonAsync(JsonSerializer.Serialize(request, WireContext.Default.SimulationRequest), cancellation);
     /// <summary>Rust validates the experimental request schema. No shell is invoked.</summary>
     public async Task<SimulationResponse> RunJsonAsync(string requestJson, CancellationToken cancellation = default)
     {

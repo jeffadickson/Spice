@@ -164,3 +164,17 @@ Implementation: scripts/Compare-NamedAcOracle.cs and Compare-NamedTransientOracl
 RELATIONS:
 - TYPE: Parent
   VALUE: MODEL-003
+
+[REQUIREMENT]
+UID: MODEL-012
+STATUS: Draft
+TITLE: Explicit typed metadata and bounded NativeAOT execution
+STATEMENT: >>>
+Core client typed request serialization and manifest/error deserialization shall use explicit generated type metadata, with trimming/AOT analyzers enabled. Native publication claims for a typed profile shall require actual native publish and execution against independent equations rather than metadata configuration alone.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Client/Client.cs, Simulator.Client.csproj and examples/TypedCharge.cs. Verification: managed contracts, actual Windows x64 NativeAOT publish/run and source/binary hashes in final evidence. Initial IL2026/IL3050 failures are retained as a review finding; whole-SDK and Linux AOT qualification remain outside this finite example.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MODEL-008

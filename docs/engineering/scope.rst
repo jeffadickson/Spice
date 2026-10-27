@@ -15,6 +15,11 @@ configured trapezoidal is explicitly unsupported. No depletion, transport or
 temperature-dependent saturation law is implied. The bounded importer accepts
 CJO/CJ0 only with explicit M=0 and zero supported RS/TT. Typed usage is in
 ``examples/TypedCharge.cs``; its C# DTO remains subject to engine validation.
+Core typed serialization uses explicit generated type metadata. Client trimming
+and NativeAOT analyzers are enabled. A Windows x64 NativeAOT publish-and-run check
+of TypedCharge verifies independent branch equations; this finite example is not
+whole-SDK or cross-platform AOT qualification. Development helpers still execute
+managed and real StrictDoc/Sphinx require their documented Python runtimes.
 
 Source continuation returns nominal excitation. Staged Gmin removes its shunt
 before returning the physical solution; explicitly requested fixed Gmin remains
