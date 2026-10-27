@@ -2,6 +2,20 @@
 TITLE: Direct Sparse Dynamic CPU Qualification
 
 [REQUIREMENT]
+UID: SPARSE-014
+STATUS: Draft
+TITLE: Dynamic numeric singularity and active circuits
+STATEMENT: >>>
+Sparse dynamic providers shall distinguish retained structural slots from nonzero numeric pivots. Exact G+alpha*Q cancellation producing a numerically empty row or column shall fail as singular without committing a trial or switching provider methods. Active controlled-source circuits shall remain supported when their requested discrete system is solvable; numerical acceptance shall not be described as a passivity or continuous-stability proof.
+<<<
+COMMENT: >>>
+Derived campaign requirement. Verification: tests/sparse_transient.rs legal negative-conductance VCCS with BE/trapezoidal exact cancellation and independently derived solvable recurrence. This finite case does not qualify arbitrary near-singular conditioning.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SPARSE-010
+
+[REQUIREMENT]
 UID: SPARSE-013
 STATUS: Draft
 TITLE: Named transient oracle comparison policy

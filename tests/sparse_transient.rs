@@ -11,6 +11,78 @@ use circuit_simulator::{
 struct DirectReal;
 
 #[test]
+fn dynamic_numeric_cancellation_is_a_singular_failure_without_trial_commit() {
+    use circuit_simulator::{
+        compile::compile,
+        configured::{self, Method, TransientConfig},
+        linear_dynamic::assemble,
+        netlist::parse,
+    };
+    // A legal active VCCS produces G=-1, Q=1. Certain discrete step sizes
+    // cancel the numeric diagonal; a structural slot is not a nonzero pivot.
+    let plan =
+        compile(&parse("title\nR1 out 0 1\nG1 out 0 out 0 -2\nC1 out 0 1\n.end").unwrap()).unwrap();
+    for (method, step) in [(Method::BackwardEuler, 1.), (Method::Trapezoidal, 2.)] {
+        let system = assemble(&plan, method, &[1.], step, &[0.], &[0.]).unwrap();
+        assert_eq!(system.matrix.nnz(), 1);
+        assert_eq!(system.matrix.values(), &[0.]);
+        let options = TransientConfig {
+            stop_s: step,
+            max_step_s: step,
+            max_steps: 1,
+            method,
+            initial_state: Some(vec![1.]),
+            ..Default::default()
+        };
+        let mut observed = Vec::new();
+        let error = configured::run_observed(
+            &plan,
+            &PreparedOnly(0.into()),
+            &options,
+            &false.into(),
+            |sample| {
+                observed.push(sample.time_s);
+                Ok(())
+            },
+        )
+        .err()
+        .expect("zero numeric pivot must fail");
+        assert_eq!(error.code, ErrorCode::SingularMatrix);
+        assert_eq!(observed, [0.]);
+    }
+}
+
+#[test]
+fn active_dynamic_systems_are_not_rejected_as_nonpassive_when_step_is_solvable() {
+    use circuit_simulator::{
+        compile::compile,
+        configured::{self, TransientConfig},
+        netlist::parse,
+    };
+    let plan =
+        compile(&parse("title\nR1 out 0 1\nG1 out 0 out 0 -2\nC1 out 0 1\n.end").unwrap()).unwrap();
+    let options = TransientConfig {
+        stop_s: 1.,
+        max_step_s: 0.5,
+        max_steps: 2,
+        initial_state: Some(vec![1.]),
+        ..Default::default()
+    };
+    for provider in [&DenseLu as &dyn LinearSolver, &PreparedOnly(0.into())] {
+        let result = configured::run(&plan, provider, &options, &false.into()).unwrap();
+        assert_eq!(
+            result
+                .samples
+                .iter()
+                .map(|sample| sample.values[0])
+                .collect::<Vec<_>>(),
+            [1., 2., 4.]
+        );
+    }
+    // This checks the discrete recurrence, not passivity or continuous stability.
+}
+
+#[test]
 fn signed_rlc_sparse_decay_obeys_analytic_response_and_discrete_energy() {
     use circuit_simulator::{
         api::{Analysis, Request},
