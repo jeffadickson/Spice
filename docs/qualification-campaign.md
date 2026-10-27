@@ -1,5 +1,11 @@
 # Qualification implementation campaign — 2026-10-26
 
+Checkpoint 424 completes 415–424; read ../evidence/models-424-qualification.md.
+Resume at 425 for model equivalence, domain/initialization and broader evidence,
+then 434 and final deep review/fixes 435. The new explicit constant-charge diode
+does not implement depletion/transport models. Preserve the importer DC/AC bias
+regression and charge mutation outcome categories.
+
 User-authorized scope: continuation hardening, mutation-driven test gaps, direct
 sparse AC, direct sparse transient, and bounded model expansion. Build and verify
 after every ten substantive iterations; push each completed checkpoint to GitHub.

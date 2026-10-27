@@ -1,0 +1,26 @@
+{
+  "scope": "Checkpoint 424 native LLVM export; owned src files only",
+  "mismatch_records": 77,
+  "unique_records": [
+    "hash-mismatch: No profile record found for '_RNvMNtCs1NnvL0bWDow_7tracing4spanNtB2_4Span7do_exit' with hash = 0x0",
+    "hash-mismatch: No profile record found for '_RNvMNtCs1NnvL0bWDow_7tracing4spanNtB2_4Span8do_enter' with hash = 0x0",
+    "hash-mismatch: No profile record found for '_RNvXse_NtCs1NnvL0bWDow_7tracing4spanNtB5_7EnteredNtNtNtCskADBYZwJmSU_4core3ops4drop4Drop4drop' with hash = 0x0",
+    "hash-mismatch: No profile record found for '_RNvXsn_NtCs3XWdltaRZg1_12tracing_core8metadataNtB5_11LevelFilterNtNtCskADBYZwJmSU_4core3cmp10PartialOrd11partial_cmp' with hash = 0x0",
+    "hash-mismatch: No profile record found for '_RNvXsp_NtCs3XWdltaRZg1_12tracing_core8metadataNtB5_11LevelFilterINtNtCskADBYZwJmSU_4core3cmp10PartialOrdNtB5_5LevelE2ge' with hash = 0x0"
+  ],
+  "owned_symbol_records": 0,
+  "raw_log_sha256": "e686058c26540183bb84f6468375af0be96e72576844ef7646877e3d053c7efc",
+  "interpretation": "74 zero-hash tracing_core records and three zero-hash tracing span records; identical five unique symbols to checkpoint 414 source attribution. No owned or unclassified symbols; vendor internals and branch/path coverage remain excluded.",
+  "unexpected_records_before_attribution": 3,
+  "unclassified_records_after_attribution": 0,
+  "dependency_source_confirmation": {
+    "crate": "tracing 0.1.44",
+    "source": "src/span.rs",
+    "sha256": "b87686c0ff6b55193a9377f3a0c978e0368edb6f46cd4d5a5b395c169df2f658",
+    "definitions": [
+      "1035 do_enter",
+      "1052 do_exit",
+      "1565 Drop for Entered"
+    ]
+  }
+}

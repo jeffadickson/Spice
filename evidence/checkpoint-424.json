@@ -1,0 +1,176 @@
+{
+  "iteration": 424,
+  "status": "passed",
+  "rust_tests_passed": 339,
+  "managed_checks_passed": 29,
+  "commands": [
+    {
+      "command": "rustc",
+      "arguments": [
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/424-0.log"
+    },
+    {
+      "command": "dotnet",
+      "arguments": [
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/424-1.log"
+    },
+    {
+      "command": "cargo",
+      "arguments": [
+        "build",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/424-2.log"
+    },
+    {
+      "command": "cargo",
+      "arguments": [
+        "test",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/424-3.log"
+    },
+    {
+      "command": "cargo",
+      "arguments": [
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/424-4.log"
+    },
+    {
+      "command": "cargo",
+      "arguments": [
+        "clippy",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/424-5.log"
+    },
+    {
+      "command": "dotnet",
+      "arguments": [
+        "build",
+        "dotnet/Simulator.Conformance/Simulator.Conformance.csproj"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/424-6.log"
+    },
+    {
+      "command": "dotnet",
+      "arguments": [
+        "run",
+        "--no-build",
+        "--project",
+        "dotnet/Simulator.Conformance/Simulator.Conformance.csproj",
+        "--",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\target\\debug\\circuit-simulator.exe"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/424-7.log"
+    },
+    {
+      "command": "dotnet",
+      "arguments": [
+        "test",
+        "dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj"
+      ],
+      "exit_code": 0,
+      "log": "build/checkpoints/424-8.log"
+    }
+  ],
+  "source_hashes": {
+    "src/ac.rs": "99b71e709bfbb2227a4980b4d491ed1d17def36f74a2db116f237b1d90d3c16c",
+    "src/adaptive.rs": "07e188bcb169652fe8f398d83da162d64cae3786ff2a68c2b2f6ac9ddd3d24ed",
+    "src/api.rs": "efc595fbe65cf4a55f542114b4851547204117a7e57038509a189ab1f324acd5",
+    "src/artifact.rs": "13180775067ea63a8958572f8c70599d50ba8797db13937e7401eb0145e940c0",
+    "src/assertion.rs": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+    "src/audit.rs": "b0ef5eee6820d350c7969ca1851454bf56789901e31ab255492af2aea87e0227",
+    "src/backend.rs": "4420491c4b956acccc1d4c60c7a2409771e8c8f60ad92707166b39d2225644b2",
+    "src/backend_faer.rs": "2115a12a1f88416912040f58c4fd5338b81cd8559fac0f18b645efbf5ad5138f",
+    "src/campaign.rs": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+    "src/charge.rs": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+    "src/circuit.rs": "7597d72df62ee3f943cc614b563e0a884d605e7c5bc3e3790e94cc35d988d159",
+    "src/compile.rs": "71b077204f37aee834a4bccb5ca1f4d4570c857434de98748faed3cb26176339",
+    "src/configured.rs": "9cfdc07ae2c5f11a117a0c4320a2c7b1e15fe9ae256619696f7edf6b6e04a563",
+    "src/dc.rs": "749a063f62b52897efdf2cae1270298f34695591031cec889211ce878b659703",
+    "src/error.rs": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+    "src/experiment.rs": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+    "src/expression.rs": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+    "src/grid.rs": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+    "src/ids.rs": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+    "src/integrator.rs": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+    "src/lib.rs": "d6be498d26459892ae5d8110d4a3fa02e7a8f1d0a2cf613a024641c496544d7d",
+    "src/linalg.rs": "e80d003c761e096bc32a368682c898bbe3254d5e8e311438f78d72cc18b4d64c",
+    "src/linear_dynamic.rs": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+    "src/main.rs": "731b42065ee40f7f6a6554a64a1c1502fdd4b2ec25d1a4b0119f077f11c545ad",
+    "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+    "src/model.rs": "62303fbe97f6b095d438f87fcc9e3238e24fa056772a79c7042642a53ce20a05",
+    "src/netlist.rs": "d272200324b62aaa2aefe2f4870897c36c4f47662390bf2529da885900922dda",
+    "src/newton.rs": "efdeb35d64165eda457846f85672bee63215c13c6ad43a81ce22b0584a574828",
+    "src/power.rs": "d1bdd03a7bfe1c68d3869de4785d69e4d11e0cceae7e8d1974ee2b71f8440ede",
+    "src/provenance.rs": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+    "src/quantity.rs": "bd53faa680ee46119020b2fe33ee8c023b8c42cfd216455ef5c205e43450e892",
+    "src/registry.rs": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7",
+    "src/sampling.rs": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+    "src/solver_contract.rs": "7d0bd8e4368d541378794ea80f2d82a47799d38afdc729915a1287b14fa6b8f1",
+    "src/sources.rs": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+    "src/sparse.rs": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+    "src/sweep.rs": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+    "src/topology.rs": "e44a5fed6c58fc092bded030a2ca9a66b6334103a3ce364e0dfe205ad9010df4",
+    "src/transient.rs": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a",
+    "src/variation.rs": "480f2d45e07d16d1cc2e033e29fb569059e9bd7fb2bd8faa3c6c5862de803b0c",
+    "src/waveform.rs": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+    "tests/adaptive.rs": "6189e89b717c76d224249c2bc91d6d24df9e48a1a2a6343bdad2b76456863aee",
+    "tests/analyses.rs": "d92f21fd6603487fa77462fedb5d6ebaa2a04c2266324128b5a2c7b6c081536c",
+    "tests/campaign_cli.rs": "6747f47cd04f4714a5666d60a229e4d46259c45bf69570a212ee1a6243544c51",
+    "tests/consistency.rs": "71bb8a26c0c60dc4c6780dbd49eca316a97f2a4a2930fb8b9e28250e96981f14",
+    "tests/continuation.rs": "f0c70bdc37a42d667d528fdfad18a9cdfe6a96232fcca8bfe05a4a63fa6ef571",
+    "tests/continuation_hardening.rs": "2f514ff834932bd5f5d410ed279d23ec517645ccb958f9d16a18a8f6738568df",
+    "tests/continuation_networks.rs": "c42c068943af6df59da4f60d1bfb35251782e7d5b58346bd3aecb4081f3405b0",
+    "tests/contracts.rs": "7c438f713c141edd4b09934d32430042aa63ce7dd08c4332746df0201aa54a52",
+    "tests/controlled_sources.rs": "880fb98f09df44b2c49bcba6d3d51f702e58acc04afe6ec94fb70d31fe216715",
+    "tests/dc.rs": "bc53abf0352e0445a1cb32205f5baa523fa26b314696c13c7925d043a4b03e78",
+    "tests/dynamic.rs": "3f8dea7e04ee020f8439a32ebdc7fe359a7c3d873e1919a36f71d92d683b68ac",
+    "tests/edge_cases.rs": "a4b769e63220f11cb2e06901c5a260f6b562cda8ccc31e82d8cadbf7c4b38df5",
+    "tests/endpoint.rs": "f9b85b0b99a1f2431c9557f979291427cb419cddd5105b2dc9e05088ac7ef88d",
+    "tests/endurance.rs": "b6be43d0e7ebadb88d5b7a05572d1f7dca10946803b5ff2ffb4f29da1a9f66ca",
+    "tests/experiment.rs": "8b9751913308a7bb5821f0cd1564119c1fc6cd8902a339deb8135d795ebec04f",
+    "tests/expression.rs": "251ea3e316e44e85f54c508338212af51be44ab2f1a661e4d68a5fcc3659f67a",
+    "tests/faults.rs": "ed7fcdbfee724895589ff45294c3f79b5ef5298abb2b98d89fdd49d42098ab54",
+    "tests/fuzz_dynamic.rs": "2d7b59c9ef7c224bd3972562da68ae86825a54b4b82d92b22eef9ff4211d86c5",
+    "tests/fuzz_smoke.rs": "ec1c20e120bf6e18eeed5808ea8007363a2e9403535a84503d7841049b2ee0aa",
+    "tests/hardening.rs": "317cdab0ec40c31501dc30902486ce7db70369af086384de8b5e40eb79ccd9cc",
+    "tests/matrix_conformance.rs": "dec9d6bbae1c4999831fefc1505bbad36adf1d4b012675bb7d91c1d3df80f621",
+    "tests/model_charge.rs": "47f365b0f99becae8fc1383fb7f6df55e2c16f57da591c4c3a4c17b2352c9ad4",
+    "tests/ngspice_compat.rs": "51f27eac66a02bb81691aa51d7f77a3255c1a104356eef79211d3dccb30deb4d",
+    "tests/nonlinear.rs": "c1f2f7ba6a2f2272142280e79b8ea2a83d72c6b9acea09cc97d61f1ca101c127",
+    "tests/properties.rs": "55912c3f745dff6da62a9cc9e8c26299a491bf284bf100c2687b184a5eb8457a",
+    "tests/property_campaign.rs": "7c28d5ac7dd4521b34263043fd1a973ecaebeab8c336423ee0cab21cf7adfc37",
+    "tests/providers.rs": "ddcea1cbd4f13c19e423ef8e6b659318bdce17044e9d06c0f5d5c916c5357b23",
+    "tests/sampling.rs": "a4adb30c300cc662cf02b679647834808eddf71669c3f57af2d60d358d7e64fe",
+    "tests/sparse_ac.rs": "6ab4634349526ed8f24f1bc4a9063e902393a604f167840e527c0815407dc0ee",
+    "tests/sparse_ac_circuits.rs": "c92c38f0632792d00b010b8c4e38c622a46939c8fcd3d0bf403116b6adccb2a3",
+    "tests/sparse_dynamic.rs": "7c4c7ef0e075ecae98849ae9f2bdcd72298611c02b358bae7fefbca3c8a2f493",
+    "tests/sparse_transient.rs": "9d592f4547339da235f107ad966b75666cb098eb40387671670909cecf72b47b",
+    "tests/storage_power.rs": "782d830e7e30dfd242e89dbdc551a327686745a185ebf72c8185e9073711aeb1",
+    "tests/transient.rs": "371336ac59a5aaf27fe1fd36f55bfd6f678c8414e8354b475c468916d99110ad",
+    "tests/variation.rs": "5b7523f11e957db4c3953798f272b68ebd14991d750a5d191f0d90937887f4bd"
+  },
+  "scope": "bounded reference prototype; not full release qualification"
+}

@@ -31,6 +31,12 @@ For authoring evolution, read `docs/modern-dsl-proposal.sdoc` before designing a
 
 An overnight campaign is now configured for midnight local time (five-hour maximum) with a 05:05 review. Use make endurance or scripts/Run-Endurance.ps1. Read docs/endurance.md and evidence/endurance-qualification.md; no completed five-hour run is claimed. Campaigns test immutable source archives and keep generated artifacts in ignored work/target paths.
 
+Checkpoint 424 completes 415–424: read evidence/models-424-qualification.md and
+resume at 425, with checkpoint 434 and final review/fixes 435 still required.
+339 Rust tests, 29 managed checks and 64 Windows/Linux xUnit cases pass. Fresh
+Rust lines 5290/5738, Coverlet lines 164/172 and branches 109/112; native branches
+unavailable. Charge mutations: ten caught, four unviable, no survivor of fourteen.
+
 Suggested next technical work:
 
 1. Extend difficult-circuit evidence beyond the current-driven diode recovery, impossible physical reverse bias, and bounded stage-exhaustion cases in tests/continuation.rs; see evidence/continuation-qualification.md. Do not infer broad convergence guarantees from this small topology.

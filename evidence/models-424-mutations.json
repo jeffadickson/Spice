@@ -1,0 +1,55 @@
+{
+  "status": "completed",
+  "requested_seconds": 900,
+  "elapsed_seconds": 210.1347816,
+  "shard": "0/1",
+  "rust_file": "src/charge.rs",
+  "rust_test": "lib,model_charge,property_campaign",
+  "tool": "rust",
+  "rust_filter": "",
+  "workers": 1,
+  "cargo_mutants": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 14,
+    "killed": 10,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 4,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "db7594580f2c27d867fd552dc6e27149e6a16b593ef1c189b3dc647e12406190",
+    "log_sha256": "345bb957a403f3a368c3bac8cf36a946cb690cda4193369975cd204a58ce6a13"
+  },
+  "stryker": {
+    "version": "5.0.0",
+    "status": "skipped_explicitly",
+    "exit_code": null,
+    "candidates": 0,
+    "killed": 0,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": null,
+    "log_sha256": null
+  },
+  "source_hashes": {
+    "src/charge.rs": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+    "tests/model_charge.rs": "47f365b0f99becae8fc1383fb7f6df55e2c16f57da591c4c3a4c17b2352c9ad4",
+    "tests/property_campaign.rs": "7c28d5ac7dd4521b34263043fd1a973ecaebeab8c336423ee0cab21cf7adfc37"
+  },
+  "source_revision": "bfdb4abb348c86d88d9ed10dfe0275c85dfdc3cf",
+  "limitations": [
+    "Charge primitive only; four return-replacement candidates do not compile against the SimResult alias. They are not kills.",
+    "No new Stryker execution at checkpoint 424; historical client-only evidence remains separate."
+  ]
+}
