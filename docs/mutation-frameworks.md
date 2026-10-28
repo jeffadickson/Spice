@@ -114,6 +114,12 @@ candidate is silently accepted and no tool upgrade or mutation suppression is
 implied. Equivalent or masked survivors need documented reasoning and remain
 separate from test-detected kills.
 
+The relocation helper now accepts 1–64 retained entries instead of requiring the
+first historical cohort's count of 35. It checks the count before source-file
+walking; an empty, oversized or ambiguous cohort is rejected. Preparation does
+not execute mutations or assign equivalence. `tests/SurvivorReplay.Tests.ps1`
+checks a small synthetic cohort and rejection without inventory modification.
+
 To repeat the full retained cohort on the current source from an existing checkout:
 
 ```powershell

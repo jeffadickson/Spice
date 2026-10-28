@@ -1,0 +1,21 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "collector_sha256": "7571d007be06bc5026c54552c5dca22cebbeaa88925eb2ee29ba00fae3de7a1a",
+  "metrics": [
+    {
+      "file": "scripts/Prepare-SurvivorReplay.cs",
+      "source_sha256": "4a83a9d3e14d230c60da35c3e2990d8853e94db55117319ad41e5bdc1d8a5179",
+      "lines": 33,
+      "covered_lines": 32,
+      "line_percent": 96.96969696969697,
+      "branches": 40,
+      "covered_branches": 29,
+      "branch_percent": 72.5
+    }
+  ],
+  "limitations": [
+    "Scoped managed tooling execution; synthetic fixture counts are not simulator qualification.",
+    "Per-line maxima for duplicate branch mappings; not complete path coverage.",
+    "PowerShell, native children, vendor internals and unexecuted platform/failure paths are unmeasured."
+  ]
+}

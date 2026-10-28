@@ -10,8 +10,10 @@ if(args is not [var inventoryPath,var archive,var output]||!File.Exists("Cargo.t
 if(!Directory.Exists(Path.GetDirectoryName(Path.GetFullPath(output))))throw new DirectoryNotFoundException("Output parent missing.");
 if(new FileInfo(inventoryPath).Length>131072)throw new InvalidDataException("Inventory too large.");
 var inventory=JsonNode.Parse(File.ReadAllBytes(inventoryPath))!.AsObject();
+var survivors=inventory["survivors"]!.AsArray();
+if(survivors.Count is <1 or >64)throw new InvalidDataException("Expected 1..64 retained survivors.");
 var names=new JsonArray();
-foreach(var node in inventory["survivors"]!.AsArray()) {
+foreach(var node in survivors) {
     var item=node!.AsObject();var file=item["file"]!.GetValue<string>();
     if(!file.StartsWith("src/",StringComparison.Ordinal)||file.Contains("..",StringComparison.Ordinal)||file.Contains('\\'))throw new InvalidDataException("Unsafe source path.");
     var before=File.ReadAllLines(Path.Combine(archive,file));var current=File.ReadAllLines(file);
@@ -32,7 +34,6 @@ foreach(var node in inventory["survivors"]!.AsArray()) {
     names.Add(name);item["current_name"]=name;item["current_line"]=matches[0];
     item["current_source_sha256"]=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(file))).ToLowerInvariant();
 }
-if(names.Count!=35)throw new InvalidDataException("Expected the preserved 35-survivor cohort.");
 var options=new JsonSerializerOptions{WriteIndented=true,NewLine="\n"};
 File.WriteAllText(output,names.ToJsonString(options));
 File.WriteAllText(inventoryPath,inventory.ToJsonString(options));
