@@ -1,5 +1,12 @@
 # Spice qualification handoff — survivor triage after completed campaign
 
+October 28 follow-up: read evidence/overnight-20261028-review.md and its linked
+native replay/source-hash evidence first. Of the new 22 Rust survivors, 20 are
+caught and two retain conditional-equivalence dispositions. Managed EOF mutation
+182 is killed in isolation but still times out in the full suite; Stryker's
+103 SafeMode compile errors and the adaptive LLVM mapping discrepancy remain
+explicit verification gaps. This work does not restart the completed quota.
+
 The October 27 follow-up addresses overnight results; it does not restart the
 completed iteration quota below. Read evidence/overnight-survivor-triage.json,
 evidence/overnight-managed-survivor-triage.json and the triage evidence reports.

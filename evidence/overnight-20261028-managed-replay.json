@@ -1,0 +1,94 @@
+{
+  "source_base": "7ce9bb3062e5f75560cab2d3dde91c2909af6f6f",
+  "full_run": "work/framework-mutations/20261028T134125Z-5fc94144",
+  "focused_run": "work/oct28-eof-focus",
+  "entries": [
+    {
+      "id": "DOTNET28-182",
+      "file": "dotnet/Simulator.Client/Client.cs",
+      "native_mutant_id": "182",
+      "full_outcome": "Timeout",
+      "focused_outcome": "Killed",
+      "replacement": "(read = await reader.BaseStream.ReadAsync(buffer.AsMemory(), cancellation)) == 0",
+      "location": {
+        "start": {
+          "line": 116,
+          "column": 16
+        },
+        "end": {
+          "line": 116,
+          "column": 96
+        }
+      },
+      "full_report_sha256": "23cd232fdf31e6adcd576f354be49607a90da1bf564452548e2870b61ef9a4a4",
+      "source_sha256": "1f5bfeaa871cef2bc6dfd2647072217cf1d52cbb778abc624778bdf5f03d914a",
+      "test_source_sha256": "a2019cb5f5031dc926f4f20c01cc02a5c033bf05bed1f13206aa58e639346ffe"
+    },
+    {
+      "id": "DOTNET28-194",
+      "file": "dotnet/Simulator.Client/Client.cs",
+      "native_mutant_id": "194",
+      "full_outcome": "Survived",
+      "focused_outcome": "Ignored",
+      "replacement": "true",
+      "location": {
+        "start": {
+          "line": 122,
+          "column": 51
+        },
+        "end": {
+          "line": 122,
+          "column": 56
+        }
+      },
+      "full_report_sha256": "23cd232fdf31e6adcd576f354be49607a90da1bf564452548e2870b61ef9a4a4",
+      "source_sha256": "1f5bfeaa871cef2bc6dfd2647072217cf1d52cbb778abc624778bdf5f03d914a",
+      "test_source_sha256": "a2019cb5f5031dc926f4f20c01cc02a5c033bf05bed1f13206aa58e639346ffe"
+    }
+  ],
+  "full_counts": {
+    "version": "5.0.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 200,
+    "killed": 88,
+    "survived": 1,
+    "timed_out": 1,
+    "invalid": 103,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 7,
+    "unattempted": 0,
+    "report_sha256": "23cd232fdf31e6adcd576f354be49607a90da1bf564452548e2870b61ef9a4a4",
+    "log_sha256": "346f191787fcd828edfaccf751cc011b8ec7f733cdf66ce257cdde608270417a"
+  },
+  "focused_counts": [
+    {
+      "status": "CompileError",
+      "count": 103
+    },
+    {
+      "status": "Ignored",
+      "count": 87
+    },
+    {
+      "status": "Killed",
+      "count": 6
+    },
+    {
+      "status": "NoCoverage",
+      "count": 2
+    },
+    {
+      "status": "Survived",
+      "count": 2
+    }
+  ],
+  "limitations": [
+    "Full suite still times out on 182; only the isolated small-envelope liveness test reports Killed for that identity. Do not promote the full-run timeout to a kill.",
+    "The isolated run deliberately omits bulk-stream tests; its 185/187 survivors and two uncovered mutations are scope artifacts and not new untriaged product defects.",
+    "194 changes a BOM-emission flag used only for decoding; conditional source-reviewed equivalence, not a kill.",
+    "103 full-run compile errors remain distinct from detection; Stryker logs attribute them to definite-assignment rollback in RunJsonAsync."
+  ]
+}

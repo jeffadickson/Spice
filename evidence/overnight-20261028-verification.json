@@ -1,0 +1,49 @@
+{
+  "source_base": "7ce9bb3062e5f75560cab2d3dde91c2909af6f6f",
+  "tested_overlay": "overnight-20261028-rust-input-hashes.json and source hashes in coverage reports",
+  "windows": {
+    "ignored": 1,
+    "command": "cargo test --all-targets",
+    "passed": 379,
+    "log": "work/oct28-rust-regression.log"
+  },
+  "linux": {
+    "ignored": 1,
+    "command": "scripts/Test-Coverage.ps1 -CoverageToolchain 1.99.1-x86_64-unknown-linux-gnu",
+    "verified_source_hashes": 78,
+    "passed": 379,
+    "log": "work/oct28-fresh-coverage.log"
+  },
+  "properties": {
+    "seed": "202610280610",
+    "cases_per_method": 1024,
+    "methods": 16,
+    "distinct_platform_inputs_are_not_additive": true,
+    "framework": "Proptest"
+  },
+  "managed": {
+    "cases": 256,
+    "replay": "362,20261027",
+    "failed": 0,
+    "passed": 71,
+    "framework": "FsCheck",
+    "coverage": "managed-coverlet.json"
+  },
+  "pester": {
+    "skipped": 0,
+    "failed": 0,
+    "passed": 22,
+    "log": "work/oct28-tooling-tests.log",
+    "elapsed_seconds": 943.96
+  },
+  "static_checks": [
+    "cargo fmt --check passed",
+    "cargo clippy --all-targets -- -D warnings passed"
+  ],
+  "limitations": [
+    "cargo-nextest unavailable; cargo test used",
+    "Rust branch coverage unavailable",
+    "LLVM owned-source mapping discrepancy unresolved; no comparable percentage gain claimed",
+    "Finite tests and selected mutation scope are not full qualification"
+  ]
+}

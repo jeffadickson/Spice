@@ -40,3 +40,12 @@ and Windows/Linux functional managed tests have actual checkpoint reports.
 No full SPICE parity, GPU implementation, universal convergence, global error
 bound, large-circuit speedup or production qualification is claimed. Raw campaign
 artifacts remain local; completed checkpoint commits are pushed without CI dispatch.
+# October 28 verification follow-up
+
+See [the survivor review](../evidence/overnight-20261028-review.md): the new
+22-survivor Rust cohort has 20 detected kills and two conditional equivalents.
+Remaining verification work includes the full-suite managed EOF timeout,
+Stryker RunJsonAsync definite-assignment rollback (103 compile-error candidates),
+and incomplete adaptive-module LLVM mappings. Focused kills, unavailable mutation
+coverage and conditional equivalents remain separate outcomes. None establishes
+general M1, GPU or production qualification.
