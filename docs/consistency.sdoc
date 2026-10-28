@@ -409,11 +409,39 @@ STATEMENT: >>>
 Each retained overnight survivor shall have a stable triage ID, original tested source and native report hash, mutation identity, affected requirement, classification, and actual replay evidence or an explicit unverified state. Tests shall challenge independent behavior without weakening acceptance tolerances to improve mutation counts. Exact-name replay shall verify the native inventory before execution; equivalent or masked behavior shall not be counted as caught without evidence.
 <<<
 COMMENT: >>>
-Inventory: evidence/overnight-survivor-triage.json for the 35 Rust survivors from run 20261027T070556Z-1d243795, source 742341b, shard 15/16. Replay: evidence/triage-survivor-replay.json and evidence/overnight-survivor-review.md retain 31 test-detected kills and four conditional source-reviewed equivalents on matching current-source snapshots. Draft status is not universal qualification or formal proof.
+Inventories: evidence/overnight-survivor-triage.json for the original 35 survivors and evidence/overnight-20261028-survivors.json for the next 22 from shard 12/16. The former retains 31 caught/four conditional equivalents; the latter retains 20 caught/two conditional equivalents. The bounded relocation helper accepts 1..64 entries and rejects ambiguous context before writing results. Draft status is not universal qualification or formal proof.
 <<<
 RELATIONS:
 - TYPE: Parent
   VALUE: MUT-002
+
+[REQUIREMENT]
+UID: QUAL-EDGE-001
+STATUS: Draft
+TITLE: Independent acceptance and audit boundary evidence
+STATEMENT: >>>
+Qualification shall exercise inclusive exact resource and assertion limits, independently malformed policy fields, signed two-live-terminal diode currents, Gmin audit scaling, inductor voltage-bound scaling and worst-observation retention. The artifact reader shall reject a trailing byte beyond its real maximum even when the bounded prefix is a valid checksummed result. Tests shall use independently stated physical equations or policy limits rather than weakening tolerances or suppressing surviving mutations.
+<<<
+COMMENT: >>>
+Inferred from the user's survivor-triage request. Verification: tests/overnight_survivors_20261028.rs and src/backend.rs::october28_contracts; replay inventory evidence/overnight-20261028-survivors.json. Finite cases and selected mutants do not close general numerical qualification.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: MAN-002
+STATUS: Draft
+TITLE: EOF completion distinguished from a mutation timeout
+STATEMENT: >>>
+Managed transport qualification shall exercise normal EOF under an explicit short cancellation deadline and require successful envelope completion. Mutation timeouts shall remain separate from test-detected failures. A fixture deadline is a verification bound on the tested host, not a general simulator latency guarantee.
+<<<
+COMMENT: >>>
+Inferred from the retained Stryker EOF-loop timeout. Verification: dotnet/Simulator.Client.Tests/TransportContracts.cs::SmallSuccessfulEnvelopeCompletesBeforeItsOwnDeadline uses a two-second cancellation token plus an independent WaitAsync bound. evidence/overnight-20261028-managed-replay.json records a focused Killed outcome for that identity while the full suite still reports Timeout. The BOM-emission flag remains separately reviewed for the decode-only path; the scopes must not be conflated.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MAN-001
 
 [REQUIREMENT]
 UID: INT-WORK-001

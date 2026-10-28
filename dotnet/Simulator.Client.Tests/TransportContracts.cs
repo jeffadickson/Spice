@@ -5,6 +5,15 @@ using Xunit;
 /// <summary>Adversarial native-process envelopes, isolated from the real numerical engine.</summary>
 public sealed class TransportContracts
 {
+    /// <summary>A normal EOF must complete before cancellation, rather than spin until a mutation-runner timeout.</summary>
+    [Fact]
+    public async Task SmallSuccessfulEnvelopeCompletesBeforeItsOwnDeadline()
+    {
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+        var response = await Fixture().RunJsonAsync(Request(
+            """{"schema_version":"1","status":"succeeded","complete":true}"""), deadline.Token).WaitAsync(deadline.Token);
+        Assert.True(response.Succeeded);
+    }
     [Fact]
     public async Task OneByteAboveDiagnosticLimitFails()
     {

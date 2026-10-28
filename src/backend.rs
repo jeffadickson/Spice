@@ -249,3 +249,25 @@ fn qr_backward_error(matrix: &DMatrix<f64>, rhs: &DVector<f64>, values: &DVector
     }
     worst
 }
+
+#[cfg(test)]
+mod october28_contracts {
+    use super::*;
+    #[test]
+    fn qr_backward_error_has_an_independently_known_nonnegative_scale() {
+        // 2*x=3 at x=1 has residual 1 and componentwise scale 2+3=5.
+        let matrix = DMatrix::from_element(1, 1, 2.);
+        let rhs = DVector::from_element(1, 3.);
+        assert!(
+            (qr_backward_error(&matrix, &rhs, &DVector::from_element(1, 1.)) - 0.2).abs() < 1e-15
+        );
+        assert_eq!(
+            qr_backward_error(&matrix, &rhs, &DVector::from_element(1, 1.5)),
+            0.
+        );
+        assert!(
+            qr_backward_error(&matrix, &rhs, &DVector::from_element(1, f64::INFINITY))
+                .is_infinite()
+        );
+    }
+}
