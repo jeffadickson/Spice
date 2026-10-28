@@ -100,7 +100,10 @@ try {
     $raw = @(Get-ChildItem -LiteralPath $profileRoot -Filter '*.profraw' | ForEach-Object FullName)
     if ($raw.Count -eq 0) { throw 'Instrumented tests produced no raw profiles; coverage was not measured.' }
     $mergeDiagnostics = Join-Path $profileRoot 'llvm-profdata.stderr.txt'
-    & $profdata merge -sparse @raw -o $profile 2> $mergeDiagnostics
+    # Profile counts grow with child processes; avoid Windows' command-line limit.
+    $rawList = Join-Path $profileRoot 'profraw-files.txt'
+    $raw | Set-Content -LiteralPath $rawList -Encoding utf8
+    & $profdata merge -sparse ('--input-files=' + $rawList) -o $profile 2> $mergeDiagnostics
     if ($LASTEXITCODE -ne 0) { throw 'Profile merge failed' }
     $arguments = @('export', $executables[0], ('-instr-profile=' + $profile))
     foreach ($binary in $executables | Select-Object -Skip 1) { $arguments += @('-object', $binary) }
