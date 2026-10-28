@@ -13,7 +13,11 @@ try {
     if ([string]::IsNullOrWhiteSpace($CoverageToolchain)) {
         $CoverageToolchain = $env:SPICE_COVERAGE_TOOLCHAIN
     }
-    $env:RUSTUP_TOOLCHAIN = $CoverageToolchain
+    if ([string]::IsNullOrWhiteSpace($CoverageToolchain)) {
+        Remove-Item Env:RUSTUP_TOOLCHAIN -ErrorAction SilentlyContinue
+    } else {
+        $env:RUSTUP_TOOLCHAIN = $CoverageToolchain
+    }
     $active = @(rustup show active-toolchain)
     if ($LASTEXITCODE -ne 0) { throw 'Cannot resolve coverage toolchain. Install the pinned rust-toolchain.toml toolchain or the explicit coverage override.' }
     $selected = ($active[0] -split '\s+')[0]
@@ -31,6 +35,7 @@ try {
     $profdata = Join-Path $tools ('llvm-profdata' + $extension)
     $llvmCov = Join-Path $tools ('llvm-cov' + $extension)
     Write-Host "Coverage toolchain: $selected; host: $hostTarget; sysroot: $sysroot"
+    $toolVersions = @{}
     foreach ($executable in @($profdata, $llvmCov)) {
         if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
             throw "Coverage prerequisite missing: $executable. Install matching tools with: $repair"
@@ -41,6 +46,7 @@ try {
         } catch {
             throw "Coverage prerequisite cannot execute: $executable ($($_.Exception.Message)). Repair with: $repair"
         }
+        $toolVersions[[IO.Path]::GetFileName($executable)] = $toolVersion -join "`n"
         Write-Host ($toolVersion -join "`n")
     }
     $runtimeDirectory = Join-Path $sysroot ('lib/rustlib/' + $hostTarget + '/lib')
@@ -84,6 +90,7 @@ try {
     $export | Set-Content -LiteralPath (Join-Path $profileRoot 'llvm-coverage.json') -Encoding utf8
     $summary = [ordered]@{
         tool = 'rustc instrumentation and matching LLVM tools'; rustc = (rustc --version)
+        coverage_toolchain = $selected; llvm_tools = $toolVersions
         source_commit = (git rev-parse HEAD)
         source_dirty = [bool](git status --porcelain)
         source_hashes = @{}

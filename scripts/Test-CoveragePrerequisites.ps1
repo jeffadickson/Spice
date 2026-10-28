@@ -5,8 +5,8 @@ $coverage = Join-Path $PSScriptRoot 'Test-Coverage.ps1'
 $oldToolchain = $env:RUSTUP_TOOLCHAIN
 $oldOverride = $env:SPICE_COVERAGE_TOOLCHAIN
 try {
-    $env:RUSTUP_TOOLCHAIN = $null
-    $env:SPICE_COVERAGE_TOOLCHAIN = $null
+    Remove-Item Env:RUSTUP_TOOLCHAIN -ErrorAction SilentlyContinue
+    Remove-Item Env:SPICE_COVERAGE_TOOLCHAIN -ErrorAction SilentlyContinue
     & $coverage -CheckPrerequisitesOnly
     $sysroot = (rustc --print sysroot).Trim()
     if ($LASTEXITCODE -ne 0) { throw 'Cannot resolve regression sysroot.' }
@@ -25,10 +25,24 @@ try {
                 throw "Missing-tool regression failed for $name : $failure"
             }
             if ($env:RUSTUP_TOOLCHAIN -ne $null) { throw 'Coverage did not restore RUSTUP_TOOLCHAIN after failure.' }
+            # A present but invalid executable must also fail the --version probe.
+            Set-Content -LiteralPath $tool -Value 'invalid executable fixture' -Encoding utf8
+            $failure = $null
+            try { & $coverage -CheckPrerequisitesOnly } catch { $failure = $_.Exception.Message }
+            if (-not $failure -or -not $failure.Contains("Coverage prerequisite cannot execute: $tool")) {
+                throw "Unusable-tool regression failed for $name : $failure"
+            }
         } finally {
+            Remove-Item -LiteralPath $tool -ErrorAction SilentlyContinue
             Move-Item -LiteralPath $hidden -Destination $tool -ErrorAction Stop
         }
     }
+    # An explicit parameter must take precedence over an invalid environment override.
+    $env:SPICE_COVERAGE_TOOLCHAIN = 'spice-intentionally-missing-toolchain'
+    $selected = ((rustup show active-toolchain) -split '\s+')[0]
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot resolve explicit regression toolchain.' }
+    & $coverage -CoverageToolchain $selected -CheckPrerequisitesOnly
+    Remove-Item Env:SPICE_COVERAGE_TOOLCHAIN -ErrorAction SilentlyContinue
     & $coverage -CheckPrerequisitesOnly
     Write-Host 'Coverage prerequisite regressions passed; no coverage measurements were collected by this check.'
 } finally {
