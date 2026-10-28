@@ -1,39 +1,58 @@
 # Orchestrate Rust/LLVM tools with native PowerShell; substantive mutation logic is C#.
-param([string]$CoverageToolchain = '')
+param([string]$CoverageToolchain = '', [switch]$CheckPrerequisitesOnly)
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'HostTools.ps1')
 Import-SpiceTools -Root (Split-Path $PSScriptRoot -Parent)
 if ($IsWindows) { Import-SpiceMsvc }
 $oldToolchain = $env:RUSTUP_TOOLCHAIN
-if ([string]::IsNullOrWhiteSpace($CoverageToolchain)) {
-    $CoverageToolchain = if ($env:SPICE_COVERAGE_TOOLCHAIN) { $env:SPICE_COVERAGE_TOOLCHAIN } elseif ($IsWindows) { 'nightly-x86_64-pc-windows-msvc' } else { 'nightly' }
-}
-$env:RUSTUP_TOOLCHAIN = $CoverageToolchain
-$sysroot = (rustc --print sysroot).Trim()
-$hostTarget = ((rustc -vV | Select-String '^host:').ToString()).Substring(6).Trim()
-$runtimeDirectory = Join-Path $sysroot ('lib/rustlib/' + $hostTarget + '/lib')
-$runtime = Get-ChildItem -LiteralPath $runtimeDirectory -Filter 'libprofiler_builtins*.rlib' -ErrorAction SilentlyContinue | Select-Object -First 1
-if (-not $runtime) {
-    $env:RUSTUP_TOOLCHAIN = $oldToolchain
-    throw "Coverage toolchain $CoverageToolchain does not include profiler_builtins."
-}
-if ($IsWindows -and $hostTarget -like '*-msvc' -and -not (Get-Command link.exe -ErrorAction SilentlyContinue)) {
-    $env:RUSTUP_TOOLCHAIN = $oldToolchain
-    throw 'Coverage toolchain has profiler_builtins, but link.exe is missing. Install the Visual C++ Build Tools and Windows SDK.'
-}
-$root = (Get-Location).Path
-$coverageRoot = Join-Path $root 'build/coverage'
-if (-not (Test-Path -LiteralPath $root -PathType Container)) { throw 'Coverage checkout directory is missing.' }
-if (-not (Test-Path -LiteralPath (Split-Path $coverageRoot -Parent) -PathType Container)) {
-    New-Item -ItemType Directory -Path (Split-Path $coverageRoot -Parent) | Out-Null
-}
-if (-not (Test-Path -LiteralPath $coverageRoot -PathType Container)) {
-    New-Item -ItemType Directory -Path $coverageRoot | Out-Null
-}
 $oldFlags = $env:RUSTFLAGS
 $oldTarget = $env:CARGO_TARGET_DIR
 $oldProfile = $env:LLVM_PROFILE_FILE
 try {
+    # Explicit overrides are supported; otherwise let rustup select rust-toolchain.toml.
+    if ([string]::IsNullOrWhiteSpace($CoverageToolchain)) {
+        $CoverageToolchain = $env:SPICE_COVERAGE_TOOLCHAIN
+    }
+    $env:RUSTUP_TOOLCHAIN = $CoverageToolchain
+    $active = @(rustup show active-toolchain)
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot resolve coverage toolchain. Install the pinned rust-toolchain.toml toolchain or the explicit coverage override.' }
+    $selected = ($active[0] -split '\s+')[0]
+    $repair = "rustup component add llvm-tools-preview --toolchain $selected"
+    $sysrootOutput = @(rustc --print sysroot)
+    if ($LASTEXITCODE -ne 0) { throw "Cannot query coverage sysroot for $selected." }
+    $sysroot = ($sysrootOutput -join '').Trim()
+    $version = @(rustc -vV)
+    if ($LASTEXITCODE -ne 0) { throw "Cannot query coverage compiler for $selected." }
+    $hostLine = @($version | Where-Object { $_ -like 'host: *' })
+    if ($hostLine.Count -ne 1) { throw "Missing rustc host target for $selected." }
+    $hostTarget = $hostLine[0].Substring(6).Trim()
+    $tools = Join-Path $sysroot ('lib/rustlib/' + $hostTarget + '/bin')
+    $extension = if ($IsWindows) { '.exe' } else { '' }
+    $profdata = Join-Path $tools ('llvm-profdata' + $extension)
+    $llvmCov = Join-Path $tools ('llvm-cov' + $extension)
+    Write-Host "Coverage toolchain: $selected; host: $hostTarget; sysroot: $sysroot"
+    foreach ($executable in @($profdata, $llvmCov)) {
+        if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
+            throw "Coverage prerequisite missing: $executable. Install matching tools with: $repair"
+        }
+        try {
+            $toolVersion = @(& $executable --version 2>&1)
+            if ($LASTEXITCODE -ne 0) { throw "exit code $LASTEXITCODE" }
+        } catch {
+            throw "Coverage prerequisite cannot execute: $executable ($($_.Exception.Message)). Repair with: $repair"
+        }
+        Write-Host ($toolVersion -join "`n")
+    }
+    $runtimeDirectory = Join-Path $sysroot ('lib/rustlib/' + $hostTarget + '/lib')
+    $runtime = Get-ChildItem -LiteralPath $runtimeDirectory -Filter 'libprofiler_builtins*.rlib' -ErrorAction SilentlyContinue | Select-Object -First 1
+    if (-not $runtime) { throw "Coverage toolchain $selected does not include profiler_builtins. Install a coverage-capable Rust distribution for $hostTarget." }
+    if ($IsWindows -and $hostTarget -like '*-msvc' -and -not (Get-Command link.exe -ErrorAction SilentlyContinue)) {
+        throw 'Coverage linker link.exe is missing. Install the Visual C++ Build Tools and Windows SDK.'
+    }
+    if ($CheckPrerequisitesOnly) { return }
+    $root = (Get-Location).Path
+    $coverageRoot = Join-Path $root 'build/coverage'
+    New-Item -ItemType Directory -Path $coverageRoot -Force | Out-Null
     $env:RUSTFLAGS = '-C instrument-coverage'
     $env:CARGO_TARGET_DIR = Join-Path $root 'target/coverage'
     # A unique run directory prevents stale profile counts from contaminating this run.
@@ -48,15 +67,10 @@ try {
     $executables = @($messages | ForEach-Object { $_ | ConvertFrom-Json } |
         Where-Object { $_.reason -eq 'compiler-artifact' -and $_.executable } |
         ForEach-Object { $_.executable } | Select-Object -Unique)
-    $sysroot = (rustc --print sysroot).Trim()
-    $hostLine = (rustc -vV | Select-String '^host:').ToString()
-    $hostTarget = $hostLine.Substring(6).Trim()
-    $tools = Join-Path $sysroot ('lib/rustlib/' + $hostTarget + '/bin')
-    $extension = if ($IsWindows) { '.exe' } else { '' }
-    $profdata = Join-Path $tools ('llvm-profdata' + $extension)
-    $llvmCov = Join-Path $tools ('llvm-cov' + $extension)
+    if ($executables.Count -eq 0) { throw 'Artifact discovery returned no executables; coverage was not measured.' }
     $profile = Join-Path $profileRoot 'merged.profdata'
     $raw = @(Get-ChildItem -LiteralPath $profileRoot -Filter '*.profraw' | ForEach-Object FullName)
+    if ($raw.Count -eq 0) { throw 'Instrumented tests produced no raw profiles; coverage was not measured.' }
     & $profdata merge -sparse @raw -o $profile
     if ($LASTEXITCODE -ne 0) { throw 'Profile merge failed' }
     $arguments = @('export', $executables[0], ('-instr-profile=' + $profile))
@@ -66,6 +80,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Coverage export failed' }
     $data = ($export -join "`n") | ConvertFrom-Json
     $totals = $data.data[0].totals
+    if (-not $totals.lines -or $totals.lines.count -le 0) { throw 'LLVM export contains no measured source lines.' }
+    $export | Set-Content -LiteralPath (Join-Path $profileRoot 'llvm-coverage.json') -Encoding utf8
     $summary = [ordered]@{
         tool = 'rustc instrumentation and matching LLVM tools'; rustc = (rustc --version)
         source_commit = (git rev-parse HEAD)
@@ -83,6 +99,7 @@ try {
         $summary.source_hashes[$relative] = (Get-FileHash -LiteralPath $source.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
     }
     $summary | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath evidence/rust-coverage.json -Encoding utf8
+    $summary | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $profileRoot 'summary.json') -Encoding utf8
     $summary | ConvertTo-Json -Depth 8
 } finally {
     $env:RUSTFLAGS = $oldFlags; $env:CARGO_TARGET_DIR = $oldTarget; $env:LLVM_PROFILE_FILE = $oldProfile
