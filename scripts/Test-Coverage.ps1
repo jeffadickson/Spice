@@ -41,8 +41,30 @@ try {
             throw "Coverage prerequisite missing: $executable. Install matching tools with: $repair"
         }
         try {
-            $toolVersion = @(& $executable --version 2>&1)
-            if ($LASTEXITCODE -ne 0) { throw "exit code $LASTEXITCODE" }
+            # Bypass PowerShell's document-opening fallback for non-executable files.
+            $start = [Diagnostics.ProcessStartInfo]::new()
+            $start.FileName = $executable
+            $start.ArgumentList.Add('--version')
+            $start.UseShellExecute = $false
+            $start.RedirectStandardOutput = $true
+            $start.RedirectStandardError = $true
+            $process = [Diagnostics.Process]::new()
+            $process.StartInfo = $start
+            try {
+                if (-not $process.Start()) { throw 'process did not start' }
+                $stdout = $process.StandardOutput.ReadToEndAsync()
+                $stderr = $process.StandardError.ReadToEndAsync()
+                if (-not $process.WaitForExit(10000)) {
+                    $process.Kill($true)
+                    $process.WaitForExit()
+                    throw 'version probe exceeded 10 seconds'
+                }
+                $toolVersion = @($stdout.GetAwaiter().GetResult(), $stderr.GetAwaiter().GetResult())
+                if ($process.ExitCode -ne 0) { throw "exit code $($process.ExitCode): $($toolVersion -join ' ')" }
+                if (($toolVersion -join ' ') -notmatch 'LLVM version') { throw 'version probe did not identify LLVM' }
+            } finally {
+                $process.Dispose()
+            }
         } catch {
             throw "Coverage prerequisite cannot execute: $executable ($($_.Exception.Message)). Repair with: $repair"
         }
