@@ -99,13 +99,20 @@ try {
     $profile = Join-Path $profileRoot 'merged.profdata'
     $raw = @(Get-ChildItem -LiteralPath $profileRoot -Filter '*.profraw' | ForEach-Object FullName)
     if ($raw.Count -eq 0) { throw 'Instrumented tests produced no raw profiles; coverage was not measured.' }
-    & $profdata merge -sparse @raw -o $profile
+    $mergeDiagnostics = Join-Path $profileRoot 'llvm-profdata.stderr.txt'
+    & $profdata merge -sparse @raw -o $profile 2> $mergeDiagnostics
     if ($LASTEXITCODE -ne 0) { throw 'Profile merge failed' }
     $arguments = @('export', $executables[0], ('-instr-profile=' + $profile))
     foreach ($binary in $executables | Select-Object -Skip 1) { $arguments += @('-object', $binary) }
     $arguments += @(Get-ChildItem -LiteralPath src -Filter '*.rs' | ForEach-Object FullName)
-    $export = & $llvmCov @arguments
+    $exportDiagnostics = Join-Path $profileRoot 'llvm-cov.stderr.txt'
+    $export = & $llvmCov @arguments 2> $exportDiagnostics
     if ($LASTEXITCODE -ne 0) { throw 'Coverage export failed' }
+    $diagnostics = @(
+        Get-Content -LiteralPath $mergeDiagnostics -ErrorAction SilentlyContinue
+        Get-Content -LiteralPath $exportDiagnostics -ErrorAction SilentlyContinue
+    ) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    foreach ($diagnostic in $diagnostics) { Write-Warning "LLVM coverage diagnostic: $diagnostic" }
     $data = ($export -join "`n") | ConvertFrom-Json
     $totals = $data.data[0].totals
     if (-not $totals.lines -or $totals.lines.count -le 0) { throw 'LLVM export contains no measured source lines.' }
@@ -113,6 +120,7 @@ try {
     $summary = [ordered]@{
         tool = 'rustc instrumentation and matching LLVM tools'; rustc = (rustc --version)
         coverage_toolchain = $selected; llvm_tools = $toolVersions
+        llvm_diagnostics = @($diagnostics)
         source_commit = (git rev-parse HEAD)
         source_dirty = [bool](git status --porcelain)
         source_hashes = @{}
@@ -122,6 +130,9 @@ try {
         limitations = @('Stable source instrumentation does not provide qualified branch metrics here.',
             '.NET, vendor library internals, GPU and native plugin coverage are not measured.',
             'Sparse CPU adapters are tested through owned wrappers; vendor internals are excluded. GPU/native plugins remain unimplemented.')
+    }
+    if (@($diagnostics).Count -gt 0) {
+        $summary.limitations += 'LLVM emitted coverage diagnostics (see llvm_diagnostics and retained stderr); exported totals may omit mismatched function mappings and are not qualified complete coverage.'
     }
     foreach ($source in @(Get-ChildItem -LiteralPath src -Filter '*.rs') + @(Get-ChildItem -LiteralPath tests -Filter '*.rs')) {
         $relative = [IO.Path]::GetRelativePath($root, $source.FullName).Replace('\','/')
