@@ -3,6 +3,7 @@ on: [push, pull_request]
 jobs:
   contracts:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
@@ -15,10 +16,21 @@ jobs:
         with:
           dotnet-version: '10.0.402'
       - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt,clippy,llvm-tools-preview
+      - name: Verify coverage prerequisites
+        run: ./scripts/Test-Coverage.ps1 -CheckPrerequisitesOnly
+      - name: Check missing-tool diagnostics and cleanup
+        run: ./scripts/Test-CoveragePrerequisites.ps1
       - run: ./scripts/Test.ps1
       - run: cargo fmt --all -- --check
       - run: cargo clippy --all-targets --locked -- -D warnings
-      - if: runner.os == 'Linux'
+      - name: Measure Rust coverage
         run: ./scripts/Test-Coverage.ps1
-# This workflow is configured, not claimed to have run remotely.
+      - name: Retain coverage evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-coverage-${{ matrix.os }}
+          path: |
+            build/coverage/
+          if-no-files-found: warn
 
