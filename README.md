@@ -64,7 +64,29 @@ It is a finite discrete-equation example, not a continuous-error or speed claim.
 
 Linux executable names omit `.exe`. Build the managed library before F# examples load it. `scripts/Test-SecondSlice.ps1` runs the current build/tests and typed examples. Source/revision evidence is under `evidence/`; generated logs and binaries stay outside Git.
 
-`scripts/Test-ManagedCoverage.ps1 -CoverageTool <path-to-dotnet-coverage>` measures the client SDK separately from its conformance executable. `scripts/Test-Coverage.ps1` selects a Rust coverage toolchain with `profiler_builtins`; this host still needs Visual C++ Build Tools and the Windows SDK for `link.exe`. Unavailable Rust coverage is explicitly recorded, never inferred from managed metrics.
+`scripts/Test-ManagedCoverage.ps1 -CoverageTool <path-to-dotnet-coverage>` measures the client SDK separately from its conformance executable.
+
+Rust coverage uses the pinned `rust-toolchain.toml` toolchain by default. Run
+`./scripts/Test-Coverage.ps1 -CheckPrerequisitesOnly` before expensive testing,
+then `./scripts/Test-Coverage.ps1` to execute the instrumented suite and measure
+owned `src/*.rs` lines, functions and regions. Both LLVM executables must exist
+and run from the selected compiler's sysroot; diagnostics print the resolved
+toolchain, host, paths and repair command. Windows MSVC also requires Visual C++
+Build Tools and the Windows SDK.
+
+For an intentional override, pass `-CoverageToolchain <version-or-dated-nightly>`
+or set `SPICE_COVERAGE_TOOLCHAIN` (the parameter takes precedence), and install
+`llvm-tools-preview` for that exact toolchain. No floating nightly is selected
+automatically. Coverage environment settings are restored on success or failure.
+
+CI runs the existing build, Rust and managed tests, formatting and lint gates
+on Linux and Windows, then measures Rust coverage on each. The missing-tool
+regression check uses a disposable CI toolchain and restores renamed tools.
+Each coverage artifact retains fresh raw profiles, merged profile, full LLVM
+export and summary with source hashes and tool versions; the existing
+`evidence/rust-coverage.json` output is preserved. A prerequisite check or
+passing test suite alone is not a coverage measurement. Branch, managed, vendor,
+GPU and native-plugin coverage remain unavailable in this Rust report.
 
 ## Documents
 
