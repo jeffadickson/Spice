@@ -1,0 +1,65 @@
+{
+  "cohort": 24,
+  "dispositions": [
+    {
+      "status": "caught_by_replay",
+      "count": 22
+    },
+    {
+      "status": "survived_masked_by_downstream_validation",
+      "count": 1
+    },
+    {
+      "status": "survived_source_reviewed_equivalent",
+      "count": 1
+    }
+  ],
+  "first_run": "work/framework-mutations/20261029T130526Z-c5345b4e",
+  "first_counts": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 2,
+    "candidates": 26,
+    "killed": 14,
+    "survived": 12,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "350e804e4c958f5c6789100d84ff31d721746237a560b80791dc05e9a6a9a222",
+    "log_sha256": "170e97ab630bd9d78cc79008b2b13b2dfc9865cc3612f450319ecc4b7d55bb0b"
+  },
+  "first_elapsed_seconds": 1006.1719567,
+  "strengthened_run": "work/framework-mutations/20261029T132214Z-cde048e3",
+  "strengthened_counts": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 2,
+    "candidates": 18,
+    "killed": 16,
+    "survived": 2,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "35218c3240519636d7d49ad067c420c6af9fc713a50df1b6eda97049b9d828e9",
+    "log_sha256": "0e48e544c06e9de1b0284dff2f2b0959dd16a38fe0038e39c8f52f2c4cc89553"
+  },
+  "strengthened_elapsed_seconds": 975.7955894,
+  "supplementary_names": [
+    "src/netlist.rs:571:17: delete field max_step_s from struct crate::configured::TransientConfig expression in import_ngspice_request",
+    "src/netlist.rs:572:17: delete field stop_s from struct crate::configured::TransientConfig expression in import_ngspice_request"
+  ],
+  "limitations": [
+    "Overlapping scopes: do not sum native totals as distinct mutations",
+    "Two supplemental importer candidates are separate from the original 24",
+    "First scope used earlier tests on GNU Windows; strengthened scope uses final tests on MSVC Windows",
+    "Masked rejection and conditional equivalence are not test-detected kills"
+  ]
+}

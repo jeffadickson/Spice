@@ -1,0 +1,20 @@
+[
+  "src/ac.rs:110:44: replace || with && in ac_with_source_phasors",
+  "src/artifact.rs:118:9: replace || with && in read_verified",
+  "src/audit.rs:33:71: replace && with || in Check::measured",
+  "src/expression.rs:35:52: replace + with * in Expr::inner",
+  "src/netlist.rs:195:65: replace > with == in parse",
+  "src/newton.rs:278:48: replace - with / in scaled_update_norm",
+  "src/newton.rs:610:46: replace == with != in solve_from_rhs",
+  "src/newton.rs:807:45: replace - with + in solve_with_source_continuation",
+  "src/solver_contract.rs:167:68: replace > with >= in verify_csc_solution",
+  "src/sweep.rs:197:67: replace += with -= in assertion_summary",
+  "src/variation.rs:78:30: replace || with && in replace_scalar",
+  "src/variation.rs:198:38: replace > with == in ScalarSweep::validate",
+  "src/waveform.rs:82:17: replace || with && in Waveform::validate",
+  "src/waveform.rs:121:46: replace > with >= in Waveform::validate",
+  "src/waveform.rs:154:30: replace || with && in Waveform::at_validated",
+  "src/waveform.rs:203:51: replace > with >= in Waveform::at_validated",
+  "src/netlist.rs:571:17: delete field max_step_s from struct crate::configured::TransientConfig expression in import_ngspice_request",
+  "src/netlist.rs:572:17: delete field stop_s from struct crate::configured::TransientConfig expression in import_ngspice_request"
+]

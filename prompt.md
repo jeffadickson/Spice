@@ -1,5 +1,14 @@
 # Spice qualification handoff — survivor triage after completed campaign
 
+October 29 follow-up: read evidence/overnight-20261029-review.md and the stable
+24-survivor inventory first. Source/test checkpoint 3e6d8f0 adds 17 tests: 22
+original identities are caught across recorded GNU/MSVC replay scopes; one
+defensive ID guard is masked downstream and one pulse guard is conditionally
+equivalent. Both platforms passed 396 tests with one ignore. Coverage remains
+qualified by LLVM mapping warnings. Managed EOF timeout/Stryker rollback remain
+open. The coverage fix from origin/main was merged locally; no push/CI dispatch
+was performed. A new five-hour run of this test checkpoint is still pending.
+
 October 28 follow-up: read evidence/overnight-20261028-review.md and its linked
 native replay/source-hash evidence first. Of the new 22 Rust survivors, 20 are
 caught and two retain conditional-equivalence dispositions. Managed EOF mutation

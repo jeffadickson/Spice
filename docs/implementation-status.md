@@ -49,3 +49,13 @@ Stryker RunJsonAsync definite-assignment rollback (103 compile-error candidates)
 and incomplete adaptive-module LLVM mappings. Focused kills, unavailable mutation
 coverage and conditional equivalents remain separate outcomes. None establishes
 general M1, GPU or production qualification.
+
+## October 29 survivor follow-up
+
+The [new cohort review](../evidence/overnight-20261029-review.md) records 22
+test-detected kills among 24 original survivors, one downstream-masked ID guard
+and one conditional pulse-guard equivalent. Source/test checkpoint 3e6d8f0 adds
+17 tests; Windows and Linux each passed 396 tests with one intentional ignore.
+LLVM mapping warnings, the full-suite managed EOF timeout and Stryker rollback
+remain open verification gaps. Reopen the masked guard if failure-phase or clone
+resource policy changes; do not count it as a semantic equivalent or kill.

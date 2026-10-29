@@ -1,0 +1,43 @@
+{
+  "source_commit": "3e6d8f0cd687f629f127a7a73061ef00baac97ee",
+  "source_hashes": "overnight-20261029-source-hashes.json",
+  "windows": {
+    "ignored": 1,
+    "command": "cargo test --all-targets",
+    "passed": 396,
+    "log": "work/oct29-qualified-regressions.log",
+    "failed": 0
+  },
+  "linux": {
+    "command": "scripts/Test-Coverage.ps1 -CoverageToolchain 1.99.1-x86_64-unknown-linux-gnu",
+    "passed": 396,
+    "coverage": "overnight-20261029-rust-coverage.json",
+    "verified_source_files": 79,
+    "ignored": 1,
+    "failed": 0,
+    "log": "work/oct29-qualified-linux-coverage.log"
+  },
+  "properties": {
+    "requested_cases_per_platform": 16384,
+    "distinct_inputs_not_additive_across_platforms": true,
+    "requested_cases_per_method": 1024,
+    "framework": "Proptest 1.9.0",
+    "seed": "202610290601",
+    "methods": 16
+  },
+  "static_checks": [
+    "cargo fmt --check passed",
+    "cargo clippy --all-targets -- -D warnings passed"
+  ],
+  "requirements": "overnight-20261029-requirements.json",
+  "limitations": [
+    "cargo-nextest unavailable; cargo test used",
+    "No fresh managed or PowerShell coverage claimed; no managed product or helper changes",
+    "No new coverage-guided fuzz campaign; malformed cases and existing Proptest executed",
+    "LLVM 83 mismatch warnings; exported source metrics not qualified complete; branch coverage unavailable",
+    "Coverage collection scripts incorporated from origin/main; destructive prerequisite fixture not rerun against shared active toolchains"
+  ],
+  "mutation_evidence": "overnight-20261029-replay-summary.json",
+  "compiler_evidence": "overnight-20261029-windows-compilers.json",
+  "source_file_hashes_verified": 79
+}

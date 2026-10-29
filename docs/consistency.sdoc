@@ -409,7 +409,7 @@ STATEMENT: >>>
 Each retained overnight survivor shall have a stable triage ID, original tested source and native report hash, mutation identity, affected requirement, classification, and actual replay evidence or an explicit unverified state. Tests shall challenge independent behavior without weakening acceptance tolerances to improve mutation counts. Exact-name replay shall verify the native inventory before execution; equivalent or masked behavior shall not be counted as caught without evidence.
 <<<
 COMMENT: >>>
-Inventories: evidence/overnight-survivor-triage.json for the original 35 survivors and evidence/overnight-20261028-survivors.json for the next 22 from shard 12/16. The former retains 31 caught/four conditional equivalents; the latter retains 20 caught/two conditional equivalents. The bounded relocation helper accepts 1..64 entries and rejects ambiguous context before writing results. Draft status is not universal qualification or formal proof.
+Inventories: evidence/overnight-survivor-triage.json for the original 35 survivors, evidence/overnight-20261028-survivors.json for the next 22 from shard 12/16, and evidence/overnight-20261029-survivors.json for 24 from shard 3/16. The first two retain 31 caught/four conditional equivalents and 20 caught/two conditional equivalents respectively; the October 29 inventory retains its actual per-replay outcomes. The bounded relocation helper accepts 1..64 entries and rejects ambiguous context before writing results. Draft status is not universal qualification or formal proof.
 <<<
 RELATIONS:
 - TYPE: Parent

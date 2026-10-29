@@ -1,0 +1,24 @@
+{
+  "run": "20261029T070016Z-9bdda867",
+  "source": "e4c7b8f5b8fe6ddc6fc1384a154ea32e78df473c",
+  "native_report_sha256": "a43bc962c90be9d21548154a975964226cc15b11d7bb1088027417135dca74d9",
+  "current_client_sha256": "1f5bfeaa871cef2bc6dfd2647072217cf1d52cbb778abc624778bdf5f03d914a",
+  "current_transport_tests_sha256": "a2019cb5f5031dc926f4f20c01cc02a5c033bf05bed1f13206aa58e639346ffe",
+  "outcomes": [
+    {
+      "disposition": "Unresolved full-suite timeout; October 28 focused kill is historical matching-source evidence, not a new full-suite kill",
+      "id": "182",
+      "status": "Timeout"
+    },
+    {
+      "disposition": "Conditional decode-only BOM-emission flag equivalence; UTF8Encoding.GetString does not emit a preamble. Reopen if encoding is used to produce bytes.",
+      "id": "194",
+      "status": "Survived"
+    }
+  ],
+  "limitations": [
+    "103 compile-error candidates, seven ignored; not kills",
+    "No new managed source or tests in this follow-up; no new managed coverage claimed"
+  ],
+  "prior_review_source_hashes_match": true
+}
