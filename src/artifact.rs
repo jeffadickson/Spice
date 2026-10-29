@@ -138,3 +138,32 @@ pub fn read_verified(directory: &Path) -> SimResult<serde_json::Value> {
     }
     Ok(value)
 }
+
+#[cfg(test)]
+mod october29_contracts {
+    use super::*;
+    #[test]
+    fn streamed_writer_accepts_exact_cap_and_rejects_next_byte() {
+        let parent = std::env::temp_dir();
+        assert!(parent.is_dir());
+        let path = parent.join(format!("spice-writer-cap-{}", std::process::id()));
+        let file = File::create_new(&path).unwrap();
+        let mut writer = LimitedFile {
+            file,
+            bytes: 0,
+            hash: Sha256::new(),
+            exhausted: false,
+        };
+        // Exercise sequential accounting through actual writes, not fabricated state.
+        let chunk = vec![b'x'; 1024 * 1024];
+        for _ in 0..64 {
+            writer.write_all(&chunk).unwrap();
+        }
+        let rejected = writer.write_all(b"x").is_err();
+        let size = writer.file.metadata().unwrap().len();
+        drop(writer);
+        fs::remove_file(&path).unwrap();
+        assert!(rejected);
+        assert_eq!(size, LIMIT);
+    }
+}

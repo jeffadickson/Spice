@@ -430,6 +430,20 @@ RELATIONS:
   VALUE: ARCH-VERIFY-003
 
 [REQUIREMENT]
+UID: QUAL-EDGE-002
+STATUS: Draft
+TITLE: Independent second-shard boundary and provider identity evidence
+STATEMENT: >>>
+Qualification shall challenge streamed artifact write accounting at the actual byte cap, independent artifact-marker fields, invalid audit bounds and worst-failure ordering, refinement scaling, expression derivatives and domains, inclusive sparse residual acceptance, branch-current Newton update units, zero-correction reports, scalar/parser resource caps, source waveform domains, and prepared factor coefficient identity. AC assembly overflow shall be rejected before nonlinear bias provider work. Native replay evidence shall distinguish the original cohort from supplementary filter-selected candidates and retain unverified or conditional-equivalence outcomes explicitly.
+<<<
+COMMENT: >>>
+Inferred from the October 29 survivor follow-up. Verification: tests/overnight_survivors_20261029.rs, src/artifact.rs::october29_contracts and src/newton.rs::october29_contracts. Inventory: evidence/overnight-20261029-survivors.json. Finite tests and selected mutants do not establish universal numerical or resource safety.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MUT-005
+
+[REQUIREMENT]
 UID: MAN-002
 STATUS: Draft
 TITLE: EOF completion distinguished from a mutation timeout

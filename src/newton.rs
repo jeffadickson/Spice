@@ -1021,3 +1021,23 @@ mod survivor_norm_contracts {
         }
     }
 }
+
+#[cfg(test)]
+mod october29_contracts {
+    use super::*;
+    #[test]
+    fn branch_current_update_uses_amperes_not_voltage_tolerance() {
+        let plan =
+            crate::compile::compile(&crate::netlist::parse("title\nV1 x 0 1\nR1 x 0 1").unwrap())
+                .unwrap();
+        let options = NewtonOptions {
+            voltage_absolute_tolerance: 1.,
+            current_absolute_tolerance: 0.01,
+            relative_tolerance: 1e-6,
+            ..Default::default()
+        };
+        // One voltage row then one branch-current row; 0.02 A is twice its bound.
+        let norm = scaled_update_norm(&plan, &[0., 0.02], &[0., 0.], options).unwrap();
+        assert!((norm - 0.02 / (0.01 * (1. + 1e-6))).abs() < 1e-15);
+    }
+}
