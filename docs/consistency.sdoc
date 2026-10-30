@@ -514,6 +514,34 @@ RELATIONS:
   VALUE: MAN-001
 
 [REQUIREMENT]
+UID: MAN-004
+STATUS: Draft
+TITLE: Independent managed error fields and useful diagnostics
+STATEMENT: >>>
+The managed transport shall reject each non-string, empty or whitespace-only native error code/message with an InvalidDataException and a nonblank diagnostic. Unsupported-version, malformed-envelope and contradictory-envelope errors shall retain nonblank diagnostics without requiring exact wording. Oversized request diagnostics shall identify the request-size limit before process startup.
+<<<
+COMMENT: >>>
+Inferred from the six diagnostic/field-validation survivors in native Stryker run 20261030T124250Z-c9f5945d. Verification: TransportContracts.RejectsErrorFieldsIndependently, RejectsUnsupportedProtocolVersions, RejectsMalformedOrContradictoryEnvelopes and ClientContracts.RejectOversizedInputBeforeStartingProcess. Exact native replay evidence is retained in evidence/managed-20261030-triage.json. These finite contracts do not qualify all process/JSON failure paths.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MAN-001
+
+[REQUIREMENT]
+UID: MUT-CLEANUP-001
+STATUS: Draft
+TITLE: Independent cancellation-test deadline and process cleanup
+STATEMENT: >>>
+The cancellation regression shall bound its assertion independently of the client under test, verify that an acknowledged direct worker has exited before the client returns cancellation, require an acknowledged descendant to exit within a bounded settling interval, and independently reap both workers in test cleanup even if the client cleanup is broken. Native mutation timeouts, compiler rollbacks, conditional equivalents and unexercised operating-system behaviors shall retain separate dispositions and source identities.
+<<<
+COMMENT: >>>
+Verification: TransportContracts.CancellationStopsTheStartedChild; a copied-client cleanup-guard mutation fails the live-child assertion and the unmodified client passes. Independent cleanup prevents the test's own finally block from hiding the assertion behind an unbounded wait. WindowsWorkerHasNoConsoleWindow observes the current host only; it does not distinguish CreateNoWindow on a headless parent and is not an interactive Windows qualification claim. The Count property pattern in Client.cs avoids Stryker 5.0.0's invalid property-to-LINQ-Sum instrumentation while preserving the nonnegative Count loop condition. Replay evidence remains bounded, not formal proof.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MUT-002
+
+[REQUIREMENT]
 UID: INT-WORK-001
 STATUS: Draft
 TITLE: Actual nonlinear initialization work accounting

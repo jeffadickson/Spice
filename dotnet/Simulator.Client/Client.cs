@@ -74,7 +74,9 @@ public sealed class SimulationClient(string executable)
             var exit = process.WaitForExitAsync(cancellation);
             // Observe failed readers promptly: otherwise a full pipe can block child exit.
             var pending = new List<Task> { output, errors, exit };
-            while (pending.Count != 0)
+            // Count cannot be negative. A property pattern also avoids treating
+            // this property as a LINQ Count() call during mutation instrumentation.
+            while (pending is { Count: > 0 })
             {
                 var completed = await Task.WhenAny(pending);
                 await completed;

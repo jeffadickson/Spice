@@ -5,6 +5,16 @@ using Xunit;
 /// <summary>Adversarial native-process envelopes, isolated from the real numerical engine.</summary>
 public sealed class TransportContracts
 {
+    /// <summary>Windows automation must not create a console window for the native worker.</summary>
+    [Fact]
+    public async Task WindowsWorkerHasNoConsoleWindow()
+    {
+        // CreateNoWindow has no corresponding Unix console-window contract.
+        if (!OperatingSystem.IsWindows()) return;
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var response = await Fixture().RunJsonAsync("""{"inspect_console":true}""", deadline.Token);
+        Assert.False(response.Payload.GetProperty("has_console").GetBoolean());
+    }
     /// <summary>A normal EOF must complete before cancellation, rather than spin until a mutation-runner timeout.</summary>
     [Fact]
     public async Task SmallSuccessfulEnvelopeCompletesBeforeItsOwnDeadline()
@@ -75,8 +85,10 @@ public sealed class TransportContracts
             new SimulationClient("nonexistent-engine").RunJsonAsync("{}", cancellation.Token));
     }
 
-    [Fact]
-    public async Task CancellationStopsTheStartedChild()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CancellationStopsTheStartedChild(bool includeDescendant)
     {
         var parent = Path.GetTempPath();
         Assert.True(Directory.Exists(parent));
@@ -84,31 +96,55 @@ public sealed class TransportContracts
         Assert.False(Directory.Exists(directory));
         Directory.CreateDirectory(directory);
         var marker = Path.Combine(directory, "pid.txt");
+        var descendantMarker = Path.Combine(directory, "descendant.txt");
+        var owned = new List<System.Diagnostics.Process>();
+        var request = new Dictionary<string, object> { ["mode"] = "hang", ["pid_file"] = marker, ["output"] = "" };
+        if (includeDescendant) request["descendant_file"] = descendantMarker;
         using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-        var run = Fixture().RunJsonAsync(JsonSerializer.Serialize(new {
-            mode = "hang", pid_file = marker, output = ""
-        }), cancellation.Token);
+        var run = Fixture().RunJsonAsync(JsonSerializer.Serialize(request), cancellation.Token);
         try
         {
             // A fixture acknowledgement removes startup races: cancellation
             // happens after the actual child has started and read its request.
             using var startup = new CancellationTokenSource(TimeSpan.FromSeconds(10));
             while (!File.Exists(marker)) await Task.Delay(10, startup.Token);
-            var pid = int.Parse(await File.ReadAllTextAsync(marker, startup.Token));
-            cancellation.Cancel();
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => run);
-            try
+            foreach (var file in includeDescendant ? new[] { marker, descendantMarker } : new[] { marker })
             {
-                using var child = System.Diagnostics.Process.GetProcessById(pid);
-                Assert.True(child.HasExited, "Cancellation left the fixture process alive.");
+                var pid = int.Parse(await File.ReadAllTextAsync(file, startup.Token));
+                var child = System.Diagnostics.Process.GetProcessById(pid);
+                owned.Add(child);
+                // Retain identity before cancellation; never reopen a possibly
+                // reused PID when asserting or cleaning up after the client.
+                _ = child.Handle;
             }
-            catch (ArgumentException) { /* The exited process is already reaped. */ }
+            cancellation.Cancel();
+            // The assertion deadline is independent of client cleanup. A broken
+            // Kill/Wait path must fail this test instead of hanging the test host.
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => run.WaitAsync(TimeSpan.FromSeconds(2)));
+            Assert.True(owned[0].HasExited, "Cancellation left the direct fixture process alive.");
+            if (includeDescendant)
+            {
+                // Kill(tree) and waiting for the direct child do not imply that
+                // every descendant has already finished asynchronous OS exit.
+                // Require bounded eventual exit without killing it in this assertion.
+                await owned[1].WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(2));
+                Assert.True(owned[1].HasExited, "Cancellation left the descendant alive.");
+            }
         }
         finally
         {
             cancellation.Cancel();
-            try { await run; } catch (OperationCanceledException) { }
+            // Test-owned cleanup cannot rely on the very client path challenged
+            // by mutation. Retain acknowledged process handles until reaping.
+            foreach (var child in owned)
+            {
+                using (child)
+                    if (!child.HasExited) { child.Kill(true); await child.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(2)); }
+            }
+            try { await run.WaitAsync(TimeSpan.FromSeconds(2)); }
+            catch (Exception error) when (error is OperationCanceledException or TimeoutException) { }
             if (File.Exists(marker)) File.Delete(marker);
+            if (File.Exists(descendantMarker)) File.Delete(descendantMarker);
             Directory.Delete(directory);
         }
     }
@@ -138,8 +174,9 @@ public sealed class TransportContracts
     [InlineData("")]
     public async Task RejectsUnsupportedProtocolVersions(string version)
     {
-        await Assert.ThrowsAsync<InvalidDataException>(() => Fixture().RunJsonAsync(
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Fixture().RunJsonAsync(
             Request($$"""{"schema_version":"{{version}}","status":"succeeded","complete":true}""")));
+        Assert.False(string.IsNullOrWhiteSpace(error.Message));
     }
 
     [Fact]
@@ -164,7 +201,26 @@ public sealed class TransportContracts
     [InlineData("""{"schema_version":"1","status":"succeeded","complete":true,"error":{"code":"x","message":"m"}}""")]
     public async Task RejectsMalformedOrContradictoryEnvelopes(string output)
     {
-        await Assert.ThrowsAsync<InvalidDataException>(() => Fixture().RunJsonAsync(Request(output)));
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Fixture().RunJsonAsync(Request(output)));
+        Assert.False(string.IsNullOrWhiteSpace(error.Message));
+    }
+
+    /// <summary>Wrong-type error fields must produce a transport diagnostic, not incidental JSON exceptions.</summary>
+    [Theory]
+    [InlineData("code", "17")]
+    [InlineData("message", "17")]
+    [InlineData("code", "[]")]
+    [InlineData("message", "null")]
+    [InlineData("code", "\"\"")]
+    [InlineData("message", "\"  \"")]
+    public async Task RejectsErrorFieldsIndependently(string field, string value)
+    {
+        var code = field == "code" ? value : "\"invalid_input\"";
+        var message = field == "message" ? value : "\"fixture rejection\"";
+        var output = "{\"schema_version\":\"1\",\"status\":\"failed\",\"complete\":false,\"error\":{\"code\":"
+            + code + ",\"message\":" + message + "}}";
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => Fixture().RunJsonAsync(Request(output, 2)));
+        Assert.False(string.IsNullOrWhiteSpace(error.Message));
     }
 
     [Theory]
