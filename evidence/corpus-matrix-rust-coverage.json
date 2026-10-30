@@ -1,0 +1,480 @@
+{
+  "tool": "rustc instrument-coverage + matching LLVM",
+  "rustc": "rustc 1.101.0-nightly (12433c307 2026-10-24)",
+  "test": "import_cli",
+  "snapshot": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator",
+  "scope": "Owned src/*.rs exercised by named test binary only",
+  "lines": {
+    "covered": 347.0,
+    "percent": 6.167792392463562,
+    "count": 5626.0
+  },
+  "file_metrics": [
+    {
+      "source_sha256": "99b71e709bfbb2227a4980b4d491ed1d17def36f74a2db116f237b1d90d3c16c",
+      "lines": {
+        "count": 137,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\ac.rs",
+      "file": "src/ac.rs"
+    },
+    {
+      "source_sha256": "9e9e55cdb4cfef83adcac6e9f88855a21965f4740876f7ff00ee4884a9fea654",
+      "lines": {
+        "count": 34,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\adaptive.rs",
+      "file": "src/adaptive.rs"
+    },
+    {
+      "source_sha256": "54a4725eee031dfef298ce2e92376214afc0e1752a55d4077d79a7666c780c3a",
+      "lines": {
+        "count": 221,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\api.rs",
+      "file": "src/api.rs"
+    },
+    {
+      "source_sha256": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
+      "lines": {
+        "count": 102,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\artifact.rs",
+      "file": "src/artifact.rs"
+    },
+    {
+      "source_sha256": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+      "lines": {
+        "count": 11,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\assertion.rs",
+      "file": "src/assertion.rs"
+    },
+    {
+      "source_sha256": "d7d68badbd59ea82172a98b6be30a11fee6f9a2b9d3ca6635b22e18e7a8f3d7f",
+      "lines": {
+        "count": 120,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\audit_ac.rs",
+      "file": "src/audit_ac.rs"
+    },
+    {
+      "source_sha256": "1c0d951e23b770304e3c2a889c31d26359c46b188246c4ca2b89b56b6dc0ab29",
+      "lines": {
+        "count": 125,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\audit_configured.rs",
+      "file": "src/audit_configured.rs"
+    },
+    {
+      "source_sha256": "7415ee221281dd69b4279da91447b7811ad5dbfa417002e2563eb484429c65cc",
+      "lines": {
+        "count": 342,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\audit.rs",
+      "file": "src/audit.rs"
+    },
+    {
+      "source_sha256": "2115a12a1f88416912040f58c4fd5338b81cd8559fac0f18b645efbf5ad5138f",
+      "lines": {
+        "count": 206,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\backend_faer.rs",
+      "file": "src/backend_faer.rs"
+    },
+    {
+      "source_sha256": "69ebd88de74917bca9a7e61acea193288c0f8490531c3c586c7b5f6f2a5de726",
+      "lines": {
+        "count": 223,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\backend.rs",
+      "file": "src/backend.rs"
+    },
+    {
+      "source_sha256": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+      "lines": {
+        "count": 37,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\campaign.rs",
+      "file": "src/campaign.rs"
+    },
+    {
+      "source_sha256": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+      "lines": {
+        "count": 16,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\charge.rs",
+      "file": "src/charge.rs"
+    },
+    {
+      "source_sha256": "7597d72df62ee3f943cc614b563e0a884d605e7c5bc3e3790e94cc35d988d159",
+      "lines": {
+        "count": 80,
+        "covered": 30,
+        "percent": 37.5
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\circuit.rs",
+      "file": "src/circuit.rs"
+    },
+    {
+      "source_sha256": "71b077204f37aee834a4bccb5ca1f4d4570c857434de98748faed3cb26176339",
+      "lines": {
+        "count": 158,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\compile.rs",
+      "file": "src/compile.rs"
+    },
+    {
+      "source_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+      "lines": {
+        "count": 282,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\configured.rs",
+      "file": "src/configured.rs"
+    },
+    {
+      "source_sha256": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+      "lines": {
+        "count": 101,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\dc.rs",
+      "file": "src/dc.rs"
+    },
+    {
+      "source_sha256": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+      "lines": {
+        "count": 12,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\error.rs",
+      "file": "src/error.rs"
+    },
+    {
+      "source_sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+      "lines": {
+        "count": 108,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\experiment.rs",
+      "file": "src/experiment.rs"
+    },
+    {
+      "source_sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+      "lines": {
+        "count": 13,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\grid.rs",
+      "file": "src/grid.rs"
+    },
+    {
+      "source_sha256": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+      "lines": {
+        "count": 3,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\ids.rs",
+      "file": "src/ids.rs"
+    },
+    {
+      "source_sha256": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+      "lines": {
+        "count": 86,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\integrator.rs",
+      "file": "src/integrator.rs"
+    },
+    {
+      "source_sha256": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+      "lines": {
+        "count": 173,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\linalg.rs",
+      "file": "src/linalg.rs"
+    },
+    {
+      "source_sha256": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+      "lines": {
+        "count": 50,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\linear_dynamic.rs",
+      "file": "src/linear_dynamic.rs"
+    },
+    {
+      "source_sha256": "f34d681c95e573ee3bfb5c894935759785377d57b9e406f98cce03155f997fa8",
+      "lines": {
+        "count": 58,
+        "covered": 32,
+        "percent": 55.172413793103445
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\main.rs",
+      "file": "src/main.rs"
+    },
+    {
+      "source_sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+      "lines": {
+        "count": 26,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\measurement.rs",
+      "file": "src/measurement.rs"
+    },
+    {
+      "source_sha256": "62303fbe97f6b095d438f87fcc9e3238e24fa056772a79c7042642a53ce20a05",
+      "lines": {
+        "count": 67,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\model.rs",
+      "file": "src/model.rs"
+    },
+    {
+      "source_sha256": "d272200324b62aaa2aefe2f4870897c36c4f47662390bf2529da885900922dda",
+      "lines": {
+        "count": 881,
+        "covered": 276,
+        "percent": 31.32803632236095
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\netlist.rs",
+      "file": "src/netlist.rs"
+    },
+    {
+      "source_sha256": "f8841bcffdaa1299b57b0dc65c673d2d95c77dbf1374be78396a5fcf66424104",
+      "lines": {
+        "count": 689,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\newton.rs",
+      "file": "src/newton.rs"
+    },
+    {
+      "source_sha256": "d1bdd03a7bfe1c68d3869de4785d69e4d11e0cceae7e8d1974ee2b71f8440ede",
+      "lines": {
+        "count": 50,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\power.rs",
+      "file": "src/power.rs"
+    },
+    {
+      "source_sha256": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+      "lines": {
+        "count": 21,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\provenance.rs",
+      "file": "src/provenance.rs"
+    },
+    {
+      "source_sha256": "bd53faa680ee46119020b2fe33ee8c023b8c42cfd216455ef5c205e43450e892",
+      "lines": {
+        "count": 35,
+        "covered": 9,
+        "percent": 25.71428571428571
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\quantity.rs",
+      "file": "src/quantity.rs"
+    },
+    {
+      "source_sha256": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7",
+      "lines": {
+        "count": 29,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\registry.rs",
+      "file": "src/registry.rs"
+    },
+    {
+      "source_sha256": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+      "lines": {
+        "count": 75,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\sampling.rs",
+      "file": "src/sampling.rs"
+    },
+    {
+      "source_sha256": "4cc809fe52e98d9cdef63a0773efef885d3aee316b59b4bf763dcafcee26f69f",
+      "lines": {
+        "count": 116,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\solver_contract.rs",
+      "file": "src/solver_contract.rs"
+    },
+    {
+      "source_sha256": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+      "lines": {
+        "count": 100,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\sources.rs",
+      "file": "src/sources.rs"
+    },
+    {
+      "source_sha256": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+      "lines": {
+        "count": 180,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\sparse.rs",
+      "file": "src/sparse.rs"
+    },
+    {
+      "source_sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+      "lines": {
+        "count": 240,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\sweep.rs",
+      "file": "src/sweep.rs"
+    },
+    {
+      "source_sha256": "e44a5fed6c58fc092bded030a2ca9a66b6334103a3ce364e0dfe205ad9010df4",
+      "lines": {
+        "count": 49,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\topology.rs",
+      "file": "src/topology.rs"
+    },
+    {
+      "source_sha256": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a",
+      "lines": {
+        "count": 79,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\transient.rs",
+      "file": "src/transient.rs"
+    },
+    {
+      "source_sha256": "480f2d45e07d16d1cc2e033e29fb569059e9bd7fb2bd8faa3c6c5862de803b0c",
+      "lines": {
+        "count": 175,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\variation.rs",
+      "file": "src/variation.rs"
+    },
+    {
+      "source_sha256": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+      "lines": {
+        "count": 116,
+        "covered": 0,
+        "percent": 0
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\src\\waveform.rs",
+      "file": "src/waveform.rs"
+    }
+  ],
+  "aggregation": "Sum per-file owned path/SHA256 matches, including source-identical cached roots; vendor/test maps and LLVM global totals excluded",
+  "branches": null,
+  "source_hashes": {
+    "src/ac.rs": "99b71e709bfbb2227a4980b4d491ed1d17def36f74a2db116f237b1d90d3c16c",
+    "src/adaptive.rs": "9e9e55cdb4cfef83adcac6e9f88855a21965f4740876f7ff00ee4884a9fea654",
+    "src/api.rs": "54a4725eee031dfef298ce2e92376214afc0e1752a55d4077d79a7666c780c3a",
+    "src/artifact.rs": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
+    "src/assertion.rs": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+    "src/audit_ac.rs": "d7d68badbd59ea82172a98b6be30a11fee6f9a2b9d3ca6635b22e18e7a8f3d7f",
+    "src/audit_configured.rs": "1c0d951e23b770304e3c2a889c31d26359c46b188246c4ca2b89b56b6dc0ab29",
+    "src/audit.rs": "7415ee221281dd69b4279da91447b7811ad5dbfa417002e2563eb484429c65cc",
+    "src/backend_faer.rs": "2115a12a1f88416912040f58c4fd5338b81cd8559fac0f18b645efbf5ad5138f",
+    "src/backend.rs": "69ebd88de74917bca9a7e61acea193288c0f8490531c3c586c7b5f6f2a5de726",
+    "src/campaign.rs": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+    "src/charge.rs": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+    "src/circuit.rs": "7597d72df62ee3f943cc614b563e0a884d605e7c5bc3e3790e94cc35d988d159",
+    "src/compile.rs": "71b077204f37aee834a4bccb5ca1f4d4570c857434de98748faed3cb26176339",
+    "src/configured.rs": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+    "src/dc.rs": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+    "src/error.rs": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+    "src/experiment.rs": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+    "src/expression.rs": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+    "src/grid.rs": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+    "src/ids.rs": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+    "src/integrator.rs": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+    "src/lib.rs": "093fa7aa18733be60b1673488f3c3347bbc3a4b223963be964771e616bd3cd97",
+    "src/linalg.rs": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+    "src/linear_dynamic.rs": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+    "src/main.rs": "f34d681c95e573ee3bfb5c894935759785377d57b9e406f98cce03155f997fa8",
+    "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+    "src/model.rs": "62303fbe97f6b095d438f87fcc9e3238e24fa056772a79c7042642a53ce20a05",
+    "src/netlist.rs": "d272200324b62aaa2aefe2f4870897c36c4f47662390bf2529da885900922dda",
+    "src/newton.rs": "f8841bcffdaa1299b57b0dc65c673d2d95c77dbf1374be78396a5fcf66424104",
+    "src/power.rs": "d1bdd03a7bfe1c68d3869de4785d69e4d11e0cceae7e8d1974ee2b71f8440ede",
+    "src/provenance.rs": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+    "src/quantity.rs": "bd53faa680ee46119020b2fe33ee8c023b8c42cfd216455ef5c205e43450e892",
+    "src/registry.rs": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7",
+    "src/sampling.rs": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+    "src/solver_contract.rs": "4cc809fe52e98d9cdef63a0773efef885d3aee316b59b4bf763dcafcee26f69f",
+    "src/sources.rs": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+    "src/sparse.rs": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+    "src/sweep.rs": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+    "src/topology.rs": "e44a5fed6c58fc092bded030a2ca9a66b6334103a3ce364e0dfe205ad9010df4",
+    "src/transient.rs": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a",
+    "src/variation.rs": "480f2d45e07d16d1cc2e033e29fb569059e9bd7fb2bd8faa3c6c5862de803b0c",
+    "src/waveform.rs": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+    "tests/import_cli.rs": "2a4e6b31611904e92f01ced80f6e889dd70fbdb553a3ac4c681572f522bd5ce5"
+  },
+  "raw_directory": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\build\\coverage\\corpus-import-5af9b47db415494eb3ab404e2e7cb2e4",
+  "diagnostics": [],
+  "limitations": [
+    "Focused test coverage, not the full regression suite",
+    "MSVC nightly compiler differs from pinned GNU regression compiler",
+    "Stable qualified branch coverage unavailable; vendor/test code excluded",
+    "LLVM diagnostics are retained; any mismatched mappings limit completeness"
+  ]
+}

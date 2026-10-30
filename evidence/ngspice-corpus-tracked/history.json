@@ -1,0 +1,16 @@
+[
+  {
+    "run_id": "20261030T232503Z-7c12caee",
+    "inventory": "87175b2c0fa305751b94d7ad45c1589dbea01dc9558d6ffcd666246e131760c7",
+    "total": 910,
+    "passed": 0,
+    "finished_utc": "2026-10-30T23:31:05.2759401\u002B00:00"
+  },
+  {
+    "run_id": "20261030T234800Z-d07887b8",
+    "inventory": "87175b2c0fa305751b94d7ad45c1589dbea01dc9558d6ffcd666246e131760c7",
+    "total": 910,
+    "passed": 0,
+    "finished_utc": "2026-10-30T23:52:30.3212417\u002B00:00"
+  }
+]

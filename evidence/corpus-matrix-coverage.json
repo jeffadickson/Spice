@@ -1,6 +1,6 @@
 {
   "tool": "dotnet-coverage 18.12",
-  "collector_sha256": "b93f592e44387e5d2f6851b85115bdbbc0652f3f9740827b4fd5f920e28dfbda",
+  "collector_sha256": "9387ff354f75d60d3b06ba90e93b2ca632e374599e1c5bd90ef050d1af2b5a35",
   "metrics": [
     {
       "file": "dotnet/Simulator.Benchmarks/CorpusCommand.cs",
@@ -24,13 +24,13 @@
     },
     {
       "file": "dotnet/Simulator.Benchmarks/CorpusPolicy.cs",
-      "source_sha256": "11ee95b551b51a0dfc0dc717eaaca53fa7687cad5a4c684fa853917eb5073869",
-      "lines": 59,
-      "covered_lines": 56,
-      "line_percent": 94.91525423728814,
-      "branches": 190,
-      "covered_branches": 116,
-      "branch_percent": 61.05263157894737
+      "source_sha256": "4a9637c5e8f1c4c821a9d25a5155ee483a269f525f5849961cb5c57c904f87eb",
+      "lines": 68,
+      "covered_lines": 65,
+      "line_percent": 95.58823529411765,
+      "branches": 202,
+      "covered_branches": 128,
+      "branch_percent": 63.366336633663366
     },
     {
       "file": "dotnet/Simulator.Benchmarks/CorpusPresentation.cs",

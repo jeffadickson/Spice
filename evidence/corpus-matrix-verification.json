@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "source_checkpoint": "3d01479eb412be11b71c7e0bc0659b9c76b02760",
+  "review_fixes": "Timeout exit and logical observation continuation removal; exact hashes in coverage and fresh run",
+  "requirements": [
+    "NGC-CORPUS-001",
+    "NGC-CORPUS-002",
+    "NGC-CORPUS-003"
+  ],
+  "rust": {
+    "log": "work/corpus-rust-final.log",
+    "clippy": "all targets -D warnings passed",
+    "command": "cargo nextest run --locked",
+    "coverage": "corpus-matrix-rust-coverage.json",
+    "passed": 424,
+    "branches": null,
+    "failed": 0,
+    "main_lines": "32/58",
+    "ignored": 1
+  },
+  "managed": {
+    "regressions_red": {
+      "passed": 14,
+      "failed": 5
+    },
+    "log": "work/corpus-review-tests.log",
+    "new_classes_branches": "397/616",
+    "command": "dotnet test dotnet/Simulator.Benchmarks.Tests --no-restore",
+    "properties": {
+      "replays": [
+        "91,20261031",
+        "123,20261031",
+        "372,20261031"
+      ],
+      "invalid_prior_replay": "91,20261030: even gamma; testhost failed; partial pass output rejected"
+    },
+    "skipped": 0,
+    "fixture_cli": {
+      "log": "work/corpus-review-coverage.log",
+      "assertions": "Eight expected statuses and XML-valid SVG",
+      "cases": 8
+    },
+    "passed": 48,
+    "new_classes_lines": "347/395",
+    "scoped_coverage": "corpus-matrix-coverage.json",
+    "failed": 0
+  },
+  "mutations": {
+    "rust": {
+      "summary": "work/framework-mutations/20261030T233200Z-72142f65/summary.json",
+      "tool": "cargo-mutants 27.1",
+      "scope": "selected CLI args branches",
+      "timeout": 0,
+      "killed": 3,
+      "earlier_attempt": "20261030T232340Z-478e5ae4: partial_timeout; three unattempted",
+      "survived": 0
+    },
+    "managed_pre_review": {
+      "no_coverage": 106,
+      "total_generated": 1939,
+      "limitations": "Survivors and uncovered mutants remain open; no equivalence claim",
+      "killed": 70,
+      "survived": 101,
+      "raw": "work/corpus-mutations-b8d468e052ef47a6b7ad152ec6e68993/stryker/reports/mutation-report.json",
+      "scope": "CorpusPolicy and CorpusPresentation with CorpusContracts only",
+      "tested": 172,
+      "ignored": 1283,
+      "timeout_detail": "CorpusPresentation i++ to i-- infinite loop; not a test kill",
+      "timeout": 1,
+      "compile_error": 378,
+      "tool": "Stryker.NET 5.0.0"
+    },
+    "managed_review": {
+      "timeout": 0,
+      "scope": "CorpusPolicy ExitCode and ObservedDeck character ranges; CorpusContracts tests",
+      "no_coverage": 3,
+      "killed": 37,
+      "score": 48.68,
+      "tool": "Stryker.NET 5.0.0",
+      "tested": 73,
+      "compile_error": 378,
+      "survived": 36,
+      "setup_warning": "TransportFixture simulated analysis failed; actual build and 19-test baseline succeeded",
+      "first_setup_attempt": "Rejected unsupported output config key; no mutations executed; corrected to CLI --output",
+      "total_generated": 1955,
+      "ignored": 1501,
+      "limitations": "Selection intentionally excludes most generated mutants. Compile failures and ignored mutants are not killed. Survivors remain open.",
+      "raw": "work/corpus-mutations-b8d468e052ef47a6b7ad152ec6e68993/review-stryker/reports/mutation-report.json"
+    }
+  },
+  "strictdoc": {
+    "status": "passed",
+    "report": "corpus-matrix-requirements.json",
+    "parents": 266,
+    "documents": 14,
+    "ids": 278
+  },
+  "limits": [
+    "Named node voltages, at most 200 sampled coordinates per signal; not full SPICE or branch-current/global waveform qualification.",
+    "Coverage is scoped managed execution, not NativeAOT/native/vendor internals or all failure paths.",
+    "Fresh Linux execution unavailable; no cross-platform equivalence claim.",
+    "Forced kill or permanent storage/network failure cannot guarantee final issue publication.",
+    "First filesystem exploration invalidated by source edits; archived locally, excluded from history.",
+    "Load-sensitive process startup failure and even-gamma testhost failures retained locally; superseded by verified full 48-test pass."
+  ],
+  "review": "corpus-matrix-review.md",
+  "publication_policy": "One issue per finalized invocation by default; explicit offline synthetic tests publish none. No CI dispatch or main push.",
+  "sphinx": {
+    "tool": "9.1.0",
+    "status": "built_with_warnings_as_errors",
+    "report": "engineering-docs.json",
+    "log": "work/corpus-review-docs.log"
+  },
+  "commands": [
+    "scripts/Run-CorpusComparison.ps1 -CorpusRoot <tracked ngspice checkout> -NgspicePath <ngspice executable> -Output evidence/ngspice-corpus-tracked -BudgetSeconds 1800 -SkipEngineBuild",
+    "dotnet test dotnet/Simulator.Benchmarks.Tests --no-restore --logger trx;LogFileName=corpus-review-final.trx --results-directory build/corpus-tests",
+    "dotnet-coverage collect \"pwsh -NoProfile -File work/Corpus-Checks.ps1\" -f cobertura -o build/coverage/corpus-review.cobertura.xml",
+    "dotnet run --file scripts/ValidateRequirements.cs -- --python <StrictDoc Python> --report evidence/corpus-matrix-requirements.json",
+    "dotnet run --file scripts/EngineeringDocs.cs -- --python .tools/sphinx/Scripts/python.exe"
+  ],
+  "corpus": {
+    "corpus_dirty": true,
+    "finished_utc": "2026-10-30T16:52:30.3212417-07:00",
+    "import_rejected": 303,
+    "selected_matches": [
+      "tests/filters/lowpass.cir",
+      "tests/resistance/res_partition.cir"
+    ],
+    "issue_state": "created",
+    "resource_or_input_rejected": 11,
+    "source_dirty": true,
+    "corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+    "elapsed_seconds": 268.9526321,
+    "partial_comparison": 2,
+    "whole_deck_passes": 0,
+    "issue": "https://github.com/jeffadickson/Spice/issues/3",
+    "run_id": "20261030T234800Z-d07887b8",
+    "started_utc": "2026-10-30T16:48:01.3686096-07:00",
+    "helper_mode": "native_aot",
+    "total": 910,
+    "source_commit": "3d01479eb412be11b71c7e0bc0659b9c76b02760",
+    "report": "ngspice-corpus-tracked/20261030T234800Z-d07887b8.json",
+    "state": "completed_with_results",
+    "previous_issue": "https://github.com/jeffadickson/Spice/issues/2",
+    "unsupported": 594,
+    "issue_error": null,
+    "gap_example": "Original res_simple.cir 1ns scalar remains rejected; adapted OP oracle does not establish original sample support.",
+    "inventory": "87175b2c0fa305751b94d7ad45c1589dbea01dc9558d6ffcd666246e131760c7"
+  },
+  "mutation_triage": "corpus-matrix-mutation-triage.json",
+  "chart_attachment": "https://github.com/jeffadickson/Spice/issues/3#issuecomment-6536039713",
+  "chart_visual_check": "Rendered 1000x400 PNG inspected: two actual points, flat 910 remaining; labels and axes readable."
+}
