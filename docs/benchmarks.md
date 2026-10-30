@@ -72,3 +72,5 @@ reaping. FsCheck has 128 cases at replay `372,20261031`. Native Stryker configur
 in that test directory selects Tables/Suites only; process/CLI/runner mutation
 coverage is not implied by that scope. Requirements and actual evidence are in
 `docs/consistency.sdoc` (BENCH-001) and `evidence/five-area-benchmark.json`.
+
+The suite also includes signed 30 V coupled Shockley clamps; see [difficult-circuits.md](difficult-circuits.md) for the independent continuation oracle and its failed tighter-policy boundary. The five paired decks are owned fixtures, not a broad SPICE corpus.

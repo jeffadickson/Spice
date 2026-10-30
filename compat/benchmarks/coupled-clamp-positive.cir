@@ -1,0 +1,15 @@
+Coupled antiparallel diode ladder
+.temp 27
+.options gmin=1e-15 reltol=1e-10 abstol=1e-15 numdgt=15
+V1 in 0 30
+R1 in a 1000
+R2 a b 3300
+DA1 a 0 DA
+DA2 0 a DA
+DB1 b 0 DB
+DB2 0 b DB
+.model DA D(IS=1p N=1 RS=0 CJO=0 TT=0)
+.model DB D(IS=1f N=1.5 RS=0 CJO=0 TT=0)
+.op
+.print op v(b)
+.end

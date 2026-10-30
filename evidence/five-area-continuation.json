@@ -1,0 +1,90 @@
+{
+  "status": "bounded_profile_verified",
+  "base_commit": "4c4dc89",
+  "requirement": "QUAL-CONT-002",
+  "tests": {
+    "full_run_scope": "405 checkpoint tests plus five then-candidate sparse tests; frozen before automatic audit source changes",
+    "matrix_solves": 90,
+    "property_cases": 32,
+    "property_seed": 2026103005,
+    "solves_per_property": 6,
+    "windows_full_run_passed": 410,
+    "named": 3,
+    "full_log": "work/five-area/difficult-current-full.log",
+    "windows_full_run_ignored": 1
+  },
+  "mutation": {
+    "status": "completed",
+    "requested_seconds": 180,
+    "elapsed_seconds": 105.1692118,
+    "shard": "0/1",
+    "rust_file": "src/newton.rs",
+    "rust_test": "difficult_continuation",
+    "tool": "rust",
+    "rust_filter": "replace (<=|>=|\\*|>) with .* in solve_with_gmin_continuation",
+    "workers": 2,
+    "owned_workers_reaped": 0,
+    "rust_selected_names": null,
+    "rust_selection_sha256": null,
+    "managed_input_hashes": {},
+    "cargo_mutants": {
+      "version": "27.1.0",
+      "status": "completed",
+      "exit_code": 0,
+      "candidates": 7,
+      "killed": 7,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": "6d130ef97dddcecba7f4249d661b3b9c2af49e4a77f8f81fbe74b0f300505f4a",
+      "log_sha256": "b34d72a5d29eed11aa5a72aa1d9b5455e658cd5ed825582f321c9189c93e021b"
+    },
+    "stryker": {
+      "version": "5.0.0",
+      "status": "skipped_explicitly",
+      "exit_code": null,
+      "candidates": 0,
+      "killed": 0,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": null,
+      "log_sha256": null
+    }
+  },
+  "oracle": "evidence/five-area-continuation-oracle.json",
+  "coverage": "evidence/five-area-continuation-coverage.json",
+  "coverage_lines": {
+    "count": 4867,
+    "covered": 826,
+    "percent": 16.971440312307376
+  },
+  "coverage_branches": null,
+  "boundary": {
+    "current_absolute_a": 1E-13,
+    "status": "expected_budget_exhaustion_retained",
+    "resistor_scale": 0.01,
+    "last_scale": 0.56640625,
+    "newton_iterations": 128,
+    "log": "work/five-area/difficult-first.log",
+    "source_stages": 128,
+    "drive_v": -30
+  },
+  "limitations": [
+    "Finite Shockley family; no universal convergence or arbitrary ngspice models",
+    "Successful profile uses 256 iterations and 1e-11 A; stricter failed policy is not claimed repaired",
+    "Windows GNU 1.99.1 regression; focused MSVC nightly 1.101.0 instrumented coverage is a different binary/compiler scope, not comparable to historical full-suite coverage",
+    "Linux coverage attempts failed: missing portable profiler in Windows GNU, initially incomplete Linux snapshot then disk exhaustion and WSL startup E_FAIL; no new Linux pass claimed",
+    "Raw traces retained locally; no full soak or CI/push"
+  ]
+}

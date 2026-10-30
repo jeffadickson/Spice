@@ -572,6 +572,20 @@ RELATIONS:
   VALUE: ARCH-VERIFY-003
 
 [REQUIREMENT]
+UID: QUAL-CONT-002
+STATUS: Draft
+TITLE: Coupled nonlinear continuation with an independent oracle
+STATEMENT: >>>
+Bounded source and Gmin continuation shall qualify a coupled two-node antiparallel Shockley ladder under signed 30 V drive, three impedance scales and dense LU/QR and sparse faer CPU providers. Successful source continuation shall reach unit excitation. Successful Gmin continuation shall remove its shunt before accepting the physical solution. Independent nested monotone bisection, source-current and node KCL checks shall bound errors. Named positive/negative ngspice pairs shall retain exact models, temperature, numerical settings and printed-value bounds. Exhausted budgets shall remain explicit failures.
+<<<
+COMMENT: >>>
+Implementation and verification: tests/difficult_continuation.rs covers 90 matrix solves plus 32 Proptest cases (seed 2026103005) across six solver/policy combinations with 256 Newton iterations and 1e-11 A absolute current tolerance; a deliberately significant 1e-4 S final warm-start shunt makes accidental retention observable. Gmin stages list regularized solves only; final_unregularized plus physical oracle/KCL verify the separate final solve. compat/benchmarks/coupled-clamp-positive and -negative decks use 27 C, IS=1p/N=1 and IS=1f/N=1.5, zero charge/series resistance, and ngspice numerical gmin=1e-15 S. A tighter 1e-13 A/128-iteration attempt exhausted 128 source stages at scale 0.56640625; this is retained boundary evidence, not a general convergence guarantee. Evidence: evidence/five-area-continuation.json. This finite model family does not close universal convergence or arbitrary diode-model compatibility.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: INT-WORK-001
 STATUS: Draft
 TITLE: Actual nonlinear initialization work accounting
