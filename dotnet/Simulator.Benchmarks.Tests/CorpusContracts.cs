@@ -4,6 +4,27 @@ using FsCheck.Xunit;
 
 public sealed class CorpusContracts
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ImportTimeoutCannotExitSuccessfully(bool precedingPass)
+    {
+        var report=new CorpusReport{State="completed_with_results"};
+        if(precedingPass)report.Rows.Add(new CorpusRow("first","h","tests",[]){Status="compared_pass"});
+        report.Rows.Add(new CorpusRow("last","h","tests",[]){Status="timeout"});
+        Assert.Equal(1,CorpusPolicy.ExitCode(report));
+    }
+    [Theory]
+    [InlineData("print")]
+    [InlineData("plot")]
+    [InlineData("probe")]
+    public void ObservationRemovalIncludesContinuationsAndPreservesDevices(string card)
+    {
+        var deck=CorpusPolicy.ObservedDeck($"title\nV1 out 0 1\nR1 out 0\n+ 1000\n.{card} op v(out)\n* comment\n\n+ i(V1)\n.op\n.end\n","op",["out"]);
+        Assert.Contains("R1 out 0\n+ 1000",deck);
+        Assert.DoesNotContain("i(V1)",deck);
+        Assert.Contains("V1 out 0 1",deck);
+    }
     [Fact]
     public void ProvenanceFailureCannotExitSuccessfullyEvenWithNoPassingRows()=>
         Assert.Equal(1,CorpusPolicy.ExitCode(new CorpusReport{State="provenance_changed"}));

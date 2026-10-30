@@ -82,6 +82,10 @@ last checkpoint marked running and cannot guarantee issue creation. Recoverable
 harness failures are recorded and publication attempted. Inspect publisher logs
 before retrying an ambiguous network failure to avoid duplicate issues.
 
+Observation edits remove complete print/plot/probe logical records, including
+continuations, while preserving device continuations. Child import timeouts are
+execution failures even when they are the final deck.
+
 Exit 0 means report completed, possibly with unsupported gaps; 1 execution/
 comparison/provenance failure; 2 budget/cancellation unfinished; 3 publication
 failure; 4 setup/harness failure. **Zero is not full-SPICE qualification.** Work

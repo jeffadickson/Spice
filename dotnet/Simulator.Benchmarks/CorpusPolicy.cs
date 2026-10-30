@@ -37,7 +37,7 @@ internal static class CorpusPolicy
         report.State=="harness_failed"?4:
         report.State is "cancelled" or "budget_exhausted"?2:
         report.Rows.Any(r=>r.Status is "budget_exhausted" or "cancelled")?2:
-        report.State=="provenance_changed"||report.Rows.Any(r=>r.Status is "comparison_failed" or "simulator_failed" or "oracle_failed" or "input_or_harness_failed" or "provenance_changed")?1:0;
+        report.State=="provenance_changed"||report.Rows.Any(r=>r.Status is "comparison_failed" or "simulator_failed" or "oracle_failed" or "timeout" or "input_or_harness_failed" or "provenance_changed")?1:0;
     internal static string Clip(string text)=>text.Length<=1024?text:text[..1024];
     internal static Point Reference(Point[] reference,double coordinate,string kind)
     {
@@ -61,7 +61,18 @@ internal static class CorpusPolicy
         if(UnsafeReference(text))throw new InvalidDataException("External resource/control execution is outside the read-only oracle profile.");
         if(nodes.Length==0 || nodes.Any(n=>!Regex.IsMatch(n,@"^[A-Za-z0-9_.$:-]+$")))
             throw new InvalidDataException("Node name outside explicit observation identifier profile.");
-        var lines=text.Split('\n').Where(line=>!Regex.IsMatch(line,@"(?i)^\s*\.(end|print|plot|probe)\b"));
+        // Remove whole observation records: a continuation must not attach to
+        // the previous device. Comments/blanks do not start a new logical card.
+        var lines=new List<string>();
+        var discardContinuation=false;
+        foreach(var line in text.Split('\n'))
+        {
+            var trimmed=line.TrimStart();
+            if(trimmed.StartsWith('+')) {if(!discardContinuation)lines.Add(line);continue;}
+            if(trimmed.Length==0||trimmed.StartsWith('*')) {lines.Add(line);continue;}
+            discardContinuation=Regex.IsMatch(line,@"(?i)^\s*\.(end|print|plot|probe)\b");
+            if(!discardContinuation)lines.Add(line);
+        }
         var result=string.Join('\n',lines)+"\n";
         if(kind=="op"&&!Regex.IsMatch(text,@"(?im)^\s*\.op\s*$"))result+=".op\n";
         foreach(var n in nodes)result+=$".print {(kind=="transient"?"tran":kind)} v({n})\n";
