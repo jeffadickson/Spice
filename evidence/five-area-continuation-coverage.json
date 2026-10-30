@@ -5,8 +5,8 @@
   "snapshot": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source",
   "scope": "Owned src/*.rs exercised by named test binary only",
   "lines": {
-    "count": 4867,
-    "covered": 826,
+    "count": 4867.0,
+    "covered": 826.0,
     "percent": 16.971440312307376
   },
   "branches": null,
@@ -60,6 +60,314 @@
     "Focused test coverage, not the full regression suite",
     "MSVC nightly compiler differs from pinned GNU regression compiler",
     "Stable qualified branch coverage unavailable; vendor/test code excluded",
-    "LLVM diagnostics are retained; any mismatched mappings limit completeness"
-  ]
+    "LLVM diagnostics are retained; any mismatched mappings limit completeness",
+    "Only mapped lines linked into this binary are counted; unlinked owned code is absent from the denominator."
+  ],
+  "file_metrics": [
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\ac.rs",
+      "lines": {
+        "count": 137,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\adaptive.rs",
+      "lines": {
+        "count": 34,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\api.rs",
+      "lines": {
+        "count": 197,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\artifact.rs",
+      "lines": {
+        "count": 102,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\assertion.rs",
+      "lines": {
+        "count": 11,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\audit.rs",
+      "lines": {
+        "count": 342,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\backend.rs",
+      "lines": {
+        "count": 223,
+        "covered": 57,
+        "percent": 25.56053811659193
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\backend_faer.rs",
+      "lines": {
+        "count": 206,
+        "covered": 49,
+        "percent": 23.78640776699029
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\campaign.rs",
+      "lines": {
+        "count": 37,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\charge.rs",
+      "lines": {
+        "count": 16,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\circuit.rs",
+      "lines": {
+        "count": 80,
+        "covered": 34,
+        "percent": 42.5
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\compile.rs",
+      "lines": {
+        "count": 158,
+        "covered": 80,
+        "percent": 50.63291139240506
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\configured.rs",
+      "lines": {
+        "count": 282,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\dc.rs",
+      "lines": {
+        "count": 101,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\error.rs",
+      "lines": {
+        "count": 12,
+        "covered": 6,
+        "percent": 50
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\experiment.rs",
+      "lines": {
+        "count": 108,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\grid.rs",
+      "lines": {
+        "count": 13,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\ids.rs",
+      "lines": {
+        "count": 3,
+        "covered": 3,
+        "percent": 100
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\integrator.rs",
+      "lines": {
+        "count": 86,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\linalg.rs",
+      "lines": {
+        "count": 173,
+        "covered": 25,
+        "percent": 14.450867052023122
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\linear_dynamic.rs",
+      "lines": {
+        "count": 50,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\measurement.rs",
+      "lines": {
+        "count": 26,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\model.rs",
+      "lines": {
+        "count": 67,
+        "covered": 46,
+        "percent": 68.65671641791045
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\netlist.rs",
+      "lines": {
+        "count": 449,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\newton.rs",
+      "lines": {
+        "count": 689,
+        "covered": 394,
+        "percent": 57.18432510885341
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\power.rs",
+      "lines": {
+        "count": 50,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\provenance.rs",
+      "lines": {
+        "count": 21,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\quantity.rs",
+      "lines": {
+        "count": 35,
+        "covered": 4,
+        "percent": 11.428571428571429
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\registry.rs",
+      "lines": {
+        "count": 29,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\sampling.rs",
+      "lines": {
+        "count": 75,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\solver_contract.rs",
+      "lines": {
+        "count": 116,
+        "covered": 18,
+        "percent": 15.517241379310345
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\sources.rs",
+      "lines": {
+        "count": 100,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\sparse.rs",
+      "lines": {
+        "count": 180,
+        "covered": 110,
+        "percent": 61.111111111111114
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\sweep.rs",
+      "lines": {
+        "count": 240,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\topology.rs",
+      "lines": {
+        "count": 49,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\transient.rs",
+      "lines": {
+        "count": 79,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\variation.rs",
+      "lines": {
+        "count": 175,
+        "covered": 0,
+        "percent": 0
+      }
+    },
+    {
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T214000Z-a58d1ecf\\rust-source\\src\\waveform.rs",
+      "lines": {
+        "count": 116,
+        "covered": 0,
+        "percent": 0
+      }
+    }
+  ],
+  "aggregation": "Sum per-file summaries under exact frozen src directory; LLVM global totals can include vendor maps despite source filters, so are not used."
 }

@@ -78,6 +78,6 @@ peak-vs-RMS AC power and BE-vs-trapezoidal energy; adaptive/bias-unavailable aud
 - [x] 1 transport
 - [x] 2 benchmark
 - [x] 3 difficult circuits
-- [ ] 4 sparse qualification
+- [x] 4 sparse qualification
 - [ ] 5 physical consistency
 - [ ] Final review

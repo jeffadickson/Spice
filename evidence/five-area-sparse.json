@@ -1,0 +1,153 @@
+{
+  "status": "bounded_profile_verified",
+  "base_commit": "5581a25",
+  "requirement": "QUAL-SPARSE-003",
+  "tests": {
+    "prepared_factors": {
+      "fixed": 1,
+      "pwl_breakpoint": 2,
+      "step_s": 0.0009765625
+    },
+    "property_cases": 32,
+    "rc_scales": [
+      0.01,
+      1,
+      100
+    ],
+    "fault_modes": [
+      "short",
+      "nonfinite",
+      "finite wrong values",
+      "explicit failure",
+      "rank deficient ideal-source loop"
+    ],
+    "property_seed": 2026103004,
+    "focused_passed": 6,
+    "rc_dimensions": "1..8",
+    "rlc": "1-2j V; 1,100,1591.5494309189535,100000 Hz",
+    "frequencies_hz": [
+      0.1,
+      10,
+      1000,
+      100000
+    ],
+    "stale_factor_rejected": true,
+    "direct_dispatch": "Dense entry point panics in direct-only spy"
+  },
+  "mutation": {
+    "initial": {
+      "status": "completed",
+      "requested_seconds": 180,
+      "elapsed_seconds": 126.886921,
+      "shard": "0/1",
+      "rust_file": "src/integrator.rs",
+      "rust_test": "sparse_qualification",
+      "tool": "rust",
+      "rust_filter": "src/integrator.rs:(59|61|62|113|117):.*replace",
+      "workers": 2,
+      "owned_workers_reaped": 0,
+      "rust_selected_names": null,
+      "rust_selection_sha256": null,
+      "managed_input_hashes": {},
+      "cargo_mutants": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 2,
+        "candidates": 10,
+        "killed": 9,
+        "survived": 1,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "de8183c93a28e362fb1acb043503b0f34e2c0597ea9baf3c8c8ea6bce38ac92a",
+        "log_sha256": "bfd85cee62769fb8e4d5180efb3c7edb6f518a6aa6c01ae11700577a2932f2ab"
+      },
+      "stryker": {
+        "version": "5.0.0",
+        "status": "skipped_explicitly",
+        "exit_code": null,
+        "candidates": 0,
+        "killed": 0,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": null,
+        "log_sha256": null
+      }
+    },
+    "replay": {
+      "status": "completed",
+      "requested_seconds": 120,
+      "elapsed_seconds": 66.5074228,
+      "shard": "0/1",
+      "rust_file": "src/integrator.rs",
+      "rust_test": "sparse_qualification",
+      "tool": "rust",
+      "rust_filter": "src/integrator.rs:59:26: replace \\+= with \\*=",
+      "workers": 2,
+      "owned_workers_reaped": 0,
+      "rust_selected_names": null,
+      "rust_selection_sha256": null,
+      "managed_input_hashes": {},
+      "cargo_mutants": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "74fabe9755b8cec9a0187f01d58002512df03ab6fa37f432ead6fbd856f553f2",
+        "log_sha256": "36258e7d56be1bbbca47101eb45d128f77b5b6e463720006e5a0f5176b1c0ee9"
+      },
+      "stryker": {
+        "version": "5.0.0",
+        "status": "skipped_explicitly",
+        "exit_code": null,
+        "candidates": 0,
+        "killed": 0,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": null,
+        "log_sha256": null
+      }
+    },
+    "failed_disk_attempt": "work/framework-mutations/20261030T214211Z-ef98334f (baseline failure, ten unattempted; not ten kills)",
+    "disposition": "The solve_calls += to *= survivor is killed by the added independent interval-count assertion. These are separate native runs, not one aggregate score."
+  },
+  "coverage": "evidence/five-area-sparse-coverage.json",
+  "coverage_lines": {
+    "count": 5299.0,
+    "covered": 1142.0,
+    "percent": 21.551236082279676
+  },
+  "coverage_branches": null,
+  "limits": [
+    "Finite owned CPU qualification; vendor internals/GPU/prepared complex cache unqualified",
+    "Focused nightly MSVC mapped lines, not full-suite coverage or comparable with the prior historical Linux compiler scope",
+    "Cached LLVM maps reference source-identical previous snapshot: per-file path and SHA256 verified, global vendor-inclusive totals discarded",
+    "New Linux execution unavailable after disk exhaustion and WSL E_FAIL; earlier platform evidence is historical",
+    "No full-duration soak, CI or push"
+  ]
+}

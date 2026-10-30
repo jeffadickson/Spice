@@ -598,3 +598,17 @@ Implementation: src/configured.rs retains the initialization Newton report. Veri
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: QUAL-SPARSE-003
+STATUS: Draft
+TITLE: Physical AC ladders and prepared transient factor qualification
+STATEMENT: >>>
+Direct sparse complex solves shall match independent RC continued-fraction and series-RLC impedance equations under non-unit complex excitation across bounded dimensions, scales and frequencies. Fixed BE/trapezoidal transient shall agree with the dense reference, reuse factors only for matching numeric step identities, and reject stale factors even when a provider claims the current matrix identity. Empty, nonfinite, wrong-value and explicitly failing providers and singular ideal-source loops shall fail without a hidden alternate-provider fallback. Explicit initial states shall not add an initialization solve to reported work.
+<<<
+COMMENT: >>>
+Verification: tests/sparse_qualification.rs has direct-only provider spies whose dense entry point panics; RC counts 1..8, three impedance scales and four frequencies, plus 32 Proptest cases at seed 2026103004, and a signed series-RLC oracle. Binary step h=1/1024 s permits exact cache identities; a 1.5h PWL breakpoint requires h/2 and h factors. A lying stale-factor provider is rejected by the owning residual check. Native cargo-mutants selections and scoped compiler-mapped line coverage are retained in evidence/five-area-sparse.json. The original selected solve-counter multiplication mutant survived until an independent accepted-interval count assertion was added; its replay is killed. Finite owned-adapter evidence excludes vendor internals, prepared complex caching, GPU and production qualification. This Draft does not close the complete sparse release work package.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
