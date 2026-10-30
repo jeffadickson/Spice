@@ -1,0 +1,21 @@
+{
+  "tool": "dotnet-coverage 18.12.0",
+  "platform": "windows-x64",
+  "scope": "dotnet/Simulator.TransportFixture/Program.cs, synthetic subprocess fixture",
+  "source_sha256": "b8fb895e38aa78244672a7d6fec612e5b663de3f7513eeebbdae3ab28d6d19f1",
+  "tests_passed": 80,
+  "tests_failed": 0,
+  "tests_skipped": 0,
+  "lines": 56,
+  "covered_lines": 54,
+  "branches": 50.0,
+  "covered_branches": 48.0,
+  "local_report": "build/coverage/managed-triage-fixture.cobertura.xml",
+  "report_sha256": "148ab2aaf78848c9b1d455856c506a3b707384003407a5560f3da6c392223da7",
+  "raw_log": "work/managed-triage-fixture-coverage.log",
+  "limitations": [
+    "Synthetic test fixture, not numerical-engine qualification.",
+    "Duplicate class/async mappings aggregated by per-line maxima, not complete path coverage.",
+    "Windows only; native kernel APIs and generated/vendor sources excluded from this per-file metric."
+  ]
+}

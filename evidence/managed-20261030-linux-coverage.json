@@ -1,0 +1,26 @@
+{
+  "platform": "linux-x64-wsl-ubuntu2404",
+  "sdk": "10.0.402",
+  "tests_passed": 80,
+  "tests_failed": 0,
+  "tests_skipped": 0,
+  "platform_guarded_noop": "WindowsWorkerHasNoConsoleWindow returns before assertions on Linux",
+  "snapshot": "/home/jeffd/spice-remote-validation/work/managed-survivors-final-9072fb4e49d64dd7bed35d6515bfeac3",
+  "source_hashes": {
+    "dotnet/Simulator.Client/Client.cs": "c98f8e760291a6dd61af05a8c4d09adade6a25cbc68e9dcff306c69172eae466",
+    "dotnet/Simulator.Client.Tests/TransportContracts.cs": "fef8c26e8f30fa01cfe3e388e5a7b31d32637f98f466a6bbc90eeb69278c30e8",
+    "dotnet/Simulator.Client.Tests/ClientContracts.cs": "82a9495d1160e86de26e5dc77c1ce2be5fb351a961efddfaaa3a96b75092b64e",
+    "dotnet/Simulator.TransportFixture/Program.cs": "b8fb895e38aa78244672a7d6fec612e5b663de3f7513eeebbdae3ab28d6d19f1"
+  },
+  "covered_lines": 171,
+  "lines": 179,
+  "covered_branches": 112,
+  "branches": 114,
+  "report_sha256": "7c4f864c118e5b6cc34e381a166f79ef2b6cb34f8480c36e96f1cdc01d5b5628",
+  "raw_log": "work/managed-survivors-final-linux-settling.log",
+  "limitations": [
+    "Owned client only; fixture/test/native/vendor code excluded.",
+    "Linux does not execute the Windows console-window assertion.",
+    "The earlier immediate-descendant-exit assertion failed (79 pass/1 fail); raw failure retained in work/managed-survivors-final-linux.log. This report uses the bounded settling test and its distinct collector report."
+  ]
+}

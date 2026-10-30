@@ -1,3 +1,17 @@
+Latest October 30 managed follow-up: read evidence/managed-20261030-review.md and
+its stable 19-outcome manifest before proceeding. Final Windows Stryker: 202
+candidates, 181 killed, three survivors, three timeouts, one compile error,
+one uncovered, 13 ignored. Focused Linux replay kills all four selected cleanup
+mutations, including the exit-wait deletion that survives Windows. Across both
+scopes, eight of the original ten survivors and three original timeouts are caught.
+Current 80-test suite passes Windows/Linux. Coverage: client 171/179 lines,
+112/114 branches; synthetic fixture Windows 54/56 lines, 48/50 branches.
+Open: three deliberate liveness timeouts, interactive Windows console evidence,
+conditional decode-only BOM equivalence, defensive startup-null branch, and
+pre-ack startup-fault fixture cleanup qualification. Compile errors are not kills.
+Source guard changed equivalently; original compile-error identities are not
+relabeled killed. No full soak, push or CI dispatch occurred. Older counts below
+are historical. Keep the existing scheduled campaign/review and broader M1 scope.
 October 30 follow-up: see evidence/soak-20261030-fixes-review.md before continuing.
 The historical fd34c53 six-hour soak completed; current finite fixes add bounded
 CSC liveness evidence, independent waveform checks, exact Rust selector support,

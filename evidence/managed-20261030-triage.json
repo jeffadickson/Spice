@@ -1,0 +1,547 @@
+{
+  "base_commit": "02196d1a0126172b86ee04333615613526b73dfe",
+  "source_dirty": true,
+  "source_hashes": {
+    "dotnet/Simulator.Client/Client.cs": "c98f8e760291a6dd61af05a8c4d09adade6a25cbc68e9dcff306c69172eae466",
+    "dotnet/Simulator.Client.Tests/TransportContracts.cs": "fef8c26e8f30fa01cfe3e388e5a7b31d32637f98f466a6bbc90eeb69278c30e8",
+    "dotnet/Simulator.Client.Tests/ClientContracts.cs": "82a9495d1160e86de26e5dc77c1ce2be5fb351a961efddfaaa3a96b75092b64e",
+    "dotnet/Simulator.TransportFixture/Program.cs": "b8fb895e38aa78244672a7d6fec612e5b663de3f7513eeebbdae3ab28d6d19f1"
+  },
+  "requirements": [
+    "MAN-003",
+    "MAN-004",
+    "MUT-CLEANUP-001"
+  ],
+  "windows_full_runs": [
+    {
+      "run": "work/framework-mutations/20261030T124250Z-c9f5945d",
+      "elapsed_seconds": 457.3813726,
+      "status": "completed",
+      "owned_workers_reaped": 2,
+      "counts": {
+        "version": "5.0.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 201,
+        "killed": 169,
+        "survived": 10,
+        "timed_out": 6,
+        "invalid": 2,
+        "not_covered": 1,
+        "pending": 0,
+        "other": 0,
+        "ignored": 13,
+        "unattempted": 0,
+        "report_sha256": "bb6b92ea465b41447b166ce7c81e709f356226507281049c0a4679f58b2ee431",
+        "log_sha256": "553e1840b5e55ff427f45638123c954ffd66a1af93a059e2f7e9bb21721db98b"
+      },
+      "native_input_hashes": {
+        "circuit-simulator.exe": "633d3d7dbb64c23d0fa3b8e2123a8717bd9f77205ad6c53b529aa4a26924fd43",
+        "examples/divider.json": "45c269a471691024c36f0cc988653cdcab4914bc33de184210935e99b23e9d71",
+        "examples/rc.json": "8dbaed5c8fc8df663ff6c5b2c9af0425a767d7f3409398d058cba97c2965f31d",
+        "examples/adaptive-rc.json": "80ad2f6145a3e682586cf79455c877b4e0173cae6b0dcdb285532b95d80ef3cf"
+      },
+      "source_hashes": {
+        "dotnet/Simulator.Client/Client.cs": "c5843d4932b90d8144df4f39a0ccb774f34ad4bd71088ccc0561b171c715e1ee",
+        "dotnet/Simulator.Client.Tests/TransportContracts.cs": "7e2b5a5aeef7748f70bca94fed8fb4d1d604dfa026b3bb31de5c6e5aa2f437d4",
+        "dotnet/Simulator.Client.Tests/ClientContracts.cs": "9a27d986de2e7fc880152f52190342f86fe3dc8d870222f3d222b45664326e9d",
+        "dotnet/Simulator.TransportFixture/Program.cs": "da079637a66a7a1250423eb69705fa2d1aafdc195c8af70533df62a0bee52bf7"
+      }
+    },
+    {
+      "run": "work/framework-mutations/20261030T130820Z-4be8c60f",
+      "elapsed_seconds": 473.6940548,
+      "status": "completed",
+      "owned_workers_reaped": 2,
+      "counts": {
+        "version": "5.0.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 201,
+        "killed": 175,
+        "survived": 4,
+        "timed_out": 6,
+        "invalid": 2,
+        "not_covered": 1,
+        "pending": 0,
+        "other": 0,
+        "ignored": 13,
+        "unattempted": 0,
+        "report_sha256": "844b9e11a321464523e3b052cfc33927fc2c8eb4a3331925ed76314ebef16107",
+        "log_sha256": "e19977375456c864eccb68d3d674323d2571242f98900686bf904f020f00fead"
+      },
+      "native_input_hashes": {
+        "circuit-simulator.exe": "633d3d7dbb64c23d0fa3b8e2123a8717bd9f77205ad6c53b529aa4a26924fd43",
+        "examples/divider.json": "45c269a471691024c36f0cc988653cdcab4914bc33de184210935e99b23e9d71",
+        "examples/rc.json": "8dbaed5c8fc8df663ff6c5b2c9af0425a767d7f3409398d058cba97c2965f31d",
+        "examples/adaptive-rc.json": "80ad2f6145a3e682586cf79455c877b4e0173cae6b0dcdb285532b95d80ef3cf"
+      },
+      "source_hashes": {
+        "dotnet/Simulator.Client/Client.cs": "c5843d4932b90d8144df4f39a0ccb774f34ad4bd71088ccc0561b171c715e1ee",
+        "dotnet/Simulator.Client.Tests/TransportContracts.cs": "e2ba9af1ac0595d3c496cdc03be6db57b7c1d849ff72662c52d7845b775323ec",
+        "dotnet/Simulator.Client.Tests/ClientContracts.cs": "82a9495d1160e86de26e5dc77c1ce2be5fb351a961efddfaaa3a96b75092b64e",
+        "dotnet/Simulator.TransportFixture/Program.cs": "da079637a66a7a1250423eb69705fa2d1aafdc195c8af70533df62a0bee52bf7"
+      }
+    },
+    {
+      "run": "work/framework-mutations/20261030T160505Z-83358ae8",
+      "elapsed_seconds": 590.8164325,
+      "status": "completed",
+      "owned_workers_reaped": 0,
+      "counts": {
+        "version": "5.0.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 202,
+        "killed": 180,
+        "survived": 4,
+        "timed_out": 3,
+        "invalid": 1,
+        "not_covered": 1,
+        "pending": 0,
+        "other": 0,
+        "ignored": 13,
+        "unattempted": 0,
+        "report_sha256": "be1d219d4e6901e7f97884c28f97927397763c15e51ebcee7a93b28001519110",
+        "log_sha256": "fe861b4457714389467271bd023c645d45351fb93306e9da9713438ffab1fbce"
+      },
+      "native_input_hashes": {
+        "circuit-simulator.exe": "633d3d7dbb64c23d0fa3b8e2123a8717bd9f77205ad6c53b529aa4a26924fd43",
+        "examples/divider.json": "45c269a471691024c36f0cc988653cdcab4914bc33de184210935e99b23e9d71",
+        "examples/rc.json": "8dbaed5c8fc8df663ff6c5b2c9af0425a767d7f3409398d058cba97c2965f31d",
+        "examples/adaptive-rc.json": "80ad2f6145a3e682586cf79455c877b4e0173cae6b0dcdb285532b95d80ef3cf"
+      },
+      "source_hashes": {
+        "dotnet/Simulator.Client/Client.cs": "c98f8e760291a6dd61af05a8c4d09adade6a25cbc68e9dcff306c69172eae466",
+        "dotnet/Simulator.Client.Tests/TransportContracts.cs": "7b8bce2d41b656fb1a1d3967fc1aeab0abf8b6cc09a54f050d96014fb1d91bed",
+        "dotnet/Simulator.Client.Tests/ClientContracts.cs": "82a9495d1160e86de26e5dc77c1ce2be5fb351a961efddfaaa3a96b75092b64e",
+        "dotnet/Simulator.TransportFixture/Program.cs": "3c7f3fde360be0be6381b594bb81b96887be2ec48d94397028c88bcd1896bb7c"
+      }
+    },
+    {
+      "run": "work/framework-mutations/20261030T161459Z-cc10a65d",
+      "elapsed_seconds": 503.4403493,
+      "status": "completed",
+      "owned_workers_reaped": 0,
+      "counts": {
+        "version": "5.0.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 202,
+        "killed": 181,
+        "survived": 3,
+        "timed_out": 3,
+        "invalid": 1,
+        "not_covered": 1,
+        "pending": 0,
+        "other": 0,
+        "ignored": 13,
+        "unattempted": 0,
+        "report_sha256": "275adbf71b8902dbc01abcc299a3d343fd8050137b154717f282c9fe32475991",
+        "log_sha256": "db8bd98d1b714b39ee7586455bc1bbd8081bea45837aa50d54e44522e865f6e8"
+      },
+      "native_input_hashes": {
+        "circuit-simulator.exe": "633d3d7dbb64c23d0fa3b8e2123a8717bd9f77205ad6c53b529aa4a26924fd43",
+        "examples/divider.json": "45c269a471691024c36f0cc988653cdcab4914bc33de184210935e99b23e9d71",
+        "examples/rc.json": "8dbaed5c8fc8df663ff6c5b2c9af0425a767d7f3409398d058cba97c2965f31d",
+        "examples/adaptive-rc.json": "80ad2f6145a3e682586cf79455c877b4e0173cae6b0dcdb285532b95d80ef3cf"
+      },
+      "source_hashes": {
+        "dotnet/Simulator.Client/Client.cs": "c98f8e760291a6dd61af05a8c4d09adade6a25cbc68e9dcff306c69172eae466",
+        "dotnet/Simulator.Client.Tests/TransportContracts.cs": "fef8c26e8f30fa01cfe3e388e5a7b31d32637f98f466a6bbc90eeb69278c30e8",
+        "dotnet/Simulator.Client.Tests/ClientContracts.cs": "82a9495d1160e86de26e5dc77c1ce2be5fb351a961efddfaaa3a96b75092b64e",
+        "dotnet/Simulator.TransportFixture/Program.cs": "b8fb895e38aa78244672a7d6fec612e5b663de3f7513eeebbdae3ab28d6d19f1"
+      }
+    }
+  ],
+  "original_cohort": [
+    {
+      "stable_id": "MAN30-087",
+      "original_id": "87",
+      "original_status": "Survived",
+      "original_line": 62,
+      "original_column": 41,
+      "original_replacement": "\"\"",
+      "current_id": "87",
+      "windows": "Killed",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-093",
+      "original_id": "93",
+      "original_status": "Survived",
+      "original_line": 65,
+      "original_column": 85,
+      "original_replacement": "false",
+      "current_id": "93",
+      "windows": "Survived",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-094",
+      "original_id": "94",
+      "original_status": "NoCoverage",
+      "original_line": 67,
+      "original_column": 75,
+      "original_replacement": "\"\"",
+      "current_id": "94",
+      "windows": "NoCoverage",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-097",
+      "original_id": "97",
+      "original_status": "Timeout",
+      "original_line": 73,
+      "original_column": 13,
+      "original_replacement": ";",
+      "current_id": "97",
+      "windows": "Timeout",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-098",
+      "original_id": "98",
+      "original_status": "Timeout",
+      "original_line": 76,
+      "original_column": 27,
+      "original_replacement": "new List<Task> {}",
+      "current_id": "98",
+      "windows": "Killed",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-099",
+      "original_id": "99",
+      "original_status": "CompileError",
+      "original_line": 77,
+      "original_column": 20,
+      "original_replacement": "pending.Count == 0",
+      "current_id": null,
+      "windows": "SourceFormReplaced_NotAKill",
+      "focused_linux": null
+    },
+    {
+      "stable_id": "MAN30-100",
+      "original_id": "100",
+      "original_status": "CompileError",
+      "original_line": 77,
+      "original_column": 20,
+      "original_replacement": "pending.Sum",
+      "current_id": null,
+      "windows": "SourceFormReplaced_NotAKill",
+      "focused_linux": null
+    },
+    {
+      "stable_id": "MAN30-102",
+      "original_id": "102",
+      "original_status": "Timeout",
+      "original_line": 80,
+      "original_column": 17,
+      "original_replacement": ";",
+      "current_id": "103",
+      "windows": "Killed",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-103",
+      "original_id": "103",
+      "original_status": "Timeout",
+      "original_line": 81,
+      "original_column": 17,
+      "original_replacement": ";",
+      "current_id": "104",
+      "windows": "Timeout",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-115",
+      "original_id": "115",
+      "original_status": "Survived",
+      "original_line": 97,
+      "original_column": 48,
+      "original_replacement": "\"\"",
+      "current_id": "116",
+      "windows": "Killed",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-128",
+      "original_id": "128",
+      "original_status": "Survived",
+      "original_line": 101,
+      "original_column": 48,
+      "original_replacement": "\"\"",
+      "current_id": "129",
+      "windows": "Killed",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-148",
+      "original_id": "148",
+      "original_status": "Survived",
+      "original_line": 107,
+      "original_column": 41,
+      "original_replacement": "!hasError || error.ValueKind != JsonValueKind.Object ||\n                    !error.TryGetProperty(\"code\", out code) || code.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(code.GetString()) ||\n                    !error.TryGetProperty(\"message\", out message) && message.ValueKind != JsonValueKind.String",
+      "current_id": "149",
+      "windows": "Killed",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-151",
+      "original_id": "151",
+      "original_status": "Survived",
+      "original_line": 107,
+      "original_column": 41,
+      "original_replacement": "!hasError || error.ValueKind != JsonValueKind.Object ||\n                    !error.TryGetProperty(\"code\", out code) && code.ValueKind != JsonValueKind.String",
+      "current_id": "152",
+      "windows": "Killed",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-169",
+      "original_id": "169",
+      "original_status": "Survived",
+      "original_line": 110,
+      "original_column": 48,
+      "original_replacement": "\"\"",
+      "current_id": "170",
+      "windows": "Killed",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-179",
+      "original_id": "179",
+      "original_status": "Timeout",
+      "original_line": 118,
+      "original_column": 39,
+      "original_replacement": ";",
+      "current_id": "180",
+      "windows": "Killed",
+      "focused_linux": "Killed"
+    },
+    {
+      "stable_id": "MAN30-180",
+      "original_id": "180",
+      "original_status": "Survived",
+      "original_line": 118,
+      "original_column": 71,
+      "original_replacement": "false",
+      "current_id": "181",
+      "windows": "Killed",
+      "focused_linux": "Killed"
+    },
+    {
+      "stable_id": "MAN30-181",
+      "original_id": "181",
+      "original_status": "Survived",
+      "original_line": 118,
+      "original_column": 78,
+      "original_replacement": ";",
+      "current_id": "182",
+      "windows": "Survived",
+      "focused_linux": "Killed"
+    },
+    {
+      "stable_id": "MAN30-183",
+      "original_id": "183",
+      "original_status": "Timeout",
+      "original_line": 128,
+      "original_column": 16,
+      "original_replacement": "(read = await reader.BaseStream.ReadAsync(buffer.AsMemory(), cancellation)) == 0",
+      "current_id": "184",
+      "windows": "Timeout",
+      "focused_linux": "Ignored"
+    },
+    {
+      "stable_id": "MAN30-195",
+      "original_id": "195",
+      "original_status": "Survived",
+      "original_line": 134,
+      "original_column": 51,
+      "original_replacement": "true",
+      "current_id": "196",
+      "windows": "Survived",
+      "focused_linux": "Ignored"
+    }
+  ],
+  "windows_remaining": [
+    {
+      "id": "93",
+      "status": "Survived",
+      "line": 65,
+      "column": 85,
+      "replacement": "false"
+    },
+    {
+      "id": "94",
+      "status": "NoCoverage",
+      "line": 67,
+      "column": 75,
+      "replacement": "\"\""
+    },
+    {
+      "id": "97",
+      "status": "Timeout",
+      "line": 73,
+      "column": 13,
+      "replacement": ";"
+    },
+    {
+      "id": "100",
+      "status": "CompileError",
+      "line": 79,
+      "column": 40,
+      "replacement": "< 0"
+    },
+    {
+      "id": "104",
+      "status": "Timeout",
+      "line": 83,
+      "column": 17,
+      "replacement": ";"
+    },
+    {
+      "id": "182",
+      "status": "Survived",
+      "line": 120,
+      "column": 78,
+      "replacement": ";"
+    },
+    {
+      "id": "184",
+      "status": "Timeout",
+      "line": 130,
+      "column": 16,
+      "replacement": "(read = await reader.BaseStream.ReadAsync(buffer.AsMemory(), cancellation)) == 0"
+    },
+    {
+      "id": "196",
+      "status": "Survived",
+      "line": 136,
+      "column": 51,
+      "replacement": "true"
+    }
+  ],
+  "linux_focused": {
+    "snapshot": "/home/jeffd/spice-remote-validation/work/managed-cleanup-native-2c4757b610574e8f94c76bc387331a18",
+    "tool": "Stryker.NET 5.0.0",
+    "coverage_analysis": "off",
+    "test_filter": "FullyQualifiedName~CancellationStopsTheStartedChild",
+    "test_cases": 2,
+    "config": {
+      "stryker-config": {
+        "project": "Simulator.Client.csproj",
+        "mutate": [
+          "**/Client.cs{7807..7950}"
+        ],
+        "reporters": [
+          "json",
+          "cleartext"
+        ],
+        "concurrency": 2,
+        "thresholds": {
+          "high": 80,
+          "low": 60,
+          "break": 0
+        },
+        "additional-timeout": 5000,
+        "coverage-analysis": "off",
+        "test-case-filter": "FullyQualifiedName~CancellationStopsTheStartedChild"
+      }
+    },
+    "counts": [
+      {
+        "status": "CompileError",
+        "count": 1
+      },
+      {
+        "status": "Ignored",
+        "count": 197
+      },
+      {
+        "status": "Killed",
+        "count": 4
+      }
+    ],
+    "outcomes": [
+      {
+        "id": "100",
+        "status": "CompileError",
+        "line": 79,
+        "column": 40,
+        "replacement": "< 0"
+      },
+      {
+        "id": "178",
+        "status": "Killed",
+        "line": 120,
+        "column": 17,
+        "replacement": "process.HasExited"
+      },
+      {
+        "id": "180",
+        "status": "Killed",
+        "line": 120,
+        "column": 39,
+        "replacement": ";"
+      },
+      {
+        "id": "181",
+        "status": "Killed",
+        "line": 120,
+        "column": 71,
+        "replacement": "false"
+      },
+      {
+        "id": "182",
+        "status": "Killed",
+        "line": 120,
+        "column": 78,
+        "replacement": ";"
+      }
+    ],
+    "report_sha256": "467c71e8fa795b97e772e3f063dde90eb7975347dbbe4f0ad622716bf6c889e2",
+    "log": "work/managed-cleanup-linux-native-rooted.log",
+    "log_sha256": "be64c0043528f3e2e35552970f57805c7566709f0c8f0dc457861a07d10013e9",
+    "initial_failure": "Without explicit DOTNET_ROOT, unmutated baseline failed with two broken-pipe tests; apphost could not find runtime. Resolved installed runtime path fixed discovery; raw failed baseline retained."
+  },
+  "compiler_characterizations": {
+    "original_equality_exit": 0,
+    "original_sum_exit": 1,
+    "original_sum_error": "CS0019",
+    "current_less_than_pattern_exit": 1,
+    "current_pattern_error": "CS8518",
+    "logs": [
+      "work/managed-equality-compile.log",
+      "work/managed-sum-compile.log",
+      "work/managed-pattern-compile.log"
+    ]
+  },
+  "verification": {
+    "windows_tests_passed": 80,
+    "linux_tests_passed": 80,
+    "failed": 0,
+    "skipped": 0,
+    "windows_coverlet": "managed-20261030-coverlet.json",
+    "linux_coverlet": "managed-20261030-linux-coverage.json",
+    "fixture_collector": "managed-20261030-fixture-coverage.json",
+    "fscheck": "Existing MaxTest=256, replay 362,20261027",
+    "fuzzing": "Deterministic malformed cases; no new coverage-guided fuzz campaign."
+  },
+  "review": {
+    "kind": "Internal AI-assisted read-only source review",
+    "blocking_findings": 0,
+    "deferred": "Pre-acknowledgement startup-failure cleanup has not been fault-injected. Owned handles are acquired after acknowledgement; general startup-failure containment is unqualified."
+  },
+  "limitations": [
+    "201/202 generated populations differ; do not add counts or compare scores.",
+    "Linux mutation evidence covers four selected cleanup mutations only.",
+    "Timeouts, compile errors, uncovered and ignored candidates are not kills.",
+    "Windows console observation is inconclusive for CreateNoWindow on this headless host.",
+    "Decode-only BOM survivor is a conditional equivalent, not killed.",
+    "Source-form replacement of original compile errors is not a kill.",
+    "No numerical source changes, full soak, CI dispatch or push."
+  ],
+  "implementation_commit": "0d11e45b6766f304b50303fb30b4ec400bccd46c"
+}

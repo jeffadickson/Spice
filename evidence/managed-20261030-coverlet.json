@@ -1,0 +1,40 @@
+{
+  "collector": "coverlet.collector 10.1.0",
+  "report_generator": "5.5.11",
+  "source_commit": "02196d1a0126172b86ee04333615613526b73dfe",
+  "source_dirty": true,
+  "source_hashes": {
+    "dotnet/Simulator.Client/Client.cs": "c98f8e760291a6dd61af05a8c4d09adade6a25cbc68e9dcff306c69172eae466",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9"
+  },
+  "test_and_helper_source_hashes": {
+    "dotnet/Simulator.Client.Tests/AcContracts.cs": "4695699a993afd366d514d2028db1368ad15209a28ba75871a1ce6c405a4dd78",
+    "dotnet/Simulator.Client.Tests/ChargeContracts.cs": "9a11fa17ed68b315b018113038b0b41c74e200c4139b7b47352210ad5d405dda",
+    "dotnet/Simulator.Client.Tests/ClientContracts.cs": "82a9495d1160e86de26e5dc77c1ce2be5fb351a961efddfaaa3a96b75092b64e",
+    "dotnet/Simulator.Client.Tests/ClientProperties.cs": "dab43f2a63ad038fe3c22abdabacaab7fa5397b9e0eb26baf781c4a1274c9496",
+    "dotnet/Simulator.Client.Tests/ManifestContracts.cs": "f12369b27d8903c2d155a59c7b73cf53d8e3b89566cc4fd5c18b035652f5bd2a",
+    "dotnet/Simulator.Client.Tests/TransportContracts.cs": "fef8c26e8f30fa01cfe3e388e5a7b31d32637f98f466a6bbc90eeb69278c30e8",
+    "dotnet/Simulator.Conformance/ConformanceChecks.cs": "7f2069aac6bb9791114247cd5b9cbe63c80a503e930d297807790ebfdbb89708",
+    "dotnet/Simulator.Conformance/MoreChecks.cs": "2cb0919e93f6ad0548a797a26da6751172511d089bf23f7914e14b9b3ca69091",
+    "dotnet/Simulator.Conformance/Program.cs": "e33e7c131f9231c2a60ddc1cc1123194a05beb1b9b0eb927d4a9c65d1ab653bc",
+    "dotnet/Simulator.TransportFixture/Program.cs": "b8fb895e38aa78244672a7d6fec612e5b663de3f7513eeebbdae3ab28d6d19f1",
+    "dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj": "178189062a63ff836cd6c6ad5bdf6daa02b22e48af78a3c1eb9236e48addea20",
+    "dotnet/coverlet.runsettings": "902c2b64e9d8c59377ef3ee6921ae32feaacc3bc80c23a2cad97c470bd7ea8ec",
+    "scripts/ManagedCoverage.cs": "eef79cafeb37d1d206847a407bb71a77802a9a903e312452f4d6dbb9c1001f05"
+  },
+  "sdk": "10.0.403",
+  "lines": 179,
+  "covered_lines": 171,
+  "branches": 114,
+  "covered_branches": 112,
+  "report_sha256": "0626833601e62fb807bb655f55f3b56f194373009e70eec26f2bb928f17e4427",
+  "local_report": "build/managed-coverage/69ab92edfc4c40f481fb660fcd503541/e7ec69ef-797e-4bd1-a100-570b8f419d9b/coverage.cobertura.xml",
+  "limitations": [
+    "Owned Simulator.Client assembly, excluding obj-generated sources; fixture/test/native/vendor code excluded.",
+    "Coverlet branch mapping differs from historical dotnet-coverage; percentages are not directly comparable.",
+    "File-based coverage orchestration was managed execution, not NativeAOT."
+  ]
+}

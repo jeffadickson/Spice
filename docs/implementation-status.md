@@ -1,5 +1,14 @@
 # Implementation status
 
+Latest managed follow-up: [October 30 mutation dispositions](../evidence/managed-20261030-review.md).
+Windows final native counts are 181 killed, three survivors, three timeouts, one
+compiler error, one uncovered and 13 ignored (202 generated). Focused Linux
+cleanup evidence catches the Windows exit-wait survivor. The 80-test managed
+suite passes on both platforms; three deliberate liveness timeouts, interactive
+Windows console qualification, the defensive startup-null branch and pre-ack
+fixture startup-fault cleanup remain follow-up work. BOM equivalence is conditional.
+
+
 Latest finite follow-up: [October 30 fixes and evidence](../evidence/soak-20261030-fixes-review.md).
 The fd34c53 six-hour campaign completed; a full-duration run on these new fixes remains pending.
 Managed mutation gaps remain explicitly tracked in that report; earlier coverage counts below are historical.
