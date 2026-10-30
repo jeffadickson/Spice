@@ -1,0 +1,29 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "collector_sha256": "3ffb110fcd1b52a5c7bfd971d5b5256c047d20e79d0cda1bddaefeee6d01806d",
+  "metrics": [
+    {
+      "file": "scripts/FrameworkMutations.cs",
+      "source_sha256": "4c1e3fa09f2d0c2cebd1dfa3985e0148815acc4e7436a033e6eb56ecdc6de7a8",
+      "lines": 255,
+      "covered_lines": 178,
+      "line_percent": 69.80392156862744,
+      "branches": 354,
+      "covered_branches": 213,
+      "branch_percent": 60.16949152542373
+    }
+  ],
+  "limitations": [
+    "Scoped managed tooling execution; synthetic fixture counts are not simulator qualification.",
+    "Per-line maxima for duplicate branch mappings; not complete path coverage.",
+    "PowerShell, native children, vendor internals and unexecuted platform/failure paths are unmeasured."
+  ],
+  "changed_selector_function": {
+    "first_line": 257,
+    "last_line": 262,
+    "lines": 6,
+    "covered_lines": 6,
+    "branches": 12,
+    "covered_branches": 12
+  }
+}

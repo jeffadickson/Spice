@@ -1,0 +1,432 @@
+{
+  "runs": [
+    {
+      "run": "work/framework-mutations/20261030T121902Z-4dd2e562",
+      "summary": {
+        "status": "completed",
+        "requested_seconds": 900,
+        "elapsed_seconds": 866.9525067,
+        "shard": "0/1",
+        "rust_file": "src/*.rs",
+        "rust_test": "all",
+        "tool": "dotnet",
+        "rust_filter": "",
+        "workers": 1,
+        "rust_selected_names": null,
+        "rust_selection_sha256": null,
+        "managed_input_hashes": {
+          "circuit-simulator.exe": "633d3d7dbb64c23d0fa3b8e2123a8717bd9f77205ad6c53b529aa4a26924fd43",
+          "examples/divider.json": "45c269a471691024c36f0cc988653cdcab4914bc33de184210935e99b23e9d71",
+          "examples/rc.json": "8dbaed5c8fc8df663ff6c5b2c9af0425a767d7f3409398d058cba97c2965f31d",
+          "examples/adaptive-rc.json": "80ad2f6145a3e682586cf79455c877b4e0173cae6b0dcdb285532b95d80ef3cf"
+        },
+        "cargo_mutants": {
+          "version": "27.1.0",
+          "status": "skipped_explicitly",
+          "exit_code": null,
+          "candidates": 0,
+          "killed": 0,
+          "survived": 0,
+          "timed_out": 0,
+          "invalid": 0,
+          "not_covered": 0,
+          "pending": 0,
+          "other": 0,
+          "ignored": 0,
+          "unattempted": 0,
+          "report_sha256": null,
+          "log_sha256": null
+        },
+        "stryker": {
+          "version": "5.0.0",
+          "status": "completed",
+          "exit_code": 0,
+          "candidates": 200,
+          "killed": 164,
+          "survived": 9,
+          "timed_out": 4,
+          "invalid": 10,
+          "not_covered": 1,
+          "pending": 0,
+          "other": 0,
+          "ignored": 12,
+          "unattempted": 0,
+          "report_sha256": "282ae34dd95ad9cea700ccc04882c03732dc3a8797b944ac5bd842beed712cf4",
+          "log_sha256": "da051d29fdf2a651e50068a4f75e6cd7860a176c3868c85b348515ecfe33ac34"
+        }
+      },
+      "source_sha256": "4eb917816382dc2d665ed7ce2a43486112bb7b9ef2bee6dc73015acf237e7466",
+      "unresolved": [
+        {
+          "id": "60",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 29,
+          "status": "CompileError",
+          "replacement": "(true?error.Deserialize(WireContext.Default.SimulationError) :null)"
+        },
+        {
+          "id": "61",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 29,
+          "status": "CompileError",
+          "replacement": "(false?error.Deserialize(WireContext.Default.SimulationError) :null)"
+        },
+        {
+          "id": "86",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 55,
+          "status": "Survived",
+          "replacement": "\"\""
+        },
+        {
+          "id": "92",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 58,
+          "status": "Survived",
+          "replacement": "false"
+        },
+        {
+          "id": "93",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 60,
+          "status": "NoCoverage",
+          "replacement": "\"\""
+        },
+        {
+          "id": "96",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 66,
+          "status": "Timeout",
+          "replacement": ";"
+        },
+        {
+          "id": "98",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 70,
+          "status": "CompileError",
+          "replacement": "pending.Count == 0"
+        },
+        {
+          "id": "99",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 70,
+          "status": "CompileError",
+          "replacement": "pending.Sum"
+        },
+        {
+          "id": "102",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 74,
+          "status": "Timeout",
+          "replacement": ";"
+        },
+        {
+          "id": "114",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 89,
+          "status": "Survived",
+          "replacement": "\"\""
+        },
+        {
+          "id": "118",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 91,
+          "status": "Survived",
+          "replacement": "!root.TryGetProperty(\"status\", out statusValue) && statusValue.ValueKind != JsonValueKind.String"
+        },
+        {
+          "id": "127",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 93,
+          "status": "Survived",
+          "replacement": "\"\""
+        },
+        {
+          "id": "146",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 99,
+          "status": "CompileError",
+          "replacement": "!hasError || error.ValueKind != JsonValueKind.Object ||\n                    !error.TryGetProperty(\"code\", out var code) || code.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(code.GetString()) ||\n                    !error.TryGetProperty(\"message\", out var message) || message.ValueKind != JsonValueKind.String && string.IsNullOrWhiteSpace(message.GetString())"
+        },
+        {
+          "id": "147",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 99,
+          "status": "CompileError",
+          "replacement": "!hasError || error.ValueKind != JsonValueKind.Object ||\n                    !error.TryGetProperty(\"code\", out var code) || code.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(code.GetString()) ||\n                    !error.TryGetProperty(\"message\", out var message) && message.ValueKind != JsonValueKind.String"
+        },
+        {
+          "id": "148",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 99,
+          "status": "CompileError",
+          "replacement": "!hasError || error.ValueKind != JsonValueKind.Object ||\n                    !error.TryGetProperty(\"code\", out var code) || code.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(code.GetString()) &&\n                    !error.TryGetProperty(\"message\", out var message)"
+        },
+        {
+          "id": "149",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 99,
+          "status": "CompileError",
+          "replacement": "!hasError || error.ValueKind != JsonValueKind.Object ||\n                    !error.TryGetProperty(\"code\", out var code) || code.ValueKind != JsonValueKind.String && string.IsNullOrWhiteSpace(code.GetString())"
+        },
+        {
+          "id": "150",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 99,
+          "status": "CompileError",
+          "replacement": "!hasError || error.ValueKind != JsonValueKind.Object ||\n                    !error.TryGetProperty(\"code\", out var code) && code.ValueKind != JsonValueKind.String"
+        },
+        {
+          "id": "151",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 99,
+          "status": "CompileError",
+          "replacement": "!hasError || error.ValueKind != JsonValueKind.Object &&\n                    !error.TryGetProperty(\"code\", out var code)"
+        },
+        {
+          "id": "168",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 102,
+          "status": "Survived",
+          "replacement": "\"\""
+        },
+        {
+          "id": "178",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 110,
+          "status": "Timeout",
+          "replacement": ";"
+        },
+        {
+          "id": "179",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 110,
+          "status": "Survived",
+          "replacement": "false"
+        },
+        {
+          "id": "180",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 110,
+          "status": "Survived",
+          "replacement": ";"
+        },
+        {
+          "id": "182",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 120,
+          "status": "Timeout",
+          "replacement": "(read = await reader.BaseStream.ReadAsync(buffer.AsMemory(), cancellation)) == 0"
+        },
+        {
+          "id": "194",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 126,
+          "status": "Survived",
+          "replacement": "true"
+        }
+      ],
+      "manual_intervention": "After native completion, two verified run-owned fixture processes were manually stopped to release inherited pipes."
+    },
+    {
+      "run": "work/framework-mutations/20261030T124250Z-c9f5945d",
+      "summary": {
+        "status": "completed",
+        "requested_seconds": 1500,
+        "elapsed_seconds": 457.3813726,
+        "shard": "0/1",
+        "rust_file": "src/*.rs",
+        "rust_test": "all",
+        "tool": "dotnet",
+        "rust_filter": "",
+        "workers": 1,
+        "owned_workers_reaped": 2,
+        "rust_selected_names": null,
+        "rust_selection_sha256": null,
+        "managed_input_hashes": {
+          "circuit-simulator.exe": "633d3d7dbb64c23d0fa3b8e2123a8717bd9f77205ad6c53b529aa4a26924fd43",
+          "examples/divider.json": "45c269a471691024c36f0cc988653cdcab4914bc33de184210935e99b23e9d71",
+          "examples/rc.json": "8dbaed5c8fc8df663ff6c5b2c9af0425a767d7f3409398d058cba97c2965f31d",
+          "examples/adaptive-rc.json": "80ad2f6145a3e682586cf79455c877b4e0173cae6b0dcdb285532b95d80ef3cf"
+        },
+        "cargo_mutants": {
+          "version": "27.1.0",
+          "status": "skipped_explicitly",
+          "exit_code": null,
+          "candidates": 0,
+          "killed": 0,
+          "survived": 0,
+          "timed_out": 0,
+          "invalid": 0,
+          "not_covered": 0,
+          "pending": 0,
+          "other": 0,
+          "ignored": 0,
+          "unattempted": 0,
+          "report_sha256": null,
+          "log_sha256": null
+        },
+        "stryker": {
+          "version": "5.0.0",
+          "status": "completed",
+          "exit_code": 0,
+          "candidates": 201,
+          "killed": 169,
+          "survived": 10,
+          "timed_out": 6,
+          "invalid": 2,
+          "not_covered": 1,
+          "pending": 0,
+          "other": 0,
+          "ignored": 13,
+          "unattempted": 0,
+          "report_sha256": "bb6b92ea465b41447b166ce7c81e709f356226507281049c0a4679f58b2ee431",
+          "log_sha256": "553e1840b5e55ff427f45638123c954ffd66a1af93a059e2f7e9bb21721db98b"
+        }
+      },
+      "source_sha256": "c5843d4932b90d8144df4f39a0ccb774f34ad4bd71088ccc0561b171c715e1ee",
+      "unresolved": [
+        {
+          "id": "87",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 62,
+          "status": "Survived",
+          "replacement": "\"\""
+        },
+        {
+          "id": "93",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 65,
+          "status": "Survived",
+          "replacement": "false"
+        },
+        {
+          "id": "94",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 67,
+          "status": "NoCoverage",
+          "replacement": "\"\""
+        },
+        {
+          "id": "97",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 73,
+          "status": "Timeout",
+          "replacement": ";"
+        },
+        {
+          "id": "98",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 76,
+          "status": "Timeout",
+          "replacement": "new List<Task> {}"
+        },
+        {
+          "id": "99",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 77,
+          "status": "CompileError",
+          "replacement": "pending.Count == 0"
+        },
+        {
+          "id": "100",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 77,
+          "status": "CompileError",
+          "replacement": "pending.Sum"
+        },
+        {
+          "id": "102",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 80,
+          "status": "Timeout",
+          "replacement": ";"
+        },
+        {
+          "id": "103",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 81,
+          "status": "Timeout",
+          "replacement": ";"
+        },
+        {
+          "id": "115",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 97,
+          "status": "Survived",
+          "replacement": "\"\""
+        },
+        {
+          "id": "128",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 101,
+          "status": "Survived",
+          "replacement": "\"\""
+        },
+        {
+          "id": "148",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 107,
+          "status": "Survived",
+          "replacement": "!hasError || error.ValueKind != JsonValueKind.Object ||\n                    !error.TryGetProperty(\"code\", out code) || code.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(code.GetString()) ||\n                    !error.TryGetProperty(\"message\", out message) && message.ValueKind != JsonValueKind.String"
+        },
+        {
+          "id": "151",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 107,
+          "status": "Survived",
+          "replacement": "!hasError || error.ValueKind != JsonValueKind.Object ||\n                    !error.TryGetProperty(\"code\", out code) && code.ValueKind != JsonValueKind.String"
+        },
+        {
+          "id": "169",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 110,
+          "status": "Survived",
+          "replacement": "\"\""
+        },
+        {
+          "id": "179",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 118,
+          "status": "Timeout",
+          "replacement": ";"
+        },
+        {
+          "id": "180",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 118,
+          "status": "Survived",
+          "replacement": "false"
+        },
+        {
+          "id": "181",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 118,
+          "status": "Survived",
+          "replacement": ";"
+        },
+        {
+          "id": "183",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 128,
+          "status": "Timeout",
+          "replacement": "(read = await reader.BaseStream.ReadAsync(buffer.AsMemory(), cancellation)) == 0"
+        },
+        {
+          "id": "195",
+          "file": "dotnet/Simulator.Client/Client.cs",
+          "line": 134,
+          "status": "Survived",
+          "replacement": "true"
+        }
+      ],
+      "manual_intervention": "None; supervisor automatically reaped two run-owned workers."
+    }
+  ],
+  "limitations": [
+    "Different source scopes: 200 then 201 generated mutants; do not add counts or compare scores directly.",
+    "Timeouts, compile errors and uncovered mutants are not kills.",
+    "Remaining survivors include diagnostic strings, process cleanup/window policy, error-envelope type checks and conditional BOM equivalence.",
+    "Broad definite-assignment rollback removed; two pending-loop compile errors remain."
+  ]
+}

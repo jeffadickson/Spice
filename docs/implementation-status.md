@@ -1,5 +1,9 @@
 # Implementation status
 
+Latest finite follow-up: [October 30 fixes and evidence](../evidence/soak-20261030-fixes-review.md).
+The fd34c53 six-hour campaign completed; a full-duration run on these new fixes remains pending.
+Managed mutation gaps remain explicitly tracked in that report; earlier coverage counts below are historical.
+
 The 100-step qualification campaign (repository iterations 335–434) is complete;
 final review/fixes 435 are complete with recorded verification. The StrictDoc implementation plan's full
 work packages retain Proposed status; these finite slices do not close M1 release

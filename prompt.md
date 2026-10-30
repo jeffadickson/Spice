@@ -1,3 +1,12 @@
+October 30 follow-up: see evidence/soak-20261030-fixes-review.md before continuing.
+The historical fd34c53 six-hour soak completed; current finite fixes add bounded
+CSC liveness evidence, independent waveform checks, exact Rust selector support,
+managed mutation guard initialization, and inherited-pipe/owned-worker cleanup.
+Final managed replay: 201 generated, 169 killed, 10 survived, six timeout, two
+compile error, one uncovered, 13 ignored. Retain the outstanding error-envelope,
+lifecycle and diagnostic-contract gaps; do not report all mutants resolved.
+A full-duration run on this new checkpoint is still pending. No push or CI was
+authorized for this follow-up. Older counts below retain historical scope.
 # Spice qualification handoff — survivor triage after completed campaign
 
 October 29 follow-up: read evidence/overnight-20261029-review.md and the stable

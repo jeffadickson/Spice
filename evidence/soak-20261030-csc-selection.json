@@ -1,0 +1,3 @@
+[
+  "src/sparse.rs:122:60: replace < with <= in CscPattern::union"
+]
