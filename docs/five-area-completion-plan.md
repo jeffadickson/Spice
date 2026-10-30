@@ -80,4 +80,4 @@ peak-vs-RMS AC power and BE-vs-trapezoidal energy; adaptive/bias-unavailable aud
 - [x] 3 difficult circuits
 - [x] 4 sparse qualification
 - [x] 5 physical consistency
-- [ ] Final review
+- [x] Final review

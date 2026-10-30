@@ -88,10 +88,10 @@ RELATIONS:
 UID: CONS-007
 TITLE: Public audit and diagnostic evidence
 STATEMENT: >>>
-Successful API manifests shall include bounded preflight diagnostics and independent consistency checks. DC and legacy constant-source backward-Euler transient states shall be audited before derived signals are appended; failed physical checks shall return numerical_failure. AC/configured transient physical audits and global accuracy shall be explicitly not_checked. C# consumers shall receive typed additive result fields.
+Successful API manifests shall include bounded preflight diagnostics and independent consistency checks. DC, legacy constant-source backward-Euler, supported linear AC and supported configured fixed-step states shall be audited before derived signals are appended; failed physical checks shall return numerical_failure. Linear AC shall follow AUD-AC-001 and configured fixed-step BE/linear trapezoidal shall follow AUD-CONFIG-001. Physical audits for nonlinear AC without retained bias and adaptive intervals without accepted midpoint history shall be explicitly not_checked. Global accuracy shall remain explicitly not_checked. C# consumers shall receive typed additive result fields.
 <<<
 COMMENT: >>>
-Implementation: src/api.rs and dotnet/Simulator.Client/Results.cs. Verification: tests/consistency.rs::manifests_distinguish_physical_checks_and_unavailable_evidence and dotnet/Simulator.Conformance/Program.cs typed audit checks.
+Implementation: src/api.rs, src/audit_ac.rs, src/audit_configured.rs and dotnet/Simulator.Client/Results.cs. Verification: tests/consistency.rs::manifests_distinguish_physical_checks_and_unavailable_evidence, tests/analysis_audits.rs and dotnet/Simulator.Conformance/Program.cs typed audit checks. The earlier all-AC/configured NotChecked scope is superseded by the bounded profiles in AUD-AC-001 and AUD-CONFIG-001; unsupported profiles and global accuracy retain explicit unavailable evidence. See evidence/five-area-audits.json and evidence/five-area-final-review.md.
 <<<
 RELATIONS:
 - TYPE: Parent

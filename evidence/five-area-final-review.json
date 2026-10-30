@@ -1,0 +1,35 @@
+{
+  "status": "review_complete_important_finding_resolved_minor_deferred",
+  "base": "4eb2644",
+  "reviewed_head": "7e4c8f41e7b31059a5dd4deb393324ea2cadb639",
+  "reviewer": "fresh read-only Codex gpt-6-astra agent",
+  "important_resolved": {
+    "id": "CONS-007 normative audit scope conflict",
+    "change": "Documentation only, stable IDs preserved; model-charge comment, status table and historical handoff reconciled",
+    "product_code_unchanged": true
+  },
+  "minor_deferred": "Benchmark wording overstates ending source rechecks: actual rechecks cover decks, requests and child executables; other sources/suite hash at setup only",
+  "verification": {
+    "benchmark_helper_passed": 29,
+    "strictdoc_documents": 14,
+    "strictdoc_ids": 275,
+    "rust_passed": 422,
+    "rust_ignored": 1,
+    "reviewer_compiled_audit_rerun_passed": 11,
+    "native_aot_ngspice_pairs": 5,
+    "sphinx": "built_with_warnings_as_errors",
+    "resolved_parents": 263,
+    "managed_passed": 82,
+    "rust_failed": 0
+  },
+  "requirements_report_sha256": "e9d9c8a34e52cbb273b50454bc46da3cce96b452d11d7ce9c96f54e58de4caad",
+  "review": "evidence/five-area-final-review.md",
+  "remaining": [
+    "Managed startup profile is load-sensitive; failed busy run and successful rechecks are retained",
+    "Stryker survivors, uncovered and invalid cases remain in separate source-scoped evidence",
+    "Fresh Linux numerical requalification unavailable after disk/WSL failure",
+    "Qualified Rust branch coverage unavailable; focused nightly MSVC and GNU regression scopes differ",
+    "No arbitrary OS containment, whole-product mutation closure, universal convergence/global accuracy, full SPICE/GPU/production qualification",
+    "No push or CI; source and raw artifacts retained locally"
+  ]
+}

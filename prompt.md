@@ -149,7 +149,9 @@ Concrete future work: broaden difficult topology/oracle evidence, triage retaine
 mutation survivors/invalid generation, qualify additional numerical/provider error
 paths and native branches where supported, add prepared complex reuse or general
 rank diagnostics only with requirements/evidence, then consider further explicitly
-bounded semiconductor models. Automatic AC/configured physical audits, full DAE
-qualification, coverage-guided fuzzing, broad SPICE syntax/devices, GPU and
-production release gates remain open. The unitless legacy absolute_tolerance is
+bounded semiconductor models. That historical checkpoint preceded AUD-AC-001
+and AUD-CONFIG-001: automatic linear AC and fixed configured profiles are now
+implemented. Nonlinear AC bias-dependent audits, adaptive midpoint-dependent
+physical audits, full DAE qualification, coverage-guided fuzzing, broad SPICE
+syntax/devices, GPU and production release gates remain open. The unitless legacy absolute_tolerance is
 validated compatibility data; actual convergence uses voltage/current tolerances.
