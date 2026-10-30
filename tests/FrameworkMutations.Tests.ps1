@@ -1,5 +1,19 @@
 # Negative process-boundary checks must reject malformed work before starting tools.
 Describe 'Framework campaign input bounds' {
+    It 'bounds inherited output pipes and reaps only its own workspace workers' {
+        $runner=Join-Path $PSScriptRoot '../scripts/FrameworkMutations.cs'
+        if(-not(Test-Path -LiteralPath $runner -PathType Leaf)){throw 'Runner missing'}
+        $output=& dotnet run --file $runner -- --pipe-self-test 2>&1|Out-String
+        $LASTEXITCODE|Should Be 0
+        $output|Should Match 'Inherited pipe deadline and owned worker cleanup passed'
+    }
+    It 'accepts Rust rest patterns while rejecting traversal in selected file paths' {
+        $runner=Join-Path $PSScriptRoot '../scripts/FrameworkMutations.cs'
+        if(-not(Test-Path -LiteralPath $runner -PathType Leaf)){throw 'Runner missing'}
+        $output=& dotnet run --file $runner -- --selection-self-test 2>&1|Out-String
+        $LASTEXITCODE|Should Be 0
+        $output|Should Match 'Exact selection path/rest-pattern contracts passed'
+    }
     It 'rejects malformed exact selections before native tools run' {
         $root=Split-Path $PSScriptRoot -Parent
         if(-not(Test-Path -LiteralPath $root -PathType Container)){throw 'Checkout unavailable'}

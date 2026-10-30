@@ -153,6 +153,7 @@ public sealed class TransportContracts
     [InlineData("[]")]
     [InlineData("{}")]
     [InlineData("""{"schema_version":1,"status":"succeeded","complete":true}""")]
+    [InlineData("""{"schema_version":"1","status":1,"complete":true}""")]
     [InlineData("""{"schema_version":"1","status":"unknown","complete":true}""")]
     [InlineData("""{"schema_version":"1","status":"succeeded","complete":false}""")]
     [InlineData("""{"schema_version":"1","status":"succeeded","complete":"true"}""")]

@@ -5,6 +5,16 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
+// Private process fixtures reproduce inherited-pipe lifetime independently of
+// mutation tools. The holder is always terminated by its owning self-test.
+if(args is ["--pipe-holder"]) {await Task.Delay(TimeSpan.FromSeconds(30));return;}
+if(args is ["--pipe-parent"]) {
+    using var holder=Process.Start(SelfStart("--pipe-holder"))??throw new IOException("Probe holder did not start.");
+    Console.WriteLine("owned-pipe-pid:"+holder.Id);return;
+}
+var pipeSelfTest=args is ["--pipe-self-test"];
+if(pipeSelfTest)args=["--tool","rust","--minutes","0.2","--workers","1"];
+
 if(args is ["--snapshot-self-test"]) {
     var temporary=Path.Combine(Path.GetTempPath(),"spice-snapshot-"+Guid.NewGuid().ToString("N"));
     Directory.CreateDirectory(temporary);
@@ -23,6 +33,14 @@ if(args is ["--snapshot-self-test"]) {
 
 // Supervise real mutation frameworks, preserving their native reports locally.
 // A timeout is partial evidence, never a killed mutant or a completed campaign.
+if(args is ["--selection-self-test"]) {
+    var rest="src/waveform.rs:260:13: delete match arm Self::DampedSine{delay_s, ..} in Waveform::breakpoints";
+    if(!ValidExactName(rest))throw new InvalidOperationException("Valid Rust rest pattern rejected.");
+    foreach(var invalid in new[]{"src/../escape.rs:1:1: replace x", "src/a/../../escape.rs:1:1: replace x", "src/a\\escape.rs:1:1: replace x", "outside.rs:1:1: replace x", "src/a.rs:1:1: bad\nname",new string('x',513)})
+        if(ValidExactName(invalid))throw new InvalidOperationException("Unsafe selection accepted.");
+    Console.WriteLine("Exact selection path/rest-pattern contracts passed.");
+    return;
+}
 var minutes=60d;var shard="0/1";var rustFile="src/*.rs";var rustTest="all";var selectedTool="all";var rustFilter="";var workers=2;
 string? rustNamesFile=null;string[]? selectedNames=null;string? selectionHash=null;
 for(var i=0;i<args.Length;i++) switch(args[i]) {
@@ -49,7 +67,7 @@ if(rustNamesFile is not null) {
     if(names.RootElement.ValueKind!=JsonValueKind.Array)throw new ArgumentException("Expected an array of exact native names.");
     selectedNames=names.RootElement.EnumerateArray().Select(item=>item.GetString()??throw new ArgumentException("Null mutant name.")).ToArray();
     if(selectedNames.Length is <1 or >64||selectedNames.Distinct(StringComparer.Ordinal).Count()!=selectedNames.Length||
-        selectedNames.Any(name=>name.Length>512||!name.StartsWith("src/",StringComparison.Ordinal)||name.Contains("..",StringComparison.Ordinal)||name.Any(char.IsControl)))
+        selectedNames.Any(name=>!ValidExactName(name)))
         throw new ArgumentException("Invalid exact-name selection.");
     rustFilter="^(?:"+string.Join("|",selectedNames.Select(System.Text.RegularExpressions.Regex.Escape))+")$";
     if(rustFilter.Length>8192)throw new ArgumentException("Exact-name expression exceeds its bound.");
@@ -87,16 +105,56 @@ async Task<(int Exit,bool Timeout)> Execute(string file,IEnumerable<string> argu
     start.Environment["CARGO_BUILD_JOBS"]=workers.ToString(CultureInfo.InvariantCulture);start.Environment["RUST_TEST_THREADS"]=workers.ToString(CultureInfo.InvariantCulture);
     if(environment is not null)foreach(var pair in environment)start.Environment[pair.Key]=pair.Value;
     using var process=Process.Start(start)??throw new IOException("Could not start "+file);
-    // Drain both pipes after truncating retained text, avoiding child deadlocks.
-    async Task<string> Read(StreamReader reader){var text=new StringBuilder();var buffer=new char[4096];int count;while((count=await reader.ReadAsync(buffer))>0)if(text.Length<1_048_576)text.Append(buffer,0,Math.Min(count,1_048_576-text.Length));return text.ToString();}
-    var stdout=Read(process.StandardOutput);var stderr=Read(process.StandardError);var timeout=false;
+    // The same budget covers execution AND pipe draining. A descendant can
+    // retain inherited handles after the immediate parent has already exited.
+    var timeout=false;
     using var limit=new CancellationTokenSource(TimeSpan.FromSeconds(Math.Max(.01,Math.Min(seconds,Remaining()))));
-    try{await process.WaitForExitAsync(limit.Token);}catch(OperationCanceledException){timeout=true;process.Kill(true);await process.WaitForExitAsync();}
-    await File.WriteAllTextAsync(Path.Combine(run,log),await stdout+"\n"+await stderr);
+    async Task<string> Read(StreamReader reader) {
+        var text=new StringBuilder();var buffer=new char[4096];int count;
+        try{while((count=await reader.ReadAsync(buffer.AsMemory(),limit.Token))>0)
+            if(text.Length<1_048_576)text.Append(buffer,0,Math.Min(count,1_048_576-text.Length));}
+        catch(OperationCanceledException){timeout=true;}
+        catch(Exception error) when(limit.IsCancellationRequested&&error is IOException or ObjectDisposedException){timeout=true;}
+        return text.ToString();
+    }
+    var stdout=Read(process.StandardOutput);var stderr=Read(process.StandardError);
+    try{await process.WaitForExitAsync(limit.Token);}catch(OperationCanceledException){timeout=true;if(!process.HasExited)process.Kill(true);await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(2));}
+    report.OwnedWorkersReaped+=ReapOwnedWorkers(run);
+    try{await Task.WhenAll(stdout,stderr).WaitAsync(limit.Token);}
+    catch(OperationCanceledException){timeout=true;process.StandardOutput.Dispose();process.StandardError.Dispose();
+        try{await Task.WhenAll(stdout,stderr).WaitAsync(TimeSpan.FromSeconds(2));}catch(TimeoutException){}}
+    await File.WriteAllTextAsync(Path.Combine(run,log),
+        (stdout.IsCompletedSuccessfully?stdout.Result:"[stdout drain incomplete]")+"\n"+
+        (stderr.IsCompletedSuccessfully?stderr.Result:"[stderr drain incomplete]"));
     return(process.ExitCode,timeout);
 }
 void Save(){report.ElapsedSeconds=clock.Elapsed.TotalSeconds;File.WriteAllText(Path.Combine(run,"summary.json"),JsonSerializer.Serialize(report,options));}
 Console.WriteLine("Framework summary: "+Path.Combine(run,"summary.json"));Save();
+if(pipeSelfTest) {
+    var probe=SelfStart("--pipe-parent");
+    try {
+        var result=await Execute(probe.FileName,probe.ArgumentList,"pipe-probe.log",2);
+        if(!result.Timeout||result.Exit!=0)throw new IOException("Inherited pipe did not trigger a bounded drain timeout.");
+    } finally {
+        var text=File.ReadAllText(Path.Combine(run,"pipe-probe.log"));
+        var match=System.Text.RegularExpressions.Regex.Match(text,@"owned-pipe-pid:(\d+)");
+        if(!match.Success)throw new IOException("Probe did not publish its owned PID.");
+        try{using var holder=Process.GetProcessById(int.Parse(match.Groups[1].Value,CultureInfo.InvariantCulture));
+            _=holder.Handle;
+            if(holder.MainModule?.FileName!=Environment.ProcessPath)throw new IOException("Probe process identity changed.");
+            holder.Kill(true);holder.WaitForExit(2000);}
+        catch(ArgumentException){ }
+    }
+    // Copy only our compiled fixture into this run, proving workspace-scoped
+    // cleanup without selecting processes from other projects or campaigns.
+    var worker=Path.Combine(run,"worker");Directory.CreateDirectory(worker);
+    var stem=Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetExecutingAssembly().Location);
+    foreach(var source in Directory.EnumerateFiles(AppContext.BaseDirectory,stem+"*"))File.Copy(source,Path.Combine(worker,Path.GetFileName(source)));
+    var copied=Path.Combine(worker,Path.GetFileName(probe.FileName));
+    var clean=await Execute(copied,["--pipe-parent"],"owned-worker.log",5);
+    if(clean.Timeout||clean.Exit!=0||report.OwnedWorkersReaped!=1)throw new IOException("Owned worker cleanup failed.");
+    report.Status="completed";Save();Console.WriteLine("Inherited pipe deadline and owned worker cleanup passed.");return;
+}
 try {
     var cargo=Environment.GetEnvironmentVariable("SPICE_CARGO_MUTANTS")??Path.Combine(root,".tools","mutation","cargo-mutants"+(OperatingSystem.IsWindows()?".exe":""));
     if(selectedTool!="dotnet") {
@@ -193,6 +251,36 @@ try {
 finally{Save();}
 if(report.Status=="failed")Environment.ExitCode=1;
 static string Hash(string path)=>Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))).ToLowerInvariant();
+// Only the filename prefix is a path. The mutation description may legitimately
+// contain Rust rest patterns (".."); it is escaped as regex data and separately
+// checked against the exact native inventory before any mutation is executed.
+static bool ValidExactName(string name) {
+    if(name.Length>512||!name.StartsWith("src/",StringComparison.Ordinal)||name.Any(char.IsControl))return false;
+    var separator=name.IndexOf(':');
+    var path=separator<0?name:name[..separator];
+    return !path.Contains("..",StringComparison.Ordinal)&&!path.Contains('\\');
+}
+static ProcessStartInfo SelfStart(string argument) {
+    var path=Environment.ProcessPath??throw new IOException("Current executable unavailable.");
+    var start=new ProcessStartInfo(path){UseShellExecute=false,CreateNoWindow=true};
+    if(Path.GetFileNameWithoutExtension(path).Equals("dotnet",StringComparison.OrdinalIgnoreCase))
+        start.ArgumentList.Add(System.Reflection.Assembly.GetExecutingAssembly().Location);
+    start.ArgumentList.Add(argument);return start;
+}
+static int ReapOwnedWorkers(string directory) {
+    var prefix=Path.GetFullPath(directory)+Path.DirectorySeparatorChar;var count=0;
+    foreach(var process in Process.GetProcesses())using(process) {
+        string? executable;
+        try{_=process.Handle;executable=process.MainModule?.FileName;}
+        catch(Exception error) when(error is System.ComponentModel.Win32Exception or InvalidOperationException){continue;}
+        if(executable is null||!executable.StartsWith(prefix,OperatingSystem.IsWindows()?StringComparison.OrdinalIgnoreCase:StringComparison.Ordinal))continue;
+        var name=Path.GetFileNameWithoutExtension(executable);
+        if(name is not ("Simulator.TransportFixture" or "circuit-simulator" or "testhost" or "FrameworkMutations"))continue;
+        if(process.HasExited)continue;
+        process.Kill(true);if(!process.WaitForExit(1000))throw new IOException("Owned mutation worker did not terminate.");count++;
+    }
+    return count;
+}
 // Verify both source-copy stability and later snapshot integrity. A mismatch
 // invalidates the campaign instead of publishing incomparable mutant counts.
 static string FreezeFile(string source,string destination) {
@@ -212,6 +300,7 @@ sealed class FrameworkReport {
     public string Tool{get;set;}="all";
     public string RustFilter{get;set;}="";
     public int Workers{get;set;}=2;
+    public int OwnedWorkersReaped{get;set;}
     public string[]? RustSelectedNames{get;set;}public string? RustSelectionSha256{get;set;}
     public Dictionary<string,string> ManagedInputHashes{get;set;}=new(StringComparer.Ordinal);
     public ToolCounts CargoMutants{get;set;}=new(){Version="27.1.0"};public ToolCounts Stryker{get;set;}=new(){Version="5.0.0"};

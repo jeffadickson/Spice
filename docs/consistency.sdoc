@@ -458,6 +458,62 @@ RELATIONS:
   VALUE: MAN-001
 
 [REQUIREMENT]
+UID: MUT-PROGRESS-001
+STATUS: Draft
+TITLE: Bounded CSC union liveness and exact selection syntax
+STATEMENT: >>>
+Qualification shall exercise CSC unions whose empty column is followed by a lower row in the next column, compare seeded small canonical unions against an independent set oracle, and bound the probe in an owned subprocess that is reaped on every exit path. A liveness regression shall produce a test failure before the outer mutation timeout. Exact mutation selection shall reject traversal in its filename prefix while accepting legitimate Rust rest-pattern syntax in its description; actual native inventory equality shall remain mandatory before mutation execution.
+<<<
+COMMENT: >>>
+Inferred from six-hour soak 20261030T050049Z-aba3c2bd: one CSC timeout and 22 unattempted candidates. Verification: tests/csc_union_progress.rs, scripts/FrameworkMutations.cs::ValidExactName and --selection-self-test, tests/FrameworkMutations.Tests.ps1. The three-second subprocess deadline is a test-harness bound, not a general numerical latency guarantee. Proptest uses 256 cases with seed 2026103001 and persisted minimized failures. This requirement remains Draft; bounded cases do not prove universal liveness.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MUT-005
+
+[REQUIREMENT]
+UID: QUAL-EDGE-003
+STATUS: Draft
+TITLE: Independent waveform and selection tail evidence
+STATEMENT: >>>
+Qualification shall separately challenge empty scalar selections, zero/negative/nonfinite damping, exponential level and rise-time finiteness, PWL field domains and interpolation in a nonzero-start interval, non-unit pulse fall durations, declared source breakpoints, and independent analytical sine/exponential values. Replays of unfinished campaigns shall retain the original candidate identities and distinguish kills, survivors, unviable and unattempted work.
+<<<
+COMMENT: >>>
+Inferred from the 22 unattempted candidates in six-hour soak 20261030T050049Z-aba3c2bd. Verification: tests/soak_tail_contracts.rs and exact native selection evidence/soak-20261030-tail-selection.json. Source equations and malformed single-field cases are finite evidence, not full waveform or dialect conformance.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MUT-005
+
+[REQUIREMENT]
+UID: MUT-PROCESS-001
+STATUS: Draft
+TITLE: Bound inherited-pipe draining and reap workspace-owned workers
+STATEMENT: >>>
+Mutation orchestration shall apply its command cancellation budget to output draining as well as parent-process execution, retaining bounded partial diagnostics when draining cannot complete. After a tool exits, cleanup shall select only known worker executable images inside that run's unique directory; unrelated processes shall remain untouched. A regression shall exercise a child retaining inherited output after its parent exits and separately verify run-local worker cleanup.
+<<<
+COMMENT: >>>
+Derived from the first managed replay after the soak: Stryker wrote its final report, but two orphaned run-local transport fixtures kept redirected pipes open and required identity-checked manual cleanup. Implementation: scripts/FrameworkMutations.cs uses cancellation-aware reads, capped post-cancellation settling and ReapOwnedWorkers. Verification: --pipe-self-test and tests/FrameworkMutations.Tests.ps1 on Windows, plus a native Linux self-test. Cleanup is scoped best-effort process supervision, not a sandbox, arbitrary descendant containment or a hard real-time guarantee. Native compiler errors, timeouts and manual interventions remain distinct evidence.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MUT-002
+
+[REQUIREMENT]
+UID: MAN-003
+STATUS: Draft
+TITLE: Envelope guard qualification without conditional assignment rollback
+STATEMENT: >>>
+Managed transport shall preserve independent schema/status/completion type checks while assigning field holders independently of short-circuit validation guards. Mutation evidence shall identify native compiler failures separately and verify whether the guarded handler is compiled and tested rather than accepting a region-wide definite-assignment rollback as detection evidence.
+<<<
+COMMENT: >>>
+Inferred from Stryker CS0165/SafeMode rollback for versionValue and completion. Implementation: dotnet/Simulator.Client/Client.cs initializes JSON field holders before validation. Verification: existing TransportContracts malformed-envelope cases, fresh managed coverage, and native Stryker replay reports. No compiler-error candidate is a kill; this requirement remains Draft pending broader qualification.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MAN-001
+
+[REQUIREMENT]
 UID: INT-WORK-001
 STATUS: Draft
 TITLE: Actual nonlinear initialization work accounting
