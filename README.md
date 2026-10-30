@@ -93,6 +93,7 @@ GPU and native-plugin coverage remain unavailable in this Rust report.
 - [Architecture](docs/architecture.sdoc), [implementation plan](docs/implementation-plan.sdoc), [backlog](BACKLOG.md).
 - [Original bounded profile](docs/prototype-contracts.sdoc), [second-slice requirements](docs/second-slice.sdoc), [extended acceptance contracts](docs/second-slice-contracts.sdoc).
 - [Current implementation status](docs/implementation-status.md), [solver adoption experiment](docs/faer-adoption.md).
+- [Accuracy-gated ngspice benchmark](docs/benchmarks.md), [bounded managed transport tests](docs/transport-testing.md).
 - [Iteration ledger](evidence/iterations.md), checkpoint reports, [mutation results](evidence/mutation.json), [coverage](evidence/coverage.json).
 
 ## Limits and remaining work

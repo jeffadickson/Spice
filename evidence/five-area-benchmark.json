@@ -1,0 +1,48 @@
+{
+  "status": "bounded_slice_verified",
+  "base_commit": "f13a9949881daaa863223895b9509f904cb93b66",
+  "benchmark_report": "evidence/five-area-benchmark-run.json",
+  "coverage": "evidence/five-area-benchmark-coverage.json",
+  "requirements": "evidence/five-area-benchmark-requirements.json",
+  "windows_tests": 29,
+  "linux_tests": 29,
+  "pester_passed": 2,
+  "property_replay": "372,20261031",
+  "property_cases": 128,
+  "native_aot": "Executed Windows win-x64; managed tests also executed Linux x64",
+  "negative_checks": [
+    "Missing observable invalidates previously eligible timings",
+    "Numerical mismatch invalidates all summaries",
+    "Malformed/nonfinite/nonmonotonic/extrapolated tables",
+    "Process cancellation, output limits and timeout cleanup"
+  ],
+  "mutation": {
+    "source_hashes_match": true,
+    "survived": 81,
+    "generated": 845,
+    "compile_error": 29,
+    "ignored": 501,
+    "tool": "Stryker.NET 5.0.0",
+    "killed": 210,
+    "timeout": 0,
+    "no_coverage": 24,
+    "scope": [
+      "Tables.cs",
+      "Suites.cs"
+    ],
+    "snapshot": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\five-area\\benchmark-mutations-9e43cef0e7854df5946607a293ca2d85"
+  },
+  "mapped_coverage": {
+    "covered_branches": 375.0,
+    "branches": 488.0,
+    "lines": 368.0,
+    "covered_lines": 356.0
+  },
+  "limitations": [
+    "Finite OP/linear AC/fixed trapezoidal RC pairs; no general SPICE or performance qualification",
+    "Process-inclusive timings compare declared policies, not isolated solver algorithms",
+    "Native child, PowerShell, vendor, generated code and unexecuted platform paths are not covered by these managed metrics",
+    "81 surviving and 24 uncovered mutations remain; process runner/CLI not in this mutation selection",
+    "Linux NativeAOT and paired benchmark were not executed; Windows native memory may be unavailable/null"
+  ]
+}

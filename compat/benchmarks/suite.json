@@ -1,0 +1,8 @@
+{
+  "schema_version":"1",
+  "cases":[
+    {"id":"divider","kind":"op","deck":"compat/benchmarks/divider.cir","request":"compat/benchmarks/divider.json","observable":"v(out)","unit":"V","coordinates":[0],"absolute_tolerance":1e-10,"relative_tolerance":1e-10,"policy":"Identical resistor/source operating point; coordinate 0 is an OP index, not time."},
+    {"id":"rc-ac","kind":"ac","deck":"compat/benchmarks/rc-ac.cir","request":"compat/benchmarks/rc-ac.json","observable":"v(out)","unit":"V","coordinates":[10,100,1000],"absolute_tolerance":2e-6,"relative_tolerance":1e-7,"policy":"Peak 1+2j V source; exact shared frequency points in Hz; compare real and imaginary parts as a complex norm."},
+    {"id":"rc-transient","kind":"transient","deck":"compat/benchmarks/rc-transient.cir","request":"compat/benchmarks/rc-transient.json","observable":"v(out)","unit":"V","coordinates":[0.001,0.003,0.005],"absolute_tolerance":2e-5,"relative_tolerance":1e-6,"policy":"Consistent initially uncharged capacitor; fixed 10 us trapezoidal vs ngspice adaptive trap capped at 10 us; linear interpolation at shared seconds, no extrapolation. Timing policies are declared, not identical controllers."}
+  ]
+}

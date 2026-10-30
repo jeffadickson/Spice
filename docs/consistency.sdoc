@@ -558,6 +558,20 @@ RELATIONS:
   VALUE: MAN-001
 
 [REQUIREMENT]
+UID: BENCH-001
+STATUS: Draft
+TITLE: Accuracy-gated external simulator comparison
+STATEMENT: >>>
+A paired supported-circuit comparison shall validate named OP/complex-AC/transient values with explicit coordinate units, absolute/relative bounds and declared solver/integration policies before making timing summaries eligible. It shall retain raw repetitions, excluded warmups, rotated execution order, process-inclusive elapsed time, nullable OS peak working-set measurements, available native work counters, executable/input/source hashes and versions. Missing, nonfinite, nonmonotonic or extrapolated reference data, changed inputs and expired execution budgets shall not yield eligible passing timing summaries. Build, parser and parent artifact-processing time shall be distinguished from timed child execution.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Benchmarks uses maintained .NET Process, Stopwatch and source-generated System.Text.Json plus the existing typed public response API; scripts/Run-ComparisonBenchmark.ps1 incrementally builds a NativeAOT helper or an explicit managed mode. Verification: Simulator.Benchmarks.Tests parser/property/process tests (FsCheck replay 372,20261031), negative CLI missing-observable timing invalidation, Pester launch bounds, and executed compat/benchmarks/suite.json pairs on ngspice and LU/faer. Evidence: evidence/five-area-benchmark.json. Small paired fixtures do not isolate solver throughput or establish full SPICE compatibility. Dynamic libraries and the OS image are not frozen; unavailable peak statistics/counters remain null. No universal performance or coverage threshold is implied.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: INT-WORK-001
 STATUS: Draft
 TITLE: Actual nonlinear initialization work accounting

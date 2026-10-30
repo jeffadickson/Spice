@@ -1,0 +1,9 @@
+Owned benchmark: RC charge, consistent initial state, bounded trap step
+.options numdgt=15 method=trap
+V1 in 0 DC 1
+R1 in out 1k
+C1 out 0 1u
+.ic v(in)=1 v(out)=0
+.tran 0.00001 0.005 0 0.00001 uic
+.print tran v(out)
+.end

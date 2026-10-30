@@ -1,0 +1,8 @@
+Owned benchmark: complex RC response, peak source phasor 1+2j
+.options numdgt=15
+V1 in 0 DC 0 AC 2.23606797749979 63.43494882292201
+R1 in out 1k
+C1 out 0 1u
+.ac dec 1 10 1000
+.print ac v(out)
+.end

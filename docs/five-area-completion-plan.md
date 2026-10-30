@@ -76,8 +76,9 @@ peak-vs-RMS AC power and BE-vs-trapezoidal energy; adaptive/bias-unavailable aud
 ## Completion ledger
 
 - [x] 1 transport
-- [ ] 2 benchmark
+- [x] 2 benchmark
 - [ ] 3 difficult circuits
 - [ ] 4 sparse qualification
 - [ ] 5 physical consistency
 - [ ] Final review
+

@@ -13,3 +13,9 @@ endurance:
 	pwsh -NoProfile -File scripts/Run-Endurance.ps1 -Minutes $(MINUTES)
 endurance-smoke:
 	pwsh -NoProfile -File scripts/Run-Endurance.ps1 -Minutes 3 -Seed 1 -SkipMutation
+
+# Supply an existing ngspice executable; the wrapper builds release/native helpers incrementally.
+BENCH_ITERATIONS ?= 3
+.PHONY: benchmark
+benchmark:
+	pwsh -NoProfile -File scripts/Run-ComparisonBenchmark.ps1 -NgspicePath "$(NGSPICE)" -Iterations $(BENCH_ITERATIONS)
