@@ -16,6 +16,11 @@ endurance-smoke:
 
 # Supply an existing ngspice executable; the wrapper builds release/native helpers incrementally.
 BENCH_ITERATIONS ?= 3
+
+CORPUS_SECONDS ?= 1800
+.PHONY: corpus-compare
+corpus-compare:
+	pwsh -NoProfile -File scripts/Run-CorpusComparison.ps1 -CorpusRoot "$(NGSPICE_CORPUS)" -NgspicePath "$(NGSPICE)" -BudgetSeconds $(CORPUS_SECONDS)
 .PHONY: benchmark
 benchmark:
 	pwsh -NoProfile -File scripts/Run-ComparisonBenchmark.ps1 -NgspicePath "$(NGSPICE)" -Iterations $(BENCH_ITERATIONS)

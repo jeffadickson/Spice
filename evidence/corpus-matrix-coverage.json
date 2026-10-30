@@ -1,0 +1,71 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "collector_sha256": "b93f592e44387e5d2f6851b85115bdbbc0652f3f9740827b4fd5f920e28dfbda",
+  "metrics": [
+    {
+      "file": "dotnet/Simulator.Benchmarks/CorpusCommand.cs",
+      "source_sha256": "42294533d5e0141586dfd28a56e47acb06ee4a9159bda2b6ce24575987635bf2",
+      "lines": 143,
+      "covered_lines": 104,
+      "line_percent": 72.72727272727273,
+      "branches": 224,
+      "covered_branches": 125,
+      "branch_percent": 55.80357142857143
+    },
+    {
+      "file": "dotnet/Simulator.Benchmarks/CorpusRunner.cs",
+      "source_sha256": "f18c3a4866a4c187def25aee4580efb2a71e9385709abf75f0d099645914a009",
+      "lines": 101,
+      "covered_lines": 95,
+      "line_percent": 94.05940594059406,
+      "branches": 134,
+      "covered_branches": 91,
+      "branch_percent": 67.91044776119404
+    },
+    {
+      "file": "dotnet/Simulator.Benchmarks/CorpusPolicy.cs",
+      "source_sha256": "11ee95b551b51a0dfc0dc717eaaca53fa7687cad5a4c684fa853917eb5073869",
+      "lines": 59,
+      "covered_lines": 56,
+      "line_percent": 94.91525423728814,
+      "branches": 190,
+      "covered_branches": 116,
+      "branch_percent": 61.05263157894737
+    },
+    {
+      "file": "dotnet/Simulator.Benchmarks/CorpusPresentation.cs",
+      "source_sha256": "9d9d3fa4cb111ed4f1f42987d66bf7acd2e499afe5fce42de8f42a7296c6b153",
+      "lines": 46,
+      "covered_lines": 46,
+      "line_percent": 100,
+      "branches": 56,
+      "covered_branches": 53,
+      "branch_percent": 94.64285714285714
+    },
+    {
+      "file": "dotnet/Simulator.Benchmarks/CorpusModels.cs",
+      "source_sha256": "ec7f8343616a4022f1f3d7d010f5a35356667ad16a6a1e3322726125f0c42e00",
+      "lines": 37,
+      "covered_lines": 37,
+      "line_percent": 100,
+      "branches": 0,
+      "covered_branches": 0,
+      "branch_percent": null
+    },
+    {
+      "file": "dotnet/Simulator.Benchmarks/ProcessRunner.cs",
+      "source_sha256": "2214743f8ea86dfe0470edd8a7a178b0e880e27f00615dbdb350f4764216d71e",
+      "lines": 67,
+      "covered_lines": 59,
+      "line_percent": 88.05970149253731,
+      "branches": 36,
+      "covered_branches": 23,
+      "branch_percent": 63.888888888888886
+    }
+  ],
+  "limitations": [
+    "Scoped managed tooling execution; synthetic fixture counts are not simulator qualification.",
+    "Per-line maxima for duplicate branch mappings; not complete path coverage.",
+    "PowerShell, native children, vendor internals and unexecuted platform/failure paths are unmeasured."
+  ]
+}

@@ -4,6 +4,11 @@ A bounded Rust circuit engine with CPU provider adapters and C#/F# access. This 
 
 ## Working scope
 
+Run the [whole upstream corpus matrix](docs/ngspice-corpus-matrix.md) to learn what
+is missing: every discovered deck gets a result, one GitHub results issue is
+created per run, and the burndown retains unsupported/failed/unfinished work.
+The five paired benchmark cases are a separate, much smaller scope.
+
 - Independent numerical libraries: nalgebra dense LU/QR and faer sparse LU (real and complex). Qualified AC and linear transient paths use direct CSC; the reference plan retains dense compatibility matrices and a 256-unknown cap. No large-circuit scaling claim is made.
 - Immutable circuit plans, explicit capabilities, prepared numeric-factor reuse and independent residual checks.
 - R/C/L and independent sources; DC, complex AC, legacy fixed-step transient, and configured backward-Euler/trapezoidal transient.

@@ -16,6 +16,8 @@ internal static class ProcessRunner
         foreach (var argument in arguments) start.ArgumentList.Add(argument);
         start.Environment["RUST_LOG"] = "off";
         start.Environment["LC_ALL"] = "C";
+        start.Environment["GH_PROMPT_DISABLED"] = "1";
+        start.Environment["GIT_TERMINAL_PROMPT"] = "0";
         cancellation.ThrowIfCancellationRequested();
         using var limit = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
         limit.CancelAfter(timeout);

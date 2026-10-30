@@ -17,10 +17,11 @@ fn execute() -> Result<(), SimError> {
             &serde_json::json!({"schema_version":"1","execution":"bounded_reference","backends":circuit_simulator::registry::BackendRegistry::reference().capabilities(),"analyses":["operating_point","operating_point_newton","ac","transient","transient_configured"],"nonlinear":{"diode_dc":true,"ac_bias_linearization":true,"transient":true,"configured_backward_euler":true,"adaptive":true,"source_overrides":true,"gmin_dc":true},"models":{"diode":{"conduction":"shockley","charge":"none"},"diode_with_capacitance":{"conduction":"shockley","charge":"constant_q_cv","depletion":false,"transport_charge":false,"configured_trapezoidal":false}},"transport":"one_shot_json","gpu":false}),
         );
     }
-    if !args.is_empty() {
+    let importing = args == ["--import-ngspice"];
+    if !args.is_empty() && !importing {
         return Err(SimError::new(
             ErrorCode::Unsupported,
-            "only --capabilities or stdin JSON is supported",
+            "only --capabilities, --import-ngspice or stdin JSON is supported",
         ));
     }
     let mut input = String::new();
@@ -33,6 +34,14 @@ fn execute() -> Result<(), SimError> {
             ErrorCode::ResourceExhausted,
             "input exceeds 1 MiB",
         ));
+    }
+    if importing {
+        // The CLI is an adapter over the same bounded library importer used by
+        // callers. Importing never evaluates control commands or simulates.
+        return write_json(&circuit_simulator::netlist::import_ngspice_request(
+            &input,
+            "ngspice-corpus",
+        )?);
     }
     let request: Request =
         serde_json::from_str(&input).map_err(|e| SimError::invalid(e.to_string()))?;

@@ -28,6 +28,10 @@
 *.key
 
 # Keep reviewed small evidence summaries and replay fixtures under evidence/tests.
+/evidence/ngspice-corpus/campaign.lock
+/evidence/ngspice-corpus/*.tmp
+/evidence/ngspice-corpus*/campaign.lock
+/evidence/ngspice-corpus*/*.tmp
 
 # Native mutation-framework outputs remain local.
 /mutants.out/

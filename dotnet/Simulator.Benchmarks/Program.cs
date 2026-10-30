@@ -8,6 +8,7 @@ internal static class Program
 {
     private static async Task<int> Main(string[] args)
     {
+        if(args.Contains("--corpus-root",StringComparer.Ordinal))return await CorpusCommand.Run(args);
         if (args is ["--help"]) { Console.WriteLine("--root DIR --engine EXE --ngspice EXE [--manifest compat/benchmarks/suite.json] [--warmups 1] [--iterations 3] [--budget-seconds 300] [--report NEW.json]"); return 0; }
         BenchmarkReport? report = null; string? destination = null;
         try

@@ -2,6 +2,48 @@
 TITLE: ngspice Corpus Compatibility Track
 
 [REQUIREMENT]
+UID: NGC-CORPUS-001
+STATUS: Draft
+TITLE: Shared bounded importer command
+STATEMENT: >>>
+The --import-ngspice CLI operation shall call the existing library importer over at most 1 MiB of UTF-8 stdin and return its typed request or structured error. Import shall not simulate or execute control commands. It shall not introduce another parser or silently broaden unsupported syntax.
+<<<
+COMMENT: >>>
+Implementation: src/main.rs CLI adapter and netlist::import_ngspice_request. Verification: tests/import_cli.rs successful typed translation and structured control-block rejection; existing malformed/property importer checks. Evidence: evidence/corpus-matrix-verification.json. CLI and library share lowering; this does not imply broad dialect conformance.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: NGC-CORPUS-002
+STATUS: Draft
+TITLE: Exhaustive accounted corpus outcomes
+STATEMENT: >>>
+The comparison campaign shall prepopulate every discovered candidate deck row and retain its path, source scope, exact available hash and observed importer diagnostics. Default inventory shall use upstream Git-tracked circuit extensions including .deck and bounded extensionless .end decks; explicit filesystem mode shall be available. Rejected, unsupported, linked/missing, partial, failed and budget-unfinished work shall never be reported as compared passes. Accepted declarative requests shall compare named node voltages on both LU and faer against bounded ngspice output, retaining declared observation-only edits, units, tolerances, sampled coordinates and raw logs. Additional declared analyses not compared by the one-analysis importer shall remain partial. Feature hints shall be distinguished from isolated root causes.
+<<<
+COMMENT: >>>
+Implementation: CorpusCommand, CorpusRunner and CorpusPolicy in dotnet/Simulator.Benchmarks; existing bounded ProcessRunner and Tables. Verification: CorpusContracts inventory/resource/outcome/axis/observation negative and FsCheck properties, actual tracked upstream scan and local synthetic pass/rejection/failure cases. All node voltages and at most 200 representative coordinates per signal are the finite comparison basis; no branch-current or global waveform bound. External control/library execution is excluded. Evidence: evidence/corpus-matrix-verification.json and the retained matrix. No copied upstream deck bodies are redistributed in Git.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: NGC-CORPUS-003
+STATUS: Draft
+TITLE: Per-run results issue and honest burndown
+STATEMENT: >>>
+Each finalized corpus invocation shall default to creating one GitHub results issue in the explicitly identified origin repository, with outcome counts, diagnostic/feature triage checklists and burndown observations. Explicit offline mode shall record no publication. Publishing failure shall remain distinct from numerical results and shall not be called uploaded. A standalone SVG and numeric history shall update automatically. Remaining work shall include every nonpassing outcome; histories shall only share a series when deck hashes, inventory mode, comparison policy/tolerances and oracle executable match. A first run shall be a baseline, not fabricated progress. Partial checkpoints shall preserve valid prior evidence without claiming guaranteed recovery or publication after forced termination.
+<<<
+COMMENT: >>>
+Implementation: CorpusPresentation, CorpusCommand publishing/finalization and scripts/Run-CorpusComparison.ps1. The maintained authenticated gh CLI receives complete noninteractive arguments and a body file; no source push or CI dispatch is implied. Source, input and executable provenance is retained; issue URL is verified and publisher diagnostics retained. Verification: CorpusContracts chart/history/target tests, actual issue creation, structured local output and XML-valid SVG; scoped coverage and mutation outcomes in evidence/corpus-matrix-verification.json. Permanent filesystem/network failure and arbitrary OS process containment remain unqualified.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: NGC-032
 STATUS: Draft
 TITLE: Independent AC bias and excitation
