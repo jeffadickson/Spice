@@ -4,7 +4,7 @@ A bounded Rust circuit engine with CPU provider adapters and C#/F# access. This 
 
 ## Working scope
 
-- Independent numerical libraries: nalgebra dense LU/QR and faer sparse LU (real and complex). The assembler still uses dense matrices and a 256-unknown cap; no large-circuit scaling claim is made.
+- Independent numerical libraries: nalgebra dense LU/QR and faer sparse LU (real and complex). Qualified AC and linear transient paths use direct CSC; the reference plan retains dense compatibility matrices and a 256-unknown cap. No large-circuit scaling claim is made.
 - Immutable circuit plans, explicit capabilities, prepared numeric-factor reuse and independent residual checks.
 - R/C/L and independent sources; DC, complex AC, legacy fixed-step transient, and configured backward-Euler/trapezoidal transient.
 - A bounded Shockley diode with damped Newton DC, DC-biased small-signal AC and qualified backward-Euler nonlinear transient paths; broader nonlinear methods remain unsupported.
@@ -15,10 +15,12 @@ A bounded Rust circuit engine with CPU provider adapters and C#/F# access. This 
 - Trusted local result artifact publication and SHA-256/byte-count verification.
 - Analytic, malformed-input, seeded property/fuzz-smoke and selected mutation tests with actual coverage scope/limitations.
 
-Independent audits now check DC KCL, voltage constraints and power, plus legacy
-constant-source backward-Euler step energy/current constraints. Successful JSON
+Independent audits check DC KCL, voltage constraints and power; linear AC complex
+current/power balance; and fixed BE/trapezoidal discrete energy and source constraints.
+Successful JSON
 manifests include `consistency` and `diagnostics`; unavailable physical checks
 and global accuracy are explicitly `not_checked`. See
+[physical audit scope](docs/physical-audits.md),
 [evidence and limits](evidence/consistency-qualification.md) and
 [requirements](docs/consistency.sdoc). For JSON diagnostic logs on stderr, set
 `$env:RUST_LOG='circuit_simulator=debug'`; stdout remains result JSON.

@@ -1,0 +1,128 @@
+{
+  "status": "bounded_profile_verified",
+  "base_commit": "38c4435",
+  "requirements": [
+    "AUD-AC-001",
+    "AUD-CONFIG-001"
+  ],
+  "windows": {
+    "rust_failed": 0,
+    "property_seeds": [
+      2026103004,
+      2026103005,
+      2026103006
+    ],
+    "rust_passed": 422,
+    "rustc": "1.99.1 GNU",
+    "clippy": "all targets warnings-as-errors passed",
+    "format": "passed",
+    "property_cases_each": 32,
+    "benchmark_helper_passed": 29,
+    "managed_passed": 82,
+    "rust_ignored": 1,
+    "release_build": "optimized passed",
+    "benchmark": "evidence/five-area-audits-benchmark.json",
+    "full_suite_environment": {
+      "PROPTEST_RNG_SEED": "2026103003",
+      "PROPTEST_CASES": 256,
+      "qualification_properties": "fixed 32-case seeds override these globals; overnight inventory remains property_campaign"
+    },
+    "ngspice_paired_cases": 5
+  },
+  "mutation": {
+    "status": "completed",
+    "requested_seconds": 240,
+    "elapsed_seconds": 136.9125643,
+    "shard": "0/1",
+    "rust_file": "src/audit*.rs",
+    "rust_test": "analysis_audits",
+    "tool": "rust",
+    "rust_filter": "src/audit_ac.rs:(87|124|130):.*replace (\\* with /|\\+= with -=)|src/audit_configured.rs:(27|108|121|127|135):.*replace (\\* with /|\\+ with -)",
+    "workers": 2,
+    "owned_workers_reaped": 0,
+    "rust_selected_names": null,
+    "rust_selection_sha256": null,
+    "managed_input_hashes": {},
+    "cargo_mutants": {
+      "version": "27.1.0",
+      "status": "completed",
+      "exit_code": 0,
+      "candidates": 15,
+      "killed": 15,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": "0adafab495482498890c3a48935dcc22308a6ed141ef82d52ff66573c75658f0",
+      "log_sha256": "72978dbe9fbd36326da6a96bd35349b3d3e01f2c43bf72046be21739ade0a1a4"
+    },
+    "stryker": {
+      "version": "5.0.0",
+      "status": "skipped_explicitly",
+      "exit_code": null,
+      "candidates": 0,
+      "killed": 0,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": null,
+      "log_sha256": null
+    }
+  },
+  "coverage": "evidence/five-area-audits-coverage.json",
+  "new_audit_files": [
+    {
+      "lines": {
+        "count": 120,
+        "covered": 114,
+        "percent": 95
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T215218Z-6959afcd\\rust-source\\src\\audit_ac.rs",
+      "file": "src/audit_ac.rs",
+      "source_sha256": "d7d68badbd59ea82172a98b6be30a11fee6f9a2b9d3ca6635b22e18e7a8f3d7f"
+    },
+    {
+      "lines": {
+        "count": 125,
+        "covered": 122,
+        "percent": 97.6
+      },
+      "mapped_file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\framework-mutations\\20261030T215218Z-6959afcd\\rust-source\\src\\audit_configured.rs",
+      "file": "src/audit_configured.rs",
+      "source_sha256": "1c0d951e23b770304e3c2a889c31d26359c46b188246c4ca2b89b56b6dc0ab29"
+    }
+  ],
+  "coverage_branches": null,
+  "red_evidence": [
+    "work/five-area/audits-red.log: missing audit APIs before implementation",
+    "work/five-area/audits-full-final.log: prior all-AC-NotChecked expectation fails after intentional new feature",
+    "work/five-area/audits-mutations.log: malformed fixture title caused baseline failure; all 15 unattempted, not kills"
+  ],
+  "transient_managed_failure": {
+    "status": "81 passed, 1 five-second startup cancellation during busy verification; not accepted as success",
+    "log": "work/five-area/audits-managed.log",
+    "fix": "No source change; bounded startup profile remains load-sensitive",
+    "rechecks": [
+      "work/five-area/audits-startup-probe.log: 2 passed",
+      "work/five-area/audits-managed-recheck.log: 82 passed"
+    ]
+  },
+  "limitations": [
+    "Physical consistency and backward error do not bound global waveform error",
+    "Nonlinear AC lacks retained bias; adaptive endpoints lack accepted midpoint history: explicitly NotChecked",
+    "Nonlinear trapezoidal remains unsupported; no new model/GPU/production qualification",
+    "Focused nightly MSVC 1.101.0 compiler-mapped line coverage differs from GNU regression compiler and historical full-suite scope; no qualified Rust branches",
+    "Linux numerical requalification unavailable after disk exhaustion and WSL E_FAIL; no new full-duration soak",
+    "Existing managed/client and benchmark-parser survivors, uncovered and compiler-invalid mutations remain in their separate checkpoint evidence",
+    "Raw source/seed/log artifacts remain local; no CI or push"
+  ]
+}

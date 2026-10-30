@@ -1,5 +1,18 @@
 # Implementation status
 
+Latest five-area checkpoints are described in [the execution plan](five-area-completion-plan.md)
+and `evidence/five-area-{transport,benchmark,continuation,sparse,audits}.json`.
+They supersede the older managed counts and missing-audit descriptions below.
+The former three deliberate transport timeouts are caught by test failures;
+benchmark timing is accuracy-gated; coupled continuation, sparse RC/RLC and
+fixed-step/linear-AC physical audits have finite evidence. Requirements remain
+Draft outside their bounded profiles; full M1 work packages remain Proposed.
+New Rust line coverage is focused nightly MSVC evidence, with branch coverage
+unavailable. New Linux numerical validation is unavailable after disk/WSL failures;
+earlier Linux reports are historical. Remaining managed/benchmark survivors are
+explicitly retained, and no new full-duration soak or production claim is made.
+
+Historical checkpoints follow.
 Latest managed follow-up: [October 30 mutation dispositions](../evidence/managed-20261030-review.md).
 Windows final native counts are 181 killed, three survivors, three timeouts, one
 compiler error, one uncovered and 13 ignored (202 generated). Focused Linux

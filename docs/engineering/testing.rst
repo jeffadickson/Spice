@@ -22,6 +22,20 @@ Rust LLVM line coverage excludes test/vendor internals; branch metrics remain
 unavailable in the qualified instrumentation. Always retain source/tool identity,
 exact coverage scope, warnings, seeds and unresolved counterexamples.
 
+Independent physical checks
+---------------------------
+
+Linear AC manifests independently check node current, voltage-defined branches
+and absorbed complex power using peak phasors, ``S=V*conj(I)/2``. Fixed configured
+BE includes discrete numerical dissipation; linear trapezoidal uses midpoint
+voltage/current energy identities. Checks precede derived signal expansion.
+Nonlinear AC without retained bias and adaptive intervals without accepted
+midpoint history report ``not_checked``. Physical consistency never closes
+global waveform accuracy. Failures prevent publication of a successful manifest.
+The existing structured tracing framework writes diagnostics to stderr while
+stdout remains the JSON protocol. Requirements AUD-AC-001 and AUD-CONFIG-001
+and evidence/five-area-audits.json define the finite qualification scope.
+
 Use ``scripts/ValidateRequirements.cs -- --python <StrictDoc Python> --report
 <existing-parent>/requirements.json`` from the checkout. Real StrictDoc parses
 the grammar; the C# supervisor also rejects duplicate stable IDs and unresolved

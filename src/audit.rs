@@ -3,6 +3,13 @@
 use crate::error::{SimError, SimResult};
 use serde::Serialize;
 
+#[path = "audit_ac.rs"]
+mod ac_checks;
+#[path = "audit_configured.rs"]
+mod configured_checks;
+pub use ac_checks::ac;
+pub use configured_checks::configured_step;
+
 /// Explicit check outcome; unavailable evidence is never presented as a pass.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]

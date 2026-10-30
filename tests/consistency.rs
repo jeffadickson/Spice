@@ -221,13 +221,19 @@ fn manifests_distinguish_physical_checks_and_unavailable_evidence() {
         frequencies_hz: vec![1.],
         source_phasors: vec![],
     };
+    let ac = run(&request).unwrap();
+    assert!(!ac.consistency.has_failures());
     assert!(
-        run(&request)
-            .unwrap()
-            .consistency
+        ac.consistency
             .checks
             .iter()
-            .all(|c| c.status == CheckStatus::NotChecked)
+            .any(|c| c.id == "ac_power_real" && c.status == CheckStatus::Passed)
+    );
+    assert!(
+        ac.consistency
+            .checks
+            .iter()
+            .any(|c| c.id == "global_accuracy" && c.status == CheckStatus::NotChecked)
     );
 }
 

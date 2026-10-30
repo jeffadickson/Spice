@@ -1,3 +1,14 @@
+Current handoff: inspect the actual git status/history and
+`docs/five-area-completion-plan.md` before continuing. The five bounded feature
+checkpoints and their exact source/verification limits are in
+`evidence/five-area-*.json`; use those newer reports over the historical managed
+counts below. The execution ledger is local `work/five-area/progress.md`; raw
+logs remain local. No full SPICE, GPU, universal convergence, complete mutation
+coverage or production qualification is claimed. Preserve unknown work and the
+repository's existing CI policy. Task-specific push/upload permission must be
+checked against the current user request.
+
+Historical handoff follows.
 Latest October 30 managed follow-up: read evidence/managed-20261030-review.md and
 its stable 19-outcome manifest before proceeding. Final Windows Stryker: 202
 candidates, 181 killed, three survivors, three timeouts, one compile error,

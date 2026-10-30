@@ -612,3 +612,31 @@ Verification: tests/sparse_qualification.rs has direct-only provider spies whose
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: AUD-AC-001
+STATUS: Draft
+TITLE: Independent linear complex-phasor conservation
+STATEMENT: >>>
+Before publishing supported linear AC results, the engine shall reconstruct element currents and voltage-defined constraints directly from R/C/L, independent and controlled-source equations, not assembled matrices or another solve. It shall check every node including reference-node KCL and absorbed complex power using peak phasors S=V*conj(I)/2, explicit V/A/W/var bounds and declared source overrides. Invalid shapes, nonfinite values, invalid frequencies and duplicate/unknown/non-source overrides shall be rejected. Failed checks shall prevent a successful manifest. Nonlinear AC whose incremental bias is not retained shall report physical auditing as NotChecked.
+<<<
+COMMENT: >>>
+Implementation: src/audit_ac.rs, re-exported through audit.rs; src/api.rs audits raw MNA states before derived signal expansion and retains the worst discrepancy with frequency coordinates. Tests: tests/analysis_audits.rs covers RC/RLC, all controlled-source kinds, complex peak/conjugation convention, corrupted source voltage/current, extreme nominal replacement, public manifest evidence and seeded RC properties (32 cases, seed 2026103006). Evidence: evidence/five-area-audits.json and scoped coverage. Global error, nonlinear bias-dependent power and general SPICE/GPU/production qualification remain unavailable; numerical backward-error checks remain separate.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: CONS-001
+
+[REQUIREMENT]
+UID: AUD-CONFIG-001
+STATUS: Draft
+TITLE: Configured fixed-step discrete energy audit
+STATEMENT: >>>
+Supported configured fixed-step BE and linear trapezoidal results shall be audited independently at accepted raw MNA intervals with explicit source endpoint values. BE energy shall include its numerical dissipation; trapezoidal energy shall use midpoint voltage/current and quadratic stored-energy differences. The audit shall reconstruct capacitor displacement and signed inductor flux, current conservation and source constraints, with energy discrepancies in joules. Failed checks shall prevent publication. Adaptive accepted endpoints that omit winning half-step history shall report the physical interval audit as NotChecked rather than applying an incorrect coarse-step identity.
+<<<
+COMMENT: >>>
+Implementation: src/audit_configured.rs delegates nominal BE element equations after selecting source endpoint values and independently checks linear midpoint trapezoidal equations. Tests: tests/analysis_audits.rs includes sine/PWL endpoint sources, RC/RLC energy, constant-capacitance nonlinear diode BE, corrupted accepted states, invalid interval/source descriptors, seeded scales and public manifest checks. Nonlinear trapezoidal remains unsupported by the integrator and explicitly unaudited by the direct audit interface. The audit neither reads assembled matrices nor reruns numerical solvers. Evidence: evidence/five-area-audits.json. Successful physical balance does not establish global waveform accuracy; the global_accuracy check remains NotChecked.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: CONS-006

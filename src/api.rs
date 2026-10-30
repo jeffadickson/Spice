@@ -182,13 +182,46 @@ pub fn run_with_registry(
             }
             report
         }
-        _ => crate::audit::AuditReport {
-            checks: vec![crate::audit::Check::not_checked(
-                "independent_physical_audit",
-                "",
-                "AC and configured transient physical audits are outside this bounded profile; existing numerical residual checks still apply",
-            )],
-        },
+        Analysis::Ac { source_phasors, .. } => {
+            let mut report = crate::audit::AuditReport { checks: Vec::new() };
+            for sample in &ac_samples {
+                let mut point =
+                    crate::audit::ac(&request.circuit, sample, source_phasors, options)?;
+                for check in &mut point.checks {
+                    check.reason = Some(format!(
+                        "{}; frequency_hz={}",
+                        check.reason.as_deref().unwrap_or("independent AC audit"),
+                        sample.frequency_hz
+                    ));
+                }
+                report.merge_worst(point);
+            }
+            report
+        }
+        Analysis::TransientConfigured { options: config } => {
+            let mut report = crate::audit::AuditReport { checks: Vec::new() };
+            for pair in samples.windows(2) {
+                let mut step = crate::audit::configured_step(
+                    &request.circuit,
+                    &pair[0],
+                    &pair[1],
+                    config,
+                    options,
+                )?;
+                for check in &mut step.checks {
+                    check.reason = Some(format!(
+                        "{}; accepted time_s={}",
+                        check
+                            .reason
+                            .as_deref()
+                            .unwrap_or("independent configured audit"),
+                        pair[1].time_s
+                    ));
+                }
+                report.merge_worst(step);
+            }
+            report
+        }
     };
     consistency.checks.push(crate::audit::Check::not_checked("global_accuracy", "", "physical consistency does not bound global error; refinement and independent reference evidence are required"));
     if let Some(check) = consistency
