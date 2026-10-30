@@ -4,7 +4,7 @@ public static class ConformanceChecks
 {
     public static async Task<int> Run(string executable, string root)
     {
-        var client = new SimulationClient(Path.GetFullPath(executable));
+        var client = new BoundedTestClient(Path.GetFullPath(executable));
         var divider = await File.ReadAllTextAsync(Path.Combine(root, "examples/divider.json"));
         var rc = await File.ReadAllTextAsync(Path.Combine(root, "examples/rc.json"));
         var passed = 0;

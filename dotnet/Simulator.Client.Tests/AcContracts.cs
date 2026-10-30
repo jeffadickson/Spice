@@ -40,7 +40,7 @@ public sealed class AcContracts
         var frequency = 1.0 / (2.0 * Math.PI * 0.001);
         var request = Request(new Ac([frequency], [new AcSourcePhasor("V1", 1.0, 2.0)])) with { Backend = backend };
         using var limit = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-        var manifest = (await new SimulationClient(executable).RunAsync(request, limit.Token)).ReadManifest();
+        var manifest = (await new BoundedTestClient(executable).RunAsync(request, limit.Token)).ReadManifest();
         var index = Array.FindIndex(manifest.Signals, signal => signal.Id == "v(out)");
         Assert.True(index >= 0);
         var value = Assert.Single(manifest.AcSamples).Values[index];

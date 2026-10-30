@@ -78,6 +78,8 @@ public sealed class SimulationClient(string executable)
             // this property as a LINQ Count() call during mutation instrumentation.
             while (pending is { Count: > 0 })
             {
+                // Observe cancellation even if an awaited task completes inline.
+                cancellation.ThrowIfCancellationRequested();
                 var completed = await Task.WhenAny(pending);
                 await completed;
                 pending.Remove(completed);
@@ -129,6 +131,7 @@ public sealed class SimulationClient(string executable)
         int read;
         while ((read = await reader.BaseStream.ReadAsync(buffer.AsMemory(), cancellation)) != 0)
         {
+            cancellation.ThrowIfCancellationRequested();
             if (bytes.Length + read > 32 * 1024 * 1024)
                 throw new InvalidDataException("Native output exceeded 32 MiB.");
             bytes.Write(buffer, 0, read);

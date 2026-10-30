@@ -1,0 +1,188 @@
+{
+  "base_commit": "4eb26442b155bc30d378bd2938051ab17b4c5a3b",
+  "requirement": "QUAL-TRANSPORT-002",
+  "status": "bounded_profile_completed",
+  "native_run": "work/framework-mutations/20261030T205508Z-59413107",
+  "summary": {
+    "status": "completed",
+    "requested_seconds": 1500,
+    "elapsed_seconds": 558.9338547,
+    "shard": "0/1",
+    "rust_file": "src/*.rs",
+    "rust_test": "all",
+    "tool": "dotnet",
+    "rust_filter": "",
+    "workers": 1,
+    "owned_workers_reaped": 0,
+    "rust_selected_names": null,
+    "rust_selection_sha256": null,
+    "managed_input_hashes": {
+      "circuit-simulator.exe": "633d3d7dbb64c23d0fa3b8e2123a8717bd9f77205ad6c53b529aa4a26924fd43",
+      "examples/divider.json": "45c269a471691024c36f0cc988653cdcab4914bc33de184210935e99b23e9d71",
+      "examples/rc.json": "8dbaed5c8fc8df663ff6c5b2c9af0425a767d7f3409398d058cba97c2965f31d",
+      "examples/adaptive-rc.json": "80ad2f6145a3e682586cf79455c877b4e0173cae6b0dcdb285532b95d80ef3cf"
+    },
+    "cargo_mutants": {
+      "version": "27.1.0",
+      "status": "skipped_explicitly",
+      "exit_code": null,
+      "candidates": 0,
+      "killed": 0,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": null,
+      "log_sha256": null
+    },
+    "stryker": {
+      "version": "5.0.0",
+      "status": "completed",
+      "exit_code": 0,
+      "candidates": 204,
+      "killed": 184,
+      "survived": 5,
+      "timed_out": 0,
+      "invalid": 1,
+      "not_covered": 1,
+      "pending": 0,
+      "other": 0,
+      "ignored": 13,
+      "unattempted": 0,
+      "report_sha256": "a6a8e56b2557d69aa941f51c8ab3c50fba8f696f2ba849a4e5f3e920f533e93a",
+      "log_sha256": "6922932ad40cd8c06a91136813bcf5a6bcf00c2fe1de85af59fd2cd353f25988"
+    }
+  },
+  "targeted_former_timeouts": [
+    {
+      "source": "process.StandardInput.Close();",
+      "native_id": "97",
+      "status": "Killed",
+      "killed_by": [
+        "c50e0fd6-84d4-5303-3ff8-723566fd0ecd",
+        "296a8b19-db15-fe10-985e-fca61e7cfcee"
+      ]
+    },
+    {
+      "source": "pending.Remove(completed);",
+      "native_id": "105",
+      "status": "Killed",
+      "killed_by": [
+        "c50e0fd6-84d4-5303-3ff8-723566fd0ecd",
+        "296a8b19-db15-fe10-985e-fca61e7cfcee"
+      ]
+    },
+    {
+      "source": "(read = await reader.BaseStream.ReadAsync(buffer.AsMemory(), cancellation)) != 0",
+      "native_id": "185",
+      "status": "Killed",
+      "killed_by": [
+        "c50e0fd6-84d4-5303-3ff8-723566fd0ecd",
+        "296a8b19-db15-fe10-985e-fca61e7cfcee"
+      ]
+    }
+  ],
+  "remaining": [
+    {
+      "id": "93",
+      "status": "Survived",
+      "line": 65,
+      "column": 85,
+      "replacement": "false"
+    },
+    {
+      "id": "94",
+      "status": "NoCoverage",
+      "line": 67,
+      "column": 75,
+      "replacement": "\"\""
+    },
+    {
+      "id": "100",
+      "status": "CompileError",
+      "line": 79,
+      "column": 40,
+      "replacement": "< 0"
+    },
+    {
+      "id": "103",
+      "status": "Survived",
+      "line": 82,
+      "column": 17,
+      "replacement": ";"
+    },
+    {
+      "id": "183",
+      "status": "Survived",
+      "line": 122,
+      "column": 78,
+      "replacement": ";"
+    },
+    {
+      "id": "187",
+      "status": "Survived",
+      "line": 134,
+      "column": 13,
+      "replacement": ";"
+    },
+    {
+      "id": "198",
+      "status": "Survived",
+      "line": 139,
+      "column": 51,
+      "replacement": "true"
+    }
+  ],
+  "windows": {
+    "passed": 82,
+    "failed": 0,
+    "coverage": "five-area-transport-client-coverage.json",
+    "lines": "172/181",
+    "branches": "112/114"
+  },
+  "linux": {
+    "passed": 82,
+    "failed": 0,
+    "snapshot": "/home/jeffd/spice-remote-validation/work/five-area-transport-795c02a86335435a8ed6c733ee2368a0",
+    "lines": "172/181",
+    "branches": "112/114",
+    "report_sha256": "59b90d386c01dfaaba631ae8bf83b671fd7fef333e9a5eed1c2f6bad11f90f93",
+    "log": "work/five-area/transport-linux.log"
+  },
+  "red_evidence": "work/five-area/transport-startup-two-red.log (two failures before fixture cleanup fix)",
+  "helper_coverage": "five-area-transport-helper-coverage.json",
+  "source_hashes": {
+    "dotnet/Simulator.Client/Client.cs": "4af10aae7a41d438196f4ec28abe41bf4dcc3829e2f2f2b9eaac5164a2eb65ff",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9"
+  },
+  "test_hashes": {
+    "dotnet/Simulator.Client.Tests/AcContracts.cs": "ed55b19505441f2b84143569d2f7c456979cd91ba64f4145b942b592b0ee3f5a",
+    "dotnet/Simulator.Client.Tests/ChargeContracts.cs": "64a5fc07cbd540328a2e62b60e839c6ed8e84a3a3dda05e4b552ed6263316870",
+    "dotnet/Simulator.Client.Tests/ClientContracts.cs": "0992e10c3d520f82f9560c0487b1d0ea5875d60cc3cf861a8a00e5b87b22378f",
+    "dotnet/Simulator.Client.Tests/ClientProperties.cs": "dab43f2a63ad038fe3c22abdabacaab7fa5397b9e0eb26baf781c4a1274c9496",
+    "dotnet/Simulator.Client.Tests/ManifestContracts.cs": "f12369b27d8903c2d155a59c7b73cf53d8e3b89566cc4fd5c18b035652f5bd2a",
+    "dotnet/Simulator.Client.Tests/TransportContracts.cs": "77c598f93099183481f1fa5b7e617a61597113e33492328196cf185e91a71edc",
+    "dotnet/Simulator.Conformance/BoundedTestClient.cs": "b2be35d0a6aa82d465da4b77437324999f5b94d387b99fcfb22ebdcab7045295",
+    "dotnet/Simulator.Conformance/ConformanceChecks.cs": "e03195bbeed837c04660c2b6f8069633069d58166eac8f3de1acc93d8ca0c1a3",
+    "dotnet/Simulator.Conformance/MoreChecks.cs": "f1c087f24888c9273b949f6bd51222a894941aa6e228085232de0f66e47abdae",
+    "dotnet/Simulator.Conformance/Program.cs": "e33e7c131f9231c2a60ddc1cc1123194a05beb1b9b0eb927d4a9c65d1ab653bc",
+    "dotnet/Simulator.TransportFixture/Program.cs": "3cfae2a78a50f6d442553a02e9ad7eff37a9326eec9ae63ecfa99453806e88a8",
+    "dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj": "0138238a66dc2120969635d196185783ed78ab3a9d0b61d0b246824ef0f5e78c",
+    "dotnet/coverlet.runsettings": "902c2b64e9d8c59377ef3ee6921ae32feaacc3bc80c23a2cad97c470bd7ea8ec",
+    "scripts/ManagedCoverage.cs": "eef79cafeb37d1d206847a407bb71a77802a9a903e312452f4d6dbb9c1001f05"
+  },
+  "limits": [
+    "Test budgets are not product latency guarantees.",
+    "Two added cancellation-check removal mutants survive; not automatically equivalent.",
+    "Compiler-invalid, startup-null, BOM and console cases retain limitations.",
+    "Windows console fact has no assertions on Linux.",
+    "No push/CI/full soak."
+  ]
+}

@@ -5,6 +5,6 @@
     "reporters": ["json", "cleartext"],
     "concurrency": 2,
     "thresholds": {"high": 80, "low": 60, "break": 0},
-    "additional-timeout": 5000
+    "additional-timeout": 15000
   }
 }

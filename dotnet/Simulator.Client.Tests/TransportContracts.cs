@@ -5,6 +5,51 @@ using Xunit;
 /// <summary>Adversarial native-process envelopes, isolated from the real numerical engine.</summary>
 public sealed class TransportContracts
 {
+    /// <summary>A startup failure must reap a descendant even before the parent acknowledges readiness.</summary>
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task StartupFailureBeforeParentAcknowledgementReapsDescendant(bool syntheticFailure)
+    {
+        var parent = Path.GetTempPath();
+        Assert.True(Directory.Exists(parent));
+        var directory = Path.Combine(parent, "spice-startup-" + Guid.NewGuid().ToString("N"));
+        Assert.False(Directory.Exists(directory));
+        Directory.CreateDirectory(directory);
+        var marker = Path.Combine(directory, "parent.txt");
+        var descendant = Path.Combine(directory, "descendant.txt");
+        if (!syntheticFailure) await File.WriteAllTextAsync(marker, "occupied");
+        System.Diagnostics.Process? owned = null;
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var run = Fixture().RunJsonAsync(JsonSerializer.Serialize(new {
+            mode = "hang", pid_file = marker, descendant_file = descendant,
+            fail_before_ack = syntheticFailure, output = ""
+        }), deadline.Token);
+        try
+        {
+            while (!File.Exists(descendant)) await Task.Delay(10, deadline.Token);
+            var pid = int.Parse(await File.ReadAllTextAsync(descendant, deadline.Token));
+            try { owned = System.Diagnostics.Process.GetProcessById(pid); _ = owned.Handle; }
+            catch (ArgumentException) { /* Already reaped by the fixture. */ }
+            await Assert.ThrowsAnyAsync<JsonException>(() => run.WaitAsync(TimeSpan.FromSeconds(7)));
+            if (syntheticFailure) Assert.False(File.Exists(marker), "Failure unexpectedly acknowledged readiness.");
+            else Assert.Equal("occupied", await File.ReadAllTextAsync(marker));
+            if (owned is not null) Assert.True(owned.HasExited, "Startup failure left its descendant alive.");
+        }
+        finally
+        {
+            deadline.Cancel();
+            if (owned is not null)
+            {
+                using (owned)
+                    if (!owned.HasExited) { owned.Kill(true); await owned.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(2)); }
+            }
+            try { await run.WaitAsync(TimeSpan.FromSeconds(2)); }
+            catch (Exception error) when (error is OperationCanceledException or TimeoutException or JsonException) { }
+            foreach (var file in Directory.GetFiles(directory)) File.Delete(file);
+            Directory.Delete(directory);
+        }
+    }
     /// <summary>Windows automation must not create a console window for the native worker.</summary>
     [Fact]
     public async Task WindowsWorkerHasNoConsoleWindow()
@@ -82,7 +127,7 @@ public sealed class TransportContracts
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            new SimulationClient("nonexistent-engine").RunJsonAsync("{}", cancellation.Token));
+            new BoundedTestClient("nonexistent-engine").RunJsonAsync("{}", cancellation.Token));
     }
 
     [Theory]
@@ -148,12 +193,12 @@ public sealed class TransportContracts
             Directory.Delete(directory);
         }
     }
-    private static SimulationClient Fixture()
+    private static BoundedTestClient Fixture()
     {
         var executable = Path.Combine(AppContext.BaseDirectory, "fixture",
             "Simulator.TransportFixture" + (OperatingSystem.IsWindows() ? ".exe" : ""));
         Assert.True(File.Exists(executable), "Build the transport fixture with the test project.");
-        return new SimulationClient(executable);
+        return new BoundedTestClient(executable);
     }
 
     private static string Request(string output, int exit = 0) =>

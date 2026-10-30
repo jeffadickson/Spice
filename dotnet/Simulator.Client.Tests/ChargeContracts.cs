@@ -35,7 +35,7 @@ public sealed class ChargeContracts
             Path.Combine(root, "target", "debug", "circuit-simulator" + (OperatingSystem.IsWindows() ? ".exe" : ""));
         var circuit = new Circuit(["0", "out"], [new Voltage("V1", 1, 0, 0.1),
             new DiodeWithCapacitance("D1", 1, 0, 1e-12, 0.025, 1e-6)]);
-        var client = new SimulationClient(executable);
+        var client = new BoundedTestClient(executable);
         using var limit = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         var dc = (await client.RunAsync(new("charge-dc", circuit, new OperatingPoint(), backend), limit.Token)).ReadManifest();
         var conduction = 1e-12 * (Math.Exp(4) - 1);

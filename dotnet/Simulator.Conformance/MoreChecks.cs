@@ -3,7 +3,7 @@ using Simulator.Client;
 /// <summary>Exercise the public polymorphic DTO graph with real engine calls.</summary>
 public static class MoreChecks
 {
-    public static async Task<int> Run(SimulationClient client)
+    public static async Task<int> Run(BoundedTestClient client)
     {
         var count=0;
         void Check(bool condition,string label){if(!condition)throw new Exception(label);count++;}

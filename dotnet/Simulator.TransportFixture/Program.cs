@@ -53,13 +53,27 @@ if (root.TryGetProperty("mode", out var mode) && mode.GetString() == "hang")
         };
         start.ArgumentList.Add("--hang-descendant"); start.ArgumentList.Add(descendant);
         using var child = System.Diagnostics.Process.Start(start) ?? throw new IOException("Descendant did not start.");
-        // Parent acknowledgement means the entire requested tree is ready.
-        using var startup = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        while (!File.Exists(descendant)) await Task.Delay(10, startup.Token);
+        try
+        {
+            // Parent acknowledgement means the entire requested tree is ready.
+            using var startup = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            while (!File.Exists(descendant)) await Task.Delay(10, startup.Token);
+            if (root.TryGetProperty("fail_before_ack", out var fail) && fail.GetBoolean())
+                throw new IOException("Synthetic failure before parent acknowledgement.");
+            await PublishPid(marker);
+        }
+        catch
+        {
+            // Ownership starts at launch, not acknowledgement. A failed marker
+            // write or startup timeout must not orphan the already-started child.
+            if (!child.HasExited) child.Kill(true);
+            await child.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(2));
+            throw;
+        }
     }
     // Publish acknowledgement only after closing the writer; File.Exists
     // during WriteAllTextAsync is not a readiness guarantee on Windows.
-    await PublishPid(marker);
+    else await PublishPid(marker);
     await Task.Delay(Timeout.Infinite);
 }
 if (root.TryGetProperty("diagnostics", out var diagnostics))

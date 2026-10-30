@@ -13,6 +13,7 @@
     <ProjectReference Include="../Simulator.TransportFixture/Simulator.TransportFixture.csproj" ReferenceOutputAssembly="false" />
     <Compile Include="../Simulator.Conformance/ConformanceChecks.cs" Link="ConformanceChecks.cs" />
     <Compile Include="../Simulator.Conformance/MoreChecks.cs" Link="MoreChecks.cs" />
+    <Compile Include="../Simulator.Conformance/BoundedTestClient.cs" Link="BoundedTestClient.cs" />
   </ItemGroup>
   <!-- Keep each test build's synthetic subprocess beside that immutable test
        assembly. Stryker's copied projects get their own fixture outputs. -->

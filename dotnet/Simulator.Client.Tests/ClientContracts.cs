@@ -31,7 +31,7 @@ public sealed class ClientContracts
     [Fact]
     public async Task RejectOversizedInputBeforeStartingProcess()
     {
-        var client=new SimulationClient("nonexistent-engine");
+        var client=new BoundedTestClient("nonexistent-engine");
         var error = await Assert.ThrowsAsync<ArgumentException>(()=>client.RunJsonAsync(new string('x',1_048_577)));
         Assert.Contains("1 MiB", error.Message);
         // UTF-8 byte bounds must also reject multibyte input shorter in characters.

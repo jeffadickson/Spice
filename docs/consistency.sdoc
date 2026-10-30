@@ -542,6 +542,22 @@ RELATIONS:
   VALUE: MUT-002
 
 [REQUIREMENT]
+UID: QUAL-TRANSPORT-002
+STATUS: Draft
+TITLE: Bounded transport liveness and startup ownership qualification
+STATEMENT: >>>
+Every managed conformance and synthetic-fixture request shall have an independent test budget and wait limit. Production transport shall observe caller cancellation while processing synchronously completed IO/tasks. Qualification shall turn the previously hanging stdin-close, pending-removal and EOF mutations into test-reported failures before the framework timeout. The fixture shall own and reap a launched descendant if synthetic startup failure or parent-acknowledgement file failure occurs before readiness is published.
+<<<
+COMMENT: >>>
+Implementation: Simulator.Conformance/BoundedTestClient.cs (test-only five-second cancellation/seven-second outer wait), Client.cs cancellation checkpoints, Simulator.TransportFixture/Program.cs startup exception cleanup. Tests: StartupFailureBeforeParentAcknowledgementReapsDescendant (synthetic and actual marker collision), acknowledged cancellation theory, and the full managed suite under native Stryker 5.0.0. Stryker additional timeout is 15 seconds; this is a test failure observation allowance, not product latency or an OS containment guarantee. Evidence: evidence/five-area-transport.json and scoped coverage. Other equivalents, compiler-invalid and unexecuted platform cases remain separate; the requirement is Draft outside these finite profiles.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: MUT-CLEANUP-001
+- TYPE: Parent
+  VALUE: MAN-001
+
+[REQUIREMENT]
 UID: INT-WORK-001
 STATUS: Draft
 TITLE: Actual nonlinear initialization work accounting
