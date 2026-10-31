@@ -107,3 +107,10 @@ adjacent representable doubles (ULPs), with finite nonnegative coordinates.
 Larger excursions fail; interior linear interpolation is unchanged. This handles
 6.000000000000001e-9 versus ngspice's printed 6.000000e-9 without an absolute-time
 epsilon. The policy change starts a separate burndown series.
+
+Real oracle integration tests require explicit tool paths. After checking the
+checkout, build directory and both executables exist, set SPICE_CORPUS_ENGINE,
+SPICE_CORPUS_NGSPICE and SPICE_CORPUS_TEST_ROOT (an existing build directory),
+then run dotnet test dotnet/Simulator.Benchmarks.Tests. Missing tool paths produce
+explicit skipped oracle tests, rather than passing cases. Raw owned fixtures
+stay under the configured build directory. See CorpusNumericalIntegration.

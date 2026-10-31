@@ -45,7 +45,10 @@ internal static class CorpusRunner
                 row.Analysis=analysis;row.RequestSha256=Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(imported.Output))).ToLowerInvariant();
                 var nodes=request["circuit"]?["nodes"]?.AsArray().Skip(1).Select(n=>n!.GetValue<string>()).ToArray()??throw new InvalidDataException("Missing nodes");
                 if(CorpusPolicy.UnsafeReference(text)){row.Status="unsupported_reference_profile";row.Diagnostic="External resources/control execution require a separate qualified oracle profile.";continue;}
-                string observed;
+                // A defined sentinel keeps mutations of the catch continuation
+                // executable instead of triggering blanket compiler rollback.
+                // Normal preparation failures leave the row before any use.
+                var observed=string.Empty;
                 try {observed=CorpusPolicy.ObservedDeck(text,kind,nodes);}
                 catch(InvalidDataException e){row.Status="comparison_unavailable";row.Diagnostic=e.Message;continue;}
                 var deck=Path.Combine(folder,"observed.cir");File.WriteAllText(deck,observed,new UTF8Encoding(false));

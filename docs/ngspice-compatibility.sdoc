@@ -2,6 +2,20 @@
 TITLE: ngspice Corpus Compatibility Track
 
 [REQUIREMENT]
+UID: NGC-CORPUS-005
+STATUS: Draft
+TITLE: Observation preflight preserves structured failure without oracle side effects
+STATEMENT: >>>
+If a successfully imported circuit uses an identifier outside the bounded observation syntax, the corpus runner shall retain a comparison_unavailable row with a nonempty diagnostic, execute neither CPU provider for comparison, and write no observed oracle deck or ngspice log. Valid observation preparation shall retain normal OP, AC and transient comparisons. Tests requiring external oracle tools shall explicitly skip when those tools are unavailable.
+<<<
+COMMENT: >>>
+Implementation: CorpusRunner observation preflight. Verification: CorpusNumericalIntegration real-engine/ngspice checks, including core-accepted bad+node. Removing the preflight catch continuation reproduces CS0165 before explicit initialization and becomes an executable rejected mutation afterward. This is compiler-instrumentation qualification, not a claim that 378 original rollback statuses were independently killed. Evidence: evidence/corpus-preflight-verification.json.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: NGC-CORPUS-004
 STATUS: Draft
 TITLE: Bounded transient endpoint representation alignment

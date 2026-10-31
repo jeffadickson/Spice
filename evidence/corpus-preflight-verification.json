@@ -1,0 +1,122 @@
+{
+  "limitations": [
+    "Windows managed scoped execution; no fresh Linux or NativeAOT qualification for this checkpoint.",
+    "Three killed mutants do not establish 378 independent kills or full mutation closure.",
+    "Coverage scope is the two integration facts only; other suites/publisher/failure paths excluded."
+  ],
+  "green": {
+    "cpu_provider_comparisons": 6,
+    "test_log": "work/preflight-tests.log",
+    "tests_failed": 0,
+    "invalid_observation_decks": 1,
+    "tests_skipped": 0,
+    "real_oracle_decks": 3,
+    "log": "work/preflight-mutation-green.log",
+    "build": "zero warnings/errors for the same deleted-continuation probe",
+    "tests_passed": 77
+  },
+  "mutations": {
+    "tool": "Stryker.NET 5.0.0",
+    "compile_error": 104,
+    "total_generated": 1982,
+    "no_coverage": 0,
+    "timeout": 0,
+    "raw": "work\\corpus-next-c19ba18992724b5384cda88376199031\\preflight-stryker\\reports\\mutation-report.json",
+    "survived": 0,
+    "selected": 3,
+    "files": [
+      {
+        "compile_errors": 27,
+        "file": "CorpusCommand.cs",
+        "ignored": 426,
+        "killed": 0
+      },
+      {
+        "compile_errors": 0,
+        "file": "CorpusModels.cs",
+        "ignored": 23,
+        "killed": 0
+      },
+      {
+        "compile_errors": 14,
+        "file": "CorpusPolicy.cs",
+        "ignored": 225,
+        "killed": 0
+      },
+      {
+        "compile_errors": 17,
+        "file": "CorpusPresentation.cs",
+        "ignored": 107,
+        "killed": 0
+      },
+      {
+        "compile_errors": 17,
+        "file": "CorpusRunner.cs",
+        "ignored": 272,
+        "killed": 3
+      },
+      {
+        "compile_errors": 0,
+        "file": "Models.cs",
+        "ignored": 0,
+        "killed": 0
+      },
+      {
+        "compile_errors": 6,
+        "file": "ProcessRunner.cs",
+        "ignored": 86,
+        "killed": 0
+      },
+      {
+        "compile_errors": 3,
+        "file": "Program.cs",
+        "ignored": 169,
+        "killed": 0
+      },
+      {
+        "compile_errors": 8,
+        "file": "Runner.cs",
+        "ignored": 242,
+        "killed": 0
+      },
+      {
+        "compile_errors": 6,
+        "file": "Suites.cs",
+        "ignored": 141,
+        "killed": 0
+      },
+      {
+        "compile_errors": 6,
+        "file": "Tables.cs",
+        "ignored": 184,
+        "killed": 0
+      }
+    ],
+    "scope": "Observation try/catch character range only, real-oracle integration filter. 378 Runner rollback statuses no longer occur. Other-file 104 compile errors remain unavailable.",
+    "ignored": 1875,
+    "report_sha256": "257531197551937925acc22936e3088f919976c361596c24e4fe4f224fd517da",
+    "killed": 3
+  },
+  "requirement": "NGC-CORPUS-005",
+  "discovered_gap": "Initial OP fixture DC 1 AC 1 was import_rejected. Bounded fixtures now use plain 1 outside AC; this is an importer gap, not a passing mixed-source test.",
+  "root_cause": "Deleting the preflight catch continuation reproduces CS0165 observed-unassigned in isolated source; explicit initialization makes it compile and actual oracle tests kill it.",
+  "base_commit": "035747f",
+  "sphinx": "warnings-as-errors passed; work/preflight-docs.log",
+  "coverage": "corpus-preflight-coverage.json",
+  "red": {
+    "build_failed": "CS0165",
+    "log": "work/preflight-mutation-red.log"
+  },
+  "hashes": {
+    "integration": "098bf5b8131f62403b2a42945e3615f2ecf3d52b1220e81c75981f9520c20287",
+    "engine": "8338d0e7fced8b67b108b37e3e7662a82626b194520d41ce495c472e945c22e6",
+    "ngspice": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "runner": "6e6057ad6c303886984d96ce65c81dd6e66e5dc7cb38030ee68f20210f65adbf"
+  },
+  "strictdoc": {
+    "report": "preflight-requirements.json",
+    "ids": 281,
+    "documents": 14,
+    "parents": 269
+  }
+}
