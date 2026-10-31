@@ -26,7 +26,7 @@ internal static class CorpusPresentation
         b.AppendLine("\n## Feature triage tasks\n\nFirst isolate a minimal reproducer; then implement a qualified contract or document deliberate exclusion. Hints can overlap.\n");
         foreach(var g in report.Rows.Where(r=>r.Status!="compared_pass").SelectMany(r=>r.FeatureHints).GroupBy(s=>s).OrderByDescending(g=>g.Count()))
             b.AppendLine($"- [ ] Triage `{Escape(g.Key)}` in {g.Count()} remaining decks; retain a reproducible case and verification evidence.");
-        b.AppendLine($"\nComparisons: representable node voltages and independent voltage-source currents (p-to-n positive), at most 200 coordinates each. Absolute {report.AbsoluteToleranceV:G} V or {report.AbsoluteToleranceA:G} A + relative {report.RelativeTolerance:G}; AC axis bound 1e-12 + 5e-6*f Hz. Transient uses declared interpolation and four-ULP endpoint alignment, no extrapolation. Other-device currents/global error remain unqualified.\n");
+        b.AppendLine($"\nComparisons: representable node voltages and supported V/L/E/H MNA branch currents (p-to-n positive), at most 200 coordinates each. Absolute {report.AbsoluteToleranceV:G} V or {report.AbsoluteToleranceA:G} A + relative {report.RelativeTolerance:G}; AC axis bound 1e-12 + 5e-6*f Hz. Transient uses declared interpolation and four-ULP endpoint alignment, no extrapolation. Other-device currents/global error remain unqualified.\n");
         if(full)
         {
             b.AppendLine("## Every discovered deck\n\n| Path | Status | Diagnostic |\n|---|---|---|");

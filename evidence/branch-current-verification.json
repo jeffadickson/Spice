@@ -1,0 +1,36 @@
+{
+  "categories": [
+    {
+      "status": "CompileError",
+      "count": 106
+    },
+    {
+      "status": "Ignored",
+      "count": 1893
+    },
+    {
+      "status": "Killed",
+      "count": 30
+    }
+  ],
+  "scope": "ObservationSignals and exact table alias validation; 64 corpus tests. Unselected generated compile errors are not kills.",
+  "requirements": "branch-current-requirements.json",
+  "coverage": "branch-current-coverage.json",
+  "ordinary_managed_tests": {
+    "passed": 93,
+    "log": "work/branch-current-green.log",
+    "failed": 0,
+    "skipped": 0
+  },
+  "native_report_sha256": "3165cc018457852ea91cac5608d2aa404ed33046febdb8910bc432d812d531e1",
+  "tool": "Stryker.NET 5.0.0",
+  "limitations": [
+    "Scoped managed helper coverage; native simulator/provider internals not measured by this collector.",
+    "Only V/L/E/H MNA currents, not all device terminals. No fresh Linux run."
+  ],
+  "red": {
+    "failed": 3,
+    "log": "work/branch-current-red.log"
+  },
+  "policy": "node-voltage+mna-VLEH-current-v4"
+}

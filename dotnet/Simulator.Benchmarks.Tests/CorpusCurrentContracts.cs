@@ -5,6 +5,18 @@ using FsCheck.Xunit;
 
 public sealed class CorpusCurrentContracts
 {
+    [Theory]
+    [InlineData("L1")]
+    [InlineData("E1")]
+    [InlineData("H1")]
+    public void SupportedMnaBranchesHaveExactDimensionalObservations(string id)
+    {
+        var signal=Assert.Single(CorpusPolicy.ObservationSignals(["out"],[id]), s=>s.Unit=="A");
+        Assert.Equal($"i({id})",signal.Name);
+        var rows=Tables.Parse($"Index time {id.ToLowerInvariant()}#branch\n0 0 -0.001\n", "transient", signal.Name);
+        Assert.Equal(-0.001,Assert.Single(rows).Real);
+        Assert.Throws<InvalidDataException>(()=>Tables.Parse("Index time vother#branch\n0 0 1\n", "transient",signal.Name));
+    }
     [Fact]
     public void DirectiveShapedTitleDoesNotCreateAPhantomAnalysis()
     {

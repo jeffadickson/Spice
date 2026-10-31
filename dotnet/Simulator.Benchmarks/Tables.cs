@@ -78,11 +78,11 @@ internal static class Tables
     private static bool Equal(string a, string b)
     {
         if(a.Equals(b,StringComparison.OrdinalIgnoreCase))return true;
-        // Batch .print i(VNAME) is headed VNAME#branch. Bind only this exact
-        // requested independent source, never an arbitrary branch column.
+        // Batch .print i(DEVICE) uses DEVICE#branch for V/L/E/H. Bind only this exact
+        // requested supported V/L/E/H branch, never an arbitrary branch column.
         if(!b.StartsWith("i(",StringComparison.OrdinalIgnoreCase)||!b.EndsWith(')'))return false;
         var source=b[2..^1];
-        return Regex.IsMatch(source,@"\A[Vv][A-Za-z0-9_.$:-]*\z") &&
+        return Regex.IsMatch(source,@"\A[VvLlEeHh][A-Za-z0-9_.$:-]*\z") &&
             a.Equals(source+"#branch",StringComparison.OrdinalIgnoreCase);
     }
     private static double Number(string text) => double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out var value) && double.IsFinite(value)

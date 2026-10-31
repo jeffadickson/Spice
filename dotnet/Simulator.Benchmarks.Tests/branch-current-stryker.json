@@ -1,0 +1,21 @@
+{
+  "stryker-config": {
+    "concurrency": 1,
+    "thresholds": {
+      "low": 60,
+      "high": 80,
+      "break": 0
+    },
+    "project": "Simulator.Benchmarks.csproj",
+    "test-case-filter": "FullyQualifiedName~Corpus",
+    "reporters": [
+      "json",
+      "cleartext"
+    ],
+    "additional-timeout": 15000,
+    "mutate": [
+      "**/CorpusPolicy.cs{4976..5703}",
+      "**/Tables.cs{4643..5212}"
+    ]
+  }
+}

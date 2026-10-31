@@ -2,6 +2,20 @@
 TITLE: ngspice Corpus Compatibility Track
 
 [REQUIREMENT]
+UID: NGC-CORPUS-008
+STATUS: Draft
+TITLE: Named MNA current comparisons
+STATEMENT: >>>
+The bounded corpus oracle shall compare signed p-to-n currents for supported V, L, E and H MNA branches by exact signal identifier, current quantity and ampere unit on both CPU providers. It shall bind only the requested device's ngspice branch alias, reject malformed identifiers or unrelated branch columns, retain complex current discrepancy witnesses, and use a distinct comparison-policy fingerprint when the observable scope expands.
+<<<
+COMMENT: >>>
+Implementation: CorpusRunner, CorpusPolicy, Tables. Verification: CorpusCurrentContracts supported branch identifier/alias tests and CorpusNumericalIntegration.InductorAndControlledVoltageBranchesMatchIndependentEquations, analytical RL impedance and controlled-source polarity. Evidence: evidence/branch-current-verification.json. This bounded profile does not qualify arbitrary resistor/capacitor/semiconductor terminal currents.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: NGC-035
 STATUS: Draft
 TITLE: Mandatory title is excluded from analysis and source evaluation

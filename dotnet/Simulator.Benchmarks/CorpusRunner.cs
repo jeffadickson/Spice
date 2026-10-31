@@ -45,18 +45,18 @@ internal static class CorpusRunner
                 row.Analysis=analysis;row.RequestSha256=Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(imported.Output))).ToLowerInvariant();
                 var nodes=request["circuit"]?["nodes"]?.AsArray().Skip(1).Select(n=>n!.GetValue<string>()).ToArray()??throw new InvalidDataException("Missing nodes");
                 var elements=request["circuit"]?["elements"]?.AsArray()??throw new InvalidDataException("Missing elements");
-                var voltageSources=elements.Where(e=>e?["kind"]?.GetValue<string>()=="voltage")
+                var branchIds=elements.Where(e=>e?["kind"]?.GetValue<string>() is "voltage" or "inductor" or "vcvs" or "ccvs")
                     .Select(e=>e!["id"]!.GetValue<string>()).ToArray();
                 if(CorpusPolicy.UnsafeReference(text)){row.Status="unsupported_reference_profile";row.Diagnostic="External resources/control execution require a separate qualified oracle profile.";continue;}
                 // A defined sentinel keeps mutations of the catch continuation
                 // executable instead of triggering blanket compiler rollback.
                 // Normal preparation failures leave the row before any use.
                 var observed=string.Empty;
-                try {observed=CorpusPolicy.ObservedDeck(text,kind,nodes,voltageSources);}
+                try {observed=CorpusPolicy.ObservedDeck(text,kind,nodes,branchIds);}
                 catch(InvalidDataException e){row.Status="comparison_unavailable";row.Diagnostic=e.Message;continue;}
                 var deck=Path.Combine(folder,"observed.cir");File.WriteAllText(deck,observed,new UTF8Encoding(false));
                 row.ExecutedDeckSha256=Runner.Hash(deck);
-                row.ObservationPolicy="Removed logical .print/.plot/.probe/.end records; appended named non-ground node voltages and independent voltage-source branch currents, p-to-n positive, and .end; added .op only for inferred default OP. Equations/analysis parameters otherwise retained.";
+                row.ObservationPolicy="Removed logical .print/.plot/.probe/.end records; appended named non-ground node voltages and supported V/L/E/H MNA branch currents, p-to-n positive, and .end; added .op only for inferred default OP. Equations/analysis parameters otherwise retained.";
                 var log=Path.Combine(folder,"ngspice.log");string? reference=null;string? referenceError=null;
                 try
                 {
@@ -82,7 +82,7 @@ internal static class CorpusRunner
                         if(manifest.Backend.Id!=expected||manifest.Backend.Gpu||manifest.Backend.Placement!="cpu")throw new InvalidDataException("Wrong CPU provider");
                         if(reference is null){row.Backends.Add(new(backend,"executed_uncompared",referenceError??"No reference",[]));continue;}
                         var signals=new List<CorpusSignal>();
-                        foreach(var signal in CorpusPolicy.ObservationSignals(nodes,voltageSources))
+                        foreach(var signal in CorpusPolicy.ObservationSignals(nodes,branchIds))
                         {
                             var observable=signal.Name;var column=CorpusPolicy.SignalColumn(manifest.Signals,signal);
                             var absolute=CorpusPolicy.AbsoluteBound(report,signal);

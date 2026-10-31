@@ -17,6 +17,31 @@ public sealed class CorpusOracleFactAttribute : FactAttribute
 public sealed class CorpusNumericalIntegration
 {
     [CorpusOracleFact]
+    public async Task InductorAndControlledVoltageBranchesMatchIndependentEquations()
+    {
+        var (rl,_) = await Run("owned\nV1 in 0 DC 0 AC 1\nR1 in out 1000\nL1 out 0 1\n.ac lin 1 100 100\n.end");
+        Assert.Equal("compared_pass",Assert.Single(rl.Rows).Status);
+        var expected=System.Numerics.Complex.One/new System.Numerics.Complex(1000,2*Math.PI*100);
+        foreach(var backend in rl.Rows[0].Backends)
+        {
+            var current=Assert.Single(backend.Signals,s=>s.Observable=="i(L1)");
+            Assert.InRange(current.ActualReal,expected.Real-1e-10,expected.Real+1e-10);
+            Assert.InRange(current.ActualImag,expected.Imaginary-1e-10,expected.Imaginary+1e-10);
+            AssertConsistentWitness(current);
+        }
+        foreach(var (source,id,current) in new[]{("E1 out 0 in 0 2","E1",-0.002),("H1 out 0 V1 1000","H1",0.001)})
+        {
+            var (report,_) = await Run($"owned\nV1 in 0 1\nRin in 0 1000\n{source}\nRout out 0 1000\n.op\n.end");
+            Assert.Equal("compared_pass",Assert.Single(report.Rows).Status);
+            foreach(var backend in report.Rows[0].Backends)
+            {
+                var signal=Assert.Single(backend.Signals,s=>s.Observable==$"i({id})");
+                Assert.InRange(signal.ActualReal,current-1e-10,current+1e-10);
+                AssertConsistentWitness(signal);
+            }
+        }
+    }
+    [CorpusOracleFact]
     public async Task InactiveAcMetadataMatchesDcAndTransientOracle()
     {
         foreach(var source in new[]{"V1 out 0 DC 2 AC 3 45","I1 out 0 DC 2m AC 3m 45"})

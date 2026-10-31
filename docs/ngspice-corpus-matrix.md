@@ -42,24 +42,23 @@ co-occurrence, not isolated root causes.
 
 Accepted declarative decks execute in scratch space with user spiceinit disabled.
 The observation copy removes print/plot/probe cards and appends named node-voltage
-and independent voltage-source current prints, adding `.op` only for inferred
+and supported V/L/E/H MNA branch current prints, adding `.op` only for inferred
 default OP. Equations/analysis parameters
 are otherwise retained. External control/resource directives are excluded.
 Original/executed/request hashes and edits remain explicit.
 
-LU and faer execute independently. Policy v3 compares all representable node
-voltages and independent voltage-source currents, at most 200 representative
+LU and faer execute independently. Policy v4 compares all representable node
+voltages and supported V/L/E/H MNA branch currents, at most 200 representative
 coordinates each including endpoints. Bounds are 1e-5 V or 1e-9 A absolute plus
 1e-4 relative complex norm. Current is p-to-n positive, and ngspice's exact
 source#branch table alias is bound to the requested i(source). Both the manifest
 quantity and unit must match. JSON schema 2 stores the unit and absolute bound
 with each signal's discrepancy/witness. The current bound participates in the
-history fingerprint; v1/v2 reports remain historical evidence.
+history fingerprint; v1/v2/v3 reports remain historical evidence.
 
 AC matches printed frequency within 1e-12 + 5e-6*f Hz without phasor interpolation.
 Transient interiors use linear interpolation; at most four adjacent doubles may
-align an out-of-table endpoint. Larger excursions fail. Other device/controlled-
-source/inductor currents and global waveform error remain unqualified. Both
+align an out-of-table endpoint. Larger excursions fail. Other terminal currents and global waveform error remain unqualified. Both
 providers must agree. Additional declared analyses not compared by the one-
 analysis importer produce partial_comparison, not a pass.
 

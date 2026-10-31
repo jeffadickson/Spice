@@ -71,15 +71,15 @@ internal static class CorpusPolicy
         Tables.Validate(points);if(points.Length<=200)return points;
         return Enumerable.Range(0,200).Select(i=>points[(int)((long)i*(points.Length-1)/199)]).ToArray();
     }
-    internal static CorpusObservable[] ObservationSignals(string[] nodes,string[] voltageSources)
+    internal static CorpusObservable[] ObservationSignals(string[] nodes,string[] branchIds)
     {
         // Full-string anchors reject terminal newlines as well as embedded
         // statements. These identifiers are interpolated into print cards.
         if(nodes.Length==0 || nodes.Any(n=>!Regex.IsMatch(n,@"\A[A-Za-z0-9_.$:-]+\z")) ||
-           voltageSources.Any(n=>!Regex.IsMatch(n,@"\A[Vv][A-Za-z0-9_.$:-]*\z")))
-            throw new InvalidDataException("Node name or voltage-source identifier outside explicit observation profile.");
+           branchIds.Any(n=>!Regex.IsMatch(n,@"\A[VvLlEeHh][A-Za-z0-9_.$:-]*\z")))
+            throw new InvalidDataException("Node name or MNA branch identifier outside explicit observation profile.");
         return nodes.Select(n=>new CorpusObservable($"v({n})","voltage","V"))
-            .Concat(voltageSources.Select(n=>new CorpusObservable($"i({n})","current","A"))).ToArray();
+            .Concat(branchIds.Select(n=>new CorpusObservable($"i({n})","current","A"))).ToArray();
     }
     internal static int SignalColumn(SignalInfo[] signals,CorpusObservable observable)
     {
@@ -91,10 +91,10 @@ internal static class CorpusPolicy
     internal static double AbsoluteBound(CorpusReport report,CorpusObservable observable)=>observable.Unit switch
     {"V"=>report.AbsoluteToleranceV,"A"=>report.AbsoluteToleranceA,_=>throw new InvalidDataException("Unsupported observation unit.")};
 
-    internal static string ObservedDeck(string text,string kind,string[] nodes,string[]? voltageSources=null)
+    internal static string ObservedDeck(string text,string kind,string[] nodes,string[]? branchIds=null)
     {
         if(UnsafeReference(text))throw new InvalidDataException("External resource/control execution is outside the read-only oracle profile.");
-        var observables=ObservationSignals(nodes,voltageSources??[]);
+        var observables=ObservationSignals(nodes,branchIds??[]);
         // Remove whole observation records: a continuation must not attach to
         // the previous device. Comments/blanks do not start a new logical card.
         var lines=new List<string>();
