@@ -1,0 +1,10 @@
+{
+  "properties_failed": 0,
+  "generated_cases": 64,
+  "properties_passed": 1,
+  "coverage": "Coverlet collector 10.1.0; owned property test only; not upstream library coverage",
+  "replay": "192,20261031",
+  "version": "FsCheck.Xunit 3.5.0",
+  "scope": "Direct SpiceSharp divider with varied signed voltage and positive resistance ratios",
+  "log": "work/spicesharp-properties.log"
+}

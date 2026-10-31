@@ -1,0 +1,11 @@
+{
+  "tool": "Coverlet collector 10.1.0",
+  "collector_sha256": "525c7b9c18427c63ddef7028c0631cb2c5d126f2e2be2be8edb02e72056ef165",
+  "source_sha256": "94d5923b5280a042351f3adb0a6b896089805382596214fa58e337a7fb4b830c",
+  "limitations": "Owned property assertion code only; no upstream library coverage implied. Coverlet relative filename resolved against its declared source root.",
+  "branches": 2,
+  "covered_lines": 13,
+  "covered_branches": 2,
+  "lines": 13,
+  "file": "evaluation/SpiceSharp.Evaluation.Tests/DividerProperty.cs"
+}

@@ -1,0 +1,239 @@
+{
+  "candidate_report_sha256": "15ec857f417a3e7050e589af17ea69c9d54f22d54c3657aa019b565f3563e4bf",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "results": [
+    {
+      "id": "divider",
+      "state": "compared_pass",
+      "observed_sha256": "240c731737c9ce3827edf8a2ad094b092e4a64885d58ff479e4b6ff4458acafb",
+      "log_sha256": "a43b16ab2463956a1928021c14097de79326f798f4c40bf2ce296a2706a670d5",
+      "checks": [
+        {
+          "analysis": 0,
+          "signal": "V(out)",
+          "actual": 3.333333333333333,
+          "reference": 3.333333,
+          "absolute": 1E-05,
+          "relative": 0.0001,
+          "passed": true
+        },
+        {
+          "analysis": 0,
+          "signal": "I(V1)",
+          "actual": -0.001666666666666667,
+          "reference": -0.00166667,
+          "absolute": 1E-08,
+          "relative": 0.0001,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "param-subckt",
+      "state": "compared_pass",
+      "observed_sha256": "4cd25022c9beafd1fbdd365bfc0e1868e91e6141e5a3c845b703466a9a2e0f0b",
+      "log_sha256": "7c5caa4a4bc31372b102451c2c4fb0b05be555017ac904508d7684bbf8a600d7",
+      "checks": [
+        {
+          "analysis": 0,
+          "signal": "V(out)",
+          "actual": 0.5,
+          "reference": 0.5,
+          "absolute": 1E-05,
+          "relative": 0.0001,
+          "passed": true
+        },
+        {
+          "analysis": 0,
+          "signal": "I(V1)",
+          "actual": -0.00025,
+          "reference": -0.00025,
+          "absolute": 1E-08,
+          "relative": 0.0001,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "rc-ac",
+      "state": "compared_pass",
+      "observed_sha256": "d0a51a027355dc079909b8ae92790c3b3052c371aec907a066e56e37bc977711",
+      "log_sha256": "bf734cf56428c6bfa7a4dac13f7ad93283aaa79b205563508a978678230504f1",
+      "checks": [
+        {
+          "analysis": 0,
+          "signal": "VR(out)",
+          "actual": 0.7169568003248978,
+          "reference": 0.7169568,
+          "absolute": 1E-05,
+          "relative": 0.0001,
+          "passed": true
+        },
+        {
+          "analysis": 0,
+          "signal": "VI(out)",
+          "actual": -0.4504772433683887,
+          "reference": -0.450477,
+          "absolute": 1E-05,
+          "relative": 0.0001,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "rl-ac",
+      "state": "comparison_failed",
+      "observed_sha256": "6c0228f472c02614d85327fc4ff75cd64f29f581518c259eec4b9746a0bf1383",
+      "log_sha256": "467776d88efbb72403d95fec32d712cb7b843276366ae215fc1d2d5127a23f3a",
+      "checks": [
+        {
+          "analysis": 0,
+          "signal": "IR(L1)",
+          "actual": 0,
+          "reference": 0.0007169568,
+          "absolute": 1E-08,
+          "relative": 0.0001,
+          "passed": false
+        },
+        {
+          "analysis": 0,
+          "signal": "II(L1)",
+          "actual": -0.0004504772433683887,
+          "reference": -0.000450477,
+          "absolute": 1E-08,
+          "relative": 0.0001,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "rc-transient",
+      "state": "compared_pass",
+      "observed_sha256": "809dfaf080259cfbc50bada93e55e18f722d95c72ffc5dd7841dbef94f52afdc",
+      "log_sha256": "cd4f94825545698f754b1ef8a990c8e7084b42ea1aae2e2dce238edbcf882b66",
+      "checks": [
+        {
+          "analysis": 0,
+          "signal": "V(out)",
+          "actual": 0.6282376631283562,
+          "reference": 0.6282377,
+          "absolute": 1E-05,
+          "relative": 0.0001,
+          "passed": true
+        },
+        {
+          "analysis": 0,
+          "signal": "I(V1)",
+          "actual": -0.00037176233687164384,
+          "reference": -0.000371762,
+          "absolute": 1E-08,
+          "relative": 0.0001,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "multiple-analyses",
+      "state": "comparison_failed",
+      "observed_sha256": "5c920d5b351ee453c1497caa57e34edb9096d03e330863b11d8f94bc6c6f4119",
+      "log_sha256": "d5025f5e9ba9c1d3f193df5e973d820b2cd9fca2ee8c43275c44edb130d4cfce",
+      "checks": [
+        {
+          "signal": "V(out)",
+          "error": "Missing/nonfinite/nonmonotonic named samples."
+        },
+        {
+          "signal": "V(out)",
+          "error": "Missing/nonfinite/nonmonotonic named samples."
+        },
+        {
+          "signal": "V(out)",
+          "error": "Missing/nonfinite/nonmonotonic named samples."
+        }
+      ]
+    },
+    {
+      "id": "bjt-npn",
+      "state": "compared_pass",
+      "observed_sha256": "f052be3532f181657d45737de981039cba01ca3624fd69c27bc740a8e242a195",
+      "log_sha256": "d28d5f90148b94c5f0f03ab6bcf55b8291c0e878448a03aa1c27a991ee7ba9e0",
+      "checks": [
+        {
+          "analysis": 0,
+          "signal": "V(collector)",
+          "actual": 2.9999995335849206,
+          "reference": 3,
+          "absolute": 1E-05,
+          "relative": 0.0001,
+          "passed": true
+        },
+        {
+          "analysis": 0,
+          "signal": "I(V1)",
+          "actual": -0.0010000002332075397,
+          "reference": -0.001,
+          "absolute": 1E-08,
+          "relative": 0.0001,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "mos-level1",
+      "state": "compared_pass",
+      "observed_sha256": "8a5f38d10f441a46ab904fdc55b5c47ae91d5dfc8db10b1c2592f968d2528fe2",
+      "log_sha256": "fa6428a40e24600f4eee12b8570c0f22bb383eab88211c69679a96bc55a7b8b1",
+      "checks": [
+        {
+          "analysis": 0,
+          "signal": "I(VD)",
+          "actual": -0.00050000000501,
+          "reference": -0.0005,
+          "absolute": 1E-08,
+          "relative": 0.0001,
+          "passed": true
+        },
+        {
+          "analysis": 0,
+          "signal": "V(drain)",
+          "actual": 5,
+          "reference": 5,
+          "absolute": 1E-05,
+          "relative": 0.0001,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "diode",
+      "state": "comparison_failed",
+      "observed_sha256": "78a9934c90bb331f9e001275e5c215db5caf31eabfb1d41b0f48c09e0ca29b21",
+      "log_sha256": "96a2db99f5997e608fc7d5d22e83ca4bfd698a20d3013fb07b72e38d563f6a60",
+      "checks": [
+        {
+          "analysis": 0,
+          "signal": "I(V1)",
+          "actual": -0.011879745040754175,
+          "reference": -0.011872,
+          "absolute": 1E-08,
+          "relative": 0.0001,
+          "passed": false
+        }
+      ]
+    },
+    {
+      "id": "malformed-expression",
+      "state": "not_numerically_executed",
+      "checks": []
+    },
+    {
+      "id": "malformed-subckt",
+      "state": "not_numerically_executed",
+      "checks": []
+    }
+  ],
+  "limitations": [
+    "Named owned-case endpoints only; no broad ngspice or model conformance claim.",
+    "Print-table comparison bounds account for rounded human-readable output; independent analytical checks remain separate."
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "checked_utc": "2026-10-31T16:24:02.7887902Z",
+  "SpiceSharp": {
+    "commits": [
+      {
+        "date": "2026-06-16T18:05:20Z",
+        "sha": "fcdb7294a20317518c8e9294901417859054fe2c",
+        "url": "https://github.com/SpiceSharp/SpiceSharp/commit/fcdb7294a20317518c8e9294901417859054fe2c",
+        "message": "Merge pull request #248 from SpiceSharp/small_fix"
+      },
+      {
+        "date": "2026-05-31T20:10:47Z",
+        "sha": "332adc12beef58cec6c61b469e7ef52559e33426",
+        "url": "https://github.com/SpiceSharp/SpiceSharp/commit/332adc12beef58cec6c61b469e7ef52559e33426",
+        "message": "Do not call Matrix.FindDiagonalElement(step) again"
+      },
+      {
+        "date": "2024-12-04T10:24:17Z",
+        "sha": "24c903c44bff0d83279f678f5f2628cfa19dfba1",
+        "url": "https://github.com/SpiceSharp/SpiceSharp/commit/24c903c44bff0d83279f678f5f2628cfa19dfba1",
+        "message": "Make code generator include external references for finding binding contexts"
+      },
+      {
+        "date": "2024-12-04T09:50:38Z",
+        "sha": "ef9ad9da3eeb53f3eb24a4b3b81dd4f4e94b0110",
+        "url": "https://github.com/SpiceSharp/SpiceSharp/commit/ef9ad9da3eeb53f3eb24a4b3b81dd4f4e94b0110",
+        "message": "Try to change slightly as both actions were started when releasing and we want only one."
+      },
+      {
+        "date": "2024-12-04T09:26:25Z",
+        "sha": "16bbb959ed3d94f7d28bd742dc8adfedb7a5e685",
+        "url": "https://github.com/SpiceSharp/SpiceSharp/commit/16bbb959ed3d94f7d28bd742dc8adfedb7a5e685",
+        "message": "Merge branch 'development'"
+      }
+    ],
+    "default_branch": "master",
+    "url": "https://github.com/SpiceSharp/SpiceSharp",
+    "updated_at": "2026-10-30T18:40:47Z",
+    "archived": false,
+    "releases": [
+      {
+        "tag": "generator-v1.0.9",
+        "url": "https://github.com/SpiceSharp/SpiceSharp/releases/tag/generator-v1.0.9",
+        "published_at": "2024-12-04T10:26:49Z",
+        "prerelease": false
+      },
+      {
+        "tag": "generator-v1.0.8",
+        "url": "https://github.com/SpiceSharp/SpiceSharp/releases/tag/generator-v1.0.8",
+        "published_at": "2024-12-04T09:45:22Z",
+        "prerelease": false
+      },
+      {
+        "tag": "v3.2.3",
+        "url": "https://github.com/SpiceSharp/SpiceSharp/releases/tag/v3.2.3",
+        "published_at": "2024-10-11T09:37:46Z",
+        "prerelease": false
+      }
+    ],
+    "disabled": false,
+    "pushed_at": "2026-08-19T14:29:08Z"
+  },
+  "SpiceSharpParser": {
+    "commits": [
+      {
+        "date": "2026-10-06T20:46:15Z",
+        "sha": "8fc01560fe303eeebaeb5cbf5edfe77bf635e1c7",
+        "url": "https://github.com/SpiceSharp/SpiceSharpParser/commit/8fc01560fe303eeebaeb5cbf5edfe77bf635e1c7",
+        "message": "Remove Circuit Cookbook section from README"
+      },
+      {
+        "date": "2026-08-01T17:44:30Z",
+        "sha": "7608fcc4175a8968f1aedc858ac709a95815d1a1",
+        "url": "https://github.com/SpiceSharp/SpiceSharpParser/commit/7608fcc4175a8968f1aedc858ac709a95815d1a1",
+        "message": "Update cookbook"
+      },
+      {
+        "date": "2026-08-01T17:43:23Z",
+        "sha": "896a1c05a9be66c2330b589cc591a217b3c4f7b5",
+        "url": "https://github.com/SpiceSharp/SpiceSharpParser/commit/896a1c05a9be66c2330b589cc591a217b3c4f7b5",
+        "message": "Cookbook"
+      },
+      {
+        "date": "2026-08-01T17:21:44Z",
+        "sha": "e0a2a4c3f9a7f8b017d865c4469a106c649fe206",
+        "url": "https://github.com/SpiceSharp/SpiceSharpParser/commit/e0a2a4c3f9a7f8b017d865c4469a106c649fe206",
+        "message": "Add diode envelope detector and loaded voltage divider circuits"
+      },
+      {
+        "date": "2026-08-01T16:36:54Z",
+        "sha": "c70875c62c7782876e362916e9ca0820e972d78b",
+        "url": "https://github.com/SpiceSharp/SpiceSharpParser/commit/c70875c62c7782876e362916e9ca0820e972d78b",
+        "message": "Add new circuits and documentation for RC sensor input filter and transmission line termination"
+      }
+    ],
+    "default_branch": "main",
+    "url": "https://github.com/SpiceSharp/SpiceSharpParser",
+    "updated_at": "2026-10-06T20:46:24Z",
+    "archived": false,
+    "releases": [
+      {
+        "tag": "3.4.1",
+        "url": "https://github.com/SpiceSharp/SpiceSharpParser/releases/tag/3.4.1",
+        "published_at": "2026-07-26T12:19:00Z",
+        "prerelease": false
+      },
+      {
+        "tag": "3.4.0",
+        "url": "https://github.com/SpiceSharp/SpiceSharpParser/releases/tag/3.4.0",
+        "published_at": "2026-07-23T04:23:25Z",
+        "prerelease": false
+      },
+      {
+        "tag": "3.3.10",
+        "url": "https://github.com/SpiceSharp/SpiceSharpParser/releases/tag/3.3.10",
+        "published_at": "2026-07-22T22:38:49Z",
+        "prerelease": false
+      }
+    ],
+    "disabled": false,
+    "pushed_at": "2026-10-06T20:46:16Z"
+  }
+}

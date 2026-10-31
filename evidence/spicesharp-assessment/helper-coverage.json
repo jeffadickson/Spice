@@ -1,0 +1,51 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "collector_sha256": "385dff2f5ddfb7e4adb86db4f08565c1d1ac97ec9c851027170a0244b82f1ebf",
+  "metrics": [
+    {
+      "file": "evaluation/SpiceSharp.Evaluation/Program.cs",
+      "source_sha256": "9c65e2728f3a2c7f8637700769a3f6c3b0c2285e66bdfa2d69da3be5b6a9d79c",
+      "lines": 108,
+      "covered_lines": 104,
+      "line_percent": 96.29629629629629,
+      "branches": 90,
+      "covered_branches": 67,
+      "branch_percent": 74.44444444444444
+    },
+    {
+      "file": "evaluation/SpiceSharp.Evaluation/Cases.cs",
+      "source_sha256": "e5c54398a780b7f713bb261543b8fcaa95bf01dce72f3a3fcf3619214d1f2e63",
+      "lines": 17,
+      "covered_lines": 17,
+      "line_percent": 100,
+      "branches": 0,
+      "covered_branches": 0,
+      "branch_percent": null
+    },
+    {
+      "file": "evaluation/SpiceSharp.Reference/Program.cs",
+      "source_sha256": "5c1cdd72bca41b4b6366320ac18ad5de8fc34fa7df2d24e3e7a759719fa57535",
+      "lines": 65,
+      "covered_lines": 62,
+      "line_percent": 95.38461538461539,
+      "branches": 60,
+      "covered_branches": 50,
+      "branch_percent": 83.33333333333333
+    },
+    {
+      "file": "evaluation/SpiceSharp.DirectProbe/Program.cs",
+      "source_sha256": "79fdde71f29f1ed7f65e2ea06c51ff7fe5addb1d0bfcd099cabf70e5d55a302a",
+      "lines": 22,
+      "covered_lines": 22,
+      "line_percent": 100,
+      "branches": 18,
+      "covered_branches": 15,
+      "branch_percent": 83.33333333333333
+    }
+  ],
+  "limitations": [
+    "Scoped managed tooling execution; synthetic fixture counts are not simulator qualification.",
+    "Per-line maxima for duplicate branch mappings; not complete path coverage.",
+    "PowerShell, native children, vendor internals and unexecuted platform/failure paths are unmeasured."
+  ]
+}

@@ -1,3 +1,17 @@
+Latest user-directed reuse assessment: read docs/assessments/spicesharp-evaluation.html
+and docs/spicesharp-evaluation.md. Canonical guidance and project AGENTS now require
+reuse-before-build evidence. The user explicitly retains Rust and drop-in solvers;
+no production migration or parser replacement was authorized by this assessment.
+SpiceSharp 3.2.3 / parser 3.4.1 trial: 488/910 structurally accepted with processors
+disabled; nine owned numerical groups have seven analytical passes and two retained
+disagreements. Direct API confirms correct RL complex current; parser IR export is
+wrong for that case. Diode drift is explained by legacy constants, not silently
+accepted under the original bounds. BSIM4 level 54 rejects. Engine has June 2026
+maintenance but October 2024 engine release; parser has October 2026 documentation
+activity and July 2026 release. See exact snapshots/provenance, not timeless claims.
+Next priority is grammar/AST/elaboration plus selective reuse/reference integration,
+not more string-card exceptions. Uncommitted sheet-model work remains preserved and
+unqualified. No fresh Rust/GPU/Linux/NativeAOT/performance or upstream mutation proof.
 Ordered follow-up checkpoint: rollback reverified (78efbe2), V/L/E/H MNA-current
 comparisons implemented (c33de35), optional transient syntax/default-stop mutation
 gap and UIC classification corrected (cfba1ce). Read docs/corpus-followup-contracts.md,

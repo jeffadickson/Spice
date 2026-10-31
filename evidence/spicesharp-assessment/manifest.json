@@ -1,0 +1,21 @@
+{
+  "candidate_original_sha256": "15ec857f417a3e7050e589af17ea69c9d54f22d54c3657aa019b565f3563e4bf",
+  "migration": "Not performed; Rust and drop-in solvers retained by user direction.",
+  "bounded_projection": "Diagnostics limited to first three at 1024 characters; owned samples reduced to first/last with original sample count. Full report and raw logs remain local.",
+  "html": "docs/assessments/spicesharp-evaluation.html",
+  "candidate_bounded_sha256": "23c63808d317af7f1389a61929f30a611926afe6f8d338a543daae9a86e8213e",
+  "new_scope": "Isolated .NET assessment only. Uncommitted sheet-resistor experiment is preserved and excluded from the evaluation.",
+  "rules_section": "Reuse-before-build decision gate (2026-10-31)",
+  "canonical_guidance_file": "C:\\Users\\jeffd\\.codex\\AGENTS.md",
+  "source_revision": "2b63997c58bd2eda67ca4854ba3b0891d48a5bcb",
+  "excluded_verification": [
+    "No upstream mutation campaign or upstream test suite executed.",
+    "No coverage-guided fuzzing or new endurance soak.",
+    "No Linux, NativeAOT, GPU or large-circuit speed comparison.",
+    "Known numerical disagreements retained as failures under original bounds."
+  ],
+  "requirements_scope": "Committed baseline requirements plus new REUSE-001/002, validated in a snapshot excluding the unrelated local sheet-model draft: 15 documents, 295 IDs, 283 parents.",
+  "html_sha256": "729c1859d1b115de41c781c3765396a6f3abd9bf331075edb8f935abd4493ca6",
+  "visual_verification": "Edge top view 1440x1100 and findings-section QA rendering 1440x1500 using the same generated HTML/CSS; source precision and tables checked. All local links and anchor IDs resolve. Smooth scrolling was removed for predictable document navigation.",
+  "candidate_binary_field": "The original candidate source_sha256 field contains the evaluation harness assembly hash, not a source-file hash. Actual owned source-file hashes are in provenance.json."
+}
