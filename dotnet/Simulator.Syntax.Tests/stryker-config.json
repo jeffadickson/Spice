@@ -1,0 +1,10 @@
+{
+  "stryker-config": {
+    "project": "Simulator.Syntax.csproj",
+    "mutate": ["**/DeckSyntax.cs"],
+    "reporters": ["json", "cleartext"],
+    "concurrency": 1,
+    "thresholds": {"high": 80, "low": 60, "break": 0},
+    "additional-timeout": 5000
+  }
+}

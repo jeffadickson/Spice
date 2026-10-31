@@ -1,0 +1,49 @@
+[DOCUMENT]
+TITLE: Parser-only input qualification
+
+[REQUIREMENT]
+UID: PRS-001
+STATUS: Draft
+TITLE: Generated recognition and solver independence
+STATEMENT: >>>
+The parser-only frontend shall use a pinned established lexer/parser generator and produce source-located syntax without invoking numerical simulation, model resolution, include loading or control commands. Unknown grammar extensions shall be identified separately from recognized syntax.
+<<<
+COMMENT: >>>
+Design: docs/parser-only-plan.md. Implementation and evidence are recorded in docs/parser-only-results.md; Draft does not assert complete ngspice conformance.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-002
+
+[REQUIREMENT]
+UID: PRS-002
+STATUS: Draft
+TITLE: Complete inventory attempts and honest acceptance levels
+STATEMENT: >>>
+The parser-only campaign shall attempt every row of the selected ngspice sample inventory and tracked repository SPICE samples. It shall retain input and grammar provenance and distinguish structural acceptance, grammar gaps, syntax rejection, invalid encoding, missing input, timeout and budget exhaustion. Structural acceptance shall not assert full device-parameter validation or simulation support.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-004
+
+[REQUIREMENT]
+UID: PRS-003
+STATUS: Draft
+TITLE: Malformed input and resource bounds
+STATEMENT: >>>
+The frontend shall reject malformed delimiters and declared device-family minimum arities, preserve original physical source locations through continuations, and bound input bytes, recursive grammar forms including subcircuits and unary chains, diagnostics and worker duration. Regression and reproducible randomized tests shall challenge these contracts.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-003
+
+[REQUIREMENT]
+UID: PRS-004
+STATUS: Draft
+TITLE: Actual corpus and executable provenance
+STATEMENT: >>>
+The parser-only campaign shall record the actual corpus checkout revision separately from the inventory's declared revision and retain executable hashes. It shall not report qualification completion if source or executable bytes change during execution.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-004

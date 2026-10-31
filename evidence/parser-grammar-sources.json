@@ -1,0 +1,69 @@
+{
+  "limitations": [
+    "Source inspection, not execution of XDM translator.",
+    "Hashes of downloaded text are UTF-8 encoded response content; upstream source is not redistributed."
+  ],
+  "inspected_utc": "2026-10-31T21:26:50.0651752+00:00",
+  "sources": [
+    {
+      "utf8_sha256": "bbfd2e7b60fad5983b26f3820396ddc70a0f58e1b0bff6aa1b31ca07619adf79",
+      "name": "XDM-HSPICE",
+      "url": "https://raw.githubusercontent.com/Xyce/XDM/b6394a0275eb94f39b86584fa1e0fa9a3766ed23/src/c_boost/xyce/HSPICEGrammar.hpp",
+      "lines": 1408
+    },
+    {
+      "utf8_sha256": "3edc98a4a4611431604836b595b4ec172ea624a0f7248b8c1cc67755a7c43aba",
+      "name": "XDM-PSPICE",
+      "url": "https://raw.githubusercontent.com/Xyce/XDM/b6394a0275eb94f39b86584fa1e0fa9a3766ed23/src/c_boost/xyce/PSPICEGrammar.hpp",
+      "lines": 337
+    },
+    {
+      "utf8_sha256": "6a9af9813a04e47e7c40034ed86e7eb7f9510bbc19c1c80c29ffdcb18c9e8856",
+      "name": "SpiceSharp-BNF",
+      "url": "https://raw.githubusercontent.com/SpiceSharp/SpiceSharpParser/8fc01560fe303eeebaeb5cbf5edfe77bf635e1c7/src/SpiceSharpParser/Parsers/Netlist/Spice/SpiceGrammarBNF.txt",
+      "lines": 69
+    },
+    {
+      "utf8_sha256": "6e7f529cc8f3ff878b040090c6f39ec0cf7c27a76e1cc3166191ec9f02fabd81",
+      "name": "SpiceSharp-LL",
+      "url": "https://raw.githubusercontent.com/SpiceSharp/SpiceSharpParser/8fc01560fe303eeebaeb5cbf5edfe77bf635e1c7/src/SpiceSharpParser/Parsers/Netlist/Spice/Internals/ParseTreeGenerator.cs",
+      "lines": 1570
+    },
+    {
+      "utf8_sha256": "d074c361c036b205123a409197351593e1662fd1c1434215a58e6decc7ebd4a4",
+      "name": "SpiceSharp-Lexer",
+      "url": "https://raw.githubusercontent.com/SpiceSharp/SpiceSharpParser/8fc01560fe303eeebaeb5cbf5edfe77bf635e1c7/src/SpiceSharpParser/Lexers/Lexer.cs",
+      "lines": 197
+    },
+    {
+      "name": "ngspice",
+      "sha256": "1fbf29e3ca08e50e4639fcd24e916b49b297e45253a4bc666d271d14b5b34233",
+      "revision": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+      "path": "src/frontend/inpcom.c"
+    },
+    {
+      "name": "ngspice",
+      "sha256": "22eb6a43bb950379f02e10cc338d25b0af939bb9cc4d418b0d08039271e0f53c",
+      "revision": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+      "path": "src/frontend/parse-bison.y"
+    },
+    {
+      "name": "ngspice",
+      "sha256": "e07620e31f6661ce54bcfc888c8a00e2443a8b5a653f698cd5f0e749aa4ce33a",
+      "revision": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+      "path": "src/spicelib/parser/inp2r.c"
+    },
+    {
+      "name": "ngspice",
+      "sha256": "c3a4e2a5624fe983b9a0b8fb247c68ac645494f012af2317d04a40989827ba76",
+      "revision": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+      "path": "src/spicelib/parser/inp2q.c"
+    },
+    {
+      "name": "ngspice",
+      "sha256": "5b370ea5921aa2a885125e55ac7a9d7031d4bd3cd79533bb9da037a7b43c268b",
+      "revision": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+      "path": "src/spicelib/parser/inp2dot.c"
+    }
+  ]
+}
