@@ -284,6 +284,11 @@ validated compatibility data; actual convergence uses voltage/current tolerances
 
 ## Parser-only continuation (2026-10-31, issue #11)
 
+The user confirmed keeping ANTLR after the bounded Sly comparison. Read
+docs/sly-trial.md and evidence/sly-trial.json before revisiting framework choices.
+The Sly experiment is isolated research for possible future .NET DSLs; do not
+turn it into a production parser migration without a new user decision.
+
 Read docs/parser-gap-results.md, docs/parser-grammar-inventory.md and
 compat/ngspice/parser-input-adjudications.json before further parser work.
 ANTLR 4.13.1 remains the selected framework. Keep generated syntax acceptance

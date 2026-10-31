@@ -1,0 +1,10 @@
+{
+  "stryker-config": {
+    "project":"SlyTrial.csproj",
+    "mutate":["**/Trial.cs"],
+    "reporters":["json","cleartext"],
+    "concurrency":1,
+    "additional-timeout":5000,
+    "thresholds":{"high":80,"low":60,"break":0}
+  }
+}

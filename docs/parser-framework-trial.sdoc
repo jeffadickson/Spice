@@ -1,0 +1,16 @@
+[DOCUMENT]
+TITLE: Bounded parser framework experiments
+
+[REQUIREMENT]
+UID: PRS-EVAL-001
+STATUS: Draft
+TITLE: Independent bounded candidate evidence
+STATEMENT: >>>
+A parser-framework trial shall be isolated from production parser selection and numerical execution. It shall identify exact package versions and source/binary provenance, compare shared fragment expectations against the existing frontend, exercise malformed input and reproducible randomized cases, and record source-location and lexical-context observations. Missing trial productions, candidate construction failure and implemented-contract mismatches shall be distinguished. A bounded trial shall not assert full inventory acceptance, a performance ranking or production replacement qualification.
+<<<
+COMMENT: >>>
+Implementation: experiments/SlyTrial and experiments/SlyTrial.Tests. Verification and scope: docs/sly-trial.md and evidence/sly-trial.json. This requirement governs experiment reporting, not complete candidate-language conformance.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: PRS-001

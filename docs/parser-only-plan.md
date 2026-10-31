@@ -17,6 +17,11 @@ engineering judgment, not a measured performance comparison. Superpower and
 Parlot provide parser combinators, but put more of the grammar in executable C#
 than the selected approach. No comparative speed claim is made.
 
+The subsequent [bounded Sly trial](sly-trial.md) executes representative
+attribute-based fragments and documents source-location/control-boundary gaps.
+The user confirmed retaining ANTLR after this trial; it is research evidence,
+not a production migration or a replacement qualification.
+
 Primary sources: [ANTLR](https://github.com/antlr/antlr4/tree/4.13.1),
 [lexer modes](https://github.com/antlr/antlr4/blob/4.13.1/doc/lexer-rules.md),
 [Sly](https://github.com/b3b00/csly),
