@@ -40,7 +40,7 @@ public sealed class BoundaryTests
 
     [Fact]
     public void Unspecified_device_family_is_a_grammar_gap()
-        => Assert.Equal("grammar_gap",DeckParser.Parse("Title\nA1 [in] [out] digital_model\n.end\n").Status);
+        => Assert.Equal("grammar_gap",DeckParser.Parse("Title\n@custom1 [in] [out] digital_model\n.end\n").Status);
 
     [Fact]
     public void Unquoted_include_paths_are_inert_syntax()

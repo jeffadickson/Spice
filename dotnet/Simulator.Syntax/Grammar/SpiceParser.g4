@@ -4,7 +4,7 @@ options { tokenVocab = SpiceLexer; }
 deck: TITLE (NL | statement)* EOF;
 statement: (passive | source | diode | bjt | mos | jfet | vcontrol |
     icontrol | switchCard | cswitch | coupling | subcall | behavior | lineCard |
-    model | includeCard | paramCard | tran | ac | dc | op | extension | unknownDevice | endCard) NL
+    xspice | model | includeCard | paramCard | tran | ac | dc | op | extension | unknownDevice | endCard) NL
     | subcircuit | control;
 passive: PASSIVE_NAME node node parameter+;
 source: SOURCE_NAME node node parameter+;
@@ -20,6 +20,15 @@ coupling: COUPLING_NAME identifier identifier parameter+;
 subcall: SUBCALL_NAME node parameter+;
 behavior: BEHAVIOR_NAME node node identifier EQUAL expression | BEHAVIOR_NAME node node parameter+;
 lineCard: LINE_NAME node node node node parameter+;
+// Syntax from ngspice's code-model instance contract. Port/model compatibility
+// is elaboration; parentheses/vector structure and differential arity are syntax.
+xspice: XSPICE_NAME xport+ identifier;
+xport: TILDE? (XDIFF (xpair | xvector | node node)
+    | XSINGLE (node | LPAREN node RPAREN | xvector)
+    | XTYPE (node | LPAREN node RPAREN | xvector)
+    | node | xvector);
+xpair: LPAREN node COMMA? node RPAREN;
+xvector: LBRACKET xport+ RBRACKET;
 model: MODEL identifier identifier parameter*;
 includeCard: INCLUDE (STRING | QUOTED | WORD);
 paramCard: PARAM assignment+;
@@ -44,7 +53,7 @@ value: (PLUS | MINUS)? NUMBER | identifier | STRING | QUOTED | LBRACE expression
 node: (PLUS | MINUS)? NUMBER | identifier;
 identifier: WORD | PASSIVE_NAME | SOURCE_NAME | DIODE_NAME | BJT_NAME |
     MOS_NAME | JFET_NAME | VCONTROL_NAME | ICONTROL_NAME | SWITCH_NAME |
-    CSWITCH_NAME | COUPLING_NAME | SUBCALL_NAME | BEHAVIOR_NAME | LINE_NAME;
+    CSWITCH_NAME | COUPLING_NAME | SUBCALL_NAME | BEHAVIOR_NAME | LINE_NAME | XSPICE_NAME;
 
 // Expressions are syntax only: no evaluation, unit checking or symbol lookup.
 expression: (PLUS | MINUS | BANG) expression

@@ -27,6 +27,20 @@ RELATIONS:
   VALUE: NGC-PARSE-004
 
 [REQUIREMENT]
+UID: PRS-XSPICE-001
+STATUS: Draft
+TITLE: Inert code-model instance grammar
+STATEMENT: >>>
+The generated grammar shall recognize A-device model references and scalar, vector, differential, inverted, null and explicitly typed XSPICE connections, including user-defined connection type names. It shall reject malformed connection delimiters and differential parenthesized pairs with other than two nodes, without loading code models or resolving their port contracts.
+<<<
+COMMENT: >>>
+Primary syntax: ngspice manual, Code Model Element and .MODEL Cards; src/xspice/mif/mif_inp2.c and mifutil.c at the pinned ngspice corpus revision. Implementation: SpiceLexer.g4 and SpiceParser.g4 xspice/xport/xpair/xvector. Verification: XspiceTests.cs, replay 481,20261031, and parser-only corpus evidence.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-001
+
+[REQUIREMENT]
 UID: PRS-003
 STATUS: Draft
 TITLE: Malformed input and resource bounds
