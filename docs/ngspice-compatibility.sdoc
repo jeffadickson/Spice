@@ -2,6 +2,34 @@
 TITLE: ngspice Corpus Compatibility Track
 
 [REQUIREMENT]
+UID: NGC-035
+STATUS: Draft
+TITLE: Mandatory title is excluded from analysis and source evaluation
+STATEMENT: >>>
+The bounded ngspice request importer shall retain the first physical line as title metadata and shall not evaluate its tokens as an analysis directive, source AC excitation or transient waveform override. This rule shall hold even when the title text looks like a malformed source card or analysis directive. Device and analysis lowering shall apply to the following records. Corpus feature classification shall likewise count only body analysis records.
+<<<
+COMMENT: >>>
+Discovered gap: the basic circuit parser skipped the title, while request-level AC/analysis/waveform scans still evaluated it. Verification: tests/ngspice_inactive_ac.rs::source_shaped_title_is_never_evaluated_as_a_source, CorpusCurrentContracts.DirectiveShapedTitleDoesNotCreateAPhantomAnalysis and finite cross-analysis tests. Evidence: evidence/ngspice-source-metadata-verification.json. No general dialect/title-expression interpretation is claimed.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: NGC-036
+STATUS: Draft
+TITLE: Atto scalar suffix is distinct from output ampere units
+STATEMENT: >>>
+The shared bounded scalar profile shall interpret case-insensitive a immediately following a numeric mantissa/exponent as a factor of 1e-18, including AC source magnitude lowering. When a trailing A follows an already recognized engineering scale, such as 2mA or 1fA, the first scale shall retain precedence and that bounded annotation shall not add another atto factor. It shall not strip bare numeric a as an ampere annotation. Output signal unit A shall continue to mean amperes; input scale suffixes are not dimensional unit checking. Scaled nonfinite results shall fail explicitly.
+<<<
+COMMENT: >>>
+Discovered numeric mismatch: AC 1A lowered to 1 instead of 1e-18; actual ngspice prints v(out)=1e-18 V for the independent ideal-source probe. Verification: tests/ngspice_inactive_ac.rs::source_suffix_a_is_atto_not_an_ampere_annotation and scalar/property cases. Evidence: evidence/ngspice-source-metadata-verification.json. Primary reference: ngspice manual scale-factor table, https://ngspice.sourceforge.io/docs/ngspice-manual.pdf . Remaining general unit tails and unsupported scale forms are not implied.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: NGC-CORPUS-007
 STATUS: Draft
 TITLE: Numerical mismatch evidence remains a failed comparison
@@ -34,10 +62,10 @@ UID: NGC-034
 STATUS: Draft
 TITLE: Constant independent sources with inactive AC metadata
 STATEMENT: >>>
-For the bounded independent voltage/current source form DC value AC magnitude with an optional finite phase, OP and constant-source transient lowering shall preserve the DC value while validating but not applying the inactive AC excitation. AC lowering shall retain the independently specified DC bias and phasor. Unknown auxiliary clauses, malformed/duplicate metadata and nonfinite parameters shall fail explicitly rather than be ignored.
+For the bounded independent voltage/current source form value AC magnitude with an optional DC marker and finite phase, OP and constant-source transient lowering shall preserve the DC value while validating but not applying the inactive AC excitation. AC lowering shall retain the independently specified DC bias and phasor. Unknown auxiliary clauses, malformed/duplicate metadata and nonfinite parameters shall fail explicitly rather than be ignored.
 <<<
 COMMENT: >>>
-Discovered gap: an OP-only source V1 in 0 DC 1 AC 1 is currently rejected although the bounded AC form is accepted. Not implemented at this requirement's introduction. Planned verification: cross-analysis typed request and analytical tests for voltage/current sources, unsupported tails and actual corpus transitions. Initial discovery is retained in evidence/corpus-preflight-verification.json. Draft does not claim implementation or acceptance.
+Discovered gap: an OP-only source V1 in 0 DC 1 AC 1 is currently rejected although the bounded AC form is accepted. Not implemented at this requirement's introduction; now implemented by shared constant_ac_fields/bounded_source_phasor normalization in netlist.rs. Verification: cross-analysis typed request and analytical/Proptest cases in tests/ngspice_inactive_ac.rs, real-oracle metadata/current tests, unsupported tails and actual corpus transitions in evidence/ngspice-source-metadata-verification.json. Initial discovery is retained in evidence/corpus-preflight-verification.json. Draft does not claim implementation or acceptance.
 <<<
 RELATIONS:
 - TYPE: Parent

@@ -20,6 +20,7 @@ pub fn finite(value: f64, name: &str) -> SimResult<f64> {
 /// Small explicit SPICE scalar suffix profile, not a dimensional unit grammar.
 /// Optional `s` and `Hz` decorations are case-insensitive and do not change
 /// the scale: `MS` remains milliseconds, while `MEGHz` uses mega.
+/// The `a` scale means atto, not an ampere annotation on an input number.
 pub fn spice_scalar(text: &str) -> SimResult<f64> {
     let normalized = text.trim().to_ascii_lowercase();
     // Permit only these named decorations, not arbitrary ngspice trailing
@@ -31,7 +32,7 @@ pub fn spice_scalar(text: &str) -> SimResult<f64> {
     if let Ok(value) = normalized.parse::<f64>() {
         return finite(value, "scalar");
     }
-    for (suffix, scale) in [
+    let scales = [
         ("meg", 1e6),
         ("t", 1e12),
         ("g", 1e9),
@@ -41,10 +42,16 @@ pub fn spice_scalar(text: &str) -> SimResult<f64> {
         ("n", 1e-9),
         ("p", 1e-12),
         ("f", 1e-15),
-    ] {
-        if let Some(number) = normalized.strip_suffix(suffix) {
-            if let Ok(value) = number.parse::<f64>() {
-                return finite(value * scale, "scaled scalar");
+        ("a", 1e-18),
+    ];
+    // First recognize a bare scale, so 1A is atto. Only if that fails, permit
+    // one trailing A after a recognized scale: 2mA stays milli, not atto.
+    for candidate in std::iter::once(normalized).chain(normalized.strip_suffix('a')) {
+        for (suffix, scale) in scales {
+            if let Some(number) = candidate.strip_suffix(suffix) {
+                if let Ok(value) = number.parse::<f64>() {
+                    return finite(value * scale, "scaled scalar");
+                }
             }
         }
     }

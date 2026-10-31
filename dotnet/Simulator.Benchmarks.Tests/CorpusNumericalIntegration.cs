@@ -17,6 +17,46 @@ public sealed class CorpusOracleFactAttribute : FactAttribute
 public sealed class CorpusNumericalIntegration
 {
     [CorpusOracleFact]
+    public async Task InactiveAcMetadataMatchesDcAndTransientOracle()
+    {
+        foreach(var source in new[]{"V1 out 0 DC 2 AC 3 45","I1 out 0 DC 2m AC 3m 45"})
+        foreach(var analysis in new[]{".op",".tran 1m 2m"})
+        {
+            var expected=source[0]=='V'?2d:-2d;
+            var (report,_)=await Run($"owned\n{source}\nR1 out 0 1000\n{analysis}\n.end");
+            var row=Assert.Single(report.Rows);Assert.Equal("compared_pass",row.Status);
+            foreach(var backend in row.Backends)
+            {
+                var voltage=Assert.Single(backend.Signals,s=>s.Observable=="v(out)");
+                Assert.InRange(voltage.ActualReal,expected-1e-10,expected+1e-10);
+                Assert.InRange(voltage.ExpectedReal,expected-1e-10,expected+1e-10);
+            }
+        }
+    }
+    [CorpusOracleFact]
+    public async Task AttoMagnitudeMatchesOracleWithoutAnAbsoluteFloorMaskingZero()
+    {
+        foreach(var (source,expected) in new[]{("V1 out 0 DC 0 AC 1A",1e-18),("I1 out 0 DC 0 AC 1a",-1e-15),("I1 out 0 DC 0 AC 2mA",-2d)})
+        {
+            var (report,_)=await Run($"owned\n{source}\nR1 out 0 1000\n.ac lin 1 10 10\n.end");
+            var row=Assert.Single(report.Rows);Assert.Equal("compared_pass",row.Status);
+            foreach(var backend in row.Backends)
+            {
+                var voltage=Assert.Single(backend.Signals,s=>s.Observable=="v(out)");
+                // Relative-to-known-nonzero assertions supplement the corpus
+                // absolute floor, which alone could accept zero at this scale.
+                Assert.InRange(voltage.ActualReal/expected,1-1e-9,1+1e-9);
+                Assert.InRange(voltage.ExpectedReal/expected,1-1e-9,1+1e-9);
+                if(source[0]=='V')
+                {
+                    var current=Assert.Single(backend.Signals,s=>s.Observable=="i(V1)");
+                    Assert.InRange(current.ActualReal/(-1e-21),1-1e-9,1+1e-9);
+                    Assert.InRange(current.ExpectedReal/(-1e-21),1-1e-9,1+1e-9);
+                }
+            }
+        }
+    }
+    [CorpusOracleFact]
     public async Task RealOracleComparesOpAcAndTransientOnBothCpuProviders()
     {
         foreach(var analysis in new[]{".op",".ac lin 3 1 1000",".tran 1ns 6ns"})

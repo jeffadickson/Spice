@@ -1,3 +1,14 @@
+Latest parser checkpoint supersedes the NGC-034 pending note below. NGC-034/035/036
+are implemented with bounded tests; remain Draft rather than broad acceptance.
+Read docs/ngspice-source-metadata.md and evidence/ngspice-source-metadata-verification.json.
+Corrected release suite: 434 passed, one ignored; managed 89 passed. Initial
+2mA regression and interrupted debug attempts are preserved honestly. Exact scalar
+division replay killed after an initial compiler failure. Corpus issue #8 records
+one pass, two partial, 694 unsupported, 202 rejected, 11 resource/input rejected.
+No increase in full-pass count. Prioritize shared model/directive/source grammar
+blockers using per-deck diagnostics; retain fail-closed behavior and add StrictDoc
+requirements for newly discovered missing behavior. Push completed checkpoints;
+CI remains undispatched. Raw artifacts local; no full SPICE/GPU/Linux qualification.
 Current source-current checkpoint: NGC-CORPUS-005/006/007 and NGC-034 are
 recorded in ngspice-compatibility.sdoc. Read corpus-preflight-verification.json,
 corpus-current-verification.json and corpus-current-mutation-replay.json.

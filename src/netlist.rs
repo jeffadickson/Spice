@@ -542,6 +542,53 @@ fn bounded_temperature(lines: &[String]) -> SimResult<f64> {
     Ok(8.617_333_262_145e-5 * kelvin)
 }
 
+// Recognize only the existing constant-source DC/AC shapes. Other auxiliary
+// clauses are handled by their explicitly qualified analysis-specific profile.
+fn constant_ac_fields(tokens: &[&str]) -> Option<(usize, usize)> {
+    if !tokens.first().is_some_and(|name| {
+        matches!(
+            name.chars().next().map(|kind| kind.to_ascii_uppercase()),
+            Some('V' | 'I')
+        )
+    }) {
+        return None;
+    }
+    if matches!(tokens.len(), 7 | 8)
+        && tokens[3].eq_ignore_ascii_case("dc")
+        && tokens[5].eq_ignore_ascii_case("ac")
+    {
+        Some((6, 7))
+    } else if matches!(tokens.len(), 6 | 7) && tokens[4].eq_ignore_ascii_case("ac") {
+        Some((5, 6))
+    } else {
+        None
+    }
+}
+
+// Share validation between active and inactive AC metadata. A is the atto
+// scale, not an ampere annotation; only the existing harmless V tail is stripped.
+fn bounded_source_phasor(
+    tokens: &[&str],
+    amplitude_index: usize,
+    phase_index: usize,
+) -> SimResult<AcSourcePhasor> {
+    let amplitude = spice_scalar(tokens[amplitude_index].trim_end_matches(['V', 'v']))?;
+    let phase_degrees = if tokens.len() == phase_index + 1 {
+        spice_scalar(tokens[phase_index])?
+    } else {
+        0.
+    };
+    if !phase_degrees.is_finite() {
+        return Err(SimError::invalid("invalid AC source phase"));
+    }
+    let radians = phase_degrees.to_radians();
+    Ok(AcSourcePhasor {
+        id: tokens[0].to_ascii_uppercase(),
+        real: amplitude * radians.cos(),
+        imag: amplitude * radians.sin(),
+    })
+}
+
 /// Lowers the bounded ngspice deck profile into the same typed request contract
 /// used by JSON and SForge callers. Only a two-value .tran directive is
 /// accepted; optional arguments fail rather than being ignored.
@@ -554,7 +601,7 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
     }
     let mut transient = None;
     let mut ac = None;
-    for source_line in text.lines() {
+    for source_line in text.lines().skip(1) {
         let line = source_line.split(';').next().unwrap_or_default().trim();
         let tokens: Vec<_> = line.split_whitespace().collect();
         if tokens
@@ -646,19 +693,20 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
     let mut source_phasors = Vec::new();
     let input = if matches!(analysis, Analysis::Ac { .. }) {
         let mut normalized = String::new();
-        for line in text.lines() {
-            let tokens: Vec<_> = line.split_whitespace().collect();
-            let ac_parameters = if matches!(
-                tokens
-                    .first()
-                    .and_then(|name| name.chars().next())
-                    .map(|kind| kind.to_ascii_uppercase()),
-                Some('V' | 'I')
-            ) && (tokens.len() == 7 || tokens.len() == 8)
-                && tokens[3].eq_ignore_ascii_case("dc")
-                && tokens[5].eq_ignore_ascii_case("ac")
-            {
-                Some((6, 7))
+        for (index, line) in text.lines().enumerate() {
+            if index == 0 {
+                normalized.push_str(line);
+                normalized.push('\n');
+                continue;
+            }
+            let tokens: Vec<_> = line
+                .split(';')
+                .next()
+                .unwrap_or_default()
+                .split_whitespace()
+                .collect();
+            let ac_parameters = if let Some(fields) = constant_ac_fields(&tokens) {
+                Some(fields)
             } else if matches!(
                 tokens
                     .first()
@@ -683,36 +731,15 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
                 // tail has no small-signal AC effect and is intentionally not
                 // lowered into transient or distortion behavior.
                 Some((6, 7))
-            } else if matches!(
-                tokens
-                    .first()
-                    .and_then(|name| name.chars().next())
-                    .map(|kind| kind.to_ascii_uppercase()),
-                Some('V' | 'I')
-            ) && (tokens.len() == 6 || tokens.len() == 7)
-                && tokens[4].eq_ignore_ascii_case("ac")
-            {
-                Some((5, 6))
             } else {
                 None
             };
             if let Some((amplitude_index, phase_index)) = ac_parameters {
-                let amplitude = tokens[amplitude_index].trim_end_matches(['V', 'v', 'A', 'a']);
-                let amplitude = spice_scalar(amplitude)?;
-                let phase_degrees = if tokens.len() == phase_index + 1 {
-                    spice_scalar(tokens[phase_index])?
-                } else {
-                    0.
-                };
-                if !phase_degrees.is_finite() {
-                    return Err(SimError::invalid("invalid AC source phase"));
-                }
-                let phase_radians = phase_degrees.to_radians();
-                source_phasors.push(AcSourcePhasor {
-                    id: tokens[0].to_ascii_uppercase(),
-                    real: amplitude * phase_radians.cos(),
-                    imag: amplitude * phase_radians.sin(),
-                });
+                source_phasors.push(bounded_source_phasor(
+                    &tokens,
+                    amplitude_index,
+                    phase_index,
+                )?);
                 normalized.push_str(&format!(
                     "{} {} {} {}\n",
                     tokens[0],
@@ -752,54 +779,79 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
         normalized
     } else {
         text.lines()
-            .map(|line| {
-                let tokens: Vec<_> = line.split_whitespace().collect();
-                if (matches!(tokens.len(), 7 | 9 | 10) && tokens[3].eq_ignore_ascii_case("sin"))
-                    || (tokens.len() == 10 && tokens[3].eq_ignore_ascii_case("exp"))
-                {
-                    format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], tokens[4])
-                } else if tokens.len() >= 6
-                    && tokens[3].eq_ignore_ascii_case("pwl")
-                    && (tokens.len() - 4).is_multiple_of(2)
-                {
-                    format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], tokens[5])
-                } else if tokens.len() == 4
-                    && (tokens[3]
-                        .get(..4)
-                        .is_some_and(|prefix| prefix.eq_ignore_ascii_case("sin("))
-                        || tokens[3]
+            .enumerate()
+            .map(|(index, line)| {
+                if index == 0 {
+                    return Ok(line.to_owned());
+                }
+                let tokens: Vec<_> = line
+                    .split(';')
+                    .next()
+                    .unwrap_or_default()
+                    .split_whitespace()
+                    .collect();
+                let prepared =
+                    if let Some((amplitude_index, phase_index)) = constant_ac_fields(&tokens) {
+                        // Validate inactive excitation but preserve only the DC
+                        // value in the constant OP/transient circuit.
+                        bounded_source_phasor(&tokens, amplitude_index, phase_index)?;
+                        let dc_index = if tokens[3].eq_ignore_ascii_case("dc") {
+                            4
+                        } else {
+                            3
+                        };
+                        format!(
+                            "{} {} {} {}",
+                            tokens[0], tokens[1], tokens[2], tokens[dc_index]
+                        )
+                    } else if (matches!(tokens.len(), 7 | 9 | 10)
+                        && tokens[3].eq_ignore_ascii_case("sin"))
+                        || (tokens.len() == 10 && tokens[3].eq_ignore_ascii_case("exp"))
+                    {
+                        format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], tokens[4])
+                    } else if tokens.len() >= 6
+                        && tokens[3].eq_ignore_ascii_case("pwl")
+                        && (tokens.len() - 4).is_multiple_of(2)
+                    {
+                        format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], tokens[5])
+                    } else if tokens.len() == 4
+                        && (tokens[3]
+                            .get(..4)
+                            .is_some_and(|prefix| prefix.eq_ignore_ascii_case("sin("))
+                            || tokens[3]
+                                .get(..6)
+                                .is_some_and(|prefix| prefix.eq_ignore_ascii_case("pulse("))
+                            || tokens[3]
+                                .get(..4)
+                                .is_some_and(|prefix| prefix.eq_ignore_ascii_case("pwl("))
+                            || tokens[3]
+                                .get(..4)
+                                .is_some_and(|prefix| prefix.eq_ignore_ascii_case("exp(")))
+                        && tokens[3].ends_with(')')
+                    {
+                        let start = if tokens[3]
                             .get(..6)
                             .is_some_and(|prefix| prefix.eq_ignore_ascii_case("pulse("))
-                        || tokens[3]
-                            .get(..4)
-                            .is_some_and(|prefix| prefix.eq_ignore_ascii_case("pwl("))
-                        || tokens[3]
-                            .get(..4)
-                            .is_some_and(|prefix| prefix.eq_ignore_ascii_case("exp(")))
-                    && tokens[3].ends_with(')')
-                {
-                    let start = if tokens[3]
-                        .get(..6)
-                        .is_some_and(|prefix| prefix.eq_ignore_ascii_case("pulse("))
-                    {
-                        6
+                        {
+                            6
+                        } else {
+                            4
+                        };
+                        let offset = tokens[3][start..tokens[3].len() - 1]
+                            .split(',')
+                            .next()
+                            .unwrap_or_default();
+                        format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], offset)
                     } else {
-                        4
+                        line.into()
                     };
-                    let offset = tokens[3][start..tokens[3].len() - 1]
-                        .split(',')
-                        .next()
-                        .unwrap_or_default();
-                    format!("{} {} {} {}", tokens[0], tokens[1], tokens[2], offset)
-                } else {
-                    line.into()
-                }
+                Ok(prepared)
             })
-            .collect::<Vec<String>>()
+            .collect::<SimResult<Vec<String>>>()?
             .join("\n")
     };
     let mut sources = Vec::new();
-    for source_line in text.lines() {
+    for source_line in text.lines().skip(1) {
         let line = source_line.split(';').next().unwrap_or_default().trim();
         let tokens: Vec<_> = line.split_whitespace().collect();
         let Some(name) = tokens.first() else { continue };

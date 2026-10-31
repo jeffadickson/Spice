@@ -1,0 +1,21 @@
+{
+  "tool": "dotnet-coverage 18.12",
+  "collector_sha256": "07ab06c47e99393bef15e189f52365a82589aa57f5f2a30c3a6816b927a6e0d3",
+  "metrics": [
+    {
+      "file": "dotnet/Simulator.Benchmarks/CorpusPolicy.cs",
+      "source_sha256": "4fddabd8bc13ff8d6e4ebc3d66b5470d224ef497461c47173c87354c84422898",
+      "lines": 92,
+      "covered_lines": 90,
+      "line_percent": 97.82608695652173,
+      "branches": 238,
+      "covered_branches": 178,
+      "branch_percent": 74.78991596638656
+    }
+  ],
+  "limitations": [
+    "Scoped managed tooling execution; synthetic fixture counts are not simulator qualification.",
+    "Per-line maxima for duplicate branch mappings; not complete path coverage.",
+    "PowerShell, native children, vendor internals and unexecuted platform/failure paths are unmeasured."
+  ]
+}

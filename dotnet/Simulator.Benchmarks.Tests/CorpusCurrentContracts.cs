@@ -6,6 +6,12 @@ using FsCheck.Xunit;
 public sealed class CorpusCurrentContracts
 {
     [Fact]
+    public void DirectiveShapedTitleDoesNotCreateAPhantomAnalysis()
+    {
+        Assert.DoesNotContain("multiple_declared_analyses",CorpusPolicy.Features(".tran nonsense nope\nV1 out 0 1\n.ac lin 1 10 10\n.end"));
+        Assert.Contains("multiple_declared_analyses",CorpusPolicy.Features("owned\nV1 out 0 1\n.op\n.ac lin 1 10 10\n.end"));
+    }
+    [Fact]
     public void CurrentRequiresItsNamedColumnQuantityUnitAndAmpereBound()
     {
         var signals=CorpusPolicy.ObservationSignals(["out"],["V1"]);

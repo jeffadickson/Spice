@@ -1,0 +1,103 @@
+{
+  "source_base": "39dafdbd7c8f628632fa93ee039b2246cc9f9d2c",
+  "source_dirty": true,
+  "requirements": [
+    "NGC-034",
+    "NGC-035",
+    "NGC-036"
+  ],
+  "source_hashes": {
+    "src/netlist.rs": "27193f685cfdcd5a9df9d61d4b728bcef51d9bcac6fe6a87b7af3a0e2e462cdc",
+    "src/quantity.rs": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397",
+    "tests/ngspice_inactive_ac.rs": "cae72b4833dc67adf0431965dcf5289a8c87d3c5f2a6529514842deb9883f576",
+    "tests/scalar_decorations.rs": "0e74bf30ac596c31f116c800fabe1bbe61b5720441ad6848c740a63711d242fa",
+    "dotnet/Simulator.Benchmarks/CorpusPolicy.cs": "4fddabd8bc13ff8d6e4ebc3d66b5470d224ef497461c47173c87354c84422898",
+    "dotnet/Simulator.Benchmarks.Tests/CorpusNumericalIntegration.cs": "071491570e7c5f2d939fc9de5acfea5a9ff20015e83fab2e9e297b98220b4c56"
+  },
+  "rust_release": {
+    "log": "work/source-metadata-release-qualified.log",
+    "failed": 0,
+    "passed": 434,
+    "command": "cargo test --locked --release",
+    "ignored": 1
+  },
+  "clippy": {
+    "status": "passed",
+    "command": "cargo clippy --locked --all-targets -- -D warnings",
+    "log": "work/source-metadata-clippy-qualified.log"
+  },
+  "managed": {
+    "log": "work/source-metadata-managed-qualified.log",
+    "failed": 0,
+    "passed": 89,
+    "skipped": 0
+  },
+  "properties": [
+    {
+      "cases": 256,
+      "seed": "0x5350494345444341",
+      "test": "ngspice_inactive_ac"
+    },
+    {
+      "properties": 2,
+      "cases": 512,
+      "seed": "0x5350494345535546",
+      "test": "scalar_decorations"
+    }
+  ],
+  "mutation": {
+    "title_stryker": {
+      "survived": 0,
+      "killed": 7,
+      "compile_error_elsewhere": 104,
+      "ignored": 1909
+    },
+    "source_helpers": {
+      "initial_status": "partial_timeout",
+      "unviable": 4,
+      "distinct_killed": 19,
+      "replay": "20261031T034120Z-3dc1961e",
+      "remaining": 0,
+      "initial": "20261031T033023Z-a8785884"
+    },
+    "scalar": {
+      "division_replay": "20261031T035709Z-a0e30525",
+      "unviable": 11,
+      "note": "Division initially unviable due test macro compiler resolution; exact replay killed. Ten constructor mutations remain unviable, not kills.",
+      "division_replay_killed": 1,
+      "initial": "20261031T034940Z-ae27e053",
+      "killed": 1
+    }
+  },
+  "corpus": {
+    "intermediate_run": "20261031T034454Z-a2ae9ba0",
+    "total": 910,
+    "resource_or_input_rejected": 11,
+    "compared_pass": 1,
+    "intermediate_issue": 7,
+    "final_run": "20261031T040004Z-685603bb",
+    "issue": "https://github.com/jeffadickson/Spice/issues/8",
+    "unsupported": 694,
+    "import_rejected": 202,
+    "partial": 2
+  },
+  "coverage": {
+    "scope": "Focused six-test Rust integration; corpus managed tests. Not full-suite coverage.",
+    "rust": "ngspice-source-metadata-rust-coverage.json",
+    "managed": "source-metadata-managed-coverage.json",
+    "rust_branch": "unavailable"
+  },
+  "requirements_evidence": "source-metadata-requirements.json",
+  "limitations": [
+    "Initial full release run exposed a 2mA regression; existing polarity tests remained unchanged and corrected full suite passed.",
+    "Debug runs interrupted due disk pressure; package dev outputs cleaned. Raw interruption/recovery logs remain local.",
+    "Helper mutation initial budget exhausted; exact remaining identities replayed. No invented combined score.",
+    "No fresh Linux, long soak, full SPICE, GPU or production qualification. cargo-nextest unavailable; cargo test fallback."
+  ],
+  "reproduction": [
+    "cargo test --locked --release",
+    "cargo clippy --locked --all-targets -- -D warnings",
+    "dotnet test dotnet/Simulator.Benchmarks.Tests with SPICE_CORPUS_ENGINE, SPICE_CORPUS_NGSPICE, SPICE_CORPUS_TEST_ROOT set",
+    "scripts/Run-CorpusComparison.ps1 -CorpusRoot <ngspice checkout> -NgspicePath <ngspice executable> -Output evidence/ngspice-corpus-tracked -BudgetSeconds 1800 -SkipEngineBuild"
+  ]
+}

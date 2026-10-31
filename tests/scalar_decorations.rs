@@ -7,10 +7,17 @@ proptest! {
     #![proptest_config(Config { cases: 512, rng_seed: RngSeed::Fixed(0x5350494345535546), .. Config::default() })]
     #[test]
     fn decorated_integer_values_preserve_the_analytical_scale(value in -1000000i32..1000000,
-        index in 0usize..4, upper in any::<bool>()) {
-        let (suffix, scale)=[("ns",1e-9),("ps",1e-12),("khz",1e3),("s",1.0)][index];
+        index in 0usize..5, upper in any::<bool>()) {
+        let (suffix, scale)=[("ns",1e-9),("ps",1e-12),("khz",1e3),("s",1.0),("a",1e-18)][index];
         let suffix=if upper {suffix.to_uppercase()} else {suffix.to_owned()};
         let actual=spice_scalar(&format!("{value}{suffix}")).unwrap();
+        let expected=f64::from(value)*scale;
+        prop_assert!((actual-expected).abs()<=expected.abs()*1e-14);
+    }
+    #[test]
+    fn first_scale_wins_before_an_ampere_annotation(value in -1000000i32..1000000,index in 0usize..5) {
+        let (suffix,scale)=[("m",1e-3),("u",1e-6),("n",1e-9),("f",1e-15),("a",1e-18)][index];
+        let actual=spice_scalar(&format!("{value}{suffix}A")).unwrap();
         let expected=f64::from(value)*scale;
         prop_assert!((actual-expected).abs()<=expected.abs()*1e-14);
     }
@@ -26,6 +33,9 @@ fn bounded_time_and_frequency_decorations_keep_spice_scale_conventions() {
         ("100kHz", 1e5),
         ("10ghz", 1e10),
         ("1MEGHz", 1e6),
+        ("2mA", 2e-3),
+        ("1A", 1e-18),
+        ("1fA", 1e-15),
         ("-2e-3us", -2e-9),
         ("1m", 1e-3),
     ] {

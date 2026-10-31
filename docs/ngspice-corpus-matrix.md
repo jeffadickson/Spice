@@ -67,7 +67,7 @@ The issue groups diagnostics, example paths and overlapping feature counts into
 triage checklists. First minimize a reproducer, then implement a qualified
 contract or document exclusion. The earlier `1ns` scalar gap is fixed; an OP
 source with inactive AC metadata
-now supplies a separate reproducible importer gap (draft NGC-034).
+supplied NGC-034, now implemented and checked as a bounded source contract.
 
 ## Reports, history and failure handling
 
@@ -124,3 +124,6 @@ SPICE_CORPUS_NGSPICE and SPICE_CORPUS_TEST_ROOT (an existing build directory),
 then run dotnet test dotnet/Simulator.Benchmarks.Tests. Missing tool paths produce
 explicit skipped oracle tests, rather than passing cases. Raw owned fixtures
 stay under the configured build directory. See CorpusNumericalIntegration.
+
+Bounded DC/AC metadata, title and atto numeric conventions are described in
+[source metadata](ngspice-source-metadata.md).

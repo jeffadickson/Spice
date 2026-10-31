@@ -25,7 +25,9 @@ internal static class CorpusPolicy
             if(feature is not null)features.Add(feature);
             if(s.Contains('{')||s.Contains('}'))features.Add("parameter_expressions");
         }
-        var analyses=Regex.Matches(text,@"(?im)^\s*\.(op|ac|tran|dc|noise|pz|tf|sens|disto)\b")
+        // The mandatory title is metadata even if it resembles a directive.
+        var body=string.Join('\n',text.Split('\n').Skip(1));
+        var analyses=Regex.Matches(body,@"(?im)^\s*\.(op|ac|tran|dc|noise|pz|tf|sens|disto)\b")
             .Select(m=>m.Groups[1].Value.ToLowerInvariant()).Distinct().Count();
         if(analyses>1)features.Add("multiple_declared_analyses");
         return features.ToArray();
