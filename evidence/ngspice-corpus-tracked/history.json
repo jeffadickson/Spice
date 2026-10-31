@@ -12,5 +12,19 @@
     "total": 910,
     "passed": 0,
     "finished_utc": "2026-10-30T23:52:30.3212417\u002B00:00"
+  },
+  {
+    "run_id": "20261031T004805Z-329b83c2",
+    "inventory": "87175b2c0fa305751b94d7ad45c1589dbea01dc9558d6ffcd666246e131760c7",
+    "total": 910,
+    "passed": 0,
+    "finished_utc": "2026-10-31T00:50:11.7899931\u002B00:00"
+  },
+  {
+    "run_id": "20261031T005353Z-b65c40ac",
+    "inventory": "9d8dc8e10d56c04fbaaf9c2837fe6becb761169f00c7ce491299528bc3e3fad5",
+    "total": 910,
+    "passed": 1,
+    "finished_utc": "2026-10-31T00:55:33.4874400\u002B00:00"
   }
 ]
