@@ -79,7 +79,8 @@ public sealed class BoundaryTests
         var oversized=DeckParser.Parse(new string('t',1_048_577));
         Assert.Equal("resource_rejected",oversized.Status);
         Assert.Contains("1,048,576",Assert.Single(oversized.Diagnostics).Message);
-        var many=DeckParser.Parse("Title\n"+new string('\n',100_000));
+        Assert.Equal("accepted_structure",DeckParser.Parse("Title\n"+new string('\n',100_000)).Status);
+        var many=DeckParser.Parse("Title\n"+string.Concat(Enumerable.Repeat("R1 1 0 1\n",15_000)));
         Assert.Equal("resource_rejected",many.Status);
         Assert.Contains("100,000",Assert.Single(many.Diagnostics).Message);
     }
@@ -128,3 +129,4 @@ public sealed class BoundaryTests
             && result.Statements.All(s=>s.Range.Start>=0 && s.Range.Start+s.Range.Length<=text.Length);
     }
 }
+

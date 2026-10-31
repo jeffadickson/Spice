@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using Antlr4.Runtime.Atn;
+using Antlr4.Runtime.Misc;
 using Simulator.Syntax.Generated;
 
 namespace Simulator.Syntax;
@@ -14,7 +16,7 @@ public sealed record SyntaxDiagnostic(string Code, string Message, int Line, int
 /// <summary>Syntax-only outcome, independent of any simulator capability.</summary>
 public sealed record DeckSyntax(string Status, string Title,
     System.Collections.Immutable.ImmutableArray<SyntaxStatement> Statements,
-    System.Collections.Immutable.ImmutableArray<SyntaxDiagnostic> Diagnostics);
+    System.Collections.Immutable.ImmutableArray<SyntaxDiagnostic> Diagnostics,string Format="deck");
 
 /// <summary>Generated-grammar frontend. It never executes cards or resolves external files.</summary>
 public static class DeckParser
@@ -26,21 +28,22 @@ public static class DeckParser
         ".print", ".plot", ".probe", ".save", ".meas", ".measure", ".options", ".option",
         ".temp", ".global", ".lib", ".endl", ".func", ".ic", ".nodeset", ".if", ".elseif",
         ".else", ".endif", ".csparam", ".title", ".backanno", ".four", ".tf", ".noise",
-        ".pz", ".sens", ".disto", ".width", ".savebias", ".loadbias"
+        ".pz", ".sens", ".disto", ".width", ".savebias", ".loadbias", ".sp", ".sparam", ".sndparam", ".sndprint", ".opt", ".endc"
     };
 
     /// <summary>Recognizes a complete titled SPICE deck under the declared bounded grammar.</summary>
-    public static DeckSyntax Parse(string text)
+    public static DeckSyntax Parse(string text,ParserLimits? limits=null)
     {
         ArgumentNullException.ThrowIfNull(text);
-        if (text.Length > 1_048_576) return Resource("Input exceeds 1,048,576 UTF-16 characters");
+        limits??=ParserLimits.Default;
+        if (text.Length > limits.MaxInputCharacters) return Resource(FormattableString.Invariant($"Input exceeds {limits.MaxInputCharacters:N0} UTF-16 characters"));
         var errors = new List<SyntaxDiagnostic>();
         var positions = new PhysicalPositions(text);
         var lexer = new SpiceLexer(new AntlrInputStream(text.EndsWith('\n') || text.EndsWith('\r') ? text : text + "\n"));
         lexer.RemoveErrorListeners();
         var tokens = new CommonTokenStream(lexer);
         tokens.Fill();
-        if (tokens.Size > 100_000) return Resource("Input exceeds 100,000 tokens including trivia");
+        if (tokens.Size > limits.MaxTokens) return Resource(FormattableString.Invariant($"Input exceeds {limits.MaxTokens:N0} tokens including trivia"));
         // Inspect generated tokens, never raw characters: braces in strings,
         // titles and control commands must not affect the nesting guard.
         var depth = 0;
@@ -49,6 +52,9 @@ public static class DeckParser
         foreach (var token in tokens.GetTokens())
         {
             if(token.Channel!=TokenConstants.DefaultChannel)continue;
+            // Group limits are per logical record. Legacy model-card outer
+            // separators need not balance; continuation newlines are hidden.
+            if(token.Type==SpiceLexer.NL)depth=0;
             unary=token.Type is SpiceLexer.PLUS or SpiceLexer.MINUS or SpiceLexer.BANG?unary+1:0;
             if(unary>128)return Resource("Unary recursion exceeds 128 operators");
             if(token.Type==SpiceLexer.SUBCKT && ++hierarchy>128)return Resource("Subcircuit recursion exceeds 128 blocks");
@@ -59,12 +65,17 @@ public static class DeckParser
             }
             else if (token.Type is SpiceLexer.RPAREN or SpiceLexer.RBRACE or SpiceLexer.RBRACKET) depth=Math.Max(0,depth-1);
         }
-        var parser = new SpiceParser(tokens);
-        parser.RemoveErrorListeners();
-        parser.AddErrorListener(new DiagnosticListener(errors,positions));
-        parser.AddParseListener(new RuleDepthGuard());
+        var parser = Recognizer(limits.UseSllFirst);
         SpiceParser.DeckContext tree;
         try { tree=parser.deck(); }
+        catch(Exception e) when(limits.UseSllFirst && e is ParseCanceledException or SyntaxDepthException)
+        {
+            // ANTLR's standard two-stage strategy: SLL never recovers partial
+            // input. A failed attempt is discarded; LL owns final diagnostics.
+            errors.Clear();tokens.Seek(0);parser=Recognizer(false);
+            try { tree=parser.deck(); }
+            catch(SyntaxDepthException) { return Resource("Generated parser rule depth exceeds 512"); }
+        }
         catch(SyntaxDepthException) { return Resource("Generated parser rule depth exceeds 512"); }
         var statements = ImmutableArray.CreateBuilder<SyntaxStatement>();
         var pending = new Stack<IParseTree>();
@@ -93,11 +104,33 @@ public static class DeckParser
                     if(errors.Count<32) errors.Add(new("grammar_gap",$"Unspecified device family {card.Start.Text}",line,column));
                 }
             }
+            if(item is SpiceParser.ScriptLineContext scriptLine && scriptLine.COMMAND_LINE() is { } command)
+            {
+                var token=command.Symbol;
+                var start=Math.Clamp(token.StartIndex,0,text.Length);
+                var end=Math.Clamp(token.StopIndex+1,start,text.Length);
+                var (line,column)=positions.At(start);
+                statements.Add(new("command",text[start..end],new(start,end-start,line,column)));
+            }
             for (var i = item.ChildCount-1; i >= 0; i--) pending.Push(item.GetChild(i));
         }
-        var title = tree.TITLE()?.GetText().TrimEnd('\r','\n') ?? "";
+        var title = (tree.TITLE()?.GetText() ?? tree.script()?.SCRIPT_TITLE()?.GetText() ?? "").TrimEnd('\r','\n');
         var status = parser.NumberOfSyntaxErrors > 0 ? "syntax_rejected" : gap ? "grammar_gap" : "accepted_structure";
-        return new(status,title,statements.ToImmutable(),errors.ToImmutableArray());
+        return new(status,title,statements.ToImmutable(),errors.ToImmutableArray(),tree.script() is null?"deck":"command_script");
+
+        SpiceParser Recognizer(bool sll)
+        {
+            var recognizer=new SpiceParser(tokens);
+            recognizer.RemoveErrorListeners();
+            recognizer.AddErrorListener(new DiagnosticListener(errors,positions));
+            recognizer.AddParseListener(new RuleDepthGuard());
+            if(sll)
+            {
+                recognizer.Interpreter.PredictionMode=PredictionMode.SLL;
+                recognizer.ErrorHandler=new BailErrorStrategy();
+            }
+            return recognizer;
+        }
     }
 
     private static DeckSyntax Resource(string reason) => new("resource_rejected","",[],[new("resource_limit",reason,0,0)]);
@@ -155,3 +188,4 @@ public static class DeckParser
         }
     }
 }
+

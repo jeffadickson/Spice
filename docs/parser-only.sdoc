@@ -2,6 +2,75 @@
 TITLE: Parser-only input qualification
 
 [REQUIREMENT]
+UID: PRS-QUAL-001
+STATUS: Draft
+TITLE: Evidence-gated valid sample acceptance
+STATEMENT: >>>
+The sample acceptance gate shall require an actual completed result for every declared inventory row and acceptance for every valid sample under an identified input profile. Non-deck documents and malformed syntax fixtures may have explicit source-evidenced dispositions pinned to input SHA-256 and expected outcome. Legacy-byte samples shall require acceptance in an explicit byte-preserving replay while retaining strict UTF-8 negative outcomes. Unexplained grammar gaps, timeouts, missing input and resource refusals shall remain outstanding.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-004
+
+[REQUIREMENT]
+UID: PRS-PREDICT-001
+STATUS: Draft
+TITLE: Full recognition fallback and differential evidence
+STATEMENT: >>>
+An optional ANTLR SLL first pass shall use bail-on-error recognition and require complete input consumption. A failed first pass shall be discarded and retried with full LL recognition and fresh diagnostics and recursion accounting. LL-only operation shall remain selectable for differential tests. Neither prediction strategy shall invoke elaboration or simulation.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-002
+
+[REQUIREMENT]
+UID: PRS-LEX-001
+STATUS: Draft
+TITLE: Context-specific lexical recognition
+STATEMENT: >>>
+The generated frontend shall recognize signed, hyphenated, numeric-prefixed, Unicode and bus node spellings, library paths, and continuation records across comments, while retaining distinct braced-expression tokenization and XSPICE vector delimiters. It shall preserve source spelling and reject malformed expression delimiters and missing operands.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-003
+
+[REQUIREMENT]
+UID: PRS-DEV-001
+STATUS: Draft
+TITLE: Additional device and numerical-model syntax families
+STATEMENT: >>>
+The frontend shall recognize OSDI N, CPL P, TXL Y and URC U instance structure, model references and parameter tails without loading their implementations. It shall recognize numerical-model continuation comments, negated CIDER flags and complex parameter pairs. It shall preserve PSpice U-card logic/delay structure and leading-apostrophe digital constants without altering ordinary closed quoted expressions on subsequent cards. It shall recognize three-terminal VDMOS syntax and legacy model outer parentheses as separators while keeping expression, call and connection delimiters strict. Model-dependent terminal counts and physical parameter validation shall remain elaboration concerns.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-002
+
+[REQUIREMENT]
+UID: PRS-SCRIPT-001
+STATUS: Draft
+TITLE: Explicit inert ngspice command-file mode
+STATEMENT: >>>
+An explicit ng_script title marker shall select the generated command-file grammar and retain command records without execution. This shall not relax block closure for ordinary titled decks. Command-file structural acceptance shall be identified separately from detailed command-language validation.
+<<<
+COMMENT: >>>
+Reference: ngspice src/frontend/inp.c and inpcom.c distinguish command files by the ng_script marker. Verification: CommonSyntaxTests and corpus InputKind metadata.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-002
+
+[REQUIREMENT]
+UID: PRS-PROFILE-001
+STATUS: Draft
+TITLE: Explicit reproducible input and resource profiles
+STATEMENT: >>>
+Sample campaigns shall expose validated byte, token, worker-duration, total-duration and concurrency limits and record actual settings. UTF-8 decoding shall remain strict by default; a separately declared legacy-byte profile may use lossless Latin-1 mapping and shall identify that interpretation per input rather than silently repairing invalid UTF-8. Interactive default allocation bounds shall remain unchanged when expanded campaign bounds are selected.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-004
+
+[REQUIREMENT]
 UID: PRS-001
 STATUS: Draft
 TITLE: Generated recognition and solver independence
@@ -61,3 +130,19 @@ The parser-only campaign shall record the actual corpus checkout revision separa
 RELATIONS:
 - TYPE: Parent
   VALUE: NGC-PARSE-004
+
+[REQUIREMENT]
+UID: PRS-LEX-002
+STATUS: Draft
+TITLE: Bounded separator recognition
+STATEMENT: >>>
+The generated lexer shall consume runs of blank and comment-only separators without repeatedly rescanning their suffix for continuations. A 100000-blank-line input within the character profile shall complete recognition. The token-budget test shall use actual token-producing records independently of separator coalescing.
+<<<
+COMMENT: >>>
+Implementation: SpiceLexer.g4 NL and CONTINUATION. Verification: BoundaryTests.Input_and_token_bounds_report_reasons. This finite regression is not a general worst-case complexity proof.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-004
+
+

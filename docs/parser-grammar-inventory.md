@@ -21,7 +21,7 @@ of the three implementations are in `parser-only-plan.md`.
 | S/W/K | switchCard, cswitch, coupling | Minimum terminals/control/model/coupling tail; value validity deferred |
 | B/T/O | behavior, lineCard | Minimum node/tail structure; full behavioral and transmission-line dialect validation deferred |
 | X and hierarchy | subcall, subcircuit | Subcircuit blocks nest and close; name matching/port binding deferred |
-| Models | model | Name, type and balanced parameter tail; arbitrary model families remain syntactically representable |
+| Models | model | Name/type and parameter tail; ngspice legacy outer parentheses are separators and may be one-sided; nested expressions remain balanced |
 | Analysis | tran, ac, dc, op | Separate analysis statements retained; no execution-support lookup |
 | Parameters | paramCard | One or more assignments, balanced expression values |
 | Includes | includeCard | Path syntax only; no filesystem access |
@@ -29,9 +29,19 @@ of the three implementations are in `parser-only-plan.md`.
 | Unknown directives/devices | gap classification | Never promoted to accepted syntax just because text was preserved |
 | Nutmeg | control + COMMAND lexer mode | Block closure and source retention only; commands do not execute or receive syntax validation |
 
-Full parameter validation, all ngspice dialect modes, expression languages,
-array/vector/node-name spellings, conditional/library context, full XSPICE
-card productions and preprocessor behavior remain concrete grammar backlog.
+The issue #11 extension adds XSPICE typed/scalar/differential/vector/inverted
+ports, numeric references, signed/Unicode/bus nodes, continuation comments,
+library paths, complex pairs, CIDER flags, OSDI/CPL/TXL/URC and PSpice U-card
+structure, three-terminal VDMOS, unbraced B/.func expressions, string
+concatenation and explicit inert `*ng_script` command files. PSpice's
+leading-apostrophe digital constants are scoped to U-card expression contexts;
+ordinary closed quoted expressions remain opaque. SLL bail recognition falls
+back to fresh full LL recognition. Separator coalescing avoids repeated
+continuation lookahead across long blank/comment runs.
+
+Full parameter validation, all ngspice dialect modes, embedded command and
+quoted expression languages, conditional/library semantics and preprocessor
+behavior remain concrete backlog beyond this inventory's structural gate.
 The parser must expose these limitations rather than hide them behind the
 generic parameter productions. In particular, `accepted_structure` is a useful
 first acceptance gate, not final syntax-conformance closure.
