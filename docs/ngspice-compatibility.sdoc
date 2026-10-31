@@ -2,6 +2,34 @@
 TITLE: ngspice Corpus Compatibility Track
 
 [REQUIREMENT]
+UID: NGC-CORPUS-004
+STATUS: Draft
+TITLE: Bounded transient endpoint representation alignment
+STATEMENT: >>>
+For finite nonnegative transient coordinates outside a named reference table, the corpus comparator shall align to the nearest endpoint only when the coordinate differs by at most four adjacent representable double values. Larger excursions shall fail rather than extrapolate. Interior points shall retain linear interpolation. AC matching shall retain its separately declared policy. The changed comparison policy shall identify a distinct burndown series.
+<<<
+COMMENT: >>>
+Implementation: CorpusPolicy.Reference and CorpusReport.ComparisonPolicy v2. Verification: CorpusContracts.TransientEndpointAllowsOnlyBoundedBinaryRepresentationDifference checks both endpoints, four/five ULP boundary, malformed coordinates and interior interpolation. Original tests/resistance/res_simple.cir exposes 6.000000000000001e-9 versus printed 6.000000e-9. Evidence: evidence/corpus-common-causes.json. This is finite axis alignment, not a global waveform error bound or permission for arbitrary extrapolation.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: NGC-033
+STATUS: Draft
+TITLE: Bounded scalar time and frequency decorations
+STATEMENT: >>>
+The shared bounded scalar parser shall accept a single optional case-insensitive s or Hz decoration following a finite number and an existing supported engineering scale. Decorations shall not alter the scale: MS is milli with s decoration and MEGHz is mega with Hz decoration. Unknown tails, expressions, malformed exponents and nonfinite scaled results shall remain explicit errors. This profile shall not claim dimensional unit checking or ngspice's general trailing-letter or expression grammar.
+<<<
+COMMENT: >>>
+Implementation: quantity::spice_scalar. Verification: tests/scalar_decorations.rs analytical cases, negative cases and 512 seeded Proptest cases (0x5350494345535546); full regression and corpus first-blocker comparison in evidence/corpus-common-causes.json. Reference: ngspice user manual, sections on scale factors and letters following a number, https://ngspice.sourceforge.io/docs/ngspice-manual.pdf . Standard Rust number parsing and existing scale factors are reused; no new dependency or expression parser.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: NGC-CORPUS-001
 STATUS: Draft
 TITLE: Shared bounded importer command

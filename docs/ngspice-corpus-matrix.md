@@ -99,3 +99,11 @@ SPICE parser or runtime dependency was added. Primary references:
 [GitHub CLI](https://cli.github.com/manual/gh_issue_create),
 [.NET enumeration](https://learn.microsoft.com/dotnet/api/system.io.enumerationoptions),
 [Stryker](https://stryker-mutator.io/docs/stryker-net/configuration/).
+
+Common-cause follow-up and next priorities: [failure priorities](corpus-common-failure-priorities.md).
+
+Comparison policy v2 aligns an out-of-table transient endpoint only within four
+adjacent representable doubles (ULPs), with finite nonnegative coordinates.
+Larger excursions fail; interior linear interpolation is unchanged. This handles
+6.000000000000001e-9 versus ngspice's printed 6.000000e-9 without an absolute-time
+epsilon. The policy change starts a separate burndown series.

@@ -1,0 +1,760 @@
+{
+  "current_report_sha256": "44210891fc1ecc84ebc5fdb56c2a1512b43e085ef7d518bafc60880b5407bcbe",
+  "original_report_sha256": "fff2ba8832822c5e534f941da377eb5617e6e6b997fbee98cf9440c5caf619cb",
+  "cohort": [
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "564",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 36,
+          "column": 9
+        },
+        "end": {
+          "line": 40,
+          "column": 207
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Conditional (false) mutation",
+      "replacement": "(false?3:        report.State==\"harness_failed\"?4:\n        report.State is \"cancelled\" or \"budget_exhausted\"?2:\n        report.Rows.Any(r=>r.Status is \"budget_exhausted\" or \"cancelled\")?2:\n        report.State==\"provenance_changed\"||report.Rows.Any(r=>r.Status is \"comparison_failed\" or \"simulator_failed\" or \"oracle_failed\" or \"timeout\" or \"input_or_harness_failed\" or \"provenance_changed\")?1:0)",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "567",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 36,
+          "column": 30
+        },
+        "end": {
+          "line": 36,
+          "column": 46
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "568",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 36,
+          "column": 50
+        },
+        "end": {
+          "line": 36,
+          "column": 80
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "570",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 37,
+          "column": 9
+        },
+        "end": {
+          "line": 40,
+          "column": 207
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Conditional (false) mutation",
+      "replacement": "(false?4:        report.State is \"cancelled\" or \"budget_exhausted\"?2:\n        report.Rows.Any(r=>r.Status is \"budget_exhausted\" or \"cancelled\")?2:\n        report.State==\"provenance_changed\"||report.Rows.Any(r=>r.Status is \"comparison_failed\" or \"simulator_failed\" or \"oracle_failed\" or \"timeout\" or \"input_or_harness_failed\" or \"provenance_changed\")?1:0)",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "572",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 37,
+          "column": 23
+        },
+        "end": {
+          "line": 37,
+          "column": 39
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "574",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 38,
+          "column": 9
+        },
+        "end": {
+          "line": 40,
+          "column": 207
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Conditional (false) mutation",
+      "replacement": "(false?2:        report.Rows.Any(r=>r.Status is \"budget_exhausted\" or \"cancelled\")?2:\n        report.State==\"provenance_changed\"||report.Rows.Any(r=>r.Status is \"comparison_failed\" or \"simulator_failed\" or \"oracle_failed\" or \"timeout\" or \"input_or_harness_failed\" or \"provenance_changed\")?1:0)",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "577",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 38,
+          "column": 25
+        },
+        "end": {
+          "line": 38,
+          "column": 36
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "578",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 38,
+          "column": 40
+        },
+        "end": {
+          "line": 38,
+          "column": 58
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "580",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 39,
+          "column": 9
+        },
+        "end": {
+          "line": 40,
+          "column": 207
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Conditional (false) mutation",
+      "replacement": "(false?2:        report.State==\"provenance_changed\"||report.Rows.Any(r=>r.Status is \"comparison_failed\" or \"simulator_failed\" or \"oracle_failed\" or \"timeout\" or \"input_or_harness_failed\" or \"provenance_changed\")?1:0)",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "584",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 39,
+          "column": 40
+        },
+        "end": {
+          "line": 39,
+          "column": 58
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "585",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 39,
+          "column": 62
+        },
+        "end": {
+          "line": 39,
+          "column": 73
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "586",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 40,
+          "column": 9
+        },
+        "end": {
+          "line": 40,
+          "column": 207
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Conditional (true) mutation",
+      "replacement": "(true?1:0)",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "596",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 40,
+          "column": 76
+        },
+        "end": {
+          "line": 40,
+          "column": 136
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Logical mutation",
+      "replacement": "\"comparison_failed\" or \"simulator_failed\" and \"oracle_failed\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "597",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 40,
+          "column": 76
+        },
+        "end": {
+          "line": 40,
+          "column": 117
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Logical mutation",
+      "replacement": "\"comparison_failed\" and \"simulator_failed\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "598",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 40,
+          "column": 76
+        },
+        "end": {
+          "line": 40,
+          "column": 95
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "599",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 40,
+          "column": 99
+        },
+        "end": {
+          "line": 40,
+          "column": 117
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "600",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 40,
+          "column": 121
+        },
+        "end": {
+          "line": 40,
+          "column": 136
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "602",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 40,
+          "column": 153
+        },
+        "end": {
+          "line": 40,
+          "column": 178
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "603",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 40,
+          "column": 182
+        },
+        "end": {
+          "line": 40,
+          "column": 202
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "644",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 61,
+          "column": 65
+        },
+        "end": {
+          "line": 61,
+          "column": 143
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "645",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 62,
+          "column": 12
+        },
+        "end": {
+          "line": 62,
+          "column": 85
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Logical mutation",
+      "replacement": "nodes.Length==0 && nodes.Any(n=>!Regex.IsMatch(n,@\"^[A-Za-z0-9_.$:-]+$\"))",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "648",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 62,
+          "column": 31
+        },
+        "end": {
+          "line": 62,
+          "column": 40
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Linq method mutation (Any() to All())",
+      "replacement": "nodes.All",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "650",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 62,
+          "column": 61
+        },
+        "end": {
+          "line": 62,
+          "column": 83
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "651",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 63,
+          "column": 13
+        },
+        "end": {
+          "line": 63,
+          "column": 106
+        }
+      },
+      "original_status": "NoCoverage",
+      "mutator": "Statement mutation",
+      "replacement": ";",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "652",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 63,
+          "column": 44
+        },
+        "end": {
+          "line": 63,
+          "column": 104
+        }
+      },
+      "original_status": "NoCoverage",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Conditional equivalence only for valid imported decks: before the first substantive card no retained continuation has a valid predecessor. Reopen if accepted input profile changes.",
+      "id": "653",
+      "current_status": "Survived",
+      "location": {
+        "start": {
+          "line": 67,
+          "column": 33
+        },
+        "end": {
+          "line": 67,
+          "column": 38
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Boolean mutation",
+      "replacement": "true",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Conditional equivalence for circuit behavior: removing comment/blank physical lines preserves equations for accepted profile. Formatting preservation is not qualified; reopen if comment metadata matters.",
+      "id": "664",
+      "current_status": "Survived",
+      "location": {
+        "start": {
+          "line": 72,
+          "column": 61
+        },
+        "end": {
+          "line": 72,
+          "column": 77
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Statement mutation",
+      "replacement": ";",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "669",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 76,
+          "column": 44
+        },
+        "end": {
+          "line": 76,
+          "column": 48
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "670",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 77,
+          "column": 12
+        },
+        "end": {
+          "line": 77,
+          "column": 65
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Logical mutation",
+      "replacement": "kind==\"op\"||!Regex.IsMatch(text,@\"(?im)^\\s*\\.op\\s*$\")",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "671",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 77,
+          "column": 12
+        },
+        "end": {
+          "line": 77,
+          "column": 65
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Negate expression",
+      "replacement": "!(kind==\"op\"&&!Regex.IsMatch(text,@\"(?im)^\\s*\\.op\\s*$\"))",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "672",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 77,
+          "column": 12
+        },
+        "end": {
+          "line": 77,
+          "column": 22
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Equality mutation",
+      "replacement": "kind!=\"op\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "673",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 77,
+          "column": 18
+        },
+        "end": {
+          "line": 77,
+          "column": 22
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "674",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 77,
+          "column": 24
+        },
+        "end": {
+          "line": 77,
+          "column": 65
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "LogicalNotExpression to un-LogicalNotExpression mutation",
+      "replacement": "Regex.IsMatch(text,@\"(?im)^\\s*\\.op\\s*$\")",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "675",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 77,
+          "column": 44
+        },
+        "end": {
+          "line": 77,
+          "column": 64
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "676",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 77,
+          "column": 74
+        },
+        "end": {
+          "line": 77,
+          "column": 81
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "679",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 78,
+          "column": 51
+        },
+        "end": {
+          "line": 78,
+          "column": 80
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "Conditional (false) mutation",
+      "replacement": "(false?\"tran\":kind)",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "681",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 78,
+          "column": 57
+        },
+        "end": {
+          "line": 78,
+          "column": 68
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "682",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 78,
+          "column": 69
+        },
+        "end": {
+          "line": 78,
+          "column": 75
+        }
+      },
+      "original_status": "NoCoverage",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "disposition": "Caught by added contract tests in native Stryker replay",
+      "id": "683",
+      "current_status": "Killed",
+      "location": {
+        "start": {
+          "line": 79,
+          "column": 23
+        },
+        "end": {
+          "line": 79,
+          "column": 31
+        }
+      },
+      "original_status": "Survived",
+      "mutator": "String mutation",
+      "replacement": "\"\"",
+      "file": "CorpusPolicy.cs"
+    }
+  ],
+  "source_sha256": "4a9637c5e8f1c4c821a9d25a5155ee483a269f525f5849961cb5c57c904f87eb",
+  "scope": "Same CorpusPolicy source and mutate ranges; tests expanded from 19 to 44. Pre-review broader report has different scope and is not closed by this replay.",
+  "counts": {
+    "newly_killed": 37,
+    "original": 39,
+    "native_ignored": 1501,
+    "native_survived": 2,
+    "native_timeouts": 0,
+    "native_total_killed": 74,
+    "native_compile_error": 378,
+    "native_uncovered": 0,
+    "conditional_survivors": 2
+  }
+}

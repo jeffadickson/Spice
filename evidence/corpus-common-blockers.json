@@ -1,0 +1,724 @@
+{
+  "overlapping_feature_hints": [
+    {
+      "count": 607,
+      "hint": "control_blocks"
+    },
+    {
+      "count": 566,
+      "hint": "model_cards_present"
+    },
+    {
+      "count": 374,
+      "hint": "hierarchy"
+    },
+    {
+      "count": 324,
+      "hint": "xspice"
+    },
+    {
+      "count": 323,
+      "hint": "switch"
+    },
+    {
+      "count": 300,
+      "hint": "transmission_line"
+    },
+    {
+      "count": 288,
+      "hint": "bjt"
+    },
+    {
+      "count": 261,
+      "hint": "mosfet"
+    },
+    {
+      "count": 169,
+      "hint": "parameter_expressions"
+    },
+    {
+      "count": 74,
+      "hint": "analysis_dc"
+    },
+    {
+      "count": 60,
+      "hint": "behavioral_source"
+    },
+    {
+      "count": 29,
+      "hint": "multiple_declared_analyses"
+    },
+    {
+      "count": 15,
+      "hint": "measurements"
+    },
+    {
+      "count": 13,
+      "hint": "mutual_inductance"
+    },
+    {
+      "count": 9,
+      "hint": "analysis_pz"
+    },
+    {
+      "count": 5,
+      "hint": "jfet"
+    },
+    {
+      "count": 3,
+      "hint": "analysis_tf"
+    },
+    {
+      "count": 3,
+      "hint": "analysis_sens"
+    },
+    {
+      "count": 3,
+      "hint": "analysis_noise"
+    }
+  ],
+  "interpretation": "First reported blocker only; later blockers are masked. Hints overlap and are not isolated root causes.",
+  "baseline_run": "20261030T234800Z-d07887b8",
+  "total": 910,
+  "diagnostic_groups": [
+    {
+      "examples": [
+        "README_OSDI_howto",
+        "examples/Monte_Carlo/MC_2_circ.sp",
+        "examples/Monte_Carlo/MC_ring.sp"
+      ],
+      "diagnostic": "unsupported: bounded importer supports only diode .model cards",
+      "count": 324
+    },
+    {
+      "examples": [
+        "examples/IHPOpenSourcePDK/nmos_pmos_PSP103.sp",
+        "examples/Monte_Carlo/rand_numb_test.cir",
+        "examples/control_structs/s-param.cir"
+      ],
+      "diagnostic": "unsupported: line 1: unsupported element/directive",
+      "count": 107
+    },
+    {
+      "examples": [
+        "examples/Monte_Carlo/MonteCarlo.sp",
+        "examples/ddt/ddt-test1.cir",
+        "examples/ddt/ddt-test2.cir"
+      ],
+      "diagnostic": "invalid_input: line 1: expected id p n value",
+      "count": 57
+    },
+    {
+      "examples": [
+        "examples/digital/auto_bridge/adder_bidi3.cir",
+        "examples/digital/auto_bridge/adder_family.cir",
+        "examples/digital/auto_bridge/shared_line.cir"
+      ],
+      "diagnostic": "unsupported: unsupported bounded model kind",
+      "count": 49
+    },
+    {
+      "examples": [
+        "examples/IHPOpenSourcePDK/19-stage-ro.cir",
+        "examples/SkywaterOpenSourcePDK/skywater_inverter.net",
+        "examples/cider/bicmos/bicmpd.cir"
+      ],
+      "diagnostic": "unsupported: ngspice importer supports exactly one .tran step stop directive",
+      "count": 49
+    },
+    {
+      "examples": [
+        "examples/mos/nmos_out_BSIM330_plainwrite.sp",
+        "examples/mos/nmos_out_BSIM330_svg.sp",
+        "examples/mos/nmos_pmos_BSIM330.sp"
+      ],
+      "diagnostic": "invalid_input: stream did not contain valid UTF-8",
+      "count": 32
+    },
+    {
+      "examples": [
+        "examples/klu/Circuits/85/c1355/c1355.net",
+        "examples/klu/Circuits/85/c1355/c1355_ann.net",
+        "examples/klu/Circuits/85/c1908/c1908.net"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 1ps",
+      "count": 22
+    },
+    {
+      "examples": [
+        "examples/Monte_Carlo/MC_2_control.sp",
+        "examples/Monte_Carlo/MC_ring_ts.sp",
+        "examples/control_structs/repeat3.sp"
+      ],
+      "diagnostic": "invalid_input: unknown bounded diode model",
+      "count": 20
+    },
+    {
+      "examples": [
+        "examples/osdi/bsimbulk-local/netlist_mod_nmos.sp",
+        "examples/osdi/bsimbulk-local/netlist_mod_pmos.sp",
+        "examples/osdi/bsimbulk/netlist_mod_nmos.sp"
+      ],
+      "diagnostic": "unsupported: line 5: unsupported element/directive",
+      "count": 18
+    },
+    {
+      "examples": [
+        "examples/TransmissionLines/cpl2_2_line.sp",
+        "examples/TransmissionLines/cpl_ibm2.sp",
+        "examples/TransmissionLines/cpl_ibm3.sp"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar (0",
+      "count": 16
+    },
+    {
+      "examples": [
+        "examples/cider/bjt/ecp.cir",
+        "examples/cider/cider-gnuplot/passq.cir",
+        "examples/cider/cider-gnuplot/passq1.cir"
+      ],
+      "diagnostic": "invalid_input: ngspice continuation is empty",
+      "count": 12
+    },
+    {
+      "examples": [
+        "examples/control_structs/new-check-3.sp",
+        "examples/control_structs/new-check-4.sp",
+        "paranoia_parallel/examples/control_structs/new-check-3.sp"
+      ],
+      "diagnostic": "unsupported: line 2: unsupported element/directive",
+      "count": 11
+    },
+    {
+      "examples": [
+        "examples/xspice/original-examples/digital_models1.deck",
+        "examples/xspice/original-examples/digital_models2.deck",
+        "examples/xspice/original-examples/digital_models3.deck"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar .01s",
+      "count": 10
+    },
+    {
+      "examples": [
+        "examples/osdi/hicuml0/hic0_gum.sp",
+        "examples/osdi/hicuml0/hic0_out.sp",
+        "examples/p-to-n-examples/op-test-adi.cir"
+      ],
+      "diagnostic": "unsupported: line 4: unsupported element/directive",
+      "count": 10
+    },
+    {
+      "examples": [
+        "examples/cider/diode/pindiode.cir",
+        "examples/digital/compare/adder_bip.cir",
+        "examples/digital/digital_devices/74f524.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 1NS",
+      "count": 9
+    },
+    {
+      "examples": [
+        "examples/soa/diode-soa-sh.cir",
+        "examples/soa/diode-soa-simple.cir",
+        "examples/various/model-name-check.cir"
+      ],
+      "diagnostic": "unsupported: unsupported bounded diode model parameter",
+      "count": 9
+    },
+    {
+      "examples": [
+        "examples/xspice/see/ihp_inverter_set.net",
+        "examples/xspice/see/ihp_simple_sram_seegen.net",
+        "examples/xspice/see/ihp_simple_sram_seegen_ctrl.net"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 100ps",
+      "count": 8
+    },
+    {
+      "examples": [
+        "examples/cider/bjt/pz.cir",
+        "examples/cider/bjt/pz1.cir",
+        "tests/polezero/filt_bridge_t.cir"
+      ],
+      "diagnostic": "invalid_input: invalid bounded .print/.plot directive",
+      "count": 8
+    },
+    {
+      "examples": [
+        "examples/cider/mos/ringosc.cir",
+        "examples/cider/parallel/clkfeed.cir",
+        "examples/cider/parallel/ringosc.1u.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 0.1ns",
+      "count": 8
+    },
+    {
+      "examples": [
+        "examples/osdi/bsimbulk-local/bsimbulk_inverter.sp",
+        "examples/osdi/bsimbulk/bsimbulk_inverter.sp",
+        "examples/osdi/bsimbulk/bsimbulk_inverter_batch.sp"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 10ps",
+      "count": 7
+    },
+    {
+      "examples": [
+        "examples/IHPOpenSourcePDK/c7552_ann_IHP.net",
+        "examples/SkywaterOpenSourcePDK/c7552_ann_skywater.net",
+        "examples/klu/Circuits/85/c5315/c5315_ann.net"
+      ],
+      "diagnostic": "Deck exceeds 1 MiB importer budget",
+      "count": 7
+    },
+    {
+      "examples": [
+        "examples/cider/parallel/latch.cir",
+        "examples/digital/digital_devices/behav-283-1.cir",
+        "examples/digital/digital_devices/behav-283.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 0.01NS",
+      "count": 6
+    },
+    {
+      "examples": [
+        "examples/xspice/original-examples/analog_models1_transient.deck",
+        "examples/xspice/original-examples/analog_models2_transient.deck",
+        "examples/xspice/original-examples/analog_models3_transient.deck"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar .1s",
+      "count": 6
+    },
+    {
+      "examples": [
+        "examples/digital/compare/adder_mos.cir",
+        "examples/mos/adder_mos.cir",
+        "examples/utf-8/стекло/있어요/adder_mos3.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 6400NS",
+      "count": 5
+    },
+    {
+      "examples": [
+        "examples/cider/parallel/bicmpu.cir",
+        "examples/cider/serial/pullup.cir",
+        "examples/cider/surfmob/Tbicmpu1.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 0.5NS",
+      "count": 5
+    },
+    {
+      "examples": [
+        "examples/cider/parallel/cmosamp.cir",
+        "examples/cider/parallel/eclinv.cir",
+        "examples/cider/parallel/ecpal.cir"
+      ],
+      "diagnostic": "unsupported: unsupported bounded .options directive",
+      "count": 5
+    },
+    {
+      "examples": [
+        "examples/cider/bjt/meclgate.cir",
+        "examples/cider/mos/bootinv.cir",
+        "examples/cider/mos/nmosinv.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 0.2ns",
+      "count": 5
+    },
+    {
+      "examples": [
+        "tests/bsim3soidd/t4.cir",
+        "tests/bsim3soifd/t4.cir",
+        "tests/bsim3soipd/t4.cir"
+      ],
+      "diagnostic": "unsupported: line 6: unsupported element/directive",
+      "count": 4
+    },
+    {
+      "examples": [
+        "examples/Monte_Carlo/OpWien.sp",
+        "paranoia_parallel/examples/Monte_Carlo/OpWien.sp",
+        "paranoia_parallel/examples/Monte_Carlo/OpWien_s.sp"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 0.05MS",
+      "count": 3
+    },
+    {
+      "examples": [
+        "tests/bsim3soidd/RampVg2.cir",
+        "tests/bsim3soifd/RampVg2.cir",
+        "tests/bsim3soipd/RampVg2.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 1.0ns",
+      "count": 3
+    },
+    {
+      "examples": [
+        "examples/xspice/d_process/checks.cir",
+        "examples/xspice/d_process/prog-pipes.cir",
+        "examples/xspice/d_process/prog1-4.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar .01us",
+      "count": 3
+    },
+    {
+      "examples": [
+        "examples/various/i(xxx)_tests.cir",
+        "paranoia_parallel/examples/various/i(xxx)_tests.cir",
+        "tests/general/rc.cir"
+      ],
+      "diagnostic": "invalid_input: line 3: expected id p n value",
+      "count": 3
+    },
+    {
+      "examples": [
+        "examples/TransmissionLines/cpl_ibm1.sp",
+        "examples/TransmissionLines/cpl_ibm1a.sp",
+        "paranoia_parallel/examples/TransmissionLines/cpl_ibm1.sp"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar (-0.4",
+      "count": 3
+    },
+    {
+      "examples": [
+        "examples/cider/mos/charge.cir",
+        "examples/cider/serial/charge.cir",
+        "tests/general/rtlinv.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 2ns",
+      "count": 3
+    },
+    {
+      "examples": [
+        "examples/cider/diode/diode.cir",
+        "examples/cider/parallel/gmamp.cir",
+        "paranoia_parallel/examples/cider/diode.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 100kHz",
+      "count": 3
+    },
+    {
+      "examples": [
+        "paranoia_parallel/examples/digital/adder_behav.cir",
+        "paranoia_parallel/examples/digital/adder_cshunt.cir",
+        "paranoia_parallel/examples/digital/adder_mos.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 100NS",
+      "count": 3
+    },
+    {
+      "examples": [
+        "examples/control_structs/if-test-1.cir",
+        "paranoia_parallel/examples/control_structs/if-test-1.cir",
+        "tests/regression/sens/sens-dc-1.cir"
+      ],
+      "diagnostic": "unsupported: line 3: unsupported element/directive",
+      "count": 3
+    },
+    {
+      "examples": [
+        "examples/utf-8/стекло/있어요/adder_mos.cir",
+        "paranoia_parallel/examples/various/adder_mos.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 640NS",
+      "count": 2
+    },
+    {
+      "examples": [
+        "paranoia_parallel/examples/various/nmos_pmos_BSIM330.sp",
+        "paranoia_parallel/examples/various/nmos_pmos_plotting.sp"
+      ],
+      "diagnostic": "Unable to translate bytes [B5] at index 411 from specified code page to Unicode.",
+      "count": 2
+    },
+    {
+      "examples": [
+        "examples/inductive-systems/positive-definite-4.cir",
+        "paranoia_parallel/examples/inductive-systems/positive-definite-4.cir"
+      ],
+      "diagnostic": "invalid_input: invalid AC linear point count",
+      "count": 2
+    },
+    {
+      "examples": [
+        "examples/rf/sp/Tschebyschef-LP.cir",
+        "paranoia_parallel/examples/various/Tschebyschef-LP.cir"
+      ],
+      "diagnostic": "invalid_input: line 6: expected id p n value",
+      "count": 2
+    },
+    {
+      "examples": [
+        "examples/various/todo-temper-3.cir",
+        "paranoia_parallel/examples/various/todo-temper-3.cir"
+      ],
+      "diagnostic": "invalid_input: nested diode model parameters",
+      "count": 2
+    },
+    {
+      "examples": [
+        "examples/various/diode_ac_par.sp",
+        "paranoia_parallel/examples/various/diode_ac_par.sp"
+      ],
+      "diagnostic": "invalid_input: diode parameter requires name=value",
+      "count": 2
+    },
+    {
+      "examples": [
+        "examples/probe/cntrl-sources.cir",
+        "examples/probe/switches-manual-p92.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 2us",
+      "count": 2
+    },
+    {
+      "examples": [
+        "examples/various/RKM-C-1.cir",
+        "examples/various/RKM-R-1.cir"
+      ],
+      "diagnostic": "invalid_input: line 2: unsupported scalar 4K7",
+      "count": 2
+    },
+    {
+      "examples": [
+        "tests/filters/lowpass.cir",
+        "tests/resistance/res_partition.cir"
+      ],
+      "diagnostic": "Both CPU providers agree for selected ac; additional declared analyses are not compared by this one-analysis importer profile.",
+      "count": 2
+    },
+    {
+      "examples": [
+        "examples/xspice/original-examples/analog_models4_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models4_transient.deck"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar .01ms",
+      "count": 2
+    },
+    {
+      "examples": [
+        "examples/TransImpedanceAmp/output.net",
+        "paranoia_parallel/examples/TransImpedanceAmp/output.net"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 0.05ns",
+      "count": 2
+    },
+    {
+      "examples": [
+        "examples/p-to-n-examples/555-timer-2.cir",
+        "examples/probe/555-timer-2.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 100MS",
+      "count": 2
+    },
+    {
+      "examples": [
+        "examples/p-to-n-examples/op-test.cir"
+      ],
+      "diagnostic": "unsupported: nonzero diode series resistance/transport is unsupported",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/xspice/various/astate_pulse.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar (1",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/vbic/self-heat.sp"
+      ],
+      "diagnostic": "unsupported: line 9: unsupported element/directive",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/regression/sens/sens-dc-2.cir"
+      ],
+      "diagnostic": "unsupported: line 8: unsupported element/directive",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/probe/ac-test.cir"
+      ],
+      "diagnostic": "unsupported: line 7: unsupported element/directive",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/probe/Dual-NMOS-amp.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar {envtemp}",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/regression/misc/resume-1.cir"
+      ],
+      "diagnostic": "invalid_input: line 2: expected id p n value",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/regression/parser/xpressn-1.cir"
+      ],
+      "diagnostic": "invalid_input: line 1: unsupported scalar '1+2'",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/regression/parser/minus-minus.cir"
+      ],
+      "diagnostic": "invalid_input: line 1: unsupported scalar '2--3'",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/xspice/ghdl/mc.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar {Load}",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/regression/parser/xpressn-2.cir"
+      ],
+      "diagnostic": "invalid_input: line 1: unsupported scalar 'sin(1.0e-9)'",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/regression/model/special-names-1.cir"
+      ],
+      "diagnostic": "unsupported: line 10: unsupported element/directive",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/various/res-value-options.cir"
+      ],
+      "diagnostic": "invalid_input: line 1: unsupported scalar 2m5",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/regression/temper/temper-1.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 'temper+1000'",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/utf-8/стекло/ext-ascii-1.cir"
+      ],
+      "diagnostic": "Unable to translate bytes [E9] at index 641 from specified code page to Unicode.",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/xspice/see/CMOSComparator/Fig27_12_see.sp"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar {VCC/2-0.2}",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/cider/diode/diotran.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 0.001ns",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/regression/misc/log-functions-1.cir"
+      ],
+      "diagnostic": "invalid_input: line 2: unsupported scalar 'ln(2.7)'",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/soi/inv_tr.sp"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 600ps",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/utf-8/стекло/있어요/utf-8-inv_w.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 500NS",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/regression/temper/temper-2.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar '1e-12",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/general/mosmem.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 20ns",
+      "count": 1
+    },
+    {
+      "examples": [
+        "paranoia_parallel/examples/various/ro_17_4.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar .1ns",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/general/mosamp.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 0.1us",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/cider/serial/dbridge.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 0.5MS",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/general/schmitt.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 10ns",
+      "count": 1
+    },
+    {
+      "examples": [
+        "paranoia_parallel/examples/pton/555-timer-2.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 10MS",
+      "count": 1
+    },
+    {
+      "examples": [
+        "tests/general/rca3040.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar 10ghz",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/utf-8/стекло/ext-ascii-2.cir"
+      ],
+      "diagnostic": "Unable to translate bytes [E9] at index 14 from specified code page to Unicode.",
+      "count": 1
+    },
+    {
+      "examples": [
+        "examples/xspice/pwm-osc/fmcw-dosc.cir"
+      ],
+      "diagnostic": "invalid_input: unsupported scalar (-1",
+      "count": 1
+    }
+  ]
+}

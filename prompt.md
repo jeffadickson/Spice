@@ -1,3 +1,26 @@
+Latest bounded checkpoint: 427 Rust tests pass (one ignored), 75 managed tests pass;
+StrictDoc parses 280 IDs. Final Reference mutation scope: 46 killed, two conditional
+survivors, one liveness timeout; separate scope from the 74-killed policy replay.
+Final corpus policy v2: one node-voltage profile pass, two partial, 693 unsupported,
+203 import-rejected, 11 resource/encoding rejected; 909 remain. Issue #5 contains
+the updated priorities and new policy baseline. Current requirements stay Draft.
+
+Current corpus common-cause follow-up: read docs/corpus-common-failure-priorities.md,
+evidence/corpus-common-causes.json and evidence/corpus-common-mutation-replay.json.
+The focused policy replay catches 34/36 prior survivors and all three uncovered
+mutants; two survivors retain conditional equivalence assumptions, not proof.
+378 Stryker SafeMode compile errors remain unavailable evidence outside this
+selection. Rust scalar mutation replay catches two arithmetic mutants; ten
+constructor replacements are unviable. Prior broader mutation cohorts stay open.
+Bounded s/Hz scalar decorations (NGC-033) advance first diagnostics for 129 of
+910 tracked decks in the scalar-only run, exposing deeper blockers. The next
+transient endpoint fix (NGC-CORPUS-004) uses an explicit four-ULP bound and policy
+v2, with separate history series. Read the finalized run evidence for actual
+pass/failure counts rather than inferring original-deck support from imports.
+No new full soak, Linux execution, CI dispatch or source/main push is implied.
+Raw logs and upstream deck bodies remain local; default corpus invocations publish
+one results issue each. Preserve all earlier failure runs and policy histories.
+
 Current handoff: inspect the actual git status/history and
 `docs/five-area-completion-plan.md` before continuing. The five bounded feature
 checkpoints and their exact source/verification limits are in

@@ -30,7 +30,7 @@ internal sealed class CorpusReport
     public string CorpusRoot {get;set;}="";
     public string Inventory {get;set;}="";
     public string InventoryMode {get;set;}="tracked";
-    public string ComparisonPolicy {get;set;}="node-voltage-v1; max200; ac-axis-abs1e-12-rel5e-6; no-extrapolation";
+    public string ComparisonPolicy {get;set;}="node-voltage-v2; max200; ac-axis-abs1e-12-rel5e-6; transient-endpoint-4ulp; no-extrapolation";
     public Dictionary<string,string> UnclassifiedAssets {get;set;}=[];
     public string NgspiceVersion {get;set;}="";
     public string HelperMode {get;set;}="";

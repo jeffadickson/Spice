@@ -1,0 +1,1044 @@
+{
+  "source_hashes": {
+    "src/quantity.rs": "1523cbd0d79b159cf8883d34981936e734922729085ed530011bb224a3d95dfe",
+    "dotnet/Simulator.Benchmarks.Tests/CorpusContracts.cs": "403e0dd8acf22ec8a16a71a2f88ea32f4caf0671e2da68f689cfaf62146777e0",
+    "tests/scalar_decorations.rs": "15301f25fff32be9b9ff390201090c3fe34e2d5d2110a87a979a9e1e9666211f"
+  },
+  "priorities": "docs/corpus-common-failure-priorities.md",
+  "rust_mutations": {
+    "run": "20261031T004421Z-c732d920",
+    "summary": {
+      "status": "completed",
+      "requested_seconds": 480,
+      "elapsed_seconds": 217.3422875,
+      "shard": "0/1",
+      "rust_file": "src/quantity.rs",
+      "rust_test": "scalar_decorations",
+      "tool": "rust",
+      "rust_filter": "spice_scalar",
+      "workers": 1,
+      "owned_workers_reaped": 0,
+      "rust_selected_names": null,
+      "rust_selection_sha256": null,
+      "managed_input_hashes": {},
+      "cargo_mutants": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 12,
+        "killed": 2,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 10,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "2b6eaa71bc53cdf890837496fd7ac0dc5fb8765e5b8306c4abc43dfae5233259",
+        "log_sha256": "72b4badcebd6571e32302ecdd032617acd6cbcbdfe3769fe64474833d54093d5"
+      },
+      "stryker": {
+        "version": "5.0.0",
+        "status": "skipped_explicitly",
+        "exit_code": null,
+        "candidates": 0,
+        "killed": 0,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": null,
+        "log_sha256": null
+      }
+    },
+    "limitations": "Two arithmetic mutants caught; ten SimResult constructor mutations unviable. This generator does not cover every suffix-parser fault."
+  },
+  "limitations": [
+    "No fresh Linux execution. GNU regression and MSVC nightly coverage have separate compiler scopes.",
+    "No full SPICE/GPU/production qualification.",
+    "Historical pre-review mutation scopes remain open outside this exact replay.",
+    "Mutation compile errors are unavailable evidence and not kills."
+  ],
+  "managed_tests": {
+    "passed": 73,
+    "lines": "61/68",
+    "failed": 0,
+    "skipped": 0,
+    "log": "work/common-managed-tests-final.log",
+    "branches": "137/202",
+    "focused_coverage": "corpus-common-managed-coverage.json",
+    "scope": "44 CorpusContracts cases only; not comparable to earlier whole CLI coverage"
+  },
+  "documentation": {
+    "report": "engineering-docs.json",
+    "sphinx": "9.1.0 warnings-as-errors passed"
+  },
+  "source_baseline": "25518f3",
+  "requirements": {
+    "documents": 14,
+    "ids": 280,
+    "parents": 268,
+    "report": "common-requirements.json"
+  },
+  "managed_mutation_replay": "corpus-common-mutation-replay.json",
+  "rust_tests": {
+    "properties": {
+      "cases": 512,
+      "seed": "0x5350494345535546",
+      "negative": "Malformed tails, exponents, expressions and nonfinite/overflow rejected"
+    },
+    "passed": 427,
+    "failed": 0,
+    "red": {
+      "failed": 1,
+      "first_rejection": "unsupported scalar 1ps",
+      "passed": 1
+    },
+    "runner": "cargo test --locked",
+    "quantity_file_lines": "32/39",
+    "branches": null,
+    "log": "work/common-rust-tests.log",
+    "ignored": 1,
+    "coverage": "corpus-common-rust-coverage.json",
+    "clippy": "all targets -D warnings passed",
+    "release": "build passed",
+    "nextest": "Not installed in configured runtime; attempted command failed before tests, used cargo test fallback"
+  },
+  "scalar_corpus_run": {
+    "reason": "Newly imported res_simple.cir exposes one-ULP transient endpoint mismatch; both comparisons fail closed.",
+    "run_id": "20261031T004805Z-329b83c2",
+    "transitions": [
+      {
+        "after": "invalid_input: unsupported scalar 'ttime'",
+        "path": "examples/Monte_Carlo/OpWien.sp",
+        "before": "invalid_input: unsupported scalar 0.05MS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: bounded importer supports one one-value .temp directive",
+        "path": "examples/TransImpedanceAmp/output.net",
+        "before": "invalid_input: unsupported scalar 0.05ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: unsupported scalar 0.9pf",
+        "path": "examples/cider/bjt/meclgate.cir",
+        "before": "invalid_input: unsupported scalar 0.2ns",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/cider/diode/diode.cir",
+        "before": "invalid_input: unsupported scalar 100kHz",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/cider/diode/diotran.cir",
+        "before": "invalid_input: unsupported scalar 0.001ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/diode/pindiode.cir",
+        "before": "invalid_input: unsupported scalar 1NS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/mos/bootinv.cir",
+        "before": "invalid_input: unsupported scalar 0.2ns",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/mos/charge.cir",
+        "before": "invalid_input: unsupported scalar 2ns",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/mos/nmosinv.cir",
+        "before": "invalid_input: unsupported scalar 0.2ns",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/mos/ringosc.cir",
+        "before": "invalid_input: unsupported scalar 0.1ns",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: line 6: unsupported element/directive",
+        "path": "examples/cider/parallel/bicmpu.cir",
+        "before": "invalid_input: unsupported scalar 0.5NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/cider/parallel/clkfeed.cir",
+        "before": "invalid_input: unsupported scalar 0.1NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/cider/parallel/gmamp.cir",
+        "before": "invalid_input: unsupported scalar 100KHZ",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/cider/parallel/latch.cir",
+        "before": "invalid_input: unsupported scalar 0.01NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/cider/parallel/ringosc.1u.cir",
+        "before": "invalid_input: unsupported scalar 0.1NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/parallel/ringosc.2u.cir",
+        "before": "invalid_input: unsupported scalar 0.1NS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/serial/charge.cir",
+        "before": "invalid_input: unsupported scalar 2NS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/cider/serial/dbridge.cir",
+        "before": "invalid_input: unsupported scalar 0.5MS",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: unsupported scalar 0.9PF",
+        "path": "examples/cider/serial/meclgate.cir",
+        "before": "invalid_input: unsupported scalar 0.2NS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/serial/nmosinv.cir",
+        "before": "invalid_input: unsupported scalar 0.2NS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/serial/pullup.cir",
+        "before": "invalid_input: unsupported scalar 0.5NS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/serial/recovery.cir",
+        "before": "invalid_input: unsupported scalar 0.1NS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/surfmob/Tbicmpu1.cir",
+        "before": "invalid_input: unsupported scalar 0.5NS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/cider/surfmob/Tbicmpu1xy.cir",
+        "before": "invalid_input: unsupported scalar 0.5NS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/digital/compare/adder_bip.cir",
+        "before": "invalid_input: unsupported scalar 1NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/digital/compare/adder_mos.cir",
+        "before": "invalid_input: unsupported scalar 6400NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded model kind",
+        "path": "examples/digital/digital_devices/74f524.cir",
+        "before": "invalid_input: unsupported scalar 1ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded model kind",
+        "path": "examples/digital/digital_devices/behav-283-1.cir",
+        "before": "invalid_input: unsupported scalar 0.01ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded model kind",
+        "path": "examples/digital/digital_devices/behav-283.cir",
+        "before": "invalid_input: unsupported scalar 0.01ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "examples/digital/digital_devices/behav-568.cir",
+        "before": "invalid_input: unsupported scalar 0.1ns",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: unsupported bounded model kind",
+        "path": "examples/digital/digital_devices/behav-tristate-pulse.cir",
+        "before": "invalid_input: unsupported scalar 0.01ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded model kind",
+        "path": "examples/digital/digital_devices/behav-tristate.cir",
+        "before": "invalid_input: unsupported scalar 0.01ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/digital/digital_devices/ex283.cir",
+        "before": "invalid_input: unsupported scalar 0.01ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c1355/c1355.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c1355/c1355_ann.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c1908/c1908.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c1908/c1908_ann.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c2670/c2670.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c2670/c2670_ann.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c3540/c3540.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c3540/c3540_ann.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c432/c432.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c432/c432_ann.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c499/c499.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c499/c499_ann.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c5315/c5315.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c6288/c6288.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c7552/c7552.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c880/c880.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/klu/Circuits/85/c880/c880_ann.net",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: line 1: unsupported element/directive",
+        "path": "examples/measure/func_cap.sp",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/measure/inv-meas-tran-auto.sp",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/measure/inv-meas-tran.sp",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/mos/adder_mos.cir",
+        "before": "invalid_input: unsupported scalar 6400NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: line 1: unsupported element/directive",
+        "path": "examples/osdi/bsimbulk-local/bsimbulk_inverter.sp",
+        "before": "invalid_input: unsupported scalar 10ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: line 1: unsupported element/directive",
+        "path": "examples/osdi/bsimbulk/bsimbulk_inverter.sp",
+        "before": "invalid_input: unsupported scalar 10ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: line 1: unsupported element/directive",
+        "path": "examples/osdi/bsimbulk/bsimbulk_inverter_batch.sp",
+        "before": "invalid_input: unsupported scalar 10ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: line 1: unsupported element/directive",
+        "path": "examples/osdi/mixed-models/bsimbulk_inverter.sp",
+        "before": "invalid_input: unsupported scalar 10ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: line 1: unsupported element/directive",
+        "path": "examples/osdi/mixed-models/psp_inverter.sp",
+        "before": "invalid_input: unsupported scalar 10ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: line 1: unsupported element/directive",
+        "path": "examples/osdi/psp103/psp_inverter.sp",
+        "before": "invalid_input: unsupported scalar 10ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: unsupported scalar 1PF",
+        "path": "examples/p-to-n-examples/555-timer-2.cir",
+        "before": "invalid_input: unsupported scalar 100MS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: unsupported scalar 1PF",
+        "path": "examples/probe/555-timer-2.cir",
+        "before": "invalid_input: unsupported scalar 100MS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: line 9: expected id p n value",
+        "path": "examples/probe/cntrl-sources.cir",
+        "before": "invalid_input: unsupported scalar 2us",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/probe/switches-manual-p92.cir",
+        "before": "invalid_input: unsupported scalar 2us",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/snapshot/adder_mos_circ.cir",
+        "before": "invalid_input: unsupported scalar 1NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: line 1: unsupported element/directive",
+        "path": "examples/soi/inv_tr.sp",
+        "before": "invalid_input: unsupported scalar 600ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/utf-8/стекло/있어요/adder_mos.cir",
+        "before": "invalid_input: unsupported scalar 640NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/utf-8/стекло/있어요/adder_mos3.cir",
+        "before": "invalid_input: unsupported scalar 6400NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/utf-8/стекло/있어요/utf-8-inv.cir",
+        "before": "invalid_input: unsupported scalar 6400NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/utf-8/стекло/있어요/utf-8-inv_w.cir",
+        "before": "invalid_input: unsupported scalar 500NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded model kind",
+        "path": "examples/xspice/d_process/checks.cir",
+        "before": "invalid_input: unsupported scalar .01us",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded model kind",
+        "path": "examples/xspice/d_process/prog-pipes.cir",
+        "before": "invalid_input: unsupported scalar .01us",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded model kind",
+        "path": "examples/xspice/d_process/prog1-4.cir",
+        "before": "invalid_input: unsupported scalar .01us",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/original-examples/analog_models1_transient.deck",
+        "before": "invalid_input: unsupported scalar .1s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/original-examples/analog_models2_transient.deck",
+        "before": "invalid_input: unsupported scalar .1s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/original-examples/analog_models3_transient.deck",
+        "before": "invalid_input: unsupported scalar .1s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/original-examples/analog_models4_transient.deck",
+        "before": "invalid_input: unsupported scalar .01ms",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/original-examples/digital_models1.deck",
+        "before": "invalid_input: unsupported scalar .01s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/original-examples/digital_models2.deck",
+        "before": "invalid_input: unsupported scalar .01s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/original-examples/digital_models3.deck",
+        "before": "invalid_input: unsupported scalar .01s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/original-examples/digital_models4.deck",
+        "before": "invalid_input: unsupported scalar .01s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded model kind",
+        "path": "examples/xspice/original-examples/hybrid_models1_transient.deck",
+        "before": "invalid_input: unsupported scalar .01s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/xspice/see/ihp_inverter_set.net",
+        "before": "invalid_input: unsupported scalar 100ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/see/ihp_simple_sram_seegen.net",
+        "before": "invalid_input: unsupported scalar 100ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: unsupported scalar (0",
+        "path": "examples/xspice/see/ihp_simple_sram_seegen_ctrl.net",
+        "before": "invalid_input: unsupported scalar 100ps",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/see/ihp_simple_sram_seegen_subckt.net",
+        "before": "invalid_input: unsupported scalar 100ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/see/ihp_simple_sram_seegen_subckt_vary.net",
+        "before": "invalid_input: unsupported scalar 100ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/xspice/see/ihp_simple_sram_set.net",
+        "before": "invalid_input: unsupported scalar 100ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded .options directive",
+        "path": "examples/xspice/see/ihp_two_inverters_set.net",
+        "before": "invalid_input: unsupported scalar 100ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "examples/xspice/see/repeat_loop_seegen.net",
+        "before": "invalid_input: unsupported scalar 100ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: unsupported scalar 'ttime'",
+        "path": "paranoia_parallel/examples/Monte_Carlo/OpWien.sp",
+        "before": "invalid_input: unsupported scalar 0.05MS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: unsupported scalar 'ttime'",
+        "path": "paranoia_parallel/examples/Monte_Carlo/OpWien_s.sp",
+        "before": "invalid_input: unsupported scalar 0.05MS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: bounded importer supports one one-value .temp directive",
+        "path": "paranoia_parallel/examples/TransImpedanceAmp/output.net",
+        "before": "invalid_input: unsupported scalar 0.05ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/cider/diode.cir",
+        "before": "invalid_input: unsupported scalar 100kHz",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "paranoia_parallel/examples/cider/pullup.cir",
+        "before": "invalid_input: unsupported scalar 0.5NS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "paranoia_parallel/examples/cider/recovery.cir",
+        "before": "invalid_input: unsupported scalar 0.1NS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: line 1: unsupported element/directive",
+        "path": "paranoia_parallel/examples/digital/adder_behav.cir",
+        "before": "invalid_input: unsupported scalar 100NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/digital/adder_bip.cir",
+        "before": "invalid_input: unsupported scalar 1NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/digital/adder_cshunt.cir",
+        "before": "invalid_input: unsupported scalar 100NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/digital/adder_mos.cir",
+        "before": "invalid_input: unsupported scalar 100NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: ngspice continuation is empty",
+        "path": "paranoia_parallel/examples/digital_devices/behav-568.cir",
+        "before": "invalid_input: unsupported scalar 0.1ns",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: line 1: unsupported element/directive",
+        "path": "paranoia_parallel/examples/measure/func_cap.sp",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/measure/inv-meas-tran-auto.sp",
+        "before": "invalid_input: unsupported scalar 1ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/measure/inv-meas-tran.sp",
+        "before": "invalid_input: unsupported scalar 10ps",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: unsupported scalar 1PF",
+        "path": "paranoia_parallel/examples/pton/555-timer-2.cir",
+        "before": "invalid_input: unsupported scalar 10MS",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/various/adder_mos.cir",
+        "before": "invalid_input: unsupported scalar 640NS",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/various/ro_17_4.cir",
+        "before": "invalid_input: unsupported scalar .1ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/xspice/original-examples/analog_models1_transient.deck",
+        "before": "invalid_input: unsupported scalar .1s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/xspice/original-examples/analog_models2_transient.deck",
+        "before": "invalid_input: unsupported scalar .1s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/xspice/original-examples/analog_models3_transient.deck",
+        "before": "invalid_input: unsupported scalar .1s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/xspice/original-examples/analog_models4_transient.deck",
+        "before": "invalid_input: unsupported scalar .01ms",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/xspice/original-examples/digital_models1.deck",
+        "before": "invalid_input: unsupported scalar .01s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/xspice/original-examples/digital_models2.deck",
+        "before": "invalid_input: unsupported scalar .01s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/xspice/original-examples/digital_models3.deck",
+        "before": "invalid_input: unsupported scalar .01s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "paranoia_parallel/examples/xspice/original-examples/digital_models4.deck",
+        "before": "invalid_input: unsupported scalar .01s",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: unsupported bounded model kind",
+        "path": "paranoia_parallel/examples/xspice/original-examples/hybrid_models1_transient.deck",
+        "before": "invalid_input: unsupported scalar .01s",
+        "status": "unsupported"
+      },
+      {
+        "after": "invalid_input: line 2: expected id p n value",
+        "path": "tests/bsim3soidd/RampVg2.cir",
+        "before": "invalid_input: unsupported scalar 1.0ns",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: line 2: expected id p n value",
+        "path": "tests/bsim3soifd/RampVg2.cir",
+        "before": "invalid_input: unsupported scalar 1.0ns",
+        "status": "import_rejected"
+      },
+      {
+        "after": "invalid_input: line 2: expected id p n value",
+        "path": "tests/bsim3soipd/RampVg2.cir",
+        "before": "invalid_input: unsupported scalar 1.0ns",
+        "status": "import_rejected"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "tests/general/fourbitadder.cir",
+        "before": "invalid_input: unsupported scalar 1ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "tests/general/mosamp.cir",
+        "before": "invalid_input: unsupported scalar 0.1us",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "tests/general/mosmem.cir",
+        "before": "invalid_input: unsupported scalar 20ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: only one ngspice analysis directive is supported",
+        "path": "tests/general/rca3040.cir",
+        "before": "invalid_input: unsupported scalar 10ghz",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "tests/general/rtlinv.cir",
+        "before": "invalid_input: unsupported scalar 2ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "tests/general/schmitt.cir",
+        "before": "invalid_input: unsupported scalar 10ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: only one ngspice analysis directive is supported",
+        "path": "tests/resistance/res_array.cir",
+        "before": "invalid_input: unsupported scalar 1ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "lu: InvalidDataException: Comparison would extrapolate.; faer: InvalidDataException: Comparison would extrapolate.",
+        "path": "tests/resistance/res_simple.cir",
+        "before": "invalid_input: unsupported scalar 1ns",
+        "status": "comparison_failed"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "tests/transient/fourbitadder.cir",
+        "before": "invalid_input: unsupported scalar 1ns",
+        "status": "unsupported"
+      },
+      {
+        "after": "unsupported: bounded importer supports only diode .model cards",
+        "path": "visualc/ng_shared_xspice_v/examples/adder_mos.cir",
+        "before": "invalid_input: unsupported scalar 6400NS",
+        "status": "unsupported"
+      }
+    ],
+    "issue": "https://github.com/jeffadickson/Spice/issues/4",
+    "changed_first_diagnostics": 129,
+    "exit_code": 1,
+    "state": "completed_with_results"
+  },
+  "endpoint_regression": {
+    "green": "Full managed suite: 74 passed, zero failed/skipped; work/common-endpoint-tests.log",
+    "policy": "v2: finite nonnegative transient endpoints only, at most four adjacent representable doubles; larger excursions fail; interior interpolation unchanged",
+    "limitations": "Not general print-axis rounding coverage or a waveform error bound.",
+    "cause": "6.000000000000001e-9 versus ngspice printed 6.000000e-9",
+    "red": "1 failed before production fix; work/endpoint-red.log",
+    "requirements": "NGC-CORPUS-004",
+    "burndown": "New policy fingerprint must create a separate series"
+  },
+  "endpoint_source_hashes": {
+    "dotnet/Simulator.Benchmarks/CorpusModels.cs": "c77b259548f3af9cf00e4aaf870df0a8617743e0f8af952b49b56fc87beb2436",
+    "dotnet/Simulator.Benchmarks/CorpusPolicy.cs": "dcf62f76fd5a577d6b8c41e59d5e791b654bb1f936ea1e2fe7da9ff798bcaefe",
+    "dotnet/Simulator.Benchmarks.Tests/CorpusContracts.cs": "963d85e4a172767e8058a5c4cb7ad337bb929a52b007ba9d589c82283e34211c"
+  },
+  "final_corpus_run": {
+    "source_commit": "25518f3c8b2dea722594565d6ff20c0e0db9b406",
+    "corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+    "seconds": 99.9097239,
+    "state": "completed_with_results",
+    "history": "Different policy fingerprint from v1; new baseline, not a synthetic decrement in the old series",
+    "issue_state": "created",
+    "issue": "https://github.com/jeffadickson/Spice/issues/5",
+    "helper_mode": "native_aot",
+    "counts": {
+      "compared_pass": 1,
+      "resource_or_input_rejected": 11,
+      "unsupported": 693,
+      "import_rejected": 203,
+      "partial_comparison": 2
+    },
+    "corpus_dirty": true,
+    "profile_pass": "tests/resistance/res_simple.cir",
+    "limits": "Node-voltage profile pass; original I(V1) observation not compared. Two other decks remain partial.",
+    "issue_error": null,
+    "started": "2026-10-30T17:53:53.5777161-07:00",
+    "comparison_policy": "node-voltage-v2; max200; ac-axis-abs1e-12-rel5e-6; transient-endpoint-4ulp; no-extrapolation",
+    "source_dirty": true,
+    "finished": "2026-10-30T17:55:33.48744-07:00",
+    "inventory": "9d8dc8e10d56c04fbaaf9c2837fe6becb761169f00c7ce491299528bc3e3fad5",
+    "run": "20261031T005353Z-b65c40ac"
+  },
+  "final_managed_tests": {
+    "coverage": "corpus-common-axis-coverage.json",
+    "scope": "46 CorpusContracts cases only; other helpers/publisher/native/platform paths excluded",
+    "policy_lines": "70/77",
+    "failed": 0,
+    "skipped": 0,
+    "passed": 75,
+    "policy_branches": "155/218",
+    "log": "work/common-final-tests.log"
+  },
+  "mutation_tooling_blocker": {
+    "effect": "SafeMode rolls back 378 generated mutations, including outside this selection; not individually proven invalid and not killed",
+    "diagnostic": "CS0165: observed is unassigned in instrumented CorpusRunner",
+    "status": "Open",
+    "precise_trigger": "Unidentified by tool; exact mutation still to isolate"
+  },
+  "chart_attachment": "https://github.com/jeffadickson/Spice/issues/5#issuecomment-6536833542",
+  "chart_visual_check": "Rendered 1000x400 PNG inspected; v2 baseline has 909 remaining; numeric issue/report supplies exact count. No synthetic cross-policy trend.",
+  "endpoint_mutations": {
+    "tool": "Stryker.NET 5.0.0",
+    "initial_run": {
+      "cause": "One-row AC tests masked wrong-nearest and invalid-axis guard mutations",
+      "raw": "work/corpus-mutations-b8d468e052ef47a6b7ad152ec6e68993/endpoint-stryker/reports/mutation-report.json",
+      "timeout": 1,
+      "killed": 36,
+      "survived": 12
+    },
+    "scope": "CorpusPolicy.Reference only; 46 CorpusContracts cases",
+    "report_sha256": "1b47f1b1cfc475f6331d5c21e4de845aa678a292a29f72f289727f34fe200e6f",
+    "counts": {
+      "Survived": 2,
+      "Timeout": 1,
+      "Ignored": 1554,
+      "CompileError": 378,
+      "Killed": 46
+    },
+    "score_note": "Tool score includes timed-out mutants as detected. This evidence reports the actual categories; timeouts are not killed.",
+    "total_generated": 1981,
+    "remaining": [
+      {
+        "id": "622",
+        "location": {
+          "start": {
+            "line": 53,
+            "column": 29
+          },
+          "end": {
+            "line": 53,
+            "column": 32
+          }
+        },
+        "mutator": "PostIncrementExpression to PostDecrementExpression mutation",
+        "disposition": "Open liveness mutant i--: framework timeout, not a test kill.",
+        "replacement": "i--",
+        "status": "Timeout"
+      },
+      {
+        "id": "627",
+        "location": {
+          "start": {
+            "line": 54,
+            "column": 16
+          },
+          "end": {
+            "line": 54,
+            "column": 50
+          }
+        },
+        "mutator": "Equality mutation",
+        "disposition": "Conditional numerical equivalence for an exact endpoint: choosing <= or >= returns the same Point values that Tables.At returns. Reference identity is not a comparator contract. Not a formal proof; reopen if contract changes.",
+        "replacement": "coordinate<=reference[0].Coordinate",
+        "status": "Survived"
+      },
+      {
+        "id": "633",
+        "location": {
+          "start": {
+            "line": 55,
+            "column": 16
+          },
+          "end": {
+            "line": 55,
+            "column": 51
+          }
+        },
+        "mutator": "Equality mutation",
+        "disposition": "Conditional numerical equivalence for an exact endpoint: choosing <= or >= returns the same Point values that Tables.At returns. Reference identity is not a comparator contract. Not a formal proof; reopen if contract changes.",
+        "replacement": "coordinate>=reference[^1].Coordinate",
+        "status": "Survived"
+      }
+    ],
+    "raw": "work/corpus-mutations-b8d468e052ef47a6b7ad152ec6e68993/endpoint-final-stryker/reports/mutation-report.json"
+  },
+  "review": "corpus-common-review.md",
+  "commands": [
+    "cargo test --locked",
+    "cargo clippy --locked --all-targets -- -D warnings",
+    "cargo build --locked --release",
+    "dotnet test dotnet/Simulator.Benchmarks.Tests --no-restore",
+    "FrameworkMutations.cs --tool rust --minutes 8 --workers 1 --rust-file src/quantity.rs --rust-test scalar_decorations --rust-filter spice_scalar",
+    "dotnet-stryker --config-file endpoint-stryker.json --output <isolated snapshot>/endpoint-final-stryker",
+    "Run-CorpusComparison.ps1 -CorpusRoot <existing tracked ngspice checkout> -NgspicePath <existing ngspice executable> -Output evidence/ngspice-corpus-tracked -BudgetSeconds 1800 -SkipEngineBuild",
+    "ValidateRequirements.cs --python <StrictDoc Python> --report evidence/common-requirements.json",
+    "EngineeringDocs.cs --python .tools/sphinx/Scripts/python.exe"
+  ],
+  "historical_runner_label_correction": "Corrected corpus-matrix-verification.json runner label to cargo test based on preserved corpus-rust-final.log; no historical count changes.",
+  "production_hash_check": "All final corpus src/* and dotnet/Simulator.Benchmarks/* hashes rechecked against current files after verification."
+}

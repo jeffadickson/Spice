@@ -42,6 +42,18 @@ internal static class CorpusPolicy
     internal static Point Reference(Point[] reference,double coordinate,string kind)
     {
         Tables.Validate(reference);
+        if(kind=="transient")
+        {
+            if(!double.IsFinite(coordinate)||coordinate<0)
+                throw new InvalidDataException("Transient coordinate must be finite and nonnegative.");
+            // Align only endpoint representation noise, not missing waveform
+            // data. No absolute-time epsilon: four representable doubles is
+            // still a strict bound at nanosecond and subnormal time scales.
+            var lower=reference[0].Coordinate;var upper=reference[^1].Coordinate;
+            for(var i=0;i<4;i++){lower=Math.BitDecrement(lower);upper=Math.BitIncrement(upper);}
+            if(coordinate<reference[0].Coordinate&&coordinate>=lower)return reference[0] with {Coordinate=coordinate};
+            if(coordinate>reference[^1].Coordinate&&coordinate<=upper)return reference[^1] with {Coordinate=coordinate};
+        }
         if(kind!="ac")return Tables.At(reference,coordinate,kind=="transient");
         if(!double.IsFinite(coordinate)||coordinate<=0)throw new InvalidDataException("AC comparison needs a positive finite frequency");
         // ngspice print axes round frequency. Match a nearby recorded point,

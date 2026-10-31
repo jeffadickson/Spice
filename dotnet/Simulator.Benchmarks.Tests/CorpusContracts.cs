@@ -4,6 +4,110 @@ using FsCheck.Xunit;
 
 public sealed class CorpusContracts
 {
+    [Fact]
+    public void AxisValidationAndNearestAcPointCannotBeMaskedByDistantSamples()
+    {
+        Point[] rows=[new(1,10,1),new(100,20,2)];
+        Assert.Equal(new Point(100,20,2),CorpusPolicy.Reference(rows,100,"ac"));
+        Assert.Equal(new Point(1,10,1),CorpusPolicy.Reference(rows,1,"ac"));
+        foreach(var coordinate in new[]{0d,-1e-15,double.NaN,double.PositiveInfinity})
+        {
+            var error=Assert.Throws<InvalidDataException>(()=>CorpusPolicy.Reference([new(1e-15,1,0)],coordinate,"ac"));
+            Assert.False(string.IsNullOrWhiteSpace(error.Message));
+        }
+        var missing=Assert.Throws<InvalidDataException>(()=>CorpusPolicy.Reference(rows,50,"ac"));
+        Assert.False(string.IsNullOrWhiteSpace(missing.Message));
+        Assert.Equal(new Point(0,1,0),CorpusPolicy.Reference([new(0,1,0),new(1,2,0)],0,"transient"));
+        var invalid=Assert.Throws<InvalidDataException>(()=>CorpusPolicy.Reference(rows,-1,"transient"));
+        Assert.False(string.IsNullOrWhiteSpace(invalid.Message));
+        // Fixed binary-representable boundary for the existing AC absolute
+        // plus relative print-axis contract; the next double is outside it.
+        const double coordinateAtBound=3.125e-14;
+        const double frequencyAtBound=1.0312501562500002e-12;
+        Assert.Equal(coordinateAtBound,CorpusPolicy.Reference([new(frequencyAtBound,1,0)],coordinateAtBound,"ac").Coordinate);
+        Assert.Throws<InvalidDataException>(()=>CorpusPolicy.Reference([new(Math.BitIncrement(frequencyAtBound),1,0)],coordinateAtBound,"ac"));
+    }
+    [Fact]
+    public void TransientEndpointAllowsOnlyBoundedBinaryRepresentationDifference()
+    {
+        var endpoint=6e-9;
+        var coordinate=Math.BitIncrement(endpoint);
+        Assert.Equal(new Point(coordinate,1,0),CorpusPolicy.Reference([new(0,1,0),new(endpoint,1,0)],coordinate,"transient"));
+        Assert.Throws<InvalidDataException>(()=>CorpusPolicy.Reference([new(0,1,0),new(endpoint,1,0)],endpoint+1e-20,"transient"));
+        Assert.Throws<InvalidDataException>(()=>CorpusPolicy.Reference([new(0,1,0),new(endpoint,1,0)],double.NaN,"transient"));
+        for(var i=0;i<4;i++)endpoint=Math.BitIncrement(endpoint);
+        Assert.Equal(endpoint,CorpusPolicy.Reference([new(0,1,0),new(6e-9,1,0)],endpoint,"transient").Coordinate);
+        Assert.Throws<InvalidDataException>(()=>CorpusPolicy.Reference([new(0,1,0),new(6e-9,1,0)],Math.BitIncrement(endpoint),"transient"));
+        var first=1e-9;var before=first;
+        for(var i=0;i<4;i++)before=Math.BitDecrement(before);
+        Assert.Equal(before,CorpusPolicy.Reference([new(first,1,0),new(2e-9,2,0)],before,"transient").Coordinate);
+        Assert.Throws<InvalidDataException>(()=>CorpusPolicy.Reference([new(first,1,0),new(2e-9,2,0)],Math.BitDecrement(before),"transient"));
+        Assert.Throws<InvalidDataException>(()=>CorpusPolicy.Reference([new(0,1,0),new(6e-9,1,0)],-double.Epsilon,"transient"));
+        Assert.Equal(1.5,CorpusPolicy.Reference([new(1,1,0),new(2,2,0)],1.5,"transient").Real);
+    }
+    // Assert the documented outcome contract, including collisions between
+    // publication, harness, unfinished work and numerical failures.
+    [Theory]
+    [InlineData("completed_with_results","offline","compared_pass",0)]
+    [InlineData("completed_with_results","created","unsupported",0)]
+    [InlineData("completed_with_results","created","import_rejected",0)]
+    [InlineData("completed_with_results","created","partial_comparison",0)]
+    [InlineData("completed_with_results","created","comparison_failed",1)]
+    [InlineData("completed_with_results","created","simulator_failed",1)]
+    [InlineData("completed_with_results","created","oracle_failed",1)]
+    [InlineData("completed_with_results","created","input_or_harness_failed",1)]
+    [InlineData("completed_with_results","created","provenance_changed",1)]
+    [InlineData("completed_with_results","created","budget_exhausted",2)]
+    [InlineData("completed_with_results","created","cancelled",2)]
+    [InlineData("cancelled","created","comparison_failed",2)]
+    [InlineData("budget_exhausted","created","compared_pass",2)]
+    [InlineData("harness_failed","created","cancelled",4)]
+    [InlineData("harness_failed","publish_failed","cancelled",3)]
+    [InlineData("completed_with_results","created_with_publisher_error","compared_pass",3)]
+    public void ExitContractPreservesFailuresAndPriority(string state,string publisher,string row,int expected)
+    {
+        var report=new CorpusReport{State=state,IssueState=publisher};
+        report.Rows.Add(new CorpusRow("deck","hash","tests",[]){Status=row});
+        Assert.Equal(expected,CorpusPolicy.ExitCode(report));
+    }
+    [Theory]
+    [InlineData("op",false)]
+    [InlineData("op",true)]
+    [InlineData("ac",false)]
+    [InlineData("transient",false)]
+    public void ObservationDeckHasRequiredAnalysisAndTerminator(string kind,bool existingOp)
+    {
+        var original="title\nV1 out 0 1\nR1 out 0 1000\n"+(existingOp?".op\n":"")+".end";
+        var deck=CorpusPolicy.ObservedDeck(original,kind,["out","other"]);
+        Assert.EndsWith("\n.end\n",deck);
+        Assert.Equal(kind=="op"?1:0,deck.Split('\n').Count(line=>line==".op"));
+        var printKind=kind=="transient"?"tran":kind;
+        Assert.Contains($"\n.print {printKind} v(out)\n",deck);
+        Assert.Contains($"\n.print {printKind} v(other)\n",deck);
+        Assert.Contains("R1 out 0 1000\n",deck);
+    }
+    [Theory]
+    [InlineData("")]
+    [InlineData("out)\n.control")]
+    [InlineData("out space")]
+    public void ObservationIdentifiersCannotInjectStatements(string node)
+    {
+        var error=Assert.Throws<InvalidDataException>(()=>CorpusPolicy.ObservedDeck("title\n.end","op",[node]));
+        Assert.Contains("Node name",error.Message);
+    }
+    [Fact]
+    public void ObservationNeedsAtLeastOneSignal()
+    {
+        var error=Assert.Throws<InvalidDataException>(()=>CorpusPolicy.ObservedDeck("title\n.end","op",[]));
+        Assert.Contains("Node name",error.Message);
+    }
+    [Fact]
+    public void OneUnsafeSignalCannotHideAmongValidSignals()
+    {
+        Assert.Throws<InvalidDataException>(()=>CorpusPolicy.ObservedDeck("title\n.end","op",["out","out)\n.control"]));
+        var error=Assert.Throws<InvalidDataException>(()=>CorpusPolicy.ObservedDeck("title\n.control\n.endc\n.end","op",["out"]));
+        Assert.False(string.IsNullOrWhiteSpace(error.Message));
+    }
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

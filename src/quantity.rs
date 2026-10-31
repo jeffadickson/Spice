@@ -17,9 +17,17 @@ pub fn finite(value: f64, name: &str) -> SimResult<f64> {
     }
 }
 
-/// Small explicit SPICE scalar suffix profile, not a general dimensional unit grammar.
+/// Small explicit SPICE scalar suffix profile, not a dimensional unit grammar.
+/// Optional `s` and `Hz` decorations are case-insensitive and do not change
+/// the scale: `MS` remains milliseconds, while `MEGHz` uses mega.
 pub fn spice_scalar(text: &str) -> SimResult<f64> {
     let normalized = text.trim().to_ascii_lowercase();
+    // Permit only these named decorations, not arbitrary ngspice trailing
+    // letters or expressions. Rust's number parser still validates the mantissa.
+    let normalized = normalized
+        .strip_suffix("hz")
+        .or_else(|| normalized.strip_suffix('s'))
+        .unwrap_or(&normalized);
     if let Ok(value) = normalized.parse::<f64>() {
         return finite(value, "scalar");
     }

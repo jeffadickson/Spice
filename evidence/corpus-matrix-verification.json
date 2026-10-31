@@ -10,7 +10,7 @@
   "rust": {
     "log": "work/corpus-rust-final.log",
     "clippy": "all targets -D warnings passed",
-    "command": "cargo nextest run --locked",
+    "command": "cargo test --locked",
     "coverage": "corpus-matrix-rust-coverage.json",
     "passed": 424,
     "branches": null,
@@ -149,5 +149,6 @@
   },
   "mutation_triage": "corpus-matrix-mutation-triage.json",
   "chart_attachment": "https://github.com/jeffadickson/Spice/issues/3#issuecomment-6536039713",
-  "chart_visual_check": "Rendered 1000x400 PNG inspected: two actual points, flat 910 remaining; labels and axes readable."
+  "chart_visual_check": "Rendered 1000x400 PNG inspected: two actual points, flat 910 remaining; labels and axes readable.",
+  "runner_label_correction": "The preserved work/corpus-rust-final.log uses cargo test test-profile/unittest output. Prior nextest command label was incorrect; counts and source evidence unchanged. Corrected during common-cause follow-up."
 }
