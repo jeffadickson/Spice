@@ -1,76 +1,76 @@
 {
   "status": "passed",
-  "tests": 154,
+  "tests": 162,
   "failed": 0,
   "command": "dotnet test dotnet/Simulator.Syntax.Tests --no-restore --nologo --collect:\"XPlat Code Coverage\"",
   "source_sha256": {
     "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "20e1f2c051e77ed13df9ebf846fcc861c515c3a668f566d7a5941e3670b6c5fa",
     "dotnet/Simulator.Syntax/DeckSyntax.cs": "9ecf917c2d3e56ce7bc77b1dd94ca79d8e99be36ff35b89951b4ed67ea7c6cac",
-    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "18d4c65a77f78b0d794de3931f1d62a96d3fc8de5dbf3d0e71280bf3a7c0d59d",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "5ec0c310f5ce19d2cd430eebac776b6cd1a321ea28b92c0dec0250f564d53af3",
     "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba"
   },
   "coverage": {
-    "report_sha256": "1c5a1d29801059a3f615d1113c56a6c4768cb4b07aab5bd7c663d562e25c5f2b",
+    "report_sha256": "f03140e55b41cf053be5e27541e9ba321d5eac713b76f8f57704636b75ad858e",
     "including_generated": {
-      "branches_valid": 1265,
-      "lines_covered": 3891,
-      "lines_valid": 5600,
-      "branches_covered": 930
+      "lines_valid": 5700,
+      "lines_covered": 3970,
+      "branches_covered": 943,
+      "branches_valid": 1280
     },
     "handwritten_classes": [
       {
+        "line_rate": 1.0,
         "class": "Simulator.Syntax.SourceRange",
         "branch_rate": 1.0,
-        "file": "DeckSyntax.cs",
-        "line_rate": 1.0
+        "file": "DeckSyntax.cs"
       },
       {
+        "line_rate": 1.0,
         "class": "Simulator.Syntax.SyntaxStatement",
         "branch_rate": 1.0,
-        "file": "DeckSyntax.cs",
-        "line_rate": 1.0
+        "file": "DeckSyntax.cs"
       },
       {
+        "line_rate": 1.0,
         "class": "Simulator.Syntax.SyntaxDiagnostic",
         "branch_rate": 1.0,
-        "file": "DeckSyntax.cs",
-        "line_rate": 1.0
+        "file": "DeckSyntax.cs"
       },
       {
+        "line_rate": 1.0,
         "class": "Simulator.Syntax.DeckSyntax",
         "branch_rate": 1.0,
-        "file": "DeckSyntax.cs",
-        "line_rate": 1.0
+        "file": "DeckSyntax.cs"
       },
       {
+        "line_rate": 0.9895,
         "class": "Simulator.Syntax.DeckParser",
         "branch_rate": 0.9555,
-        "file": "DeckSyntax.cs",
-        "line_rate": 0.9895
+        "file": "DeckSyntax.cs"
       },
       {
+        "line_rate": 1.0,
         "class": "Simulator.Syntax.DeckParser/DiagnosticListener",
         "branch_rate": 0.5,
-        "file": "DeckSyntax.cs",
-        "line_rate": 1.0
+        "file": "DeckSyntax.cs"
       },
       {
+        "line_rate": 1.0,
         "class": "Simulator.Syntax.DeckParser/RuleDepthGuard",
         "branch_rate": 1.0,
-        "file": "DeckSyntax.cs",
-        "line_rate": 1.0
+        "file": "DeckSyntax.cs"
       },
       {
+        "line_rate": 1.0,
         "class": "Simulator.Syntax.DeckParser/PhysicalPositions",
         "branch_rate": 0.9166,
-        "file": "DeckSyntax.cs",
-        "line_rate": 1.0
+        "file": "DeckSyntax.cs"
       },
       {
+        "line_rate": 1.0,
         "class": "Simulator.Syntax.ParserLimits",
         "branch_rate": 1.0,
-        "file": "ParserLimits.cs",
-        "line_rate": 1.0
+        "file": "ParserLimits.cs"
       }
     ],
     "collector": "Coverlet 10.1.0"

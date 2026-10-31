@@ -20,8 +20,8 @@ switchCard: SWITCH_NAME fourNodes referenceName parameter*;
 cswitch: CSWITCH_NAME twoNodes referenceName referenceName parameter*;
 coupling: COUPLING_NAME identifier identifier parameter+;
 subcall: SUBCALL_NAME node parameter+;
-behavior: BEHAVIOR_START expression | BEHAVIOR_NAME twoNodes identifier EQUAL expression | BEHAVIOR_NAME twoNodes parameter+;
-function: FUNC_START expression;
+behavior: BEHAVIOR_START expression parameter* | BEHAVIOR_NAME twoNodes identifier EQUAL expression | BEHAVIOR_NAME twoNodes parameter+;
+function: FUNC_START EQUAL? expression;
 lineCard: LINE_NAME fourNodes parameter+;
 // Terminal count for OSDI and conductor dimension for CPL are model-dependent.
 // Parsing preserves their node sequences; elaboration checks model contracts.
@@ -59,7 +59,9 @@ extension: DIRECTIVE parameter*;
 // A preserved unimplemented device is a gap, never accepted_structure.
 unknownDevice: WORD parameter*;
 
-parameter: assignment | comparison | call | group | value | COMMA;
+parameter: assignment | arithmetic | comparison | call | group | value | COMMA;
+// Start arithmetic with an atom, keeping bare nested groups unambiguous.
+arithmetic: (call | value) (STAR | SLASH | PLUS | MINUS | POWER) expression;
 comparison: (call | value) (COMPARE | EQUAL | COMPLEX_OPEN | COMPLEX_CLOSE) (call | value);
 assignment: (referenceName | call) EQUAL (concatenation | value | group | call | expression);
 concatenation: (identifier | NUMBER | STRING | QUOTED | LBRACE expression RBRACE)

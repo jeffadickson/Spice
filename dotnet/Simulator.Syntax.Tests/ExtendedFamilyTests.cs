@@ -24,6 +24,11 @@ public sealed class ExtendedFamilyTests
     [InlineData("U1 LOGICEXP\n+ (2,1) DPWR DGND A B OUT IO_STD LOGIC: OUT={A=='1 & B!='0}")]
     [InlineData("U1\n* header comment\n+ LOGICEXP(2,\n+ 1) DPWR DGND A B OUT IO_STD LOGIC: OUT={A=='1 & B!='0}")]
     [InlineData("U1 in out 0 urc_model L={'1 + 2'}")]
+    [InlineData(".func f1(y)={beta*y+0.5*(alpha-beta)*(abs(y+Vt)-abs(y-Vt))}")]
+    [InlineData("B2 2 0 I=v(1) tc1=0.001")]
+    [InlineData("B3 3 0 V=v(1) tc1=0.001")]
+    [InlineData(".print tran @m1[Vbs], V(g)/10")]
+    [InlineData(".save @m1[Vbs], V(g)/10")]
     [InlineData("M1 d g s power\n.model power VDMOS")]
     [InlineData("R? 1 0 1k")]
     [InlineData("a1 (pint1 pint2) (mc1 0) primary")]
@@ -49,7 +54,10 @@ public sealed class ExtendedFamilyTests
     }
 
     [Theory]
+    [InlineData(".print tran v(g)/")]
     [InlineData("B1 1 0 V=1+")]
+    [InlineData("B1 1 0 V=v(1) tc1=")]
+    [InlineData(".func f(x)==x")]
     [InlineData(".func f(x) x+")]
     [InlineData("B1 1 0 V=(1+2")]
     public void Bare_expression_mode_does_not_accept_missing_operands_or_closers(string body)

@@ -28,7 +28,7 @@ UID: PRS-LEX-001
 STATUS: Draft
 TITLE: Context-specific lexical recognition
 STATEMENT: >>>
-The generated frontend shall recognize signed, hyphenated, numeric-prefixed, Unicode and bus node spellings, library paths, and continuation records across comments, while retaining distinct braced-expression tokenization and XSPICE vector delimiters. It shall preserve source spelling and reject malformed expression delimiters and missing operands.
+The generated frontend shall recognize signed, hyphenated, numeric-prefixed, Unicode and bus node spellings, library paths, and continuation records across comments, while retaining distinct braced-expression tokenization and XSPICE vector delimiters. It shall accept the optional equals delimiter in function definitions and preserve behavioral-source parameter assignments after an expression. It shall preserve source spelling and reject malformed expression delimiters and missing operands.
 <<<
 RELATIONS:
 - TYPE: Parent
