@@ -1,3 +1,8 @@
+Current ordered follow-up supersedes historical rollback/current descriptions below.
+The observation-preflight rollback fix was reverified against 41b7655: three
+selected native Stryker mutations killed, no CorpusRunner compile-error rollback.
+105 other generated CompileError outcomes remain distinct and unqualified.
+See evidence/rollback-current-verification.json and ordered-corpus-followup-plan.md.
 # Corpus and mutation common-cause priorities
 
 User objective: reduce surviving mutations and identify shared corpus blockers
@@ -58,3 +63,4 @@ Qualification depth remains a separate priority: the corpus profile compares nod
 voltages, not every original .print observable. For voltage-driven res_simple.cir,
 matching v(1)=1 V alone does not independently qualify its requested I(V1) or the
 resistor's conductance. Add named current oracles before claiming that coverage.
+

@@ -1,0 +1,144 @@
+{
+  "tool": "Stryker.NET 5.0.0",
+  "raw_report": "work/rollback-current-stryker/reports/mutation-report.json",
+  "raw_report_sha256": "95ad033819f80f4ab09fd1bcc037ebd9d09748b541008eb516d93f07e1d3c438",
+  "source_base": "41b7655",
+  "files": [
+    {
+      "categories": [
+        {
+          "status": "CompileError",
+          "count": 28
+        },
+        {
+          "status": "Ignored",
+          "count": 428
+        }
+      ],
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\dotnet\\Simulator.Benchmarks\\CorpusCommand.cs"
+    },
+    {
+      "categories": [
+        {
+          "status": "Ignored",
+          "count": 23
+        }
+      ],
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\dotnet\\Simulator.Benchmarks\\CorpusModels.cs"
+    },
+    {
+      "categories": [
+        {
+          "status": "CompileError",
+          "count": 14
+        },
+        {
+          "status": "Ignored",
+          "count": 253
+        }
+      ],
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\dotnet\\Simulator.Benchmarks\\CorpusPolicy.cs"
+    },
+    {
+      "categories": [
+        {
+          "status": "CompileError",
+          "count": 17
+        },
+        {
+          "status": "Ignored",
+          "count": 107
+        }
+      ],
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\dotnet\\Simulator.Benchmarks\\CorpusPresentation.cs"
+    },
+    {
+      "categories": [
+        {
+          "status": "CompileError",
+          "count": 17
+        },
+        {
+          "status": "Ignored",
+          "count": 270
+        },
+        {
+          "status": "Killed",
+          "count": 3
+        }
+      ],
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\dotnet\\Simulator.Benchmarks\\CorpusRunner.cs"
+    },
+    {
+      "categories": [],
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\dotnet\\Simulator.Benchmarks\\Models.cs"
+    },
+    {
+      "categories": [
+        {
+          "status": "CompileError",
+          "count": 6
+        },
+        {
+          "status": "Ignored",
+          "count": 86
+        }
+      ],
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\dotnet\\Simulator.Benchmarks\\ProcessRunner.cs"
+    },
+    {
+      "categories": [
+        {
+          "status": "CompileError",
+          "count": 3
+        },
+        {
+          "status": "Ignored",
+          "count": 169
+        }
+      ],
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\dotnet\\Simulator.Benchmarks\\Program.cs"
+    },
+    {
+      "categories": [
+        {
+          "status": "CompileError",
+          "count": 8
+        },
+        {
+          "status": "Ignored",
+          "count": 242
+        }
+      ],
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\dotnet\\Simulator.Benchmarks\\Runner.cs"
+    },
+    {
+      "categories": [
+        {
+          "status": "CompileError",
+          "count": 6
+        },
+        {
+          "status": "Ignored",
+          "count": 141
+        }
+      ],
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\dotnet\\Simulator.Benchmarks\\Suites.cs"
+    },
+    {
+      "categories": [
+        {
+          "status": "CompileError",
+          "count": 6
+        },
+        {
+          "status": "Ignored",
+          "count": 196
+        }
+      ],
+      "file": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\dotnet\\Simulator.Benchmarks\\Tables.cs"
+    }
+  ],
+  "scope": "Three preflight catch mutants only; six real-oracle tests. Runner has no collateral rollback. Other compile errors remain unavailable, not kills.",
+  "failed_attempt": "work/rollback-current-stryker.log: unsupported output configuration key; no mutations executed. Corrected CLI --output retry completed."
+}
