@@ -2,6 +2,62 @@
 TITLE: ngspice Corpus Compatibility Track
 
 [REQUIREMENT]
+UID: NGC-PARSE-001
+STATUS: Draft
+TITLE: Explicit dialect and versioned grammar baseline
+STATEMENT: >>>
+The ngspice front end shall declare its target dialect and pinned reference revision, maintain a reviewable grammar for lexical and syntactic productions, and map supported productions and intentional omissions to primary reference syntax and conformance tests. Other SPICE dialects shall be explicit profiles rather than silent syntax heuristics.
+<<<
+COMMENT: >>>
+Missing foundation identified by the user. The current bounded text-rewriting importer does not satisfy this requirement. Published references and implementation assessment: docs/spice-parser-foundation-assessment.md. Parser-library selection and grammar implementation remain pending; no new parser or dependency has been adopted.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-DEP-001
+
+[REQUIREMENT]
+UID: NGC-PARSE-002
+STATUS: Draft
+TITLE: Separate parsing from elaboration and numerical capability
+STATEMENT: >>>
+The front end shall parse syntactically valid device, model, hierarchy, expression and analysis declarations into an immutable source-located ParsedDeck without requiring the corresponding numerical model or analysis to be executable. A separate elaboration and capability phase shall resolve names and parameters and report unsupported execution explicitly before constructing the existing typed numerical request. Unknown syntax shall not be silently discarded or reported as simulated.
+<<<
+COMMENT: >>>
+Architecture already describes ParsedDeck, ElaboratedCircuit and ExecutionPlan. The current ngspice importer conflates these phases. A valid NPN model or UIC/multiple-analysis declaration must not become a numeric-parser failure solely because execution is unsupported. This is a Draft corrective requirement, not implemented acceptance evidence.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-DEP-001
+
+[REQUIREMENT]
+UID: NGC-PARSE-003
+STATUS: Draft
+TITLE: Unified lexical processing and source provenance
+STATEMENT: >>>
+The declared dialect front end shall process title records, comments, continuations, identifiers, numeric tokens, quoted text, delimiters and expressions through a shared lexical and syntax pipeline. Parsed nodes and diagnostics shall retain original file and physical source ranges through continuation folding and permitted include processing. Resource resolution and external command execution shall remain explicit policies rather than parser side effects.
+<<<
+COMMENT: >>>
+Existing request, circuit and oracle scanners independently split and rewrite physical text. Earlier title, continuation and UIC fixes illustrate the missing unified boundary. No claim of complete lexical or include conformance is made by the bounded importer.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: NGC-PARSE-004
+STATUS: Draft
+TITLE: Independent parser corpus qualification
+STATEMENT: >>>
+Corpus qualification shall separately report syntactic parsing, elaboration or dependency resolution, numerical capability, execution and oracle comparison outcomes. Parser-only campaigns shall exercise all inventoried decks without executing control commands or requiring all device models, retain source hashes and source-located diagnostics, and distinguish malformed syntax from unimplemented grammar and valid but unsupported simulation features. Valid/malformed grammar cases, reproducible randomized or fuzz checks and regression evidence shall trace to the declared grammar productions.
+<<<
+COMMENT: >>>
+The current one-profile-pass count is numerical end-to-end evidence, not parser coverage. A parser-only baseline and separate coverage/burndown series remain unimplemented. See docs/spice-parser-foundation-assessment.md.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: NGC-038
 STATUS: Draft
 TITLE: Bounded named passive resistor model family
