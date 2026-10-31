@@ -1,3 +1,25 @@
+Current source-current checkpoint: NGC-CORPUS-005/006/007 and NGC-034 are
+recorded in ngspice-compatibility.sdoc. Read corpus-preflight-verification.json,
+corpus-current-verification.json and corpus-current-mutation-replay.json.
+Preflight CS0165 is reproduced and fixed; the three selected native mutations
+are killed. The 378-identity Runner rollback is gone. 104 other CompileError
+statuses remain distinct; three exact examples independently reproduce ordinary
+C# type/pattern failures. Do not report them as kills or a blanket remaining bug.
+Current profile v3 compares node voltages and independent voltage-source currents
+with units and dimensional bounds, including exact source#branch aliases.
+Issue #6 records one profile pass, two partial, 693 unsupported, 203 rejected,
+11 resource/encoding-rejected (909 remaining). res_simple matches all seven
+-100 microampere points on both CPU providers. Broader currents remain unqualified.
+The 86-test managed suite passes; 57 corpus tests plus an eight-row offline CLI
+matrix supply scoped coverage. Four real-oracle facts explicitly skip if tools
+are absent. Current-scope mutation identities compose 83 original kills plus
+seven new replay kills, five conditional survivors and two uncovered overflow
+guards; do not invent a combined whole-run score or close older scopes.
+NGC-034 remains unimplemented at this checkpoint; it is the next bounded source
+syntax gap. User authorized pushing completed Spice checkpoints in this task.
+CI remains undispatched, raw artifacts local, and no full SPICE/GPU/production,
+fresh Linux or full-soak qualification is claimed.
+
 Latest bounded checkpoint: 427 Rust tests pass (one ignored), 75 managed tests pass;
 StrictDoc parses 280 IDs. Final Reference mutation scope: 46 killed, two conditional
 survivors, one liveness timeout; separate scope from the 74-killed policy replay.

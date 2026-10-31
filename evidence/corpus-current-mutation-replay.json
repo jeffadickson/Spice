@@ -1,0 +1,280 @@
+{
+  "replay_sha256": "e729cdec333a46a6e631de00c7573872e3d70411469c5fd9f7e1dec16d8ad144",
+  "original_sha256": "7c35d140183caa3eb891803a07c8cc0f61495e29b4dadb7003300b5badd2510c",
+  "scope": "Combined identity disposition over matching source and two native runs; no invented combined mutation score.",
+  "counts": {
+    "still_uncovered": 2,
+    "original_undetected": 14,
+    "newly_killed": 7,
+    "conditional_survivors": 5
+  },
+  "cohort": [
+    {
+      "original": "Survived",
+      "replacement": "\"\"",
+      "location": {
+        "start": {
+          "line": 86,
+          "column": 44
+        },
+        "end": {
+          "line": 86,
+          "column": 101
+        }
+      },
+      "disposition": "Caught by targeted native replay with current diagnostic/witness/mismatch/alias tests.",
+      "id": "696",
+      "file": "CorpusPolicy.cs",
+      "current": "Killed"
+    },
+    {
+      "original": "Survived",
+      "replacement": "\"\"",
+      "location": {
+        "start": {
+          "line": 90,
+          "column": 102
+        },
+        "end": {
+          "line": 90,
+          "column": 133
+        }
+      },
+      "disposition": "Caught by targeted native replay with current diagnostic/witness/mismatch/alias tests.",
+      "id": "699",
+      "file": "CorpusPolicy.cs",
+      "current": "Killed"
+    },
+    {
+      "original": "Survived",
+      "replacement": "true",
+      "location": {
+        "start": {
+          "line": 99,
+          "column": 33
+        },
+        "end": {
+          "line": 99,
+          "column": 38
+        }
+      },
+      "disposition": "Conditional numerical equivalence for valid imported decks: initial continuation flag is reset by the first substantive card.",
+      "id": "706",
+      "file": "CorpusPolicy.cs",
+      "current": "Survived"
+    },
+    {
+      "original": "Survived",
+      "replacement": ";",
+      "location": {
+        "start": {
+          "line": 104,
+          "column": 61
+        },
+        "end": {
+          "line": 104,
+          "column": 77
+        }
+      },
+      "disposition": "Conditional numerical equivalence: comment/blank omission changes formatting/provenance bytes, not circuit equations in this profile.",
+      "id": "717",
+      "file": "CorpusPolicy.cs",
+      "current": "Survived"
+    },
+    {
+      "original": "Survived",
+      "replacement": "(false?0:p.TimeS)",
+      "location": {
+        "start": {
+          "line": 91,
+          "column": 70
+        },
+        "end": {
+          "line": 91,
+          "column": 90
+        }
+      },
+      "disposition": "Conditional equivalence for core OP outputs: operating-point sample time is zero.",
+      "id": "1036",
+      "file": "CorpusRunner.cs",
+      "current": "Survived"
+    },
+    {
+      "original": "Survived",
+      "replacement": "\"\"",
+      "location": {
+        "start": {
+          "line": 91,
+          "column": 76
+        },
+        "end": {
+          "line": 91,
+          "column": 80
+        }
+      },
+      "disposition": "Conditional equivalence for core OP outputs: operating-point sample time is zero.",
+      "id": "1038",
+      "file": "CorpusRunner.cs",
+      "current": "Survived"
+    },
+    {
+      "original": "Survived",
+      "replacement": "target.Real+point.Real",
+      "location": {
+        "start": {
+          "line": 96,
+          "column": 80
+        },
+        "end": {
+          "line": 96,
+          "column": 102
+        }
+      },
+      "disposition": "Caught by targeted native replay with current diagnostic/witness/mismatch/alias tests.",
+      "id": "1041",
+      "file": "CorpusRunner.cs",
+      "current": "Killed"
+    },
+    {
+      "original": "Survived",
+      "replacement": "target.Imag+point.Imag",
+      "location": {
+        "start": {
+          "line": 96,
+          "column": 103
+        },
+        "end": {
+          "line": 96,
+          "column": 125
+        }
+      },
+      "disposition": "Caught by targeted native replay with current diagnostic/witness/mismatch/alias tests.",
+      "id": "1042",
+      "file": "CorpusRunner.cs",
+      "current": "Killed"
+    },
+    {
+      "original": "NoCoverage",
+      "replacement": ";",
+      "location": {
+        "start": {
+          "line": 97,
+          "column": 99
+        },
+        "end": {
+          "line": 97,
+          "column": 108
+        }
+      },
+      "disposition": "Caught by targeted native replay with current diagnostic/witness/mismatch/alias tests.",
+      "id": "1044",
+      "file": "CorpusRunner.cs",
+      "current": "Killed"
+    },
+    {
+      "original": "NoCoverage",
+      "replacement": "failed--",
+      "location": {
+        "start": {
+          "line": 97,
+          "column": 99
+        },
+        "end": {
+          "line": 97,
+          "column": 107
+        }
+      },
+      "disposition": "Caught by targeted native replay with current diagnostic/witness/mismatch/alias tests.",
+      "id": "1045",
+      "file": "CorpusRunner.cs",
+      "current": "Killed"
+    },
+    {
+      "original": "NoCoverage",
+      "replacement": ";",
+      "location": {
+        "start": {
+          "line": 98,
+          "column": 65
+        },
+        "end": {
+          "line": 98,
+          "column": 121
+        }
+      },
+      "disposition": "Open: nonfinite discrepancy overflow error guard not reached by bounded real-oracle fixtures.",
+      "id": "1047",
+      "file": "CorpusRunner.cs",
+      "current": "NoCoverage"
+    },
+    {
+      "original": "NoCoverage",
+      "replacement": "\"\"",
+      "location": {
+        "start": {
+          "line": 98,
+          "column": 96
+        },
+        "end": {
+          "line": 98,
+          "column": 119
+        }
+      },
+      "disposition": "Open: overflow diagnostic branch not reached by bounded real-oracle fixtures.",
+      "id": "1048",
+      "file": "CorpusRunner.cs",
+      "current": "NoCoverage"
+    },
+    {
+      "original": "Survived",
+      "replacement": "difference>=max",
+      "location": {
+        "start": {
+          "line": 99,
+          "column": 36
+        },
+        "end": {
+          "line": 99,
+          "column": 50
+        }
+      },
+      "disposition": "Equal-error tie may choose another valid largest-error witness; earliest tie is not required.",
+      "id": "1050",
+      "file": "CorpusRunner.cs",
+      "current": "Survived"
+    },
+    {
+      "original": "Survived",
+      "replacement": "\"\"",
+      "location": {
+        "start": {
+          "line": 85,
+          "column": 37
+        },
+        "end": {
+          "line": 85,
+          "column": 65
+        }
+      },
+      "disposition": "Caught by targeted native replay with current diagnostic/witness/mismatch/alias tests.",
+      "id": "2013",
+      "file": "Tables.cs",
+      "current": "Killed"
+    }
+  ],
+  "targeted_replay": {
+    "no_coverage": 2,
+    "total": 2019,
+    "killed": 7,
+    "ignored": 1906,
+    "compile_error": 104
+  },
+  "original_native": {
+    "killed": 83,
+    "ignored": 1818,
+    "total": 2019,
+    "compile_error": 104,
+    "survived": 10,
+    "no_coverage": 4
+  }
+}

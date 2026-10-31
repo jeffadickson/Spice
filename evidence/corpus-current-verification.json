@@ -1,0 +1,114 @@
+{
+  "green": {
+    "properties": {
+      "cases": 128,
+      "replay": "917,20261031",
+      "framework": "FsCheck.Xunit 3.5.0"
+    },
+    "numeric_mismatch_case": "One BE ramp step intentionally disagrees; both providers retain comparison_failed current witnesses.",
+    "skipped": 0,
+    "real_ngspice_executions": 8,
+    "tools_unavailable": {
+      "failed": 0,
+      "skipped": 4,
+      "passed": 0,
+      "log": "work/current-tools-missing.log"
+    },
+    "owned_decks": 9,
+    "log": "work/current-qualified-tests.log",
+    "provider_executions": 16,
+    "tests_passed": 86,
+    "failed": 0
+  },
+  "coverage": "corpus-current-coverage.json",
+  "sphinx": "9.1.0 warnings-as-errors; work/current-docs-qualified.log",
+  "corpus": {
+    "started": "2026-10-30T20:01:29.5589312-07:00",
+    "seconds": 133.4270686,
+    "res_simple": "Seven selected voltage and i(V1) points agree on each provider; i(V1)=-0.0001 A, p-to-n positive",
+    "profile": "node-voltage+independent-voltage-source-current-v3; max200; ac-axis-abs1e-12-rel5e-6; transient-endpoint-4ulp; no-extrapolation",
+    "issue_state": "created",
+    "history": "v3 has distinct observable/tolerance fingerprint; new baseline, not a synthetic v2 improvement",
+    "inventory": "4a947ffb2ea1c58574c92b8464fe1068e0f6faf0c6d8dbc284ac455049bb1627",
+    "issue": "https://github.com/jeffadickson/Spice/issues/6",
+    "run": "20261031T030129Z-485588ea",
+    "schema": "2",
+    "helper": "native_aot",
+    "source_commit": "3618c9c5dcbcf4322384e5fe5e92278119be57ff",
+    "state": "completed_with_results",
+    "source_dirty": true,
+    "corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+    "counts": {
+      "unsupported": 693,
+      "resource_or_input_rejected": 11,
+      "import_rejected": 203,
+      "partial_comparison": 2,
+      "compared_pass": 1
+    },
+    "finished": "2026-10-30T20:03:42.9859998-07:00"
+  },
+  "strictdoc": {
+    "ids": 284,
+    "parents": 272,
+    "report": "current-requirements.json",
+    "documents": 14
+  },
+  "mutation_replay": "corpus-current-mutation-replay.json",
+  "base_commit": "3618c9c",
+  "compiler_mutation_examples": "corpus-current-invalid-mutations.json",
+  "limitations": [
+    "Independent voltage-source currents only; arbitrary device, controlled-source and inductor currents remain outside this oracle profile.",
+    "At most 200 selected coordinates per signal; declared dimensional absolute floors and interpolation do not prove global waveform error bounds.",
+    "Five current-scope survivors retain conditional dispositions; two overflow guard mutants remain uncovered. Broader historical scopes are not closed.",
+    "104 native CompileError statuses remain distinct from kills. Three exact examples reproduced as intrinsic C# type/pattern errors; not every identity independently rebuilt.",
+    "Windows managed and NativeAOT execution only; no fresh Linux or full soak.",
+    "Core Rust code unchanged in this checkpoint; prior Rust test counts are historical, not rerun claims.",
+    "NGC-034 inactive AC metadata outside AC remains a separately tracked Draft gap at this checkpoint."
+  ],
+  "requirements": [
+    "NGC-CORPUS-005",
+    "NGC-CORPUS-006",
+    "NGC-CORPUS-007"
+  ],
+  "red": {
+    "failed": 4,
+    "causes": [
+      "Source-current table alias unsupported",
+      "Current observations absent",
+      "Terminal-newline observation identifier accepted",
+      "Complex current not compared"
+    ],
+    "passed": 1,
+    "log": "work/current-red.log"
+  },
+  "hashes": {
+    "dotnet/Simulator.Benchmarks/CorpusCommand.cs": "ff72cb2502cf955b493103cb5e27a2933dfcad56004698a87b51c5813bde2fe9",
+    "dotnet/Simulator.Benchmarks/CorpusModels.cs": "628910e066786b1600cc35634f694b76ee4f6ca71fe799583dc335a462b0cc6c",
+    "dotnet/Simulator.Benchmarks.Tests/CorpusCurrentContracts.cs": "17ab8249e5231f0db1ee2670973987f68ce70538e962f63d885c781369df31ad",
+    "dotnet/Simulator.Benchmarks/CorpusPolicy.cs": "5dd6cc4c8b65b6c6ac0fedf24a6e12f15993e9c6e8856bc6cef05bc3ca6c6e66",
+    "dotnet/Simulator.Benchmarks.Tests/CorpusNumericalIntegration.cs": "1a572a98dd6f8dc0784f11a78d8d46f03e5c6b883131f0ba5ef9a680859c32d1",
+    "dotnet/Simulator.Benchmarks/CorpusRunner.cs": "2411feaf937a257a3cac67b6176a62581611bd31ac4cc0129d24fe08b58f33e0",
+    "dotnet/Simulator.Benchmarks/CorpusPresentation.cs": "7a6de2979e7003cd82572cf5e433310ddb843bd995fff73565a4b24f3091e73d",
+    "dotnet/Simulator.Benchmarks/Tables.cs": "6329be4b24dbddf537ec26112d6556271b8bf4e1366035d8b60b45373232a58f"
+  },
+  "chart_attachment": "https://github.com/jeffadickson/Spice/issues/6#issuecomment-6538281635",
+  "chart_visual_check": "Rendered 1000x400 PNG inspected; distinct v3 baseline, numeric issue/report count 909. Own generated SVG/data, no upstream assets redistributed.",
+  "coverage_attempt_history": "Legacy ignored CLI fixture still expected 1ns rejection after NGC-033 enabled it; this expectation failed. Corrected its negative input to 1nsjunk and retained attempt1 raw coverage/logs. Partial attempt not accepted as a pass.",
+  "review": "corpus-current-review.md",
+  "commands": [
+    "dotnet test dotnet/Simulator.Benchmarks.Tests --no-restore with explicit real-oracle environment",
+    "dotnet-coverage collect \"pwsh -NoProfile -File work/Current-Checks.ps1\" -f cobertura -o build/coverage/current-complete-tooling.cobertura.xml",
+    "dotnet-stryker --config-file current-stryker.json --output <isolated snapshot>/current-stryker",
+    "dotnet-stryker --config-file current-replay-stryker.json --output <isolated snapshot>/current-replay-stryker",
+    "Run-CorpusComparison.ps1 -CorpusRoot <tracked upstream checkout> -NgspicePath <existing ngspice executable> -Output evidence/ngspice-corpus-tracked -BudgetSeconds 1800 -SkipEngineBuild",
+    "ValidateRequirements.cs --python <StrictDoc Python> --report evidence/current-requirements.json",
+    "EngineeringDocs.cs --python .tools/sphinx/Scripts/python.exe"
+  ],
+  "coverage_totals": {
+    "branches": 780,
+    "lines": 494,
+    "covered_branches": 547,
+    "scope": "Six changed owned helper files; managed unit plus eight-row offline CLI. Not native, publisher or platform-complete coverage.",
+    "covered_lines": 444
+  }
+}

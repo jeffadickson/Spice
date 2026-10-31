@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.Numerics;
+using System.Text.RegularExpressions;
 [assembly: InternalsVisibleTo("Simulator.Benchmarks.Tests")]
 namespace Simulator.Benchmarks;
 internal sealed record Point(double Coordinate, double Real, double Imag);
@@ -74,7 +75,16 @@ internal static class Tables
             rows.Zip(rows.Skip(1)).Any(pair => pair.First.Coordinate >= pair.Second.Coordinate))
             throw new InvalidDataException("Missing/nonfinite/nonmonotonic named samples.");
     }
-    private static bool Equal(string a, string b) => a.Equals(b, StringComparison.OrdinalIgnoreCase);
+    private static bool Equal(string a, string b)
+    {
+        if(a.Equals(b,StringComparison.OrdinalIgnoreCase))return true;
+        // Batch .print i(VNAME) is headed VNAME#branch. Bind only this exact
+        // requested independent source, never an arbitrary branch column.
+        if(!b.StartsWith("i(",StringComparison.OrdinalIgnoreCase)||!b.EndsWith(')'))return false;
+        var source=b[2..^1];
+        return Regex.IsMatch(source,@"\A[Vv][A-Za-z0-9_.$:-]*\z") &&
+            a.Equals(source+"#branch",StringComparison.OrdinalIgnoreCase);
+    }
     private static double Number(string text) => double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out var value) && double.IsFinite(value)
         ? value : throw new InvalidDataException("Nonfinite or malformed reference number.");
     private sealed class PointComparer : IComparer<Point>

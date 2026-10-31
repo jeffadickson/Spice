@@ -2,6 +2,48 @@
 TITLE: ngspice Corpus Compatibility Track
 
 [REQUIREMENT]
+UID: NGC-CORPUS-007
+STATUS: Draft
+TITLE: Numerical mismatch evidence remains a failed comparison
+STATEMENT: >>>
+If any selected named voltage or current point exceeds its dimensional absolute-plus-relative bound, the corpus row and provider outcome shall remain comparison_failed even when both programs complete successfully. Per-signal evidence shall retain selected and failing point counts, largest absolute discrepancy in the stated unit, its coordinate and the expected/actual real and imaginary values. A failed comparison shall not be counted as a passing burndown point or silently replaced with a missing/zero value.
+<<<
+COMMENT: >>>
+Implementation: CorpusRunner comparison loop and CorpusSignal. Verification: CorpusNumericalIntegration.CoarseTransientRetainsNumericalFailureAndWitnesses deliberately uses one backward-Euler ramp step against ngspice's refined reference. This finite counterexample is expected to fail numerically; it is not an engine regression or general integration accuracy claim. Evidence: evidence/corpus-current-verification.json. Status remains Draft pending the full qualification scope.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: NGC-CORPUS-006
+STATUS: Draft
+TITLE: Independent voltage-source current oracle with dimensional evidence
+STATEMENT: >>>
+For accepted bounded OP, AC and transient requests, the corpus comparator shall compare each representable independent voltage-source branch current on both CPU providers against the corresponding named ngspice print table, in addition to node voltages. Positive source current shall flow from the positive node through the source to its negative node. A current shall require manifest quantity current and unit A, a 1e-9 A absolute tolerance plus the declared relative bound, and stored per-signal unit and absolute tolerance. Exact named source#branch table aliases may represent i(source); unrelated columns, missing currents and wrong units shall fail visibly with nonempty contextual diagnostics. The changed observable profile and current tolerance shall participate in the history fingerprint.
+<<<
+COMMENT: >>>
+Implementation: CorpusPolicy, CorpusRunner, Tables, CorpusModels and the history fingerprint in CorpusCommand. Verification: CorpusCurrentContracts and CorpusNumericalIntegration. Analytical resistor pairs retain identical node voltages while changing current; complex RC admittance challenges current phasors. Identifier checks shall consume the complete identifier, including rejecting terminal newlines. No arbitrary device/controlled-source/inductor current or global waveform qualification is implied. Reference: ngspice user manual chapter 4, https://ngspice.sourceforge.io/docs/ngspice-manual.pdf . Evidence: evidence/corpus-current-verification.json; Draft is not full qualification closure.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
+UID: NGC-034
+STATUS: Draft
+TITLE: Constant independent sources with inactive AC metadata
+STATEMENT: >>>
+For the bounded independent voltage/current source form DC value AC magnitude with an optional finite phase, OP and constant-source transient lowering shall preserve the DC value while validating but not applying the inactive AC excitation. AC lowering shall retain the independently specified DC bias and phasor. Unknown auxiliary clauses, malformed/duplicate metadata and nonfinite parameters shall fail explicitly rather than be ignored.
+<<<
+COMMENT: >>>
+Discovered gap: an OP-only source V1 in 0 DC 1 AC 1 is currently rejected although the bounded AC form is accepted. Not implemented at this requirement's introduction. Planned verification: cross-analysis typed request and analytical tests for voltage/current sources, unsupported tails and actual corpus transitions. Initial discovery is retained in evidence/corpus-preflight-verification.json. Draft does not claim implementation or acceptance.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: NGC-CORPUS-005
 STATUS: Draft
 TITLE: Observation preflight preserves structured failure without oracle side effects

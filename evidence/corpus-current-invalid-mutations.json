@@ -1,0 +1,65 @@
+{
+  "scope": "Three representative native CompileError mutations reproduced individually in detached current source. Other identities retain native tool classification without individual re-execution.",
+  "results": [
+    {
+      "id": "494",
+      "location": {
+        "start": {
+          "line": 19,
+          "column": 17
+        },
+        "end": {
+          "line": 19,
+          "column": 38
+        }
+      },
+      "replacement": "\".control\" and \".endc\"",
+      "diagnostics": [
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\invalid-csharp-probe-efc667bfaf4d4a569e211b63501c8a08\\dotnet\\Simulator.Benchmarks\\CorpusPolicy.cs(19,17): error CS8510: The pattern is unreachable. It has already been handled by a previous arm of the switch expression or it is impossible to match. [C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\invalid-csharp-probe-efc667bfaf4d4a569e211b63501c8a08\\dotnet\\Simulator.Benchmarks\\Simulator.Benchmarks.csproj]"
+      ],
+      "log": "work\\invalid-csharp-probe-efc667bfaf4d4a569e211b63501c8a08\\494.log",
+      "exit_code": 1,
+      "file": "CorpusPolicy.cs"
+    },
+    {
+      "id": "101",
+      "location": {
+        "start": {
+          "line": 36,
+          "column": 23
+        },
+        "end": {
+          "line": 36,
+          "column": 134
+        }
+      },
+      "replacement": "DateTime.UtcNow.ToString(\"yyyyMMddTHHmmssZ\",CultureInfo.InvariantCulture)+\"-\"-Guid.NewGuid().ToString(\"N\")[..8]",
+      "diagnostics": [
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\invalid-csharp-probe-efc667bfaf4d4a569e211b63501c8a08\\dotnet\\Simulator.Benchmarks\\CorpusCommand.cs(36,23): error CS0019: Operator '-' cannot be applied to operands of type 'string' and 'string' [C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\invalid-csharp-probe-efc667bfaf4d4a569e211b63501c8a08\\dotnet\\Simulator.Benchmarks\\Simulator.Benchmarks.csproj]"
+      ],
+      "log": "work\\invalid-csharp-probe-efc667bfaf4d4a569e211b63501c8a08\\101.log",
+      "exit_code": 1,
+      "file": "CorpusCommand.cs"
+    },
+    {
+      "id": "756",
+      "location": {
+        "start": {
+          "line": 13,
+          "column": 27
+        },
+        "end": {
+          "line": 13,
+          "column": 44
+        }
+      },
+      "replacement": "report.Rows.Sum",
+      "diagnostics": [
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\invalid-csharp-probe-efc667bfaf4d4a569e211b63501c8a08\\dotnet\\Simulator.Benchmarks\\CorpusPresentation.cs(13,27): error CS1503: Argument 1: cannot convert from 'method group' to 'object?' [C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\invalid-csharp-probe-efc667bfaf4d4a569e211b63501c8a08\\dotnet\\Simulator.Benchmarks\\Simulator.Benchmarks.csproj]"
+      ],
+      "log": "work\\invalid-csharp-probe-efc667bfaf4d4a569e211b63501c8a08\\756.log",
+      "exit_code": 1,
+      "file": "CorpusPresentation.cs"
+    }
+  ]
+}

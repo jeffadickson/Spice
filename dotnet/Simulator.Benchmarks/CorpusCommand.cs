@@ -84,7 +84,7 @@ internal static class CorpusCommand
             }
             if(report.Rows.Count==0)throw new InvalidDataException("No decks discovered");
             report.Inventory=Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(mode+"|"+report.ComparisonPolicy+"|"+report.Hashes["ngspice"]+"|"+
-                report.AbsoluteToleranceV.ToString("R",CultureInfo.InvariantCulture)+"|"+report.RelativeTolerance.ToString("R",CultureInfo.InvariantCulture)+"|"+
+                report.AbsoluteToleranceV.ToString("R",CultureInfo.InvariantCulture)+"|"+report.AbsoluteToleranceA.ToString("R",CultureInfo.InvariantCulture)+"|"+report.RelativeTolerance.ToString("R",CultureInfo.InvariantCulture)+"|"+
                 string.Join('\n',report.Rows.Select(r=>r.Path+":"+(r.Sha256??("unhashed-"+runId))))))).ToLowerInvariant();
             void Save(){report.Counts=report.Rows.GroupBy(r=>r.Status).ToDictionary(g=>g.Key,g=>g.Count(),StringComparer.Ordinal);Atomic(reportPath,JsonSerializer.Serialize(report,CorpusJson.Default.CorpusReport));}
             Save();

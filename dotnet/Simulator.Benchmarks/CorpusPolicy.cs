@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Simulator.Client;
 namespace Simulator.Benchmarks;
 internal static class CorpusPolicy
 {
@@ -68,11 +69,30 @@ internal static class CorpusPolicy
         Tables.Validate(points);if(points.Length<=200)return points;
         return Enumerable.Range(0,200).Select(i=>points[(int)((long)i*(points.Length-1)/199)]).ToArray();
     }
-    internal static string ObservedDeck(string text,string kind,string[] nodes)
+    internal static CorpusObservable[] ObservationSignals(string[] nodes,string[] voltageSources)
+    {
+        // Full-string anchors reject terminal newlines as well as embedded
+        // statements. These identifiers are interpolated into print cards.
+        if(nodes.Length==0 || nodes.Any(n=>!Regex.IsMatch(n,@"\A[A-Za-z0-9_.$:-]+\z")) ||
+           voltageSources.Any(n=>!Regex.IsMatch(n,@"\A[Vv][A-Za-z0-9_.$:-]*\z")))
+            throw new InvalidDataException("Node name or voltage-source identifier outside explicit observation profile.");
+        return nodes.Select(n=>new CorpusObservable($"v({n})","voltage","V"))
+            .Concat(voltageSources.Select(n=>new CorpusObservable($"i({n})","current","A"))).ToArray();
+    }
+    internal static int SignalColumn(SignalInfo[] signals,CorpusObservable observable)
+    {
+        var column=Array.FindIndex(signals,s=>s.Id.Equals(observable.Name,StringComparison.OrdinalIgnoreCase));
+        if(column<0||signals[column].Unit!=observable.Unit||signals[column].Quantity!=observable.Quantity)
+            throw new InvalidDataException("Missing named observable or incompatible quantity/unit.");
+        return column;
+    }
+    internal static double AbsoluteBound(CorpusReport report,CorpusObservable observable)=>observable.Unit switch
+    {"V"=>report.AbsoluteToleranceV,"A"=>report.AbsoluteToleranceA,_=>throw new InvalidDataException("Unsupported observation unit.")};
+
+    internal static string ObservedDeck(string text,string kind,string[] nodes,string[]? voltageSources=null)
     {
         if(UnsafeReference(text))throw new InvalidDataException("External resource/control execution is outside the read-only oracle profile.");
-        if(nodes.Length==0 || nodes.Any(n=>!Regex.IsMatch(n,@"^[A-Za-z0-9_.$:-]+$")))
-            throw new InvalidDataException("Node name outside explicit observation identifier profile.");
+        var observables=ObservationSignals(nodes,voltageSources??[]);
         // Remove whole observation records: a continuation must not attach to
         // the previous device. Comments/blanks do not start a new logical card.
         var lines=new List<string>();
@@ -87,7 +107,7 @@ internal static class CorpusPolicy
         }
         var result=string.Join('\n',lines)+"\n";
         if(kind=="op"&&!Regex.IsMatch(text,@"(?im)^\s*\.op\s*$"))result+=".op\n";
-        foreach(var n in nodes)result+=$".print {(kind=="transient"?"tran":kind)} v({n})\n";
+        foreach(var signal in observables)result+=$".print {(kind=="transient"?"tran":kind)} {signal.Name}\n";
         return result+".end\n";
     }
     internal static string Repository(string remote)

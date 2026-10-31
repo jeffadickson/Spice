@@ -44,16 +44,19 @@ internal static class CorpusRunner
                 var kind=analysis switch {"operating_point" or "operating_point_newton"=>"op","ac"=>"ac","transient_configured"=>"transient",_=>throw new InvalidDataException("Unknown imported analysis")};
                 row.Analysis=analysis;row.RequestSha256=Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(imported.Output))).ToLowerInvariant();
                 var nodes=request["circuit"]?["nodes"]?.AsArray().Skip(1).Select(n=>n!.GetValue<string>()).ToArray()??throw new InvalidDataException("Missing nodes");
+                var elements=request["circuit"]?["elements"]?.AsArray()??throw new InvalidDataException("Missing elements");
+                var voltageSources=elements.Where(e=>e?["kind"]?.GetValue<string>()=="voltage")
+                    .Select(e=>e!["id"]!.GetValue<string>()).ToArray();
                 if(CorpusPolicy.UnsafeReference(text)){row.Status="unsupported_reference_profile";row.Diagnostic="External resources/control execution require a separate qualified oracle profile.";continue;}
                 // A defined sentinel keeps mutations of the catch continuation
                 // executable instead of triggering blanket compiler rollback.
                 // Normal preparation failures leave the row before any use.
                 var observed=string.Empty;
-                try {observed=CorpusPolicy.ObservedDeck(text,kind,nodes);}
+                try {observed=CorpusPolicy.ObservedDeck(text,kind,nodes,voltageSources);}
                 catch(InvalidDataException e){row.Status="comparison_unavailable";row.Diagnostic=e.Message;continue;}
                 var deck=Path.Combine(folder,"observed.cir");File.WriteAllText(deck,observed,new UTF8Encoding(false));
                 row.ExecutedDeckSha256=Runner.Hash(deck);
-                row.ObservationPolicy="Removed .print/.plot/.probe/.end; appended one named node-voltage .print per non-ground node and .end; added .op only for inferred default OP. Equations/analysis parameters otherwise retained.";
+                row.ObservationPolicy="Removed logical .print/.plot/.probe/.end records; appended named non-ground node voltages and independent voltage-source branch currents, p-to-n positive, and .end; added .op only for inferred default OP. Equations/analysis parameters otherwise retained.";
                 var log=Path.Combine(folder,"ngspice.log");string? reference=null;string? referenceError=null;
                 try
                 {
@@ -79,10 +82,10 @@ internal static class CorpusRunner
                         if(manifest.Backend.Id!=expected||manifest.Backend.Gpu||manifest.Backend.Placement!="cpu")throw new InvalidDataException("Wrong CPU provider");
                         if(reference is null){row.Backends.Add(new(backend,"executed_uncompared",referenceError??"No reference",[]));continue;}
                         var signals=new List<CorpusSignal>();
-                        foreach(var node in nodes)
+                        foreach(var signal in CorpusPolicy.ObservationSignals(nodes,voltageSources))
                         {
-                            var observable=$"v({node})";var column=Array.FindIndex(manifest.Signals,s=>s.Id.Equals(observable,StringComparison.OrdinalIgnoreCase));
-                            if(column<0||manifest.Signals[column].Unit!="V")throw new InvalidDataException("Missing node voltage/unit");
+                            var observable=signal.Name;var column=CorpusPolicy.SignalColumn(manifest.Signals,signal);
+                            var absolute=CorpusPolicy.AbsoluteBound(report,signal);
                             var refs=Tables.Parse(reference,kind,observable);
                             var actual=kind=="ac"?manifest.AcSamples.Select(p=>new Point(p.FrequencyHz,p.Values[column].Real,p.Values[column].Imag)).ToArray():
                                 manifest.Samples.Select(p=>new Point(kind=="op"?0:p.TimeS,p.Values[column],0)).ToArray();
@@ -91,11 +94,11 @@ internal static class CorpusRunner
                             {
                                 var target=CorpusPolicy.Reference(refs,point.Coordinate,kind);
                                 var difference=System.Numerics.Complex.Abs(new(target.Real-point.Real,target.Imag-point.Imag));
-                                if(!Tables.Within(target,point,report.AbsoluteToleranceV,report.RelativeTolerance))failed++;
+                                if(!Tables.Within(target,point,absolute,report.RelativeTolerance))failed++;
                                 if(!double.IsFinite(difference))throw new InvalidDataException("Nonfinite discrepancy");
                                 if(difference>max){max=difference;worst=point;worstExpected=target;}
                             }
-                            signals.Add(new(observable,selected.Length,failed,max,worst!.Coordinate,worstExpected!.Real,worstExpected.Imag,worst.Real,worst.Imag));
+                            signals.Add(new(observable,signal.Unit,absolute,selected.Length,failed,max,worst!.Coordinate,worstExpected!.Real,worstExpected.Imag,worst.Real,worst.Imag));
                         }
                         var pass=signals.Count>0&&signals.All(s=>s.FailedPoints==0);
                         row.Backends.Add(new(backend,pass?"compared_pass":"comparison_failed",pass?"Selected named points agree":"Numerical discrepancy exceeds declared bound",signals));
@@ -105,7 +108,7 @@ internal static class CorpusRunner
                 }
                 row.Status=row.Backends.Count==2&&row.Backends.All(b=>b.Status=="compared_pass")?"compared_pass":
                     row.Backends.Any(b=>b.Status=="simulator_failed")?"simulator_failed":reference is null?"oracle_failed":"comparison_failed";
-                row.Diagnostic=row.Status=="compared_pass"?"Both CPU providers agree at selected named node-voltage points":
+                row.Diagnostic=row.Status=="compared_pass"?"Both CPU providers agree at selected named voltage/current points":
                     CorpusPolicy.Clip(string.Join("; ",row.Backends.Where(b=>b.Status!="compared_pass").Select(b=>b.Backend+": "+b.Detail)));
                 if(row.Status=="compared_pass" && row.FeatureHints.Contains("multiple_declared_analyses",StringComparer.Ordinal))
                 {row.Status="partial_comparison";row.Diagnostic=$"Both CPU providers agree for selected {analysis}; additional declared analyses are not compared by this one-analysis importer profile.";}

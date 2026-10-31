@@ -42,22 +42,32 @@ co-occurrence, not isolated root causes.
 
 Accepted declarative decks execute in scratch space with user spiceinit disabled.
 The observation copy removes print/plot/probe cards and appends named node-voltage
-prints, adding `.op` only for inferred default OP. Equations/analysis parameters
+and independent voltage-source current prints, adding `.op` only for inferred
+default OP. Equations/analysis parameters
 are otherwise retained. External control/resource directives are excluded.
 Original/executed/request hashes and edits remain explicit.
 
-LU and faer execute independently. Comparisons cover all representable node
-voltages, at most 200 representative coordinates each including endpoints:
-1e-5 V absolute plus 1e-4 relative complex norm. AC matches printed frequency
-within 1e-12 + 5e-6*f Hz, without phasor interpolation. Transient interpolation is
-piecewise linear and never extrapolates. Branch currents and global error are
-not qualified. Both providers must agree. Additional declared analyses not
-compared by the one-analysis importer produce `partial_comparison`, not a pass.
+LU and faer execute independently. Policy v3 compares all representable node
+voltages and independent voltage-source currents, at most 200 representative
+coordinates each including endpoints. Bounds are 1e-5 V or 1e-9 A absolute plus
+1e-4 relative complex norm. Current is p-to-n positive, and ngspice's exact
+source#branch table alias is bound to the requested i(source). Both the manifest
+quantity and unit must match. JSON schema 2 stores the unit and absolute bound
+with each signal's discrepancy/witness. The current bound participates in the
+history fingerprint; v1/v2 reports remain historical evidence.
+
+AC matches printed frequency within 1e-12 + 5e-6*f Hz without phasor interpolation.
+Transient interiors use linear interpolation; at most four adjacent doubles may
+align an out-of-table endpoint. Larger excursions fail. Other device/controlled-
+source/inductor currents and global waveform error remain unqualified. Both
+providers must agree. Additional declared analyses not compared by the one-
+analysis importer produce partial_comparison, not a pass.
 
 The issue groups diagnostics, example paths and overlapping feature counts into
 triage checklists. First minimize a reproducer, then implement a qualified
-contract or document exclusion. An upstream `1ns` literal, for example, can expose
-a scalar-import gap despite an adapted operating-point oracle.
+contract or document exclusion. The earlier `1ns` scalar gap is fixed; an OP
+source with inactive AC metadata
+now supplies a separate reproducible importer gap (draft NGC-034).
 
 ## Reports, history and failure handling
 
