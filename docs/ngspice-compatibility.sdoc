@@ -2,6 +2,20 @@
 TITLE: ngspice Corpus Compatibility Track
 
 [REQUIREMENT]
+UID: NGC-037
+STATUS: Draft
+TITLE: Bounded optional transient fields and repeated analysis rejection
+STATEMENT: >>>
+The bounded importer shall accept .tran step stop with optional zero output start and positive finite maximum step. It shall preserve simulation from t=0 and the explicit maximum-step integration bound without claiming a resampled print grid. It shall reject nonpositive or nonfinite numeric fields, nonzero output start, UIC, duplicate OP/AC/TRAN cards and combined AC plus transient requests rather than silently selecting or discarding an analysis. Recognized UIC shall be classified as unsupported initialization rather than a malformed scalar.
+<<<
+COMMENT: >>>
+Implementation: netlist::import_ngspice_request. Verification: tests/ngspice_analysis_cards.rs, 128 Proptest cases with fixed seed 0x535049434554524e, malformed/duplicate cards, and real-ngspice oracle checks. Evidence: evidence/analysis-cards-verification.json. Recurring exactly-one-tran diagnostics often describe optional syntax rather than duplicates. Multiple-analysis execution and nonzero output starts remain unsupported; OP alongside a selected AC/transient remains partial corpus coverage.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: NGC-CORPUS-008
 STATUS: Draft
 TITLE: Named MNA current comparisons

@@ -14,8 +14,21 @@ public sealed class CorpusOracleFactAttribute : FactAttribute
     }
 }
 
-public sealed class CorpusNumericalIntegration
+public sealed partial class CorpusNumericalIntegration
 {
+    [CorpusOracleFact]
+    public async Task ExplicitTransientMaximumStepMatchesConstantOracle()
+    {
+        var (report,_) = await Run("owned\nV1 out 0 1\nR1 out 0 1000\n.tran 1m 5m 0 250u\n.end");
+        Assert.Equal("compared_pass",Assert.Single(report.Rows).Status);
+        foreach(var backend in report.Rows[0].Backends)
+        {
+            var signal=Assert.Single(backend.Signals,s=>s.Observable=="i(V1)");
+            Assert.InRange(signal.ActualReal,-0.00100000001,-0.00099999999);
+            Assert.InRange(signal.ExpectedReal,-0.00100000001,-0.00099999999);
+            AssertConsistentWitness(signal);
+        }
+    }
     [CorpusOracleFact]
     public async Task InductorAndControlledVoltageBranchesMatchIndependentEquations()
     {

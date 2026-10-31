@@ -1,0 +1,101 @@
+{
+  "coverage": "five-area-ordered-analysis-final-coverage.json",
+  "properties": {
+    "cases": 128,
+    "fields": "independently varied maximum step and stop time",
+    "minimized_original_counterexample": "microseconds=1; persisted regression seed file retained",
+    "seed": "0x535049434554524e"
+  },
+  "green": {
+    "failed": 0,
+    "oracle": {
+      "log": "work/analysis-cards-oracle.log",
+      "passed": 1,
+      "later_suite": "work/ordered-managed-qualified.log"
+    },
+    "initial_full_regression": {
+      "failed": 0,
+      "passed": 440,
+      "ignored": 1,
+      "scope": "Before final UIC diagnostic-only correction. Final seven parser tests cover corrected code; do not relabel this as a new full regression.",
+      "log": "work/ordered-release-regression.log"
+    },
+    "log": "work/ordered-final-parser-tests.log",
+    "focused_parser_tests": 7
+  },
+  "requirement": "NGC-037",
+  "source_hashes": {
+    "src/netlist.rs": "8115ae7c961b7a089d1505fef4c10159ac7fca4158262b272cefd2021e70860a",
+    "tests/ngspice_analysis_cards.rs": "441c34726dda95846c3ead71d503e09f44368198fe815676301dcb4d821d6c01",
+    "scripts/Measure-FocusedRustCoverage.ps1": "72fc7ac39f30b37556490d3b3527e7e06197ab9dcf2f1e57ccd2aede8a9f9047"
+  },
+  "red": "work/analysis-cards-red.log: three tests failed on original optional-field/default/duplicate behavior",
+  "requirements_parse": "ordered-followup-requirements.json",
+  "mutation": {
+    "initial": {
+      "version": "27.1.0",
+      "status": "completed",
+      "exit_code": 2,
+      "candidates": 5,
+      "killed": 4,
+      "survived": 1,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": "0a877931c64d2bdfdf2adfc372d3c695be8da36e70db77a3dd1ce97515100b83",
+      "log_sha256": "0649d88215298ec9cad91a6c544fd679f4c554f14d39a2fb7047dcd6bf68a979"
+    },
+    "failed_selection": "20261031T055035Z-22accca1: fail-closed inventory escaped single-field filter; no mutants executed. Replay explicitly selected both native field-deletion identities.",
+    "scope": "Pre-UIC source snapshot. Final UIC diagnostic branch has regression/CLI checks, not native mutation evidence.",
+    "replay_run": "20261031T055156Z-52aaa9a1",
+    "distinct_original_cohort_detected": 5,
+    "gap": "stop_s deletion survived because every fixture accidentally used the default stop time",
+    "initial_run": "20261031T054633Z-f08326bc",
+    "replay": {
+      "version": "27.1.0",
+      "status": "completed",
+      "exit_code": 0,
+      "candidates": 2,
+      "killed": 2,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": "7de670c0eafdd7957b6d140f791151f2a9e9271fae71f07b7c6ce13f702d6576",
+      "log_sha256": "e04b1c8d3bf46da811752baec97b6d203586de3b9f5ec6e4442f88192e88531b"
+    }
+  },
+  "uic": {
+    "green": "work/uic-classification-green.json",
+    "meaning": "recognized unsupported initialization, not malformed numeric input",
+    "red": "work/uic-classification-red.json"
+  },
+  "source_base": "c33de35",
+  "source_dirty": true,
+  "limitations": [
+    "Optional print increment is not an exact output-grid contract; nonlinear/DAE/event qualification unchanged.",
+    "Nonzero starts, UIC, repeated analyses and multi-analysis execution remain unsupported.",
+    "Native Rust branch coverage and fresh Linux execution unavailable.",
+    "Per-feature commits were tested in the combined working tree, whose source hashes are retained; final model checkpoint contains that combined source."
+  ],
+  "final_corpus_run": "20261031T055611Z-019f8631",
+  "final_engine_sha256": "b34b2f9dcdf12c572a325bf4fb2e9900c6f72abb4fde85a9ac67a8aea24d57e8",
+  "final_managed": {
+    "log": "work/ordered-managed-qualified.log",
+    "skipped": 0,
+    "passed": 95,
+    "failed": 0
+  },
+  "final_clippy": {
+    "log": "work/ordered-final-clippy.log",
+    "status": "passed"
+  }
+}

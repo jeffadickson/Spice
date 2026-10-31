@@ -590,8 +590,8 @@ fn bounded_source_phasor(
 }
 
 /// Lowers the bounded ngspice deck profile into the same typed request contract
-/// used by JSON and SForge callers. Only a two-value .tran directive is
-/// accepted; optional arguments fail rather than being ignored.
+/// used by JSON and SForge callers. Bounded transient optional fields retain
+/// zero-start and maximum-step semantics; unsupported analysis requests fail.
 pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResult<Request> {
     if text.len() > 1_048_576 {
         return Err(SimError::new(
@@ -601,22 +601,71 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
     }
     let mut transient = None;
     let mut ac = None;
+    let mut operating_point = false;
     for source_line in text.lines().skip(1) {
         let line = source_line.split(';').next().unwrap_or_default().trim();
         let tokens: Vec<_> = line.split_whitespace().collect();
         if tokens
             .first()
+            .is_some_and(|token| token.eq_ignore_ascii_case(".op"))
+        {
+            if operating_point || tokens.len() != 1 {
+                return Err(SimError::invalid("duplicate or malformed .op directive"));
+            }
+            operating_point = true;
+        }
+        if tokens
+            .first()
             .is_some_and(|token| token.eq_ignore_ascii_case(".tran"))
         {
-            if transient.is_some() || tokens.len() != 3 {
+            if transient.is_some() {
                 return Err(SimError::new(
                     ErrorCode::Unsupported,
-                    "ngspice importer supports exactly one .tran step stop directive",
+                    "multiple .tran analyses require a multi-analysis result contract",
                 ));
             }
+            // UIC is valid ngspice syntax with different initialization
+            // semantics, not a malformed numeric start/max-step parameter.
+            if tokens
+                .iter()
+                .skip(3)
+                .any(|token| token.eq_ignore_ascii_case("uic"))
+            {
+                return Err(SimError::new(
+                    ErrorCode::Unsupported,
+                    "transient UIC initialization is unsupported",
+                ));
+            }
+            if !(3..=5).contains(&tokens.len()) {
+                return Err(SimError::new(
+                    ErrorCode::Unsupported,
+                    "bounded .tran expects step stop [zero-start [max-step]]; UIC is unsupported",
+                ));
+            }
+            let step = spice_scalar(tokens[1])?;
+            let stop = spice_scalar(tokens[2])?;
+            if step <= 0. || stop <= 0. {
+                return Err(SimError::invalid(
+                    "transient step and stop must be positive",
+                ));
+            }
+            if tokens.len() >= 4 && spice_scalar(tokens[3])? != 0. {
+                return Err(SimError::new(
+                    ErrorCode::Unsupported,
+                    "nonzero transient output start is unsupported",
+                ));
+            }
+            let maximum_step = if tokens.len() == 5 {
+                spice_scalar(tokens[4])?
+            } else {
+                step
+            };
+            if maximum_step <= 0. {
+                return Err(SimError::invalid("transient maximum step must be positive"));
+            }
             transient = Some(crate::configured::TransientConfig {
-                max_step_s: spice_scalar(tokens[1])?,
-                stop_s: spice_scalar(tokens[2])?,
+                max_step_s: maximum_step,
+                stop_s: stop,
                 ..Default::default()
             });
         }
