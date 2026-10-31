@@ -1,5 +1,7 @@
 # Project instructions
 
+- Before substantial additional parser/solver/model implementation, apply the canonical reuse-before-build gate. Evaluate complete existing solutions, including SpiceSharp/SpiceSharpParser and ngspice integration, rather than limiting the search to Rust crates. Record concrete gaps and executable evidence; do not treat the current language/architecture choice as proof that reuse is unsuitable. An evaluation does not itself authorize a production migration.
+
 - Read `docs/implementation-plan.sdoc`, `docs/architecture.sdoc` and `docs/development-standards.sdoc` before implementation.
 - Use C# or F# for scripts/automation by default and PowerShell cmdlets for shell/text/file operations. A required tool runtime, such as StrictDoc's Python runtime, is an explicit exception rather than a default scripting choice.
 - Keep authoritative requirements in StrictDoc with stable IDs and honest implementation/test evidence links. Update `backlog.json` from the plan when work-package metadata changes.

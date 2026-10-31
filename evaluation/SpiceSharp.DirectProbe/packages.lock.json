@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "SpiceSharp": {
+        "type": "Direct",
+        "requested": "[3.2.3, )",
+        "resolved": "3.2.3",
+        "contentHash": "mQ6jWhq59HDxQklMoOJn1DVmce2oII9zhvt7GTRWjfJTkGSWlgjM7qI0136BqWgHvZsQQkb/1zaaWsrqCKFvoQ=="
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+[DOCUMENT]
+TITLE: Simulator Reuse Decision Evidence
+
+[REQUIREMENT]
+UID: REUSE-001
+STATUS: Draft
+TITLE: Existing solutions are evaluated before substantial replacement work
+STATEMENT: >>>
+Before substantial new parser or numerical-model implementation, the project shall compare existing simulator and parser solutions against the user's required outcomes, considering reuse, integration and selective retention of existing work. The decision record shall identify exact candidate versions, primary sources, license and dependency implications, measured representative behavior, material gaps, migration costs and unresolved risks. Language preference and existing sunk cost alone shall not justify a replacement.
+<<<
+COMMENT: >>>
+User-directed corrective gate, also recorded in canonical personal AGENTS.md on 2026-10-31. Evidence: docs/spicesharp-evaluation.md and the isolated evaluation harness. Research does not authorize automatic migration or establish production qualification.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-ADOPT-001
+
+[REQUIREMENT]
+UID: REUSE-002
+STATUS: Draft
+TITLE: Separate structural parsing from executed numerical evidence
+STATEMENT: >>>
+Candidate evaluation shall report parser-only structural acceptance independently from elaboration, model or analysis support, numerical execution and oracle agreement. The parser-only corpus shall not execute control commands or implicitly resolve external dependencies. Representative numerical cases shall use declared analytical bounds and independent ngspice checks, with malformed inputs and unavailable, failed or timed-out work reported explicitly.
+<<<
+COMMENT: >>>
+Implementation under evaluation/SpiceSharp.Evaluation uses SpiceSharp 3.2.3 and SpiceSharp-Parser 3.4.1, disables all processors for corpus-only parsing, and supervises separate bounded workers. This is a bounded assessment rather than a production engine integration.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
