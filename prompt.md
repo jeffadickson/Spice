@@ -1,3 +1,22 @@
+Ordered follow-up checkpoint: rollback reverified (78efbe2), V/L/E/H MNA-current
+comparisons implemented (c33de35), optional transient syntax/default-stop mutation
+gap and UIC classification corrected (cfba1ce). Read docs/corpus-followup-contracts.md,
+evidence/ordered-followup-review.md, analysis-cards-verification.json and
+resistor-model-verification.json. NGC-CORPUS-008, NGC-037 and NGC-038 remain Draft.
+The new named R family accepts only positive constant R=; geometry, temperature,
+noise, multiplicity and semiconductor families remain unsupported. Model inventory
+counts overlap: NMOS 91 decks, PMOS 82, NPN 77, VDMOS 50. Minimize LEVEL/parameter
+profiles before selecting the next semiconductor implementation.
+Final corpus run 20261031T055611Z-019f8631 / issue #10: one full selected-profile
+pass, two partial, 666 unsupported, 230 import-rejected, 11 input/resource rejected.
+909 remain; v4 is a separate comparison scope. Intermediate issue #9 is preserved;
+12 UIC cases are now correctly Unsupported rather than malformed scalar input.
+Full regression before final UIC diagnostic correction: 440 passed, one ignored.
+Final correction: seven parser checks and 95 managed checks passed; final clippy,
+StrictDoc (289 IDs) and Sphinx passed. Scoped coverage and exact native mutation
+replays are linked in the evidence; no native Rust branch or fresh Linux result.
+Current user authorizes normal checkpoint pushes; no CI dispatch/new soak.
+Raw artifacts remain local. This does not establish full SPICE/model qualification.
 Latest parser checkpoint supersedes the NGC-034 pending note below. NGC-034/035/036
 are implemented with bounded tests; remain Draft rather than broad acceptance.
 Read docs/ngspice-source-metadata.md and evidence/ngspice-source-metadata-verification.json.

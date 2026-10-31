@@ -1,0 +1,77 @@
+{
+  "coverage": {
+    "native": "five-area-ordered-resistor-coverage.json",
+    "rust_branch": null,
+    "inventory": "model-inventory-coverage.json"
+  },
+  "limitations": [
+    "Constant positive default R only. RSH/geometry, temperature, noise, multiplicity and per-instance overrides unsupported.",
+    "BJT, MOS, JFET and other semiconductor model families remain unsupported. Inventory counts overlap and are not compatibility passes.",
+    "Native coverage is focused MSVC nightly; regression uses pinned GNU. No fresh Linux/GPU/production qualification.",
+    "Inventory helper executed managed, not NativeAOT. Error/path/platform branches remain unmeasured as reported."
+  ],
+  "inventory": {
+    "families": 104,
+    "unreadable": 11,
+    "report": "ngspice-model-family-inventory.json",
+    "probe": "work/model-inventory-probe-*: title/comment exclusions, duplicate-family deck de-duplication, two literal families and invalid UTF-8 rejected from scan"
+  },
+  "green": {
+    "log": "work/ordered-final-parser-tests.log",
+    "providers_per_deck": 2,
+    "managed_suite": "work/ordered-managed-qualified.log",
+    "rust_tests": 3,
+    "real_oracle_decks": 6
+  },
+  "requirement": "NGC-038",
+  "source_hashes": {
+    "src/ngspice_resistor.rs": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3",
+    "src/netlist.rs": "8115ae7c961b7a089d1505fef4c10159ac7fca4158262b272cefd2021e70860a",
+    "tests/ngspice_resistor_models.rs": "71fb1718c477c4d9d5413228ce7204cc47e870a05735933d17d45d0ef5fc7f84",
+    "dotnet/Simulator.Benchmarks.Tests/CorpusPassiveModelIntegration.cs": "6cbe6a9ac86df508cbaaa12af1e77d8aecebaa3dcb30a3966a217761a10d2cb0",
+    "scripts/Inventory-NgspiceModels.cs": "cd9f43e21a6004cca0e3b9367c9657825ba3dbfda2700154ddb57aa979f0548a"
+  },
+  "red": "work/resistor-model-red.log: two failed, one negative test passed",
+  "requirements_parse": "ordered-followup-requirements.json",
+  "property": {
+    "cases": 128,
+    "minimized_original_counterexample": "value=1; persisted regression seed retained",
+    "seed": "0x5350494345524d44"
+  },
+  "source_base": "c33de35",
+  "source_dirty": true,
+  "mutation": {
+    "native": {
+      "version": "27.1.0",
+      "status": "completed",
+      "exit_code": 0,
+      "candidates": 3,
+      "killed": 3,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": "2c1e8a5937be3c6b875a31d761b9d5ce2db5d52acf2937c0eecabda96ada80ae",
+      "log_sha256": "d5b47bae034c2e8122fb07db4a1b70f5458b8d75bbb52d7820d74cfc483d8104"
+    },
+    "selection": "cross-family duplicate guard, parameter-shape disjunction and resistance positivity",
+    "scope": "Three selected mutations only; no full-module mutation score",
+    "run": "20261031T054003Z-de0fd7bf"
+  },
+  "final_corpus_run": "20261031T055611Z-019f8631",
+  "final_engine_sha256": "b34b2f9dcdf12c572a325bf4fb2e9900c6f72abb4fde85a9ac67a8aea24d57e8",
+  "final_managed": {
+    "log": "work/ordered-managed-qualified.log",
+    "skipped": 0,
+    "passed": 95,
+    "failed": 0
+  },
+  "final_clippy": {
+    "log": "work/ordered-final-clippy.log",
+    "status": "passed"
+  }
+}

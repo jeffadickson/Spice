@@ -2,6 +2,20 @@
 TITLE: ngspice Corpus Compatibility Track
 
 [REQUIREMENT]
+UID: NGC-038
+STATUS: Draft
+TITLE: Bounded named passive resistor model family
+STATEMENT: >>>
+The bounded ngspice importer shall resolve case-insensitive forward references to a named R model containing only one positive finite R resistance value into the existing primitive resistor equation in ohms. It shall require unique model identifiers across families and reject missing resistance, extra or duplicate parameters, unsupported geometry, temperature or noise behavior, and malformed model cards rather than dropping model physics or inventing a default. Other unsupported model families shall remain explicit failures.
+<<<
+COMMENT: >>>
+Implementation: ngspice_resistor::lower before bounded diode-model parsing. Verification: tests/ngspice_resistor_models.rs, fixed 128-case Proptest seed 0x5350494345524d44, and CorpusNumericalIntegration.NamedResistorModelMatchesOhmsLawAndNgspice. Evidence: evidence/resistor-model-verification.json. Model-family inventory records literal declarations, not supported devices or independent deck pass counts; semiconductor and geometry-dependent resistor models remain unsupported. Primary reference: https://ngspice.sourceforge.io/docs/ngspice-manual.pdf and upstream res/restemp.c at e8285746c73a8229cf922487c8ccfcf6bea61bce.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-003
+
+[REQUIREMENT]
 UID: NGC-037
 STATUS: Draft
 TITLE: Bounded optional transient fields and repeated analysis rejection

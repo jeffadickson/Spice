@@ -1,0 +1,1586 @@
+{
+  "report_sha256": "5c6451e46d3530a5392e67bb0a17d1a2c254ed537bc784fe1b8df9184e5158ba",
+  "families": [
+    {
+      "family": "ABSDELAY_DLY",
+      "decks": 1,
+      "examples": [
+        "examples/osdi/absdelay/absdelay_tran.cir"
+      ]
+    },
+    {
+      "family": "ADC_BRIDGE",
+      "decks": 57,
+      "examples": [
+        "examples/digital/compare/adder_Xspice.cir",
+        "examples/digital/digital_devices/counter.cir",
+        "examples/digital/digital_devices/xspice_c4.cir",
+        "examples/numparam/strings.cir",
+        "examples/numparam/vector_param.cir"
+      ]
+    },
+    {
+      "family": "ASTATE",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/various/astate.cir",
+        "examples/xspice/various/astate_pulse.cir"
+      ]
+    },
+    {
+      "family": "ASWITCH",
+      "decks": 9,
+      "examples": [
+        "examples/p-to-n-examples/aswitch-pswitch.cir",
+        "examples/xspice/original-examples/analog_models4_ac.deck",
+        "examples/xspice/original-examples/analog_models4_dc.deck",
+        "examples/xspice/original-examples/analog_models4_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models4_transient.deck"
+      ]
+    },
+    {
+      "family": "CAPACITOR",
+      "decks": 3,
+      "examples": [
+        "examples/xspice/original-examples/initial_conditions.deck",
+        "paranoia_parallel/examples/xspice/original-examples/initial_conditions.deck",
+        "paranoia_parallel/examples/xspice/original-examples/supply_ramping.deck"
+      ]
+    },
+    {
+      "family": "CAPACITORIC",
+      "decks": 1,
+      "examples": [
+        "examples/xspice/original-examples/supply_ramping.deck"
+      ]
+    },
+    {
+      "family": "CLIMIT",
+      "decks": 8,
+      "examples": [
+        "examples/xspice/original-examples/analog_models3_ac.deck",
+        "examples/xspice/original-examples/analog_models3_dc.deck",
+        "examples/xspice/original-examples/analog_models3_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models3_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models3_ac.deck"
+      ]
+    },
+    {
+      "family": "CMETER",
+      "decks": 8,
+      "examples": [
+        "examples/xspice/original-examples/analog_models3_ac.deck",
+        "examples/xspice/original-examples/analog_models3_dc.deck",
+        "examples/xspice/original-examples/analog_models3_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models3_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models3_ac.deck"
+      ]
+    },
+    {
+      "family": "CORE",
+      "decks": 8,
+      "examples": [
+        "examples/xspice/original-examples/analog_models2_ac.deck",
+        "examples/xspice/original-examples/analog_models2_dc.deck",
+        "examples/xspice/original-examples/analog_models2_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models2_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models2_ac.deck"
+      ]
+    },
+    {
+      "family": "CPL",
+      "decks": 17,
+      "examples": [
+        "examples/TransmissionLines/cpl1_4_line.sp",
+        "examples/TransmissionLines/cpl2_2_line.sp",
+        "examples/TransmissionLines/cpl3_4_line.sp",
+        "examples/TransmissionLines/cpl4_txl_2_line.sp",
+        "examples/TransmissionLines/cpl_ibm1.sp"
+      ]
+    },
+    {
+      "family": "CPLINE",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/transmission_lines/cpline_ac.cir",
+        "examples/xspice/transmission_lines/cpline_tran.cir"
+      ]
+    },
+    {
+      "family": "CPMLIN",
+      "decks": 1,
+      "examples": [
+        "examples/xspice/transmission_lines/cpmline_ac.cir"
+      ]
+    },
+    {
+      "family": "CSW",
+      "decks": 1,
+      "examples": [
+        "examples/probe/switches-manual-p92.cir"
+      ]
+    },
+    {
+      "family": "D",
+      "decks": 57,
+      "examples": [
+        "examples/Monte_Carlo/OpWien.sp",
+        "examples/TransImpedanceAmp/output.net",
+        "examples/TransmissionLines/cpl4_txl_2_line.sp",
+        "examples/TransmissionLines/cpl_ibm3.sp",
+        "examples/TransmissionLines/ltra4_1_line.sp"
+      ]
+    },
+    {
+      "family": "DAC_BRIDGE",
+      "decks": 39,
+      "examples": [
+        "examples/xspice/d_source/PWMexample.net",
+        "examples/xspice/delta-sigma/count-latch-dac.cir",
+        "examples/xspice/delta-sigma/delta-sigma-1.cir",
+        "examples/xspice/delta-sigma/mod1-ct.cir",
+        "examples/xspice/original-examples/bad_io_type.deck"
+      ]
+    },
+    {
+      "family": "DELAY",
+      "decks": 1,
+      "examples": [
+        "examples/xspice/delay/analog-delay1.cir"
+      ]
+    },
+    {
+      "family": "DIVIDE",
+      "decks": 10,
+      "examples": [
+        "examples/xspice/original-examples/analog_models1_ac.deck",
+        "examples/xspice/original-examples/analog_models1_dc.deck",
+        "examples/xspice/original-examples/analog_models1_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models1_transient.deck",
+        "examples/xspice/various/analog_models1_transient.sp"
+      ]
+    },
+    {
+      "family": "D_AND",
+      "decks": 12,
+      "examples": [
+        "examples/xspice/d_process/checks.cir",
+        "examples/xspice/d_process/prog1-4.cir",
+        "examples/xspice/delta-sigma/count-latch-dac.cir",
+        "examples/xspice/original-examples/digital_models1.deck",
+        "examples/xspice/pll/f-p-det-d-sub.cir"
+      ]
+    },
+    {
+      "family": "D_BUFFER",
+      "decks": 6,
+      "examples": [
+        "examples/digital/auto_bridge/shared_line.cir",
+        "examples/digital/auto_bridge/vcc.cir",
+        "examples/xspice/delta-sigma/delta-sigma-1.cir",
+        "examples/xspice/original-examples/digital_models1.deck",
+        "paranoia_parallel/examples/xspice/delta-sigma/delta-sigma-1.cir"
+      ]
+    },
+    {
+      "family": "D_COSIM",
+      "decks": 12,
+      "examples": [
+        "examples/xspice/ghdl/555.cir",
+        "examples/xspice/ghdl/adc.cir",
+        "examples/xspice/ghdl/mc.cir",
+        "examples/xspice/ghdl/pwm.cir",
+        "examples/xspice/icarus_verilog/555.cir"
+      ]
+    },
+    {
+      "family": "D_DFF",
+      "decks": 15,
+      "examples": [
+        "examples/xspice/delta-sigma/count-latch-dac.cir",
+        "examples/xspice/delta-sigma/mod1-ct.cir",
+        "examples/xspice/original-examples/digital_models2.deck",
+        "examples/xspice/original-examples/mixed_mode.deck",
+        "examples/xspice/pll/f-p-det-d-sub.cir"
+      ]
+    },
+    {
+      "family": "D_DLATCH",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/original-examples/digital_models3.deck",
+        "paranoia_parallel/examples/xspice/original-examples/digital_models3.deck"
+      ]
+    },
+    {
+      "family": "D_DT",
+      "decks": 8,
+      "examples": [
+        "examples/xspice/original-examples/analog_models2_ac.deck",
+        "examples/xspice/original-examples/analog_models2_dc.deck",
+        "examples/xspice/original-examples/analog_models2_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models2_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models2_ac.deck"
+      ]
+    },
+    {
+      "family": "D_FDIV",
+      "decks": 10,
+      "examples": [
+        "examples/shared/t.cir",
+        "examples/xspice/delta-sigma/delta-sigma-1.cir",
+        "examples/xspice/original-examples/digital_models3.deck",
+        "examples/xspice/pll/pll-xspice-fstep.cir",
+        "examples/xspice/pll/shared-pll-xspice.cir"
+      ]
+    },
+    {
+      "family": "D_GENLUT",
+      "decks": 1,
+      "examples": [
+        "examples/numparam/vector_param.cir"
+      ]
+    },
+    {
+      "family": "D_INVERTER",
+      "decks": 17,
+      "examples": [
+        "examples/digital/auto_bridge/shared_line.cir",
+        "examples/digital/digital_devices/encoder.cir",
+        "examples/xspice/original-examples/digital_invert.deck",
+        "examples/xspice/original-examples/digital_models1.deck",
+        "examples/xspice/original-examples/mixed_io_size.deck"
+      ]
+    },
+    {
+      "family": "D_JKFF",
+      "decks": 5,
+      "examples": [
+        "examples/xspice/delta-sigma/count-latch-dac.cir",
+        "examples/xspice/original-examples/digital_models2.deck",
+        "paranoia_parallel/examples/xspice/delta-sigma/count-latch-dac.cir",
+        "paranoia_parallel/examples/xspice/original-examples/digital_models2.deck",
+        "visualc/ng_shared_xspice_v/examples/count-latch-dac.cir"
+      ]
+    },
+    {
+      "family": "D_LUT",
+      "decks": 1,
+      "examples": [
+        "examples/numparam/strings.cir"
+      ]
+    },
+    {
+      "family": "D_NAND",
+      "decks": 23,
+      "examples": [
+        "examples/digital/auto_bridge/adder_family.cir",
+        "examples/digital/compare/adder_Xspice.cir",
+        "examples/xspice/delta-sigma/count-latch-dac.cir",
+        "examples/xspice/original-examples/digital_invert.deck",
+        "examples/xspice/original-examples/digital_models.deck"
+      ]
+    },
+    {
+      "family": "D_NOR",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/original-examples/digital_models1.deck",
+        "paranoia_parallel/examples/xspice/original-examples/digital_models1.deck"
+      ]
+    },
+    {
+      "family": "D_OR",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/original-examples/digital_models1.deck",
+        "paranoia_parallel/examples/xspice/original-examples/digital_models1.deck"
+      ]
+    },
+    {
+      "family": "D_OSC",
+      "decks": 14,
+      "examples": [
+        "examples/shared/t.cir",
+        "examples/xspice/d_process/checks.cir",
+        "examples/xspice/d_process/prog-pipes.cir",
+        "examples/xspice/d_process/prog1-4.cir",
+        "examples/xspice/original-examples/hybrid_models1_dc.deck"
+      ]
+    },
+    {
+      "family": "D_PROCESS",
+      "decks": 3,
+      "examples": [
+        "examples/xspice/d_process/checks.cir",
+        "examples/xspice/d_process/prog-pipes.cir",
+        "examples/xspice/d_process/prog1-4.cir"
+      ]
+    },
+    {
+      "family": "D_PULLDOWN",
+      "decks": 3,
+      "examples": [
+        "examples/digital/auto_bridge/adder_bidi3.cir",
+        "examples/xspice/state/state-machine.cir",
+        "paranoia_parallel/examples/xspice/state/state-machine.cir"
+      ]
+    },
+    {
+      "family": "D_PULLUP",
+      "decks": 3,
+      "examples": [
+        "examples/digital/auto_bridge/adder_bidi3.cir",
+        "examples/xspice/state/state-machine.cir",
+        "paranoia_parallel/examples/xspice/state/state-machine.cir"
+      ]
+    },
+    {
+      "family": "D_PWM",
+      "decks": 1,
+      "examples": [
+        "examples/xspice/pwm-osc/pwm-sin.cir"
+      ]
+    },
+    {
+      "family": "D_RAM",
+      "decks": 3,
+      "examples": [
+        "examples/xspice/original-examples/digital_models4.deck",
+        "paranoia_parallel/examples/xspice/original-examples/digital_models4.deck",
+        "tests/xspice/digital/d_ram.cir"
+      ]
+    },
+    {
+      "family": "D_SOURCE",
+      "decks": 21,
+      "examples": [
+        "examples/digital/digital_devices/7490a.cir",
+        "examples/digital/digital_devices/74f524.cir",
+        "examples/digital/digital_devices/behav-283-1.cir",
+        "examples/digital/digital_devices/behav-283.cir",
+        "examples/digital/digital_devices/behav-568.cir"
+      ]
+    },
+    {
+      "family": "D_SRFF",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/original-examples/digital_models2.deck",
+        "paranoia_parallel/examples/xspice/original-examples/digital_models2.deck"
+      ]
+    },
+    {
+      "family": "D_SRLATCH",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/original-examples/digital_models3.deck",
+        "paranoia_parallel/examples/xspice/original-examples/digital_models3.deck"
+      ]
+    },
+    {
+      "family": "D_STATE",
+      "decks": 3,
+      "examples": [
+        "examples/xspice/state/state-machine.cir",
+        "paranoia_parallel/examples/xspice/state/state-machine.cir",
+        "tests/xspice/digital/d_state.cir"
+      ]
+    },
+    {
+      "family": "D_TFF",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/original-examples/digital_models2.deck",
+        "paranoia_parallel/examples/xspice/original-examples/digital_models2.deck"
+      ]
+    },
+    {
+      "family": "D_TO_REAL",
+      "decks": 9,
+      "examples": [
+        "examples/digital/digital_devices/xspice_c4.cir",
+        "examples/xspice/original-examples/io_types.deck",
+        "examples/xspice/original-examples/mixed_mode.deck",
+        "examples/xspice/original-examples/user_defined_nodes.deck",
+        "examples/xspice/various/xspice_c3.cir"
+      ]
+    },
+    {
+      "family": "D_TRISTATE",
+      "decks": 1,
+      "examples": [
+        "examples/digital/auto_bridge/shared_line.cir"
+      ]
+    },
+    {
+      "family": "D_XNOR",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/original-examples/digital_models1.deck",
+        "paranoia_parallel/examples/xspice/original-examples/digital_models1.deck"
+      ]
+    },
+    {
+      "family": "D_XOR",
+      "decks": 3,
+      "examples": [
+        "examples/xspice/original-examples/digital_models1.deck",
+        "paranoia_parallel/examples/xspice/original-examples/digital_models1.deck",
+        "tests/xspice/digital/d_state.cir"
+      ]
+    },
+    {
+      "family": "FILESOURCE",
+      "decks": 6,
+      "examples": [
+        "examples/xspice/filesource/filesource_variants.cir",
+        "examples/xspice/filesource/simple-filesource.cir",
+        "examples/xspice/filesource/subckt-filesource.cir",
+        "examples/xspice/various/filesource-test.sp",
+        "paranoia_parallel/examples/xspice/filesource/simple-filesource.cir"
+      ]
+    },
+    {
+      "family": "GAIN",
+      "decks": 44,
+      "examples": [
+        "examples/noise/baker-252-gain.cir",
+        "examples/noise/resdiv_gain.cir",
+        "examples/xspice/delta-sigma/mod1-ct.cir",
+        "examples/xspice/noise/noise_gain.cir",
+        "examples/xspice/original-examples/analog_models1_ac.deck"
+      ]
+    },
+    {
+      "family": "HYST",
+      "decks": 8,
+      "examples": [
+        "examples/xspice/original-examples/analog_models3_ac.deck",
+        "examples/xspice/original-examples/analog_models3_dc.deck",
+        "examples/xspice/original-examples/analog_models3_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models3_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models3_ac.deck"
+      ]
+    },
+    {
+      "family": "ILIMIT",
+      "decks": 8,
+      "examples": [
+        "examples/xspice/original-examples/analog_models3_ac.deck",
+        "examples/xspice/original-examples/analog_models3_dc.deck",
+        "examples/xspice/original-examples/analog_models3_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models3_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models3_ac.deck"
+      ]
+    },
+    {
+      "family": "INDUCTOR",
+      "decks": 3,
+      "examples": [
+        "examples/xspice/original-examples/initial_conditions.deck",
+        "paranoia_parallel/examples/xspice/original-examples/initial_conditions.deck",
+        "paranoia_parallel/examples/xspice/original-examples/supply_ramping.deck"
+      ]
+    },
+    {
+      "family": "INDUCTORIC",
+      "decks": 1,
+      "examples": [
+        "examples/xspice/original-examples/supply_ramping.deck"
+      ]
+    },
+    {
+      "family": "INT",
+      "decks": 9,
+      "examples": [
+        "examples/various/integrate1.cir",
+        "examples/xspice/original-examples/analog_models2_ac.deck",
+        "examples/xspice/original-examples/analog_models2_dc.deck",
+        "examples/xspice/original-examples/analog_models2_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models2_transient.deck"
+      ]
+    },
+    {
+      "family": "LCOUPLE",
+      "decks": 9,
+      "examples": [
+        "examples/various/transformers1.cir",
+        "examples/xspice/original-examples/analog_models2_ac.deck",
+        "examples/xspice/original-examples/analog_models2_dc.deck",
+        "examples/xspice/original-examples/analog_models2_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models2_transient.deck"
+      ]
+    },
+    {
+      "family": "LIMIT",
+      "decks": 13,
+      "examples": [
+        "examples/digital/digital_devices/xspice_c4.cir",
+        "examples/xspice/original-examples/analog_models3_ac.deck",
+        "examples/xspice/original-examples/analog_models3_dc.deck",
+        "examples/xspice/original-examples/analog_models3_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models3_transient.deck"
+      ]
+    },
+    {
+      "family": "LMETER",
+      "decks": 8,
+      "examples": [
+        "examples/xspice/original-examples/analog_models3_ac.deck",
+        "examples/xspice/original-examples/analog_models3_dc.deck",
+        "examples/xspice/original-examples/analog_models3_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models3_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models3_ac.deck"
+      ]
+    },
+    {
+      "family": "LTRA",
+      "decks": 18,
+      "examples": [
+        "examples/TransmissionLines/ltra1_1_line.sp",
+        "examples/TransmissionLines/ltra1_4_line.sp",
+        "examples/TransmissionLines/ltra2_2_line.sp",
+        "examples/TransmissionLines/ltra3_2_line.sp",
+        "examples/TransmissionLines/ltra4_1_line.sp"
+      ]
+    },
+    {
+      "family": "MEMRISTOR",
+      "decks": 2,
+      "examples": [
+        "examples/memristor/memristor_x.sp",
+        "paranoia_parallel/examples/memristor/memristor_x.sp"
+      ]
+    },
+    {
+      "family": "MLIN",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/transmission_lines/mlin.cir",
+        "examples/xspice/transmission_lines/mlin_tran.cir"
+      ]
+    },
+    {
+      "family": "MULT",
+      "decks": 10,
+      "examples": [
+        "examples/xspice/original-examples/analog_models1_ac.deck",
+        "examples/xspice/original-examples/analog_models1_dc.deck",
+        "examples/xspice/original-examples/analog_models1_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models1_transient.deck",
+        "examples/xspice/various/analog_models1_transient.sp"
+      ]
+    },
+    {
+      "family": "NBJT",
+      "decks": 21,
+      "examples": [
+        "examples/cider/bjt/astable.cir",
+        "examples/cider/bjt/colposc.cir",
+        "examples/cider/bjt/ecp.cir",
+        "examples/cider/bjt/invchain.cir",
+        "examples/cider/bjt/meclgate.cir"
+      ]
+    },
+    {
+      "family": "NHFET",
+      "decks": 2,
+      "examples": [
+        "tests/hfet/id_vgs.cir",
+        "tests/hfet/inverter.cir"
+      ]
+    },
+    {
+      "family": "NJF",
+      "decks": 1,
+      "examples": [
+        "tests/jfet/jfet_vds-vgs.cir"
+      ]
+    },
+    {
+      "family": "NMF",
+      "decks": 14,
+      "examples": [
+        "examples/rf/hb/ampATF34143/ATF34143_amp_s21_vdd.cir",
+        "examples/rf/hb/ampATF34143/ATF34143_amp_spectrum.cir",
+        "tests/mes/subth.cir",
+        "tests/mesa/mesa-12.cir",
+        "tests/mesa/mesa.cir"
+      ]
+    },
+    {
+      "family": "NMOS",
+      "decks": 91,
+      "examples": [
+        "examples/Monte_Carlo/MC_2_circ.sp",
+        "examples/Monte_Carlo/MC_ring.sp",
+        "examples/Monte_Carlo/mc_ring_circ.net",
+        "examples/Monte_Carlo/mc_ring_lib_complete_actual.cir",
+        "examples/TransmissionLines/cpl1_4_line.sp"
+      ]
+    },
+    {
+      "family": "NPN",
+      "decks": 77,
+      "examples": [
+        "examples/TransImpedanceAmp/output.net",
+        "examples/TransmissionLines/cpl4_txl_2_line.sp",
+        "examples/TransmissionLines/cpl_ibm1.sp",
+        "examples/TransmissionLines/cpl_ibm1a.sp",
+        "examples/TransmissionLines/ltra4_1_line.sp"
+      ]
+    },
+    {
+      "family": "NPORT",
+      "decks": 2,
+      "examples": [
+        "examples/rf/sp/file_nport.cir",
+        "examples/rf/sp/file_nport_tran.cir"
+      ]
+    },
+    {
+      "family": "NUMD",
+      "decks": 10,
+      "examples": [
+        "examples/cider/diode/diode.cir",
+        "examples/cider/diode/diotran.cir",
+        "examples/cider/diode/pd1.cir",
+        "examples/cider/diode/pindiode.cir",
+        "examples/cider/resistor/gaasres.cir"
+      ]
+    },
+    {
+      "family": "NUMOS",
+      "decks": 21,
+      "examples": [
+        "examples/cider/cider-gnuplot/passq.cir",
+        "examples/cider/cider-gnuplot/passq1.cir",
+        "examples/cider/cider-gnuplot/winq.cir",
+        "examples/cider/cider-gnuplot/winq1.cir",
+        "examples/cider/mos/bootinv.cir"
+      ]
+    },
+    {
+      "family": "ONESHOT",
+      "decks": 8,
+      "examples": [
+        "examples/xspice/original-examples/analog_models4_ac.deck",
+        "examples/xspice/original-examples/analog_models4_dc.deck",
+        "examples/xspice/original-examples/analog_models4_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models4_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models4_ac.deck"
+      ]
+    },
+    {
+      "family": "OTA",
+      "decks": 1,
+      "examples": [
+        "examples/xspice/noise/ota_noise_test1.cir"
+      ]
+    },
+    {
+      "family": "PMOS",
+      "decks": 82,
+      "examples": [
+        "examples/Monte_Carlo/MC_2_circ.sp",
+        "examples/Monte_Carlo/MC_ring.sp",
+        "examples/Monte_Carlo/mc_ring_circ.net",
+        "examples/Monte_Carlo/mc_ring_lib_complete_actual.cir",
+        "examples/TransmissionLines/cpl1_4_line.sp"
+      ]
+    },
+    {
+      "family": "PNP",
+      "decks": 18,
+      "examples": [
+        "examples/TransImpedanceAmp/output.net",
+        "examples/p-to-n-examples/555-timer-2.cir",
+        "examples/p-to-n-examples/op-test.cir",
+        "examples/probe/555-timer-2.cir",
+        "examples/probe/probe-i-dev.cir"
+      ]
+    },
+    {
+      "family": "PRINT_PARAM_TYPES",
+      "decks": 6,
+      "examples": [
+        "examples/xspice/original-examples/param_defaults.deck",
+        "examples/xspice/original-examples/param_types.deck",
+        "examples/xspice/original-examples/suffixes.deck",
+        "paranoia_parallel/examples/xspice/original-examples/param_defaults.deck",
+        "paranoia_parallel/examples/xspice/original-examples/param_types.deck"
+      ]
+    },
+    {
+      "family": "PSWITCH",
+      "decks": 3,
+      "examples": [
+        "examples/p-to-n-examples/aswitch-pswitch.cir",
+        "examples/xspice/various/vswitch-test-lin.cir",
+        "examples/xspice/various/vswitch-test-log.cir"
+      ]
+    },
+    {
+      "family": "PWL",
+      "decks": 10,
+      "examples": [
+        "examples/xspice/original-examples/analog_models1_ac.deck",
+        "examples/xspice/original-examples/analog_models1_dc.deck",
+        "examples/xspice/original-examples/analog_models1_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models1_transient.deck",
+        "examples/xspice/various/analog_models1_transient.sp"
+      ]
+    },
+    {
+      "family": "PWLTS",
+      "decks": 1,
+      "examples": [
+        "examples/xspice/various/pwlts1.cir"
+      ]
+    },
+    {
+      "family": "R",
+      "decks": 9,
+      "examples": [
+        "examples/loops/loop-model.cir",
+        "paranoia_parallel/examples/Monte_Carlo/names-test2.sp",
+        "tests/regression/misc/test-noise-2.cir",
+        "tests/regression/misc/test-noise-3.cir",
+        "tests/regression/model/instance-defaults.cir"
+      ]
+    },
+    {
+      "family": "R2_CMC",
+      "decks": 1,
+      "examples": [
+        "examples/osdi/r2_cmc/res_r2_cmc.cir"
+      ]
+    },
+    {
+      "family": "REAL_DELAY",
+      "decks": 5,
+      "examples": [
+        "examples/digital/digital_devices/xspice_c4.cir",
+        "examples/xspice/original-examples/mixed_mode.deck",
+        "examples/xspice/various/xspice_c3.cir",
+        "paranoia_parallel/examples/xspice/original-examples/mixed_mode.deck",
+        "paranoia_parallel/examples/xspice/xspice_c3.cir"
+      ]
+    },
+    {
+      "family": "REAL_GAIN",
+      "decks": 9,
+      "examples": [
+        "examples/digital/digital_devices/xspice_c4.cir",
+        "examples/xspice/original-examples/io_types.deck",
+        "examples/xspice/original-examples/mixed_mode.deck",
+        "examples/xspice/original-examples/user_defined_nodes.deck",
+        "examples/xspice/various/xspice_c3.cir"
+      ]
+    },
+    {
+      "family": "REAL_TO_V",
+      "decks": 9,
+      "examples": [
+        "examples/digital/digital_devices/xspice_c4.cir",
+        "examples/xspice/original-examples/io_types.deck",
+        "examples/xspice/original-examples/mixed_mode.deck",
+        "examples/xspice/original-examples/user_defined_nodes.deck",
+        "examples/xspice/various/xspice_c3.cir"
+      ]
+    },
+    {
+      "family": "RES",
+      "decks": 1,
+      "examples": [
+        "paranoia_parallel/examples/various/def_red.cir"
+      ]
+    },
+    {
+      "family": "RESISTORVA",
+      "decks": 1,
+      "examples": [
+        "examples/osdi/noise/resdiv.cir"
+      ]
+    },
+    {
+      "family": "SEEGEN",
+      "decks": 7,
+      "examples": [
+        "examples/xspice/see/CMOSComparator/Fig27_12_see.sp",
+        "examples/xspice/see/ihp_simple_sram_seegen.net",
+        "examples/xspice/see/ihp_simple_sram_seegen_ctrl.net",
+        "examples/xspice/see/ihp_simple_sram_seegen_subckt.net",
+        "examples/xspice/see/ihp_simple_sram_seegen_subckt_vary.net"
+      ]
+    },
+    {
+      "family": "SINE",
+      "decks": 8,
+      "examples": [
+        "examples/xspice/original-examples/analog_models4_ac.deck",
+        "examples/xspice/original-examples/analog_models4_dc.deck",
+        "examples/xspice/original-examples/analog_models4_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models4_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models4_ac.deck"
+      ]
+    },
+    {
+      "family": "SQUARE",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/original-examples/analog_models4_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models4_transient.deck"
+      ]
+    },
+    {
+      "family": "SUMMER",
+      "decks": 12,
+      "examples": [
+        "examples/xspice/original-examples/analog_models1_ac.deck",
+        "examples/xspice/original-examples/analog_models1_dc.deck",
+        "examples/xspice/original-examples/analog_models1_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models1_transient.deck",
+        "examples/xspice/original-examples/mixed_io_size.deck"
+      ]
+    },
+    {
+      "family": "SW",
+      "decks": 6,
+      "examples": [
+        "examples/p-to-n-examples/switch-oscillators.cir",
+        "examples/probe/switches-manual-p92.cir",
+        "examples/transient-noise/noi-sc-tr.cir",
+        "examples/xspice/ghdl/mc.cir",
+        "paranoia_parallel/examples/pton/switch-oscillators.cir"
+      ]
+    },
+    {
+      "family": "S_XFER",
+      "decks": 9,
+      "examples": [
+        "examples/xspice/original-examples/analog_models2_ac.deck",
+        "examples/xspice/original-examples/analog_models2_dc.deck",
+        "examples/xspice/original-examples/analog_models2_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models2_transient.deck",
+        "examples/xspice/various/x_fer.cir"
+      ]
+    },
+    {
+      "family": "TABLE2D",
+      "decks": 14,
+      "examples": [
+        "examples/xspice/table/table-model-bip-2d-1-oc.sp",
+        "examples/xspice/table/table-model-bip-2d-1.sp",
+        "examples/xspice/table/table-model-man-2d-1.sp",
+        "examples/xspice/table/table-model-mos-2d-2-oc.sp",
+        "examples/xspice/table/table-model-mos-2d-2.sp"
+      ]
+    },
+    {
+      "family": "TABLE3D",
+      "decks": 10,
+      "examples": [
+        "examples/xspice/table/table-model-man-3d-1.sp",
+        "examples/xspice/table/table-model-mos-3d-2.sp",
+        "examples/xspice/table/table-model-mos-3d-3.sp",
+        "examples/xspice/table/table-model-mos-3d-4.sp",
+        "examples/xspice/table/table-model-mos-3d-5.sp"
+      ]
+    },
+    {
+      "family": "THIS_MODEL_DOESNT_EXIST",
+      "decks": 2,
+      "examples": [
+        "examples/xspice/original-examples/bad_name.deck",
+        "paranoia_parallel/examples/xspice/original-examples/bad_name.deck"
+      ]
+    },
+    {
+      "family": "TRIANGLE",
+      "decks": 8,
+      "examples": [
+        "examples/xspice/original-examples/analog_models4_ac.deck",
+        "examples/xspice/original-examples/analog_models4_dc.deck",
+        "examples/xspice/original-examples/analog_models4_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models4_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models4_ac.deck"
+      ]
+    },
+    {
+      "family": "TXL",
+      "decks": 14,
+      "examples": [
+        "examples/TransmissionLines/cpl4_txl_2_line.sp",
+        "examples/TransmissionLines/cpl_ibm3.sp",
+        "examples/TransmissionLines/txl1_1_line.sp",
+        "examples/TransmissionLines/txl2_3_line.sp",
+        "examples/TransmissionLines/txl3_1_line.sp"
+      ]
+    },
+    {
+      "family": "TYPE",
+      "decks": 2,
+      "examples": [
+        "README_OSDI_howto",
+        "examples/osdi/README"
+      ]
+    },
+    {
+      "family": "UEFF",
+      "decks": 4,
+      "examples": [
+        "examples/digital/digital_devices/counter.cir",
+        "examples/digital/digital_devices/ex5.cir",
+        "examples/digital/digital_devices/xspice_c4.cir",
+        "paranoia_parallel/examples/digital_devices/counter.cir"
+      ]
+    },
+    {
+      "family": "UGATE",
+      "decks": 4,
+      "examples": [
+        "examples/digital/digital_devices/ex283.cir",
+        "examples/digital/digital_devices/ex4.cir",
+        "examples/digital/digital_devices/xspice_c4.cir",
+        "paranoia_parallel/examples/digital_devices/ex4.cir"
+      ]
+    },
+    {
+      "family": "UIO",
+      "decks": 1,
+      "examples": [
+        "examples/digital/digital_devices/ex283.cir"
+      ]
+    },
+    {
+      "family": "URC",
+      "decks": 1,
+      "examples": [
+        "examples/TransmissionLines/URC-TM-SUB.cir"
+      ]
+    },
+    {
+      "family": "UTGATE",
+      "decks": 1,
+      "examples": [
+        "examples/digital/digital_devices/ex5.cir"
+      ]
+    },
+    {
+      "family": "VDMOS",
+      "decks": 50,
+      "examples": [
+        "examples/vdmos/100W.sp",
+        "examples/vdmos/100W_wingspread.sp",
+        "examples/vdmos/IXTH80N20L-IXTH48P20P-quasisat.sp",
+        "examples/vdmos/IXTP6N100D2-cap.sp",
+        "examples/vdmos/IXTP6N100D2-n-weak-inv.sp"
+      ]
+    },
+    {
+      "family": "XFER",
+      "decks": 1,
+      "examples": [
+        "examples/rf/sp/file.cir"
+      ]
+    },
+    {
+      "family": "ZENER",
+      "decks": 8,
+      "examples": [
+        "examples/xspice/original-examples/analog_models4_ac.deck",
+        "examples/xspice/original-examples/analog_models4_dc.deck",
+        "examples/xspice/original-examples/analog_models4_swept_dc.deck",
+        "examples/xspice/original-examples/analog_models4_transient.deck",
+        "paranoia_parallel/examples/xspice/original-examples/analog_models4_ac.deck"
+      ]
+    }
+  ],
+  "unreadable": [
+    "examples/IHPOpenSourcePDK/c7552_ann_IHP.net",
+    "examples/SkywaterOpenSourcePDK/c7552_ann_skywater.net",
+    "examples/klu/Circuits/85/c5315/c5315_ann.net",
+    "examples/klu/Circuits/85/c6288/c6288_ann.net",
+    "examples/osdi/bsimbulk-local/c7552_ann_bsimbulk.net",
+    "examples/osdi/bsimbulk/c7552_ann_bsimbulk.net",
+    "examples/osdi/psp103/c7552_ann_psp.net",
+    "examples/utf-8/\u0441\u0442\u0435\u043A\u043B\u043E/ext-ascii-1.cir",
+    "examples/utf-8/\u0441\u0442\u0435\u043A\u043B\u043E/ext-ascii-2.cir",
+    "paranoia_parallel/examples/various/nmos_pmos_BSIM330.sp",
+    "paranoia_parallel/examples/various/nmos_pmos_plotting.sp"
+  ],
+  "source_hashes": {
+    "README_OSDI_howto": "d070e942163cb53e36eb4f87fdec78e7dc3da07df5091a547418671c42bd7be8",
+    "examples/Monte_Carlo/MC_2_circ.sp": "cc3fc2d0c27d81c36921880e9b7aa5871f08c7e3f46caf762dc3608f328d5059",
+    "examples/Monte_Carlo/MC_ring.sp": "e75083353db5abd2f42752f4330db8e7ba62909a1d79a3062e16abe6537e3ac2",
+    "examples/Monte_Carlo/OpWien.sp": "68cf7dbd2ddebec69b2bb42bfd5eaccfc480fa3185391c696ca4be168a9540f2",
+    "examples/Monte_Carlo/mc_ring_circ.net": "2b844ff9561d630dd307ce30d162d473b7772d339d9ccb10a92f218d212df27f",
+    "examples/Monte_Carlo/mc_ring_lib_complete_actual.cir": "a4c03de3b0a4d3d8a33ead939413813cbe2c40435412e71d5cb40f7c67eadb09",
+    "examples/TransImpedanceAmp/output.net": "b39ef04be7df88bda4a9159937237ed36ba60cb75a79b76d9de79af8e812b473",
+    "examples/TransmissionLines/URC-TM-SUB.cir": "b8aefca9f22054642d56850bad085b2d0c8cce4f6eefad3effaeee850add2975",
+    "examples/TransmissionLines/cpl1_4_line.sp": "741d5520ccc8688ecdc00277d1cdb940e99102e4c03c71e9ab50c5da3cbb6332",
+    "examples/TransmissionLines/cpl2_2_line.sp": "216c15cc5d7d885499c517dda6657aefe06d0aaa093a72891344a29e88038c4f",
+    "examples/TransmissionLines/cpl3_4_line.sp": "a3620a2661f1fe574811e6428bdf33c504454658770472b8683b8c1a5ecf26b4",
+    "examples/TransmissionLines/cpl4_txl_2_line.sp": "c2cc34667cf36ee04e864f409b677bafce1e076d179371c579ad9849d1d7f68a",
+    "examples/TransmissionLines/cpl_ibm1.sp": "d3c2bb4ec7b8ee58ea8d157b6add880ee351e93dae6a9f7a0260c963aec2e033",
+    "examples/TransmissionLines/cpl_ibm1a.sp": "96f8fa25a5de8f0d75f7066ee26d09823717d90f2b8ba9414170cebc44791278",
+    "examples/TransmissionLines/cpl_ibm2.sp": "29520c29fd7f2a23a4a444e6759f8ee17a832a0d7cf119c5772dbc9ce25800cb",
+    "examples/TransmissionLines/cpl_ibm3.sp": "85d67b14f63bd9eecbb198d524670847b364dc22c99f96ca1cbb0e56e82467a1",
+    "examples/TransmissionLines/ltra1_1_line.sp": "b3f232682b5c2dfa0da68ee8278516f7dbd46b12e4cf6ccf7422566ff48e8fb2",
+    "examples/TransmissionLines/ltra1_4_line.sp": "b2ce07fb760e11b02edfff7caf25a88d8d710eb891a5ec09374e5d2f4f5a64bd",
+    "examples/TransmissionLines/ltra2_2_line.sp": "e5b5c2856ff8854640cf1f5795e30edaf839fd7d82662adf1fc83c665e70509c",
+    "examples/TransmissionLines/ltra3_2_line.sp": "d3effe41b97a0d66d06c330ddb8661a2eb5f08fbfa1d405c80f0c48983d30c7a",
+    "examples/TransmissionLines/ltra4_1_line.sp": "0dfb7102bed932716d8303134de988d71a2ee18579f580c7c919f18009731ba6",
+    "examples/TransmissionLines/ltra5_1_line.sp": "2923a04fd608987379cfe097de72c13aaabbac04ec1c0db8281a7d6b2938cb8a",
+    "examples/TransmissionLines/ltra6_2_line.sp": "afc08cc28e6f5560d3b18e16c2f238866eb7f7e7bb3967833dd830c3e107da5d",
+    "examples/TransmissionLines/ltra7_4_line.sp": "4aced1c6b2bbfc37fd621372317bbcb41171cac480f2eaa1da9d935505c0f177",
+    "examples/TransmissionLines/txl1_1_line.sp": "a44cfc150c1eaf5b02076c24eccbcf316668947d27da5b06978534a6e78a6a4e",
+    "examples/TransmissionLines/txl2_3_line.sp": "e55f55bf8d88ece62a231fe39c9a5d53f027eda684a5192143c93e62e85aa0d2",
+    "examples/TransmissionLines/txl3_1_line.sp": "95f32e89608294a9da358ccd957ad3a3c65aae6848f59875abb83e521cf2f904",
+    "examples/TransmissionLines/txl4_1_line.sp": "94cfdfe728a4a5cb023f98993105bcc0fd3fb2006c221106cbd4409fa191db9a",
+    "examples/cider/bjt/astable.cir": "3d9242f4000bbc1156a1b1a88c1ae364e4918d76b6bb780b1311c3e9eb3468bc",
+    "examples/cider/bjt/colposc.cir": "e8e80d50f16c01dba83928486ef6e54b45d884aeaa9d056f86c526c2ad729571",
+    "examples/cider/bjt/ecp.cir": "9784fc8d0c74f863243347ae3ae90479c5dde3ce0bc169d42ce60a327e4211fc",
+    "examples/cider/bjt/invchain.cir": "3a0c77fc23dc252c692deb8d58deba409289e62c970cfbf2e517fb14b7d7f9be",
+    "examples/cider/bjt/meclgate.cir": "02c62698a3f7d74dfd36e5220e7404875a1f30ff2f58c9b7d953a463f456fa83",
+    "examples/cider/bjt/rtlinv.cir": "b2773164f6aa3531234a559841f8f2f28afc91210489a142555a3b6203cb9f5e",
+    "examples/cider/bjt/vco.cir": "9a94d163a2069795ba9202840154037373b934a6c1a51bb10ef18b49561262ee",
+    "examples/cider/cider-gnuplot/passq.cir": "a640bdd1cf6079f8a1f6ab39459d84f34feac6ac8b22c87144aed525a265f158",
+    "examples/cider/cider-gnuplot/passq1.cir": "d9b601f7d6de2f423d4f8988eb76865e86deb1216b03f10f63c1594e4fcbbe78",
+    "examples/cider/cider-gnuplot/winq.cir": "46f79abe225ec5b1cef5113e48583145e161139ce4e007545a1d04e5f6e97e5e",
+    "examples/cider/cider-gnuplot/winq1.cir": "9662019d99431a74a7022169bcb6ba71f3519c0394d56001a88845eeed80c087",
+    "examples/cider/diode/diode.cir": "bb233210e65c0068c8be9f51c5984714afc99ead43683ec33e352fd03fea8ead",
+    "examples/cider/diode/diotran.cir": "f1b53fa6e8ad431991ec09174ca60d944c783785cc10b163c6395e333b7c41ec",
+    "examples/cider/diode/pd1.cir": "3810edd92c77ddffb9500d30270d7b55fd88f3fcdd0d40d6c95e0ee9b272242d",
+    "examples/cider/diode/pindiode.cir": "417be31211ec91f9148c06e6c8596a680cbaae0e80979c89b0ab39981087dd96",
+    "examples/cider/jfet/jfet.cir": "b0d8a5ccde29d975d63842d029e5df3ccc7fceb3e0dfa5acea8631da9eb94086",
+    "examples/cider/mos/bootinv.cir": "cbad83649be286ab8552bf5c21fd108dd51dd4587a6c73dd64bf52805e80be52",
+    "examples/cider/mos/charge.cir": "11d8d22bd46c132d8cd8df2c789ec1f98bbce25415952e8ee221642bec12542d",
+    "examples/cider/mos/cmosinv.cir": "449a3032d65057fa67cb3e33fbaf1c563bd416ff29e9902c1e3817c3b4cd782c",
+    "examples/cider/mos/nmosinv.cir": "851313be863e7b1d05edd3b1ce42e84c82b327d1d125831a4fe37f6d2b67c6f0",
+    "examples/cider/mos/pass.cir": "5d9da6c2f72ad23378c645fe3ac56131919b9ca1fb0f279ed6b93b2c118efa50",
+    "examples/cider/mos/ringosc.cir": "991bb45742ddfd275d155cb2559121bb4a9f34bf368401869c95383db2ccc7cc",
+    "examples/cider/parallel/clkfeed.cir": "a65a50ee7aaf66ce2339a3d856801266c42027ab4173869d433b4ef7a93b609c",
+    "examples/cider/parallel/ringosc.2u.cir": "6eb7e979e75bbf822d00b88b550d6de147a51749dd3fa2da23b6747918f2519a",
+    "examples/cider/resistor/gaasres.cir": "1b3c2ff14f92d055ed72c7dc74bc7825403ca462c0e08af6d0af5608df2e9250",
+    "examples/cider/resistor/sires.cir": "3b2ca733d4d7e9eb6e2213485211c411b1db858fb774441579fae969a3f61c1f",
+    "examples/cider/serial/astable.cir": "3061c606f047792336d077364eac1f1871b2d3c9124c460e6b19af3f2dd93a2b",
+    "examples/cider/serial/charge.cir": "07878b551491d224a923d8cf78375065ca1b22aa7a541d5e710dc9216f98ef2f",
+    "examples/cider/serial/colposc.cir": "fb0993fb61c732de1e925010c6255623c628a33a742e46ba2d7f0f747880ec19",
+    "examples/cider/serial/dbridge.cir": "55c01473bbf4f9b115fb968c398affcdb44f49ddd059b5cb3845561a950aecf3",
+    "examples/cider/serial/invchain.cir": "4fd9a41ed412ed661e50dce735b4092bdb949a57ce632b5fdbe84571b863e6a1",
+    "examples/cider/serial/meclgate.cir": "cb1542d48f33b936261e59b64137c9338e25632029b396744838e3bc27292892",
+    "examples/cider/serial/nmosinv.cir": "0beac7b016542bcf5753ac23a63f51643830d06b73227079daee53fd587a7d41",
+    "examples/cider/serial/pass.cir": "310a5c1cdd295a4d6e5e06b1a748404dc4e32825d42acdbac9a8cd2d9ffc509d",
+    "examples/cider/serial/pullup.cir": "72ea7f77dc9e813c5e05ec04c493e9ec02b383d835754e39968ad66e1ee9fab5",
+    "examples/cider/serial/recovery.cir": "56033347a7ddbb695a8251046ecde9b93c54d9082d5532810f4f83f81e62e26c",
+    "examples/cider/serial/rtlinv.cir": "74ea1669ea7e19429310eaf9626cf3cb0ddc57f9ed57d814c5f0b403e1a9b147",
+    "examples/cider/serial/vco.cir": "6c0abbedfb9cc088254dfa78c7aa1eb27fa5e7b330ecc6342fd2f5159db5a9db",
+    "examples/cider/surfmob/Tbicmpd1.cir": "b8d9811f1fa13ea61b71881546e0414b6db6476cfc83f689ebff68ca28e088ab",
+    "examples/cider/surfmob/Tbicmpd1xy.cir": "8c6c3722662aeb6a14d66888bdea2f791b56895e31b96035aec618a3de898b2e",
+    "examples/cider/surfmob/Tbicmpu1.cir": "8d9e488abb8be2c8c9c7a8f7d0bbaa68e0c3e52e7dde29ae24db5a0abefeca6b",
+    "examples/cider/surfmob/Tbicmpu1xy.cir": "5481f738ebab8f0405c6759472e1f55db5615fbcd39ec39c9b4018fee600e5d5",
+    "examples/cider/surfmob/cd4007n_200402idvg.net": "8c16c4151652fcee9eac7dce798e09d8490234fde4da14bb9c6ec07680125dd0",
+    "examples/cider/surfmob/cdxy.net": "8ef014bc06daa923c9c687bf4b0ff4c835bfe35e5e79c66764322d98387752c7",
+    "examples/control_structs/foreach_bjt_ft.sp": "46a9d2914c3c3900ad40ba90c2ebf0019dcb5d3974fa3b5e567e1834373a10bc",
+    "examples/digital/auto_bridge/adder_bidi3.cir": "01de9ddace9dbe507c65a55d16a3d3b15021503d8bd06977a2f32fb9b4bc71c6",
+    "examples/digital/auto_bridge/adder_family.cir": "05538b04ab441657d8e82aca211a03e5edd8ac49d7dd3ae29caa144887c175e5",
+    "examples/digital/auto_bridge/shared_line.cir": "91db1cabe410bbfa24229d4323a07a29bd08e17e33247e0924c56f3c281f77f4",
+    "examples/digital/auto_bridge/vcc.cir": "c75435f49f40464966b480b29e849961da58783c274ec8a387c6f2ac02cf2e6c",
+    "examples/digital/compare/adder_Xspice.cir": "e392075f6841f0a988733eb5c28a194be5aec2811cef779c9b56f103fea68238",
+    "examples/digital/compare/adder_bip.cir": "c46ee0696eb66b88bd8ba9def159b6ab9c7994871073a4cb7ffb95c2a73b972a",
+    "examples/digital/compare/adder_mos.cir": "d38a578521817f66d4a3c7f199569ea900dd514850da4085392c0ef2b7e5389a",
+    "examples/digital/digital_devices/7490a.cir": "86866563f46282e90522efcd0b089c9593f1d42b33915bff375b4ebcc64f1416",
+    "examples/digital/digital_devices/74f524.cir": "9f818cda2d2c368dc3a4dcdbe11e8263abc5c8d5037fde9c808cff9fdc75840f",
+    "examples/digital/digital_devices/behav-283-1.cir": "d20126d328c61b2dcd52932e3308070e654752b6bd886b4d56d594ca7c624768",
+    "examples/digital/digital_devices/behav-283.cir": "3672f45bcfb668c878b90a0e62c8d06a96af59304b31f1dc52ea279a8b2f9d9b",
+    "examples/digital/digital_devices/behav-568.cir": "0ec54412fc4bdf34f55eb25bdc686500f97df7ccf5c5ce50407e995b295703bc",
+    "examples/digital/digital_devices/behav-tristate-pulse.cir": "f2be3ab880ed191637176fe1e689f94a45320f140b63c12c751d5ff1db8c65be",
+    "examples/digital/digital_devices/behav-tristate.cir": "6f83dd864c139a35c7317d8cc75defa06c0f895f90f5db30014ee5c902bf8038",
+    "examples/digital/digital_devices/counter.cir": "1b4827d347dd2e7f356fd71794618119252dea1cd3e008654a6a3d1f327c32c6",
+    "examples/digital/digital_devices/decoder.cir": "153ba18d42b89c3835bdacc072849524156981bb787bb4a3993fb90797c10850",
+    "examples/digital/digital_devices/encoder.cir": "78aefbd305af2827d2901b49736cb76c17b709e3650f19c1fba7c1407f54326b",
+    "examples/digital/digital_devices/ex283.cir": "f79bcb595fa45630d923a213ce10102994bcaecef4b96e4757b247ea57f4284d",
+    "examples/digital/digital_devices/ex4.cir": "6ed4d96fecd8f8556688fec5ed301d830eeeed0516e66f0ba13f83f6bace5045",
+    "examples/digital/digital_devices/ex5.cir": "e4d6ce2972de6c23fa2188442863721265b4f78a66d1e6da1d3fa5d690e73348",
+    "examples/digital/digital_devices/xspice_c4.cir": "c8fbf0b20703e160429baca8b880cfd3a8ae09461913b6256827ac58009a1b50",
+    "examples/loops/loop-model.cir": "af16eb24765e9593c4f9e87033cbea2811b8de385f324d80d56c5ce0d7e39b6b",
+    "examples/measure/inv-meas-tran-auto.sp": "7f3e2d2e8323044834d5b1024b484bed439112ed8da6167a52e327c6b277f60f",
+    "examples/measure/inv-meas-tran-control.sp": "4d03bae9d4f58d3f2f3f5272de632d1eb8f439a0e4411fc691da2706e0260f9d",
+    "examples/measure/inv-meas-tran.sp": "9b21c9503cba13382ca44542a1e3ff07f1445582d9fd7501e2650c88738407f5",
+    "examples/measure/mos-meas-dc-control-file.sp": "3b9f12a60b3d3e4c81f2504eaa34168dbac4d4cf4b9a14b574c50e9f99f56e3a",
+    "examples/measure/mos-meas-dc-control.sp": "5ba55d950d57a994efa35ac22c673270884b932cabbd7a4746caf0b9462e94a1",
+    "examples/measure/mos-meas-dc.sp": "75a39c3568018b92651aa13a5cc296ee9dfac27bbc14357959a5bb0642b5eefb",
+    "examples/memristor/memristor_x.sp": "0c8971beeb46baaa4a1509f77ae6d170b4cc65003183c2d28c527803cec80686",
+    "examples/mos/adder_mos.cir": "ea29390b159e7de1aa142a549ad6a3df8e3e8776edca23693522f164af31ebca",
+    "examples/mos/nmos_out_BSIM330_plainwrite.sp": "096fb43f4c492d9795ffb0d1a842c889478afbc04fa4fb499b4ae644d7591129",
+    "examples/mos/nmos_out_BSIM330_svg.sp": "04ee9227a5fbccc584acd716985f7642effb1460202fa2e6403bc9f27fa62b0c",
+    "examples/mos/nmos_pmos_BSIM330.sp": "f6f5367e13686743fd81132323f40588b99dd63996461963e19d2298e8018883",
+    "examples/mos/nmos_pmos_BSIM482.sp": "ccf666e1517fd02e0f578f53e681bddf4a6c38bea295d3504b3df8294b26dc97",
+    "examples/mos/nmos_pmos_drainresistor.sp": "a02c484b9132c540162a0f7d2141ca9afb6a3874315b4aeb8f1e541a4eb43fa1",
+    "examples/mos/nmos_pmos_plotting.sp": "9a75f2d083b6759706d72307e31a763927d200b924a38413c39b41a76caa164c",
+    "examples/mos/ro-meas.cir": "c38d329bad44f427a1a386cfff9333dfeb5b8da11b91e197d20ecd1263f58e45",
+    "examples/mos/ro_17_4.cir": "e50ed1d608fe8c4bdd9031a5fc8772ebd9fa5f51dd644e33aacfbb40644d2ab9",
+    "examples/noise/baker-252-gain.cir": "ee5e9dce9d1607534f7611168635129e28c98ef6e217e53980b299643ecff9a9",
+    "examples/noise/bipolar-noise.cir": "e92b35fb6013a0e9e7d1ca944099a5deca7f9df3edd72bac2f88ce1d41200c27",
+    "examples/noise/resdiv_gain.cir": "1507700463f8471012af61520ff5a0458fcecde74bd4c34f563e2d582a0d95f0",
+    "examples/numparam/strings.cir": "6c780141e626480316175a23aa8e191ddb8f5d9db43c3a3cd2d609b9b0ef270b",
+    "examples/numparam/vector_param.cir": "2d7207a7e0e3d7451f41ca9508b65054994313e18a65e3b6728337915c4f660b",
+    "examples/osdi/README": "d964554e4241f0fe8f99795959a575419115028bd69e75c6e4d713246e6606c3",
+    "examples/osdi/absdelay/absdelay_tran.cir": "9495f939a956b66c1b852eca93aef4ca0667a7862f1d60f13841ad0a4a8138b6",
+    "examples/osdi/hicuml0/DFF_Y_ECL_VBIC.sp": "3cdf30f33bd25b4638b50f3eff2a777e8684e786c1048afe495a2885427766fa",
+    "examples/osdi/hicuml0/bip_subsmod.sp": "d0d98523791dcc5a8972e2af2184a51947ffb079f25df66db4faffbd48936276",
+    "examples/osdi/hicuml0/vbic_out.sp": "bc0b2947004bc1cbfd2a2c65b2c2c3ec8d5e835760f85b2afd422f5dfc457457",
+    "examples/osdi/noise/resdiv.cir": "a54d51d97d21e92b5a180c1fbe730ec2b908df50be6d9cdaf79dabe367339f7a",
+    "examples/osdi/r2_cmc/res_r2_cmc.cir": "0b1160f931a524ca7d4dedacfbcd771225e26209a3b242082f6f5055197d6a5b",
+    "examples/p-to-n-examples/555-timer-2.cir": "614799614b452994bcfbd59005d8ca19897617524b35ee5d514f8a38e2931d72",
+    "examples/p-to-n-examples/MOS1_out.cir": "c7495fc1d15fd9e044dedc0de3a611a149f958799870a59e79719783c6472783",
+    "examples/p-to-n-examples/aswitch-pswitch.cir": "baf82f336d69eb798dc37cee17b0ff6ba63481c17dab67f6ff7b749390219f33",
+    "examples/p-to-n-examples/op-test.cir": "c33248642da1b605486cfad4b99c7dc7c68e8b57135fd067eabd4aa90d09d306",
+    "examples/p-to-n-examples/switch-oscillators.cir": "6b9227d3e9873f2ebd040dbb850fe9fd9d36dfc048fcad08776177ef60c6025a",
+    "examples/plot/inv-chain-pyplot.cir": "72de89b96a35c9a2b7a82b65a045981062db237e1bb09fe7567f90ccc55490d7",
+    "examples/probe/555-timer-2.cir": "0de9e62f60f6f94cb9fa7843e223397df571ed7e82313306f18cd4811ce7da53",
+    "examples/probe/mos-test.cir": "013f22b6a61381863e649fb6a848105443f059ebdd894a2df8713d9ffa445b67",
+    "examples/probe/probe-i-dev.cir": "c58faec0bcd58ce391837ece5beb3c4a311f1beaf285c7a953d0622b6f2f9aae",
+    "examples/probe/switches-manual-p92.cir": "93417fb9b2aed529530fdedc3e008ffe09bae7230fc16d6bb50a2dfd4fe44270",
+    "examples/rf/hb/ampATF34143/ATF34143_amp_s21_vdd.cir": "5c3ec5dd0a6ea7824e845deab96e0ecf28daa3eb856f1a78538c6fa0638a0c6d",
+    "examples/rf/hb/ampATF34143/ATF34143_amp_spectrum.cir": "a33872c6623f257b8b8dc49ba03f13c188181caf0b4b135bd1cc505c00937e9a",
+    "examples/rf/pss/colpitt_osc_pss_ctrl.cir": "3863547711ab52da2d02c4b9c22d41bbd6f61b73f69c1eddf514291f9491563d",
+    "examples/rf/pss/compl_cross_quad_osc_pss_ctrl.cir": "dc452441a1105872dea4e1af8d0441e9cd58c931a6c33f8083a4f29271b898d6",
+    "examples/rf/pss/hartley_osc_pss_ctrl.cir": "aeea31f38c04f49891ff371c6db9d1720608f6b3d94593717395eaf1783b6c7f",
+    "examples/rf/pss/ring_osc_pss_ctrl.cir": "9bb6f1cce29df11dc99f01e76f1d541034aa8ae41510c10be23f7851b0bb45c0",
+    "examples/rf/pss/vackar_osc_pss_ctrl.cir": "15df6e6c07a8f6b633d4bc1726eec4775af2a407c76db6a1639a70dae02827a9",
+    "examples/rf/sp/file.cir": "75f36bf5606080dc0e9ea8954ea756913ae59c4df4808515eba83029542a5d95",
+    "examples/rf/sp/file_nport.cir": "d5c29689d9f0e7f47410df62df0bcc25962fe13f6e9b20902fcee1cbefccbacf",
+    "examples/rf/sp/file_nport_tran.cir": "27052b757c28c988ea50671c62759963686c4ed27976074eb3375cdbcd3f2103",
+    "examples/shared/t.cir": "01d0384d7ad9e835446f59bcc2dd86b5db3ca0b8b3700cd6608bb401186f659a",
+    "examples/snapshot/adder_mos_circ.cir": "6dc5d21f13313d4868b2894bc8aa8d1d489b14c9f20e348f0b0f606f59cf0dfe",
+    "examples/soa/bjt-soa.cir": "ea56b3cb683ae8ff1b7e1781595ad4f26c774a5c98712b51c0e209f6bfa1c2b5",
+    "examples/soa/diode-soa-sh.cir": "24c5c8568ebe8c15d8d8b603e84db3d98e8914767e1de1f4f266f242828f066f",
+    "examples/soa/diode-soa-simple.cir": "861e6bc803d89d5d31dc419d33ce3a3a821aed6c057152e4826ac3962190d557",
+    "examples/svg/nmos_out_BSIM330_png.sp": "5795cff404f6b940b005c23bf1a71641160b9ccd42e8318d099ac444d27bf6ed",
+    "examples/svg/nmos_out_BSIM330_ps.sp": "c530bc6333ad95df2c25840cae695952f7a9a42c11b05d52edbf10f6d1b7b464",
+    "examples/svg/nmos_out_BSIM330_svg-2.sp": "32247346682839203730157f72d0e67b633d44dbeb133548ec6f0910c29ba6b6",
+    "examples/svg/nmos_out_BSIM330_svg.sp": "1385d87ad527dbaa7c3f1755ccb8c314a656b2d1b031a59dc7aeae9a8f0ff50e",
+    "examples/svg/nmos_out_BSIM330_various.sp": "c635d6de82e7ba32f68d07b52620865cb4f9213b148f0b685e37c24f1554de40",
+    "examples/tclspice/tcl-testbench2/example.cir": "5e417c2b75614a916783d1d511689595058c433fe7e11c533ee764a9ee019234",
+    "examples/tclspice/tcl-testbench3/FB14.cir": "1143b8fa1723454e88b86b4afb94a48f2e390859ce3a4020ccd76b0c6065718a",
+    "examples/tclspice/tcl-testbench4/example.cir": "a27ade0e841f87dfc561dc04dbf6e655943f73c231fedd8c6b52f20cb7948628",
+    "examples/tclspice/tcl/diffpair.cir": "59f0eb8da9f2d38a9516354daf522be8fb1136ed5015bbc6b3bfbe7330af76b1",
+    "examples/transient-noise/noi-sc-tr.cir": "cff084fe00705944d66ea1a3a8f59e6c7f8cc5ff17a64e01904256ba2c363179",
+    "examples/transient-noise/shot_ng.cir": "be56025fbdad977c3f2b6e252031bc2df00d47d10564ba40de5a9dc600009d94",
+    "examples/utf-8/\u0441\u0442\u0435\u043A\u043B\u043E/\uC788\uC5B4\uC694/adder_mos.cir": "3b84a82c7aa903b6317a793968a0dbfba4cc0b01349107a3d9f7285fa27fb46e",
+    "examples/utf-8/\u0441\u0442\u0435\u043A\u043B\u043E/\uC788\uC5B4\uC694/adder_mos3.cir": "58c5c7820d7d1ada9cde6160cfaf643007db3a025c4e8aef24ad01d0c3d3be07",
+    "examples/utf-8/\u0441\u0442\u0435\u043A\u043B\u043E/\uC788\uC5B4\uC694/utf-8-inv.cir": "2323af059f45b2f0bd9910d6aadaa16bb3ab924be2a4270b6fb0c8cf98cef1eb",
+    "examples/utf-8/\u0441\u0442\u0435\u043A\u043B\u043E/\uC788\uC5B4\uC694/utf-8-inv_w.cir": "4a714c686c630acfa412da682dc1f4c4a7077b3959d41f51c515cb2654845c77",
+    "examples/various/bjt_ac_par.sp": "ad38d2526a6d9b0002109e6518ff4d7df5508af9cf3ad24cd2e80f41ed141a6e",
+    "examples/various/bjtnoise.cir": "b226bb9c94d1d91b83fc223fdcbeb066bc81dfd4de47b447f2530e11694b67a8",
+    "examples/various/diode_ac_par.sp": "ab1aaf712a554154c01b8c514c2c7219a75fac0087b8d47fa613daaaf7e59624",
+    "examples/various/gain_stage.cir": "6383ff5c996fec7388f820adcca6767dfea41ce991e8485c369fb4939efc479c",
+    "examples/various/integrate1.cir": "5d62c9af5b57cde128075a76c41dbcb01e800ed0f33299c318520a84275bba80",
+    "examples/various/model-name-check.cir": "72cb98d40908d0075b9f7528022f7d32e7390e2fc3500b5e284bbdab2e01ff6e",
+    "examples/various/todo-temper-3.cir": "4c7080fbb5e7910fc96d97e9390ebc52f573194e8715314fd21bf00e3afe15df",
+    "examples/various/transformers1.cir": "aa23e822b0a3fdca9e07f7af4222dc6007900eeee3abca1911f0fcdeefb559c1",
+    "examples/various/v-i-sources-am-ffm.cir": "10a03b9178c31281543d59034a0bca5415764dff41bcdca8640eb8b3cf2764bd",
+    "examples/vbic/DFF_Y_ECL.sp": "09f1b08064cfc2d8e791d449567e036d0fc839916cff09021115069c5a17432f",
+    "examples/vbic/vbic99_dc.sp": "be898c3cf7e9253aa32a76ed345e4de59e85708fa6c9f9974ecb196d949bf6be",
+    "examples/vbic/vbic99_tran.sp": "ccab25bf80223b183b20e56151d30fe4271f11d38dd9c81263de6478e232b3e5",
+    "examples/vdmos/100W.sp": "7066595717c7cc626664ab32804802e0707b90e2e9f339cd87d985c6f03b32c9",
+    "examples/vdmos/100W_wingspread.sp": "37805e936688c5aa76a95dee516b6f54073165ff376a047e0d8aeb7f73f6123f",
+    "examples/vdmos/IXTH80N20L-IXTH48P20P-quasisat.sp": "da201add94ee890db12d7478ece8836ea918d309f80578ab7fbf119eb33e20f3",
+    "examples/vdmos/IXTP6N100D2-cap.sp": "cff9e88cc41de8b8338a25ae8d905dabfa977d57cb099da0d9384a9949c22f24",
+    "examples/vdmos/IXTP6N100D2-n-weak-inv.sp": "9aa1f1a5ea5ad979a070468a229e269e827c22ad56394dcfa3c8464a1562c88c",
+    "examples/vdmos/VDMOS-DIO.sp": "3f23dc98f286ccb2f48e0114ca95fdc8c6b8b785f7eeeb1dc783f59624b5a283",
+    "examples/vdmos/crss_coss_ciss.sp": "3aeb91efe75af3f4c9683d41164093d16111a75fdd7c70ceb09fc6860749b947",
+    "examples/vdmos/dcdc.sp": "ed99b1ef29777a0db03890e53f677cb99c2eec2b833d1cabe934fc4caa0745e5",
+    "examples/vdmos/inv_vdmos.sp": "d7980bacf85f3d55d30e0fc5090a3aad2933e9d0a35cc85ddffb32bdb785a37d",
+    "examples/vdmos/mtriode_nch.sp": "7381b12eca07491caf394c80df94565a0421f0378d36ce7753976bb7daaa5931",
+    "examples/vdmos/ro_11_vdmos.sp": "b2bb019625af405b5c4926543680c5164c4c01c19e6e6f31a462a503d0fd2cf4",
+    "examples/vdmos/self-heating.sp": "cb96f0a4fadddf7389b747d7a47c8c6061d4a16b7b982655380c62dac4d07e44",
+    "examples/vdmos/soa_chk.sp": "f233b92dfb59275db865b8f8002aa41f2b96d53b4cf09b1e921b231c11bc9c38",
+    "examples/vdmos/theta_nch.sp": "20543d6319744d23cd3c22a79ecb457cf9dffb4b2aed5c5052f97978d5e5c080",
+    "examples/vdmos/vdmos-out.sp": "90c23f24fe3cba3021cf7a1d212d21f5a7a4b9c18c1090c71ed7d3dbd8c7114f",
+    "examples/vdmos/vdmos-out_ir_mtr.sp": "26888693b6c0aa9dc283d6a54b320d7d6e4bb0e1c03dc0d0c10bf0ad338023ab",
+    "examples/vdmos/vdmosp-out-mtr.sp": "d53f783f59d7f1ebfd2531b83b85111e889128e5a0a7433d89fa4b571001e38e",
+    "examples/vdmos/vdmosp-out.sp": "81c2340b7771c4b4ab32658be6de7fcaf084270894b078761011641790816030",
+    "examples/wave/jimi_fuzz-snd.cir": "2358b6a92fa87a9fa8bc49cf91d28f7418fd7d6c46dfede7b87276ff152efc7e",
+    "examples/wave/jimi_fuzz.cir": "9aef9b9b562c6053ced77f2bf5be8abce7d487cc51cfb5bf2263051102324127",
+    "examples/xspice/d_process/checks.cir": "b90973941f3ce1d83c57f5fb832f8a9a7f9b457388026f6a3e3117c829e5b049",
+    "examples/xspice/d_process/prog-pipes.cir": "799fa0164b4a6ac9213592a318631bdc5efe37c8608baa4b662a0e6f4421efd0",
+    "examples/xspice/d_process/prog1-4.cir": "edc533cd7ab91e828308dbf9e4fc83867cd4eec361f6554d6f5e098983ca11a6",
+    "examples/xspice/d_source/PWMexample.net": "50f8da90ac843f24872f5e3f8982fe886bd7779e6a6ba7f39de9c2e4db2f898c",
+    "examples/xspice/d_source/d_source.cir": "e2ef29759ecf0fa0ba13b083850973af950ed49dff77ee0ccf004d909ab85339",
+    "examples/xspice/d_source/d_source_sub.cir": "9d2ac118aaba30207fcabd67a8f42eef8b9602fc8cd1897b98f3b6afd856c25d",
+    "examples/xspice/delay/analog-delay1.cir": "b71dc9d39ed2645f57444f7998403bb828e5d2e239cf64bd48d61e0cb8cde994",
+    "examples/xspice/delta-sigma/count-latch-dac.cir": "9c8667cf41c53f8352a67eb43fdaca803fd030b6df7583ea5385b254ab14e45e",
+    "examples/xspice/delta-sigma/counter-test.cir": "d06f0004ce80c81782aa59130ad10ee285e34bfecb41ac703103efea7915515f",
+    "examples/xspice/delta-sigma/delta-sigma-1.cir": "d6675fb8aad186de03d9da41044eb97b05a90fb5ff8bd1af214b507db97684a1",
+    "examples/xspice/delta-sigma/mod1-ct-test.cir": "7b1ba95d202bc358c33fcd4c756d9a16c019939299d14a0ab061caa06fe016ea",
+    "examples/xspice/delta-sigma/mod1-ct.cir": "7e9075b864543c3ec586bfc4b5af119edd5c69c75c3ae59485d7d739257ef12f",
+    "examples/xspice/filesource/filesource_variants.cir": "eb492327c59fd236f2da79e50b9b52728b560d93443ea0d5d97323396e0fd0c6",
+    "examples/xspice/filesource/simple-filesource.cir": "28031c7f1e54824ea0d405ed09593617b6718aab728f3d1f6b0ad8c5ff9ae385",
+    "examples/xspice/filesource/subckt-filesource.cir": "df4cb1f4978f95fd0791710dc9addf99c70ee3b3ee666dbf0d744647e5e357b5",
+    "examples/xspice/ghdl/555.cir": "b06eef4340460f7cb88994d98c5c4231e0d888165b0f851fe589fcfe0e8a1580",
+    "examples/xspice/ghdl/adc.cir": "9ab3f1011f64f7ed58f048e5ac48cda64f7dd787ee0918000bc0576011f48f01",
+    "examples/xspice/ghdl/mc.cir": "4cd29cf516cb5fb89e35344ea5bbaa57935b6d12a50247d4278cbec80b87099b",
+    "examples/xspice/ghdl/pwm.cir": "04fec7537a2c73356d513ac2e84d9c4bd1a3669885244e235583c192e61375a9",
+    "examples/xspice/icarus_verilog/555.cir": "b1bab6910395d43666fddac638dcbe56853ab01bac4169acc5623e658d19c560",
+    "examples/xspice/icarus_verilog/adc.cir": "492ebe85a21c51f2dd6a82f9c339ac2fb0c3e20ed4789312c7d718fd043a0235",
+    "examples/xspice/icarus_verilog/delay.cir": "92493b016b9d19169b868a3ccdd547c0c8e7c8eaeae10da172f0100d62ff5f17",
+    "examples/xspice/icarus_verilog/pwm.cir": "a14cdaf93c49707fb2d9fe0fe8b33aff3e464bca6f3927328268e05cc9cebd87",
+    "examples/xspice/noise/noise_gain.cir": "d41121a130eda2169c7b9e7fa3ec74d129beba369c61ff0c24edae0f7896ea5c",
+    "examples/xspice/noise/ota_noise_test1.cir": "da22c3479b315382d4d7a02e706d177ffc8c175baa1c31fbe69ba313b349bf8b",
+    "examples/xspice/original-examples/analog_models1_ac.deck": "a872c139a52742ebb0188b0ccea4ed2fed144c5201d7efd1972aedef2c449984",
+    "examples/xspice/original-examples/analog_models1_dc.deck": "f116a4f940fee836fb91742127514a69e5216d462a7b40f62c9bc8183b333dce",
+    "examples/xspice/original-examples/analog_models1_swept_dc.deck": "e931f8f7f22f434323b76329d6db81c095f795fcadda31f76b842c8b0f6e2d55",
+    "examples/xspice/original-examples/analog_models1_transient.deck": "3477f17a5e405ef743b0f0f3622fb760cf50d189c4864b30082b627ec201ed49",
+    "examples/xspice/original-examples/analog_models2_ac.deck": "ce98d8ed1be76f0a86ff1da5121945dd19b60eb6e64bb3e6336f670fed5b203a",
+    "examples/xspice/original-examples/analog_models2_dc.deck": "a6d4d62f20f72c52cea56d985a3fe360ff569af8c60a310c8c3e5613850b2a01",
+    "examples/xspice/original-examples/analog_models2_swept_dc.deck": "1e226bfc22dc82b2c1c678d20d71bb4999cdd50a87ff675fc454a3dac3aefc12",
+    "examples/xspice/original-examples/analog_models2_transient.deck": "e34c9a6fea6e7cd1a5d839b5a22823c2adf02801a7d3081ed01541e6dbca952f",
+    "examples/xspice/original-examples/analog_models3_ac.deck": "3673988b6b7f230995d462db408aae6d3c27866fdfce62118cfe9c044ea33c1e",
+    "examples/xspice/original-examples/analog_models3_dc.deck": "e6a1db72c39ebda53b39cf13a36a0b0e029a886c02d78a0cf322b033f825051a",
+    "examples/xspice/original-examples/analog_models3_swept_dc.deck": "9f3ca88fd307f9e6148916e6c861fa4b65a6dbbb4d311d06df85e48bd8d3bfd9",
+    "examples/xspice/original-examples/analog_models3_transient.deck": "8235f75595912e11001fc0244638b3968b64cb349c575be48ed59481e777186c",
+    "examples/xspice/original-examples/analog_models4_ac.deck": "5bb6c428404d48c6f99b0b5b0e8659842859d08e48b470ce176128cf0573f417",
+    "examples/xspice/original-examples/analog_models4_dc.deck": "306bf19a21a18a22f4324a1bc8a510eccb5e47ca6033d242a7cfe2ca133e2c77",
+    "examples/xspice/original-examples/analog_models4_swept_dc.deck": "2cbb374ed9d2fa865acf02c2c4a9a48ff6bcad12b6fc9606beb57c97a0b3f0cd",
+    "examples/xspice/original-examples/analog_models4_transient.deck": "e523f422dc813850f8a3d4b2810f7fd83381438539fbc26399a2610975c26b47",
+    "examples/xspice/original-examples/bad_io.deck": "ea530f3e70368c8aead768e5175aa42b4843c237092de732f2a714010bba72b7",
+    "examples/xspice/original-examples/bad_io_type.deck": "2b2e6a3a42007824787f70525deea5e8f64edb32d876a3590cb9444b9c7cc599",
+    "examples/xspice/original-examples/bad_name.deck": "e463da7c79bf318a0ac6b0a26970b4185cb8bb8b30623ee2272f5a1b3823bad3",
+    "examples/xspice/original-examples/bad_param.deck": "bacc1df27adecb6f0b15726df55af737b517395f990cfb1117637cae05f780c5",
+    "examples/xspice/original-examples/bad_param_type.deck": "afd470ce0bb753af54a0ad06f4c3216838a2f2b02b122cb131e2e28e1d3babce",
+    "examples/xspice/original-examples/digital_invert.deck": "a7bb2dfd71f8b4da5c1f30156431c3413af3fd9b661df5398cf1149b906c1b69",
+    "examples/xspice/original-examples/digital_models.deck": "10f9add16adac82c0c3ee79db6e0ba1f9d9b630eabe1ce903cdd50ffd9a4dcb0",
+    "examples/xspice/original-examples/digital_models1.deck": "ea93d7478aa29b627faf224a7fe5eab87da2e99fa50dfbf67a972c98591ca5cc",
+    "examples/xspice/original-examples/digital_models2.deck": "d38f5c8bdb22191933f34bca82fe7b975f99975be95dd311e7fe3dce3f560299",
+    "examples/xspice/original-examples/digital_models3.deck": "99cc8c74c074e58d2880a352a02660692ad7b54992aa2439c1324ad40e93832e",
+    "examples/xspice/original-examples/digital_models4.deck": "872e2dacf3cafee993288aab566c4981b68a418248ca3d4ebf09e59eb1540956",
+    "examples/xspice/original-examples/dot_model_ref.deck": "3768d1b0f0c300fa8284fef95d8621d2b3ebfcee9983547cbe1568826b433d42",
+    "examples/xspice/original-examples/hybrid_models1_dc.deck": "aaf870314d2aaf0e567004145b251985b43aca72ea8507da446f3b12723da629",
+    "examples/xspice/original-examples/hybrid_models1_transient.deck": "f71c3a55d58693054c35832b1ec7eaf42e0dd62a813129e63f9d1db47db96dd1",
+    "examples/xspice/original-examples/initial_conditions.deck": "2b36aae81581728f4e2d8b657f688c54d829eccf21a653e804d83e04624363b8",
+    "examples/xspice/original-examples/io_ordering.deck": "4f8e293f78418ae9bdd815c47fc7bb5fd69d27abd933f2752dc546f46e6ed8aa",
+    "examples/xspice/original-examples/io_types.deck": "d1984c052791bb97d08389dc20ce673e79a3938a05d2c6ba0ab0c746304ba3f3",
+    "examples/xspice/original-examples/long_names.deck": "34eff93c59da07dab3c32ec373ea283e30e54592976109f2b85952fe9931c684",
+    "examples/xspice/original-examples/mixed_case.deck": "8314ad2cb02d0946aa280bbe703d442181cd0600cb819d483fe3eb5276782e92",
+    "examples/xspice/original-examples/mixed_io_size.deck": "0de748cbcbc0e45f6e2c523e68eccf7e12bf3d6e65e5f04e8034ae4ad74a4d8d",
+    "examples/xspice/original-examples/mixed_mode.deck": "09cddbc53e415e9c1d2cdb7adb5b33e646738281ca4675d839cd4ada15475994",
+    "examples/xspice/original-examples/mixed_ref.deck": "d7b43b29f488b12cadfc202c7913fe317a8c0d2a223d005c84171e3c0c2c67e3",
+    "examples/xspice/original-examples/param_defaults.deck": "55c30621b2f0e4afa4facde3b5835bb7b5088dace4404faa9dd87a721ede89df",
+    "examples/xspice/original-examples/param_types.deck": "28306384285c06f8dff5906deea4e8bcc5d82570980e58483ca01bb70504e650",
+    "examples/xspice/original-examples/parsing.deck": "ea424471ff40436344717740f7cfc151eb2e420377d86487976dd02b1be468ce",
+    "examples/xspice/original-examples/polarity.deck": "290b4b87b284b127d2b3fba668f2363cd377792538ab5909149d2a60e363c4a5",
+    "examples/xspice/original-examples/spice3.deck": "1419a545f64090f2a6a860a8c1234e322b38901e62fd058cfd9f46289eab6958",
+    "examples/xspice/original-examples/suffixes.deck": "d51b42441e60b5ee2ccc695d0f5662e037276a967e7c343c10e645e7b4f0a981",
+    "examples/xspice/original-examples/supply_ramping.deck": "6c1b83368712a8cdfd268b538def076d7ab6db4ac21b4090558051f1cb14527c",
+    "examples/xspice/original-examples/user_defined_nodes.deck": "15654ae1dbe699d77f9a0726d3baa5bd2759360f99450017f2b05446305f12ed",
+    "examples/xspice/original-examples/xspice.deck": "880bb62736f45d7353551a85918c09b3eee0c4750ecdf8cb350aface61fca74a",
+    "examples/xspice/pll/f-p-det-d-sub.cir": "c7d87fd58373110fd0200b1a269f5d5112d61f0ad0763faae84b03f5a1f47031",
+    "examples/xspice/pll/loop-filter-2.cir": "66275c0c9dd2b815bd38ed92a7a276f3fbbf3365ab6664191ce5acff7aa4f8f1",
+    "examples/xspice/pll/loop-filter.cir": "4aefc52c1025a63ec9a636c9cb57883772fb9a9285c78876c432654f59fd1823",
+    "examples/xspice/pll/pll-xspice-fstep.cir": "39713db1d818485c34a05fdf5cb33203df37414234b3847b4a9fa90c887d6b1d",
+    "examples/xspice/pll/shared-pll-xspice.cir": "853690232b510e1531bb5f68ecc0ddcecd838736c0b8d0f4ca8bbe73821372a1",
+    "examples/xspice/pll/test-f-p-det.cir": "6cae710319a07bc6df0ed2f442becf2743e5e81dec27c698fa9330f1f1df1864",
+    "examples/xspice/pll/test_vco.cir": "f5f9fe5ed548d493a531dd21a8a4c4fea020b98b9efd4bd615c7523c0f932f3f",
+    "examples/xspice/pll/vco_sub.cir": "5180ea207e99da3d33529daa4af072c01937cec10b807f17b1ea2fff98a37396",
+    "examples/xspice/pll/vco_sub_new.cir": "21aa36e5423f0e6542e61b56403f41cdb26078a3f505be4ea151df9a65185d8f",
+    "examples/xspice/pwm-osc/fmcw-dosc.cir": "08a8cfed77481f5691ddbc0700e375ff295d527317d18d608500a8182090d087",
+    "examples/xspice/pwm-osc/pwm-sin.cir": "337645cecf1f123e1437ec759db59ab5724cc061bcd955f94abf11a7407e9db8",
+    "examples/xspice/see/CMOSComparator/Fig27_12_see.sp": "c2c1d1c8eb8de99ec501f15fe5308a14a440417dc6cad8c689df006b8366c821",
+    "examples/xspice/see/ihp_simple_sram_seegen.net": "7d9b5ab306d89fe0c4f82b94d9b714a679f25c314ac02ab4994dc6770c8d07db",
+    "examples/xspice/see/ihp_simple_sram_seegen_ctrl.net": "a427352e17ed8a0a6da41511daf47006610e59e93f0e51326e590bf197f1f97d",
+    "examples/xspice/see/ihp_simple_sram_seegen_subckt.net": "4332292ab69cd1342557ee0a86189a396bdc800c2641515a612ead5937e6343d",
+    "examples/xspice/see/ihp_simple_sram_seegen_subckt_vary.net": "0374155a4539820f2a3f78dd3761edb3ff44bf4f2a49580ad1171708396b3079",
+    "examples/xspice/see/repeat_loop_seegen.net": "294548e2a669ddc28243ac7a9e3b0cebd03cb39a7fefb0f8d53b3c51d1dcb938",
+    "examples/xspice/see/seegen_cm1.cir": "de698bd32257cf889e32c31b3ec2d41514dcc15e00f2b65f765750f6ba1e1ea1",
+    "examples/xspice/state/state-machine.cir": "b11a7d0fe2ff39ce7c744adae785eba97a4c81df44d6495784833cebcc2e2eb7",
+    "examples/xspice/table/table-generator-q-2d.sp": "f221c4c4a31b0e085ca71cf4e005c0a39064a78304c60147d4726192e85ad931",
+    "examples/xspice/table/table-model-bip-2d-1-oc.sp": "8d94c0ed30187ca4c8227ca65f48b9053048d02e3189693f5b5a520f68699ddc",
+    "examples/xspice/table/table-model-bip-2d-1.sp": "ceb50b646f7141287a5ca3df43fb9776564df963c6b382067bb8d45509b099f2",
+    "examples/xspice/table/table-model-man-2d-1.sp": "76e91b5026361477441643a0f76854ee694e5c405e9a0000540b2128be586011",
+    "examples/xspice/table/table-model-man-3d-1.sp": "e453315c75b66dc8524ad4a182f96fac96551dad08d05705026b2c990231fc9e",
+    "examples/xspice/table/table-model-mos-2d-2-oc.sp": "401f14147fb2de20e8652ffac56e7f7ce77d24a3d0c6dcdbdfdadd7a81c58d6b",
+    "examples/xspice/table/table-model-mos-2d-2.sp": "8f1348966c9da3f740ae600b5c793bbe0acb4228715924666dd5ef7a187e48ed",
+    "examples/xspice/table/table-model-mos-2d-3.sp": "4954269ebee116f69dc7cafbc14c14a8a40b4ff46504363cd5e93eb2cd97e455",
+    "examples/xspice/table/table-model-mos-2d-4.sp": "31ac1a6cb3991d90a0a6982bd485ab5b042b53605a56500b352db316d690f894",
+    "examples/xspice/table/table-model-mos-3d-2.sp": "443d471cd8e224d221c67c80035b7d0d54a0badb65c73f738bca1d580598e93b",
+    "examples/xspice/table/table-model-mos-3d-3.sp": "cfb527fd4b07f308e2292bc92c95b92e2efadd65cb75b0cd77abe98fab653740",
+    "examples/xspice/table/table-model-mos-3d-4.sp": "824a1006cf1aa3a9658cdbcd551e54a031496a4e62cab39293a3458184ea4724",
+    "examples/xspice/table/table-model-mos-3d-5.sp": "3c0e4e2361ccf2182c9caa85cf8ccb74853f89f36f9965d03448515d4376f2d6",
+    "examples/xspice/transmission_lines/cpline_ac.cir": "aad03fac9d384038171e700b16a90627a9cec4448a979820cc7cb4aa1ebcf3b8",
+    "examples/xspice/transmission_lines/cpline_tran.cir": "d2e8cac38d565d5a4c2fe9043a8689ebf1ad14e3cf5d81b6fb91cc8128f9f0ff",
+    "examples/xspice/transmission_lines/cpmline_ac.cir": "9b7de12c6bcb878620b2d2d4c5c7827efb5be7fcaa78dfec474a7433686bd7a1",
+    "examples/xspice/transmission_lines/mlin.cir": "f353bebe2b68d4d7c4c61921d298ab8c1931c5f4f40ebe7a5fb8c670d124e16d",
+    "examples/xspice/transmission_lines/mlin_tran.cir": "4bdd9cb9f946f91e1a149ad015d36992de2ba5420fb10272bb2b4fe9e1b620e9",
+    "examples/xspice/various/analog_models1_transient.sp": "f7baf5978dee6a7cb223292d0ec0153bae2a2717959d138adeec579c6f3e1f90",
+    "examples/xspice/various/astate.cir": "f9659c35d66436b16c08d880452239cae563349c0e40b6d4dc97293339cb1421",
+    "examples/xspice/various/astate_pulse.cir": "bf794d27c4d6069777bf2199e0bdcdc9383b5ba3d0b2dfe391dff52e5ff5b5c1",
+    "examples/xspice/various/filesource-test.sp": "72621b0c10f6642de02de55c829b533910ab53f70a8b06f45192f89394633367",
+    "examples/xspice/various/pwlts1.cir": "3fe8cf88d7106c4029262ddf158d5e917fa2c82a63bc14303581b636beb07619",
+    "examples/xspice/various/ro_nand_digi.cir": "838c082eb4ce44b061d45cd989938fc0ddb7071f819f1e7f08cdea6ec62e95a4",
+    "examples/xspice/various/simple-diode.cir": "d28b6bd47dbaced43b1b8292e91188e85315ce64ad49dcb41d5371245ae550da",
+    "examples/xspice/various/vswitch-test-lin.cir": "ff70cd5da70ea132f4d3e81fa3ad0b751408be50014a81b244b684fbf0c47c9b",
+    "examples/xspice/various/vswitch-test-log.cir": "9e81e53d59ce4987afb5b24078b6c8a2d08455b975447796725b6476f16118d8",
+    "examples/xspice/various/x_fer.cir": "deba88972ca3fa36754a85cb2a859fd34c30794b9647c3155450b6d0de59b913",
+    "examples/xspice/various/xspice_c1.cir": "264e532785e48bead98a60d7854bb59b48d5b40b518e8eaa093b4e540e722d9d",
+    "examples/xspice/various/xspice_c2.cir": "fd91ff8cadd56280a49189ec0acf1cb12a4d8533b4d425f586bb3e3cf053fff5",
+    "examples/xspice/various/xspice_c3.cir": "e2b488103526f1cbf28c752551b5e7601b0b21daa9f1e5c0d522aa7de85d7bc5",
+    "examples/xspice/verilator/555.cir": "b2e9d36f86e5bdc99f104064c81725223be0781ad68b66cd23f6927ab4b15e3e",
+    "examples/xspice/verilator/adc.cir": "659e47caafc1ac9551578ba305ab1697f5a5b98399306899db306460d6e9902d",
+    "examples/xspice/verilator/delay.cir": "44fd593edb1dfa2c041a840df2f96aa28c1ec697545dbf3a83ae7aa310d15f70",
+    "examples/xspice/verilator/pwm.cir": "af4002468347782c986b0449685280ecd4868a19dc8964c3256ec9e90428d3d9",
+    "paranoia_parallel/examples/Monte_Carlo/MC_2_circ.sp": "9b290ec466b34e9564afd64aee428628ef0b8cb8f7e19c5e565389eb8e0ec2c7",
+    "paranoia_parallel/examples/Monte_Carlo/MC_ring.sp": "61ef324d152fa2676aca8cf01ba6f98c6f0672e53a05d7df127e0192130aaa60",
+    "paranoia_parallel/examples/Monte_Carlo/MC_ring_val.sp": "35f9f5321bc7f50ad00e60793532321cdc434ddd4d05ceb4e61ae66b63468f50",
+    "paranoia_parallel/examples/Monte_Carlo/OpWien.sp": "f0c1b3f4767d5d176c7445e9856aece451f9a5764ffccf00e59eb88a828da52e",
+    "paranoia_parallel/examples/Monte_Carlo/OpWien_s.sp": "6667d25c9c3bced05644dc2d52861e7c77446d7ed477fc2e9485bbf45aa8c1de",
+    "paranoia_parallel/examples/Monte_Carlo/mc_ring_circ.net": "a878f0b3f5e9c00eee182d441063ac100f3fbc2b320b76a0ddaa19169a5bf31e",
+    "paranoia_parallel/examples/Monte_Carlo/names-test2.sp": "c3843c669e7c56c66a5b547e59de09503a720fd2e64dd6a76dbe8144f4d95733",
+    "paranoia_parallel/examples/TransImpedanceAmp/output.net": "391c23bbf132d204e661e8ad0817ccf33c5e2883d8d05657dfd94ae320c16012",
+    "paranoia_parallel/examples/TransmissionLines/cpl1_4_line.sp": "741d5520ccc8688ecdc00277d1cdb940e99102e4c03c71e9ab50c5da3cbb6332",
+    "paranoia_parallel/examples/TransmissionLines/cpl2_2_line.sp": "216c15cc5d7d885499c517dda6657aefe06d0aaa093a72891344a29e88038c4f",
+    "paranoia_parallel/examples/TransmissionLines/cpl3_4_line.sp": "a3620a2661f1fe574811e6428bdf33c504454658770472b8683b8c1a5ecf26b4",
+    "paranoia_parallel/examples/TransmissionLines/cpl4_txl_2_line.sp": "c2cc34667cf36ee04e864f409b677bafce1e076d179371c579ad9849d1d7f68a",
+    "paranoia_parallel/examples/TransmissionLines/cpl_ibm1.sp": "d3c2bb4ec7b8ee58ea8d157b6add880ee351e93dae6a9f7a0260c963aec2e033",
+    "paranoia_parallel/examples/TransmissionLines/cpl_ibm2.sp": "29520c29fd7f2a23a4a444e6759f8ee17a832a0d7cf119c5772dbc9ce25800cb",
+    "paranoia_parallel/examples/TransmissionLines/cpl_ibm3.sp": "85d67b14f63bd9eecbb198d524670847b364dc22c99f96ca1cbb0e56e82467a1",
+    "paranoia_parallel/examples/TransmissionLines/ltra1_1_line.sp": "1878f0981db3bf7355836bbe942747dd67122ef53eb11c36522e10bf4b20d61b",
+    "paranoia_parallel/examples/TransmissionLines/ltra1_4_line.sp": "b00383e3bab64d877c05da9bc24a7a1be4e9fd6daa4cc05d21220d0d939e7432",
+    "paranoia_parallel/examples/TransmissionLines/ltra2_2_line.sp": "9ae27a515247cb1ea2cc4bd06acbd5a9c6b519f40a1f3ee77cdf87f919f10ad5",
+    "paranoia_parallel/examples/TransmissionLines/ltra3_2_line.sp": "a6e1b7c58c8a6ab54eb9fc57e11698973707a390a7f221c39a86d37f51ea9d94",
+    "paranoia_parallel/examples/TransmissionLines/ltra4_1_line.sp": "035402d7c42b363d24ed8ac8a415515e9868e90897f3ac93f0a4235c0b8dab49",
+    "paranoia_parallel/examples/TransmissionLines/ltra5_1_line.sp": "afaec15bc83c151f945834a62ae7d9a91dfcd4c19ddd5fa0542a0169c0846913",
+    "paranoia_parallel/examples/TransmissionLines/ltra6_2_line.sp": "16671e90c7c6131bd95ff95f658cb4edff6151fc9d896010e9ff003249c778c3",
+    "paranoia_parallel/examples/TransmissionLines/ltra7_4_line.sp": "45aadeb4c4f291b2e097f1867af7899fc8bd305dd86fc4338e5ca77b720d6098",
+    "paranoia_parallel/examples/TransmissionLines/txl1_1_line.sp": "a44cfc150c1eaf5b02076c24eccbcf316668947d27da5b06978534a6e78a6a4e",
+    "paranoia_parallel/examples/TransmissionLines/txl2_3_line.sp": "e55f55bf8d88ece62a231fe39c9a5d53f027eda684a5192143c93e62e85aa0d2",
+    "paranoia_parallel/examples/TransmissionLines/txl3_1_line.sp": "95f32e89608294a9da358ccd957ad3a3c65aae6848f59875abb83e521cf2f904",
+    "paranoia_parallel/examples/TransmissionLines/txl4_1_line.sp": "5baed6ce7025fff552d703c9a4e1f9ab2d0c7e563d63d42a6f808ff8e7c805bb",
+    "paranoia_parallel/examples/cider/cmosinv.cir": "9fa3a02f91184bb8f82fb4f470c051cb6883f5a3af828e070e59e0a980ed1f42",
+    "paranoia_parallel/examples/cider/diode.cir": "4c742a46247b99dc83f796bf6caa7e246e78f6a6143a6324620f8ef17e14cc9f",
+    "paranoia_parallel/examples/cider/pullup.cir": "4f95ab6c824e76c65b9f6aaeefdb2d40336597401859befcfc2dbe1d6eca1400",
+    "paranoia_parallel/examples/cider/recovery.cir": "ebf1105f7444d08099f5ce303821b3ab016b7176247e70a53fc3a1295f8417d9",
+    "paranoia_parallel/examples/cider/rtlinv.cir": "54665e1f6b6fcc79144fa33619399dee4d7000c35c2fd62b11315e6726c2abc0",
+    "paranoia_parallel/examples/control_structs/foreach_bjt_ft.sp": "5e6059a71cc38859fdc6727745c6d15789b703713da8d4502357e5762a536e20",
+    "paranoia_parallel/examples/delta-sigma/mod1-ct-test.cir": "ee68ae655e0bdaaadede6e4b979eb6fc5723e39ea33e56016172f06d6669b663",
+    "paranoia_parallel/examples/delta-sigma/mod1-ct.cir": "7e9075b864543c3ec586bfc4b5af119edd5c69c75c3ae59485d7d739257ef12f",
+    "paranoia_parallel/examples/digital/adder_Xspice.cir": "07ef6de648f43639f16fe2d4473b8b4091e34ac07ec3b70cc73b5f1a25a787ba",
+    "paranoia_parallel/examples/digital/adder_bip.cir": "416d4e9b4bae7861e49b65477b96442141d1763b44e71962be6908e311a361ef",
+    "paranoia_parallel/examples/digital/adder_cshunt.cir": "554e3a2e9ee2cfaa21d38a7cdfc036bdcc46aa919a2bef483e32e06aa3ac9d94",
+    "paranoia_parallel/examples/digital/adder_mos.cir": "65cb21f65be51dea803c150ca6d97caa95250b02b068dff5bb5263765eac2afe",
+    "paranoia_parallel/examples/digital_devices/behav-568.cir": "558b62a78da215fc90eb078ae6a841c84bff4a1e88810dfed7e9155470509c6d",
+    "paranoia_parallel/examples/digital_devices/counter.cir": "e629073f9c9ebced7a25d14d69980c85f42fce39b62be6a4054dd92ee2aa0ffc",
+    "paranoia_parallel/examples/digital_devices/ex4.cir": "a788a507b02f347501b455ee983053b42f24c7b78e18ba1af84ecff7863a2d93",
+    "paranoia_parallel/examples/measure/inv-meas-tran-auto.sp": "7f3e2d2e8323044834d5b1024b484bed439112ed8da6167a52e327c6b277f60f",
+    "paranoia_parallel/examples/measure/inv-meas-tran-control.sp": "4d03bae9d4f58d3f2f3f5272de632d1eb8f439a0e4411fc691da2706e0260f9d",
+    "paranoia_parallel/examples/measure/inv-meas-tran.sp": "a8297cc14deb582f4454e8de0890bf4d33e6a00f7b1b0def25161d9024e148f4",
+    "paranoia_parallel/examples/measure/mos-meas-dc-control.sp": "5ba55d950d57a994efa35ac22c673270884b932cabbd7a4746caf0b9462e94a1",
+    "paranoia_parallel/examples/measure/mos-meas-dc.sp": "bc48d9d6c9b8171739185904af6ac465c92c64e8a2f21565b81c3b0586c8e191",
+    "paranoia_parallel/examples/memristor/memristor_x.sp": "aab218f85affe728ac976ef581f8da065972545b5d8c35aada4949561547c527",
+    "paranoia_parallel/examples/pll/f-p-det-d-sub.cir": "c7d87fd58373110fd0200b1a269f5d5112d61f0ad0763faae84b03f5a1f47031",
+    "paranoia_parallel/examples/pll/loop-filter-2.cir": "66275c0c9dd2b815bd38ed92a7a276f3fbbf3365ab6664191ce5acff7aa4f8f1",
+    "paranoia_parallel/examples/pll/pll-xspice.cir": "f84d91a987f7795c8311c950c811e05039c8edcd65b8e8bfe1f3dd75bd7bf1af",
+    "paranoia_parallel/examples/pll/vco_sub_new.cir": "21aa36e5423f0e6542e61b56403f41cdb26078a3f505be4ea151df9a65185d8f",
+    "paranoia_parallel/examples/pton/555-timer-2.cir": "1a5b99cb718b9e51c61934f160d4fbcc725ca081ccb3c3841b80a71dbee5b134",
+    "paranoia_parallel/examples/pton/MOS1_out.cir": "9b88d1e5da636de32243f3cab04047ded58bc31f8289ef892e0d38dcc4005be2",
+    "paranoia_parallel/examples/pton/op-test-test.cir": "d91d0dc15ef5fa9812e6cfe7569e7f059c8ffabb029711864ea34932de501c94",
+    "paranoia_parallel/examples/pton/op-test.cir": "6ddaf070725600a1831c1a345f4e7dedbbb757436dd4c6327e2a584947bcc531",
+    "paranoia_parallel/examples/pton/switch-oscillators.cir": "6ab9efe442d5c0e5f63d903ef1aead78aa4c154085783075e266e9e87cb085dd",
+    "paranoia_parallel/examples/transient-noise/noi-sc-tr.cir": "0eff6967f552b0576b2878dbaaa7c815c1990e2f6ae17c531ffbfce7c339fecf",
+    "paranoia_parallel/examples/transient-noise/shot_ng.cir": "607f1f25c81002abeb51078e3d17559bf7af110e0dbee62820bbef6f89ecbb9e",
+    "paranoia_parallel/examples/various/adder_mos.cir": "2cf914bbd3bf65b0131c23ef9d69509d12c274d0f46b0c613159c8e8fc99b2fa",
+    "paranoia_parallel/examples/various/bjt_ac_par.sp": "ad38d2526a6d9b0002109e6518ff4d7df5508af9cf3ad24cd2e80f41ed141a6e",
+    "paranoia_parallel/examples/various/bjtnoise.cir": "5c1b42dd1ea51c565d6258cb1293af3bf8e2ab182cc511516d879db025cb2248",
+    "paranoia_parallel/examples/various/def_red.cir": "0cf77e0466539df0df65315e8751d57e56206d1a5da6c7856b13b162ec07ab97",
+    "paranoia_parallel/examples/various/diode_ac_par.sp": "ab1aaf712a554154c01b8c514c2c7219a75fac0087b8d47fa613daaaf7e59624",
+    "paranoia_parallel/examples/various/gain_stage.cir": "e3301e4b391d6cd27fd3a77f43e9efd7021db6231c0c57dde459333d812eec4e",
+    "paranoia_parallel/examples/various/model-name-check.cir": "72cb98d40908d0075b9f7528022f7d32e7390e2fc3500b5e284bbdab2e01ff6e",
+    "paranoia_parallel/examples/various/probe-i-dev.cir": "7198750f013cdfacbd8dd0678d4dbdb10c79167273a6aef6a0ed46c34341e0c6",
+    "paranoia_parallel/examples/various/ro_17_4.cir": "fe29986ff64f23dd59c5be81a3f4ddaaa783286767a3f6f59d91b78206b9a80a",
+    "paranoia_parallel/examples/various/todo-temper-3.cir": "4c7080fbb5e7910fc96d97e9390ebc52f573194e8715314fd21bf00e3afe15df",
+    "paranoia_parallel/examples/vbic/DFF_Y_ECL.sp": "33c504eb9f998ed08aafc6ae5843789e1d2c1d2de3a96fed11fd057730b888ec",
+    "paranoia_parallel/examples/vbic/self-heat.sp": "52ea698b8f8fb41ce37b70cb44784eb13b709867a8c0f35bd893e54cf8b42c35",
+    "paranoia_parallel/examples/vbic/vbic99_dc.sp": "f615300d4c20230d02d92f7d2705e1e235ff7966492f02ffdf6d5849296bdebb",
+    "paranoia_parallel/examples/vbic/vbic99_tran.sp": "08edbe7ad2cf04eb3e483acc1696e5f0d2fd7e861d4825e1dee5827636d62442",
+    "paranoia_parallel/examples/vdmos/100W.sp": "1ec50ef3eda7ecf2d692ec2e378935cfc2c6ce63ecf4a2210052dd166fdde80c",
+    "paranoia_parallel/examples/vdmos/100W_wingspread.sp": "6fc8e86ce0888b049e843d3b11a5e1c551a5c6006e0333694e6a0565f7350a6a",
+    "paranoia_parallel/examples/vdmos/IXTH80N20L-IXTH48P20P-quasisat.cir": "2916d253665cf375573023a4e898c08cd753b79f98d941ffc191837385043535",
+    "paranoia_parallel/examples/vdmos/IXTH80N20L-IXTH48P20P-quasisat.sp": "55ab3f5368518124ea8fdab26a89941d16514388b6d3dfc61da2b1087902a30d",
+    "paranoia_parallel/examples/vdmos/IXTP6N100D2-cap.cir": "7c9cdefff68843109b972cf56c63ac49bbe7e375f466d3773b7d416d9adb5c1d",
+    "paranoia_parallel/examples/vdmos/IXTP6N100D2-cap.sp": "2f2de999ddc86257290b72c9da59ea8e9e14931f474a4902815bc0784f195ad8",
+    "paranoia_parallel/examples/vdmos/IXTP6N100D2-n-weak-inv.cir": "9507a006e20c954191745af91b04e5f025bb38d26c9205bdd690c99fd595a40e",
+    "paranoia_parallel/examples/vdmos/IXTP6N100D2-n-weak-inv.sp": "4452492d903dfeaa4f1fba7075d79c83efd2468a3b96139c17669acb5795e7c6",
+    "paranoia_parallel/examples/vdmos/VDMOS-DIO-AC.cir": "52e62e925f50b4de30cbbb4507eab8b2c6d95cf38d96bcf9ec26c007b067b47c",
+    "paranoia_parallel/examples/vdmos/VDMOS-DIO.cir": "38466e1905d6a346872bc0cd5d2515a072c92759c9961afced2f0a6be800977a",
+    "paranoia_parallel/examples/vdmos/VDMOS-DIO.sp": "0646f314bcf8baaadaadaf0b12ff369ddd74c48f99300b038cfc5b78d0802881",
+    "paranoia_parallel/examples/vdmos/crss_coss_ciss.sp": "79271cf989ae9b96916c59ba6199bc0138dd58bc6b0b0a01867e66e31fc6799d",
+    "paranoia_parallel/examples/vdmos/dcdc.sp": "bd8b2a359b56d1a029c2ab83332e1b97d5c10ad7e7016ff803276f6727d9f0ac",
+    "paranoia_parallel/examples/vdmos/inv_vdmos.cir": "2ae522480f07ac872f2427505e301eeae9c2c9112b6e1d5257e5378d8e72c350",
+    "paranoia_parallel/examples/vdmos/inv_vdmos.sp": "d5e478cca76b5ff59312f369180b2e82c6f8313a05381b645ae233805e96a8bd",
+    "paranoia_parallel/examples/vdmos/inv_vdmos_dc.cir": "5e7642e85618cffed9884e4fca71a3dbd62ae1863988d61f5c444088de2d5ed3",
+    "paranoia_parallel/examples/vdmos/mtriode_nch.sp": "5fb879bf8c6197251a5ff92e68afbbe192f61d0025a5234eb023da4f943bfd2e",
+    "paranoia_parallel/examples/vdmos/ro_11_vdmos.cir": "7b2bfc5d6d872b87d195c1d2f9b801337793cb77c9b4df242c7e2abee731dc79",
+    "paranoia_parallel/examples/vdmos/ro_11_vdmos.sp": "06b604c17132f10c97456cdc03eacb79c4887c261adb396ec610495a8a6d7560",
+    "paranoia_parallel/examples/vdmos/self-heating.sp": "594aaa3e8f55119682c438505c5143cf2af05efb1527b419295b2e2e913e1db0",
+    "paranoia_parallel/examples/vdmos/soa_chk.sp": "061a41f1facf9fdcf634e12a9df7613ddec558e4bc96fc8aebb7fcd638327bf3",
+    "paranoia_parallel/examples/vdmos/theta_nch.sp": "2b762d7565d6037792068a7c0add119e17bb67e9c4da8beeac3c1ccbf7e94c20",
+    "paranoia_parallel/examples/vdmos/vdmos-out.cir": "e16affbb7d0735f189b6adf8fec7aa6f26cba58e598195f3381eb0b745d93735",
+    "paranoia_parallel/examples/vdmos/vdmos-out.sp": "bfef4bdbb7bd46bc7f90106cb9a490ec01716764f8b00a15657e7990f1df7625",
+    "paranoia_parallel/examples/vdmos/vdmos-out_ir.cir": "e044eeda4c5c27188a72e80d0f912214a2537378ffe0d410c38a6d189ad52e80",
+    "paranoia_parallel/examples/vdmos/vdmos-out_ir_mtr.cir": "27b309698d759b757708b9dd3027ab47c29b406aaefc0db03fa809d7f70d8603",
+    "paranoia_parallel/examples/vdmos/vdmos-out_ir_mtr.sp": "444d31e301715ab36fc02c32dbdc72183c668803cd80876d98e3e812750a7c24",
+    "paranoia_parallel/examples/vdmos/vdmos_model_test.cir": "aac44d79bd70f7ab37dc0e387211bd2d18e011c347b91cf6d71246467dfd41f5",
+    "paranoia_parallel/examples/vdmos/vdmosp-out-mtr.cir": "9351cef6c707c86b5fce5cf9b1579725f137db3e334c278266df936933474522",
+    "paranoia_parallel/examples/vdmos/vdmosp-out-mtr.sp": "092ddde6050f259de67f7fba79c72fb44d77a1fc9840075a9a426fb0293408a1",
+    "paranoia_parallel/examples/vdmos/vdmosp-out.cir": "19e970a9729c3cadee409bed1b3fe432ecddda2a38f9c4ced0755a73e41073fc",
+    "paranoia_parallel/examples/vdmos/vdmosp-out.sp": "0ca91f06fc5a6933c5f56b95c64c703202895f040ad8e81a0df0a5f8199e3749",
+    "paranoia_parallel/examples/xspice/analog_models1_transient.sp": "f7baf5978dee6a7cb223292d0ec0153bae2a2717959d138adeec579c6f3e1f90",
+    "paranoia_parallel/examples/xspice/bug-378-test-sequence.cir": "d926ef82cde4e577beeb93d9360b62000865cd00b368c797f1869d91c80ca83e",
+    "paranoia_parallel/examples/xspice/d_source/d_source.cir": "5af89058a155f16fb15fd46c6bce1d65540b1b0f841a630cc98a2b016d7d4dad",
+    "paranoia_parallel/examples/xspice/delta-sigma/count-latch-dac.cir": "9c8667cf41c53f8352a67eb43fdaca803fd030b6df7583ea5385b254ab14e45e",
+    "paranoia_parallel/examples/xspice/delta-sigma/counter-test.cir": "d06f0004ce80c81782aa59130ad10ee285e34bfecb41ac703103efea7915515f",
+    "paranoia_parallel/examples/xspice/delta-sigma/delta-sigma-1.cir": "ee62e386ba0fa7826de902bd881da445878cdb14086ea0bfed8abaa277c89667",
+    "paranoia_parallel/examples/xspice/delta-sigma/mod1-ct-test.cir": "7b1ba95d202bc358c33fcd4c756d9a16c019939299d14a0ab061caa06fe016ea",
+    "paranoia_parallel/examples/xspice/delta-sigma/mod1-ct.cir": "7e9075b864543c3ec586bfc4b5af119edd5c69c75c3ae59485d7d739257ef12f",
+    "paranoia_parallel/examples/xspice/filesource/simple-filesource.cir": "afa50830e424790607e0f3411bbbe9320c3a5bc2b6a2e01fbe78081ef1810bf0",
+    "paranoia_parallel/examples/xspice/fstest.sp": "72621b0c10f6642de02de55c829b533910ab53f70a8b06f45192f89394633367",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models1_ac.deck": "a872c139a52742ebb0188b0ccea4ed2fed144c5201d7efd1972aedef2c449984",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models1_dc.deck": "f116a4f940fee836fb91742127514a69e5216d462a7b40f62c9bc8183b333dce",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models1_swept_dc.deck": "e931f8f7f22f434323b76329d6db81c095f795fcadda31f76b842c8b0f6e2d55",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models1_transient.deck": "3477f17a5e405ef743b0f0f3622fb760cf50d189c4864b30082b627ec201ed49",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models2_ac.deck": "ce98d8ed1be76f0a86ff1da5121945dd19b60eb6e64bb3e6336f670fed5b203a",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models2_dc.deck": "a6d4d62f20f72c52cea56d985a3fe360ff569af8c60a310c8c3e5613850b2a01",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models2_swept_dc.deck": "1e226bfc22dc82b2c1c678d20d71bb4999cdd50a87ff675fc454a3dac3aefc12",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models2_transient.deck": "e34c9a6fea6e7cd1a5d839b5a22823c2adf02801a7d3081ed01541e6dbca952f",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models3_ac.deck": "3673988b6b7f230995d462db408aae6d3c27866fdfce62118cfe9c044ea33c1e",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models3_dc.deck": "e6a1db72c39ebda53b39cf13a36a0b0e029a886c02d78a0cf322b033f825051a",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models3_swept_dc.deck": "9f3ca88fd307f9e6148916e6c861fa4b65a6dbbb4d311d06df85e48bd8d3bfd9",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models3_transient.deck": "8235f75595912e11001fc0244638b3968b64cb349c575be48ed59481e777186c",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models4_ac.deck": "5bb6c428404d48c6f99b0b5b0e8659842859d08e48b470ce176128cf0573f417",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models4_dc.deck": "306bf19a21a18a22f4324a1bc8a510eccb5e47ca6033d242a7cfe2ca133e2c77",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models4_swept_dc.deck": "2cbb374ed9d2fa865acf02c2c4a9a48ff6bcad12b6fc9606beb57c97a0b3f0cd",
+    "paranoia_parallel/examples/xspice/original-examples/analog_models4_transient.deck": "e523f422dc813850f8a3d4b2810f7fd83381438539fbc26399a2610975c26b47",
+    "paranoia_parallel/examples/xspice/original-examples/bad_io.deck": "ea530f3e70368c8aead768e5175aa42b4843c237092de732f2a714010bba72b7",
+    "paranoia_parallel/examples/xspice/original-examples/bad_io_type.deck": "2b2e6a3a42007824787f70525deea5e8f64edb32d876a3590cb9444b9c7cc599",
+    "paranoia_parallel/examples/xspice/original-examples/bad_name.deck": "e463da7c79bf318a0ac6b0a26970b4185cb8bb8b30623ee2272f5a1b3823bad3",
+    "paranoia_parallel/examples/xspice/original-examples/bad_param.deck": "bacc1df27adecb6f0b15726df55af737b517395f990cfb1117637cae05f780c5",
+    "paranoia_parallel/examples/xspice/original-examples/bad_param_type.deck": "afd470ce0bb753af54a0ad06f4c3216838a2f2b02b122cb131e2e28e1d3babce",
+    "paranoia_parallel/examples/xspice/original-examples/digital_invert.deck": "a7bb2dfd71f8b4da5c1f30156431c3413af3fd9b661df5398cf1149b906c1b69",
+    "paranoia_parallel/examples/xspice/original-examples/digital_models.deck": "10f9add16adac82c0c3ee79db6e0ba1f9d9b630eabe1ce903cdd50ffd9a4dcb0",
+    "paranoia_parallel/examples/xspice/original-examples/digital_models1.deck": "ea93d7478aa29b627faf224a7fe5eab87da2e99fa50dfbf67a972c98591ca5cc",
+    "paranoia_parallel/examples/xspice/original-examples/digital_models2.deck": "d38f5c8bdb22191933f34bca82fe7b975f99975be95dd311e7fe3dce3f560299",
+    "paranoia_parallel/examples/xspice/original-examples/digital_models3.deck": "99cc8c74c074e58d2880a352a02660692ad7b54992aa2439c1324ad40e93832e",
+    "paranoia_parallel/examples/xspice/original-examples/digital_models4.deck": "872e2dacf3cafee993288aab566c4981b68a418248ca3d4ebf09e59eb1540956",
+    "paranoia_parallel/examples/xspice/original-examples/dot_model_ref.deck": "3768d1b0f0c300fa8284fef95d8621d2b3ebfcee9983547cbe1568826b433d42",
+    "paranoia_parallel/examples/xspice/original-examples/hybrid_models1_dc.deck": "aaf870314d2aaf0e567004145b251985b43aca72ea8507da446f3b12723da629",
+    "paranoia_parallel/examples/xspice/original-examples/hybrid_models1_transient.deck": "f71c3a55d58693054c35832b1ec7eaf42e0dd62a813129e63f9d1db47db96dd1",
+    "paranoia_parallel/examples/xspice/original-examples/initial_conditions.deck": "2b36aae81581728f4e2d8b657f688c54d829eccf21a653e804d83e04624363b8",
+    "paranoia_parallel/examples/xspice/original-examples/io_ordering.deck": "4f8e293f78418ae9bdd815c47fc7bb5fd69d27abd933f2752dc546f46e6ed8aa",
+    "paranoia_parallel/examples/xspice/original-examples/io_types.deck": "d1984c052791bb97d08389dc20ce673e79a3938a05d2c6ba0ab0c746304ba3f3",
+    "paranoia_parallel/examples/xspice/original-examples/long_names.deck": "34eff93c59da07dab3c32ec373ea283e30e54592976109f2b85952fe9931c684",
+    "paranoia_parallel/examples/xspice/original-examples/mixed_case.deck": "8314ad2cb02d0946aa280bbe703d442181cd0600cb819d483fe3eb5276782e92",
+    "paranoia_parallel/examples/xspice/original-examples/mixed_io_size.deck": "0de748cbcbc0e45f6e2c523e68eccf7e12bf3d6e65e5f04e8034ae4ad74a4d8d",
+    "paranoia_parallel/examples/xspice/original-examples/mixed_mode.deck": "09cddbc53e415e9c1d2cdb7adb5b33e646738281ca4675d839cd4ada15475994",
+    "paranoia_parallel/examples/xspice/original-examples/mixed_ref.deck": "d7b43b29f488b12cadfc202c7913fe317a8c0d2a223d005c84171e3c0c2c67e3",
+    "paranoia_parallel/examples/xspice/original-examples/param_defaults.deck": "55c30621b2f0e4afa4facde3b5835bb7b5088dace4404faa9dd87a721ede89df",
+    "paranoia_parallel/examples/xspice/original-examples/param_types.deck": "28306384285c06f8dff5906deea4e8bcc5d82570980e58483ca01bb70504e650",
+    "paranoia_parallel/examples/xspice/original-examples/parsing.deck": "ea424471ff40436344717740f7cfc151eb2e420377d86487976dd02b1be468ce",
+    "paranoia_parallel/examples/xspice/original-examples/polarity.deck": "290b4b87b284b127d2b3fba668f2363cd377792538ab5909149d2a60e363c4a5",
+    "paranoia_parallel/examples/xspice/original-examples/spice3.deck": "1419a545f64090f2a6a860a8c1234e322b38901e62fd058cfd9f46289eab6958",
+    "paranoia_parallel/examples/xspice/original-examples/suffixes.deck": "d51b42441e60b5ee2ccc695d0f5662e037276a967e7c343c10e645e7b4f0a981",
+    "paranoia_parallel/examples/xspice/original-examples/supply_ramping.deck": "47bf177274cdead4b342d4df5eebf2708d4cfed2e9501ec6f984766c30833061",
+    "paranoia_parallel/examples/xspice/original-examples/user_defined_nodes.deck": "15654ae1dbe699d77f9a0726d3baa5bd2759360f99450017f2b05446305f12ed",
+    "paranoia_parallel/examples/xspice/original-examples/xspice.deck": "880bb62736f45d7353551a85918c09b3eee0c4750ecdf8cb350aface61fca74a",
+    "paranoia_parallel/examples/xspice/pll/f-p-det-d-sub.cir": "c7d87fd58373110fd0200b1a269f5d5112d61f0ad0763faae84b03f5a1f47031",
+    "paranoia_parallel/examples/xspice/pll/loop-filter-2.cir": "66275c0c9dd2b815bd38ed92a7a276f3fbbf3365ab6664191ce5acff7aa4f8f1",
+    "paranoia_parallel/examples/xspice/pll/loop-filter.cir": "4aefc52c1025a63ec9a636c9cb57883772fb9a9285c78876c432654f59fd1823",
+    "paranoia_parallel/examples/xspice/pll/pll-xspice-fstep.cir": "2b9ea3ee1a6a3490ece7078a50bcb125bce09785f49ba73dc51fbcb9497b9e81",
+    "paranoia_parallel/examples/xspice/pll/pll-xspice.cir": "bd4b847d7bcc190d6790a0bd6a5dad81509c53bb048f9c69949198cbf909365e",
+    "paranoia_parallel/examples/xspice/pll/test-f-p-det.cir": "6cae710319a07bc6df0ed2f442becf2743e5e81dec27c698fa9330f1f1df1864",
+    "paranoia_parallel/examples/xspice/pll/test_vco.cir": "ab7fae4499f3f1ff1fe65556891049277dd999da9bc537417c8af2713d590820",
+    "paranoia_parallel/examples/xspice/pll/vco_sub.cir": "5180ea207e99da3d33529daa4af072c01937cec10b807f17b1ea2fff98a37396",
+    "paranoia_parallel/examples/xspice/pll/vco_sub_new.cir": "21aa36e5423f0e6542e61b56403f41cdb26078a3f505be4ea151df9a65185d8f",
+    "paranoia_parallel/examples/xspice/state/state-machine.cir": "b29fa22519665c600f137e7065677825848245efd1151638c564c181ac30d2f5",
+    "paranoia_parallel/examples/xspice/table/table-generator-q-2d.sp": "e0ee6df43ee0cd773713264d1908f4ff35e13825acef30c835f07428095633c2",
+    "paranoia_parallel/examples/xspice/table/table-model-bip-2d-1-oc.sp": "8d94c0ed30187ca4c8227ca65f48b9053048d02e3189693f5b5a520f68699ddc",
+    "paranoia_parallel/examples/xspice/table/table-model-bip-2d-1.sp": "9048650eb53f2134a3ed989d71eed79a172ad9818558799cfb5153e940f504c5",
+    "paranoia_parallel/examples/xspice/table/table-model-man-2d-1.sp": "b26fa32bd520464aaef0dca859941a7d76299b158b7d559131e6d9e3a97f570f",
+    "paranoia_parallel/examples/xspice/table/table-model-man-3d-1.sp": "265e04a63ae48675139d1f72f3149d8bcb543d14641c1587cabf6414dfc26b36",
+    "paranoia_parallel/examples/xspice/table/table-model-mos-2d-2-oc.sp": "488d1290b02c277aa49392858cb41cb908e55655cfa47b3696a855bd6f792476",
+    "paranoia_parallel/examples/xspice/table/table-model-mos-2d-2.sp": "32a61ddc89dc37920c17f7153954158cf53a5fb0b30ac7e5359bd3cf008c6ca1",
+    "paranoia_parallel/examples/xspice/table/table-model-mos-2d-3.sp": "59a606c8fd370ba6f562e5f09248c5e48d4ec523b52c869d1715891f16b9a1bf",
+    "paranoia_parallel/examples/xspice/table/table-model-mos-2d-4.sp": "1c142dad40acd1f99d12290aa7715f117aab4242e228d2db81c2caf08ab2b12c",
+    "paranoia_parallel/examples/xspice/table/table-model-mos-3d-2.sp": "728e055c4cd3a8a8dc1cf6344a06e27340a7d88a4c74de58444d4228f5013c58",
+    "paranoia_parallel/examples/xspice/table/table-model-mos-3d-3.sp": "8049456ccefe178577320b4ce20fc33acc1c8a96554460e520c355abb39c3fb3",
+    "paranoia_parallel/examples/xspice/table/table-model-mos-3d-4.sp": "fb399b262884558c6d6b1bd49677b3fd76cced90a98d4381c854c350d6dc7e95",
+    "paranoia_parallel/examples/xspice/table/table-model-mos-3d-5.sp": "fdccc8d17c633db651819e070e2ec2d64ea4116dcdd6973fe55854a87823f3af",
+    "paranoia_parallel/examples/xspice/xspice_c1.cir": "f87a56bd54ab8c29594cd3e342b803c513ddd40161cef23879e46302a18a7ed3",
+    "paranoia_parallel/examples/xspice/xspice_c2.cir": "fc545c0055f260f07faae1a042009ee7ca73915cf23dba50ba8b328223b21739",
+    "paranoia_parallel/examples/xspice/xspice_c3.cir": "74e332df70c697c362524dd4f7669fe40e55ce38a32d2877890935de9134deb2",
+    "tests/bsim1/test.cir": "8996a3843bbadf007ce16ceba67cbe6ec227b58389d715b5e325773175ff585d",
+    "tests/bsim2/test.cir": "5e015727e335554102057dd12ec5698a2c0f9c74cb264c8c52d400cfbf388320",
+    "tests/general/diffpair.cir": "7b8130123cb74140ac247ca8b9b0f50aee0389b397ac9a4505493cda225bb76b",
+    "tests/general/fourbitadder.cir": "914e1df75057878208b932f953640d165633bea64cd42cac3953ce4cb8e25b3f",
+    "tests/general/mosamp.cir": "f26d811bb675fe56674e16c5c63a7ddbd48b7f5a6399285940ead9f3295c63b1",
+    "tests/general/mosmem.cir": "6d5bd5a8e00f1f51f1c1c465bf8f80851cbc7c731623f11a4db1052389c39667",
+    "tests/general/rca3040.cir": "afda521a320d08b678add26141315731e6c03ae06df0983020156c703ec31586",
+    "tests/general/rtlinv.cir": "efb524624f7c96d1f8b05ac8428afd4f0462c65791801f1b5cd8019e5e9471f4",
+    "tests/general/schmitt.cir": "717ed64c128733509d96238d4a997d1d6408420ba1f02baeaa9349127096e297",
+    "tests/hfet/id_vgs.cir": "808d3aad58dcfeeceb5d2e6fb46cc1774c1e86e0c23c2870638f96f77547054b",
+    "tests/hfet/inverter.cir": "0ae45b8c481a3df68dc0c4fbf5476b78f825914c82175a95c5568293d63f9ca7",
+    "tests/jfet/jfet_vds-vgs.cir": "1b091823aefe52c8b3b2ee7f57974847c57a909e255d08fac3d62f562f2da739",
+    "tests/mes/subth.cir": "ec1019076c9bd44da3d7c0901e08c8c6fd84015b332f63fe465f5fd827cceef0",
+    "tests/mesa/mesa-12.cir": "5bc119c20bef02c681707a5f7e00236bcd584fa1c769742a72828f620425dcfb",
+    "tests/mesa/mesa.cir": "91f0e9b69c2701abecf32abb6d3f0f3a4e21c7f46cccb56deb9825b3f6ef6966",
+    "tests/mesa/mesa11.cir": "c1bc999bc9190918c99da1ea7396ef3c91a8565194dcbee412f23059c1364d15",
+    "tests/mesa/mesa12.cir": "b42179e157cab598c6ba084614f678f86c0242d436f1d51f9f82a1f09a53c73b",
+    "tests/mesa/mesa13.cir": "f6ba019bf4e1b7e09edb2291de1ada2812e6ce3b322d94f427bc34143fae5cd1",
+    "tests/mesa/mesa14.cir": "91fe9953361d8f1859401abaf67db29950b5564df5e71dc9e5a9e99f4b786d30",
+    "tests/mesa/mesa15.cir": "87edf6af3eff62b263162a683b583881f1fa8ce6829ed5780803cb311497ec71",
+    "tests/mesa/mesa21.cir": "ec35a1ec86d9e7c6fa8da894c3849dfb1fef5ac78faeb4d0f102cf8cbe8577a0",
+    "tests/mesa/mesgout.cir": "34b923f1ae2a679c05eb5c87bd03deb93df42d102e8964c8372773a71507841f",
+    "tests/mesa/mesinv.cir": "21f1fe1e3758aa88411def61437b13a04d8d7485c2c83255b0817d8b776d3583",
+    "tests/mesa/mesosc.cir": "9ca90c0a19ba7e542acf762673d1587761ca99ba0dfe1748a23d818b83d1be0b",
+    "tests/mos6/mos6inv.cir": "04758449c721d354579718c8d171b5a15895e422698f2a4ed6f2e29be334b5a3",
+    "tests/mos6/simpleinv.cir": "60c55bed0200d432d70967d8457d20e000839ff2ca731aab6813019952d8affa",
+    "tests/regression/misc/test-noise-2.cir": "272ef83f052cefdf2d9780e30a2df75eb5518e20335578f4a4a55ba8a2660eb8",
+    "tests/regression/misc/test-noise-3.cir": "0cdd0dab0f5e923d5684e3e8a4fa9215998948912e74726de17e8bd072beb317",
+    "tests/regression/model/binning-1.cir": "cef827da6d1eb9b8cfefd2537fb3bbe793eed336329da77f456261dd5b099a3a",
+    "tests/regression/model/instance-defaults.cir": "fc8b1f4759e3efdc01b8b253352949ceba027b8fe6b60a5ef5a76f27328f8c5d",
+    "tests/regression/model/special-names-1.cir": "99d01423f6b1621725862b7a518f70b84adc0519c9f064d242cded5efa4c9eed",
+    "tests/regression/subckt-processing/model-scope-5.cir": "e5173eef90d527256a8cf9b6411d4fbebfc7fa10fdf92fe0fe17bb8890a94b67",
+    "tests/regression/temper/temper-1.cir": "a92c616aee6454d452e435faf567551b082359981233574228bd830ccff4c753",
+    "tests/regression/temper/temper-2.cir": "3286e268cf1857a57cb53d6c6018022a3f6c1be5ce835ed1689782bc0696eb1e",
+    "tests/regression/temper/temper-3.cir": "eecbfa1491903650413c4734e8afad0919e53043f8a6774b1580066de889f5d1",
+    "tests/regression/temper/temper-res-1.cir": "b7986b6133f778378e41f5e09b952dfad615854c17486102057d8e7f00107eb9",
+    "tests/resistance/res_array.cir": "618fc4d2f3f3752777327ee685c16da060744017421a7f0ac7d442f80f823ede",
+    "tests/sensitivity/diffpair.cir": "a750c4157e78847d3b51e9b3da3312e32e55426dd17cc1bc1116b6edfa80458c",
+    "tests/transient/fourbitadder.cir": "914e1df75057878208b932f953640d165633bea64cd42cac3953ce4cb8e25b3f",
+    "tests/transmission/cpl3_4_line.cir": "91bae2fc54578dc91bf4e5dce2ea09d836a9f57c4d7a2275b759511a0f0922b6",
+    "tests/transmission/cpl_ibm2.cir": "005cd19569dcfc6d98ecb679ecc1df71112006340741f356bc58f4e9fc71a2fd",
+    "tests/transmission/ltra1_1_line.cir": "ca230cce539d63fdcf9fb7019c533d9e0ea4797d5478acf6d7f44c09e90bd61e",
+    "tests/transmission/ltra2_2_line.cir": "c14fec85a3c548eef5b93d3638d40aa9894b08722bc1f1ca4a6074c3c411a352",
+    "tests/transmission/txl1_1_line.cir": "40be94a0d077cee9b01afe7c8c912e50a88f5e8936ba74b82db8d3c933064c87",
+    "tests/transmission/txl2_3_line.cir": "b7eefcd2bcfdff5498de39348c51c122fd3ee4dfcbddca0a5d452201c6c4b58f",
+    "tests/vbic/CEamp.cir": "79cfdf856253eda56809f72f11f9c45897c1cda1ca4ee01fc5ef9777e619bab5",
+    "tests/vbic/FG.cir": "f0d61870ad35a0d78bec27da123d6562ad5da1dba6fc85a8ecce9aca12838fbc",
+    "tests/vbic/FO.cir": "82a738391f95ea3e75dab44b6bfba712eee400b3649ca96fec23e7f9c7a02283",
+    "tests/vbic/diffamp.cir": "685c881e39c2238268dbf1686dd537c9fc269c550f8eaed937bdae1e6b2cbf16",
+    "tests/vbic/noise_scale_test.cir": "d7c170a04c66a3ccbd1bece1bdbb7b278ddcca8b259c08ceca8d07f5bc783c9f",
+    "tests/vbic/temp.cir": "9427b4ecd27c083cee7e02a112d5f8a6eed9f05fd0bb04315b8979dda402a11a",
+    "tests/xspice/digital/d_ram.cir": "bc8a857fd4b70ad24e904606902a3aed2ae3fd6dc1701baa4655a4217e895ff5",
+    "tests/xspice/digital/d_source.cir": "f6fcc26ec9747baf1903c85ada8a18d97e527e62fe6804419efdc2901f4d5d96",
+    "tests/xspice/digital/d_state.cir": "e8bee8729bafdadee4f46bb1bb8ebeca93c5531b9e74920940a3e572b9242856",
+    "visualc/ng_shared_xspice_v/examples/adder_mos.cir": "5b373e7b1bd69379597799a89911ef8dc9bfdb7deb4fadc144b6699b841a9cc6",
+    "visualc/ng_shared_xspice_v/examples/count-latch-dac.cir": "9c8667cf41c53f8352a67eb43fdaca803fd030b6df7583ea5385b254ab14e45e",
+    "visualc/ng_shared_xspice_v/examples/counter-test.cir": "5d3de5079eec1fba65080cf013860d287bd2ce83669ca3668d60732cd6b94abb"
+  },
+  "limitations": [
+    "Literal model declarations in readable inventoried decks only; no include/expression expansion or model execution.",
+    "Families may overlap within decks. Declaration counts are not device counts or compatibility passes."
+  ]
+}

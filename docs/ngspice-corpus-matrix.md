@@ -126,3 +126,5 @@ stay under the configured build directory. See CorpusNumericalIntegration.
 
 Bounded DC/AC metadata, title and atto numeric conventions are described in
 [source metadata](ngspice-source-metadata.md).
+
+The ordered rollback/current/analysis/model follow-up is documented in [the bounded contracts](corpus-followup-contracts.md). Named constant-R models do not imply semiconductor or geometry-model support.

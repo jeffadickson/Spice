@@ -26,6 +26,7 @@ pub mod measurement;
 pub mod model;
 pub mod netlist;
 pub mod newton;
+mod ngspice_resistor;
 pub mod power;
 pub mod provenance;
 pub mod quantity;

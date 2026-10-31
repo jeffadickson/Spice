@@ -235,6 +235,7 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
             logical_lines.push(line.to_owned());
         }
     }
+    let logical_lines = crate::ngspice_resistor::lower(logical_lines)?;
     let thermal_voltage = bounded_temperature(&logical_lines)?;
     let diode_models = bounded_diode_models(&logical_lines, thermal_voltage)?;
     let mut normalized = String::new();
@@ -422,7 +423,7 @@ fn bounded_diode_models(
         {
             return Err(SimError::new(
                 ErrorCode::Unsupported,
-                "bounded importer supports only diode .model cards",
+                "bounded importer supports only D and constant R model families",
             ));
         }
         let tail = body[1..].trim();

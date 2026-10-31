@@ -1,4 +1,14 @@
 # Implementation status
+Latest ordered corpus/parser follow-up: [contracts](corpus-followup-contracts.md)
+and [self-review](../evidence/ordered-followup-review.md). V/L/E/H currents now
+participate in comparison policy v4. Zero-start/maximum-step transient syntax and
+a named constant-resistance R model are implemented in bounded profiles; repeated
+analyses and other model physics remain explicit gaps. Final issue #10 records
+one full selected-profile pass and two partial comparisons among 910 decks.
+StrictDoc requirements NGC-CORPUS-008/NGC-037/NGC-038 remain Draft; the complete
+M1 work packages are not closed. Full regression before final UIC classification:
+440 passed/one ignored; final seven parser tests, 95 managed tests and clippy pass.
+The model declaration inventory is demand evidence, not numerical qualification.
 
 Latest five-area checkpoints are described in [the execution plan](five-area-completion-plan.md)
 and `evidence/five-area-{transport,benchmark,continuation,sparse,audits}.json`.
