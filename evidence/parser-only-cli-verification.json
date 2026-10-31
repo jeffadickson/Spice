@@ -1,0 +1,26 @@
+{
+  "test_helper_sha256": "97f674d3ddcd21f535b1a0076d35a56958d8a0a315d7baa007235da9d2dcccf3",
+  "collector": "dotnet-coverage 18.12",
+  "limitations": [
+    "Seven synthetic upstream rows plus fourteen tracked repository decks in each CLI fixture campaign.",
+    "The intentional provenance fault changes an unused copied DLL; no source or real active campaign binary is changed.",
+    "Coverage rates are reported by dotnet-coverage; this is not cross-platform or malicious transient-tampering qualification.",
+    "PowerShell scripts and report-renderer coverage remain unmeasured."
+  ],
+  "coverage_sha256": "e1b36363f3159c6cc4e4bba3d6cdb7439261efed24a3e7d8b58cd626906547bf",
+  "coverage": [
+    {
+      "assembly": "Test-SyntaxCorpus",
+      "line_rate": 0.96875,
+      "branch_rate": 0.8
+    },
+    {
+      "assembly": "Simulator.Syntax.Corpus",
+      "line_rate": 0.875,
+      "branch_rate": 0.7777777777777778
+    }
+  ],
+  "campaign_cases": 2,
+  "fixture_cases": 7,
+  "status": "passed"
+}

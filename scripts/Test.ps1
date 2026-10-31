@@ -1,5 +1,23 @@
 # Build/test orchestration; execute from repository root with Rust and .NET on PATH.
+[CmdletBinding()]
+param([switch]$SyntaxOnly,[switch]$SyntaxCorpus,[string]$CorpusRoot)
 $ErrorActionPreference = 'Stop'
+$repository=Split-Path $PSScriptRoot -Parent
+if(!(Test-Path -LiteralPath $repository -PathType Container)){throw 'Missing repository'}
+if(!(Test-Path -LiteralPath (Join-Path $repository 'Cargo.toml') -PathType Leaf)){throw 'Missing repository manifest'}
+if([IO.Path]::GetFullPath((Get-Location).Path) -ne [IO.Path]::GetFullPath($repository)){throw 'Run from repository root'}
+$syntaxTests=Join-Path $repository 'dotnet/Simulator.Syntax.Tests'
+if(!(Test-Path -LiteralPath $syntaxTests -PathType Container)){throw 'Missing syntax test project'}
+& (Join-Path $PSScriptRoot 'Initialize-SyntaxParser.ps1')
+dotnet test $syntaxTests -p:RestoreLockedMode=true
+if($LASTEXITCODE -ne 0){throw 'Parser-only tests failed'}
+if($SyntaxCorpus){
+    $parameters=@{}
+    if($CorpusRoot){$parameters.CorpusRoot=$CorpusRoot}
+    & (Join-Path $PSScriptRoot 'Run-SyntaxCorpus.ps1') @parameters
+}
+# This path intentionally returns before any numerical engine build or run.
+if($SyntaxOnly){return}
 cargo build --locked
 if ($LASTEXITCODE -ne 0) { throw 'Rust build failed' }
 cargo test --locked

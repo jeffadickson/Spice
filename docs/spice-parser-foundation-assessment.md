@@ -4,7 +4,11 @@ The user correctly identified that incremental card-shape exceptions are not a
 sound plan for a general SPICE front end. The current implementation is an
 explicitly bounded importer; its numerical tests do not establish grammar
 conformance. Further syntax/model expansion is held while the parser boundary is
-replanned. No replacement parser or library has been implemented or adopted.
+replanned. That review preceded the user's explicit parser-only implementation
+authorization. The separate ANTLR frontend and sample campaign now follow
+[the three-reference comparison and framework decision](parser-only-plan.md).
+See [actual results and remaining grammar gaps](parser-only-results.md); the
+production numerical importer has not been replaced.
 
 ## Published primary references
 
@@ -22,12 +26,16 @@ replanned. No replacement parser or library has been implemented or adopted.
   PEGTL rules for lexical details, continuations, models and subcircuits.
   Its generic dot-line/unknown-line fallbacks mean recognition is not complete
   validation of device/directive syntax. Source header is GPL-3.0-or-later.
-- [SpiceSharpParser](https://github.com/SpiceSharp/SpiceSharpParser): an MIT-licensed
-  .NET implementation worth evaluating for reuse or independent differential
-  tests. The documented parse-model/reader boundary is useful. Coupling to its
-  runtime, actual ngspice coverage and dependency/license details require an
-  integration assessment; README feature claims have not been independently
-  executed here.
+- [SpiceSharpParser](https://github.com/SpiceSharp/SpiceSharpParser): the C#
+  reference is explicitly part of the grammar analysis, alongside ngspice and
+  XDM. Study its published `SpiceGrammarBNF.txt`, regex lexer, handwritten LL(*)
+  parse-tree generator, and syntax tests; it is not Parlot-based. The completed
+  [pinned-package assessment](spicesharp-evaluation.md) exercised version 3.4.1
+  against all 910 inventoried inputs with preprocessing disabled: 488 structural
+  acceptances, 409 input rejections, four encoding rejections, seven unavailable
+  inputs and two worker timeouts. Structural acceptance is not device-level
+  syntax conformance. Use the reference to identify productions and differential
+  fixtures, while keeping library acceptance separate from ngspice validity.
 - Ngspice's `src/frontend/parse-bison.y` is an expression grammar, not a complete
   deck grammar. The actual frontend also uses preprocessing in `inpcom.c` and
   per-card/device parsing under `src/spicelib/parser`. A single `.y` file is not
@@ -75,3 +83,13 @@ not implemented or accepted. The already-started sheet-resistor changes remain
 local and uncommitted: 84 focused Rust tests and clippy passed, but new managed
 oracles, mutations, coverage and corpus qualification have not run. Do not publish
 that feature as qualified while this architectural correction is unresolved.
+
+## Parser implementation constraint
+
+The user explicitly requires established lexer/parser machinery rather than a
+handwritten lexer or recursive-descent parser. Compare annotation-driven Sly,
+ANTLR and parser-combinator alternatives against the grammar inventory before
+selection. Throughput is secondary to declarative rules, source locations,
+diagnostics and corpus acceptance. The comparison must include the C# reference,
+not only the C and C++ implementations. Do not substitute a generic accept-any-line
+rule for validating the declared grammar subset.

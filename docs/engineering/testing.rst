@@ -42,3 +42,23 @@ the grammar; the C# supervisor also rejects duplicate stable IDs and unresolved
 parents across documents and checks unchanged source hashes. Its ``--self-test``
 exercises positive, duplicate and missing-parent cases. This gate validates
 structure and identity, not behavioral requirement closure.
+
+Parser-only qualification
+-------------------------
+
+The separate ``Simulator.Syntax`` frontend generates its lexer and parser with
+ANTLR 4.13.1. It references no numerical simulator. ``Simulator.Syntax.Corpus``
+attempts every selected upstream inventory row and tracked repository SPICE
+sample in isolated workers. Reports distinguish structural acceptance, grammar
+gaps, syntax rejection, encoding/resource rejection, worker failure and timeout.
+Control blocks and include paths are preserved without executing or loading them.
+
+Run ``scripts/Initialize-SyntaxParser.ps1`` once, then
+``scripts/Run-SyntaxCorpus.ps1``. Java 11+ is a regeneration dependency; .NET 10
+executes the managed frontend. Generated code is incremental and remains under
+``obj``. The production bounded Rust importer is not replaced by this slice.
+Canonical requirements are ``docs/parser-only.sdoc`` (PRS-001 through PRS-004);
+the three-reference comparison, grammar inventory and actual results are in
+``docs/parser-only-plan.md``, ``docs/parser-grammar-inventory.md`` and
+``docs/parser-only-results.md``. A parser rejection is not independent evidence
+that an upstream example is malformed.

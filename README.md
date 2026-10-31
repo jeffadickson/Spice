@@ -2,6 +2,12 @@
 
 A bounded Rust circuit engine with CPU provider adapters and C#/F# access. This is **not a full M1 release**.
 
+The separate [parser-only frontend](docs/parser-only-results.md) uses generated
+ANTLR C# recognition and tests the sample inventory without executing circuits.
+See the [three-parser comparison and framework decision](docs/parser-only-plan.md)
+and [declared grammar inventory](docs/parser-grammar-inventory.md). Structural
+acceptance, complete syntax conformance and numerical support are distinct.
+
 ## Working scope
 
 Run the [whole upstream corpus matrix](docs/ngspice-corpus-matrix.md) to learn what

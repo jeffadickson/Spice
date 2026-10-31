@@ -1,0 +1,704 @@
+{
+  "focused_counts": [
+    {
+      "count": 28,
+      "status": "CompileError"
+    },
+    {
+      "count": 162,
+      "status": "Ignored"
+    },
+    {
+      "count": 4,
+      "status": "Killed"
+    },
+    {
+      "count": 1,
+      "status": "Survived"
+    }
+  ],
+  "source_sha256": "8418996c6c060dfe1d3ef8105a2c96ad268fbe726c72f72d9cee2d81a8891a25",
+  "full_report_sha256": "080a419a2a0aa82bf03951dd08ea0f886cc4d0a90ced6ce40a3ce55dcdc0c762",
+  "unresolved_and_replayed": [
+    {
+      "disposition": "open",
+      "id": "38",
+      "replacement": "(false?text :text + \"\\n\")",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 39,
+          "column": 57
+        },
+        "end": {
+          "line": 39,
+          "column": 120
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "39",
+      "replacement": "text.EndsWith('\\n') && text.EndsWith('\\r')",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 39,
+          "column": 57
+        },
+        "end": {
+          "line": 39,
+          "column": 99
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "41",
+      "replacement": ";",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 40,
+          "column": 9
+        },
+        "end": {
+          "line": 40,
+          "column": 38
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "44",
+      "replacement": "tokens.Size >= 100_000",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 43,
+          "column": 13
+        },
+        "end": {
+          "line": 43,
+          "column": 34
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "49",
+      "replacement": ";",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 51,
+          "column": 61
+        },
+        "end": {
+          "line": 51,
+          "column": 70
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "54",
+      "replacement": "SpiceLexer.PLUS and SpiceLexer.MINUS",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 52,
+          "column": 33
+        },
+        "end": {
+          "line": 52,
+          "column": 68
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "57",
+      "replacement": "unary>=128",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 53,
+          "column": 16
+        },
+        "end": {
+          "line": 53,
+          "column": 25
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "64",
+      "replacement": "++hierarchy>=128",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 54,
+          "column": 49
+        },
+        "end": {
+          "line": 54,
+          "column": 64
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "65",
+      "replacement": "--hierarchy",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 54,
+          "column": 49
+        },
+        "end": {
+          "line": 54,
+          "column": 60
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "66",
+      "replacement": "\"\"",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 54,
+          "column": 81
+        },
+        "end": {
+          "line": 54,
+          "column": 122
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "67",
+      "replacement": "token.Type!=SpiceLexer.ENDS",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 55,
+          "column": 16
+        },
+        "end": {
+          "line": 55,
+          "column": 43
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "68",
+      "replacement": "Math.Min",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 55,
+          "column": 54
+        },
+        "end": {
+          "line": 55,
+          "column": 62
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "69",
+      "replacement": "hierarchy+1",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 55,
+          "column": 65
+        },
+        "end": {
+          "line": 55,
+          "column": 76
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "78",
+      "replacement": "\"\"",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 58,
+          "column": 52
+        },
+        "end": {
+          "line": 58,
+          "column": 80
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "79",
+      "replacement": "token.Type is not SpiceLexer.RPAREN or SpiceLexer.RBRACE or SpiceLexer.RBRACKET",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 60,
+          "column": 22
+        },
+        "end": {
+          "line": 60,
+          "column": 97
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "84",
+      "replacement": ";",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 63,
+          "column": 9
+        },
+        "end": {
+          "line": 63,
+          "column": 39
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "86",
+      "replacement": ";",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 65,
+          "column": 9
+        },
+        "end": {
+          "line": 65,
+          "column": 55
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "89",
+      "replacement": "\"\"",
+      "full_run_status": "NoCoverage",
+      "location": {
+        "start": {
+          "line": 68,
+          "column": 55
+        },
+        "end": {
+          "line": 68,
+          "column": 96
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "120",
+      "replacement": "errors.Count<=32",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 93,
+          "column": 24
+        },
+        "end": {
+          "line": 93,
+          "column": 39
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "121",
+      "replacement": "!(errors.Count<32)",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 93,
+          "column": 24
+        },
+        "end": {
+          "line": 93,
+          "column": 39
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "123",
+      "replacement": ";",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 93,
+          "column": 41
+        },
+        "end": {
+          "line": 93,
+          "column": 131
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "124",
+      "replacement": "\"\"",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 93,
+          "column": 56
+        },
+        "end": {
+          "line": 93,
+          "column": 69
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "125",
+      "replacement": "$\"\"",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 93,
+          "column": 70
+        },
+        "end": {
+          "line": 93,
+          "column": 116
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "128",
+      "replacement": "i > 0",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 96,
+          "column": 45
+        },
+        "end": {
+          "line": 96,
+          "column": 51
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "132",
+      "replacement": "\"Stryker was here!\"",
+      "full_run_status": "NoCoverage",
+      "location": {
+        "start": {
+          "line": 98,
+          "column": 67
+        },
+        "end": {
+          "line": 98,
+          "column": 69
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "143",
+      "replacement": "\"Stryker was here!\"",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 103,
+          "column": 82
+        },
+        "end": {
+          "line": 103,
+          "column": 84
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "144",
+      "replacement": "\"\"",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 103,
+          "column": 93
+        },
+        "end": {
+          "line": 103,
+          "column": 109
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "146",
+      "replacement": "Math.Min",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 110,
+          "column": 37
+        },
+        "end": {
+          "line": 110,
+          "column": 45
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "148",
+      "replacement": "errors.Count <= 32",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 111,
+          "column": 17
+        },
+        "end": {
+          "line": 111,
+          "column": 34
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "154",
+      "replacement": "(false?msg[..512] :msg)",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 111,
+          "column": 60
+        },
+        "end": {
+          "line": 111,
+          "column": 95
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "156",
+      "replacement": "msg.Length >= 512",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 111,
+          "column": 60
+        },
+        "end": {
+          "line": 111,
+          "column": 76
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "159",
+      "replacement": "++depth>=512",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 123,
+          "column": 16
+        },
+        "end": {
+          "line": 123,
+          "column": 27
+        }
+      },
+      "focused_replay_status": "Survived"
+    },
+    {
+      "disposition": "verified_killed_in_focused_replay",
+      "id": "161",
+      "replacement": "--depth",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 123,
+          "column": 16
+        },
+        "end": {
+          "line": 123,
+          "column": 23
+        }
+      },
+      "focused_replay_status": "Killed"
+    },
+    {
+      "disposition": "verified_killed_in_focused_replay",
+      "id": "162",
+      "replacement": ";",
+      "full_run_status": "NoCoverage",
+      "location": {
+        "start": {
+          "line": 123,
+          "column": 28
+        },
+        "end": {
+          "line": 123,
+          "column": 61
+        }
+      },
+      "focused_replay_status": "Killed"
+    },
+    {
+      "disposition": "open",
+      "id": "175",
+      "replacement": "i+1<=text.Length",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 143,
+          "column": 24
+        },
+        "end": {
+          "line": 143,
+          "column": 39
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "176",
+      "replacement": "i-1",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 143,
+          "column": 24
+        },
+        "end": {
+          "line": 143,
+          "column": 27
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "180",
+      "replacement": "i--",
+      "full_run_status": "Timeout",
+      "location": {
+        "start": {
+          "line": 143,
+          "column": 59
+        },
+        "end": {
+          "line": 143,
+          "column": 62
+        }
+      },
+      "focused_replay_status": null
+    },
+    {
+      "disposition": "open",
+      "id": "188",
+      "replacement": "index<=0",
+      "full_run_status": "Survived",
+      "location": {
+        "start": {
+          "line": 153,
+          "column": 16
+        },
+        "end": {
+          "line": 153,
+          "column": 23
+        }
+      },
+      "focused_replay_status": null
+    }
+  ],
+  "limitations": [
+    "Full run and focused replay counts are separate scopes; do not sum their kills.",
+    "Focused run uses the stronger combined-recursion assertion and all sixty tests, selecting a source character span.",
+    "Compile-error and ignored mutants outside that span are not additional replay outcomes.",
+    "Open survivors need behavioral boundary/diagnostic tests or justified equivalence analysis; none is automatically dismissed."
+  ],
+  "full_run_counts": [
+    {
+      "count": 28,
+      "status": "CompileError"
+    },
+    {
+      "count": 6,
+      "status": "Ignored"
+    },
+    {
+      "count": 123,
+      "status": "Killed"
+    },
+    {
+      "count": 3,
+      "status": "NoCoverage"
+    },
+    {
+      "count": 34,
+      "status": "Survived"
+    },
+    {
+      "count": 1,
+      "status": "Timeout"
+    }
+  ],
+  "focused_report_sha256": "5f757016fdd0bbfac4bd0ea144841adf0ddcd0fd7bd5dbed56d5a76643b4b501",
+  "schema_version": 1
+}

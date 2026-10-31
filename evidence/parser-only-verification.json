@@ -1,0 +1,68 @@
+{
+  "coverage": [
+    {
+      "scope": "handwritten",
+      "lines_covered": 107,
+      "lines": 107,
+      "branches_covered": 83,
+      "branches": 90
+    },
+    {
+      "scope": "generated",
+      "lines_covered": 2066,
+      "lines": 2983,
+      "branches_covered": 303,
+      "branches": 454
+    }
+  ],
+  "mutations": {
+    "Killed": 123,
+    "CompileError": 28,
+    "Survived": 34,
+    "NoCoverage": 3,
+    "Ignored": 6,
+    "Timeout": 1
+  },
+  "input_reports": {
+    "baseline_sha256": "134eae2446ebc472080e1a12cb57db57855bc395d8422e97fa26d29e6c50f32d",
+    "final_sha256": "528ccd5f7b452a539579c7a9843e829016da09d50d818fea55b608b361ee81ea",
+    "coverage_sha256": "2f20685f8aeafec7f63117290c80f9e20df53514db8eeff139d7e9c89380546d",
+    "mutation_sha256": "080a419a2a0aa82bf03951dd08ea0f886cc4d0a90ced6ce40a3ce55dcdc0c762"
+  },
+  "baseline_counts": {
+    "syntax_rejected": 498,
+    "accepted_structure": 399,
+    "resource_rejected": 7,
+    "timeout": 8,
+    "grammar_gap": 8,
+    "encoding_rejected": 4
+  },
+  "baseline_source": {
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "3e8b0e9d004ca97cc4a6bf94e67e3030a070c8c459c13cc07992b2b79ce8e5ac",
+    "dotnet/Simulator.Syntax/packages.lock.json": "3adab9a08a0804840cb2b4107dc7f4879ad31e4a0128e3513696206f2778aac4",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "9e924af40922fa05258c59351d5049e2b40e49d7b0502b2da78415bb5d94aca8",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "6d9941f6454c42ab67f261c2109ce10bfbf2890426ab3164087b924b40e97d12",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "70bcbd219d64681fcfb075bed760cb26473e769abc43ca2691698c8945e97181",
+    "dotnet/Simulator.Syntax.Corpus/packages.lock.json": "89e2eca6904b9d4efeff8bf5ad9606110eca890134317044a9c897114829debd",
+    "dotnet/Simulator.Syntax.Corpus/Program.cs": "182d803f2236f6769785bf8bc34f7abf4adbee435cc0f17c28eb711689d244ff",
+    "dotnet/Simulator.Syntax.Corpus/Simulator.Syntax.Corpus.csproj": "ac299b6057cf9dd59b1379a136971e5dae66e66dcfec3cd79f7552c9e2974210"
+  },
+  "limitations": [
+    "Generated recognizer and handwritten boundary coverage are separate; campaign CLI/PowerShell coverage is not included in this test collector.",
+    "Stryker mutates the selected handwritten C# files, not ANTLR grammar productions or generated recognition code.",
+    "Historical intermediate baseline source was uncommitted; hashes record actual bytes but are not a reproducible committed baseline."
+  ],
+  "tests": {
+    "cli_campaign_cases": 2,
+    "malformed_replay": "362,20261031",
+    "valid_replay": "192,20261031",
+    "valid_generated_cases": 128,
+    "skipped": 0,
+    "passed": 60,
+    "cli_fixture_cases": 7,
+    "malformed_generated_cases": 512
+  },
+  "focused_mutation_evidence": "evidence/parser-only-mutation-backlog.json",
+  "scoped_source_matches_checkpoint": true,
+  "visual_check": "SVG rendered in headless Edge and inspected; final data update uses identical layout."
+}

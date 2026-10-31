@@ -1,4 +1,41 @@
-Latest user-directed reuse assessment: read docs/assessments/spicesharp-evaluation.html
+Latest authorized parser-only work: read docs/parser-only-results.md,
+docs/parser-only-plan.md, docs/parser-grammar-inventory.md and
+evidence/parser-only-corpus.json. Compared ngspice, XDM C++ and SpiceSharpParser C#;
+selected pinned ANTLR 4.13.1 generated C# lexer/parser. Rust and solver adapters
+are retained. Production numerical importer is not replaced. Syntax parsing never
+loads includes, resolves models, invokes solvers or executes control commands.
+Final checkpoint campaign: 924/924 attempted (910 upstream plus 14 repository),
+493 structurally accepted (479 upstream plus all 14 repository), 181 explicit gaps,
+231 current-grammar rejections, seven resource refusals, eight timeouts, four UTF-8
+refusals. No numerical support/conformance follows from structural acceptance.
+Previous replay had 494 accepted; the final 3-second profile timed out on one
+previously accepted input and four deep inputs before their resource checks.
+Input/source/DLL hashes and actual corpus revision are retained; tested source
+base is 054c3ee plus scoped uncommitted runner bytes. See current Git history for
+the final publication checkpoint rather than treating the base as the entire tree.
+Sixty tests passed; FsCheck generated 128 valid / 512 malformed cases with replay
+192,20261031 / 362,20261031. Handwritten coverage 107/107 lines, 83/90 branches;
+generated 2066/2983 lines, 303/454 branches. CLI coverage is separate.
+Broad Stryker: 123 killed, 34 survived, three uncovered, one timeout, 28 compile
+errors, six ignored. Focused stronger guard replay killed four of five selected
+mutants; retain separate scopes. Ledger leaves 33 survivors, two uncovered and
+one timeout open; do not call these all passing or dismiss them as equivalent.
+StrictDoc intended snapshot: 16 documents / 299 IDs / 287 parents; Sphinx passed.
+PRS-001..004 remain Draft. Unrelated sheet-resistor draft and artifacts remain
+local/unqualified and must not be swept into parser commits.
+Next grammar priorities: XSPICE percent-typed ports/A devices, identifiers,
+directive/source expression families and P/Y/U/N device productions. Adjudicate
+grammar rejections before calling upstream samples malformed. Expand the bounded
+worker profile deliberately when investigating unavailable evidence. Normal
+scripts/Test.ps1 includes syntax tests; -SyntaxOnly avoids numerical execution,
+and -SyntaxCorpus opts into the upstream sample campaign. Java 11+ is required
+for regeneration; scripts/Initialize-SyntaxParser.ps1 verifies the generator.
+No fresh Rust numerical, Linux, GPU, NativeAOT or performance qualification.
+GitHub's push workflow was found active; use [skip ci] checkpoint messages to
+honor the instruction not to dispatch CI. Do not change CI settings or restart
+historical iteration quotas. Raw logs/decks/binaries remain local.
+
+Previous user-directed reuse assessment: read docs/assessments/spicesharp-evaluation.html
 and docs/spicesharp-evaluation.md. Canonical guidance and project AGENTS now require
 reuse-before-build evidence. The user explicitly retains Rust and drop-in solvers;
 no production migration or parser replacement was authorized by this assessment.
