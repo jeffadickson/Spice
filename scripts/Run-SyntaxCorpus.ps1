@@ -7,7 +7,13 @@ a simulator or publish issues. CorpusRoot overrides machine-specific inventory
 paths on another computer. Initialize-SyntaxParser.ps1 supplies the pinned tool.
 #>
 [CmdletBinding()]
-param([string]$Inventory,[string]$CorpusRoot,[string]$Output)
+param([string]$Inventory,[string]$CorpusRoot,[string]$Output,
+    [ValidateRange(1,300)][int]$WorkerSeconds=20,
+    [ValidateRange(1,1440)][int]$Minutes=30,
+    [ValidateRange(1,4)][int]$Workers=1,
+    [ValidateRange(1,67108864)][int]$MaxInputBytes=4194304,
+    [ValidateRange(1,4000000)][int]$MaxTokens=2000000,
+    [switch]$LegacyBytes)
 $ErrorActionPreference='Stop'
 $repository=Split-Path $PSScriptRoot -Parent
 if(!(Test-Path -LiteralPath $repository -PathType Container)){throw 'Missing repository'}
@@ -28,5 +34,16 @@ dotnet build $project -p:RestoreLockedMode=true --nologo
 if($LASTEXITCODE -ne 0){throw 'Syntax build failed'}
 $arguments=@((Join-Path $project 'bin/Debug/net10.0/Simulator.Syntax.Corpus.dll'),$Inventory,$repository,$Output)
 if($CorpusRoot){$arguments+=$CorpusRoot}
-dotnet @arguments
-if($LASTEXITCODE -ne 0){throw "Syntax campaign failed; inspect $Output and console diagnostics"}
+$settings=@{
+    SPICE_PARSE_WORKER_SECONDS=$WorkerSeconds; SPICE_PARSE_CAMPAIGN_MINUTES=$Minutes
+    SPICE_PARSE_WORKERS=$Workers; SPICE_PARSE_MAX_BYTES=$MaxInputBytes
+    SPICE_PARSE_MAX_TOKENS=$MaxTokens; SPICE_PARSE_LEGACY_BYTES=[int][bool]$LegacyBytes
+}
+$saved=@{}
+foreach($name in $settings.Keys){$saved[$name]=[Environment]::GetEnvironmentVariable($name);[Environment]::SetEnvironmentVariable($name,[string]$settings[$name])}
+try{
+    dotnet @arguments
+    if($LASTEXITCODE -ne 0){throw "Syntax campaign failed; inspect $Output and console diagnostics"}
+}finally{
+    foreach($name in $saved.Keys){[Environment]::SetEnvironmentVariable($name,$saved[$name])}
+}

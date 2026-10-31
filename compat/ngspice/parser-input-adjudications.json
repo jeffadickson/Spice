@@ -1,0 +1,108 @@
+{
+  "entries": [
+    {
+      "path": "README_OSDI_howto",
+      "expected_primary_status": "syntax_rejected",
+      "input_sha256": "d070e942163cb53e36eb4f87fdec78e7dc3da07df5091a547418671c42bd7be8",
+      "evidence": "OpenVAF/OSDI prose instructions, including shell/compiler directions; not a SPICE deck.",
+      "scope": "ngspice",
+      "disposition": "non_deck_document"
+    },
+    {
+      "path": "examples/osdi/README",
+      "expected_primary_status": "syntax_rejected",
+      "input_sha256": "d964554e4241f0fe8f99795959a575419115028bd69e75c6e4d713246e6606c3",
+      "evidence": "OpenVAF/OSDI prose instructions; not a SPICE deck.",
+      "scope": "ngspice",
+      "disposition": "non_deck_document"
+    },
+    {
+      "path": "examples/measure/buggy-meas-tran.sp",
+      "expected_primary_status": "syntax_rejected",
+      "input_sha256": "4b9cfb5b2069d7ea4bee7af7cf8ef0f6e9a656a50f17366c6458e0f89bc6bbcd",
+      "evidence": "Explicit buggy measurement example; line 11 has an unclosed v(1 expression and subsequent intentionally misspelled/malformed measurements.",
+      "scope": "ngspice",
+      "disposition": "invalid_syntax_fixture"
+    },
+    {
+      "path": "examples/utf-8/стекло/ext-ascii-1.cir",
+      "expected_primary_status": "encoding_rejected",
+      "input_sha256": "f4785b6b5a32acacc6feda4bde6c376186860091e68c9301899bbb95a59711c3",
+      "evidence": "Header explicitly says this byte-encoded file errors in a UTF-8 ngspice build and requires --disable-utf8.",
+      "scope": "ngspice",
+      "disposition": "legacy_encoded_deck",
+      "utf8_negative_fixture": true
+    },
+    {
+      "path": "examples/utf-8/стекло/ext-ascii-2.cir",
+      "expected_primary_status": "encoding_rejected",
+      "input_sha256": "26c5b097f979055be8a52420cd4032c11121319100d785959bed05fd100b46ca",
+      "evidence": "Header explicitly says this byte-encoded file errors in a UTF-8 ngspice build and requires --disable-utf8.",
+      "scope": "ngspice",
+      "disposition": "legacy_encoded_deck",
+      "utf8_negative_fixture": true
+    },
+    {
+      "path": "paranoia_parallel/examples/various/nmos_pmos_BSIM330.sp",
+      "expected_primary_status": "encoding_rejected",
+      "input_sha256": "697a2a29ee1d214e62e4d853fb9f51f741cfc19232cc4f74173ca5aaf43dcd33",
+      "evidence": "Legacy byte-encoded deck; qualify syntax using the explicit lossless legacy-byte profile, not UTF-8 replacement decoding.",
+      "scope": "ngspice",
+      "disposition": "legacy_encoded_deck"
+    },
+    {
+      "path": "paranoia_parallel/examples/various/nmos_pmos_plotting.sp",
+      "expected_primary_status": "encoding_rejected",
+      "input_sha256": "e61828cc74868d7997fbaa95850f8c66f460a594e4a69bcc97fa5976c6f659ae",
+      "evidence": "Legacy byte-encoded deck; qualify syntax using the explicit lossless legacy-byte profile.",
+      "scope": "ngspice",
+      "disposition": "legacy_encoded_deck"
+    },
+    {
+      "path": "examples/probe/mos-test.cir",
+      "expected_primary_status": "syntax_rejected",
+      "input_sha256": "013f22b6a61381863e649fb6a848105443f059ebdd894a2df8713d9ffa445b67",
+      "evidence": "Title and comments explicitly mark buggy .probe inputs; unmatched closing parenthesis at line 20.",
+      "scope": "ngspice",
+      "disposition": "invalid_syntax_fixture"
+    },
+    {
+      "path": "examples/probe/F5TurboV2-Probe.cir",
+      "expected_primary_status": "syntax_rejected",
+      "input_sha256": "eea658fe271539b5cf6041482bd83d17967415231903b2f444d4d72c7de7297d",
+      "evidence": "Lines 59-62 explicitly label erroneous .probe parameters, including malformed colon-separated probe operands.",
+      "scope": "ngspice",
+      "disposition": "invalid_syntax_fixture"
+    },
+    {
+      "path": "examples/various/model-name-check.cir",
+      "expected_primary_status": "syntax_rejected",
+      "input_sha256": "72cb98d40908d0075b9f7528022f7d32e7390e2fc3500b5e284bbdab2e01ff6e",
+      "evidence": "Negative model-name test explicitly labels ^274ls4444 not o.k.; invalid caret-prefixed model name.",
+      "scope": "ngspice",
+      "disposition": "invalid_syntax_fixture"
+    },
+    {
+      "path": "paranoia_parallel/examples/various/model-name-check.cir",
+      "expected_primary_status": "syntax_rejected",
+      "input_sha256": "72cb98d40908d0075b9f7528022f7d32e7390e2fc3500b5e284bbdab2e01ff6e",
+      "evidence": "Duplicate negative model-name fixture explicitly labels ^274ls4444 not o.k.",
+      "scope": "ngspice",
+      "disposition": "invalid_syntax_fixture"
+    },
+    {
+      "path": "examples/osdi/noise/resdiv.cir",
+      "expected_primary_status": "syntax_rejected",
+      "input_sha256": "a54d51d97d21e92b5a180c1fbe730ec2b908df50be6d9cdaf79dabe367339f7a",
+      "evidence": "Line 10 R2 2 0 lacks a value/model. src/spicelib/parser/inp2r.c rejects and ignores a resistor ending after its second node. Other OSDI cards are tested separately.",
+      "scope": "ngspice",
+      "disposition": "invalid_syntax_fixture"
+    }
+  ],
+  "schema_version": 1,
+  "corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+  "limitations": [
+    "Adjudications apply only to the named input bytes.",
+    "Unlisted grammar rejections, gaps, resource failures and timeouts remain outstanding; do not exclude them automatically."
+  ]
+}

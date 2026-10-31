@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "collector": "dotnet-coverage 18.12",
+  "fixture_cases": 7,
+  "cli_campaigns": 2,
+  "gate_synthetic_scenarios": 12,
+  "source_sha256": {
+    "scripts/Test-SyntaxCorpus.cs": "f8ab1cdfcc5768a299c815dcfdf28977f51e45514c968c58b070aacc5b9c88cf",
+    "scripts/ValidateSyntaxAcceptance.cs": "57114d751bdacedf5643d01ef3be2d4546bc81d3a34ac6c41f42f07001969eab",
+    "scripts/Test-SyntaxAcceptance.cs": "febbd2f28e38e305ebc0a1b899d90318481ba501f14b497e0c696364b2305b24",
+    "dotnet/Simulator.Syntax.Corpus/Program.cs": "3d8c2364db66a05a72169d17d323e256db048ab3a3f06838ae2ba2b60355f2a9"
+  },
+  "coverage": [
+    {
+      "line_rate": 0.9705882352941176,
+      "branch_rate": 0.8,
+      "report_sha256": "0cb799528f04240938e1b24760bfff3e0786c857cd1eee007c18626a864a7c0f",
+      "assembly": "Test-SyntaxCorpus"
+    },
+    {
+      "line_rate": 0.8639455782312925,
+      "branch_rate": 0.7625,
+      "report_sha256": "0cb799528f04240938e1b24760bfff3e0786c857cd1eee007c18626a864a7c0f",
+      "assembly": "Simulator.Syntax.Corpus"
+    },
+    {
+      "line_rate": 0.9803921568627451,
+      "branch_rate": 0.6923076923076923,
+      "report_sha256": "81873a4ba9bd139b78990b1fac99fe47f9b2325b0ee00e6445bcaab268141fbb",
+      "assembly": "Test-SyntaxAcceptance"
+    },
+    {
+      "line_rate": 0.989247311827957,
+      "branch_rate": 0.8777777777777778,
+      "report_sha256": "81873a4ba9bd139b78990b1fac99fe47f9b2325b0ee00e6445bcaab268141fbb",
+      "assembly": "ValidateSyntaxAcceptance"
+    }
+  ],
+  "limitations": [
+    "CLI coverage uses synthetic fixture campaigns and repository samples, not the whole upstream sample campaign.",
+    "Gate synthetic reports are explicitly artificial; actual sample acceptance requires a separate complete primary and replay.",
+    "Legacy decoding is exercised by real corpus replay; CLI collector does not cover every configuration/exception branch.",
+    "PowerShell orchestration, grammar-production mutation, Linux and NativeAOT remain unmeasured."
+  ]
+}

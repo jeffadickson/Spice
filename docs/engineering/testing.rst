@@ -57,8 +57,22 @@ Run ``scripts/Initialize-SyntaxParser.ps1`` once, then
 ``scripts/Run-SyntaxCorpus.ps1``. Java 11+ is a regeneration dependency; .NET 10
 executes the managed frontend. Generated code is incremental and remains under
 ``obj``. The production bounded Rust importer is not replaced by this slice.
-Canonical requirements are ``docs/parser-only.sdoc`` (PRS-001 through PRS-004);
+Canonical requirements are ``docs/parser-only.sdoc`` (PRS IDs, including the
+XSPICE, lexical, profile, prediction and acceptance-gate contracts);
 the three-reference comparison, grammar inventory and actual results are in
 ``docs/parser-only-plan.md``, ``docs/parser-grammar-inventory.md`` and
 ``docs/parser-only-results.md``. A parser rejection is not independent evidence
 that an upstream example is malformed.
+
+Campaign bounds are explicit: ``-WorkerSeconds``, ``-Minutes``, ``-Workers``,
+``-MaxInputBytes`` and ``-MaxTokens``. ``-LegacyBytes`` opts into lossless Latin-1
+byte mapping after a strict UTF-8 decoding failure; reports identify that choice.
+Default library limits remain smaller than the campaign profile.
+
+``scripts/ValidateSyntaxAcceptance.cs`` takes a completed primary report,
+``compat/ngspice/parser-input-adjudications.json``, authoritative inventory,
+repository root, output path and optional completed replay reports. It checks
+inventory membership, input hashes, source and binary identity; unexplained
+failures remain outstanding. ``scripts/Test-SyntaxAcceptance.cs`` exercises
+synthetic corruption scenarios; it is not sample acceptance evidence. Actual
+commands and results are recorded in ``docs/parser-gap-results.md``.

@@ -20,7 +20,7 @@ var marker=Path.Combine(worker,"UnusedFixture.dll");File.WriteAllText(marker,"in
 var valid=Path.Combine(scratch,"valid.cir");File.WriteAllText(valid,"Title\n.model modern NMOS LEVEL=54\nM1 d g s b modern\n.end\n");
 var invalid=Path.Combine(scratch,"invalid.cir");File.WriteAllText(invalid,"Title\nR1 1 0 {1+}\n");
 var encoding=Path.Combine(scratch,"encoding.cir");File.WriteAllBytes(encoding,[0xc3,0x28]);
-var oversized=Path.Combine(scratch,"oversized.cir");File.WriteAllText(oversized,new string('t',1_048_577));
+var oversized=Path.Combine(scratch,"oversized.cir");File.WriteAllText(oversized,new string('t',4_194_305));
 var hostile=Path.Combine(scratch,"hostile.cir");File.WriteAllText(hostile,"Title\nB1 1 0 v={"+new string('!',4096)+"1}\n");
 var mixed=Path.Combine(scratch,"mixed.cir");File.WriteAllText(mixed,"Title\nB1 1 0 v={"+
     string.Concat(Enumerable.Repeat(new string('!',100)+"(",8))+"1"+new string(')',8)+"}\n");
@@ -53,6 +53,10 @@ Console.WriteLine(JsonSerializer.Serialize(new{status="passed",fixture_cases=7,c
 async Task<int> Run(string output,bool changeBinary)
 {
     var start=new ProcessStartInfo("dotnet"){RedirectStandardOutput=true,RedirectStandardError=true,CreateNoWindow=true};
+    start.Environment["SPICE_PARSE_MAX_BYTES"]="4194304";
+    start.Environment["SPICE_PARSE_MAX_TOKENS"]="2000000";
+    start.Environment["SPICE_PARSE_WORKERS"]="1";
+    start.Environment["SPICE_PARSE_LEGACY_BYTES"]="0";
     foreach(var argument in new[]{Path.Combine(worker,"Simulator.Syntax.Corpus.dll"),inventory,repository,output})start.ArgumentList.Add(argument);
     using var process=Process.Start(start)!;
     var stdout=process.StandardOutput.ReadToEndAsync();var stderr=process.StandardError.ReadToEndAsync();
