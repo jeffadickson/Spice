@@ -1,0 +1,59 @@
+{
+  "status": "all_declared_valid_inputs_accepted",
+  "inventory_inputs": 924,
+  "required_inputs": 916,
+  "accepted": 916,
+  "accepted_via_explicit_replay": 4,
+  "excluded": [
+    {
+      "key": "ngspice/README_OSDI_howto",
+      "disposition": "non_deck_document",
+      "evidence": "OpenVAF/OSDI prose instructions, including shell/compiler directions; not a SPICE deck."
+    },
+    {
+      "key": "ngspice/examples/measure/buggy-meas-tran.sp",
+      "disposition": "invalid_syntax_fixture",
+      "evidence": "Explicit buggy measurement example; line 11 has an unclosed v(1 expression and subsequent intentionally misspelled/malformed measurements."
+    },
+    {
+      "key": "ngspice/examples/osdi/README",
+      "disposition": "non_deck_document",
+      "evidence": "OpenVAF/OSDI prose instructions; not a SPICE deck."
+    },
+    {
+      "key": "ngspice/examples/osdi/noise/resdiv.cir",
+      "disposition": "invalid_syntax_fixture",
+      "evidence": "Line 10 R2 2 0 lacks a value/model. src/spicelib/parser/inp2r.c rejects and ignores a resistor ending after its second node. Other OSDI cards are tested separately."
+    },
+    {
+      "key": "ngspice/examples/probe/F5TurboV2-Probe.cir",
+      "disposition": "invalid_syntax_fixture",
+      "evidence": "Lines 59-62 explicitly label erroneous .probe parameters, including malformed colon-separated probe operands."
+    },
+    {
+      "key": "ngspice/examples/probe/mos-test.cir",
+      "disposition": "invalid_syntax_fixture",
+      "evidence": "Title and comments explicitly mark buggy .probe inputs; unmatched closing parenthesis at line 20."
+    },
+    {
+      "key": "ngspice/examples/various/model-name-check.cir",
+      "disposition": "invalid_syntax_fixture",
+      "evidence": "Negative model-name test explicitly labels ^274ls4444 not o.k.; invalid caret-prefixed model name."
+    },
+    {
+      "key": "ngspice/paranoia_parallel/examples/various/model-name-check.cir",
+      "disposition": "invalid_syntax_fixture",
+      "evidence": "Duplicate negative model-name fixture explicitly labels ^274ls4444 not o.k."
+    }
+  ],
+  "outstanding": [],
+  "primary_sha256": "a94551404404d2133a5a47fc9b271e010851cc2d409f8b0cccfef80b133464a6",
+  "catalog_sha256": "d27f022c8a8544d7e921163ff29b80d18dbe03fd2d971df99e10f5eea6c52bfa",
+  "replay_sha256": {
+    "parser-gap-legacy-replay.json": "16519d85029f5472f65639bb0d01124a86649ddf662030871311faba62f8e2ae"
+  },
+  "limitations": [
+    "Structural acceptance only; embedded command/quoted languages and numerical support are separate contracts.",
+    "Exception metadata is human-adjudicated against source evidence; new input bytes invalidate an exception."
+  ]
+}

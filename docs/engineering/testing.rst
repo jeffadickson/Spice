@@ -68,6 +68,11 @@ Campaign bounds are explicit: ``-WorkerSeconds``, ``-Minutes``, ``-Workers``,
 ``-MaxInputBytes`` and ``-MaxTokens``. ``-LegacyBytes`` opts into lossless Latin-1
 byte mapping after a strict UTF-8 decoding failure; reports identify that choice.
 Default library limits remain smaller than the campaign profile.
+Add ``-RequireValidSamples`` to run the explicit legacy subset replay and the
+acceptance gate automatically, reusing the same binary set. It cannot be
+combined with ``-LegacyBytes`` because the primary must exercise strict UTF-8.
+``Test.ps1 -SyntaxOnly -SyntaxCorpus`` enables this gate with a 90-second
+per-input budget; the ordinary report-only corpus command remains available.
 
 ``scripts/ValidateSyntaxAcceptance.cs`` takes a completed primary report,
 ``compat/ngspice/parser-input-adjudications.json``, authoritative inventory,

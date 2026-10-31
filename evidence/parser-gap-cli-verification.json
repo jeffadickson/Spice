@@ -41,5 +41,24 @@
     "Gate synthetic reports are explicitly artificial; actual sample acceptance requires a separate complete primary and replay.",
     "Legacy decoding is exercised by real corpus replay; CLI collector does not cover every configuration/exception branch.",
     "PowerShell orchestration, grammar-production mutation, Linux and NativeAOT remain unmeasured."
-  ]
+  ],
+  "acceptance_workflow": {
+    "outstanding": 0,
+    "replay_inputs": 18,
+    "status": "passed",
+    "script_sha256": {
+      "scripts/SummarizeSyntaxCampaign.cs": "ceb99792341ad929627f43ec788e6971eb05c23238d881830dba05a5618b4fd6",
+      "scripts/Run-SyntaxCorpus.ps1": "67b162bd443b819b4a9c07dd55a5bf5bcd5525ef54ac21c66fe7a710668e0104",
+      "scripts/Test.ps1": "9e65886213339cf353efd1b37706a9ca41887073efb48d1d867c68db59e45123"
+    },
+    "primary_inputs": 924,
+    "valid_accepted": 916,
+    "valid_required": 916,
+    "checks": [
+      "PowerShell AST parsing",
+      "Mutually exclusive profile rejected before build",
+      "Full strict primary, same-binary legacy replay, and completion gate executed end to end",
+      "SVG generated and parsed as XML; no rendered visual inspection"
+    ]
+  }
 }

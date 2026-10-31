@@ -281,3 +281,17 @@ implemented. Nonlinear AC bias-dependent audits, adaptive midpoint-dependent
 physical audits, full DAE qualification, coverage-guided fuzzing, broad SPICE
 syntax/devices, GPU and production release gates remain open. The unitless legacy absolute_tolerance is
 validated compatibility data; actual convergence uses voltage/current tolerances.
+
+## Parser-only continuation (2026-10-31, issue #11)
+
+Read docs/parser-gap-results.md, docs/parser-grammar-inventory.md and
+compat/ngspice/parser-input-adjudications.json before further parser work.
+ANTLR 4.13.1 remains the selected framework. Keep generated syntax acceptance
+independent of the Rust importer, simulation capabilities, model resolution,
+include loading and control execution. Use the authoritative inventory and the
+completion gate rather than inferring invalid syntax from a parser rejection.
+Strict UTF-8 and explicit legacy-byte results are separate input profiles.
+The bounded reports retain exact source/input/binary hashes; raw campaigns and
+coverage/mutation artifacts remain local. Do not treat profile-only mutation
+kills as closure of the historical broad survivor ledger or claim complete
+ngspice grammar/semantic conformance from structural acceptance.

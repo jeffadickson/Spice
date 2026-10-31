@@ -13,8 +13,9 @@ param([string]$Inventory,[string]$CorpusRoot,[string]$Output,
     [ValidateRange(1,4)][int]$Workers=1,
     [ValidateRange(1,67108864)][int]$MaxInputBytes=4194304,
     [ValidateRange(1,4000000)][int]$MaxTokens=2000000,
-    [switch]$LegacyBytes)
+    [switch]$LegacyBytes,[switch]$RequireValidSamples)
 $ErrorActionPreference='Stop'
+if($RequireValidSamples -and $LegacyBytes){throw 'Acceptance requires a strict UTF-8 primary; legacy replay is automatic'}
 $repository=Split-Path $PSScriptRoot -Parent
 if(!(Test-Path -LiteralPath $repository -PathType Container)){throw 'Missing repository'}
 if(!$Inventory){$Inventory=Join-Path $repository 'evidence/ngspice-corpus-tracked/20261031T055611Z-019f8631.json'}
@@ -44,6 +45,26 @@ foreach($name in $settings.Keys){$saved[$name]=[Environment]::GetEnvironmentVari
 try{
     dotnet @arguments
     if($LASTEXITCODE -ne 0){throw "Syntax campaign failed; inspect $Output and console diagnostics"}
+    if($RequireValidSamples){
+        # Reuse the exact built DLLs, without rebuilding between primary and
+        # replay. Only the explicit legacy input profile changes.
+        $catalog=Join-Path $repository 'compat/ngspice/parser-input-adjudications.json'
+        $entries=(Get-Content -LiteralPath $catalog -Raw | ConvertFrom-Json).entries
+        $legacyPaths=@($entries | Where-Object disposition -eq 'legacy_encoded_deck' | ForEach-Object path)
+        $subset=Get-Content -LiteralPath $Inventory -Raw | ConvertFrom-Json
+        $subset.rows=@($subset.rows | Where-Object {$_.path -in $legacyPaths})
+        if($subset.rows.Count -ne $legacyPaths.Count){throw 'Acceptance inventory does not contain the catalogued legacy samples'}
+        $subsetPath=$Output+'.legacy-inventory.json'
+        $subset | ConvertTo-Json -Depth 32 | Set-Content -LiteralPath $subsetPath
+        $replay=$Output+'.legacy.json'
+        $replayArguments=@($arguments[0],$subsetPath,$repository,$replay)
+        if($CorpusRoot){$replayArguments+=$CorpusRoot}
+        $env:SPICE_PARSE_LEGACY_BYTES='1'
+        dotnet @replayArguments
+        if($LASTEXITCODE -ne 0){throw "Legacy replay failed; inspect $replay"}
+        dotnet run --file (Join-Path $PSScriptRoot 'ValidateSyntaxAcceptance.cs') -- $Output $catalog $Inventory $repository ($Output+'.acceptance.json') $replay
+        if($LASTEXITCODE -ne 0){throw "Valid sample acceptance remains outstanding; inspect $Output.acceptance.json"}
+    }
 }finally{
     foreach($name in $saved.Keys){[Environment]::SetEnvironmentVariable($name,$saved[$name])}
 }

@@ -12,9 +12,9 @@ if(!(Test-Path -LiteralPath $syntaxTests -PathType Container)){throw 'Missing sy
 dotnet test $syntaxTests -p:RestoreLockedMode=true
 if($LASTEXITCODE -ne 0){throw 'Parser-only tests failed'}
 if($SyntaxCorpus){
-    $parameters=@{}
+    $parameters=@{WorkerSeconds=90}
     if($CorpusRoot){$parameters.CorpusRoot=$CorpusRoot}
-    & (Join-Path $PSScriptRoot 'Run-SyntaxCorpus.ps1') @parameters
+    & (Join-Path $PSScriptRoot 'Run-SyntaxCorpus.ps1') @parameters -RequireValidSamples
 }
 # This path intentionally returns before any numerical engine build or run.
 if($SyntaxOnly){return}

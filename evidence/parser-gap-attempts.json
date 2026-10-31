@@ -1,0 +1,160 @@
+{
+  "scope": "Historical development attempts; not combined with final acceptance",
+  "attempts": [
+    {
+      "artifact": "full-round4.json",
+      "sha256": "37f48c8b29fb5252f444fee64e6a96faf7c0a9855ad355f0ecc7d50598ee6440",
+      "completed": 924,
+      "counts": {
+        "encoding_rejected": 4,
+        "accepted_structure": 816,
+        "syntax_rejected": 97,
+        "grammar_gap": 7
+      },
+      "state": "completed_with_results",
+      "elapsed_seconds": 528.5640217,
+      "inputs": 924
+    },
+    {
+      "artifact": "targeted-v5.json",
+      "sha256": "055763555a17b0b7676400d14f3485c0b38f700887ae48a37ef4678f24cb56e5",
+      "completed": 122,
+      "counts": {
+        "encoding_rejected": 4,
+        "accepted_structure": 103,
+        "syntax_rejected": 13,
+        "grammar_gap": 2
+      },
+      "state": "completed_with_results",
+      "elapsed_seconds": 35.2716619,
+      "inputs": 122
+    },
+    {
+      "artifact": "targeted-v6.json",
+      "sha256": "da9e1a19411b99ad23a28eaddd4e9e82570a071cdfdbc62fbe5509e7fc0bf8f1",
+      "completed": 122,
+      "counts": {
+        "encoding_rejected": 4,
+        "accepted_structure": 110,
+        "syntax_rejected": 8
+      },
+      "state": "completed_with_results",
+      "elapsed_seconds": 37.1434255,
+      "inputs": 122
+    },
+    {
+      "artifact": "full-v6.json",
+      "sha256": "5cb4354ebf877f7abbabd7af93c5bb662cd06cf9fa8963bad7558a3f88152981",
+      "completed": 100,
+      "counts": {
+        "accepted_structure": 99,
+        "syntax_rejected": 1
+      },
+      "state": "cancelled_for_lexer_blank_line_performance_fix",
+      "elapsed_seconds": 64.0506127,
+      "inputs": 924
+    },
+    {
+      "artifact": "full-v7.json",
+      "sha256": "11499c000444bf235390b2fae64b91ea68272f4009182b003a7b66bb92716f86",
+      "completed": 100,
+      "counts": {
+        "accepted_structure": 99,
+        "syntax_rejected": 1
+      },
+      "state": "cancelled_for_reviewed_quoted_expression_fix",
+      "elapsed_seconds": 62.8901645,
+      "inputs": 924
+    },
+    {
+      "artifact": "full-final.json",
+      "sha256": "e0f98177bb55b59db07f7c2bcb544cb653b6742a2d7e0b36e76690a30bc71469",
+      "completed": 100,
+      "counts": {
+        "accepted_structure": 99,
+        "syntax_rejected": 1
+      },
+      "state": "cancelled_for_analog_urc_quote_regression",
+      "elapsed_seconds": 63.6932201,
+      "inputs": 924
+    },
+    {
+      "artifact": "targeted-qualified.json",
+      "sha256": "50e407f18106476f7ab6862564c7d1ed2f7dc58cb65ad58209c55b5e18c791c7",
+      "completed": 122,
+      "counts": {
+        "encoding_rejected": 4,
+        "accepted_structure": 110,
+        "syntax_rejected": 8
+      },
+      "state": "provenance_changed",
+      "elapsed_seconds": 36.2296633,
+      "inputs": 122
+    },
+    {
+      "artifact": "full-closure.json",
+      "sha256": "2735964965641ca54ac3e8ddfd5de40de9504e56bd48e21da557d1c322997344",
+      "completed": 924,
+      "counts": {
+        "encoding_rejected": 4,
+        "accepted_structure": 902,
+        "syntax_rejected": 18
+      },
+      "state": "completed_with_results",
+      "elapsed_seconds": 407.3459622,
+      "inputs": 924
+    },
+    {
+      "artifact": "parser-gaps-round1.json",
+      "sha256": "eaa15ef079bdc96a58431ed1dfbb98500722ba3f285720091d60b4995c5180d6",
+      "completed": 200,
+      "counts": {
+        "accepted_structure": 151,
+        "syntax_rejected": 29,
+        "grammar_gap": 20
+      },
+      "state": "cancelled_for_known_grammar_fixes",
+      "elapsed_seconds": 159.5778893,
+      "inputs": 924
+    },
+    {
+      "artifact": "parser-gaps-round2.json",
+      "sha256": "47d5ad1594e51699132c00f7fe45fc67266512bf0841d11fed46dd29170d58be",
+      "completed": 500,
+      "counts": {
+        "encoding_rejected": 2,
+        "accepted_structure": 427,
+        "syntax_rejected": 66,
+        "grammar_gap": 3,
+        "timeout": 2
+      },
+      "state": "cancelled_for_common_blocker_fixes",
+      "elapsed_seconds": 377.0114136,
+      "inputs": 924
+    },
+    {
+      "artifact": "parser-gaps-round3.json",
+      "sha256": "1b743e22bfbb0390e791ca1131b178a8fae46d5604a4521ff4627c97989b1928",
+      "completed": 100,
+      "counts": {
+        "accepted_structure": 98,
+        "syntax_rejected": 1,
+        "timeout": 1
+      },
+      "state": "failed_disk_full",
+      "elapsed_seconds": 92.9267271,
+      "inputs": 924
+    }
+  ],
+  "limitations": [
+    "Cancelled and disk-full reports contain only durable checkpoint rows, not an asserted complete attempt count.",
+    "An intentional source update invalidated targeted-qualified provenance; that report is not current-source qualification.",
+    "Raw logs, coverage XML and mutation reports remain local."
+  ],
+  "focused_correction_replay": {
+    "scope": "Ten regressions from the completed development scan plus fourteen repository samples",
+    "accepted": 24,
+    "artifact_sha256": "745d2687d6030c3d357f1778c6e6942ed81f079dc1c95cf53f4061217392953a",
+    "inputs": 24
+  }
+}

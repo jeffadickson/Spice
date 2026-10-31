@@ -73,7 +73,23 @@
         "file": "ParserLimits.cs"
       }
     ],
-    "collector": "Coverlet 10.1.0"
+    "collector": "Coverlet 10.1.0",
+    "scopes": [
+      {
+        "lines": 142,
+        "branches": 120,
+        "branches_covered": 113,
+        "scope": "handwritten",
+        "lines_covered": 141
+      },
+      {
+        "lines": 5558,
+        "branches": 1160,
+        "branches_covered": 830,
+        "scope": "generated",
+        "lines_covered": 3829
+      }
+    ]
   },
   "properties": [
     {
@@ -103,7 +119,13 @@
     "ignored": 1,
     "scope": "unchanged ParserLimits.cs",
     "raw_report_sha256": "10c6efafd2fb3ecbec3f170fcbee45e255c61ad9a1e9630d436d84697db18618",
-    "tool": "Stryker.NET 5.0"
+    "tool": "Stryker.NET 5.0",
+    "outside_selected_file": {
+      "file": "DeckSyntax.cs",
+      "ignored": 185,
+      "compile_errors": 41,
+      "interpretation": "Tool-reported generated mutants outside the selected ParserLimits scope; no kill or survivor claim for these"
+    }
   },
   "limitations": [
     "Finite seeded FsCheck checks are not exhaustive fuzz qualification.",

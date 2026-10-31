@@ -7,8 +7,8 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 // Bounded evidence only: do not copy raw decks, binaries or full worker logs.
-if(args is not [var baselinePath,var finalPath,var coveragePath,var mutationPath,var destination] || !Directory.Exists(destination))
-    throw new ArgumentException("Usage: <baseline JSON> <final JSON> <cobertura XML> <mutation JSON> <existing evidence directory>");
+if(args is not [var baselinePath,var finalPath,var coveragePath,var mutationPath,var destination,..var gatePaths] || gatePaths.Length>1 || !Directory.Exists(destination))
+    throw new ArgumentException("Usage: <baseline JSON> <final JSON> <cobertura XML> <mutation JSON> <existing evidence directory> [completed acceptance JSON]");
 var baseline=JsonNode.Parse(File.ReadAllText(baselinePath))!;
 var final=JsonNode.Parse(File.ReadAllText(finalPath))!;
 if(final["state"]?.GetValue<string>()!="completed_with_results" || final["completed"]!.GetValue<int>()!=final["inputs"]!.GetValue<int>())
@@ -51,6 +51,20 @@ File.WriteAllText(Path.Combine(destination,"parser-only-verification.json"),Json
 var remainingBaseline=baseline["inputs"]!.GetValue<int>()-baseline["counts"]!["accepted_structure"]!.GetValue<int>();
 var remainingFinal=final["inputs"]!.GetValue<int>()-final["counts"]!["accepted_structure"]!.GetValue<int>();
 var total=final["inputs"]!.GetValue<int>();
+var chartTitle="Inputs without structural acceptance";
+var chartScope=$"Same {total}-input inventory; includes gaps, rejections and unavailable evidence";
+if(gatePaths.Length==1)
+{
+    var gate=JsonNode.Parse(File.ReadAllText(gatePaths[0]))!;
+    if(gate["status"]?.GetValue<string>()!="all_declared_valid_inputs_accepted" || gate["primary_sha256"]?.GetValue<string>()!=Hash(finalPath) ||
+        baseline["inventory_sha256"]?.GetValue<string>()!=final["inventory_sha256"]?.GetValue<string>())
+        throw new InvalidDataException("A completed same-inventory acceptance gate is required for the valid-input chart");
+    var excluded=gate["excluded"]!.AsArray().Select(row=>row!["key"]!.GetValue<string>()).ToHashSet(StringComparer.Ordinal);
+    remainingBaseline=baseline["rows"]!.AsArray().Count(row=>!excluded.Contains(row!["scope"]+"/"+row["path"]) && row["result"]!["Status"]!.GetValue<string>()!="accepted_structure");
+    remainingFinal=gate["outstanding"]!.AsArray().Count;total=gate["required_inputs"]!.GetValue<int>();
+    chartTitle="Declared valid inputs without acceptance";
+    chartScope=$"{total} valid inputs; {excluded.Count} pinned exclusions; {gate["accepted_via_explicit_replay"]} explicit legacy replay acceptances";
+}
 var widthBaseline=remainingBaseline*620d/total;var widthFinal=remainingFinal*620d/total;
 var svg=FormattableString.Invariant($"""
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="230" viewBox="0 0 900 230" role="img" aria-labelledby="title desc">
@@ -58,8 +72,8 @@ var svg=FormattableString.Invariant($"""
 <desc id="desc">{remainingBaseline} inputs without structural acceptance initially; {remainingFinal} in the final run, out of {total}. This is not numerical qualification.</desc>
 <rect width="900" height="230" fill="#f5f7fb"/>
 <g font-family="Segoe UI, sans-serif" fill="#18243a">
-<text x="24" y="32" font-size="21">Inputs without structural acceptance</text>
-<text x="24" y="56" font-size="13">Same {total}-input inventory; includes gaps, rejections and unavailable evidence</text>
+<text x="24" y="32" font-size="21">{chartTitle}</text>
+<text x="24" y="56" font-size="13">{chartScope}</text>
 <text x="24" y="104">Initial</text><rect x="130" y="80" width="{widthBaseline:F2}" height="32" fill="#64748b"/>
 <text x="{140+widthBaseline:F2}" y="102">{remainingBaseline}</text>
 <text x="24" y="154">Final</text><rect x="130" y="130" width="{widthFinal:F2}" height="32" fill="#2563eb"/>

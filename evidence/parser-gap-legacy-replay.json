@@ -1,0 +1,275 @@
+{
+  "schema_version": 2,
+  "state": "completed_with_results",
+  "started_utc": "2026-10-31T16:14:49.7474796-07:00",
+  "updated_utc": "2026-10-31T16:14:52.5597982-07:00",
+  "elapsed_seconds": 2.8122233,
+  "source_commit": "689e06192615d253b00d0ee6101079227c36cfb7",
+  "source_dirty": true,
+  "inventory_sha256": "dbc5c9093bc885ee07cffc2a0f7990e4d2d69f7a979be24c0a531262d8b2a35b",
+  "corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+  "inventory_corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+  "corpus_root": "<local ngspice checkout>",
+  "corpus_dirty": true,
+  "framework": "ANTLR generator/runtime 4.13.1",
+  "runtime": ".NET 10.0.14",
+  "platform": "Microsoft Windows 10.0.26300",
+  "inputs": 18,
+  "completed": 18,
+  "counts": {
+    "accepted_structure": 18
+  },
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "9ecf917c2d3e56ce7bc77b1dd94ca79d8e99be36ff35b89951b4ed67ea7c6cac",
+    "dotnet/Simulator.Syntax/packages.lock.json": "3adab9a08a0804840cb2b4107dc7f4879ad31e4a0128e3513696206f2778aac4",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "20e1f2c051e77ed13df9ebf846fcc861c515c3a668f566d7a5941e3670b6c5fa",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "5ec0c310f5ce19d2cd430eebac776b6cd1a321ea28b92c0dec0250f564d53af3",
+    "dotnet/Simulator.Syntax.Corpus/packages.lock.json": "89e2eca6904b9d4efeff8bf5ad9606110eca890134317044a9c897114829debd",
+    "dotnet/Simulator.Syntax.Corpus/Program.cs": "3d8c2364db66a05a72169d17d323e256db048ab3a3f06838ae2ba2b60355f2a9",
+    "dotnet/Simulator.Syntax.Corpus/Simulator.Syntax.Corpus.csproj": "ac299b6057cf9dd59b1379a136971e5dae66e66dcfec3cd79f7552c9e2974210"
+  },
+  "binary_sha256": {
+    "Antlr4.Runtime.Standard.dll": "0440e3d2c5906326e04df87d6a5272192b7d29099901ba4215ca9e0f5dca7591",
+    "Simulator.Syntax.Corpus.dll": "ef53bd515317e8f63ea8cda333c197a103f6fe5587f1aee01c6ca71b05fcfad6",
+    "Simulator.Syntax.dll": "e53a9585b76d60bdf0df0c1bc7f944d4d2e8dd9109f70a1ae157102ff13acba9"
+  },
+  "rows": [
+    {
+      "scope": "ngspice",
+      "path": "examples/utf-8/стекло/ext-ascii-1.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 1,
+        "Diagnostics": [],
+        "Sha256": "f4785b6b5a32acacc6feda4bde6c376186860091e68c9301899bbb95a59711c3",
+        "Encoding": "latin1-byte-preserving",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/utf-8/стекло/ext-ascii-2.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 1,
+        "Diagnostics": [],
+        "Sha256": "26c5b097f979055be8a52420cd4032c11121319100d785959bed05fd100b46ca",
+        "Encoding": "latin1-byte-preserving",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/various/nmos_pmos_BSIM330.sp",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 15,
+        "Diagnostics": [],
+        "Sha256": "697a2a29ee1d214e62e4d853fb9f51f741cfc19232cc4f74173ca5aaf43dcd33",
+        "Encoding": "latin1-byte-preserving",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/various/nmos_pmos_plotting.sp",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 15,
+        "Diagnostics": [],
+        "Sha256": "e61828cc74868d7997fbaa95850f8c66f460a594e4a69bcc97fa5976c6f659ae",
+        "Encoding": "latin1-byte-preserving",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/benchmarks/coupled-clamp-negative.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 14,
+        "Diagnostics": [],
+        "Sha256": "b3343a72b2111514ea1debc59c88f59623c83dca0edfd33cfb712fd7bb12257a",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/benchmarks/coupled-clamp-positive.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 14,
+        "Diagnostics": [],
+        "Sha256": "caeb53ced78739b0dec5e3aef4bc4b7a2bf1f87fcbea949572c09620983636c8",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/benchmarks/divider.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 7,
+        "Diagnostics": [],
+        "Sha256": "9c6b6fe1232ac0526f521a56702ccc379664e18b5fd44fa1eea5c2bd077595c1",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/benchmarks/rc-ac.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 7,
+        "Diagnostics": [],
+        "Sha256": "04066e53252363b7ba1c940ae02edce832403140196f4e7021a5902d8348173b",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/benchmarks/rc-transient.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 8,
+        "Diagnostics": [],
+        "Sha256": "4597cf1d4041100fa1a98227738e31f4ed715867c9b0c9464499c51225a19e0f",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/lowpass.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 9,
+        "Diagnostics": [],
+        "Sha256": "295778205a961ed53cc98d7d48e13fe0ccb8f529f76b795f5f842ac6bd293791",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-diode-charge-transient.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 8,
+        "Diagnostics": [],
+        "Sha256": "da53c0f68310c440a8d66c1f7a24790008fbae75cd28dd98d1f67cf9e0019024",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-diode-constant-charge.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 8,
+        "Diagnostics": [],
+        "Sha256": "beb35ef506e3370ea76a679c6c9bda7c3aa2534960e4a4c2c5732d3e0467d29a",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-rc-ramp.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 6,
+        "Diagnostics": [],
+        "Sha256": "2a75005f226011b3f28e2be5b91e5bf6ccc7cdcef768f32241a57a10c603069f",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-rlc-decay.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 7,
+        "Diagnostics": [],
+        "Sha256": "e236c67f80aa67901799f905c0c6b1596c38cb4bbd418b773d4ff575860d4ef5",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-series-rlc.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 7,
+        "Diagnostics": [],
+        "Sha256": "7a05a110a3a031849c1a9008c95a473a057e60e49b3c67c61c62253ea0b1626f",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-vccs.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 8,
+        "Diagnostics": [],
+        "Sha256": "2a891744713dcd32243145ae0cd7ee77d8ba008edb43a2b1d00e7016896f702d",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/res_partition.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 8,
+        "Diagnostics": [],
+        "Sha256": "4341fba574909ad98f5569d50a4a896af3172843a0b6aa56846ad78b00776cab",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/res_simple.cir",
+      "result": {
+        "Status": "accepted_structure",
+        "Statements": 6,
+        "Diagnostics": [],
+        "Sha256": "c394eca0a18e4b229ca442177c5397b24a06ffc08862f9c585579dc7fa576a52",
+        "Encoding": "utf-8",
+        "InputKind": "deck"
+      }
+    }
+  ],
+  "limits": {
+    "input_bytes": 4194304,
+    "tokens": 2000000,
+    "nesting": 128,
+    "rule_depth": 512,
+    "worker_seconds": 90,
+    "campaign_minutes": 30,
+    "workers": 2,
+    "legacy_bytes": true,
+    "diagnostics_per_row": 3
+  },
+  "limitations": [
+    "Structural acceptance only; not complete ngspice device/parameter/expression dialect conformance.",
+    "Control blocks and quoted expressions are retained without validating the embedded language.",
+    "Includes are not loaded; model references, subcircuit binding and physical parameter validity are not checked.",
+    "Syntax rejection means rejection by this grammar, not independent adjudication that an upstream deck is malformed.",
+    "Numerical support is not evaluated; missing, timed-out or budget-unattempted inputs are not passes.",
+    "Windows execution only; no Linux, NativeAOT or Rust-core qualification from this campaign."
+  ]
+}

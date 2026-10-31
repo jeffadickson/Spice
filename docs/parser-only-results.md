@@ -1,5 +1,7 @@
 # Parser-only frontend: results and remaining work
 
+For the subsequent issue #11 grammar-family work and current sample acceptance, see [parser-gap-results.md](parser-gap-results.md). The counts below are the historical first checkpoint and are preserved as its baseline.
+
 ## Delivered boundary
 
 The [three-reference assessment](parser-only-plan.md) compares ngspice's C
