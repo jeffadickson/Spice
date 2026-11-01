@@ -365,3 +365,10 @@ The bounded reports retain exact source/input/binary hashes; raw campaigns and
 coverage/mutation artifacts remain local. Do not treat profile-only mutation
 kills as closure of the historical broad survivor ledger or claim complete
 ngspice grammar/semantic conformance from structural acceptance.
+
+Current frontend bridge checkpoint: see docs/simulation-bridge-plan.md,
+docs/simulation-bridge.sdoc and docs/semantic-frontend.md. The generated frontend
+now has a separate Simulator.Frontend R/V/I DC adapter to existing typed requests;
+keep syntax, resource resolution, binding, lowering and numerical evidence apart.
+Use faer as the wire backend key. No model/AC/transient bridge support is implied.
+Continue bulk verification artifacts under CODEX_ARTIFACT_ROOT / E:\Artifacts.

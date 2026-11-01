@@ -131,3 +131,21 @@ The tested source example is ``examples/DeclarationCatalog.cs``. Canonical
 requirements are ``docs/declaration-catalog.sdoc`` (SEM-CAT-001/002); the delivery
 sequence and limits are in ``docs/semantic-frontend-plan.md`` and
 ``docs/declaration-catalog.md``. This is not numerical qualification.
+
+Generated frontend simulation verification
+------------------------------------------
+
+``Simulator.Frontend.Tests`` exercises atomic failures, supported source headers,
+port/private-node isolation, inclusive expansion budgets and a 64-case FsCheck
+property (replay ``901,20261101``). ``Run-SemanticMutations.ps1 -Stage Bridge``
+uses the established Stryker.NET package against the adapter in an isolated
+artifact snapshot. Generated parser and Rust mutation coverage are separate.
+``examples/FrontendOperatingPoint.cs`` demonstrates explicit resource access,
+lowering, typed engine execution and root-signal mapping.
+
+``QualifyOperatingPointBridge.cs`` runs four named constant-DC fixtures through
+three registered CPU backend keys and compares them with separate typed requests,
+analytical values and native ngspice. It records hashes and raw outputs locally.
+These fixtures do not establish arbitrary model, AC/transient or corpus numerical
+conformance. Corpus resource rebinding is an opt-in observation stage with no
+simulation, and its default syntax gate does not certify resource success.

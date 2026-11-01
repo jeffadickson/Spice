@@ -153,10 +153,44 @@ dotnet test dotnet/Simulator.Syntax.Tests --artifacts-path "$out/build" "-p:Gram
 ```
 
 On another platform supply an existing native artifact root instead of E:.
-The corpus observer never loads resources and reports reference/root-parameter
+The default corpus observer never loads resources and reports reference/root-parameter
 stages separately; include/library qualification uses isolated filesystem and
 named oracle fixtures. Source-only header observations do not establish active
 hierarchy, evaluated model parameters, bridge support or numerical oracle success.
 Raw artifacts stay local; bounded verification and mutation dispositions are
 recorded in the companion evidence. SEM-BIND-001, SEM-PARAM-001 and
 SEM-RESOURCE-001 remain Draft, with explicit limits rather than broad closure.
+
+## From syntax back to simulation
+
+The new `dotnet/Simulator.Frontend` adapter references Syntax and Client; neither
+underlying library depends on the adapter. Explicitly resolve resources, parse
+with declarations, lower with `OperatingPointBridge.Lower`, check `Success`, then
+send the typed `Request` through `SimulationClient.RunAsync`. No ngspice process
+is required in the application path; it is an independent qualification oracle.
+`RootNodes` maps user signals to wire names; `Origins` retains instance paths and
+expanded-source ranges. Keep the resolver's source mappings for physical files.
+
+This first text-to-request profile covers constant R/V/I DC operating points,
+parameter scopes/overrides and hierarchical port binding. It atomically refuses
+unsupported active analyses/devices/control commands, invalid scalars, recursion
+and budget exhaustion. Only literal `0` is ground. Declaration uncertainty is a
+global prerequisite even in unused definitions. Default limits: depth 32, 128
+frames including the root, 1024 elements and 128 nodes. Wire backend keys are
+`lu`, `qr`, `faer`; `faer_sparse_lu` is a provider manifest name, not a request key.
+
+For reproducible Windows numerical qualification, use an existing native Rust
+executable and ngspice installation with `scripts/QualifyOperatingPointBridge.cs`.
+Arguments are checkout, Rust executable, ngspice executable, fresh output path.
+Use `--artifacts-path`, `-p:GrammarOutput`, and `-p:AntlrJar` as in the commands
+above so generated/build artifacts remain on the selected artifact volume.
+Four named fixtures compare all three CPU backends with independent structured
+requests, analytical values and ngspice. This is not model/AC/transient bridge
+qualification, even though the existing engine has broader supported APIs.
+
+For resource-backed corpus observation add `-ResourceRoots @($corpus,$repo)` to
+`Run-SyntaxCorpus.ps1`. This opt-in profile records separate resolution/expanded
+semantics and file path, selected section and SHA256 provenance. It never lowers
+or simulates the corpus. Refused resources, expanded syntax failures, unresolved
+bindings and simulation gaps must remain separate categories. The default syntax
+acceptance gate does not certify expanded semantics or numerical behavior.

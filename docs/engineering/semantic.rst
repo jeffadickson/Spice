@@ -13,9 +13,10 @@ Three explicit subsequent operations are available:
 * ``ParameterEvaluator.Evaluate`` and ``ForInstance`` evaluate finite lexical
   parameter profiles with catalog-branded per-instance environments.
 
-Binding is symbolic; hierarchy flattening, ground/global translation, model
-parameter lowering and the Rust numerical bridge remain separate work. The
-observed corpus profile performs no resource loading or numerical execution.
+Binding is symbolic. The bounded R/V/I DC bridge below flattens active hierarchy
+into typed requests; general model/global translation remains open. Default
+corpus observation does not load resources; explicit roots enable rebinding.
+Neither corpus mode runs numerical simulation.
 The matched ngspice profiles are named finite checks, not full SPICE conformance.
 
 Refer to the repository's ``docs/semantic-frontend.md`` for exact supported
@@ -25,3 +26,27 @@ Windows host belong on E:. No native Linux, GPU or production qualification is
 implied; the exFAT artifact volume cannot qualify symbolic-link creation.
 
 * :download:`Bounded semantic requirements <requirements/semantic-elaboration.sdoc>`
+
+Operating-point bridge
+----------------------
+
+``Simulator.Frontend`` connects the generated syntax/catalog to the existing
+``Simulator.Client`` request API and Rust engine. Resolve resources explicitly,
+parse with ``collectDeclarations: true``, and call
+``OperatingPointBridge.Lower(syntax, backend: "faer")``. Check ``Success`` before
+passing ``Request`` to ``SimulationClient.RunAsync``. ``RootNodes`` maps original
+root node spellings to compact wire names; ``Origins`` retains element source
+ranges and hierarchical paths. Resource source maps remain with the resolver.
+
+The initial bridge covers constant DC resistors and independent voltage/current
+sources, including parameterized subcircuits. It refuses unsupported active cards
+atomically. It requires a globally definite declaration catalog even for unused
+conditional/resource declarations. Private nodes are isolated per expansion.
+Default budgets are depth 32, 128 frames including root, 1024 elements and 128
+nodes. Backend request keys are ``lu``, ``qr`` and ``faer``.
+
+Syntax acceptance, resource resolution, semantic binding, request lowering and
+numerical agreement are separate outcomes. The opt-in corpus ``-ResourceRoots``
+profile records the first three and never simulates samples. The bridge does not
+yet expose model devices, waveform sources or AC/transient from text. Those
+analyses remain available through the existing engine's supported API contracts.

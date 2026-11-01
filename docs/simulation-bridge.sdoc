@@ -1,0 +1,30 @@
+[DOCUMENT]
+TITLE: Bounded Generated Frontend Simulation Bridge
+
+[REQUIREMENT]
+UID: SEM-BRIDGE-001
+STATUS: Draft
+TITLE: Atomic operating-point request elaboration
+STATEMENT: >>>
+The generated frontend shall optionally lower constant DC R/V/I primitives and active subcircuit instances into the existing typed operating-point request. It shall preserve signed sources, parameter scope and overrides, ordered port bindings, private-node isolation and source/instance provenance. Unsupported active cards, invalid values, ambiguous or deferred bindings, recursion and exceeded expansion budgets shall refuse the whole request without publishing partial circuits. Syntax acceptance alone shall never imply simulation support.
+<<<
+COMMENT: >>>
+Implementation: PrimitiveSyntax.cs, ParameterEvaluator.EvaluateValue and OperatingPointBridge.cs. Verification: BridgeTests, FsCheck seed 901,20261101, Stryker.NET bridge stage and scripts/QualifyOperatingPointBridge.cs. Initial limits: depth 32, 128 expansion frames including root, 1024 elements and 128 nodes. Only literal 0 is ground. A globally definite catalog is required, including declaration uncertainty in unused bodies. Model devices, waveform sources, AC/transient, controls and general ngspice conformance remain outside this bridge profile. Existing Rust solver functionality is unchanged.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-PARAM-001
+
+[REQUIREMENT]
+UID: SEM-REBIN-001
+STATUS: Draft
+TITLE: Opt-in corpus resource rebinding evidence
+STATEMENT: >>>
+Corpus qualification shall optionally resolve resources under explicitly permitted roots and report resolution and expanded semantic binding separately from original syntax acceptance and simulation support. Refused resources shall retain diagnostic codes without presenting missing expanded semantics as successful binding. Default syntax-only corpus operation shall perform no resource access or simulation.
+<<<
+COMMENT: >>>
+Implementation: Run-SyntaxCorpus.ps1 ResourceRoots and Simulator.Syntax.Corpus ResourceProfileObserver. The existing strict UTF-8, file/depth/byte and denied-link policies apply. Evidence shall identify exact source hashes, roots, completed and unavailable rows. This observation profile does not execute the accepted corpus.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-RESOURCE-001

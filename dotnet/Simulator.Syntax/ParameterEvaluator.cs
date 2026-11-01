@@ -18,6 +18,8 @@ public sealed record ParameterEvaluation(ImmutableDictionary<string,double> Valu
     internal int ScopeId { get; init; }
     internal ImmutableDictionary<int,ImmutableDictionary<string,double>> Environments { get; init; } = ImmutableDictionary<int,ImmutableDictionary<string,double>>.Empty;
 }
+/// <summary>One finite scalar or an explicit source-located failure; missing data is never zero.</summary>
+public sealed record ScalarEvaluation(double? Value,ImmutableArray<ParameterDiagnostic> Diagnostics);
 /// <summary>Finite, bounded numeric semantics over the existing generated ANTLR expression tree.</summary>
 public static class ParameterEvaluator
 {
@@ -47,6 +49,15 @@ public static class ParameterEvaluator
             catch(EvaluationFailure e){return Failure(e.Code,e.Name??parameter.Name,parameter.Range);}
         }
         return EvaluateScope(catalog,scope,values,caller);
+    }
+    /// <summary>Evaluates a source expression in an unmodified environment belonging to this catalog.</summary>
+    public static ScalarEvaluation EvaluateValue(DeclarationCatalog catalog,ParameterEvaluation environment,SourceSyntax syntax)
+    {
+        ArgumentNullException.ThrowIfNull(catalog);ArgumentNullException.ThrowIfNull(environment);ArgumentNullException.ThrowIfNull(syntax);
+        if(!environment.Success||!ReferenceEquals(environment.Catalog,catalog)||!environment.Environments.TryGetValue(environment.ScopeId,out var values)||!ReferenceEquals(values,environment.Values))
+            return new(null,[new("invalid_parameter_environment","",syntax.Range)]);
+        try{return new(Expression(syntax.Text,name=>values.TryGetValue(name,out var value)?value:throw new EvaluationFailure("missing_parameter",name)),[]);}
+        catch(EvaluationFailure e){return new(null,[new(e.Code,e.Name??"",syntax.Range)]);}
     }
     private static ParameterEvaluation EvaluateScope(DeclarationCatalog catalog,int scopeId,IReadOnlyDictionary<string,double>? overrides,ParameterEvaluation? enclosing=null)
     {

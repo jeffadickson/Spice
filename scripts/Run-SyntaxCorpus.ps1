@@ -14,7 +14,7 @@ param([string]$Inventory,[string]$CorpusRoot,[string]$Output,
     [ValidateRange(1,67108864)][int]$MaxInputBytes=4194304,
     [ValidateRange(1,4000000)][int]$MaxTokens=2000000,
     [switch]$LegacyBytes,[switch]$RequireValidSamples,[switch]$CollectFeatures,[switch]$CollectDeclarations,[switch]$CollectSemantics,
-    [string]$ArtifactsPath,[string]$AntlrJar)
+    [string]$ArtifactsPath,[string]$AntlrJar,[string[]]$ResourceRoots)
 $ErrorActionPreference='Stop'
 if($RequireValidSamples -and $LegacyBytes){throw 'Acceptance requires a strict UTF-8 primary; legacy replay is automatic'}
 $repository=Split-Path $PSScriptRoot -Parent
@@ -56,6 +56,7 @@ if($LASTEXITCODE -ne 0){throw 'Syntax build failed'}
 $dll=if($ArtifactsPath){Join-Path $ArtifactsPath 'bin/Simulator.Syntax.Corpus/debug/Simulator.Syntax.Corpus.dll'}else{Join-Path $project 'bin/Debug/net10.0/Simulator.Syntax.Corpus.dll'}
 $arguments=@($dll,$Inventory,$repository,$Output)
 if($CorpusRoot){$arguments+=$CorpusRoot}
+if($ResourceRoots){foreach($root in $ResourceRoots){if(!(Test-Path -LiteralPath $root -PathType Container)){throw "Missing resource root $root"}}}
 $settings=@{
     SPICE_PARSE_WORKER_SECONDS=$WorkerSeconds; SPICE_PARSE_CAMPAIGN_MINUTES=$Minutes
     SPICE_PARSE_WORKERS=$Workers; SPICE_PARSE_MAX_BYTES=$MaxInputBytes
@@ -63,6 +64,7 @@ $settings=@{
     SPICE_PARSE_FEATURES=[int][bool]$CollectFeatures
     SPICE_PARSE_DECLARATIONS=[int][bool]$CollectDeclarations
     SPICE_PARSE_SEMANTICS=[int][bool]$CollectSemantics
+    SPICE_PARSE_RESOURCE_ROOTS_JSON=$(if($ResourceRoots){ConvertTo-Json -InputObject @($ResourceRoots) -Compress}else{""})
 }
 $saved=@{}
 foreach($name in $settings.Keys){$saved[$name]=[Environment]::GetEnvironmentVariable($name);[Environment]::SetEnvironmentVariable($name,[string]$settings[$name])}

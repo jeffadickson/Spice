@@ -26,3 +26,4 @@ StrictDoc remains authoritative; Sphinx is an engineering/API projection.
 * :download:`Development standards <requirements/development-standards.sdoc>`
 * :download:`Parsed corpus capability inventory <requirements/capability-inventory.sdoc>`
 * :download:`Declaration catalog <requirements/declaration-catalog.sdoc>`
+* :download:`Generated frontend operating-point bridge <requirements/simulation-bridge.sdoc>`

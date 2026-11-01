@@ -14,6 +14,8 @@ internal sealed class DeclarationExtraction
     private readonly List<DeclarationScope> scopes=[];
     private readonly List<NamedDeclaration> symbols=[];
     private readonly List<InstanceHeader> instances=[];
+    private readonly List<PrimitiveSyntax> primitives=[];
+    private readonly List<ScopedCard> cards=[];
     private readonly List<LibrarySectionEnd> libraryEnds=[];
     private readonly List<ScopedParameter> parameters=[];
     private readonly List<DeclaredResource> resources=[];
@@ -28,6 +30,10 @@ internal sealed class DeclarationExtraction
     internal void Observe(IParseTree item)
     {
         if(item is not SpiceParser.StatementContext statement || statement.GetChild(0) is not ParserRuleContext card)return;
+        var owner=Enclosing(statement.Parent);
+        cards.Add(new(owner,SpiceParser.ruleNames[card.RuleIndex],Range(card)));
+        var primitive=PrimitiveExtraction.Extract(card,owner,Capture,Capture);
+        if(primitive!=null){primitives.Add(primitive);return;}
         if(card is SpiceParser.ExtensionContext extension && extension.Start.Text.ToLowerInvariant() is ".if" or ".elseif" or ".else" or ".endif" or ".csparam" or ".sndparam")
         {deferredContexts.Add(new(extension.Start.Text.ToLowerInvariant(),Range(extension)));return;}
         if(card is SpiceParser.ExtensionContext ending&&ending.Start.Text.Equals(".endl",StringComparison.OrdinalIgnoreCase))
@@ -69,7 +75,7 @@ internal sealed class DeclarationExtraction
         }
     }
 
-    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray());
+    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray(),primitives.ToImmutableArray(),cards.ToImmutableArray());
 
     private int Enclosing(IParseTree? tree)
     {

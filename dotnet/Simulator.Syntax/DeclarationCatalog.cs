@@ -64,6 +64,10 @@ public sealed class DeclarationCatalog
     private readonly Dictionary<(DeclarationKind Kind,string Name),ImmutableArray<NamedDeclaration>>[] symbolsByScope;
     private readonly Dictionary<string,ImmutableArray<ScopedParameter>>[] parametersByScope;
     private readonly bool opaqueParameters;
+    /// <summary>Generated primitive headers; evaluation and execution are separate stages.</summary>
+    public ImmutableArray<PrimitiveSyntax> Primitives { get; }
+    /// <summary>All statement kinds with lexical owners, including unsupported/opaque cards.</summary>
+    public ImmutableArray<ScopedCard> Cards { get; }
     /// <summary>Generated library closing delimiters; not external file requests.</summary>
     public ImmutableArray<LibrarySectionEnd> LibraryEnds { get; }
     /// <summary>Observed X/D/Q/M/J/S/W headers; other device families are outside reference binding.</summary>
@@ -84,9 +88,9 @@ public sealed class DeclarationCatalog
     public string Status=>Diagnostics.IsEmpty?"catalogued":"ambiguous_declarations";
 
     internal DeclarationCatalog(ImmutableArray<DeclarationScope> scopes,ImmutableArray<NamedDeclaration> symbols,
-        ImmutableArray<ScopedParameter> parameters,ImmutableArray<DeclaredResource> resources,ImmutableArray<DeferredDeclarationContext> deferredContexts,ImmutableArray<InstanceHeader> instances,ImmutableArray<LibrarySectionEnd> libraryEnds)
+        ImmutableArray<ScopedParameter> parameters,ImmutableArray<DeclaredResource> resources,ImmutableArray<DeferredDeclarationContext> deferredContexts,ImmutableArray<InstanceHeader> instances,ImmutableArray<LibrarySectionEnd> libraryEnds,ImmutableArray<PrimitiveSyntax> primitives,ImmutableArray<ScopedCard> cards)
     {
-        Scopes=scopes;Symbols=symbols;Parameters=parameters;Resources=resources;DeferredContexts=deferredContexts;Instances=instances;LibraryEnds=libraryEnds;
+        Scopes=scopes;Symbols=symbols;Parameters=parameters;Resources=resources;DeferredContexts=deferredContexts;Instances=instances;LibraryEnds=libraryEnds;Primitives=primitives;Cards=cards;
         symbolsByScope=new Dictionary<(DeclarationKind,string),ImmutableArray<NamedDeclaration>>[scopes.Length];
         parametersByScope=new Dictionary<string,ImmutableArray<ScopedParameter>>[scopes.Length];
         var diagnostics=ImmutableArray.CreateBuilder<DeclarationDiagnostic>();
