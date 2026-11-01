@@ -145,4 +145,16 @@ RELATIONS:
 - TYPE: Parent
   VALUE: NGC-PARSE-004
 
-
+[REQUIREMENT]
+UID: PRS-REF-001
+STATUS: Draft
+TITLE: Punctuated node names inside voltage-reference expressions
+STATEMENT: >>>
+The generated frontend shall distinguish node arguments of voltage-reference calls from ordinary arithmetic identifier expressions under the selected dialect profile. It shall preserve spellings such as V(VC+,VC-), V(REF+,REF-) and V(IN1+,IN1-) when nested inside behavioral expressions, without treating trailing node punctuation as a missing arithmetic operand. Malformed reference delimiters and malformed surrounding arithmetic shall remain rejected. Syntax acceptance shall not imply behavioral-source evaluation or numerical model support.
+<<<
+COMMENT: >>>
+Inferred draft gap from resource-policy corpus diagnostics: examples/optran/models/opa1611.lib line 266, TLV6001.LIB line 264, TLV9002.lib line 237, and p-to-n-examples/TLC555.LIB line 357. Not implemented or independently qualified in this checkpoint. Planned verification: generated-parser-only vendor-fragment fixtures plus independent ngspice dialect acceptance and negative arithmetic/reference tests; retain original source hashes and separate simulation support. Do not close this requirement from root-deck acceptance alone.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: PRS-LEX-001

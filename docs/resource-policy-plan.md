@@ -23,9 +23,9 @@ Qualify changed corpus outcomes with source/resource hashes and same inventory.
 - [x] Add failing budget propagation and export-versus-conditional tests.
 - [x] Implement ResourcePolicy.ParsingLimits and corpus propagation, minimal guard fix.
 - [x] Run Syntax/Frontend regressions, malformed/property tests and Stryker resource slice.
-- [ ] Run full resource corpus + legacy acceptance gate and update results issue/chart.
-- [ ] Parse StrictDoc and build Sphinx; review evidence including incomplete coverage.
-- [ ] Commit and push coherent checkpoints, preserving main's unrelated work.
+- [x] Run full resource corpus + legacy acceptance gate and update results issue/chart.
+- [x] Parse StrictDoc and build Sphinx; review evidence including incomplete coverage.
+- [x] Commit and push coherent checkpoints, preserving main's unrelated work.
 
 Files: ResourceResolver.cs policy/use; Simulator.Syntax.Corpus/Program.cs explicit
 caller limits/report; ResourceResolutionTests.cs boundary/source-map invariants;
@@ -37,3 +37,7 @@ Review extension: cap exported grammar-gap messages at512 characters, preserve
 unknown budget line0, and verify CR/CRLF offsets, prefix budgets, three-message
 limits, nested conditionals and immediate post-.end cards. Targeted mutation
 follow-up is still running; checked regression step does not assert its outcome.
+
+Completed results: docs/resource-policy-results.md; issue #16. The new
+PRS-REF-001 requirement captures the next inferred vendor grammar gap and
+remains unimplemented. No closure-inclusive coverage or full-SPICE claim.

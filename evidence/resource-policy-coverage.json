@@ -1,0 +1,30 @@
+{
+  "raw_directory": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z",
+  "summary": {
+    "generatedon": "2026-11-01T17:18:08Z",
+    "parser": "MultiReport (2x Cobertura)",
+    "assemblies": 2,
+    "classes": 53,
+    "files": 14,
+    "coveredlines": 807,
+    "uncoveredlines": 12,
+    "coverablelines": 819,
+    "totallines": 1390,
+    "linecoverage": 98.5,
+    "coveredbranches": 969,
+    "totalbranches": 1110,
+    "branchcoverage": 87.2,
+    "coveredmethods": 157,
+    "fullcoveredmethods": 149,
+    "totalmethods": 157,
+    "methodcoverage": 100,
+    "fullmethodcoverage": 94.9
+  },
+  "collector": "Coverlet10.1.0",
+  "limitations": [
+    "ResourceResolver.Load/Append and OperatingPointBridge.Expand/Node omitted from raw Cobertura. Denominator incomplete, not full handwritten coverage.",
+    "No Rust, corpus coordinator or qualification helper coverage collected."
+  ],
+  "projection": "ReportGenerator5.5.11",
+  "scope": "Collector instrumented subset only: handwritten Syntax/Frontend after excluding ANTLR; captured core functions omitted"
+}

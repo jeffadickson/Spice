@@ -1,0 +1,475 @@
+{
+  "requirements": {
+    "status": "Draft; PRS-REF-001 is inferred and unimplemented",
+    "new_ids": [
+      "SEM-RESOURCE-002",
+      "SEM-RESOURCE-003",
+      "SEM-RESOURCE-004",
+      "PRS-REF-001"
+    ],
+    "resolved_parents": 309,
+    "documents": 21,
+    "unique_ids": 321
+  },
+  "tested_base": "7f259c8",
+  "antlr_jar_sha256": "bc13a9c57a8dd7d5196888211e5ede657cb64a3ce968608697e4f668251a8487",
+  "mutations": {
+    "final_equivalent_dispositions": {
+      "id743": "At length512 both original string and its first512 characters have identical value; > to >= changes no exported string value",
+      "id639": "DeckParser with collectDeclarations true publishes a catalog iff accepted_structure; OR to AND does not change observed failure classification under this internal invariant"
+    },
+    "scope": "Only selected ResourceResolver character spans, not whole Syntax assembly. Compiler errors generated across assembly are unavailable evidence; out-of-span mutants ignored. Earlier broad survivor ledger unchanged.",
+    "campaigns": [
+      {
+        "tests_sha256": "e82cd411789fbdc9494a51e682c00d4960904db89161299b1085dc4df397d7bb",
+        "compile_errors_by_file": [
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations\\source\\dotnet\\Simulator.Syntax\\CapabilityInventory.cs",
+            "count": 3
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations\\source\\dotnet\\Simulator.Syntax\\DeckSyntax.cs",
+            "count": 27
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations\\source\\dotnet\\Simulator.Syntax\\DeclarationExtraction.cs",
+            "count": 13
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations\\source\\dotnet\\Simulator.Syntax\\FeatureExtraction.cs",
+            "count": 23
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations\\source\\dotnet\\Simulator.Syntax\\InstanceBinding.cs",
+            "count": 4
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations\\source\\dotnet\\Simulator.Syntax\\InstanceExtraction.cs",
+            "count": 14
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations\\source\\dotnet\\Simulator.Syntax\\ParameterEvaluator.cs",
+            "count": 18
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations\\source\\dotnet\\Simulator.Syntax\\ParserLimits.cs",
+            "count": 2
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations\\source\\dotnet\\Simulator.Syntax\\PrimitiveSyntax.cs",
+            "count": 8
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations\\source\\dotnet\\Simulator.Syntax\\ResourceResolver.cs",
+            "count": 35
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations\\source\\dotnet\\Simulator.Syntax\\SemanticSummary.cs",
+            "count": 1
+          }
+        ],
+        "statuses": {
+          "Survived": 7,
+          "Ignored": 588,
+          "Killed": 10,
+          "CompileError": 148
+        },
+        "selected_character_spans": [
+          "**/ResourceResolver.cs{6237..6616}",
+          "**/ResourceResolver.cs{7569..7768}",
+          "**/ResourceResolver.cs{11987..12281}"
+        ],
+        "name": "before_review_cap",
+        "survivors": [
+          {
+            "id": "639",
+            "replacement": "parsed.Status!=\"accepted_structure\"&&parsed.Declarations==null",
+            "location": {
+              "start": {
+                "line": 84,
+                "column": 20
+              },
+              "end": {
+                "line": 84,
+                "column": 82
+              }
+            }
+          },
+          {
+            "id": "667",
+            "replacement": "r.Range.Start-shift<=end",
+            "location": {
+              "start": {
+                "line": 99,
+                "column": 45
+              },
+              "end": {
+                "line": 99,
+                "column": 68
+              }
+            }
+          },
+          {
+            "id": "668",
+            "replacement": "r.Range.Start+shift",
+            "location": {
+              "start": {
+                "line": 99,
+                "column": 45
+              },
+              "end": {
+                "line": 99,
+                "column": 64
+              }
+            }
+          },
+          {
+            "id": "672",
+            "replacement": "c.Range.Start-shift<=end",
+            "location": {
+              "start": {
+                "line": 99,
+                "column": 123
+              },
+              "end": {
+                "line": 99,
+                "column": 146
+              }
+            }
+          },
+          {
+            "id": "673",
+            "replacement": "c.Range.Start+shift",
+            "location": {
+              "start": {
+                "line": 99,
+                "column": 123
+              },
+              "end": {
+                "line": 99,
+                "column": 142
+              }
+            }
+          },
+          {
+            "id": "738",
+            "replacement": "fragment||d.Line>0",
+            "location": {
+              "start": {
+                "line": 159,
+                "column": 24
+              },
+              "end": {
+                "line": 159,
+                "column": 42
+              }
+            }
+          },
+          {
+            "id": "740",
+            "replacement": "d.Line>=0",
+            "location": {
+              "start": {
+                "line": 159,
+                "column": 34
+              },
+              "end": {
+                "line": 159,
+                "column": 42
+              }
+            }
+          }
+        ],
+        "test_cases_discovered": 346,
+        "raw_sha256": "f506b9fa028f584b8d70528fa3cee2b3f54941ec1628eb2d01f7dbb9d0dcbb3a",
+        "source_sha256": "b9b7c58c7392cefa5f581f816465999f4f2af82186a5743c0730c771985f3d6c"
+      },
+      {
+        "tests_sha256": "e2cabcf098b476cff1fbb486947634a7bf1e8ec11a50f775ae0391fa1752d053",
+        "compile_errors_by_file": [
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-diagnostics\\source\\dotnet\\Simulator.Syntax\\CapabilityInventory.cs",
+            "count": 3
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-diagnostics\\source\\dotnet\\Simulator.Syntax\\DeckSyntax.cs",
+            "count": 27
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-diagnostics\\source\\dotnet\\Simulator.Syntax\\DeclarationExtraction.cs",
+            "count": 13
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-diagnostics\\source\\dotnet\\Simulator.Syntax\\FeatureExtraction.cs",
+            "count": 23
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-diagnostics\\source\\dotnet\\Simulator.Syntax\\InstanceBinding.cs",
+            "count": 4
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-diagnostics\\source\\dotnet\\Simulator.Syntax\\InstanceExtraction.cs",
+            "count": 14
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-diagnostics\\source\\dotnet\\Simulator.Syntax\\ParameterEvaluator.cs",
+            "count": 18
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-diagnostics\\source\\dotnet\\Simulator.Syntax\\ParserLimits.cs",
+            "count": 2
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-diagnostics\\source\\dotnet\\Simulator.Syntax\\PrimitiveSyntax.cs",
+            "count": 8
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-diagnostics\\source\\dotnet\\Simulator.Syntax\\ResourceResolver.cs",
+            "count": 35
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-diagnostics\\source\\dotnet\\Simulator.Syntax\\SemanticSummary.cs",
+            "count": 1
+          }
+        ],
+        "statuses": {
+          "Survived": 3,
+          "Ignored": 601,
+          "Killed": 3,
+          "CompileError": 148
+        },
+        "selected_character_spans": [
+          "**/ResourceResolver.cs{11987..12359}"
+        ],
+        "name": "diagnostic_only_before_boundary_tests",
+        "survivors": [
+          {
+            "id": "738",
+            "replacement": "fragment||d.Line>0",
+            "location": {
+              "start": {
+                "line": 159,
+                "column": 37
+              },
+              "end": {
+                "line": 159,
+                "column": 55
+              }
+            }
+          },
+          {
+            "id": "740",
+            "replacement": "d.Line>=0",
+            "location": {
+              "start": {
+                "line": 159,
+                "column": 47
+              },
+              "end": {
+                "line": 159,
+                "column": 55
+              }
+            }
+          },
+          {
+            "id": "743",
+            "replacement": "d.Message.Length>=512",
+            "location": {
+              "start": {
+                "line": 160,
+                "column": 25
+              },
+              "end": {
+                "line": 160,
+                "column": 45
+              }
+            }
+          }
+        ],
+        "test_cases_discovered": 351,
+        "raw_sha256": "7091ffaae9c4da60309a61b176a9d8bb7446cd9a36f56c4a3d5b4524d1fad2fa",
+        "source_sha256": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4"
+      },
+      {
+        "tests_sha256": "146ff1459f7ffc8a476986e3ae1e5f846d9b86f4de89108efd4047754ebf25db",
+        "compile_errors_by_file": [
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-final\\source\\dotnet\\Simulator.Syntax\\CapabilityInventory.cs",
+            "count": 3
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-final\\source\\dotnet\\Simulator.Syntax\\DeckSyntax.cs",
+            "count": 27
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-final\\source\\dotnet\\Simulator.Syntax\\DeclarationExtraction.cs",
+            "count": 13
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-final\\source\\dotnet\\Simulator.Syntax\\FeatureExtraction.cs",
+            "count": 23
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-final\\source\\dotnet\\Simulator.Syntax\\InstanceBinding.cs",
+            "count": 4
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-final\\source\\dotnet\\Simulator.Syntax\\InstanceExtraction.cs",
+            "count": 14
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-final\\source\\dotnet\\Simulator.Syntax\\ParameterEvaluator.cs",
+            "count": 18
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-final\\source\\dotnet\\Simulator.Syntax\\ParserLimits.cs",
+            "count": 2
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-final\\source\\dotnet\\Simulator.Syntax\\PrimitiveSyntax.cs",
+            "count": 8
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-final\\source\\dotnet\\Simulator.Syntax\\ResourceResolver.cs",
+            "count": 35
+          },
+          {
+            "file": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z\\mutations-final\\source\\dotnet\\Simulator.Syntax\\SemanticSummary.cs",
+            "count": 1
+          }
+        ],
+        "statuses": {
+          "Survived": 2,
+          "Ignored": 588,
+          "Killed": 17,
+          "CompileError": 148
+        },
+        "selected_character_spans": [
+          "**/ResourceResolver.cs{6237..6616}",
+          "**/ResourceResolver.cs{7569..7768}",
+          "**/ResourceResolver.cs{11987..12359}"
+        ],
+        "name": "final_changed_spans",
+        "survivors": [
+          {
+            "id": "639",
+            "replacement": "parsed.Status!=\"accepted_structure\"&&parsed.Declarations==null",
+            "location": {
+              "start": {
+                "line": 84,
+                "column": 20
+              },
+              "end": {
+                "line": 84,
+                "column": 82
+              }
+            }
+          },
+          {
+            "id": "743",
+            "replacement": "d.Message.Length>=512",
+            "location": {
+              "start": {
+                "line": 160,
+                "column": 25
+              },
+              "end": {
+                "line": 160,
+                "column": 45
+              }
+            }
+          }
+        ],
+        "test_cases_discovered": 355,
+        "raw_sha256": "0dfd46695798b6e00a5df4578d06e67dec8f8908d522ac9596362d53f44a2a64",
+        "source_sha256": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4"
+      }
+    ],
+    "tool": "Stryker.NET5.0.0 Basic"
+  },
+  "tested_dirty_source": true,
+  "numerical": {
+    "tolerance": "1e-10 absolute +1e-10 relative",
+    "report": "resource-policy-oracles.json",
+    "engine_source": "Unchanged Rust build at344cb5b reused with exact executable hash",
+    "rust_solves": 24,
+    "backends": [
+      "lu",
+      "qr",
+      "faer"
+    ],
+    "fixtures": 4,
+    "comparisons": 12
+  },
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "203ad24cf31c941554e15d9408fcde64f0c90568d69c922f1f97429b3ecf5540",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "91d8262c9b7bdd150529c044da56a7f2464a0724ab6a9af880267bed490dcff4",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "15c49e1d79e90e0ebf5e0d2336b616e74d44ea06d8b9e1c750f50b1e5b2ec5b2",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "820e0ebbc84ca3e41ddf9e543d911f85f9d22e0cf13685955cf6ec9d07ae47db",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Client/Client.cs": "4af10aae7a41d438196f4ec28abe41bf4dcc3829e2f2f2b9eaac5164a2eb65ff",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "84d66c3c98bddddcd65037643b0cd3b18d35c414fed665fb9f15bcc96f55180f",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "7bf80c8e545ebb8ee2bbbb0a0abece7b623be9dbd717499379bbe98a72795651",
+    "dotnet/Simulator.Frontend/packages.lock.json": "ea51b87a36d8e82f42b9839406f5dacdb9cc1a61b4754743075f3dd4d23e402c",
+    "dotnet/Simulator.Frontend/Simulator.Frontend.csproj": "5a69547d0d2f92145f9450e95135646aa308e2fdd4bc465841ed5cf7dd376361",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "093dfadc21e85c14b1184ec338b52e8b6da26fd395bd3b32b0a896e853e91eb1",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "2f39c037dd64bced12afddaaf130d825f18fb685a381f5b6eb8522254726a2fe",
+    "scripts/QualifyOperatingPointBridge.cs": "e9d300e066fa07dd8d3cec1e0e4259777a5fc4a6cd60b73a7260e36c262e5fae",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779"
+  },
+  "review": {
+    "finding": "Unbounded grammar-gap token messages",
+    "kind": "AI source review only, no external human review",
+    "followup": "No remaining important code findings",
+    "disposition": "10,000-character red regression observed; cap512 plus physical/zero-line and end-boundary tests passed"
+  },
+  "implementation_commit": "550365f",
+  "platform": "Windows x64",
+  "raw_directory": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z",
+  "limitations": [
+    "Coverage omits captured core functions and captured diagnostic projection; metrics are only the instrumented subset.",
+    "No Rust/codegen/core-wide mutation or coverage-guided fuzz/soak campaign added.",
+    "No whole-corpus numerical, model/AC/transient text bridge, Linux/GPU/production qualification.",
+    "All raw outputs local onE; bounded evidence only tracked.",
+    "File-app orchestration executed managed, not NativeAOT.",
+    "Main unrelated work was excluded via isolated linked worktree."
+  ],
+  "issue": "https://github.com/jeffadickson/Spice/issues/16",
+  "test_source_sha256": "146ff1459f7ffc8a476986e3ae1e5f846d9b86f4de89108efd4047754ebf25db",
+  "tests": {
+    "skip_reason": "Artifact filesystem exFAT cannot create required symbolic link",
+    "resource_property": {
+      "cases": 64,
+      "framework": "FsCheck.Xunit3.5.0",
+      "property": "Control exports preserve unconditional expansion and exact physical source segments",
+      "replay": "904,20261101"
+    },
+    "syntax_log_sha256": "9f7ffd9424107addafc1f0ab7f9a79c546aaa87dcf68eaac5ab7bb48b1579a2e",
+    "frontend_log_sha256": "0ba0c38384e73f2fc00aad1f463ab96c330692d257fe838343f4b4d16306eab6",
+    "skipped": 1,
+    "counterexamples": "None observed in bounded seeded tests",
+    "other_properties": "Existing malformed-input/parser/binding/parameter properties executed in full Syntax suite; no separate coverage-guided campaign",
+    "syntax_passed": 354,
+    "frontend_passed": 33
+  },
+  "sdk": "10.0.403",
+  "partial_trials": [
+    "corpus.json intentionally stopped before reviewed cap; not a completed or qualifying corpus",
+    "Pre-cap DC replay passed but final source replay recorded separately",
+    "StrictDoc rejected extra blank separator before new requirement; corrected and reparsed"
+  ]
+}

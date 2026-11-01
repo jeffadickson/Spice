@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="450" viewBox="0 0 960 450" role="img" aria-labelledby="title desc">
+<title id="title">Spice resource-policy gate burndown — 2026-11-01</title>
+<desc id="desc">Same 920 valid root decks. Resource resolution improves from 834 to 876; refusals fall from 86 to 44. This is not simulation coverage. On the same new 876 decks, binding improves after expansion but reference denominators differ.</desc>
+<rect width="960" height="450" fill="#102033"/>
+<g font-family="Segoe UI, sans-serif" fill="#f0f5fc">
+<text x="32" y="42" font-size="25">Resource policy: 42 additional root decks resolved</text>
+<text x="32" y="73" font-size="15">550365f · Windows · same input hashes · syntax gate remains 920 / 920</text>
+<text x="32" y="122">Previous resolved</text><rect x="260" y="101" width="453" height="28" fill="#35b88e"/><rect x="713" y="101" width="47" height="28" fill="#ed9c48"/><text x="780" y="122">834 / 920</text>
+<text x="32" y="171">Current resolved</text><rect x="260" y="150" width="476" height="28" fill="#35b88e"/><rect x="736" y="150" width="24" height="28" fill="#ed9c48"/><text x="780" y="171">876 / 920</text>
+<text x="260" y="208" font-size="14">44 explicit refusals remain; allowed roots and UTF-8 policy unchanged</text>
+<text x="32" y="253">Definitive bindings</text><text x="260" y="253" font-size="23">3,216 → 62,667</text>
+<text x="32" y="295">Deferred references</text><text x="260" y="295" font-size="23">58,382 → 86</text>
+<text x="260" y="326" font-size="14">Same 876 decks before / after expansion; 61,926 → 63,683 references</text>
+<text x="32" y="368" font-size="14">876 resource successes are not numerical passes. Named DC regression: 12 comparisons / 24 solves.</text>
+<text x="32" y="396" font-size="14">Worker limit 180 s (previously 90 s); no speedup claim. Captured-function coverage remains unmeasured.</text>
+<text x="32" y="424" font-size="14">Next draft grammar gap: PRS-REF-001, punctuated voltage-reference node names in vendor libraries.</text>
+</g></svg>

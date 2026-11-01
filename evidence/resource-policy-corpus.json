@@ -1,0 +1,834 @@
+{
+  "raw": {
+    "directory": "E:\\Artifacts\\Spice-resource-policy-20261101T170409Z",
+    "legacy_sha256": "b1434953b2e1827f05d24fff30ed07a4543668bd72ffe0056ebe8dc39a7e59b8",
+    "primary_sha256": "773748e12adeaf5b10a65035e49cfc6fc251318bfe0edebd16b7b3ad5bde0301"
+  },
+  "corpus_dirty": true,
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "203ad24cf31c941554e15d9408fcde64f0c90568d69c922f1f97429b3ecf5540",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "91d8262c9b7bdd150529c044da56a7f2464a0724ab6a9af880267bed490dcff4",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "15c49e1d79e90e0ebf5e0d2336b616e74d44ea06d8b9e1c750f50b1e5b2ec5b2",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "820e0ebbc84ca3e41ddf9e543d911f85f9d22e0cf13685955cf6ec9d07ae47db",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "093dfadc21e85c14b1184ec338b52e8b6da26fd395bd3b32b0a896e853e91eb1",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "2f39c037dd64bced12afddaaf130d825f18fb685a381f5b6eb8522254726a2fe",
+    "dotnet/Simulator.Syntax.Corpus/InventoryCommand.cs": "e41689a6cf479fc10cc57742fb68296be86eacd52691513dfb88fe8ebd1d8d6b",
+    "dotnet/Simulator.Syntax.Corpus/packages.lock.json": "4788584a824763fed9384acb5ab8ff8b3628d766cec0e0bf5186b0a5be9aaf64",
+    "dotnet/Simulator.Syntax.Corpus/Program.cs": "2ec60e17334f5d85b423c31ea13339546bdb15a9af3c82233abdedcd8a9cef6a",
+    "dotnet/Simulator.Syntax.Corpus/Simulator.Syntax.Corpus.csproj": "ac299b6057cf9dd59b1379a136971e5dae66e66dcfec3cd79f7552c9e2974210"
+  },
+  "valid_roots": 920,
+  "limitations": [
+    "920 root acceptance does not certify their reachable vendor-library contents or numerical support.",
+    "876 resource-resolved decks is not a simulation count.",
+    "44 resource refusals remain distinct from syntax, binding, parameters and solver outcomes.",
+    "Legacy replay22rows includes18duplicate repository decks, counted once.",
+    "No whole-corpus numerical, model/AC/transient bridge, Linux/GPU/production qualification."
+  ],
+  "limits": {
+    "input_bytes": 4194304,
+    "tokens": 2000000,
+    "nesting": 128,
+    "rule_depth": 512,
+    "worker_seconds": 180,
+    "campaign_minutes": 30,
+    "workers": 4,
+    "legacy_bytes": false,
+    "collect_features": false,
+    "collect_declarations": true,
+    "collect_semantics": true,
+    "resource_roots": [
+      "C:\\dev\\ngspice-ngspice",
+      "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\simulation-bridge"
+    ],
+    "resource_parser": {
+      "characters": 4194304,
+      "tokens": 2000000
+    },
+    "resource_profile": "strict-utf8;maxDepth32;maxFiles128;maxTotal8MiB;no-simulation",
+    "diagnostics_per_row": 3
+  },
+  "syntax_accepted": 920,
+  "corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+  "source_dirty": true,
+  "primary": {
+    "completed": 928,
+    "elapsed_seconds": 424.5517777,
+    "counts": {
+      "encoding_rejected": 4,
+      "accepted_structure": 916,
+      "syntax_rejected": 8
+    },
+    "inputs": 928
+  },
+  "binary_sha256": {
+    "Antlr4.Runtime.Standard.dll": "0440e3d2c5906326e04df87d6a5272192b7d29099901ba4215ca9e0f5dca7591",
+    "Simulator.Syntax.Corpus.dll": "4425bed6e3eee2818d8e5e6984c8e3ab4a2ab897704464131c94c3266e55ae8c",
+    "Simulator.Syntax.dll": "86800aae6119cf1dc12763d2b293bf4ee89f56d7b1d28db2f3112cae34f56d4c"
+  },
+  "source_commit": "7f259c879e40b9ed98841fabdd127dec5e2f76ab",
+  "implementation_commit": "550365f",
+  "resource_refused": 44,
+  "examples": [
+    {
+      "scope": "ngspice",
+      "path": "examples/IHPOpenSourcePDK/19-stage-ro.cir",
+      "diagnostics": {
+        "Code": "resource_io",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\IHPOpenSourcePDK\\19-stage-ro.cir",
+        "Range": {
+          "Start": 39,
+          "Length": 69,
+          "Line": 3,
+          "Column": 1
+        },
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\IHPOpenSourcePDK\\$PDK_ROOT\\$PDK\\libs.tech\\ngspice\\models\\cornerMOSlv.lib",
+        "SyntaxDiagnostics": []
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/IHPOpenSourcePDK/c7552_ann_IHP.net",
+      "diagnostics": {
+        "Code": "denied_path",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\IHPOpenSourcePDK\\c7552_ann_IHP.net",
+        "Range": {
+          "Start": 184,
+          "Length": 95,
+          "Line": 6,
+          "Column": 1
+        },
+        "TargetPath": "D:\\Spice_general\\IHP-Open-PDK\\ihp-sg13g2\\libs.tech\\ngspice\\models\\cornerMOSlv.lib",
+        "SyntaxDiagnostics": []
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/IHPOpenSourcePDK/nmos_pmos_PSP103.sp",
+      "diagnostics": {
+        "Code": "denied_path",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\IHPOpenSourcePDK\\nmos_pmos_PSP103.sp",
+        "Range": {
+          "Start": 424,
+          "Length": 95,
+          "Line": 16,
+          "Column": 1
+        },
+        "TargetPath": "D:\\Spice_general\\IHP-Open-PDK\\ihp-sg13g2\\libs.tech\\ngspice\\models\\cornerMOSlv.lib",
+        "SyntaxDiagnostics": []
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/SkywaterOpenSourcePDK/c7552_ann_skywater.net",
+      "diagnostics": {
+        "Code": "denied_path",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\SkywaterOpenSourcePDK\\c7552_ann_skywater.net",
+        "Range": {
+          "Start": 611,
+          "Length": 85,
+          "Line": 10,
+          "Column": 1
+        },
+        "TargetPath": "D:\\Spice_general\\open_pdks\\sky130\\sky130A\\libs.tech\\combined\\sky130.lib.spice",
+        "SyntaxDiagnostics": []
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/SkywaterOpenSourcePDK/skywater_inverter.net",
+      "diagnostics": {
+        "Code": "denied_path",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\SkywaterOpenSourcePDK\\skywater_inverter.net",
+        "Range": {
+          "Start": 277,
+          "Length": 85,
+          "Line": 7,
+          "Column": 1
+        },
+        "TargetPath": "D:\\Spice_general\\open_pdks\\sky130\\sky130A\\libs.tech\\combined\\sky130.lib.spice",
+        "SyntaxDiagnostics": []
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/optran/HiPass3opamps_optran.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\opa1611.lib",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\opa1611.lib",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input 'VALUE={LIMIT(GAIN*V(VC+,'",
+            "Line": 266,
+            "Column": 39
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 266,
+            "Column": 39
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '-)'",
+            "Line": 266,
+            "Column": 43
+          }
+        ]
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/optran/TLV6001-test.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV6001.LIB",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV6001.LIB",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input 'Value = {IF(V(VIN,COM)>V(VC+,'",
+            "Line": 264,
+            "Column": 42
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 264,
+            "Column": 42
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 264,
+            "Column": 66
+          }
+        ]
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/optran/TLV9002-test.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV9002.lib",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV9002.lib",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '{(V(REF+,'",
+            "Line": 237,
+            "Column": 23
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 237,
+            "Column": 23
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '-)'",
+            "Line": 237,
+            "Column": 27
+          }
+        ]
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/p-to-n-examples/555-timer-2.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\TLC555.LIB",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\TLC555.LIB",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input 'VALUE= { IF ( (V(IN1+,'",
+            "Line": 357,
+            "Column": 35
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 357,
+            "Column": 35
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '-)'",
+            "Line": 357,
+            "Column": 40
+          }
+        ]
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/p-to-n-examples/OP_MCP6041.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\MCP6041.txt",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\MCP6041.txt",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "extraneous input ')' expecting NL",
+            "Line": 120,
+            "Column": 58
+          },
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '\\r\\n*\\r\\n* Output Stage\\r\\n' expecting {LPAREN, RPAREN, '{', LBRACKET, COMMA, PLUS, MINUS, '<', STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+            "Line": 121,
+            "Column": 61
+          }
+        ]
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/p-to-n-examples/Optimos_out.cir",
+      "diagnostics": {
+        "Code": "resource_io",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\Optimos_out.cir",
+        "Range": {
+          "Start": 580,
+          "Length": 32,
+          "Line": 17,
+          "Column": 1
+        },
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\OptiMOS5_30V_PSpice.lib",
+        "SyntaxDiagnostics": []
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/p-to-n-examples/op-test.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\OPA171.txt",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\OPA171.txt",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input 'Value = {IF(V(VIN,COM)>V(VC+,'",
+            "Line": 245,
+            "Column": 42
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 245,
+            "Column": 42
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 245,
+            "Column": 66
+          }
+        ]
+      }
+    }
+  ],
+  "grammar_examples": [
+    {
+      "path": "examples/optran/HiPass3opamps_optran.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\opa1611.lib",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\opa1611.lib",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input 'VALUE={LIMIT(GAIN*V(VC+,'",
+            "Line": 266,
+            "Column": 39
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 266,
+            "Column": 39
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '-)'",
+            "Line": 266,
+            "Column": 43
+          }
+        ]
+      }
+    },
+    {
+      "path": "examples/optran/TLV6001-test.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV6001.LIB",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV6001.LIB",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input 'Value = {IF(V(VIN,COM)>V(VC+,'",
+            "Line": 264,
+            "Column": 42
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 264,
+            "Column": 42
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 264,
+            "Column": 66
+          }
+        ]
+      }
+    },
+    {
+      "path": "examples/optran/TLV9002-test.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV9002.lib",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV9002.lib",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '{(V(REF+,'",
+            "Line": 237,
+            "Column": 23
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 237,
+            "Column": 23
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '-)'",
+            "Line": 237,
+            "Column": 27
+          }
+        ]
+      }
+    },
+    {
+      "path": "examples/p-to-n-examples/555-timer-2.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\TLC555.LIB",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\TLC555.LIB",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input 'VALUE= { IF ( (V(IN1+,'",
+            "Line": 357,
+            "Column": 35
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '+,'",
+            "Line": 357,
+            "Column": 35
+          },
+          {
+            "Code": "syntax",
+            "Message": "no viable alternative at input '-)'",
+            "Line": 357,
+            "Column": 40
+          }
+        ]
+      }
+    }
+  ],
+  "phases": {
+    "original_resolved": {
+      "parameter_status": [
+        {
+          "Name": "deferred_parameters",
+          "Count": 192
+        },
+        {
+          "Name": "evaluated_root_scope",
+          "Count": 35
+        },
+        {
+          "Name": "no_root_parameters_observed",
+          "Count": 642
+        },
+        {
+          "Name": "unsupported_expression",
+          "Count": 7
+        }
+      ],
+      "counts": {
+        "Unsupported": 250,
+        "Bound": 3216,
+        "Deferred": 58382,
+        "Ambiguous": 0,
+        "Invalid": 30,
+        "Missing": 48
+      },
+      "decks": 876,
+      "references": 61926.0
+    },
+    "original_all": {
+      "parameter_status": [
+        {
+          "Name": "deferred_parameters",
+          "Count": 232
+        },
+        {
+          "Name": "evaluated_root_scope",
+          "Count": 35
+        },
+        {
+          "Name": "no_root_parameters_observed",
+          "Count": 646
+        },
+        {
+          "Name": "unsupported_expression",
+          "Count": 7
+        }
+      ],
+      "counts": {
+        "Unsupported": 264,
+        "Bound": 3220,
+        "Deferred": 73070,
+        "Ambiguous": 0,
+        "Invalid": 30,
+        "Missing": 48
+      },
+      "decks": 920,
+      "references": 76632.0
+    },
+    "expanded_resolved": {
+      "parameter_status": [
+        {
+          "Name": "deferred_parameters",
+          "Count": 47
+        },
+        {
+          "Name": "evaluated_root_scope",
+          "Count": 57
+        },
+        {
+          "Name": "no_root_parameters_observed",
+          "Count": 765
+        },
+        {
+          "Name": "unsupported_expression",
+          "Count": 7
+        }
+      ],
+      "counts": {
+        "Unsupported": 806,
+        "Bound": 62667,
+        "Deferred": 86,
+        "Ambiguous": 28,
+        "Invalid": 30,
+        "Missing": 66
+      },
+      "decks": 876,
+      "references": 63683.0
+    }
+  },
+  "resource_resolved": 876,
+  "state": "completed_with_results",
+  "comparison": {
+    "current_conditional": 3,
+    "previous_parse_budget": 14,
+    "previous_resolved": 834,
+    "previous_conditional": 34,
+    "current_worker_seconds": 180,
+    "previous_worker_seconds": 90,
+    "previous_commit": "7f259c8",
+    "previous_refused": 86,
+    "additional_resolved": 42,
+    "notes": "Same root inventory, broader selected recognition used consistently. Different worker duration; no speedup claim. Expansion changes reference denominators.",
+    "current_parse_budget": 0
+  },
+  "refusal_codes": [
+    {
+      "Name": "resource_syntax",
+      "Count": 15
+    },
+    {
+      "Name": "denied_path",
+      "Count": 13
+    },
+    {
+      "Name": "resource_io",
+      "Count": 5
+    },
+    {
+      "Name": "end_in_fragment",
+      "Count": 4
+    },
+    {
+      "Name": "invalid_utf8",
+      "Count": 4
+    },
+    {
+      "Name": "conditional_resources",
+      "Count": 3
+    }
+  ],
+  "inventory_sha256": "9d637040701b491d04e7e8cdabc8bedfff782b63927c55bae130852edad33811",
+  "transitions": [
+    {
+      "path": "ngspice/examples/IHPOpenSourcePDK/c7552_ann_IHP.net",
+      "to": "denied_path",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/SkywaterOpenSourcePDK/c7552_ann_skywater.net",
+      "to": "denied_path",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/klu/Circuits/85/c1355/c1355_ann.net",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/klu/Circuits/85/c1908/c1908_ann.net",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/klu/Circuits/85/c2670/c2670_ann.net",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/klu/Circuits/85/c3540/c3540_ann.net",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/klu/Circuits/85/c499/c499_ann.net",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/klu/Circuits/85/c5315/c5315_ann.net",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/klu/Circuits/85/c6288/c6288_ann.net",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/klu/Circuits/85/c880/c880_ann.net",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/osdi/bsimbulk-local/bsimbulk_inverter.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/osdi/bsimbulk-local/bsimbulk_ro.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/osdi/bsimbulk-local/c7552_ann_bsimbulk.net",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/osdi/bsimbulk/bsimbulk_inverter.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/osdi/bsimbulk/bsimbulk_inverter_batch.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/osdi/bsimbulk/bsimbulk_ro.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/osdi/bsimbulk/c7552_ann_bsimbulk.net",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/osdi/mixed-models/bsimbulk_inverter.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/osdi/mixed-models/psp_inverter.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/osdi/psp103/c7552_ann_psp.net",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/examples/osdi/psp103/psp_inverter.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/osdi/psp103/psp_ro.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/rf/hb/amp2n2222/amp2n2222_mod.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/xspice/delta-sigma/delta-sigma-1.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/xspice/delta-sigma/mod1-ct-test.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/xspice/pll/pll-digital-iplot.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/xspice/pll/pll-xspice-fstep.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/xspice/pll/pll-xspice.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/xspice/pll/shared-pll-xspice.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/xspice/pll/test_vco.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/examples/xspice/see/ihp_simple_sram_seegen_subckt_vary.net",
+      "to": "denied_path",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/delta-sigma/mod1-ct-test.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/pll/pll-xspice.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/pton/relax_osc_st.cir",
+      "to": "resolved",
+      "from": "resource_parse_budget"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/xspice/delta-sigma/delta-sigma-1.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/xspice/delta-sigma/mod1-ct-test.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/xspice/pll/pll-xspice-fstep.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/xspice/pll/pll-xspice.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/xspice/pll/test_vco.cir",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/xspice/table/table-generator-b4-2d.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/xspice/table/table-generator-b4-3d.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/xspice/table/table-generator-b4n-2d.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/xspice/table/table-generator-b4n-3d.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/xspice/table/table-generator-b4p-2d.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    },
+    {
+      "path": "ngspice/paranoia_parallel/examples/xspice/table/table-generator-b4p-3d.sp",
+      "to": "resolved",
+      "from": "conditional_resources"
+    }
+  ]
+}

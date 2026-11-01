@@ -372,3 +372,13 @@ now has a separate Simulator.Frontend R/V/I DC adapter to existing typed request
 keep syntax, resource resolution, binding, lowering and numerical evidence apart.
 Use faer as the wire backend key. No model/AC/transient bridge support is implied.
 Continue bulk verification artifacts under CODEX_ARTIFACT_ROOT / E:\Artifacts.
+
+Resource-policy checkpoint (550365f + evidence): see docs/resource-policy-results.md
+and issue #16. Explicit parser budgets now reach resources/expanded parsing;
+csparam exports alone no longer block unconditional includes. 876/920 valid root
+decks resolve; 44 explicit resource refusals remain. Root syntax gate is920/920,
+not vendor-fragment or numerical qualification. Next shared grammar target is
+inferred Draft PRS-REF-001: punctuated node arguments in voltage references,
+such as V(VC+,VC-), in reached vendor libraries. Keep syntax, resource, binding,
+parameter and simulation results separate. Captured-function coverage still
+unmeasured; all bulk artifacts remain on E: under the configured artifact root.
