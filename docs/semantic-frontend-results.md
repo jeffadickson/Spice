@@ -102,3 +102,5 @@ bridge and named primitive-equivalence oracles. Model families/LEVELs, active
 conditionals, global-node semantics, flattened topology, whole-SPICE/GPU/production
 qualification remain open. Preserve the unrelated sheet-resistor work and original
 Rust mutation unavailable categories. No CI or new endurance soak was dispatched.
+
+Results/fix checklist: [GitHub issue #14](https://github.com/jeffadickson/Spice/issues/14).

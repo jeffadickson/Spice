@@ -1,3 +1,4 @@
+Semantic corpus results/fix checklist: https://github.com/jeffadickson/Spice/issues/14
 Latest semantic frontend checkpoint: read docs/semantic-frontend.md,
 docs/semantic-frontend-results.md and evidence/semantic-frontend-verification.json.
 Instance/port binding, bounded parameter environments and opt-in include/library
