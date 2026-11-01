@@ -149,3 +149,10 @@ analytical values and native ngspice. It records hashes and raw outputs locally.
 These fixtures do not establish arbitrary model, AC/transient or corpus numerical
 conformance. Corpus resource rebinding is an opt-in observation stage with no
 simulation, and its default syntax gate does not certify resource success.
+
+Coverage caveat for this checkpoint: Coverlet 10.1.0 omits captured local functions
+from raw Cobertura, including bridge ``Expand``/``Node`` and ResourceResolver
+internals. Reported percentages describe the collector's instrumented subset;
+they are not complete handwritten or core-lowering coverage. Closure-inclusive
+measurement remains open. Keep the separate executed mutation/property/oracle
+evidence and do not promote draft requirements based on the partial denominator.

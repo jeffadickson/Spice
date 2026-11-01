@@ -1,0 +1,480 @@
+{
+  "limitations": [
+    "Coverage collector omits captured core lowering/resolution functions; percentages have incomplete denominator.",
+    "No independent coverage-guided fuzz or Rust mutation campaign in this slice.",
+    "No model/AC/transient text bridge, whole-corpus numerical, Linux/GPU/production qualification.",
+    "Requirements remain Draft. Raw artifact files local; bounded summaries only tracked.",
+    "File-app tools ran managed; NativeAOT not attempted."
+  ],
+  "tests": {
+    "syntax_log_sha256": "d4007ba5a5ea63427bbf760d44ca25285ed1a3ed08239d6da997bc8f20c04964",
+    "properties": {
+      "hierarchy_isolation": {
+        "cases": 64,
+        "replay": "901,20261101"
+      },
+      "arbitrary_text": {
+        "cases": 128,
+        "replay": "903,20261101"
+      }
+    },
+    "skip_reason": "Cannot create required link on exFAT artifact filesystem",
+    "frontend_passed": 33,
+    "syntax_passed": 339,
+    "frontend_log_sha256": "58057ab5efa5b4aa7bab81fc98ce866806fdb2df3ff05189383a1d53e2ec1153",
+    "syntax_skipped": 1
+  },
+  "base_commit": "344cb5b",
+  "corpus": {
+    "valid_accepted": 920,
+    "refused": 86,
+    "resolved": 834,
+    "issue": "https://github.com/jeffadickson/Spice/issues/15"
+  },
+  "artifact_directory": "E:\\Artifacts\\Spice-simulation-bridge-20261101T162640Z",
+  "partial_trials": [
+    "Initial oracle startup before native executable existed",
+    "Wrong faer_sparse_lu wire key",
+    "Signed DC -2 incorrectly treated as parameter reference",
+    "Earlier resource corpus rejected because source changed",
+    "Two empty span-filter trials: no executable mutants selected"
+  ],
+  "oracles": {
+    "rust_solves": 24,
+    "providers": [
+      "lu",
+      "qr",
+      "faer"
+    ],
+    "report": "simulation-bridge-oracles.json",
+    "comparisons": 12,
+    "fixtures": 4
+  },
+  "tools": {
+    "ngspice": "******\r\n** ngspice-47+ : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "dotnet": "10.0.403",
+    "antlr_sha256": "bc13a9c57a8dd7d5196888211e5ede657cb64a3ce968608697e4f668251a8487"
+  },
+  "source_sha256": {
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax.Tests/ResourceResolutionTests.cs": "dbb9f9d4bc6012e147f4e4d94ed9fbd1a87372d578efcb746e78a820d2e4666b",
+    "dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj": "69ae314202bceb52336c6ad737f079b2fda888303d2d2e9aa9a66541ef1fda45",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "84d66c3c98bddddcd65037643b0cd3b18d35c414fed665fb9f15bcc96f55180f",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "203ad24cf31c941554e15d9408fcde64f0c90568d69c922f1f97429b3ecf5540",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax.Tests/CapabilityInventoryTests.cs": "0205691e7d012d3b4b20fba88387540cbf0c33bfbcc25c22f8d4919869124b94",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax.Tests/ParameterEvaluationTests.cs": "398f0bbb31059de6bd9917706313fc4830bbe0508ec56fb8a7aab650f944c323",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Frontend.Tests/BridgeTests.cs": "7e3632235f055cd9121c1b995c791f02f79869f2953dd837db5cf901865d3d43",
+    "dotnet/Simulator.Syntax.Tests/FeatureTests.cs": "e9f671cfae88a8f19c8718ccf92549af8dd431ebf85f67dc15dc47ab5f284f45",
+    "dotnet/Simulator.Syntax.Tests/BoundaryTests.cs": "561b667fae7bb31b4d2363d1a2cb31f364b8f9d2b3e2f73e0f1176025afdd538",
+    "dotnet/Simulator.Syntax.Tests/InstanceBindingTests.cs": "2feb243fe2af27e2fee3d4359c20c9b7733fb18c6941364f43f4d4efe8545c01",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "971d5a42ab90f3321afdad7d4dc0b85f7cce1aa1b9ff37033259cb71cb10eef3",
+    "dotnet/Simulator.Syntax.Tests/DeviceFamilyTests.cs": "fdd0bbf99e0485649b7fc8224142120cb415ae9cb40992e68e780d4ea687adcf",
+    "dotnet/Simulator.Frontend/packages.lock.json": "ea51b87a36d8e82f42b9839406f5dacdb9cc1a61b4754743075f3dd4d23e402c",
+    "dotnet/Simulator.Syntax.Tests/GrammarTests.cs": "59aafed45bd2ba1b880936b976ecacab9a3117d540e8d60cb3b9f91b3458da07",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax.Tests/stryker-config.json": "d1e4424aeb409697469e5f173243400aadd89ce077d6ea8f2a977423f1cb067e",
+    "dotnet/Simulator.Frontend/Simulator.Frontend.csproj": "5a69547d0d2f92145f9450e95135646aa308e2fdd4bc465841ed5cf7dd376361",
+    "dotnet/Simulator.Syntax.Tests/DeclarationTests.cs": "282a614553032c25e8c77acf13fb695b1833b39bfc1072dde5d931e479bad400",
+    "dotnet/Simulator.Syntax.Tests/Simulator.Syntax.Tests.csproj": "46e916b84ebaea2668f2d880c85cabf8be7d5f617e8edba2158728c81e7dddb7",
+    "dotnet/Simulator.Syntax.Tests/packages.lock.json": "6ed443455a65997bd895ad3ba8d5543853a48fc27f695d99d958e2716b4c28a8",
+    "dotnet/Simulator.Syntax.Tests/inventory-replay-stryker.json": "2a1c15416d295f059f495b36f9141c53e4478e39de223e2a8e456bd468340064",
+    "dotnet/Simulator.Frontend.Tests/packages.lock.json": "144164d76ce2c23e9ffffef2a305d69d34acb953f0eaeb30afd7ad0acc83f82b",
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax.Tests/CommonSyntaxTests.cs": "631222145376e7ec6f4129eee7fbce55ccce9774b59e04e03383171d742109cf",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/Client.cs": "4af10aae7a41d438196f4ec28abe41bf4dcc3829e2f2f2b9eaac5164a2eb65ff",
+    "dotnet/Simulator.Syntax.Tests/declaration-replay-stryker.json": "f50af06bb3471555b9b85a7c8de580f3b70f232175d77074332e2860eb9ac7c0",
+    "dotnet/Simulator.Syntax.Tests/inventory-key-stryker.json": "eedc565a495cf859d9eb68ef316e67d94ed8d3fb10832865f93521ba8dbe89f5",
+    "dotnet/Simulator.Syntax.Tests/ExtendedFamilyTests.cs": "6b3c458c9c8db570911eaaf77fdd88eda34c208c8404f6f8da7b2329f2f1e849",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Syntax.Tests/profile-stryker.json": "2e7d23ddcdfd9fb605e822c849417c81b6c2267d705d9420cc4924bdedb746c9",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Syntax.Tests/rule-guard-stryker.json": "0ed94cfa946920302a4c2d3e4b786499c2ef7b223e3d67dbf555f456b854ba1c",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "7bf80c8e545ebb8ee2bbbb0a0abece7b623be9dbd717499379bbe98a72795651",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "91d8262c9b7bdd150529c044da56a7f2464a0724ab6a9af880267bed490dcff4",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "820e0ebbc84ca3e41ddf9e543d911f85f9d22e0cf13685955cf6ec9d07ae47db",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "15c49e1d79e90e0ebf5e0d2336b616e74d44ea06d8b9e1c750f50b1e5b2ec5b2",
+    "dotnet/Simulator.Syntax.Tests/declaration-stryker.json": "62df16abf4a8dca511af13d9eb4af53ef793e396ed4c9b0da3bdc5d55333369c",
+    "dotnet/Simulator.Syntax.Tests/SemanticSummaryTests.cs": "56afd9146a391911b52e6516a60d54363b64f5c09cf8fd994e0a69e9361956ad",
+    "dotnet/Simulator.Syntax.Tests/XspiceTests.cs": "38be1d1d44aa270bcd0874430f8d33b9d17cc5ee27020b9c26e2cc5dea91b05e",
+    "dotnet/Simulator.Syntax.Tests/PredictionTests.cs": "763ac5848ebbe693140bdb799432912796c77f1d2b3dcb9e330e94e794fa4b84",
+    "dotnet/Simulator.Syntax.Tests/inventory-stryker.json": "c2015beebe464b6274a202abda0948f326b18496dd22e4ba2ae21546f6f2a259",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037"
+  },
+  "mutation": {
+    "campaigns": [
+      {
+        "tests": 14,
+        "statuses": {
+          "Survived": 17,
+          "Ignored": 6,
+          "CompileError": 7,
+          "Killed": 57
+        },
+        "tests_sha256": "169f842742f5d53ee727921fca6a22586cf30d9d3f3f387764393dca6eca2d55",
+        "raw_file": "E:\\Artifacts\\Spice-simulation-bridge-20261101T162640Z\\bridge-mutations\\reports\\reports\\mutation-report.json",
+        "name": "initial",
+        "adapter_sha256": "8782a3563139f22f76f8efd56741e1f9f6bad1b100f72a43c1398576b0832d0e",
+        "survivors": [
+          {
+            "id": "0",
+            "replacement": "Request!=null||Diagnostics.IsEmpty",
+            "location": {
+              "start": {
+                "line": 15,
+                "column": 26
+              },
+              "end": {
+                "line": 15,
+                "column": 60
+              }
+            }
+          },
+          {
+            "id": "3",
+            "replacement": "limits.MaxDepth<0||limits.MaxDepth>128||limits.MaxInstances<1||limits.MaxElements<1||limits.MaxElements>1024||limits.MaxNodes<1&&limits.MaxNodes>128",
+            "location": {
+              "start": {
+                "line": 24,
+                "column": 12
+              },
+              "end": {
+                "line": 24,
+                "column": 160
+              }
+            }
+          },
+          {
+            "id": "4",
+            "replacement": "limits.MaxDepth<0||limits.MaxDepth>128||limits.MaxInstances<1||limits.MaxElements<1||limits.MaxElements>1024&&limits.MaxNodes<1",
+            "location": {
+              "start": {
+                "line": 24,
+                "column": 12
+              },
+              "end": {
+                "line": 24,
+                "column": 139
+              }
+            }
+          },
+          {
+            "id": "5",
+            "replacement": "limits.MaxDepth<0||limits.MaxDepth>128||limits.MaxInstances<1||limits.MaxElements<1&&limits.MaxElements>1024",
+            "location": {
+              "start": {
+                "line": 24,
+                "column": 12
+              },
+              "end": {
+                "line": 24,
+                "column": 120
+              }
+            }
+          },
+          {
+            "id": "6",
+            "replacement": "limits.MaxDepth<0||limits.MaxDepth>128||limits.MaxInstances<1&&limits.MaxElements<1",
+            "location": {
+              "start": {
+                "line": 24,
+                "column": 12
+              },
+              "end": {
+                "line": 24,
+                "column": 95
+              }
+            }
+          },
+          {
+            "id": "7",
+            "replacement": "limits.MaxDepth<0||limits.MaxDepth>128&&limits.MaxInstances<1",
+            "location": {
+              "start": {
+                "line": 24,
+                "column": 12
+              },
+              "end": {
+                "line": 24,
+                "column": 73
+              }
+            }
+          },
+          {
+            "id": "8",
+            "replacement": "limits.MaxDepth<0&&limits.MaxDepth>128",
+            "location": {
+              "start": {
+                "line": 24,
+                "column": 12
+              },
+              "end": {
+                "line": 24,
+                "column": 50
+              }
+            }
+          },
+          {
+            "id": "10",
+            "replacement": "limits.MaxDepth<=0",
+            "location": {
+              "start": {
+                "line": 24,
+                "column": 12
+              },
+              "end": {
+                "line": 24,
+                "column": 29
+              }
+            }
+          },
+          {
+            "id": "12",
+            "replacement": "limits.MaxDepth>=128",
+            "location": {
+              "start": {
+                "line": 24,
+                "column": 31
+              },
+              "end": {
+                "line": 24,
+                "column": 50
+              }
+            }
+          },
+          {
+            "id": "14",
+            "replacement": "limits.MaxInstances<=1",
+            "location": {
+              "start": {
+                "line": 24,
+                "column": 52
+              },
+              "end": {
+                "line": 24,
+                "column": 73
+              }
+            }
+          },
+          {
+            "id": "20",
+            "replacement": "limits.MaxNodes<=1",
+            "location": {
+              "start": {
+                "line": 24,
+                "column": 122
+              },
+              "end": {
+                "line": 24,
+                "column": 139
+              }
+            }
+          },
+          {
+            "id": "43",
+            "replacement": "depth>=limits.MaxDepth",
+            "location": {
+              "start": {
+                "line": 46,
+                "column": 16
+              },
+              "end": {
+                "line": 46,
+                "column": 37
+              }
+            }
+          },
+          {
+            "id": "45",
+            "replacement": "++frames>=limits.MaxInstances",
+            "location": {
+              "start": {
+                "line": 48,
+                "column": 16
+              },
+              "end": {
+                "line": 48,
+                "column": 44
+              }
+            }
+          },
+          {
+            "id": "46",
+            "replacement": "frames+1",
+            "location": {
+              "start": {
+                "line": 49,
+                "column": 23
+              },
+              "end": {
+                "line": 49,
+                "column": 31
+              }
+            }
+          },
+          {
+            "id": "64",
+            "replacement": "!primitive.Supported&&primitive.Value==null",
+            "location": {
+              "start": {
+                "line": 60,
+                "column": 24
+              },
+              "end": {
+                "line": 60,
+                "column": 67
+              }
+            }
+          },
+          {
+            "id": "70",
+            "replacement": "value<0",
+            "location": {
+              "start": {
+                "line": 63,
+                "column": 47
+              },
+              "end": {
+                "line": 63,
+                "column": 55
+              }
+            }
+          },
+          {
+            "id": "79",
+            "replacement": "depth-1",
+            "location": {
+              "start": {
+                "line": 86,
+                "column": 104
+              },
+              "end": {
+                "line": 86,
+                "column": 111
+              }
+            }
+          }
+        ],
+        "raw_sha256": "f72a9e0835cb59557c3667fc0f6c1fae1b897fd81d1c2ef1c8c93f0af2662ce6"
+      },
+      {
+        "tests": 31,
+        "statuses": {
+          "Survived": 4,
+          "Ignored": 6,
+          "CompileError": 7,
+          "Killed": 70
+        },
+        "tests_sha256": "a8e733912ec3dcebd26351f57a2d9cc488c2732b456de6cdfa14ef243146ac64",
+        "raw_file": "E:\\Artifacts\\Spice-simulation-bridge-20261101T162640Z\\bridge-mutations-final\\reports\\reports\\mutation-report.json",
+        "name": "full_followup",
+        "adapter_sha256": "7bf80c8e545ebb8ee2bbbb0a0abece7b623be9dbd717499379bbe98a72795651",
+        "survivors": [
+          {
+            "id": "0",
+            "replacement": "Request!=null||Diagnostics.IsEmpty",
+            "location": {
+              "start": {
+                "line": 15,
+                "column": 26
+              },
+              "end": {
+                "line": 15,
+                "column": 60
+              }
+            }
+          },
+          {
+            "id": "20",
+            "replacement": "limits.MaxNodes<=1",
+            "location": {
+              "start": {
+                "line": 24,
+                "column": 122
+              },
+              "end": {
+                "line": 24,
+                "column": 139
+              }
+            }
+          },
+          {
+            "id": "46",
+            "replacement": "frames+1",
+            "location": {
+              "start": {
+                "line": 49,
+                "column": 23
+              },
+              "end": {
+                "line": 49,
+                "column": 31
+              }
+            }
+          },
+          {
+            "id": "64",
+            "replacement": "!primitive.Supported&&primitive.Value==null",
+            "location": {
+              "start": {
+                "line": 60,
+                "column": 24
+              },
+              "end": {
+                "line": 60,
+                "column": 67
+              }
+            }
+          }
+        ],
+        "raw_sha256": "3b70436f7e6194c4e213e212f61b9abc2cd57f916014d9847b6a908f2483f490"
+      },
+      {
+        "tests": 33,
+        "statuses": {
+          "Ignored": 58,
+          "CompileError": 7,
+          "Killed": 22
+        },
+        "tests_sha256": "7e3632235f055cd9121c1b995c791f02f79869f2953dd837db5cf901865d3d43",
+        "raw_file": "E:\\Artifacts\\Spice-simulation-bridge-20261101T162640Z\\bridge-mutations-character-confirm\\reports\\mutation-report.json",
+        "name": "character_span_confirmation",
+        "adapter_sha256": "7bf80c8e545ebb8ee2bbbb0a0abece7b623be9dbd717499379bbe98a72795651",
+        "survivors": [],
+        "raw_sha256": "10207ac1dfe441be5ffecd6aeb7047687e0d71db1c2ef3827a47bcd3af7569ae"
+      }
+    ],
+    "empty_span_trials": [
+      "bridge-mutations-boundary-followup",
+      "bridge-mutations-boundary-confirm"
+    ],
+    "equivalent_candidates": {
+      "id64": "Supported false iff Value null in current internal extraction; OR to AND preserves guard behavior",
+      "id46": "Unique private frame offset changes but key isolation and published values remain the same under frame bound"
+    },
+    "tool": "Stryker.NET5.0.0 Basic",
+    "scope": "Adapter only. Full follow-up70 killed4surviving; exact char confirmation tests22selected including prior0/20; not a final full-scope score.",
+    "empty_trials_qualified": false
+  },
+  "implementation_commit": "6487691",
+  "platform": "Windows x64",
+  "review": {
+    "accepted_fixes": [
+      "DC prefix restricted to sources; signed DC regression",
+      "resource input path/section/SHA256 provenance",
+      "stale Sphinx prose corrected",
+      "full numerical source/assembly manifest",
+      "captured-local-function coverage gap explicitly disclosed"
+    ],
+    "kind": "Source inspection by AI review agent, not external human review"
+  }
+}

@@ -1,0 +1,366 @@
+{
+  "resources": {
+    "examples": [
+      {
+        "scope": "ngspice",
+        "path": "examples/IHPOpenSourcePDK/19-stage-ro.cir",
+        "diagnostics": {
+          "Code": "resource_io",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\IHPOpenSourcePDK\\19-stage-ro.cir",
+          "Range": {
+            "Start": 39,
+            "Length": 69,
+            "Line": 3,
+            "Column": 1
+          },
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\IHPOpenSourcePDK\\$PDK_ROOT\\$PDK\\libs.tech\\ngspice\\models\\cornerMOSlv.lib"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/IHPOpenSourcePDK/c7552_ann_IHP.net",
+        "diagnostics": {
+          "Code": "resource_parse_budget",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\IHPOpenSourcePDK\\c7552_ann_IHP.net",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\IHPOpenSourcePDK\\c7552_ann_IHP.net"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/IHPOpenSourcePDK/nmos_pmos_PSP103.sp",
+        "diagnostics": {
+          "Code": "denied_path",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\IHPOpenSourcePDK\\nmos_pmos_PSP103.sp",
+          "Range": {
+            "Start": 424,
+            "Length": 95,
+            "Line": 16,
+            "Column": 1
+          },
+          "TargetPath": "D:\\Spice_general\\IHP-Open-PDK\\ihp-sg13g2\\libs.tech\\ngspice\\models\\cornerMOSlv.lib"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/SkywaterOpenSourcePDK/c7552_ann_skywater.net",
+        "diagnostics": {
+          "Code": "resource_parse_budget",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\SkywaterOpenSourcePDK\\c7552_ann_skywater.net",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\SkywaterOpenSourcePDK\\c7552_ann_skywater.net"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/SkywaterOpenSourcePDK/skywater_inverter.net",
+        "diagnostics": {
+          "Code": "denied_path",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\SkywaterOpenSourcePDK\\skywater_inverter.net",
+          "Range": {
+            "Start": 277,
+            "Length": 85,
+            "Line": 7,
+            "Column": 1
+          },
+          "TargetPath": "D:\\Spice_general\\open_pdks\\sky130\\sky130A\\libs.tech\\combined\\sky130.lib.spice"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/klu/Circuits/85/c1355/c1355_ann.net",
+        "diagnostics": {
+          "Code": "resource_parse_budget",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c1355\\c1355_ann.net",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c1355\\c1355_ann.net"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/klu/Circuits/85/c1908/c1908_ann.net",
+        "diagnostics": {
+          "Code": "resource_parse_budget",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c1908\\c1908_ann.net",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c1908\\c1908_ann.net"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/klu/Circuits/85/c2670/c2670_ann.net",
+        "diagnostics": {
+          "Code": "resource_parse_budget",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c2670\\c2670_ann.net",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c2670\\c2670_ann.net"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/klu/Circuits/85/c3540/c3540_ann.net",
+        "diagnostics": {
+          "Code": "resource_parse_budget",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c3540\\c3540_ann.net",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c3540\\c3540_ann.net"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/klu/Circuits/85/c499/c499_ann.net",
+        "diagnostics": {
+          "Code": "resource_parse_budget",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c499\\c499_ann.net",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c499\\c499_ann.net"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/klu/Circuits/85/c5315/c5315_ann.net",
+        "diagnostics": {
+          "Code": "resource_parse_budget",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c5315\\c5315_ann.net",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c5315\\c5315_ann.net"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/klu/Circuits/85/c6288/c6288_ann.net",
+        "diagnostics": {
+          "Code": "resource_parse_budget",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c6288\\c6288_ann.net",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c6288\\c6288_ann.net"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/klu/Circuits/85/c880/c880_ann.net",
+        "diagnostics": {
+          "Code": "resource_parse_budget",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c880\\c880_ann.net",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\klu\\Circuits\\85\\c880\\c880_ann.net"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/optran/HiPass3opamps_optran.cir",
+        "diagnostics": {
+          "Code": "resource_syntax",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\opa1611.lib",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\opa1611.lib"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/optran/TLV6001-test.cir",
+        "diagnostics": {
+          "Code": "resource_syntax",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV6001.LIB",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV6001.LIB"
+        }
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/optran/TLV9002-test.cir",
+        "diagnostics": {
+          "Code": "resource_syntax",
+          "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV9002.lib",
+          "Range": null,
+          "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV9002.lib"
+        }
+      }
+    ],
+    "refused": 86,
+    "diagnostics": [
+      {
+        "Name": "conditional_resources",
+        "Count": 34
+      },
+      {
+        "Name": "resource_syntax",
+        "Count": 15
+      },
+      {
+        "Name": "resource_parse_budget",
+        "Count": 14
+      },
+      {
+        "Name": "denied_path",
+        "Count": 10
+      },
+      {
+        "Name": "resource_io",
+        "Count": 5
+      },
+      {
+        "Name": "end_in_fragment",
+        "Count": 4
+      },
+      {
+        "Name": "invalid_utf8",
+        "Count": 4
+      }
+    ],
+    "resolved": 834
+  },
+  "state": "completed_with_results",
+  "binary_sha256": {
+    "Antlr4.Runtime.Standard.dll": "0440e3d2c5906326e04df87d6a5272192b7d29099901ba4215ca9e0f5dca7591",
+    "Simulator.Syntax.dll": "a799d01b1b1fe91b1fcad9a90976a4b510d5da2f4919ad0f7173c96cf0777b9a",
+    "Simulator.Syntax.Corpus.dll": "9c7ba313b93cb52baaaa696de4c0a9c745019e131a95df6a90cf75ec7ee4be41"
+  },
+  "raw": {
+    "legacy_sha256": "f2e747d8f10d9a8d240e04228918d2e412bead29d649adfa30676e54d213f39e",
+    "directory": "E:\\Artifacts\\Spice-simulation-bridge-20261101T162640Z",
+    "primary_sha256": "3fbfe78f428562c9f6650bbbe002962227060041e72b8bdd71c9ddd49a3fa8d8"
+  },
+  "limitations": [
+    "Resource success/binding is not simulation readiness.",
+    "Compared same 834 decks; expansion adds references, so reference denominators differ.",
+    "4 Latin-1 syntax replays refuse strict UTF-8 resources; no duplicate repository rows counted.",
+    "Source/runtime/provenance manifests and raw resource fingerprints local; bounded data only in Git.",
+    "No Linux/GPU/production or full SPICE qualification."
+  ],
+  "acceptance": {
+    "accepted": 920,
+    "repository_duplicate_rows": 18,
+    "required": 920,
+    "legacy_replay_rows": 22,
+    "legacy_unique": 4,
+    "excluded": 8
+  },
+  "primary": {
+    "elapsed_seconds": 380.6366605,
+    "counts": {
+      "encoding_rejected": 4,
+      "accepted_structure": 916,
+      "syntax_rejected": 8
+    },
+    "inputs": 928,
+    "completed": 928
+  },
+  "phases": {
+    "original_all": {
+      "counts": {
+        "Unsupported": 264,
+        "Deferred": 73070,
+        "Missing": 48,
+        "Invalid": 30,
+        "Ambiguous": 0,
+        "Bound": 3220
+      },
+      "references": 76632.0,
+      "decks": 920,
+      "parameter_status": [
+        {
+          "Name": "deferred_parameters",
+          "Count": 232
+        },
+        {
+          "Name": "evaluated_root_scope",
+          "Count": 35
+        },
+        {
+          "Name": "no_root_parameters_observed",
+          "Count": 646
+        },
+        {
+          "Name": "unsupported_expression",
+          "Count": 7
+        }
+      ]
+    },
+    "expanded_resolved": {
+      "counts": {
+        "Unsupported": 328,
+        "Deferred": 6,
+        "Missing": 66,
+        "Invalid": 30,
+        "Ambiguous": 0,
+        "Bound": 19541
+      },
+      "references": 19971.0,
+      "decks": 834,
+      "parameter_status": [
+        {
+          "Name": "deferred_parameters",
+          "Count": 17
+        },
+        {
+          "Name": "evaluated_root_scope",
+          "Count": 56
+        },
+        {
+          "Name": "no_root_parameters_observed",
+          "Count": 754
+        },
+        {
+          "Name": "unsupported_expression",
+          "Count": 7
+        }
+      ]
+    },
+    "original_resolved": {
+      "counts": {
+        "Unsupported": 250,
+        "Deferred": 15791,
+        "Missing": 48,
+        "Invalid": 30,
+        "Ambiguous": 0,
+        "Bound": 3216
+      },
+      "references": 19335.0,
+      "decks": 834,
+      "parameter_status": [
+        {
+          "Name": "deferred_parameters",
+          "Count": 150
+        },
+        {
+          "Name": "evaluated_root_scope",
+          "Count": 35
+        },
+        {
+          "Name": "no_root_parameters_observed",
+          "Count": 642
+        },
+        {
+          "Name": "unsupported_expression",
+          "Count": 7
+        }
+      ]
+    }
+  },
+  "source_commit": "344cb5b6bb3ca7f72e45ec6fd996eb4ec5823887",
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "203ad24cf31c941554e15d9408fcde64f0c90568d69c922f1f97429b3ecf5540",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "91d8262c9b7bdd150529c044da56a7f2464a0724ab6a9af880267bed490dcff4",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "15c49e1d79e90e0ebf5e0d2336b616e74d44ea06d8b9e1c750f50b1e5b2ec5b2",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "820e0ebbc84ca3e41ddf9e543d911f85f9d22e0cf13685955cf6ec9d07ae47db",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "971d5a42ab90f3321afdad7d4dc0b85f7cce1aa1b9ff37033259cb71cb10eef3",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "093dfadc21e85c14b1184ec338b52e8b6da26fd395bd3b32b0a896e853e91eb1",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "2f39c037dd64bced12afddaaf130d825f18fb685a381f5b6eb8522254726a2fe",
+    "dotnet/Simulator.Syntax.Corpus/InventoryCommand.cs": "e41689a6cf479fc10cc57742fb68296be86eacd52691513dfb88fe8ebd1d8d6b",
+    "dotnet/Simulator.Syntax.Corpus/packages.lock.json": "4788584a824763fed9384acb5ab8ff8b3628d766cec0e0bf5186b0a5be9aaf64",
+    "dotnet/Simulator.Syntax.Corpus/Program.cs": "16901e5cf2d7dbfa3e26fa5a4d8e9110ecf70323349f9366b62575e3c459de0d",
+    "dotnet/Simulator.Syntax.Corpus/Simulator.Syntax.Corpus.csproj": "ac299b6057cf9dd59b1379a136971e5dae66e66dcfec3cd79f7552c9e2974210"
+  },
+  "source_dirty": true
+}

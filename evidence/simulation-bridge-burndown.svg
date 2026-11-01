@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="390" viewBox="0 0 960 390" role="img" aria-labelledby="title desc">
+<title id="title">Spice frontend gate burndown — 2026-11-01</title>
+<desc id="desc">Syntax 920 of 920 valid decks accepted. Resources 834 resolved and 86 refused. Among the same 834 decks, deferred references decrease from 15791 to 6. Binding and simulation have separate denominators.</desc>
+<rect width="960" height="390" fill="#102033"/>
+<g font-family="Segoe UI, sans-serif" fill="#f0f5fc">
+<text x="32" y="42" font-size="25">Frontend qualification: remaining gates</text>
+<text x="32" y="73" font-size="15">2026-11-01 · Windows CPU · separate stages, separate denominators</text>
+<text x="32" y="118">Valid syntax decks</text><rect x="260" y="98" width="500" height="28" fill="#35b88e"/><text x="780" y="118">920 / 920</text>
+<text x="32" y="169">Resource-resolved decks</text><rect x="260" y="149" width="453" height="28" fill="#35b88e"/><rect x="713" y="149" width="47" height="28" fill="#ed9c48"/><text x="780" y="169">834 / 920</text>
+<text x="260" y="198" font-size="14">86 refused: explicit limits/errors; no numerical pass implied</text>
+<text x="32" y="239">Deferred references</text><text x="260" y="239" font-size="23">15,791 → 6</text><text x="470" y="239" font-size="14">same 834 decks, before / after expansion</text>
+<text x="32" y="280">Named DC comparisons</text><text x="260" y="280" font-size="23">12 / 12</text><text x="470" y="280" font-size="14">4 fixtures × 3 providers; 24 Rust solves</text>
+<text x="32" y="330" font-size="14">Expansion changes reference counts: 19,335 → 19,971. Binding is not simulation readiness.</text>
+<text x="32" y="357" font-size="14">No whole-corpus numerical, model/AC/transient bridge, Linux, GPU or production qualification.</text>
+</g></svg>

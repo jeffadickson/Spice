@@ -21,12 +21,12 @@ Root/global0 uses reference index0. All other nodes/element IDs use injective
 frame/name encoding; root-node lookup is returned to callers. No ground aliases,
 .global, model lowering, behavioral sources, AC or transient bridge claim.
 
-- [ ] Add failing primitive/scalar/bridge tests; run missing-API baseline.
-- [ ] Implement generated metadata and pure R/V/I operating-point lowering.
-- [ ] Execute typed Rust requests and independent named ngspice comparisons.
-- [ ] Add resource-backed corpus rebinding as a distinct opt-in profile; report
+- [x] Add failing primitive/scalar/bridge tests; run missing-API baseline.
+- [x] Implement generated metadata and pure R/V/I operating-point lowering.
+- [x] Execute typed Rust requests and independent named ngspice comparisons.
+- [x] Add resource-backed corpus rebinding as a distinct opt-in profile; report
       resource failures separately from syntax/binding/parameter/support.
-- [ ] Collect scoped coverage, library mutation/property/negative evidence,
+- [x] Collect scoped coverage, library mutation/property/negative evidence,
       StrictDoc and docs; fresh review, fixes, small commits and normal push.
 
 All new artifacts on E:, no CI or endurance soak; preserve main's unrelated work.
@@ -35,3 +35,6 @@ Ruling: the first bridge requires a globally definite catalog. Existing global
 resource/conditional deferral remains conservative even in unused definitions;
 only inactive non-declaration device bodies are ignored. Reachability-aware
 conditional/declaration narrowing remains a later qualification profile.
+
+Evidence: docs/simulation-bridge-verification.md and issue #15. Final verification
+publication follows the implemented checkpoint; all requirements remain Draft.
