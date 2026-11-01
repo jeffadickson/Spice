@@ -14,3 +14,5 @@
 - When resuming an active qualification goal, inspect the current worktree, requirements, evidence, and handoff prompt before acting. Preserve the goal's full scope, make concrete verified progress, and leave it active unless completion or the documented blocked audit is proven.
 - Maintain the repository as a careful long-term steward: prefer small reversible commits, keep the handoff material accurate, and thank contributors respectfully for their guidance and trust.
 - Never commit build outputs, runtime environments, credentials, downloaded native binaries or large fuzz/benchmark corpora. Record reproducible acquisition instructions and immutable hashes when those assets become necessary.
+
+- Store new build/generated outputs, coverage, mutation/fuzz/soak data, downloaded tools and temporary test data under the existing E: artifact root on this Windows host (CODEX_ARTIFACT_ROOT when configured). Use a unique checkout/run subtree and supported tool output settings. Keep source on its existing filesystem, preserve active/unknown artifacts, and do not assume NTFS capabilities on exFAT.

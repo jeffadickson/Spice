@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="610" viewBox="0 0 1000 610" role="img" aria-labelledby="title desc">
+<title id="title">Semantic frontend obligations — November 1, 2026</title>
+<desc id="desc">All920 required valid inputs parse. Of76632 observed references,3220 bind and73412 remain deferred, unsupported, missing or invalid. Stage denominators are independent and do not indicate simulation support.</desc>
+<rect width="1000" height="610" fill="#f7fafc"/>
+<g font-family="Segoe UI,Arial,sans-serif" fill="#132d46">
+<text x="40" y="48" font-size="27" font-weight="700">Semantic frontend: current obligations</text>
+<text x="40" y="77" font-size="15">2026-11-01 · independent stage denominators · no numerical qualification implied</text>
+<text x="40" y="122" font-size="20" font-weight="600">Syntax gate:920 /920 required inputs accepted</text>
+<rect x="40" y="141" width="920" height="28" rx="5" fill="#148568"/>
+<text x="40" y="193" font-size="15">928 inventoried ·8 adjudicated exclusions ·4 explicit legacy byte replays</text>
+<text x="40" y="240" font-size="20" font-weight="600">Observed references:76632</text>
+<rect x="40" y="258" width="920" height="34" rx="4" fill="#dba74a"/>
+<rect x="40" y="258" width="38.66" height="34" fill="#148568"/>
+<rect x="955.63" y="258" width="4.37" height="34" fill="#bf4c43"/>
+<text x="40" y="320" font-size="16">3220 bound</text><text x="250" y="320" font-size="16">73070 deferred</text>
+<text x="535" y="320" font-size="16">264 unsupported ·48 missing ·30 invalid</text>
+<text x="40" y="352" font-size="15">Largest blocker: unresolved resources/conditions;71610 deferred X references.</text>
+<text x="40" y="397" font-size="20" font-weight="600">Input binding sets (denominator920)</text>
+<text x="40" y="429" font-size="17">190 fully bound observed sets ·351 incomplete ·379 without observed references</text>
+<text x="40" y="472" font-size="20" font-weight="600">Observed root parameters (denominator920)</text>
+<text x="40" y="504" font-size="17">35 evaluated ·232 deferred ·7 unsupported ·646 without root parameters</text>
+<text x="40" y="550" font-size="15">Includes remain unopened in this observer. Resource loading is separately qualified.</text>
+<text x="40" y="577" font-size="14">Unused/conditional declarations are included. This is a snapshot, not a solve-success burndown.</text>
+</g></svg>

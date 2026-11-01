@@ -1,0 +1,169 @@
+{
+  "status": "passed",
+  "oracle": "ngspice process; analytical resistor divider and generated-tree parameter values",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "ngspice_version": "******\r\n** ngspice-47\u002B : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n",
+  "observations": [
+    {
+      "name": "parameters",
+      "signal": "milli",
+      "expected": 0.001,
+      "actual": 0.001,
+      "tolerance": 1.001E-12,
+      "input_sha256": "106fcc73c9e0945fc450cddc95e405943afd0405926b60656c171ae673532609",
+      "log_sha256": "831f1df4af0c6f70e808bfcfd0da8ab34782aef1d1f030a3745dfe5335488206"
+    },
+    {
+      "name": "parameters",
+      "signal": "mega",
+      "expected": 1000000,
+      "actual": 1000000,
+      "tolerance": 1.000001E-06,
+      "input_sha256": "106fcc73c9e0945fc450cddc95e405943afd0405926b60656c171ae673532609",
+      "log_sha256": "831f1df4af0c6f70e808bfcfd0da8ab34782aef1d1f030a3745dfe5335488206"
+    },
+    {
+      "name": "parameters",
+      "signal": "chain",
+      "expected": 64,
+      "actual": 64,
+      "tolerance": 6.5E-11,
+      "input_sha256": "106fcc73c9e0945fc450cddc95e405943afd0405926b60656c171ae673532609",
+      "log_sha256": "831f1df4af0c6f70e808bfcfd0da8ab34782aef1d1f030a3745dfe5335488206"
+    },
+    {
+      "name": "parameters",
+      "signal": "unary",
+      "expected": -4,
+      "actual": -4,
+      "tolerance": 5E-12,
+      "input_sha256": "106fcc73c9e0945fc450cddc95e405943afd0405926b60656c171ae673532609",
+      "log_sha256": "831f1df4af0c6f70e808bfcfd0da8ab34782aef1d1f030a3745dfe5335488206"
+    },
+    {
+      "name": "parameters",
+      "signal": "logic",
+      "expected": 1,
+      "actual": 1,
+      "tolerance": 2E-12,
+      "input_sha256": "106fcc73c9e0945fc450cddc95e405943afd0405926b60656c171ae673532609",
+      "log_sha256": "831f1df4af0c6f70e808bfcfd0da8ab34782aef1d1f030a3745dfe5335488206"
+    },
+    {
+      "name": "parameters",
+      "signal": "choice",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 1E-12,
+      "input_sha256": "106fcc73c9e0945fc450cddc95e405943afd0405926b60656c171ae673532609",
+      "log_sha256": "831f1df4af0c6f70e808bfcfd0da8ab34782aef1d1f030a3745dfe5335488206"
+    },
+    {
+      "name": "parameters",
+      "signal": "out",
+      "expected": 0.75,
+      "actual": 0.75,
+      "tolerance": 1.75E-12,
+      "input_sha256": "106fcc73c9e0945fc450cddc95e405943afd0405926b60656c171ae673532609",
+      "log_sha256": "831f1df4af0c6f70e808bfcfd0da8ab34782aef1d1f030a3745dfe5335488206"
+    },
+    {
+      "name": "nested",
+      "signal": "nested",
+      "expected": 24,
+      "actual": 24,
+      "tolerance": 2.5E-11,
+      "input_sha256": "d340e9251e926f6f9a92244fecd3782eb823ad4de7b4d0713974499fbdb4ba94",
+      "log_sha256": "da886d67705f8605e80cea86c71466799a6220432a5397564c607f435fac8b2b"
+    },
+    {
+      "name": "port-order",
+      "signal": "portorder",
+      "expected": -2,
+      "actual": -2,
+      "tolerance": 3E-12,
+      "input_sha256": "ae1581b656b442c8841da6a3b160d19d99ff14d96667320753026c615a9e9e13",
+      "log_sha256": "0fbe76e21682c5e19b7571c9e7b37e21da8a29f5af4e1e0932be9e9afeb07cee"
+    },
+    {
+      "name": "zero-port",
+      "signal": "zero",
+      "expected": 1,
+      "actual": 1,
+      "tolerance": 2E-12,
+      "input_sha256": "f61967af855f57df7b7b6590f7875c43453607357dae6866ce640f6e917595bc",
+      "log_sha256": "337f85596c597fe7f1b95288a4acfbd9b665d6ffc6b9e3b8858cc94475a53c99"
+    },
+    {
+      "name": "arity",
+      "expected_binding": "Invalid",
+      "actual_ngspice_exit": 1,
+      "input_sha256": "a9ac0e656f58188c7d1a5acd1852db78c08c8db1ad5829e7bf95ee33c163d5b3",
+      "log_sha256": "40e44f6ed9cfdbf6c23624f692b545cb3a102818f001b4a5b07e7ec09d79c49f"
+    },
+    {
+      "name": "missing",
+      "expected_binding": "Missing",
+      "actual_ngspice_exit": 1,
+      "input_sha256": "8f8aec7fb21a89749d5b1ed06f97cc0076e1c4526f5c9178cc2e242b52667950",
+      "log_sha256": "9ac3debb981885c0dc8d2d6123a8ffa8d9c32a074493118bbee1dafbfbacd86d"
+    },
+    {
+      "name": "resources-original",
+      "signal": "resource",
+      "expected": 0.75,
+      "actual": 0.75,
+      "tolerance": 1.75E-12,
+      "input_sha256": "88a72776f5bfd898391dbca8728e725d366671b118ed9b19690c97f9930b3868",
+      "log_sha256": "9328384f8f077ace85e93a59a87d3f5093e90ac774a0311ebd75f0b9f65fadf5"
+    },
+    {
+      "name": "resources-expanded",
+      "signal": "resource",
+      "expected": 0.75,
+      "actual": 0.75,
+      "tolerance": 1.75E-12,
+      "input_sha256": "be70825f800d4f49f6da7bb3d9f9fe454b2db992348e5e14c0d9ecee31f6e77b",
+      "log_sha256": "9328384f8f077ace85e93a59a87d3f5093e90ac774a0311ebd75f0b9f65fadf5"
+    }
+  ],
+  "source_files": [
+    {
+      "Path": "E:\\Artifacts\\Spice-semantics-20261101T151459Z\\reviewed-oracles\\resources\\main.cir",
+      "Section": null,
+      "Sha256": "88a72776f5bfd898391dbca8728e725d366671b118ed9b19690c97f9930b3868"
+    },
+    {
+      "Path": "E:\\Artifacts\\Spice-semantics-20261101T151459Z\\reviewed-oracles\\resources\\settings.inc",
+      "Section": null,
+      "Sha256": "2211567bc90b6629ad6e8279115b38f35977cf72da99d0899ce6c778cd642f04"
+    },
+    {
+      "Path": "E:\\Artifacts\\Spice-semantics-20261101T151459Z\\reviewed-oracles\\resources\\cells.lib",
+      "Section": "typical",
+      "Sha256": "2f124881453271ea541de4d28a41c4f1e18524447e14f45e859d900c8c79efcd"
+    }
+  ],
+  "resource_inputs": {
+    "main.cir": "88a72776f5bfd898391dbca8728e725d366671b118ed9b19690c97f9930b3868",
+    "settings.inc": "2211567bc90b6629ad6e8279115b38f35977cf72da99d0899ce6c778cd642f04",
+    "cells.lib": "2f124881453271ea541de4d28a41c4f1e18524447e14f45e859d900c8c79efcd",
+    "unused.inc": "be524c1bfa2c590ea2e5f3fdf6f304c874b4dfb8e31af96ff8e7c4651449a6a0"
+  },
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "83aaa3bf4fc1d30e48bc9d0dc7965fa8c353e000515cab1f49cc49ff033e67e8",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "97c877e5d4dd3e7ab9c500ea011a4f424aa7dd09dc4f4cd69fb7609cab941887",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "188f2a66e79ede8cb1501ee5588b30770f1f010ad09843b6104915f3e23fa3da",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "3ed694a4f0dfb0274bc0d225f59d0e316c29a441ff0f2b508039908623bbbb69",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "1e0a15b6d8c908a3427aebb35a875cdf6236cd9835413271784aaf2b3087d54b",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "7cd166dc63e5084863e934bb8f64d3e28da797835b59418e028751a152d64857",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "2f39c037dd64bced12afddaaf130d825f18fb685a381f5b6eb8522254726a2fe",
+    "scripts/QualifySemanticFrontend.cs": "f624bf528c1993b6e999b3c9af21c4b25f329a9a754ccd67567f3dac1e2a90b7"
+  },
+  "limitations": [
+    "Named finite semantic profiles, not full SPICE/model or Rust numerical qualification",
+    "Windows execution; no Linux/reparse-point filesystem race qualification",
+    "Product path never executes the trusted fixture control commands",
+    "Observed ngspice opens includes in unselected library sections; this resolver intentionally leaves them unopened"
+  ]
+}

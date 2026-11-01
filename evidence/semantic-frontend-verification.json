@@ -1,0 +1,2662 @@
+{
+  "base_commit": "d9a01d5",
+  "implementation_checkpoints": [
+    "d122c35",
+    "fdf084a",
+    "79adc9d"
+  ],
+  "stage": "Bounded instance binding, parameter environments and opt-in resource resolution",
+  "source_sha256": {
+    "AGENTS.md": "473ec1139d5d8579af411a71d76090943a9ff71e65af7d9c5b4afad61a04a065",
+    "compat/ngspice/semantic-nested.cir": "d340e9251e926f6f9a92244fecd3782eb823ad4de7b4d0713974499fbdb4ba94",
+    "compat/ngspice/semantic-parameters.cir": "106fcc73c9e0945fc450cddc95e405943afd0405926b60656c171ae673532609",
+    "compat/ngspice/semantic-port-order.cir": "ae1581b656b442c8841da6a3b160d19d99ff14d96667320753026c615a9e9e13",
+    "compat/ngspice/semantic-zero-port.cir": "f61967af855f57df7b7b6590f7875c43453607357dae6866ce640f6e917595bc",
+    "docs/assessments/semantic-frontend-burndown.svg": "6c2174d2dbbdc7a058bcfe62e5d1ca705a92958f4e3eb0c79750dd0bcdcd8394",
+    "docs/declaration-catalog.md": "16a85c12a8359eb859c03f30563aac8fc8000869775c593253afc3b226cbb16d",
+    "docs/engineering/index.rst": "f759244a5819f07481fabcebf4d53115c40373fcf7ed1094bb8ce1e9c748ab6c",
+    "docs/engineering/semantic.rst": "296600edacefd6836bd99e9790d7d06ed7bea94babb1fcf4b49471e4f09d6c18",
+    "docs/semantic-binding-plan.md": "fa181649212c435a2d582790058da90886e3b34b54cecf3ed47ab0b814adbd88",
+    "docs/semantic-elaboration.sdoc": "b42cdcf09bc8b3176f1c8a37071f3d89a743f7e32e2229c680a9a7aae7786f92",
+    "docs/semantic-frontend-plan.md": "483d4de340f6c7e4d5deb7ab1062ad94bc583e25c8e9a315dc00762ed0fa2e02",
+    "docs/semantic-frontend-results.md": "95febe0a7f3c3a6ce029bd27d41d6fe6dc4717878056f2297a3ba3c943ad7df5",
+    "docs/semantic-frontend.md": "992ba379e39aa2fc29bf78626ec43f4f4c3f507b374cc270ad9d783a714d87b4",
+    "dotnet/Simulator.Syntax.Corpus/Program.cs": "fd8702bb6a0b7ea96522d11921164eed402fcef50fa939f2a157a9d7769f2fcf",
+    "dotnet/Simulator.Syntax.Tests/InstanceBindingTests.cs": "97feba210503be1b7ca19345ef8a945e1090aa6b31a401ab8a8f93f5b08e5f6f",
+    "dotnet/Simulator.Syntax.Tests/ParameterEvaluationTests.cs": "470821b4983307d28dfca4f6a19dfb24b4999140d3c87ff7cb5748dc28732843",
+    "dotnet/Simulator.Syntax.Tests/ResourceResolutionTests.cs": "229480bedb9bcb5ef7ac6b5e9671b3b637326698f2f99714f502847aa1ae5827",
+    "dotnet/Simulator.Syntax.Tests/SemanticSummaryTests.cs": "6109198265c0a98985594b5eb05ea34066f6c5ba9404d6878e797038640ab37b",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "1e0a15b6d8c908a3427aebb35a875cdf6236cd9835413271784aaf2b3087d54b",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "7cd166dc63e5084863e934bb8f64d3e28da797835b59418e028751a152d64857",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "15c49e1d79e90e0ebf5e0d2336b616e74d44ea06d8b9e1c750f50b1e5b2ec5b2",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "093dfadc21e85c14b1184ec338b52e8b6da26fd395bd3b32b0a896e853e91eb1",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "2f39c037dd64bced12afddaaf130d825f18fb685a381f5b6eb8522254726a2fe",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "83aaa3bf4fc1d30e48bc9d0dc7965fa8c353e000515cab1f49cc49ff033e67e8",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "97c877e5d4dd3e7ab9c500ea011a4f424aa7dd09dc4f4cd69fb7609cab941887",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "188f2a66e79ede8cb1501ee5588b30770f1f010ad09843b6104915f3e23fa3da",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "3ed694a4f0dfb0274bc0d225f59d0e316c29a441ff0f2b508039908623bbbb69",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "a76d9625d0d68497ca2c04bbee5caab9d673e2122998c5f0380f546c9a4107b3",
+    "examples/SemanticFrontend.cs": "8672cafd33e579fbcbbc600ffd3a1776ea25faa0f57f1125de45c733fa7594cd",
+    "prompt.md": "5d2a3426d044c375a6ae0e0444eb968bac8f72fac79706fd017531142eeaaa84",
+    "scripts/EngineeringDocs.cs": "c5a6ffa5d68cdd46b3763b8144f4ea9b45d9438e91c01ba21d2d8bc05600ecdd",
+    "scripts/Initialize-SyntaxParser.ps1": "ff4a6583b447d9ab50fbace18da7b030230e5031b50699057b83b01bf486df6e",
+    "scripts/QualifySemanticFrontend.cs": "f624bf528c1993b6e999b3c9af21c4b25f329a9a754ccd67567f3dac1e2a90b7",
+    "scripts/Run-SemanticMutations.ps1": "45987e533da160f6dc87c959be60fb3ff3b588db30b89ef3c647354fe743a6c2",
+    "scripts/Run-SyntaxCorpus.ps1": "8645214d163e5ce50337789970e4b43ac787deac91f7debade9c6773a26b3984"
+  },
+  "tests": {
+    "skip": "Link creation unavailable on configured exFAT artifact drive",
+    "scope": "Simulator.Syntax.Tests",
+    "new_properties": {
+      "replays": [
+        "801,20261101",
+        "802,20261101",
+        "803,20261101"
+      ],
+      "framework": "FsCheck.Xunit 3.5.0",
+      "cases": 384
+    },
+    "long_fuzz": "No new long-duration or coverage-guided fuzz campaign",
+    "negative_and_malformed": "Existing syntax fuzz/property suite plus semantic cycles, missing values, wrong catalogs, resource caps, UTF8, paths, sections, EOF and source-map checks",
+    "skipped": 1,
+    "passed": 339,
+    "log_sha256": "5e2acd4d66eae9113d0fc230824c1aeac92de691260d909704674408a31ba88c",
+    "failed": 0
+  },
+  "coverage": {
+    "report_sha256": "56d100d249107411bc391545921bb414bfa9ec5ed2bd62d853da93797e430851",
+    "summary": {
+      "generatedon": "2026-11-01T16:11:23Z",
+      "parser": "Cobertura",
+      "assemblies": 1,
+      "classes": 44,
+      "files": 12,
+      "coveredlines": 739,
+      "uncoveredlines": 11,
+      "coverablelines": 750,
+      "totallines": 1215,
+      "linecoverage": 98.5,
+      "coveredbranches": 883,
+      "totalbranches": 1016,
+      "branchcoverage": 86.9,
+      "coveredmethods": 138,
+      "fullcoveredmethods": 131,
+      "totalmethods": 138,
+      "methodcoverage": 100,
+      "fullmethodcoverage": 94.9
+    },
+    "scope": "Handwritten Simulator.Syntax, excluding Simulator.Syntax.Generated.*; full339-test suite",
+    "tool": "Coverlet collector10.1.0 + ReportGenerator5.5.11",
+    "unmeasured": [
+      "Corpus CLI and wrappers",
+      "Oracle/example helper coverage",
+      "Linux and link-creation path on exFAT"
+    ]
+  },
+  "requirements": {
+    "parent_relations": 303,
+    "unique_ids": 315,
+    "status": "Draft requirements with scoped evidence; parsing is not broad behavioral closure",
+    "report_sha256": "d73bbf0bcde3c557e983121c86a1eb1bd3cb8a1b22e84e98ff7f520af8442163",
+    "parser": {
+      "strictdoc_version": "0.30.4",
+      "documents": 20
+    }
+  },
+  "oracles": {
+    "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "checks": 14,
+    "limitations": [
+      "Named finite semantic profiles, not full SPICE/model or Rust numerical qualification",
+      "Windows execution; no Linux/reparse-point filesystem race qualification",
+      "Product path never executes the trusted fixture control commands",
+      "Observed ngspice opens includes in unselected library sections; this resolver intentionally leaves them unopened"
+    ],
+    "ngspice_version": "******\r\n** ngspice-47+ : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n",
+    "report_sha256": "92436599afe1aff98bfa67fcbfe84ef2fbfefa72e74d5f2f36e2391888c0a21b"
+  },
+  "mutations": [
+    {
+      "run": "binding-mutations",
+      "note": "Initial guard/profile tests",
+      "tool": "Stryker.NET 5.0.0 Basic",
+      "report_sha256": "557bab70732041ef21263eb0421c515c47818d2587a818131cb4666a1ff50c04",
+      "framework_universe_counts": {
+        "CompileError": 82,
+        "Ignored": 268,
+        "Killed": 33,
+        "NoCoverage": 5,
+        "Survived": 10
+      },
+      "selected_file_counts": {
+        "CompileError": 18,
+        "Ignored": 8,
+        "Killed": 33,
+        "NoCoverage": 5,
+        "Survived": 10
+      },
+      "source_sha256": {
+        "InstanceBinding.cs": "bddb2c70947eae7803d1188d374d325da72cd380c356752418d4c4fb21add6cf",
+        "InstanceExtraction.cs": "97c877e5d4dd3e7ab9c500ea011a4f424aa7dd09dc4f4cd69fb7609cab941887"
+      },
+      "open": [
+        {
+          "file": "InstanceBinding.cs",
+          "id": "315",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "g.Count()>=1",
+          "location": {
+            "start": {
+              "line": 44,
+              "column": 148
+            },
+            "end": {
+              "line": 44,
+              "column": 159
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "322",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "depth>=128",
+          "location": {
+            "start": {
+              "line": 55,
+              "column": 16
+            },
+            "end": {
+              "line": 55,
+              "column": 25
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "323",
+          "status": "NoCoverage",
+          "mutator": "Block removal mutation",
+          "replacement": "{}",
+          "location": {
+            "start": {
+              "line": 55,
+              "column": 26
+            },
+            "end": {
+              "line": 55,
+              "column": 101
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "327",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "depth-1",
+          "location": {
+            "start": {
+              "line": 61,
+              "column": 56
+            },
+            "end": {
+              "line": 61,
+              "column": 63
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "329",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "!header.Supported&&header.Positional.IsEmpty",
+          "location": {
+            "start": {
+              "line": 69,
+              "column": 12
+            },
+            "end": {
+              "line": 69,
+              "column": 56
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "339",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "arity+1-(header.Family==\"W\"?1:0)",
+          "location": {
+            "start": {
+              "line": 87,
+              "column": 42
+            },
+            "end": {
+              "line": 87,
+              "column": 74
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "343",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "ambiguous&&candidates.Count>1",
+          "location": {
+            "start": {
+              "line": 93,
+              "column": 12
+            },
+            "end": {
+              "line": 93,
+              "column": 41
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "344",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "candidates.Count<1",
+          "location": {
+            "start": {
+              "line": 93,
+              "column": 23
+            },
+            "end": {
+              "line": 93,
+              "column": 41
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "347",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "i-1",
+          "location": {
+            "start": {
+              "line": 98,
+              "column": 138
+            },
+            "end": {
+              "line": 98,
+              "column": 141
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "352",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "model is not \"nmos\" or \"pmos\"",
+          "location": {
+            "start": {
+              "line": 106,
+              "column": 56
+            },
+            "end": {
+              "line": 106,
+              "column": 81
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "354",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "model is not \"njf\" or \"pjf\"",
+          "location": {
+            "start": {
+              "line": 106,
+              "column": 87
+            },
+            "end": {
+              "line": 106,
+              "column": 110
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "356",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "model!=\"sw\"",
+          "location": {
+            "start": {
+              "line": 106,
+              "column": 116
+            },
+            "end": {
+              "line": 106,
+              "column": 127
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "357",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "model!=\"csw\"",
+          "location": {
+            "start": {
+              "line": 106,
+              "column": 133
+            },
+            "end": {
+              "line": 106,
+              "column": 145
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "InstanceExtraction.cs",
+          "id": "375",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "i<=card.ChildCount",
+          "location": {
+            "start": {
+              "line": 30,
+              "column": 21
+            },
+            "end": {
+              "line": 30,
+              "column": 38
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceExtraction.cs",
+          "id": "383",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "n<=context.ChildCount",
+          "location": {
+            "start": {
+              "line": 35,
+              "column": 30
+            },
+            "end": {
+              "line": 35,
+              "column": 50
+            }
+          },
+          "reason": null
+        }
+      ],
+      "limitations": "Source snapshots and spans differ; no combined or whole-project mutation score. Ignored/compile-error/no-coverage/timeout outcomes are not kills."
+    },
+    {
+      "run": "binding-strengthened-mutations",
+      "note": "Added depth/switch/ordinal/ambiguity tests",
+      "tool": "Stryker.NET 5.0.0 Basic",
+      "report_sha256": "2cbc3023d0ffaeb5ab32b475bb955630427a6d989368df28397cd89f7404890c",
+      "framework_universe_counts": {
+        "CompileError": 94,
+        "Ignored": 369,
+        "Killed": 41,
+        "NoCoverage": 3,
+        "Survived": 4
+      },
+      "selected_file_counts": {
+        "CompileError": 18,
+        "Ignored": 8,
+        "Killed": 41,
+        "NoCoverage": 3,
+        "Survived": 4
+      },
+      "source_sha256": {
+        "InstanceBinding.cs": "b2f45df76bf43e7ddd14bdc592603e2b8e59ead4b147d655a4a0f609e010a785",
+        "InstanceExtraction.cs": "97c877e5d4dd3e7ab9c500ea011a4f424aa7dd09dc4f4cd69fb7609cab941887"
+      },
+      "open": [
+        {
+          "file": "InstanceBinding.cs",
+          "id": "315",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "g.Count()>=1",
+          "location": {
+            "start": {
+              "line": 44,
+              "column": 148
+            },
+            "end": {
+              "line": 44,
+              "column": 159
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "347",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "queried||!foundName",
+          "location": {
+            "start": {
+              "line": 96,
+              "column": 39
+            },
+            "end": {
+              "line": 96,
+              "column": 58
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "352",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "model is not \"nmos\" or \"pmos\"",
+          "location": {
+            "start": {
+              "line": 108,
+              "column": 56
+            },
+            "end": {
+              "line": 108,
+              "column": 81
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "354",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "model is not \"njf\" or \"pjf\"",
+          "location": {
+            "start": {
+              "line": 108,
+              "column": 87
+            },
+            "end": {
+              "line": 108,
+              "column": 110
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "InstanceBinding.cs",
+          "id": "356",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "model!=\"sw\"",
+          "location": {
+            "start": {
+              "line": 108,
+              "column": 116
+            },
+            "end": {
+              "line": 108,
+              "column": 127
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "InstanceExtraction.cs",
+          "id": "375",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "i<=card.ChildCount",
+          "location": {
+            "start": {
+              "line": 30,
+              "column": 21
+            },
+            "end": {
+              "line": 30,
+              "column": 38
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "InstanceExtraction.cs",
+          "id": "383",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "n<=context.ChildCount",
+          "location": {
+            "start": {
+              "line": 35,
+              "column": 30
+            },
+            "end": {
+              "line": 35,
+              "column": 50
+            }
+          },
+          "reason": null
+        }
+      ],
+      "limitations": "Source snapshots and spans differ; no combined or whole-project mutation score. Ignored/compile-error/no-coverage/timeout outcomes are not kills."
+    },
+    {
+      "run": "parameter-mutations-retry",
+      "note": "Frozen initial parameter profile before final operator/ownership boundary expansions",
+      "tool": "Stryker.NET 5.0.0 Basic",
+      "report_sha256": "f131e3c38243faa8b0fbf7289a7bd1eb40f90ee0f6ebd158ed2bb287c6622f4b",
+      "framework_universe_counts": {
+        "CompileError": 136,
+        "Ignored": 428,
+        "Killed": 50,
+        "NoCoverage": 22,
+        "Survived": 25
+      },
+      "selected_file_counts": {
+        "CompileError": 16,
+        "Ignored": 13,
+        "Killed": 50,
+        "NoCoverage": 22,
+        "Survived": 25
+      },
+      "source_sha256": {
+        "ParameterEvaluator.cs": "5b7636ee72811557e06cd570773f9ee1a035bd0f06b37bc5d356152ba00a8385"
+      },
+      "open": [
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "397",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "call.Status!=BindingStatus.Bound&&call.Header.Family!=\"X\"",
+          "location": {
+            "start": {
+              "line": 34,
+              "column": 12
+            },
+            "end": {
+              "line": 34,
+              "column": 69
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "401",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "!caller.Success||!ReferenceEquals(caller.Catalog,catalog)||caller.ScopeId!=call.Header.ScopeId||!caller.Environments.TryGetValue(call.Header.ScopeId,out var callerValues)||!ReferenceEquals(callerValues,caller.Values)&&caller.Values.Any(p=>!double.IsFinite(p.Value))",
+          "location": {
+            "start": {
+              "line": 36,
+              "column": 12
+            },
+            "end": {
+              "line": 36,
+              "column": 277
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "404",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "!caller.Success||!ReferenceEquals(caller.Catalog,catalog)&&caller.ScopeId!=call.Header.ScopeId",
+          "location": {
+            "start": {
+              "line": 36,
+              "column": 12
+            },
+            "end": {
+              "line": 36,
+              "column": 106
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "405",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "!caller.Success&&!ReferenceEquals(caller.Catalog,catalog)",
+          "location": {
+            "start": {
+              "line": 36,
+              "column": 12
+            },
+            "end": {
+              "line": 36,
+              "column": 69
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "411",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "p.ScopeId!=scope",
+          "location": {
+            "start": {
+              "line": 43,
+              "column": 42
+            },
+            "end": {
+              "line": 43,
+              "column": 58
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "415",
+          "status": "NoCoverage",
+          "mutator": "Null coalescing mutation (remove left)",
+          "replacement": "parameter.Name",
+          "location": {
+            "start": {
+              "line": 46,
+              "column": 62
+            },
+            "end": {
+              "line": 46,
+              "column": 84
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "417",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "scopeId<0&&scopeId>=catalog.Scopes.Length",
+          "location": {
+            "start": {
+              "line": 53,
+              "column": 12
+            },
+            "end": {
+              "line": 53,
+              "column": 53
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "421",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "scopeId>catalog.Scopes.Length",
+          "location": {
+            "start": {
+              "line": 53,
+              "column": 23
+            },
+            "end": {
+              "line": 53,
+              "column": 53
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "434",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "++count>=4096",
+          "location": {
+            "start": {
+              "line": 79,
+              "column": 20
+            },
+            "end": {
+              "line": 79,
+              "column": 32
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "442",
+          "status": "Survived",
+          "mutator": "Null coalescing mutation (remove left)",
+          "replacement": "\"\"",
+          "location": {
+            "start": {
+              "line": 92,
+              "column": 62
+            },
+            "end": {
+              "line": 92,
+              "column": 72
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "446",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "++depth>=64",
+          "location": {
+            "start": {
+              "line": 98,
+              "column": 20
+            },
+            "end": {
+              "line": 98,
+              "column": 30
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "449",
+          "status": "Survived",
+          "mutator": "Block removal mutation",
+          "replacement": "{}",
+          "location": {
+            "start": {
+              "line": 101,
+              "column": 24
+            },
+            "end": {
+              "line": 101,
+              "column": 54
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "452",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "value.Length>=4096",
+          "location": {
+            "start": {
+              "line": 115,
+              "column": 12
+            },
+            "end": {
+              "line": 115,
+              "column": 29
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "455",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "value.Length>2",
+          "location": {
+            "start": {
+              "line": 116,
+              "column": 12
+            },
+            "end": {
+              "line": 116,
+              "column": 27
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "457",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "value[0]=='{'||value[^1]=='}'",
+          "location": {
+            "start": {
+              "line": 116,
+              "column": 31
+            },
+            "end": {
+              "line": 116,
+              "column": 60
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "458",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "value[0]!='{'",
+          "location": {
+            "start": {
+              "line": 116,
+              "column": 31
+            },
+            "end": {
+              "line": 116,
+              "column": 44
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "459",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "value[^1]!='}'",
+          "location": {
+            "start": {
+              "line": 116,
+              "column": 46
+            },
+            "end": {
+              "line": 116,
+              "column": 60
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "460",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "value[0]=='\\''||value[^1]=='\\''",
+          "location": {
+            "start": {
+              "line": 116,
+              "column": 64
+            },
+            "end": {
+              "line": 116,
+              "column": 95
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "466",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "++nodes>1024&&depth>64",
+          "location": {
+            "start": {
+              "line": 127,
+              "column": 16
+            },
+            "end": {
+              "line": 127,
+              "column": 38
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "468",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "++nodes>=1024",
+          "location": {
+            "start": {
+              "line": 127,
+              "column": 16
+            },
+            "end": {
+              "line": 127,
+              "column": 28
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "470",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "depth>=64",
+          "location": {
+            "start": {
+              "line": 127,
+              "column": 30
+            },
+            "end": {
+              "line": 127,
+              "column": 38
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "471",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "depth-1",
+          "location": {
+            "start": {
+              "line": 128,
+              "column": 82
+            },
+            "end": {
+              "line": 128,
+              "column": 89
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "476",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "Child(0)!=0",
+          "location": {
+            "start": {
+              "line": 133,
+              "column": 92
+            },
+            "end": {
+              "line": 133,
+              "column": 103
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "477",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "node.identifier()!=null||node.GetChild(1).GetText()==\"(\"",
+          "location": {
+            "start": {
+              "line": 134,
+              "column": 21
+            },
+            "end": {
+              "line": 134,
+              "column": 77
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "481",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "depth-1",
+          "location": {
+            "start": {
+              "line": 136,
+              "column": 52
+            },
+            "end": {
+              "line": 136,
+              "column": 59
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "486",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "node.ChildCount==5||node.GetChild(1).GetText()==\"?\"",
+          "location": {
+            "start": {
+              "line": 142,
+              "column": 21
+            },
+            "end": {
+              "line": 142,
+              "column": 72
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "487",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "node.ChildCount!=5",
+          "location": {
+            "start": {
+              "line": 142,
+              "column": 21
+            },
+            "end": {
+              "line": 142,
+              "column": 39
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "488",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "node.GetChild(1).GetText()!=\"?\"",
+          "location": {
+            "start": {
+              "line": 142,
+              "column": 41
+            },
+            "end": {
+              "line": 142,
+              "column": 72
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "489",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "Child(0)==0",
+          "location": {
+            "start": {
+              "line": 142,
+              "column": 80
+            },
+            "end": {
+              "line": 142,
+              "column": 91
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "493",
+          "status": "NoCoverage",
+          "mutator": "Arithmetic mutation",
+          "replacement": "left+Child(1)",
+          "location": {
+            "start": {
+              "line": 148,
+              "column": 45
+            },
+            "end": {
+              "line": 148,
+              "column": 58
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "496",
+          "status": "NoCoverage",
+          "mutator": "Arithmetic mutation",
+          "replacement": "left*Child(1)",
+          "location": {
+            "start": {
+              "line": 148,
+              "column": 102
+            },
+            "end": {
+              "line": 148,
+              "column": 115
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "498",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left>Child(1)",
+          "location": {
+            "start": {
+              "line": 149,
+              "column": 63
+            },
+            "end": {
+              "line": 149,
+              "column": 76
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "499",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left<=Child(1)",
+          "location": {
+            "start": {
+              "line": 149,
+              "column": 63
+            },
+            "end": {
+              "line": 149,
+              "column": 76
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "500",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left<Child(1)",
+          "location": {
+            "start": {
+              "line": 149,
+              "column": 86
+            },
+            "end": {
+              "line": 149,
+              "column": 99
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "501",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left>=Child(1)",
+          "location": {
+            "start": {
+              "line": 149,
+              "column": 86
+            },
+            "end": {
+              "line": 149,
+              "column": 99
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "502",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left>Child(1)",
+          "location": {
+            "start": {
+              "line": 150,
+              "column": 27
+            },
+            "end": {
+              "line": 150,
+              "column": 41
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "503",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left<Child(1)",
+          "location": {
+            "start": {
+              "line": 150,
+              "column": 27
+            },
+            "end": {
+              "line": 150,
+              "column": 41
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "504",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left<Child(1)",
+          "location": {
+            "start": {
+              "line": 150,
+              "column": 52
+            },
+            "end": {
+              "line": 150,
+              "column": 66
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "505",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left>Child(1)",
+          "location": {
+            "start": {
+              "line": 150,
+              "column": 52
+            },
+            "end": {
+              "line": 150,
+              "column": 66
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "507",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left!=Child(1)",
+          "location": {
+            "start": {
+              "line": 150,
+              "column": 84
+            },
+            "end": {
+              "line": 150,
+              "column": 98
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "509",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left==Child(1)",
+          "location": {
+            "start": {
+              "line": 150,
+              "column": 117
+            },
+            "end": {
+              "line": 150,
+              "column": 131
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "511",
+          "status": "NoCoverage",
+          "mutator": "Logical mutation",
+          "replacement": "left!=0||Child(1)!=0",
+          "location": {
+            "start": {
+              "line": 151,
+              "column": 34
+            },
+            "end": {
+              "line": 151,
+              "column": 54
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "512",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left==0",
+          "location": {
+            "start": {
+              "line": 151,
+              "column": 34
+            },
+            "end": {
+              "line": 151,
+              "column": 41
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "513",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "Child(1)==0",
+          "location": {
+            "start": {
+              "line": 151,
+              "column": 43
+            },
+            "end": {
+              "line": 151,
+              "column": 54
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "515",
+          "status": "NoCoverage",
+          "mutator": "Logical mutation",
+          "replacement": "left!=0&&Child(1)!=0",
+          "location": {
+            "start": {
+              "line": 151,
+              "column": 72
+            },
+            "end": {
+              "line": 151,
+              "column": 92
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "516",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "left==0",
+          "location": {
+            "start": {
+              "line": 151,
+              "column": 72
+            },
+            "end": {
+              "line": 151,
+              "column": 79
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "517",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "Child(1)==0",
+          "location": {
+            "start": {
+              "line": 151,
+              "column": 81
+            },
+            "end": {
+              "line": 151,
+              "column": 92
+            }
+          },
+          "reason": "Not covered by any test."
+        }
+      ],
+      "limitations": "Source snapshots and spans differ; no combined or whole-project mutation score. Ignored/compile-error/no-coverage/timeout outcomes are not kills."
+    },
+    {
+      "run": "resource-mutations",
+      "note": "Frozen initial resource profile before EOF/scope boundary expansion",
+      "tool": "Stryker.NET 5.0.0 Basic",
+      "report_sha256": "c6d35befbbc146bdf6e634ccb0d1051b324f9ba710a5798051807d8fa6f4291e",
+      "framework_universe_counts": {
+        "CompileError": 136,
+        "Ignored": 432,
+        "Killed": 58,
+        "NoCoverage": 5,
+        "Survived": 30
+      },
+      "selected_file_counts": {
+        "CompileError": 34,
+        "Killed": 58,
+        "NoCoverage": 5,
+        "Survived": 30
+      },
+      "source_sha256": {
+        "ResourceResolver.cs": "80c718ceef93a633d213a2c19727e60e5717b75c4844761b0c4209f3bba73165"
+      },
+      "open": [
+        {
+          "file": "ResourceResolver.cs",
+          "id": "534",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "Diagnostics.IsEmpty||Text!=null",
+          "location": {
+            "start": {
+              "line": 18,
+              "column": 26
+            },
+            "end": {
+              "line": 18,
+              "column": 57
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "537",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "policy.AllowedRoots.IsDefaultOrEmpty||policy.MaxDepth<0||policy.MaxDepth>128||policy.MaxFiles<1||policy.MaxFiles>4096||policy.MaxTotalBytes<1&&policy.MaxTotalBytes>67_108_864",
+          "location": {
+            "start": {
+              "line": 28,
+              "column": 12
+            },
+            "end": {
+              "line": 28,
+              "column": 186
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "538",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "policy.AllowedRoots.IsDefaultOrEmpty||policy.MaxDepth<0||policy.MaxDepth>128||policy.MaxFiles<1||policy.MaxFiles>4096&&policy.MaxTotalBytes<1",
+          "location": {
+            "start": {
+              "line": 28,
+              "column": 12
+            },
+            "end": {
+              "line": 28,
+              "column": 153
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "539",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "policy.AllowedRoots.IsDefaultOrEmpty||policy.MaxDepth<0||policy.MaxDepth>128||policy.MaxFiles<1&&policy.MaxFiles>4096",
+          "location": {
+            "start": {
+              "line": 28,
+              "column": 12
+            },
+            "end": {
+              "line": 28,
+              "column": 129
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "540",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "policy.AllowedRoots.IsDefaultOrEmpty||policy.MaxDepth<0||policy.MaxDepth>128&&policy.MaxFiles<1",
+          "location": {
+            "start": {
+              "line": 28,
+              "column": 12
+            },
+            "end": {
+              "line": 28,
+              "column": 107
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "541",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "policy.AllowedRoots.IsDefaultOrEmpty||policy.MaxDepth<0&&policy.MaxDepth>128",
+          "location": {
+            "start": {
+              "line": 28,
+              "column": 12
+            },
+            "end": {
+              "line": 28,
+              "column": 88
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "542",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "policy.AllowedRoots.IsDefaultOrEmpty&&policy.MaxDepth<0",
+          "location": {
+            "start": {
+              "line": 28,
+              "column": 12
+            },
+            "end": {
+              "line": 28,
+              "column": 67
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "544",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "policy.MaxDepth<=0",
+          "location": {
+            "start": {
+              "line": 28,
+              "column": 50
+            },
+            "end": {
+              "line": 28,
+              "column": 67
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "546",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "policy.MaxDepth>=128",
+          "location": {
+            "start": {
+              "line": 28,
+              "column": 69
+            },
+            "end": {
+              "line": 28,
+              "column": 88
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "550",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "policy.MaxFiles>=4096",
+          "location": {
+            "start": {
+              "line": 28,
+              "column": 109
+            },
+            "end": {
+              "line": 28,
+              "column": 129
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "554",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "policy.MaxTotalBytes>=67_108_864",
+          "location": {
+            "start": {
+              "line": 28,
+              "column": 155
+            },
+            "end": {
+              "line": 28,
+              "column": 186
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "558",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "e is not IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException",
+          "location": {
+            "start": {
+              "line": 42,
+              "column": 33
+            },
+            "end": {
+              "line": 42,
+              "column": 126
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "560",
+          "status": "NoCoverage",
+          "mutator": "Logical mutation",
+          "replacement": "IOException or UnauthorizedAccessException and ArgumentException",
+          "location": {
+            "start": {
+              "line": 42,
+              "column": 38
+            },
+            "end": {
+              "line": 42,
+              "column": 101
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "565",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "depth>=policy.MaxDepth",
+          "location": {
+            "start": {
+              "line": 47,
+              "column": 16
+            },
+            "end": {
+              "line": 47,
+              "column": 37
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "570",
+          "status": "Survived",
+          "mutator": "Null coalescing mutation (remove left)",
+          "replacement": "\"\"",
+          "location": {
+            "start": {
+              "line": 53,
+              "column": 32
+            },
+            "end": {
+              "line": 53,
+              "column": 63
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "572",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "++fileCount>=policy.MaxFiles",
+          "location": {
+            "start": {
+              "line": 55,
+              "column": 16
+            },
+            "end": {
+              "line": 55,
+              "column": 43
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "576",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "length>=policy.MaxTotalBytes-bytes",
+          "location": {
+            "start": {
+              "line": 63,
+              "column": 24
+            },
+            "end": {
+              "line": 63,
+              "column": 57
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "577",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "policy.MaxTotalBytes+bytes",
+          "location": {
+            "start": {
+              "line": 63,
+              "column": 31
+            },
+            "end": {
+              "line": 63,
+              "column": 57
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "578",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "stream.ReadByte()!=-1&&stream.Length!=length",
+          "location": {
+            "start": {
+              "line": 65,
+              "column": 24
+            },
+            "end": {
+              "line": 65,
+              "column": 68
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "590",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "raw[0]!=0xef",
+          "location": {
+            "start": {
+              "line": 70,
+              "column": 44
+            },
+            "end": {
+              "line": 70,
+              "column": 56
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "591",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "raw[1]!=0xbb",
+          "location": {
+            "start": {
+              "line": 70,
+              "column": 58
+            },
+            "end": {
+              "line": 70,
+              "column": 70
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "592",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "raw[2]!=0xbf",
+          "location": {
+            "start": {
+              "line": 70,
+              "column": 72
+            },
+            "end": {
+              "line": 70,
+              "column": 84
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "593",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "raw.Length+bom",
+          "location": {
+            "start": {
+              "line": 70,
+              "column": 141
+            },
+            "end": {
+              "line": 70,
+              "column": 155
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "596",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "parsed.Status!=\"accepted_structure\"&&parsed.Declarations==null",
+          "location": {
+            "start": {
+              "line": 75,
+              "column": 20
+            },
+            "end": {
+              "line": 75,
+              "column": 82
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "611",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "open==null&&!item.Close!.Supported",
+          "location": {
+            "start": {
+              "line": 91,
+              "column": 32
+            },
+            "end": {
+              "line": 91,
+              "column": 66
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "621",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "definitions.Length!=0&&closings.Length!=0",
+          "location": {
+            "start": {
+              "line": 100,
+              "column": 25
+            },
+            "end": {
+              "line": 100,
+              "column": 66
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "629",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "r.Range.Start-shift<=end",
+          "location": {
+            "start": {
+              "line": 102,
+              "column": 96
+            },
+            "end": {
+              "line": 102,
+              "column": 119
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "633",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "at+cursor",
+          "location": {
+            "start": {
+              "line": 105,
+              "column": 35
+            },
+            "end": {
+              "line": 105,
+              "column": 44
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "634",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "resource.Range.Line+(fragment?1:0)",
+          "location": {
+            "start": {
+              "line": 107,
+              "column": 70
+            },
+            "end": {
+              "line": 107,
+              "column": 104
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "639",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "e is not ArgumentException or NotSupportedException",
+          "location": {
+            "start": {
+              "line": 111,
+              "column": 45
+            },
+            "end": {
+              "line": 111,
+              "column": 92
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "647",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "length<0",
+          "location": {
+            "start": {
+              "line": 118,
+              "column": 24
+            },
+            "end": {
+              "line": 118,
+              "column": 33
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "651",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "File.Exists(current)&&Directory.Exists(current)",
+          "location": {
+            "start": {
+              "line": 129,
+              "column": 21
+            },
+            "end": {
+              "line": 129,
+              "column": 68
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "654",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "text.Length>=2&&text[0] is '\\'' or '\"'||text[^1]==text[0]",
+          "location": {
+            "start": {
+              "line": 133,
+              "column": 49
+            },
+            "end": {
+              "line": 133,
+              "column": 106
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "655",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "text.Length>=2||text[0] is '\\'' or '\"'",
+          "location": {
+            "start": {
+              "line": 133,
+              "column": 49
+            },
+            "end": {
+              "line": 133,
+              "column": 87
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "657",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "text.Length>2",
+          "location": {
+            "start": {
+              "line": 133,
+              "column": 49
+            },
+            "end": {
+              "line": 133,
+              "column": 63
+            }
+          },
+          "reason": null
+        }
+      ],
+      "limitations": "Source snapshots and spans differ; no combined or whole-project mutation score. Ignored/compile-error/no-coverage/timeout outcomes are not kills."
+    },
+    {
+      "run": "binding-final-replay",
+      "note": "Native Stryker span replay of missing-versus-unsupported model classification",
+      "tool": "Stryker.NET 5.0.0 Basic",
+      "report_sha256": "7fa1538b3a3ce591e6bbf4f73488389cf8c3b742ff04c4f3eb604716b82e552d",
+      "framework_universe_counts": {
+        "CompileError": 138,
+        "Ignored": 569,
+        "Killed": 1
+      },
+      "selected_file_counts": {
+        "CompileError": 4,
+        "Ignored": 43,
+        "Killed": 1
+      },
+      "source_sha256": {
+        "InstanceBinding.cs": "83aaa3bf4fc1d30e48bc9d0dc7965fa8c353e000515cab1f49cc49ff033e67e8"
+      },
+      "open": [],
+      "limitations": "Source snapshots and spans differ; no combined or whole-project mutation score. Ignored/compile-error/no-coverage/timeout outcomes are not kills."
+    },
+    {
+      "run": "parameter-final-replay",
+      "note": "Native Stryker span replay of catalog ownership and override-entry budget",
+      "tool": "Stryker.NET 5.0.0 Basic",
+      "report_sha256": "17d1fc33c8175464cefa23761fff60e244e1fab526450b9ad49f6659f8587b68",
+      "framework_universe_counts": {
+        "CompileError": 138,
+        "Ignored": 568,
+        "Killed": 1,
+        "Survived": 1
+      },
+      "selected_file_counts": {
+        "CompileError": 16,
+        "Ignored": 111,
+        "Killed": 1,
+        "Survived": 1
+      },
+      "source_sha256": {
+        "ParameterEvaluator.cs": "188f2a66e79ede8cb1501ee5588b30770f1f010ad09843b6104915f3e23fa3da"
+      },
+      "open": [
+        {
+          "file": "ParameterEvaluator.cs",
+          "id": "409",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "call.Header.Parameters.Length>=4096",
+          "location": {
+            "start": {
+              "line": 37,
+              "column": 12
+            },
+            "end": {
+              "line": 37,
+              "column": 46
+            }
+          },
+          "reason": null
+        }
+      ],
+      "limitations": "Source snapshots and spans differ; no combined or whole-project mutation score. Ignored/compile-error/no-coverage/timeout outcomes are not kills."
+    },
+    {
+      "run": "resource-final-replay",
+      "note": "Native Stryker span replay of EOF and flat-section boundaries",
+      "tool": "Stryker.NET 5.0.0 Basic",
+      "report_sha256": "eaba5d092432032e8b32169aee0894e5367abd3d77845e098e70e9d3bbaefbea",
+      "framework_universe_counts": {
+        "CompileError": 138,
+        "Ignored": 528,
+        "Killed": 17,
+        "NoCoverage": 6,
+        "Survived": 19
+      },
+      "selected_file_counts": {
+        "CompileError": 35,
+        "Ignored": 90,
+        "Killed": 17,
+        "NoCoverage": 6,
+        "Survived": 19
+      },
+      "source_sha256": {
+        "ResourceResolver.cs": "3ed694a4f0dfb0274bc0d225f59d0e316c29a441ff0f2b508039908623bbbb69"
+      },
+      "open": [
+        {
+          "file": "ResourceResolver.cs",
+          "id": "606",
+          "status": "NoCoverage",
+          "mutator": "Logical mutation",
+          "replacement": "ending.Range.Start>=s.Range.Start||ending.Range.Start<s.Range.Start+s.Range.Length",
+          "location": {
+            "start": {
+              "line": 83,
+              "column": 54
+            },
+            "end": {
+              "line": 83,
+              "column": 136
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "607",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "ending.Range.Start<s.Range.Start",
+          "location": {
+            "start": {
+              "line": 83,
+              "column": 54
+            },
+            "end": {
+              "line": 83,
+              "column": 87
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "608",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "ending.Range.Start>s.Range.Start",
+          "location": {
+            "start": {
+              "line": 83,
+              "column": 54
+            },
+            "end": {
+              "line": 83,
+              "column": 87
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "609",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "ending.Range.Start>s.Range.Start+s.Range.Length",
+          "location": {
+            "start": {
+              "line": 83,
+              "column": 89
+            },
+            "end": {
+              "line": 83,
+              "column": 136
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "610",
+          "status": "NoCoverage",
+          "mutator": "Equality mutation",
+          "replacement": "ending.Range.Start<=s.Range.Start+s.Range.Length",
+          "location": {
+            "start": {
+              "line": 83,
+              "column": 89
+            },
+            "end": {
+              "line": 83,
+              "column": 136
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "611",
+          "status": "NoCoverage",
+          "mutator": "Arithmetic mutation",
+          "replacement": "s.Range.Start-s.Range.Length",
+          "location": {
+            "start": {
+              "line": 83,
+              "column": 108
+            },
+            "end": {
+              "line": 83,
+              "column": 136
+            }
+          },
+          "reason": "Not covered by any test."
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "612",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "ending.Range.Start-ending.Range.Length",
+          "location": {
+            "start": {
+              "line": 84,
+              "column": 25
+            },
+            "end": {
+              "line": 84,
+              "column": 63
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "614",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "end>text.Length",
+          "location": {
+            "start": {
+              "line": 85,
+              "column": 27
+            },
+            "end": {
+              "line": 85,
+              "column": 42
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "615",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "end<=text.Length",
+          "location": {
+            "start": {
+              "line": 85,
+              "column": 27
+            },
+            "end": {
+              "line": 85,
+              "column": 42
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "616",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "text[end] is ('\\r' or '\\n')",
+          "location": {
+            "start": {
+              "line": 85,
+              "column": 44
+            },
+            "end": {
+              "line": 85,
+              "column": 75
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "618",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "end<text.Length||text[end]=='\\r'",
+          "location": {
+            "start": {
+              "line": 86,
+              "column": 24
+            },
+            "end": {
+              "line": 86,
+              "column": 56
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "619",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "end>text.Length",
+          "location": {
+            "start": {
+              "line": 86,
+              "column": 24
+            },
+            "end": {
+              "line": 86,
+              "column": 39
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "620",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "end<=text.Length",
+          "location": {
+            "start": {
+              "line": 86,
+              "column": 24
+            },
+            "end": {
+              "line": 86,
+              "column": 39
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "621",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "text[end]!='\\r'",
+          "location": {
+            "start": {
+              "line": 86,
+              "column": 41
+            },
+            "end": {
+              "line": 86,
+              "column": 56
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "622",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "end<text.Length||text[end]=='\\n'",
+          "location": {
+            "start": {
+              "line": 87,
+              "column": 24
+            },
+            "end": {
+              "line": 87,
+              "column": 56
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "623",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "end>text.Length",
+          "location": {
+            "start": {
+              "line": 87,
+              "column": 24
+            },
+            "end": {
+              "line": 87,
+              "column": 39
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "624",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "end<=text.Length",
+          "location": {
+            "start": {
+              "line": 87,
+              "column": 24
+            },
+            "end": {
+              "line": 87,
+              "column": 39
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "625",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "text[end]!='\\n'",
+          "location": {
+            "start": {
+              "line": 87,
+              "column": 41
+            },
+            "end": {
+              "line": 87,
+              "column": 56
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "628",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "r.Range.Start-shift<=end",
+          "location": {
+            "start": {
+              "line": 89,
+              "column": 45
+            },
+            "end": {
+              "line": 89,
+              "column": 68
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "629",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "r.Range.Start+shift",
+          "location": {
+            "start": {
+              "line": 89,
+              "column": 45
+            },
+            "end": {
+              "line": 89,
+              "column": 64
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "631",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "c.Range.Start-shift<=end",
+          "location": {
+            "start": {
+              "line": 89,
+              "column": 103
+            },
+            "end": {
+              "line": 89,
+              "column": 126
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "632",
+          "status": "Survived",
+          "mutator": "Arithmetic mutation",
+          "replacement": "c.Range.Start+shift",
+          "location": {
+            "start": {
+              "line": 89,
+              "column": 103
+            },
+            "end": {
+              "line": 89,
+              "column": 122
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "638",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "r.Range.Start-shift<=end",
+          "location": {
+            "start": {
+              "line": 90,
+              "column": 101
+            },
+            "end": {
+              "line": 90,
+              "column": 124
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "641",
+          "status": "Survived",
+          "mutator": "Equality mutation",
+          "replacement": "c.Range.Start-shift<=end",
+          "location": {
+            "start": {
+              "line": 91,
+              "column": 59
+            },
+            "end": {
+              "line": 91,
+              "column": 82
+            }
+          },
+          "reason": null
+        },
+        {
+          "file": "ResourceResolver.cs",
+          "id": "643",
+          "status": "Survived",
+          "mutator": "Logical mutation",
+          "replacement": "definitions.Any(d=>d.ScopeId!=0)&&closings.Any(c=>c.ScopeId!=0)",
+          "location": {
+            "start": {
+              "line": 92,
+              "column": 20
+            },
+            "end": {
+              "line": 92,
+              "column": 83
+            }
+          },
+          "reason": null
+        }
+      ],
+      "limitations": "Source snapshots and spans differ; no combined or whole-project mutation score. Ignored/compile-error/no-coverage/timeout outcomes are not kills."
+    }
+  ],
+  "review": {
+    "final": "No remaining blockers reported by source inspection",
+    "kind": "Fresh separate AI-agent source review, not external human experts",
+    "fixed": [
+      "Nested lexical overrides were lost",
+      "Failing dependency range pointed at initiating assignment",
+      "Foreign bindings could be paired with local callers",
+      "Nested library sections discarded their enclosing scope",
+      "Unary/power, AND/OR and ternary grammar precedence required independent checks"
+    ]
+  },
+  "development_failures": [
+    "Malformed initial C# test literal corrected before implementation",
+    "Single-file Stryker config serialized a scalar instead of array; refused before mutations",
+    "First oracle resource deck referenced a missing include in an unselected library section; ngspice opens it while this policy does not",
+    "First example needed explicit managed execution because reflection-based JSON was disabled under file-app AOT defaults",
+    "Two preliminary corpus campaigns intentionally interrupted for review/operator fixes; incomplete, not passing"
+  ],
+  "raw_artifacts": "E:\\Artifacts\\Spice-semantics-20261101T151459Z",
+  "limitations": [
+    "No Rust numerical importer replacement or topology flattening",
+    "No model/device-value lowering or full parameter/dialect/profile support",
+    "No full SPICE, Linux, NativeAOT, GPU, performance or production qualification",
+    "Mutation scopes are separate frozen snapshots; retained survivors/uncovered/invalid/ignored entries remain open",
+    "No hostile concurrent-filesystem sandbox guarantee; unselected library include policy differs from observed ngspice"
+  ]
+}

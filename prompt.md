@@ -1,3 +1,21 @@
+Latest semantic frontend checkpoint: read docs/semantic-frontend.md,
+docs/semantic-frontend-results.md and evidence/semantic-frontend-verification.json.
+Instance/port binding, bounded parameter environments and opt-in include/library
+resolution are implemented as separate operations; no Rust importer replacement,
+topology flattening or model/device-value lowering. All920 required valid inputs
+parse across928 inventory inputs,4 explicit legacy replays and8 exclusions.
+Observed reference counts:76632 total,3220 bound,73070 deferred,264 unsupported,
+48 missing,30 invalid. These include unused definitions and are not active solves.
+Root parameter profiles:35 evaluated,232 deferred,7 unsupported,646 no observations.
+Next: resource-backed bulk rebinding, then the supported typed Rust bridge and
+named primitive-equivalence oracles. SEM-BIND/PARAM/RESOURCE-001 remain Draft.
+339 tests pass,1 exFAT link-test skip; handwritten line739/750 and branch883/1016.
+14 named ngspice checks pass; StrictDoc315 IDs and Sphinx358 XML entries pass.
+Stryker snapshots retain survivors/uncovered/invalid/ignored outcomes; no broad
+mutation closure. Raw artifacts and all new build/temp/report outputs on E:.
+Keep source worktrees on their existing filesystem; do not assume NTFS on exFAT.
+Preserve unrelated sheet-resistor work; no CI or new soak. Full SPICE, Linux,
+NativeAOT, GPU and production qualification remain unavailable.
 Latest native survivor follow-up: see docs/rust-survivors-20261101.md and
 evidence/rust-survivors-20261101.json. The November 1 fourteen-mutant cohort
 now has 13 actual kills and one retained raw survivor, reviewed equivalent only

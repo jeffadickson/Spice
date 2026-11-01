@@ -1,5 +1,7 @@
 # Declaration catalog: the first semantic frontend slice
 
+Historical catalog checkpoint: subsequent bounded binding, parameter and resource profiles are documented in [semantic-frontend.md](semantic-frontend.md) and [the current results](semantic-frontend-results.md). Catalog counts below retain their original source/input scope.
+
 The [delivery plan](semantic-frontend-plan.md) now follows observed corpus dependencies: declaration scopes, instance binding, parameter elaboration, external resources, the typed Rust bridge, then selected model profiles. Each stage has an independent exit gate and denominator. This slice implements declaration cataloguing and scoped lookup; it does not bind instances, choose model-aware terminal counts, flatten circuits, evaluate parameters or simulate anything.
 
 ## Implemented API

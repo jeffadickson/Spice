@@ -9,6 +9,7 @@ It does not yet satisfy the complete M1 release gates.
 
    scope
    testing
+   semantic
    api
 
 Canonical requirements

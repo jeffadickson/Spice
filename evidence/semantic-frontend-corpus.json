@@ -1,0 +1,132 @@
+{
+  "status": "completed_observed_semantic_profile",
+  "source_commit": "fdf084a4a9c8dc43fe7787ccf34185fb289904f6",
+  "source_dirty": true,
+  "corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+  "corpus_dirty": true,
+  "inventory_inputs": 928,
+  "required_inputs": 920,
+  "accepted": 920,
+  "primary_counts": {
+    "encoding_rejected": 4,
+    "accepted_structure": 916,
+    "syntax_rejected": 8
+  },
+  "replay": "Four hash-adjudicated legacy inputs; replayed repository rows deduplicated by scope/path",
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "203ad24cf31c941554e15d9408fcde64f0c90568d69c922f1f97429b3ecf5540",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "1e0a15b6d8c908a3427aebb35a875cdf6236cd9835413271784aaf2b3087d54b",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "7cd166dc63e5084863e934bb8f64d3e28da797835b59418e028751a152d64857",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "15c49e1d79e90e0ebf5e0d2336b616e74d44ea06d8b9e1c750f50b1e5b2ec5b2",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "83aaa3bf4fc1d30e48bc9d0dc7965fa8c353e000515cab1f49cc49ff033e67e8",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "97c877e5d4dd3e7ab9c500ea011a4f424aa7dd09dc4f4cd69fb7609cab941887",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "188f2a66e79ede8cb1501ee5588b30770f1f010ad09843b6104915f3e23fa3da",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "3ed694a4f0dfb0274bc0d225f59d0e316c29a441ff0f2b508039908623bbbb69",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "a76d9625d0d68497ca2c04bbee5caab9d673e2122998c5f0380f546c9a4107b3",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "093dfadc21e85c14b1184ec338b52e8b6da26fd395bd3b32b0a896e853e91eb1",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "2f39c037dd64bced12afddaaf130d825f18fb685a381f5b6eb8522254726a2fe",
+    "dotnet/Simulator.Syntax.Corpus/InventoryCommand.cs": "e41689a6cf479fc10cc57742fb68296be86eacd52691513dfb88fe8ebd1d8d6b",
+    "dotnet/Simulator.Syntax.Corpus/packages.lock.json": "4788584a824763fed9384acb5ab8ff8b3628d766cec0e0bf5186b0a5be9aaf64",
+    "dotnet/Simulator.Syntax.Corpus/Program.cs": "fd8702bb6a0b7ea96522d11921164eed402fcef50fa939f2a157a9d7769f2fcf",
+    "dotnet/Simulator.Syntax.Corpus/Simulator.Syntax.Corpus.csproj": "ac299b6057cf9dd59b1379a136971e5dae66e66dcfec3cd79f7552c9e2974210"
+  },
+  "binary_sha256": {
+    "Antlr4.Runtime.Standard.dll": "0440e3d2c5906326e04df87d6a5272192b7d29099901ba4215ca9e0f5dca7591",
+    "Simulator.Syntax.dll": "fda2250d63a35dab617e31d2906eb4dbf514c0d37c2fb461e3278338d2a2ef3c",
+    "Simulator.Syntax.Corpus.dll": "1896c4f4253fb413b783f7059bb942c718d17055b84330d23d94644dabd271bd"
+  },
+  "limits": {
+    "input_bytes": 4194304,
+    "tokens": 2000000,
+    "nesting": 128,
+    "rule_depth": 512,
+    "worker_seconds": 90,
+    "campaign_minutes": 30,
+    "workers": 4,
+    "legacy_bytes": false,
+    "collect_features": false,
+    "collect_declarations": true,
+    "collect_semantics": true,
+    "diagnostics_per_row": 3
+  },
+  "references": 76632,
+  "mapped_ports": 10019,
+  "root_parameter_values": 140,
+  "reference_input_status": {
+    "no_references_observed": 379,
+    "incomplete_observed_references": 351,
+    "bound_observed_references": 190
+  },
+  "parameter_input_status": {
+    "deferred_parameters": 232,
+    "no_root_parameters_observed": 646,
+    "evaluated_root_scope": 35,
+    "unsupported_expression": 7
+  },
+  "tallies": {
+    "ReferenceCounts": {
+      "Invalid": 30,
+      "Unsupported": 264,
+      "Deferred": 73070,
+      "Ambiguous": 0,
+      "Bound": 3220,
+      "Missing": 48
+    },
+    "ReferenceDiagnostics": {
+      "bound": 3220,
+      "opaque_header": 15,
+      "missing_reference": 48,
+      "unsupported_model_contract": 249,
+      "port_arity": 30,
+      "provisional_reference": 73070
+    },
+    "ReferenceProfiles": {
+      "X:Invalid": 30,
+      "S:Unsupported": 6,
+      "Q:Unsupported": 69,
+      "X:Bound": 1827,
+      "W:Unsupported": 1,
+      "S:Bound": 10,
+      "J:Bound": 1,
+      "Q:Bound": 352,
+      "D:Bound": 471,
+      "J:Unsupported": 20,
+      "M:Missing": 45,
+      "Q:Deferred": 142,
+      "M:Unsupported": 141,
+      "D:Unsupported": 15,
+      "M:Bound": 559,
+      "Q:Missing": 3,
+      "M:Deferred": 1263,
+      "X:Unsupported": 12,
+      "J:Deferred": 6,
+      "X:Deferred": 71610,
+      "D:Deferred": 49
+    },
+    "GraphDiagnostics": {
+      "duplicate_instance": 4
+    },
+    "ParameterDiagnostics": {
+      "deferred_parameters": 232,
+      "unsupported_expression": 7
+    },
+    "ParameterSymbols": {}
+  },
+  "raw_primary_sha256": "4eda32dc0f08c056d5ef4dd3ebab85de4224f1ab68096204afa224e460d9bb1a",
+  "raw_replay_sha256": "2599d0f8a44462231a6c5147414fb6bc261f00af5a19d8ef6fcf45771ff744b3",
+  "acceptance_sha256": "ffb79128c70767bba412939ad47467bd5e9c990fc7193afa134cc477b2af988d",
+  "elapsed_seconds": 373.2420496,
+  "limitations": [
+    "Observed X/D/Q/M/J/S/W references including unused/conditional declarations, not instantiated active circuits",
+    "Reference, root-parameter, resource, numerical and oracle stages have independent denominators",
+    "No resources opened or commands/simulators executed by corpus observer",
+    "Root parameters only; model parameters, nested per-instance expansion, primitive device values and topology lowering not evaluated by corpus observer",
+    "Some files are observed in titled-deck profile; fragment loading is separately qualified by ResourceResolver fixtures",
+    "No whole-project numerical support, Linux/GPU/NativeAOT or production qualification"
+  ]
+}
