@@ -16,7 +16,11 @@ public sealed record SyntaxDiagnostic(string Code, string Message, int Line, int
 /// <summary>Syntax-only outcome, independent of any simulator capability.</summary>
 public sealed record DeckSyntax(string Status, string Title,
     System.Collections.Immutable.ImmutableArray<SyntaxStatement> Statements,
-    System.Collections.Immutable.ImmutableArray<SyntaxDiagnostic> Diagnostics,string Format="deck");
+    System.Collections.Immutable.ImmutableArray<SyntaxDiagnostic> Diagnostics,string Format="deck")
+{
+    /// <summary>Opt-in syntactic observations; empty on rejected input. These do not establish execution support.</summary>
+    public ImmutableArray<SyntaxFeature> Features { get; init; } = [];
+}
 
 /// <summary>Generated-grammar frontend. It never executes cards or resolves external files.</summary>
 public static class DeckParser
@@ -32,7 +36,7 @@ public static class DeckParser
     };
 
     /// <summary>Recognizes a complete titled SPICE deck under the declared bounded grammar.</summary>
-    public static DeckSyntax Parse(string text,ParserLimits? limits=null)
+    public static DeckSyntax Parse(string text,ParserLimits? limits=null,bool collectFeatures=false)
     {
         ArgumentNullException.ThrowIfNull(text);
         limits??=ParserLimits.Default;
@@ -78,11 +82,13 @@ public static class DeckParser
         }
         catch(SyntaxDepthException) { return Resource("Generated parser rule depth exceeds 512"); }
         var statements = ImmutableArray.CreateBuilder<SyntaxStatement>();
+        var features = ImmutableArray.CreateBuilder<SyntaxFeature>();
         var pending = new Stack<IParseTree>();
         pending.Push(tree);
         var gap = false;
         while (pending.TryPop(out var item))
         {
+            if(collectFeatures) FeatureExtraction.Observe(item,features,positions.At,text.Length);
             if (item is SpiceParser.StatementContext statement && statement.GetChild(0) is ParserRuleContext card)
             {
                 var kind = SpiceParser.ruleNames[card.RuleIndex];
@@ -116,7 +122,8 @@ public static class DeckParser
         }
         var title = (tree.TITLE()?.GetText() ?? tree.script()?.SCRIPT_TITLE()?.GetText() ?? "").TrimEnd('\r','\n');
         var status = parser.NumberOfSyntaxErrors > 0 ? "syntax_rejected" : gap ? "grammar_gap" : "accepted_structure";
-        return new(status,title,statements.ToImmutable(),errors.ToImmutableArray(),tree.script() is null?"deck":"command_script");
+        return new(status,title,statements.ToImmutable(),errors.ToImmutableArray(),tree.script() is null?"deck":"command_script")
+        { Features=status=="accepted_structure"?features.ToImmutable():[] };
 
         SpiceParser Recognizer(bool sll)
         {

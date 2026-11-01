@@ -1,0 +1,317 @@
+[
+  {
+    "Status": "partial",
+    "Category": "device",
+    "Name": "r",
+    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+  },
+  {
+    "Status": "partial",
+    "Category": "device",
+    "Name": "c",
+    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+  },
+  {
+    "Status": "partial",
+    "Category": "device",
+    "Name": "l",
+    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+  },
+  {
+    "Status": "partial",
+    "Category": "device",
+    "Name": "v",
+    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+  },
+  {
+    "Status": "partial",
+    "Category": "device",
+    "Name": "i",
+    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+  },
+  {
+    "Status": "partial",
+    "Category": "device",
+    "Name": "d",
+    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+  },
+  {
+    "Status": "partial",
+    "Category": "device",
+    "Name": "e",
+    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+  },
+  {
+    "Status": "partial",
+    "Category": "device",
+    "Name": "g",
+    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+  },
+  {
+    "Status": "partial",
+    "Category": "device",
+    "Name": "f",
+    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+  },
+  {
+    "Status": "partial",
+    "Category": "device",
+    "Name": "h",
+    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+  },
+  {
+    "Status": "partial",
+    "Category": "model",
+    "Name": "d",
+    "Limitation": "Restricted diode or positive constant resistor contract; geometry, transport, temperature and other parameters are not generally supported.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; src/ngspice_resistor.rs; evidence/resistor-model-verification.json"
+  },
+  {
+    "Status": "partial",
+    "Category": "model",
+    "Name": "r",
+    "Limitation": "Restricted diode or positive constant resistor contract; geometry, transport, temperature and other parameters are not generally supported.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; src/ngspice_resistor.rs; evidence/resistor-model-verification.json"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "model",
+    "Name": "nmos",
+    "Limitation": "The bounded importer accepts only restricted D/R model families. No numerical implementation is qualified for this family.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; docs/corpus-followup-contracts.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "model",
+    "Name": "pmos",
+    "Limitation": "The bounded importer accepts only restricted D/R model families. No numerical implementation is qualified for this family.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; docs/corpus-followup-contracts.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "model",
+    "Name": "npn",
+    "Limitation": "The bounded importer accepts only restricted D/R model families. No numerical implementation is qualified for this family.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; docs/corpus-followup-contracts.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "model",
+    "Name": "pnp",
+    "Limitation": "The bounded importer accepts only restricted D/R model families. No numerical implementation is qualified for this family.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; docs/corpus-followup-contracts.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "model",
+    "Name": "njf",
+    "Limitation": "The bounded importer accepts only restricted D/R model families. No numerical implementation is qualified for this family.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; docs/corpus-followup-contracts.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "model",
+    "Name": "pjf",
+    "Limitation": "The bounded importer accepts only restricted D/R model families. No numerical implementation is qualified for this family.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; docs/corpus-followup-contracts.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "model",
+    "Name": "vdmos",
+    "Limitation": "The bounded importer accepts only restricted D/R model families. No numerical implementation is qualified for this family.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; docs/corpus-followup-contracts.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "q",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "m",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "j",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "a",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "n",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "o",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "p",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "t",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "u",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "y",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "z",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "s",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "w",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "k",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "b",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Status": "unsupported",
+    "Category": "device",
+    "Name": "x",
+    "Limitation": "No general bounded ngspice-import execution contract for this family; syntax acceptance does not establish numerical support.",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/implementation-status.md"
+  },
+  {
+    "Category": "analysis",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
+    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Name": "op",
+    "Status": "partial"
+  },
+  {
+    "Category": "directive",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
+    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Name": ".op",
+    "Status": "partial"
+  },
+  {
+    "Category": "analysis",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
+    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Name": "tran",
+    "Status": "partial"
+  },
+  {
+    "Category": "directive",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
+    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Name": ".tran",
+    "Status": "partial"
+  },
+  {
+    "Category": "analysis",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
+    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Name": "ac",
+    "Status": "partial"
+  },
+  {
+    "Category": "directive",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
+    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Name": ".ac",
+    "Status": "partial"
+  },
+  {
+    "Category": "analysis",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
+    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Name": "dc",
+    "Status": "partial"
+  },
+  {
+    "Category": "directive",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
+    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Name": ".dc",
+    "Status": "partial"
+  },
+  {
+    "Category": "directive",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
+    "Limitation": "Recognized deck terminator in the bounded importer; not a missing execution feature. This does not implement hierarchy, control semantics or the ANTLR bridge.",
+    "Name": ".end",
+    "Status": "partial"
+  },
+  {
+    "Category": "directive",
+    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
+    "Limitation": "Only restricted D/R model contracts; see separate family/LEVEL/parameter rows for unsupported and unassessed profiles.",
+    "Name": ".model",
+    "Status": "partial"
+  }
+]

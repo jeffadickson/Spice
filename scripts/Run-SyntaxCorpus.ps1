@@ -13,7 +13,8 @@ param([string]$Inventory,[string]$CorpusRoot,[string]$Output,
     [ValidateRange(1,4)][int]$Workers=1,
     [ValidateRange(1,67108864)][int]$MaxInputBytes=4194304,
     [ValidateRange(1,4000000)][int]$MaxTokens=2000000,
-    [switch]$LegacyBytes,[switch]$RequireValidSamples)
+    [switch]$LegacyBytes,[switch]$RequireValidSamples,[switch]$CollectFeatures,
+    [string]$ArtifactsPath)
 $ErrorActionPreference='Stop'
 if($RequireValidSamples -and $LegacyBytes){throw 'Acceptance requires a strict UTF-8 primary; legacy replay is automatic'}
 $repository=Split-Path $PSScriptRoot -Parent
@@ -31,14 +32,21 @@ if(!(Test-Path -LiteralPath $parent -PathType Container)){throw 'Output parent m
 $project=Join-Path $repository 'dotnet/Simulator.Syntax.Corpus'
 if(!(Test-Path -LiteralPath $project -PathType Container)){throw 'Missing corpus project'}
 & (Join-Path $PSScriptRoot 'Initialize-SyntaxParser.ps1')
-dotnet build $project -p:RestoreLockedMode=true --nologo
+$buildArguments=@('build',$project,'-p:RestoreLockedMode=true','--nologo')
+if($ArtifactsPath){
+    if(!(Test-Path -LiteralPath $ArtifactsPath -PathType Container)){throw 'ArtifactsPath must exist'}
+    $buildArguments+=@('--artifacts-path',$ArtifactsPath)
+}
+dotnet @buildArguments
 if($LASTEXITCODE -ne 0){throw 'Syntax build failed'}
-$arguments=@((Join-Path $project 'bin/Debug/net10.0/Simulator.Syntax.Corpus.dll'),$Inventory,$repository,$Output)
+$dll=if($ArtifactsPath){Join-Path $ArtifactsPath 'bin/Simulator.Syntax.Corpus/debug/Simulator.Syntax.Corpus.dll'}else{Join-Path $project 'bin/Debug/net10.0/Simulator.Syntax.Corpus.dll'}
+$arguments=@($dll,$Inventory,$repository,$Output)
 if($CorpusRoot){$arguments+=$CorpusRoot}
 $settings=@{
     SPICE_PARSE_WORKER_SECONDS=$WorkerSeconds; SPICE_PARSE_CAMPAIGN_MINUTES=$Minutes
     SPICE_PARSE_WORKERS=$Workers; SPICE_PARSE_MAX_BYTES=$MaxInputBytes
     SPICE_PARSE_MAX_TOKENS=$MaxTokens; SPICE_PARSE_LEGACY_BYTES=[int][bool]$LegacyBytes
+    SPICE_PARSE_FEATURES=[int][bool]$CollectFeatures
 }
 $saved=@{}
 foreach($name in $settings.Keys){$saved[$name]=[Environment]::GetEnvironmentVariable($name);[Environment]::SetEnvironmentVariable($name,[string]$settings[$name])}

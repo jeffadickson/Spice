@@ -1,0 +1,30 @@
+[DOCUMENT]
+TITLE: Parsed Corpus Capability Inventory
+
+[REQUIREMENT]
+UID: CAP-001
+STATUS: Draft
+TITLE: Source-located inventory from recognized syntax
+STATEMENT: >>>
+The syntax frontend shall optionally report immutable source-located observations of device families, model families and literal LEVEL profiles, model parameters, analysis declarations, hierarchy, external-resource declarations, source forms and expression structures using its generated parse tree. Rejected or resource-refused inputs shall not publish partial feature evidence. Quoted languages and control-command bodies shall remain explicitly opaque; no includes, commands or model expressions shall execute during inventory.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Syntax/FeatureExtraction.cs and DeckSyntax.cs. Verification: FeatureTests, including seeded prediction-strategy properties and malformed/resource refusals. This inventory does not satisfy semantic elaboration or numerical qualification.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-002
+
+[REQUIREMENT]
+UID: CAP-002
+STATUS: Draft
+TITLE: Honest corpus capability aggregation
+STATEMENT: >>>
+The inventory shall count occurrences and distinct required input identities separately, preserving exact source, binary and input provenance. Explicit exclusions and legacy replay shall require matching adjudicated hashes and outcomes. Missing, unfinished, rejected or unavailable observations shall not become accepted inventory evidence. Capability assessments shall carry evidence and limitations; absent assessments shall remain unassessed. Rankings shall state that deck counts overlap and do not predict successful simulation.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Syntax/CapabilityInventory.cs and corpus InventoryCommand.cs. Verification: CapabilityInventoryTests; full corpus artifacts and bounded capability-inventory evidence. The initial SVG is an assessment baseline, not a historical numerical burndown. Requirements remain Draft for this finite slice.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-002
