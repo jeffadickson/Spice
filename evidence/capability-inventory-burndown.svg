@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 960 320" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>Capability assessment baseline; no simulated-pass claims</title>
+  <rect width="960" height="320" fill="#f5f4ed" />
+  <text x="36" y="42" font-family="sans-serif" font-size="17">Corpus capability burndown — baseline only</text>
+  <text x="36" y="82" font-family="sans-serif" font-size="17">Observed feature kinds: 3618; unassessed: 3575</text>
+  <text x="36" y="119" font-family="sans-serif" font-size="17">Partial: 22; unsupported: 21</text>
+  <text x="36" y="156" font-family="sans-serif" font-size="17">Inventory evidence: 916/916 required decks; outstanding: 0</text>
+  <line x1="42" x2="900" y1="210" y2="210" stroke="#56756c" />
+  <circle cx="80" cy="210" r="8" fill="#12675d" />
+  <text x="36" y="250" font-family="sans-serif" font-size="17">First measurement. Future comparable snapshots can establish change.</text>
+  <text x="36" y="285" font-family="sans-serif" font-size="17">Feature counts overlap. Parser acceptance does not close simulation gaps.</text>
+</svg>

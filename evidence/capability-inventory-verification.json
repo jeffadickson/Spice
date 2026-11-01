@@ -1,0 +1,193 @@
+{
+  "status": "completed_bounded_inventory",
+  "run_id": "capability-inventory-20261101T015903Z",
+  "implementation_commit": "a9c1b4dd7efe149fb86f071c30d249dce7a0f7b5",
+  "tested_source_base": "bc48c645088237e30f28370feff5f3b2b4e76347",
+  "tested_source_dirty": true,
+  "captured_source_bytes_still_match_checkout": true,
+  "source_identity": "evidence/capability-inventory.json contains actual working-tree source and binary byte hashes; Git line-ending normalization is not asserted to preserve those bytes on every checkout",
+  "platform": "Windows",
+  "tools": {
+    "stryker": "5.0.0",
+    "strictdoc": "0.30.4",
+    "antlr": "4.13.1",
+    "fscheck": "3.5.0",
+    "dotnet_sdk": "10.0.403",
+    "sphinx": "9.1.0",
+    "coverlet": "10.1.0"
+  },
+  "corpus": {
+    "excluded": 8,
+    "legacy_counts": {
+      "accepted_structure": 18
+    },
+    "assessments": {
+      "unassessed": 3575,
+      "partial": 22,
+      "unsupported": 21
+    },
+    "legacy_elapsed_seconds": 3.601553,
+    "feature_kinds": 3618,
+    "primary_counts": {
+      "encoding_rejected": 4,
+      "accepted_structure": 912,
+      "syntax_rejected": 8
+    },
+    "outstanding": 0,
+    "accepted": 916,
+    "primary_elapsed_seconds": 292.9138086,
+    "required": 916,
+    "inventory_inputs": 924
+  },
+  "tests": {
+    "passed": 245,
+    "skipped": 0,
+    "source_sha256": {
+      "GrammarTests.cs": "59aafed45bd2ba1b880936b976ecacab9a3117d540e8d60cb3b9f91b3458da07",
+      "CommonSyntaxTests.cs": "631222145376e7ec6f4129eee7fbce55ccce9774b59e04e03383171d742109cf",
+      "ExtendedFamilyTests.cs": "9bdbd54c6be53fc3fed916f5116f03bfffe054fa448cf369aae4580ac58cd250",
+      "PredictionTests.cs": "763ac5848ebbe693140bdb799432912796c77f1d2b3dcb9e330e94e794fa4b84",
+      "BoundaryTests.cs": "832db1433360b430f65c382057a5306e03aca1d3d6ad149dcc59906485997879",
+      "CapabilityInventoryTests.cs": "0205691e7d012d3b4b20fba88387540cbf0c33bfbcc25c22f8d4919869124b94",
+      "XspiceTests.cs": "38be1d1d44aa270bcd0874430f8d33b9d17cc5ee27020b9c26e2cc5dea91b05e",
+      "FeatureTests.cs": "e9f671cfae88a8f19c8718ccf92549af8dd431ebf85f67dc15dc47ab5f284f45",
+      "DeviceFamilyTests.cs": "fdd0bbf99e0485649b7fc8224142120cb415ae9cb40992e68e780d4ea687adcf"
+    },
+    "replays": [
+      "192,20261031",
+      "362,20261031",
+      "481,20261031",
+      "492,20261031",
+      "681,20261101",
+      "682,20261101"
+    ],
+    "fscheck_successful_cases": 1408,
+    "failed": 0
+  },
+  "coverage": {
+    "unit_classes": [
+      {
+        "branches_valid": 100,
+        "line_percent": 100.0,
+        "branch_percent": 98.0,
+        "lines_valid": 84,
+        "lines_covered": 84,
+        "class": "Simulator.Syntax.CapabilityInventory",
+        "branches_covered": 98
+      },
+      {
+        "branches_valid": 166,
+        "line_percent": 98.57,
+        "branch_percent": 92.77,
+        "lines_valid": 70,
+        "lines_covered": 69,
+        "class": "Simulator.Syntax.FeatureExtraction",
+        "branches_covered": 154
+      }
+    ],
+    "report_cli": {
+      "class": "InventoryCommand",
+      "branch_percent": 83.33,
+      "line_percent": 100.0,
+      "scope": "Separate successful report-only CLI coverage replay; isolated corpus workers were not instrumented."
+    },
+    "limitations": [
+      "Selected handwritten classes, not whole repository or third-party ANTLR conformance.",
+      "PowerShell wrapper and mutation-summary helper coverage unavailable.",
+      "No fresh Rust/native branch coverage or numerical execution."
+    ]
+  },
+  "requirements": {
+    "status": "parsed_intended_snapshot",
+    "requirements_remain": "Draft",
+    "documents": 18,
+    "scope": "Committed requirements plus CAP-001/002; uncommitted ngspice sheet-resistor requirement edits excluded.",
+    "parent_relations": 298,
+    "unique_ids": 310
+  },
+  "sphinx": {
+    "status": "passed_warnings_as_errors",
+    "initial_attempt": "StrictDoc environment lacked Sphinx; reran using existing prepared Sphinx environment successfully.",
+    "scope": "Isolated engineering source/API projection; source checkout engineering-docs evidence preserved"
+  },
+  "powershell": {
+    "existing_evidence_preservation_negative_check": "passed",
+    "parser_checks": 2,
+    "full_wrapper_run": "passed",
+    "coverage": "unmeasured"
+  },
+  "review": {
+    "findings_fixed": [
+      "Composite B/U leading whitespace",
+      "Canonical .func key",
+      "Nested calls separated from source forms",
+      "Nonempty provenance maps",
+      "Pinned assessment baseline",
+      "Assessment backlog distinct from implementation gaps"
+    ],
+    "kind": "AI code review, read-only"
+  },
+  "visual": {
+    "checked": "Rendered SVG baseline counts, bounds and scope labels",
+    "artifact": "chart-final.png",
+    "browser": "Headless Edge"
+  },
+  "mutations": {
+    "disposition": "All four remain survivors with conditional equivalence arguments, not formal proof or mutant kills.",
+    "ledger": "evidence/capability-inventory-mutations.json",
+    "remaining_timeouts_in_selected_replays": 0,
+    "killed_in_replays": 80,
+    "focused_counts": {
+      "Ignored": 555,
+      "CompileError": 90,
+      "Killed": 3
+    },
+    "remaining_survivors": 4,
+    "original_counts": {
+      "NoCoverage": 22,
+      "CompileError": 90,
+      "Ignored": 324,
+      "Survived": 61,
+      "Killed": 150,
+      "Timeout": 1
+    },
+    "original_open_identities": 84,
+    "broad_final_counts": {
+      "Killed": 100,
+      "CompileError": 90,
+      "Survived": 7,
+      "Ignored": 451
+    },
+    "remaining_uncovered_in_selected_replays": 0,
+    "status": "completed_broad_and_focused_replays",
+    "limitations": "Scopes differ; do not combine scores. The 90 compile-error instrumentations and ignored outcomes remain unavailable/excluded, not kills. Generated grammar and third-party engine were not mutated.",
+    "conditional_assumptions": [
+      "ID 3: GroupBy groups are nonempty, so FirstOrDefault and First share the same result under the Tally contract.",
+      "IDs 123/126: overflow guards are defensive under positive Int32 tallies and representable dictionary input counts; no giant allocation experiment was performed.",
+      "ID 183: both identity maps are sorted in the same direction; changing that direction preserves their comparison under the ordering contract."
+    ]
+  },
+  "prior_attempt": {
+    "run_id": "capability-inventory-20261101T015223Z",
+    "state": "intentionally_stopped_after_review",
+    "raw_artifacts": "preserved locally with stopped-for-review.json"
+  },
+  "commands": [
+    "scripts/Run-CapabilityInventory.ps1 -OutputDirectory <run> -Workers 2 -WorkerSeconds 90 -Minutes 30",
+    "dotnet test dotnet/Simulator.Syntax.Tests --artifacts-path <run>/test-build --collect:\"XPlat Code Coverage\" --results-directory <run>/coverage-final --nologo",
+    "dotnet tool run dotnet-stryker -- --config-file inventory-stryker.json --test-project dotnet/Simulator.Syntax.Tests/Simulator.Syntax.Tests.csproj --output <run>/mutations --skip-version-check",
+    "dotnet tool run dotnet-stryker -- --config-file inventory-replay-stryker.json --test-project dotnet/Simulator.Syntax.Tests/Simulator.Syntax.Tests.csproj --output <run>/mutations-final --skip-version-check",
+    "dotnet tool run dotnet-stryker -- --config-file inventory-key-stryker.json --test-project dotnet/Simulator.Syntax.Tests/Simulator.Syntax.Tests.csproj --output <run>/mutations-keys --skip-version-check",
+    "dotnet run --file scripts/ValidateRequirements.cs -- --python <StrictDoc Python> --report <run>/strictdoc.json (intended documentation snapshot)",
+    "dotnet run --file scripts/EngineeringDocs.cs -- --python <prepared Sphinx Python> (intended documentation snapshot)",
+    "dotnet tool run dotnet-stryker -- --config-file inventory-key-stryker.json --test-project dotnet/Simulator.Syntax.Tests/Simulator.Syntax.Tests.csproj --output <run>/mutations-keys --skip-version-check",
+    "dotnet run --file scripts/SummarizeCapabilityMutations.cs -- <original Stryker JSON> <broad-final Stryker JSON> evidence/capability-inventory-mutations.json <focused-key Stryker JSON>"
+  ],
+  "limitations": [
+    "Structural observations include unused models and nested declarations; includes are not loaded.",
+    "Quoted/control bodies remain opaque; no semantic binding, model evaluation or new numerical support.",
+    "Feature counts overlap and do not predict circuits unlocked; inventory keys are not individual implementation tasks.",
+    "Windows-only finite evidence; no Linux, GPU, Native AOT, production memory-budget or full SPICE qualification.",
+    "No CI dispatch or new soak; unrelated sheet-resistor edits and engineering evidence preserved."
+  ]
+}

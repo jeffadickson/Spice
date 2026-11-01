@@ -42,10 +42,13 @@ public sealed class CapabilityInventoryTests
         Assert.Equal("budget_unattempted",Assert.Single(result.Outstanding).Status);
     }
 
-    [Fact]
-    public void Exclusions_are_hash_and_outcome_pinned_not_a_path_allowlist()
+    [Theory]
+    [InlineData("invalid_syntax_fixture")]
+    [InlineData("non_deck_document")]
+    public void Exclusions_are_hash_and_outcome_pinned_not_a_path_allowlist(string disposition)
     {
         var catalog="{\"entries\":[{\"scope\":\"ngspice\",\"path\":\"a\",\"input_sha256\":\"abc\",\"expected_primary_status\":\"syntax_rejected\",\"disposition\":\"invalid_syntax_fixture\"}]}";
+        catalog=catalog.Replace("\"invalid_syntax_fixture\"",JsonSerializer.Serialize(disposition));
         var result=CapabilityInventory.FromReports(Report([Row("a","syntax_rejected")]),Report([],true),catalog,[]);
         Assert.Equal(1,result.ExcludedDecks);Assert.Equal(0,result.RequiredDecks);
         Refuses(()=>CapabilityInventory.FromReports(Report([Row("a","accepted_structure")]),Report([],true),catalog,[]),"Adjudicated input hash/outcome changed");
@@ -201,5 +204,22 @@ public sealed class CapabilityInventoryTests
         var result=CapabilityInventory.FromReports(Report([Row("a")]),Report([],true),EmptyCatalog,
             [new("device","r",status,"Pinned source evidence","Bounded assessment")]);
         Assert.Equal(status,Assert.Single(result.Features).Status);
+    }
+
+    [Fact]
+    public void Scope_path_pairs_cannot_collide_by_removing_their_separator()
+    {
+        var replay=JsonNode.Parse(Report([Row("b")],true))!;
+        replay["rows"]![0]!["scope"]="ngspicea";
+        Refuses(()=>CapabilityInventory.FromReports(Report([Row("ab")]),replay.ToJsonString(),EmptyCatalog,[]),"Replay input identity differs");
+    }
+
+    [Fact]
+    public void Identity_keys_and_values_cannot_collide_by_concatenation()
+    {
+        var primary=JsonNode.Parse(Report([Row("a")]))!;var legacy=JsonNode.Parse(Report([],true))!;
+        primary["source_sha256"]=new JsonObject{["ab"]="c"};
+        legacy["source_sha256"]=new JsonObject{["a"]="bc"};
+        Refuses(()=>CapabilityInventory.FromReports(primary.ToJsonString(),legacy.ToJsonString(),EmptyCatalog,[]),"Replay provenance differs");
     }
 }

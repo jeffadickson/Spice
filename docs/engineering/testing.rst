@@ -81,3 +81,29 @@ inventory membership, input hashes, source and binary identity; unexplained
 failures remain outstanding. ``scripts/Test-SyntaxAcceptance.cs`` exercises
 synthetic corruption scenarios; it is not sample acceptance evidence. Actual
 commands and results are recorded in ``docs/parser-gap-results.md``.
+
+Corpus capability inventory
+---------------------------
+
+``scripts/Run-CapabilityInventory.ps1`` reuses the bounded generated parser,
+strict primary campaign, adjudicated legacy replay and acceptance gate. Supply
+an existing writable ``CODEX_ARTIFACT_ROOT`` or an explicit fresh
+``-OutputDirectory`` with an existing parent. ``-CorpusRoot`` overrides the
+inventory's machine-local corpus location. Raw reports and build outputs stay
+in that output directory; JSON, Markdown and SVG summaries are emitted there.
+The script does not publish issues or run simulations.
+
+``DeckParser.Parse(..., collectFeatures: true)`` exposes source-located immutable
+observations only for accepted input. Quoted text and control-command bodies
+remain opaque. Includes are counted without being loaded. Nested declarations
+and unused model cards are included, so observation is not elaboration.
+``CapabilityInventory`` counts occurrences and distinct decks separately;
+model LEVEL values retain literal spelling, with explicit unspecified,
+expression and multiple-declaration profiles. No default LEVEL is inferred.
+
+``compat/ngspice/capability-support.json`` pins conservative implementation
+assessments to a committed source revision. Missing assessments remain
+unassessed; family-level partial support never implies parameter parity.
+Rankings overlap and measure reach rather than circuits unlocked. The SVG
+starts a new assessment baseline, separate from numerical corpus burndowns.
+Canonical requirements are ``docs/capability-inventory.sdoc`` (CAP-001/002).

@@ -23,3 +23,4 @@ StrictDoc remains authoritative; Sphinx is an engineering/API projection.
 * :download:`Sparse dynamic qualification <requirements/sparse-qualification.sdoc>`
 * :download:`Bounded model charge contracts <requirements/model-charge-profile.sdoc>`
 * :download:`Development standards <requirements/development-standards.sdoc>`
+* :download:`Parsed corpus capability inventory <requirements/capability-inventory.sdoc>`

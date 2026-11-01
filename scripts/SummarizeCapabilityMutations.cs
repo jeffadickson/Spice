@@ -5,18 +5,27 @@ using System.Text.Json;
 
 // Stryker performs mutation and execution. This helper only reconciles stable
 // source/location/operator/replacement identities across its two JSON reports.
-if(args is not [var originalPath,var replayPath,var output] || !Directory.Exists(Path.GetDirectoryName(Path.GetFullPath(output))))
-    throw new ArgumentException("Usage: <original Stryker JSON> <replay Stryker JSON> <output with existing parent>");
+if(args.Length is not (3 or 4) || !Directory.Exists(Path.GetDirectoryName(Path.GetFullPath(args[2]))))
+    throw new ArgumentException("Usage: <original Stryker JSON> <replay Stryker JSON> <output with existing parent> [focused Stryker JSON]");
+var originalPath=args[0];var replayPath=args[1];var output=args[2];
 var original=Read(originalPath);var replay=Read(replayPath);
 var lookup=replay.ToDictionary(m=>m.Identity,StringComparer.Ordinal);
+var focused=args.Length==4?Read(args[3]):[];
+var focusLookup=focused.ToDictionary(m=>m.Identity,StringComparer.Ordinal);
 var transitions=original.Where(m=>m.Status is "Survived" or "NoCoverage" or "Timeout").Select(m=>
 {
     var found=lookup.TryGetValue(m.Identity,out var repeated);
+    var status=found?repeated!.Status:"not_replayed";var stage="broad_replay";
+    // A later executed identity can refine an open result. Unselected/compile
+    // outcomes cannot erase earlier evidence, and raw scope counts stay separate.
+    if(status!="Killed"&&focusLookup.TryGetValue(m.Identity,out var targeted)&&targeted.Status is "Killed" or "Survived" or "NoCoverage" or "Timeout")
+    {status=targeted.Status;stage="focused_replay";}
     return new{m.Identity,m.File,m.Id,m.Line,m.Column,m.Mutator,m.Replacement,original_status=m.Status,
-        replay_status=found?repeated!.Status:"not_replayed",disposition=found&&repeated!.Status=="Killed"?"detected_by_strengthened_tests":"review_needed"};
+        replay_status=status,replay_stage=stage,disposition=status=="Killed"?"detected_by_strengthened_tests":"review_needed"};
 }).ToArray();
 var report=new{framework="Stryker.NET 5.0.0",original_report_sha256=Hash(originalPath),replay_report_sha256=Hash(replayPath),
-    original_counts=Counts(original),replay_counts=Counts(replay),targeted_original_identities=transitions.Length,
+    focused_report_sha256=args.Length==4?Hash(args[3]):null,
+    original_counts=Counts(original),replay_counts=Counts(replay),focused_counts=Counts(focused),targeted_original_identities=transitions.Length,
     replay_killed=transitions.Count(t=>t.replay_status=="Killed"),transitions,
     limitations=new[]{"Scopes differ: do not add campaign scores or relabel skipped/compile-error outcomes as kills.",
         "Timeouts remain separate, even if Stryker's displayed score treats them as detected.",

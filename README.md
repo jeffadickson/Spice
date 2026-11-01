@@ -8,6 +8,11 @@ See the [three-parser comparison and framework decision](docs/parser-only-plan.m
 and [declared grammar inventory](docs/parser-grammar-inventory.md). Structural
 acceptance, complete syntax conformance and numerical support are distinct.
 
+The [parsed capability inventory](docs/capability-inventory.md) counts what the
+accepted samples require before adding model support. Run
+`scripts/Run-CapabilityInventory.ps1` for a fresh provenance-checked inventory,
+planning-gap report and separate assessment-baseline burndown.
+
 ## Working scope
 
 Run the [whole upstream corpus matrix](docs/ngspice-corpus-matrix.md) to learn what

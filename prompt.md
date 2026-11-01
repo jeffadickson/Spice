@@ -1,3 +1,20 @@
+Latest capability-inventory checkpoint: read docs/capability-inventory.md,
+docs/capability-inventory-results.md and evidence/capability-inventory.json.
+The opt-in generated-tree observer inventories all 916 declared valid inputs
+from the 924-row scope, with eight hash-pinned exclusions and explicit legacy
+replay; 3618 feature kinds are observations, not execution support. Source and
+binary identities remain in the bounded report. Registry assessments pin the
+committed bc48c64 baseline, excluding unrelated sheet-resistor edits.
+Next implementation priority is typed/source-located semantic binding and
+parameter/subcircuit elaboration with an explicit external-resource policy,
+then representative model/LEVEL/parameter profiles. Includes are not expanded,
+control bodies and quoted languages remain opaque, and no numerical model was
+added. The new assessment SVG is a baseline, separate from numerical burndowns.
+See capability-inventory-verification.json and capability-inventory-mutations.json
+for actual tests, scopes, coverage, replay outcomes and remaining mutation gaps.
+Preserve unrelated sheet-resistor work and engineering-docs evidence. No CI,
+new soak, Linux, GPU, NativeAOT or full SPICE qualification is authorized by this
+inventory checkpoint. Check actual git history/status before continuing.
 Latest authorized parser-only work: read docs/parser-only-results.md,
 docs/parser-only-plan.md, docs/parser-grammar-inventory.md and
 evidence/parser-only-corpus.json. Compared ngspice, XDM C++ and SpiceSharpParser C#;
