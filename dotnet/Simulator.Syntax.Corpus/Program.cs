@@ -56,7 +56,7 @@ if (args is ["--worker",var input])
                 collectFeatures&&syntax.Status=="accepted_structure"?CapabilityInventory.Tally(syntax.Features):null,
                 syntax.Declarations is { } catalog?DeclarationSummary.From(catalog):null,
                 collectSemantics&&syntax.Declarations is {} semanticCatalog?SemanticSummary.From(semanticCatalog):null,
-                resourceRoots!=null&&syntax.Status=="accepted_structure"?ResourceProfileObserver.Inspect(input,resourceRoots):null);
+                resourceRoots!=null&&syntax.Status=="accepted_structure"?ResourceProfileObserver.Inspect(input,resourceRoots,new ParserLimits(maxBytes,maxTokens)):null);
         }
     }
     catch (DecoderFallbackException) { result=new("encoding_rejected",0,[],digest); }
@@ -133,7 +133,7 @@ var report=new {
     framework="ANTLR generator/runtime 4.13.1",runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,
     platform=System.Runtime.InteropServices.RuntimeInformation.OSDescription,
     inputs=inputs.Count,completed,counts,source_sha256=provenance,binary_sha256=binaries,rows=rows.Where(row=>row is not null).ToArray(),
-    limits=new{input_bytes=maxBytes,tokens=maxTokens,nesting=128,rule_depth=512,worker_seconds=workerSeconds,campaign_minutes=campaignMinutes,workers,legacy_bytes=legacyBytes,collect_features=collectFeatures,collect_declarations=collectDeclarations,collect_semantics=collectSemantics,resource_roots=resourceRoots,resource_profile="strict-utf8;maxDepth32;maxFiles128;maxTotal8MiB;no-simulation",diagnostics_per_row=3},
+    limits=new{input_bytes=maxBytes,tokens=maxTokens,nesting=128,rule_depth=512,worker_seconds=workerSeconds,campaign_minutes=campaignMinutes,workers,legacy_bytes=legacyBytes,collect_features=collectFeatures,collect_declarations=collectDeclarations,collect_semantics=collectSemantics,resource_roots=resourceRoots,resource_parser=new{characters=maxBytes,tokens=maxTokens},resource_profile="strict-utf8;maxDepth32;maxFiles128;maxTotal8MiB;no-simulation",diagnostics_per_row=3},
     limitations=new[]{"Structural acceptance only; not complete ngspice device/parameter/expression dialect conformance.",
         "Control blocks and quoted expressions are retained without validating the embedded language.",
         resourceRoots!=null?"Resources are loaded only under explicit roots; resolved semantic outcomes are separate from numerical support.":collectSemantics?"Includes are not loaded; observed reference binding and root parameters are separate bounded profiles, not full elaboration or support.":"Includes are not loaded; model references, subcircuit binding and physical parameter validity are not checked.",
@@ -192,12 +192,12 @@ internal sealed record ResourceFingerprint(string Path,string? Section,string Sh
 internal sealed record ResolvedProfile(string Status,int Files,string[] DiagnosticCodes,SemanticSummary? Semantics,ResourceFingerprint[] Sources,ResourceDiagnostic[] Diagnostics);
 internal static class ResourceProfileObserver
 {
-    internal static ResolvedProfile Inspect(string input,string[] roots)
+    internal static ResolvedProfile Inspect(string input,string[] roots,ParserLimits parsingLimits)
     {
-        var resolved=ResourceResolver.Resolve(input,new(roots.ToImmutableArray()));
+        var resolved=ResourceResolver.Resolve(input,new(roots.ToImmutableArray()){ParsingLimits=parsingLimits});
         if(!resolved.Success)return new("resource_refused",0,resolved.Diagnostics.Select(d=>d.Code).ToArray(),null,[],resolved.Diagnostics.ToArray());
         var sources=resolved.Sources.Select(s=>new ResourceFingerprint(s.Path,s.Section,s.Sha256)).ToArray();
-        var parsed=DeckParser.Parse(resolved.Text!,collectDeclarations:true);
+        var parsed=DeckParser.Parse(resolved.Text!,parsingLimits,collectDeclarations:true);
         return parsed.Declarations is {} catalog?new("resolved",resolved.Sources.Length,[],SemanticSummary.From(catalog),sources,[]):
             new("expanded_syntax_refused",resolved.Sources.Length,parsed.Diagnostics.Select(d=>d.Code).ToArray(),null,sources,[]);
     }

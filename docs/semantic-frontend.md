@@ -194,3 +194,12 @@ semantics and file path, selected section and SHA256 provenance. It never lowers
 or simulates the corpus. Refused resources, expanded syntax failures, unresolved
 bindings and simulation gaps must remain separate categories. The default syntax
 acceptance gate does not certify expanded semantics or numerical behavior.
+Resource-policy refinement (2026-11-01): `ResourcePolicy.ParsingLimits` optionally
+selects recognition limits for every loaded file, including fragment-prefix
+characters/tokens. Defaults remain the existing interactive profile. Corpus
+resource/expanded recognition now inherits the campaign's declared parser limits;
+file/byte/depth/allowed-root and strict UTF-8 limits remain separate.
+`.csparam` alone no longer blocks unconditional loading, but remains unevaluated
+and semantically deferred; actual conditional-resource selection remains refused.
+`ResourceDiagnostic.SyntaxDiagnostics` supplies up to three physical parser
+reasons for grammar/budget refusals without exposing a partial successful graph.

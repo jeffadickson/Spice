@@ -42,3 +42,45 @@ Implementation: ResourceResolver.cs, generated resource/section metadata and exp
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-CAT-001
+
+[REQUIREMENT]
+UID: SEM-RESOURCE-002
+STATUS: Draft
+TITLE: Caller-selected resource recognition limits
+STATEMENT: >>>
+Resource resolution shall apply the caller-selected immutable parser character/token limits to every loaded root and fragment, counting synthetic fragment prefix input against those limits. Corpus resource and expanded-source recognition shall use its explicitly selected parser profile rather than silently reverting to interactive defaults. Insufficient limits shall refuse atomically with a budget outcome; larger qualification limits shall not change the default interactive profile or bypass file, byte, depth or path policies.
+<<<
+COMMENT: >>>
+Implementation: ResourcePolicy.ParsingLimits and ResourceResolver.Load, plus ResourceProfileObserver and the corpus resource_parser manifest. Verification: Explicit_parser_limits_govern_root_and_fragment_recognition, including a smaller-limit refusal and larger-limit success on both locations; full corpus replay. This is allocation-policy propagation, not a language or numerical-support expansion.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-RESOURCE-001
+
+[REQUIREMENT]
+UID: SEM-RESOURCE-003
+STATUS: Draft
+TITLE: Separate control exports from resource branch selection
+STATEMENT: >>>
+A csparam control-vector export alone shall not classify an otherwise unconditional include as conditional resource selection. Its syntax and deferred parameter semantics shall remain intact; resource resolution shall neither evaluate nor execute it. Actual conditional resources and other unresolved selection contexts shall remain explicitly refused under the bounded profile.
+<<<
+COMMENT: >>>
+Verification: Control_vector_exports_do_not_select_include_branches_or_gain_evaluation_support, A_control_vector_export_does_not_enable_conditional_resource_loading, and 64 seeded source-map/export cases (904,20261101). Reference: ngspice src/frontend/inp.c handles csparam control-vector creation after dotifeval. No general conditional selection, csparam evaluation or model/analysis bridge support is implied.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-RESOURCE-001
+
+[REQUIREMENT]
+UID: SEM-RESOURCE-004
+STATUS: Draft
+TITLE: Bounded physical recognition failure details
+STATEMENT: >>>
+A resource recognition failure shall retain at most three underlying parser diagnostics of at most 512 characters per message, associated with the failed physical source path. Included-fragment diagnostic lines shall exclude the synthetic title prefix. Failed resolution shall still publish no partial successful text or resource graph. Non-parser failures shall not invent parser diagnostics.
+<<<
+COMMENT: >>>
+Implementation: ResourceDiagnostic.SyntaxDiagnostics and ResourceResolver.ParseFailure. Verification: Included_syntax_failures_retain_bounded_physical_diagnostics and retained resource-policy corpus diagnostic examples. These observations explain grammar/budget gaps; a parser rejection does not establish that a vendor file is invalid SPICE.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-RESOURCE-001

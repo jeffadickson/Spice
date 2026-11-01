@@ -4,13 +4,21 @@ using System.Text;
 namespace Simulator.Syntax;
 
 /// <summary>Explicit filesystem policy; bytes count every open, including repeated includes and the root.</summary>
-public sealed record ResourcePolicy(ImmutableArray<string> AllowedRoots,int MaxDepth=32,int MaxFiles=128,long MaxTotalBytes=8_388_608);
+public sealed record ResourcePolicy(ImmutableArray<string> AllowedRoots,int MaxDepth=32,int MaxFiles=128,long MaxTotalBytes=8_388_608)
+{
+    /// <summary>Explicit recognition limits for every loaded file; fragment prefix characters/tokens count toward them. Defaults remain interactive.</summary>
+    public ParserLimits ParsingLimits { get; init; } = ParserLimits.Default;
+}
 /// <summary>Decoded UTF-8 source with original-byte SHA256; an optional UTF-8 BOM is omitted from Text.</summary>
 public sealed record ResolvedSource(string Path,string? Section,string Sha256,string Text);
 /// <summary>Exact contiguous source mapping; all offsets are UTF-16 and zero based.</summary>
 public sealed record SourceSegment(int OutputStart,int Length,int SourceIndex,int SourceStart);
 /// <summary>Resolution failure at a referring source range and attempted target, when available.</summary>
-public sealed record ResourceDiagnostic(string Code,string SourcePath,SourceRange? Range,string? TargetPath=null);
+public sealed record ResourceDiagnostic(string Code,string SourcePath,SourceRange? Range,string? TargetPath=null)
+{
+    /// <summary>At most three underlying recognition diagnostics, with physical file line numbers; empty for non-parser failures.</summary>
+    public ImmutableArray<SyntaxDiagnostic> SyntaxDiagnostics { get; init; } = [];
+}
 /// <summary>Atomic expanded source/provenance result; failures contain no partial source text or graph.</summary>
 public sealed record ResourceResolution(string? Text,ImmutableArray<ResolvedSource> Sources,ImmutableArray<SourceSegment> Segments,ImmutableArray<ResourceDiagnostic> Diagnostics)
 {
@@ -24,7 +32,7 @@ public static class ResourceResolver
     /// <remarks>Links/reparse points are refused. This is not a sandbox against hostile concurrent filesystem mutation.</remarks>
     public static ResourceResolution Resolve(string rootPath,ResourcePolicy policy)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);ArgumentNullException.ThrowIfNull(policy);
+        ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);ArgumentNullException.ThrowIfNull(policy);ArgumentNullException.ThrowIfNull(policy.ParsingLimits);
         if(policy.AllowedRoots.IsDefaultOrEmpty||policy.MaxDepth<0||policy.MaxDepth>128||policy.MaxFiles<1||policy.MaxFiles>4096||policy.MaxTotalBytes<1||policy.MaxTotalBytes>67_108_864)
             throw new ArgumentOutOfRangeException(nameof(policy));
         var comparison=OperatingSystem.IsWindows()?StringComparison.OrdinalIgnoreCase:StringComparison.Ordinal;
@@ -71,9 +79,9 @@ public static class ResourceResolver
                 catch(DecoderFallbackException){throw Fail("invalid_utf8",origin,reference,path);}
                 var index=sources.Count;sources.Add(new(path,section,Convert.ToHexStringLower(SHA256.HashData(raw)),text));
                 const string title="Resource fragment\n";var shift=fragment?title.Length:0;
-                var parsed=DeckParser.Parse((fragment?title:"")+text,collectDeclarations:true);
-                if(parsed.Status=="resource_rejected")throw Fail("resource_parse_budget",path,null,path);
-                if(parsed.Status!="accepted_structure"||parsed.Declarations==null)throw Fail("resource_syntax",path,null,path);
+                var parsed=DeckParser.Parse((fragment?title:"")+text,policy.ParsingLimits,collectDeclarations:true);
+                if(parsed.Status=="resource_rejected")throw ParseFailure("resource_parse_budget",path,parsed,fragment);
+                if(parsed.Status!="accepted_structure"||parsed.Declarations==null)throw ParseFailure("resource_syntax",path,parsed,fragment);
                 var catalog=parsed.Declarations;
                 var start=0;var end=text.Length;
                 var ending=parsed.Statements.FirstOrDefault(s=>s.Kind=="endCard");
@@ -86,7 +94,9 @@ public static class ResourceResolver
                     if(end<text.Length&&text[end]=='\r')end++;
                     if(end<text.Length&&text[end]=='\n')end++;
                 }
-                if(catalog.Resources.Any(r=>r.Range.Start-shift<end)&&catalog.DeferredContexts.Any(c=>c.Range.Start-shift<end))throw Fail("conditional_resources",path,null,path);
+                // .csparam exports a control vector after preprocessing; it does not
+                // choose file branches. Its parameter semantics remain deferred.
+                if(catalog.Resources.Any(r=>r.Range.Start-shift<end)&&catalog.DeferredContexts.Any(c=>c.Kind!=".csparam"&&c.Range.Start-shift<end))throw Fail("conditional_resources",path,null,path);
                 var definitions=catalog.Resources.Where(r=>r.Kind=="library_card"&&r.Section==null&&r.Range.Start-shift<end).OrderBy(r=>r.Range.Start).ToArray();
                 var closings=catalog.LibraryEnds.Where(c=>c.Range.Start-shift<end).OrderBy(s=>s.Range.Start).ToArray();
                 if(definitions.Any(d=>d.ScopeId!=0)||closings.Any(c=>c.ScopeId!=0))throw Fail("nested_library_section",path,null,path);
@@ -142,6 +152,12 @@ public static class ResourceResolver
                     throw Fail("link_resource",origin,reference,path);
         }
     }
+    // Included text is recognized with one synthetic title line. Expose physical
+    // diagnostics rather than leaking that implementation offset to callers.
+    private static ResourceFailure ParseFailure(string code,string path,DeckSyntax parsed,bool fragment)=>new(
+        new(code,path,null,path) { SyntaxDiagnostics=parsed.Diagnostics.Take(3)
+            .Select(d=>d with {Line=fragment&&d.Line>0?Math.Max(1,d.Line-1):d.Line,
+                Message=d.Message.Length>512?d.Message[..512]:d.Message}).ToImmutableArray() });
     private static string Unquote(string text)=>text.Length>=2&&text[0] is '\'' or '"'&&text[^1]==text[0]?text[1..^1]:text;
     private static ResourceFailure Fail(string code,string origin,SourceRange? range,string? target)=>new(new(code,origin,range,target));
     private sealed class ResourceFailure(ResourceDiagnostic diagnostic):Exception(diagnostic.Code)

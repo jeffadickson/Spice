@@ -50,3 +50,15 @@ numerical agreement are separate outcomes. The opt-in corpus ``-ResourceRoots``
 profile records the first three and never simulates samples. The bridge does not
 yet expose model devices, waveform sources or AC/transient from text. Those
 analyses remain available through the existing engine's supported API contracts.
+
+Resource policy refinements
+---------------------------
+
+``ResourcePolicy.ParsingLimits`` selects the immutable recognition profile for
+each root/fragment. Fragment title prefix input counts against those limits.
+Corpus resource and expanded parsing use the explicitly declared campaign
+profile; interactive defaults remain unchanged. ``.csparam`` is a control-vector
+export rather than a resource branch selector, so its presence alone does not
+refuse an unconditional include. Resolution still does not evaluate it, and real
+conditional resources remain refused. Failed recognition retains at most three
+physical source diagnostics in ``ResourceDiagnostic.SyntaxDiagnostics``.

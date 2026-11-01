@@ -42,7 +42,7 @@ public sealed class ResourceResolutionTests
     public void Failure_publishes_no_partial_graph_or_expanded_text(string directive,string code)
     {
         using var f=new Files();var root=f.Put("root.cir","Title\n"+directive+"\n.end\n");f.Put("cells.lib",".lib typical\n.param a=1\n.endl\n");
-        var result=ResourceResolver.Resolve(root,new([f.Root]));Assert.False(result.Success);Assert.Null(result.Text);Assert.Empty(result.Sources);Assert.Empty(result.Segments);Assert.Contains(result.Diagnostics,d=>d.Code==code);
+        var result=ResourceResolver.Resolve(root,new([f.Root]));Assert.False(result.Success);Assert.Null(result.Text);Assert.Empty(result.Sources);Assert.Empty(result.Segments);Assert.Contains(result.Diagnostics,d=>d.Code==code);Assert.All(result.Diagnostics,d=>Assert.Empty(d.SyntaxDiagnostics));
     }
     [Fact]
     public void Cycles_encodings_conditionals_and_all_resource_budgets_have_explicit_failures()
@@ -99,4 +99,124 @@ public sealed class ResourceResolutionTests
         f.Put("cells.lib",".subckt outer p n\n.lib typical\n.param local=1\n.endl typical\n.ends\n");
         var result=ResourceResolver.Resolve(root,new([f.Root]));
         Assert.False(result.Success);Assert.Null(result.Text);Assert.Equal("nested_library_section",Assert.Single(result.Diagnostics).Code);
-    }}
+    }    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Explicit_parser_limits_govern_root_and_fragment_recognition(bool fragment)
+    {
+        using var f=new Files();
+        var body=string.Join('\n',Enumerable.Range(0,80).Select(i=>$"R{i} a 0 1k"))+"\n";
+        var root=f.Put("root.cir",fragment?"Title\n.include 'large.inc'\n.end\n":"Title\n"+body+".end\n");
+        f.Put("large.inc",body);
+        var small=new ResourcePolicy([f.Root]) {ParsingLimits=new(10_000,64)};
+        var refused=ResourceResolver.Resolve(root,small);
+        Assert.False(refused.Success);Assert.Null(refused.Text);Assert.Empty(refused.Sources);Assert.Empty(refused.Segments);
+        Assert.Equal("resource_parse_budget",Assert.Single(refused.Diagnostics).Code);
+        Assert.Equal(Path.Combine(f.Root,fragment?"large.inc":"root.cir"),refused.Diagnostics[0].SourcePath);
+        var selected=small with {ParsingLimits=new(10_000,10_000)};
+        var accepted=ResourceResolver.Resolve(root,selected);
+        Assert.True(accepted.Success);Assert.Contains("R79 a 0 1k",accepted.Text!);
+        Assert.Same(ParserLimits.Default,new ResourcePolicy([f.Root]).ParsingLimits);
+    }
+    [Fact]
+    public void Control_vector_exports_do_not_select_include_branches_or_gain_evaluation_support()
+    {
+        using var f=new Files();var root=f.Put("root.cir","Title\n.param r=1k\n.csparam exported='r'\n.include 'values.inc'\n.end\n");
+        f.Put("values.inc","R1 a 0 1k\n");
+        var result=ResourceResolver.Resolve(root,new([f.Root]));
+        Assert.True(result.Success);Assert.Equal(2,result.Sources.Length);Assert.Contains(".csparam exported='r'",result.Text!);
+        var catalog=DeckParser.Parse(result.Text!,collectDeclarations:true).Declarations!;
+        Assert.Contains(catalog.DeferredContexts,c=>c.Kind==".csparam");Assert.False(ParameterEvaluator.Evaluate(catalog).Success);
+    }
+    [Fact]
+    public void A_control_vector_export_does_not_enable_conditional_resource_loading()
+    {
+        using var f=new Files();var root=f.Put("root.cir","Title\n.csparam enabled=1\n.if enabled\n.include 'must-not-open.inc'\n.endif\n.end\n");
+        var result=ResourceResolver.Resolve(root,new([f.Root]));
+        Assert.Equal("conditional_resources",Assert.Single(result.Diagnostics).Code);
+        Assert.Null(result.Text);Assert.Empty(result.Sources);Assert.Empty(result.Segments);
+    }
+    [Theory]
+    [InlineData("\n")]
+    [InlineData("\r\n")]
+    [InlineData("\r")]
+    public void Included_syntax_failures_retain_bounded_physical_diagnostics(string newline)
+    {
+        using var f=new Files();var root=f.Put("root.cir","Title\n.include 'bad.inc'\n.end\n");
+        f.Put("bad.inc","* first physical line"+newline+"R1 a 0 {1+}"+newline);
+        var result=ResourceResolver.Resolve(root,new([f.Root]));
+        var failure=Assert.Single(result.Diagnostics);Assert.Equal("resource_syntax",failure.Code);
+        Assert.Equal(Path.Combine(f.Root,"bad.inc"),failure.SourcePath);
+        Assert.InRange(failure.SyntaxDiagnostics.Length,1,3);
+        Assert.All(failure.SyntaxDiagnostics,d=>{Assert.Equal(2,d.Line);Assert.InRange(d.Message.Length,1,512);});
+        Assert.Null(result.Text);Assert.Empty(result.Sources);Assert.Empty(result.Segments);
+    }
+    [FsCheck.Xunit.Property(MaxTest=64,Replay="904,20261101")]
+    public bool Control_exports_preserve_unconditional_expansion_and_exact_segments(FsCheck.PositiveInt number)
+    {
+        using var f=new Files();var count=1+number.Get%12;
+        var exports=string.Join('\n',Enumerable.Range(0,count).Select(i=>$".csparam v{i}={i}"));
+        var root=f.Put("root.cir","Title\n"+exports+"\n.include 'part.inc'\n.end\n");
+        f.Put("part.inc","R1 a 0 1k\n");
+        var result=ResourceResolver.Resolve(root,new([f.Root]) {ParsingLimits=new(10_000,10_000)});
+        if(!result.Success||result.Sources.Length!=2||!result.Text!.Contains(exports,StringComparison.Ordinal))return false;
+        return string.Concat(result.Segments.Select(s=>result.Sources[s.SourceIndex].Text.Substring(s.SourceStart,s.Length)))==result.Text;
+    }
+    [Fact]
+    public void Long_unknown_directive_messages_are_bounded_at_the_resource_boundary()
+    {
+        using var f=new Files();var root=f.Put("root.cir","Title\n.include 'long.inc'\n.end\n");
+        f.Put("long.inc","."+new string('z',10_000)+"\n");
+        var failure=Assert.Single(ResourceResolver.Resolve(root,new([f.Root])).Diagnostics);
+        Assert.Equal("resource_syntax",failure.Code);
+        Assert.Contains(failure.SyntaxDiagnostics,d=>d.Code=="grammar_gap");
+        Assert.All(failure.SyntaxDiagnostics,d=>Assert.InRange(d.Message.Length,1,512));
+    }
+    [Fact]
+    public void Fragment_prefix_is_charged_to_the_explicit_character_budget()
+    {
+        using var f=new Files();var root=f.Put("root.cir","T\n.inc p\n.end\n");f.Put("p","R1 a 0 1k\n");
+        var small=new ResourcePolicy([f.Root]) {ParsingLimits=new(20,1000)};
+        var rejected=ResourceResolver.Resolve(root,small);
+        Assert.False(rejected.Success);Assert.Null(rejected.Text);Assert.Empty(rejected.Sources);
+        Assert.Equal("resource_parse_budget",Assert.Single(rejected.Diagnostics).Code);
+        Assert.Equal(Path.Combine(f.Root,"p"),rejected.Diagnostics[0].SourcePath);
+        Assert.Equal(0,Assert.Single(rejected.Diagnostics[0].SyntaxDiagnostics).Line);
+        Assert.True(ResourceResolver.Resolve(root,small with {ParsingLimits=new(64,1000)}).Success);
+    }
+    [Fact]
+    public void Only_three_physical_grammar_gap_messages_are_exported()
+    {
+        using var f=new Files();var root=f.Put("root.cir","Title\n.include 'many.inc'\n.end\n");
+        f.Put("many.inc",".gap1\n.gap2\n.gap3\n.gap4\n");
+        var failure=Assert.Single(ResourceResolver.Resolve(root,new([f.Root])).Diagnostics);
+        Assert.Equal(3,failure.SyntaxDiagnostics.Length);
+        Assert.Equal(new[]{1,2,3},failure.SyntaxDiagnostics.Select(d=>d.Line));
+    }
+    [Fact]
+    public void Nested_fragment_conditionals_are_refused_before_opening_targets()
+    {
+        using var f=new Files();var root=f.Put("root.cir","Title\n.include 'conditional.inc'\n.end\n");
+        f.Put("conditional.inc",".if 1\n.inc a\n.endif\n");
+        Assert.Equal("conditional_resources",Assert.Single(ResourceResolver.Resolve(root,new([f.Root])).Diagnostics).Code);
+    }
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Conditional_or_resource_cards_immediately_after_end_are_inactive(bool resourceInTail)
+    {
+        using var f=new Files();f.Put("good.inc","R1 a 0 1k\n");
+        var body=resourceInTail?".if 1\n.endif\n.end\n.inc must-not-open\n":".inc good.inc\n.end\n.if 1\n.endif\n";
+        var result=ResourceResolver.Resolve(f.Put("root.cir","Title\n"+body),new([f.Root]));
+        Assert.True(result.Success);Assert.DoesNotContain("must-not-open",result.Text!);
+        Assert.Equal(resourceInTail?1:2,result.Sources.Length);
+    }
+    [Fact]
+    public void Root_syntax_diagnostics_do_not_lose_a_physical_line()
+    {
+        using var f=new Files();var root=f.Put("root.cir","Title\nR1 a 0 {1+}\n.end\n");
+        var failure=Assert.Single(ResourceResolver.Resolve(root,new([f.Root])).Diagnostics);
+        Assert.Equal("resource_syntax",failure.Code);Assert.NotEmpty(failure.SyntaxDiagnostics);
+        Assert.All(failure.SyntaxDiagnostics,d=>Assert.Equal(2,d.Line));
+    }
+}
