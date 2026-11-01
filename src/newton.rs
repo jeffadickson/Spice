@@ -1041,3 +1041,27 @@ mod october29_contracts {
         assert!((norm - 0.02 / (0.01 * (1. + 1e-6))).abs() < 1e-15);
     }
 }
+
+#[cfg(test)]
+mod november1_contracts {
+    use super::*;
+
+    #[test]
+    fn first_branch_constraint_residual_uses_volts_not_amperes() {
+        let plan = crate::compile::compile(
+            &crate::netlist::parse("* Row units\nV1 x 0 1\nR1 x 0 1\n.end").unwrap(),
+        )
+        .unwrap();
+        let options = NewtonOptions {
+            voltage_absolute_tolerance: 1e-6,
+            current_absolute_tolerance: 1e-12,
+            relative_tolerance: 1e-9,
+            ..Default::default()
+        };
+        // Node KCL is exact. The first voltage-constraint row is 0.5 microvolt
+        // away from its RHS. The relative floor adds 1e-9 of the absolute
+        // voltage bound; current-row tolerance must not enter this ratio.
+        let norm = scaled_residual_norm(&plan, &[0., 0.5e-6], &[0., 0.], options).unwrap();
+        assert!((norm - 0.5 / (1. + 1e-9)).abs() < 1e-15);
+    }
+}
