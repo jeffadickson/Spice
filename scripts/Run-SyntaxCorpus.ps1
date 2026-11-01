@@ -13,7 +13,7 @@ param([string]$Inventory,[string]$CorpusRoot,[string]$Output,
     [ValidateRange(1,4)][int]$Workers=1,
     [ValidateRange(1,67108864)][int]$MaxInputBytes=4194304,
     [ValidateRange(1,4000000)][int]$MaxTokens=2000000,
-    [switch]$LegacyBytes,[switch]$RequireValidSamples,[switch]$CollectFeatures,
+    [switch]$LegacyBytes,[switch]$RequireValidSamples,[switch]$CollectFeatures,[switch]$CollectDeclarations,
     [string]$ArtifactsPath)
 $ErrorActionPreference='Stop'
 if($RequireValidSamples -and $LegacyBytes){throw 'Acceptance requires a strict UTF-8 primary; legacy replay is automatic'}
@@ -47,6 +47,7 @@ $settings=@{
     SPICE_PARSE_WORKERS=$Workers; SPICE_PARSE_MAX_BYTES=$MaxInputBytes
     SPICE_PARSE_MAX_TOKENS=$MaxTokens; SPICE_PARSE_LEGACY_BYTES=[int][bool]$LegacyBytes
     SPICE_PARSE_FEATURES=[int][bool]$CollectFeatures
+    SPICE_PARSE_DECLARATIONS=[int][bool]$CollectDeclarations
 }
 $saved=@{}
 foreach($name in $settings.Keys){$saved[$name]=[Environment]::GetEnvironmentVariable($name);[Environment]::SetEnvironmentVariable($name,[string]$settings[$name])}

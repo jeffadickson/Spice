@@ -1,0 +1,30 @@
+[DOCUMENT]
+TITLE: Source-Located Declaration Catalog
+
+[REQUIREMENT]
+UID: SEM-CAT-001
+STATUS: Draft
+TITLE: Immutable declaration scopes from generated syntax
+STATEMENT: >>>
+The frontend shall optionally derive immutable model/subcircuit declarations, lexical body scopes, ordered scope parameter syntax, attached model/default parameter syntax and unresolved resource declarations from its generated parse tree. Original physical UTF-16 source ranges shall be retained. Rejected inputs shall publish no partial catalog. Catalog export shall neither load resources nor evaluate parameters or commands.
+<<<
+COMMENT: >>>
+Implementation: DeclarationExtraction.cs, DeclarationCatalog.cs and DeckSyntax.cs. Verification: DeclarationTests and the bounded declaration corpus profile. This is a catalog slice, not instance binding, flattening, expression evaluation or execution readiness.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-002
+
+[REQUIREMENT]
+UID: SEM-CAT-002
+STATUS: Draft
+TITLE: Conservative lexical lookup with explicit uncertainty
+STATEMENT: >>>
+The catalog shall provide ordinal case-insensitive lookup in the nearest lexical scope and then ancestors, including forward declarations. Model and subcircuit namespaces shall remain distinct. Same-scope named duplicates shall retain their locations and report ambiguity under an explicit conservative profile. Parameter lookup shall retain ordered assignments without selecting or evaluating an effective value. Unresolved external resources, conditional declarations and opaque parameter targets shall prevent definitive absence claims where relevant.
+<<<
+COMMENT: >>>
+Verification: shadowing, forward definitions, duplicates, namespace separation, source locations, deferred lookup and seeded prediction-strategy/renaming properties. The duplicate/scope profile is not asserted to reproduce all ngspice dialect policies. Requirements remain Draft; no full elaboration conformance is closed.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: NGC-PARSE-002

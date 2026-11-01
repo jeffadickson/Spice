@@ -19,6 +19,7 @@ var campaignMinutes=Setting("SPICE_PARSE_CAMPAIGN_MINUTES",30,1,1440);
 var workers=Setting("SPICE_PARSE_WORKERS",1,1,4);
 var legacyBytes=Setting("SPICE_PARSE_LEGACY_BYTES",0,0,1)==1;
 var collectFeatures=Setting("SPICE_PARSE_FEATURES",0,0,1)==1;
+var collectDeclarations=Setting("SPICE_PARSE_DECLARATIONS",0,0,1)==1;
 
 // A worker parses only. There is no simulator, preprocessor, shell interpreter,
 // model resolver, or file loader reachable from the syntax project.
@@ -44,9 +45,10 @@ if (args is ["--worker",var input])
                 // not claim the author's actual code page or repair broken UTF-8.
                 text=Encoding.Latin1.GetString(bytes);encoding="latin1-byte-preserving";
             }
-            var syntax=DeckParser.Parse(text.TrimStart('\uFEFF'),new ParserLimits(maxBytes,maxTokens),collectFeatures);
+            var syntax=DeckParser.Parse(text.TrimStart('\uFEFF'),new ParserLimits(maxBytes,maxTokens),collectFeatures,collectDeclarations);
             result=new(syntax.Status,syntax.Statements.Length,syntax.Diagnostics.Take(3).ToArray(),digest,encoding,syntax.Format,
-                collectFeatures&&syntax.Status=="accepted_structure"?CapabilityInventory.Tally(syntax.Features):null);
+                collectFeatures&&syntax.Status=="accepted_structure"?CapabilityInventory.Tally(syntax.Features):null,
+                syntax.Declarations is { } catalog?DeclarationSummary.From(catalog):null);
         }
     }
     catch (DecoderFallbackException) { result=new("encoding_rejected",0,[],digest); }
@@ -123,7 +125,7 @@ var report=new {
     framework="ANTLR generator/runtime 4.13.1",runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,
     platform=System.Runtime.InteropServices.RuntimeInformation.OSDescription,
     inputs=inputs.Count,completed,counts,source_sha256=provenance,binary_sha256=binaries,rows=rows.Where(row=>row is not null).ToArray(),
-    limits=new{input_bytes=maxBytes,tokens=maxTokens,nesting=128,rule_depth=512,worker_seconds=workerSeconds,campaign_minutes=campaignMinutes,workers,legacy_bytes=legacyBytes,collect_features=collectFeatures,diagnostics_per_row=3},
+    limits=new{input_bytes=maxBytes,tokens=maxTokens,nesting=128,rule_depth=512,worker_seconds=workerSeconds,campaign_minutes=campaignMinutes,workers,legacy_bytes=legacyBytes,collect_features=collectFeatures,collect_declarations=collectDeclarations,diagnostics_per_row=3},
     limitations=new[]{"Structural acceptance only; not complete ngspice device/parameter/expression dialect conformance.",
         "Control blocks and quoted expressions are retained without validating the embedded language.",
         "Includes are not loaded; model references, subcircuit binding and physical parameter validity are not checked.",
@@ -176,4 +178,4 @@ static int Setting(string name,int fallback,int minimum,int maximum)
         || value<minimum || value>maximum)throw new ArgumentException($"{name} must be an integer in [{minimum},{maximum}]");
     return value;
 }
-internal sealed record WorkerResult(string Status,int Statements,SyntaxDiagnostic[] Diagnostics,string? Sha256,string? Encoding=null,string? InputKind=null,FeatureTally[]? Features=null);
+internal sealed record WorkerResult(string Status,int Statements,SyntaxDiagnostic[] Diagnostics,string? Sha256,string? Encoding=null,string? InputKind=null,FeatureTally[]? Features=null,DeclarationSummary? Declarations=null);

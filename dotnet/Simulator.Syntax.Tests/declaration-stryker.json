@@ -1,0 +1,21 @@
+{
+  "stryker-config": {
+    "additional-timeout": 5000,
+    "project": "Simulator.Syntax.csproj",
+    "thresholds": {
+      "high": 80,
+      "low": 60,
+      "break": 0
+    },
+    "concurrency": 1,
+    "reporters": [
+      "json",
+      "cleartext"
+    ],
+    "mutate": [
+      "**/DeclarationCatalog.cs",
+      "**/DeclarationExtraction.cs",
+      "**/DeclarationSummary.cs"
+    ]
+  }
+}

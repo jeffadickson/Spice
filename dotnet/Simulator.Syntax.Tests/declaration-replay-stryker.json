@@ -1,0 +1,35 @@
+{
+  "stryker-config": {
+    "reporters": [
+      "json",
+      "cleartext"
+    ],
+    "thresholds": {
+      "break": 0,
+      "low": 60,
+      "high": 80
+    },
+    "additional-timeout": 5000,
+    "concurrency": 1,
+    "project": "Simulator.Syntax.csproj",
+    "mutate": [
+      "**/DeclarationCatalog.cs{6393..6412}",
+      "**/DeclarationCatalog.cs{8529..8599}",
+      "**/DeclarationExtraction.cs{1311..1320}",
+      "**/DeclarationExtraction.cs{1324..1331}",
+      "**/DeclarationExtraction.cs{1347..1357}",
+      "**/DeclarationExtraction.cs{1361..1372}",
+      "**/DeclarationExtraction.cs{1659..1666}",
+      "**/DeclarationExtraction.cs{2169..2215}",
+      "**/DeclarationExtraction.cs{3411..3474}",
+      "**/DeclarationExtraction.cs{3450..3459}",
+      "**/DeclarationExtraction.cs{3460..3474}",
+      "**/DeclarationExtraction.cs{4882..4906}",
+      "**/DeclarationExtraction.cs{4984..4993}",
+      "**/DeclarationSummary.cs{1241..1250}",
+      "**/DeclarationSummary.cs{1241..1249}",
+      "**/DeclarationSummary.cs{1687..1696}",
+      "**/DeclarationSummary.cs{1687..1695}"
+    ]
+  }
+}
