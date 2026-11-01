@@ -207,7 +207,7 @@ STATEMENT: >>>
 The project shall use mutation testing on relevant code to check whether tests detect deliberately changed behavior. Report killed, surviving, timed-out and invalid mutants and document reviewed exclusions.
 <<<
 COMMENT: >>>
-Verification: Run the selected mutation tool and investigate surviving mutants rather than relying only on the score.
+Verification: Run the selected mutation tool and investigate surviving mutants rather than relying only on the score. November 1 native-cohort trace: tests/overnight_survivors_20261101.rs independently exercises disjunction operands, inclusive limits, endpoint roundoff, payload validity, signed power and provider identity; src/newton.rs::november1_contracts verifies the first voltage-constraint residual row with voltage units. See evidence/rust-survivors-20261101.json for exact replay dispositions and limitations.
 <<<
 
 [REQUIREMENT]

@@ -1,0 +1,16 @@
+[
+  "src/artifact.rs:135:34: replace || with && in read_verified",
+  "src/audit.rs:305:15: replace += with *= in power_check",
+  "src/backend_faer.rs:214:9: replace <impl LinearSolver for FaerSparseLu>::name -> &'static str with \"\"",
+  "src/circuit.rs:137:35: replace || with && in Circuit::validate",
+  "src/circuit.rs:227:21: replace || with && in Circuit::validate",
+  "src/configured.rs:86:40: replace || with && in initial",
+  "src/configured.rs:198:85: replace > with >= in run_observed",
+  "src/configured.rs:225:52: replace * with / in run_observed",
+  "src/expression.rs:41:52: replace + with * in Expr::inner",
+  "src/measurement.rs:17:33: replace || with && in value_at",
+  "src/newton.rs:250:33: replace < with <= in scaled_residual_norm",
+  "src/newton.rs:356:77: replace > with == in NewtonOptions::validate",
+  "src/waveform.rs:56:41: replace match guard !value.is_finite() with false in Waveform::validate",
+  "src/waveform.rs:113:17: replace || with && in Waveform::validate"
+]

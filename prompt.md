@@ -1,3 +1,14 @@
+Latest native survivor follow-up: see docs/rust-survivors-20261101.md and
+evidence/rust-survivors-20261101.json. The November 1 fourteen-mutant cohort
+now has 13 actual kills and one retained raw survivor, reviewed equivalent only
+to the stable measurement InvalidInput/no-extrapolation contract (context text
+and scans differ). Tests changed; production behavior did not. Final Windows
+MSVC regression: 459 passed, one explicitly ignored endurance batch; proptest
+seed 2026110101, requested cases 256. Focused line coverage 1071/6211 (17.24%),
+branch coverage unavailable. StrictDoc: 19 documents, 312 IDs, 300 parents.
+Original 99 unviable and 19 unattempted candidates remain unavailable evidence.
+No whole-shard score, Linux/.NET/GPU/production qualification or new soak is
+claimed. Preserve unrelated sheet-resistor work and engineering-docs evidence.
 Latest declaration-catalog checkpoint: read docs/semantic-frontend-plan.md,
 docs/declaration-catalog.md and evidence/declaration-catalog.json. All 916
 required inputs exported catalogs; 903 have unambiguous observed definitions
