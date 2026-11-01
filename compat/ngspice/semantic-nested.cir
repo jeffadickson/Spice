@@ -1,0 +1,15 @@
+Nested override semantic oracle
+Xroot out 0 outer gain=6
+.subckt outer p n gain=2
+Xinner p n inner
+.subckt inner p n derived={gain*4}
+Vlocal p n {derived}
+.ends inner
+.ends outer
+.control
+set numdgt=17
+op
+echo SEMANTIC_nested $&v(out)
+quit
+.endc
+.end

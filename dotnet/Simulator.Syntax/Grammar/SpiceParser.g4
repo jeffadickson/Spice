@@ -86,9 +86,11 @@ identifier: WORD | PASSIVE_NAME | SOURCE_NAME | DIODE_NAME | BJT_NAME |
     CSWITCH_NAME | COUPLING_NAME | SUBCALL_NAME | BEHAVIOR_NAME | LINE_NAME | XSPICE_NAME | NUMERIC_NAME | PATH_NAME |
     OSDI_NAME | CPL_NAME | TXL_NAME | URC_NAME;
 
-// Expressions are syntax only: no evaluation, unit checking or symbol lookup.
-expression: (PLUS | MINUS | BANG | TILDE) expression
-    | expression (POWER | CARET) expression
+// Recognition stays syntax-only. The semantic evaluator reuses this tree.
+// Pinned ngspice parameter fixtures: power binds before unary minus, while
+// chained powers associate left (2^3^2 = 64, -2^2 = -4).
+expression: expression (POWER | CARET) expression
+    | (PLUS | MINUS | BANG | TILDE) expression
     | expression (STAR | SLASH | PERCENT) expression
     | expression (PLUS | MINUS) expression
     | expression LBRACKET expression RBRACKET
