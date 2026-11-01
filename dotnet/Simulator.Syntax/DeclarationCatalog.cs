@@ -46,7 +46,11 @@ public sealed record DeclaredResource(int ScopeId,string Kind,SourceSyntax Targe
     public SourceSyntax? Section { get; init; }
 }
 /// <summary>A generated library closing delimiter, with an optional section name.</summary>
-public sealed record LibrarySectionEnd(SourceSyntax? Name,bool Supported,SourceRange Range);
+public sealed record LibrarySectionEnd(SourceSyntax? Name,bool Supported,SourceRange Range)
+{
+    /// <summary>Lexical declaration scope containing the delimiter.</summary>
+    public int ScopeId { get; init; }
+}
 /// <summary>A conditional or alternate parameter declaration whose semantics remain unresolved.</summary>
 public sealed record DeferredDeclarationContext(string Kind,SourceRange Range);
 /// <summary>Catalog ambiguity with both physical declaration locations; not a ngspice syntax verdict.</summary>

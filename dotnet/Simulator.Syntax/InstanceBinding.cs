@@ -23,7 +23,24 @@ public sealed record InstanceHeader(string Name,string Family,int ScopeId,Immuta
 /// <summary>One zero-based connection; Formal is null for model terminal ordinals without named source declarations.</summary>
 public sealed record PortBinding(SourceSyntax? Formal,SourceSyntax Actual,int Ordinal);
 /// <summary>A reference binding or explicit diagnostic, without hierarchy flattening.</summary>
-public sealed record BoundInstance(InstanceHeader Header,BindingStatus Status,string Code,NamedDeclaration? Target,ImmutableArray<PortBinding> Ports);
+public sealed record BoundInstance
+{
+    /// <summary>The immutable generated header belonging to the source catalog.</summary>
+    public InstanceHeader Header { get; }
+    /// <summary>Reference outcome under the bounded binding profile.</summary>
+    public BindingStatus Status { get; }
+    /// <summary>Stable outcome code.</summary>
+    public string Code { get; }
+    /// <summary>The uniquely bound definition, when available.</summary>
+    public NamedDeclaration? Target { get; }
+    /// <summary>Ordered connections; empty on failure or a zero-port call.</summary>
+    public ImmutableArray<PortBinding> Ports { get; }
+    internal DeclarationCatalog Catalog { get; }
+    // Only the binder can create a result. Get-only properties prevent a public
+    // record 'with' expression from changing its header/target after validation.
+    internal BoundInstance(DeclarationCatalog catalog,InstanceHeader header,BindingStatus status,string code,NamedDeclaration? target,ImmutableArray<PortBinding> ports)
+    {Catalog=catalog;Header=header;Status=status;Code=code;Target=target;Ports=ports;}
+}
 /// <summary>A graph diagnostic with a physical source origin.</summary>
 public sealed record BindingDiagnostic(string Code,SourceRange Range);
 /// <summary>Bindings cover observed X/D/Q/M/J/S/W references, not every device or an executable circuit.</summary>
@@ -65,7 +82,7 @@ public static class InstanceBinder
     }
     private static BoundInstance BindOne(DeclarationCatalog catalog,InstanceHeader header)
     {
-        BoundInstance Fail(BindingStatus status,string code)=>new(header,status,code,null,[]);
+        BoundInstance Fail(BindingStatus status,string code)=>new(catalog,header,status,code,null,[]);
         if(!header.Supported||header.Positional.IsEmpty)return Fail(BindingStatus.Unsupported,"opaque_header");
         if(header.Family=="X")
         {
@@ -76,7 +93,7 @@ public static class InstanceBinder
             if(target.FormalPorts.Select(p=>p.Text).Distinct(StringComparer.OrdinalIgnoreCase).Count()!=target.FormalPorts.Length)
                 return Fail(BindingStatus.Invalid,"duplicate_formal_port");
             if(header.Positional.Length-1!=target.FormalPorts.Length)return Fail(BindingStatus.Invalid,"port_arity");
-            return new(header,BindingStatus.Bound,"bound",target,target.FormalPorts.Select((f,i)=>new PortBinding(f,header.Positional[i],i)).ToImmutableArray());
+            return new(catalog,header,BindingStatus.Bound,"bound",target,target.FormalPorts.Select((f,i)=>new PortBinding(f,header.Positional[i],i)).ToImmutableArray());
         }
         // Enumerate only declared model positions allowed by explicit device
         // contracts. The grammar's Q/M partition is not a semantic arity oracle.
@@ -97,7 +114,7 @@ public static class InstanceBinder
         var found=candidates[0];
         // Model terminals have ordinal positions; model-specific names are not
         // invented. W's controlling source remains in its positional header.
-        return new(header,BindingStatus.Bound,"bound",found.Model,header.Positional.Take(found.Arity).Select((a,i)=>new PortBinding(null,a,i)).ToImmutableArray());
+        return new(catalog,header,BindingStatus.Bound,"bound",found.Model,header.Positional.Take(found.Arity).Select((a,i)=>new PortBinding(null,a,i)).ToImmutableArray());
     }
     private static (BindingStatus Status,string Code)? LookupFailure(DeclarationLookup<NamedDeclaration> lookup)
     {

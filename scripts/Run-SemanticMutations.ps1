@@ -7,7 +7,7 @@ explicit output directory. This avoids rewriting or mutating the active checkout
 #>
 [CmdletBinding()]
 param([Parameter(Mandatory)][ValidateSet('Binding','Parameters','Resources')][string]$Stage,
- [Parameter(Mandatory)][string]$OutputDirectory,[Parameter(Mandatory)][string]$AntlrJar)
+ [Parameter(Mandatory)][string]$OutputDirectory,[Parameter(Mandatory)][string]$AntlrJar,[string[]]$MutationPatterns)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 foreach($p in @($root,(Split-Path ([IO.Path]::GetFullPath($OutputDirectory)) -Parent))){if(!(Test-Path -LiteralPath $p -PathType Container)){throw "Missing directory $p"}}
@@ -27,6 +27,7 @@ $tools=Join-Path $snapshot '.tools';New-Item -ItemType Directory -Path $tools|Ou
 $antlr=Join-Path $tools 'antlr';New-Item -ItemType Directory -Path $antlr|Out-Null
 Copy-Item -LiteralPath $AntlrJar -Destination (Join-Path $antlr 'antlr-4.13.1-complete.jar')
 $files=switch($Stage){Binding{@('**/InstanceBinding.cs','**/InstanceExtraction.cs')} Parameters{@('**/ParameterEvaluator.cs')} Resources{@('**/ResourceResolver.cs')}}
+if($MutationPatterns){$files=@($MutationPatterns)}
 $config=@{'stryker-config'=@{project='Simulator.Syntax.csproj';mutate=@($files);concurrency=2;'mutation-level'='Basic';reporters=@('json','cleartext');'additional-timeout'=5000;thresholds=@{high=80;low=60;break=0}}}
 $configPath=Join-Path $snapshot 'mutations.json';$config|ConvertTo-Json -Depth 8|Set-Content -LiteralPath $configPath
 $before=Get-Location

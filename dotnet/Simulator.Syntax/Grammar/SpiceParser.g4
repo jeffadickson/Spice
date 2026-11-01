@@ -19,7 +19,8 @@ icontrol: ICONTROL_NAME twoNodes referenceName parameter+;
 switchCard: SWITCH_NAME fourNodes referenceName parameter*;
 cswitch: CSWITCH_NAME twoNodes referenceName referenceName parameter*;
 coupling: COUPLING_NAME identifier identifier parameter+;
-subcall: SUBCALL_NAME node parameter+;
+// A target-only X header is a valid zero-port subcircuit call.
+subcall: SUBCALL_NAME node parameter*;
 behavior: BEHAVIOR_START expression parameter* | BEHAVIOR_NAME twoNodes identifier EQUAL expression | BEHAVIOR_NAME twoNodes parameter+;
 function: FUNC_START EQUAL? expression;
 lineCard: LINE_NAME fourNodes parameter+;
@@ -95,8 +96,9 @@ expression: expression (POWER | CARET) expression
     | expression (PLUS | MINUS) expression
     | expression LBRACKET expression RBRACKET
     | expression (COMPARE | EQUAL | COMPLEX_OPEN | COMPLEX_CLOSE) expression
-    | expression BOOL expression
-    | expression QUESTION expression COLON expression
+    | expression AND expression
+    | expression OR expression
+    | <assoc=right> expression QUESTION expression COLON expression
     | LPAREN expression RPAREN
     | LBRACE expression RBRACE
     | identifier LPAREN (expression (COMMA expression)*)? RPAREN

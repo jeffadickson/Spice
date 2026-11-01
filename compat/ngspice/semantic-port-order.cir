@@ -1,0 +1,12 @@
+Signed port order reference
+X1 0 out cell
+.subckt cell p n voltage=2
+V1 p n {voltage}
+.ends cell
+.control
+set numdgt=17
+op
+echo SEMANTIC_portorder $&v(out)
+quit
+.endc
+.end

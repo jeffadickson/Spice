@@ -49,7 +49,7 @@ internal static class FeatureExtraction
             // visited independently. Function names are structural, not bound.
             if(expression.identifier() is { } name && expression.LPAREN()!=null)Add("call",name.GetText(),expression);
             if(expression.ChildCount>1)Add("expression",expression.QUESTION()!=null?"conditional":
-                expression.BOOL()!=null?"boolean":expression.ChildCount==2?"unary":"compound",expression);
+                (expression.AND()!=null||expression.OR()!=null)?"boolean":expression.ChildCount==2?"unary":"compound",expression);
         }
         if(item is SpiceParser.XportContext port)
         {

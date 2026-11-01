@@ -33,7 +33,7 @@ internal sealed class DeclarationExtraction
         if(card is SpiceParser.ExtensionContext ending&&ending.Start.Text.Equals(".endl",StringComparison.OrdinalIgnoreCase))
         {
             var tail=InstanceExtraction.Tail(ending.parameter(),Capture,Parameter);
-            libraryEnds.Add(new(tail.Positionals.IsEmpty?null:tail.Positionals[0],tail.Supported&&tail.Parameters.IsEmpty&&tail.Positionals.Length<=1,Range(ending)));return;
+            libraryEnds.Add(new(tail.Positionals.IsEmpty?null:tail.Positionals[0],tail.Supported&&tail.Parameters.IsEmpty&&tail.Positionals.Length<=1,Range(ending)) { ScopeId=Enclosing(statement.Parent) });return;
         }
         var instance=InstanceExtraction.Extract(card,Enclosing(statement.Parent),Capture,Parameter);
         if(instance!=null){instances.Add(instance);return;}
@@ -47,8 +47,9 @@ internal sealed class DeclarationExtraction
                 // Generated parameter() also contains .ends arguments. Only
                 // records before the first default-channel NL are header data.
                 var header=sub.parameter().Where(p=>p.Start.StartIndex<sub.NL(0).Symbol.StartIndex).ToArray();
-                var defaults=header.Where(p=>p.assignment()!=null).Select(p=>Parameter(p.assignment())).ToImmutableArray();
-                symbols.Add(new(symbols.Count,DeclarationKind.Subcircuit,name,scope,child,null,header.Select(Capture).ToImmutableArray(),defaults,Range(sub)) { FormalPorts=InstanceExtraction.Tail(header,Capture,Parameter).Positionals,HasTypedPorts=InstanceExtraction.Tail(header,Capture,Parameter).Supported });
+                var typedHeader=InstanceExtraction.Tail(header,Capture,Parameter);
+                var defaults=typedHeader.Parameters;
+                symbols.Add(new(symbols.Count,DeclarationKind.Subcircuit,name,scope,child,null,header.Select(Capture).ToImmutableArray(),defaults,Range(sub)) { FormalPorts=typedHeader.Positionals,HasTypedPorts=typedHeader.Supported });
                 parameters.AddRange(defaults.Select(p=>new ScopedParameter(child,"subcircuit_default",p)));
                 break;
             case SpiceParser.ModelContext model:

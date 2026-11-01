@@ -96,6 +96,14 @@ public sealed class InstanceBindingTests
     public void Model_absence_ambiguity_and_opaque_X_headers_have_distinct_outcomes()
     {
         Assert.Equal(BindingStatus.Missing,Assert.Single(InstanceBinder.Bind(Catalog("D1 a b absent")).Instances).Status);
+        Assert.Equal(BindingStatus.Unsupported,Assert.Single(InstanceBinder.Bind(Catalog("D1 a b m\n.model m npn")).Instances).Status);
+        Assert.Equal(BindingStatus.Unsupported,Assert.Single(InstanceBinder.Bind(Catalog("D1 a b m 2\n.model m d")).Instances).Status);
         Assert.Equal(BindingStatus.Ambiguous,Assert.Single(InstanceBinder.Bind(Catalog("D1 a b m\n.model m d\n.model M npn")).Instances).Status);
         Assert.Equal(BindingStatus.Unsupported,Assert.Single(InstanceBinder.Bind(Catalog("X1 a {dynamic} cell\n.subckt cell p n\n.ends")).Instances).Status);
+    }    [Fact]
+    public void A_zero_port_call_binds_a_subcircuit_with_no_external_terminals()
+    {
+        var catalog=Catalog("X1 cell\n.subckt cell\nR1 hidden 0 1k\n.ends");
+        Assert.NotNull(catalog);var call=Assert.Single(InstanceBinder.Bind(catalog).Instances);
+        Assert.Equal(BindingStatus.Bound,call.Status);Assert.Empty(call.Ports);
     }}

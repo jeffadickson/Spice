@@ -1,9 +1,11 @@
 Semantic oracle
-.param milli=1M mega=1MEG chain={2^3^2} unary={-2^2}
+.param milli=1M mega=1MEG chain={2^3^2} unary={-2^2} logic={1||0&&0} choice={1?0:1?2:3}
 Vm vm 0 {milli}
 Vmeg vmeg 0 {mega}
 Vc vc 0 {chain}
 Vu vu 0 {unary}
+Vlogic logic 0 {logic}
+Vchoice choice 0 {choice}
 Vdrive input 0 1
 Rseries input out 1k
 X1 out 0 load resistance=3k
@@ -17,6 +19,8 @@ echo SEMANTIC_milli $&v(vm)
 echo SEMANTIC_mega $&v(vmeg)
 echo SEMANTIC_chain $&v(vc)
 echo SEMANTIC_unary $&v(vu)
+echo SEMANTIC_logic $&v(logic)
+echo SEMANTIC_choice $&v(choice)
 echo SEMANTIC_out $&v(out)
 quit
 .endc

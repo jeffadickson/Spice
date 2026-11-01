@@ -31,7 +31,7 @@ public static class ParameterEvaluator
     public static ParameterEvaluation ForInstance(DeclarationCatalog catalog,BoundInstance call,ParameterEvaluation caller)
     {
         ArgumentNullException.ThrowIfNull(catalog);ArgumentNullException.ThrowIfNull(call);ArgumentNullException.ThrowIfNull(caller);
-        if(call.Status!=BindingStatus.Bound||call.Header.Family!="X"||call.Target?.BodyScopeId is not {} scope)
+        if(!ReferenceEquals(call.Catalog,catalog)||call.Status!=BindingStatus.Bound||call.Header.Family!="X"||call.Target?.BodyScopeId is not {} scope)
             return Failure("unbound_parameter_instance",call.Header.Name,call.Header.Range);
         if(!caller.Success||!ReferenceEquals(caller.Catalog,catalog)||caller.ScopeId!=call.Header.ScopeId||!caller.Environments.TryGetValue(call.Header.ScopeId,out var callerValues)||!ReferenceEquals(callerValues,caller.Values)||caller.Values.Any(p=>!double.IsFinite(p.Value)))return Failure("invalid_caller_parameters",call.Header.Name,call.Header.Range);
         if(call.Header.Parameters.Length>4096)return Failure("parameter_budget",call.Header.Name,call.Header.Range);

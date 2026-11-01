@@ -12,6 +12,11 @@ public sealed class ParameterEvaluationTests
     [InlineData("{2^3}",8.0)] [InlineData("{2^3^2}",64.0)]
     [InlineData("{-2^2}",-4.0)] [InlineData("{(-2)^2}",4.0)] [InlineData("'3*4'",12.0)]
     [InlineData("{sqrt(9)+abs(-2)}",5.0)]
+    [InlineData("{1||0&&0}",1.0)] [InlineData("{0&&1||1}",1.0)]
+    [InlineData("{1?0:1?2:3}",0.0)] [InlineData("{pow(-2,3)}",-8.0)]
+    [InlineData("{!0}",1.0)] [InlineData("{1?7:9}",7.0)] [InlineData("{0?7:9}",9.0)]
+    [InlineData("{5%2}",1.0)] [InlineData("{1<=1}",1.0)] [InlineData("{2!=2}",0.0)]
+    [InlineData("{min(2,3)+max(4,5)}",7.0)] [InlineData("{exp(0)+ln(1)+sin(0)+cos(0)}",2.0)]
     public void Numeric_semantics_have_independent_expected_values(string expression,double expected)
     {
         var result=ParameterEvaluator.Evaluate(Catalog(".param result="+expression));
@@ -103,4 +108,13 @@ public sealed class ParameterEvaluationTests
         var first=ParameterEvaluator.ForInstance(catalog,calls[0],root);var second=ParameterEvaluator.ForInstance(catalog,calls[1],root);
         var a=ParameterEvaluator.ForInstance(catalog,calls[2],first);var b=ParameterEvaluator.ForInstance(catalog,calls[2],second);
         return a.Success&&b.Success&&a.Values["derived"]==gain*4&&b.Values["derived"]==(gain+1)*4;
+    }    [Fact]
+    public void A_foreign_catalog_binding_cannot_be_combined_with_a_local_caller()
+    {
+        var a=Catalog("X1 a b cell gain=3\n.subckt cell p n gain=2\n.ends");
+        var b=Catalog("X1 a b cell gain=7\n.subckt cell p n gain=5\n.ends");
+        var foreign=InstanceBinder.Bind(b).Instances.Single();
+        var result=ParameterEvaluator.ForInstance(a,foreign,ParameterEvaluator.Evaluate(a));
+        Assert.False(result.Success);Assert.Empty(result.Values);
+        Assert.All(typeof(BoundInstance).GetProperties(),p=>Assert.Null(p.SetMethod));
     }}

@@ -19,10 +19,11 @@ var campaignMinutes=Setting("SPICE_PARSE_CAMPAIGN_MINUTES",30,1,1440);
 var workers=Setting("SPICE_PARSE_WORKERS",1,1,4);
 var legacyBytes=Setting("SPICE_PARSE_LEGACY_BYTES",0,0,1)==1;
 var collectFeatures=Setting("SPICE_PARSE_FEATURES",0,0,1)==1;
-var collectDeclarations=Setting("SPICE_PARSE_DECLARATIONS",0,0,1)==1;
+var collectSemantics=Setting("SPICE_PARSE_SEMANTICS",0,0,1)==1;
+var collectDeclarations=Setting("SPICE_PARSE_DECLARATIONS",0,0,1)==1||collectSemantics;
 
 // A worker parses only. There is no simulator, preprocessor, shell interpreter,
-// model resolver, or file loader reachable from the syntax project.
+// resource resolution or numerical execution on this worker call path.
 if (args is ["--worker",var input])
 {
     WorkerResult result;
@@ -48,7 +49,8 @@ if (args is ["--worker",var input])
             var syntax=DeckParser.Parse(text.TrimStart('\uFEFF'),new ParserLimits(maxBytes,maxTokens),collectFeatures,collectDeclarations);
             result=new(syntax.Status,syntax.Statements.Length,syntax.Diagnostics.Take(3).ToArray(),digest,encoding,syntax.Format,
                 collectFeatures&&syntax.Status=="accepted_structure"?CapabilityInventory.Tally(syntax.Features):null,
-                syntax.Declarations is { } catalog?DeclarationSummary.From(catalog):null);
+                syntax.Declarations is { } catalog?DeclarationSummary.From(catalog):null,
+                collectSemantics&&syntax.Declarations is {} semanticCatalog?SemanticSummary.From(semanticCatalog):null);
         }
     }
     catch (DecoderFallbackException) { result=new("encoding_rejected",0,[],digest); }
@@ -125,10 +127,10 @@ var report=new {
     framework="ANTLR generator/runtime 4.13.1",runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,
     platform=System.Runtime.InteropServices.RuntimeInformation.OSDescription,
     inputs=inputs.Count,completed,counts,source_sha256=provenance,binary_sha256=binaries,rows=rows.Where(row=>row is not null).ToArray(),
-    limits=new{input_bytes=maxBytes,tokens=maxTokens,nesting=128,rule_depth=512,worker_seconds=workerSeconds,campaign_minutes=campaignMinutes,workers,legacy_bytes=legacyBytes,collect_features=collectFeatures,collect_declarations=collectDeclarations,diagnostics_per_row=3},
+    limits=new{input_bytes=maxBytes,tokens=maxTokens,nesting=128,rule_depth=512,worker_seconds=workerSeconds,campaign_minutes=campaignMinutes,workers,legacy_bytes=legacyBytes,collect_features=collectFeatures,collect_declarations=collectDeclarations,collect_semantics=collectSemantics,diagnostics_per_row=3},
     limitations=new[]{"Structural acceptance only; not complete ngspice device/parameter/expression dialect conformance.",
         "Control blocks and quoted expressions are retained without validating the embedded language.",
-        "Includes are not loaded; model references, subcircuit binding and physical parameter validity are not checked.",
+        collectSemantics?"Includes are not loaded; observed reference binding and root parameters are separate bounded profiles, not full elaboration or support.":"Includes are not loaded; model references, subcircuit binding and physical parameter validity are not checked.",
         "Syntax rejection means rejection by this grammar, not independent adjudication that an upstream deck is malformed.",
         "Numerical support is not evaluated; missing, timed-out or budget-unattempted inputs are not passes.",
         "Windows execution only; no Linux, NativeAOT or Rust-core qualification from this campaign."}
@@ -178,4 +180,4 @@ static int Setting(string name,int fallback,int minimum,int maximum)
         || value<minimum || value>maximum)throw new ArgumentException($"{name} must be an integer in [{minimum},{maximum}]");
     return value;
 }
-internal sealed record WorkerResult(string Status,int Statements,SyntaxDiagnostic[] Diagnostics,string? Sha256,string? Encoding=null,string? InputKind=null,FeatureTally[]? Features=null,DeclarationSummary? Declarations=null);
+internal sealed record WorkerResult(string Status,int Statements,SyntaxDiagnostic[] Diagnostics,string? Sha256,string? Encoding=null,string? InputKind=null,FeatureTally[]? Features=null,DeclarationSummary? Declarations=null,SemanticSummary? Semantics=null);

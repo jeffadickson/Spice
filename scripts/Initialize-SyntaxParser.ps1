@@ -1,12 +1,13 @@
 # Acquires the pinned build-time generator, verifying bytes before use. Java 11+
 # and .NET 10 are prerequisites; runtime parsing does not require Java.
 [CmdletBinding()]
-param()
+param([string]$OutputDirectory)
 $ErrorActionPreference='Stop'
 $repository=Split-Path $PSScriptRoot -Parent
 if(!(Test-Path -LiteralPath $repository -PathType Container)){throw 'Missing repository'}
 Get-Command java -ErrorAction Stop | Out-Null
-$tools=Join-Path $repository '.tools'
+$tools=if($OutputDirectory){[IO.Path]::GetFullPath($OutputDirectory)}else{Join-Path $repository '.tools'}
+if(!(Test-Path -LiteralPath (Split-Path $tools -Parent) -PathType Container)){throw 'Generator output parent missing'}
 if(!(Test-Path -LiteralPath $tools -PathType Container)){New-Item -ItemType Directory -Path $tools | Out-Null}
 $folder=Join-Path $tools 'antlr'
 if(!(Test-Path -LiteralPath $folder -PathType Container)){New-Item -ItemType Directory -Path $folder | Out-Null}

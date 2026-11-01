@@ -1,0 +1,12 @@
+Zero port reference
+X1 zero
+.subckt zero
+R1 hidden 0 1k
+V1 hidden 0 1
+.ends zero
+.control
+op
+echo SEMANTIC_zero $&v(x1.hidden)
+quit
+.endc
+.end
