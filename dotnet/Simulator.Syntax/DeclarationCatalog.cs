@@ -30,11 +30,23 @@ public sealed record ParameterSyntax(string? Name,SourceSyntax Target,SourceSynt
 public sealed record DeclarationScope(int Id,int? ParentId,string? Name,SourceRange Range);
 /// <summary>A named definition. Header arguments and model/default parameters remain syntax.</summary>
 public sealed record NamedDeclaration(int Id,DeclarationKind Kind,string Name,int ScopeId,int? BodyScopeId,
-    string? ModelFamily,ImmutableArray<SourceSyntax> HeaderArguments,ImmutableArray<ParameterSyntax> Parameters,SourceRange Range);
+    string? ModelFamily,ImmutableArray<SourceSyntax> HeaderArguments,ImmutableArray<ParameterSyntax> Parameters,SourceRange Range)
+{
+    /// <summary>Generated positional formal ports under the bounded header profile.</summary>
+    public ImmutableArray<SourceSyntax> FormalPorts { get; init; } = [];
+    /// <summary>False when header structure needs a further semantic profile.</summary>
+    public bool HasTypedPorts { get; init; }
+}
 /// <summary>An ordered header-default or .param assignment in a lexical scope.</summary>
 public sealed record ScopedParameter(int ScopeId,string Origin,ParameterSyntax Syntax);
 /// <summary>An unresolved include/library declaration, never an instruction to open a file.</summary>
-public sealed record DeclaredResource(int ScopeId,string Kind,SourceSyntax Target,SourceRange Range);
+public sealed record DeclaredResource(int ScopeId,string Kind,SourceSyntax Target,SourceRange Range)
+{
+    /// <summary>Requested external library section; null for include cards or one-argument library declarations.</summary>
+    public SourceSyntax? Section { get; init; }
+}
+/// <summary>A generated library closing delimiter, with an optional section name.</summary>
+public sealed record LibrarySectionEnd(SourceSyntax? Name,bool Supported,SourceRange Range);
 /// <summary>A conditional or alternate parameter declaration whose semantics remain unresolved.</summary>
 public sealed record DeferredDeclarationContext(string Kind,SourceRange Range);
 /// <summary>Catalog ambiguity with both physical declaration locations; not a ngspice syntax verdict.</summary>
@@ -48,6 +60,10 @@ public sealed class DeclarationCatalog
     private readonly Dictionary<(DeclarationKind Kind,string Name),ImmutableArray<NamedDeclaration>>[] symbolsByScope;
     private readonly Dictionary<string,ImmutableArray<ScopedParameter>>[] parametersByScope;
     private readonly bool opaqueParameters;
+    /// <summary>Generated library closing delimiters; not external file requests.</summary>
+    public ImmutableArray<LibrarySectionEnd> LibraryEnds { get; }
+    /// <summary>Observed X/D/Q/M/J/S/W headers; other device families are outside reference binding.</summary>
+    public ImmutableArray<InstanceHeader> Instances { get; }
     /// <summary>All lexical scopes, with root at ID zero.</summary>
     public ImmutableArray<DeclarationScope> Scopes { get; }
     /// <summary>Definitions in physical traversal order, including unused declarations.</summary>
@@ -64,9 +80,9 @@ public sealed class DeclarationCatalog
     public string Status=>Diagnostics.IsEmpty?"catalogued":"ambiguous_declarations";
 
     internal DeclarationCatalog(ImmutableArray<DeclarationScope> scopes,ImmutableArray<NamedDeclaration> symbols,
-        ImmutableArray<ScopedParameter> parameters,ImmutableArray<DeclaredResource> resources,ImmutableArray<DeferredDeclarationContext> deferredContexts)
+        ImmutableArray<ScopedParameter> parameters,ImmutableArray<DeclaredResource> resources,ImmutableArray<DeferredDeclarationContext> deferredContexts,ImmutableArray<InstanceHeader> instances,ImmutableArray<LibrarySectionEnd> libraryEnds)
     {
-        Scopes=scopes;Symbols=symbols;Parameters=parameters;Resources=resources;DeferredContexts=deferredContexts;
+        Scopes=scopes;Symbols=symbols;Parameters=parameters;Resources=resources;DeferredContexts=deferredContexts;Instances=instances;LibraryEnds=libraryEnds;
         symbolsByScope=new Dictionary<(DeclarationKind,string),ImmutableArray<NamedDeclaration>>[scopes.Length];
         parametersByScope=new Dictionary<string,ImmutableArray<ScopedParameter>>[scopes.Length];
         var diagnostics=ImmutableArray.CreateBuilder<DeclarationDiagnostic>();

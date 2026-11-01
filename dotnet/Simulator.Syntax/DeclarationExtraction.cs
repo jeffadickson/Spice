@@ -13,6 +13,8 @@ internal sealed class DeclarationExtraction
     private readonly Func<int,(int Line,int Column)> locate;
     private readonly List<DeclarationScope> scopes=[];
     private readonly List<NamedDeclaration> symbols=[];
+    private readonly List<InstanceHeader> instances=[];
+    private readonly List<LibrarySectionEnd> libraryEnds=[];
     private readonly List<ScopedParameter> parameters=[];
     private readonly List<DeclaredResource> resources=[];
     private readonly List<DeferredDeclarationContext> deferredContexts=[];
@@ -28,6 +30,13 @@ internal sealed class DeclarationExtraction
         if(item is not SpiceParser.StatementContext statement || statement.GetChild(0) is not ParserRuleContext card)return;
         if(card is SpiceParser.ExtensionContext extension && extension.Start.Text.ToLowerInvariant() is ".if" or ".elseif" or ".else" or ".endif" or ".csparam" or ".sndparam")
         {deferredContexts.Add(new(extension.Start.Text.ToLowerInvariant(),Range(extension)));return;}
+        if(card is SpiceParser.ExtensionContext ending&&ending.Start.Text.Equals(".endl",StringComparison.OrdinalIgnoreCase))
+        {
+            var tail=InstanceExtraction.Tail(ending.parameter(),Capture,Parameter);
+            libraryEnds.Add(new(tail.Positionals.IsEmpty?null:tail.Positionals[0],tail.Supported&&tail.Parameters.IsEmpty&&tail.Positionals.Length<=1,Range(ending)));return;
+        }
+        var instance=InstanceExtraction.Extract(card,Enclosing(statement.Parent),Capture,Parameter);
+        if(instance!=null){instances.Add(instance);return;}
         if(card is not (SpiceParser.SubcircuitContext or SpiceParser.ModelContext or SpiceParser.ParamCardContext or SpiceParser.IncludeCardContext or SpiceParser.LibraryCardContext))return;
         var scope=Enclosing(statement.Parent);
         switch(card)
@@ -39,7 +48,7 @@ internal sealed class DeclarationExtraction
                 // records before the first default-channel NL are header data.
                 var header=sub.parameter().Where(p=>p.Start.StartIndex<sub.NL(0).Symbol.StartIndex).ToArray();
                 var defaults=header.Where(p=>p.assignment()!=null).Select(p=>Parameter(p.assignment())).ToImmutableArray();
-                symbols.Add(new(symbols.Count,DeclarationKind.Subcircuit,name,scope,child,null,header.Select(Capture).ToImmutableArray(),defaults,Range(sub)));
+                symbols.Add(new(symbols.Count,DeclarationKind.Subcircuit,name,scope,child,null,header.Select(Capture).ToImmutableArray(),defaults,Range(sub)) { FormalPorts=InstanceExtraction.Tail(header,Capture,Parameter).Positionals,HasTypedPorts=InstanceExtraction.Tail(header,Capture,Parameter).Supported });
                 parameters.AddRange(defaults.Select(p=>new ScopedParameter(child,"subcircuit_default",p)));
                 break;
             case SpiceParser.ModelContext model:
@@ -54,12 +63,12 @@ internal sealed class DeclarationExtraction
                 var argument=(ITerminalNode)card.GetChild(1);
                 var token=argument.Symbol;
                 resources.Add(new(scope,card is SpiceParser.IncludeCardContext?"include":"library_card",
-                    Capture(token.StartIndex,token.StopIndex),Range(card)));
+                    Capture(token.StartIndex,token.StopIndex),Range(card)) { Section=card is SpiceParser.LibraryCardContext library&&library.identifier()!=null?Capture(library.identifier()):null });
                 break;
         }
     }
 
-    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray());
+    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray());
 
     private int Enclosing(IParseTree? tree)
     {

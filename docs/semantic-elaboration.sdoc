@@ -1,0 +1,44 @@
+[DOCUMENT]
+TITLE: Bounded Semantic Elaboration
+
+[REQUIREMENT]
+UID: SEM-BIND-001
+STATUS: Draft
+TITLE: Source-located instance and port binding
+STATEMENT: >>>
+The frontend shall derive explicit instance headers from generated syntax and bind ordered subcircuit ports using case-insensitive lexical declaration lookup. It shall retain actual/formal source syntax and named assignments, reject arity and duplicate-formal ambiguity, diagnose recursive reference graphs and duplicate instance IDs, and preserve missing, ambiguous, deferred and unsupported outcomes. Model terminal interpretation shall use explicitly supported family contracts rather than the parser's ambiguous positional partition. Binding shall neither evaluate parameters nor imply numerical device support.
+<<<
+COMMENT: >>>
+Implementation: InstanceExtraction.cs, InstanceBinding.cs, DeclarationExtraction.cs and DeclarationCatalog.cs. Verification: InstanceBindingTests, including seeded order/renaming properties. The initial profile covers X/D/Q/M/J/S/W reference headers, with explicit unsupported outcomes for other terminal/model contracts. Conditional/resource-dependent references remain provisional. Recursion is checked in the observed declaration graph, including unused declarations; this is not topology flattening or full ngspice scope conformance.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-CAT-001
+
+[REQUIREMENT]
+UID: SEM-PARAM-001
+STATUS: Draft
+TITLE: Bounded atomic parameter elaboration
+STATEMENT: >>>
+Parameter evaluation shall consume generated expression syntax with explicit SPICE numeric suffixes, scope/default/override policies, finite arithmetic and dependency limits. Missing values, cycles, unsupported constructs and invalid domains shall produce source-located diagnostics without publishing partial effective values or modifying input catalogs. Syntax acceptance shall remain separate from evaluability.
+<<<
+COMMENT: >>>
+Planned verification: independent arithmetic/suffix/default fixtures, dependency graphs, override and failure rollback tests and selected ngspice references. This requirement is not closed by declaration or reference binding.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-CAT-001
+
+[REQUIREMENT]
+UID: SEM-RESOURCE-001
+STATUS: Draft
+TITLE: Explicit bounded include and library access
+STATEMENT: >>>
+External resource resolution shall be opt-in with explicit permitted roots, strict declared encoding, selected library sections, cycle detection, byte/depth/file budgets and immutable source provenance. Denied paths and link traversal shall be rejected. Failed resolution shall publish no partial successful source graph. Syntax-only parsing shall never open resources, execute controls or invoke simulators.
+<<<
+COMMENT: >>>
+Planned verification: isolated filesystem fixtures for relative includes, library sections, cycles, malformed bytes, denied roots/links, resource caps and source-map consistency. Platform and hostile filesystem race limitations shall be recorded explicitly.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-CAT-001
