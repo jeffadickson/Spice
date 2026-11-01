@@ -1,3 +1,21 @@
+Latest declaration-catalog checkpoint: read docs/semantic-frontend-plan.md,
+docs/declaration-catalog.md and evidence/declaration-catalog.json. All 916
+required inputs exported catalogs; 903 have unambiguous observed definitions
+and 13 retain conservative duplicate-definition ambiguity. There are 30070
+scopes, 29154 subcircuits, 1591 models, 578 scope parameters, 17817 assigned
+model parameters, 293 unresolved resources and 189 deferred contexts; 31323
+self-lookups had zero inconsistencies. These are not instantiated topology,
+parameter values, bound references or simulation support.
+DeclarationCatalog provides immutable source-located metadata and nearest-scope
+lookup. Parameter candidates remain ordered syntax. Resource/condition deferral
+is globally conservative, not a qualified ngspice visibility policy. SEM-CAT-001
+and SEM-CAT-002 remain Draft. See declaration-catalog-verification.json and the
+mutation ledger for actual verification and remaining gaps.
+Next: explicit typed X-call/model-aware instance headers and bounded reference/
+port binding with named ngspice fixtures, before expression evaluation, resource
+loading or numerical/model expansion. Rust and drop-in solvers remain retained.
+Preserve unrelated sheet-resistor work and engineering-docs evidence; no CI or
+new soak. Check source/history and scoped hashes before claiming qualification.
 Latest capability-inventory checkpoint: read docs/capability-inventory.md,
 docs/capability-inventory-results.md and evidence/capability-inventory.json.
 The opt-in generated-tree observer inventories all 916 declared valid inputs

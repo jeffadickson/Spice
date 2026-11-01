@@ -1,0 +1,211 @@
+{
+  "status": "completed_bounded_declaration_catalog",
+  "run_id": "Spice-semantic-catalog-20261101T042253Z",
+  "tested_source_base": "d328c653913b6c1220f013d6b6d74529fbb6d089",
+  "source_dirty": true,
+  "source_byte_capture_matches_current_checkout": true,
+  "source_note": "Exact worker source/binary hashes are in declaration-catalog.json. Git line-ending normalization is not asserted to preserve captured bytes on every checkout.",
+  "tools": {
+    "antlr": "4.13.1",
+    "dotnet_coverage": "18.12.0",
+    "fscheck": "3.5.0",
+    "stryker": "5.0.0",
+    "sphinx": "9.1.0",
+    "coverlet": "10.1.0",
+    "strictdoc": "0.30.4",
+    "dotnet_sdk": "10.0.403"
+  },
+  "platform": "Windows",
+  "corpus": {
+    "totals": {
+      "Scopes": 30070,
+      "Models": 1591,
+      "Subcircuits": 29154,
+      "ScopeParameters": 578,
+      "AssignedModelParameters": 17817,
+      "Resources": 293,
+      "DeferredContexts": 189,
+      "Ambiguities": 13,
+      "SelfLookups": 31323,
+      "SelfLookupFailures": 0
+    },
+    "primary_elapsed_seconds": 284.8093204,
+    "outstanding": 0,
+    "excluded": 8,
+    "scope": "Declaration observations and self-index checks only; no instance binding/effective parameters/flattening/execution.",
+    "catalogued": 916,
+    "required": 916,
+    "statuses": {
+      "catalogued": 903,
+      "ambiguous_declarations": 13
+    }
+  },
+  "tests": {
+    "total_fscheck_cases": 1792,
+    "passed": 268,
+    "synthetic_gate_cases": 9,
+    "failed": 0,
+    "new_replays": [
+      "701,20261101",
+      "702,20261101"
+    ],
+    "new_fscheck_cases": 384,
+    "all_replays": [
+      "192,20261031",
+      "362,20261031",
+      "481,20261031",
+      "492,20261031",
+      "681,20261101",
+      "682,20261101",
+      "701,20261101",
+      "702,20261101"
+    ],
+    "example": "examples/DeclarationCatalog.cs executed successfully",
+    "initial_oracle_corrections": [
+      "Use structural serialization rather than ImmutableArray reference equality when comparing independent parse results.",
+      "Root ParentId is null; only child parent IDs must precede child IDs. Raw failed property outputs retained locally."
+    ],
+    "source_sha256": {
+      "PredictionTests.cs": "763ac5848ebbe693140bdb799432912796c77f1d2b3dcb9e330e94e794fa4b84",
+      "XspiceTests.cs": "38be1d1d44aa270bcd0874430f8d33b9d17cc5ee27020b9c26e2cc5dea91b05e",
+      "DeclarationTests.cs": "282a614553032c25e8c77acf13fb695b1833b39bfc1072dde5d931e479bad400",
+      "BoundaryTests.cs": "832db1433360b430f65c382057a5306e03aca1d3d6ad149dcc59906485997879",
+      "GrammarTests.cs": "59aafed45bd2ba1b880936b976ecacab9a3117d540e8d60cb3b9f91b3458da07",
+      "FeatureTests.cs": "e9f671cfae88a8f19c8718ccf92549af8dd431ebf85f67dc15dc47ab5f284f45",
+      "ExtendedFamilyTests.cs": "9bdbd54c6be53fc3fed916f5116f03bfffe054fa448cf369aae4580ac58cd250",
+      "DeviceFamilyTests.cs": "fdd0bbf99e0485649b7fc8224142120cb415ae9cb40992e68e780d4ea687adcf",
+      "CommonSyntaxTests.cs": "631222145376e7ec6f4129eee7fbce55ccce9774b59e04e03383171d742109cf",
+      "CapabilityInventoryTests.cs": "0205691e7d012d3b4b20fba88387540cbf0c33bfbcc25c22f8d4919869124b94"
+    },
+    "skipped": 0
+  },
+  "coverage": {
+    "limitations": [
+      "Selected handwritten class scopes only, not whole repository coverage.",
+      "SymbolComparer is a separate class with an untested hash-collision-sensitive branch.",
+      "Four defensive self-lookup failure mutations are uncovered under valid immutable catalogs.",
+      "PowerShell wrapper coverage unmeasured; wrapper syntax and existing-evidence refusal checks executed.",
+      "No fresh Rust/native numerical coverage, generated grammar mutation or third-party engine mutation."
+    ],
+    "gate": {
+      "scope": "Separate dotnet-coverage process-tree run of nine synthetic gate fixtures, not sample parsing",
+      "branch_percent": 76.09,
+      "line_percent": 86.76
+    },
+    "classes": [
+      {
+        "lines_covered": 50,
+        "branch_percent": 100.0,
+        "branches_valid": 36,
+        "branches_covered": 36,
+        "class": "Simulator.Syntax.DeclarationCatalog",
+        "lines_valid": 50,
+        "line_percent": 100.0
+      },
+      {
+        "lines_covered": 2,
+        "branch_percent": 50.0,
+        "branches_valid": 2,
+        "branches_covered": 1,
+        "class": "Simulator.Syntax.DeclarationCatalog/SymbolComparer",
+        "lines_valid": 2,
+        "line_percent": 100.0
+      },
+      {
+        "lines_covered": 53,
+        "branch_percent": 100.0,
+        "branches_valid": 50,
+        "branches_covered": 50,
+        "class": "Simulator.Syntax.DeclarationExtraction",
+        "lines_valid": 53,
+        "line_percent": 100.0
+      },
+      {
+        "lines_covered": 24,
+        "branch_percent": 87.5,
+        "branches_valid": 16,
+        "branches_covered": 14,
+        "class": "Simulator.Syntax.DeclarationSummary",
+        "lines_valid": 24,
+        "line_percent": 100.0
+      }
+    ]
+  },
+  "mutations": {
+    "original_counts": {
+      "Ignored": 586,
+      "CompileError": 107,
+      "Killed": 86,
+      "Survived": 14,
+      "NoCoverage": 4
+    },
+    "replay_counts": {
+      "Ignored": 670,
+      "CompileError": 107,
+      "Killed": 13,
+      "Survived": 3,
+      "NoCoverage": 4
+    },
+    "replay_killed": 11,
+    "remaining": [
+      "DeclarationCatalog.cs ID 486: unresolved hash-collision comparator oracle gap; not equivalence.",
+      "DeclarationExtraction.cs ID 517: filter removal appears output-equivalent with current switch but changes traversal overhead; conditional argument only.",
+      "DeclarationExtraction.cs ID 522: a parameter context cannot start at header NL under the generated grammar; boundary mutation remains a conditional survivor.",
+      "DeclarationSummary.cs IDs 556/557/564/565: defensive failure counters unvisited by valid immutable catalog fixtures; synthetic gate tests cover reported failure handling separately."
+    ],
+    "original_open_identities": 18,
+    "uncovered": 4,
+    "limits": "Scopes differ: no combined score. 107 compile-error instrumentations and ignored outcomes are not kills.",
+    "timeouts": 0,
+    "ledger": "evidence/declaration-catalog-mutations.json",
+    "survivors": 3
+  },
+  "requirements": {
+    "status": "parsed_intended_snapshot",
+    "requirements_remain": "Draft",
+    "documents": 19,
+    "unique_ids": 312,
+    "parent_relations": 300,
+    "scope": "Committed requirements plus SEM-CAT-001/002; uncommitted sheet-resistor requirement edits excluded."
+  },
+  "sphinx": "Existing 9.1.0 environment; isolated engineering source/API projection builds with warnings as errors. Source checkout engineering-docs evidence preserved.",
+  "review": {
+    "kind": "AI read-only code review",
+    "fixed": [
+      "Grouped self-checks avoid duplicate-heavy repeated scans.",
+      "Conditional deferral documented globally.",
+      "Separate catalog payload and consistency gate.",
+      "Impossible ambiguity/model-parameter counter combinations refused."
+    ]
+  },
+  "prior_attempt": {
+    "scope": "Partial source version, not qualification evidence; raw data retained.",
+    "artifact": "stopped-for-review.json",
+    "run_id": "Spice-semantic-catalog-20261101T041134Z",
+    "state": "intentionally_stopped_for_summary_review"
+  },
+  "helpers_sha256": {
+    "Run-DeclarationCatalog.ps1": "ee7cdc796e7c30d631da40be00314d9e14977d5c1ec98492deffd771b1a0a1d4",
+    "Run-SyntaxCorpus.ps1": "e1ef8c8fe70cba9420a45718255c676f9e3ad2db0a670f8f1e17d37c2766c99f",
+    "TestDeclarationCatalog.cs": "786bc48e72385d21d37485429414bfc803adb5d5ff272e7b408c8e6b6cf4f688",
+    "ValidateDeclarationCatalog.cs": "ef00327a6d3268a5e445fcfeceff8b341041fa55adc37cce556b8b2ab0f272ad"
+  },
+  "commands": [
+    "scripts/Run-DeclarationCatalog.ps1 -OutputDirectory <run> -Workers 2 -WorkerSeconds 90 -Minutes 30",
+    "dotnet test dotnet/Simulator.Syntax.Tests --artifacts-path <run>/test-build --collect:\"XPlat Code Coverage\" --results-directory <run>/coverage-final --nologo",
+    "dotnet run --file scripts/TestDeclarationCatalog.cs -- <checkout> <run> (under dotnet-coverage process-tree collector)",
+    "dotnet run --file examples/DeclarationCatalog.cs",
+    "dotnet tool run dotnet-stryker -- --config-file declaration-stryker.json --test-project dotnet/Simulator.Syntax.Tests/Simulator.Syntax.Tests.csproj --output <run>/mutations --skip-version-check (isolated source snapshot)",
+    "dotnet tool run dotnet-stryker -- --config-file declaration-replay-stryker.json --test-project dotnet/Simulator.Syntax.Tests/Simulator.Syntax.Tests.csproj --output <run>/mutations-replay --skip-version-check (isolated snapshot)",
+    "dotnet run --file scripts/SummarizeCapabilityMutations.cs -- <original Stryker JSON> <replay Stryker JSON> evidence/declaration-catalog-mutations.json",
+    "dotnet run --file scripts/ValidateRequirements.cs -- --python <StrictDoc Python> --report <run>/strictdoc.json (intended snapshot)",
+    "dotnet run --file scripts/EngineeringDocs.cs -- --python <prepared Sphinx Python> (intended snapshot)"
+  ],
+  "limitations": [
+    "No ngspice duplicate/default/visibility conformance closure from a conservative declaration catalog.",
+    "Global deferral may include unrelated scopes; missing/provisional is not a numerical result.",
+    "Control/quoted languages and function headers remain uninterpreted; resource cards never opened.",
+    "No new numerical models, Rust changes, circuit execution, Linux/GPU/NativeAOT/production qualification, CI dispatch or soak.",
+    "Existing unrelated sheet-resistor changes and engineering evidence preserved."
+  ]
+}

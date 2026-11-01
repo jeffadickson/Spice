@@ -107,3 +107,27 @@ unassessed; family-level partial support never implies parameter parity.
 Rankings overlap and measure reach rather than circuits unlocked. The SVG
 starts a new assessment baseline, separate from numerical corpus burndowns.
 Canonical requirements are ``docs/capability-inventory.sdoc`` (CAP-001/002).
+
+Declaration catalog
+-------------------
+
+``scripts/Run-DeclarationCatalog.ps1`` reuses the syntax primary/legacy gate,
+then runs ``ValidateDeclarationCatalog.cs`` against the exact report digests.
+It requires catalog metadata for every accepted required input, coherent
+counters and zero self-lookup inconsistencies. Ambiguous definitions remain
+explicit catalog outcomes; they are not silently chosen or called invalid
+ngspice circuits. Synthetic corruption checks live in
+``scripts/TestDeclarationCatalog.cs``; actual sample counts are separate.
+
+``DeckParser.Parse(..., collectDeclarations: true)`` exports immutable lexical
+scopes, named model/subcircuit declarations and ordered parameter syntax.
+``DeclarationCatalog.Lookup`` and ``LookupParameter`` preserve uncertainty
+from unresolved resources, conditions and opaque targets. They do not evaluate
+expressions, bind instance terminals, expand subcircuits or execute commands.
+``DeclarationSummary.From`` checks catalog index consistency using grouped
+candidate sets, including duplicate-heavy fixtures.
+
+The tested source example is ``examples/DeclarationCatalog.cs``. Canonical
+requirements are ``docs/declaration-catalog.sdoc`` (SEM-CAT-001/002); the delivery
+sequence and limits are in ``docs/semantic-frontend-plan.md`` and
+``docs/declaration-catalog.md``. This is not numerical qualification.

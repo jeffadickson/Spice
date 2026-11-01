@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "parser": {
+    "strictdoc_version": "0.30.4",
+    "documents": 19
+  },
+  "unique_ids": 312,
+  "parent_relations": 300,
+  "source_hashes": {
+    "docs/architecture.sdoc": "6a68cbef7671e9db51c07a4ef31cda2350fbccbba17ce060106d40674d8683d2",
+    "docs/capability-inventory.sdoc": "6d9253abacfb057f43356095a67b1b2ca0adc6fb1d3d2f82d7385eb9fcea22ab",
+    "docs/consistency.sdoc": "94c271fb2d8d129cd5490784fa8a1bd6afa1612fb56479523f9f9ae6e5f0c8d1",
+    "docs/declaration-catalog.sdoc": "e8c62b8ff3d1e48050244b871f8d8630cfbfb5c99839d86c38e59b01e2cbb228",
+    "docs/development-standards.sdoc": "40969e4f3902706eee1d097916a9385f67fb53e63e881ccc4ff8377d867d157b",
+    "docs/fourth-slice.sdoc": "a76868635f98ce97cc79bd68f0b85a6169c8b08aaa7191ce607fcdc56a0381d5",
+    "docs/implementation-plan.sdoc": "ccc83c8679fd0548b57c16cb29be42dcf9a60f6200cb9537a51b78cad8ce55c0",
+    "docs/model-charge-profile.sdoc": "182492366118618b39e7c1ce93c21192c5cc6fa58af604bfd9bc2d4207e1a3d3",
+    "docs/modern-dsl-proposal.sdoc": "0b05b04e68f5cf5fd52cc71fe953949418a8695f72661fb97c4414de86cedfcf",
+    "docs/ngspice-compatibility.sdoc": "6f49ea821f5c79fdb64f885842a0a54c834fdc8fbe7dad0d35a9e02b5b8f2db0",
+    "docs/parser-framework-trial.sdoc": "161ebe8e30f6774f296e4ccaec05d75f29f98d45b3a43396ec75bfa079d40846",
+    "docs/parser-only.sdoc": "0350f6a1fd927cb08387dac0e86d4e9034bb4bd35738c1fae7e023448b35c74b",
+    "docs/prototype-contracts.sdoc": "797510755a63f58085daada535b9b183440ab70ddbe1ff53d91fdefa45b7d32a",
+    "docs/reuse-assessment.sdoc": "ccb94a43b0358aea3ff78455532c5ca48e11b2d4b252503a15895bf6424eb1b7",
+    "docs/second-slice-contracts.sdoc": "db30b5a26705f8a25ce753fe47242681d4cb6c37c625db7d501fe5301ad777d3",
+    "docs/second-slice.sdoc": "48666154d4833a5805c89e411c97da16e4f4bdb626a38453662a3adafdc90195",
+    "docs/sforge-language.sdoc": "d0e0691ad306e40a7575b17811effd0c940e0164d098c66136a5e67aad416748",
+    "docs/sparse-qualification.sdoc": "dc8862df4be6edeee1b630a9997e8a965d094baf92dd6c9635c5acc227331d76",
+    "docs/third-slice.sdoc": "4831631874a90d0e5a7e7849d7bc027e0e2ddf096b11f7fe48a829fe5c7bda3a"
+  },
+  "helper_sha256": "3917facf81da105c2a17447d9f37bf25d8f40750fab8ac8a8986ee6a006675f7",
+  "limitations": [
+    "Grammar, unique IDs and resolved parents only; not requirement acceptance or behavioral closure.",
+    "Python is required by real StrictDoc; the orchestration helper executed managed, not NativeAOT."
+  ]
+}

@@ -13,6 +13,12 @@ accepted samples require before adding model support. Run
 `scripts/Run-CapabilityInventory.ps1` for a fresh provenance-checked inventory,
 planning-gap report and separate assessment-baseline burndown.
 
+The [semantic frontend plan](docs/semantic-frontend-plan.md) now starts with a
+working [declaration catalog](docs/declaration-catalog.md): immutable lexical
+scopes and conservative name lookup, with parameter syntax retained unevaluated.
+Instance binding, external-resource resolution and numerical execution remain
+separate gates.
+
 ## Working scope
 
 Run the [whole upstream corpus matrix](docs/ngspice-corpus-matrix.md) to learn what
