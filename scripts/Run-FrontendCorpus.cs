@@ -113,7 +113,9 @@ foreach(var item in input.RootElement.GetProperty("rows").EnumerateArray())
   // offsets intact while blanking requested nonexecuted instructions. This is
   // oracle preparation, never an alternative lexer/parser or silent lowering.
   var characters=resolved.Text!.ToCharArray();var previousEnd=0;
-  foreach(var omission in row.Omissions.OrderBy(o=>o.Range.Start))
+  // Source AC metadata records which excitation was not selected. Preserve the
+  // original source card for the native OP oracle; only input instructions are masked.
+  foreach(var omission in row.Omissions.Where(o=>o.Kind!="source_ac").OrderBy(o=>o.Range.Start))
   {
    var range=omission.Range;
    if(range.Start<previousEnd||range.Start<0||range.Length<0||range.Start>characters.Length-range.Length)throw new InvalidDataException("Invalid/overlapping omission range");
