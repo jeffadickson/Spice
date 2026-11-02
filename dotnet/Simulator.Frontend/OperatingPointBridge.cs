@@ -11,6 +11,10 @@ public sealed record ElementOrigin(string WireId,string LocalName,ImmutableArray
 /// <summary>Atomic typed request preparation; this operation does not run a simulator.</summary>
 public sealed record BridgeResult(SimulationRequest? Request,ImmutableDictionary<string,string> RootNodes,ImmutableArray<ElementOrigin> Origins,ImmutableArray<BridgeDiagnostic> Diagnostics)
 {
+    /// <summary>Explicit complex AC replacements for every active independent source, including zero for DC-only sources. DC bias remains in Request.Circuit.</summary>
+    public ImmutableArray<AcSourcePhasor> AcSources { get; init; } = [];
+    /// <summary>Number of active source headers with an explicitly declared AC amplitude.</summary>
+    public int ExplicitAcSources { get; init; }
     /// <summary>All active cards fit the requested bounded operating-point preparation profile.</summary>
     public bool Success=>Request!=null&&Diagnostics.IsEmpty;
 }
@@ -41,6 +45,7 @@ public static class OperatingPointBridge
         var rootEnd=catalog.Cards.FirstOrDefault(c=>c.ScopeId==0&&c.Kind=="endCard");
         if(rootEnd!=null&&catalog.Cards.Any(c=>c.ScopeId==0&&c.Range.Start>rootEnd.Range.Start))return Failure("unprocessed_end_tail",rootEnd.Range);
         var nodes=new List<string>{"0"};var elements=new List<Element>();var origins=new List<ElementOrigin>();
+        var acSources=new List<AcSourcePhasor>();var explicitAcSources=0;
         var roots=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var bound=InstanceBinder.Bind(catalog).Instances.ToLookup(i=>i.Header.ScopeId);
         var primitives=catalog.Primitives.ToLookup(p=>p.ScopeId);var cards=catalog.Cards.ToLookup(c=>c.ScopeId);
@@ -51,7 +56,8 @@ public static class OperatingPointBridge
         {
             Expand(0,rootParameters,new(StringComparer.OrdinalIgnoreCase),[],0);
             if(elements.Count==0)throw new BridgeFailure("empty_circuit",null);
-            return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),new OperatingPoint(),backend),roots.ToImmutable(),origins.ToImmutableArray(),[]);
+            return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),new OperatingPoint(),backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
+            {AcSources=acSources.ToImmutableArray(),ExplicitAcSources=explicitAcSources};
         }
         catch(BridgeFailure e){return Failure(e.Code,e.Range);}
         void Expand(int scope,ParameterEvaluation environment,Dictionary<string,int> ports,ImmutableArray<string> path,int depth)
@@ -72,11 +78,23 @@ public static class OperatingPointBridge
                 }
                 foreach(var primitive in primitives[scope])
                 {
+                    if(selected&&primitive.RequiresExcitationProfile&&primitive.Excitation==null)throw new BridgeFailure("unsupported_source_profile",primitive.Range);
                     if(primitive.Family is not ("R" or "V" or "I") && !(selected && primitive.Family is ("C" or "L")))throw new BridgeFailure("unsupported_active_card",primitive.Range);
                     if(!names.Add(primitive.Name))throw new BridgeFailure("duplicate_element",primitive.Range);
-                    if(!primitive.Supported||primitive.Value==null)throw new BridgeFailure("unsupported_primitive_header",primitive.Range);
-                    var scalar=ParameterEvaluator.EvaluateValue(catalog,environment,primitive.Value);
-                    if(scalar.Value is not {} value)throw new BridgeFailure(scalar.Diagnostics[0].Code,scalar.Diagnostics[0].Range);
+                    double value;double magnitude=0,phase=0;
+                    if(selected&&primitive.Family is ("V" or "I")&&primitive.Excitation is {} excitation)
+                    {
+                        value=excitation.Dc==null?0:Evaluate(excitation.Dc);
+                        // Validate explicitly supplied AC fields even though this
+                        // selected operating point does not use their excitation.
+                        if(excitation.AcMagnitude!=null){magnitude=Evaluate(excitation.AcMagnitude);explicitAcSources++;}
+                        if(excitation.AcPhase!=null)phase=Evaluate(excitation.AcPhase);
+                    }
+                    else
+                    {
+                        if(!primitive.Supported||primitive.Value==null)throw new BridgeFailure("unsupported_primitive_header",primitive.Range);
+                        value=Evaluate(primitive.Value);
+                    }
                     if(primitive.Family=="R"&&value<=0)throw new BridgeFailure("invalid_resistance",primitive.Range);
                     if(primitive.Family=="C"&&value<=0)throw new BridgeFailure("invalid_capacitance",primitive.Range);
                     if(primitive.Family=="L"&&value<=0)throw new BridgeFailure("invalid_inductance",primitive.Range);
@@ -87,7 +105,20 @@ public static class OperatingPointBridge
                     // Rust's byte limits; original spellings remain in provenance.
                     var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
                     elements.Add(primitive.Family switch{"R"=>new Resistor(id,p,n,value),"C"=>new Capacitor(id,p,n,value),"L"=>new Inductor(id,p,n,value),"V"=>new Voltage(id,p,n,value),_=>new Current(id,p,n,value)});
+                    if(selected&&primitive.Family is ("V" or "I"))
+                    {
+                        // Degree-to-radian multiplication avoids an overflowing
+                        // intermediate phase*pi for otherwise finite angles.
+                        var radians=phase*(Math.PI/180.0);
+                        acSources.Add(new(id,magnitude*Math.Cos(radians),magnitude*Math.Sin(radians)));
+                    }
                     origins.Add(new(id,primitive.Name,path,primitive.Range));
+                }
+                double Evaluate(SourceSyntax valueSyntax)
+                {
+                    var scalar=ParameterEvaluator.EvaluateValue(catalog,environment,valueSyntax);
+                    if(scalar.Value is not {} result)throw new BridgeFailure(scalar.Diagnostics[0].Code,scalar.Diagnostics[0].Range);
+                    return result;
                 }
                 foreach(var call in bound[scope])
                 {

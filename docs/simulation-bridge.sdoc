@@ -84,3 +84,45 @@ Implementation: Run-FrontendCorpus.cs AST-located projection, 17-digit print pro
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-EXEC-001
+
+[REQUIREMENT]
+UID: SEM-SOURCE-001
+STATUS: Draft
+TITLE: Independently represented constant DC and AC source clauses
+STATEMENT: >>>
+The generated frontend shall retain separate constant DC, AC magnitude and optional phase syntax, including signed values, DC assignment spelling and either DC/AC order. Explicit AC-only amplitude shall use the named zero-DC default for selected operating points. Parameter expressions shall use the existing scope evaluator. Duplicate, unsupported waveform and unresolved fields shall not publish partial requests. Strict legacy lowering shall retain its prior scope. Selected static-DC qualification shall record unselected AC excitation and retain original source cards for native operating-point comparison.
+<<<
+COMMENT: >>>
+Implementation: SpiceParser.g4 sourceProfile entry, SourceProfileExtraction.cs, PrimitiveSyntax.Excitation and OperatingPointBridge/Selection. Reuse: generated ANTLR token stream and parameter evaluator, no second lexer or numerical source model. Verification: SourceProfileTests and three original-source native fixture cases in FrontendCorpusIntegration, followed by original928-row execution census. AC amplitude/phase retention is not AC/transient execution or waveform support. Requirement remains Draft pending wider qualification. Evidence: evidence/corpus-sources-results.json.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SELECT-001
+
+[REQUIREMENT]
+UID: SEM-REPORT-OPTIONS-001
+STATUS: Draft
+TITLE: Qualified reporting-only option selection
+STATEMENT: >>>
+Explicit selected analysis preparation may omit a nonempty .option or .options card only when every generated parameter is a bare acct, noacct or noinit reporting flag. Each such omission shall retain its original range and reason. Any assignment, empty option list or other flag shall remain an explicit refusal, including a physical option adjacent to a recognized reporting flag. Strict lowering shall remain unchanged.
+<<<
+COMMENT: >>>
+Implementation: DeclarationExtraction.ReportingOptionsOnly and OperatingPointSelection. Primary source inspection: ngspice frontend/spiceif.c returns for acct/noacct/noinit after setting print flags, frontend/options.c exposes corresponding print state, and dotcards.c/dctran.c use them to gate reporting. Verification: AccountingOptionTests, original-source native fixture and full corpus execution. No solver tolerances, global temperature or physical model options are ignored. Evidence: evidence/corpus-sources-results.json. Draft, not broad option compatibility.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SELECT-001
+
+[REQUIREMENT]
+UID: SEM-ACPROBE-001
+STATUS: Draft
+TITLE: Selected linear AC corpus probes with independent source excitation
+STATEMENT: >>>
+The frontend AC qualification operation shall prepare finite complex replacements for every active independent source, setting DC-only sources to zero AC excitation and preserving their separate DC bias. It shall compare explicitly selected frequency probes on both CPU providers against complex root-node voltages from independently projected original-source ngspice. It shall verify source/response identity, frequency coordinates, voltage descriptors, finite real/imaginary components and explicit numerical bounds. A provider failure shall not suppress the other provider. Missing or failed reference data and unfinished budget work shall not be reported passing. Probe results shall remain distinct from execution of original sweeps, control programs or transient analyses.
+<<<
+COMMENT: >>>
+Implementation: BridgeResult.AcSources/ExplicitAcSources and scripts/Run-FrontendAcCorpus.cs, reusing Client.Ac/AcSourcePhasor and existing Rust AC solvers. Explicit exp(j*omega*t), phase in degrees; probe grid1/100/1000Hz, complex-voltage discrepancy <=1e-9 V +1e-8 times reference magnitude. The harness currently limits AC candidates to previously OP-compared corpus rows and independently verifies the DC request and original-source projection. DC-solvable selection is a qualification limitation, not a claim that every AC circuit needs a DC solution. Verification: SourceProfileTests, owned AC-only/phase/mixed-source native fixtures, corpus probes and synthetic missing-output failure classification. No source-current/internal-node or full original analysis qualification. Evidence: evidence/corpus-sources-results.json. Draft pending broader coverage.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-EXEC-001

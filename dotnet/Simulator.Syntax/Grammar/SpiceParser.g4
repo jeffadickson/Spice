@@ -10,6 +10,11 @@ statement: (passive | source | diode | bjt | mos | jfet | vcontrol |
     | subcircuit | control;
 passive: PASSIVE_NAME twoNodes parameter+;
 source: SOURCE_NAME twoNodes parameter*;
+// Bounded semantic entry over the existing source-tail tokens. The general
+// source rule continues accepting other syntactically valid source families.
+sourceProfile: dcExcitation acExcitation? EOF | acExcitation dcExcitation? EOF | value EOF;
+dcExcitation: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase)}? identifier EQUAL? value;
+acExcitation: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier value value?;
 diode: DIODE_NAME twoNodes referenceName parameter*;
 bjt: BJT_NAME (threeNodes | fourNodes | fiveNodes) referenceName parameter*;
 mos: MOS_NAME (threeNodes | fourNodes | fiveNodes | sixNodes | sevenNodes) referenceName parameter*;

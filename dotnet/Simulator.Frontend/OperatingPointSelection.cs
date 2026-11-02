@@ -34,12 +34,17 @@ public static class OperatingPointSelection
                     "op"=>"analysis_replaced_by_explicit_op",
                     "ac" or "dc" or "tran"=>"analysis_not_selected",
                     "extension" when Observations.Contains(card.Name)=>"observation_not_selected",
+                    "extension" when card.ReportingOptionsOnly=>"reporting_options_not_selected",
                     "extension" when Analyses.Contains(card.Name)=>"analysis_not_selected",
                     _=>null
                 };
                 if(reason!=null)omissions.Add(new(card.ScopeId,card.Kind,card.Name,reason,card.Range));
             }
-        var prepared=OperatingPointBridge.LowerSelected(syntax,limits,backend,omissions.Select(o=>o.Range.Start).ToImmutableHashSet());
+        var omittedCards=omissions.Select(o=>o.Range.Start).ToImmutableHashSet();
+        if(syntax.Declarations is {} declarations)
+            foreach(var source in declarations.Primitives.Where(p=>p.Excitation?.AcMagnitude!=null))
+                omissions.Add(new(source.ScopeId,"source_ac",source.Name,"ac_excitation_not_selected",source.Range));
+        var prepared=OperatingPointBridge.LowerSelected(syntax,limits,backend,omittedCards);
         return new(prepared,prepared.Success?omissions.ToImmutable():[]);
     }
 }

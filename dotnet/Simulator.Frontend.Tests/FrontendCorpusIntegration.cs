@@ -39,6 +39,11 @@ public sealed class FrontendCorpusIntegration
             // A familiar exclusion PATH with different bytes is never excluded.
             (Name:"README_OSDI_howto",Body:"V1 a 0 2\nR1 a 0 1k",Expected:"compared_pass"),
             (Name:"fraction.cir",Body:"V1 a 0 {143.0/3}\nR1 a 0 1k",Expected:"compared_pass"),
+            (Name:"source-ac-only.cir",Body:"V1 a 0 AC 1 -90\nR1 a 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"source-dc-ac.cir",Body:"V1 a 0 DC=2 AC 1\nR1 a 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"source-current.cir",Body:".param bias=2m\nI1 a 0 AC 1 DC {bias}\nR1 a 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"reporting.cir",Body:"V1 a 0 DC 2 AC 1\nR1 a 0 1k\n.option noinit acct noacct",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"source-mixed.cir",Body:"Vbias a 0 2\nIac b 0 AC 1 DC 0\nR1 a b 1k\nR2 b 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"zero-port.cir",Body:"X1 noports\n.subckt noports\nV1 hidden 0 1\nR1 hidden 0 1k\n.ends",Expected:"solver_completed_no_root_observables"),
             (Name:"capacitor.cir",Body:"V1 a 0 1\nC1 a 0 1u",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"rlc.cir",Body:"V1 a 0 3\nR1 a b 1k\nL1 b 0 2m\nC1 a b 3u",Expected:selected?"compared_pass":"lowering_refused"),
@@ -92,6 +97,12 @@ public sealed class FrontendCorpusIntegration
         }
         if(selected&&only==null)
         {
+            foreach(var source in new[]{(Name:"source-ac-only.cir",Expected:0.0),(Name:"source-dc-ac.cir",Expected:2.0),(Name:"source-current.cir",Expected:-2.0)})
+                foreach(var observation in outcomes[source.Name].GetProperty("comparisons").EnumerateArray())
+                {
+                    Assert.InRange(observation.GetProperty("rust_volts").GetDouble(),source.Expected-1e-10,source.Expected+1e-10);
+                    Assert.InRange(observation.GetProperty("ngspice_volts").GetDouble(),source.Expected-1e-10,source.Expected+1e-10);
+                }
             var index=Array.FindIndex(fixtures,f=>f.Name=="control.cir");
             var directory=Path.Combine(output,"cases",index.ToString("D4",CultureInfo.InvariantCulture));
             Assert.Contains("MUST_NOT_RUN",File.ReadAllText(Path.Combine(directory,"expanded.cir")));
