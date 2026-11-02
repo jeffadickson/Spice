@@ -14,7 +14,16 @@ diode: DIODE_NAME twoNodes referenceName parameter*;
 bjt: BJT_NAME (threeNodes | fourNodes | fiveNodes) referenceName parameter*;
 mos: MOS_NAME (threeNodes | fourNodes | fiveNodes | sixNodes | sevenNodes) referenceName parameter*;
 jfet: JFET_NAME threeNodes referenceName parameter*;
-vcontrol: VCONTROL_NAME twoNodes parameter+;
+// TABLE selects a strict tail only after E/G output nodes. The generated
+// predicate prevents malformed TABLE tails falling back to generic parameters.
+vcontrol: VCONTROL_NAME twoNodes (tableTail | {!(TokenStream.LT(1).Text.Equals("table",StringComparison.OrdinalIgnoreCase) && TokenStream.LA(2)==LBRACE)}? parameter+);
+tableTail: {TokenStream.LT(1).Text.Equals("table",StringComparison.OrdinalIgnoreCase)}? identifier LBRACE expression RBRACE EQUAL? tableSeparator* tablePair+;
+// ngspice inpcom.c TABLE uses gettok_node: commas/parentheses separate scalar
+// coordinates, including legacy unmatched wrappers. Keep this tolerance local;
+// the controlling expression and the even coordinate count remain strict.
+tablePair: tableCoordinate tableSeparator* tableCoordinate tableSeparator*;
+tableCoordinate: (PLUS | MINUS)? (NUMBER | identifier) | LBRACE expression RBRACE;
+tableSeparator: LPAREN | RPAREN | COMMA;
 icontrol: ICONTROL_NAME twoNodes referenceName parameter+;
 switchCard: SWITCH_NAME fourNodes referenceName parameter*;
 cswitch: CSWITCH_NAME twoNodes referenceName referenceName parameter*;

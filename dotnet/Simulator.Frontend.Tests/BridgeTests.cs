@@ -23,6 +23,8 @@ public sealed class BridgeTests
     [InlineData(".param dc=3\nV1 a 0 dc\nR1 a 0 1k","unsupported_primitive_header")]
     [InlineData("R1 a 0 dc 1k","unsupported_primitive_header")]
     [InlineData("C1 a 0 1u","unsupported_active_card")]
+    [InlineData("E1 out 0 TABLE {V(in)} = (0,0) (4,8)","unsupported_active_card")]
+    [InlineData("G1 out 0 TABLE {V(in)} ((0,0)(4,.008)","unsupported_active_card")]
     [InlineData("V1 a 0 SIN(0 1 1k)","unsupported_primitive_header")]
     [InlineData("R1 a 0 {missing}","missing_parameter")]
     [InlineData("R1 a 0 -1","invalid_resistance")]

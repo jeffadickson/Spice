@@ -167,7 +167,35 @@ STATEMENT: >>>
 The generated frontend shall recognize the selected E/G controlled-source TABLE form with an expression, an optional equals separator and continued coordinate pairs, preserving source spelling and physical locations. Table syntax shall be recognized in its declared card context without relaxing ordinary expression assignment or delimiter validation. Structural recognition shall remain separate from table interpolation, numerical support and dialect-specific legacy grouping policy.
 <<<
 COMMENT: >>>
-Inferred unimplemented draft from reached vendor-library diagnostics after PRS-REF-001: opa1611.lib line 408 onward, TLV6001.LIB line 297 onward, TLV9002.lib line 238 and OPA171.txt line 310 onward. Native acceptance and malformed/legacy wrapper adjudication are still required before implementation/closure; MCP6041.txt has separate non-balanced table wrappers requiring independent investigation. TL072.301 also retains a terminal DOS control-Z input-profile question. Do not label those vendor inputs invalid merely because the current generated grammar rejects them.
+Bounded implementation under verification: context-specific generated tableTail/tablePair rules with contextual keyword selection and source-form observations; TableSyntaxTests and QualifyTables.cs. Inferred from reached vendor-library diagnostics after PRS-REF-001: opa1611.lib line 408 onward, TLV6001.LIB line 297 onward, TLV9002.lib line 238 and OPA171.txt line 310 onward. Named native acceptance is tested separately from numerical agreement; legacy wrapper adjudication remains required before broader closure; MCP6041.txt non-balanced coordinate wrappers are qualified separately by PRS-TABLE-002; they are not ordinary expression groups. TL072.301 also retains a terminal DOS control-Z input-profile question. Do not label those vendor inputs invalid merely because the current generated grammar rejects them.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: PRS-LEX-001
+
+[REQUIREMENT]
+UID: PRS-TABLE-002
+STATUS: Draft
+TITLE: Local legacy TABLE coordinate separators
+STATEMENT: >>>
+Within the selected E/G TABLE coordinate tail only, commas and parentheses shall act as scalar separators as in the pinned native ngspice compatibility reader. Legacy extra or unmatched coordinate wrappers shall not by themselves cause rejection. A table shall contain a nonempty even number of coordinates. Controlling expressions and expressions outside the coordinate tail shall retain their ordinary delimiter and operand requirements. Recognition shall not imply interpolation support.
+<<<
+COMMENT: >>>
+Inferred from inpcom.c TABLE translation using gettok_node and executed native controls: both MCP6041 wrapper spellings and a missing terminal pair parenthesis complete ngspice operating points. Bounded implementation: tableCoordinate/tableSeparator/tablePair productions, TableSyntaxTests, and scripts/QualifyTables.cs. Native acceptance and numeric controls remain separate fields. Group/resource budgets still apply; no complete TABLE dialect qualification is claimed.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: PRS-TABLE-001
+
+[REQUIREMENT]
+UID: PRS-EOF-001
+STATUS: Draft
+TITLE: Explicit terminal DOS end-of-file profile
+STATEMENT: >>>
+An explicitly qualified legacy fragment input profile shall recognize a terminal DOS control-Z marker without silently discarding interior content or changing original source locations. Interior control characters and content after a claimed end marker shall remain distinct malformed-input or unsupported-profile outcomes. Syntax acceptance shall remain separate from resource resolution and model execution.
+<<<
+COMMENT: >>>
+Inferred unimplemented draft from TL072.301 line 43, the remaining rejection in the fourteen-file reached-library recognition profile after TABLE support. Native acceptance of terminal versus interior/trailed markers and platform behavior must be tested before implementation or closure. No generic control-character stripping is authorized by this draft.
 <<<
 RELATIONS:
 - TYPE: Parent
