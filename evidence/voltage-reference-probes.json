@@ -1,0 +1,477 @@
+{
+  "status": "syntax_agreement",
+  "numerical_status": "mismatch_observed",
+  "fixtures": 11,
+  "syntax_accepted": 11,
+  "native_accepted": 11,
+  "native_matched": 10,
+  "rows": [
+    {
+      "Name": "differential",
+      "Expression": "V(VC\u002B,VC-)",
+      "expected": 2,
+      "actual": 2,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "12294d08af13bf896ff5f56724073bed58a6676515d8650488a38241a5a5f658",
+      "native_input_sha256": "3838a89f0f3e7273bb5c6b63a5f5cb4786818158c6203dbb6df11e20167c3776",
+      "log_sha256": "7ed168d36a3e1cca7a9bcc5a1f1d10a223c0ef977c162c1f9f5ab7b4be81ec1b"
+    },
+    {
+      "Name": "single",
+      "Expression": "v(VC\u002B)",
+      "expected": 3,
+      "actual": 3,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "6b740bd72687c69c93ecf27f91ea1443d3d19e84d6a01525910a448d54957156",
+      "native_input_sha256": "a5c92b1d83fa90a3b7a0efd631003891e2cc57ea19f31587e8d10c349c664c89",
+      "log_sha256": "5319a1255bfd4043cbd8e41f73b1b8f3c181897a8e227f0a3fce45d8c734d6dc"
+    },
+    {
+      "Name": "nested",
+      "Expression": "max(V(VC\u002B,VC-)*2,1)",
+      "expected": 4,
+      "actual": 4,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "a89c4dc4d800b492ace05d4d06e14c6a5783e00c7a7d40c7f4ceb903fa7e2126",
+      "native_input_sha256": "c2f0273ff8f88ec7ef8bcb66a92c63069ff6493701b20ce7483ca76b9bc14d41",
+      "log_sha256": "c5d794e0f04354af88bc72319f6cc866580c20ec36f5c88642bdef3ea18dad81"
+    },
+    {
+      "Name": "spaced",
+      "Expression": "v ( VC\u002B , VC- )",
+      "expected": 2,
+      "actual": 2,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "a776950ab95c0a8c53559e4237ebe5262241ecdca739e103f2787ca271323f42",
+      "native_input_sha256": "90b3cdc24f45ff5987b13c8f15114f9478c631686556107911b20aaf57c6cc8e",
+      "log_sha256": "7ed168d36a3e1cca7a9bcc5a1f1d10a223c0ef977c162c1f9f5ab7b4be81ec1b"
+    },
+    {
+      "Name": "numeric-node",
+      "Expression": "V(2p)",
+      "expected": 2.25,
+      "actual": 2.25,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "77d75ac5408cb030eec6b611b3882c5c1be929958bf0785861fc2de7c64f7211",
+      "native_input_sha256": "ae5a5ba04d068b16e1bfc29a51d00f7edaa7c8423d27d42b3dde43c5a1b7d03b",
+      "log_sha256": "bf9af241668ef654bf7df5885bc1a699046279036959615761f931cb490b0d8d"
+    },
+    {
+      "Name": "bus-node",
+      "Expression": "V(bus[3],ref:minus)",
+      "expected": 2,
+      "actual": 2,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "ebf7b02ef744efbd52a4afac18b577337467ef33de030bdf924764995ebff046",
+      "native_input_sha256": "ca8159de9aec07aa5d6ad4fddb9a21c5a904e0aee3f639781d4ecb95b0c8a65b",
+      "log_sha256": "7ed168d36a3e1cca7a9bcc5a1f1d10a223c0ef977c162c1f9f5ab7b4be81ec1b"
+    },
+    {
+      "Name": "path-node",
+      "Expression": "V(path/a,path-b)",
+      "expected": 2.5,
+      "actual": 2.5,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "6ed6c686b4560f3024b17b8c746c4c7167bd91316a127d90abd4fe09f1904695",
+      "native_input_sha256": "1451132ec381fe4d5b273c48a93efa795e37a613aa0d79901b43e715d78dde60",
+      "log_sha256": "36c094859e53f76d6c7688fca39679ffee5b913bcb4c43e4572a5ab29dc8718d"
+    },
+    {
+      "Name": "quoted-node",
+      "Expression": "V(\u0022VC\u002B\u0022,\u0022VC-\u0022)",
+      "expected": 2,
+      "actual": 2,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "23b538f9de65503313569fcdbd878c00a3afc26943f22ccd0976a02a5dfaa068",
+      "native_input_sha256": "975e07700082628fcf4b770033078a7c051f26bc77bd8929329f0b7988fd8355",
+      "log_sha256": "7ed168d36a3e1cca7a9bcc5a1f1d10a223c0ef977c162c1f9f5ab7b4be81ec1b"
+    },
+    {
+      "Name": "limited",
+      "Expression": "LIMIT(.5*V(VC\u002B,VC-),-1,1)",
+      "expected": 1,
+      "actual": 0.5,
+      "native_accepted": true,
+      "native_matched": false,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "d874c95aa7cd80120a7f7e5b5860c8f0efab6369b9ff3594f2cae634c5875410",
+      "native_input_sha256": "b5d2e71f75dd909ea9da6ebf573c16043a315f46ebb45ca8b5e92c84d6c7d0b2",
+      "log_sha256": "d8253684b9b77ffd2b1f3a93e1a5b523ebcd139c1de60df00614350c177c9bef"
+    },
+    {
+      "Name": "continued",
+      "Expression": "V(VC\u002B\n\u002B ,VC-)",
+      "expected": 2,
+      "actual": 2,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "e6a608ea3b8f28dce6a980230e39009fc477b66ba2efd3015005303dcee53468",
+      "native_input_sha256": "9fb8f0a858c884c0c7e565a156a32b59364d3d9c0ad9ff7785b0e4f016fe61c6",
+      "log_sha256": "7ed168d36a3e1cca7a9bcc5a1f1d10a223c0ef977c162c1f9f5ab7b4be81ec1b"
+    },
+    {
+      "Name": "continued-open",
+      "Expression": "V\n\u002B (VC\u002B,VC-)",
+      "expected": 2,
+      "actual": 2,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "92cf7befd14da5cfa2092279afabb63da9cab6b28874b70f99bec2abde4607c7",
+      "native_input_sha256": "882fecfcee5c593e4410452d6912970e1f5319666913afab30177173c7b8d403",
+      "log_sha256": "7ed168d36a3e1cca7a9bcc5a1f1d10a223c0ef977c162c1f9f5ab7b4be81ec1b"
+    }
+  ],
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "f0686aa05ec94e7ccdbfbe3ea03df104407b4f4fc68ccfda0c3422e0a5f773c2",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "91d8262c9b7bdd150529c044da56a7f2464a0724ab6a9af880267bed490dcff4",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "0c968b1bc53376e245cebb95b683d686cef43df8d4cace45f126f36c474137c1",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "820e0ebbc84ca3e41ddf9e543d911f85f9d22e0cf13685955cf6ec9d07ae47db",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "942de52671daf11d86447e7808ee4ade224e211fc31b7f4116b8cc0162f7cb2d",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "f8e567aeb70033af3f696884b1af7828a0a5b7ef2b1495029fe336e11b05b047",
+    "scripts/QualifyVoltageReferences.cs": "3b9f9ca16728d317dbe54d9c237e3271ac429c60bbe246f1c8db252c85b0adcd",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779"
+  },
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "syntax_assembly_sha256": "5e0196774d01ad74c45467beb44b2c0fa5902f521a8b6066dd590f68441963fb",
+  "vendor_profile": "recognition_only",
+  "vendor_expected": 14,
+  "vendor_accepted": 3,
+  "vendor_rows": [
+    {
+      "path": "examples/optran/models/opa1611.lib",
+      "status": "syntax_rejected",
+      "sha256": "b6bcad844e31ec3cb838285748a542336fdf2e54ba90ad411d4253b9ca1c234b",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 409,
+          "Column": 2
+        },
+        {
+          "Code": "syntax",
+          "Message": "mismatched input \u0027)\u0027 expecting NL",
+          "Line": 409,
+          "Column": 15
+        },
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 417,
+          "Column": 2
+        }
+      ]
+    },
+    {
+      "path": "examples/optran/models/TLV6001.LIB",
+      "status": "syntax_rejected",
+      "sha256": "68e616a077752c88f279e494092cb9d6625eda2a0b13ebdd5e81916c4bfa9b2c",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 298,
+          "Column": 2
+        },
+        {
+          "Code": "syntax",
+          "Message": "mismatched input \u0027)\u0027 expecting NL",
+          "Line": 298,
+          "Column": 14
+        },
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 308,
+          "Column": 2
+        }
+      ]
+    },
+    {
+      "path": "examples/optran/models/TLV9002.lib",
+      "status": "syntax_rejected",
+      "sha256": "8d482d075395aa6d995354f6289f819120ba66126c88c23fb1113b8c14a81b18",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 238,
+          "Column": 2
+        },
+        {
+          "Code": "syntax",
+          "Message": "mismatched input \u0027)\u0027 expecting NL",
+          "Line": 238,
+          "Column": 12
+        },
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 243,
+          "Column": 2
+        }
+      ]
+    },
+    {
+      "path": "examples/p-to-n-examples/MCP6041.txt",
+      "status": "syntax_rejected",
+      "sha256": "6ffd7737b19be4972f1c1e4687e8175b8c179267f47df7731db70ba63a5ef005",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027)\u0027 expecting NL",
+          "Line": 120,
+          "Column": 58
+        },
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027\\r\\n*\\r\\n* Output Stage\\r\\n\u0027 expecting {LPAREN, RPAREN, \u0027{\u0027, LBRACKET, COMMA, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 121,
+          "Column": 61
+        }
+      ]
+    },
+    {
+      "path": "examples/p-to-n-examples/OPA171.txt",
+      "status": "syntax_rejected",
+      "sha256": "31a9420079ca12629ef0078a4e8a3249a304733de5b083d0630ae7c10cbd3747",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 311,
+          "Column": 2
+        },
+        {
+          "Code": "syntax",
+          "Message": "mismatched input \u0027)\u0027 expecting NL",
+          "Line": 311,
+          "Column": 10
+        },
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 364,
+          "Column": 2
+        }
+      ]
+    },
+    {
+      "path": "examples/p-to-n-examples/TLC555.LIB",
+      "status": "accepted_structure",
+      "sha256": "2340cd6192dc0e4f43fc5628ea084e64d4b82244a6a2267e4b55ce45ed5dcd2c",
+      "diagnostics": []
+    },
+    {
+      "path": "examples/probe/TL072.301",
+      "status": "syntax_rejected",
+      "sha256": "74e89d558163615ac7a19f0c783101a6f8af77fb6d80bd3c20c6ab66426561cd",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027\u001A\u0027 expecting {\u003CEOF\u003E, \u0027.control\u0027, \u0027.model\u0027, \u0027.subckt\u0027, \u0027.end\u0027, INCLUDE, \u0027.param\u0027, \u0027.tran\u0027, \u0027.ac\u0027, \u0027.dc\u0027, \u0027.op\u0027, \u0027.lib\u0027, BEHAVIOR_START, FUNC_START, DIRECTIVE, NL, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_DIGITAL_HEADER, URC_NAME, WORD}",
+          "Line": 43,
+          "Column": 1
+        }
+      ]
+    },
+    {
+      "path": "examples/probe/TLC555.LIB",
+      "status": "accepted_structure",
+      "sha256": "2340cd6192dc0e4f43fc5628ea084e64d4b82244a6a2267e4b55ce45ed5dcd2c",
+      "diagnostics": []
+    },
+    {
+      "path": "paranoia_parallel/examples/optran/models/opa1611.lib",
+      "status": "syntax_rejected",
+      "sha256": "b6bcad844e31ec3cb838285748a542336fdf2e54ba90ad411d4253b9ca1c234b",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 409,
+          "Column": 2
+        },
+        {
+          "Code": "syntax",
+          "Message": "mismatched input \u0027)\u0027 expecting NL",
+          "Line": 409,
+          "Column": 15
+        },
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 417,
+          "Column": 2
+        }
+      ]
+    },
+    {
+      "path": "paranoia_parallel/examples/optran/models/TLV6001.LIB",
+      "status": "syntax_rejected",
+      "sha256": "68e616a077752c88f279e494092cb9d6625eda2a0b13ebdd5e81916c4bfa9b2c",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 298,
+          "Column": 2
+        },
+        {
+          "Code": "syntax",
+          "Message": "mismatched input \u0027)\u0027 expecting NL",
+          "Line": 298,
+          "Column": 14
+        },
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 308,
+          "Column": 2
+        }
+      ]
+    },
+    {
+      "path": "paranoia_parallel/examples/optran/models/TLV9002.lib",
+      "status": "syntax_rejected",
+      "sha256": "8d482d075395aa6d995354f6289f819120ba66126c88c23fb1113b8c14a81b18",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 238,
+          "Column": 2
+        },
+        {
+          "Code": "syntax",
+          "Message": "mismatched input \u0027)\u0027 expecting NL",
+          "Line": 238,
+          "Column": 12
+        },
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 243,
+          "Column": 2
+        }
+      ]
+    },
+    {
+      "path": "paranoia_parallel/examples/pton/MCP6041.txt",
+      "status": "syntax_rejected",
+      "sha256": "6ffd7737b19be4972f1c1e4687e8175b8c179267f47df7731db70ba63a5ef005",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027)\u0027 expecting NL",
+          "Line": 120,
+          "Column": 58
+        },
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027\\r\\n*\\r\\n* Output Stage\\r\\n\u0027 expecting {LPAREN, RPAREN, \u0027{\u0027, LBRACKET, COMMA, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 121,
+          "Column": 61
+        }
+      ]
+    },
+    {
+      "path": "paranoia_parallel/examples/pton/OPA171.txt",
+      "status": "syntax_rejected",
+      "sha256": "31a9420079ca12629ef0078a4e8a3249a304733de5b083d0630ae7c10cbd3747",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 311,
+          "Column": 2
+        },
+        {
+          "Code": "syntax",
+          "Message": "mismatched input \u0027)\u0027 expecting NL",
+          "Line": 311,
+          "Column": 10
+        },
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027(\u0027 expecting {\u0027{\u0027, PLUS, MINUS, \u0027\u003C\u0027, STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+          "Line": 364,
+          "Column": 2
+        }
+      ]
+    },
+    {
+      "path": "paranoia_parallel/examples/pton/TLC555.LIB",
+      "status": "accepted_structure",
+      "sha256": "2340cd6192dc0e4f43fc5628ea084e64d4b82244a6a2267e4b55ce45ed5dcd2c",
+      "diagnostics": []
+    }
+  ],
+  "limitations": [
+    "Named voltage-reference probes only; not complete ngspice expression dialect conformance",
+    "Native B-source execution is an oracle, not Rust behavioral-source or signal-parameter support",
+    "Managed file-app; Windows execution only; no whole-corpus simulation, Linux/GPU/production qualification"
+  ]
+}

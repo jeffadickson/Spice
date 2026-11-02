@@ -1,0 +1,321 @@
+{
+  "phases": {
+    "original_resolved": {
+      "counts": {
+        "Unsupported": 250,
+        "Bound": 3216,
+        "Missing": 48,
+        "Deferred": 58466,
+        "Invalid": 30,
+        "Ambiguous": 0
+      },
+      "decks": 879,
+      "references": 62010.0
+    },
+    "expanded_resolved": {
+      "counts": {
+        "Unsupported": 815,
+        "Bound": 62913,
+        "Missing": 66,
+        "Deferred": 86,
+        "Invalid": 30,
+        "Ambiguous": 28
+      },
+      "decks": 879,
+      "references": 63938.0
+    },
+    "original_all": {
+      "counts": {
+        "Unsupported": 264,
+        "Bound": 3220,
+        "Missing": 48,
+        "Deferred": 73070,
+        "Invalid": 30,
+        "Ambiguous": 0
+      },
+      "decks": 920,
+      "references": 76632.0
+    }
+  },
+  "failure_counts": [
+    {
+      "Name": "denied_path",
+      "Count": 13
+    },
+    {
+      "Name": "resource_syntax",
+      "Count": 12
+    },
+    {
+      "Name": "resource_io",
+      "Count": 5
+    },
+    {
+      "Name": "end_in_fragment",
+      "Count": 4
+    },
+    {
+      "Name": "invalid_utf8",
+      "Count": 4
+    },
+    {
+      "Name": "conditional_resources",
+      "Count": 3
+    }
+  ],
+  "tested_base": "884a5972011e93127fb949ebaff63705ad3e2b99",
+  "raw": {
+    "legacy_sha256": "58f7fb0812b727b2d65eefc380cfc9f3cc3503f557659d8ffeee05811d116af9",
+    "directory": "E:\\Artifacts\\Spice-voltage-reference-20261102T003915Z",
+    "primary_sha256": "6671f9394b12106385ba76181d7da278ce9ff221c26beb372534f94006f75eea"
+  },
+  "grammar_examples": [
+    {
+      "path": "examples/optran/HiPass3opamps_optran.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\opa1611.lib",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\opa1611.lib",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '(' expecting {'{', PLUS, MINUS, '<', STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+            "Line": 409,
+            "Column": 2
+          },
+          {
+            "Code": "syntax",
+            "Message": "mismatched input ')' expecting NL",
+            "Line": 409,
+            "Column": 15
+          },
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '(' expecting {'{', PLUS, MINUS, '<', STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+            "Line": 417,
+            "Column": 2
+          }
+        ]
+      }
+    },
+    {
+      "path": "examples/optran/TLV6001-test.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV6001.LIB",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV6001.LIB",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '(' expecting {'{', PLUS, MINUS, '<', STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+            "Line": 298,
+            "Column": 2
+          },
+          {
+            "Code": "syntax",
+            "Message": "mismatched input ')' expecting NL",
+            "Line": 298,
+            "Column": 14
+          },
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '(' expecting {'{', PLUS, MINUS, '<', STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+            "Line": 308,
+            "Column": 2
+          }
+        ]
+      }
+    },
+    {
+      "path": "examples/optran/TLV9002-test.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV9002.lib",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\optran\\models\\TLV9002.lib",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '(' expecting {'{', PLUS, MINUS, '<', STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+            "Line": 238,
+            "Column": 2
+          },
+          {
+            "Code": "syntax",
+            "Message": "mismatched input ')' expecting NL",
+            "Line": 238,
+            "Column": 12
+          },
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '(' expecting {'{', PLUS, MINUS, '<', STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+            "Line": 243,
+            "Column": 2
+          }
+        ]
+      }
+    },
+    {
+      "path": "examples/p-to-n-examples/OP_MCP6041.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\MCP6041.txt",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\MCP6041.txt",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "extraneous input ')' expecting NL",
+            "Line": 120,
+            "Column": 58
+          },
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '\\r\\n*\\r\\n* Output Stage\\r\\n' expecting {LPAREN, RPAREN, '{', LBRACKET, COMMA, PLUS, MINUS, '<', STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+            "Line": 121,
+            "Column": 61
+          }
+        ]
+      }
+    },
+    {
+      "path": "examples/p-to-n-examples/op-test.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\OPA171.txt",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\p-to-n-examples\\OPA171.txt",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '(' expecting {'{', PLUS, MINUS, '<', STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+            "Line": 311,
+            "Column": 2
+          },
+          {
+            "Code": "syntax",
+            "Message": "mismatched input ')' expecting NL",
+            "Line": 311,
+            "Column": 10
+          },
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '(' expecting {'{', PLUS, MINUS, '<', STRING, QUOTED, NUMBER, NUMERIC_NAME, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_NAME, WORD, PATH_NAME}",
+            "Line": 364,
+            "Column": 2
+          }
+        ]
+      }
+    },
+    {
+      "path": "examples/probe/Dual-NMOS-amp.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\probe\\TL072.301",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\probe\\TL072.301",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '\u001a' expecting {<EOF>, '.control', '.model', '.subckt', '.end', INCLUDE, '.param', '.tran', '.ac', '.dc', '.op', '.lib', BEHAVIOR_START, FUNC_START, DIRECTIVE, NL, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_DIGITAL_HEADER, URC_NAME, WORD}",
+            "Line": 43,
+            "Column": 1
+          }
+        ]
+      }
+    }
+  ],
+  "corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+  "valid_root_acceptance": 920,
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "f0686aa05ec94e7ccdbfbe3ea03df104407b4f4fc68ccfda0c3422e0a5f773c2",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "91d8262c9b7bdd150529c044da56a7f2464a0724ab6a9af880267bed490dcff4",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "0c968b1bc53376e245cebb95b683d686cef43df8d4cace45f126f36c474137c1",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "820e0ebbc84ca3e41ddf9e543d911f85f9d22e0cf13685955cf6ec9d07ae47db",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "942de52671daf11d86447e7808ee4ade224e211fc31b7f4116b8cc0162f7cb2d",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "f8e567aeb70033af3f696884b1af7828a0a5b7ef2b1495029fe336e11b05b047",
+    "dotnet/Simulator.Syntax.Corpus/InventoryCommand.cs": "e41689a6cf479fc10cc57742fb68296be86eacd52691513dfb88fe8ebd1d8d6b",
+    "dotnet/Simulator.Syntax.Corpus/packages.lock.json": "4788584a824763fed9384acb5ab8ff8b3628d766cec0e0bf5186b0a5be9aaf64",
+    "dotnet/Simulator.Syntax.Corpus/Program.cs": "2ec60e17334f5d85b423c31ea13339546bdb15a9af3c82233abdedcd8a9cef6a",
+    "dotnet/Simulator.Syntax.Corpus/Simulator.Syntax.Corpus.csproj": "ac299b6057cf9dd59b1379a136971e5dae66e66dcfec3cd79f7552c9e2974210"
+  },
+  "resource_resolved": 879,
+  "inventory_sha256": "9d637040701b491d04e7e8cdabc8bedfff782b63927c55bae130852edad33811",
+  "completed": 928,
+  "resource_refused": 41,
+  "tested_dirty": true,
+  "counts": {
+    "encoding_rejected": 4,
+    "accepted_structure": 916,
+    "syntax_rejected": 8
+  },
+  "state": "completed_with_results",
+  "limitations": [
+    "Root acceptance is not vendor-library acceptance, binding or simulation readiness.",
+    "Legacy22 rows include18 repeated repository decks; four distinct replay inputs counted once.",
+    "Same root inventory/input hashes as prior checkpoint; corpus checkout is dirty and current reached-file hashes are retained separately.",
+    "No whole-corpus numerical, behavioral/table simulation, Linux/GPU/production qualification."
+  ],
+  "implementation_commit": "2b997ef",
+  "corpus_dirty": true,
+  "inputs": 928,
+  "elapsed_seconds": 359.1025064,
+  "transitions": [
+    {
+      "to": "resolved",
+      "path": "ngspice/examples/p-to-n-examples/555-timer-2.cir",
+      "from": "resource_refused"
+    },
+    {
+      "to": "resolved",
+      "path": "ngspice/examples/probe/555-timer-2.cir",
+      "from": "resource_refused"
+    },
+    {
+      "to": "resolved",
+      "path": "ngspice/paranoia_parallel/examples/pton/555-timer-2.cir",
+      "from": "resource_refused"
+    }
+  ],
+  "binary_sha256": {
+    "Simulator.Syntax.dll": "722a4b07cf0b7a93948c44004d62e281ce947d945b2742b3428e4a145c7188cf",
+    "Antlr4.Runtime.Standard.dll": "0440e3d2c5906326e04df87d6a5272192b7d29099901ba4215ca9e0f5dca7591",
+    "Simulator.Syntax.Corpus.dll": "984cb5cd32ac1e162b81dfd13d95f6ee564456a6d226ee65a1cda91e615f6c25"
+  },
+  "limits": {
+    "input_bytes": 4194304,
+    "tokens": 2000000,
+    "nesting": 128,
+    "rule_depth": 512,
+    "worker_seconds": 180,
+    "campaign_minutes": 30,
+    "workers": 4,
+    "legacy_bytes": false,
+    "collect_features": false,
+    "collect_declarations": true,
+    "collect_semantics": true,
+    "resource_roots": [
+      "C:\\dev\\ngspice-ngspice",
+      "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\simulation-bridge"
+    ],
+    "resource_parser": {
+      "characters": 4194304,
+      "tokens": 2000000
+    },
+    "resource_profile": "strict-utf8;maxDepth32;maxFiles128;maxTotal8MiB;no-simulation",
+    "diagnostics_per_row": 3
+  }
+}

@@ -28,11 +28,11 @@ SLL/LL agreement; nesting budgets; no signal evaluation or partial catalog.
 - [x] Clean baseline; new bulk outputs under E: unique artifact directory.
 - [x] Red syntax regressions and named native ngspice reference probes.
 - [x] Minimal generated lexer/parser fix plus metadata/nesting guard integration.
-- [ ] Full regressions, seeded input/property checks, scoped Stryker boundaries,
+- [x] Full regressions, seeded input/property checks, scoped Stryker boundaries,
       partial coverage with known captured-function exclusions, and named probes.
-- [ ] Frozen-source full resource corpus + root syntax/legacy acceptance gate.
-- [ ] StrictDoc/Sphinx, review fixes, updated results issue/chart and handoff.
-- [ ] Verified small commits/pushes and main integration, preserving unrelated work.
+- [x] Frozen-source full resource corpus + root syntax/legacy acceptance gate.
+- [x] StrictDoc/Sphinx, review fixes, updated results issue/chart and handoff.
+- [x] Verified small commits/pushes and main integration, preserving unrelated work.
 
 Files: Grammar/SpiceLexer.g4, Grammar/SpiceParser.g4, DeckSyntax.cs group guard,
 FeatureExtraction.cs observation, VoltageReferenceTests.cs, native qualification
@@ -44,3 +44,6 @@ Review finding resolved: the opener now reuses LOGICAL_SPACE for physical
 continuations, including intervening comment records. Numeric LIMIT controls
 remain explicitly unresolved (syntax acceptance is a separate result). The
 next inferred syntax requirement is PRS-TABLE-001, not implemented here.
+
+Completed evidence: docs/voltage-reference-results.md and issue #17. Native
+LIMIT mismatch and remaining vendor TABLE/legacy gaps remain open, not passes.

@@ -1,0 +1,57 @@
+{
+  "collector": "Coverlet10.1.0",
+  "limitations": [
+    "Captured handwritten core functions and callbacks remain omitted; not complete handwritten coverage.",
+    "Generated parser/lexer CSharp coverage is not lexer ATN transition or complete grammar coverage.",
+    "No Rust, native oracle, corpus coordinator or file-app coverage measured."
+  ],
+  "raw_directory": "E:\\Artifacts\\Spice-voltage-reference-20261102T003915Z",
+  "projection": "ReportGenerator5.5.11",
+  "instrumented_subset": {
+    "generatedon": "2026-11-02T00:58:06Z",
+    "parser": "MultiReport (2x Cobertura)",
+    "assemblies": 2,
+    "classes": 53,
+    "files": 14,
+    "coveredlines": 811,
+    "uncoveredlines": 12,
+    "coverablelines": 823,
+    "totallines": 1394,
+    "linecoverage": 98.5,
+    "coveredbranches": 974,
+    "totalbranches": 1114,
+    "branchcoverage": 87.4,
+    "coveredmethods": 157,
+    "fullcoveredmethods": 149,
+    "totalmethods": 157,
+    "methodcoverage": 100,
+    "fullmethodcoverage": 94.9
+  },
+  "generated": {
+    "reference_methods": [
+      {
+        "line_rate": "0.8571",
+        "branch_rate": "1",
+        "name": "voltageReference"
+      },
+      {
+        "line_rate": "0.7406999999999999",
+        "branch_rate": "0.75",
+        "name": "referenceNode"
+      }
+    ],
+    "limitation": "Generated CSharp coverage, not serialized lexer ATN transition coverage or complete grammar conformance",
+    "generated_classes": [
+      {
+        "line_rate": "0.9781",
+        "branch_rate": "0.8653",
+        "name": "Simulator.Syntax.Generated.SpiceLexer"
+      },
+      {
+        "line_rate": "0.8173999999999999",
+        "branch_rate": "0.7145999999999999",
+        "name": "Simulator.Syntax.Generated.SpiceParser"
+      }
+    ]
+  }
+}

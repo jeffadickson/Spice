@@ -382,3 +382,13 @@ inferred Draft PRS-REF-001: punctuated node arguments in voltage references,
 such as V(VC+,VC-), in reached vendor libraries. Keep syntax, resource, binding,
 parameter and simulation results separate. Captured-function coverage still
 unmeasured; all bulk artifacts remain on E: under the configured artifact root.
+
+Voltage-reference grammar checkpoint: see docs/voltage-reference-results.md and
+issue #17. Generated v(...) node contexts now preserve punctuation and physical
+continuations. Root syntax remains 920/920; resources resolve 879/920. Next shared
+grammar target is inferred Draft PRS-TABLE-001 (E/G TABLE tails), with separate
+legacy MCP6041 grouping and TL072 DOS EOF adjudication. Native syntax agrees on
+11 named probes; ten numeric values match, one scaled LIMIT result remains
+unqualified. Existing DC regression still passes 12 comparisons/24 Rust solves.
+Do not equate these stages or claim signal evaluation/behavioral support. Keep
+bulk artifacts on E: and retain captured-function/lexer-ATN coverage limitations.

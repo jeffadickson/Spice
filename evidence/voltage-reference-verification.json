@@ -1,0 +1,191 @@
+{
+  "test_source_sha256": "190a41e92732caa9d55a0fabad05b10593d3fd814881dad44f27a89dd6fe404b",
+  "implementation_commit": "2b997ef",
+  "antlr_sha256": "bc13a9c57a8dd7d5196888211e5ede657cb64a3ce968608697e4f668251a8487",
+  "dc_regression": {
+    "comparisons": 12,
+    "rust_solves": 24,
+    "rust": "Unchanged native executable reused by exact SHA256",
+    "report": "voltage-reference-dc-oracles.json"
+  },
+  "limitations": [
+    "Root/resource/library recognition is not simulation support.",
+    "Native syntax agreement does not make the numerical LIMIT mismatch a pass.",
+    "Coverage omits captured functions; generated CSharp coverage does not measure serialized lexer ATN transitions.",
+    "No separate coverage-guided fuzz/soak, native mutation/coverage or new Rust implementation.",
+    "No whole-corpus numerical, behavioral/table/model/AC/transient text bridge, Linux/GPU/production qualification.",
+    "File-app tools executed managed, not NativeAOT.",
+    "Raw artifacts local onE; bounded summaries only tracked."
+  ],
+  "base_commit": "884a597",
+  "issue": "https://github.com/jeffadickson/Spice/issues/17",
+  "sdk": "10.0.403",
+  "raw_directory": "E:\\Artifacts\\Spice-voltage-reference-20261102T003915Z",
+  "review": {
+    "fix": "Existing LOGICAL_SPACE reused after two red cases; direct/comment-intervened continuations and native continued-opener passed",
+    "finding": "Continuation between v and opening parenthesis missing",
+    "followup": "No remaining substantive source issues",
+    "kind": "AI source inspection, not external human review"
+  },
+  "controls": [
+    {
+      "name": "LIMIT constant",
+      "observed": 1,
+      "expected": 1
+    },
+    {
+      "name": "scaled differential V",
+      "observed": 1,
+      "expected": 1
+    },
+    {
+      "name": "min/max scaled V",
+      "observed": 1,
+      "expected": 1
+    },
+    {
+      "name": "parenthesized scaled differential LIMIT",
+      "observed": 0.5,
+      "expected": 1
+    },
+    {
+      "name": "unscaled differential LIMIT",
+      "observed": 0,
+      "expected": 1
+    }
+  ],
+  "requirements": {
+    "status": "Draft",
+    "ids": 322,
+    "parents": 310,
+    "new_unimplemented": "PRS-TABLE-001",
+    "implemented_slice": "PRS-REF-001",
+    "documents": 21
+  },
+  "platform": "Windows x64",
+  "references": {
+    "unqualified": "Scaled LIMIT(.5*V(VC+,VC-),-1,1): expected1, observed0.5; default and explicit ps controls agree on unexpected result; cause unresolved",
+    "report": "voltage-reference-probes.json",
+    "vendor_recognition": {
+      "accepted": 3,
+      "requested": 14,
+      "remaining": 11
+    },
+    "numerical_total": 11,
+    "syntax_native_agreement": 11,
+    "numerical_matches": 10
+  },
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "f0686aa05ec94e7ccdbfbe3ea03df104407b4f4fc68ccfda0c3422e0a5f773c2",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "91d8262c9b7bdd150529c044da56a7f2464a0724ab6a9af880267bed490dcff4",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "0c968b1bc53376e245cebb95b683d686cef43df8d4cace45f126f36c474137c1",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "820e0ebbc84ca3e41ddf9e543d911f85f9d22e0cf13685955cf6ec9d07ae47db",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "942de52671daf11d86447e7808ee4ade224e211fc31b7f4116b8cc0162f7cb2d",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "f8e567aeb70033af3f696884b1af7828a0a5b7ef2b1495029fe336e11b05b047",
+    "scripts/QualifyVoltageReferences.cs": "3b9f9ca16728d317dbe54d9c237e3271ac429c60bbe246f1c8db252c85b0adcd",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779"
+  },
+  "tests": {
+    "skip": "exFAT artifact volume cannot create required file link",
+    "frontend_passed": 33,
+    "syntax_log_sha256": "be695f5868e2e2775406b0937c733cf25d132017d4cd7dcf55247fd17704e230",
+    "frontend_log_sha256": "150ad2ef35b09f81c3ac11486fc9d4997c53ad48476535a6c9afa9f771be1978",
+    "red_runs": {
+      "continued_opener": {
+        "failed": 2,
+        "passed": 29
+      },
+      "initial": {
+        "failed": 14,
+        "passed": 15
+      }
+    },
+    "syntax_passed": 387,
+    "skipped": 1,
+    "property": {
+      "framework": "FsCheck.Xunit3.5.0",
+      "contract": "SLL/LL prediction, call/range observations for punctuated references",
+      "replay": "905,20261101",
+      "cases": 128
+    }
+  },
+  "mutation": {
+    "tool": "Stryker.NET5.0.0 Basic",
+    "finding": "Closing-token negation survived contiguous-parenthesis tests; added interleaved nested-call group budget cases, then confirmed mutant76 killed",
+    "limitation": "Scoped handwritten guard/observer selection only; no generated grammar/lexer-ATN mutation coverage, assembly-wide compile errors/ignored cases are not kills",
+    "runs": [
+      {
+        "tests_sha256": "67825e99c283b3738fe4084f372c586c5dd4e5c6df53b212ef2150d40318bcdc",
+        "statuses": {
+          "Survived": 1,
+          "Ignored": 600,
+          "Killed": 8,
+          "CompileError": 149
+        },
+        "discovered_tests": 386,
+        "survivors": [
+          {
+            "id": "76",
+            "replacement": "token.Type is not SpiceLexer.RPAREN or SpiceLexer.RBRACE or SpiceLexer.RBRACKET",
+            "location": {
+              "start": {
+                "line": 72,
+                "column": 22
+              },
+              "end": {
+                "line": 72,
+                "column": 97
+              }
+            }
+          }
+        ],
+        "mutant76": [
+          {
+            "id": "76",
+            "status": "Survived",
+            "replacement": "token.Type is not SpiceLexer.RPAREN or SpiceLexer.RBRACE or SpiceLexer.RBRACKET"
+          }
+        ],
+        "raw_sha256": "1679d24733d85b6ba7aa10f333e81cca14f495c4b7f9b5cca782c85c527b316f",
+        "name": "initial",
+        "selected_character_spans": [
+          "**/DeckSyntax.cs{4207..4570}",
+          "**/FeatureExtraction.cs{3507..3671}"
+        ]
+      },
+      {
+        "tests_sha256": "190a41e92732caa9d55a0fabad05b10593d3fd814881dad44f27a89dd6fe404b",
+        "statuses": {
+          "Ignored": 601,
+          "Killed": 8,
+          "CompileError": 149
+        },
+        "discovered_tests": 388,
+        "survivors": [],
+        "mutant76": [
+          {
+            "id": "76",
+            "status": "Killed",
+            "replacement": "token.Type is not SpiceLexer.RPAREN or SpiceLexer.RBRACE or SpiceLexer.RBRACKET"
+          }
+        ],
+        "raw_sha256": "07c33368041f7174ab58c049b342a774ae880cfdacb2648b68378df0a7c04d2e",
+        "name": "guard_followup",
+        "selected_character_spans": [
+          "**/DeckSyntax.cs{4207..4570}"
+        ]
+      }
+    ]
+  }
+}

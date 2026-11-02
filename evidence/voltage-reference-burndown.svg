@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-labelledby="title desc">
+<title id="title">Voltage-reference grammar gate burndown</title>
+<desc id="desc">920 valid roots accepted. Resources improve from876 to879. Fifteen resource syntax gaps fall to12. Eleven named native syntax probes agree; ten numeric values match and one LIMIT control remains unqualified.</desc>
+<rect width="960" height="420" fill="#102033"/>
+<g font-family="Segoe UI, sans-serif" fill="#f0f5fc">
+<text x="32" y="43" font-size="25">Voltage references: shared grammar gap removed</text>
+<text x="32" y="75" font-size="15">2b997ef · 2026-11-01 Pacific · root syntax gate 920 / 920</text>
+<text x="32" y="122">Resource-resolved roots</text><rect x="285" y="101" width="478" height="28" fill="#35b88e"/><text x="785" y="122">879 / 920</text>
+<text x="285" y="156" font-size="15">Previous 876 · 3 additional 555-timer roots · 41 refusals remain</text>
+<text x="32" y="208">Resource syntax gaps</text><text x="285" y="208" font-size="24">15 → 12</text><text x="490" y="208" font-size="15">TABLE / grouping / DOS EOF remain</text>
+<text x="32" y="253">Named native syntax</text><text x="285" y="253" font-size="24">11 / 11</text><text x="490" y="253" font-size="15">numeric agreement 10 / 11; LIMIT unqualified</text>
+<text x="32" y="298">Existing DC regression</text><text x="285" y="298" font-size="24">12 / 12</text><text x="490" y="298" font-size="15">24 Rust solves; no new behavioral support</text>
+<text x="32" y="347" font-size="14">Counts represent separate stages. 879 resolved roots are not 879 numerical passes.</text>
+<text x="32" y="376" font-size="14">Captured-function and lexer-ATN coverage unavailable. Next inferred requirement: PRS-TABLE-001.</text>
+</g></svg>
