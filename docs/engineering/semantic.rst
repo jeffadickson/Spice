@@ -62,3 +62,11 @@ export rather than a resource branch selector, so its presence alone does not
 refuse an unconditional include. Resolution still does not evaluate it, and real
 conditional resources remain refused. Failed recognition retains at most three
 physical source diagnostics in ``ResourceDiagnostic.SyntaxDiagnostics``.
+
+Voltage-reference continuation: generated expression-mode recognition treats
+one/two v(...) arguments as node spellings, including signs, bus/path punctuation,
+quoted names and physical continuations before or inside the opener. Ordinary
+arithmetic remains separate, source ranges are preserved, and the composite
+opener counts toward the existing group budget. Parameter evaluation does not
+resolve signal references. Native syntax probes and numeric agreement are
+reported separately; a scaled LIMIT control remains numerically unqualified.

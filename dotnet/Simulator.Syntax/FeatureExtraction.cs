@@ -51,6 +51,10 @@ internal static class FeatureExtraction
             if(expression.ChildCount>1)Add("expression",expression.QUESTION()!=null?"conditional":
                 (expression.AND()!=null||expression.OR()!=null)?"boolean":expression.ChildCount==2?"unary":"compound",expression);
         }
+        if(item is SpiceParser.VoltageReferenceContext reference)
+        {
+            Add("call","v",reference);Add("expression","compound",reference);
+        }
         if(item is SpiceParser.XportContext port)
         {
             if(port.XDIFF()!=null)Add("xspice_port","differential",port);

@@ -65,7 +65,7 @@ public static class DeckParser
             if(unary>128)return Resource("Unary recursion exceeds 128 operators");
             if(token.Type==SpiceLexer.SUBCKT && ++hierarchy>128)return Resource("Subcircuit recursion exceeds 128 blocks");
             if(token.Type==SpiceLexer.ENDS)hierarchy=Math.Max(0,hierarchy-1);
-            if (token.Type is SpiceLexer.LPAREN or SpiceLexer.LBRACE or SpiceLexer.LBRACKET)
+            if (token.Type is SpiceLexer.LPAREN or SpiceLexer.LBRACE or SpiceLexer.LBRACKET or SpiceLexer.EXPR_VREF_OPEN)
             {
                 if (++depth > 128) return Resource("Nesting exceeds 128 groups");
             }

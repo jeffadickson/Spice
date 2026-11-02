@@ -153,7 +153,21 @@ STATEMENT: >>>
 The generated frontend shall distinguish node arguments of voltage-reference calls from ordinary arithmetic identifier expressions under the selected dialect profile. It shall preserve spellings such as V(VC+,VC-), V(REF+,REF-) and V(IN1+,IN1-) when nested inside behavioral expressions, without treating trailing node punctuation as a missing arithmetic operand. Malformed reference delimiters and malformed surrounding arithmetic shall remain rejected. Syntax acceptance shall not imply behavioral-source evaluation or numerical model support.
 <<<
 COMMENT: >>>
-Inferred draft gap from resource-policy corpus diagnostics: examples/optran/models/opa1611.lib line 266, TLV6001.LIB line 264, TLV9002.lib line 237, and p-to-n-examples/TLC555.LIB line 357. Not implemented or independently qualified in this checkpoint. Planned verification: generated-parser-only vendor-fragment fixtures plus independent ngspice dialect acceptance and negative arithmetic/reference tests; retain original source hashes and separate simulation support. Do not close this requirement from root-deck acceptance alone.
+Bounded implementation: generated VOLTAGE_REFERENCE mode and voltageReference production; FeatureExtraction observations and nesting guard. Verification: VoltageReferenceTests, including source ranges, ordinary arithmetic, continued openers, group limits and SLL/LL property replay 905,20261101; scripts/QualifyVoltageReferences.cs records named native syntax acceptance separately from numerical agreement and vendor-fragment observations. Signal references remain unsupported by ParameterEvaluator. The scaled LIMIT oracle control has unresolved numeric disagreement and is not a numerical pass. This requirement remains Draft; selected plain v references do not establish complete expression/dialect conformance or behavioral simulation support.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: PRS-LEX-001
+
+[REQUIREMENT]
+UID: PRS-TABLE-001
+STATUS: Draft
+TITLE: Context-specific controlled-source TABLE syntax
+STATEMENT: >>>
+The generated frontend shall recognize the selected E/G controlled-source TABLE form with an expression, an optional equals separator and continued coordinate pairs, preserving source spelling and physical locations. Table syntax shall be recognized in its declared card context without relaxing ordinary expression assignment or delimiter validation. Structural recognition shall remain separate from table interpolation, numerical support and dialect-specific legacy grouping policy.
+<<<
+COMMENT: >>>
+Inferred unimplemented draft from reached vendor-library diagnostics after PRS-REF-001: opa1611.lib line 408 onward, TLV6001.LIB line 297 onward, TLV9002.lib line 238 and OPA171.txt line 310 onward. Native acceptance and malformed/legacy wrapper adjudication are still required before implementation/closure; MCP6041.txt has separate non-balanced table wrappers requiring independent investigation. TL072.301 also retains a terminal DOS control-Z input-profile question. Do not label those vendor inputs invalid merely because the current generated grammar rejects them.
 <<<
 RELATIONS:
 - TYPE: Parent

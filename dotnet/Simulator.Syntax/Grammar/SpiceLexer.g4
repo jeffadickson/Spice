@@ -115,6 +115,9 @@ EXPR_LBRACE: '{' -> type(LBRACE), pushMode(EXPRESSION);
 EXPR_RBRACE: '}' -> type(RBRACE), popMode;
 EXPR_NUMBER: NUM -> type(NUMBER);
 EXPR_NUMERIC_NAME: [0-9]+ [a-z_] [a-z_0-9.]* -> type(WORD);
+// Voltage arguments are node spellings, not arithmetic operands. Keep this
+// generated-mode boundary local to expressions and retain original offsets.
+EXPR_VREF_OPEN: 'v' LOGICAL_SPACE* '(' -> pushMode(VOLTAGE_REFERENCE);
 EXPR_WORD: [a-z_@$#\u0080-\uffff] [a-z_0-9.$#\u0080-\uffff]* -> type(WORD);
 EXPR_WS: [ \t\f]+ -> channel(HIDDEN);
 EXPR_COMMENT: (';' | DOLLAR_MARKER | '//') ~[\r\n]* -> channel(HIDDEN);
@@ -145,6 +148,18 @@ EXPR_DIGITAL: {digitalCard}? '\'' [01xzrf] -> type(NUMBER);
 EXPR_QUOTED: {!digitalCard || !(InputStream.LA(2) is '0' or '1' or 'x' or 'X' or 'z' or 'Z' or 'r' or 'R' or 'f' or 'F') || !(InputStream.LA(3) is ' ' or '\t' or '\r' or '\n' or '}' or ')' or ',' or '&' or '|')}? '\'' ~['\r\n]* '\'' -> type(QUOTED);
 EXPR_INVALID: . -> type(INVALID);
 
+// A complete reference returns to the enclosing expression mode. Names reuse
+// the connection spelling contract; malformed delimiters remain explicit tokens.
+mode VOLTAGE_REFERENCE;
+VREF_WS: [ \t\f]+ -> channel(HIDDEN);
+VREF_COMMENT: (';' | DOLLAR_MARKER | '//') ~[\r\n]* -> channel(HIDDEN);
+VREF_CONT: ('\r\n' | '\r' | '\n') [ \t]* '+' -> channel(HIDDEN);
+VREF_NL: ('\r\n' | '\r' | '\n') -> type(NL), popMode;
+VREF_COMMA: ',' -> type(COMMA);
+VREF_CLOSE: ')' -> type(RPAREN), popMode;
+VREF_STRING: '"' ~["\r\n]* '"' -> type(STRING);
+VREF_NODE: CONNECT_UID -> type(WORD);
+VREF_INVALID: . -> type(INVALID);
 // ngspice inp.c explicitly selects command-file mode for *ng_script headers.
 // These records are retained inert, at the same structural level as .control.
 mode SCRIPT;
