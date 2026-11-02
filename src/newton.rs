@@ -1065,3 +1065,16 @@ mod november1_contracts {
         assert!((norm - 0.5 / (1. + 1e-9)).abs() < 1e-15);
     }
 }
+
+#[cfg(test)]
+mod november2_contracts {
+    use super::*;
+    #[test]
+    fn correction_accounting_preserves_the_wrapped_provider_identity() {
+        let counter = CorrectionCounter {
+            inner: &crate::backend::DenseLu,
+            calls: std::sync::atomic::AtomicUsize::new(0),
+        };
+        assert_eq!(counter.name(), "nalgebra_dense_lu_reference");
+    }
+}

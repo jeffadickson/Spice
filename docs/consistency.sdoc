@@ -13,7 +13,7 @@ STATEMENT: >>>
 Audits shall expose passed, failed and not_checked outcomes with SI discrepancy, effective tolerance and a reason when unavailable. Invalid tolerance settings shall be rejected and nonfinite check arithmetic shall fail with JSON-safe null metrics.
 <<<
 COMMENT: >>>
-Implementation: src/audit.rs Check, AuditOptions and AuditReport. Verification: tests/consistency.rs::audit_metrics_are_json_safe_and_bounds_are_validated.
+Implementation: src/audit.rs Check, AuditOptions and AuditReport. Verification: tests/consistency.rs::audit_metrics_are_json_safe_and_bounds_are_validated. November 2 mutation follow-up: tests/overnight_survivors_20261102.rs::available_audit_evidence_replaces_an_unavailable_observation independently checks merge ordering.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -640,3 +640,17 @@ Implementation: src/audit_configured.rs delegates nominal BE element equations a
 RELATIONS:
 - TYPE: Parent
   VALUE: CONS-006
+
+[REQUIREMENT]
+UID: CONS-MERGE-001
+STATUS: Draft
+TITLE: Retain available physical evidence across waveform intervals
+STATEMENT: >>>
+For matching audit identifiers, aggregation shall retain the greatest normalized available discrepancy. An unavailable observation shall not displace an available measured result in either arrival order. Nonfinite failed evidence shall retain the highest severity rather than becoming an unavailable pass.
+<<<
+COMMENT: >>>
+Inferred clarification of CONS-001 and AuditReport::merge_worst, not a new simulation capability. Implementation: src/audit.rs. Verification: tests/overnight_survivors_20261102.rs::available_audit_evidence_replaces_an_unavailable_observation and existing tests/consistency.rs. Scoped mutation evidence: evidence/rust-survivors-20261102.json. Draft remains subject to broader qualification.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: CONS-001

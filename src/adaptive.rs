@@ -77,4 +77,22 @@ mod survivor_contracts {
         assert!((options.error(&plan, &coarse, &fine, 2).unwrap() - 30. / 19.).abs() < 1e-12);
         assert!((options.error(&plan, &coarse, &fine, 1).unwrap() - 90. / 19.).abs() < 1e-12);
     }
+
+    #[test]
+    fn first_branch_error_uses_the_current_absolute_tolerance() {
+        let plan =
+            crate::compile::compile(&crate::netlist::parse("R\nV1 a 0 1\nR1 a 0 1").unwrap())
+                .unwrap();
+        let options = AdaptiveOptions {
+            relative: 0.1,
+            voltage_absolute: 0.1,
+            current_absolute: 0.01,
+            min_step_s: 1e-6,
+            max_attempts: 100,
+        };
+        // First unknown is a voltage; the next is the source branch current.
+        // BE: delta=0.5 A, current scale=0.01+0.1*1=0.11 A, ratio=50/11.
+        let ratio = options.error(&plan, &[0., 1.], &[0., 0.5], 1).unwrap();
+        assert!((ratio - 50. / 11.).abs() < 1e-14);
+    }
 }
