@@ -30,8 +30,9 @@ internal static class Program
             var manifest = Suites.SafeInput(root, Option("--manifest", "compat/benchmarks/suite.json"));
             var suite = JsonSerializer.Deserialize(Runner.Input(manifest), BenchmarkJson.Default.SuiteDefinition) ?? throw new InvalidDataException("Missing suite.");
             Suites.Validate(suite, warmups, iterations);
-            var build = Path.Combine(root, "build"); Directory.CreateDirectory(build);
-            var parent = Path.Combine(build, "benchmarks"); Directory.CreateDirectory(parent);
+            // An explicit report relocates raw child artifacts alongside that report.
+            var parent = options.ContainsKey("--report") ? Path.GetDirectoryName(Path.GetFullPath(options["--report"], root))! : Path.Combine(root, "build", "benchmarks");
+            if (!Directory.Exists(parent)) Directory.CreateDirectory(parent);
             var raw = Path.Combine(parent, Guid.NewGuid().ToString("N")); Directory.CreateDirectory(raw);
             destination = Path.GetFullPath(Option("--report", Path.Combine(raw, "report.json")), root);
             if (!Directory.Exists(Path.GetDirectoryName(destination)) || File.Exists(destination)) throw new IOException("Report parent must exist and report must be new.");

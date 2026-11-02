@@ -28,3 +28,17 @@ Implementation: Run-SyntaxCorpus.ps1 ResourceRoots and Simulator.Syntax.Corpus R
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-RESOURCE-001
+
+[REQUIREMENT]
+UID: SEM-EVIDENCE-001
+STATUS: Draft
+TITLE: Separate syntax acceptance from numerical comparison evidence
+STATEMENT: >>>
+Each completed corpus gap checkpoint shall record fresh ngspice numerical comparisons separately from syntax, resource resolution and binding counts. Numerical reports shall identify their importer or frontend path, tested source and executable identities, unique fully compared files, partially compared files, mismatches, explicit refusals and unfinished inputs. Named generated fixtures and repeated solver executions shall not inflate corpus file counts. Performance claims shall use comparable analyses and build profiles with repeated measurements, separately from correctness comparisons.
+<<<
+COMMENT: >>>
+User-requested reporting contract. Implementation uses the existing CorpusCommand numerical matrix and QualifyOperatingPointBridge named DC regression, independently of the generated syntax corpus. TABLE recognition alone does not add Rust interpolation support. Raw artifacts belong to the explicit campaign output; benchmark raw artifacts follow an explicit report parent. Draft pending this checkpoint's actual verification evidence.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-BRIDGE-001

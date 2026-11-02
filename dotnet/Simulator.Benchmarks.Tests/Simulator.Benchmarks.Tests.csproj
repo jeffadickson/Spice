@@ -10,7 +10,13 @@
     <ProjectReference Include="../Simulator.TransportFixture/Simulator.TransportFixture.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <Target Name="CopyFixture" AfterTargets="Build">
-    <ItemGroup><Fixture Include="../Simulator.TransportFixture/bin/$(Configuration)/net10.0/*" /></ItemGroup>
+    <!-- Resolve the actual referenced output, including relocated artifacts;
+         assuming source/bin silently loses the process-transport fixture. -->
+    <MSBuild Projects="../Simulator.TransportFixture/Simulator.TransportFixture.csproj" Targets="GetTargetPath" Properties="Configuration=$(Configuration)">
+      <Output TaskParameter="TargetOutputs" ItemName="FixtureTarget" />
+    </MSBuild>
+    <PropertyGroup><FixtureOutputDirectory>@(FixtureTarget->'%(RootDir)%(Directory)')</FixtureOutputDirectory></PropertyGroup>
+    <ItemGroup><Fixture Include="$(FixtureOutputDirectory)*" /></ItemGroup>
     <Copy SourceFiles="@(Fixture)" DestinationFolder="$(OutDir)fixture" SkipUnchangedFiles="true" />
   </Target>
 </Project>

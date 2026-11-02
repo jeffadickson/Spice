@@ -34,7 +34,8 @@ internal static class CorpusCommand
             var history=File.Exists(historyPath)?JsonSerializer.Deserialize(Runner.Input(historyPath),CorpusJson.Default.CorpusHistoryArray)??[]:[];
             if(history.Length>=1000||history.Any(h=>h.Total<0||h.Passed<0||h.Passed>h.Total))throw new InvalidDataException("Invalid/full corpus history");
             var runId=DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ",CultureInfo.InvariantCulture)+"-"+Guid.NewGuid().ToString("N")[..8];
-            var raw=Path.Combine(root,"build","corpus",runId);Ensure(raw);
+            // Keep child artifacts with the explicitly selected campaign output.
+            var raw=Path.Combine(output,"raw",runId);Ensure(raw);
             async Task<string> Metadata(string exe,string[] argv,string cwd)
             {
                 var p=await ProcessRunner.Run(exe,argv,null,cwd,TimeSpan.FromSeconds(15));

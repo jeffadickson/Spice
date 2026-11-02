@@ -70,3 +70,28 @@ arithmetic remains separate, source ranges are preserved, and the composite
 opener counts toward the existing group budget. Parameter evaluation does not
 resolve signal references. Native syntax probes and numeric agreement are
 reported separately; a scaled LIMIT control remains numerically unqualified.
+
+Controlled-source TABLE and numerical reporting
+-----------------------------------------------
+
+The generated grammar recognizes the selected E/G ``TABLE {expression}`` tail,
+optional equals, and continued coordinate pairs with optional comma separators.
+Once the braced TABLE form is selected, odd coordinate counts and malformed
+controlling expressions are syntax errors. Coordinate commas/parentheses are
+local separators, including legacy unmatched wrappers, as in native ngspice. TABLE is contextual: a T device or ordinary node named ``table``
+retains its existing spelling. The ``source_form:table`` observation carries the
+original physical tail range. Recognition adds no Rust TABLE interpolation.
+
+Each completed gap checkpoint reruns the numerical corpus matrix and named
+ngspice regressions. Lead with unique fully compared and partially compared
+files, mismatches, refusals and unfinished inputs. Keep the older numerical
+importer and generated frontend bridge identified separately. Root acceptance
+and resolved libraries never count as numerical passes; named fixtures and
+multiple solvers do not inflate corpus file counts.
+
+``CorpusCommand --output`` places both bounded reports and raw child artifacts
+beneath the selected directory. A benchmark ``--report`` path also locates raw
+child artifacts alongside that report. Use an existing unique E: campaign parent
+on this host, plus ``--artifacts-path`` for managed builds and TEMP/TMP for child
+temporary data. Repeated process timing is distinct from numerical accuracy;
+a debug engine versus a separately built ngspice is not a release speed ranking.
