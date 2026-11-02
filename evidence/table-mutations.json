@@ -1,0 +1,130 @@
+{
+  "limitations": [
+    "Standard replay uses the earlier strict-TABLE grammar snapshot and404 tests; selected handwritten observer is byte-identical to delivery source.",
+    "Generated parser/lexer/serialized ATN were not mutation-qualified.",
+    "683 Standard compile errors and1056 ignores are unavailable/unselected, not kills or a broad mutation score.",
+    "First Standard CLI attempt omitted test-project and failed before analysis; retained local log, no outcomes claimed."
+  ],
+  "basic_attempt": {
+    "Ignored": 609,
+    "Killed": 0,
+    "score": "unavailable",
+    "CompileError": 150
+  },
+  "snapshot_source_sha256": "BF2FC543ED6C90B46EA07EC86166BFEB5B55DC0EFFFCB8CA042B87D2EC9D02CC",
+  "level": "Standard",
+  "counts": [
+    {
+      "Name": "CompileError",
+      "Count": 683
+    },
+    {
+      "Name": "Ignored",
+      "Count": 1056
+    },
+    {
+      "Name": "Killed",
+      "Count": 3
+    }
+  ],
+  "raw_sha256": "7041253C817E05F4D4CF23C5750CC3371C8856CB23C93F7D420A6C1CB3050DA1",
+  "current_source_sha256": "BF2FC543ED6C90B46EA07EC86166BFEB5B55DC0EFFFCB8CA042B87D2EC9D02CC",
+  "scope": "FeatureExtraction TABLE observer character span only",
+  "raw_report": "E:\\Artifacts\\Spice-table-20261102T015724Z\\mutations-standard-followup\\reports\\mutation-report.json",
+  "selected_viable": [
+    {
+      "id": "751",
+      "mutatorName": "Statement mutation",
+      "replacement": ";",
+      "location": {
+        "start": {
+          "line": 55,
+          "column": 55
+        },
+        "end": {
+          "line": 55,
+          "column": 88
+        }
+      },
+      "status": "Killed",
+      "static": false,
+      "coveredBy": [
+        "e460e7c9-d45f-6116-6a02-a82f14bf41e3",
+        "cc3351e8-f376-2949-b432-8949986cd64b",
+        "b06f3c61-d3da-af34-78ec-88128d64483f",
+        "1e928b60-d57c-e820-cf14-a9e97aef3852",
+        "40c29a11-2240-a661-20b4-3de4e96ebf78"
+      ],
+      "killedBy": [
+        "e460e7c9-d45f-6116-6a02-a82f14bf41e3",
+        "cc3351e8-f376-2949-b432-8949986cd64b",
+        "b06f3c61-d3da-af34-78ec-88128d64483f",
+        "1e928b60-d57c-e820-cf14-a9e97aef3852",
+        "40c29a11-2240-a661-20b4-3de4e96ebf78"
+      ]
+    },
+    {
+      "id": "752",
+      "mutatorName": "String mutation",
+      "replacement": "\"\"",
+      "location": {
+        "start": {
+          "line": 55,
+          "column": 59
+        },
+        "end": {
+          "line": 55,
+          "column": 72
+        }
+      },
+      "status": "Killed",
+      "static": false,
+      "coveredBy": [
+        "e460e7c9-d45f-6116-6a02-a82f14bf41e3",
+        "cc3351e8-f376-2949-b432-8949986cd64b",
+        "b06f3c61-d3da-af34-78ec-88128d64483f",
+        "1e928b60-d57c-e820-cf14-a9e97aef3852",
+        "40c29a11-2240-a661-20b4-3de4e96ebf78"
+      ],
+      "killedBy": [
+        "e460e7c9-d45f-6116-6a02-a82f14bf41e3",
+        "cc3351e8-f376-2949-b432-8949986cd64b",
+        "b06f3c61-d3da-af34-78ec-88128d64483f",
+        "1e928b60-d57c-e820-cf14-a9e97aef3852",
+        "40c29a11-2240-a661-20b4-3de4e96ebf78"
+      ]
+    },
+    {
+      "id": "753",
+      "mutatorName": "String mutation",
+      "replacement": "\"\"",
+      "location": {
+        "start": {
+          "line": 55,
+          "column": 73
+        },
+        "end": {
+          "line": 55,
+          "column": 80
+        }
+      },
+      "status": "Killed",
+      "static": false,
+      "coveredBy": [
+        "e460e7c9-d45f-6116-6a02-a82f14bf41e3",
+        "cc3351e8-f376-2949-b432-8949986cd64b",
+        "b06f3c61-d3da-af34-78ec-88128d64483f",
+        "1e928b60-d57c-e820-cf14-a9e97aef3852",
+        "40c29a11-2240-a661-20b4-3de4e96ebf78"
+      ],
+      "killedBy": [
+        "e460e7c9-d45f-6116-6a02-a82f14bf41e3",
+        "cc3351e8-f376-2949-b432-8949986cd64b",
+        "b06f3c61-d3da-af34-78ec-88128d64483f",
+        "1e928b60-d57c-e820-cf14-a9e97aef3852",
+        "40c29a11-2240-a661-20b4-3de4e96ebf78"
+      ]
+    }
+  ],
+  "tool": "Stryker.NET 5.0.0"
+}

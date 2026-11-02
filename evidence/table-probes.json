@@ -1,0 +1,284 @@
+{
+  "status": "syntax_agreement",
+  "numerical_status": "matched",
+  "fixtures": 10,
+  "syntax_accepted": 10,
+  "native_accepted": 10,
+  "native_matched": 10,
+  "rows": [
+    {
+      "Name": "e-equals",
+      "Expression": "E1 out 0 TABLE {V(VC\u002B,VC-)} = (0,0) (4,8)",
+      "expected": 4,
+      "actual": 4,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "2a6fd709b0db65117d81dd6b05ce96e83f657d3ed1087dd6907fda7066eb278d",
+      "native_input_sha256": "e22e47ccf0ffd5a64ab7dd4df723580d0264286be902e4e0c7d47fd5c6615383",
+      "log_sha256": "517d060d14dfbcd7399078ad6a1f4a010238465c8a10855445ae9df2eca8fa29"
+    },
+    {
+      "Name": "e-no-equals",
+      "Expression": "E1 out 0 TABLE {V(VC\u002B,VC-)} (0,0) (4,8)",
+      "expected": 4,
+      "actual": 4,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "9b345cc22e93f09507d39ab69e9f6c8199c99cd8d8938271b1ff4953176ca982",
+      "native_input_sha256": "016e75f603b0041fd92b41b6dcbf1ab8ccaf52f746916b4a657247b353aaf878",
+      "log_sha256": "517d060d14dfbcd7399078ad6a1f4a010238465c8a10855445ae9df2eca8fa29"
+    },
+    {
+      "Name": "g-equals",
+      "Expression": "G1 out 0 TABLE {V(VC\u002B,VC-)} = (0,0) (4,.008)",
+      "expected": -4,
+      "actual": -4,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "1ea87ffa4aff9321f527e4b7138ef3029702eef6af3df1345968a1de6fac7368",
+      "native_input_sha256": "5c3b1381233a460fb9e4733150098ac0efa5a92acfa8512efe7c98f03b0ba576",
+      "log_sha256": "dc96c9fef4dcf95ad8bfc5069848c0143b3e95227d9c57d1fdc8bf6934a0275d"
+    },
+    {
+      "Name": "g-continued",
+      "Expression": "G1 out 0 TABLE {(V(VC\u002B,VC-))} =\n\u002B(0,0)\n\u002B(4,.008)",
+      "expected": -4,
+      "actual": -4,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "16f0a0b9f20a5d506cc54875f5b0750309be94e4fe573a4d72addd6fda253d6c",
+      "native_input_sha256": "ba7e246ab1528db56b81c104803b6455858a5265aba4bdd4404f74447bf89d31",
+      "log_sha256": "dc96c9fef4dcf95ad8bfc5069848c0143b3e95227d9c57d1fdc8bf6934a0275d"
+    },
+    {
+      "Name": "e-spaces",
+      "Expression": "E1 out 0 TABLE {V(VC\u002B,VC-)} = (0 0) (4 8)",
+      "expected": 4,
+      "actual": 4,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "a780dcb7cc0829ebafc8f1612ca45db197091f806b5ea5f540b033c6aa9609bc",
+      "native_input_sha256": "46cb9dd7b3eac96ea6484dfacc3425d76a77dde39ffe0dff2a8a9b5efee0c670",
+      "log_sha256": "517d060d14dfbcd7399078ad6a1f4a010238465c8a10855445ae9df2eca8fa29"
+    },
+    {
+      "Name": "g-wrapped",
+      "Expression": "G1 out 0 TABLE {V(VC\u002B,VC-)} ((0,0)(4,.008))",
+      "expected": -4,
+      "actual": -4,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "3d83e6b41e53c470159ed00ae58497bb03186a97f341bcce9e10ff8c4a2d0f76",
+      "native_input_sha256": "61863ca269a45c92f23599ab39d78b874b7fe532620579b04460ae3f84def4dc",
+      "log_sha256": "dc96c9fef4dcf95ad8bfc5069848c0143b3e95227d9c57d1fdc8bf6934a0275d"
+    },
+    {
+      "Name": "g-unclosed",
+      "Expression": "G1 out 0 TABLE {V(VC\u002B,VC-)} ((0,0)(4,.008)",
+      "expected": -4,
+      "actual": -4,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "515bd0570db20f8fdaec6ddd19dcc43deaa6ef3f04c3d0ed00bbbeb3f06018ec",
+      "native_input_sha256": "f83853372dcf46526483cdcb21ff4a42fb7e754f8bff918aabc266a324efb7be",
+      "log_sha256": "dc96c9fef4dcf95ad8bfc5069848c0143b3e95227d9c57d1fdc8bf6934a0275d"
+    },
+    {
+      "Name": "g-extra-close",
+      "Expression": "G1 out 0 TABLE {V(VC\u002B,VC-)} ((0,0)(1,.002))(4,.008))",
+      "expected": -4,
+      "actual": -4,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "e966d06db4c6922fe17ec3120631cf303a0442717e960ca50d4f399587d2a6c7",
+      "native_input_sha256": "c5b4e2b83e248396dcf2f3ce335c68c453f704ebda4209b98f8c6e7bc29b0062",
+      "log_sha256": "dc96c9fef4dcf95ad8bfc5069848c0143b3e95227d9c57d1fdc8bf6934a0275d"
+    },
+    {
+      "Name": "g-bare",
+      "Expression": "G1 out 0 TABLE {V(VC\u002B,VC-)} 0,0,4,.008",
+      "expected": -4,
+      "actual": -4,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "861d8fd4a5c41e28843745b14c71d065d3df34fbe5bb183cf7ba39c620e913f0",
+      "native_input_sha256": "b27c2531d3b5c9f0c783fe449c9ac16c0e6db5cffd0281c76ecd0c979bcfe0fc",
+      "log_sha256": "dc96c9fef4dcf95ad8bfc5069848c0143b3e95227d9c57d1fdc8bf6934a0275d"
+    },
+    {
+      "Name": "e-clamp",
+      "Expression": "E1 out 0 TABLE {V(VC\u002B,VC-)} = (-1,-2) (1,2)",
+      "expected": 2,
+      "actual": 2,
+      "native_accepted": true,
+      "native_matched": true,
+      "native_errors_detected": false,
+      "native_exit": 0,
+      "syntax_status": "accepted_structure",
+      "diagnostics": [],
+      "input_sha256": "c5f5b77d8608c46aea2b57efed11ec476115190fa2dce5e4a095a95c8f773246",
+      "native_input_sha256": "ff4537b721bd4b7718350edb94f36184de4c7d3a4ceb3b27beebfd8ba1f19154",
+      "log_sha256": "a5fdcd4c03f688d3789a1bb30a4aeb9f7e38724d0f8f44528dce436deb77fef7"
+    }
+  ],
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "f0686aa05ec94e7ccdbfbe3ea03df104407b4f4fc68ccfda0c3422e0a5f773c2",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "91d8262c9b7bdd150529c044da56a7f2464a0724ab6a9af880267bed490dcff4",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "bf2fc543ed6c90b46ea07ec86166bfeb5b55dc0efffcb8ca042b87d2ec9d02cc",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "820e0ebbc84ca3e41ddf9e543d911f85f9d22e0cf13685955cf6ec9d07ae47db",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "942de52671daf11d86447e7808ee4ade224e211fc31b7f4116b8cc0162f7cb2d",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "16ca2da0a864e43df1a95930710c9ff30c2ed22a01fa911aaadfcda0e091ae9e",
+    "scripts/QualifyTables.cs": "027c6f55bca0acd8ac6099dc36a645ac925295698d7515d927579edb61d2f101",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779"
+  },
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "syntax_assembly_sha256": "bc33b5498d1ee91fd8aea01b36eebb983b1cd5c71aa9b1d6b1dacdf029b5658b",
+  "vendor_profile": "recognition_only",
+  "vendor_expected": 14,
+  "vendor_accepted": 13,
+  "vendor_rows": [
+    {
+      "path": "examples/optran/models/opa1611.lib",
+      "status": "accepted_structure",
+      "sha256": "b6bcad844e31ec3cb838285748a542336fdf2e54ba90ad411d4253b9ca1c234b",
+      "diagnostics": []
+    },
+    {
+      "path": "examples/optran/models/TLV6001.LIB",
+      "status": "accepted_structure",
+      "sha256": "68e616a077752c88f279e494092cb9d6625eda2a0b13ebdd5e81916c4bfa9b2c",
+      "diagnostics": []
+    },
+    {
+      "path": "examples/optran/models/TLV9002.lib",
+      "status": "accepted_structure",
+      "sha256": "8d482d075395aa6d995354f6289f819120ba66126c88c23fb1113b8c14a81b18",
+      "diagnostics": []
+    },
+    {
+      "path": "examples/p-to-n-examples/MCP6041.txt",
+      "status": "accepted_structure",
+      "sha256": "6ffd7737b19be4972f1c1e4687e8175b8c179267f47df7731db70ba63a5ef005",
+      "diagnostics": []
+    },
+    {
+      "path": "examples/p-to-n-examples/OPA171.txt",
+      "status": "accepted_structure",
+      "sha256": "31a9420079ca12629ef0078a4e8a3249a304733de5b083d0630ae7c10cbd3747",
+      "diagnostics": []
+    },
+    {
+      "path": "examples/p-to-n-examples/TLC555.LIB",
+      "status": "accepted_structure",
+      "sha256": "2340cd6192dc0e4f43fc5628ea084e64d4b82244a6a2267e4b55ce45ed5dcd2c",
+      "diagnostics": []
+    },
+    {
+      "path": "examples/probe/TL072.301",
+      "status": "syntax_rejected",
+      "sha256": "74e89d558163615ac7a19f0c783101a6f8af77fb6d80bd3c20c6ab66426561cd",
+      "diagnostics": [
+        {
+          "Code": "syntax",
+          "Message": "extraneous input \u0027\u001A\u0027 expecting {\u003CEOF\u003E, \u0027.control\u0027, \u0027.model\u0027, \u0027.subckt\u0027, \u0027.end\u0027, INCLUDE, \u0027.param\u0027, \u0027.tran\u0027, \u0027.ac\u0027, \u0027.dc\u0027, \u0027.op\u0027, \u0027.lib\u0027, BEHAVIOR_START, FUNC_START, DIRECTIVE, NL, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_DIGITAL_HEADER, URC_NAME, WORD}",
+          "Line": 43,
+          "Column": 1
+        }
+      ]
+    },
+    {
+      "path": "examples/probe/TLC555.LIB",
+      "status": "accepted_structure",
+      "sha256": "2340cd6192dc0e4f43fc5628ea084e64d4b82244a6a2267e4b55ce45ed5dcd2c",
+      "diagnostics": []
+    },
+    {
+      "path": "paranoia_parallel/examples/optran/models/opa1611.lib",
+      "status": "accepted_structure",
+      "sha256": "b6bcad844e31ec3cb838285748a542336fdf2e54ba90ad411d4253b9ca1c234b",
+      "diagnostics": []
+    },
+    {
+      "path": "paranoia_parallel/examples/optran/models/TLV6001.LIB",
+      "status": "accepted_structure",
+      "sha256": "68e616a077752c88f279e494092cb9d6625eda2a0b13ebdd5e81916c4bfa9b2c",
+      "diagnostics": []
+    },
+    {
+      "path": "paranoia_parallel/examples/optran/models/TLV9002.lib",
+      "status": "accepted_structure",
+      "sha256": "8d482d075395aa6d995354f6289f819120ba66126c88c23fb1113b8c14a81b18",
+      "diagnostics": []
+    },
+    {
+      "path": "paranoia_parallel/examples/pton/MCP6041.txt",
+      "status": "accepted_structure",
+      "sha256": "6ffd7737b19be4972f1c1e4687e8175b8c179267f47df7731db70ba63a5ef005",
+      "diagnostics": []
+    },
+    {
+      "path": "paranoia_parallel/examples/pton/OPA171.txt",
+      "status": "accepted_structure",
+      "sha256": "31a9420079ca12629ef0078a4e8a3249a304733de5b083d0630ae7c10cbd3747",
+      "diagnostics": []
+    },
+    {
+      "path": "paranoia_parallel/examples/pton/TLC555.LIB",
+      "status": "accepted_structure",
+      "sha256": "2340cd6192dc0e4f43fc5628ea084e64d4b82244a6a2267e4b55ce45ed5dcd2c",
+      "diagnostics": []
+    }
+  ],
+  "limitations": [
+    "Named E/G TABLE probes only; not complete ngspice expression dialect conformance",
+    "Native controlled-source execution is an oracle, not Rust behavioral-source or signal-parameter support",
+    "Managed file-app; Windows execution only; no whole-corpus simulation, Linux/GPU/production qualification"
+  ]
+}

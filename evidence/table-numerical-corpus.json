@@ -1,0 +1,452 @@
+{
+  "run_id": "20261102T015858Z-06e9dc72",
+  "state": "completed_with_results",
+  "source_commit": "e76798876ced3a8f39c091c719ca704a9a11872c",
+  "source_dirty": true,
+  "corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+  "corpus_dirty": true,
+  "inventory": "e8f3bf62ef6145deeb73fc264f26281d0888f9745627564ae076e3b99cfa1ac1",
+  "inventory_mode": "tracked",
+  "comparison_policy": "node-voltage+mna-VLEH-current-v4; max200; ac-axis-abs1e-12-rel5e-6; transient-endpoint-4ulp; no-extrapolation",
+  "started_utc": "2026-11-01T17:58:58.6296773-08:00",
+  "finished_utc": "2026-11-01T18:14:57.3122795-08:00",
+  "duration_seconds": 958.6826022,
+  "unique_files": 910,
+  "files_executed_selected_analyses": 3,
+  "counts": {
+    "unsupported": 666,
+    "resource_or_input_rejected": 11,
+    "import_rejected": 230,
+    "partial_comparison": 2,
+    "compared_pass": 1
+  },
+  "issue_url": "https://github.com/jeffadickson/Spice/issues/18",
+  "comparison_rows": [
+    {
+      "path": "tests/filters/lowpass.cir",
+      "sha256": "a6a8be760d5787ca836990dac5bcfa3b909dd6ea8bf17c5b2f1be7583d3f2172",
+      "scope": "tests",
+      "feature_hints": [
+        "multiple_declared_analyses"
+      ],
+      "status": "partial_comparison",
+      "diagnostic": "Both CPU providers agree for selected ac; additional declared analyses are not compared by this one-analysis importer profile.",
+      "analysis": "ac",
+      "executed_deck_sha256": "8962513841388b9c5264efa6a86742a32fbc94b1168c5fc7acc45190aee349c0",
+      "request_sha256": "9ab506da1d5c22fb60c50f90a25a908b8bafc74f2813090b9688317de50fd127",
+      "observation_policy": "Removed logical .print/.plot/.probe/.end records; appended named non-ground node voltages and supported V/L/E/H MNA branch currents, p-to-n positive, and .end; added .op only for inferred default OP. Equations/analysis parameters otherwise retained.",
+      "backends": [
+        {
+          "backend": "lu",
+          "status": "compared_pass",
+          "detail": "Selected named points agree",
+          "signals": [
+            {
+              "observable": "v(1)",
+              "unit": "V",
+              "absolute_tolerance": 1E-05,
+              "points": 31,
+              "failed_points": 0,
+              "maximum_absolute_difference": 0,
+              "worst_coordinate": 1000,
+              "expected_real": 1,
+              "expected_imag": 0,
+              "actual_real": 1,
+              "actual_imag": 0
+            },
+            {
+              "observable": "v(2)",
+              "unit": "V",
+              "absolute_tolerance": 1E-05,
+              "points": 31,
+              "failed_points": 0,
+              "maximum_absolute_difference": 4.3658158127779327E-07,
+              "worst_coordinate": 19952.623149688796,
+              "expected_real": 0.3589592,
+              "expected_imag": -0.225006,
+              "actual_real": 0.35895918336483496,
+              "actual_imag": -0.22500643626453948
+            },
+            {
+              "observable": "i(V1)",
+              "unit": "A",
+              "absolute_tolerance": 1E-09,
+              "points": 31,
+              "failed_points": 0,
+              "maximum_absolute_difference": 5.2487319753201535E-11,
+              "worst_coordinate": 31622.776601683792,
+              "expected_real": -7.48359E-05,
+              "expected_imag": -2.49995E-05,
+              "actual_real": -7.483593583913592E-05,
+              "actual_imag": -2.4999461653226056E-05
+            }
+          ]
+        },
+        {
+          "backend": "faer",
+          "status": "compared_pass",
+          "detail": "Selected named points agree",
+          "signals": [
+            {
+              "observable": "v(1)",
+              "unit": "V",
+              "absolute_tolerance": 1E-05,
+              "points": 31,
+              "failed_points": 0,
+              "maximum_absolute_difference": 0,
+              "worst_coordinate": 1000,
+              "expected_real": 1,
+              "expected_imag": 0,
+              "actual_real": 1,
+              "actual_imag": 0
+            },
+            {
+              "observable": "v(2)",
+              "unit": "V",
+              "absolute_tolerance": 1E-05,
+              "points": 31,
+              "failed_points": 0,
+              "maximum_absolute_difference": 4.3658158127779327E-07,
+              "worst_coordinate": 19952.623149688796,
+              "expected_real": 0.3589592,
+              "expected_imag": -0.225006,
+              "actual_real": 0.35895918336483496,
+              "actual_imag": -0.22500643626453948
+            },
+            {
+              "observable": "i(V1)",
+              "unit": "A",
+              "absolute_tolerance": 1E-09,
+              "points": 31,
+              "failed_points": 0,
+              "maximum_absolute_difference": 5.2487319753201535E-11,
+              "worst_coordinate": 31622.776601683792,
+              "expected_real": -7.48359E-05,
+              "expected_imag": -2.49995E-05,
+              "actual_real": -7.483593583913592E-05,
+              "actual_imag": -2.4999461653226056E-05
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "tests/resistance/res_partition.cir",
+      "sha256": "a96394ae4fcd07140d19e7f6a7178f6adda68ba9d0b74d88ae309ff969279fb0",
+      "scope": "tests",
+      "feature_hints": [
+        "multiple_declared_analyses"
+      ],
+      "status": "partial_comparison",
+      "diagnostic": "Both CPU providers agree for selected ac; additional declared analyses are not compared by this one-analysis importer profile.",
+      "analysis": "ac",
+      "executed_deck_sha256": "59175d5fe2b6d70df212ed335d7b3708cf21792ac8ed007ae510ca55fdb0bc74",
+      "request_sha256": "f746c63819926659922fe40cbc0980307fcfdfeb815ab9de38daa2ff62a67b42",
+      "observation_policy": "Removed logical .print/.plot/.probe/.end records; appended named non-ground node voltages and supported V/L/E/H MNA branch currents, p-to-n positive, and .end; added .op only for inferred default OP. Equations/analysis parameters otherwise retained.",
+      "backends": [
+        {
+          "backend": "lu",
+          "status": "compared_pass",
+          "detail": "Selected named points agree",
+          "signals": [
+            {
+              "observable": "v(1)",
+              "unit": "V",
+              "absolute_tolerance": 1E-05,
+              "points": 41,
+              "failed_points": 0,
+              "maximum_absolute_difference": 0,
+              "worst_coordinate": 1,
+              "expected_real": 1,
+              "expected_imag": 0,
+              "actual_real": 1,
+              "actual_imag": 0
+            },
+            {
+              "observable": "v(2)",
+              "unit": "V",
+              "absolute_tolerance": 1E-05,
+              "points": 41,
+              "failed_points": 0,
+              "maximum_absolute_difference": 0,
+              "worst_coordinate": 1,
+              "expected_real": 0.75,
+              "expected_imag": 0,
+              "actual_real": 0.75,
+              "actual_imag": 0
+            },
+            {
+              "observable": "i(VIN)",
+              "unit": "A",
+              "absolute_tolerance": 1E-09,
+              "points": 41,
+              "failed_points": 0,
+              "maximum_absolute_difference": 6.776263578034403E-21,
+              "worst_coordinate": 1,
+              "expected_real": -5E-05,
+              "expected_imag": 0,
+              "actual_real": -4.9999999999999996E-05,
+              "actual_imag": 0
+            }
+          ]
+        },
+        {
+          "backend": "faer",
+          "status": "compared_pass",
+          "detail": "Selected named points agree",
+          "signals": [
+            {
+              "observable": "v(1)",
+              "unit": "V",
+              "absolute_tolerance": 1E-05,
+              "points": 41,
+              "failed_points": 0,
+              "maximum_absolute_difference": 0,
+              "worst_coordinate": 1,
+              "expected_real": 1,
+              "expected_imag": 0,
+              "actual_real": 1,
+              "actual_imag": 0
+            },
+            {
+              "observable": "v(2)",
+              "unit": "V",
+              "absolute_tolerance": 1E-05,
+              "points": 41,
+              "failed_points": 0,
+              "maximum_absolute_difference": 0,
+              "worst_coordinate": 1,
+              "expected_real": 0.75,
+              "expected_imag": 0,
+              "actual_real": 0.75,
+              "actual_imag": 0
+            },
+            {
+              "observable": "i(VIN)",
+              "unit": "A",
+              "absolute_tolerance": 1E-09,
+              "points": 41,
+              "failed_points": 0,
+              "maximum_absolute_difference": 6.776263578034403E-21,
+              "worst_coordinate": 1,
+              "expected_real": -5E-05,
+              "expected_imag": 0,
+              "actual_real": -4.9999999999999996E-05,
+              "actual_imag": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "tests/resistance/res_simple.cir",
+      "sha256": "499df6f0ca39c891a7f27cf26f19dd105e1cfeb4c48c29cdb708be795e687d6d",
+      "scope": "tests",
+      "feature_hints": [],
+      "status": "compared_pass",
+      "diagnostic": "Both CPU providers agree at selected named voltage/current points",
+      "analysis": "transient_configured",
+      "executed_deck_sha256": "d1b05a41b0cb7b7fbe1808a538b53ff1069c74a8fc5f9d82866ce7e096ffa2d9",
+      "request_sha256": "7e93c255fbf56e754158326034bd4a5559c392b132b4d628311bbea30122e02c",
+      "observation_policy": "Removed logical .print/.plot/.probe/.end records; appended named non-ground node voltages and supported V/L/E/H MNA branch currents, p-to-n positive, and .end; added .op only for inferred default OP. Equations/analysis parameters otherwise retained.",
+      "backends": [
+        {
+          "backend": "lu",
+          "status": "compared_pass",
+          "detail": "Selected named points agree",
+          "signals": [
+            {
+              "observable": "v(1)",
+              "unit": "V",
+              "absolute_tolerance": 1E-05,
+              "points": 7,
+              "failed_points": 0,
+              "maximum_absolute_difference": 0,
+              "worst_coordinate": 0,
+              "expected_real": 1,
+              "expected_imag": 0,
+              "actual_real": 1,
+              "actual_imag": 0
+            },
+            {
+              "observable": "i(V1)",
+              "unit": "A",
+              "absolute_tolerance": 1E-09,
+              "points": 7,
+              "failed_points": 0,
+              "maximum_absolute_difference": 0,
+              "worst_coordinate": 0,
+              "expected_real": -0.0001,
+              "expected_imag": 0,
+              "actual_real": -0.0001,
+              "actual_imag": 0
+            }
+          ]
+        },
+        {
+          "backend": "faer",
+          "status": "compared_pass",
+          "detail": "Selected named points agree",
+          "signals": [
+            {
+              "observable": "v(1)",
+              "unit": "V",
+              "absolute_tolerance": 1E-05,
+              "points": 7,
+              "failed_points": 0,
+              "maximum_absolute_difference": 0,
+              "worst_coordinate": 0,
+              "expected_real": 1,
+              "expected_imag": 0,
+              "actual_real": 1,
+              "actual_imag": 0
+            },
+            {
+              "observable": "i(V1)",
+              "unit": "A",
+              "absolute_tolerance": 1E-09,
+              "points": 7,
+              "failed_points": 0,
+              "maximum_absolute_difference": 0,
+              "worst_coordinate": 0,
+              "expected_real": -0.0001,
+              "expected_imag": 0,
+              "actual_real": -0.0001,
+              "actual_imag": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "leading_diagnostics": [
+    {
+      "Count": 368,
+      "Name": "unsupported: bounded importer supports only D and constant R model families"
+    },
+    {
+      "Count": 117,
+      "Name": "unsupported: line 1: unsupported element/directive"
+    },
+    {
+      "Count": 59,
+      "Name": "unsupported: unsupported bounded model kind"
+    },
+    {
+      "Count": 53,
+      "Name": "invalid_input: line 1: expected id p n value"
+    },
+    {
+      "Count": 34,
+      "Name": "invalid_input: ngspice continuation is empty"
+    },
+    {
+      "Count": 32,
+      "Name": "unsupported: unsupported bounded .options directive"
+    },
+    {
+      "Count": 32,
+      "Name": "invalid_input: stream did not contain valid UTF-8"
+    },
+    {
+      "Count": 21,
+      "Name": "invalid_input: unknown bounded diode model"
+    },
+    {
+      "Count": 19,
+      "Name": "invalid_input: duplicate model identifier across families"
+    },
+    {
+      "Count": 18,
+      "Name": "unsupported: line 5: unsupported element/directive"
+    },
+    {
+      "Count": 17,
+      "Name": "invalid_input: unsupported scalar (0"
+    },
+    {
+      "Count": 13,
+      "Name": "unsupported: transient UIC initialization is unsupported"
+    }
+  ],
+  "hashes": {
+    "engine": "a544235875817114f704966c7baa0a0f3f96a2abd53f8809c7afe5e9d6736547",
+    "ngspice": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "executed_helper": "7dd3e0977033876e0fa9551bc58b3944c1301ea49a38ce7faf7e4f0c6d8fd61b",
+    "src/ac.rs": "99b71e709bfbb2227a4980b4d491ed1d17def36f74a2db116f237b1d90d3c16c",
+    "src/adaptive.rs": "9e9e55cdb4cfef83adcac6e9f88855a21965f4740876f7ff00ee4884a9fea654",
+    "src/api.rs": "54a4725eee031dfef298ce2e92376214afc0e1752a55d4077d79a7666c780c3a",
+    "src/artifact.rs": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
+    "src/assertion.rs": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+    "src/audit.rs": "7415ee221281dd69b4279da91447b7811ad5dbfa417002e2563eb484429c65cc",
+    "src/audit_ac.rs": "d7d68badbd59ea82172a98b6be30a11fee6f9a2b9d3ca6635b22e18e7a8f3d7f",
+    "src/audit_configured.rs": "1c0d951e23b770304e3c2a889c31d26359c46b188246c4ca2b89b56b6dc0ab29",
+    "src/backend.rs": "69ebd88de74917bca9a7e61acea193288c0f8490531c3c586c7b5f6f2a5de726",
+    "src/backend_faer.rs": "2115a12a1f88416912040f58c4fd5338b81cd8559fac0f18b645efbf5ad5138f",
+    "src/campaign.rs": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+    "src/charge.rs": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+    "src/circuit.rs": "7597d72df62ee3f943cc614b563e0a884d605e7c5bc3e3790e94cc35d988d159",
+    "src/compile.rs": "71b077204f37aee834a4bccb5ca1f4d4570c857434de98748faed3cb26176339",
+    "src/configured.rs": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+    "src/dc.rs": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+    "src/error.rs": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+    "src/experiment.rs": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+    "src/expression.rs": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+    "src/grid.rs": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+    "src/ids.rs": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+    "src/integrator.rs": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+    "src/lib.rs": "6e0bffc241fc449f7cc60c3c6453d056820f1c6521e48a419a2c4896d3dd50aa",
+    "src/linalg.rs": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+    "src/linear_dynamic.rs": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+    "src/main.rs": "f34d681c95e573ee3bfb5c894935759785377d57b9e406f98cce03155f997fa8",
+    "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+    "src/model.rs": "62303fbe97f6b095d438f87fcc9e3238e24fa056772a79c7042642a53ce20a05",
+    "src/netlist.rs": "8115ae7c961b7a089d1505fef4c10159ac7fca4158262b272cefd2021e70860a",
+    "src/newton.rs": "7686dab628bb2ab0570c95794662673ac20e05bb3ecb081fceca34c09fbe620f",
+    "src/ngspice_resistor.rs": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3",
+    "src/power.rs": "d1bdd03a7bfe1c68d3869de4785d69e4d11e0cceae7e8d1974ee2b71f8440ede",
+    "src/provenance.rs": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+    "src/quantity.rs": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397",
+    "src/registry.rs": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7",
+    "src/sampling.rs": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+    "src/solver_contract.rs": "4cc809fe52e98d9cdef63a0773efef885d3aee316b59b4bf763dcafcee26f69f",
+    "src/sources.rs": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+    "src/sparse.rs": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+    "src/sweep.rs": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+    "src/topology.rs": "e44a5fed6c58fc092bded030a2ca9a66b6334103a3ce364e0dfe205ad9010df4",
+    "src/transient.rs": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a",
+    "src/variation.rs": "480f2d45e07d16d1cc2e033e29fb569059e9bd7fb2bd8faa3c6c5862de803b0c",
+    "src/waveform.rs": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+    "dotnet/Simulator.Benchmarks/CorpusCommand.cs": "4074ca4b8dae88a692b693e92f7b39152222a3f3948183a8e0b349e83f68a078",
+    "dotnet/Simulator.Benchmarks/CorpusModels.cs": "411204142a9bb8e81c0113c16f78007bf3b334be07f9c4aa37250a8f7be84aea",
+    "dotnet/Simulator.Benchmarks/CorpusPolicy.cs": "0c7b0db7c6b9bde510d7a29025e028afb8cfe2ad1f114e4b01d898ed5814e49e",
+    "dotnet/Simulator.Benchmarks/CorpusPresentation.cs": "00e3566805d8a94e5ef2af17ae8f07e29a8c95e0dfcb303bd8801ecf0951f8a4",
+    "dotnet/Simulator.Benchmarks/CorpusRunner.cs": "67b740dba273ad54aae4ac202c009aa3256a9d62e3c2fbfea6e7f81e465dd864",
+    "dotnet/Simulator.Benchmarks/Models.cs": "9c2bc80b27501922eb20185df693f520036eac35c9e46be81980903c6121b0d4",
+    "dotnet/Simulator.Benchmarks/ProcessRunner.cs": "2214743f8ea86dfe0470edd8a7a178b0e880e27f00615dbdb350f4764216d71e",
+    "dotnet/Simulator.Benchmarks/Program.cs": "41e11218b9ab314745d2d0bde522f30675d1c2abfeed359adcafb09cba510b85",
+    "dotnet/Simulator.Benchmarks/Runner.cs": "894905d0fa454c31a7f1958bd6171295ef7eb47e19d6d429826a0a4af639c38f",
+    "dotnet/Simulator.Benchmarks/Suites.cs": "61c27fb3a981aa67d15c6fcd5c4d59b73ff469376dbcf575e0fbe1da3b20ea55",
+    "dotnet/Simulator.Benchmarks/Tables.cs": "3aec799d505c1e992f6a6177916ad0fd56d74eceec20bd3859f639e113c0048c",
+    "dotnet/Simulator.Client/Client.cs": "4af10aae7a41d438196f4ec28abe41bf4dcc3829e2f2f2b9eaac5164a2eb65ff",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "Cargo.toml": "a833a9a62ab2ce071d92609556c1f01a390699144001c68f30ed3e070a1fd16c",
+    "Cargo.lock": "018b19472c004dd03af3c75aa2bd5a45982f1da3d23a5be41e612ac97e3a41f6",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779",
+    "rust-toolchain.toml": "c946aab8e3eafd93e58303a52f31fc8b9a0caf4bf7a63328ff00195e6a6ad30b",
+    "dotnet/Simulator.Benchmarks/Simulator.Benchmarks.csproj": "31cad7a4444b86c1c4fa2224f630e165e6401949baca226afee1f5d81bf8836f"
+  },
+  "raw_report": "E:\\Artifacts\\Spice-table-20261102T015724Z\\numerical-corpus\\20261102T015858Z-06e9dc72.json",
+  "raw_report_sha256": "71ECAECF8793046CD15A622B007D3AF1C1625BE7CCFE0A0D0D83DC6460135937",
+  "limitations": [
+    "Passing means finite named node-voltage and independent voltage-source current comparisons on LU and faer, not full SPICE conformance.",
+    "At most 200 representative coordinates per signal; transient interpolation and AC print-axis rounding are explicit.",
+    "Control scripts and external-resource directives are not executed; lexical hints are not isolated root causes.",
+    "Recognized deck extensions plus bounded extensionless .end decks; other assets are not silently counted as circuits.",
+    "Other device/controlled-source/inductor currents, global waveform bounds, vendor/GPU and production qualification remain unverified.",
+    "Unfinished, rejected and unsupported cases remain remaining work; no historical five-case benchmark is a whole-corpus baseline."
+  ]
+}

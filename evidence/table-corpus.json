@@ -1,0 +1,248 @@
+{
+  "status": "completed_with_results",
+  "tested_base": "e76798876ced3a8f39c091c719ca704a9a11872c",
+  "source_dirty": true,
+  "primary_inputs": 928,
+  "primary_counts": {
+    "encoding_rejected": 4,
+    "accepted_structure": 916,
+    "syntax_rejected": 8
+  },
+  "primary_elapsed_seconds": 467.1004307,
+  "acceptance": {
+    "status": "all_declared_valid_inputs_accepted",
+    "inventory_inputs": 928,
+    "required_inputs": 920,
+    "accepted": 920,
+    "accepted_via_explicit_replay": 4,
+    "excluded": [
+      {
+        "key": "ngspice/README_OSDI_howto",
+        "disposition": "non_deck_document",
+        "evidence": "OpenVAF/OSDI prose instructions, including shell/compiler directions; not a SPICE deck."
+      },
+      {
+        "key": "ngspice/examples/measure/buggy-meas-tran.sp",
+        "disposition": "invalid_syntax_fixture",
+        "evidence": "Explicit buggy measurement example; line 11 has an unclosed v(1 expression and subsequent intentionally misspelled/malformed measurements."
+      },
+      {
+        "key": "ngspice/examples/osdi/README",
+        "disposition": "non_deck_document",
+        "evidence": "OpenVAF/OSDI prose instructions; not a SPICE deck."
+      },
+      {
+        "key": "ngspice/examples/osdi/noise/resdiv.cir",
+        "disposition": "invalid_syntax_fixture",
+        "evidence": "Line 10 R2 2 0 lacks a value/model. src/spicelib/parser/inp2r.c rejects and ignores a resistor ending after its second node. Other OSDI cards are tested separately."
+      },
+      {
+        "key": "ngspice/examples/probe/F5TurboV2-Probe.cir",
+        "disposition": "invalid_syntax_fixture",
+        "evidence": "Lines 59-62 explicitly label erroneous .probe parameters, including malformed colon-separated probe operands."
+      },
+      {
+        "key": "ngspice/examples/probe/mos-test.cir",
+        "disposition": "invalid_syntax_fixture",
+        "evidence": "Title and comments explicitly mark buggy .probe inputs; unmatched closing parenthesis at line 20."
+      },
+      {
+        "key": "ngspice/examples/various/model-name-check.cir",
+        "disposition": "invalid_syntax_fixture",
+        "evidence": "Negative model-name test explicitly labels ^274ls4444 not o.k.; invalid caret-prefixed model name."
+      },
+      {
+        "key": "ngspice/paranoia_parallel/examples/various/model-name-check.cir",
+        "disposition": "invalid_syntax_fixture",
+        "evidence": "Duplicate negative model-name fixture explicitly labels ^274ls4444 not o.k."
+      }
+    ],
+    "outstanding": [],
+    "primary_sha256": "639942cf3e489baf7ce4b4e3437601d54781ede3d143ba049ae1c5b33f9ad255",
+    "catalog_sha256": "c28e224f3bf4b4d1021be7a53c6444f1062ed9273c0f0722bee0dd5df063ab9d",
+    "replay_sha256": {
+      "corpus-delivery.json.legacy.json": "eb1ef25afca36e91ac5d9d30c931b3a6607ef47401939bba551ef08aad0ce354"
+    },
+    "limitations": [
+      "Structural acceptance only; embedded command/quoted languages and numerical support are separate contracts.",
+      "Exception metadata is human-adjudicated against source evidence; new input bytes invalidate an exception."
+    ]
+  },
+  "resolved": 890,
+  "refused": 30,
+  "failure_counts": [
+    {
+      "Name": "denied_path",
+      "Count": 13
+    },
+    {
+      "Name": "resource_io",
+      "Count": 5
+    },
+    {
+      "Name": "end_in_fragment",
+      "Count": 4
+    },
+    {
+      "Name": "invalid_utf8",
+      "Count": 4
+    },
+    {
+      "Name": "conditional_resources",
+      "Count": 3
+    },
+    {
+      "Name": "resource_syntax",
+      "Count": 1
+    }
+  ],
+  "transitions": [
+    {
+      "scope": "ngspice",
+      "path": "examples/optran/TLV9002-test.cir"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/pton/OP_MCP6041.cir"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/optran/TLV9002-test.cir"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/optran/HiPass3opamps_optran.cir"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/pton/op-test.cir"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/optran/TLV6001-test.cir"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/p-to-n-examples/OP_MCP6041.cir"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/optran/HiPass3opamps_optran.cir"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/optran/TLV6001-test.cir"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/pton/op-test-test.cir"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/p-to-n-examples/op-test.cir"
+    }
+  ],
+  "phases": {
+    "expanded_resolved": {
+      "decks": 890,
+      "counts": {
+        "Unsupported": 938,
+        "Invalid": 30,
+        "Ambiguous": 28,
+        "Missing": 66,
+        "Bound": 63274,
+        "Deferred": 86
+      },
+      "references": 64422
+    },
+    "original_resolved": {
+      "decks": 890,
+      "counts": {
+        "Unsupported": 256,
+        "Invalid": 30,
+        "Ambiguous": 0,
+        "Missing": 48,
+        "Bound": 3216,
+        "Deferred": 58517
+      },
+      "references": 62067
+    },
+    "original_all": {
+      "decks": 920,
+      "counts": {
+        "Unsupported": 264,
+        "Invalid": 30,
+        "Ambiguous": 0,
+        "Missing": 48,
+        "Bound": 3220,
+        "Deferred": 73070
+      },
+      "references": 76632
+    }
+  },
+  "root_hash_comparison": {
+    "matched": 928,
+    "different": 0,
+    "previous": "E:\\Artifacts\\Spice-voltage-reference-20261102T003915Z"
+  },
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "f0686aa05ec94e7ccdbfbe3ea03df104407b4f4fc68ccfda0c3422e0a5f773c2",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "91d8262c9b7bdd150529c044da56a7f2464a0724ab6a9af880267bed490dcff4",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "bf2fc543ed6c90b46ea07ec86166bfeb5b55dc0efffcb8ca042b87d2ec9d02cc",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "820e0ebbc84ca3e41ddf9e543d911f85f9d22e0cf13685955cf6ec9d07ae47db",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "942de52671daf11d86447e7808ee4ade224e211fc31b7f4116b8cc0162f7cb2d",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "16ca2da0a864e43df1a95930710c9ff30c2ed22a01fa911aaadfcda0e091ae9e",
+    "dotnet/Simulator.Syntax.Corpus/InventoryCommand.cs": "e41689a6cf479fc10cc57742fb68296be86eacd52691513dfb88fe8ebd1d8d6b",
+    "dotnet/Simulator.Syntax.Corpus/packages.lock.json": "4788584a824763fed9384acb5ab8ff8b3628d766cec0e0bf5186b0a5be9aaf64",
+    "dotnet/Simulator.Syntax.Corpus/Program.cs": "2ec60e17334f5d85b423c31ea13339546bdb15a9af3c82233abdedcd8a9cef6a",
+    "dotnet/Simulator.Syntax.Corpus/Simulator.Syntax.Corpus.csproj": "ac299b6057cf9dd59b1379a136971e5dae66e66dcfec3cd79f7552c9e2974210"
+  },
+  "binary_sha256": {
+    "Simulator.Syntax.dll": "d7f865347313febb3bbf76131d4270329cd51e79ff07cc82e1c44b1c0a6b5ff4",
+    "Antlr4.Runtime.Standard.dll": "0440e3d2c5906326e04df87d6a5272192b7d29099901ba4215ca9e0f5dca7591",
+    "Simulator.Syntax.Corpus.dll": "6c4e8f42ff68ae827f15ff7cc7830c3369f000500afbbc23a358b9bbd04d1dfe"
+  },
+  "corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+  "corpus_dirty": true,
+  "raw": {
+    "primary_sha256": "639942CF3E489BAF7CE4B4E3437601D54781EDE3D143BA049AE1C5B33F9AD255",
+    "directory": "E:\\Artifacts\\Spice-table-20261102T015724Z",
+    "legacy_sha256": "EB1EF25AFCA36E91AC5D9D30C931B3A6607EF47401939BBA551EF08AAD0CE354"
+  },
+  "limitations": [
+    "No sample simulation in this generated syntax/resource corpus; numerical legacy-importer and named fixture runs are separate.",
+    "Original and expanded reference populations differ; cohort is the same890 resolved decks.",
+    "Root input SHA256 agrees with previous928 rows; historical failed resource graphs did not fingerprint every transitive source.",
+    "Two interrupted superseded parser trials are not completion evidence."
+  ],
+  "remaining_syntax_examples": [
+    {
+      "path": "examples/probe/Dual-NMOS-amp.cir",
+      "diagnostics": {
+        "Code": "resource_syntax",
+        "SourcePath": "C:\\dev\\ngspice-ngspice\\examples\\probe\\TL072.301",
+        "Range": null,
+        "TargetPath": "C:\\dev\\ngspice-ngspice\\examples\\probe\\TL072.301",
+        "SyntaxDiagnostics": [
+          {
+            "Code": "syntax",
+            "Message": "extraneous input '\u001a' expecting {<EOF>, '.control', '.model', '.subckt', '.end', INCLUDE, '.param', '.tran', '.ac', '.dc', '.op', '.lib', BEHAVIOR_START, FUNC_START, DIRECTIVE, NL, PASSIVE_NAME, SOURCE_NAME, DIODE_NAME, BJT_NAME, MOS_NAME, JFET_NAME, VCONTROL_NAME, ICONTROL_NAME, SWITCH_NAME, CSWITCH_NAME, COUPLING_NAME, SUBCALL_NAME, BEHAVIOR_NAME, LINE_NAME, XSPICE_NAME, OSDI_NAME, CPL_NAME, TXL_NAME, URC_DIGITAL_HEADER, URC_NAME, WORD}",
+            "Line": 43,
+            "Column": 1
+          }
+        ]
+      }
+    }
+  ]
+}

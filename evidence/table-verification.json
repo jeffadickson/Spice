@@ -1,0 +1,92 @@
+{
+  "status": "verified_bounded_checkpoint",
+  "source_commits": [
+    "bf11350",
+    "14e541b"
+  ],
+  "tested_dirty_base": "e76798876ced3a8f39c091c719ca704a9a11872c",
+  "source_api_fingerprints_verified": 265,
+  "artifacts": "E:\\Artifacts\\Spice-table-20261102T015724Z",
+  "tests": {
+    "benchmark_passed": 95,
+    "frontend_passed": 35,
+    "skipped_exfat_link": 1,
+    "syntax_passed": 406
+  },
+  "property": {
+    "replay": "906,20261101",
+    "framework": "FsCheck.Xunit 3.5.0",
+    "requested_cases": 128
+  },
+  "command_scope": {
+    "mutations": "Run-SemanticMutations.ps1 Resources with explicit FeatureExtraction character span, then retained snapshot config Standard and explicit test-project",
+    "documentation": "ValidateRequirements.cs -- --python <StrictDoc env> --report <E>/requirements-commit.json; EngineeringDocs.cs -- --python <Sphinx env> --output <E>/engineering --api-xml <E>/api.xml",
+    "repeated_benchmark": "dotnet <E>/benchmark-build/bin/Simulator.Benchmarks/debug/Simulator.Benchmarks.dll --root <checkout> --engine <existing debug exe> --ngspice <reference> --warmups 1 --iterations 3 --budget-seconds 300 --report <E>/benchmark.json",
+    "benchmark_tests": "dotnet test dotnet/Simulator.Benchmarks.Tests --artifacts-path <E>/benchmark-test-build --collect:XPlat Code Coverage --results-directory <E>/benchmark-verified-coverage; SPICE_CORPUS_ENGINE/NGSPICE/TEST_ROOT explicit",
+    "tables": "dotnet run --file scripts/QualifyTables.cs --artifacts-path <E>/review-build -p:GrammarOutput=<E>/review-grammar -p:AntlrJar=<pinned jar> -- <checkout> <ngspice> <fresh output> <corpus>",
+    "syntax": "dotnet test dotnet/Simulator.Syntax.Tests --artifacts-path <E>/review-build -p:GrammarOutput=<E>/review-grammar -p:AntlrJar=<pinned jar>",
+    "numerical": "dotnet run --project dotnet/Simulator.Benchmarks --artifacts-path <E>/benchmark-build -- --root <checkout> --engine <existing debug exe> --ngspice <reference> --corpus-root <corpus> --output <E>/numerical-corpus --budget-seconds 1800 --publish-issue true --inventory-mode tracked",
+    "frontend": "dotnet test dotnet/Simulator.Frontend.Tests --artifacts-path <E>/frontend-build -p:GrammarOutput=<E>/frontend-grammar -p:AntlrJar=<pinned jar>",
+    "corpus": "Run-SyntaxCorpus.ps1 -CollectSemantics -RequireValidSamples -CorpusRoot <corpus> -ResourceRoots <corpus>,<checkout> -Output <E>/corpus-delivery.json -ArtifactsPath <E>/corpus-delivery-build -AntlrJar <pinned jar> -Workers 4 -WorkerSeconds 180 -Minutes 30"
+  },
+  "tool_versions": {
+    "runtime": "10.0.14",
+    "sdk": "10.0.403",
+    "stryker": "5.0.0",
+    "antlr": "4.13.1",
+    "sphinx": "9.1.0",
+    "strictdoc": "0.30.4",
+    "coverlet": "10.1.0",
+    "reportgenerator": "5.5.11"
+  },
+  "log_sha256": {
+    "engineering-commit.log": "BE999D076C4813DECB98590C5B2996A48901EB1631537A93FE4404F251279D9B",
+    "frontend-commit-tests.log": "6268572257B1EFF4BFF07A6B83EEB6611B0B59ADC28AA9F6D7D0E15D0DFE43F6",
+    "mutations-standard-followup.log": "20C57C0CFB64FD79529C3A792F4E67F2488CE0BD53F815C498CCBFDB7ACCD35E",
+    "corpus-delivery.log": "69A836911F98AC2ACDEBF9E672FDF2FADDB9DF67011386BE8A67F9841CE739BC",
+    "requirements-commit.log": "5C1ECC699DDB811CE49F43C763B0947A604189BB0680B499487C573F6DA3B5CC",
+    "numerical-corpus.log": "BD61CB119D73450C7517282A9782AD46CF859FC6622706C8A6E49BEF254614D7",
+    "native-budget-commit.log": "A1AC20545749763E5FC488E1D2D4B4576F6296706FB6398B149CA3A73A6B9FD7",
+    "dc-verified.log": "BD2925982D1FBAE3F89E8FB6E5D784B8E2261F76F757EAA5E3CDEE82D19186AE",
+    "benchmark.log": "74CE0BF9C2134312A92D7B422ADB304EC4B4AF23852885FF9E3AAE0AF2496A23",
+    "mutations.log": "1C25B72559235036D22F62E13C014D8A12531F0D1BB05E341CC484533030FFCE",
+    "benchmark-verified-tests.log": "5404F8CAD2ABA4E361BCBE57F2E6712E76EEEC1077E2B78590BEA1413C53B7CC",
+    "native-commit.log": "0402CF54E00D4D80B08705814CA8918F9AB105573D68B75B7C562C70565A56D4",
+    "syntax-commit-tests.log": "2F2DE7CDF2CFBA4CDEACE7E60A07806EC3D7AE32F1154B23FAA2701610F389C0"
+  },
+  "primary_source": {
+    "section": "TABLE translation/gettok_node coordinate separators",
+    "file": "C:/dev/ngspice-ngspice/src/frontend/inpcom.c",
+    "sha256": "1FBF29E3CA08E50E4639FCD24E916B49B297E45253A4BC666D271D14B5B34233"
+  },
+  "review": {
+    "findings_fixed": [
+      "contextual TABLE names",
+      "native legacy coordinate separators",
+      "bounded vendor read before allocation",
+      "fixture output location"
+    ],
+    "evidence_check": "stale documentation-report copy caught and replaced with fresh <E>/engineering/verification.json; all265 fingerprints then matched",
+    "external_human": false,
+    "kind": "read-only AI source and evidence review"
+  },
+  "limitations": [
+    "Whole-corpus simulation through generated frontend remains unmeasured; numerical legacy-importer matrix remains separate.",
+    "Incomplete captured-function coverage; benchmark entrypoints have zero collector coverage despite actual CLI runs.",
+    "Earlier strict-TABLE mutation snapshot qualifies only byte-identical observer, not final grammar/ATN.",
+    "No new Rust build/coverage, coverage-guided fuzz, soak, CI, Linux/GPU/production qualification."
+  ],
+  "preserved_wip_paths": [
+    "src/ngspice_resistor.rs",
+    "docs/sheet-resistor-plan.md",
+    "tests/ngspice_sheet_resistors.proptest-regressions",
+    "dotnet/Simulator.Benchmarks.Tests/CorpusPassiveModelIntegration.cs",
+    "evidence/engineering-docs.json",
+    "docs/ngspice-compatibility.sdoc",
+    "tests/ngspice_sheet_resistors.rs"
+  ],
+  "results_issues": [
+    "https://github.com/jeffadickson/Spice/issues/18",
+    "https://github.com/jeffadickson/Spice/issues/19"
+  ]
+}

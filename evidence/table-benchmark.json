@@ -1,0 +1,2576 @@
+{
+  "schema_version": "1",
+  "status": "passed",
+  "failure": null,
+  "source_commit": "e76798876ced3a8f39c091c719ca704a9a11872c",
+  "source_dirty": true,
+  "platform": "Microsoft Windows 10.0.26300 / X64",
+  "helper_mode": "managed",
+  "warmups": 1,
+  "iterations": 3,
+  "budget_seconds": 300,
+  "stopwatch_frequency": 10000000,
+  "high_resolution": true,
+  "timing_scope": "Spawn \u002B stdin \u002B child setup/solve/serialization \u002B pipe drain \u002B exit; excludes parent comparison/artifact writing; includes supervision overhead.",
+  "memory_scope": "OS-reported peak resident working set includes shared pages; unavailable metrics are null, not zero.",
+  "hashes": {
+    "engine_executable": "a544235875817114f704966c7baa0a0f3f96a2abd53f8809c7afe5e9d6736547",
+    "ngspice_executable": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "suite": "d6be34ddf0dd3427c6fbcff414f5b10a0012737cfd8dc9820b4a7b16ca2fb0d4",
+    "src/ac.rs": "99b71e709bfbb2227a4980b4d491ed1d17def36f74a2db116f237b1d90d3c16c",
+    "src/adaptive.rs": "9e9e55cdb4cfef83adcac6e9f88855a21965f4740876f7ff00ee4884a9fea654",
+    "src/api.rs": "54a4725eee031dfef298ce2e92376214afc0e1752a55d4077d79a7666c780c3a",
+    "src/artifact.rs": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
+    "src/assertion.rs": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+    "src/audit.rs": "7415ee221281dd69b4279da91447b7811ad5dbfa417002e2563eb484429c65cc",
+    "src/audit_ac.rs": "d7d68badbd59ea82172a98b6be30a11fee6f9a2b9d3ca6635b22e18e7a8f3d7f",
+    "src/audit_configured.rs": "1c0d951e23b770304e3c2a889c31d26359c46b188246c4ca2b89b56b6dc0ab29",
+    "src/backend.rs": "69ebd88de74917bca9a7e61acea193288c0f8490531c3c586c7b5f6f2a5de726",
+    "src/backend_faer.rs": "2115a12a1f88416912040f58c4fd5338b81cd8559fac0f18b645efbf5ad5138f",
+    "src/campaign.rs": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+    "src/charge.rs": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+    "src/circuit.rs": "7597d72df62ee3f943cc614b563e0a884d605e7c5bc3e3790e94cc35d988d159",
+    "src/compile.rs": "71b077204f37aee834a4bccb5ca1f4d4570c857434de98748faed3cb26176339",
+    "src/configured.rs": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+    "src/dc.rs": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+    "src/error.rs": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+    "src/experiment.rs": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+    "src/expression.rs": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+    "src/grid.rs": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+    "src/ids.rs": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+    "src/integrator.rs": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+    "src/lib.rs": "6e0bffc241fc449f7cc60c3c6453d056820f1c6521e48a419a2c4896d3dd50aa",
+    "src/linalg.rs": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+    "src/linear_dynamic.rs": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+    "src/main.rs": "f34d681c95e573ee3bfb5c894935759785377d57b9e406f98cce03155f997fa8",
+    "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+    "src/model.rs": "62303fbe97f6b095d438f87fcc9e3238e24fa056772a79c7042642a53ce20a05",
+    "src/netlist.rs": "8115ae7c961b7a089d1505fef4c10159ac7fca4158262b272cefd2021e70860a",
+    "src/newton.rs": "7686dab628bb2ab0570c95794662673ac20e05bb3ecb081fceca34c09fbe620f",
+    "src/ngspice_resistor.rs": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3",
+    "src/power.rs": "d1bdd03a7bfe1c68d3869de4785d69e4d11e0cceae7e8d1974ee2b71f8440ede",
+    "src/provenance.rs": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+    "src/quantity.rs": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397",
+    "src/registry.rs": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7",
+    "src/sampling.rs": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+    "src/solver_contract.rs": "4cc809fe52e98d9cdef63a0773efef885d3aee316b59b4bf763dcafcee26f69f",
+    "src/sources.rs": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+    "src/sparse.rs": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+    "src/sweep.rs": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+    "src/topology.rs": "e44a5fed6c58fc092bded030a2ca9a66b6334103a3ce364e0dfe205ad9010df4",
+    "src/transient.rs": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a",
+    "src/variation.rs": "480f2d45e07d16d1cc2e033e29fb569059e9bd7fb2bd8faa3c6c5862de803b0c",
+    "src/waveform.rs": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3",
+    "dotnet/Simulator.Benchmarks/CorpusCommand.cs": "4074ca4b8dae88a692b693e92f7b39152222a3f3948183a8e0b349e83f68a078",
+    "dotnet/Simulator.Benchmarks/CorpusModels.cs": "411204142a9bb8e81c0113c16f78007bf3b334be07f9c4aa37250a8f7be84aea",
+    "dotnet/Simulator.Benchmarks/CorpusPolicy.cs": "0c7b0db7c6b9bde510d7a29025e028afb8cfe2ad1f114e4b01d898ed5814e49e",
+    "dotnet/Simulator.Benchmarks/CorpusPresentation.cs": "00e3566805d8a94e5ef2af17ae8f07e29a8c95e0dfcb303bd8801ecf0951f8a4",
+    "dotnet/Simulator.Benchmarks/CorpusRunner.cs": "67b740dba273ad54aae4ac202c009aa3256a9d62e3c2fbfea6e7f81e465dd864",
+    "dotnet/Simulator.Benchmarks/Models.cs": "9c2bc80b27501922eb20185df693f520036eac35c9e46be81980903c6121b0d4",
+    "dotnet/Simulator.Benchmarks/ProcessRunner.cs": "2214743f8ea86dfe0470edd8a7a178b0e880e27f00615dbdb350f4764216d71e",
+    "dotnet/Simulator.Benchmarks/Program.cs": "41e11218b9ab314745d2d0bde522f30675d1c2abfeed359adcafb09cba510b85",
+    "dotnet/Simulator.Benchmarks/Runner.cs": "894905d0fa454c31a7f1958bd6171295ef7eb47e19d6d429826a0a4af639c38f",
+    "dotnet/Simulator.Benchmarks/Suites.cs": "61c27fb3a981aa67d15c6fcd5c4d59b73ff469376dbcf575e0fbe1da3b20ea55",
+    "dotnet/Simulator.Benchmarks/Tables.cs": "3aec799d505c1e992f6a6177916ad0fd56d74eceec20bd3859f639e113c0048c",
+    "dotnet/Simulator.Client/Client.cs": "4af10aae7a41d438196f4ec28abe41bf4dcc3829e2f2f2b9eaac5164a2eb65ff",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "Cargo.toml": "a833a9a62ab2ce071d92609556c1f01a390699144001c68f30ed3e070a1fd16c",
+    "Cargo.lock": "018b19472c004dd03af3c75aa2bd5a45982f1da3d23a5be41e612ac97e3a41f6",
+    "rust-toolchain.toml": "c946aab8e3eafd93e58303a52f31fc8b9a0caf4bf7a63328ff00195e6a6ad30b",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779",
+    "dotnet/Simulator.Benchmarks/Simulator.Benchmarks.csproj": "31cad7a4444b86c1c4fa2224f630e165e6401949baca226afee1f5d81bf8836f",
+    "executed_helper": "7dd3e0977033876e0fa9551bc58b3944c1301ea49a38ce7faf7e4f0c6d8fd61b",
+    "compat/benchmarks/divider.cir": "9c6b6fe1232ac0526f521a56702ccc379664e18b5fd44fa1eea5c2bd077595c1",
+    "compat/benchmarks/divider.json": "53b55dba4eaa62e0f737eb80e4453c70dc3f07275c3fadc0052eaa2641411b2d",
+    "compat/benchmarks/rc-ac.cir": "04066e53252363b7ba1c940ae02edce832403140196f4e7021a5902d8348173b",
+    "compat/benchmarks/rc-ac.json": "34223237dbebc6f9a2d7e4d6d7a4246698f326fe0dfb788d6121a760578c69fb",
+    "compat/benchmarks/rc-transient.cir": "4597cf1d4041100fa1a98227738e31f4ed715867c9b0c9464499c51225a19e0f",
+    "compat/benchmarks/rc-transient.json": "930fd286db24c433a12545d3f8b6851d9d224bb9cb6000a3adb9b4403fcbf0c2",
+    "compat/benchmarks/coupled-clamp-negative.cir": "b3343a72b2111514ea1debc59c88f59623c83dca0edfd33cfb712fd7bb12257a",
+    "compat/benchmarks/coupled-clamp-negative.json": "2ca2aacb69252ef5257d36d6bb834380e138f22cd6e52d6bc553d12f36045488",
+    "compat/benchmarks/coupled-clamp-positive.cir": "caeb53ced78739b0dec5e3aef4bc4b7a2bf1f87fcbea949572c09620983636c8",
+    "compat/benchmarks/coupled-clamp-positive.json": "908366a22ccf446ff2ad029c7d8e00bde97bfda4eef0f6639cac451c6bc6f759"
+  },
+  "ngspice_version": "******\r\n** ngspice-47\u002B : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******",
+  "cases": [
+    {
+      "id": "divider",
+      "kind": "op",
+      "coordinate_unit": "op_index",
+      "unit": "V",
+      "policy": "Identical resistor/source operating point; coordinate 0 is an OP index, not time.",
+      "deck_sha256": "9c6b6fe1232ac0526f521a56702ccc379664e18b5fd44fa1eea5c2bd077595c1",
+      "request_sha256": "53b55dba4eaa62e0f737eb80e4453c70dc3f07275c3fadc0052eaa2641411b2d",
+      "measurements": [
+        {
+          "tool": "ngspice",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 1212.1849,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "9c6b6fe1232ac0526f521a56702ccc379664e18b5fd44fa1eea5c2bd077595c1",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 595.3466,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "220bd4f8e40a716beff08b7db10a178ecd508b864ffb3ea7619e2a41d606b2c9",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 624.8349,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "177a7580fc0d0b1307fb27f8f71235f77a5c66beb5ce7aa7c594c34bd077d6cb",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 718.2749,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "220bd4f8e40a716beff08b7db10a178ecd508b864ffb3ea7619e2a41d606b2c9",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 504.0925,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "177a7580fc0d0b1307fb27f8f71235f77a5c66beb5ce7aa7c594c34bd077d6cb",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 996.8408,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "9c6b6fe1232ac0526f521a56702ccc379664e18b5fd44fa1eea5c2bd077595c1",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 771.2931,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "177a7580fc0d0b1307fb27f8f71235f77a5c66beb5ce7aa7c594c34bd077d6cb",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 2144.8108,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "9c6b6fe1232ac0526f521a56702ccc379664e18b5fd44fa1eea5c2bd077595c1",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 1447.5864,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "220bd4f8e40a716beff08b7db10a178ecd508b864ffb3ea7619e2a41d606b2c9",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 824.3567,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "9c6b6fe1232ac0526f521a56702ccc379664e18b5fd44fa1eea5c2bd077595c1",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 625.8261,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "220bd4f8e40a716beff08b7db10a178ecd508b864ffb3ea7619e2a41d606b2c9",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 1547.389,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "177a7580fc0d0b1307fb27f8f71235f77a5c66beb5ce7aa7c594c34bd077d6cb",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        }
+      ],
+      "comparisons": [
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "absolute_tolerance": 1E-10,
+          "relative_tolerance": 1E-10,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "absolute_tolerance": 1E-10,
+          "relative_tolerance": 1E-10,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "absolute_tolerance": 1E-10,
+          "relative_tolerance": 1E-10,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "absolute_tolerance": 1E-10,
+          "relative_tolerance": 1E-10,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "absolute_tolerance": 1E-10,
+          "relative_tolerance": 1E-10,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "absolute_tolerance": 1E-10,
+          "relative_tolerance": 1E-10,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "absolute_tolerance": 1E-10,
+          "relative_tolerance": 1E-10,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 5,
+            "imag": 0
+          },
+          "absolute_tolerance": 1E-10,
+          "relative_tolerance": 1E-10,
+          "passed": true
+        }
+      ],
+      "timings": [
+        {
+          "tool": "ngspice",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 996.8408,
+          "minimum_ms": 824.3567,
+          "maximum_ms": 2144.8108
+        },
+        {
+          "tool": "lu",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 718.2749,
+          "minimum_ms": 625.8261,
+          "maximum_ms": 1447.5864
+        },
+        {
+          "tool": "faer",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 771.2931,
+          "minimum_ms": 504.0925,
+          "maximum_ms": 1547.389
+        }
+      ],
+      "accuracy_passed": true
+    },
+    {
+      "id": "rc-ac",
+      "kind": "ac",
+      "coordinate_unit": "Hz",
+      "unit": "V",
+      "policy": "Peak 1\u002B2j V source; exact shared frequency points in Hz; compare real and imaginary parts as a complex norm.",
+      "deck_sha256": "04066e53252363b7ba1c940ae02edce832403140196f4e7021a5902d8348173b",
+      "request_sha256": "34223237dbebc6f9a2d7e4d6d7a4246698f326fe0dfb788d6121a760578c69fb",
+      "measurements": [
+        {
+          "tool": "ngspice",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 1966.9171,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "04066e53252363b7ba1c940ae02edce832403140196f4e7021a5902d8348173b",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 1603.862,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "62953f0170f1d4cee31617c85edc06cef9720ba940975bac29071717d9a2b84f",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 677.9957,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "4b9b97427b89d6013f5afd7a25a111020a0c23c07c551661635755abc021d98e",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 646.6177,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "62953f0170f1d4cee31617c85edc06cef9720ba940975bac29071717d9a2b84f",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 894.9028,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "4b9b97427b89d6013f5afd7a25a111020a0c23c07c551661635755abc021d98e",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 635.9668,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "04066e53252363b7ba1c940ae02edce832403140196f4e7021a5902d8348173b",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 811.3225,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "4b9b97427b89d6013f5afd7a25a111020a0c23c07c551661635755abc021d98e",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 870.2151,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "04066e53252363b7ba1c940ae02edce832403140196f4e7021a5902d8348173b",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 202.0382,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "62953f0170f1d4cee31617c85edc06cef9720ba940975bac29071717d9a2b84f",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 528.9316,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "04066e53252363b7ba1c940ae02edce832403140196f4e7021a5902d8348173b",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 194.2381,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "62953f0170f1d4cee31617c85edc06cef9720ba940975bac29071717d9a2b84f",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 236.8117,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "4b9b97427b89d6013f5afd7a25a111020a0c23c07c551661635755abc021d98e",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        }
+      ],
+      "comparisons": [
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 10,
+          "expected": {
+            "coordinate": 10,
+            "real": 1.121237,
+            "imag": 1.929551
+          },
+          "actual": {
+            "coordinate": 10,
+            "real": 1.1212372389483158,
+            "imag": 1.9295505865437734
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 100,
+          "expected": {
+            "coordinate": 100,
+            "real": 1.617911,
+            "imag": 0.9834364
+          },
+          "actual": {
+            "coordinate": 100,
+            "real": 1.617911287061675,
+            "imag": 0.9834363572814068
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 1000,
+          "expected": {
+            "coordinate": 1000,
+            "real": 0.3351507,
+            "imag": -0.105814
+          },
+          "actual": {
+            "coordinate": 1000,
+            "real": 0.335150715301153,
+            "imag": -0.10581405007093235
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 10,
+          "expected": {
+            "coordinate": 10,
+            "real": 1.121237,
+            "imag": 1.929551
+          },
+          "actual": {
+            "coordinate": 10,
+            "real": 1.121237238948316,
+            "imag": 1.9295505865437734
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 100,
+          "expected": {
+            "coordinate": 100,
+            "real": 1.617911,
+            "imag": 0.9834364
+          },
+          "actual": {
+            "coordinate": 100,
+            "real": 1.6179112870616752,
+            "imag": 0.9834363572814071
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 1000,
+          "expected": {
+            "coordinate": 1000,
+            "real": 0.3351507,
+            "imag": -0.105814
+          },
+          "actual": {
+            "coordinate": 1000,
+            "real": 0.33515071530115303,
+            "imag": -0.10581405007093239
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 10,
+          "expected": {
+            "coordinate": 10,
+            "real": 1.121237,
+            "imag": 1.929551
+          },
+          "actual": {
+            "coordinate": 10,
+            "real": 1.1212372389483158,
+            "imag": 1.9295505865437734
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 100,
+          "expected": {
+            "coordinate": 100,
+            "real": 1.617911,
+            "imag": 0.9834364
+          },
+          "actual": {
+            "coordinate": 100,
+            "real": 1.617911287061675,
+            "imag": 0.9834363572814068
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 1000,
+          "expected": {
+            "coordinate": 1000,
+            "real": 0.3351507,
+            "imag": -0.105814
+          },
+          "actual": {
+            "coordinate": 1000,
+            "real": 0.335150715301153,
+            "imag": -0.10581405007093235
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 10,
+          "expected": {
+            "coordinate": 10,
+            "real": 1.121237,
+            "imag": 1.929551
+          },
+          "actual": {
+            "coordinate": 10,
+            "real": 1.121237238948316,
+            "imag": 1.9295505865437734
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 100,
+          "expected": {
+            "coordinate": 100,
+            "real": 1.617911,
+            "imag": 0.9834364
+          },
+          "actual": {
+            "coordinate": 100,
+            "real": 1.6179112870616752,
+            "imag": 0.9834363572814071
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 1000,
+          "expected": {
+            "coordinate": 1000,
+            "real": 0.3351507,
+            "imag": -0.105814
+          },
+          "actual": {
+            "coordinate": 1000,
+            "real": 0.33515071530115303,
+            "imag": -0.10581405007093239
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 10,
+          "expected": {
+            "coordinate": 10,
+            "real": 1.121237,
+            "imag": 1.929551
+          },
+          "actual": {
+            "coordinate": 10,
+            "real": 1.1212372389483158,
+            "imag": 1.9295505865437734
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 100,
+          "expected": {
+            "coordinate": 100,
+            "real": 1.617911,
+            "imag": 0.9834364
+          },
+          "actual": {
+            "coordinate": 100,
+            "real": 1.617911287061675,
+            "imag": 0.9834363572814068
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 1000,
+          "expected": {
+            "coordinate": 1000,
+            "real": 0.3351507,
+            "imag": -0.105814
+          },
+          "actual": {
+            "coordinate": 1000,
+            "real": 0.335150715301153,
+            "imag": -0.10581405007093235
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 10,
+          "expected": {
+            "coordinate": 10,
+            "real": 1.121237,
+            "imag": 1.929551
+          },
+          "actual": {
+            "coordinate": 10,
+            "real": 1.121237238948316,
+            "imag": 1.9295505865437734
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 100,
+          "expected": {
+            "coordinate": 100,
+            "real": 1.617911,
+            "imag": 0.9834364
+          },
+          "actual": {
+            "coordinate": 100,
+            "real": 1.6179112870616752,
+            "imag": 0.9834363572814071
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 1000,
+          "expected": {
+            "coordinate": 1000,
+            "real": 0.3351507,
+            "imag": -0.105814
+          },
+          "actual": {
+            "coordinate": 1000,
+            "real": 0.33515071530115303,
+            "imag": -0.10581405007093239
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 10,
+          "expected": {
+            "coordinate": 10,
+            "real": 1.121237,
+            "imag": 1.929551
+          },
+          "actual": {
+            "coordinate": 10,
+            "real": 1.1212372389483158,
+            "imag": 1.9295505865437734
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 100,
+          "expected": {
+            "coordinate": 100,
+            "real": 1.617911,
+            "imag": 0.9834364
+          },
+          "actual": {
+            "coordinate": 100,
+            "real": 1.617911287061675,
+            "imag": 0.9834363572814068
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 1000,
+          "expected": {
+            "coordinate": 1000,
+            "real": 0.3351507,
+            "imag": -0.105814
+          },
+          "actual": {
+            "coordinate": 1000,
+            "real": 0.335150715301153,
+            "imag": -0.10581405007093235
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 10,
+          "expected": {
+            "coordinate": 10,
+            "real": 1.121237,
+            "imag": 1.929551
+          },
+          "actual": {
+            "coordinate": 10,
+            "real": 1.121237238948316,
+            "imag": 1.9295505865437734
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 100,
+          "expected": {
+            "coordinate": 100,
+            "real": 1.617911,
+            "imag": 0.9834364
+          },
+          "actual": {
+            "coordinate": 100,
+            "real": 1.6179112870616752,
+            "imag": 0.9834363572814071
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 1000,
+          "expected": {
+            "coordinate": 1000,
+            "real": 0.3351507,
+            "imag": -0.105814
+          },
+          "actual": {
+            "coordinate": 1000,
+            "real": 0.33515071530115303,
+            "imag": -0.10581405007093239
+          },
+          "absolute_tolerance": 2E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        }
+      ],
+      "timings": [
+        {
+          "tool": "ngspice",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 635.9668,
+          "minimum_ms": 528.9316,
+          "maximum_ms": 870.2151
+        },
+        {
+          "tool": "lu",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 202.0382,
+          "minimum_ms": 194.2381,
+          "maximum_ms": 646.6177
+        },
+        {
+          "tool": "faer",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 811.3225,
+          "minimum_ms": 236.8117,
+          "maximum_ms": 894.9028
+        }
+      ],
+      "accuracy_passed": true
+    },
+    {
+      "id": "rc-transient",
+      "kind": "transient",
+      "coordinate_unit": "s",
+      "unit": "V",
+      "policy": "Consistent initially uncharged capacitor; fixed 10 us trapezoidal vs ngspice adaptive trap capped at 10 us; linear interpolation at shared seconds, no extrapolation. Timing policies are declared, not identical controllers.",
+      "deck_sha256": "4597cf1d4041100fa1a98227738e31f4ed715867c9b0c9464499c51225a19e0f",
+      "request_sha256": "930fd286db24c433a12545d3f8b6851d9d224bb9cb6000a3adb9b4403fcbf0c2",
+      "measurements": [
+        {
+          "tool": "ngspice",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 348.9047,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "4597cf1d4041100fa1a98227738e31f4ed715867c9b0c9464499c51225a19e0f",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 586.703,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "0f98bc572de59107acbe2a2ae4f09e51dd028db2689f9f719b7bd598aa997c2e",
+          "final_newton_iterations": null,
+          "linear_solves": 500,
+          "accepted_steps": 500,
+          "rejected_steps": 0,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 440.8007,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "25dda2b71c3a884c123fca80917e04129159ff3800972491641c1b0a2245dc30",
+          "final_newton_iterations": null,
+          "linear_solves": 500,
+          "accepted_steps": 500,
+          "rejected_steps": 0,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 4664.4824,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "0f98bc572de59107acbe2a2ae4f09e51dd028db2689f9f719b7bd598aa997c2e",
+          "final_newton_iterations": null,
+          "linear_solves": 500,
+          "accepted_steps": 500,
+          "rejected_steps": 0,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 1008.7858,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "25dda2b71c3a884c123fca80917e04129159ff3800972491641c1b0a2245dc30",
+          "final_newton_iterations": null,
+          "linear_solves": 500,
+          "accepted_steps": 500,
+          "rejected_steps": 0,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 715.8521,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "4597cf1d4041100fa1a98227738e31f4ed715867c9b0c9464499c51225a19e0f",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 781.6711,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "25dda2b71c3a884c123fca80917e04129159ff3800972491641c1b0a2245dc30",
+          "final_newton_iterations": null,
+          "linear_solves": 500,
+          "accepted_steps": 500,
+          "rejected_steps": 0,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 636.8658,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "4597cf1d4041100fa1a98227738e31f4ed715867c9b0c9464499c51225a19e0f",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 511.2277,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "0f98bc572de59107acbe2a2ae4f09e51dd028db2689f9f719b7bd598aa997c2e",
+          "final_newton_iterations": null,
+          "linear_solves": 500,
+          "accepted_steps": 500,
+          "rejected_steps": 0,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 612.2908,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "4597cf1d4041100fa1a98227738e31f4ed715867c9b0c9464499c51225a19e0f",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 607.939,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "0f98bc572de59107acbe2a2ae4f09e51dd028db2689f9f719b7bd598aa997c2e",
+          "final_newton_iterations": null,
+          "linear_solves": 500,
+          "accepted_steps": 500,
+          "rejected_steps": 0,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 926.076,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "25dda2b71c3a884c123fca80917e04129159ff3800972491641c1b0a2245dc30",
+          "final_newton_iterations": null,
+          "linear_solves": 500,
+          "accepted_steps": 500,
+          "rejected_steps": 0,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        }
+      ],
+      "comparisons": [
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0.001,
+          "expected": {
+            "coordinate": 0.001,
+            "real": 0.632122776,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.001,
+            "real": 0.6321236245237797,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0.003,
+          "expected": {
+            "coordinate": 0.003,
+            "real": 0.950214024,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.003,
+            "real": 0.9502141763119577,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0.005,
+          "expected": {
+            "coordinate": 0.005,
+            "real": 0.9932623,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.005,
+            "real": 0.9932623337470688,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0.001,
+          "expected": {
+            "coordinate": 0.001,
+            "real": 0.632122776,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.001,
+            "real": 0.6321236245237802,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0.003,
+          "expected": {
+            "coordinate": 0.003,
+            "real": 0.950214024,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.003,
+            "real": 0.9502141763119623,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0.005,
+          "expected": {
+            "coordinate": 0.005,
+            "real": 0.9932623,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.005,
+            "real": 0.9932623337470747,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0.001,
+          "expected": {
+            "coordinate": 0.001,
+            "real": 0.632122776,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.001,
+            "real": 0.6321236245237797,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0.003,
+          "expected": {
+            "coordinate": 0.003,
+            "real": 0.950214024,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.003,
+            "real": 0.9502141763119577,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0.005,
+          "expected": {
+            "coordinate": 0.005,
+            "real": 0.9932623,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.005,
+            "real": 0.9932623337470688,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0.001,
+          "expected": {
+            "coordinate": 0.001,
+            "real": 0.632122776,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.001,
+            "real": 0.6321236245237802,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0.003,
+          "expected": {
+            "coordinate": 0.003,
+            "real": 0.950214024,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.003,
+            "real": 0.9502141763119623,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0.005,
+          "expected": {
+            "coordinate": 0.005,
+            "real": 0.9932623,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.005,
+            "real": 0.9932623337470747,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0.001,
+          "expected": {
+            "coordinate": 0.001,
+            "real": 0.632122776,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.001,
+            "real": 0.6321236245237797,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0.003,
+          "expected": {
+            "coordinate": 0.003,
+            "real": 0.950214024,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.003,
+            "real": 0.9502141763119577,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0.005,
+          "expected": {
+            "coordinate": 0.005,
+            "real": 0.9932623,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.005,
+            "real": 0.9932623337470688,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0.001,
+          "expected": {
+            "coordinate": 0.001,
+            "real": 0.632122776,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.001,
+            "real": 0.6321236245237802,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0.003,
+          "expected": {
+            "coordinate": 0.003,
+            "real": 0.950214024,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.003,
+            "real": 0.9502141763119623,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0.005,
+          "expected": {
+            "coordinate": 0.005,
+            "real": 0.9932623,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.005,
+            "real": 0.9932623337470747,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0.001,
+          "expected": {
+            "coordinate": 0.001,
+            "real": 0.632122776,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.001,
+            "real": 0.6321236245237797,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0.003,
+          "expected": {
+            "coordinate": 0.003,
+            "real": 0.950214024,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.003,
+            "real": 0.9502141763119577,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0.005,
+          "expected": {
+            "coordinate": 0.005,
+            "real": 0.9932623,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.005,
+            "real": 0.9932623337470688,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0.001,
+          "expected": {
+            "coordinate": 0.001,
+            "real": 0.632122776,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.001,
+            "real": 0.6321236245237802,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0.003,
+          "expected": {
+            "coordinate": 0.003,
+            "real": 0.950214024,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.003,
+            "real": 0.9502141763119623,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0.005,
+          "expected": {
+            "coordinate": 0.005,
+            "real": 0.9932623,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0.005,
+            "real": 0.9932623337470747,
+            "imag": 0
+          },
+          "absolute_tolerance": 2E-05,
+          "relative_tolerance": 1E-06,
+          "passed": true
+        }
+      ],
+      "timings": [
+        {
+          "tool": "ngspice",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 636.8658,
+          "minimum_ms": 612.2908,
+          "maximum_ms": 715.8521
+        },
+        {
+          "tool": "lu",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 607.939,
+          "minimum_ms": 511.2277,
+          "maximum_ms": 4664.4824
+        },
+        {
+          "tool": "faer",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 926.076,
+          "minimum_ms": 781.6711,
+          "maximum_ms": 1008.7858
+        }
+      ],
+      "accuracy_passed": true
+    },
+    {
+      "id": "coupled-clamp-negative",
+      "kind": "op",
+      "coordinate_unit": "op_index",
+      "unit": "V",
+      "policy": "27 C Shockley pairs, no series resistance/charge; full source continuation. ngspice gmin 1e-15 S; finite model comparison.",
+      "deck_sha256": "b3343a72b2111514ea1debc59c88f59623c83dca0edfd33cfb712fd7bb12257a",
+      "request_sha256": "2ca2aacb69252ef5257d36d6bb834380e138f22cd6e52d6bc553d12f36045488",
+      "measurements": [
+        {
+          "tool": "ngspice",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 569.5865,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "b3343a72b2111514ea1debc59c88f59623c83dca0edfd33cfb712fd7bb12257a",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 378.3943,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "471ec3ec01035d2efc6e89e1cb4c1a67b61245bd99f69e123b3b08f4d11c1bc1",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 328.8318,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "5ee446ca83b784138257a7a10491fd940956978d75715dbccbdcf3d334ce4d36",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 502.3685,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "471ec3ec01035d2efc6e89e1cb4c1a67b61245bd99f69e123b3b08f4d11c1bc1",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 306.8708,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "5ee446ca83b784138257a7a10491fd940956978d75715dbccbdcf3d334ce4d36",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 426.2493,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "b3343a72b2111514ea1debc59c88f59623c83dca0edfd33cfb712fd7bb12257a",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 479.3087,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "5ee446ca83b784138257a7a10491fd940956978d75715dbccbdcf3d334ce4d36",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 643.4811,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "b3343a72b2111514ea1debc59c88f59623c83dca0edfd33cfb712fd7bb12257a",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 570.8968,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "471ec3ec01035d2efc6e89e1cb4c1a67b61245bd99f69e123b3b08f4d11c1bc1",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 525.1799,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "b3343a72b2111514ea1debc59c88f59623c83dca0edfd33cfb712fd7bb12257a",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 407.0458,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "471ec3ec01035d2efc6e89e1cb4c1a67b61245bd99f69e123b3b08f4d11c1bc1",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 164.4893,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "5ee446ca83b784138257a7a10491fd940956978d75715dbccbdcf3d334ce4d36",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        }
+      ],
+      "comparisons": [
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": -0.623403,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": -0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": -0.623403,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": -0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": -0.623403,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": -0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": -0.623403,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": -0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": -0.623403,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": -0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": -0.623403,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": -0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": -0.623403,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": -0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": -0.623403,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": -0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        }
+      ],
+      "timings": [
+        {
+          "tool": "ngspice",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 525.1799,
+          "minimum_ms": 426.2493,
+          "maximum_ms": 643.4811
+        },
+        {
+          "tool": "lu",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 502.3685,
+          "minimum_ms": 407.0458,
+          "maximum_ms": 570.8968
+        },
+        {
+          "tool": "faer",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 306.8708,
+          "minimum_ms": 164.4893,
+          "maximum_ms": 479.3087
+        }
+      ],
+      "accuracy_passed": true
+    },
+    {
+      "id": "coupled-clamp-positive",
+      "kind": "op",
+      "coordinate_unit": "op_index",
+      "unit": "V",
+      "policy": "27 C Shockley pairs, no series resistance/charge; full source continuation. ngspice gmin 1e-15 S; finite model comparison.",
+      "deck_sha256": "caeb53ced78739b0dec5e3aef4bc4b7a2bf1f87fcbea949572c09620983636c8",
+      "request_sha256": "908366a22ccf446ff2ad029c7d8e00bde97bfda4eef0f6639cac451c6bc6f759",
+      "measurements": [
+        {
+          "tool": "ngspice",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 409.5451,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "caeb53ced78739b0dec5e3aef4bc4b7a2bf1f87fcbea949572c09620983636c8",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 242.0535,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "fa5c662542218d6facef3787fa925cc8f70d3b0b596eac2684b8553738c1c107",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "elapsed_ms": 218.1026,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "cb97442a23cf44bd47c2de67e33f839cb95a2b62c78cbed28646ca066e009576",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 334.1747,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "fa5c662542218d6facef3787fa925cc8f70d3b0b596eac2684b8553738c1c107",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 298.3758,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "cb97442a23cf44bd47c2de67e33f839cb95a2b62c78cbed28646ca066e009576",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 0,
+          "warmup": false,
+          "elapsed_ms": 995.5195,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "caeb53ced78739b0dec5e3aef4bc4b7a2bf1f87fcbea949572c09620983636c8",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 719.2738,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "cb97442a23cf44bd47c2de67e33f839cb95a2b62c78cbed28646ca066e009576",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 441.4153,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "caeb53ced78739b0dec5e3aef4bc4b7a2bf1f87fcbea949572c09620983636c8",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "elapsed_ms": 759.6954,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "fa5c662542218d6facef3787fa925cc8f70d3b0b596eac2684b8553738c1c107",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "ngspice",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 276.2466,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "caeb53ced78739b0dec5e3aef4bc4b7a2bf1f87fcbea949572c09620983636c8",
+          "final_newton_iterations": null,
+          "linear_solves": null,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "ngspice",
+          "provider_version": null
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 327.9751,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "fa5c662542218d6facef3787fa925cc8f70d3b0b596eac2684b8553738c1c107",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "nalgebra_dense_lu_reference",
+          "provider_version": "nalgebra 0.34.1"
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "elapsed_ms": 247.0364,
+          "peak_working_set_bytes": null,
+          "memory_status": "unavailable: InvalidOperationException",
+          "executed_input_sha256": "cb97442a23cf44bd47c2de67e33f839cb95a2b62c78cbed28646ca066e009576",
+          "final_newton_iterations": 4,
+          "linear_solves": 29,
+          "accepted_steps": null,
+          "rejected_steps": null,
+          "provider_id": "faer_sparse_lu",
+          "provider_version": "faer 0.24.4"
+        }
+      ],
+      "comparisons": [
+        {
+          "tool": "lu",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 0.6234027,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": -1,
+          "warmup": true,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 0.6234027,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 0.6234027,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 0,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 0.6234027,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 0.6234027,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 1,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 0.6234027,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "lu",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 0.6234027,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        },
+        {
+          "tool": "faer",
+          "iteration": 2,
+          "warmup": false,
+          "coordinate": 0,
+          "expected": {
+            "coordinate": 0,
+            "real": 0.6234027,
+            "imag": 0
+          },
+          "actual": {
+            "coordinate": 0,
+            "real": 0.6234028833571398,
+            "imag": 0
+          },
+          "absolute_tolerance": 3E-06,
+          "relative_tolerance": 1E-07,
+          "passed": true
+        }
+      ],
+      "timings": [
+        {
+          "tool": "ngspice",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 441.4153,
+          "minimum_ms": 276.2466,
+          "maximum_ms": 995.5195
+        },
+        {
+          "tool": "lu",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 334.1747,
+          "minimum_ms": 327.9751,
+          "maximum_ms": 759.6954
+        },
+        {
+          "tool": "faer",
+          "eligible": true,
+          "repetitions": 3,
+          "median_ms": 298.3758,
+          "minimum_ms": 247.0364,
+          "maximum_ms": 719.2738
+        }
+      ],
+      "accuracy_passed": true
+    }
+  ],
+  "limitations": [
+    "Small supported paired fixtures; different output formats and transient step controllers prevent pure solver-speed claims.",
+    "Warmups excluded; raw repetitions and order rotation retained; machine load/affinity were not controlled.",
+    "Named-point accuracy is finite evidence, not full SPICE or a rigorous global error bound.",
+    "ngspice compatible work counters are unavailable; absent engine counters remain null.",
+    "Executable/source hashes identify inputs; dynamic libraries and the entire OS image are not frozen."
+  ],
+  "raw_directory": "E:\\Artifacts\\Spice-table-20261102T015724Z\\51f2ed33b49c48bf9f42ca14b3955940"
+}

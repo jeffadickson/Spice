@@ -1,3 +1,31 @@
+# Current continuation — November 1, 2026 Pacific
+
+TABLE and explicit numerical-count checkpoint: read docs/table-syntax-results.md
+and evidence/table-*.json. Contextual generated E/G TABLE recognition now supports
+native coordinate separators, including MCP6041 wrappers. Syntax gate920/920;
+resources890/920 (up11), vendor recognition13/14. TL072 terminal DOS EOF remains
+inferred Draft PRS-EOF-001. TABLE adds no interpolation or model runtime.
+Fresh numerical importer corpus:3/910 execute selected analyses;1 compared pass,
+2 partial,666 unsupported,230 import rejected,11 input/resource refused. No
+unfinished inputs or observed numeric mismatches; issue#18. Whole-corpus execution
+through the generated frontend remains UNMEASURED. Next numerical integration must
+measure that path instead of re-reading accepted decks through the old importer.
+Repeat numerical matrix and named ngspice checks at each completed gap checkpoint;
+lead with unique file counts and separate syntax/resource/binding/fixture metrics.
+Named DC4 fixtures/12 comparisons/24 solves and repeated benchmark5 cases pass;
+native TABLE10/10 values match. Debug process timings are not release rankings.
+Delivery536 tests pass,1 exFAT skip; StrictDoc325 IDs/313 parents and Sphinx pass.
+Coverage remains incomplete: captured functions/callbacks omitted; benchmark CLI
+entrypoints have zero collector coverage despite executed CLI runs. Selected
+Standard observer mutations3 killed,683 compile errors,1056 ignored; earlier
+strict-grammar snapshot, byte-identical observer, no grammar/ATN mutation closure.
+All bulk artifacts E:/Artifacts/Spice-table-20261102T015724Z; preserve unrelated
+main sheet-resistor work. No CI, soak, full SPICE/GPU/Linux/production claim.
+
+## Historical checkpoint notes
+
+Older next-step/count statements below are superseded where the current checkpoint differs.
+
 Semantic corpus results/fix checklist: https://github.com/jeffadickson/Spice/issues/14
 Latest semantic frontend checkpoint: read docs/semantic-frontend.md,
 docs/semantic-frontend-results.md and evidence/semantic-frontend-verification.json.

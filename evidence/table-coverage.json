@@ -1,0 +1,91 @@
+{
+  "syntax_frontend_collector_subset": {
+    "generatedon": "2026-11-02T02:14:17Z",
+    "parser": "MultiReport (2x Cobertura)",
+    "assemblies": 2,
+    "classes": 53,
+    "files": 14,
+    "coveredlines": 812,
+    "uncoveredlines": 12,
+    "coverablelines": 824,
+    "totallines": 1396,
+    "linecoverage": 98.5,
+    "coveredbranches": 976,
+    "totalbranches": 1116,
+    "branchcoverage": 87.4,
+    "coveredmethods": 157,
+    "fullcoveredmethods": 149,
+    "totalmethods": 157,
+    "methodcoverage": 100,
+    "fullmethodcoverage": 94.9
+  },
+  "limitations": [
+    "Coverlet 10.1.0 omits captured local functions/callbacks, including ResourceResolver.Load/Append and OperatingPointBridge.Expand/Node; handwritten denominator is incomplete.",
+    "BenchmarkJson/CorpusJson generated serializers excluded from handwritten benchmark totals; raw aggregate retained on E.",
+    "Benchmark Program and CorpusCommand entrypoints have zero collector coverage; their actual CLI runs are separate execution evidence.",
+    "Generated C# coverage does not qualify serialized lexer ATN transitions or complete grammar/dialect conformance.",
+    "No new Rust, native ngspice, C# file-app, Linux or GPU coverage."
+  ],
+  "generated_csharp_table_methods": [
+    {
+      "name": "vcontrol",
+      "line-rate": "1",
+      "branch-rate": "0.9166"
+    },
+    {
+      "name": "tableTail",
+      "line-rate": "0.9229999999999999",
+      "branch-rate": "0.8332999999999999"
+    },
+    {
+      "name": "tablePair",
+      "line-rate": "0.9",
+      "branch-rate": "0.75"
+    },
+    {
+      "name": "tableCoordinate",
+      "line-rate": "0.7142000000000001",
+      "branch-rate": "0.6705"
+    },
+    {
+      "name": "tableSeparator",
+      "line-rate": "0.7406999999999999",
+      "branch-rate": "0.5"
+    },
+    {
+      "name": "vcontrol_sempred",
+      "line-rate": "0.8",
+      "branch-rate": "0.75"
+    },
+    {
+      "name": "tableTail_sempred",
+      "line-rate": "0.8",
+      "branch-rate": "0.5"
+    }
+  ],
+  "raw_sha256": {
+    "handwritten_summary": "EDE62227CF7D2FC49EB28A11F553FF7A8EA840118F60449325E942D1E36C3F96",
+    "syntax": "F093962F1F052779816D403BCFB1EDC4BCD5A1453A0C5E19996B7EC9280EC9DF",
+    "benchmark_summary": "68B05BEA5DEBD209ED45C04025746694F84D994918299AFEE669E2AA5C3AF6DB"
+  },
+  "benchmark_handwritten_collector_subset": {
+    "generatedon": "2026-11-02T02:15:01Z",
+    "parser": "Cobertura",
+    "assemblies": 1,
+    "classes": 24,
+    "files": 11,
+    "coveredlines": 413,
+    "uncoveredlines": 398,
+    "coverablelines": 811,
+    "totallines": 1012,
+    "linecoverage": 50.9,
+    "coveredbranches": 434,
+    "totalbranches": 942,
+    "branchcoverage": 46,
+    "coveredmethods": 72,
+    "fullcoveredmethods": 64,
+    "totalmethods": 106,
+    "methodcoverage": 67.9,
+    "fullmethodcoverage": 60.3
+  }
+}
