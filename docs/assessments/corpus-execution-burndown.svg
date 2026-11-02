@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="410" viewBox="0 0 920 410" role="img" aria-labelledby="title desc">
+<title id="title">Spice corpus runtime burndown</title><desc id="desc">Valid roots not solving fall from903 to888 to885. Solved selected DC files rise17 to32 to35; compared files16 to31 to34. Seven final files also match selected AC probes.</desc>
+<rect width="920" height="410" fill="#f5f7fb"/><g font-family="Segoe UI,Arial,sans-serif" fill="#17243b">
+<text x="35" y="36" font-size="23" font-weight="bold">Corpus execution: actual solver progress</text>
+<text x="35" y="62" font-size="14">920 valid roots · same928-row inventory · selected analyses only</text>
+<text x="40" y="99" font-size="16" font-weight="bold">Selected DC: files solving / native compared</text>
+<g font-size="13"><text x="44" y="147">Prior</text><text x="44" y="207">Source clauses</text><text x="44" y="267">Reporting flags</text></g>
+<g fill="#2375b8"><rect x="165" y="120" width="153" height="18"/><rect x="165" y="180" width="288" height="18"/><rect x="165" y="240" width="315" height="18"/></g>
+<g fill="#15987d"><rect x="165" y="139" width="144" height="14"/><rect x="165" y="199" width="279" height="14"/><rect x="165" y="259" width="306" height="14"/></g>
+<g font-size="14"><text x="326" y="143">17 /16</text><text x="461" y="203">32 /31</text><text x="488" y="263">35 /34</text></g>
+<text x="590" y="99" font-size="16" font-weight="bold">Valid roots not solving</text>
+<path d="M600 120V285H875" fill="none" stroke="#a8b3c3"/><g font-size="12" fill="#5c687a"><text x="561" y="135">910</text><text x="561" y="195">895</text><text x="561" y="255">880</text><text x="604" y="310">Zoomed y-axis:875–915</text></g>
+<path d="M635 163L735 223L835 235" fill="none" stroke="#b05d21" stroke-width="3"/><g fill="#b05d21"><circle cx="635" cy="163" r="5"/><circle cx="735" cy="223" r="5"/><circle cx="835" cy="235" r="5"/></g>
+<g font-size="15" font-weight="bold"><text x="620" y="151">903</text><text x="720" y="211">888</text><text x="820" y="223">885</text></g>
+<text x="35" y="345" font-size="15" font-weight="bold">Seven final files also match1/100/1000Hz AC probes on LU and Faer.</text>
+<text x="35" y="372" font-size="13">855 lowering refusals +30 resource refusals remain. One solved zero-port file has no root reference.</text>
+<text x="35" y="393" font-size="12" fill="#5c687a">No numerical discrepancies observed in final DC/AC runs. This is not full original program or full SPICE qualification.</text>
+</g></svg>

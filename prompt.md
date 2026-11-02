@@ -1,3 +1,24 @@
+# Current continuation — November 2 corpus runtime priority
+
+User priority: make more corpus files simulate; do not substitute mutation-score
+work for runtime implementation. Read docs/corpus-source-execution-results.md,
+evidence/corpus-sources-results.json and issue#21.
+35 files solve selected DC on LU/Faer (up17),34 match native ngspice,1zero-port
+has no root reference.29upstream paths+6repo examples;30distinct root hashes.
+Seven of these also match selected1/100/1000Hz AC probes (138complex checks).
+Generated DC/AC source clauses, explicit all-source AC replacements and qualified
+acct/noacct/noinit reporting flags now feed retained Rust solvers. StrictLower
+unchanged. No original control/sweep/transient/fullSPICE qualification.
+928-row final census:34compared,1no-root,855lower refused,30resource refused,
+8exclusions; no observed discrepancy/unfinished inputs.482.NET tests pass,1exFAT
+skip. Coverage incomplete886/898lines98.6%,1074/1220branches88%; captured locals,
+CLI coordinators and fresh native coverage unavailable. No new mutation/soak.
+StrictDoc21docs/332IDs/320parents; SEM-SOURCE/REPORT-OPTIONS/ACPROBE remainDraft.
+Raw artifacts E:/Artifacts/Spice-corpus-sources-20261102T152846Z.
+Next runtime gaps: controlled/model families, waveform/transient execution and
+explicit physical-option/global-node semantics. Continue native comparisons and
+report unique solved/compared file counts. Preserve unrelated main sheet-resistor
+WIP. Older checkpoint notes follow.
 # Current continuation — November 2 Rust survivor follow-up
 
 Read docs/rust-survivors-20261102.md and evidence/rust-survivors-20261102*.json.

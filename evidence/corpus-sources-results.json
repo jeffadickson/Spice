@@ -1,0 +1,616 @@
+{
+  "schema_version": 1,
+  "status": "completed_scoped_execution",
+  "base_commit": "71ade4de387ed57bfe9758457afdabc79a468b9f",
+  "issue": "https://github.com/jeffadickson/Spice/issues/21",
+  "inventory_inputs": 928,
+  "valid_roots": 920,
+  "dc": {
+    "root_reference_unavailable": 1,
+    "upstream_solved_files": 29,
+    "distinct_solved_root_hashes": 30,
+    "compared_files": 34,
+    "elapsed_seconds": 333.3503199,
+    "root_voltage_checks": 172,
+    "provider_solves": 70,
+    "counts": {
+      "excluded_hash_pinned": 8,
+      "resource_refused": 30,
+      "lowering_refused": 855,
+      "compared_pass": 34,
+      "solver_completed_no_root_observables": 1
+    },
+    "raw_summary_sha256": "cbf2f6a7d4b5c660f6a6af1e555fff3bd69a5bee86677676b419b4e2a207d660",
+    "solved_files": 35,
+    "repository_solved_files": 6,
+    "raw_directory": "E:\\Artifacts\\Spice-corpus-sources-20261102T152846Z\\final-corpus"
+  },
+  "ac": {
+    "complex_voltage_checks": 138,
+    "counts": {
+      "not_in_dc_compared_cohort": 894,
+      "compared_pass": 7,
+      "no_explicit_ac_excitation": 27
+    },
+    "compared_files": 7,
+    "frequencies_hz": [
+      1,
+      100,
+      1000
+    ],
+    "provider_requests": 14,
+    "raw_summary_sha256": "c4fc6d8c06d23a3a4cbcfc28b6adff2746e0c6d5af460d9942a825089b44eb3c",
+    "profile": "selected_linear_ac_probes",
+    "frequency_points": 42,
+    "raw_directory": "E:\\Artifacts\\Spice-corpus-sources-20261102T152846Z\\ac-verified",
+    "elapsed_seconds": 4.9389641,
+    "files": [
+      {
+        "scope": "ngspice",
+        "path": "examples/Monte_Carlo/MonteCarlo.sp",
+        "completed_providers": 2
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/numparam/param-example.cir",
+        "completed_providers": 2
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/probe/ac-test.cir",
+        "completed_providers": 2
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/various/atanh.sp",
+        "completed_providers": 2
+      },
+      {
+        "scope": "ngspice",
+        "path": "examples/wave/rcsim.cir",
+        "completed_providers": 2
+      },
+      {
+        "scope": "ngspice",
+        "path": "paranoia_parallel/examples/Monte_Carlo/MonteCarlo.sp",
+        "completed_providers": 2
+      },
+      {
+        "scope": "repository",
+        "path": "compat/ngspice/qualification-series-rlc.cir",
+        "completed_providers": 2
+      }
+    ]
+  },
+  "baseline": {
+    "dc_solved_files": 17,
+    "dc_compared_files": 16,
+    "all_previous_solves_preserved": true
+  },
+  "newly_solved_files": [
+    {
+      "scope": "ngspice",
+      "path": "examples/Monte_Carlo/MonteCarlo.sp",
+      "input_sha256": "3f704cb079080e6a56a90eb0095d254c28f2a288bdd49f7982b9d8a6d6fd89ad",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/control_structs/new-check-3.sp",
+      "input_sha256": "6da3f06dc297adb4078b22d32cee1ec336eb465e316b9020d01d585931607dbf",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/control_structs/new-check-4.sp",
+      "input_sha256": "73f08d0adfabae15390b3a225dc6450b681fe2ca2cba48710541e70bd5c7e75f",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/numparam/param-example.cir",
+      "input_sha256": "6f6b6a303c75df816615189d751c7b725549b6d313fc35e7972ae413f37b5223",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/probe/ac-test.cir",
+      "input_sha256": "2f38b91e8b7f4033c30ec5bcace0d10e92c915445c6e59327d6e398116d43fe4",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/various/atanh.sp",
+      "input_sha256": "d32f91453c2b9e127fd7486f241b1af4dad673200ad7edcfe8c18dd9bdff63d7",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/wave/rcsim.cir",
+      "input_sha256": "55d33d81c779e5ea44124b1dc24ee8e3ba03db9534f1536f2f67b790d6a19430",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/Monte_Carlo/MonteCarlo.sp",
+      "input_sha256": "014d9a694bce1364c0a521cbf97790794e9edec170693563412949e5b5e744c8",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/control_structs/new-check-3.sp",
+      "input_sha256": "6da3f06dc297adb4078b22d32cee1ec336eb465e316b9020d01d585931607dbf",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/control_structs/new-check-4.sp",
+      "input_sha256": "73f08d0adfabae15390b3a225dc6450b681fe2ca2cba48710541e70bd5c7e75f",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/polezero/simplepz.cir",
+      "input_sha256": "cd6ccd81115df42624729b9842e8ff8363c56709cb8df813e3cd8afb0dd857dd",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/misc/bugs-2.cir",
+      "input_sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/misc/dollar-1.cir",
+      "input_sha256": "c564db57ac79462cecb48e87ca5f897c8c7d03777d7ae11a0da8be4db2cb877e",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/sens/sens-dc-1.cir",
+      "input_sha256": "4c58e28708a9d2d418594739ab73790653ebc10502726a8024d72419eac9c073",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/sens/sens-dc-2.cir",
+      "input_sha256": "a2a8ae66afd652cf5b1cb5e828722297fa2f3d355e6cc9b26c08bc3fca16dd4b",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/resistance/res_simple.cir",
+      "input_sha256": "499df6f0ca39c891a7f27cf26f19dd105e1cfeb4c48c29cdb708be795e687d6d",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-series-rlc.cir",
+      "input_sha256": "7a05a110a3a031849c1a9008c95a473a057e60e49b3c67c61c62253ea0b1626f",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/res_simple.cir",
+      "input_sha256": "c394eca0a18e4b229ca442177c5397b24a06ffc08862f9c585579dc7fa576a52",
+      "status": "compared_pass"
+    }
+  ],
+  "first_refusals": [
+    {
+      "code": "unsupported_active_card",
+      "files": 410
+    },
+    {
+      "code": "unsupported_physical_directive",
+      "files": 278
+    },
+    {
+      "code": "unsupported_source_profile",
+      "files": 58
+    },
+    {
+      "code": "empty_circuit",
+      "files": 55
+    },
+    {
+      "code": "unsupported_primitive_header",
+      "files": 31
+    },
+    {
+      "code": "missing_parameter",
+      "files": 12
+    },
+    {
+      "code": "unsupported_expression",
+      "files": 8
+    },
+    {
+      "code": "unknown_parameter_override",
+      "files": 2
+    },
+    {
+      "code": "reserved_formal_ground",
+      "files": 1
+    }
+  ],
+  "solved_files": [
+    {
+      "scope": "ngspice",
+      "path": "examples/Monte_Carlo/MonteCarlo.sp",
+      "input_sha256": "3f704cb079080e6a56a90eb0095d254c28f2a288bdd49f7982b9d8a6d6fd89ad",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/control_structs/if-batchmode.cir",
+      "input_sha256": "b0769832f69df561c9d40f5387394f8bfef7b2b0f5cbe2368d200708daa52bc5",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/control_structs/if-test-1.cir",
+      "input_sha256": "e57b4fb59192267c38ade8ea49b828859c7b1919227603ad4f9577d527e4cc89",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/control_structs/new-check-3.sp",
+      "input_sha256": "6da3f06dc297adb4078b22d32cee1ec336eb465e316b9020d01d585931607dbf",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/control_structs/new-check-4.sp",
+      "input_sha256": "73f08d0adfabae15390b3a225dc6450b681fe2ca2cba48710541e70bd5c7e75f",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/numparam/param-example.cir",
+      "input_sha256": "6f6b6a303c75df816615189d751c7b725549b6d313fc35e7972ae413f37b5223",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/probe/ac-test.cir",
+      "input_sha256": "2f38b91e8b7f4033c30ec5bcace0d10e92c915445c6e59327d6e398116d43fe4",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/various/atanh.sp",
+      "input_sha256": "d32f91453c2b9e127fd7486f241b1af4dad673200ad7edcfe8c18dd9bdff63d7",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/various/param_sweep.cir",
+      "input_sha256": "4354b93f21ff91cad5c9eb77c7605d88c679548b64426142d8af6d60805d1dc9",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/wave/rcsim.cir",
+      "input_sha256": "55d33d81c779e5ea44124b1dc24ee8e3ba03db9534f1536f2f67b790d6a19430",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/Monte_Carlo/MonteCarlo.sp",
+      "input_sha256": "014d9a694bce1364c0a521cbf97790794e9edec170693563412949e5b5e744c8",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/control_structs/if-batchmode.cir",
+      "input_sha256": "b0769832f69df561c9d40f5387394f8bfef7b2b0f5cbe2368d200708daa52bc5",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/control_structs/if-test-1.cir",
+      "input_sha256": "e57b4fb59192267c38ade8ea49b828859c7b1919227603ad4f9577d527e4cc89",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/control_structs/new-check-3.sp",
+      "input_sha256": "6da3f06dc297adb4078b22d32cee1ec336eb465e316b9020d01d585931607dbf",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/control_structs/new-check-4.sp",
+      "input_sha256": "73f08d0adfabae15390b3a225dc6450b681fe2ca2cba48710541e70bd5c7e75f",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/various/param_sweep.cir",
+      "input_sha256": "4354b93f21ff91cad5c9eb77c7605d88c679548b64426142d8af6d60805d1dc9",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/polezero/simplepz.cir",
+      "input_sha256": "cd6ccd81115df42624729b9842e8ff8363c56709cb8df813e3cd8afb0dd857dd",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/ex1a.cir",
+      "input_sha256": "33f32962b5f5d1d6a2c4f5e8f54e4ccab6b4a587b67cd951e37f449d7f21489c",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/ex1b.cir",
+      "input_sha256": "7a0e521bda9e6782f11fdfcb78e7e6d9f07d16c7141daac285aa4ad25d6a84ef",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/ex2a.cir",
+      "input_sha256": "4a673f13bca1489d3095bae51debfa546f138b90258d936d8e24586a304d1b48",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/ex3a.cir",
+      "input_sha256": "f94350617cdebf77d2b866a90af6db52f5f6d54a408aeb7bf28d33c0e0198bda",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/scope-1.cir",
+      "input_sha256": "b14df7f80e570096aa68c7aef84c966059e7c565fa8d3b8d8764e5360ba91278",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/scope-2.cir",
+      "input_sha256": "756a6208fefe08d86632b856abf5d4234eb2116ddc017f663529f21254014b24",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/scope-3.cir",
+      "input_sha256": "af0497412476d23e13a41e310bada49a905660a3ce01459ceea7c33e8410b324",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/misc/bugs-2.cir",
+      "input_sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/misc/dollar-1.cir",
+      "input_sha256": "c564db57ac79462cecb48e87ca5f897c8c7d03777d7ae11a0da8be4db2cb877e",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/sens/sens-dc-1.cir",
+      "input_sha256": "4c58e28708a9d2d418594739ab73790653ebc10502726a8024d72419eac9c073",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/sens/sens-dc-2.cir",
+      "input_sha256": "a2a8ae66afd652cf5b1cb5e828722297fa2f3d355e6cc9b26c08bc3fca16dd4b",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/resistance/res_simple.cir",
+      "input_sha256": "499df6f0ca39c891a7f27cf26f19dd105e1cfeb4c48c29cdb708be795e687d6d",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-series-rlc.cir",
+      "input_sha256": "7a05a110a3a031849c1a9008c95a473a057e60e49b3c67c61c62253ea0b1626f",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/res_simple.cir",
+      "input_sha256": "c394eca0a18e4b229ca442177c5397b24a06ffc08862f9c585579dc7fa576a52",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/semantic-nested.cir",
+      "input_sha256": "0afcaefb12f11ab81791d4326b36c603374d59b5d2d5bca6e35c5b3bdc25115b",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/semantic-parameters.cir",
+      "input_sha256": "07405cb94c842c0e3b28ba2d966a19dd7925d0a4239b3b5637fc679898b2308e",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/semantic-port-order.cir",
+      "input_sha256": "2e67675476390354f09d70b417707330fb725b2913bf940b957f80cdb8e71bc5",
+      "status": "compared_pass"
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/semantic-zero-port.cir",
+      "input_sha256": "e3d535ec496eba1ea91481a2b69de19fbaf23b4cc174663b2d4cfae78385ee4e",
+      "status": "solver_completed_no_root_observables"
+    }
+  ],
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "f0686aa05ec94e7ccdbfbe3ea03df104407b4f4fc68ccfda0c3422e0a5f773c2",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "6d4aca0e2e7f5f14346bcd1ca67feac5050709977d042329447b22c7f60c3e11",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "bf2fc543ed6c90b46ea07ec86166bfeb5b55dc0efffcb8ca042b87d2ec9d02cc",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "674d25fa94ff0c8c47865a818831c4180aa0f0f87e3097c004a258075f39e8e3",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "2cc33f862d7d548dd682553007f0ebbc4b55b0c6b136c315861f6dd15a482204",
+    "dotnet/Simulator.Client/Client.cs": "4af10aae7a41d438196f4ec28abe41bf4dcc3829e2f2f2b9eaac5164a2eb65ff",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "84d66c3c98bddddcd65037643b0cd3b18d35c414fed665fb9f15bcc96f55180f",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "ab4917bf1ee12d0def883eca803a2bf78f2b697d403dd64c429d4a1b48aa5e21",
+    "dotnet/Simulator.Frontend/OperatingPointSelection.cs": "fff6edd5bd60867d798164bda00c17d53c76d01357e8e00053df484a28a0f3e5",
+    "dotnet/Simulator.Frontend/packages.lock.json": "ea51b87a36d8e82f42b9839406f5dacdb9cc1a61b4754743075f3dd4d23e402c",
+    "dotnet/Simulator.Frontend/Simulator.Frontend.csproj": "5a69547d0d2f92145f9450e95135646aa308e2fdd4bc465841ed5cf7dd376361",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "942de52671daf11d86447e7808ee4ade224e211fc31b7f4116b8cc0162f7cb2d",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "8043a743f468c97a09505dc05d47d06c941589866d742dfae3798c98f3619210",
+    "scripts/Run-FrontendCorpus.cs": "e623da796d6584a70e5e91c446063eabb9e14132213f078a2f0fcc2afb611b7a",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779"
+  },
+  "ac_source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "f0686aa05ec94e7ccdbfbe3ea03df104407b4f4fc68ccfda0c3422e0a5f773c2",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "6d4aca0e2e7f5f14346bcd1ca67feac5050709977d042329447b22c7f60c3e11",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "bf2fc543ed6c90b46ea07ec86166bfeb5b55dc0efffcb8ca042b87d2ec9d02cc",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "674d25fa94ff0c8c47865a818831c4180aa0f0f87e3097c004a258075f39e8e3",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "2cc33f862d7d548dd682553007f0ebbc4b55b0c6b136c315861f6dd15a482204",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "ab4917bf1ee12d0def883eca803a2bf78f2b697d403dd64c429d4a1b48aa5e21",
+    "dotnet/Simulator.Frontend/OperatingPointSelection.cs": "fff6edd5bd60867d798164bda00c17d53c76d01357e8e00053df484a28a0f3e5",
+    "dotnet/Simulator.Frontend/packages.lock.json": "ea51b87a36d8e82f42b9839406f5dacdb9cc1a61b4754743075f3dd4d23e402c",
+    "dotnet/Simulator.Frontend/Simulator.Frontend.csproj": "5a69547d0d2f92145f9450e95135646aa308e2fdd4bc465841ed5cf7dd376361",
+    "dotnet/Simulator.Client/Client.cs": "4af10aae7a41d438196f4ec28abe41bf4dcc3829e2f2f2b9eaac5164a2eb65ff",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "84d66c3c98bddddcd65037643b0cd3b18d35c414fed665fb9f15bcc96f55180f",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "942de52671daf11d86447e7808ee4ade224e211fc31b7f4116b8cc0162f7cb2d",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "8043a743f468c97a09505dc05d47d06c941589866d742dfae3798c98f3619210",
+    "scripts/Run-FrontendAcCorpus.cs": "67046cda284dae703274c544096d97af72efb729814f06fb8549189f0795eb40",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779"
+  },
+  "harness_assembly_sha256": "49eb3b9e8a9cd2a382cd07093f9189451f0d6d0e212be0e6e14dfdf0e806fafc",
+  "ac_harness_assembly_sha256": "a6d76ac3767c62781f506ded6e8b9e5430f011e85489e1f3623744d5808b1666",
+  "engine_sha256": "65d45d76cb1446b3bfd0bfe800857dbc84a1143d1756c1577850ec789bf81c86",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "verification": {
+    "synthetic_ac_faults": {
+      "before_fix": "Short vector aborted without summary; ac-short-red.log retained",
+      "owned_cases_per_mode": 5,
+      "modes": [
+        "ac-short",
+        "ac-extra",
+        "ac-nonfinite"
+      ],
+      "synthetic_only": true,
+      "recorded_numeric_checks": 0,
+      "regression": "FrontendAcCorpusIntegration.Complex_phase_matches_native_and_malformed_AC_preserves_both_provider_failures",
+      "provider_errors_per_mode": 10
+    },
+    "mutation": "Not run in this feature slice; user prioritized corpus execution over further mutation work",
+    "syntax_tests": {
+      "skipped": 1,
+      "skip": "exFAT link capability",
+      "log_sha256": "3b46bc534fc226cf7775a115375d34fda475683b3b45373e591f603d25000580",
+      "passed": 406
+    },
+    "coverage": {
+      "generatedon": "2026-11-02T16:10:54Z",
+      "parser": "MultiReport (2x Cobertura)",
+      "assemblies": 2,
+      "classes": 58,
+      "files": 16,
+      "coveredlines": 886,
+      "uncoveredlines": 12,
+      "coverablelines": 898,
+      "totallines": 1556,
+      "linecoverage": 98.6,
+      "coveredbranches": 1074,
+      "totalbranches": 1220,
+      "branchcoverage": 88,
+      "coveredmethods": 173,
+      "fullcoveredmethods": 165,
+      "totalmethods": 173,
+      "methodcoverage": 100,
+      "fullmethodcoverage": 95.3
+    },
+    "benchmark": {
+      "warmups": 1,
+      "status": "passed",
+      "raw_sha256": "d7905112b7b1a6800661bfcf3a567ea012b5a32d4e408e2f56853aef1fbbd59e",
+      "iterations": 3,
+      "cases": [
+        {
+          "id": "divider",
+          "accuracy_passed": true
+        },
+        {
+          "id": "rc-ac",
+          "accuracy_passed": true
+        },
+        {
+          "id": "rc-transient",
+          "accuracy_passed": true
+        },
+        {
+          "id": "coupled-clamp-negative",
+          "accuracy_passed": true
+        },
+        {
+          "id": "coupled-clamp-positive",
+          "accuracy_passed": true
+        }
+      ]
+    },
+    "fuzz_property": "Existing FsCheck bounded-input/scalar properties and malformed regressions ran in suites; no new long fuzz/soak campaign",
+    "frontend_tests": {
+      "skipped": 0,
+      "log_sha256": "0bfab8edc9d13e49814bb42f6c72c66e301788805cf1ccff454893bec5a4b1f0",
+      "passed": 76
+    },
+    "requirements": {
+      "ids": 332,
+      "documents": 21,
+      "version": "0.30.4",
+      "parents": 320
+    }
+  },
+  "requirements": [
+    "SEM-SOURCE-001",
+    "SEM-REPORT-OPTIONS-001",
+    "SEM-ACPROBE-001"
+  ],
+  "limitations": [
+    "Selected static DC and selected1/100/1000Hz AC probes, not complete original sweeps/control programs or generated-frontend transient execution",
+    "AC cohort is a subset of DC-compared files with explicit AC source amplitude; other files are unqualified for AC",
+    "Only exposed root voltages; one zero-port example has no reference observations",
+    "First diagnostics may mask further gaps; most model families and physical/numerical options remain unsupported",
+    "Coverage is an incomplete collector denominator: captured local functions/callbacks, both file-app coordinators and native Rust coverage are unmeasured; generated grammar excluded",
+    "Windows managed frontend with existing debug Rust; no release ranking, GPU/Linux/NativeAOT or full-SPICE/production qualification",
+    "Main sheet-resistor WIP excluded from tested clean checkout and preserved"
+  ],
+  "raw_directory": "E:\\Artifacts\\Spice-corpus-sources-20261102T152846Z",
+  "tested_source_commit": "d0fc145f8f935d3cb81a8874c41cf818298bba21"
+}

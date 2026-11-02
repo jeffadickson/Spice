@@ -120,3 +120,14 @@ root voltages remain unqualified, not mismatches or passes. Response identity,
 finite samples, unique signals and required units are checked before comparison.
 Synthetic fault fixtures test that malformed/mismatching data never pass; they
 are kept separate from actual Rust/ngspice qualification counts.
+
+Source clauses and selected AC probes
+--------------------------------------------------
+
+The generated frontend now retains independent DC and AC source values. Selected DC
+executes35 corpus files;34 match native root voltages and one has no root reference.
+Seven files also match explicit1/100/1000Hz complex AC probes on both CPU providers.
+This is selected-analysis evidence, not original sweep/control/transient execution.
+Only qualified reporting flags acct/noacct/noinit are omitted; numerical options remain explicit gaps.
+See the `results report <https://github.com/jeffadickson/Spice/blob/main/docs/corpus-source-execution-results.md>`_
+and `runtime backlog <https://github.com/jeffadickson/Spice/issues/21>`_.
