@@ -203,3 +203,22 @@ file/byte/depth/allowed-root and strict UTF-8 limits remain separate.
 and semantically deferred; actual conditional-resource selection remains refused.
 `ResourceDiagnostic.SyntaxDiagnostics` supplies up to three physical parser
 reasons for grammar/budget refusals without exposing a partial successful graph.
+
+## Selected static DC execution
+
+Use `OperatingPointSelection.Select(parsed, backend: "faer")` for an explicitly
+selected linear static operating point. Inspect `Success`, then `Prepared.Request`
+and `Omissions`. The strict `OperatingPointBridge.Lower` behavior is unchanged.
+R/C/L and independent constant V/I are supported; original control programs and
+non-selected analyses/observations are listed as unexecuted. Unknown physical
+settings, source waveforms/AC headers and model devices remain refused. This
+selected result is not a full run of the original analysis program.
+
+The opt-in `scripts/Run-FrontendCorpus.cs` file app accepts existing checkout,
+corpus, Rust executable, ngspice executable, prior syntax inventory JSON, fresh
+output directory, optional `selected-linear-op`/`strict-rvi-op`, and optional
+admission-budget seconds (1..21600, default1800). Set TEMP/TMP and all artifacts
+paths to a checked unique E: directory on this host. Input control scripts never
+execute. Raw expanded/projected sources, requests, responses and native logs stay
+local. Successful solves, native agreement and unavailable observables are
+separate outcomes; repeated backends do not inflate file counts.

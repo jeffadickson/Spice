@@ -95,3 +95,28 @@ child artifacts alongside that report. Use an existing unique E: campaign parent
 on this host, plus ``--artifacts-path`` for managed builds and TEMP/TMP for child
 temporary data. Repeated process timing is distinct from numerical accuracy;
 a debug engine versus a separately built ngspice is not a release speed ranking.
+
+Explicit selected static operating point
+----------------------------------------
+
+``OperatingPointBridge.Lower`` retains its strict R/V/I contract. Call
+``OperatingPointSelection.Select`` to request a separate static operating point
+for ideal R/C/L and independent constant V/I declarations. The result exposes
+``Prepared`` and immutable ``Omissions`` with scope, original range, generated
+leading token and reason. Capacitors/inductors retain positive SI values; the
+existing Rust operating-point equations supply steady open/short behavior.
+Original analyses, input controls and a bounded set of read-only observations
+are explicitly excluded. This is not execution of those original programs.
+Unqualified directives remain refused, including extensions in unused bodies
+that might have global physical effects. Failure publishes no partial plan.
+
+``scripts/Run-FrontendCorpus.cs`` executes eligible original corpus files through
+that operation and the public Client wire API on LU/Faer. Its independent native
+oracle uses expanded original source with only recorded instruction ranges
+blanked; circuit values are not reconstructed from lowered requests. Seventeen-
+digit print probes avoid the observed six-digit echo interpolation loss. Root
+voltage agreement uses absolute 1e-9 V plus relative 1e-8. Solves without exposed
+root voltages remain unqualified, not mismatches or passes. Response identity,
+finite samples, unique signals and required units are checked before comparison.
+Synthetic fault fixtures test that malformed/mismatching data never pass; they
+are kept separate from actual Rust/ngspice qualification counts.
