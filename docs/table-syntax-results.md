@@ -139,6 +139,8 @@ and compiled API XML. AI read-only source review caught the identifier collision
 and an unbounded pre-check vendor read; fixes include red name tests and a bounded
 stream read plus executed 5 MiB refusal fixture. This is not external human review.
 
+Verification ran in the isolated `work/simulation-bridge` checkout. Existing uncommitted main sheet-resistor source, requirements and tests were excluded and preserved; these reports do not qualify that work.
+
 Implementation commits: `bf11350` and `14e541b`. Final verification checked 265 source/API fingerprint entries across reports, with 380 compiled API XML entries in the Sphinx build.
 
 ## Reproduction and handoff
