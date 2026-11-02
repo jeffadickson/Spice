@@ -1,3 +1,25 @@
+# Current continuation — November 2 Rust survivor follow-up
+
+Read docs/rust-survivors-20261102.md and evidence/rust-survivors-20261102*.json.
+Original overnight shard10/16 cohort:17 Rust survivors replayed;16 killed and
+one raw AC guard survivor retained as conditional stable-InvalidInput equivalence,
+not a formal proof. Two separately tracked importer time-grid field deletions
+also killed. No invalid/timeouts/unattempted in this scoped replay; the original
+whole shard's71 invalid and51 unattempted candidates remain unavailable evidence.
+Production numerical/parser behavior unchanged; new independent tests cover
+branch-current units, inclusive AC residual bound, BE intervals, VCVS/audit merge,
+validation operands, window knots, tree node budget, log/interpolation endpoints,
+PWL initialization, Newton defaults/identity and nominal-source negative times.
+Final Rust regression475 passed/1 ignored endurance batch. Clippy -Dwarnings,
+owned rustfmt, StrictDoc21 docs/329 IDs/317 parents, and5 paired ngspice fixtures
+pass. Focused integration coverage1989/6142 lines32.38%; branch/private-unit/full
+suite coverage unavailable. Proptest seed2026110201;256 cases per property in
+regression/coverage,128 in mutation replay. Raw evidence E:/Artifacts/Spice-rust-survivors-20261102T142355Z.
+Source/test checkpoint79caf69. Preserve unrelated main sheet-resistor WIP.
+Next actual simulation work remains source DC/AC excitation profiles, selected
+linear AC/transient and bounded models via generated frontend plus native oracles.
+The17-file selected-DC frontend census is unchanged. No new long soak, .NET
+mutation, Linux/GPU/NativeAOT/full-SPICE qualification. Earlier notes follow.
 # Current continuation — actual frontend execution, November 1 Pacific
 
 Read docs/frontend-corpus-simulation-results.md and evidence/frontend-execution-*.

@@ -1,0 +1,5 @@
+[
+  "src/netlist.rs:353:29: replace >= with < in parse_ngspice_basic",
+  "src/netlist.rs:668:17: delete field max_step_s from struct crate::configured::TransientConfig expression in import_ngspice_request",
+  "src/netlist.rs:669:17: delete field stop_s from struct crate::configured::TransientConfig expression in import_ngspice_request"
+]

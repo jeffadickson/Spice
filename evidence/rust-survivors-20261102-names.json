@@ -1,0 +1,19 @@
+[
+  "src/ac.rs:61:13: replace || with && in ac_with_source_phasors",
+  "src/ac.rs:182:74: replace > with >= in verify_complex_system",
+  "src/adaptive.rs:43:60: replace - with / in AdaptiveOptions::error",
+  "src/api.rs:169:35: replace - with + in run_with_registry",
+  "src/audit.rs:273:13: delete match arm Element::Vcvs{cp, cn, gain, ..} in constraint_checks",
+  "src/audit.rs:393:22: delete - in AuditReport::merge_worst::severity",
+  "src/configured.rs:329:45: replace * with / in run_observed",
+  "src/experiment.rs:70:70: replace || with && in ExperimentSpec::validate",
+  "src/experiment.rs:94:17: replace || with && in ExperimentSpec::validate",
+  "src/experiment.rs:116:54: replace < with == in calculate",
+  "src/expression.rs:25:17: replace -= with /= in Expr::inner",
+  "src/grid.rs:9:13: replace < with <= in log_grid",
+  "src/measurement.rs:26:34: replace && with || in value_at",
+  "src/netlist.rs:353:29: replace >= with < in parse_ngspice_basic",
+  "src/newton.rs:211:9: replace <impl LinearSolver for CorrectionCounter<'_>>::name -> &'static str with \"xyzzy\"",
+  "src/newton.rs:383:5: replace default_current_tolerance -> f64 with 0.0",
+  "src/sources.rs:113:30: replace || with && in BoundSources::rhs"
+]

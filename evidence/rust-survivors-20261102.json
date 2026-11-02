@@ -1,0 +1,514 @@
+{
+  "schema_version": 1,
+  "status": "completed_scoped_followup",
+  "source_commit": "79caf69cfd561f56efb23c971e1ca976d5a380f7",
+  "base_commit": "f59663648f3c8dee8d4636e8061adb692b0ad3ed",
+  "original_run": "20261102T080055Z-25e64e76",
+  "original_dirty": true,
+  "scope": "Original17 missed Rust mutants, plus two explicitly separate importer field deletions",
+  "original_cohort": {
+    "raw_survived": 1,
+    "unattempted": 0,
+    "invalid": 0,
+    "candidates": 17,
+    "killed": 16,
+    "timed_out": 0,
+    "conditional_equivalent": 1
+  },
+  "cohort_outcomes": [
+    {
+      "name": "src/ac.rs:61:13: replace || with && in ac_with_source_phasors",
+      "outcome": "MissedMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__ac.rs_line_61_col_13.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__ac.rs_line_61_col_13.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "conditional_equivalent_stable_invalid_input_contract"
+    },
+    {
+      "name": "src/ac.rs:182:74: replace > with >= in verify_complex_system",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__ac.rs_line_182_col_74.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__ac.rs_line_182_col_74.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/adaptive.rs:43:60: replace - with / in AdaptiveOptions::error",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__adaptive.rs_line_43_col_60.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__adaptive.rs_line_43_col_60.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/api.rs:169:35: replace - with + in run_with_registry",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__api.rs_line_169_col_35.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__api.rs_line_169_col_35.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/audit.rs:273:13: delete match arm Element::Vcvs{cp, cn, gain, ..} in constraint_checks",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__audit.rs_line_273_col_13.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__audit.rs_line_273_col_13.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/audit.rs:393:22: delete - in AuditReport::merge_worst::severity",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__audit.rs_line_393_col_22.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__audit.rs_line_393_col_22.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/configured.rs:329:45: replace * with / in run_observed",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__configured.rs_line_329_col_45.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__configured.rs_line_329_col_45.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/experiment.rs:70:70: replace || with && in ExperimentSpec::validate",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__experiment.rs_line_70_col_70.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__experiment.rs_line_70_col_70.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/experiment.rs:94:17: replace || with && in ExperimentSpec::validate",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__experiment.rs_line_94_col_17.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__experiment.rs_line_94_col_17.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/experiment.rs:116:54: replace < with == in calculate",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__experiment.rs_line_116_col_54.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__experiment.rs_line_116_col_54.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/expression.rs:25:17: replace -= with /= in Expr::inner",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__expression.rs_line_25_col_17.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__expression.rs_line_25_col_17.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/grid.rs:9:13: replace < with <= in log_grid",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__grid.rs_line_9_col_13.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__grid.rs_line_9_col_13.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/measurement.rs:26:34: replace && with || in value_at",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__measurement.rs_line_26_col_34.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__measurement.rs_line_26_col_34.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/netlist.rs:353:29: replace >= with < in parse_ngspice_basic",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T151550Z-c4f4e1bb\\rust\\mutants.out\\log\\src__netlist.rs_line_353_col_29.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T151550Z-c4f4e1bb\\rust\\mutants.out\\diff\\src__netlist.rs_line_353_col_29.diff",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/newton.rs:211:9: replace <impl LinearSolver for CorrectionCounter<'_>>::name -> &'static str with \"xyzzy\"",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__newton.rs_line_211_col_9.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__newton.rs_line_211_col_9.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/newton.rs:383:5: replace default_current_tolerance -> f64 with 0.0",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__newton.rs_line_383_col_5.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__newton.rs_line_383_col_5.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    },
+    {
+      "name": "src/sources.rs:113:30: replace || with && in BoundSources::rhs",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\log\\src__sources.rs_line_113_col_30.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T143950Z-d0cf5f75\\rust\\mutants.out\\diff\\src__sources.rs_line_113_col_30.diff",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "disposition": "killed"
+    }
+  ],
+  "supplemental_outcomes": [
+    {
+      "name": "src/netlist.rs:668:17: delete field max_step_s from struct crate::configured::TransientConfig expression in import_ngspice_request",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T151550Z-c4f4e1bb\\rust\\mutants.out\\log\\src__netlist.rs_line_668_col_17.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T151550Z-c4f4e1bb\\rust\\mutants.out\\diff\\src__netlist.rs_line_668_col_17.diff",
+      "phase": "20261102T151550Z-c4f4e1bb"
+    },
+    {
+      "name": "src/netlist.rs:669:17: delete field stop_s from struct crate::configured::TransientConfig expression in import_ngspice_request",
+      "outcome": "CaughtMutant",
+      "log": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T151550Z-c4f4e1bb\\rust\\mutants.out\\log\\src__netlist.rs_line_669_col_17.log",
+      "diff": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z\\replay-checkout\\work\\framework-mutations\\20261102T151550Z-c4f4e1bb\\rust\\mutants.out\\diff\\src__netlist.rs_line_669_col_17.diff",
+      "phase": "20261102T151550Z-c4f4e1bb"
+    }
+  ],
+  "phases": [
+    {
+      "summary_sha256": "8760c647e47f4841b76c9ea12b5d4b796fb1ad85c851292a9668f620d4d40656",
+      "selection_sha256": "3bd010cbe97af23bae39f1b7f4ca535bf37ccd65da3535318b43d5664be1d79d",
+      "seconds": 2157.9998756,
+      "test": "lib,overnight_survivors_20261102",
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 2,
+        "candidates": 16,
+        "killed": 15,
+        "survived": 1,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "ca9e733370252fb851a864e2da2e8993702fc8c1ad57f8344d7c2a9b4e537320",
+        "log_sha256": "1deee73c322c91676e5da4ead7014e2bb19ea6bc2d69c3667ed2f706e57de277"
+      },
+      "native_sha256": "ca9e733370252fb851a864e2da2e8993702fc8c1ad57f8344d7c2a9b4e537320",
+      "test_source_sha256": "bc4261d183f8c957942779656a982920e17b3a266f2a64eee7e5547c43667e59",
+      "status": "completed",
+      "id": "20261102T143950Z-d0cf5f75"
+    },
+    {
+      "summary_sha256": "a2966ab89a860ccbcb532c21b529945fff943ab21249c3a9b4f7bedd0c4233d5",
+      "selection_sha256": "77c52e6a7129ebb8ba7ab65d04e827047948c384d8fd2c3fd7c0d0fde9a85cb3",
+      "seconds": 326.8272976,
+      "test": "lib,overnight_survivors_20261102",
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 3,
+        "killed": 3,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "5c2c78c4c028c84bb46098631ef0d60837db4d5ade6389e87a12304299d218f6",
+        "log_sha256": "b2ff5beb6989e9f972409e38a0b401939c38ba14dc5cac2412b80682aca24757"
+      },
+      "native_sha256": "5c2c78c4c028c84bb46098631ef0d60837db4d5ade6389e87a12304299d218f6",
+      "test_source_sha256": "26554667e37dac4a738816ce98de20029c931ae3133bc2641e3f19977e3c8325",
+      "status": "completed",
+      "id": "20261102T151550Z-c4f4e1bb"
+    }
+  ],
+  "production_prefix_checks": [
+    {
+      "snapshot_sha256": "99b71e709bfbb2227a4980b4d491ed1d17def36f74a2db116f237b1d90d3c16c",
+      "file": "src/ac.rs",
+      "current_sha256": "99b71e709bfbb2227a4980b4d491ed1d17def36f74a2db116f237b1d90d3c16c",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "fb22261d3f1856ab1dc3c830fca88b7785d5fbb67eb6899b64e9f74eed349ecc",
+      "file": "src/adaptive.rs",
+      "current_sha256": "557919a6c31070dc63e084506443bb280a5e8ce635cb0b22616640ccd5f04781",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "54a4725eee031dfef298ce2e92376214afc0e1752a55d4077d79a7666c780c3a",
+      "file": "src/api.rs",
+      "current_sha256": "54a4725eee031dfef298ce2e92376214afc0e1752a55d4077d79a7666c780c3a",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "7415ee221281dd69b4279da91447b7811ad5dbfa417002e2563eb484429c65cc",
+      "file": "src/audit.rs",
+      "current_sha256": "7415ee221281dd69b4279da91447b7811ad5dbfa417002e2563eb484429c65cc",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+      "file": "src/configured.rs",
+      "current_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+      "file": "src/experiment.rs",
+      "current_sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+      "file": "src/expression.rs",
+      "current_sha256": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+      "file": "src/grid.rs",
+      "current_sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+      "file": "src/measurement.rs",
+      "current_sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "8115ae7c961b7a089d1505fef4c10159ac7fca4158262b272cefd2021e70860a",
+      "file": "src/netlist.rs",
+      "current_sha256": "8115ae7c961b7a089d1505fef4c10159ac7fca4158262b272cefd2021e70860a",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "7699bbe386dde51562c69ba71187c4111ce8c772c70c1d6df228fc59c4770992",
+      "file": "src/newton.rs",
+      "current_sha256": "7699bbe386dde51562c69ba71187c4111ce8c772c70c1d6df228fc59c4770992",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+      "file": "src/sources.rs",
+      "current_sha256": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+      "phase": "20261102T143950Z-d0cf5f75",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "99b71e709bfbb2227a4980b4d491ed1d17def36f74a2db116f237b1d90d3c16c",
+      "file": "src/ac.rs",
+      "current_sha256": "99b71e709bfbb2227a4980b4d491ed1d17def36f74a2db116f237b1d90d3c16c",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "fb22261d3f1856ab1dc3c830fca88b7785d5fbb67eb6899b64e9f74eed349ecc",
+      "file": "src/adaptive.rs",
+      "current_sha256": "557919a6c31070dc63e084506443bb280a5e8ce635cb0b22616640ccd5f04781",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "54a4725eee031dfef298ce2e92376214afc0e1752a55d4077d79a7666c780c3a",
+      "file": "src/api.rs",
+      "current_sha256": "54a4725eee031dfef298ce2e92376214afc0e1752a55d4077d79a7666c780c3a",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "7415ee221281dd69b4279da91447b7811ad5dbfa417002e2563eb484429c65cc",
+      "file": "src/audit.rs",
+      "current_sha256": "7415ee221281dd69b4279da91447b7811ad5dbfa417002e2563eb484429c65cc",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+      "file": "src/configured.rs",
+      "current_sha256": "3b8d655d8c9643f26352732e5fbf2733e95cc250b88413ffbc78999525e9beb0",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+      "file": "src/experiment.rs",
+      "current_sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+      "file": "src/expression.rs",
+      "current_sha256": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+      "file": "src/grid.rs",
+      "current_sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+      "file": "src/measurement.rs",
+      "current_sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "8115ae7c961b7a089d1505fef4c10159ac7fca4158262b272cefd2021e70860a",
+      "file": "src/netlist.rs",
+      "current_sha256": "8115ae7c961b7a089d1505fef4c10159ac7fca4158262b272cefd2021e70860a",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "7699bbe386dde51562c69ba71187c4111ce8c772c70c1d6df228fc59c4770992",
+      "file": "src/newton.rs",
+      "current_sha256": "7699bbe386dde51562c69ba71187c4111ce8c772c70c1d6df228fc59c4770992",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    },
+    {
+      "snapshot_sha256": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+      "file": "src/sources.rs",
+      "current_sha256": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+      "phase": "20261102T151550Z-c4f4e1bb",
+      "production_prefix_matches": true
+    }
+  ],
+  "source_hashes": {
+    "Cargo.toml": "a833a9a62ab2ce071d92609556c1f01a390699144001c68f30ed3e070a1fd16c",
+    "Cargo.lock": "018b19472c004dd03af3c75aa2bd5a45982f1da3d23a5be41e612ac97e3a41f6",
+    "rust-toolchain.toml": "c946aab8e3eafd93e58303a52f31fc8b9a0caf4bf7a63328ff00195e6a6ad30b",
+    "src/adaptive.rs": "557919a6c31070dc63e084506443bb280a5e8ce635cb0b22616640ccd5f04781",
+    "src/newton.rs": "7699bbe386dde51562c69ba71187c4111ce8c772c70c1d6df228fc59c4770992",
+    "tests/overnight_survivors_20261102.rs": "5cb7356ace3ffb11063179df80499c2a0a8607989f7e6478c5a63734c1b3d9e2",
+    "scripts/FrameworkMutations.cs": "4c1e3fa09f2d0c2cebd1dfa3985e0148815acc4e7436a033e6eb56ecdc6de7a8",
+    "docs/consistency.sdoc": "bb210f06d054664437551f05a1767230e7569a5b9095c21bb78c341c7f36bcee"
+  },
+  "verification": {
+    "ngspice": {
+      "status": "passed",
+      "limitations": [
+        "Small supported paired fixtures; different output formats and transient step controllers prevent pure solver-speed claims.",
+        "Warmups excluded; raw repetitions and order rotation retained; machine load/affinity were not controlled.",
+        "Named-point accuracy is finite evidence, not full SPICE or a rigorous global error bound.",
+        "ngspice compatible work counters are unavailable; absent engine counters remain null.",
+        "Executable/source hashes identify inputs; dynamic libraries and the entire OS image are not frozen."
+      ],
+      "cases": [
+        {
+          "id": "divider",
+          "accuracy_passed": true,
+          "point_checks": 8
+        },
+        {
+          "id": "rc-ac",
+          "accuracy_passed": true,
+          "point_checks": 24
+        },
+        {
+          "id": "rc-transient",
+          "accuracy_passed": true,
+          "point_checks": 24
+        },
+        {
+          "id": "coupled-clamp-negative",
+          "accuracy_passed": true,
+          "point_checks": 8
+        },
+        {
+          "id": "coupled-clamp-positive",
+          "accuracy_passed": true,
+          "point_checks": 8
+        }
+      ],
+      "warmups": 1,
+      "helper_mode": "managed",
+      "report_sha256": "e546914d29af88574e7632ae2ad00fb7e21b96476445a212f4ffdf632d78fe12",
+      "iterations": 3
+    },
+    "properties": {
+      "library": "proptest 1.9.0",
+      "mutation_requested_cases": 128,
+      "seed": "2026110201",
+      "full_and_coverage_requested_cases": 256,
+      "minimized_mutant_counterexample": {
+        "middle": 0.0,
+        "right": -71.22768681948112,
+        "left": 0.0,
+        "numerator": 1
+      }
+    },
+    "requirements": {
+      "parents": 317,
+      "status": "passed",
+      "report_sha256": "249c6f90e6bb1967a19aba937588c0afa894c3e94e3f8e70c0f8dea73e476bcf",
+      "version": "0.30.4",
+      "ids": 329,
+      "documents": 21
+    },
+    "regression": {
+      "log_sha256": "0e4dad511947d2601a86a330aacb6dd3a136a282e7b92c8e5770ef5b190e02de",
+      "command": "cargo test --locked",
+      "groups": 53,
+      "passed": 475,
+      "ignored": 1
+    },
+    "coverage": {
+      "lines": {
+        "covered": 1989.0,
+        "count": 6142.0,
+        "percent": 32.38358840768479
+      },
+      "report_sha256": "dc8ef5956d101fc0c700a635b2ff1ab163ce93c8c1ffdabd78c9ea0c96e905db",
+      "branches": null,
+      "scope": "Owned src/*.rs exercised by named test binary only"
+    },
+    "clippy": {
+      "exit_code": 0,
+      "command": "cargo clippy --all-targets --locked -- -D warnings",
+      "log_sha256": "6422b47485172f1c1c0df2aabe9e00edde15881feb05f688e4daae1761bc1743"
+    }
+  },
+  "original_evidence": {
+    "native_sha256": "68c2447d55bfcb2ba7d670e5df904d40649f85efa5f8c08926478815ecc89072",
+    "preserved_files": 36
+  },
+  "review": {
+    "kind": "read-only AI source/diff review",
+    "correction": "Three initial oracle mappings corrected using all archived native diffs before final replay",
+    "external_expert": false,
+    "remaining": "CONS-MERGE-001 remains Draft; differing-tolerance and nonfinite-severity combinations are not fully established by the new merge test"
+  },
+  "limitations": [
+    "Scoped cohort, not a whole Rust mutation score; original71 invalid and51 unattempted unchanged",
+    "One raw survivor retained as conditional equivalence, not formal proof; diagnostic messages differ",
+    "Core mutation snapshot predates the supplemental importer test and test-only rustfmt; importer snapshot predates only formatting. All affected production prefixes match exactly; per-phase test hashes are retained.",
+    "Focused integration coverage excludes private unit-test objects, vendor/test code and full-suite coverage; branch coverage unavailable",
+    "No new long soak or coverage-guided fuzz run; full suite includes malformed/fuzz-smoke/proptest tests",
+    "Windows MSVC only; no new .NET, Linux, GPU, Native AOT or full-SPICE qualification",
+    "Main sheet-resistor WIP excluded and preserved; no new simulation capability",
+    "Benchmark uses debug Rust under concurrent machine load; memory unavailable; no speed ranking"
+  ],
+  "raw_directory": "E:\\Artifacts\\Spice-rust-survivors-20261102T142355Z"
+}
