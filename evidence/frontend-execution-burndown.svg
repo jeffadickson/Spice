@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="460" viewBox="0 0 1000 460" role="img" aria-labelledby="title desc">
+<title id="title">Generated frontend now executes selected static DC circuits</title>
+<desc id="desc">Of920 valid root files:17 solve on both providers,16 match native root voltages,one has no exposed root observable. 873 lowering refusals and30 resource refusals remain. Three copied upstream files share root bytes with other paths. This is selected static DC, not original analysis program execution.</desc>
+<rect width="1000" height="460" rx="18" fill="#102034"/>
+<g font-family="Segoe UI,Arial,sans-serif" fill="#edf4ff">
+<text x="40" y="48" font-size="26" font-weight="700">Actual generated-frontend simulation — selected static DC</text>
+<text x="40" y="80" font-size="16" fill="#a9bfd8">November 1, 2026 Pacific · 920 valid roots · 928 inventory rows including8 exclusions</text>
+<rect x="40" y="111" width="280" height="120" rx="10" fill="#194440"/>
+<rect x="340" y="111" width="280" height="120" rx="10" fill="#174555"/>
+<rect x="640" y="111" width="320" height="120" rx="10" fill="#4d4327"/>
+<text x="60" y="161" font-size="43" font-weight="700">17</text><text x="60" y="193" font-size="16">files solved on LU and Faer</text><text x="60" y="216" font-size="14">13 upstream +4 repository files</text>
+<text x="360" y="161" font-size="43" font-weight="700">16</text><text x="360" y="193" font-size="16">native root-voltage matches</text><text x="360" y="216" font-size="14">96 provider/node checks,0 failures</text>
+<text x="660" y="161" font-size="43" font-weight="700">1</text><text x="660" y="193" font-size="16">solve without root reference</text><text x="660" y="216" font-size="14">Zero-port circuit: explicitly unqualified</text>
+<text x="40" y="277" font-size="19" font-weight="600">Remaining:873 lowering refusals +30 resource refusals</text>
+<text x="40" y="310" font-size="16" fill="#a9bfd8">Strict R/V/I baseline:0 eligible. Explicit selected DC:17 solves (14 distinct root-byte hashes).</text>
+<text x="40" y="341" font-size="16" fill="#a9bfd8">Original control/AC/transient programs are not executed; omissions remain source-located.</text>
+<path d="M40 366H960" stroke="#416078"/>
+<text x="40" y="400" font-size="16">Next:source profiles → linear AC/transient → bounded model contracts</text>
+<text x="40" y="431" font-size="14" fill="#a9bfd8">Older legacy-importer3-file comparison is a separate cohort. No full SPICE/GPU/production claim.</text>
+</g></svg>

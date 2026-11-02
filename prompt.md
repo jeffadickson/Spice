@@ -1,3 +1,34 @@
+# Current continuation — actual frontend execution, November 1 Pacific
+
+Read docs/frontend-corpus-simulation-results.md and evidence/frontend-execution-*.
+Generated frontend now executes17 files on both Rust LU/Faer:13 ngspice sample
+paths +4 repository examples,14 distinct root-byte hashes.16 independently match
+native root voltages (96 provider/node checks); one zero-port file solves but has
+no exposed root reference and remains unqualified. This is selected static DC,
+NOT execution of original control/AC/transient programs.17 is not a direct update
+to the old numerical importer's separate3-file comparison cohort.
+OperatingPointSelection.Select explicitly prepares ideal R/C/L and constant V/I,
+records all omissions with scope/range/reason and refuses unqualified directives
+including globally physical effects in unused bodies. Strict Lower remains R/V/I.
+Harness Run-FrontendCorpus.cs accepts an explicit profile/admission budget, hashes
+actual source/assemblies/inputs, never executes original controls, and compares
+expanded original source to typed requests. Native17-digit print fixes echo6-digit
+rounding; zero root observables are unavailable, not mismatch. Bad provider data
+are retained per backend; six synthetic fault modes never qualify Rust.
+Final928-row census:16 compared,1 no-root-reference,873 lower refused,30 resource
+refused,8 prior exclusions; no unfinished inputs or observed discrepancies.
+Next:source DC/AC excitation profiles, selected linear AC/transient through this
+path, then bounded model families using actual failures/ngspice oracles. Avoid
+another grammar-only campaign unless a concrete execution case requires it.
+406 Syntax +57 Frontend tests pass,1 exFAT skip. FsCheck907/908,20261101 each128
+cases. StrictDoc328 IDs/316 parents and Sphinx pass. Coverage incomplete (captured
+functions omitted); file-app coverage unavailable. Stryker initial22 kills/2survive,
+zero-L guard replay catches89 (4kills);75 remains conditional equivalent under
+internal Supported iff Value invariant, not formal proof.13compile errors remain.
+All bulk artifacts E:/Artifacts/Spice-frontend-simulation-20261102T025251Z.
+Preserve unrelated main sheet-resistor WIP. No CI,soak,new Rust build,GPU/Linux,
+NativeAOT,full SPICE or production qualification. Older notes follow.
+
 # Current continuation — November 1, 2026 Pacific
 
 TABLE and explicit numerical-count checkpoint: read docs/table-syntax-results.md

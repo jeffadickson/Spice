@@ -1,0 +1,46 @@
+{
+  "raw_summary_sha256": "E9CDC21FF22DF53144FFE9226AEB246D1007D507F72BB5CC61B19BD8BBC93118",
+  "measured_subset": {
+    "generatedon": "2026-11-02T03:39:25Z",
+    "parser": "MultiReport (2x Cobertura)",
+    "assemblies": 2,
+    "classes": 56,
+    "files": 15,
+    "coveredlines": 843,
+    "uncoveredlines": 12,
+    "coverablelines": 855,
+    "totallines": 1464,
+    "linecoverage": 98.5,
+    "coveredbranches": 1004,
+    "totalbranches": 1146,
+    "branchcoverage": 87.6,
+    "coveredmethods": 165,
+    "fullcoveredmethods": 157,
+    "totalmethods": 165,
+    "methodcoverage": 100,
+    "fullmethodcoverage": 95.1
+  },
+  "selected_operation": [
+    {
+      "name": "Simulator.Frontend.OperatingPointSelection",
+      "coverage": 100,
+      "coveredlines": 23,
+      "coverablelines": 23,
+      "totallines": 45,
+      "branchcoverage": 95.4,
+      "coveredbranches": 21,
+      "totalbranches": 22,
+      "methodcoverage": 100,
+      "fullmethodcoverage": 100,
+      "coveredmethods": 2,
+      "fullcoveredmethods": 2,
+      "totalmethods": 2
+    }
+  ],
+  "limitations": [
+    "Coverlet 10.1.0 omits captured core local functions/callbacks; this handwritten denominator is incomplete.",
+    "Generated ANTLR C# excluded; serialized lexer ATN and complete grammar conformance not measured.",
+    "File-app coordinator/synthetic executable child coverage not collected. Real and synthetic integration execution is separate evidence.",
+    "No fresh Rust/native-ngspice/Linux/GPU coverage."
+  ]
+}

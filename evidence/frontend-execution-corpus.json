@@ -1,0 +1,2060 @@
+{
+  "schema_version": 1,
+  "state": "completed_with_results",
+  "profile": "generated_frontend_selected_linear_op",
+  "started_utc": "2026-11-01T19:32:27.7509152-08:00",
+  "updated_utc": "2026-11-01T19:37:42.3686837-08:00",
+  "elapsed_seconds": 314.6144768,
+  "inventory_inputs": 928,
+  "valid_input_files": 920,
+  "counts": {
+    "excluded_hash_pinned": 8,
+    "resource_refused": 30,
+    "lowering_refused": 873,
+    "compared_pass": 16,
+    "solver_completed_no_root_observables": 1
+  },
+  "solved_files": 17,
+  "byte_unique_solved": 14,
+  "solved_by_scope": [
+    {
+      "Name": "ngspice",
+      "Count": 13
+    },
+    {
+      "Name": "repository",
+      "Count": 4
+    }
+  ],
+  "provider_solves": 34,
+  "compared_files": 16,
+  "comparison_points": 96,
+  "failed_points": 0,
+  "root_graph_hashes_verified": 890,
+  "execution_rows": [
+    {
+      "scope": "ngspice",
+      "path": "examples/control_structs/if-batchmode.cir",
+      "status": "compared_pass",
+      "input_sha256": "b0769832f69df561c9d40f5387394f8bfef7b2b0f5cbe2368d200708daa52bc5",
+      "expanded_sha256": "b0769832f69df561c9d40f5387394f8bfef7b2b0f5cbe2368d200708daa52bc5",
+      "native_input_sha256": "225ae51f01757b3b24d9f3c754893f4fb4267bcbd1c02446887b09da41e79974",
+      "native_log_sha256": "87ec94579942441e39dc8783f1e8ae455ce2e97b186fda8a57d4df8fa2fc80f1",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "tran",
+          "name": ".tran",
+          "reason": "analysis_not_selected",
+          "range": {
+            "start": 227,
+            "length": 18,
+            "line": 14,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "extension",
+          "name": ".print",
+          "reason": "observation_not_selected",
+          "range": {
+            "start": 247,
+            "length": 15,
+            "line": 15,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 266,
+            "length": 223,
+            "line": 17,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\examples\\control_structs\\if-batchmode.cir",
+          "sha256": "b0769832f69df561c9d40f5387394f8bfef7b2b0f5cbe2368d200708daa52bc5"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 742.9048,
+          "request_sha256": "23b5d3fc8f5866a405b00e2106063d30ceff6ac407089953c4da727715631d4a",
+          "values": {
+            "2": 1,
+            "1": 1
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 46.2425,
+          "request_sha256": "2ce05549a69809dc61122a252d36220a17bb230aac24901a225ad0777e68ea79",
+          "values": {
+            "2": 1,
+            "1": 1
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "1",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "2",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "1",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "2",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/control_structs/if-test-1.cir",
+      "status": "compared_pass",
+      "input_sha256": "e57b4fb59192267c38ade8ea49b828859c7b1919227603ad4f9577d527e4cc89",
+      "expanded_sha256": "e57b4fb59192267c38ade8ea49b828859c7b1919227603ad4f9577d527e4cc89",
+      "native_input_sha256": "f97b2fa11e63d5538c8a438c4d728f09880f819e0af9858170f7fb759517d07b",
+      "native_log_sha256": "cf42993bf6f4441e60065db80f08bb4d0dc51f2e4ad5f710c749237ce3843664",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 100,
+            "length": 1278,
+            "line": 9,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\examples\\control_structs\\if-test-1.cir",
+          "sha256": "e57b4fb59192267c38ade8ea49b828859c7b1919227603ad4f9577d527e4cc89"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 52.7687,
+          "request_sha256": "3450281435d8a9789060560bb2049b01cf2677a6c9752f97129c38f9987fad54",
+          "values": {
+            "1": 42
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 49.6519,
+          "request_sha256": "ab952b49cfd74310444bda192ff21df1901804fd921ab006b0d32db20c4ea1b9",
+          "values": {
+            "1": 42
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "1",
+          "ngspice_volts": 42,
+          "rust_volts": 42,
+          "bound_volts": 4.21E-07,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "1",
+          "ngspice_volts": 42,
+          "rust_volts": 42,
+          "bound_volts": 4.21E-07,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/various/param_sweep.cir",
+      "status": "compared_pass",
+      "input_sha256": "4354b93f21ff91cad5c9eb77c7605d88c679548b64426142d8af6d60805d1dc9",
+      "expanded_sha256": "4354b93f21ff91cad5c9eb77c7605d88c679548b64426142d8af6d60805d1dc9",
+      "native_input_sha256": "fd20df3404bb215f463f6d6c941bb90f201fce7a3b9ef22371b44c8a62d90d28",
+      "native_log_sha256": "844d6b038b9f40f112abf5f3eb48e7ffcb49c43e6b0c25f655127fac175198c7",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "dc",
+          "name": ".dc",
+          "reason": "analysis_not_selected",
+          "range": {
+            "start": 163,
+            "length": 14,
+            "line": 10,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 181,
+            "length": 334,
+            "line": 12,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\examples\\various\\param_sweep.cir",
+          "sha256": "4354b93f21ff91cad5c9eb77c7605d88c679548b64426142d8af6d60805d1dc9"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 684.1654,
+          "request_sha256": "74c5990c9c7d43d0105b14bdccdd8df541bbe2554d67cf76299b68d6cfbbb92d",
+          "values": {
+            "2": 0.5,
+            "1": 1
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 42.5164,
+          "request_sha256": "1cdfdb6df0d6e202823bba812b614ae5752fcccaf39d7216ccf1d23909c04474",
+          "values": {
+            "2": 0.5,
+            "1": 1
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "1",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "2",
+          "ngspice_volts": 0.5,
+          "rust_volts": 0.5,
+          "bound_volts": 6E-09,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "1",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "2",
+          "ngspice_volts": 0.5,
+          "rust_volts": 0.5,
+          "bound_volts": 6E-09,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/control_structs/if-batchmode.cir",
+      "status": "compared_pass",
+      "input_sha256": "b0769832f69df561c9d40f5387394f8bfef7b2b0f5cbe2368d200708daa52bc5",
+      "expanded_sha256": "b0769832f69df561c9d40f5387394f8bfef7b2b0f5cbe2368d200708daa52bc5",
+      "native_input_sha256": "225ae51f01757b3b24d9f3c754893f4fb4267bcbd1c02446887b09da41e79974",
+      "native_log_sha256": "87ec94579942441e39dc8783f1e8ae455ce2e97b186fda8a57d4df8fa2fc80f1",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "tran",
+          "name": ".tran",
+          "reason": "analysis_not_selected",
+          "range": {
+            "start": 227,
+            "length": 18,
+            "line": 14,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "extension",
+          "name": ".print",
+          "reason": "observation_not_selected",
+          "range": {
+            "start": 247,
+            "length": 15,
+            "line": 15,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 266,
+            "length": 223,
+            "line": 17,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\paranoia_parallel\\examples\\control_structs\\if-batchmode.cir",
+          "sha256": "b0769832f69df561c9d40f5387394f8bfef7b2b0f5cbe2368d200708daa52bc5"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 48.0131,
+          "request_sha256": "23b5d3fc8f5866a405b00e2106063d30ceff6ac407089953c4da727715631d4a",
+          "values": {
+            "2": 1,
+            "1": 1
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 43.5492,
+          "request_sha256": "2ce05549a69809dc61122a252d36220a17bb230aac24901a225ad0777e68ea79",
+          "values": {
+            "2": 1,
+            "1": 1
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "1",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "2",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "1",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "2",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/control_structs/if-test-1.cir",
+      "status": "compared_pass",
+      "input_sha256": "e57b4fb59192267c38ade8ea49b828859c7b1919227603ad4f9577d527e4cc89",
+      "expanded_sha256": "e57b4fb59192267c38ade8ea49b828859c7b1919227603ad4f9577d527e4cc89",
+      "native_input_sha256": "f97b2fa11e63d5538c8a438c4d728f09880f819e0af9858170f7fb759517d07b",
+      "native_log_sha256": "cf42993bf6f4441e60065db80f08bb4d0dc51f2e4ad5f710c749237ce3843664",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 100,
+            "length": 1278,
+            "line": 9,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\paranoia_parallel\\examples\\control_structs\\if-test-1.cir",
+          "sha256": "e57b4fb59192267c38ade8ea49b828859c7b1919227603ad4f9577d527e4cc89"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 53.1192,
+          "request_sha256": "3450281435d8a9789060560bb2049b01cf2677a6c9752f97129c38f9987fad54",
+          "values": {
+            "1": 42
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 50.5399,
+          "request_sha256": "ab952b49cfd74310444bda192ff21df1901804fd921ab006b0d32db20c4ea1b9",
+          "values": {
+            "1": 42
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "1",
+          "ngspice_volts": 42,
+          "rust_volts": 42,
+          "bound_volts": 4.21E-07,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "1",
+          "ngspice_volts": 42,
+          "rust_volts": 42,
+          "bound_volts": 4.21E-07,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/various/param_sweep.cir",
+      "status": "compared_pass",
+      "input_sha256": "4354b93f21ff91cad5c9eb77c7605d88c679548b64426142d8af6d60805d1dc9",
+      "expanded_sha256": "4354b93f21ff91cad5c9eb77c7605d88c679548b64426142d8af6d60805d1dc9",
+      "native_input_sha256": "fd20df3404bb215f463f6d6c941bb90f201fce7a3b9ef22371b44c8a62d90d28",
+      "native_log_sha256": "844d6b038b9f40f112abf5f3eb48e7ffcb49c43e6b0c25f655127fac175198c7",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "dc",
+          "name": ".dc",
+          "reason": "analysis_not_selected",
+          "range": {
+            "start": 163,
+            "length": 14,
+            "line": 10,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 181,
+            "length": 334,
+            "line": 12,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\paranoia_parallel\\examples\\various\\param_sweep.cir",
+          "sha256": "4354b93f21ff91cad5c9eb77c7605d88c679548b64426142d8af6d60805d1dc9"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 71.5598,
+          "request_sha256": "74c5990c9c7d43d0105b14bdccdd8df541bbe2554d67cf76299b68d6cfbbb92d",
+          "values": {
+            "2": 0.5,
+            "1": 1
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 80.811,
+          "request_sha256": "1cdfdb6df0d6e202823bba812b614ae5752fcccaf39d7216ccf1d23909c04474",
+          "values": {
+            "2": 0.5,
+            "1": 1
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "1",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "2",
+          "ngspice_volts": 0.5,
+          "rust_volts": 0.5,
+          "bound_volts": 6E-09,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "1",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "2",
+          "ngspice_volts": 0.5,
+          "rust_volts": 0.5,
+          "bound_volts": 6E-09,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/ex1a.cir",
+      "status": "compared_pass",
+      "input_sha256": "33f32962b5f5d1d6a2c4f5e8f54e4ccab6b4a587b67cd951e37f449d7f21489c",
+      "expanded_sha256": "69417a28e7ce384743b6c2e0b625dbdde282f527a0ea28c272af5ecf8436aba5",
+      "native_input_sha256": "693addd75a4cefde4d2042d029b3633503cd612343adc328fe66db17d929d861",
+      "native_log_sha256": "ec214c55dfc6c9af8a5caeb32acf1904091d998fe449117a4828c97ab74f149a",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 224,
+            "length": 168,
+            "line": 21,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\ex1a.cir",
+          "sha256": "33f32962b5f5d1d6a2c4f5e8f54e4ccab6b4a587b67cd951e37f449d7f21489c"
+        },
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\ex1.lib",
+          "section": "RES",
+          "sha256": "5a0f8ec43349d25620927d0f7296cce2c7e0417504ac4beb54f433f1d6c68708"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 46.5212,
+          "request_sha256": "412e7a69a784462297b1c846e3b9e6b4334df8a3b3b52a42623834eb6f3f88ea",
+          "values": {
+            "check0": 0,
+            "9": 1
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 49.4939,
+          "request_sha256": "c20897545bf6bfdc2b006175f97cde2e9adf5f1157eda565c84ea079a522f67d",
+          "values": {
+            "check0": 0,
+            "9": 1
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "9",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "check0",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "9",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "check0",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/ex1b.cir",
+      "status": "compared_pass",
+      "input_sha256": "7a0e521bda9e6782f11fdfcb78e7e6d9f07d16c7141daac285aa4ad25d6a84ef",
+      "expanded_sha256": "468107773776ac50fb6ba50adf50d809fb4a870dc837b093d3c8e0d3cf1cf1bb",
+      "native_input_sha256": "f17d94462abf8e30c307677613e57da7a591a8c180e2cc4bc6c533a92ded53ff",
+      "native_log_sha256": "47e1e24552f3b2a72270c56e009242b1ba4e58462c3fe7a75a4dfddb50ba8f91",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 297,
+            "length": 168,
+            "line": 25,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\ex1b.cir",
+          "sha256": "7a0e521bda9e6782f11fdfcb78e7e6d9f07d16c7141daac285aa4ad25d6a84ef"
+        },
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\ex1.lib",
+          "section": "RES",
+          "sha256": "5a0f8ec43349d25620927d0f7296cce2c7e0417504ac4beb54f433f1d6c68708"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 56.2579,
+          "request_sha256": "f65c329f312c6d637fd8f9a06141959da96a9eaa964f1c56fccd640b0f096c3e",
+          "values": {
+            "check0": 0,
+            "9": 1
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 43.5266,
+          "request_sha256": "df77e14880b568f9f4213c2bbf7b548385fcf7c706dee3365b2427006b13f8ef",
+          "values": {
+            "check0": 0,
+            "9": 1
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "9",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "check0",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "9",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "check0",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/ex2a.cir",
+      "status": "compared_pass",
+      "input_sha256": "4a673f13bca1489d3095bae51debfa546f138b90258d936d8e24586a304d1b48",
+      "expanded_sha256": "613b6aa8047e11e27782fba3005fe8d6f556f40b297edf803d63069a3cbce3b9",
+      "native_input_sha256": "acd0af9b1bdd5f77a2b9e63d738aa6dbee287458b8771f1243f832c1dfb3a5d4",
+      "native_log_sha256": "7e936f264039fa788ee6b84ca97d7b784ff6d155cbc6edcdf30669c90913594f",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 484,
+            "length": 434,
+            "line": 42,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\ex2a.cir",
+          "sha256": "4a673f13bca1489d3095bae51debfa546f138b90258d936d8e24586a304d1b48"
+        },
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\ex2.lib",
+          "section": "MOS",
+          "sha256": "57d4ebf2f396cc94627a61088eb06bded09a44512781be7f60d48966463a8c84"
+        },
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\ex2.lib",
+          "section": "RES",
+          "sha256": "57d4ebf2f396cc94627a61088eb06bded09a44512781be7f60d48966463a8c84"
+        },
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\ex2.lib",
+          "section": "RES",
+          "sha256": "57d4ebf2f396cc94627a61088eb06bded09a44512781be7f60d48966463a8c84"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 44.3245,
+          "request_sha256": "6f79be5098669df477fe934bf49a8ac7eba4a092f7193c5be463cb058adda357",
+          "values": {
+            "check2": 0,
+            "7": 1,
+            "check1": 0,
+            "9": 2
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 56.4452,
+          "request_sha256": "228cbdf9bad0094ba1ed10030e4952f5cfde47fc2d641df0f7348d3f0680b1fd",
+          "values": {
+            "check2": 0,
+            "7": 1,
+            "check1": 0,
+            "9": 2
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "7",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "9",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "check1",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "check2",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "7",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "9",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "check1",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "check2",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/ex3a.cir",
+      "status": "compared_pass",
+      "input_sha256": "f94350617cdebf77d2b866a90af6db52f5f6d54a408aeb7bf28d33c0e0198bda",
+      "expanded_sha256": "ad3a70d49c38813e5642a1fa1ccae18ef729a36d3354d6b73300e4b50dbf96d9",
+      "native_input_sha256": "c29bd80d12af96c26043501ef26b62589096b9cd765285d11d8e5893520d1cb3",
+      "native_log_sha256": "13b952ab7e93c524756c094fb82f4edde348d660e9ca9693850591e6878d5053",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 484,
+            "length": 434,
+            "line": 42,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\ex3a.cir",
+          "sha256": "f94350617cdebf77d2b866a90af6db52f5f6d54a408aeb7bf28d33c0e0198bda"
+        },
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\ex3.lib",
+          "section": "MOS",
+          "sha256": "65d89c71f8114965d71410edbba7bc4529dd4d17619d9895dd8ff3c7dd0a6fe5"
+        },
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\extra3.lib",
+          "section": "RES",
+          "sha256": "81c1c0f074d812ff2d87b80f5dd979dd3eee83d34e15e3380c54fc9023e37712"
+        },
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\extra3.lib",
+          "section": "RES",
+          "sha256": "81c1c0f074d812ff2d87b80f5dd979dd3eee83d34e15e3380c54fc9023e37712"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 43.5905,
+          "request_sha256": "6f79be5098669df477fe934bf49a8ac7eba4a092f7193c5be463cb058adda357",
+          "values": {
+            "check2": 0,
+            "7": 1,
+            "check1": 0,
+            "9": 2
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 47.6021,
+          "request_sha256": "228cbdf9bad0094ba1ed10030e4952f5cfde47fc2d641df0f7348d3f0680b1fd",
+          "values": {
+            "check2": 0,
+            "7": 1,
+            "check1": 0,
+            "9": 2
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "7",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "9",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "check1",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "check2",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "7",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "9",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "check1",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "check2",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/scope-1.cir",
+      "status": "compared_pass",
+      "input_sha256": "b14df7f80e570096aa68c7aef84c966059e7c565fa8d3b8d8764e5360ba91278",
+      "expanded_sha256": "b14df7f80e570096aa68c7aef84c966059e7c565fa8d3b8d8764e5360ba91278",
+      "native_input_sha256": "e12d957a89762c3fb103a6d72c121cb642900207878fe6959ba119de06628c8b",
+      "native_log_sha256": "fd9828860fb018547d22f48b44fe7efa19b5e09c25db6a460c2f3ed6408c9ea9",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 476,
+            "length": 654,
+            "line": 37,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\scope-1.cir",
+          "sha256": "b14df7f80e570096aa68c7aef84c966059e7c565fa8d3b8d8764e5360ba91278"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 50.8874,
+          "request_sha256": "811040876748a904413ccc40c7781bef2d3135c5d96ca43fc486750de60e89be",
+          "values": {
+            "n1002_g": 1,
+            "n1002_t": 1,
+            "n1001_g": 2,
+            "n1001_t": 2
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 47.8299,
+          "request_sha256": "deb80668fc599a7209e0d1f0f0ac8c2cebd547545d4b2956d7d199e5f201482b",
+          "values": {
+            "n1002_g": 1,
+            "n1002_t": 1,
+            "n1001_g": 2,
+            "n1001_t": 2
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "n1001_g",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1001_t",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1002_g",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1002_t",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1001_g",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1001_t",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1002_g",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1002_t",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/scope-2.cir",
+      "status": "compared_pass",
+      "input_sha256": "756a6208fefe08d86632b856abf5d4234eb2116ddc017f663529f21254014b24",
+      "expanded_sha256": "756a6208fefe08d86632b856abf5d4234eb2116ddc017f663529f21254014b24",
+      "native_input_sha256": "cb5ec49eee3a5093f83ebfc31fb172856805dd68ad205b4c1a4d08ec4e4ed9d3",
+      "native_log_sha256": "b1bce273933a88e881bf47aef145610469d1ddcc0ba394307100337eafd10a95",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 614,
+            "length": 654,
+            "line": 48,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\scope-2.cir",
+          "sha256": "756a6208fefe08d86632b856abf5d4234eb2116ddc017f663529f21254014b24"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 43.7793,
+          "request_sha256": "78660a6444895fad4024381d138c28002543e032987962652c6750b6239c40ee",
+          "values": {
+            "n1003_g": 3,
+            "n1002_g": 1,
+            "n1002_t": 1,
+            "n1003_t": 3,
+            "n1001_g": 2,
+            "n1001_t": 2
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 45.3702,
+          "request_sha256": "6d834a1fbf68d863a9190802639eb70e9d5993ed953a0dbc7cc6e8a86c320568",
+          "values": {
+            "n1003_g": 3,
+            "n1002_g": 1,
+            "n1002_t": 1,
+            "n1003_t": 3,
+            "n1001_g": 2,
+            "n1001_t": 2
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "n1001_g",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1001_t",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1002_g",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1002_t",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1003_g",
+          "ngspice_volts": 3,
+          "rust_volts": 3,
+          "bound_volts": 3.1000000000000006E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1003_t",
+          "ngspice_volts": 3,
+          "rust_volts": 3,
+          "bound_volts": 3.1000000000000006E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1001_g",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1001_t",
+          "ngspice_volts": 2,
+          "rust_volts": 2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1002_g",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1002_t",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1003_g",
+          "ngspice_volts": 3,
+          "rust_volts": 3,
+          "bound_volts": 3.1000000000000006E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1003_t",
+          "ngspice_volts": 3,
+          "rust_volts": 3,
+          "bound_volts": 3.1000000000000006E-08,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/scope-3.cir",
+      "status": "compared_pass",
+      "input_sha256": "af0497412476d23e13a41e310bada49a905660a3ce01459ceea7c33e8410b324",
+      "expanded_sha256": "af0497412476d23e13a41e310bada49a905660a3ce01459ceea7c33e8410b324",
+      "native_input_sha256": "ad5f8138ff9962d28096728fef82ca467ac3ee60816d20f476c6ddeec81db095",
+      "native_log_sha256": "8d41ffaa204b2282b2c505130bb0b727bd6dec71ca346f05e5092aab1c113799",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 852,
+            "length": 654,
+            "line": 51,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\dev\\ngspice-ngspice\\tests\\regression\\lib-processing\\scope-3.cir",
+          "sha256": "af0497412476d23e13a41e310bada49a905660a3ce01459ceea7c33e8410b324"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 53.9084,
+          "request_sha256": "6c3d55a4a37ed372e6d329ee08f16771e1a8369d8aec06ddf03792fcbf9399df",
+          "values": {
+            "n1003_g": 33,
+            "n1002_g": 47.666666666666664,
+            "n1002_t": 47.666666666666664,
+            "n1003_t": 33,
+            "n1001_g": 11.25,
+            "n1001_t": 11.25
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 45.976,
+          "request_sha256": "0df1bfda38c7f4a6dd57709df11710cb5cbba8607b0bd18b2df91eb546f5877c",
+          "values": {
+            "n1003_g": 33,
+            "n1002_g": 47.666666666666664,
+            "n1002_t": 47.666666666666664,
+            "n1003_t": 33,
+            "n1001_g": 11.25,
+            "n1001_t": 11.25
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "n1001_g",
+          "ngspice_volts": 11.25,
+          "rust_volts": 11.25,
+          "bound_volts": 1.135E-07,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1001_t",
+          "ngspice_volts": 11.25,
+          "rust_volts": 11.25,
+          "bound_volts": 1.135E-07,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1002_g",
+          "ngspice_volts": 47.666666666666664,
+          "rust_volts": 47.666666666666664,
+          "bound_volts": 4.776666666666667E-07,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1002_t",
+          "ngspice_volts": 47.666666666666664,
+          "rust_volts": 47.666666666666664,
+          "bound_volts": 4.776666666666667E-07,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1003_g",
+          "ngspice_volts": 33,
+          "rust_volts": 33,
+          "bound_volts": 3.3100000000000004E-07,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "n1003_t",
+          "ngspice_volts": 33,
+          "rust_volts": 33,
+          "bound_volts": 3.3100000000000004E-07,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1001_g",
+          "ngspice_volts": 11.25,
+          "rust_volts": 11.25,
+          "bound_volts": 1.135E-07,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1001_t",
+          "ngspice_volts": 11.25,
+          "rust_volts": 11.25,
+          "bound_volts": 1.135E-07,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1002_g",
+          "ngspice_volts": 47.666666666666664,
+          "rust_volts": 47.666666666666664,
+          "bound_volts": 4.776666666666667E-07,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1002_t",
+          "ngspice_volts": 47.666666666666664,
+          "rust_volts": 47.666666666666664,
+          "bound_volts": 4.776666666666667E-07,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1003_g",
+          "ngspice_volts": 33,
+          "rust_volts": 33,
+          "bound_volts": 3.3100000000000004E-07,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "n1003_t",
+          "ngspice_volts": 33,
+          "rust_volts": 33,
+          "bound_volts": 3.3100000000000004E-07,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/semantic-nested.cir",
+      "status": "compared_pass",
+      "input_sha256": "0afcaefb12f11ab81791d4326b36c603374d59b5d2d5bca6e35c5b3bdc25115b",
+      "expanded_sha256": "0afcaefb12f11ab81791d4326b36c603374d59b5d2d5bca6e35c5b3bdc25115b",
+      "native_input_sha256": "8e89bd816de7b05b4e4bc8fa4ff8aea7da43af48f9b6fb4fbaa39fc929a631a6",
+      "native_log_sha256": "f82aa3427bb584722b9f999cc25463e4fbe967cf336bfe3c7f75819e6e18ed95",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 179,
+            "length": 67,
+            "line": 9,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\simulation-bridge\\compat\\ngspice\\semantic-nested.cir",
+          "sha256": "0afcaefb12f11ab81791d4326b36c603374d59b5d2d5bca6e35c5b3bdc25115b"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 49.0012,
+          "request_sha256": "c2116240e08ab4e019c5ca3fd1d6291c1adaf835566bded303cfcbc92c5faa19",
+          "values": {
+            "out": 24
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 43.0435,
+          "request_sha256": "25526462ffffe8c24058baa7ed557dbd5487518f5ce31daa9854a47cf7e4480b",
+          "values": {
+            "out": 24
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "out",
+          "ngspice_volts": 24,
+          "rust_volts": 24,
+          "bound_volts": 2.4100000000000005E-07,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "out",
+          "ngspice_volts": 24,
+          "rust_volts": 24,
+          "bound_volts": 2.4100000000000005E-07,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/semantic-parameters.cir",
+      "status": "compared_pass",
+      "input_sha256": "07405cb94c842c0e3b28ba2d966a19dd7925d0a4239b3b5637fc679898b2308e",
+      "expanded_sha256": "07405cb94c842c0e3b28ba2d966a19dd7925d0a4239b3b5637fc679898b2308e",
+      "native_input_sha256": "9c1be03ea0b344a985851ccf6ceabc3f359351778afc6fee4b07fe5b98787e29",
+      "native_log_sha256": "573ef83fdd6df159bfe93fd9abc2e643e36f58b468066c7fd421173aa4269708",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 359,
+            "length": 241,
+            "line": 15,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\simulation-bridge\\compat\\ngspice\\semantic-parameters.cir",
+          "sha256": "07405cb94c842c0e3b28ba2d966a19dd7925d0a4239b3b5637fc679898b2308e"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 51.5503,
+          "request_sha256": "ff3bc11d6fb7b00d9b590cbc5d29c987944335f97aaf177131ffe2fe90a56b46",
+          "values": {
+            "choice": 0,
+            "vmeg": 1000000,
+            "vm": 0.001,
+            "input": 1,
+            "vc": 64,
+            "out": 0.75,
+            "logic": 1,
+            "vu": -4
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 44.8147,
+          "request_sha256": "6de3938ff6f67b1bc46fbd01e3e2a486d64a2a119af80cb6fd37802dcf2518bc",
+          "values": {
+            "choice": 0,
+            "vmeg": 1000000,
+            "vm": 0.001,
+            "input": 1,
+            "vc": 64,
+            "out": 0.75,
+            "logic": 1,
+            "vu": -4
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "choice",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "input",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "logic",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "out",
+          "ngspice_volts": 0.75,
+          "rust_volts": 0.75,
+          "bound_volts": 8.500000000000002E-09,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "vc",
+          "ngspice_volts": 64,
+          "rust_volts": 64,
+          "bound_volts": 6.41E-07,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "vm",
+          "ngspice_volts": 0.001,
+          "rust_volts": 0.001,
+          "bound_volts": 1.01E-09,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "vmeg",
+          "ngspice_volts": 1000000.0000000001,
+          "rust_volts": 1000000,
+          "bound_volts": 0.010000001000000001,
+          "passed": true
+        },
+        {
+          "backend": "lu",
+          "node": "vu",
+          "ngspice_volts": -4,
+          "rust_volts": -4,
+          "bound_volts": 4.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "choice",
+          "ngspice_volts": 0,
+          "rust_volts": 0,
+          "bound_volts": 1E-09,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "input",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "logic",
+          "ngspice_volts": 1,
+          "rust_volts": 1,
+          "bound_volts": 1.1000000000000001E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "out",
+          "ngspice_volts": 0.75,
+          "rust_volts": 0.75,
+          "bound_volts": 8.500000000000002E-09,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "vc",
+          "ngspice_volts": 64,
+          "rust_volts": 64,
+          "bound_volts": 6.41E-07,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "vm",
+          "ngspice_volts": 0.001,
+          "rust_volts": 0.001,
+          "bound_volts": 1.01E-09,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "vmeg",
+          "ngspice_volts": 1000000.0000000001,
+          "rust_volts": 1000000,
+          "bound_volts": 0.010000001000000001,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "vu",
+          "ngspice_volts": -4,
+          "rust_volts": -4,
+          "bound_volts": 4.1E-08,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/semantic-port-order.cir",
+      "status": "compared_pass",
+      "input_sha256": "2e67675476390354f09d70b417707330fb725b2913bf940b957f80cdb8e71bc5",
+      "expanded_sha256": "2e67675476390354f09d70b417707330fb725b2913bf940b957f80cdb8e71bc5",
+      "native_input_sha256": "e45cc087a7d699ef9fdd4192ca54c71ff8ff9fe8d7f62ce00d9abb0244bd09bf",
+      "native_log_sha256": "533a211336d07026ec7d6094e8d0a657fe8172f69ac6e8ecf680da21040b076f",
+      "native_exit": 0,
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 97,
+            "length": 70,
+            "line": 6,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\simulation-bridge\\compat\\ngspice\\semantic-port-order.cir",
+          "sha256": "2e67675476390354f09d70b417707330fb725b2913bf940b957f80cdb8e71bc5"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 45.5401,
+          "request_sha256": "101a98ce9609583b06bd94fa5de972f8b65472d2342bf497d8382e3bb125d657",
+          "values": {
+            "out": -2
+          }
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 50.075,
+          "request_sha256": "24526b9219d3b8184c246f4b60a7cd4c261c270edf310cf5bb2974d4adc4cb43",
+          "values": {
+            "out": -2
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "backend": "lu",
+          "node": "out",
+          "ngspice_volts": -2,
+          "rust_volts": -2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        },
+        {
+          "backend": "faer",
+          "node": "out",
+          "ngspice_volts": -2,
+          "rust_volts": -2,
+          "bound_volts": 2.1E-08,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/semantic-zero-port.cir",
+      "status": "solver_completed_no_root_observables",
+      "detail": "no_exposed_root_voltage_observables",
+      "input_sha256": "e3d535ec496eba1ea91481a2b69de19fbaf23b4cc174663b2d4cfae78385ee4e",
+      "expanded_sha256": "e3d535ec496eba1ea91481a2b69de19fbaf23b4cc174663b2d4cfae78385ee4e",
+      "omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control",
+          "name": ".control",
+          "reason": "input_control_not_executed",
+          "range": {
+            "start": 81,
+            "length": 57,
+            "line": 7,
+            "column": 1
+          }
+        }
+      ],
+      "sources": [
+        {
+          "path": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\simulation-bridge\\compat\\ngspice\\semantic-zero-port.cir",
+          "sha256": "e3d535ec496eba1ea91481a2b69de19fbaf23b4cc174663b2d4cfae78385ee4e"
+        }
+      ],
+      "providers": [
+        {
+          "backend": "lu",
+          "status": "solver_completed",
+          "elapsed_ms": 51.8858,
+          "request_sha256": "0f48bc6da6c1e47383a6015991538a55f5f2a1fefac7e516619a4822d3dac52b",
+          "values": {}
+        },
+        {
+          "backend": "faer",
+          "status": "solver_completed",
+          "elapsed_ms": 45.1865,
+          "request_sha256": "ceff6c195c90ff8ed8db71d9eb62c970964c22794c026a05ab789e021fc7befe",
+          "values": {}
+        }
+      ],
+      "comparisons": []
+    }
+  ],
+  "first_diagnostics": [
+    {
+      "Name": "unsupported_active_card",
+      "Count": 365
+    },
+    {
+      "Name": "unsupported_physical_directive",
+      "Count": 351
+    },
+    {
+      "Name": "unsupported_primitive_header",
+      "Count": 82
+    },
+    {
+      "Name": "empty_circuit",
+      "Count": 55
+    },
+    {
+      "Name": "missing_parameter",
+      "Count": 10
+    },
+    {
+      "Name": "unsupported_expression",
+      "Count": 8
+    },
+    {
+      "Name": "unknown_parameter_override",
+      "Count": 2
+    }
+  ],
+  "diagnostic_examples": [
+    {
+      "scope": "ngspice",
+      "path": "examples/Monte_Carlo/MC_2_control.sp",
+      "detail": "empty_circuit",
+      "card": null,
+      "family": null,
+      "excerpt": null
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/Monte_Carlo/MC_ring_ts.sp",
+      "detail": "empty_circuit",
+      "card": null,
+      "family": null,
+      "excerpt": null
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/p-to-n-examples/555-timer-2.cir",
+      "detail": "missing_parameter",
+      "card": null,
+      "family": null,
+      "excerpt": "NZ = {0.3/(VT*Log(1 + 5.0M/ISZ))}"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/p-to-n-examples/remcirc-test.cir",
+      "detail": "missing_parameter",
+      "card": null,
+      "family": null,
+      "excerpt": "res"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/various/alterparam.sp",
+      "detail": "unknown_parameter_override",
+      "card": null,
+      "family": null,
+      "excerpt": "rint = 7"
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/various/alterparam.sp",
+      "detail": "unknown_parameter_override",
+      "card": null,
+      "family": null,
+      "excerpt": "rint = 7"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/Monte_Carlo/OpWien.sp",
+      "detail": "unsupported_active_card",
+      "card": "diode",
+      "family": null,
+      "excerpt": "D1\t5\t4\tD1N914"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/TransmissionLines/cpl1_4_line.sp",
+      "detail": "unsupported_active_card",
+      "card": "mos",
+      "family": null,
+      "excerpt": "m1     1     2      6       1  mp1p0  w = 36.0u l=1.0u"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/measure/func_cap.sp",
+      "detail": "unsupported_expression",
+      "card": null,
+      "family": null,
+      "excerpt": "cap_val = 'max(icap_calc(1,2,3,4))'"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/numparam/strings.cir",
+      "detail": "unsupported_expression",
+      "card": null,
+      "family": null,
+      "excerpt": "and=\"0001\""
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/Monte_Carlo/MC_2_circ.sp",
+      "detail": "unsupported_physical_directive",
+      "card": "extension",
+      "family": null,
+      "excerpt": ".options noacct"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/Monte_Carlo/MC_ring.sp",
+      "detail": "unsupported_physical_directive",
+      "card": "extension",
+      "family": null,
+      "excerpt": ".options noacct"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/Monte_Carlo/MonteCarlo.sp",
+      "detail": "unsupported_primitive_header",
+      "card": "source",
+      "family": "V",
+      "excerpt": "V1 N001 0 AC 1 DC 0"
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/TransmissionLines/URC-TM-SUB.cir",
+      "detail": "unsupported_primitive_header",
+      "card": "source",
+      "family": "V",
+      "excerpt": "VS 1  0 dc 0 PULSE (0 5 15.9NS 0.2NS 0.2NS 15.8NS 32NS )"
+    }
+  ],
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "f0686aa05ec94e7ccdbfbe3ea03df104407b4f4fc68ccfda0c3422e0a5f773c2",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "3aafdcede31233157a03ee55c22b823998eb5868da81ac09f0b14c5051a44037",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "4cd729c76c38745ec31c166862f8258be51dad30e640bbc7619e3312ebe112d8",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "bf2fc543ed6c90b46ea07ec86166bfeb5b55dc0efffcb8ca042b87d2ec9d02cc",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "976afed999d973f33a86b7ee05b8a0e1663dda13c2c27319be34abd4990261ec",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "b70b629c02f410dabfc074c1d0668e5ada5df7b671177ccb7b88b965411f512d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "42c46d689c4ba3d88db7e474474464805fb6923423e0479419adae2452ebba49",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Client/Client.cs": "4af10aae7a41d438196f4ec28abe41bf4dcc3829e2f2f2b9eaac5164a2eb65ff",
+    "dotnet/Simulator.Client/Requests.cs": "7af8670158dd1d4d80135e37cd8511c947cb7fd67ec68b33e73fef69dcf9d4b6",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "84d66c3c98bddddcd65037643b0cd3b18d35c414fed665fb9f15bcc96f55180f",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "951fa06514bea51fd3ae6bd114c118e6c503f0c65285196c200bdd289ef6fd39",
+    "dotnet/Simulator.Frontend/OperatingPointSelection.cs": "702a574c89ecfd69c15a5b9c3285d14dfd7587f179c5dddd1c06d63caa08ede8",
+    "dotnet/Simulator.Frontend/packages.lock.json": "ea51b87a36d8e82f42b9839406f5dacdb9cc1a61b4754743075f3dd4d23e402c",
+    "dotnet/Simulator.Frontend/Simulator.Frontend.csproj": "5a69547d0d2f92145f9450e95135646aa308e2fdd4bc465841ed5cf7dd376361",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "942de52671daf11d86447e7808ee4ade224e211fc31b7f4116b8cc0162f7cb2d",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "16ca2da0a864e43df1a95930710c9ff30c2ed22a01fa911aaadfcda0e091ae9e",
+    "scripts/Run-FrontendCorpus.cs": "0a1ceee61483e0a46f3f86a0cf13bc328754313bbbc97969715d9f4c82c36ef7",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779"
+  },
+  "assembly_sha256": {
+    "Simulator.Syntax": "dc503d9d75fc82e13999330a48da7661af1cdb63fb172e327b4749417e462d77",
+    "Simulator.Frontend": "488dd6028ee9a2f7bc0296fc8e3a11cff2a15654d986bdd8cc9df1b87a2b8324",
+    "Simulator.Client": "4607942d35ac698d353110e5de27bf9300ae0df483c6928f44d70704bcf477ff"
+  },
+  "harness_assembly_sha256": "9a905c48966258c699f65caae4a2754c4b30d500539030a87d9f8fa921577b20",
+  "engine_sha256": "a544235875817114f704966c7baa0a0f3f96a2abd53f8809c7afe5e9d6736547",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "inventory_sha256": "639942cf3e489baf7ce4b4e3437601d54781ede3d143ba049ae1c5b33f9ad255",
+  "limits": {
+    "max_characters": 4194304,
+    "max_tokens": 2000000,
+    "admission_budget_seconds": 1800,
+    "child_seconds": 30,
+    "absolute_voltage": 1E-09,
+    "relative": 1E-08
+  },
+  "raw": {
+    "sha256": "7001307A786AE234C566FACE5AF73F0932EA0B49C32B16AF085BA3648B9B3023",
+    "directory": "E:\\Artifacts\\Spice-frontend-simulation-20261102T025251Z/final-corpus"
+  },
+  "limitations": [
+    "Explicit profile: strict R/V/I, or selected static R/C/L/V/I with recorded analysis/control/observation omissions. Never a complete original program run.",
+    "All exposed root-node voltages only; no source-current/internal-node/full-deck/AC/transient/model qualification.",
+    "Native oracle uses expanded original source with explicit OP control queries; original input controls are never executed.",
+    "Admission budget is checked between inputs; bounded current-row operations can finish after it. No hard whole-process deadline is promised.",
+    "Windows managed harness and reused debug Rust executable; no performance ranking, new native coverage, GPU or production qualification."
+  ]
+}

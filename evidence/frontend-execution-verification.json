@@ -1,0 +1,108 @@
+{
+  "status": "verified_bounded_selected_static_dc",
+  "tested_base": "b932a44c8688bd5b782182c709a06f572ae50cc8",
+  "source_tree": "isolated work/simulation-bridge; preserved main WIP excluded",
+  "source_fingerprint_checks": 115,
+  "artifacts": "E:\\Artifacts\\Spice-frontend-simulation-20261102T025251Z",
+  "tests": {
+    "filesystem_skip": 1,
+    "syntax_passed": 406,
+    "synthetic_fault_modes": 6,
+    "frontend_passed": 57
+  },
+  "properties": {
+    "framework": "FsCheck.Xunit 3.5.0",
+    "coverage_guided_fuzz": "not_run",
+    "positive_replay": "907,20261101",
+    "cases_each": 128,
+    "arbitrary_replay": "908,20261101",
+    "soak": "not_run"
+  },
+  "baseline": {
+    "resource_refused": 30,
+    "exclusions": 8,
+    "strict_eligible": 0,
+    "lowering_refused": 890
+  },
+  "prior_trial": {
+    "solved": 17,
+    "apparent_mismatches": 2,
+    "disposition": "Native echo6digit truncation and zero root-observable classification; retained raw evidence and red regressions.",
+    "compared": 15
+  },
+  "result": {
+    "remaining_resource": 30,
+    "provider_solves": 34,
+    "files_solved": 17,
+    "reference_unavailable": 1,
+    "upstream_paths": 13,
+    "comparison_points": 96,
+    "repository_paths": 4,
+    "remaining_lowering": 873,
+    "excluded": 8,
+    "files_compared": 16,
+    "failed_points": 0,
+    "unfinished": 0,
+    "root_byte_hashes": 14
+  },
+  "tools": {
+    "sphinx": "9.1.0",
+    "stryker": "5.0.0",
+    "sdk": "10.0.403",
+    "coverlet": "10.1.0",
+    "antlr": "4.13.1",
+    "runtime": "10.0.14",
+    "reportgenerator": "5.5.11",
+    "strictdoc": "0.30.4"
+  },
+  "execution_command": "dotnet run --file scripts/Run-FrontendCorpus.cs --artifacts-path <E>/build -p:GrammarOutput=<E>/grammar -p:AntlrJar=<pinned jar> -- <checkout> <corpus> <Rust exe> <ngspice exe> <syntax inventory> <fresh output> selected-linear-op 1800",
+  "validation_commands": [
+    "dotnet test dotnet/Simulator.Frontend.Tests --artifacts-path <E>/test-build -p:GrammarOutput=<E>/test-grammar -p:AntlrJar=<pinned jar> --collect:XPlat Code Coverage; explicit SPICE_FRONTEND_*/SPICE_CORPUS_* tool paths",
+    "dotnet test dotnet/Simulator.Syntax.Tests --artifacts-path <E>/syntax-test-build -p:GrammarOutput=<E>/syntax-test-grammar -p:AntlrJar=<pinned jar> --collect:XPlat Code Coverage",
+    "QualifyOperatingPointBridge.cs with existing Rust/ngspice binaries and fresh output",
+    "Existing Simulator.Benchmarks DLL: one warmup,three measured iterations,300s budget,fresh report on E",
+    "Run-SemanticMutations.ps1 Bridge with selected adapter/guard spans; fresh zero-L guard-only replay",
+    "ValidateRequirements.cs -- --python <StrictDoc environment> --report <E>/requirements-final.json",
+    "EngineeringDocs.cs -- --python <Sphinx environment> --output <E>/engineering --api-xml <E>/api.xml"
+  ],
+  "review": {
+    "kind": "read-only AI source and evidence consistency review",
+    "remaining": "One conditional-equivalence mutation,unmeasured captured code,file-app child coverage and unimplemented simulation families",
+    "findings_fixed": [
+      "profile documentation",
+      "provider result fault classification",
+      "high precision native oracle output",
+      "zero exposed-observable outcome",
+      "unused globally physical directives"
+    ],
+    "external_human": false
+  },
+  "log_sha256": {
+    "result-validation-red.log": "943F96B8DE56D55814FDDC63821A63563FE55E4F76D93BAE766F9E96151E377E",
+    "engineering.log": "B0A9B4182F4BCF81B867BDF1C4E2B228744480AD79DBA832AFB5D9DE20185DFD",
+    "selected-corpus.log": "1A12BBE5168EB27A72F723A121DE48F7982EAA51337F61C213F9CF06193B5BF6",
+    "mutations.log": "2DF8AE01E62BF5A133A0FE9296AB70B1B8917F44CBFC16ABCD161073F9C2A5BD",
+    "delivery-corpus.log": "A02487B6CDADB0AED8FDD354AA208A028705F066A1AD9785F0E1682224C6117A",
+    "benchmark.log": "3ED99A73FA159CBCADEDBDB5880AEBBED434947A22FFBC56F801989C0CBB6A19",
+    "mutations-followup.log": "EE92986574063AF0D778F28D6140C9C63C49F237608E762EC85C4DC8DB094CB7",
+    "syntax-final-tests.log": "E7641E9C982F91049601BD092C29AD1C7EC56545F4FDB4276256A38AEB132C5C",
+    "frontend-verified-tests.log": "2AC2D506F3D0BAD08A451AF6309CD5B4305C6668A8419B7EF8F82D2823C3B9E7",
+    "final-corpus.log": "B119B3B9648C6470D82A6022003F1B180F6B2ED9816997AE7ECB0DF31586BD0B",
+    "initial-corpus.log": "4BDC749E2DAA3F9ACA928DEF8833ECC7D1EFE21CF1137599983E3B3CB69F3A07",
+    "budget-red.log": "8814D857102BE15AD9A78BEA528AED1F4E6AF52D02CBFBCF07ADB1554BE45645",
+    "requirements-final.log": "ADE339BA2C26EDFF9277ED255079C03C6CC8FA52155BDF76BF041D48C961885D",
+    "precision-and-observables-red.log": "054FF02E633A83CC2C7B3CFA7730BFD05D67CBA3D94054EDD53BCC74BA63B2FE",
+    "global-directive-red.log": "027494F0975B02CC154163C591A6AAC0B5E1433105A58AC5295BEC402E6FDBC8"
+  },
+  "limitations": [
+    "Selected static DC only; not original AC/transient/control program execution.",
+    "Only root-node voltages compared; zero-port solve is not numerically qualified.",
+    "Synthetic process outputs never count as Rust simulator evidence.",
+    "No new Rust build/native coverage,Linux/GPU/NativeAOT/full SPICE/production qualification."
+  ],
+  "results_issue": "https://github.com/jeffadickson/Spice/issues/20",
+  "source_commits": [
+    "2f4978c",
+    "ab356f7"
+  ]
+}

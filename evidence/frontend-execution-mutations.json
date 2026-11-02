@@ -1,0 +1,153 @@
+{
+  "dispositions": {
+    "original_89": "Caught in exact zero-inductance guard follow-up after a new L=0 regression; original cohort not rerun wholesale.",
+    "original_75": "Retained conditional equivalence only under internal PrimitiveExtraction invariant: Supported iff Value is non-null. Public catalog constructor is internal and snapshots immutable. Not formal proof; reopen if producer/API changes."
+  },
+  "selections": [
+    {
+      "killed_zero_inductance": [],
+      "run": "mutations",
+      "survivors": [
+        {
+          "id": "75",
+          "mutatorName": "Logical mutation",
+          "replacement": "!primitive.Supported&&primitive.Value==null",
+          "location": {
+            "start": {
+              "line": 77,
+              "column": 24
+            },
+            "end": {
+              "line": 77,
+              "column": 67
+            }
+          },
+          "status": "Survived",
+          "static": false,
+          "coveredBy": [
+            "03c8e0af-17a3-e4b2-52a8-b7921f0e59d1",
+            "edbcd2f7-7616-98c5-fc7f-efb5d8c906f9",
+            "ed8e2ab1-b590-0b82-5ca8-a7ecd68bc60b",
+            "ff7336b4-1b14-53e3-b154-a532bf4fa104",
+            "c1024192-6c30-c70f-cc07-b943e6e479fb",
+            "7f4c5b9d-ab23-b1ad-e30a-eca55a1aa95d",
+            "df2046e4-4a39-4e39-ba4f-e99a032255e0",
+            "2389edd6-b0ec-7694-999d-623cfa97ecb8",
+            "47905eb8-8647-fc28-c253-712faba77283",
+            "cff4f2ee-c46a-ec7a-0721-468d65af95a2",
+            "51c771c9-fb2c-f077-6507-7e0c44cf6d26",
+            "3be12c09-d1ea-47cd-1515-bd4e7f78c184",
+            "4d621b61-d059-4a02-9e59-6ec2445359b1",
+            "b6232092-50eb-bf71-c618-2b0eb0d736bd",
+            "be261a67-b5aa-7de9-5ae7-e5ffe912ee20",
+            "1928f194-3b9b-a14a-f0f0-face13159918",
+            "8037774e-cd27-8bbd-5066-08d2fe74f8e2",
+            "d2046cbe-c9cf-87d0-cbd7-52291030fd1a",
+            "3120518f-a169-da10-cea5-b25df92a6093",
+            "a6977119-ffe5-2782-78e7-38840321de29",
+            "a55cc2e1-24bf-93e8-7496-810ea3cd86e8",
+            "b13af4c4-5f75-c689-7232-152fd5651853",
+            "79011c3a-2ee2-01bb-b5c8-f2006f7253f9",
+            "7290f336-c62d-63b9-121f-bb41b55d1992",
+            "54768136-8980-f230-ffb1-79b982887da1",
+            "8bfae7be-e09e-c214-12a8-86ac471450c4"
+          ],
+          "killedBy": []
+        },
+        {
+          "id": "89",
+          "mutatorName": "Equality mutation",
+          "replacement": "value<0",
+          "location": {
+            "start": {
+              "line": 82,
+              "column": 47
+            },
+            "end": {
+              "line": 82,
+              "column": 55
+            }
+          },
+          "status": "Survived",
+          "static": false,
+          "coveredBy": [
+            "b13af4c4-5f75-c689-7232-152fd5651853",
+            "79011c3a-2ee2-01bb-b5c8-f2006f7253f9"
+          ],
+          "killedBy": []
+        }
+      ],
+      "counts": [
+        {
+          "Name": "CompileError",
+          "Count": 13
+        },
+        {
+          "Name": "Ignored",
+          "Count": 75
+        },
+        {
+          "Name": "Killed",
+          "Count": 22
+        },
+        {
+          "Name": "Survived",
+          "Count": 2
+        }
+      ],
+      "raw_sha256": "24B6B07C7A66E1DCD0C07BFA4229D29BDE413E7520BC1BE5958383CA80074D89"
+    },
+    {
+      "killed_zero_inductance": [
+        {
+          "id": "89",
+          "mutatorName": "Equality mutation",
+          "replacement": "value<0",
+          "location": {
+            "start": {
+              "line": 82,
+              "column": 47
+            },
+            "end": {
+              "line": 82,
+              "column": 55
+            }
+          },
+          "status": "Killed",
+          "static": false,
+          "coveredBy": [
+            "86a8a6e3-aee5-1eb1-d9b5-501723f6b524",
+            "b13af4c4-5f75-c689-7232-152fd5651853",
+            "79011c3a-2ee2-01bb-b5c8-f2006f7253f9"
+          ],
+          "killedBy": [
+            "86a8a6e3-aee5-1eb1-d9b5-501723f6b524"
+          ]
+        }
+      ],
+      "run": "mutations-followup",
+      "survivors": [],
+      "counts": [
+        {
+          "Name": "CompileError",
+          "Count": 13
+        },
+        {
+          "Name": "Ignored",
+          "Count": 95
+        },
+        {
+          "Name": "Killed",
+          "Count": 4
+        }
+      ],
+      "raw_sha256": "3D2F8448C663479FC21E5DB4B3ABA25678F6FC166891A0F93496F2771ADF9DA6"
+    }
+  ],
+  "tool": "Stryker.NET 5.0.0 Basic",
+  "limitations": [
+    "Initial 22 kills,2 survivors,13 compile errors,75 ignored; follow-up4 kills,13 compile errors,95 ignored.",
+    "Scope: selection adapter and selected bridge guard spans, not entire assembly/new harness/grammar qualification.",
+    "Snapshots predate final diagnostic comments/LF normalization and later integration tests; numerical guard/selection behavior unchanged."
+  ]
+}
