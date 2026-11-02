@@ -5,7 +5,11 @@ namespace Simulator.Syntax;
 /// <summary>Generated two-terminal primitive metadata, retaining unevaluated source syntax.</summary>
 public sealed record PrimitiveSyntax(string Name,string Family,int ScopeId,SourceSyntax P,SourceSyntax N,SourceSyntax? Value,bool Supported,SourceRange Range);
 /// <summary>Every generated statement's lexical owner, for explicit active-capability checks.</summary>
-public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range);
+public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range)
+{
+    /// <summary>Original generated leading-token spelling; composite lexical headers may span more than one word.</summary>
+    public string Name { get; init; } = "";
+}
 internal static class PrimitiveExtraction
 {
     internal static PrimitiveSyntax? Extract(ParserRuleContext card,int scope,Func<ParserRuleContext,SourceSyntax> capture,Func<int,int,SourceSyntax> captureRange)

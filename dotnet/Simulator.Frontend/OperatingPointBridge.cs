@@ -11,7 +11,7 @@ public sealed record ElementOrigin(string WireId,string LocalName,ImmutableArray
 /// <summary>Atomic typed request preparation; this operation does not run a simulator.</summary>
 public sealed record BridgeResult(SimulationRequest? Request,ImmutableDictionary<string,string> RootNodes,ImmutableArray<ElementOrigin> Origins,ImmutableArray<BridgeDiagnostic> Diagnostics)
 {
-    /// <summary>All active cards fit the bounded R/V/I operating-point profile.</summary>
+    /// <summary>All active cards fit the requested bounded operating-point preparation profile.</summary>
     public bool Success=>Request!=null&&Diagnostics.IsEmpty;
 }
 /// <summary>Generated frontend to existing typed Rust API adapter, independent of solver implementation.</summary>
@@ -19,12 +19,25 @@ public static class OperatingPointBridge
 {
     /// <summary>Flattens active R/V/I subcircuits with evaluated parameters into an operating-point request.</summary>
     public static BridgeResult Lower(DeckSyntax syntax,BridgeLimits? limits=null,string backend="lu")
+        =>LowerCore(syntax,limits,backend,false,null);
+
+    // Only the explicit selection adapter supplies omissions. The legacy public
+    // Lower contract remains strict R/V/I with no ignored input instructions.
+    internal static BridgeResult LowerSelected(DeckSyntax syntax,BridgeLimits? limits,string backend,ImmutableHashSet<int> omittedStarts)
+        =>LowerCore(syntax,limits,backend,true,omittedStarts);
+
+    private static BridgeResult LowerCore(DeckSyntax syntax,BridgeLimits? limits,string backend,bool selected,ImmutableHashSet<int>? omittedStarts)
     {
         ArgumentNullException.ThrowIfNull(syntax);limits??=new();
         if(limits.MaxDepth<0||limits.MaxDepth>128||limits.MaxInstances<1||limits.MaxElements<1||limits.MaxElements>1024||limits.MaxNodes<1||limits.MaxNodes>128)throw new ArgumentOutOfRangeException(nameof(limits));
         BridgeResult Failure(string code,SourceRange? range)=>new(null,ImmutableDictionary.Create<string,string>(StringComparer.OrdinalIgnoreCase),[],[new(code,range)]);
         if(syntax.Status!="accepted_structure"||syntax.Declarations is not {} catalog)return Failure("syntax_not_accepted",null);
         if(backend is not ("lu" or "qr" or "faer"))return Failure("unsupported_backend",null);
+        // Extensions may have globally physical effects even when spelled in
+        // an unused body. Only the explicit selection's named observations and
+        // analyses may be omitted; all other extensions remain conservative.
+        if(selected && catalog.Cards.FirstOrDefault(c=>c.Kind=="extension"&&omittedStarts?.Contains(c.Range.Start)!=true) is {} unsupportedDirective)
+            return Failure("unsupported_physical_directive",unsupportedDirective.Range);
         var rootEnd=catalog.Cards.FirstOrDefault(c=>c.ScopeId==0&&c.Kind=="endCard");
         if(rootEnd!=null&&catalog.Cards.Any(c=>c.ScopeId==0&&c.Range.Start>rootEnd.Range.Start))return Failure("unprocessed_end_tail",rootEnd.Range);
         var nodes=new List<string>{"0"};var elements=new List<Element>();var origins=new List<ElementOrigin>();
@@ -49,25 +62,31 @@ public static class OperatingPointBridge
             var frame=frames-1;var names=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             try
             {
-                // Explicit allowlist prevents ignored analyses, controls, global
-                // aliases or unsupported devices from becoming successful circuits.
-                foreach(var card in cards[scope])if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op"))
-                    throw new BridgeFailure("unsupported_active_card",card.Range);
+                // Reject every instruction not supported or explicitly recorded
+                // by the selection adapter; physical aliases/devices stay strict.
+                foreach(var card in cards[scope])
+                {
+                    if(omittedStarts?.Contains(card.Range.Start)==true)continue;
+                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op"))
+                        throw new BridgeFailure("unsupported_active_card",card.Range);
+                }
                 foreach(var primitive in primitives[scope])
                 {
-                    if(primitive.Family is not ("R" or "V" or "I"))throw new BridgeFailure("unsupported_active_card",primitive.Range);
+                    if(primitive.Family is not ("R" or "V" or "I") && !(selected && primitive.Family is ("C" or "L")))throw new BridgeFailure("unsupported_active_card",primitive.Range);
                     if(!names.Add(primitive.Name))throw new BridgeFailure("duplicate_element",primitive.Range);
                     if(!primitive.Supported||primitive.Value==null)throw new BridgeFailure("unsupported_primitive_header",primitive.Range);
                     var scalar=ParameterEvaluator.EvaluateValue(catalog,environment,primitive.Value);
                     if(scalar.Value is not {} value)throw new BridgeFailure(scalar.Diagnostics[0].Code,scalar.Diagnostics[0].Range);
                     if(primitive.Family=="R"&&value<=0)throw new BridgeFailure("invalid_resistance",primitive.Range);
+                    if(primitive.Family=="C"&&value<=0)throw new BridgeFailure("invalid_capacitance",primitive.Range);
+                    if(primitive.Family=="L"&&value<=0)throw new BridgeFailure("invalid_inductance",primitive.Range);
                     var p=Node(primitive.P.Text);var n=Node(primitive.N.Text);
                     if(p==n)throw new BridgeFailure("shorted_primitive",primitive.Range);
                     if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",primitive.Range);
                     // Compact wire identifiers are collision-free and stay within
                     // Rust's byte limits; original spellings remain in provenance.
                     var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                    elements.Add(primitive.Family switch{"R"=>new Resistor(id,p,n,value),"V"=>new Voltage(id,p,n,value),_=>new Current(id,p,n,value)});
+                    elements.Add(primitive.Family switch{"R"=>new Resistor(id,p,n,value),"C"=>new Capacitor(id,p,n,value),"L"=>new Inductor(id,p,n,value),"V"=>new Voltage(id,p,n,value),_=>new Current(id,p,n,value)});
                     origins.Add(new(id,primitive.Name,path,primitive.Range));
                 }
                 foreach(var call in bound[scope])

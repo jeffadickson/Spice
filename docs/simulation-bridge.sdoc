@@ -42,3 +42,45 @@ User-requested reporting contract. Implementation uses the existing CorpusComman
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-BRIDGE-001
+
+[REQUIREMENT]
+UID: SEM-SELECT-001
+STATUS: Draft
+TITLE: Explicit linear static operating-point selection
+STATEMENT: >>>
+The generated frontend shall provide an explicit selected static operating-point operation for ideal R/C/L and independent constant V/I declarations, preserving the strict R/V/I Lower operation. Every excluded analysis, input control program or supported read-only observation shall be reported with scope, original source range, leading token and reason. Input controls shall never execute. Unqualified physical/directive semantics shall remain refused, including potentially global effects in unused bodies. R/C/L values shall be finite and strictly positive in SI units. Failed preparation shall return no partial request, origins or omission plan.
+<<<
+COMMENT: >>>
+Bounded implementation: OperatingPointSelection.Select; OperatingPointBridge.LowerSelected/LowerCore; generated ScopedCard.Name metadata. Verification: SelectedOperatingPointTests including replay 907,20261101, physical directive red regression and zero-inductance mutation follow-up; FrontendCorpusIntegration compares original-source native operating points. No original AC/transient/control program or model-device execution is implied. Default Lower remains unchanged.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-BRIDGE-001
+
+[REQUIREMENT]
+UID: SEM-EXEC-001
+STATUS: Draft
+TITLE: Actual generated-frontend corpus execution outcomes
+STATEMENT: >>>
+An opt-in qualification harness shall run supported generated-frontend requests through the public typed wire boundary to existing CPU solvers. It shall retain input/resource/source/binary fingerprints and hash-pinned exclusions, verify the actual root read against the inventory identity, distinguish preparation refusal, provider failure, completed solve, reference unavailability and numerical agreement, and count unique input files separately from provider runs and fixture campaigns. Successful provider data shall match the requested case/provider identity, finite sample and unique signal contracts and required voltage units. A failed provider result shall not suppress the other provider's evidence. Configurable bounded admission and child-process budgets shall leave unfinished work explicit.
+<<<
+COMMENT: >>>
+Implementation: scripts/Run-FrontendCorpus.cs. Verification: real corpus replay plus FrontendCorpusIntegration and synthetic FrontendResultFaultIntegration. Synthetic protocol faults are never simulator qualification. Admission is checked between inputs; bounded current-row operations may finish after it. Missing root observables are unavailable, not zero or a numerical discrepancy. Source changes before finalization prevent a completed report. New source/helper fingerprint and elapsed/UTC metadata supplement the reused Rust executable identity.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-EVIDENCE-001
+
+[REQUIREMENT]
+UID: SEM-ORACLE-001
+STATUS: Draft
+TITLE: Independent selected operating-point reference precision
+STATEMENT: >>>
+Selected operating-point qualification shall compare root-node voltages against native ngspice from the independently expanded original source, preserving device/parameter values. Only explicitly recorded generated source ranges may be excluded from the oracle's original control, analysis and observation instructions. The oracle shall use sufficient printed precision without increasing the declared numerical bound to hide formatting discrepancies. Missing, non-finite, duplicate or otherwise unavailable reference observations shall not count as numerical passes. Absent root observables shall remain explicitly unqualified even when solvers complete.
+<<<
+COMMENT: >>>
+Implementation: Run-FrontendCorpus.cs AST-located projection, 17-digit print probes and explicit absolute 1e-9 V plus relative 1e-8 bound. Actual echo interpolation rounded a repeating-fraction case to six digits; precision-control experiment and red fraction regression establish why print replaces echo. Zero-port and malformed-response red regressions retain unavailable versus mismatch distinctions. Only root-node voltages are compared; internal nodes, source currents and complete original programs remain outside this profile.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-EXEC-001

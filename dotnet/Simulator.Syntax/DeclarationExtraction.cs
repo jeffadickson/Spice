@@ -31,7 +31,7 @@ internal sealed class DeclarationExtraction
     {
         if(item is not SpiceParser.StatementContext statement || statement.GetChild(0) is not ParserRuleContext card)return;
         var owner=Enclosing(statement.Parent);
-        cards.Add(new(owner,SpiceParser.ruleNames[card.RuleIndex],Range(card)));
+        cards.Add(new(owner,SpiceParser.ruleNames[card.RuleIndex],Range(card)){Name=card.Start.Text});
         var primitive=PrimitiveExtraction.Extract(card,owner,Capture,Capture);
         if(primitive!=null){primitives.Add(primitive);return;}
         if(card is SpiceParser.ExtensionContext extension && extension.Start.Text.ToLowerInvariant() is ".if" or ".elseif" or ".else" or ".endif" or ".csparam" or ".sndparam")
