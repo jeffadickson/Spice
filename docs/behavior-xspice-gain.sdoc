@@ -15,7 +15,7 @@ The generated frontend shall retain A-card lexical scope and ordered ports and p
 <<<
 COMMENT: >>>
 Implementation: dotnet/Simulator.Syntax/XspiceSyntax.cs, DeclarationExtraction.cs, DeclarationCatalog.cs; dotnet/Simulator.Frontend/XspiceGainLowering.cs.
-Verification: XspiceGainTests covers defaults, explicit and differential ports, lexical scope, engineering values and FsCheck affine algebra. XspiceGainOracleIntegration uses original A/model decks against existing typed VCVS/constant-source requests in DC, AC and ramp transient. The nonzero-reference differential transient case exposes an existing native sparse residual failure and remains unresolved in this branch. Evidence: evidence/behavior-xspice-gain.json, docs/behavior-xspice-gain-results.md. Draft status does not imply full solver capability closure.
+Verification: XspiceGainTests covers defaults, explicit and differential ports, lexical scope, engineering values and FsCheck affine algebra. XspiceGainOracleIntegration uses original A/model decks against existing typed VCVS/constant-source requests in DC, AC and ramp transient. The nonzero-reference differential transient case exposed an existing native sparse residual failure; a520ec2 corrects that named fixture through bounded DenseLU refinement, with separate SOLVER-LU-REFINE-001 evidence. Evidence: evidence/behavior-xspice-gain.json, docs/behavior-xspice-gain-results.md. Draft status does not imply full solver capability closure.
 <<<
 RELATIONS:
 - TYPE: Parent

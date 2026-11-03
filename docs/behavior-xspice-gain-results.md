@@ -59,10 +59,7 @@ Original A-card comparisons cover positive gain/nonzero offsets, negative gain
 and explicit differential ports, and mixed-case model/parameter names with
 engineering suffixes. The initial zero-reference variants passed 78 voltage
 checks over DC, one AC frequency and a linear ramp transient on LU/faer.
-Nonzero differential references pass DC/AC but the native typed transient
-request returns `numerical_failure: sparse real residual failed`. The opt-in
-regression remains failing until the parent runtime investigation resolves it;
-no complete differential transient qualification is claimed.
+The original frozen engine failed the nonzero-reference differential transient with `numerical_failure: sparse real residual failed`. The bounded DenseLU correction in a520ec2 resolves that named regression without relaxing the residual check; all 78 original-A comparisons now pass, including the nonzero-reference profile. See docs/lu-refinement-results.md. No general differential/transient model claim follows from these finite fixtures.
 
 Raw artifacts are under `E:/Artifacts/spice/behavior-xspice-nov2`. In particular,
 `gain-oracle-ff7e0b905b2243298f069eb76869a9c0` contains the exact original deck,
@@ -94,4 +91,4 @@ cannot be added to solved-circuit totals.
 
 The corrected Stryker.NET 5.0.0 campaign killed both selected offset-arithmetic mutants. Of 429 generated mutants, 376 were outside the selected span and 51 had compile errors outside that span; this is a two-mutant check, not whole-helper mutation qualification.
 
-Frozen928-root lexical census completed:890 resource-expanded accepted roots,38 resource refusals,zero changed root hashes. It observed 1157 A-card instances over 76 lexical families, including63 gain instances in49 roots and12 summer instances. Of gain instances,34 in31 roots prepared under lexical defaults;18 refused port semantics,4 unsupported parameters,5 invalid environments and2 missing parameters. Counts include unused hierarchy and repeated source inclusion; these are neither distinct complete circuits nor simulation uplift. The census preceded the diagnostic-ordering fix; invalid-environment classification is retained as measured. StrictDoc validation passed22documents/344uniqueIDs/333resolvedparents.
+Frozen 928-root lexical census completed:890 resource-expanded accepted roots, 38 resource refusals,zero changed root hashes. It observed 1157 A-card instances over 76 lexical families, including 63 gain instances in 49 roots and 12 summer instances. Of gain instances, 34 in 31 roots prepared under lexical defaults; 18 refused port semantics, 4 unsupported parameters, 5 invalid environments and 2 missing parameters. Counts include unused hierarchy and repeated source inclusion; these are neither distinct complete circuits nor simulation uplift. The census preceded the diagnostic-ordering fix; invalid-environment classification is retained as measured. StrictDoc validation passed 22 documents / 344 unique IDs / 333 resolved parents.

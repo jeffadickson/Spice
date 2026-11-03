@@ -44,3 +44,7 @@ files instead. Instrumented builds use a separate target and disable incremental
 caching; they do not change the production toolchain pin. Native line/branch
 coverage and the bounded two-mutant correction campaign are recorded separately
 when their actual runs complete.
+
+Focused existing native regressions passed 47 tests (15 library,4 matrix conformance,6 sparse qualification,22 sparse transient), plus the3 new gain tests. Nightly branch instrumentation passed15 library+3 integration tests. The helper's unit-binary instantiation measured31/33 lines and8/10 branches; its integration-binary instantiation measured23/33 and5/10. These are separate compiler instantiations and are not summed. Exact clean profiles, source hashes and scope limits are in evidence/lu-refinement-results.json.
+
+The bounded cargo-mutants run caught both selected arithmetic defects (residual minus changed to plus; correction plus changed to minus). Zero survived/timed out/unviable. Its own baseline was explicitly skipped after the separately recorded50-test native baseline and78 original-A checks; this is not a whole-helper mutation score.

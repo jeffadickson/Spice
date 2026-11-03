@@ -1,5 +1,5 @@
 {
-  "state": "bounded_helper_measured_native_regression_unresolved",
+  "state": "bounded_helper_measured_named_native_regression_fixed",
   "tested_revision": "791e31cde5605e077c4bdf066d47715872c72291",
   "source_sha256": {
     "dotnet/Simulator.Syntax/XspiceSyntax.cs": "b7182d0627099d2bae6e64c8bfadb18c478d53a4fc8d8afcb18b37169d30f2f3",
@@ -30,12 +30,14 @@
       "nonzero_differential_dc_ac": "passed LU/faer",
       "regression_directory": "E:/Artifacts/spice/behavior-xspice-nov2/gain-oracle-ff7e0b905b2243298f069eb76869a9c0",
       "initial_zero_reference_profiles": 3,
-      "nonzero_differential_transient": "failed existing native sparse real residual",
+      "nonzero_differential_transient": "passed LU/faer after bounded DenseLU correction a520ec2",
       "initial_zero_reference_outcome": "passed",
       "expected_output_volts": "2.3 - 2000*t, t seconds",
       "native_engine_sha256": "679da74a6d93e6b471617c9cd9c410af29e503ad3821355644d0863042981492",
       "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
-      "initial_zero_reference_checks": 78
+      "initial_zero_reference_checks": 78,
+      "fixed_engine_sha256": "09ecd69c6c092fc8bcc148ca799367a254bcbb7dfbd242aa4ff26ffbd1a878e8",
+      "current_reference_evidence": "evidence/lu-refinement-results.json"
     },
     "frontend": {
       "skipped": 10,
@@ -61,8 +63,7 @@
     "No generic XSPICE kernel, summer vector parameters, current/digital/UDN/inverted ports or generic B-source support.",
     "Helper preparation does not establish active hierarchy/circuit execution; parent owns bridge integration.",
     "No new standalone fuzz campaign ran; fixed negative cases and FsCheck scalar algebra ran.",
-    "Initial invalid even-gamma PropertyAttribute caused partial VSTest execution; its 19-case counts, coverage and first mutation run are superseded.",
-    "Nonzero-reference differential transient remains a real failing opt-in regression."
+    "Initial invalid even-gamma PropertyAttribute caused partial VSTest execution; its 19-case counts, coverage and first mutation run are superseded."
   ],
   "raw_artifacts": "E:/Artifacts/spice/behavior-xspice-nov2",
   "requirements": [

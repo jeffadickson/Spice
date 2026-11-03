@@ -1,0 +1,108 @@
+{
+  "state": "fixed_named_regression_verified",
+  "tested_revision": "a520ec2",
+  "source_sha256": {
+    "tests/gain_differential_transient.rs": "53864342b36689caa786adf3198d3f7dde909b685a4fccde1c846114a28077f4",
+    "src/backend.rs": "802c0d1bf2897e36320ee1ca878bd88865fca020225b1b961fde83e5bdade126"
+  },
+  "root_cause": {
+    "unrefined_lu_volts": 1.1102230246251565E-16,
+    "factor_identity_issue": false,
+    "expected_volts": 0,
+    "normalized_componentwise_error": 1,
+    "faer_original": "passed",
+    "residual_acceptance": 1E-10,
+    "source_constraint_row": 5
+  },
+  "fix": {
+    "counter_scope": "integration.linear_solves counts logical outer requests, not internal factor corrections",
+    "max_factor_internal_corrections": 3,
+    "factor_reuse": "same factor; no refactor or provider fallback",
+    "independent_csc_checker": "unchanged",
+    "provider": "nalgebra_dense_lu_reference",
+    "dependency": "nalgebra 0.34.1"
+  },
+  "verification": {
+    "native_focused": {
+      "library": 15,
+      "gain_differential_transient": 3,
+      "sparse_transient": 22,
+      "failed": 0,
+      "sparse_qualification": 6,
+      "total": 50,
+      "skipped": 0,
+      "matrix_conformance": 4
+    },
+    "strictdoc": {
+      "documents": 23,
+      "resolved_parents": 334,
+      "outcome": "passed",
+      "unique_ids": 345
+    },
+    "original_A_oracle": {
+      "outcome": "passed",
+      "native_version": "ngspice-47+",
+      "voltage_checks": 78,
+      "fixed_engine_sha256": "09ecd69c6c092fc8bcc148ca799367a254bcbb7dfbd242aa4ff26ffbd1a878e8",
+      "profiles": 3,
+      "analytical_output_volts": "2.3-2000*t, t seconds",
+      "negative_differential_directory": "E:/Artifacts/spice/behavior-xspice-nov2/gain-oracle-32e5cc65aac6406a8d17bfd7123ffb9a"
+    },
+    "regular_compiler": "rustc 1.99.1 MSVC",
+    "property": {
+      "framework": "Proptest 1.9.0",
+      "providers": [
+        "lu",
+        "faer"
+      ],
+      "counterexample": null,
+      "outcome": "passed",
+      "seed": 57120261103,
+      "requested_cases": 128
+    }
+  },
+  "coverage": {
+    "limitation": "Initial all-profile merge included build-script profiles and emitted three mismatched-function warnings; discarded in favor of individually identified test profiles with no warnings. No combined helper coverage or whole-core coverage claim.",
+    "flags": "-C instrument-coverage -Z coverage-options=branch",
+    "unit": {
+      "branches_valid": 10,
+      "raw_report": "E:/Artifacts/spice/behavior-xspice-nov2/native-coverage/unit-clean-functions.txt",
+      "profile": "4126857929014895647_0-68504.profraw",
+      "lines_covered": 31,
+      "lines_valid": 33,
+      "branches_covered": 8
+    },
+    "integration": {
+      "branches_valid": 10,
+      "raw_report": "E:/Artifacts/spice/behavior-xspice-nov2/native-coverage/integration-clean-functions.txt",
+      "profile": "16494633844572684782_0-65172.profraw",
+      "lines_covered": 23,
+      "lines_valid": 33,
+      "branches_covered": 5
+    },
+    "compiler": "rustc 1.101.0-nightly (12433c307 2026-10-24)",
+    "scope": "solve_refined_real_lu function, separate unit and integration crate instantiations; no invalid sum across different mangled symbols"
+  },
+  "limitations": [
+    "Same-precision bounded refinement may stagnate or fail; no global convergence/conditioning guarantee.",
+    "No full native suite rerun in this branch; parent runs merged regression coverage.",
+    "No nextest installation in the active global Cargo environment; cargo test used.",
+    "E: exFAT incremental hard links were unsupported and copied in regular builds; instrumented builds disable incremental caching.",
+    "No standalone new fuzz campaign; negative unit tests and bounded Proptest source-constraint campaign ran."
+  ],
+  "requirements": [
+    "SOLVER-LU-REFINE-001"
+  ],
+  "raw_artifacts": "E:/Artifacts/spice/behavior-xspice-nov2",
+  "mutation": {
+    "selected": 2,
+    "baseline": "explicit skip in mutation harness; prior 50 native focused tests and 78 original-A oracle checks passed",
+    "scope": "residual subtraction to addition; correction addition to subtraction in solve_refined_real_lu",
+    "tool": "cargo-mutants",
+    "missed": 0,
+    "timed_out": 0,
+    "caught": 2,
+    "raw_report": "E:/Artifacts/spice/behavior-xspice-nov2/native-mutation/mutants.out/outcomes.json",
+    "unviable": 0
+  }
+}
