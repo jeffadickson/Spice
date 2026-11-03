@@ -1,0 +1,50 @@
+{
+  "state": "scheduled_execution_pending",
+  "recorded_utc": "2026-11-03T04:23:27.9543374Z",
+  "source_commit": "8ecc0abdab7049fbcd8af1a0db6dd3efcc62da28",
+  "clean_checkout_relative": "work/soak-next-five-nov2",
+  "artifact_directory": "E:/Artifacts/Spice-soak-20261102T2300-8ecc0abdab70",
+  "start_local": "2026-11-02T23:00:00-08:00",
+  "finish_local": "2026-11-03T06:00:00-08:00",
+  "review_local": "2026-11-03T06:10:00-08:00",
+  "timezone": "America/Los_Angeles",
+  "requested_minutes": 420,
+  "cleanup_reserved_seconds": 5,
+  "automations": [
+    {
+      "id": "spice-verified-seven-hour-soak-tonight",
+      "record_sha256": "0f681e34ef97ea7c14f00d40c55239eb6c99464bcf4801259a4229561b75aed8",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "review-spice-verified-overnight-window",
+      "record_sha256": "1a6995946c2f766fa8a369f73f028e1721b50059e22b5c45cd9a0bb9d06ee008",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "spice-nightly-endurance-campaign",
+      "record_sha256": "8cdba855a8f40bfcebad33fa5e8df2072440b5ede82c3276b751fc92a57e4179",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "spice-morning-endurance-results",
+      "record_sha256": "0042cf3c4a6e722fb829674a73095faded6444e84f5e41db0aa7bfe4d55a3e35",
+      "status": "ACTIVE"
+    }
+  ],
+  "recurring": {
+    "requested_minutes": 300,
+    "nightly_start_local": "00:00",
+    "morning_review_local": "05:05",
+    "source": "Fresh clean committed-main checkout; preserve unknown uncommitted work",
+    "results": "One GitHub results issue per logical finished run, no CI or source changes in scheduled execution/review",
+    "overlap": "Actual worker canonical lock; preserve any active run",
+    "bulk_outputs": "Existing CODEX_ARTIFACT_ROOT or E:/Artifacts unique run subtree"
+  },
+  "limits": [
+    "No campaign has started or completed at this recording.",
+    "Late startup shrinks effective test budget; do not infer420active minutes.",
+    "Raw logs remain local; actual result/source/seed/mutation evidence must be reviewed.",
+    "Forced outer-supervisor cleanup and Linux junction-launcher behavior remain unqualified."
+  ]
+}

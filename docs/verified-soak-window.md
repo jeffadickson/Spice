@@ -62,3 +62,5 @@ and inner deadline. No Windows Job Object/forced-cleanup guarantee is claimed.
 This Windows junction launcher and external separate git-dir layouts have no
 Linux qualification; use the established native Linux workflow there. END-006
 remains Draft until the actual overnight evidence is reviewed.
+
+Scheduler registration is confirmed in evidence/overnight-schedule-20261102.json: one-time11pm launch and6:10am review are active; exact source pin8ecc0ab remains fixed. The recurring midnight300-minute campaign now uses clean committed-main checkouts and unique E: bulk directories, preserving any active run. Its5:05am review understands an active seven-hour run and new E: manifest pointers. Scheduling is not execution evidence.
