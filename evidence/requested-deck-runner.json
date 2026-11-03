@@ -1,0 +1,201 @@
+{
+  "scope": "Thin single-deck requested analysis execution adapter; no domain/parser/solver change or numerical qualification",
+  "base": "48aca57",
+  "requirement": "EXEC-DECK-001",
+  "tested_source_hashes": {
+    "README.md": "a76fb390800d1d1980722619fb2a42e4b9597b0f120f36b88e350f88848782f0",
+    "scripts/Run-RequestedDeck.cs": "210cb4a789c5a2835dd1b95884219a41e4d9490fd82449f35ed009a49999a28b",
+    "scripts/Test-RequestedDeck.cs": "07a592e468d60602ec2a01c8d9b11c3804c3f8be70b96475e8040872e4b743fc",
+    "docs/requested-deck-runner.md": "7819d77af49281c85d6c655e86c8d1f06776b7190e6723c288487fc38e85d0c2",
+    "docs/requested-deck-runner.sdoc": "a7281f055779825b9cfab67ed27d5651218c1a998b9cf8aa6eb9753e5ca08c8a"
+  },
+  "canonical_lf_source_sha256": {
+    "README.md": "a76fb390800d1d1980722619fb2a42e4b9597b0f120f36b88e350f88848782f0",
+    "scripts/Run-RequestedDeck.cs": "5d116dadcafd59cdd997d26ee7e2ed765c9eeeb664c4ea7554b3a6f26a164c01",
+    "scripts/Test-RequestedDeck.cs": "217f6914b010a2973dfce2860e4367fb339b25c446b4b0c4a8bfb4801df8fb16",
+    "docs/requested-deck-runner.md": "f006a4b59eb906a53bdbff5b116f9629c6e4b938c998f009dfbc0d714dcd8f9b",
+    "docs/requested-deck-runner.sdoc": "f80c060bd973315cfcb73bf2fe1ca2a8172fb898c025c5c68e1b731c3ea34981"
+  },
+  "source_byte_conventions": "Actual tested working-file bytes and LF-normalized repository source hashes retained separately.",
+  "engine": {
+    "note": "Copied and SHA-verified before smoke; no mutable root/census engine used for execution.",
+    "path": "E:\\Artifacts\\Spice-requested-deck-runner-44c5317c04264f51818e433b028ca662\\circuit-simulator.exe",
+    "sha256": "ba0507050148e4ad626c05b354145f08ad2a4a3664043ff2143843d0b281459b",
+    "original": "E:/Artifacts/Spice-compatibility-20261103T043926Z/native-wave-target/debug/circuit-simulator.exe"
+  },
+  "adapter": {
+    "raw_policy": "PrepareExecutionAsync materializes IC once; archive initialization response and materialized request immediately. Single-point ExecuteAsync view clears InitializationRequest, retains original identity and DC coordinate; original complete plan archived separately. Partial returned payloads retained but original aggregate status fails.",
+    "path": "E:\\Artifacts\\Spice-requested-deck-runner-44c5317c04264f51818e433b028ca662\\build\\bin\\debug\\Run-RequestedDeck.dll",
+    "sha256": "6ed6a2eb613e3c0a5f95924ea8d68a6e8fbac1dcd6bfa2180fb21f3335fedce8",
+    "public_apis": [
+      "ResourceResolver.Resolve",
+      "RequestedAnalysis.Prepare",
+      "RequestedAnalysis.PrepareExecutionAsync",
+      "RequestedAnalysis.ExecuteAsync",
+      "SimulationClient"
+    ]
+  },
+  "verification": {
+    "covered_raw": "E:\\Artifacts\\Spice-requested-deck-runner-44c5317c04264f51818e433b028ca662\\smoke-covered-release\\verification.json",
+    "initial_window": {
+      "materialized_state_values": 3,
+      "reported_start_s": 0.0002,
+      "raw_start_s": 0
+    },
+    "raw": "E:\\Artifacts\\Spice-requested-deck-runner-44c5317c04264f51818e433b028ca662\\smoke-release\\verification.json",
+    "examples_unchanged": true,
+    "independent_dc_values_v": [
+      0,
+      1,
+      2
+    ],
+    "unknown_control_diagnostic": "unsupported_control_command:shell",
+    "status": "passed",
+    "examples": [
+      "examples/bjt-ebers-moll.cir",
+      "examples/mos1-body-overlap.cir"
+    ],
+    "checks": [
+      {
+        "name": "help",
+        "exit": 0,
+        "status": "usage"
+      },
+      {
+        "name": "usage",
+        "exit": 2,
+        "status": "refused_before_output_ownership"
+      },
+      {
+        "name": "rlc",
+        "exit": 0,
+        "status": "executed"
+      },
+      {
+        "name": "missing-input",
+        "exit": 2,
+        "status": "refused_before_output_ownership"
+      },
+      {
+        "name": "missing-engine",
+        "exit": 2,
+        "status": "refused_before_output_ownership"
+      },
+      {
+        "name": "missing-allowed-root",
+        "exit": 2,
+        "status": "refused_before_output_ownership"
+      },
+      {
+        "name": "unknown-control",
+        "exit": 1,
+        "status": "refused"
+      },
+      {
+        "name": "missing-resource",
+        "exit": 1,
+        "status": "refused"
+      },
+      {
+        "name": "existing-output",
+        "exit": 2,
+        "status": "refused_before_output_ownership"
+      },
+      {
+        "name": "singular",
+        "exit": 1,
+        "status": "failed"
+      },
+      {
+        "name": "dc",
+        "exit": 0,
+        "status": "executed"
+      },
+      {
+        "name": "initial-window",
+        "exit": 0,
+        "status": "executed"
+      },
+      {
+        "name": "partial-dc",
+        "exit": 1,
+        "status": "failed"
+      },
+      {
+        "name": "local-include",
+        "exit": 0,
+        "status": "executed"
+      },
+      {
+        "name": "denied-include",
+        "exit": 1,
+        "status": "refused"
+      },
+      {
+        "name": "explicit-include",
+        "exit": 0,
+        "status": "executed"
+      },
+      {
+        "name": "bjt-ebers-moll",
+        "exit": 0,
+        "status": "executed"
+      },
+      {
+        "name": "mos1-body-overlap",
+        "exit": 0,
+        "status": "executed"
+      }
+    ],
+    "negative_expectations": "Unknown shell control/missing or denied resource refuse; singular and partially failed DC remain failed; invalid args/inputs/roots and existing output reject before output ownership. Existing sentinel unchanged. Successful partial DC raw payloads retained.",
+    "cases": 18
+  },
+  "coverage": {
+    "module_line_rate": 0.9782,
+    "scope": "Extracted Run-RequestedDeck module only; aggregate raw also contains reused API modules, not claimed as new core qualification",
+    "lines_total": 92,
+    "tool": "Existing cached Coverlet.Console10.1.0 net10",
+    "module_branch_rate": 0.7465,
+    "maps": "Main async state, Hash, captured CreateFolder/SaveText/Save, archive records are present",
+    "mapped_class_line_conditions_covered": 106,
+    "lines_covered": 90,
+    "mapped_class_line_conditions_total": 142,
+    "limitations": "Mapped condition totals and vendor headline are separate aggregates. Cancellation and generic archival/transport exception paths are incompletely exercised; no source coverage completeness claim. Coverlet restored the adapter DLL to the normal smoke SHA after collection.",
+    "raw": "E:\\Artifacts\\Spice-requested-deck-runner-44c5317c04264f51818e433b028ca662\\runner-coverage-release.cobertura.xml"
+  },
+  "requirements": {
+    "unique_ids": 386,
+    "documents": 41,
+    "resolved_parents": 365,
+    "raw": "E:\\Artifacts\\Spice-requested-deck-runner-44c5317c04264f51818e433b028ca662\\strictdoc.json"
+  },
+  "engineering": {
+    "raw": "E:\\Artifacts\\Spice-requested-deck-runner-44c5317c04264f51818e433b028ca662\\engineering\\verification.json",
+    "status": "passed"
+  },
+  "review": {
+    "disposition": "No Important/Critical source finding. Minor old echo fixture did not prove control-effect refusal; corrected to admitted OP followed by forbidden shell, with exact diagnostic assertion and no executed operations. Final hash review pending commit.",
+    "kind": "Independent internal agent read-only source review",
+    "reviewer": "requested_analyses_impl"
+  },
+  "commands": [
+    {
+      "command": "dotnet run --file scripts/Run-RequestedDeck.cs --artifacts-path <run>/build -p:AntlrJar=<existing-pinned-jar> -p:GrammarOutput=<run>/grammar -- <input.cir> <frozen-engine> <fresh-output>",
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\requested-deck-runner"
+    },
+    {
+      "command": "dotnet run --file scripts/Test-RequestedDeck.cs --artifacts-path <run>/smoke-build -- <compiled-runner.dll> <frozen-engine> <fresh-smoke-output> <existing-examples-directory>",
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\requested-deck-runner"
+    },
+    {
+      "command": "dotnet <cached-coverlet10.1.0-net10.dll> <runner.dll> --target dotnet --targetargs \"<smoke.dll> <runner.dll> <frozen-engine> <fresh-smoke-output> <examples>\" --include [Run-RequestedDeck]* --include-test-assembly --format cobertura --output <run>/runner-coverage-reviewed.cobertura.xml"
+    }
+  ],
+  "limitations": [
+    "Executed is not qualified. No ngspice dependency or new native numerical campaign.",
+    "120s cooperative job and30s perpoint; synchronous bounded preparation checks cancellation between phases, no OS-blocked IO hard deadline.",
+    "Timeout/user-cancellation/forced disk failure not newly fault-injected; public client cancellation and process cleanup reused.",
+    "No new source mutation or broad fuzz campaign. Finite malformed/negative/partial-failure checks ran.",
+    "Managed .NET10 fileapp, not NativeAOT. No new library/framework/project, production migration, CI or push."
+  ]
+}

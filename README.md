@@ -19,6 +19,8 @@ scopes and conservative name lookup, with parameter syntax retained unevaluated.
 Instance binding, external-resource resolution and numerical execution remain
 separate gates.
 
+Execute one admitted SPICE deck through the [single-deck requested-analysis command](docs/requested-deck-runner.md). It resolves bounded resources and runs the original supported requests, retaining raw results and execution metadata without claiming numerical qualification.
+
 ## Working scope
 
 Run the [whole upstream corpus matrix](docs/ngspice-corpus-matrix.md) to learn what

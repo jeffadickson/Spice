@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Single-deck requested analysis execution command
+
+[REQUIREMENT]
+UID: EXEC-DECK-001
+STATUS: Draft
+TITLE: Thin public execution and evidence adapter
+STATEMENT: >>>
+The application shall expose a noninteractive single-deck command taking explicit input, engine and fresh output paths, with optional additional allowed resource roots. It shall reuse bounded generated resource/preparation/client APIs, preserve original analysis and point identities, retain prepared/materialized requests and returned raw initialization/execution responses separately from reported windows, and publish an atomic execution summary. Unsupported controls/resources/profiles, incomplete or failed points, cancellation, changed source/engine identities and publication failure shall not produce an executed success label. Execution shall remain distinct from numerical qualification.
+<<<
+COMMENT: >>>
+Implementation: scripts/Run-RequestedDeck.cs; existing ResourceResolver, RequestedAnalysis and SimulationClient remain unchanged. Budgets: 120-second cooperative job / 30-second point, 32 operations, 1000 client points, existing resource bounds. Single-point views preserve raw partial evidence but original aggregate failure; public IC materialization occurs once before ExecuteAsync. Verification: scripts/Test-RequestedDeck.cs end-to-end smoke cases and evidence/requested-deck-runner.json. Actual adapter coverage is scoped separately; cancellation/forced-disk failure and broad mutation/fuzz remain unmeasured here. No native oracle or full model/control compatibility is inferred.
+<<<
