@@ -1,0 +1,29 @@
+{
+  "observations": [
+    "Eight direct Newton iterations fail.",
+    "Coarse source minimum1e-6 fails explicitly.",
+    "Minimum1e-12 source stepping and Gmin1S→1e-9S recover within inverse Ebers-Moll/KCL tolerances.",
+    "Impossible reverse injection refuses under both policies."
+  ],
+  "source_hashes": {
+    "dotnet/Simulator.Frontend.Tests/BjtContinuationNativeTests.cs": "e6b3950ef9a2b6014eb76887401a43af271c80a6a0bd106631dc6a4353b33886",
+    "docs/charged-junction-convergence.sdoc": "1af268ad4c2a978896703186c62a5506c656ac4ff2257706d770d32b85869b76"
+  },
+  "polarities": [
+    "NPN",
+    "PNP"
+  ],
+  "status": "finite_composite_recovery_qualified",
+  "artifacts": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z",
+  "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/final-managed.log",
+  "providers": [
+    "lu",
+    "faer"
+  ],
+  "theory_rows": 4,
+  "limitations": [
+    "No new mutation campaign for these test scenarios; production model/provider mutations reported separately.",
+    "Public client does not expose internal continuation counters.",
+    "Finite diode-connected composition evidence, not universal BJT/MOS convergence."
+  ]
+}

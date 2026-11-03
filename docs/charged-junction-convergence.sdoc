@@ -14,3 +14,17 @@ Verification: tests/spice_diode_continuation.rs exercises LU, QR and faer with r
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: CONV-BJT-COMPOSITE-001
+STATUS: Draft
+TITLE: Qualify composite BJT recovery and physical refusal
+STATEMENT: >>>
+Qualification of the admitted diode-connected NPN/PNP composition shall demonstrate an actual bounded direct-Newton failure, explicit exhaustion of a coarse source-step policy, successful finer source stepping and Gmin recovery against independent inverse-Ebers-Moll voltage and KCL oracles, and refusal of impossible reverse injection. Artificial shunt removal shall be challenged by physical tolerances tighter than its unrecovered contribution.
+<<<
+COMMENT: >>>
+Verification: BjtContinuationNativeTests uses both LU/faer through the generated frontend and public client. Eight iterations are held fixed. Source minimum scale 1e-6 is intentionally insufficient; the qualified finer policy permits 1e-12 within 128 stages. Gmin uses 1 S to 1e-9 S warm starts, then the mandatory unregularized solve. Nonzero junction/transit storage is retained in the composite. Public API results do not expose internal stage counters, so no counter-coverage claim follows. This is finite composite recovery evidence, not arbitrary transistor circuits or universal convergence.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: CONV-SPICE-JUNCTION-001
