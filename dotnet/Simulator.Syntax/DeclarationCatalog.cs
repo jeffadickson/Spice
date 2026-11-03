@@ -74,6 +74,8 @@ public sealed class DeclarationCatalog
     public ImmutableArray<AnalysisSyntax> Analyses { get; init; } = [];
     /// <summary>Generated .IC node-voltage cards; evaluation and initial-state preparation remain separate.</summary>
     public ImmutableArray<InitialConditionSyntax> InitialConditions { get; init; } = [];
+    /// <summary>Generated bounded command metadata; collection does not authorize execution.</summary>
+    public ImmutableArray<ControlBlockSyntax> ControlBlocks { get; init; } = [];
     /// <summary>Generated primitive headers; evaluation and execution are separate stages.</summary>
     public ImmutableArray<PrimitiveSyntax> Primitives { get; }
     /// <summary>Generated code-model ports; model-specific execution admission remains separate.</summary>

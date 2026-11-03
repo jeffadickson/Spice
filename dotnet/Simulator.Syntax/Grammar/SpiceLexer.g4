@@ -6,7 +6,10 @@ options { caseInsensitive = true; }
     private bool digitalCard;
     /// <summary>Opt-in generated semantic header decomposition; ordinary deck recognition leaves this false.</summary>
     public bool SemanticHeaderOnly { get; set; }
+    /// <summary>Opt-in generated control-command recognition; ordinary deck lexing leaves this false.</summary>
+    public bool ControlSemantic { get; set; }
 }
+
 
 // SPICE's first physical line is a title, including when it resembles a card.
 SCRIPT_TITLE: '*ng_script' ~[\r\n]* ('\r\n' | '\r' | '\n') -> mode(SCRIPT);
@@ -39,10 +42,12 @@ CONTINUATION: ('\r\n' | '\r' | '\n') ([ \t]* (('*' | DOLLAR_MARKER) ~[\r\n]*)? (
 CONTINUED_COMMENT: ('\r\n' | '\r' | '\n') [ \t]* '+' [ \t]* ('*' | DOLLAR_MARKER) ~[\r\n]* -> channel(HIDDEN);
 COMMENT: {Column == 0 || InputStream.LA(-1) == '\r'}? [ \t]* '*' ~[\r\n]* -> channel(HIDDEN);
 HASH_COMMENT: {Column == 0 || InputStream.LA(-1) == '\r'}? [ \t]* '#' ~[\r\n]* -> channel(HIDDEN);
-INLINE_COMMENT: ';' ~[\r\n]* -> channel(HIDDEN);
+INLINE_COMMENT: {!ControlSemantic}? ';' ~[\r\n]* -> channel(HIDDEN);
+CONTROL_SEPARATOR: {ControlSemantic}? ';' ~[\r\n]*;
 // Reserve the PSpice global/digital namespaces; ordinary dollar text is a
 // deck comment. Control/script modes keep their own variable spelling intact.
-DOLLAR_COMMENT: DOLLAR_MARKER ~[\r\n]* -> channel(HIDDEN);
+DOLLAR_COMMENT: {!ControlSemantic || InputStream.LA(2) == ' ' || InputStream.LA(2) == '\t'}? DOLLAR_MARKER ~[\r\n]* -> channel(HIDDEN);
+CONTROL_VARIABLE: {ControlSemantic}? DOLLAR_MARKER ~[ \t\r\n]*;
 SLASH_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 WS: [ \t\f]+ -> channel(HIDDEN);
 // Consume failed continuation lookahead once across trivia, avoiding quadratic rescans.

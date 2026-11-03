@@ -61,7 +61,7 @@ public sealed class RequestedCorpusNativeTests
   var parent=Environment.GetEnvironmentVariable("SPICE_REQUESTED_ARTIFACTS")!;var folder=Path.Combine(parent,"coordinator-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(folder);
   var fixtures=new Dictionary<string,string>{
    ["good.cir"]="ordinary\n.param upper=1k\nV1 a 0 DC 0 AC 1 PWL(0 0 4u 4)\nR1 a out 1k\nR2 out 0 1k\n.op\n.dc V1 1 -1 -.5\n.ac dec 1 10 {upper}\n.tran 1u 4u\n.op\n.end\n",
-   ["control.cir"]="control\nV1 a 0 1\nR1 a 0 1k\n.control\nop\n.endc\n.op\n.end\n",
+   ["control.cir"]="control\nV1 a 0 1\nR1 a 0 1k\n.control\nalter R1=2k\nop\n.endc\n.op\n.end\n",
    ["uic.cir"]="uic\nV1 a 0 1\nR1 a 0 1k\n.tran 1u 4u uic\n.end\n",
    ["resource.cir"]="resource\n.include missing-file.cir\n.op\n.end\n",
    ["lin2.cir"]="native grid anomaly\nV1 a 0 AC 1\nR1 a 0 1k\n.ac lin 2 10 30\n.end\n",

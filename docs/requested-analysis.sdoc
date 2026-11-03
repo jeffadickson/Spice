@@ -14,7 +14,7 @@ STATEMENT: >>>
 Prepare every supported root .op, single-source .dc, .ac lin/dec/oct and .tran directive in physical source order, retaining repeated directives with unique identities and original source ranges. Evaluate scalar fields through existing parameter semantics. Publish no partial program when a directive or physical instruction is unsupported.
 <<<
 COMMENT: >>>
-Implementation: dotnet/Simulator.Syntax/AnalysisSyntax.cs, DeclarationExtraction.cs, DeclarationCatalog.cs; dotnet/Simulator.Frontend/RequestedAnalysis.cs. Verification: RequestedAnalysisTests.cs and RequestedAnalysisNativeTests.cs. Controls, nested analyses, nested DC sweep and UIC are explicit refusals. Bounded linear node .IC and separate reporting windows are specified in requested-initial-conditions.sdoc. Reporting/observation omissions remain explicit metadata and are not executed measurements.
+Implementation: dotnet/Simulator.Syntax/AnalysisSyntax.cs, DeclarationExtraction.cs, DeclarationCatalog.cs; dotnet/Simulator.Frontend/RequestedAnalysis.cs. Verification: RequestedAnalysisTests.cs and RequestedAnalysisNativeTests.cs. Unmodeled controls, nested analyses, nested DC sweep and UIC are explicit refusals. Validated finite analysis controls are specified in requested-control-profile.sdoc. Bounded linear node .IC and separate reporting windows are specified in requested-initial-conditions.sdoc. Reporting/observation omissions remain explicit metadata and are not executed measurements.
 <<<
 RELATIONS:
 - TYPE: Parent

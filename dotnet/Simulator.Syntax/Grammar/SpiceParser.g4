@@ -139,3 +139,17 @@ expression: expression (POWER | CARET) expression
     | identifier LPAREN (expression (COMMA expression)*)? RPAREN
     | NUMBER | identifier | STRING | QUOTED;
 
+
+// A bounded semantic entry over generated BODY tokens of one COMMAND_LINE.
+// Numeric command arguments deliberately exclude vectors, substitution and state.
+controlCommandProfile: (controlOp | controlAc | controlDc | controlTran | controlRun | controlSet | controlReport | controlQuit | controlUnknown)? EOF;
+controlOp: {TokenStream.LT(1).Text.Equals("op",StringComparison.OrdinalIgnoreCase)}? identifier;
+controlAc: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier identifier controlNumber controlNumber controlNumber;
+controlDc: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase)}? identifier identifier controlNumber controlNumber controlNumber (identifier controlNumber controlNumber controlNumber)?;
+controlTran: {TokenStream.LT(1).Text.Equals("tran",StringComparison.OrdinalIgnoreCase)}? identifier controlNumber controlNumber controlNumber? controlNumber? identifier?;
+controlRun: {TokenStream.LT(1).Text.Equals("run",StringComparison.OrdinalIgnoreCase)}? identifier;
+controlSet: {TokenStream.LT(1).Text.Equals("set",StringComparison.OrdinalIgnoreCase)}? identifier parameter+;
+controlReport: {TokenStream.LT(1).Text.ToLowerInvariant() is "print" or "plot" or "meas" or "measure" or "save" or "gnuplot" or "echo" or "rusage"}? identifier parameter*;
+controlQuit: {TokenStream.LT(1).Text.Equals("quit",StringComparison.OrdinalIgnoreCase)}? identifier;
+controlUnknown: identifier parameter*;
+controlNumber: (PLUS | MINUS)? NUMBER;

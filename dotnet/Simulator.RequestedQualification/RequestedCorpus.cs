@@ -8,7 +8,7 @@ using Simulator.Client;
 using Simulator.Frontend;
 using Simulator.Syntax;
 namespace Simulator.RequestedQualification;
-/// <summary>Qualification-only corpus coordinator; it never dispatches original input controls or synthesizes selected analyses as requested analyses.</summary>
+/// <summary>Qualification-only corpus coordinator; it never dispatches unmodeled input controls or synthesizes selected analyses as requested analyses.</summary>
 public static class RequestedCorpus
 {
  private static readonly JsonSerializerOptions Json=new(){WriteIndented=true,PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower};
@@ -55,12 +55,12 @@ public static class RequestedCorpus
     if(syntax.Status!="accepted_structure"){row.Status="expanded_syntax_refused";continue;}
     var plan=RequestedAnalysis.Prepare(syntax);var circuit=plan.CircuitPreparation??OperatingPointSelection.Select(syntax).Prepared;row.CircuitPrepared=circuit.Success;
     if(!circuit.Success)row.Diagnostics=circuit.Diagnostics.Select(d=>d.Code).ToArray();
-    row.RequestedPrepared=plan.Success;
+    row.RequestedPrepared=plan.Success;row.ControlProfile=plan.ControlProfile;row.ProgramOmissions=plan.ProgramOmissions.ToArray();
     if(!plan.Success){row.Status="requested_preparation_refused";row.RequestedExecuted=false;row.Diagnostics=row.Diagnostics.Concat(plan.Diagnostics.Select(d=>d.Code)).Distinct().ToArray();continue;}
     if(!circuit.Success){row.Status="circuit_preparation_inconsistent";row.RequestedExecuted=false;continue;}
     row.Status="prepared";
     foreach(var operation in plan.Operations){
-     var result=new OperationRow{Id=row.Id+"/"+operation.Id,Ordinal=row.Operations.Count,Kind=operation.Kind,Range=operation.Range,CoordinateUnit=operation.CoordinateUnit,Arguments=operation.Arguments.ToArray(),RequestedCoordinates=operation.Coordinates.ToArray(),OutputStartS=operation.OutputStartS,InitialConditions=operation.InitialConditions.ToArray()};row.Operations.Add(result);
+     var result=new OperationRow{Id=row.Id+"/"+operation.Id,Ordinal=row.Operations.Count,Kind=operation.Kind,Range=operation.Range,CoordinateUnit=operation.CoordinateUnit,Arguments=operation.Arguments.ToArray(),RequestedCoordinates=operation.Coordinates.ToArray(),OutputStartS=operation.OutputStartS,InitialConditions=operation.InitialConditions.ToArray(),ControlOrigin=operation.ControlOrigin};row.Operations.Add(result);
      var operationFolder=Path.Combine(folder,operation.Id);Directory.CreateDirectory(operationFolder);var responses=new List<SimulationResponse>();var allExecuted=true;var failed=false;
      for(var point=0;point<operation.Requests.Length;point++){
       if(watch.Elapsed.TotalSeconds>=seconds){result.Points.Add(new(point,"unattempted_budget",null));allExecuted=false;continue;}
@@ -80,10 +80,10 @@ public static class RequestedCorpus
      result.Executed=failed?false:allExecuted?true:null;
      if(result.Executed!=true){result.Status=failed?"engine_operation_failed_atomically":"unattempted_budget";continue;}
      if(watch.Elapsed.TotalSeconds>=seconds){result.Status="native_unattempted_budget";continue;}
-     var projection=OriginalProjection.Create(expanded,syntax,operation,plan);result.Omissions=projection.Omissions.ToArray();var nativePath=Path.Combine(operationFolder,"original-analysis.cir");await File.WriteAllTextAsync(nativePath,projection.Text);result.NativeProjectionSha256=Hash(nativePath);
+     var projection=OriginalProjection.Create(expanded,syntax,operation,plan);result.Omissions=projection.Omissions.ToArray();result.NativeInstrumentation=projection.Instrumentation.ToArray();var nativePath=Path.Combine(operationFolder,"original-analysis.cir");await File.WriteAllTextAsync(nativePath,projection.Text);result.NativeProjectionSha256=Hash(nativePath);
      var rawPath=Path.Combine(operationFolder,"native.raw");var nativeArgs=new List<string>{"-n","-D","filetype=ascii"};
      if(circuit.Request!.Circuit.Elements.Any(e=>e is PspiceSwitch)){nativeArgs.AddRange(["-D","ngbehavior=psa"]);result.NativeDialect="psa";}
-     nativeArgs.AddRange(["-b","-r",rawPath,"-o",Path.Combine(operationFolder,"native.log"),nativePath]);
+     nativeArgs.Add("-b");if(!projection.RequiresControlWrite)nativeArgs.AddRange(["-r",rawPath]);nativeArgs.AddRange(["-o",Path.Combine(operationFolder,"native.log"),nativePath]);
      try{
       var native=await Child(ngspice,nativeArgs.ToArray(),operationFolder,null,"native");result.NativeExit=native.Exit;
       if(native.Exit!=0){result.Status="native_failed";continue;}
@@ -131,10 +131,10 @@ public static class RequestedCorpus
  private sealed record LoadedSource(string Path,string? Section,string Sha256);
  private sealed record PointRow(int Index,string Status,string? Detail);
  private sealed class OperationRow{
-  public string Id{get;set;}="";public int Ordinal{get;set;}public string Kind{get;set;}="";public SourceRange? Range{get;set;}public string? CoordinateUnit{get;set;}public double[] Arguments{get;set;}=[];public double[] RequestedCoordinates{get;set;}=[];public double OutputStartS{get;set;}public PreparedNodeInitialCondition[] InitialConditions{get;set;}=[];public bool? Executed{get;set;}public bool? Agreed{get;set;}public string Status{get;set;}="pending";public string? Detail{get;set;}public List<PointRow> Points{get;set;}=[];public ProjectionOmission[] Omissions{get;set;}=[];public string? NativeProjectionSha256{get;set;}public string? NativeRawSha256{get;set;}public int? NativeExit{get;set;}public int? NativePoints{get;set;}public string NativeDialect{get;set;}="default";public ComparisonResult? Comparison{get;set;}
+  public string Id{get;set;}="";public int Ordinal{get;set;}public string Kind{get;set;}="";public SourceRange? Range{get;set;}public string? CoordinateUnit{get;set;}public double[] Arguments{get;set;}=[];public double[] RequestedCoordinates{get;set;}=[];public double OutputStartS{get;set;}public PreparedNodeInitialCondition[] InitialConditions{get;set;}=[];public RequestedControlOrigin? ControlOrigin{get;set;}public string[] NativeInstrumentation{get;set;}=[];public bool? Executed{get;set;}public bool? Agreed{get;set;}public string Status{get;set;}="pending";public string? Detail{get;set;}public List<PointRow> Points{get;set;}=[];public ProjectionOmission[] Omissions{get;set;}=[];public string? NativeProjectionSha256{get;set;}public string? NativeRawSha256{get;set;}public int? NativeExit{get;set;}public int? NativePoints{get;set;}public string NativeDialect{get;set;}="default";public ComparisonResult? Comparison{get;set;}
  }
  private sealed class CorpusRow{
-  public string Id{get;set;}="";public string Scope{get;set;}="";public string Path{get;set;}="";public string InputPath{get;set;}="";public string ExpectedSha256{get;set;}="";public string? InputSha256{get;set;}public string Status{get;set;}="unattempted";public bool? SyntaxAccepted{get;set;}public string? SyntaxStatus{get;set;}public string? ExpandedSyntaxStatus{get;set;}public string? ResourceStatus{get;set;}public bool? CircuitPrepared{get;set;}public bool? RequestedPrepared{get;set;}public bool? RequestedExecuted{get;set;}public bool? NativeAgreed{get;set;}public string[] Diagnostics{get;set;}=[];public LoadedSource[] Sources{get;set;}=[];public string? ExpandedSha256{get;set;}public List<OperationRow> Operations{get;set;}=[];
+  public string Id{get;set;}="";public string Scope{get;set;}="";public string Path{get;set;}="";public string InputPath{get;set;}="";public string ExpectedSha256{get;set;}="";public string? InputSha256{get;set;}public string Status{get;set;}="unattempted";public bool? SyntaxAccepted{get;set;}public string? SyntaxStatus{get;set;}public string? ExpandedSyntaxStatus{get;set;}public string? ResourceStatus{get;set;}public bool? CircuitPrepared{get;set;}public string? ControlProfile{get;set;}public OperatingPointOmission[] ProgramOmissions{get;set;}=[];public bool? RequestedPrepared{get;set;}public bool? RequestedExecuted{get;set;}public bool? NativeAgreed{get;set;}public string[] Diagnostics{get;set;}=[];public LoadedSource[] Sources{get;set;}=[];public string? ExpandedSha256{get;set;}public List<OperationRow> Operations{get;set;}=[];
  }
  private sealed class CorpusReport{
   // Same monotonic admission clock as final duration; internal state is not serialized.

@@ -20,6 +20,7 @@ internal sealed class DeclarationExtraction
     private readonly List<ScopedCard> cards=[];
     private readonly List<AnalysisSyntax> analyses=[];
     private readonly List<InitialConditionSyntax> initialConditions=[];
+    private readonly List<ControlBlockSyntax> controlBlocks=[];
     private readonly List<LibrarySectionEnd> libraryEnds=[];
     private readonly List<ScopedParameter> parameters=[];
     private readonly List<DeclaredResource> resources=[];
@@ -64,6 +65,7 @@ internal sealed class DeclarationExtraction
             }
             initialConditions.Add(new(owner,supported,nodes.ToImmutable(),Range(card)));
         }
+        if(card is SpiceParser.ControlContext control)controlBlocks.Add(ControlExtraction.Extract(control,owner,Capture,Range));
         var primitive=PrimitiveExtraction.Extract(card,owner,Capture,Capture);
         if(primitive!=null){primitives.Add(primitive);return;}
         if(card is SpiceParser.ExtensionContext extension && extension.Start.Text.ToLowerInvariant() is ".if" or ".elseif" or ".else" or ".endif" or ".csparam" or ".sndparam")
@@ -107,7 +109,7 @@ internal sealed class DeclarationExtraction
         }
     }
 
-    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray(),primitives.ToImmutableArray(),cards.ToImmutableArray()) { XspiceInstances=xspice.ToImmutableArray(), Analyses=analyses.ToImmutableArray(), BehavioralSources=behavior.ToImmutableArray(), InitialConditions=initialConditions.ToImmutableArray() };
+    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray(),primitives.ToImmutableArray(),cards.ToImmutableArray()) { XspiceInstances=xspice.ToImmutableArray(), Analyses=analyses.ToImmutableArray(), BehavioralSources=behavior.ToImmutableArray(), InitialConditions=initialConditions.ToImmutableArray(),ControlBlocks=controlBlocks.ToImmutableArray() };
 
     private int Enclosing(IParseTree? tree)
     {

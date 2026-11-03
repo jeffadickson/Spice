@@ -1,0 +1,63 @@
+[DOCUMENT]
+TITLE: Bounded generated control-analysis dispatch
+
+[TEXT]
+STATEMENT: >>>
+This is a finite analysis-dispatch profile over the existing generated ANTLR lexer/parser and public typed simulator client, not a general ngspice interpreter. A full ngspice or third-party command interpreter remains a different integration/reuse decision and is not introduced as a production runtime dependency. The new semantic entry addresses the existing opaque COMMAND_LINE metadata gap without a Split/regex command scanner. Primary semantics/format evidence: ngspice user-manual command reference, https://ngspice.sourceforge.io/docs/ngspice-manual.pdf, and official control-language tutorial, https://ngspice.sourceforge.io/ngspice-control-language-tutorial.html; actual local native POC and immutable hashes are recorded in evidence/requested-control-profile.json.
+<<<
+
+[REQUIREMENT]
+UID: FRONTEND-CONTROL-001
+STATUS: Implemented
+TITLE: Generated bounded ordinary analysis commands
+STATEMENT: >>>
+One root control block may request ordinary op/dc/ac/tran commands with literal signed SI scalar arguments. Repeated direct commands shall retain order, source ranges and independent identities. Unknown effects, vectors/substitution, separators, unsupported scopes and malformed commands shall refuse the whole program atomically. Existing standalone declaration semantics shall remain unchanged.
+<<<
+COMMENT: >>>
+Implementation: ControlExtraction.cs, ControlSyntax.cs, SpiceLexer/SpiceParser grammar semantic entry and RequestedControlPreparation.cs. No original command text is forwarded to the product engine; public typed requests execute. Source numeric range capture uses the original COMMAND_LINE offsets. Whitespace/full-line comments and bounded dollar-space comments are recognized by generated tokens.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-001
+
+[REQUIREMENT]
+UID: FRONTEND-CONTROL-002
+STATUS: Implemented
+TITLE: Finite retained-deck run dispatch
+STATEMENT: >>>
+Each admitted run invocation shall dispatch its retained unique-kind outside analysis declarations once, in the qualified native priority AC/DC/OP/TRAN. Outside declarations shall not execute implicitly merely because a control block exists. Repeated run invocations shall retain distinct identities. Duplicate outside analysis kinds and mixed direct-analysis/run registration profiles shall be explicitly refused until qualified.
+<<<
+COMMENT: >>>
+Native POC verifies priority independent of source order, no implicit outside.TRAN under direct OP, and duplicate AC jobs executing in reverse source order. The first profile refuses duplicates rather than silently coalescing, last-wins filtering or inventing extra/source-ordered jobs. Mixing direct analyses with run is refused because direct analysis commands can override registered jobs used later by run. This is individual-analysis qualification, not complete control-program parity.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-002
+
+[REQUIREMENT]
+UID: FRONTEND-CONTROL-003
+STATUS: Implemented
+TITLE: Explicit reporting-only omissions and state-effect refusals
+STATEMENT: >>>
+Only exact reporting settings noaskquit, filetype=ascii and integer numdgt1..17 may be admitted as recorded unexecuted reporting metadata. Print/plot/meas/measure/save/gnuplot/echo/rusage output commands shall be recorded as unexecuted observations. Quit may occur only after all modeled commands. Alter/reset/load/shell/write/let/define/loops/noise, physics-changing settings and other unmodeled effects shall refuse atomically rather than be ignored.
+<<<
+COMMENT: >>>
+No original file/shell or reporting command executes. Measurement vectors cannot influence typed analyses because control analysis arguments are literal-only and all state-changing commands refuse. Run is modeled explicitly, never dropped. Limits:256commands per block,256tokens/4096characters per command,128effective analyses.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: FRONTEND-CONTROL-004
+STATUS: Implemented
+TITLE: Independent original-control native projection
+STATEMENT: >>>
+Each native job shall preserve one original analysis command in its original control envelope, or one original run command plus its retained original outside analysis card. Other analysis/control/reporting instructions shall be masked only by generated source ranges, with omissions and projection hashes retained. Only qualification-owned relative write-native.raw-all and quit instrumentation may be inserted. Complete mapped grids, units, identities and finite values remain mandatory; accuracy gaps shall remain unqualified at unchanged tolerances.
+<<<
+COMMENT: >>>
+Native control RAW uses blank separators between points; the bounded RAW adapter accepts those separators without relaxing point index, column count, finite value or extra-plot checks. Owned direct/repeated-run fixtures agree independently. Original unmodified simple-meas-tran.sp executes its actual.TRAN once, but its sine reference interpolation discrepancy remains an explicit numerical disagreement. No full new928-input census is claimed.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-CORPUS-001

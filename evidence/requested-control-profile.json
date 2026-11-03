@@ -1,0 +1,229 @@
+{
+  "state": "bounded_control_profile_verified_with_unresolved_original_accuracy",
+  "base_commit": "7bd695c84a0846b9a9780ce78c8acba3bbae782d",
+  "artifact_root": "E:/Artifacts/spice-control-profile-nov2",
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/ControlExtraction.cs": "b9f56d0fda6035ae134706a0be31e96a940626da9a74137e4f2f0e69b5864687",
+    "dotnet/Simulator.Syntax/ControlSyntax.cs": "355225e80dc125523ffe57213f144cb17d4b8bb39889494b9fbf9120d048a17c",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "b5f6f8aafc5d0db26eba4a23b377ef68684163c02ad5f44468210d3d2a12029b",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "5c7ac4021e8e01067bc2eda3b8caf23dc240b4c686c343fb22f8c633f26fddb9",
+    "dotnet/Simulator.Frontend/RequestedControlPreparation.cs": "1d50b91c0ee27e19d63ea008cf1f9f2f61f9446197938066fced25ed9d7339ca",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "4d99dba71b8ede38a0c56f87141913d29e9f3c19bd4a422198d5bffb2cf0c607",
+    "dotnet/Simulator.RequestedQualification/QualificationSupport.cs": "606bb1ecc4820d51956c1928ad34a6d83d8a1c19f8e7de8ccff5d6e1ebfc4a91",
+    "dotnet/Simulator.RequestedQualification/RequestedCorpus.cs": "5dc28269fdfc77964e46beadafc9f110ac883b19bd20c0b7bc9c294958efc405",
+    "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs": "5d43044ce6551993aefad8683b8d7f11a1fbea12983a5b69792b05bde7f2cb33"
+  },
+  "tools": {
+    "dotnet": "10.0.403",
+    "engine_sha256": "679da74a6d93e6b471617c9cd9c410af29e503ad3821355644d0863042981492",
+    "strictdoc": "0.30.4",
+    "antlr": "4.13.1",
+    "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "ngspice": "******\r\n** ngspice-47+ : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n"
+  },
+  "tests": {
+    "control_framework_rows": 30,
+    "property": {
+      "replay": "2391,20261103",
+      "contract": "State-changing alter prefix cannot be silently omitted; failure publishes zero operations.",
+      "framework": "FsCheck.Xunit",
+      "cases": 100
+    },
+    "frontend": {
+      "skipped": 9,
+      "total": 247,
+      "passed": 238,
+      "trx": "final-coverage/frontend.trx",
+      "failed": 0
+    },
+    "negative_cases": "Unsupported effects, settings, variables, separators, malformed grammar, duplicate/mixed registration, command/effective-job budgets, RAW index validation.",
+    "syntax": {
+      "skipped": 1,
+      "total": 407,
+      "passed": 406,
+      "trx": "syntax-final-coverage/syntax.trx",
+      "failed": 0
+    }
+  },
+  "coverage": [
+    {
+      "file": "ControlExtraction.cs",
+      "linesCovered": 33,
+      "linesTotal": 33,
+      "branchesCovered": 43,
+      "branchesTotal": 50
+    },
+    {
+      "file": "RequestedControlPreparation.cs",
+      "linesCovered": 36,
+      "linesTotal": 37,
+      "branchesCovered": 74,
+      "branchesTotal": 80
+    },
+    {
+      "file": "RequestedAnalysis.cs",
+      "linesCovered": 111,
+      "linesTotal": 111,
+      "branchesCovered": 129,
+      "branchesTotal": 138
+    },
+    {
+      "file": "QualificationSupport.cs",
+      "linesCovered": 142,
+      "linesTotal": 142,
+      "branchesCovered": 297,
+      "branchesTotal": 402
+    },
+    {
+      "file": "RequestedCorpus.cs",
+      "linesCovered": 108,
+      "linesTotal": 109,
+      "branchesCovered": 97,
+      "branchesTotal": 160
+    }
+  ],
+  "coverage_raw": "final-coverage/037ecc93-2aad-4045-abb9-49e08fda12e0/coverage.cobertura.xml",
+  "native_poc": {
+    "summary": "native-poc-relative/summary.json",
+    "red_green": "Initial RAW adapter rejected native control blank point separators; new regression accepts separators while retaining strict index/shape validation.",
+    "fixtures": 7,
+    "contract": "Native logs independently show AC/DC/OP/TRAN priority, no implicit outside TRAN under direct OP, reverse source order for duplicate AC; duplicates/mixed profiles explicitly refuse."
+  },
+  "owned": {
+    "summary": "E:/Artifacts/spice-control-profile-nov2/control-oracle-6cc18e8a19df45f1839c4117920e0c18/output/summary.json",
+    "rows": [
+      {
+        "path": "direct.cir",
+        "status": "all_individual_requested_analyses_agreed",
+        "requested_prepared": true,
+        "requested_executed": true,
+        "native_agreed": true
+      },
+      {
+        "path": "run.cir",
+        "status": "all_individual_requested_analyses_agreed",
+        "requested_prepared": true,
+        "requested_executed": true,
+        "native_agreed": true
+      },
+      {
+        "path": "unsafe.cir",
+        "status": "requested_preparation_refused",
+        "requested_prepared": false,
+        "requested_executed": false,
+        "native_agreed": null
+      }
+    ],
+    "stages": [
+      {
+        "name": "Syntax accepted",
+        "passed": 3,
+        "refused": 0,
+        "unknown": 0
+      },
+      {
+        "name": "Circuit prepared",
+        "passed": 3,
+        "refused": 0,
+        "unknown": 0
+      },
+      {
+        "name": "Requested analyses executed",
+        "passed": 2,
+        "refused": 1,
+        "unknown": 0
+      },
+      {
+        "name": "Native numerical agreement",
+        "passed": 2,
+        "refused": 0,
+        "unknown": 1
+      }
+    ],
+    "provenance_valid": true,
+    "individual_operations": 13
+  },
+  "original": {
+    "native_agreed": false,
+    "summary": "E:/Artifacts/spice-control-profile-nov2/original-control-a56de460c7f24a22befa4361eda945bd/output/summary.json",
+    "provenance_valid": true,
+    "requested_prepared": true,
+    "origin": {
+      "source": "C:/dev/ngspice-ngspice\\examples/measure/simple-meas-tran.sp",
+      "sha256": "1fa814b53abd59f9945877a1273f1863a73c05be2c1abd9845bee70f63cb24bf"
+    },
+    "operations": 1,
+    "requested_executed": true,
+    "comparison": {
+      "status": "numerical_disagreement",
+      "observables": [
+        {
+          "engine_signal": "v(n1)",
+          "native_signal": "v(1)",
+          "unit": "V",
+          "points": 501,
+          "failed": 499,
+          "maximum_absolute_error": 0.00039789071409379595,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n2)",
+          "native_signal": "v(2)",
+          "unit": "V",
+          "points": 501,
+          "failed": 497,
+          "maximum_absolute_error": 0.00038677184846358514,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e0)",
+          "native_signal": "i(vac1)",
+          "unit": "A",
+          "points": 501,
+          "failed": 390,
+          "maximum_absolute_error": 3.978907140939631E-09,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e2)",
+          "native_signal": "i(vac2)",
+          "unit": "A",
+          "points": 501,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        }
+      ],
+      "gaps": [],
+      "agreed": false
+    }
+  },
+  "requirements": {
+    "unique_ids": 357,
+    "resolved_parents": 346,
+    "documents": 25,
+    "raw": "requirements.json"
+  },
+  "limitations": [
+    "Individual analysis projections, not complete control program/measurement/report parity.",
+    "Literal-only one-root-block bounded profile; duplicate outside kinds, mixed direct/run, UIC, variables, expressions and state-changing effects refuse.",
+    "Original sine interpolation discrepancy remains unqualified; tolerances unchanged.",
+    "No new 928-root census. Native tests use the explicitly hashed prior engine, not root current integration.",
+    "No new control-specific mutation campaign; earlier IC/DC mutation snapshot does not cover this feature. Negative/property/native checks executed. No broad fuzz claim.",
+    "Generated grammar coverage not treated as a manually authored code branch metric. Coverage is whole frontend-test scope for listed files, not independent proof.",
+    "Initial syntax run on C: lacked symlink privileges; forward-slash CODEX_ARTIFACT_ROOT caused six path spelling assertions. Correct backslash E: run passes with one ExFAT symlink skip.",
+    "One pre-existing xUnit2013 warning at ThirdReferenceContracts.cs:32. Managed .NET helpers, no Native AOT qualification.",
+    "No CI or push."
+  ],
+  "commands": [
+    "Set per-process CODEX_ARTIFACT_ROOT/TEMP/TMP=E:\\Artifacts\\spice-control-profile-nov2 and existing SPICE_REQUESTED_ARTIFACTS,SPICE_REQUESTED_CORPUS,SPICE_CORPUS_ENGINE,SPICE_CORPUS_NGSPICE to recorded paths.",
+    "dotnet test dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj --artifacts-path E:/Artifacts/spice-control-profile-nov2/build -p:AntlrJar=<canonical-repo>/.tools/antlr/antlr-4.13.1-complete.jar --collect:\"XPlat Code Coverage\" --results-directory E:/Artifacts/spice-control-profile-nov2/final-coverage --logger \"trx;LogFileName=frontend.trx\"",
+    "dotnet test dotnet/Simulator.Syntax.Tests/Simulator.Syntax.Tests.csproj --artifacts-path E:/Artifacts/spice-control-profile-nov2/syntax-build -p:AntlrJar=<canonical-repo>/.tools/antlr/antlr-4.13.1-complete.jar --collect:\"XPlat Code Coverage\" --results-directory E:/Artifacts/spice-control-profile-nov2/syntax-final-coverage --logger \"trx;LogFileName=syntax.trx\"",
+    "dotnet run --file scripts/ValidateRequirements.cs --artifacts-path E:/Artifacts/spice-control-profile-nov2/requirements-build -- --python <existing-strictdoc-env>/Scripts/python.exe --report E:/Artifacts/spice-control-profile-nov2/requirements.json",
+    "dotnet run --file scripts/ControlNativePoc.cs --artifacts-path E:/Artifacts/spice-control-profile-nov2/poc-build -p:AntlrJar=<canonical-repo>/.tools/antlr/antlr-4.13.1-complete.jar -- C:/dev/ngspice-install/bin/ngspice.exe <fresh-output-under-existing-artifact-parent>"
+  ]
+}
