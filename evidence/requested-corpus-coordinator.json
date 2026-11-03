@@ -1,0 +1,113 @@
+{
+  "state": "representative_fixtures_verified_no_full_census",
+  "base_commit": "1d6122f96f775a477a9dd69f5d03dcb6f4fd3b15",
+  "source_sha256": {
+    "dotnet/Simulator.RequestedQualification/Simulator.RequestedQualification.csproj": "b2abbb75369478573b3dd833bfabb988f727b728ff3e6af4d66e0ba7662954bb",
+    "dotnet/Simulator.RequestedQualification/packages.lock.json": "a82ea45882d6cb8e9be71522ee0b06e10a92dfb3991dcf0f708fc45052e60c11",
+    "dotnet/Simulator.RequestedQualification/QualificationSupport.cs": "241c342b21a6e65c6b2d73ddc6963e0b18bdce31d6ba4eb721c88e9232f369aa",
+    "dotnet/Simulator.RequestedQualification/RequestedCorpus.cs": "fcb1d3a94e661efcfa8af47e023dc2e935a1e5d82e0a05fbf9899449699f6a0b",
+    "scripts/Run-RequestedCorpus.cs": "9c9ffadf1899377e697ed33a089a95709586165933e7d9c9cc54e197d88d8d66",
+    "dotnet/Simulator.Frontend.Tests/RequestedQualificationTests.cs": "639e07d94b5cbbaa1cbbc3d0cf7683eb2fcdb318829eaec82499890d161efddb",
+    "dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj": "ebcd86b74de37ac8729fcfc06c7382a3d657ce78ba262059e7a94aad09761a4f",
+    "dotnet/Simulator.Frontend.Tests/packages.lock.json": "18248294099097e1b7efb44bf34e233c36a71c9eb490142670ecd13ac36c9166"
+  },
+  "artifact_root": "E:/Artifacts/spice-requested-corpus-nov2",
+  "fixture_report": "E:\\Artifacts\\spice-requested-corpus-nov2\\coordinator-3ca3175be774457ca69bb4e626fd3c77\\output",
+  "tests": {
+    "limitations": "Nine unrelated external corpus/reference tests are explicitly skipped. Existing baseline xUnit2013 warning remains. CLI orchestration is exercised through the public qualification coordinator method; the thin fileapp entrypoint smoke is separately retained.",
+    "coordinator_cases": 12,
+    "failed": 0,
+    "fscheck": {
+      "cases": 100,
+      "seed": 2371,
+      "gamma": 20261103,
+      "purpose": "malformed bounded RAW tails"
+    },
+    "coverage": "endgate-coverage/f2419b32-4450-490c-bce2-6853c804c2d1/coverage.cobertura.xml",
+    "passed": 184,
+    "trx": "endgate-coverage/frontend.trx",
+    "skipped": 9,
+    "total": 193
+  },
+  "coverage": {
+    "coordinator": {
+      "lines_covered": 101,
+      "branches_total": 146,
+      "branches_covered": 86,
+      "lines_total": 102
+    },
+    "limitations": "Complete new helper-file scope; native engine/ngspice, generated ANTLR and thin fileapp entrypoint excluded. Child timeout/locking/cancellation and every error branch are not exhaustively executed.",
+    "qualification_support": {
+      "lines_covered": 122,
+      "branches_total": 318,
+      "branches_covered": 239,
+      "lines_total": 122
+    }
+  },
+  "representative": {
+    "svg_sha256": "6e45fe484a72d8ad6029fec6619977a6b920ce629032dd7a88d54b168164ad86",
+    "inputs": 7,
+    "agreed_individual_analyses": 6,
+    "native_version": "******\r\n** ngspice-47+ : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n",
+    "stages": [
+      {
+        "name": "Syntax accepted",
+        "passed": 7,
+        "refused": 0,
+        "unknown": 0
+      },
+      {
+        "name": "Circuit prepared",
+        "passed": 6,
+        "refused": 0,
+        "unknown": 1
+      },
+      {
+        "name": "Requested analyses executed",
+        "passed": 3,
+        "refused": 3,
+        "unknown": 1
+      },
+      {
+        "name": "Native numerical agreement",
+        "passed": 2,
+        "refused": 1,
+        "unknown": 4
+      }
+    ],
+    "compared_points": 186,
+    "native_analysis_jobs": 7,
+    "summary_sha256": "8b2fdf3eed8418137962ca05236b67aca8ca806b0811905fe9d059fc31b26dd8",
+    "visual_validation": "SVG parsed as well-formed XML and numeric stage scopes checked; no raster screenshot claim.",
+    "agreed_input_rows": 2,
+    "engine_requests": 13,
+    "unknown_native_rows": 4,
+    "mapped_observables": 16,
+    "provenance_valid": true,
+    "grid_discrepancy_rows": 1
+  },
+  "negative_gate": {
+    "cause": "QualificationSupport.cs changed during an earlier campaign; source end gate detected it and invalidated all four chart counts to unknown. This failed frozen-source test run is negative evidence, not a passing campaign.",
+    "report": "coordinator-1945a2605fea4278805b5a70678f536e/output/summary.json",
+    "state": "provenance_changed",
+    "actual_exit": 3
+  },
+  "strictdoc": {
+    "unique_ids": 348,
+    "status": "passed",
+    "raw_report": "requirements.json",
+    "documents": 23,
+    "parents": 337
+  },
+  "reuse": "Existing resource resolver, RequestedAnalysis, public SimulationClient and typed manifest retained. Existing benchmark print-table parser cannot express descending DC/full complex RAW, so a bounded independent ASCII RAW adapter is qualification-only; no new external dependency.",
+  "limitations": [
+    "No928-input census executed. Root must integrate/freeze source and native engine before starting the frozen inventory.",
+    "Individual requested-analysis projections are not whole input-control-program parity.",
+    "Unsupported.IC/UIC/TSTART/model profiles remain requested preparation refusals until separate implementation.",
+    "Native47+ LIN2 grid discrepancy is refused and never counted as agreement.",
+    "All mapped root voltages and supported root V/L/E/H branch currents; device currents absent from native default RAW are not claimed.",
+    "Transient interpolation on complete engine sample grid; no identical native adaptive integration/output-resampling claim.",
+    "No new mutation campaign for this coordinator slice; meaningful malformed, identity, shape, unit, provenance, resource and native-grid checks ran.",
+    "Managed .NET qualification CLI; no NativeAOT claim. No CI/push."
+  ]
+}

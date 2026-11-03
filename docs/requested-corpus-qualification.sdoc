@@ -1,0 +1,49 @@
+[DOCUMENT]
+TITLE: Frozen corpus individual requested-analysis qualification
+
+[TEXT]
+STATEMENT: >>>
+This is an offline qualification coordinator over the existing public frontend/client, not a new production parser or simulator. Existing Simulator.Benchmarks.Tables reads named print tables, rejects negative/descending axes and is internal; it cannot retain full complex native RAW columns. A bounded ASCII RAW adapter is therefore confined to Simulator.RequestedQualification. No third-party dependency was added. Native format research: https://github.com/ngspice/ngspice/blob/master/src/frontend/rawfile.c (inspected 2026-11-02); exact executed native binary SHA256 is recorded per campaign. This does not qualify all RAW variants.
+<<<
+
+[REQUIREMENT]
+UID: FRONTEND-REQUESTED-CORPUS-001
+STATUS: Implemented
+TITLE: Original independent requested analyses
+STATEMENT: >>>
+The coordinator shall retain every frozen inventory identity and original analysis identity, resolve resources through the existing generated frontend, and execute only successfully prepared ordinary requested analyses. Native oracle jobs shall preserve expanded original physical cards and one original analysis card, masking other analyses and output/reporting cards by generated source ranges. Native jobs shall independently evaluate original arguments and parameters. Input control programs shall never execute.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.RequestedQualification/RequestedCorpus.cs and QualificationSupport.cs; scripts/Run-RequestedCorpus.cs. Tests: RequestedQualificationTests.cs. Individual analysis projections and all omission ranges/hashes are retained. This is not complete input-control-program parity. Static selected OP preparation is reported only as a separate circuit-preparation stage and cannot count as requested execution.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-001
+
+[REQUIREMENT]
+UID: FRONTEND-REQUESTED-CORPUS-002
+STATUS: Implemented
+TITLE: Bounded complete-grid numerical evidence
+STATEMENT: >>>
+The coordinator shall enforce child deadlines, between-job admission budgets, bounded native RAW shapes, stable identities and SI units, finite values and complete original OP/DC/AC grids. It shall compare all mapped root voltages and supported root branch currents when available. Missing observables, native grid discrepancies and malformed results shall not count as numerical agreement. Transient reference interpolation shall not extrapolate or claim identical internal integration grids.
+<<<
+COMMENT: >>>
+RAW bounds:64MiB characters,2048variables,100000points,4000000complex cells. Native and engine children have30-second deadlines. Voltage/current absolute bounds are1e-6V/1e-9A plus1e-4relative; raw axis matching uses1e-12relative without a unit-sized absolute epsilon. These are qualification tolerances, not simulator accuracy guarantees.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-002
+
+[REQUIREMENT]
+UID: FRONTEND-REQUESTED-CORPUS-003
+STATUS: Implemented
+TITLE: Honest four-stage burndown and immutable source gate
+STATEMENT: >>>
+Reports and SVG shall distinguish syntax acceptance, circuit preparation, actual requested-analysis execution and actual native numerical agreement. Each stage shall retain measured successes, known refusals/failures and unknown/unattempted counts over the same inventory. A final source, assembly, executable, inventory and loaded-resource hash gate shall invalidate stage claims when provenance changes. Scheduled or partial campaigns shall not be reported as completed qualification.
+<<<
+COMMENT: >>>
+No whole928-input campaign was run during coordinator implementation. Owned representative inputs verify refusal and agreement distinctions. Bulk artifacts remain outside Git; bounded evidence and commands are recorded in docs/requested-corpus-qualification.md and evidence/requested-corpus-coordinator.json.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005

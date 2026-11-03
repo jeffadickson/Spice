@@ -138,6 +138,12 @@
           "Simulator.Syntax": "[1.0.0, )"
         }
       },
+      "simulator.requestedqualification": {
+        "type": "Project",
+        "dependencies": {
+          "Simulator.Frontend": "[1.0.0, )"
+        }
+      },
       "simulator.syntax": {
         "type": "Project",
         "dependencies": {
