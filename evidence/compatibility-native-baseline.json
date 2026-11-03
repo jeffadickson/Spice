@@ -1,0 +1,24 @@
+{
+  "log_sha256": "e10afbc6981210825a60fc9b04f934c015a9bc142a0ec120763e3033ff7f2742",
+  "passed": 499,
+  "result_blocks": 58,
+  "limitations": [
+    "Historical checkpoint regression, not new AM/SFFM or later BJT/MOS qualification.",
+    "Result blocks include empty executable/doc-test blocks; not 58 nonempty suites.",
+    "No new coverage measurement in this ordinary regression. Separate scoped coverage and mutation reports apply.",
+    "cargo-nextest absent; cargo test used without installing tools."
+  ],
+  "note": "Native production sources and tests compiled before later AM/SFFM and sparse-complex refinement edits. Managed-only additions at 9d491c8 do not change this native source scope.",
+  "failed": 0,
+  "ignored": 2,
+  "command": "cargo test --locked --target-dir <artifact>/native-target -j 4",
+  "ignored_tests": [
+    "test seeded_batch ... ignored, bounded batches are launched by scripts/Endurance.cs",
+    "test nonzero_depletion_transport_dc_ac_transient_against_ngspice ... ignored, requires SPICE_NGSPICE and SPICE_ORACLE_ARTIFACT_ROOT"
+  ],
+  "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z\\native-integrated-all.log",
+  "environment": {
+    "RUST_TEST_THREADS": "4"
+  },
+  "tested_native_source_checkpoint": "4e573fc"
+}
