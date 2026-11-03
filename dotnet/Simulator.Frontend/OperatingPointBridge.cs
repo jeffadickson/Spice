@@ -321,6 +321,10 @@ public static class OperatingPointBridge
             int Node(string name)
             {
                 if(name=="0")return 0;
+                // Native gnd normalization precedes elaboration and has dialect
+                // exceptions. Until qualified, never accept a floating substitute.
+                if(selected&&name.Equals("gnd",StringComparison.OrdinalIgnoreCase))
+                    throw new BridgeFailure("unsupported_ground_alias",catalog.Scopes[scope].Range);
                 if(selected&&globalNames.Contains(name)){
                     if(globalNodes.TryGetValue(name,out var global))return global;
                     if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",catalog.Scopes[scope].Range);

@@ -1,0 +1,24 @@
+[DOCUMENT]
+TITLE: Ground Alias Admission Boundary
+
+[REQUIREMENT]
+UID: SEM-GROUND-ALIAS-001
+STATUS: Implemented
+TITLE: Refuse unqualified active ground aliases
+STATEMENT: >>>
+Selected preparation shall refuse an active case-insensitive exact gnd node reference with unsupported_ground_alias until dialect-aware ground-alias normalization is qualified. It shall not allocate that alias as a floating unknown, fabricate a grounding source, publish a partial request or remove a failed observable merely to obtain agreement. Literal node zero remains ground. Unused bodies and declarations without an active reference shall remain inert.
+<<<
+COMMENT: >>>
+The frozen f64edbd corpus admitted rc-meas-ac.sp and its mirror as floating circuits, while ngspice47+ normalized gnd to zero. This is a preparation defect, not only a missing RAW column. OperatingPointBridge.Node enforces the interim boundary; PreparationSemanticsTests exercise active root/global/nested/behavioral references and inactive declarations. The original frozen outcomes remain historical failures.
+<<<
+
+[REQUIREMENT]
+UID: SEM-GROUND-ALIAS-002
+STATUS: Draft
+TITLE: Qualify dialect-aware ground normalization
+STATEMENT: >>>
+Before admitting gnd aliases, preparation shall qualify default native ground normalization, global and subcircuit scope, formal-port exceptions, and explicit no-auto-ground behavior against original ngspice inputs. Ground aliases shall not become independently measured root unknowns. Unsupported options shall refuse rather than be silently masked.
+<<<
+COMMENT: >>>
+Open follow-up in corpus results issue29. Native inpcom.c calls inp_fix_gnd_name before elaboration unless no_auto_gnd is set, with a PSpice formal-port exception. No complete dialect policy is implemented by the interim refusal.
+<<<

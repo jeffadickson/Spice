@@ -1,0 +1,59 @@
+{
+  "status": "wrong_acceptance_corrected_by_explicit_refusal",
+  "source_base": "dd269fd",
+  "tested_source_sha256": {
+    "dotnet/Simulator.Frontend.Tests/PreparationSemanticsTests.cs": "bb8c72bd9b98958871956798499209916120672a87d1f34d7a8b3cc5f04cacce",
+    "docs/ground-alias-admission.sdoc": "96842e2c38cb711d46c7a3c10cfedd9af994d5835d894697f276afbb1c965e3c",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "09c2f5f589b127ff8b66fa9597b87f10fe0ef760d1e168a915d620aee5d3fbe1"
+  },
+  "red": {
+    "passed": 0,
+    "failed": 4,
+    "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/ground-guard-red.log"
+  },
+  "green_full": {
+    "passed": 479,
+    "skipped": 9,
+    "failed": 0,
+    "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/ground-guard-green-full.log"
+  },
+  "original_decks": [
+    "examples/measure/rc-meas-ac.sp",
+    "paranoia_parallel/examples/measure/rc-meas-ac.sp"
+  ],
+  "original_replay": {
+    "status": "refused",
+    "artifacts": [
+      "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/ground-original-0",
+      "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/ground-original-1"
+    ],
+    "executed_operations": 0,
+    "diagnostic": "unsupported_ground_alias"
+  },
+  "coverage": {
+    "lines_covered": 17016,
+    "lines_valid": 21414,
+    "branches_valid": 6142,
+    "sha256": "6ac401a5f70862758b9258feadddee8862320ad2d460841c2a9490fe64f48e2f",
+    "limitation": "Captured Node/Expand/CollectGlobals are omitted by Coverlet. The core guard line has no measured line/branch coverage; actual red/green and input regressions are separate behavioral evidence.",
+    "branches_covered": 3994,
+    "path": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z\\ground-guard-coverage\\3849c84c-51aa-451e-b330-88a305e30457\\coverage.cobertura.xml"
+  },
+  "mutation": {
+    "ignored": 1164,
+    "scope": "Logical&& to|| at guard; no whole-bridge mutation closure claim",
+    "tool": "Stryker.NET5.0.0",
+    "compile_invalid": 184,
+    "killed": 1,
+    "survived": 0,
+    "sha256": "ebfe52384620db5fb024a7bc7c20967e61bbc6fc6f29eefebc09e2ca7a14d229",
+    "report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/ground-guard-stryker/reports/reports/mutation-report.json"
+  },
+  "review": "Independent read-only coding-agent review: no Important/Critical issue in guard; native source establishes topology defect, not only missing observable.",
+  "limitations": [
+    "Ground alias normalization is not implemented. Both noautognd option spellings and no_auto_gnd control effects remain unqualified/refused.",
+    "Frozen f64edbd full928 primary counts remain historical23executed9agreed; this is targeted original-deck refusal evidence, not a new928 count.",
+    "No fresh Linux or broad alias fuzz campaign. Existing fullsuite randomized properties ran; new guard uses finite active/inactive cases.",
+    "No fake zero-voltage source, dropped observable or tolerance relaxation."
+  ]
+}

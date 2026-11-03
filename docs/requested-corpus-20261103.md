@@ -14,24 +14,29 @@ The final frozen run completed in 834.140 seconds with matching provenance.
 
 ![Latest full frozen inventory](../evidence/requested-final-f64edbd.svg)
 
-The earlier full run below prepared77, executed18 and agreed4 on the same928
+The earlier full run below prepared 77, executed 18 and agreed 4 on the same 928
 inventory. These are original individual requested analyses, not complete control
-programs or selected OP probes. The latest23 executions include nine agreeing
-rows and14 unqualified rows: ten stateless sine/gain interpolation discrepancies,
-two `v(gnd)` observable gaps, the simple-meas transient discrepancy and the RC-ramp
-backward-Euler accuracy discrepancy. No tolerance was relaxed.
+programs or selected OP probes. The latest 23 executions include nine agreeing
+rows and 14 unqualified rows: ten stateless sine/gain interpolation discrepancies,
+two `v(gnd)` gaps subsequently diagnosed as floating-ground topology errors,
+the simple-meas transient discrepancy and the RC-ramp
+backward-Euler accuracy discrepancy. No tolerance was relaxed. A subsequent
+correction explicitly refuses active `gnd` references until dialect-aware alias
+normalization is qualified. Both original affected decks now refuse before
+simulation; the frozen 23/9 counts above are historical, not a new count after
+that guard. See `ground-alias-admission.sdoc`.
 
 Four additional original BJT amplifier transient attempts (spice3.deck and
 xspice_c1.cir, with mirrors) failed with `Newton iteration limit exceeded`.
 They are execution failures, not numerical disagreements or completed solves.
 The finite composite recovery tests do not close these real-circuit failures.
 
-Common diagnostic occurrences include272 unsupported physical directives,
-139 XSPICE models,78 MOS profiles,39 BJT profiles,43 source profiles and23
+Common diagnostic occurrences include 272 unsupported physical directives,
+139 XSPICE models, 78 MOS profiles, 39 BJT profiles, 43 source profiles and 23
 resistor profiles. Diagnostics overlap and cannot be summed as distinct decks.
 Among physically prepared decks, unsupported controls dominate the remaining
 request refusals. This motivates shared semantics/model work rather than separate
-patches for each sample.22 resource refusals, four strict UTF-8 failures and eight
+patches for each sample. 22 resource refusals, four strict UTF-8 failures and eight
 pinned exclusions remain unavailable downstream evidence.
 
 Bounded [manifest](../evidence/requested-final-f64edbd.json) records individual

@@ -7,6 +7,26 @@ namespace Simulator.Frontend.Tests;
 public sealed class PreparationSemanticsTests
 {
     [Theory]
+    [InlineData("V1 out gnd 1\nR1 out gnd 1k")]
+    [InlineData(".global GND\nV1 out GND 1\nR1 out GND 1k")]
+    [InlineData("X1 out cell\n.subckt cell out\nV1 out GnD 1\nR1 out GnD 1k\n.ends")]
+    [InlineData("V1 in 0 1\nB1 out 0 V=v(gnd)+v(in)\nR1 out 0 1k")]
+    public void Unqualified_active_ground_alias_refuses_instead_of_allocating_a_floating_node(string body)
+    {
+        var result=Prepare(body);
+        Assert.False(result.Success);
+        Assert.Contains(result.Prepared.Diagnostics,d=>d.Code=="unsupported_ground_alias");
+        Assert.Null(result.Prepared.Request);
+        Assert.Empty(result.Prepared.RootNodes);
+    }
+    [Fact]
+    public void Unused_ground_alias_declarations_and_bodies_do_not_change_a_valid_circuit()
+    {
+        var result=Prepare(".global gnd\nV1 out 0 1\nR1 out 0 1k\n.subckt unused\nV2 gnd 0 2\n.ends");
+        Assert.True(result.Success);
+        Assert.DoesNotContain(result.Prepared.RootNodes.Keys,n=>n.Equals("gnd",StringComparison.OrdinalIgnoreCase));
+    }
+    [Theory]
     [InlineData("rm","R(R=2k)",2000)]
     [InlineData("rm L=10u W=2u","R(RSH=100 SHORT=.5u NARROW=.25u)",600)]
     public void Named_resistor_profiles_execute_through_generated_preparation(string tail,string model,double expected)
