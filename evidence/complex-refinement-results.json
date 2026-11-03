@@ -1,0 +1,121 @@
+{
+  "state": "bounded_complex_provider_regression_fixed",
+  "tested_revision": "06e8a6b",
+  "source_sha256": {
+    "src/ac.rs": "c9385753fdebdb9e0c4183f1c3bbd06a970e0ad9d06aad4049e6e0ed7dc1bd44",
+    "src/backend_faer.rs": "28620a5cb47deef1a35a6af6046fcf361e9727f7bbbd34c70f8a71097406efc5",
+    "src/solver_contract.rs": "c8b1e09a3425bb16881ae3b414c880820cfb3546aa5f6b540273106be357d098",
+    "tests/faer_complex_refinement.rs": "1f0ac52576b0bb8ce7a6809abcef384504eb2d57781765c0e693e4ab31fdf883",
+    "tests/fixtures/bjt-faer-ac-frozen.json": "ede1bc7a26f24137b0174fcdf34a006861a12f000ecb55e6169077cd606a8060"
+  },
+  "fixture": {
+    "dimension": 12,
+    "source_request_sha256": "ccb1e80c00c5f90ecbf2ae1ea1d85b18e511d076dc4d1daa90de04c9bf98fe84",
+    "frequency_hz": 10000000.0,
+    "backend_for_bias": "faer",
+    "origin": "Public Rust API linearization from semiconductor-profile worktree; model IR is not needed by this provider test",
+    "source_path": "tests/fixtures/bjt-faer-ac-frozen.json"
+  },
+  "root_cause": {
+    "raw_residual_imag": 2.3401687422679896E-20,
+    "raw_residual_real": -5.429715264175045E-21,
+    "row": 6,
+    "original_lu": "accepted",
+    "original_faer": "failed strict AC residual",
+    "componentwise_scale": 3.1993491978006317E-20,
+    "classification": "loss of relative accuracy in very small reverse-BC sense current"
+  },
+  "implementation": {
+    "max_corrections": 3,
+    "canonical_score": "May exceed threshold; not an acceptance verdict",
+    "dense_fallback_added": false,
+    "acceptance_threshold": 1E-10,
+    "ac_compatibility": "verify_complex_system signature retained as canonical forwarding wrapper",
+    "refactor_added": false,
+    "counter_scope": "Factor-internal corrections are not additional logical AC point solves",
+    "dependency": "faer 0.24.4 existing complex sparse LU"
+  },
+  "verification": {
+    "strictdoc": {
+      "outcome": "passed",
+      "resolved_parents": 336,
+      "documents": 25,
+      "unique_ids": 347
+    },
+    "native_focused": {
+      "skipped": 0,
+      "gain_differential_transient": 3,
+      "sparse_ac_circuits": 4,
+      "library": 18,
+      "sparse_qualification": 6,
+      "failed": 0,
+      "sparse_ac": 11,
+      "faer_complex_refinement": 3,
+      "sparse_transient": 22,
+      "matrix_conformance": 4,
+      "total": 71
+    },
+    "property": {
+      "outcome": "passed",
+      "requested_cases": 128,
+      "scope": "Genuine complex RHS scalar superposition on frozen matrix, independent LU reference and strict residual",
+      "framework": "Proptest 1.9.0",
+      "seed": 57120261105
+    },
+    "production_compiler": "Rust 1.99.1 MSVC"
+  },
+  "coverage": {
+    "scope": "Production correction callback instantiation in integration object; canonical functions reported in that same object. Separate unit callback instantiations cover error paths but are not summed.",
+    "canonical_score": {
+      "branches_covered": 2,
+      "branches_valid": 4,
+      "lines_covered": 22,
+      "lines_valid": 26
+    },
+    "unit_profile": "4146867058638840863_0-40900.profraw",
+    "unit_raw_report": "E:/Artifacts/spice/behavior-xspice-nov2/native-complex-coverage/unit-functions.txt",
+    "limitation": "Some overflow/guard paths remain unmeasured; LLVM conditional branches are not exhaustive pattern-match or MCDC coverage. Profiles selected per binary; no mixed crate-instantiation totals.",
+    "acceptance_wrapper": {
+      "branches_covered": 2,
+      "branches_valid": 2,
+      "lines_covered": 14,
+      "lines_valid": 14
+    },
+    "raw_report": "E:/Artifacts/spice/behavior-xspice-nov2/native-complex-coverage/integration-functions.txt",
+    "integration_profile": "7819582583977897859_0-24548.profraw",
+    "flags": "-C instrument-coverage -Z coverage-options=branch",
+    "production_helper": {
+      "branches_covered": 3,
+      "branches_valid": 4,
+      "lines_covered": 28,
+      "lines_valid": 32
+    },
+    "instrumented_tests": {
+      "integration": 3,
+      "library": 18,
+      "failed": 0
+    },
+    "compiler": "rustc 1.101.0-nightly (12433c307 2026-10-24)"
+  },
+  "mutation": {
+    "unviable": 0,
+    "selected": 2,
+    "caught": 2,
+    "scope": "Complex residual -= to += and correction + to -",
+    "raw_report": "E:/Artifacts/spice/behavior-xspice-nov2/native-complex-mutation/mutants.out/outcomes.json",
+    "tool": "cargo-mutants",
+    "missed": 0,
+    "timed_out": 0,
+    "baseline": "Explicitly skipped inside mutation harness after recorded 71-test focused baseline"
+  },
+  "requirements": [
+    "SOLVER-COMPLEX-REFINE-001"
+  ],
+  "limitations": [
+    "Frozen matrix regression does not independently qualify the BJT model or original analysis program; parent owns original NPN/PNP oracle replay.",
+    "No global conditioning/convergence guarantee or performance claim.",
+    "No new standalone fuzz campaign; malformed/negative tests and bounded Proptest ran.",
+    "Full native suite and merged multi-agent qualification are parent work."
+  ],
+  "raw_artifacts": "E:/Artifacts/spice/behavior-xspice-nov2"
+}
