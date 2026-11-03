@@ -29,7 +29,7 @@ public static class CircuitReadiness
         var bound=InstanceBinder.Bind(catalog).Instances.ToLookup(i=>i.Header.ScopeId);
         var cards=catalog.Cards.ToLookup(c=>c.ScopeId);var primitives=catalog.Primitives.ToLookup(p=>p.ScopeId);
         var stack=new HashSet<int>();var frames=0;var truncated=false;var complete=catalog.Resources.IsEmpty&&catalog.DeferredContexts.IsEmpty;
-        foreach(var card in catalog.Cards.Where(c=>c.Kind=="extension"&&OperatingPointSelection.OmissionReason(c)==null))
+        foreach(var card in catalog.Cards.Where(c=>c.Kind=="extension"&&c.GlobalNodes==null&&OperatingPointSelection.OmissionReason(c)==null))
             AddIssue(new("directive_policy","unqualified_directive",card.Name,card.ScopeId,[],card.Range));
         foreach(var resource in catalog.Resources)AddIssue(new("resource","unresolved_resource",resource.Kind,resource.ScopeId,[],resource.Range));
         foreach(var context in catalog.DeferredContexts)AddIssue(new("elaboration","deferred_context",context.Kind,0,[],context.Range));
@@ -46,7 +46,13 @@ public static class CircuitReadiness
                 foreach(var card in cards[scope])
                 {
                     if(OperatingPointSelection.OmissionReason(card)!=null||card.Kind=="extension")continue;
-                    if(card.Kind is "passive" or "source" or "vcontrol" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard")continue;
+                    if(card.Kind is "passive" or "source" or "vcontrol" or "icontrol" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard")continue;
+                    if(card.Kind=="xspice"&&catalog.XspiceInstances.FirstOrDefault(i=>i.Range==card.Range) is {} xi&&catalog.Lookup(DeclarationKind.Model,xi.Model.Text,scope) is {Status:NameLookupStatus.Found,Provisional:false} lookup&&lookup.Candidates.Single().ModelFamily=="gain"){
+                        // Structural analog-gain recognition is distinct from
+                        // full parameter/port admission, reported by preparation.
+                        if(xi.Ports.Length!=2||xi.Ports.Any(p=>!p.Supported))AddIssue(new("model_contract","unsupported_xspice_gain_ports",card.Kind,scope,path,card.Range));
+                        continue;
+                    }
                     if(card.Kind=="switchCard"&&bound[scope].FirstOrDefault(i=>i.Header.Range==card.Range&&i.Status==BindingStatus.Bound&&i.Target?.ModelFamily=="vswitch") is {} sw)
                     {
                         var model=sw.Target!;var names=model.Parameters.Select(p=>p.Name).ToArray();
@@ -55,8 +61,7 @@ public static class CircuitReadiness
                         continue;
                     }
                     var layer=card.Kind is "diode" or "bjt" or "mos" or "jfet" or "xspice" or "osdi"?"runtime_model":"runtime_family";
-                    if(card.Kind=="icontrol")layer="parser_to_runtime";
-                    AddIssue(new(layer,card.Kind=="icontrol"?"missing_typed_current_control":"unsupported_active_family",card.Kind,scope,path,card.Range));
+                    AddIssue(new(layer,"unsupported_active_family",card.Kind,scope,path,card.Range));
                 }
                 foreach(var primitive in primitives[scope])
                 {

@@ -1,0 +1,58 @@
+[DOCUMENT]
+TITLE: Common Generated Preparation Semantics
+
+[REQUIREMENT]
+UID: SEM-CURRENT-BINDING-001
+STATUS: Draft
+TITLE: Instance-local current controller binding
+STATEMENT: >>>
+Selected preparation shall bind scalar F and H sources to an explicitly named voltage-defined V, E or H branch in the same expanded instance, including forward references. CCCS gain is dimensionless and CCVS transresistance is in ohms. Missing, nonbranch and unsupported polynomial controllers shall refuse the complete request without partial origins or invented current values.
+<<<
+COMMENT: >>>
+Implementation: generated currentControlProfile, PrimitiveSyntax and OperatingPointBridge. Verification: PreparationSemanticsTests and PreparationNativeOracle exercise forward binding, repeated instances, malformed controllers and independent native voltage/current conventions on lu/faer. Direct inductor controllers and POLY are outside this contract.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SOURCE-001
+
+[REQUIREMENT]
+UID: SEM-GLOBAL-BINDING-001
+STATUS: Draft
+TITLE: Active global-node aliases
+STATEMENT: >>>
+Selected preparation shall discover generated .global declarations in the root and instantiated subcircuits before allocating nodes. A global name shall take precedence over a conflicting formal port. Declarations in unused bodies shall remain inert. An unused actual port shadowed by a global shall not create a floating unknown. Expansion depth and instance budgets shall remain enforced during discovery and expansion.
+<<<
+COMMENT: >>>
+Implementation: generated globalNodesProfile, ScopedCard.GlobalNodes and OperatingPointBridge. Verification: PreparationSemanticsTests and original native PreparationNativeOracle fixtures challenge active versus unused declarations and formal-port precedence. Resource resolution, conditional language and arbitrary dialect aliases remain separate contracts.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SOURCE-001
+
+[REQUIREMENT]
+UID: SEM-SCALAR-FUNCTIONS-001
+STATUS: Draft
+TITLE: Deterministic numparam functions
+STATEMENT: >>>
+Parameter evaluation shall use the generated expression grammar and explicitly supported finite deterministic functions. Natural log, decimal log, truncation and nearest-even rounding shall follow the documented ngspice numparam conventions. Invalid arity, unsupported functions and nonfinite results shall refuse the complete parameter environment. Stochastic functions shall not be replaced by deterministic clamps or guessed constants.
+<<<
+COMMENT: >>>
+Implementation: ParameterEvaluator.Expression. Verification: ScalarFunctionTests checks independent mathematical values and atomic nonfinite-domain failures. Conventions were checked against ngspice src/frontend/numparam/xpressn.c; interactive Nutmeg and PSpice behavioral function conventions are separate. No blanket expression or dialect compatibility is established.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SOURCE-001
+
+[REQUIREMENT]
+UID: VERIFY-PROPERTY-REPLAY-001
+STATUS: Draft
+TITLE: Validate property replay metadata
+STATEMENT: >>>
+Frontend property replay metadata shall be constructible by the actual installed FsCheck random generator. Invalid replay metadata shall fail an ordinary discovered test rather than silently reducing the property test inventory.
+<<<
+COMMENT: >>>
+Verification: PropertyReplayMetadataContracts constructs FsCheck.Rnd from reflected PropertyAttribute replay values. An even gamma was reproduced as an exception before correction. This guard covers the frontend assembly; it does not establish discovery completeness for every external test adapter or assembly.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SOURCE-001

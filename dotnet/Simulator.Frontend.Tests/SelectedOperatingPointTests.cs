@@ -23,7 +23,7 @@ public sealed class SelectedOperatingPointTests
         Assert.Equal(2,selected.Omissions.Count(o=>o.Reason=="observation_not_selected"));
     }
     [Theory]
-    [InlineData(".global power")]
+    [InlineData(".temp 50")]
     [InlineData(".ic v(a)=2")]
     [InlineData(".options reltol=1e-2")]
     [InlineData("B1 a 0 V=1")]
@@ -64,7 +64,7 @@ public sealed class SelectedOperatingPointTests
     [Fact]
     public void Unused_bodies_cannot_hide_potentially_global_physical_directives()
     {
-        var selected=OperatingPointSelection.Select(Parse("V1 a 0 1\nR1 a 0 1k\n.subckt unused p n\n.global a\n.ends"));
+        var selected=OperatingPointSelection.Select(Parse("V1 a 0 1\nR1 a 0 1k\n.subckt unused p n\n.temp 50\n.ends"));
         Assert.False(selected.Success);Assert.Null(selected.Prepared.Request);Assert.Empty(selected.Omissions);
     }
     [Fact]

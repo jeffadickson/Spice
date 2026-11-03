@@ -42,7 +42,7 @@ public static class OperatingPointBridge
         // Extensions may have globally physical effects even when spelled in
         // an unused body. Only the explicit selection's named observations and
         // analyses may be omitted; all other extensions remain conservative.
-        if(selected && catalog.Cards.FirstOrDefault(c=>c.Kind=="extension"&&omittedStarts?.Contains(c.Range.Start)!=true) is {} unsupportedDirective)
+        if(selected && catalog.Cards.FirstOrDefault(c=>c.Kind=="extension"&&omittedStarts?.Contains(c.Range.Start)!=true&&!c.Name.Equals(".global",StringComparison.OrdinalIgnoreCase)) is {} unsupportedDirective)
             return Failure("unsupported_physical_directive",unsupportedDirective.Range);
         var rootEnd=catalog.Cards.FirstOrDefault(c=>c.ScopeId==0&&c.Kind=="endCard");
         if(rootEnd!=null&&catalog.Cards.Any(c=>c.ScopeId==0&&c.Range.Start>rootEnd.Range.Start))return Failure("unprocessed_end_tail",rootEnd.Range);
@@ -51,17 +51,34 @@ public static class OperatingPointBridge
         var roots=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var bound=InstanceBinder.Bind(catalog).Instances.ToLookup(i=>i.Header.ScopeId);
         var primitives=catalog.Primitives.ToLookup(p=>p.ScopeId);var cards=catalog.Cards.ToLookup(c=>c.ScopeId);
+        var globalNames=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var globalNodes=new Dictionary<string,int>(StringComparer.OrdinalIgnoreCase);
         var localNodes=new Dictionary<int,Dictionary<string,int>>();var active=new HashSet<int>();var frames=0;
         var rootParameters=ParameterEvaluator.Evaluate(catalog);
         if(!rootParameters.Success)return Failure(rootParameters.Diagnostics[0].Code,rootParameters.Diagnostics[0].Range);
         try
         {
+            if(selected)CollectGlobals(0,new(),0);
             Expand(0,rootParameters,new(StringComparer.OrdinalIgnoreCase),[],0);
             if(elements.Count==0)throw new BridgeFailure("empty_circuit",null);
             return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),new OperatingPoint(),backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
             {AcSources=acSources.ToImmutableArray(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray()};
         }
         catch(BridgeFailure e){return Failure(e.Code,e.Range);}
+        void CollectGlobals(int scope,HashSet<int> seen,int depth)
+        {
+            // ngspice promotes .global only from instantiated bodies. Discover
+            // all reachable declarations before allocating any instance nodes;
+            // declaration order must not change aliases or formal precedence.
+            if(depth>limits.MaxDepth)throw new BridgeFailure("expansion_depth",catalog.Scopes[scope].Range);
+            if(seen.Contains(scope))return;
+            if(seen.Count>=limits.MaxInstances)throw new BridgeFailure("instance_budget",catalog.Scopes[scope].Range);
+            seen.Add(scope);
+            foreach(var card in cards[scope].Where(c=>c.Name.Equals(".global",StringComparison.OrdinalIgnoreCase))){
+                if(card.GlobalNodes is not {} globals)throw new BridgeFailure("unsupported_global_declaration",card.Range);
+                foreach(var node in globals)globalNames.Add(node.Text);
+            }
+            foreach(var call in bound[scope].Where(c=>c.Header.Family=="X"&&c.Status==BindingStatus.Bound&&c.Target?.BodyScopeId!=null))CollectGlobals(call.Target!.BodyScopeId!.Value,seen,depth+1);
+        }
         void Expand(int scope,ParameterEvaluation environment,Dictionary<string,int> ports,ImmutableArray<string> path,int depth)
         {
             if(depth>limits.MaxDepth)throw new BridgeFailure("expansion_depth",catalog.Scopes[scope].Range);
@@ -75,13 +92,19 @@ public static class OperatingPointBridge
                 foreach(var card in cards[scope])
                 {
                     if(omittedStarts?.Contains(card.Range.Start)==true)continue;
-                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "switchCard")))
+                    if(selected&&card.GlobalNodes!=null)continue;
+                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice")))
                         throw new BridgeFailure("unsupported_active_card",card.Range);
+                }
+                var frameIds=new Dictionary<string,(string Id,string Family)>(StringComparer.OrdinalIgnoreCase);
+                foreach(var primitive in primitives[scope]){
+                    var id="e"+(elements.Count+frameIds.Count).ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    if(!frameIds.TryAdd(primitive.Name,(id,primitive.Family)))throw new BridgeFailure("duplicate_element",primitive.Range);
                 }
                 foreach(var primitive in primitives[scope])
                 {
                     if(selected&&primitive.RequiresExcitationProfile&&primitive.Excitation==null)throw new BridgeFailure("unsupported_source_profile",primitive.Range);
-                    if(primitive.Family is not ("R" or "V" or "I") && !(selected && primitive.Family is ("C" or "L" or "E" or "G")))throw new BridgeFailure("unsupported_active_card",primitive.Range);
+                    if(primitive.Family is not ("R" or "V" or "I") && !(selected && primitive.Family is ("C" or "L" or "E" or "G" or "F" or "H")))throw new BridgeFailure("unsupported_active_card",primitive.Range);
                     if(!names.Add(primitive.Name))throw new BridgeFailure("duplicate_element",primitive.Range);
                     double value;double magnitude=0,phase=0;SourceWaveformSyntax? waveformSyntax=null;ImmutableArray<double> waveformValues=[];
                     if(selected&&primitive.Family is ("V" or "I")&&primitive.Excitation is {} excitation)
@@ -111,7 +134,15 @@ public static class OperatingPointBridge
                     // Compact wire identifiers are collision-free and stay within
                     // Rust's byte limits; original spellings remain in provenance.
                     var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                    if(primitive.Family is "E" or "G")
+                    if(primitive.Family is "F" or "H")
+                    {
+                        if(primitive.CurrentReference is not {} reference||!frameIds.TryGetValue(reference.Text,out var controller))throw new BridgeFailure("missing_current_control",primitive.Range);
+                        // Native ngspice admits voltage-defined V/E/H branches;
+                        // direct inductor control is not this qualified profile.
+                        if(controller.Family is not ("V" or "E" or "H"))throw new BridgeFailure("current_control_not_voltage_branch",reference.Range);
+                        elements.Add(primitive.Family=="F"?new Cccs(id,p,n,controller.Id,value):new Ccvs(id,p,n,controller.Id,value));
+                    }
+                    else if(primitive.Family is "E" or "G")
                     {
                         if(primitive.Control==null)throw new BridgeFailure("unsupported_control_profile",primitive.Range);
                         var cp=Node(primitive.Control.P.Text);var cn=Node(primitive.Control.N.Text);
@@ -128,6 +159,24 @@ public static class OperatingPointBridge
                     }
                     if(waveformSyntax!=null)sourceWaveforms.Add(new(id,waveformSyntax.Kind,waveformValues,primitive.Range));
                     origins.Add(new(id,primitive.Name,path,primitive.Range));
+                }
+                foreach(var instance in catalog.XspiceInstances.Where(i=>i.ScopeId==scope))
+                {
+                    if(!selected)throw new BridgeFailure("unsupported_active_card",instance.Range);
+                    if(!names.Add(instance.Name))throw new BridgeFailure("duplicate_element",instance.Range);
+                    var lowered=XspiceGainLowering.Prepare(catalog,instance,environment);
+                    if(!lowered.Success)throw new BridgeFailure(lowered.Diagnostics[0].Code,lowered.Diagnostics[0].Range);
+                    var gain=lowered.Gain!;var p=Node(gain.OutputP.Text);var n=Node(gain.OutputN.Text);var cp=Node(gain.InputP.Text);var cn=Node(gain.InputN.Text);
+                    if(p==n)throw new BridgeFailure("shorted_xspice_output",gain.Range);
+                    if(elements.Count+(gain.Offset==0?1:2)>limits.MaxElements)throw new BridgeFailure("element_budget",gain.Range);
+                    var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);var mid=n;
+                    if(gain.Offset!=0){if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",gain.Range);mid=nodes.Count;nodes.Add("n"+mid.ToString(System.Globalization.CultureInfo.InvariantCulture));}
+                    elements.Add(new Vcvs(id,p,mid,cp,cn,gain.Gain));origins.Add(new(id,gain.Name,path,gain.Range));
+                    if(gain.Offset!=0){
+                        var offsetId="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        elements.Add(new Voltage(offsetId,mid,n,gain.Offset));origins.Add(new(offsetId,gain.Name+"$offset",path,gain.Range));
+                        acSources.Add(new(offsetId,0,0));
+                    }
                 }
                 double Evaluate(SourceSyntax valueSyntax)
                 {
@@ -167,7 +216,10 @@ public static class OperatingPointBridge
                     foreach(var port in call.Ports)
                     {
                         if(port.Formal!.Text=="0")throw new BridgeFailure("reserved_formal_ground",port.Formal.Range);
-                        childPorts.Add(port.Formal.Text,Node(port.Actual.Text));
+                        // A global formal is replaced before ordinary port
+                        // substitution. Its unused actual must not create a
+                        // floating matrix unknown or a fictitious observable.
+                        childPorts.Add(port.Formal.Text,Node(selected&&globalNames.Contains(port.Formal.Text)?port.Formal.Text:port.Actual.Text));
                     }
                     var child=ParameterEvaluator.ForInstance(catalog,call,environment);
                     if(!child.Success)throw new BridgeFailure(child.Diagnostics[0].Code,child.Diagnostics[0].Range);
@@ -178,6 +230,11 @@ public static class OperatingPointBridge
             int Node(string name)
             {
                 if(name=="0")return 0;
+                if(selected&&globalNames.Contains(name)){
+                    if(globalNodes.TryGetValue(name,out var global))return global;
+                    if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",catalog.Scopes[scope].Range);
+                    global=nodes.Count;var globalWire="n"+global.ToString(System.Globalization.CultureInfo.InvariantCulture);nodes.Add(globalWire);globalNodes.Add(name,global);roots[name]=globalWire;return global;
+                }
                 if(ports.TryGetValue(name,out var index))return index;
                 if(!localNodes.TryGetValue(frame,out var table)){table=new(StringComparer.OrdinalIgnoreCase);localNodes.Add(frame,table);}
                 if(table.TryGetValue(name,out index))return index;

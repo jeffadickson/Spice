@@ -149,7 +149,17 @@ public static class ParameterEvaluator
                 var args=children.Select(c=>Eval(c,depth+1)).ToArray();
                 result=(node.identifier().GetText().ToLowerInvariant(),args.Length) switch
                 {("abs",1)=>Math.Abs(args[0]),("sqrt",1)=>Math.Sqrt(args[0]),("exp",1)=>Math.Exp(args[0]),("ln",1)=>Math.Log(args[0]),
-                 ("sin",1)=>Math.Sin(args[0]),("cos",1)=>Math.Cos(args[0]),("min",2)=>Math.Min(args[0],args[1]),("max",2)=>Math.Max(args[0],args[1]),("pow",2)=>Math.Pow(args[0],args[1]),_=>throw new EvaluationFailure("unsupported_expression")};
+                 // numparam log is natural (unlike some interactive Nutmeg
+                 // conventions); nint follows IEEE ties-to-even, int truncates.
+                 ("log",1)=>Math.Log(args[0]),("log10",1)=>Math.Log10(args[0]),("sqr",1)=>args[0]*args[0],
+                 ("int",1)=>Math.Truncate(args[0]),("nint",1)=>Math.Round(args[0],MidpointRounding.ToEven),
+                 ("ceil",1)=>Math.Ceiling(args[0]),("floor",1)=>Math.Floor(args[0]),("sgn",1)=>Math.Sign(args[0]),
+                 ("sin",1)=>Math.Sin(args[0]),("cos",1)=>Math.Cos(args[0]),("tan",1)=>Math.Tan(args[0]),
+                 ("asin",1)=>Math.Asin(args[0]),("acos",1)=>Math.Acos(args[0]),("atan",1) or ("arctan",1)=>Math.Atan(args[0]),
+                 ("sinh",1)=>Math.Sinh(args[0]),("cosh",1)=>Math.Cosh(args[0]),("tanh",1)=>Math.Tanh(args[0]),
+                 ("asinh",1)=>Math.Asinh(args[0]),("acosh",1)=>Math.Acosh(args[0]),("atanh",1)=>Math.Atanh(args[0]),
+                 ("min",2)=>Math.Min(args[0],args[1]),("max",2)=>Math.Max(args[0],args[1]),
+                 ("pow",2)=>Math.Pow(args[0],args[1]),("pwr",2)=>Math.Pow(Math.Abs(args[0]),args[1]),_=>throw new EvaluationFailure("unsupported_expression")};
             }
             else if(node.ChildCount==3&&node.GetChild(0).GetText() is "(" or "{")result=Child(0);
             else if(node.ChildCount==5&&node.GetChild(1).GetText()=="?")result=Child(0)!=0?Child(1):Child(2);

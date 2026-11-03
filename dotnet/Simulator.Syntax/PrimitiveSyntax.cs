@@ -11,6 +11,8 @@ public sealed record PrimitiveSyntax(string Name,string Family,int ScopeId,Sourc
     public bool RequiresExcitationProfile { get; init; }
     /// <summary>Typed differential control terminals for a qualified linear E/G source.</summary>
     public VoltageControlSyntax? Control { get; init; }
+    /// <summary>Original same-instance voltage-branch reference of an F/H source.</summary>
+    public SourceSyntax? CurrentReference { get; init; }
 }
 /// <summary>Control voltage is V(P)-V(N); output polarity remains the primitive P-to-N convention.</summary>
 public sealed record VoltageControlSyntax(SourceSyntax P,SourceSyntax N);
@@ -42,6 +44,8 @@ public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range)
     public string Name { get; init; } = "";
     /// <summary>True only for a nonempty generated .option(s) tail composed entirely of the qualified output flags acct/noacct/noinit.</summary>
     public bool ReportingOptionsOnly { get; init; }
+    /// <summary>Generated .global node list; null denotes another directive or an unsupported global header.</summary>
+    public ImmutableArray<SourceSyntax>? GlobalNodes {get;init;}
 }
 internal static class PrimitiveExtraction
 {
@@ -50,6 +54,14 @@ internal static class PrimitiveExtraction
         SpiceParser.TwoNodesContext nodes;SpiceParser.ParameterContext[] parameters;
         if(card is SpiceParser.PassiveContext passive){nodes=passive.twoNodes();parameters=passive.parameter();}
         else if(card is SpiceParser.SourceContext source){nodes=source.twoNodes();parameters=source.parameter();}
+        else if(card is SpiceParser.IcontrolContext current)
+        {
+            nodes=current.twoNodes();var parser=SourceProfileExtraction.CreateParser(current.parameter());
+            try{
+                if(parser!=null){var profile=parser.currentControlProfile();return new(card.Start.Text,card.Start.Text[..1].ToUpperInvariant(),scope,capture(nodes.node(0)),capture(nodes.node(1)),capture(profile.value()),true,capture(card).Range){CurrentReference=capture(current.referenceName())};}
+            }catch(Antlr4.Runtime.Misc.ParseCanceledException){ }
+            return new(card.Start.Text,card.Start.Text[..1].ToUpperInvariant(),scope,capture(nodes.node(0)),capture(nodes.node(1)),null,false,capture(card).Range){CurrentReference=capture(current.referenceName())};
+        }
         else if(card is SpiceParser.VcontrolContext control)
         {
             nodes=control.twoNodes();
@@ -89,5 +101,16 @@ internal static class PrimitiveExtraction
                 &&!(parameters.Length==1&&SourceProfileExtraction.IsReserved(parameters[0].GetText()))
                 ?new(value,null,null):SourceProfileExtraction.Extract(sourceCard,capture)
             :null};
+    }
+}
+
+internal static class GlobalNodeExtraction
+{
+    internal static ImmutableArray<SourceSyntax>? Extract(ParserRuleContext card,Func<ParserRuleContext,SourceSyntax> capture)
+    {
+        if(card is not SpiceParser.ExtensionContext extension||!extension.Start.Text.Equals(".global",StringComparison.OrdinalIgnoreCase))return null;
+        var parser=SourceProfileExtraction.CreateParser(extension.parameter());if(parser==null)return null;
+        try{return parser.globalNodesProfile().node().Select(capture).ToImmutableArray();}
+        catch(Antlr4.Runtime.Misc.ParseCanceledException){return null;}
     }
 }

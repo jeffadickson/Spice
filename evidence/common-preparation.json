@@ -1,0 +1,344 @@
+{
+  "status": "bounded_checkpoint",
+  "base_commit": "ca38358",
+  "source_hashes": {
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "3334276969f6e600e17ac0e6e23fd67ae895a1498d644474ded011ed1712ead3",
+    "dotnet/Simulator.Frontend/OperatingPointSelection.cs": "637d8acfd4fa276e6f3ada257df3f6c922c401c52be6faee0d7dc6a71e513958",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "3b1cebbcdcc8141de208b754b90c78c8f2ad7752c46a92faac8ea93f86276829",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "ede8f8fa4cd89003e165185137e4f604a8d91be960d549b29d70fdd3325a8567",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "38176371f2d45699f37f91d8db75f2cb9df146ec23b1e2e367646afb6d8af3ab",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "abbb93bd4c2a3eddbf71d49527746b3f5d228c9685e45e73953801ed46be4f54",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "38af84c7a03509348c2c81ea57789ca7ca143b1da0e3d0a81a3e46b1c99d1392",
+    "dotnet/Simulator.Frontend.Tests/PreparationSemanticsTests.cs": "32de75ce00b8ee110d65eb9f892cf8c121199145bb62ad160521bbd24cd09c8d",
+    "dotnet/Simulator.Frontend.Tests/PreparationNativeOracle.cs": "e2c62a0639d87b43c0bff1e4c9adba52f009e4be2d8de1f1ac810fec825a6597",
+    "dotnet/Simulator.Frontend.Tests/PropertyReplayMetadataContracts.cs": "9c5ab05ebd434a49405844e550ca0adefbe3e150ee1e6a71f74d3afa56dfb778",
+    "dotnet/Simulator.Syntax.Tests/ScalarFunctionTests.cs": "870c51db5363c3b536897be0a77ed451302e6b145c82fe899e30f4f9b91dd4ae",
+    "docs/common-preparation.sdoc": "df51c6d7c690a994cd60c0ac38734042af1de6490aa4598e0b1df4b15498624e"
+  },
+  "artifact_root": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z",
+  "tests": {
+    "frontend": {
+      "skipped": 9,
+      "failed": 0,
+      "passed": 173,
+      "log": "preparation-final2.log"
+    },
+    "syntax": {
+      "skipped": 1,
+      "failed": 0,
+      "passed": 433,
+      "log": "scalar-final2.log"
+    }
+  },
+  "requirements": "common-requirements.json",
+  "native_engine": "E:/Artifacts/spice/behavior-xspice-nov2/fixed-oracle-engine/circuit-simulator.exe",
+  "coverage": [
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "0.7888",
+      "line_rate": "0.9466",
+      "mapped_lines": 75,
+      "class": "Simulator.Syntax.DeclarationExtraction",
+      "file": "Simulator.Syntax/DeclarationExtraction.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 1,
+      "class": "Simulator.Syntax.ParameterDiagnostic",
+      "file": "Simulator.Syntax/ParameterEvaluator.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 5,
+      "class": "Simulator.Syntax.ParameterEvaluation",
+      "file": "Simulator.Syntax/ParameterEvaluator.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 1,
+      "class": "Simulator.Syntax.ScalarEvaluation",
+      "file": "Simulator.Syntax/ParameterEvaluator.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "0.6901",
+      "line_rate": "0.9456",
+      "mapped_lines": 92,
+      "class": "Simulator.Syntax.ParameterEvaluator",
+      "file": "Simulator.Syntax/ParameterEvaluator.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 2,
+      "class": "Simulator.Syntax.ParameterEvaluator/EvaluationFailure",
+      "file": "Simulator.Syntax/ParameterEvaluator.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "0.41659999999999997",
+      "line_rate": "0.8887999999999999",
+      "mapped_lines": 9,
+      "class": "Simulator.Syntax.ParameterEvaluator/<>c__DisplayClass4_2",
+      "file": "Simulator.Syntax/ParameterEvaluator.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "0.10880000000000001",
+      "line_rate": "0.5",
+      "mapped_lines": 42,
+      "class": "Simulator.Syntax.ParameterEvaluator/<>c__DisplayClass7_0",
+      "file": "Simulator.Syntax/ParameterEvaluator.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 5,
+      "class": "Simulator.Syntax.PrimitiveSyntax",
+      "file": "Simulator.Syntax/PrimitiveSyntax.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 1,
+      "class": "Simulator.Syntax.VoltageControlSyntax",
+      "file": "Simulator.Syntax/PrimitiveSyntax.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 2,
+      "class": "Simulator.Syntax.SourceExcitationSyntax",
+      "file": "Simulator.Syntax/PrimitiveSyntax.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 1,
+      "class": "Simulator.Syntax.SourceWaveformSyntax",
+      "file": "Simulator.Syntax/PrimitiveSyntax.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 4,
+      "class": "Simulator.Syntax.ScopedCard",
+      "file": "Simulator.Syntax/PrimitiveSyntax.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "0.9333",
+      "line_rate": "1",
+      "mapped_lines": 43,
+      "class": "Simulator.Syntax.PrimitiveExtraction",
+      "file": "Simulator.Syntax/PrimitiveSyntax.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "0.8332999999999999",
+      "line_rate": "0.8332999999999999",
+      "mapped_lines": 6,
+      "class": "Simulator.Syntax.GlobalNodeExtraction",
+      "file": "Simulator.Syntax/PrimitiveSyntax.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 1,
+      "class": "Simulator.Frontend.BridgeLimits",
+      "file": "Simulator.Frontend/OperatingPointBridge.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 1,
+      "class": "Simulator.Frontend.BridgeDiagnostic",
+      "file": "Simulator.Frontend/OperatingPointBridge.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 1,
+      "class": "Simulator.Frontend.ElementOrigin",
+      "file": "Simulator.Frontend/OperatingPointBridge.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 5,
+      "class": "Simulator.Frontend.BridgeResult",
+      "file": "Simulator.Frontend/OperatingPointBridge.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "0.94",
+      "line_rate": "1",
+      "mapped_lines": 29,
+      "class": "Simulator.Frontend.OperatingPointBridge",
+      "file": "Simulator.Frontend/OperatingPointBridge.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 2,
+      "class": "Simulator.Frontend.OperatingPointBridge/BridgeFailure",
+      "file": "Simulator.Frontend/OperatingPointBridge.cs"
+    },
+    {
+      "report": "preparation-final2-coverage/89108529-80b5-4f67-8ed1-d3efb33d1a52/coverage.cobertura.xml",
+      "branch_rate": "0.9582999999999999",
+      "line_rate": "1",
+      "mapped_lines": 18,
+      "class": "Simulator.Frontend.OperatingPointBridge/<>c__DisplayClass2_1",
+      "file": "Simulator.Frontend/OperatingPointBridge.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "0.8222",
+      "line_rate": "0.9865999999999999",
+      "mapped_lines": 75,
+      "class": "Simulator.Syntax.DeclarationExtraction",
+      "file": "DeclarationExtraction.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 1,
+      "class": "Simulator.Syntax.ParameterDiagnostic",
+      "file": "ParameterEvaluator.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 5,
+      "class": "Simulator.Syntax.ParameterEvaluation",
+      "file": "ParameterEvaluator.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "0",
+      "mapped_lines": 1,
+      "class": "Simulator.Syntax.ScalarEvaluation",
+      "file": "ParameterEvaluator.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "0.6970999999999999",
+      "line_rate": "0.8804000000000001",
+      "mapped_lines": 92,
+      "class": "Simulator.Syntax.ParameterEvaluator",
+      "file": "ParameterEvaluator.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 2,
+      "class": "Simulator.Syntax.ParameterEvaluator/EvaluationFailure",
+      "file": "ParameterEvaluator.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 9,
+      "class": "Simulator.Syntax.ParameterEvaluator/<>c__DisplayClass4_2",
+      "file": "ParameterEvaluator.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "0.8225",
+      "line_rate": "0.9523",
+      "mapped_lines": 42,
+      "class": "Simulator.Syntax.ParameterEvaluator/<>c__DisplayClass7_0",
+      "file": "ParameterEvaluator.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "0.6",
+      "mapped_lines": 5,
+      "class": "Simulator.Syntax.PrimitiveSyntax",
+      "file": "PrimitiveSyntax.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "0",
+      "mapped_lines": 1,
+      "class": "Simulator.Syntax.VoltageControlSyntax",
+      "file": "PrimitiveSyntax.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "0",
+      "mapped_lines": 2,
+      "class": "Simulator.Syntax.SourceExcitationSyntax",
+      "file": "PrimitiveSyntax.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "0",
+      "mapped_lines": 1,
+      "class": "Simulator.Syntax.SourceWaveformSyntax",
+      "file": "PrimitiveSyntax.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "1",
+      "line_rate": "1",
+      "mapped_lines": 4,
+      "class": "Simulator.Syntax.ScopedCard",
+      "file": "PrimitiveSyntax.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "0.35",
+      "line_rate": "0.6511",
+      "mapped_lines": 43,
+      "class": "Simulator.Syntax.PrimitiveExtraction",
+      "file": "PrimitiveSyntax.cs"
+    },
+    {
+      "report": "scalar-final2-coverage/15989b25-9cc5-496c-a5ed-bf5b0a0ac75c/coverage.cobertura.xml",
+      "branch_rate": "0.5",
+      "line_rate": "0.5",
+      "mapped_lines": 6,
+      "class": "Simulator.Syntax.GlobalNodeExtraction",
+      "file": "PrimitiveSyntax.cs"
+    }
+  ],
+  "mutation": {
+    "path": "scalar-mutations",
+    "status": "running_separate_frozen_snapshot"
+  },
+  "limitations": [
+    "Coverlet does not map captured bridge Expand/Node/CollectGlobals bodies; outer 100% is not core lowering coverage.",
+    "Independent frontend and syntax coverage scopes are not summed. Generated ANTLR internals and fresh Linux execution are unmeasured.",
+    "Nine frontend external integration prerequisites unavailable; exFAT symbolic-link test explicitly skipped.",
+    "Earlier runs failed obsolete expectations, old LU executable and absent symlink privilege; preserved raw logs.",
+    "Whole corpus uplift has not yet been measured; no all-five completion claim."
+  ]
+}

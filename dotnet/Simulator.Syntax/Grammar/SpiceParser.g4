@@ -24,6 +24,9 @@ dcExcitation: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnore
 acExcitation: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier value value?;
 // Typed linear E/G tail; TABLE/POLY/behavioral headers remain outside this entry.
 linearControlProfile: twoNodes value EOF;
+// Bounded generated semantic entries over existing card tokens.
+currentControlProfile: value EOF;
+globalNodesProfile: node (COMMA? node)* EOF;
 diode: DIODE_NAME twoNodes referenceName parameter*;
 bjt: BJT_NAME (threeNodes | fourNodes | fiveNodes) referenceName parameter*;
 mos: MOS_NAME (threeNodes | fourNodes | fiveNodes | sixNodes | sevenNodes) referenceName parameter*;

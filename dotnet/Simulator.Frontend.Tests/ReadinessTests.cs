@@ -11,7 +11,7 @@ public sealed class ReadinessTests
         Assert.False(audit.CanPrepare);Assert.True(audit.ActiveGraphComplete);Assert.False(audit.NumericalValidationExhaustive);
         Assert.Contains(audit.Issues,i=>i.Layer=="directive_policy");
         Assert.Equal(2,audit.Issues.Count(i=>i.Layer=="runtime_model"));
-        Assert.Contains(audit.Issues,i=>i.Layer=="parser_to_runtime"&&i.Kind=="icontrol");
+        Assert.DoesNotContain(audit.Issues,i=>i.Layer=="parser_to_runtime"&&i.Kind=="icontrol");
         Assert.Contains(audit.Models,m=>m.ModelFamily=="d"&&m.ParameterAssignments.Contains("is"));
         Assert.Single(audit.PreparationDiagnostics);
     }

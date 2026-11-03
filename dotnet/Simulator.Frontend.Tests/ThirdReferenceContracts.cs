@@ -29,7 +29,7 @@ public sealed class ThirdReferenceContracts
         Assert.Equal("executed",data["status"]!.GetValue<string>());
         Assert.Equal("V",data["probes"]![0]!["unit"]!.GetValue<string>());
         Assert.Equal("A",data["probes"]![1]!["unit"]!.GetValue<string>());
-        Assert.Equal(1,data["samples"]!.AsArray().Count);
+        Assert.Single(data["samples"]!.AsArray());
         var values=data["samples"]![0]!["values"]!;
         Assert.Equal(1,values["v"]!["real"]!.GetValue<double>(),12);
         Assert.Equal(-.001,values["i"]!["real"]!.GetValue<double>(),12);

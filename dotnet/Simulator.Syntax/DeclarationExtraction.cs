@@ -33,7 +33,7 @@ internal sealed class DeclarationExtraction
         if(item is not SpiceParser.StatementContext statement || statement.GetChild(0) is not ParserRuleContext card)return;
         var owner=Enclosing(statement.Parent);
         cards.Add(new(owner,SpiceParser.ruleNames[card.RuleIndex],Range(card))
-        {Name=card.Start.Text,ReportingOptionsOnly=card is SpiceParser.ExtensionContext reporting
+        {Name=card.Start.Text,GlobalNodes=GlobalNodeExtraction.Extract(card,Capture),ReportingOptionsOnly=card is SpiceParser.ExtensionContext reporting
             &&reporting.Start.Text.ToLowerInvariant() is ".option" or ".options"
             &&reporting.parameter().Length>0
             &&reporting.parameter().All(p=>p.value()?.identifier()!=null&&p.GetText().ToLowerInvariant() is "acct" or "noacct" or "noinit")});
