@@ -1,0 +1,10 @@
+# Captured by deliberate cargo-mutants equation changes, not unmodified-product failures.
+# Retained minimized cases pass against the restored physical junction law.
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 280cd20fbb8633fcfffa774dacffe68d34c1e19aa67ea69491f2cc6260eebfa3 # shrinks to v = 0.0, m = 0.0, fc = 0.1, c = 1e-14, tt = 0.0
+cc 42519ca13b337b2000f8aa5ebbcba9f8c045b0f29c285eb71ff2d38048b903b0 # shrinks to v = 0.5994001323841546, m = 0.0, fc = 0.1, c = 1e-14, tt = 5.4164555922132076e-8

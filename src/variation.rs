@@ -68,9 +68,9 @@ pub fn scalar_kind(circuit: &Circuit, element_id: &str) -> SimResult<ScalarKind>
         Element::Vcvs { .. } => ScalarKind::VoltageGain,
         Element::Cccs { .. } => ScalarKind::CurrentGain,
         Element::Ccvs { .. } => ScalarKind::Transresistance,
-        Element::Diode { .. } | Element::DiodeWithCapacitance { .. } => {
-            ScalarKind::DiodeSaturationCurrent
-        }
+        Element::Diode { .. }
+        | Element::DiodeWithCapacitance { .. }
+        | Element::SpiceDiode { .. } => ScalarKind::DiodeSaturationCurrent,
     })
 }
 
@@ -90,6 +90,7 @@ pub fn replace_scalar(circuit: &Circuit, element_id: &str, value: f64) -> SimRes
         .find(|element| element.id() == element_id)
         .ok_or_else(|| SimError::invalid("variation element ID is unknown"))?;
     match element {
+        Element::SpiceDiode { model, .. } => model.saturation_amps = value,
         Element::PspiceSwitch { .. } => {
             return Err(SimError::invalid(
                 "switch scalar variation requires an explicit parameter selection",

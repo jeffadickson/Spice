@@ -1,0 +1,40 @@
+[DOCUMENT]
+TITLE: SPICE semiconductor profile requirements
+
+[TEXT]
+STATEMENT: >>>
+The full semiconductor scope includes diode, BJT and explicitly named MOS levels with model parameters, DC, AC and transient charge. This document begins the diode vertical slice; it does not close BJT/MOS or general ngspice model compatibility. Exact reuse sources and unresolved alternatives are in semiconductor-reuse-assessment.md. Parameters below are effective values at a fixed temperature; unsupported model terms refuse rather than disappear.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-DIODE-Q-001
+STATUS: Draft
+TITLE: Nonlinear depletion and diffusion junction storage
+STATEMENT: >>>
+The bounded native SPICE diode shall evaluate physical conduction current, its voltage derivative, depletion charge integrated from CJO/VJ/M with forward continuation at FC*VJ, and diffusion charge TT*I. It shall use dQ/dV at the operating point for AC, and accepted charge differences with the matching trial derivative for backward Euler. Parameters and intermediate results outside the qualified finite domain shall reject explicitly.
+<<<
+COMMENT: >>>
+Implementation: src/spice_diode.rs, src/model.rs, src/newton.rs, src/ac.rs, src/configured.rs. Verification: tests/spice_diode.rs and explicitly invoked tests/spice_diode_oracle.rs. Domain: effective IS>0, NVT>0, CJO>=0,VJ>0,0<=M<1,0<=FC<1,TT>=0. Temperature transformations, avalanche and series resistance remain open work. Qualification evidence pending final immutable source hashes.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-DIODE-OBS-001
+STATUS: Draft
+TITLE: Explicit conduction and total current semantics
+STATEMENT: >>>
+A charged SPICE diode shall expose separate conduction and total terminal current observables. DC total current equals conduction; AC total current includes j*omega*dQ/dV; supported backward-Euler total current includes accepted charge differences over the accepted interval. Unsupported history or initialization semantics shall refuse instead of inventing total current. Independent KCL shall include displacement; unavailable nonlinear stored-energy verification shall report NotChecked with a reason.
+<<<
+COMMENT: >>>
+Implementation: src/api.rs, src/audit.rs. Verification: total-current KCL and explicit unavailable-energy tests in tests/spice_diode.rs. Configured adaptive and explicitly supplied initial states are currently unsupported for this charged profile because endpoint history alone does not establish the required initial derivative or final adaptive substep current. Existing constant-capacitance diode behavior remains separately qualified.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-DIODE-BIND-001
+STATUS: Draft
+TITLE: Strict model parameter binding
+STATEMENT: >>>
+The generated frontend shall bind qualified diode model assignments in their declaration scope with the active instance environment. It shall reject unknown, duplicate, opaque, invalid or unqualified assignments atomically before returning a request, preserve source origins, and use the same typed native model in DC, AC and transient preparation.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Frontend/SemiconductorPreparation.cs, additive diode lowering in OperatingPointBridge.cs, typed DTOs in Simulator.Client/Requests.cs. Verification: SemiconductorTests.cs (8 initial cases), full frontend regressions and actual engine oracle integration. First profile supports IS,N,CJO/CJ0,VJ,M,FC,TT and TNOM=27 only; RS,BV and other terms reject. Binding readiness is not numerical qualification.
+<<<

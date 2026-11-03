@@ -1,0 +1,454 @@
+{
+  "schema_version": 1,
+  "profile": "bounded_spice_diode_effective_parameters_v1",
+  "source_base": "224d044",
+  "source_state": "isolated semiconductor-profile worktree; exact raw Windows source hashes below",
+  "status": "bounded_slice_verified_parent_semiconductor_scope_open",
+  "tools": {
+    "oracle": "ngspice47+",
+    "cargo_mutants": "27.1.0",
+    "sphinx": "9.1.0",
+    "strictdoc": "0.30.4",
+    "stryker": "5.0.0",
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)",
+    "dotnet": "10.0.403",
+    "oracle_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f"
+  },
+  "native_tests": {
+    "oracle_tests_passed": 1,
+    "failed": 0,
+    "property_seed": 2026110201,
+    "oracle_native_analyses": 6,
+    "broader_selected_passed": 84,
+    "oracle_bounds": {
+      "dc_voltage_absolute_v": 2E-08,
+      "transient_current_absolute_a": 2E-06,
+      "ac_current_complex_component_absolute_a": 2E-09,
+      "transient_voltage_absolute_v": 0.002,
+      "ac_voltage_complex_component_absolute_v": 2E-06,
+      "dc_current_absolute_a": 2E-11
+    },
+    "property_cases": 128,
+    "oracle_providers": [
+      "lu",
+      "faer"
+    ],
+    "oracle_raw_directory": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/diode-oracle-69876",
+    "post_mutation_passed": 23,
+    "oracle_times_s": [
+      1E-09,
+      5E-09,
+      1E-08
+    ],
+    "retained_minimized_mutant_replays": 2
+  },
+  "managed_tests": {
+    "passed": 155,
+    "external_campaign_environment": {
+      "SPICE_SEMICONDUCTOR_ENGINE": "<artifact root>/target/debug/circuit-simulator.exe",
+      "SPICE_SEMICONDUCTOR_ARTIFACT_ROOT": "<existing unique artifact root>"
+    },
+    "failed": 0,
+    "total": 164,
+    "skipped": 9,
+    "actual_frontend_client_native_analyses": 6,
+    "post_whitespace_semiconductor_passed": 22
+  },
+  "coverage": {
+    "native_branch_limitation": "Stable instrument-coverage supplied no branch maps; not a 0% or 100% branch result",
+    "raw_managed": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/managed-coverage-native-final/968577f3-96b2-46bd-871c-36838fb0b5cd/coverage.cobertura.xml",
+    "native_new_model": {
+      "count": 64,
+      "covered": 63,
+      "percent": 98.4375
+    },
+    "managed_helper": {
+      "line_percent": 97.36842105263158,
+      "count": 38,
+      "covered_branches": 102,
+      "covered": 37,
+      "branches": 112
+    },
+    "native_scope": "model_charge and spice_diode test binaries only; changed owned src maps; not full regression coverage",
+    "raw_native": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/rust-coverage/summary.json",
+    "managed_scope": "SemiconductorPreparation class mapped Coverlet lines/conditions only; captured local Value getter at line40 is omitted and unmeasured. Captured bridge Expand/Node bodies are not covered by the outer class metric.",
+    "native_files": [
+      {
+        "file": "src/ac.rs",
+        "lines": {
+          "count": 146,
+          "covered": 106,
+          "percent": 72.6027397260274
+        }
+      },
+      {
+        "file": "src/api.rs",
+        "lines": {
+          "count": 305,
+          "covered": 266,
+          "percent": 87.21311475409837
+        }
+      },
+      {
+        "file": "src/audit.rs",
+        "lines": {
+          "count": 400,
+          "covered": 287,
+          "percent": 71.75
+        }
+      },
+      {
+        "file": "src/audit_ac.rs",
+        "lines": {
+          "count": 129,
+          "covered": 45,
+          "percent": 34.883720930232556
+        }
+      },
+      {
+        "file": "src/audit_configured.rs",
+        "lines": {
+          "count": 125,
+          "covered": 40,
+          "percent": 32
+        }
+      },
+      {
+        "file": "src/circuit.rs",
+        "lines": {
+          "count": 132,
+          "covered": 57,
+          "percent": 43.18181818181818
+        }
+      },
+      {
+        "file": "src/compile.rs",
+        "lines": {
+          "count": 228,
+          "covered": 137,
+          "percent": 60.08771929824561
+        }
+      },
+      {
+        "file": "src/configured.rs",
+        "lines": {
+          "count": 260,
+          "covered": 150,
+          "percent": 57.692307692307686
+        }
+      },
+      {
+        "file": "src/model.rs",
+        "lines": {
+          "count": 90,
+          "covered": 86,
+          "percent": 95.55555555555556
+        }
+      },
+      {
+        "file": "src/newton.rs",
+        "lines": {
+          "count": 765,
+          "covered": 453,
+          "percent": 59.21568627450981
+        }
+      },
+      {
+        "file": "src/power.rs",
+        "lines": {
+          "count": 75,
+          "covered": 47,
+          "percent": 62.66666666666667
+        }
+      },
+      {
+        "file": "src/spice_diode.rs",
+        "lines": {
+          "count": 64,
+          "covered": 63,
+          "percent": 98.4375
+        }
+      },
+      {
+        "file": "src/variation.rs",
+        "lines": {
+          "count": 191,
+          "covered": 70,
+          "percent": 36.64921465968586
+        }
+      }
+    ],
+    "native_branches": null
+  },
+  "mutation": {
+    "rust": {
+      "unviable": 0,
+      "timeout": 0,
+      "scope": "depletion sign, diffusion Q sign and diffusion derivative sign in src/spice_diode.rs",
+      "tested": 3,
+      "raw": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/mutation/mutants.out/outcomes.json",
+      "caught": 3,
+      "missed": 0
+    },
+    "managed_followup": {
+      "ignored": 2,
+      "no_coverage": 2,
+      "killed": 103,
+      "compile_error": 24,
+      "survived": 2,
+      "remaining": [
+        "n<=0 to n<0 is redundant for N=0 because later VT<=0 still refuses",
+        "Empty underflow diagnostic string survives: outcome rejects, but exact/nonempty diagnostic for this special path is not asserted"
+      ],
+      "test_source_hashes": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/stryker-followup-inputs.json",
+      "scope": "SemiconductorPreparation only; existing captured LowerCore compiler-instrumentation failures are outside the selected file and are not killed mutants",
+      "raw": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/stryker-followup/reports/mutation-report.json"
+    },
+    "managed_initial": {
+      "killed": 80,
+      "compile_error": 24,
+      "survived": 22,
+      "no_coverage": 5,
+      "ignored": 2
+    }
+  },
+  "documentation": {
+    "compiled_xml_entries": 508,
+    "strictdoc_report": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/strictdoc-validation.json",
+    "sphinx_report": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/engineering/verification.json",
+    "strictdoc_documents": 22,
+    "strictdoc_ids": 345,
+    "strictdoc_resolved_parents": 331
+  },
+  "commands": [
+    {
+      "args": [
+        "test",
+        "--manifest-path",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile/Cargo.toml",
+        "--test",
+        "spice_diode",
+        "--test",
+        "model_charge",
+        "--test",
+        "analysis_audits",
+        "--test",
+        "dynamic",
+        "--test",
+        "nonlinear",
+        "--test",
+        "sparse_ac",
+        "-j",
+        "4"
+      ],
+      "exe": "cargo",
+      "environment": {
+        "CARGO_TARGET_DIR": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/target",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile"
+    },
+    {
+      "args": [
+        "test",
+        "--manifest-path",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile/Cargo.toml",
+        "--test",
+        "spice_diode",
+        "--test",
+        "model_charge",
+        "-j",
+        "4"
+      ],
+      "exe": "cargo",
+      "environment": {
+        "CARGO_TARGET_DIR": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/target",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile",
+      "scope": "post-mutation restored source"
+    },
+    {
+      "args": [
+        "test",
+        "--manifest-path",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile/Cargo.toml",
+        "--test",
+        "spice_diode_oracle",
+        "-j",
+        "4",
+        "--",
+        "--ignored",
+        "--nocapture"
+      ],
+      "exe": "cargo",
+      "environment": {
+        "CARGO_TARGET_DIR": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/target",
+        "CARGO_INCREMENTAL": "0",
+        "SPICE_NGSPICE": "C:/dev/ngspice-install/bin/ngspice.exe",
+        "SPICE_ORACLE_ARTIFACT_ROOT": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b"
+      },
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile"
+    },
+    {
+      "args": [
+        "test",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile/dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj",
+        "--no-restore",
+        "--verbosity",
+        "quiet",
+        "--collect",
+        "XPlat Code Coverage",
+        "--results-directory",
+        "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/managed-coverage-native-final"
+      ],
+      "exe": "dotnet",
+      "environment": {
+        "SPICE_SEMICONDUCTOR_ENGINE": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/target/debug/circuit-simulator.exe",
+        "SPICE_SEMICONDUCTOR_ARTIFACT_ROOT": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b"
+      },
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile"
+    },
+    {
+      "args": [
+        "test",
+        "--manifest-path",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile/Cargo.toml",
+        "--test",
+        "spice_diode",
+        "--test",
+        "model_charge",
+        "-j",
+        "4",
+        "--message-format=json"
+      ],
+      "exe": "cargo",
+      "environment": {
+        "CARGO_TARGET_DIR": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/coverage-target",
+        "LLVM_PROFILE_FILE": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/rust-coverage/%m-%p.profraw",
+        "CARGO_INCREMENTAL": "0",
+        "RUSTFLAGS": "-C instrument-coverage"
+      },
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile",
+      "subsequent": "matching llvm-profdata merge -sparse profraws; llvm-cov export first-test-binary -object second-test-binary -instr-profile=merged.profdata -summary-only"
+    },
+    {
+      "args": [
+        "mutants",
+        "--no-config",
+        "--in-place",
+        "--file",
+        "src/spice_diode.rs",
+        "--re",
+        "(75:26.*replace - with \\+|91:27.*replace \\+ with -|92:30.*replace \\+ with -)",
+        "--timeout",
+        "120",
+        "--output",
+        "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/mutation",
+        "--",
+        "--test",
+        "spice_diode"
+      ],
+      "exe": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator/.tools/mutation/cargo-mutants.exe",
+      "environment": {
+        "CARGO_TARGET_DIR": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/target",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "4"
+      },
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile"
+    },
+    {
+      "args": [
+        "tool",
+        "run",
+        "dotnet-stryker",
+        "--",
+        "--config-file",
+        "semiconductor-stryker.json",
+        "--test-project",
+        "Simulator.Frontend.Tests.csproj",
+        "--output",
+        "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/stryker-followup"
+      ],
+      "exe": "dotnet",
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile/dotnet/Simulator.Frontend.Tests"
+    },
+    {
+      "args": [
+        "run",
+        "--file",
+        "scripts/ValidateRequirements.cs",
+        "--",
+        "--python",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator/../../work/strictdoc-env/Scripts/python.exe",
+        "--report",
+        "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/strictdoc-validation.json"
+      ],
+      "exe": "dotnet",
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile"
+    },
+    {
+      "args": [
+        "run",
+        "--file",
+        "scripts/EngineeringDocs.cs",
+        "--",
+        "--python",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator/.tools/sphinx/Scripts/python.exe",
+        "--output",
+        "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/engineering",
+        "--api-xml",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile/dotnet/Simulator.Client/bin/Debug/net10.0/Simulator.Client.xml"
+      ],
+      "exe": "dotnet",
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile"
+    }
+  ],
+  "limitations": [
+    "This first diode slice does not complete BJT, MOS or general ngspice semiconductor compatibility. RS, BV and temperature scaling remain refused by generated frontend.",
+    "Charged configured adaptive and explicit initial-state policies refuse; nonlinear trapezoidal remains unsupported.",
+    "Stored-energy audit is NotChecked; physical BE KCL independently reconstructs charge displacement.",
+    "Only declared finite scenarios and seeded properties ran, not a global proof, fresh Linux qualification or coverage-guided fuzz campaign.",
+    "Existing constant-C regressions passed; no runtime simulator dependency or production dependency was added.",
+    "Native initial compile failure was an exhaustiveness error; behavioral RED-to-GREEN was explicitly observed for generated frontend lowering, not claimed for every native assertion.",
+    "E exFAT incremental hard links failed and copied; final compilation disabled incremental. No performance comparison inferred.",
+    "StrictDoc HTML export lacks html2pdf4doc; real SDReader repository gate passed separately.",
+    "CLI capability/example executed separately; current src/main.rs capability metadata is excluded from the earlier native coverage scope.",
+    "After the final full managed campaign, only trailing blank lines were removed from plan, requirement and semiconductor test files. The affected22 semiconductor tests and real StrictDoc/Sphinx gates were rerun; Stryker input test fingerprints remain the exact pre-trim snapshot."
+  ],
+  "source_hashes": {
+    "docs/semiconductor-profile-plan.md": "c7a35510e7f54c8a819be4fc262066c30e410c66ebd2b66fa082c91b3ebbb613",
+    "docs/semiconductor-profile.md": "29feb2269a6f41294c80d4070581d6d2b8b2a50ad31c553c2bcde99e0be1d2a7",
+    "docs/semiconductor-profile.sdoc": "96740c37a83705dd49d4ade8739f83848826188c8303d00751c87de4c91cc859",
+    "docs/semiconductor-reuse-assessment.md": "05ba348e0e8b8573bc030728c1422588044d32394f1b876ae241e48105b97ba0",
+    "dotnet/Simulator.Frontend.Tests/SemiconductorNativeIntegration.cs": "0a0d862aec39317f678e97c3924065415765c3d5b6d2d41d76795788826d62a6",
+    "dotnet/Simulator.Frontend.Tests/SemiconductorTests.cs": "fed27d6a225722d5a1a52a0b22543ae4bdc283af6100f1fcd968830bea098124",
+    "dotnet/Simulator.Frontend.Tests/semiconductor-stryker.json": "5a82da305c2704c027efb6e96803b6fa743ba1523b16b02caba7259fcc87cd44",
+    "dotnet/Simulator.Frontend/SemiconductorPreparation.cs": "6d793cb0006d1015e8c3c37f4fb02acb4743a1c9825203746bc022a7f4d04123",
+    "examples/spice-diode-charge.request.json": "480f7aadc1f3114fc9af7f5d1ef5e9ed6d9d7c612cf16d0d51665e726ad7533d",
+    "src/spice_diode.rs": "f15abe8bd656df14abdbd9c6b3939fb706f0086b5d1193a4cf6a59f7fe638504",
+    "tests/spice_diode.proptest-regressions": "6ff2f0c32ecd64f3e026ba7cfe2169d90241f8ec84c9f37b74ee7ceae50cd31d",
+    "tests/spice_diode.rs": "4bbebc40eee74411aa1c58d47a89e9fe5dff64f67bcd13425463a151508ae2c8",
+    "tests/spice_diode_oracle.rs": "4073f01a7b01511a7ddd5792c5011f1f19b82fd5352f1e6f72063f3c6a1ddc71",
+    "third-party/ATTRIBUTION.md": "58b581c8c7d87ceb028b0ac7fb579aeea338c0f2eae3ff17e2ce2b86f07b5189",
+    "third-party/SPICESHARP-LICENSE.txt": "2fe44c1dc224620b164c086bde38ded98a1b55847b3cd3123e5ee51c2e559ff0",
+    "dotnet/Simulator.Client/Requests.cs": "71d06d7eeec45f3c1a268953d2ea21aa57448985b9ea894ff092419c9c72648c",
+    "dotnet/Simulator.Frontend.Tests/ReadinessTests.cs": "71f5299214e616599c4c7abf6cd7a599ca3cc1c9e042d571124936709e3854e8",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "f13b36ad66047e42427f704473a4a46eba09fbd2e1915c998ca9ab258c38aadf",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "32c64b1aa481fedc8a3422d598a1a12809b9b35681ba3ca3408ecd9a2108e4eb",
+    "src/ac.rs": "895b15d95cf66b0ee2b63539f09448cbd64dd5fb0c75166f58ef5cd313d23304",
+    "src/api.rs": "f155785b420ff53a547b78a7f3ab6ea78551e94e3cc53b24388d0cd328ea563e",
+    "src/audit.rs": "c9749a75026b23cc0d5e4c063c55a23a6f9575a15231e906579b5a7c20d448df",
+    "src/audit_ac.rs": "b2fb583e0c6cbf518d82792d42251f4b0cebb3d79dd51414bc18901b20050932",
+    "src/audit_configured.rs": "92a40e8932207bac69170d9152b2d228610b7cab7715d0e2a9875449f073a011",
+    "src/circuit.rs": "c87e8672a3b033b1edd972b671e7d08fc96f97e7f97a674178904b59e4a2c862",
+    "src/compile.rs": "a7609c03b5f7e7b5ab73c92a1c8bb1bdfbad277d47a3a4e8fb9a19bf8714f39b",
+    "src/configured.rs": "eef0e6fca55f696372fe65cfb93f0f89082b9951fc4731ed0a63198adc21b59e",
+    "src/lib.rs": "c1bbfa69ee2b36b502f2392b96a53445f76da4fbeb0b7dc422cf364131b84fd9",
+    "src/main.rs": "23e3e815eeba035c0349b47ea7e1402e244d9ffba8fdc1faf5f9dc3f49263c45",
+    "src/model.rs": "3de7f1db92d3375c6514495dd3b248abd85ab2e38f0ad0f06fbbef453b54bf83",
+    "src/newton.rs": "fc24ce2ebec12371fbcc38961986f759f8ea5c5418b96affd14fdd5fbaf87f6e",
+    "src/power.rs": "d2d92f28fb07d32b3f2a7bc0bc6bf84079974a207d56cf3ba73b5aae5542f06a",
+    "src/variation.rs": "0105a411571d671386262b4df6acf30b2f5a45665cfe6ebdf7fd38b5765c5430"
+  }
+}

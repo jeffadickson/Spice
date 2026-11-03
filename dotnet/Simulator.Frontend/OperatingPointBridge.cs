@@ -93,7 +93,7 @@ public static class OperatingPointBridge
                 {
                     if(omittedStarts?.Contains(card.Range.Start)==true)continue;
                     if(selected&&card.GlobalNodes!=null)continue;
-                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice")))
+                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice" or "diode")))
                         throw new BridgeFailure("unsupported_active_card",card.Range);
                 }
                 var frameIds=new Dictionary<string,(string Id,string Family)>(StringComparer.OrdinalIgnoreCase);
@@ -187,6 +187,17 @@ public static class OperatingPointBridge
                 foreach(var call in bound[scope])
                 {
                     if(!names.Add(call.Header.Name))throw new BridgeFailure("duplicate_element",call.Header.Range);
+                    if(selected&&call.Header.Family=="D")
+                    {
+                        if(!SemiconductorPreparation.TryDiode(catalog,environment,call,out var diode,out var error))
+                            throw new BridgeFailure(error!.Code,error.Range);
+                        var p=Node(call.Ports[0].Actual.Text);var n=Node(call.Ports[1].Actual.Text);
+                        if(p==n)throw new BridgeFailure("shorted_primitive",call.Header.Range);
+                        if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);
+                        var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        elements.Add(new SpiceDiode(id,p,n,diode!));origins.Add(new(id,call.Header.Name,path,call.Header.Range));
+                        continue;
+                    }
                     if(selected&&call.Header.Family=="S")
                     {
                         if(call.Status!=BindingStatus.Bound)throw new BridgeFailure(call.Code,call.Header.Range);

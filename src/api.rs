@@ -112,6 +112,17 @@ pub fn run_with_registry(
         tracing::warn!(code = diagnostic.code, subject = %diagnostic.subject, "topology_diagnostic");
     }
     let plan = compile(&request.circuit)?;
+    if plan
+        .diodes
+        .iter()
+        .any(|d| matches!(d.model,crate::model::DiodeProfile::Spice(m) if m.has_charge()))
+        && matches!(&request.analysis,Analysis::TransientConfigured { options } if options.adaptive.is_some() || options.initial_state.is_some())
+    {
+        return Err(crate::error::SimError::new(
+            crate::error::ErrorCode::Unsupported,
+            "charged SPICE diode total current requires nonadaptive backward Euler initialized from operating point",
+        ));
+    }
     tracing::debug!(unknowns = plan.unknown_count(), "circuit_compiled");
     let mut integration = None;
     let mut newton = None;
@@ -264,7 +275,7 @@ pub fn run_with_registry(
         // Composite profiles expose conduction explicitly. A transient initial
         // state does not generally determine dV/dt, so a total device current
         // must not be invented for a constant-charge profile.
-        let signal_id = if model.capacitance().is_some() {
+        let signal_id = if model.has_charge() {
             format!("i_conduction({})", diode.id)
         } else {
             format!("i({})", diode.id)
@@ -294,6 +305,79 @@ pub fn run_with_registry(
                 let imag = conductance
                     * (p.map(|v| v.imag).unwrap_or(0.) - n.map(|v| v.imag).unwrap_or(0.));
                 sample.values.push(crate::ac::ComplexValue { real, imag });
+            }
+        }
+        // The SPICE junction exposes both total terminal current and conduction.
+        // Raw BE starts with the documented zero MNA state; configured BE has
+        // an operating-point sample at t=0. Rejected trials are absent here.
+        if matches!(model, crate::model::DiodeProfile::Spice(_)) && model.has_charge() {
+            signals.push(Signal {
+                id: format!("i({})", diode.id),
+                quantity: "current",
+                unit: "A",
+            });
+            let mut old_q = 0.;
+            let mut old_time = 0.;
+            for sample in &mut samples {
+                let v = diode.p.unknown().map(|i| sample.values[i]).unwrap_or(0.)
+                    - diode.n.unknown().map(|i| sample.values[i]).unwrap_or(0.);
+                let q = model
+                    .nonlinear_charge(v)?
+                    .ok_or_else(|| SimError::invalid("missing SPICE charge"))?
+                    .charge_coulombs;
+                let conduction = model.linearize(v)?.current_amps;
+                let dynamic = matches!(
+                    request.analysis,
+                    Analysis::Transient { .. } | Analysis::TransientConfigured { .. }
+                );
+                let total = if dynamic && sample.time_s > old_time {
+                    conduction + (q - old_q) / (sample.time_s - old_time)
+                } else {
+                    conduction
+                };
+                if !total.is_finite() {
+                    return Err(SimError::invalid("nonfinite total diode current"));
+                }
+                sample.values.push(total);
+                old_q = q;
+                old_time = sample.time_s;
+            }
+            if !ac_samples.is_empty() {
+                let bias = crate::dc::operating_point(&plan, solver)?;
+                let v = diode.p.unknown().map(|i| bias[i]).unwrap_or(0.)
+                    - diode.n.unknown().map(|i| bias[i]).unwrap_or(0.);
+                let g = model.linearize(v)?.conductance_siemens;
+                let c = model
+                    .nonlinear_charge(v)?
+                    .ok_or_else(|| SimError::invalid("missing SPICE charge"))?
+                    .capacitance_farads;
+                for sample in &mut ac_samples {
+                    let real = diode
+                        .p
+                        .unknown()
+                        .map(|i| sample.values[i].real)
+                        .unwrap_or(0.)
+                        - diode
+                            .n
+                            .unknown()
+                            .map(|i| sample.values[i].real)
+                            .unwrap_or(0.);
+                    let imag = diode
+                        .p
+                        .unknown()
+                        .map(|i| sample.values[i].imag)
+                        .unwrap_or(0.)
+                        - diode
+                            .n
+                            .unknown()
+                            .map(|i| sample.values[i].imag)
+                            .unwrap_or(0.);
+                    let wc = std::f64::consts::TAU * sample.frequency_hz * c;
+                    sample.values.push(crate::ac::ComplexValue {
+                        real: g * real - wc * imag,
+                        imag: g * imag + wc * real,
+                    });
+                }
             }
         }
     }

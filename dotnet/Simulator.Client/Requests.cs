@@ -27,6 +27,7 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(Ccvs), "ccvs")]
 [JsonDerivedType(typeof(Diode), "diode")]
 [JsonDerivedType(typeof(DiodeWithCapacitance), "diode_with_capacitance")]
+[JsonDerivedType(typeof(SpiceDiode), "spice_diode")]
 public abstract record Element(string Id, int P, int N);
 /// <summary>Positive resistance in ohms; validated by the engine before assembly.</summary>
 public sealed record Resistor(string Id, int P, int N, double Ohms) : Element(Id, P, N);
@@ -50,6 +51,13 @@ public sealed record Ccvs(string Id,int P,int N,string ControlId,double Ohms):El
 public sealed record PspiceSwitch(string Id,int P,int N,int Cp,int Cn,double Ron,double Roff,double Von,double Voff):Element(Id,P,N);
 /// <summary>Shockley diode parameters use SI amps and volts; current flows P to N.</summary>
 public sealed record Diode(string Id, int P, int N, double SaturationAmps, double ThermalVolts) : Element(Id, P, N);
+/// <summary>Effective SI junction parameters at a fixed temperature. Depletion
+/// and diffusion charge use CJO,VJ,M,FC,TT; no series resistance is hidden in Q.</summary>
+public sealed record SpiceDiodeModel(double SaturationAmps,double ThermalVolts,double JunctionFarads,
+    double JunctionVolts,double Grading,double ForwardCoefficient,double TransitSeconds);
+/// <summary>Junction with nonlinear SPICE depletion and diffusion storage.
+/// The i_conduction observable excludes displacement current.</summary>
+public sealed record SpiceDiode(string Id,int P,int N,SpiceDiodeModel Model):Element(Id,P,N);
 /// <summary>Shockley conduction in parallel with constant Q=C*V; SI amps, volts and
 /// strictly positive farads. This bounded profile has no depletion or transport charge.
 /// Derived i_conduction(id) excludes displacement; total current requires circuit KCL.</summary>

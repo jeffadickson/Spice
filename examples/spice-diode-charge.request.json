@@ -1,0 +1,16 @@
+{
+  "schema_version": "1", "case_id": "spice-diode-nonlinear-charge", "backend": "faer",
+  "circuit": {
+    "nodes": ["0", "in", "out"],
+    "elements": [
+      {"kind":"voltage","id":"V1","p":1,"n":0,"volts":0.5},
+      {"kind":"resistor","id":"R1","p":1,"n":2,"ohms":1000},
+      {"kind":"spice_diode","id":"D1","p":2,"n":0,
+       "model":{"saturation_amps":1e-14,"thermal_volts":0.025864915805605,
+                "junction_farads":2e-12,"junction_volts":0.8,"grading":0.5,
+                "forward_coefficient":0.5,"transit_seconds":1e-9}}
+    ]
+  },
+  "analysis":{"kind":"ac","frequencies_hz":[1000,1000000],
+              "source_phasors":[{"id":"V1","real":1,"imag":0}]}
+}

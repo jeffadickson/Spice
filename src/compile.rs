@@ -119,6 +119,15 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     let mut switches = Vec::new();
     for e in &circuit.elements {
         match e {
+            Element::SpiceDiode { id, p, n, model } => {
+                model.validate()?;
+                diodes.push(CompiledDiode {
+                    id: id.clone(),
+                    p: *p,
+                    n: *n,
+                    model: DiodeProfile::Spice(*model),
+                });
+            }
             Element::PspiceSwitch {
                 p,
                 n,

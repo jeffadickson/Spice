@@ -70,6 +70,29 @@ pub fn conductance_at_bias_csc(
     stamps.to_csc()
 }
 
+/// Complete dQ/dx at an immutable bias, including nonlinear junction storage.
+pub fn charge_at_bias_csc(
+    plan: &CompiledCircuit,
+    values: &[f64],
+) -> SimResult<crate::sparse::CscMatrix> {
+    if values.len() != plan.unknown_count() || values.iter().any(|v| !v.is_finite()) {
+        return Err(SimError::invalid("invalid charge bias vector"));
+    }
+    let mut stamps = crate::sparse::SparseAccumulator::new(plan.unknown_count())?;
+    for (row, col, value) in plan.charge_sparse().entries() {
+        stamps.add(row, col, value);
+    }
+    for diode in &plan.diodes {
+        if let Some(q) = diode
+            .model
+            .nonlinear_charge(voltage(values, diode.p, diode.n))?
+        {
+            crate::compile::stamp_pair(&mut stamps, diode.p, diode.n, q.capacitance_farads);
+        }
+    }
+    stamps.to_csc()
+}
+
 // Output current enters p and leaves n. The AC matrix uses exactly these DC
 // partials; negating either differential gain recreates bug883.
 fn stamp_switch(
@@ -179,6 +202,25 @@ pub fn linearize_backward_euler(
     // Assemble the requested excitation directly. Cancelling the nominal RHS
     // afterwards can overflow even when the requested residual is finite.
     let mut system = linearize_with_rhs(plan, values, rhs)?;
+    for diode in &plan.diodes {
+        if let Some(q) = diode
+            .model
+            .nonlinear_charge(voltage(values, diode.p, diode.n))?
+        {
+            let old = diode
+                .model
+                .nonlinear_charge(voltage(previous, diode.p, diode.n))?
+                .ok_or_else(|| SimError::invalid("inconsistent diode charge profile"))?;
+            let displacement = (q.charge_coulombs - old.charge_coulombs) / step_s;
+            stamp_vector(&mut system.residual, diode.p, diode.n, displacement);
+            crate::compile::stamp_pair(
+                &mut system.jacobian,
+                diode.p,
+                diode.n,
+                q.capacitance_farads / step_s,
+            );
+        }
+    }
     for row in 0..values.len() {
         for column in 0..values.len() {
             let coefficient = plan.charge.at(row, column) / step_s;

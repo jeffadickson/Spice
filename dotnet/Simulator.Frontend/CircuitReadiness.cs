@@ -53,6 +53,15 @@ public static class CircuitReadiness
                         if(xi.Ports.Length!=2||xi.Ports.Any(p=>!p.Supported))AddIssue(new("model_contract","unsupported_xspice_gain_ports",card.Kind,scope,path,card.Range));
                         continue;
                     }
+                    // Structural unsupported terms remain visible even if an
+                    // earlier directive prevented active value evaluation.
+                    if(card.Kind=="diode")
+                    {
+                        var diode=bound[scope].FirstOrDefault(i=>i.Header.Range==card.Range);
+                        if(diode!=null&&!SemiconductorPreparation.DiodeAssignmentsAreSupported(diode))
+                            AddIssue(new("model_contract","unsupported_diode_profile",card.Kind,scope,path,card.Range));
+                        continue;
+                    }
                     if(card.Kind=="switchCard"&&bound[scope].FirstOrDefault(i=>i.Header.Range==card.Range&&i.Status==BindingStatus.Bound&&i.Target?.ModelFamily=="vswitch") is {} sw)
                     {
                         var model=sw.Target!;var names=model.Parameters.Select(p=>p.Name).ToArray();

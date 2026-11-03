@@ -22,11 +22,15 @@ pub struct DiodeModel {
 #[derive(Debug, Clone, Copy)]
 pub enum DiodeProfile {
     Shockley(DiodeModel),
+    Spice(crate::spice_diode::SpiceDiodeModel),
     ConstantCharge { conduction: DiodeModel, farads: f64 },
 }
 impl DiodeProfile {
     /// Validate both independent parameter domains before compilation.
     pub fn validate(self) -> SimResult<()> {
+        if let Self::Spice(model) = self {
+            return model.validate();
+        }
         self.conduction().validate()?;
         if let Self::ConstantCharge { farads, .. } = self {
             crate::charge::constant_capacitance(farads, 0.)?;
@@ -36,6 +40,9 @@ impl DiodeProfile {
     /// The unchanged conduction-current equation and its derivative. Charge
     /// finiteness is checked here; its dynamic Jacobian is stamped separately in Q.
     pub fn linearize(self, voltage: f64) -> SimResult<DiodeLinearization> {
+        if let Self::Spice(model) = self {
+            return model.linearize(voltage);
+        }
         if let Self::ConstantCharge { farads, .. } = self {
             crate::charge::constant_capacitance(farads, voltage)?;
         }
@@ -48,13 +55,34 @@ impl DiodeProfile {
     /// Explicit constant parallel capacitance, absent for a legacy diode.
     pub fn capacitance(self) -> Option<f64> {
         match self {
-            Self::Shockley(_) => None,
+            Self::Shockley(_) | Self::Spice(_) => None,
             Self::ConstantCharge { farads, .. } => Some(farads),
+        }
+    }
+    /// Dynamic model charge omitted from the immutable linear charge matrix.
+    pub fn nonlinear_charge(
+        self,
+        voltage: f64,
+    ) -> SimResult<Option<crate::spice_diode::JunctionCharge>> {
+        match self {
+            Self::Spice(model) => Ok(Some(model.charge(voltage)?)),
+            _ => Ok(None),
+        }
+    }
+    /// Distinguish conduction observables from total dynamic device current.
+    pub fn has_charge(self) -> bool {
+        match self {
+            Self::Spice(model) => model.has_charge(),
+            _ => self.capacitance().is_some(),
         }
     }
     fn conduction(self) -> DiodeModel {
         match self {
             Self::Shockley(model) => model,
+            Self::Spice(model) => DiodeModel {
+                saturation_amps: model.saturation_amps,
+                thermal_volts: model.thermal_volts,
+            },
             Self::ConstantCharge { conduction, .. } => conduction,
         }
     }

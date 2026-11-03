@@ -59,6 +59,7 @@ pub fn ac(
         matches!(
             e,
             Element::Diode { .. }
+                | Element::SpiceDiode { .. }
                 | Element::DiodeWithCapacitance { .. }
                 | Element::PspiceSwitch { .. }
         )

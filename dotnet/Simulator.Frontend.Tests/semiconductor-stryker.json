@@ -1,0 +1,1 @@
+{"stryker-config":{"project":"Simulator.Frontend.csproj","mutate":["**/SemiconductorPreparation.cs"],"reporters":["json","cleartext"],"concurrency":2,"thresholds":{"high":80,"low":60,"break":0},"additional-timeout":5000}}

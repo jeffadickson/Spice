@@ -36,6 +36,7 @@ pub mod sampling;
 pub mod solver_contract;
 pub mod sources;
 pub mod sparse;
+pub mod spice_diode;
 pub mod sweep;
 pub mod topology;
 pub mod transient;

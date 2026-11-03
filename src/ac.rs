@@ -113,24 +113,30 @@ pub fn ac_with_source_phasors(
     }
     // DC convergence is still the bounded Newton/reference path; incremental
     // AC conductance stamps and every subsequent complex solve stay sparse.
-    let conductance_sparse = if plan.has_nonlinear_devices() {
+    let (conductance_sparse, charge_sparse) = if plan.has_nonlinear_devices() {
         let bias = crate::dc::operating_point(plan, solver)?;
-        crate::newton::conductance_at_bias_csc(plan, &bias)?
+        (
+            crate::newton::conductance_at_bias_csc(plan, &bias)?,
+            crate::newton::charge_at_bias_csc(plan, &bias)?,
+        )
     } else {
-        plan.conductance_sparse().clone()
+        (
+            plan.conductance_sparse().clone(),
+            plan.charge_sparse().clone(),
+        )
     };
     let mut output = Vec::with_capacity(frequencies.len());
     for &frequency in frequencies {
         positive(frequency, "frequency_hz")?;
         let omega = std::f64::consts::TAU * frequency;
         let system =
-            SparseComplexSystem::from_real_parts(&conductance_sparse, plan.charge_sparse(), omega)?;
+            SparseComplexSystem::from_real_parts(&conductance_sparse, &charge_sparse, omega)?;
         system.validate_complex_rhs(&rhs)?;
         let (x, direct) = match solver.solve_complex_csc(&system, &rhs) {
             Ok(values) => (values, true),
             Err(error) if error.code == ErrorCode::Unsupported => {
                 let conductance = conductance_sparse.to_dense()?;
-                let mut imag = plan.charge.clone();
+                let mut imag = charge_sparse.to_dense()?;
                 for value in &mut imag.values {
                     *value *= omega;
                 }

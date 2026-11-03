@@ -181,6 +181,9 @@ fn dc_currents(circuit: &Circuit, state: &[f64]) -> SimResult<Vec<f64>> {
                     .current
                 }
                 Element::Resistor { ohms, .. } => v / ohms,
+                Element::SpiceDiode { model, .. } => {
+                    model.saturation_amps * (v / model.thermal_volts).exp_m1()
+                }
                 Element::Capacitor { .. } => 0.,
                 Element::Current { amps, .. } => *amps,
                 Element::Diode {
@@ -354,12 +357,20 @@ pub fn backward_euler_step(
     let mut currents = dc_currents(circuit, state)?;
     let mut energy = 0.;
     let mut energy_scale = 0.;
+    let mut nonlinear_storage = false;
     let mut checks = constraint_checks(circuit, state, options)?;
     for (element, current) in circuit.elements.iter().zip(&mut currents) {
         let (p, n) = element.terminals();
         let v = voltage(state, p) - voltage(state, n);
         let old_v = voltage(previous, p) - voltage(previous, n);
         let term = match element {
+            Element::SpiceDiode { model, .. } => {
+                let q = independent_junction_charge(*model, v);
+                let old = independent_junction_charge(*model, old_v);
+                *current += (q - old) / step_s;
+                nonlinear_storage |= model.has_charge();
+                step_s * v * *current
+            }
             Element::DiodeWithCapacitance { farads, .. } => {
                 let conduction = *current;
                 let displacement = farads * (v - old_v) / step_s;
@@ -388,13 +399,35 @@ pub fn backward_euler_step(
         energy_scale += term.abs();
     }
     checks.extend(kcl_checks(circuit, state, &currents, options, None));
-    checks.push(Check::measured(
-        "be_energy_balance",
-        energy,
-        options.energy_absolute_j + options.relative * energy_scale,
-        "J",
-    ));
+    if nonlinear_storage {
+        checks.push(Check::not_checked("be_energy_balance","J","nonlinear depletion/transport stored-energy and BE dissipation audit is not implemented"));
+    } else {
+        checks.push(Check::measured(
+            "be_energy_balance",
+            energy,
+            options.energy_absolute_j + options.relative * energy_scale,
+            "J",
+        ));
+    }
     Ok(AuditReport { checks })
+}
+
+// Independently reconstruct the SPICE depletion integral and transport charge;
+// audits never consume the model evaluator, compiled Jacobian or matrix stamps.
+fn independent_junction_charge(m: crate::spice_diode::SpiceDiodeModel, v: f64) -> f64 {
+    let threshold = m.forward_coefficient * m.junction_volts;
+    let depletion = if v < threshold {
+        m.junction_volts * m.junction_farads / (1. - m.grading)
+            * (1. - (1. - v / m.junction_volts).powf(1. - m.grading))
+    } else {
+        let a = 1. - m.forward_coefficient;
+        let base =
+            m.junction_volts * m.junction_farads / (1. - m.grading) * (1. - a.powf(1. - m.grading));
+        base + m.junction_farads / a.powf(1. + m.grading)
+            * ((1. - m.forward_coefficient * (1. + m.grading)) * (v - threshold)
+                + m.grading / (2. * m.junction_volts) * (v * v - threshold * threshold))
+    };
+    depletion + m.transit_seconds * m.saturation_amps * (v / m.thermal_volts).exp_m1()
 }
 
 impl AuditReport {

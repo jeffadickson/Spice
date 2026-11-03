@@ -94,7 +94,7 @@ fn initial(
     // model domains on dynamic rows before observers see the initial state.
     let system = crate::newton::linearize_with_rhs(plan, x, b)?;
     let mut algebraic = vec![true; x.len()];
-    for (row, _, value) in plan.charge_sparse().entries() {
+    for (row, _, value) in crate::newton::charge_at_bias_csc(plan, x)?.entries() {
         if value != 0. {
             algebraic[row] = false;
         }

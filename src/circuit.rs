@@ -8,6 +8,13 @@ use std::collections::BTreeSet;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Element {
+    /// SPICE depletion and diffusion charge evaluated with effective SI parameters.
+    SpiceDiode {
+        id: String,
+        p: NodeId,
+        n: NodeId,
+        model: crate::spice_diode::SpiceDiodeModel,
+    },
     Resistor {
         id: String,
         p: NodeId,
@@ -106,6 +113,7 @@ impl Element {
     pub fn id(&self) -> &str {
         match self {
             Self::Resistor { id, .. }
+            | Self::SpiceDiode { id, .. }
             | Self::Capacitor { id, .. }
             | Self::Inductor { id, .. }
             | Self::Voltage { id, .. }
@@ -122,6 +130,7 @@ impl Element {
     pub fn terminals(&self) -> (NodeId, NodeId) {
         match self {
             Self::Resistor { p, n, .. }
+            | Self::SpiceDiode { p, n, .. }
             | Self::Capacitor { p, n, .. }
             | Self::Inductor { p, n, .. }
             | Self::Voltage { p, n, .. }
@@ -267,6 +276,7 @@ impl Circuit {
                         "diode parameters must be finite and positive",
                     ));
                 }
+                Element::SpiceDiode { model, .. } => model.validate()?,
                 _ => {}
             }
         }

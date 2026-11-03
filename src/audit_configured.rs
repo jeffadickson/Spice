@@ -90,7 +90,9 @@ pub fn configured_step(
     if circuit.elements.iter().any(|e| {
         matches!(
             e,
-            Element::Diode { .. } | Element::DiodeWithCapacitance { .. }
+            Element::Diode { .. }
+                | Element::DiodeWithCapacitance { .. }
+                | Element::SpiceDiode { .. }
         )
     }) {
         return Ok(AuditReport {
