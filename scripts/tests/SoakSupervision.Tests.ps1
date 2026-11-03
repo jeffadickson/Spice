@@ -36,10 +36,50 @@ Describe 'Whole-child soak supervision' {
   $childState=Get-Content -LiteralPath (Join-Path $output 'work/child-started.json') -Raw|ConvertFrom-Json
   $childState.framework_work_root|Should -Be (Join-Path $output 'fm')
   $manifest.framework_work_root|Should -Be $childState.framework_work_root
+  $manifest.outer_started_utc|Should -Not -BeNullOrEmpty
+  $manifest.effective_outer_deadline_utc|Should -Not -BeNullOrEmpty
+  $manifest.test_finish_by_utc|Should -Not -BeNullOrEmpty
+  # ConvertFrom-Json may materialize dates as DateTime. Cast directly rather
+  # than formatting/parsing through a string that loses fractional seconds.
+  $anchor=[DateTimeOffset]$manifest.outer_started_utc
+  $outer=[DateTimeOffset]$manifest.effective_outer_deadline_utc
+  $outer.UtcTicks|Should -Be $anchor.AddSeconds(6).UtcTicks
+  ([DateTimeOffset]$childState.finish_by_utc).UtcTicks|Should -Be $outer.AddSeconds(-5).UtcTicks
+  $manifest.test_finish_by_utc|Should -Be $childState.finish_by_utc
+ }
+ It 'caps a later explicit finish by the same relative-duration anchor' {
+  $checkout=New-Checkout 'later-finish';$output=Join-Path $artifactParent ('soak-later-'+[guid]::NewGuid().ToString('N'));$env:SPICE_SOAK_FIXTURE_MODE='fast'
+  $requested=[DateTimeOffset]::UtcNow.AddMinutes(5).ToString('o')
+  & $launcher -Checkout $checkout -CanonicalRepository $canonical -ExpectedCommit $pinned -ArtifactDirectory $output -Minutes .1 -SkipMutation -FinishByUtc $requested
+  $manifest=Get-Content -LiteralPath (Join-Path $output 'launch-manifest.json') -Raw|ConvertFrom-Json
+  $childState=Get-Content -LiteralPath (Join-Path $output 'work/child-started.json') -Raw|ConvertFrom-Json
+  $manifest.effective_outer_deadline_utc|Should -Not -BeNullOrEmpty
+  $outer=[DateTimeOffset]$manifest.effective_outer_deadline_utc
+  $outer.UtcTicks|Should -Be (([DateTimeOffset]$manifest.outer_started_utc).AddSeconds(6).UtcTicks)
+  ($outer -lt [DateTimeOffset]$requested)|Should -BeTrue
+  ([DateTimeOffset]$childState.finish_by_utc).UtcTicks|Should -Be $outer.AddSeconds(-5).UtcTicks
+ }
+ It 'preserves an earlier explicit absolute finish window' {
+  $checkout=New-Checkout 'earlier-finish';$output=Join-Path $artifactParent ('soak-earlier-'+[guid]::NewGuid().ToString('N'));$env:SPICE_SOAK_FIXTURE_MODE='fast'
+  $requested=[DateTimeOffset]::UtcNow.AddSeconds(15).ToString('o')
+  & $launcher -Checkout $checkout -CanonicalRepository $canonical -ExpectedCommit $pinned -ArtifactDirectory $output -Minutes 1 -SkipMutation -FinishByUtc $requested
+  $manifest=Get-Content -LiteralPath (Join-Path $output 'launch-manifest.json') -Raw|ConvertFrom-Json
+  $childState=Get-Content -LiteralPath (Join-Path $output 'work/child-started.json') -Raw|ConvertFrom-Json
+  $manifest.effective_outer_deadline_utc|Should -Not -BeNullOrEmpty
+  ([DateTimeOffset]$manifest.effective_outer_deadline_utc).UtcTicks|Should -Be ([DateTimeOffset]$requested).UtcTicks
+  ([DateTimeOffset]$childState.finish_by_utc).UtcTicks|Should -Be (([DateTimeOffset]$requested).AddSeconds(-5).UtcTicks)
+ }
+ It 'rejects a window consumed by the five-second cleanup reserve before dispatch' {
+  $checkout=New-Checkout 'too-short';$output=Join-Path $artifactParent ('soak-short-'+[guid]::NewGuid().ToString('N'));$env:SPICE_SOAK_FIXTURE_MODE='slow'
+  {& $launcher -Checkout $checkout -CanonicalRepository $canonical -ExpectedCommit $pinned -ArtifactDirectory $output -Minutes .02 -SkipMutation}|Should -Throw '*five-second cleanup reserve*'
+  Test-Path -LiteralPath (Join-Path $output 'work/child-started.json')|Should -BeFalse
+  $manifest=Get-Content -LiteralPath (Join-Path $output 'launch-manifest.json') -Raw|ConvertFrom-Json
+  $manifest.state|Should -Be 'launcher_failed'
+  $manifest.child_pid|Should -BeNullOrEmpty
  }
  It 'terminates a stuck bootstrap by the outer deadline and never claims completed tests' {
   $checkout=New-Checkout 'slow';$output=Join-Path $artifactParent ('soak-slow-'+[guid]::NewGuid().ToString('N'));$env:SPICE_SOAK_FIXTURE_MODE='slow'
-  {& $launcher -Checkout $checkout -CanonicalRepository $canonical -ExpectedCommit $pinned -ArtifactDirectory $output -Minutes .02 -SkipMutation -FinishByUtc ([DateTimeOffset]::UtcNow.AddSeconds(30).ToString('o'))}|Should -Throw '*Outer soak deadline*'
+  {& $launcher -Checkout $checkout -CanonicalRepository $canonical -ExpectedCommit $pinned -ArtifactDirectory $output -Minutes .1 -SkipMutation -FinishByUtc ([DateTimeOffset]::UtcNow.AddSeconds(30).ToString('o'))}|Should -Throw '*Outer soak deadline*'
   $manifest=Get-Content -LiteralPath (Join-Path $output 'launch-manifest.json') -Raw|ConvertFrom-Json
   $manifest.state|Should -Be 'launcher_failed';$manifest.error|Should -Match 'Outer soak deadline'
   Get-Process -Id $manifest.child_pid -ErrorAction SilentlyContinue|Should -BeNullOrEmpty

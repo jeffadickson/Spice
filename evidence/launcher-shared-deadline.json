@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "base_revision": "b31cfd97037bcea40ecab490d0acf2573909c4fc",
+  "status": "bounded_launcher_contracts_passed",
+  "source_hashes": {
+    "docs/consistency.sdoc": {
+      "canonical_git_blob_sha1": "066043fac7c400f193e8870b648d10bf7c3fa135",
+      "tested_working_sha256": "e238fc0e721048041db4de7a7f3fb545ea741adda7ffbd55052e627f02600693"
+    },
+    "scripts/Run-VerifiedSoak.ps1": {
+      "canonical_git_blob_sha1": "18f4766c105d74fd507814371c25a1da77d7bc9b",
+      "tested_working_sha256": "1ce88e88a85c831caf038a6bd07932bee901228dd47ebc7f411e548388426d7b"
+    },
+    "scripts/tests/SoakSupervision.Tests.ps1": {
+      "canonical_git_blob_sha1": "0da4a5df7e94d08ede06085e938d80d8786ca47b",
+      "tested_working_sha256": "22175c19e533b1608e37b5af3d13c731cfd5401de8cae93f7e6d2180c2eca77e"
+    }
+  },
+  "policy": "One outer UTC/monotonic anchor; effective outer deadline=min(anchor+Minutes,userFinishBy), child FinishBy=effective outer deadline-5s even when user FinishBy is absent or later. Reject remaining windows<=5s before dispatch. Requested window, effective deadlines and cleanup reserve remain separate manifest fields.",
+  "red": {
+    "passed": 0,
+    "observations": "Missing effective manifest fields and old 1.2 s stuck-child dispatch reproduced the required changes.",
+    "sha256": "8f0df06ff71a8571c1db64f8ca1614dc2ce707991afc8e5137d5237dbaa7603f",
+    "not_selected": 3,
+    "report": "launcher-shared-anchor-red.xml",
+    "failed": 4
+  },
+  "first_post_fix_attempt": {
+    "passed": 12,
+    "skipped": 0,
+    "sha256": "582d2cd7bcc43072ea7b0f9df7e0407ba1ce20bfbb885925cf03806fad088958",
+    "disposition": "The earlier-absolute assertion formatted a JSON-materialized DateTime through a string, losing fractional precision/offset identity. Test now casts directly to DateTimeOffset and compares UTC ticks; production timing code unchanged between attempts.",
+    "report": "launcher-shared-anchor-green.xml",
+    "failed": 1
+  },
+  "final": {
+    "seconds": 30.29,
+    "skipped": 0,
+    "failed": 0,
+    "report": "launcher-shared-anchor-final.xml",
+    "cases": "Missing finish, later finish, earlier absolute finish, cleanup-consumed window rejection, real six-second stuck bootstrap/tree kill, canonical locks, source validation and post-dispatch reporting failure.",
+    "passed": 13,
+    "sha256": "f8e7a18afbdddb4498a7796147e5a0cb3603ef55a35ff1de924ccc12d0c62380",
+    "command": "Set existing SPICE_SOAK_TEST_ROOT, SPICE_SOAK_SOURCE_ROOT and SPICE_ENDURANCE_SUPERVISOR_DLL; Invoke-Pester -Path scripts/tests/SoakSupervision.Tests.ps1,scripts/tests/VerifiedSoak.Tests.ps1 with CodeCoverage.Path=scripts/Run-VerifiedSoak.ps1"
+  },
+  "coverage": {
+    "branch_coverage": "Unavailable from Pester; no branch percentage invented.",
+    "report_sha256": "10af9ee349ffc0e65fe13e8212809fe3b83cfcb694417785c5a9a4d737e01c08",
+    "command_percent": 79.92565055762081,
+    "mapped_lines": {
+      "covered": 92,
+      "missed": 12
+    },
+    "source_sha256": "1ce88e88a85c831caf038a6bd07932bee901228dd47ebc7f411e548388426d7b",
+    "tool": "Pester 5.7.1 JaCoCo output",
+    "limits": "Launcher only. Background dispatch, mutation-tool setup, ancestor artifact-junction and several failure branches were not executed by this test scope. Child numerical code is unmeasured.",
+    "line_percent": 88.46153846153847,
+    "mapped_commands": {
+      "covered": 215,
+      "missed": 54
+    },
+    "report": "launcher-shared-anchor-coverage-final.xml"
+  },
+  "examples": {
+    "soak-slow-*": {
+      "requested_minutes": 0.1,
+      "error": "Outer soak deadline reached; setup/build/test tree terminated. Inspect partial summary; do not claim a full run.",
+      "manifest_sha256": "17e49583182da5243bf969acb6d1f28e362a31855cc66ff5c392583c097ca78a",
+      "outer_started_utc": "2026-11-03T14:58:11.4313556+00:00",
+      "requested_finish_by_utc": "2026-11-03T14:58:39.9439443+00:00",
+      "child_observed_finish_by_utc": "2026-11-03T14:58:12.4313556+00:00",
+      "manifest_path": "E:\\Artifacts\\Spice-fix-20261103T140559Z\\paths\\soak-slow-79cddda2a1ed4848beb6902c1c41af48\\launch-manifest.json",
+      "effective_outer_deadline_utc": "2026-11-03T14:58:17.4313556+00:00",
+      "test_finish_by_utc": "2026-11-03T14:58:12.4313556+00:00",
+      "cleanup_reserve_seconds": 5,
+      "state": "launcher_failed"
+    },
+    "soak-short-*": {
+      "requested_minutes": 0.02,
+      "error": "Remaining soak window must exceed the five-second cleanup reserve before dispatch.",
+      "manifest_sha256": "1e436dc907e2d555d8cb0dcc9cfdfc97a3366186decf22de5e20de9b7e04ac89",
+      "outer_started_utc": "2026-11-03T14:58:09.4628110+00:00",
+      "requested_finish_by_utc": "",
+      "child_observed_finish_by_utc": null,
+      "manifest_path": "E:\\Artifacts\\Spice-fix-20261103T140559Z\\paths\\soak-short-734df758388641fc96561f06cff74cac\\launch-manifest.json",
+      "effective_outer_deadline_utc": "2026-11-03T14:58:10.6628110+00:00",
+      "test_finish_by_utc": null,
+      "cleanup_reserve_seconds": 5,
+      "state": "launcher_failed"
+    },
+    "soak-earlier-*": {
+      "requested_minutes": 1.0,
+      "error": null,
+      "manifest_sha256": "3de829251001e5d8bc287b58b4aa1243b0a1d48ed968986f2e0ef7529719b95e",
+      "outer_started_utc": "2026-11-03T14:58:06.2409280+00:00",
+      "requested_finish_by_utc": "2026-11-03T14:58:20.3261904+00:00",
+      "child_observed_finish_by_utc": "2026-11-03T14:58:15.3261904+00:00",
+      "manifest_path": "E:\\Artifacts\\Spice-fix-20261103T140559Z\\paths\\soak-earlier-44ac92cd1d0b42ce969ac515cc21c84b\\launch-manifest.json",
+      "effective_outer_deadline_utc": "2026-11-03T14:58:20.3261904+00:00",
+      "test_finish_by_utc": "2026-11-03T14:58:15.3261904+00:00",
+      "cleanup_reserve_seconds": 5,
+      "state": "worker_returned"
+    },
+    "soak-later-*": {
+      "requested_minutes": 0.1,
+      "error": null,
+      "manifest_sha256": "e0367858568c7207fcd3982e0ee25750c0cbd01682ff7b67552875b538a94c6c",
+      "outer_started_utc": "2026-11-03T14:58:03.6900857+00:00",
+      "requested_finish_by_utc": "2026-11-03T15:03:03.1314234+00:00",
+      "child_observed_finish_by_utc": "2026-11-03T14:58:04.6900857+00:00",
+      "manifest_path": "E:\\Artifacts\\Spice-fix-20261103T140559Z\\paths\\soak-later-8606ae331c6f43c7bc5239ef3f1e21a6\\launch-manifest.json",
+      "effective_outer_deadline_utc": "2026-11-03T14:58:09.6900857+00:00",
+      "test_finish_by_utc": "2026-11-03T14:58:04.6900857+00:00",
+      "cleanup_reserve_seconds": 5,
+      "state": "worker_returned"
+    },
+    "soak-fast-*": {
+      "requested_minutes": 0.1,
+      "error": null,
+      "manifest_sha256": "2c34c1abfd6a61e89563f5f754337779428c767e4ac383825de0f27557e64b07",
+      "outer_started_utc": "2026-11-03T14:58:01.9917581+00:00",
+      "requested_finish_by_utc": "",
+      "child_observed_finish_by_utc": "2026-11-03T14:58:02.9917581+00:00",
+      "manifest_path": "E:\\Artifacts\\Spice-fix-20261103T140559Z\\paths\\soak-fast-742ee206a268495f81e4a0cc9d71cb60\\launch-manifest.json",
+      "effective_outer_deadline_utc": "2026-11-03T14:58:07.9917581+00:00",
+      "test_finish_by_utc": "2026-11-03T14:58:02.9917581+00:00",
+      "cleanup_reserve_seconds": 5,
+      "state": "worker_returned"
+    }
+  },
+  "partial_preflight": {
+    "artifact": "E:/Artifacts/Spice-fix-20261103T140559Z/property-replay",
+    "child_passed_finish_by_utc": "2026-11-03T14:53:00.0666406+00:00",
+    "launcher_error": "Outer soak deadline reached; setup/build/test tree terminated. Inspect partial summary; do not claim a full run.",
+    "launcher_manifest_sha256": "14bac35655f88f5346024da2bf211807491e76ca88328159baf00906e830e2a2",
+    "inner_status": "running",
+    "pending_seed": "1112197940714409981",
+    "source_dirty": false,
+    "inner_started_utc": "2026-11-03T14:44:45.2220766Z",
+    "checkpoint_sha256": "7fab55d86efcaa55c9bef544e6eadc1599f5aa9dbe978c11413be5cea9d38e95",
+    "inner_deadline_utc": "2026-11-03T14:52:45.2220766Z",
+    "finished_utc": null,
+    "launcher_state": "launcher_failed",
+    "completed_requested_cases": 214272,
+    "launcher_manifest_started_utc": "2026-11-03T14:44:36.6119023Z",
+    "source_commit": "c7761dd1eae80689b4942e75d1781262a33aef5d",
+    "completed_batches": 93,
+    "classification": "Partial: outer killed child before inner finalization. Running checkpoint with no finished timestamp is not a completed or passing campaign. Prior launcher did not record its exact outer-clock anchor; manifest start is retained as metadata, not an invented exact dispatch timestamp."
+  },
+  "strictdoc": {
+    "resolved_parents": 372,
+    "documents": 47,
+    "status": "passed",
+    "report_sha256": "a7ab81ecdd8737fca913ef2959ac49fb632a9ea60cc401c9f3cc2e5e277315c0",
+    "unique_ids": 397
+  },
+  "limits": [
+    "No new long campaign was started; finite launcher fixtures are not numerical or overnight qualification. The earlier second preflight remains partial.",
+    "The five-second cleanup reserve is unchanged; the prior 1.2 s fixture now verifies rejection, with a separate 6 s fixture verifying actual outer cleanup. No test-only production hook or budget inflation.",
+    "No native numerical, Stryker, fuzz/property or fresh managed coverage campaign was required for this launcher-only correction; numerical properties and fixed independent oracle evidence remain separate.",
+    "Existing exFAT Git-ownership rejection is exercised fail-closed by the unrelated-repository contract without changing global Git configuration. Timer/OS scheduling and forced parent termination remain platform limitations."
+  ]
+}

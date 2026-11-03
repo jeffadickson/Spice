@@ -83,19 +83,30 @@ try{
  $state|ConvertTo-Json -Depth 5|Set-Content -LiteralPath $pointer
  $state|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $ArtifactDirectory 'launch-manifest.json')
  . (Join-Path $Checkout 'scripts/HostTools.ps1');Import-SpiceTools -Root $Checkout;Import-SpiceMsvc
+ # Anchor both supervisors to one absolute window. The child's bootstrap must
+ # consume this window instead of receiving a new Minutes budget on startup.
+ $outerStartedUtc=[DateTimeOffset]::UtcNow;$outerClock=[Diagnostics.Stopwatch]::StartNew()
+ $effectiveDeadline=$outerStartedUtc.AddMinutes($Minutes)
+ if($FinishByUtc){$requestedFinish=[DateTimeOffset]::ParseExact($FinishByUtc,'O',[cultureinfo]::InvariantCulture);if($requestedFinish -lt $effectiveDeadline){$effectiveDeadline=$requestedFinish}}
+ $remaining=$effectiveDeadline-$outerStartedUtc
+ $state['outer_started_utc']=$outerStartedUtc.ToString('o')
+ $state['effective_outer_deadline_utc']=$effectiveDeadline.ToString('o')
+ $state['cleanup_reserve_seconds']=5
+ if($remaining -le [TimeSpan]::FromSeconds(5)){throw 'Remaining soak window must exceed the five-second cleanup reserve before dispatch.'}
+ $testFinish=$effectiveDeadline.AddSeconds(-5)
+ $state['test_finish_by_utc']=$testFinish.ToString('o')
  # Invoke a child shell: Run-Endurance.ps1 intentionally exits its own process.
  $arguments=@('-NoProfile','-File',(Join-Path $Checkout 'scripts/Run-Endurance.ps1'),'-Minutes',$Minutes.ToString([cultureinfo]::InvariantCulture));if($SkipMutation){$arguments+='-SkipMutation'}
- # Reserve the existing five-second cleanup allowance inside the user's window.
- if($FinishByUtc){$testFinish=[DateTimeOffset]::ParseExact($FinishByUtc,'O',[cultureinfo]::InvariantCulture).AddSeconds(-5);$arguments+=@('-FinishByUtc',$testFinish.ToString('o'));$state['test_finish_by_utc']=$testFinish.ToString('o')}
+ # Always apply the earlier effective deadline, including duration-only runs.
+ $arguments+=@('-FinishByUtc',$testFinish.ToString('o'))
  $start=[Diagnostics.ProcessStartInfo]::new((Get-Command pwsh).Source);$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.WorkingDirectory=$Checkout
  # Scope this export to the owned worker; do not change global environment or
  # derive mutation builds from the checkout/work junction's logical alias.
  $start.Environment['SPICE_FRAMEWORK_WORK_ROOT']=$frameworkWorkRoot
  foreach($argument in $arguments){$start.ArgumentList.Add($argument)}
- $outerStartedUtc=[DateTimeOffset]::UtcNow;$outerClock=[Diagnostics.Stopwatch]::StartNew()
- $remaining=[TimeSpan]::FromMinutes($Minutes)
- if($FinishByUtc){$window=[DateTimeOffset]::ParseExact($FinishByUtc,'O',[cultureinfo]::InvariantCulture)-$outerStartedUtc;if($window -lt $remaining){$remaining=$window}}
- if($remaining -le [TimeSpan]::Zero){throw 'Soak launch window expired during preparation'}
+ $dispatchElapsed=$outerClock.Elapsed;$dispatchUtcElapsed=[DateTimeOffset]::UtcNow-$outerStartedUtc
+ if($dispatchUtcElapsed -gt $dispatchElapsed){$dispatchElapsed=$dispatchUtcElapsed}
+ if(($remaining-$dispatchElapsed) -le [TimeSpan]::FromSeconds(5)){throw 'Remaining soak window must exceed the five-second cleanup reserve before dispatch.'}
  $guard.Dispose()
  $child=[Diagnostics.Process]::Start($start);if($null -eq $child){throw 'Endurance child did not start'}
  try{

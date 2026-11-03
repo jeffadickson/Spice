@@ -1,5 +1,21 @@
 # Verified overnight checkpoint and window
 
+November 3 timing correction: the launcher now anchors one outer window immediately
+before child dispatch, chooses the earlier of `anchor + Minutes` and the optional
+user finish, and always passes the child an absolute deadline five seconds earlier.
+This includes duration-only runs and later user finishes. Bootstrap consumes that
+same window. Remaining windows of five seconds or less are rejected before dispatch.
+The manifest records `outer_started_utc`, `effective_outer_deadline_utc`,
+`test_finish_by_utc` and `cleanup_reserve_seconds`. Thirteen current launcher
+contracts and scoped coverage are recorded in
+[the timing evidence](../evidence/launcher-shared-deadline.json).
+
+The earlier eight-minute `property-replay` preflight remains partial: its final
+checkpoint retained 93 completed batches/214272 requested cases and a pending seed,
+but the outer deadline killed the child before its final summary. The independent
+relative clocks had differed by bootstrap time. That checkpoint is not a completed
+or passing campaign. The authorized overnight window below is historical.
+
 The authorized next window is November2 at11pm through November3 at6am,
 America/Los_Angeles. Request420 minutes, with an absolute finish time of
 2026-11-03T14:00:00Z. Startup/scheduling does not establish a seven-hour result.
