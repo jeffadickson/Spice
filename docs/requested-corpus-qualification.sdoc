@@ -61,3 +61,17 @@ RequestedProgressNativeTests observes real atomic checkpoints using FileSystemWa
 RELATIONS:
 - TYPE: Parent
   VALUE: FRONTEND-REQUESTED-CORPUS-003
+
+[REQUIREMENT]
+UID: FRONTEND-REQUESTED-CORPUS-005
+STATUS: Draft
+TITLE: Distinct-root blocker ranking without predicted unlock claims
+STATEMENT: >>>
+Offline prioritization shall require completed provenance-valid census evidence and a matching baseline inventory. It shall count distinct root identities separately from unique original content hashes, reject duplicate identities, retain overlapping diagnostic groups and distinguish reached primary refusals from bounded secondary structural observations. Sole observed issues and model-family presence shall not imply guaranteed executable or numerically agreeing circuits. Expanded inputs shall retain matching recorded hashes; unavailable, incomplete and truncated structural observations shall remain explicit.
+<<<
+COMMENT: >>>
+Implementation: CorpusBlockerRanking.cs and scripts/Rank-RequestedCorpus.cs reuse the generated parser and CircuitReadiness audit, without changing primary census outcomes. Verification: CorpusBlockerRankingTests exercises mirrors, repeated observations, duplicate refusal, intersections and 200 FsCheck order/multiplicity trials (replay 362,20261103). Current corpus report and scope-specific coverage/mutation evidence: docs/requested-corpus-fc5db25.md. This offline finite audit does not establish complete scalar, model or numerical validation.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: CAP-002

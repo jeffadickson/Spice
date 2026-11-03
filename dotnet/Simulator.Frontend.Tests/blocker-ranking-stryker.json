@@ -1,0 +1,11 @@
+{
+  "stryker-config": {
+    "project": "Simulator.RequestedQualification.csproj",
+    "mutate": ["**/CorpusBlockerRanking.cs"],
+    "test-case-filter": "FullyQualifiedName~CorpusBlockerRankingTests",
+    "reporters": ["json", "cleartext"],
+    "concurrency": 2,
+    "thresholds": {"high": 80, "low": 60, "break": 0},
+    "additional-timeout": 5000
+  }
+}

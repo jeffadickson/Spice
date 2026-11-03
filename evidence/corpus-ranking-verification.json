@@ -1,0 +1,175 @@
+{
+  "status": "verified_reporting_scope_only",
+  "base_source": "fc5db2529abace539f23ba3aa35508af2c78b62e",
+  "source_sha256": {
+    "scripts/tests/RequestedCorpusRanking.Tests.ps1": "6409c58b7e3adbd0a06feab7df05b155e1d9e542779a4acfac946aeb737fec1b",
+    "dotnet/Simulator.Frontend.Tests/CorpusBlockerRankingTests.cs": "e82f26739324e575b021d371008ba60480c1da6ac09385973dae8dbdbe3199dd",
+    "scripts/Rank-RequestedCorpus.cs": "3a0002c6d6233984e90328dcc844a621634940865c932c7ecc50b91c0cd328d3",
+    "dotnet/Simulator.RequestedQualification/CorpusBlockerRanking.cs": "08d0339c5c7ef66385eb866fe218df6d24a0287d452b5c898944f9736611be4a",
+    "dotnet/Simulator.Frontend.Tests/blocker-ranking-stryker.json": "11c8514e70183df795aa9445d8b671b8ce7dbdd6b610a8bdbe0173128bc18249"
+  },
+  "dotnet_sdk": "10.0.403",
+  "managed_tests": {
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "ranking_tests": 5,
+    "existing_readiness_tests": 5,
+    "framework": "xUnit2.9.3 / FsCheck.Xunit3.5.0",
+    "property_cases": 200,
+    "replay": "362,20261103",
+    "command": "dotnet test dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj --artifacts-path <E-run>/analysis-build -p:GrammarOutput=<E-run>/analysis-grammar -p:AntlrJar=<canonical>/.tools/antlr/antlr-4.13.1-complete.jar --filter \"FullyQualifiedName~CorpusBlockerRankingTests|FullyQualifiedName~Readiness\" --collect:\"XPlat Code Coverage\" --results-directory <E-run>/analysis-tests-fscheck",
+    "log_sha256": "cfab80d3ed36e443bf534884ce4f5ea561340654f7a144574c7c239ff207c4c1",
+    "invocation": {
+      "executable": "dotnet",
+      "arguments": [
+        "test",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\simulation-bridge\\dotnet\\Simulator.Frontend.Tests\\Simulator.Frontend.Tests.csproj",
+        "--artifacts-path",
+        "E:\\Artifacts\\Spice-census-20261103T191728Z\\analysis-build",
+        "-p:GrammarOutput=E:\\Artifacts\\Spice-census-20261103T191728Z/analysis-grammar",
+        "-p:AntlrJar=C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator/.tools/antlr/antlr-4.13.1-complete.jar",
+        "--filter",
+        "FullyQualifiedName~CorpusBlockerRankingTests|FullyQualifiedName~Readiness",
+        "--collect:XPlat Code Coverage",
+        "--results-directory",
+        "E:\\Artifacts\\Spice-census-20261103T191728Z\\analysis-tests-fscheck",
+        "--logger",
+        "console;verbosity=minimal"
+      ]
+    }
+  },
+  "pester": {
+    "version": "5.7.1",
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "Synthetic positive directive canonicalization/frozen-content grouping; rejection of unfinished/invalid source, baseline state/inventory/root-set mismatch, missing/partial/source-mismatched manifest, absent expanded file and pre-existing output.",
+    "source": "scripts/tests/RequestedCorpusRanking.Tests.ps1",
+    "command": "Invoke-Pester with New-PesterContainer data: Analyzer=<E-run>/ranking-host/bin/debug/Rank-RequestedCorpus.exe, ArtifactDirectory=<fresh existing E fixture parent>, FrontendSource=<report-checkout>/dotnet/Simulator.Frontend/CircuitReadiness.cs",
+    "log_sha256": "682d1c5398ea9983ee318f5ea5ff884fe7337fbe8786adad8c05b731e30f653b",
+    "driver_path": "E:\\Artifacts\\Spice-census-20261103T191728Z\\run-ranking-contracts-reviewed.ps1",
+    "driver_sha256": "c9c0282c246cffb61b95e24ca7b9a9752b00a92e0780c6b51131f5f92db0f68e"
+  },
+  "coverage": {
+    "library": {
+      "collector": "Coverlet10.1.0",
+      "scope": "CorpusBlockerRanking.cs only",
+      "metrics": {
+        "lines": 24,
+        "covered_lines": 24,
+        "branches": 4,
+        "covered_branches": 4,
+        "xml_sha256": "fd18ce295a1f4489a5ec1a57fcb398b2fccf5aea983598ab4cc03a9785d2e61c",
+        "source_sha256": "08d0339c5c7ef66385eb866fe218df6d24a0287d452b5c898944f9736611be4a",
+        "source_roots": [
+          "C:/Users/jeffd/Documents/Codex/2026-10-24/how/outputs/rust-circuit-simulator/work/simulation-bridge/dotnet/",
+          "E:/Artifacts/Spice-census-20261103T191728Z/"
+        ]
+      },
+      "line_percent": 100,
+      "branch_percent": 100,
+      "source_mapping": "Coverlet <sources> resolves Simulator.RequestedQualification/CorpusBlockerRanking.cs to the exact current owned source; merged unique line numbers and per-line branch maxima."
+    },
+    "script": {
+      "collector": "dotnet-coverage18.12.0",
+      "scope": "Rank-RequestedCorpus.cs only",
+      "metrics": {
+        "file": "scripts/Rank-RequestedCorpus.cs",
+        "source_sha256": "3a0002c6d6233984e90328dcc844a621634940865c932c7ecc50b91c0cd328d3",
+        "lines": 97,
+        "covered_lines": 97,
+        "line_percent": 100,
+        "branches": 52,
+        "covered_branches": 52,
+        "branch_percent": 100
+      },
+      "xml_sha256": "9f0118d5facde16b76a7cfbe9a3bffd189edc64485c14c35a15e1d79ee494d14"
+    },
+    "limitations": [
+      "Collector-mapped reporting line/branch coverage is not complete path or semantic correctness evidence. Captured LINQ/closure coverage is limited by collector mappings.",
+      "No new whole-frontend or Rust line/branch coverage; core binaries were not instrumented by this census.",
+      "PowerShell fixtures, native executables, dependency internals and Linux/GPU paths are unmeasured.",
+      "The existing coverage summary helper does not resolve relative Coverlet <sources>; source-root resolution was applied directly rather than reporting its zero-match result as coverage."
+    ]
+  },
+  "mutation": {
+    "tool": "Stryker.NET5.0.0",
+    "scope": "CorpusBlockerRanking.cs",
+    "all_generated_candidates": 1691,
+    "selected_candidates": 19,
+    "actually_tested": 13,
+    "killed": 12,
+    "survived": 1,
+    "compile_errors": 4,
+    "framework_filtered": 2,
+    "score_percent": 92.31,
+    "survivor": {
+      "id": "1",
+      "line": 16,
+      "mutation": "Remove explicit ArgumentNullException.ThrowIfNull",
+      "disposition": "Both paths reject null using ArgumentNullException; LINQ supplies the guard after mutation. Exception parameter name differs and is not asserted. Retained as a survivor, not a kill or exact behavioral-equivalence proof."
+    },
+    "limitations": [
+      "Four compiler-invalid selected candidates remain unavailable, not killed.",
+      "Two candidates were removed by framework block-already-covered filtering. Other1672 generated candidates were outside this selected-file run; no product-wide mutation qualification.",
+      "No new Rust mutation/fuzz/soak campaign; actual corpus execution is separate evidence."
+    ],
+    "command": "From isolated E source snapshot: dotnet tool run dotnet-stryker -- --config-file dotnet/Simulator.Frontend.Tests/blocker-ranking-stryker.json --test-project dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj --output <E-run>/ranking-mutations-fscheck",
+    "report_sha256": "5c34520cc6d93144dded43f440283e04dc5e2f863245906fa0857c9904b6a58c",
+    "invocation": {
+      "executable": "dotnet",
+      "working_directory": "E:\\Artifacts\\Spice-census-20261103T191728Z\\ranking-mutation-fscheck-source",
+      "arguments": [
+        "tool",
+        "run",
+        "dotnet-stryker",
+        "--",
+        "--config-file",
+        "dotnet/Simulator.Frontend.Tests/blocker-ranking-stryker.json",
+        "--test-project",
+        "dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj",
+        "--output",
+        "E:\\Artifacts\\Spice-census-20261103T191728Z\\ranking-mutations-fscheck"
+      ]
+    }
+  },
+  "strictdoc": {
+    "status": "passed",
+    "parser": {
+      "strictdoc_version": "0.30.4",
+      "documents": 49
+    },
+    "documents": 49,
+    "unique_ids": 403,
+    "parent_relations": 378,
+    "report_sha256": "09eee65f47343ea107731d204a82073222c5280cb27d5ffd3efa05bac988d649",
+    "requirement": "FRONTEND-REQUESTED-CORPUS-005 remains Draft; parent CAP-002"
+  },
+  "sphinx": {
+    "status": "built_with_warnings_as_errors",
+    "tool": "sphinx-build 9.1.0",
+    "xml_member_entries": 909,
+    "report_sha256": "df71ad53206077ae31f3a41d960cd8400788893e7bf8aeb6b4945de2583e7580",
+    "limitations": [
+      "Compiled XML text projection, not a complete semantic API-compatibility proof.",
+      "StrictDoc parsing is a separate required gate.",
+      "Python is required by Sphinx; the C# helper executed managed, not NativeAOT."
+    ]
+  },
+  "review": {
+    "kind": "Independent automated agent review, not external human expert review",
+    "findings_closed": [
+      "Require complete frontend/parser/client source manifest, not any nonempty subset.",
+      "Require identical baseline/current root identity sets.",
+      "Use frozen expected hashes for original-content counts."
+    ],
+    "evidence": "All three reproduced in synthetic fixtures before fixes; final11Pester checks pass. Final reviewer matched bounded summary/ranking/chart data and hashes; no material findings remain."
+  },
+  "raw_artifact_root": "E:\\Artifacts\\Spice-census-20261103T191728Z",
+  "qualification_limits": [
+    "This checkpoint implements offline reporting and requirements only; no simulator capability/model/tolerance was changed.",
+    "Corpus21executed/9agree does not establish full SPICE, GPU, Linux, SpiceSharp or production qualification.",
+    "Original numerical engine remains Rust; current helper code executes managed, not NativeAOT."
+  ]
+}
