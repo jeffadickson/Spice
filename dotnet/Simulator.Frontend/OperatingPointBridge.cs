@@ -124,6 +124,12 @@ public static class OperatingPointBridge
                         if(excitation.AcMagnitude!=null){magnitude=Evaluate(excitation.AcMagnitude);explicitAcSources++;}
                         if(excitation.AcPhase!=null)phase=Evaluate(excitation.AcPhase);
                     }
+                    else if(selected&&primitive.Family=="R")
+                    {
+                        var preparedResistor=ResistorModelLowering.Prepare(catalog,primitive,environment);
+                        if(!preparedResistor.Success)throw new BridgeFailure(preparedResistor.Diagnostics[0].Code,preparedResistor.Diagnostics[0].Range);
+                        value=preparedResistor.Resistor!.Ohms;
+                    }
                     else
                     {
                         if(!primitive.Supported||primitive.Value==null)throw new BridgeFailure("unsupported_primitive_header",primitive.Range);

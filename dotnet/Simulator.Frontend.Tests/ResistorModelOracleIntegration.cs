@@ -35,16 +35,21 @@ public sealed class ResistorModelOracleIntegration
                 await File.WriteAllTextAsync(Path.Combine(folder,mode+".stdout"),await output);await File.WriteAllTextAsync(Path.Combine(folder,mode+".stderr"),await error);Assert.Equal(0,process.ExitCode);
             }
             var native=(await File.ReadAllLinesAsync(data)).Where(line=>!string.IsNullOrWhiteSpace(line)).Select(line=>line.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Select(v=>double.Parse(v,CultureInfo.InvariantCulture)).ToArray()).ToArray();
-            var circuit=new Circuit(["0","in","out"],[new Voltage("drive",1,0,mode=="tran"?0:2),new Resistor("model",1,2,resistance.Ohms),new Resistor("load",2,0,1000)]);
+            var integrated=DeckParser.Parse("Integrated resistor\n"+source+"\n"+model+".end\n",collectDeclarations:true);
+            var selected=OperatingPointSelection.Select(integrated);Assert.True(selected.Success,string.Join(',',selected.Prepared.Diagnostics.Select(d=>d.Code)));
             foreach(var backend in new[]{"lu","faer"})
             {
-                Analysis analysis=mode switch{"dc"=>new OperatingPoint(),"ac"=>new Ac([100],[new("drive",1,0)]),_=>new TransientConfigured(new(.001,.0001,100,Sources:[new("drive",new Pwl([new(0,0),new(.001,1)]))]))};
-                var request=new SimulationRequest("resistor-model-"+mode,circuit,analysis,backend);
+                var request=selected.Prepared.Request! with{Backend=backend,CaseId="resistor-model-"+mode};
+                if(mode=="ac")request=request with{Analysis=new Ac([100],selected.Prepared.AcSources.ToArray())};
+                if(mode=="tran"){
+                    var transient=TransientSelection.Prepare(integrated,.001,.0001,100,backend:backend);
+                    Assert.True(transient.Success,string.Join(',',transient.Prepared.Diagnostics.Select(d=>d.Code)));request=transient.Prepared.Request!;
+                }
                 await File.WriteAllTextAsync(Path.Combine(folder,mode+"-"+backend+".request.json"),JsonSerializer.Serialize(request,WireFormat.Options));
                 var response=await new SimulationClient(Environment.GetEnvironmentVariable("SPICE_CORPUS_ENGINE")!).RunAsync(request);
                 await File.WriteAllTextAsync(Path.Combine(folder,mode+"-"+backend+".response.json"),response.Payload.ToString());
                 Assert.True(response.Succeeded,response.Payload.ToString());
-                var manifest=response.ReadManifest();var index=Array.FindIndex(manifest.Signals,s=>s.Id=="v(out)");Assert.True(index>=0);
+                var manifest=response.ReadManifest();var index=Array.FindIndex(manifest.Signals,s=>s.Id=="v("+selected.Prepared.RootNodes["out"]+")");Assert.True(index>=0);
                 if(mode=="ac")
                 {
                     var actual=Assert.Single(manifest.AcSamples).Values[index];Assert.InRange(Math.Abs(actual.Real-native[0][1]),0,1e-9);Assert.InRange(Math.Abs(actual.Imag-native[0][2]),0,1e-9);

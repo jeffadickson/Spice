@@ -102,7 +102,15 @@ public static class CircuitReadiness
                     else if(primitive.RequiresExcitationProfile&&primitive.Excitation==null)
                         AddIssue(new("source_contract","unsupported_source_profile",primitive.Family,scope,path,primitive.Range));
                     else if(!primitive.Supported&&primitive.Excitation==null)
-                        AddIssue(new("primitive_contract","unsupported_primitive_header",primitive.Family,scope,path,primitive.Range));
+                    {
+                        // A generated model/geometry header is no longer a
+                        // missing parser adapter. If another error prevented
+                        // preparation, retain uncertainty rather than inventing
+                        // either admission or an unsupported-header verdict.
+                        if(primitive.Family=="R"&&primitive.ResistorModel!=null)
+                        {if(!prepared.Success)AddIssue(new("model_contract","resistor_model_validation_deferred",primitive.Family,scope,path,primitive.Range));}
+                        else AddIssue(new("primitive_contract","unsupported_primitive_header",primitive.Family,scope,path,primitive.Range));
+                    }
                 }
                 foreach(var call in bound[scope])
                 {

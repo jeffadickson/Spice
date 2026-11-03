@@ -1,0 +1,40 @@
+{
+  "source_hashes": {
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "ed099c4987ca543c96a595caa723888e160dbd55c3deb6c98f6ab14f0daf89da",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "f6147fe130df4d40db2b3f542f3e96afc919c0435afaf958797cfbc695f85f84",
+    "dotnet/Simulator.Frontend.Tests/PreparationSemanticsTests.cs": "8b4d501042647c43d2b259e06147aefb7ec59ddd691bd62d98e83b99b20c6086",
+    "dotnet/Simulator.Frontend.Tests/ResistorModelOracleIntegration.cs": "865ac664dd298142e09753f88b015f5a0e1b082cef124e594b2b7d17010c988b",
+    "docs/resistor-model.sdoc": "eaff434960584c1e38536f6fbd2b6c4d4eee5596d8530127f57346ca67b8c229"
+  },
+  "coverage": {
+    "report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/resistor-bridge-coverage/7bde0d30-19e6-4916-860c-41cc011019ad/coverage.cobertura.xml",
+    "limitations": "Captured core bridge lowering omitted by Coverlet; helper metrics remain separately scoped in resistor-model.json."
+  },
+  "limitations": [
+    "Named sheet fixtures verified; frozen corpus admitted no sheet-model candidates.",
+    "Canonical unknown native sheet-resistor WIP was preserved, not staged.",
+    "Temperature/noise/AC/multiplicity/implicit geometry remain unsupported in this profile."
+  ],
+  "status": "bounded_generated_resistor_execution",
+  "focused": {
+    "native_output_comparisons": 78,
+    "passed": 34,
+    "skipped": 0,
+    "failed": 0,
+    "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/resistor-bridge-green.log"
+  },
+  "integrated": {
+    "skipped": 10,
+    "unique_final_unavailable": 9,
+    "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/final-managed.log",
+    "passed": 465,
+    "failed": 0,
+    "additional_original_corpus_test": {
+      "passed": 1,
+      "skipped": 0,
+      "failed": 0,
+      "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/final-original-control.log"
+    }
+  },
+  "requirements": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/final-requirements.json"
+}

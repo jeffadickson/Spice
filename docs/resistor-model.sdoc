@@ -14,3 +14,17 @@ Implementation: ResistorModelSyntax.cs, generated resistorModelProfile, Primitiv
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: SEM-RESISTOR-MODEL-EXEC-001
+STATUS: Draft
+TITLE: Execute admitted resistor models through generated selection
+STATEMENT: >>>
+Selected preparation shall lower the admitted scalar, constant-model and sheet-model profiles to the existing positive finite resistor element. Scalar parameter precedence and declaration-versus-instance parameter scope shall be retained. Unsupported model assignments and native floating-point sheet-branch ambiguities shall refuse atomically. Readiness shall distinguish a generated model header awaiting validation from a missing scalar parser adapter.
+<<<
+COMMENT: >>>
+Implementation: OperatingPointBridge and CircuitReadiness use ResistorModelLowering. Verification: PreparationSemanticsTests and ResistorModelOracleIntegration exercise the actual generated selection, public typed client and original R/model cards in DC, AC and ramp transient on LU/faer. Integrated focused run: 34 passed, zero skips, including 78 original output comparisons. The separate lexical census admitted 11 constant-model candidates across four roots and no sheet-model corpus candidates; named sheet fixtures are evidence, not claimed whole-deck uplift. Unknown canonical sheet-resistor WIP remains untouched.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-RESISTOR-MODEL-001

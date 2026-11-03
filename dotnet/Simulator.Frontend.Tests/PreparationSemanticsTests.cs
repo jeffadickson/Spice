@@ -7,6 +7,16 @@ namespace Simulator.Frontend.Tests;
 public sealed class PreparationSemanticsTests
 {
     [Theory]
+    [InlineData("rm","R(R=2k)",2000)]
+    [InlineData("rm L=10u W=2u","R(RSH=100 SHORT=.5u NARROW=.25u)",600)]
+    public void Named_resistor_profiles_execute_through_generated_preparation(string tail,string model,double expected)
+    {
+        var result=Prepare("V1 out 0 1\nR1 out 0 "+tail+"\n.model rm "+model);
+        Assert.True(result.Success,string.Join(',',result.Prepared.Diagnostics.Select(d=>d.Code)));
+        Assert.Equal(expected,Assert.Single(result.Prepared.Request!.Circuit.Elements.OfType<Simulator.Client.Resistor>()).Ohms,9);
+        Assert.DoesNotContain(CircuitReadiness.Audit(DeckParser.Parse("Resistor\nV1 out 0 1\nR1 out 0 "+tail+"\n.model rm "+model+"\n.end\n",collectDeclarations:true)).Issues,i=>i.Code=="unsupported_primitive_header");
+    }
+    [Theory]
     [InlineData("summer")]
     [InlineData("summer(in_gain=[2 -3] in_offset=[.25 -.5] out_gain=4 out_offset=.1)")]
     public void Analog_summer_vectors_lower_to_existing_voltage_elements(string model)
