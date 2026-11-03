@@ -1,0 +1,7 @@
+{
+  "src/artifact.rs": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
+  "src/audit.rs": "4c54ea24070401fecf64a131861a9d03c8b7aeb371e8160634689940c496576d",
+  "tests/overnight_survivors_20261103.rs": "361e444e426d4525b0b4c60a6cc99ed50bb575e8c03ebe5ef626d4f47c813243",
+  "tests/overnight_survivors_20261103.proptest-regressions": "ddec4e77bc11cb134c3d15e001102be7fcf13235340453f9f05fbd7aaf75d75b",
+  "docs/overnight-survivors-20261103.sdoc": "4cfd9ba1318eeeadfac735ac4f84df83c91ce80a1d7b2d8fec2979d305771f44"
+}

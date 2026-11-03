@@ -156,3 +156,14 @@ internals. Reported percentages describe the collector's instrumented subset;
 they are not complete handwritten or core-lowering coverage. Closure-inclusive
 measurement remains open. Keep the separate executed mutation/property/oracle
 evidence and do not promote draft requirements based on the partial denominator.
+
+November 3 Rust survivor replay
+------------------------------
+
+``tests/overnight_survivors_20261103.rs`` checks artifact ID byte boundaries,
+nonzero common-mode differential switch controls and the direct audit's inclusive
+1 S Gmin limit. Its 128-case midpoint property pins seed ``2026110303``.
+``docs/overnight-survivors-20261103.sdoc`` records the three draft contracts;
+``evidence/rust-survivors-20261103.md`` records the bounded mutation/coverage
+scope and reproduction commands. The switch reference independently derives the
+midpoint resistance, while the audit still shares the existing switch model law.

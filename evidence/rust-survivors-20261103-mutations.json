@@ -1,0 +1,56 @@
+[
+  {
+    "name": "src/artifact.rs:50:25: replace > with == in publish",
+    "summary": "CaughtMutant",
+    "phases": [
+      {
+        "phase": "Build",
+        "seconds": 47.8137639,
+        "status": "Success"
+      },
+      {
+        "phase": "Test",
+        "seconds": 15.2873125,
+        "status": {
+          "Failure": 101
+        }
+      }
+    ]
+  },
+  {
+    "name": "src/audit.rs:180:55: replace - with / in dc_currents",
+    "summary": "CaughtMutant",
+    "phases": [
+      {
+        "phase": "Build",
+        "seconds": 102.698438,
+        "status": "Success"
+      },
+      {
+        "phase": "Test",
+        "seconds": 19.8799213,
+        "status": {
+          "Failure": 101
+        }
+      }
+    ]
+  },
+  {
+    "name": "src/audit.rs:276:60: replace > with == in dc",
+    "summary": "CaughtMutant",
+    "phases": [
+      {
+        "phase": "Build",
+        "seconds": 90.0443379,
+        "status": "Success"
+      },
+      {
+        "phase": "Test",
+        "seconds": 14.2278797,
+        "status": {
+          "Failure": 101
+        }
+      }
+    ]
+  }
+]

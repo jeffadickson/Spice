@@ -1,0 +1,8 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc f9c28015bd0c5b78d08a2f188072a375d78f07f841444a763a9565ba776060d5 # shrinks to common = 0.3, output = 1.8784053664992197
+# This replay was minimized against the injected CP/CN subtraction-to-division mutant on 2026-11-03; the unmutated implementation passes it.

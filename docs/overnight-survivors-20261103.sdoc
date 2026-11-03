@@ -1,0 +1,44 @@
+[DOCUMENT]
+TITLE: November 3 Overnight Rust Survivor Regression Contracts
+
+[REQUIREMENT]
+UID: SURV-20261103-001
+STATUS: Draft
+TITLE: Artifact identifier byte boundary
+STATEMENT: >>>
+Publication shall accept valid ASCII identifiers of 1 through 128 bytes inclusive and reject longer, empty or invalid-alphabet identifiers before creating storage.
+<<<
+COMMENT: >>>
+Implementation: src/artifact.rs::publish. Verification: tests/overnight_survivors_20261103.rs::run_id_boundary_and_invalid_alphabet_preserve_storage; evidence/rust-survivors-20261103.md. The trusted-root filesystem contract is unchanged.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF-006
+
+[REQUIREMENT]
+UID: SURV-20261103-002
+STATUS: Draft
+TITLE: Differential switch control audit
+STATEMENT: >>>
+The DC physical audit shall reconstruct switch control as CP minus CN, preserving the accepted midpoint current under a common-mode control shift and detecting an incorrect returned output state.
+<<<
+COMMENT: >>>
+Implementation: src/audit.rs::dc_currents. Verification: tests/overnight_survivors_20261103.rs differential-switch and midpoint common-mode property cases. Expected midpoint resistance is independently derived as the geometric mean of endpoint resistances. This checks control wiring and conservation; the existing model law remains shared and is not a wholly independent switch-model implementation.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF-006
+
+[REQUIREMENT]
+UID: SURV-20261103-003
+STATUS: Draft
+TITLE: Direct DC audit Gmin boundary
+STATEMENT: >>>
+The direct DC audit shall admit finite positive fixed Gmin through one siemens inclusive and reject larger, nonpositive or nonfinite values; retained shunts shall participate in current and power balance.
+<<<
+COMMENT: >>>
+Implementation: src/audit.rs::dc. Verification: tests/overnight_survivors_20261103.rs::direct_gmin_audit_includes_one_siemens_and_rejects_larger_or_nonfinite. Analytical reference: a 2 A supply at 2 V balances the 1 S shunt. No numerical solver participates in this test.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF-006
