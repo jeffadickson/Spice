@@ -1,0 +1,25 @@
+{
+  "revision": "ca3f774a363d7e2c7ef3d2c56a0378f9fbd60957",
+  "command": "cargo test --locked --manifest-path C:/dev/spice-rust-fix/Cargo.toml",
+  "environment": {
+    "SPICE_SURVIVOR_ARTIFACT_ROOT": "E:/Artifacts/Spice-fix-20261103T140559Z/rust",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_TARGET_DIR": "E:/Artifacts/Spice-fix-20261103T140559Z/rust/target"
+  },
+  "exit_code": 0,
+  "passed": 525,
+  "failed": 0,
+  "ignored": 2,
+  "target_result_lines": 63,
+  "ignored_tests": [
+    "test seeded_batch ... ignored, bounded batches are launched by scripts/Endurance.cs",
+    "test nonzero_depletion_transport_dc_ac_transient_against_ngspice ... ignored, requires SPICE_NGSPICE and SPICE_ORACLE_ARTIFACT_ROOT"
+  ],
+  "log_sha256": "1c89aa4ff543b0b82e0145f14214662c31e6b3f13b192ad2f6430377f6deecb0",
+  "limitations": [
+    "cargo-nextest unavailable; cargo test used including 0 doctests.",
+    "ExFAT incremental hard links fall back to copy.",
+    "This is executed regression evidence, not whole-suite coverage measurement.",
+    "Source/test bytes match original tested inputs; only evidence files edited during execution."
+  ]
+}

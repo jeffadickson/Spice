@@ -8,5 +8,6 @@
     "lock": "018b19472c004dd03af3c75aa2bd5a45982f1da3d23a5be41e612ac97e3a41f6",
     "test": "361e444e426d4525b0b4c60a6cc99ed50bb575e8c03ebe5ef626d4f47c813243",
     "requirements": "4cfd9ba1318eeeadfac735ac4f84df83c91ce80a1d7b2d8fec2979d305771f44"
-  }
+  },
+  "input_hash_scope": "inputs are observed tested worktree bytes, not Git blob hashes; see adjacent hashes JSON for separately measured canonical Git blob hashes and CRLF-only equivalence check"
 }

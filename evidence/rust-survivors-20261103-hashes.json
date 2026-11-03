@@ -1,7 +1,45 @@
 {
-  "src/artifact.rs": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
-  "src/audit.rs": "4c54ea24070401fecf64a131861a9d03c8b7aeb371e8160634689940c496576d",
-  "tests/overnight_survivors_20261103.rs": "361e444e426d4525b0b4c60a6cc99ed50bb575e8c03ebe5ef626d4f47c813243",
-  "tests/overnight_survivors_20261103.proptest-regressions": "ddec4e77bc11cb134c3d15e001102be7fcf13235340453f9f05fbd7aaf75d75b",
-  "docs/overnight-survivors-20261103.sdoc": "4cfd9ba1318eeeadfac735ac4f84df83c91ce80a1d7b2d8fec2979d305771f44"
+  "scope": "Tested working-tree byte hashes are retained separately from canonical Git blobs; Git normalized CRLF on commit. Replay provenance comment was present for coverage and final full regression.",
+  "files": [
+    {
+      "current_worktree_sha256": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
+      "file": "src/artifact.rs",
+      "canonical_git_blob_sha256": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
+      "git_revision": "ca3f774a363d7e2c7ef3d2c56a0378f9fbd60957",
+      "difference_only_crlf_normalization": true,
+      "tested_worktree_sha256": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f"
+    },
+    {
+      "current_worktree_sha256": "4c54ea24070401fecf64a131861a9d03c8b7aeb371e8160634689940c496576d",
+      "file": "src/audit.rs",
+      "canonical_git_blob_sha256": "4c54ea24070401fecf64a131861a9d03c8b7aeb371e8160634689940c496576d",
+      "git_revision": "ca3f774a363d7e2c7ef3d2c56a0378f9fbd60957",
+      "difference_only_crlf_normalization": true,
+      "tested_worktree_sha256": "4c54ea24070401fecf64a131861a9d03c8b7aeb371e8160634689940c496576d"
+    },
+    {
+      "current_worktree_sha256": "361e444e426d4525b0b4c60a6cc99ed50bb575e8c03ebe5ef626d4f47c813243",
+      "file": "tests/overnight_survivors_20261103.rs",
+      "canonical_git_blob_sha256": "361e444e426d4525b0b4c60a6cc99ed50bb575e8c03ebe5ef626d4f47c813243",
+      "git_revision": "ca3f774a363d7e2c7ef3d2c56a0378f9fbd60957",
+      "difference_only_crlf_normalization": true,
+      "tested_worktree_sha256": "361e444e426d4525b0b4c60a6cc99ed50bb575e8c03ebe5ef626d4f47c813243"
+    },
+    {
+      "current_worktree_sha256": "ddec4e77bc11cb134c3d15e001102be7fcf13235340453f9f05fbd7aaf75d75b",
+      "file": "tests/overnight_survivors_20261103.proptest-regressions",
+      "canonical_git_blob_sha256": "06c04ce286e35765dc7f2a29db1b42dd422a822af9eec1a49a4924e4f70892e4",
+      "git_revision": "ca3f774a363d7e2c7ef3d2c56a0378f9fbd60957",
+      "difference_only_crlf_normalization": true,
+      "tested_worktree_sha256": "ddec4e77bc11cb134c3d15e001102be7fcf13235340453f9f05fbd7aaf75d75b"
+    },
+    {
+      "current_worktree_sha256": "4cfd9ba1318eeeadfac735ac4f84df83c91ce80a1d7b2d8fec2979d305771f44",
+      "file": "docs/overnight-survivors-20261103.sdoc",
+      "canonical_git_blob_sha256": "2c5fe89ecde0523d8bc62004c5084b49ff275a3c1c66357e7301fee0dc7458f9",
+      "git_revision": "ca3f774a363d7e2c7ef3d2c56a0378f9fbd60957",
+      "difference_only_crlf_normalization": true,
+      "tested_worktree_sha256": "4cfd9ba1318eeeadfac735ac4f84df83c91ce80a1d7b2d8fec2979d305771f44"
+    }
+  ]
 }

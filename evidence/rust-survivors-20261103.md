@@ -71,3 +71,22 @@ branch coverage is unavailable. Vendor dependencies and test source are excluded
 other integration targets and main are outside this coverage run. These broad
 file percentages include unrelated audit paths not exercised by this focused test.
 
+
+Hash review: recorded instrumented source/test hashes and StrictDoc/provenance
+inputs describe actual tested working-tree bytes. Git normalizes CRLF on commit:
+the SDoc and saved property replay differ in raw SHA256 from their committed LF
+blobs. The hashes JSON retains both observed worktree and independently measured
+canonical Git-blob SHA256 values, with an exact UTF-8 comparison after CRLF-to-LF
+normalization. All five source/test/requirements inputs compare equal under that
+normalization; the Rust production and integration-test bytes are already equal.
+The property replay's explanatory provenance comment preceded scoped coverage
+and final full regression. No semantic/source-input edit is hidden by rehashing.
+
+Final full Rust regression on ca3f774a363d7e2c7ef3d2c56a0378f9fbd60957:
+`cargo test --locked --manifest-path C:/dev/spice-rust-fix/Cargo.toml` with
+CARGO_BUILD_JOBS=2 and the existing isolated artifact target completed exit 0:
+525 passed, zero failed, two ignored across 63 target result lines, including
+zero doctests. New four-test target passed with the saved minimized property replay.
+Ignored tests are the explicitly launched endurance batch and external-ngspice
+oracle fixture; neither is counted as a pass. cargo-nextest is unavailable.
+The adjacent regression JSON records raw-log hash, command and actual scope.
