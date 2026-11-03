@@ -1,0 +1,307 @@
+{
+  "executed_rows": [
+    {
+      "operations": [
+        {
+          "status": "numerical_disagreement",
+          "failed_signals": 6,
+          "gaps": [],
+          "maximum_absolute_error": 0.003978907140936627,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "examples/xspice/original-examples/dot_model_ref.deck",
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "operations": [
+        {
+          "status": "numerical_disagreement",
+          "failed_signals": 4,
+          "gaps": [],
+          "maximum_absolute_error": 0.0039789071409330745,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "examples/xspice/original-examples/io_ordering.deck",
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "operations": [
+        {
+          "status": "numerical_disagreement",
+          "failed_signals": 4,
+          "gaps": [],
+          "maximum_absolute_error": 0.015896440748738527,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "examples/xspice/original-examples/long_names.deck",
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "operations": [
+        {
+          "status": "numerical_disagreement",
+          "failed_signals": 4,
+          "gaps": [],
+          "maximum_absolute_error": 0.0039789071409330745,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "examples/xspice/original-examples/mixed_case.deck",
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "operations": [
+        {
+          "status": "numerical_disagreement",
+          "failed_signals": 4,
+          "gaps": [],
+          "maximum_absolute_error": 0.0039789071409330745,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "examples/xspice/original-examples/parsing.deck",
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "operations": [
+        {
+          "status": "agreed",
+          "failed_signals": 0,
+          "gaps": [],
+          "maximum_absolute_error": 4.307078187082425E-05,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "examples/xspice/original-examples/xspice.deck",
+      "status": "all_individual_requested_analyses_agreed"
+    },
+    {
+      "operations": [
+        {
+          "status": "agreed",
+          "failed_signals": 0,
+          "gaps": [],
+          "maximum_absolute_error": 4.307078187082425E-05,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "examples/xspice/various/xspice_c2.cir",
+      "status": "all_individual_requested_analyses_agreed"
+    },
+    {
+      "operations": [
+        {
+          "status": "numerical_disagreement",
+          "failed_signals": 6,
+          "gaps": [],
+          "maximum_absolute_error": 0.003978907140936627,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/xspice/original-examples/dot_model_ref.deck",
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "operations": [
+        {
+          "status": "numerical_disagreement",
+          "failed_signals": 4,
+          "gaps": [],
+          "maximum_absolute_error": 0.0039789071409330745,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/xspice/original-examples/io_ordering.deck",
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "operations": [
+        {
+          "status": "numerical_disagreement",
+          "failed_signals": 4,
+          "gaps": [],
+          "maximum_absolute_error": 0.015896440748738527,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/xspice/original-examples/long_names.deck",
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "operations": [
+        {
+          "status": "numerical_disagreement",
+          "failed_signals": 4,
+          "gaps": [],
+          "maximum_absolute_error": 0.0039789071409330745,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/xspice/original-examples/mixed_case.deck",
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "operations": [
+        {
+          "status": "numerical_disagreement",
+          "failed_signals": 4,
+          "gaps": [],
+          "maximum_absolute_error": 0.0039789071409330745,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/xspice/original-examples/parsing.deck",
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "operations": [
+        {
+          "status": "agreed",
+          "failed_signals": 0,
+          "gaps": [],
+          "maximum_absolute_error": 4.307078187082425E-05,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/xspice/original-examples/xspice.deck",
+      "status": "all_individual_requested_analyses_agreed"
+    },
+    {
+      "operations": [
+        {
+          "status": "agreed",
+          "failed_signals": 0,
+          "gaps": [],
+          "maximum_absolute_error": 0.0,
+          "kind": "tran"
+        }
+      ],
+      "scope": "ngspice",
+      "path": "tests/resistance/res_simple.cir",
+      "status": "all_individual_requested_analyses_agreed"
+    },
+    {
+      "operations": [
+        {
+          "status": "numerical_disagreement",
+          "failed_signals": 2,
+          "gaps": [],
+          "maximum_absolute_error": 0.00031213527085354603,
+          "kind": "tran"
+        }
+      ],
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-rc-ramp.cir",
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "operations": [
+        {
+          "status": "agreed",
+          "failed_signals": 0,
+          "gaps": [],
+          "maximum_absolute_error": 1.1322097734007351E-15,
+          "kind": "ac"
+        }
+      ],
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-series-rlc.cir",
+      "status": "all_individual_requested_analyses_agreed"
+    },
+    {
+      "operations": [
+        {
+          "status": "agreed",
+          "failed_signals": 0,
+          "gaps": [],
+          "maximum_absolute_error": 5.593023969348752E-16,
+          "kind": "ac"
+        }
+      ],
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-vccs.cir",
+      "status": "all_individual_requested_analyses_agreed"
+    },
+    {
+      "operations": [
+        {
+          "status": "agreed",
+          "failed_signals": 0,
+          "gaps": [],
+          "maximum_absolute_error": 0.0,
+          "kind": "tran"
+        }
+      ],
+      "scope": "repository",
+      "path": "compat/ngspice/res_simple.cir",
+      "status": "all_individual_requested_analyses_agreed"
+    }
+  ],
+  "corpus_source": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+  "tested_source": "408d718841d9d3b2f55785ab42400052c3bd94ed",
+  "limitations": [
+    "Individual original requested analysis projections, not complete control-program compatibility.",
+    "Counts from different source/cohort scopes are not equivalent; cohort18 is not a fresh928 campaign.",
+    "Native interpolation/BE discrepancies remain unqualified at unchanged bounds.",
+    "Raw artifacts stay local; this manifest is bounded evidence."
+  ],
+  "state": "completed_with_results",
+  "elapsed_seconds": 28.8834715,
+  "provenance_valid": true,
+  "stages": [
+    {
+      "name": "Syntax accepted",
+      "passed": 18,
+      "refused": 0,
+      "unknown": 0
+    },
+    {
+      "name": "Circuit prepared",
+      "passed": 18,
+      "refused": 0,
+      "unknown": 0
+    },
+    {
+      "name": "Requested analyses executed",
+      "passed": 18,
+      "refused": 0,
+      "unknown": 0
+    },
+    {
+      "name": "Native numerical agreement",
+      "passed": 7,
+      "refused": 11,
+      "unknown": 0
+    }
+  ],
+  "raw_summary_sha256": "57bb71e6b7efea0a7619b0113028df79c565f7a0f0b9d1ffdac361552909332d",
+  "scope": "Individual ordinary requested analyses; not input-control-program parity. No hardcoded selected OP counts as requested execution. Full mapped root voltage and supported branch-current grids; declared transient oracle interpolation.",
+  "row_statuses": [
+    {
+      "count": 7,
+      "status": "all_individual_requested_analyses_agreed"
+    },
+    {
+      "count": 11,
+      "status": "requested_executed_not_fully_qualified"
+    }
+  ],
+  "inventory_sha256": "d3d6dee00692c49a365155cdc9fbb0ba56e011f7e295fa64b54c92192315d31c",
+  "raw_artifact_root": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z\\requested-cohort-408d718"
+}
