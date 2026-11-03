@@ -93,6 +93,7 @@ pub fn configured_step(
             Element::Diode { .. }
                 | Element::DiodeWithCapacitance { .. }
                 | Element::SpiceDiode { .. }
+                | Element::JunctionStorage { .. }
         )
     }) {
         return Ok(AuditReport {

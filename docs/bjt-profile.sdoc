@@ -1,0 +1,29 @@
+[DOCUMENT]
+TITLE: Bounded Ebers-Moll BJT and junction-storage requirements
+
+[REQUIREMENT]
+UID: SEMI-STORAGE-001
+STATUS: Draft
+TITLE: Explicit charge-only junction companion
+STATEMENT: >>>
+The simulator shall provide a validated charge-only junction profile whose effective saturation-current scale participates only in transport Q and dQ/dV, with exactly zero static F and dF/dV. It shall share the qualified SPICE depletion/diffusion charge law and accepted BE charge history, expose true displacement current, and not be classified as a DC conduction path. It shall preserve diode/constant-capacitance behavior and retain explicit unavailable energy evidence.
+<<<
+COMMENT: >>>
+Implementation: JunctionStorage in native circuit/model/compile, shared newton/ac/API/audit loops, typed Client DTO. Verification: tests/junction_storage.rs DC-zero, complex AC and BE-KCL; existing diode and constant-C regressions; source-controlled Ebers-Moll composition and native oracle. Three meaningful RED tests failed on unknown old wire tag, then passed after implementation.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-BJT-001
+STATUS: Draft
+TITLE: Genuine bounded Ebers-Moll current and charge composition
+STATEMENT: >>>
+The generated frontend shall lower qualified three-terminal NPN/PNP profiles to native conduction-only IS/BF and IS/BR junction paths with separate zero-voltage current senses, BF/BR transport CCCS contributions, and parallel BE/BC charge-only companions using effective IS and TF/TR. Charge shall not flow through or be amplified by the conduction senses. An outer zero-voltage collector sense shall expose signed total collector current. Private nodes shall not become source-name mappings.
+<<<
+COMMENT: >>>
+Qualified first terms: IS,BF,BR,NF,NR,CJE,VJE,MJE,CJC,VJC,MJC,FC,TF,TR, TNOM27 and LEVEL1. Unsupported terms, four-terminal/substrate profiles and instance parameters refuse atomically. Early/high-injection/leakage/base-resistance/temperature/excess-phase coupling remains open. These absent-coupling defaults reduce to Ebers-Moll; this is not general GP qualification. Implementation: BjtPreparation.cs plus additive Q bridge/readiness. Verification: BjtTests and BjtNativeOracleIntegration; separate provider outcomes retained.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Qualification investigation: the initial50ps BE grid missed the declared3mV early collector-voltage bound by4.968mV on an owned NPN circuit. At10ps the discrepancy reduced to0.983mV; at2ps early-slice refinement it reduced to0.184mV, consistent with first-order time discretization. The original failed run and fixed bounds remain in local artifacts. The initial Faer AC refusal was retained and referred to the numerical-provider owner. After importing06e8a6b (local47b9809), both LU and Faer passed the original NPN/PNP DC, complex AC and10ps BE comparisons, including signed collector currents and formal coarse/fine error reduction. The unchanged complex residual acceptance is independently qualified by the provider regression. This finite subset does not establish full Gummel-Poon or arbitrary timestep accuracy.
+<<<

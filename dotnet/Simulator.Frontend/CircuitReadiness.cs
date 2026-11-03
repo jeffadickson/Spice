@@ -67,6 +67,12 @@ public static class CircuitReadiness
                             AddIssue(new("model_contract","unsupported_diode_profile",card.Kind,scope,path,card.Range));
                         continue;
                     }
+                    if(card.Kind=="bjt")
+                    {
+                        var bjt=bound[scope].FirstOrDefault(i=>i.Header.Range==card.Range);
+                        if(bjt!=null&&!BjtPreparation.AssignmentsAreSupported(bjt))AddIssue(new("model_contract","unsupported_bjt_profile",card.Kind,scope,path,card.Range));
+                        continue;
+                    }
                     if(card.Kind=="switchCard"&&bound[scope].FirstOrDefault(i=>i.Header.Range==card.Range&&i.Status==BindingStatus.Bound&&i.Target?.ModelFamily=="vswitch") is {} sw)
                     {
                         var model=sw.Target!;var names=model.Parameters.Select(p=>p.Name).ToArray();

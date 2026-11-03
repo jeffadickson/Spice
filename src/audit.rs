@@ -181,6 +181,7 @@ fn dc_currents(circuit: &Circuit, state: &[f64]) -> SimResult<Vec<f64>> {
                     .current
                 }
                 Element::Resistor { ohms, .. } => v / ohms,
+                Element::JunctionStorage { .. } => 0.,
                 Element::SpiceDiode { model, .. } => {
                     model.saturation_amps * (v / model.thermal_volts).exp_m1()
                 }
@@ -364,7 +365,7 @@ pub fn backward_euler_step(
         let v = voltage(state, p) - voltage(state, n);
         let old_v = voltage(previous, p) - voltage(previous, n);
         let term = match element {
-            Element::SpiceDiode { model, .. } => {
+            Element::SpiceDiode { model, .. } | Element::JunctionStorage { model, .. } => {
                 let q = independent_junction_charge(*model, v);
                 let old = independent_junction_charge(*model, old_v);
                 *current += (q - old) / step_s;

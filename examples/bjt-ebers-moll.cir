@@ -1,0 +1,10 @@
+Bounded Ebers-Moll NPN with real junction and transport storage
+VDRV input 0 DC .6 AC 1
+VCC supply 0 DC 1 AC 0
+RB input b 1k
+RC supply c 1k
+Q1 c b 0 qm
+.model qm NPN(IS=1f BF=100 BR=2 NF=1 NR=1 CJE=2p VJE=.75 MJE=.33 CJC=3p VJC=.75 MJC=.33 FC=.5 TF=50n TR=200n TNOM=27 LEVEL=1)
+.op
+.ac lin 1 10meg 10meg
+.end

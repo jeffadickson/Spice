@@ -26,6 +26,7 @@ pub fn inspect(circuit: &Circuit) -> SimResult<Vec<Diagnostic>> {
         if !matches!(
             element,
             Element::Capacitor { .. }
+                | Element::JunctionStorage { .. }
                 | Element::Current { .. }
                 | Element::Vccs { .. }
                 | Element::Cccs { .. }

@@ -115,12 +115,12 @@ pub fn run_with_registry(
     if plan
         .diodes
         .iter()
-        .any(|d| matches!(d.model,crate::model::DiodeProfile::Spice(m) if m.has_charge()))
+        .any(|d| matches!(d.model,crate::model::DiodeProfile::Spice(m)|crate::model::DiodeProfile::JunctionStorage(m) if m.has_charge()))
         && matches!(&request.analysis,Analysis::TransientConfigured { options } if options.adaptive.is_some() || options.initial_state.is_some())
     {
         return Err(crate::error::SimError::new(
             crate::error::ErrorCode::Unsupported,
-            "charged SPICE diode total current requires nonadaptive backward Euler initialized from operating point",
+            "charged junction total current requires nonadaptive backward Euler initialized from operating point",
         ));
     }
     tracing::debug!(unknowns = plan.unknown_count(), "circuit_compiled");
@@ -310,7 +310,11 @@ pub fn run_with_registry(
         // The SPICE junction exposes both total terminal current and conduction.
         // Raw BE starts with the documented zero MNA state; configured BE has
         // an operating-point sample at t=0. Rejected trials are absent here.
-        if matches!(model, crate::model::DiodeProfile::Spice(_)) && model.has_charge() {
+        if matches!(
+            model,
+            crate::model::DiodeProfile::Spice(_) | crate::model::DiodeProfile::JunctionStorage(_)
+        ) && model.has_charge()
+        {
             signals.push(Signal {
                 id: format!("i({})", diode.id),
                 quantity: "current",

@@ -1,0 +1,42 @@
+using Simulator.Syntax;
+using Simulator.Client;
+using Xunit;
+namespace Simulator.Frontend.Tests;
+public sealed class BjtTests
+{
+ [Theory][InlineData("",0)][InlineData("CJE=2p",1)][InlineData("TF=1n",1)][InlineData("CJC=3p",1)][InlineData("TR=2n",1)]
+ public void Each_individual_physical_storage_term_adds_its_companion(string terms,int count) {
+  var r=Select("NPN("+terms+")");Assert.True(r.Success,string.Join(',',r.Diagnostics.Select(d=>d.Code)));Assert.Equal(count,r.Request!.Circuit.Elements.OfType<JunctionStorage>().Count());
+ }
+ [Fact] public void Diode_connected_and_ground_emitter_topologies_are_valid() {
+  var result=OperatingPointSelection.Select(DeckParser.Parse("Connected\nV1 b 0 .6\nQ1 b b 0 qm\n.model qm NPN(IS=1f BF=100 CJE=2p TF=1n)\n.end\n",collectDeclarations:true)).Prepared;
+  Assert.True(result.Success,string.Join(',',result.Diagnostics.Select(d=>d.Code)));
+ }
+ [Theory][InlineData("NPN")][InlineData("PNP")]
+ public void Bounded_BJT_separates_conduction_sensors_from_real_charge(string family)
+ {
+  var result=Select(family+"(IS=1f BF=100 BR=2 NF=1.2 NR=1.5 CJE=2p VJE=.8 MJE=.4 CJC=3p VJC=.9 MJC=.6 FC=.4 TF=1n TR=2n TNOM=27 LEVEL=1)");
+  Assert.True(result.Success,string.Join(',',result.Diagnostics.Select(d=>d.Code)));
+  var elements=result.Request!.Circuit.Elements;Assert.Equal(2,elements.OfType<Cccs>().Count());Assert.Equal(2,elements.OfType<Diode>().Count());
+  var charge=elements.OfType<JunctionStorage>().ToArray();Assert.Equal(2,charge.Length);Assert.All(charge,c=>Assert.Equal(1e-15,c.Model.SaturationAmps));Assert.Contains(charge,c=>c.Model.TransitSeconds==1e-9&&c.Model.JunctionFarads==2e-12);
+  var q=result.Origins.Single(o=>o.LocalName=="Q1");Assert.Contains(elements.OfType<Voltage>(),v=>v.Id==q.WireId&&v.Volts==0);
+  var c=elements.OfType<Voltage>().Single(v=>v.Id==q.WireId).N;
+  var b=Array.IndexOf(result.Request.Circuit.Nodes,result.RootNodes["b"]);var e=Array.IndexOf(result.Request.Circuit.Nodes,result.RootNodes["e"]);
+  var forward=elements.OfType<Cccs>().Single(v=>v.Gain==100);var reverse=elements.OfType<Cccs>().Single(v=>v.Gain==2);
+  var sense=elements.OfType<Voltage>().Single(v=>v.Id==forward.ControlId);
+  Assert.Equal(family=="NPN"?c:e,forward.P);Assert.Equal(family=="NPN"?e:c,forward.N);
+  Assert.Equal(family=="NPN"?e:c,reverse.P);Assert.Equal(family=="NPN"?c:e,reverse.N);
+  var be=charge.Single(v=>v.Model.JunctionFarads==2e-12);var bc=charge.Single(v=>v.Model.JunctionFarads==3e-12);
+  Assert.Equal(.8,be.Model.JunctionVolts);Assert.Equal(.4,be.Model.Grading);Assert.Equal(.4,be.Model.ForwardCoefficient);Assert.Equal(1e-9,be.Model.TransitSeconds);
+  Assert.Equal(.9,bc.Model.JunctionVolts);Assert.Equal(.6,bc.Model.Grading);Assert.Equal(.4,bc.Model.ForwardCoefficient);Assert.Equal(2e-9,bc.Model.TransitSeconds);
+  Assert.Equal(1.2*1.38064852e-23*300.15/1.6021766208e-19,be.Model.ThermalVolts,14);Assert.Equal(1.5*1.38064852e-23*300.15/1.6021766208e-19,bc.Model.ThermalVolts,14);
+  Assert.Equal(family=="NPN"?b:e,be.P);Assert.Equal(family=="NPN"?e:b,be.N);
+  Assert.Equal(family=="NPN"?b:c,bc.P);Assert.Equal(family=="NPN"?c:b,bc.N);
+  Assert.NotEqual(sense.N,be.P);Assert.NotEqual(sense.N,be.N);
+  Assert.Equal(elements.Length,elements.Select(v=>v.Id).Distinct(StringComparer.Ordinal).Count());
+  Assert.DoesNotContain(result.RootNodes.Keys,k=>k.StartsWith("$",StringComparison.Ordinal));
+ }
+ [Theory][InlineData("NPN(VAF=100)")][InlineData("NPN(IKF=1m)")][InlineData("NPN(RB=10)")][InlineData("NPN(BF=0)")][InlineData("NPN(IS=1 BF=5e-324)")][InlineData("NPN(IS=0)")][InlineData("NPN(CJE=-1p)")][InlineData("NPN(MJE=1)")][InlineData("NPN(TF=-1n)")][InlineData("NPN(TNOM=30)")][InlineData("NPN(LEVEL=4)")][InlineData("NPN(BF=100 BF=200)")]
+ public void Unsupported_or_invalid_BJT_terms_refuse_atomically(string model){var r=Select(model);Assert.False(r.Success);Assert.Null(r.Request);Assert.Empty(r.Origins);}
+ private static BridgeResult Select(string model)=>OperatingPointSelection.Select(DeckParser.Parse("BJT\nVc c 0 1\nVb b 0 .6\nVe e 0 0\nQ1 c b e qm\n.model qm "+model+"\n.end\n",collectDeclarations:true)).Prepared;
+}

@@ -8,6 +8,14 @@ use std::collections::BTreeSet;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Element {
+    /// Charge-only junction companion. Transport IS is a Q scale and contributes
+    /// no conduction F; sense branches can therefore exclude displacement.
+    JunctionStorage {
+        id: String,
+        p: NodeId,
+        n: NodeId,
+        model: crate::spice_diode::SpiceDiodeModel,
+    },
     /// SPICE depletion and diffusion charge evaluated with effective SI parameters.
     SpiceDiode {
         id: String,
@@ -113,6 +121,7 @@ impl Element {
     pub fn id(&self) -> &str {
         match self {
             Self::Resistor { id, .. }
+            | Self::JunctionStorage { id, .. }
             | Self::SpiceDiode { id, .. }
             | Self::Capacitor { id, .. }
             | Self::Inductor { id, .. }
@@ -130,6 +139,7 @@ impl Element {
     pub fn terminals(&self) -> (NodeId, NodeId) {
         match self {
             Self::Resistor { p, n, .. }
+            | Self::JunctionStorage { p, n, .. }
             | Self::SpiceDiode { p, n, .. }
             | Self::Capacitor { p, n, .. }
             | Self::Inductor { p, n, .. }
@@ -276,7 +286,9 @@ impl Circuit {
                         "diode parameters must be finite and positive",
                     ));
                 }
-                Element::SpiceDiode { model, .. } => model.validate()?,
+                Element::SpiceDiode { model, .. } | Element::JunctionStorage { model, .. } => {
+                    model.validate()?
+                }
                 _ => {}
             }
         }

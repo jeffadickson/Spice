@@ -6,13 +6,14 @@ public sealed class ReadinessTests
     [Fact]
     public void Audit_retains_multiple_structural_layers_instead_of_only_the_first_failure()
     {
-        var deck="Audit\n.options reltol=1m\nV1 a 0 2\nQ1 a a 0 transistor\nD1 a 0 diode\nF1 b 0 V1 2\n.model transistor npn (bf=100)\n.model diode d (is=1p)\n.end\n";
+        var deck="Audit\n.options reltol=1m\nV1 a 0 2\nQ1 a a 0 transistor\nD1 a 0 diode\nF1 b 0 V1 2\n.model transistor npn (bf=100 VAF=100)\n.model diode d (is=1p)\n.end\n";
         var audit=CircuitReadiness.Audit(DeckParser.Parse(deck,collectDeclarations:true));
         Assert.False(audit.CanPrepare);Assert.True(audit.ActiveGraphComplete);Assert.False(audit.NumericalValidationExhaustive);
         Assert.Contains(audit.Issues,i=>i.Layer=="directive_policy");
-        Assert.Single(audit.Issues.Where(i=>i.Layer=="runtime_model"));
+        Assert.DoesNotContain(audit.Issues,i=>i.Layer=="runtime_model");
         Assert.DoesNotContain(audit.Issues,i=>i.Kind=="diode");
         Assert.DoesNotContain(audit.Issues,i=>i.Layer=="parser_to_runtime"&&i.Kind=="icontrol");
+        Assert.Contains(audit.Issues,i=>i.Layer=="model_contract"&&i.Code=="unsupported_bjt_profile");
         Assert.Contains(audit.Models,m=>m.ModelFamily=="d"&&m.ParameterAssignments.Contains("is"));
         Assert.Single(audit.PreparationDiagnostics);
     }

@@ -23,15 +23,20 @@ pub struct DiodeModel {
 pub enum DiodeProfile {
     Shockley(DiodeModel),
     Spice(crate::spice_diode::SpiceDiodeModel),
-    ConstantCharge { conduction: DiodeModel, farads: f64 },
+    /// Pure junction storage: the effective IS scales transport Q, not F.
+    JunctionStorage(crate::spice_diode::SpiceDiodeModel),
+    ConstantCharge {
+        conduction: DiodeModel,
+        farads: f64,
+    },
 }
 impl DiodeProfile {
     /// Validate both independent parameter domains before compilation.
     pub fn validate(self) -> SimResult<()> {
-        if let Self::Spice(model) = self {
+        if let Self::Spice(model) | Self::JunctionStorage(model) = self {
             return model.validate();
         }
-        self.conduction().validate()?;
+        self.reference_junction().validate()?;
         if let Self::ConstantCharge { farads, .. } = self {
             crate::charge::constant_capacitance(farads, 0.)?;
         }
@@ -40,22 +45,29 @@ impl DiodeProfile {
     /// The unchanged conduction-current equation and its derivative. Charge
     /// finiteness is checked here; its dynamic Jacobian is stamped separately in Q.
     pub fn linearize(self, voltage: f64) -> SimResult<DiodeLinearization> {
+        if let Self::JunctionStorage(model) = self {
+            model.charge(voltage)?;
+            return Ok(DiodeLinearization {
+                current_amps: 0.,
+                conductance_siemens: 0.,
+            });
+        }
         if let Self::Spice(model) = self {
             return model.linearize(voltage);
         }
         if let Self::ConstantCharge { farads, .. } = self {
             crate::charge::constant_capacitance(farads, voltage)?;
         }
-        self.conduction().linearize(voltage)
+        self.reference_junction().linearize(voltage)
     }
     /// Existing thermal-voltage trial limiting applies to the conduction equation.
     pub fn thermal_volts(self) -> f64 {
-        self.conduction().thermal_volts
+        self.reference_junction().thermal_volts
     }
     /// Explicit constant parallel capacitance, absent for a legacy diode.
     pub fn capacitance(self) -> Option<f64> {
         match self {
-            Self::Shockley(_) | Self::Spice(_) => None,
+            Self::Shockley(_) | Self::Spice(_) | Self::JunctionStorage(_) => None,
             Self::ConstantCharge { farads, .. } => Some(farads),
         }
     }
@@ -65,21 +77,21 @@ impl DiodeProfile {
         voltage: f64,
     ) -> SimResult<Option<crate::spice_diode::JunctionCharge>> {
         match self {
-            Self::Spice(model) => Ok(Some(model.charge(voltage)?)),
+            Self::Spice(model) | Self::JunctionStorage(model) => Ok(Some(model.charge(voltage)?)),
             _ => Ok(None),
         }
     }
     /// Distinguish conduction observables from total dynamic device current.
     pub fn has_charge(self) -> bool {
         match self {
-            Self::Spice(model) => model.has_charge(),
+            Self::Spice(model) | Self::JunctionStorage(model) => model.has_charge(),
             _ => self.capacitance().is_some(),
         }
     }
-    fn conduction(self) -> DiodeModel {
+    fn reference_junction(self) -> DiodeModel {
         match self {
             Self::Shockley(model) => model,
-            Self::Spice(model) => DiodeModel {
+            Self::Spice(model) | Self::JunctionStorage(model) => DiodeModel {
                 saturation_amps: model.saturation_amps,
                 thermal_volts: model.thermal_volts,
             },

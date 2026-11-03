@@ -6,7 +6,7 @@ use crate::{
     model::{CapacitorModel, DiodeModel, DiodeProfile, ResistorModel, TwoTerminalModel},
     sparse::{CscMatrix, SparseAccumulator},
 };
-/// Immutable nonlinear diode definition retained separately from linear MNA terms.
+/// Immutable nonlinear current/charge junction, retained separately from linear MNA terms.
 #[derive(Debug, Clone)]
 pub(crate) struct CompiledDiode {
     pub(crate) id: String,
@@ -119,6 +119,15 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     let mut switches = Vec::new();
     for e in &circuit.elements {
         match e {
+            Element::JunctionStorage { id, p, n, model } => {
+                model.validate()?;
+                diodes.push(CompiledDiode {
+                    id: id.clone(),
+                    p: *p,
+                    n: *n,
+                    model: DiodeProfile::JunctionStorage(*model),
+                });
+            }
             Element::SpiceDiode { id, p, n, model } => {
                 model.validate()?;
                 diodes.push(CompiledDiode {

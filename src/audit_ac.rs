@@ -60,6 +60,7 @@ pub fn ac(
             e,
             Element::Diode { .. }
                 | Element::SpiceDiode { .. }
+                | Element::JunctionStorage { .. }
                 | Element::DiodeWithCapacitance { .. }
                 | Element::PspiceSwitch { .. }
         )

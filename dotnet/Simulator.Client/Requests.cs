@@ -28,6 +28,7 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(Diode), "diode")]
 [JsonDerivedType(typeof(DiodeWithCapacitance), "diode_with_capacitance")]
 [JsonDerivedType(typeof(SpiceDiode), "spice_diode")]
+[JsonDerivedType(typeof(JunctionStorage), "junction_storage")]
 public abstract record Element(string Id, int P, int N);
 /// <summary>Positive resistance in ohms; validated by the engine before assembly.</summary>
 public sealed record Resistor(string Id, int P, int N, double Ohms) : Element(Id, P, N);
@@ -58,6 +59,9 @@ public sealed record SpiceDiodeModel(double SaturationAmps,double ThermalVolts,d
 /// <summary>Junction with nonlinear SPICE depletion and diffusion storage.
 /// The i_conduction observable excludes displacement current.</summary>
 public sealed record SpiceDiode(string Id,int P,int N,SpiceDiodeModel Model):Element(Id,P,N);
+/// <summary>Pure depletion/transport junction storage with zero static F. Model
+/// saturation current scales diffusion Q only; current senses remain separate.</summary>
+public sealed record JunctionStorage(string Id,int P,int N,SpiceDiodeModel Model):Element(Id,P,N);
 /// <summary>Shockley conduction in parallel with constant Q=C*V; SI amps, volts and
 /// strictly positive farads. This bounded profile has no depletion or transport charge.
 /// Derived i_conduction(id) excludes displacement; total current requires circuit KCL.</summary>

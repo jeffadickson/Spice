@@ -97,7 +97,7 @@ public static class OperatingPointBridge
                 {
                     if(omittedStarts?.Contains(card.Range.Start)==true)continue;
                     if(selected&&card.GlobalNodes!=null)continue;
-                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice" or "diode" or "behavior")))
+                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice" or "diode" or "behavior" or "bjt")))
                         throw new BridgeFailure("unsupported_active_card",card.Range);
                 }
                 var frameIds=new Dictionary<string,(string Id,string Family)>(StringComparer.OrdinalIgnoreCase);
@@ -221,6 +221,14 @@ public static class OperatingPointBridge
                 foreach(var call in bound[scope])
                 {
                     if(!names.Add(call.Header.Name))throw new BridgeFailure("duplicate_element",call.Header.Range);
+                    if(selected&&call.Header.Family=="Q")
+                    {
+                        if(!BjtPreparation.TryPrepare(catalog,environment,call,out var bjt,out var error))throw new BridgeFailure(error!.Code,error.Range);
+                        var c=Node(call.Ports[0].Actual.Text);var b=Node(call.Ports[1].Actual.Text);var e=Node(call.Ports[2].Actual.Text);
+                        var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        bjt!.Append(id,c,b,e,PrivateNode,element=>{if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);elements.Add(element);});
+                        origins.Add(new(id,call.Header.Name,path,call.Header.Range));continue;
+                    }
                     if(selected&&call.Header.Family=="D")
                     {
                         if(!SemiconductorPreparation.TryDiode(catalog,environment,call,out var diode,out var error))
@@ -286,6 +294,11 @@ public static class OperatingPointBridge
                 if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",catalog.Scopes[scope].Range);
                 index=nodes.Count;var wire="n"+index.ToString(System.Globalization.CultureInfo.InvariantCulture);nodes.Add(wire);table.Add(name,index);
                 if(scope==0)roots[name]=wire;return index;
+            }
+            int PrivateNode()
+            {
+                if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",catalog.Scopes[scope].Range);
+                var index=nodes.Count;nodes.Add("n"+index.ToString(System.Globalization.CultureInfo.InvariantCulture));return index;
             }
         }
     }

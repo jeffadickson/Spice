@@ -1,0 +1,340 @@
+{
+  "schema_version": 1,
+  "profile": "bounded_three_terminal_ebers_moll_with_depletion_and_transport_storage",
+  "status": "verified_bounded_checkpoint_MOS1_and_broader_models_remain_open",
+  "base_commits": {
+    "managed_current_control": "fde9bc2",
+    "diode": "b9e4dd579e08840e2b3c8635a9fc806ee164fce1",
+    "upstream_provider_fix": "06e8a6b",
+    "faer_complex_refinement": "47b9809"
+  },
+  "native_executable": {
+    "frozen_before_final_qualification": true,
+    "path": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\bjt-qualified-231718e36da7467b8f91825f15911cb2\\circuit-simulator.exe",
+    "sha256": "23adcfc6ff51d49a1a30a7c356087f5ee9a1cb9e003648cbd12ac3685d815e4f"
+  },
+  "verification": {
+    "managed_full": {
+      "total": 187,
+      "passed": 178,
+      "skipped": 9,
+      "failed": 0
+    },
+    "native_charge_only_tests_passed": 5,
+    "native_instrumented_tests_passed": 26,
+    "post_fixture_adjustment_readiness_passed": 3,
+    "analytical_dc": {
+      "collector_and_base_current_absolute_bound_a": 2E-12,
+      "scenarios": 8,
+      "polarities": [
+        "NPN",
+        "PNP"
+      ],
+      "collector_bias_v": [
+        1,
+        0.2
+      ],
+      "providers": [
+        "lu",
+        "faer"
+      ]
+    },
+    "provider_refinement_tests_passed": 3,
+    "original_ngspice": {
+      "polarities": [
+        "NPN",
+        "PNP"
+      ],
+      "native_analyses": 16,
+      "providers": [
+        "lu",
+        "faer"
+      ],
+      "formal_refinement": "At2ns the fine collector-voltage error must be less than one third of the50ps error for each provider/polarity",
+      "dc_voltage_bound_v": 2E-07,
+      "version": "47+",
+      "ac_complex_component_collector_current_bound_a": 2E-08,
+      "sample_times_s": [
+        2E-09,
+        1E-08,
+        5E-08,
+        1E-07
+      ],
+      "fine_be_collector_current_bound_a": 2E-06,
+      "fine_be_step_s": 1E-11,
+      "fine_be_voltage_bound_v": 0.003,
+      "sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+      "raw_parent": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/bjt-qualified-231718e36da7467b8f91825f15911cb2",
+      "dc_collector_current_bound_a": 2E-10,
+      "qualified_analyses": 12,
+      "coarse_diagnostic_analyses": 4,
+      "ac_complex_component_voltage_bound_v": 2E-05
+    },
+    "retained_initial_failures": {
+      "coarse_be": {
+        "native_collector_v": 0.833398858900027,
+        "error_v": 0.004968376099973026,
+        "ngspice_collector_v": 0.838367235,
+        "refined_10ps_error_v": 0.0009826375429929923,
+        "bound_v": 0.003,
+        "refined_2ps_error_v": 0.00018401696404435341,
+        "time_s": 2E-09,
+        "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b/bjt-oracle-1998ef487af74fceb89fbd6272c52fe8",
+        "native_step_s": 5E-11
+      },
+      "faer_ac": {
+        "outcome": "structured numerical_failure: AC residual failed",
+        "disposition": "Fixed by provider-owned residual corrections under unchanged1e-10 acceptance; original circuits replay passed",
+        "reproducer": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b/bjt-oracle-cf81f190bbd04051bcb4272f3332f8fc/NPN-faer-Ac.request.json",
+        "frozen_matrix": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b/bjt-faer-ac-frozen.json"
+      }
+    },
+    "native_instrumented_scope": "Earlier three charge-only tests plus seven diode and16 constant-charge tests; two later pure-term/DC-path tests ran normally and are not included in that coverage",
+    "native_diode_constant_charge_regressions_passed": 23
+  },
+  "coverage": {
+    "native_branches": null,
+    "native_raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b/bjt-rust-coverage/summary.json",
+    "native_files": [
+      {
+        "file": "src/api.rs",
+        "lines": {
+          "count": 307,
+          "covered": 268,
+          "percent": 87.29641693811075
+        }
+      },
+      {
+        "file": "src/model.rs",
+        "lines": {
+          "count": 97,
+          "covered": 93,
+          "percent": 95.87628865979381
+        }
+      },
+      {
+        "file": "src/topology.rs",
+        "lines": {
+          "count": 45,
+          "covered": 33,
+          "percent": 73.33333333333333
+        }
+      }
+    ],
+    "managed_limitations": [
+      "Mapped class lines/conditions only; captured All predicate and bridge expansion/private-node callbacks can be omitted by Coverlet",
+      "No claim of full lowering coverage from outer bridge metrics"
+    ],
+    "native_scope": "Instrumented bounded junction tests before provider-fix import; shown model/api/topology files are unchanged by that provider fix. Not full regression/new-code-only coverage.",
+    "native_limitation": "Stable instrument-coverage supplied no branch maps; later provider code has separately scoped owner evidence",
+    "managed_classes": [
+      {
+        "class": "Simulator.Frontend.PreparedBjt",
+        "covered_lines": 16,
+        "lines": 16,
+        "covered_branches": 32,
+        "branches": 32
+      },
+      {
+        "class": "Simulator.Frontend.BjtPreparation",
+        "covered_lines": 32,
+        "lines": 33,
+        "covered_branches": 70,
+        "branches": 82
+      }
+    ],
+    "managed_raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\bjt-qualified-231718e36da7467b8f91825f15911cb2\\managed-coverage\\1e5cd0c4-6b7e-4151-ad63-6d47ae2eb71b\\coverage.cobertura.xml"
+  },
+  "mutation": {
+    "ignored": 2,
+    "selected_file": "BjtPreparation.cs",
+    "scope": "Topology/refusal tests and actual independent NPN/PNP forward/saturated native DC cases; ngspice AC/BE oracle deliberately unset for this bounded campaign",
+    "compile_error": 18,
+    "tool": "Stryker.NET5.0.0",
+    "killed": 148,
+    "no_coverage": 6,
+    "disposition": "Open survivors and uncovered/invalid cases retained. Added independent cap-only/transit-only/default-no-storage regression cases after triage; no further broad campaign run.",
+    "survived": 38,
+    "tested": 186,
+    "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b/bjt-stryker/reports/mutation-report.json",
+    "input_hashes": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b/bjt-stryker-inputs.json",
+    "native_binary_provenance_limitation": "First campaign used an existing native binary that was later rebuilt without a separate initial binary hash; final original-case qualification uses the frozen hash above"
+  },
+  "documentation": {
+    "sphinx_xml_entries": 526,
+    "strictdoc_documents": 25,
+    "resolved_parents": 333,
+    "sphinx_status": "built_with_warnings_as_errors",
+    "strictdoc_report": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/bjt-qualified-231718e36da7467b8f91825f15911cb2/strictdoc.json",
+    "strictdoc_ids": 349,
+    "sphinx_report": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/bjt-qualified-231718e36da7467b8f91825f15911cb2/engineering/verification.json"
+  },
+  "commands": [
+    {
+      "args": [
+        "test",
+        "--manifest-path",
+        "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile/Cargo.toml",
+        "--test",
+        "faer_complex_refinement",
+        "--test",
+        "junction_storage",
+        "--test",
+        "spice_diode",
+        "--test",
+        "model_charge",
+        "-j",
+        "4"
+      ],
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-25\\continue-the-spice-m1-qualification-work",
+      "note": "Initial call used absolute --manifest-path from host task cwd; see correction document",
+      "env": {
+        "CARGO_TARGET_DIR": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b/target",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "exe": "cargo"
+    },
+    {
+      "args": [
+        "test",
+        "--test",
+        "junction_storage",
+        "-j",
+        "4"
+      ],
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile",
+      "env": {
+        "CARGO_TARGET_DIR": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b/target",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "exe": "cargo"
+    },
+    {
+      "args": [
+        "test",
+        "dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj",
+        "--no-restore",
+        "--verbosity",
+        "quiet",
+        "--collect",
+        "XPlat Code Coverage",
+        "--results-directory",
+        "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/bjt-qualified-231718e36da7467b8f91825f15911cb2/managed-coverage"
+      ],
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile",
+      "env": {
+        "SPICE_NGSPICE": "C:/dev/ngspice-install/bin/ngspice.exe",
+        "SPICE_SEMICONDUCTOR_ENGINE": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\bjt-qualified-231718e36da7467b8f91825f15911cb2\\circuit-simulator.exe",
+        "SPICE_SEMICONDUCTOR_ARTIFACT_ROOT": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/bjt-qualified-231718e36da7467b8f91825f15911cb2"
+      },
+      "exe": "dotnet"
+    },
+    {
+      "args": [
+        "tool",
+        "run",
+        "dotnet-stryker",
+        "--",
+        "--config-file",
+        "bjt-stryker.json",
+        "--test-project",
+        "Simulator.Frontend.Tests.csproj",
+        "--output",
+        "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b/bjt-stryker"
+      ],
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile/dotnet/Simulator.Frontend.Tests",
+      "note": "SPICE_NGSPICE absent; native engine unfrozen in this earlier campaign",
+      "exe": "dotnet"
+    },
+    {
+      "args": [
+        "run",
+        "--file",
+        "scripts/ValidateRequirements.cs",
+        "--",
+        "--python",
+        "<existing StrictDoc Python>",
+        "--report",
+        "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/bjt-qualified-231718e36da7467b8f91825f15911cb2/strictdoc.json"
+      ],
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile",
+      "exe": "dotnet"
+    }
+  ],
+  "limitations": [
+    "No general Gummel-Poon, substrate/fourth-terminal, Early/high-injection/leakage/base-resistance/excess-phase/temperature scaling claim. Unsupported model/instance terms refuse.",
+    "Configured charged explicit initial states/adaptive and nonlinear trapezoidal remain unsupported; energy evidence remains NotChecked.",
+    "Finite voltage/current and refinement checks, not a global transient-error bound or formal model proof.",
+    "Windows native/.NET execution only; no fresh Linux, AOT, noise or coverage-guided fuzz campaign.",
+    "After full managed qualification, a negative readiness fixture was adjusted to retain directive/model-contract layering as supported families expanded; its three tests reran. Only EOF whitespace was otherwise normalized.",
+    "Diode command-cwd and earlier BJT mutation native-binary provenance corrections are explicit in docs/semiconductor-evidence-corrections.md."
+  ],
+  "source_hashes": {
+    "Cargo.lock": "018b19472c004dd03af3c75aa2bd5a45982f1da3d23a5be41e612ac97e3a41f6",
+    "Cargo.toml": "a833a9a62ab2ce071d92609556c1f01a390699144001c68f30ed3e070a1fd16c",
+    "docs/bjt-profile-plan.md": "f9fc6ea8fb2e043cfc523b82afb8e72812802f389493343d42cd26e2dacb93e6",
+    "docs/bjt-profile.md": "8609305352d76337528796aaf2b252fb199b79bf9481dc30a6395d6b5fd62c96",
+    "docs/bjt-profile.sdoc": "d3d4e00d09a93f8c9d69234bc3289cd4fc37ecd7454cd6aec1dbe5feddc9b451",
+    "docs/semiconductor-evidence-corrections.md": "08350bb95ab8a703c944af40d57ad0f517fb0b265109ec524b8a8cb3d21ecca1",
+    "dotnet/Simulator.Client/Requests.cs": "ca852d0b75144d8f0903ce19cad9843c82879bf3c735afb06ffe2ffdd95c5096",
+    "dotnet/Simulator.Frontend.Tests/bjt-stryker.json": "e4d3d1e68a9da9ab882d88e2994e7d05e11620de3b23d807f344e326b462c601",
+    "dotnet/Simulator.Frontend.Tests/BjtDcNativeIntegration.cs": "34118b83a83001b36d2a51fa0e870de4e27d02125d95a2bc2de8bf3700d76642",
+    "dotnet/Simulator.Frontend.Tests/BjtNativeOracleIntegration.cs": "31f0d5a532dadf431d15367c469f7f78cd35671caaa8dc88f5e868a355e10d0c",
+    "dotnet/Simulator.Frontend.Tests/BjtTests.cs": "3a75390b065b83c9377ede57626d2ad2dbcc7b747ccc1915c64e744d7a4d8afa",
+    "dotnet/Simulator.Frontend.Tests/ReadinessTests.cs": "e24ad668cafee6a6035dc981604e3cf3d4c2b11f8721feff528f2125f3bcc724",
+    "dotnet/Simulator.Frontend/BjtPreparation.cs": "6716efd83539e64c53cadc6f37bd3baef9e1600686f84bb05cb09093b0c7a48e",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "14967015a5af2a51a79744886b1194e1629789a0ec03506963ad3d767e342381",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "984a3a10648fdb9c4cedbc82615e2709aea4f758736c0e64aaf5faa4002de8a4",
+    "examples/bjt-ebers-moll.cir": "52c43657b9b72edbcee5c45c788a498ef8f3e501a404afd7b63dbc802822818a",
+    "examples/freeze_ac.rs": "c50a0de2fcd7f6ea8207e5f5ca270f06902cc18670198b2707c0b6ad3c12df54",
+    "rust-toolchain.toml": "c946aab8e3eafd93e58303a52f31fc8b9a0caf4bf7a63328ff00195e6a6ad30b",
+    "src/ac.rs": "cc292a338cb5bbcedff4be3523ac5b086007e16cc2536db1537deb4cd86c38b5",
+    "src/adaptive.rs": "557919a6c31070dc63e084506443bb280a5e8ce635cb0b22616640ccd5f04781",
+    "src/api.rs": "38bb3363d3c6d9dfb6cd775f131adb6d31ea013ea69661d05d3b628b8b1ba69f",
+    "src/artifact.rs": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
+    "src/assertion.rs": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+    "src/audit_ac.rs": "e721f5f14702d0c1e35e9f555edd832f0bee8152171981903237d12cfc2100fa",
+    "src/audit_configured.rs": "e96d72470218075a6508bebbf73a83fdfb1a41fef3e4b0973d891b6c9a6d1327",
+    "src/audit.rs": "56bb2d122a8b6294a281f170ff427c9d0f7e021f37caa864c532329ea92e5bad",
+    "src/backend_faer.rs": "28620a5cb47deef1a35a6af6046fcf361e9727f7bbbd34c70f8a71097406efc5",
+    "src/backend.rs": "69ebd88de74917bca9a7e61acea193288c0f8490531c3c586c7b5f6f2a5de726",
+    "src/campaign.rs": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+    "src/charge.rs": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+    "src/circuit.rs": "80e256a31215ff7cd77114454910ba94182bfe22319406cc23d7b895bd82f5a8",
+    "src/compile.rs": "ef18d89d943f8f25e89b1ec3c2183b43524cffe3cfce7b418ad1eca0145df10c",
+    "src/configured.rs": "eef0e6fca55f696372fe65cfb93f0f89082b9951fc4731ed0a63198adc21b59e",
+    "src/dc.rs": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+    "src/error.rs": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+    "src/experiment.rs": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+    "src/expression.rs": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+    "src/grid.rs": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+    "src/ids.rs": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+    "src/integrator.rs": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+    "src/lib.rs": "c1bbfa69ee2b36b502f2392b96a53445f76da4fbeb0b7dc422cf364131b84fd9",
+    "src/linalg.rs": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+    "src/linear_dynamic.rs": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+    "src/main.rs": "f30077611a9d105016a24f6a37ce73c1396fc7d203be2b7451a4878c003eed02",
+    "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+    "src/model.rs": "500da23f436a9c916a0e264fb95a201a90189bae645d24858f8bdf17d9ec4d01",
+    "src/netlist.rs": "753efdb099a0d7ab7beb380166f833912c43936a391c4db879af7f7078981a12",
+    "src/newton.rs": "fc24ce2ebec12371fbcc38961986f759f8ea5c5418b96affd14fdd5fbaf87f6e",
+    "src/ngspice_resistor.rs": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3",
+    "src/power.rs": "7fd65d85066f0e01506ad3736780eb23887c6d3816456fc6bf84f14f64ccd08a",
+    "src/provenance.rs": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+    "src/pspice_switch.rs": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9",
+    "src/quantity.rs": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397",
+    "src/registry.rs": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7",
+    "src/sampling.rs": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+    "src/solver_contract.rs": "c8b1e09a3425bb16881ae3b414c880820cfb3546aa5f6b540273106be357d098",
+    "src/sources.rs": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+    "src/sparse.rs": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+    "src/spice_diode.rs": "f15abe8bd656df14abdbd9c6b3939fb706f0086b5d1193a4cf6a59f7fe638504",
+    "src/sweep.rs": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+    "src/topology.rs": "acdad8f0987b02ffcedf53dfa68bb91b33b04e32a7ad48be032e14a3e9c1bba5",
+    "src/transient.rs": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a",
+    "src/variation.rs": "922d4acb06319efde49443489b249fca0dc5b67ebe307925b69d4cd71cccb12d",
+    "src/waveform.rs": "2bce955e8d3453700d0a5801a894799d3737034672332d942bc544fdb8d32cd9",
+    "tests/junction_storage.rs": "b0c72404fbdc0ef054ba4a7bbd1ac6dbd9c2dede9356c3d1b065c2329530906e",
+    "third-party/ATTRIBUTION.md": "c1a0704aacd7e0f0386e41d41678bd19033209451fa98710e62ae5ad013bedd0"
+  }
+}
