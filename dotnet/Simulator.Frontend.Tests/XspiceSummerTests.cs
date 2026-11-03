@@ -76,6 +76,28 @@ public sealed class XspiceSummerTests
         Assert.True(result.Success);Assert.Equal(3,result.Summer!.Inputs[1].P.Range.Line);Assert.Equal(3,result.Summer.Inputs[1].P.Range.Column);
     }
     [Fact]
+    public void Model_arrays_use_model_scope_despite_a_shadowing_instance_environment()
+    {
+        var syntax=DeckParser.Parse("t\n.param k=2\n.model sum summer(in_gain=[{k} {-k}])\n.subckt child a b out k=3\nA1 [a b] out sum\n.ends\n.end\n",collectDeclarations:true);
+        var catalog=syntax.Declarations!;var instance=Assert.Single(catalog.XspiceInstances);
+        var result=XspiceSummerLowering.Prepare(catalog,instance,ParameterEvaluator.Evaluate(catalog,instance.ScopeId));
+        Assert.True(result.Success);Assert.Equal(new[]{2d,-2d},result.Summer!.Inputs.Select(i=>i.Gain));
+    }
+    [Fact]
+    public void Foreign_environment_and_instance_are_refused()
+    {
+        var catalog=DeckParser.Parse("t\nA1 [a b] out sum\n.model sum summer\n.end\n",collectDeclarations:true).Declarations!;
+        var foreign=DeckParser.Parse("t\n.end\n",collectDeclarations:true).Declarations!;var instance=Assert.Single(catalog.XspiceInstances);
+        Assert.Equal("foreign_xspice_instance",Assert.Single(XspiceSummerLowering.Prepare(foreign,instance,ParameterEvaluator.Evaluate(foreign)).Diagnostics).Code);
+        Assert.Equal("invalid_parameter_environment",Assert.Single(XspiceSummerLowering.Prepare(catalog,instance,ParameterEvaluator.Evaluate(foreign)).Diagnostics).Code);
+    }
+    [Fact]
+    public void Sixteen_inputs_are_bounded_and_seventeen_are_refused()
+    {
+        Assert.True(Prepare("A1 ["+string.Join(' ',Enumerable.Range(0,16).Select(i=>"in"+i))+"] out sum").Success);
+        Assert.False(Prepare("A1 ["+string.Join(' ',Enumerable.Range(0,17).Select(i=>"in"+i))+"] out sum").Success);
+    }
+    [Fact]
     public void Weighted_sum_property_campaign()
     {
         var config=Config.QuickThrowOnFailure.WithMaxTest(128).WithReplay(FSharpOption<Replay>.Some(new(new Rnd(20261104UL),null)));

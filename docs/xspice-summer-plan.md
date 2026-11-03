@@ -16,17 +16,17 @@ Generated inspection found all 12 summer instances from the frozen 928 roots:
 omitted defaults. They occupy root scope in six example variants and mirrors.
 Other analog/digital models still block those complete decks.
 
-- [ ] Write failing preparation/default/vector/length/type/parameter tests.
-- [ ] Extend existing generated port metadata with vector children; retain
+- [x] Write failing preparation/default/vector/length/type/parameter tests.
+- [x] Extend existing generated port metadata with vector children; retain
       unsupported type markers and scalar gain admission behavior. Reuse the
       existing physical source capture for CR/LF/CRLF ranges.
-- [ ] Add a generated scalarVectorProfile over existing tokens; retain optional
+- [x] Add a generated scalarVectorProfile over existing tokens; retain optional
       typed array members in ParameterSyntax without a custom splitter/parser.
-- [ ] Prepare ordered differential voltage controls, finite coefficients and
+- [x] Prepare ordered differential voltage controls, finite coefficients and
       offset in XspiceSummerLowering; evaluate model values in lexical snapshots.
-- [ ] Verify original A-card default/weighted/differential DC/complex AC/ramp
+- [x] Verify original A-card default/weighted/differential DC/complex AC/ramp
       cases against native ngspice and typed existing elements on both providers.
-- [ ] Execute bounded FsCheck, negative cases, coverage and meaningful mutations;
+- [x] Execute bounded FsCheck, negative cases, coverage and meaningful mutations;
       re-inspect the 12 corpus cases, StrictDoc and docs, then commit evidence.
 
 Parent owns OperatingPointBridge integration. No root bridge or native runtime
