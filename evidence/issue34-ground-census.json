@@ -1,0 +1,40 @@
+{
+  "source_commit": "26cfad91fd398fa14ed1de1ae8974f454a348409",
+  "state": "completed_with_results",
+  "provenance_valid": true,
+  "inventory_sha256": "639942cf3e489baf7ce4b4e3437601d54781ede3d143ba049ae1c5b33f9ad255",
+  "elapsed_seconds": 906.0241567,
+  "stages": [
+    {
+      "name": "Syntax accepted",
+      "passed": 916,
+      "refused": 8,
+      "unknown": 4
+    },
+    {
+      "name": "Circuit prepared",
+      "passed": 85,
+      "refused": 809,
+      "unknown": 34
+    },
+    {
+      "name": "Requested analyses executed",
+      "passed": 23,
+      "refused": 871,
+      "unknown": 34
+    },
+    {
+      "name": "Native numerical agreement",
+      "passed": 11,
+      "refused": 12,
+      "unknown": 905
+    }
+  ],
+  "summary_sha256": "b0a0c6f6fbb5db475df489d8151a64ca551ae6b3b09108e38827afe82ac56f45",
+  "limitations": [
+    "Mirrored paths count separately",
+    "Twelve numerical disagreements remain",
+    "905 inputs lack native agreement evidence",
+    "No BJT initialization changes included"
+  ]
+}

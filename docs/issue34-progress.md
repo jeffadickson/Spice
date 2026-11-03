@@ -80,3 +80,17 @@ Raw inputs, requests, responses, native RAW/logs, coverage and mutation reports
 remain under `E:/Artifacts/Spice-issue34-20261103T195804Z`. Bounded evidence:
 `evidence/issue34-ground-checkpoint.json`. Existing main sheet-resistor changes
 remain untouched; no CI dispatched.
+
+## Frozen ground checkpoint census
+
+Clean revision `26cfad91fd398fa14ed1de1ae8974f454a348409` completed the same
+928-input inventory in 906.024 seconds, with provenance_valid=true. Counts:
+916 syntax accepted,85 circuit prepared,23 requested analyses executed,
+11 native numerical agreements. Compared with fc5db25 this is +4 preparations,
++2 executions and +2 agreements. Twelve numerical disagreements remain;
+905 inputs have no native-agreement evidence. The two ordinary rc-meas-ac.sp
+paths now execute and agree; both control-program variants prepare but remain
+explicit requested-preparation refusals. These are file counts, including mirrors,
+not unique circuit counts. Raw summary, per-case evidence and burndown are in
+`ground-census` beneath the current E: artifact directory. New BJT work is excluded
+from this immutable checkpoint.
