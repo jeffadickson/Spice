@@ -28,6 +28,8 @@ linearControlProfile: twoNodes value EOF;
 currentControlProfile: value EOF;
 globalNodesProfile: node (COMMA? node)* EOF;
 // A composite B header is decomposed only by the generated lexer in BODY mode.
+// Resistor model references are identifiers; ordinary scalar evaluation retains precedence.
+resistorModelProfile: identifier assignment* EOF;
 behaviorHeaderProfile: BEHAVIOR_NAME twoNodes identifier EQUAL EOF;
 // Scalar model arrays reuse existing value tokens; arithmetic members are braced.
 scalarVectorProfile: LBRACKET (value ((COMMA | {TokenStream.LT(1).StartIndex > TokenStream.LT(-1).StopIndex + 1}?) value)*)? RBRACKET EOF;

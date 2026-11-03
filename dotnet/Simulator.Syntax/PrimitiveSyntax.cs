@@ -7,6 +7,8 @@ public sealed record PrimitiveSyntax(string Name,string Family,int ScopeId,Sourc
 {
     /// <summary>Separately generated DC/AC clauses; null means outside this bounded excitation profile.</summary>
     public SourceExcitationSyntax? Excitation { get; init; }
+    /// <summary>Generated resistor model candidate and assignment tail; scalar/parameter evaluation still has precedence.</summary>
+    public ResistorModelSyntax? ResistorModel {get;init;}
     /// <summary>A leading reserved DC/AC token must satisfy the bounded clause grammar rather than become a same-named scalar parameter.</summary>
     public bool RequiresExcitationProfile { get; init; }
     /// <summary>Typed differential control terminals for a qualified linear E/G source.</summary>
@@ -99,7 +101,8 @@ internal static class PrimitiveExtraction
         var supported=parameters.Length==valueIndex+1&&parameters[valueIndex].assignment()==null&&!(card is SpiceParser.SourceContext&&parameters[valueIndex].call()!=null);
         var value=supported?capture(parameters[valueIndex]):null;
         return new(card.Start.Text,family,scope,capture(nodes.node(0)),capture(nodes.node(1)),value,supported,capture(card).Range)
-        {RequiresExcitationProfile=card is SpiceParser.SourceContext&&parameters.Length>0&&SourceProfileExtraction.IsReserved(parameters[0].Start.Text),
+        {ResistorModel=family=="R"?ResistorModelExtraction.Extract(parameters,capture):null,
+         RequiresExcitationProfile=card is SpiceParser.SourceContext&&parameters.Length>0&&SourceProfileExtraction.IsReserved(parameters[0].Start.Text),
          Excitation=card is SpiceParser.SourceContext sourceCard
             ?supported&&value!=null&&!parameters[0].Start.Text.Equals("ac",StringComparison.OrdinalIgnoreCase)
                 &&!(parameters.Length==1&&SourceProfileExtraction.IsReserved(parameters[0].GetText()))
