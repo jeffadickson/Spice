@@ -1,0 +1,14 @@
+{
+  "revision": "03b9554d083556e52ff98e3e70f77cd72d48d984",
+  "command": "cargo build --locked --manifest-path C:/dev/spice-rust-fix/Cargo.toml --bin circuit-simulator",
+  "exit_code": 0,
+  "profile": "dev",
+  "path": "E:\\Artifacts\\Spice-fix-20261103T140559Z\\rust-switch-replay\\native-feasibility\\circuit-simulator.exe",
+  "sha256": "42835c20d6ee316cb88b656849e0f5a6b18272d89fedc2ca62420c7a206caaab",
+  "source_sha256": "38d6604ce5fa694e805f4cfe6a05a156f4b2db1a8101f1c897d6af770f8a04e0",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+  "build_log_sha256": "9cb16c0c217ec8964b75ea2b3d59269aff04a74fa5da18e427cd515c3ded49d7",
+  "temporary_root": "E:/Artifacts/Spice-fix-20261103T140559Z/rust-switch-replay/temp",
+  "scope": "Normal restored production binary after focused25testGREEN; immutable copy distinct from unqualified20f prototype and from future mutation/instrumented builds."
+}

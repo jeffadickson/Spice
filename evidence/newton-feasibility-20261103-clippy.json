@@ -1,0 +1,19 @@
+{
+  "tool": "clippy 0.1.99 (58cf8f9c35 2026-10-13)",
+  "changed_scope": {
+    "command": "cargo clippy --locked --manifest-path C:/dev/spice-rust-fix/Cargo.toml --lib --test switch_stagnation_20261103 -- -D warnings",
+    "status": "passed",
+    "log_sha256": "983ec9a3523a9fa03d39d82514b158995e3037ff3825d778b28e9eb5dd5f3ea0",
+    "exit_code": 0
+  },
+  "all_targets": {
+    "unchanged_e679def_and_current_sha256": "4bbebc40eee74411aa1c58d47a89e9fe5dff64f67bcd13425463a151508ae2c8",
+    "lint": "clippy::single_element_loop",
+    "file": "tests/spice_diode.rs:114",
+    "command": "cargo clippy --locked --manifest-path C:/dev/spice-rust-fix/Cargo.toml --all-targets -- -D warnings",
+    "exit_code": 1,
+    "log_sha256": "b7a745a2dd8239f8b618e5c3fdb141bd139d878d9c76f3a3dc7fe4c951eb7a67",
+    "status": "failed_preexisting_lint"
+  },
+  "scope": "No lint allowance or unrelated source edit was introduced; broad all-target success is not claimed."
+}

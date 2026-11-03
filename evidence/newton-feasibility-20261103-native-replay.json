@@ -1,0 +1,79 @@
+{
+  "engine_sha256": "42835c20d6ee316cb88b656849e0f5a6b18272d89fedc2ca62420c7a206caaab",
+  "count": 8,
+  "scope": "Direct native replay of original saved positive source/Gmin requests; not the full managed test body",
+  "results": [
+    {
+      "absolute_voltage_error": 2.466671888967653E-08,
+      "final_gmin": null,
+      "voltage": -0.5357481618675742,
+      "request_sha256": "4dc50e6d55bd4e9693710dbaa7ec95b2fb8e43ccf798fa78b136baafdcbfe82b",
+      "backend": "lu",
+      "sign": -1,
+      "policy": "source"
+    },
+    {
+      "absolute_voltage_error": 1.1102230246251565E-16,
+      "final_gmin": null,
+      "voltage": -0.535748186534293,
+      "request_sha256": "a8aca717d6b61f77e687d3d07f20340792900a676cb8d967cd4c0bd35557e21c",
+      "backend": "lu",
+      "sign": -1,
+      "policy": "gmin"
+    },
+    {
+      "absolute_voltage_error": 2.466671888967653E-08,
+      "final_gmin": null,
+      "voltage": 0.5357481618675742,
+      "request_sha256": "d428a11c6421dbad33a2f5051472cde8662e9610d4e34b404f84a323defba02c",
+      "backend": "lu",
+      "sign": 1,
+      "policy": "source"
+    },
+    {
+      "absolute_voltage_error": 0.0,
+      "final_gmin": null,
+      "voltage": 0.5357481865342931,
+      "request_sha256": "d129681dc31ec5392e38efbba267621f943a36a6adf4c9a12baa3fd7a47d43c0",
+      "backend": "lu",
+      "sign": 1,
+      "policy": "gmin"
+    },
+    {
+      "absolute_voltage_error": 2.466671888967653E-08,
+      "final_gmin": null,
+      "voltage": -0.5357481618675742,
+      "request_sha256": "814feb7b3462c5b084d4b804060dbc8524ac5e7ae9582bd80231ad8ed8835be0",
+      "backend": "faer",
+      "sign": -1,
+      "policy": "source"
+    },
+    {
+      "absolute_voltage_error": 1.1102230246251565E-16,
+      "final_gmin": null,
+      "voltage": -0.535748186534293,
+      "request_sha256": "0384698d574ffba6b83ad0318e0a763f6036f861928f3f5372e095d43be54065",
+      "backend": "faer",
+      "sign": -1,
+      "policy": "gmin"
+    },
+    {
+      "absolute_voltage_error": 2.466671888967653E-08,
+      "final_gmin": null,
+      "voltage": 0.5357481618675742,
+      "request_sha256": "954f124326e4ccb268641524ccb347b91e539ad18b66904b84b3f6d54845e7c1",
+      "backend": "faer",
+      "sign": 1,
+      "policy": "source"
+    },
+    {
+      "absolute_voltage_error": 0.0,
+      "final_gmin": null,
+      "voltage": 0.5357481865342931,
+      "request_sha256": "d8cb977721552fa1d56eacc91f07c3a9cb0815dcf62980787447a0c12e57f51e",
+      "backend": "faer",
+      "sign": 1,
+      "policy": "gmin"
+    }
+  ]
+}

@@ -22,15 +22,39 @@
       "canonical_git_blob_sha256": "a8aca717d6b61f77e687d3d07f20340792900a676cb8d967cd4c0bd35557e21c"
     },
     {
-      "tested_worktree_sha256": "b22fe7a3abce2689c9f036055a26986aa927a59376f4aa7eff2497e229a4fc3e",
+      "tested_worktree_sha256": "b7853a15a8da5dbb357692d371dc3613c61983a228a9bcf4c878218f8aa21246",
       "equal_after_crlf_normalization": true,
       "file": "docs/newton-merit-20261103.sdoc",
-      "canonical_git_blob_sha256": "1d00084f6a2b1514f7335dea858dcd07169611be3e6f165104995ce52d87dfe9"
+      "canonical_git_blob_sha256": "b7853a15a8da5dbb357692d371dc3613c61983a228a9bcf4c878218f8aa21246"
     }
   ],
   "red_log_sha256": "7af97af5d9dea88956b45720a1f083c209b49159d7d96cd568595fb0c06e7ae5",
   "green_log_sha256": "7c09fbb53dabe9d4db068eaf514c287a0b08adabb1aa84c56d0777a0625e5546",
   "green_tests": 25,
   "green_command": "cargo test --locked --lib --test switch_stagnation_20261103 -- --nocapture",
-  "hash_scope": "Exact tested worktree input bytes retained separately from canonical staged Git blobs; normalization equivalence checked."
+  "hash_scope": "Exact tested worktree input bytes retained separately from canonical staged Git blobs; normalization equivalence checked.",
+  "documentation_history": [
+    {
+      "tested_worktree_sha256": "b22fe7a3abce2689c9f036055a26986aa927a59376f4aa7eff2497e229a4fc3e",
+      "equal_after_crlf_normalization": true,
+      "file": "docs/newton-merit-20261103.sdoc",
+      "canonical_git_blob_sha256": "1d00084f6a2b1514f7335dea858dcd07169611be3e6f165104995ce52d87dfe9"
+    },
+    {
+      "tested_worktree_sha256": "7befa35b2228ba669dc9ea593bd5b536e2a3d745726f21682d9161d75dc225eb",
+      "equal_after_crlf_normalization": true,
+      "file": "docs/newton-merit-20261103.sdoc",
+      "canonical_git_blob_sha256": "7befa35b2228ba669dc9ea593bd5b536e2a3d745726f21682d9161d75dc225eb"
+    }
+  ],
+  "documentation_cleanup": "EOF cleanup and precise no-branch/already-feasible wording; both previous observed document inputs retained in documentation_history. Final actual StrictDoc rerun passed47/399/374; numerical source/test bytes unchanged.",
+  "final_source_revision": "03b9554d083556e52ff98e3e70f77cd72d48d984",
+  "final_pending_seed": {
+    "log_sha256": "64f5209f2eb06ed8a1891e846dc3a504a3715ff933586d24431ea64cab9b0ae4",
+    "seed": "3401923026981217896",
+    "target_tests_passed": 43,
+    "cases_per_property": 512,
+    "exit_code": 0,
+    "properties": 18
+  }
 }

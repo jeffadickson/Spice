@@ -1,0 +1,411 @@
+{
+  "tool": "cargo rustc + rustc instrument-coverage + matching LLVM",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "test": "switch_stagnation_20261103",
+  "environment_seed": "88320261103",
+  "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+  "files": [
+    {
+      "lines": {
+        "count": 125,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/ac.rs",
+      "sha256": "cc292a338cb5bbcedff4be3523ac5b086007e16cc2536db1537deb4cd86c38b5"
+    },
+    {
+      "lines": {
+        "count": 34,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/adaptive.rs",
+      "sha256": "557919a6c31070dc63e084506443bb280a5e8ce635cb0b22616640ccd5f04781"
+    },
+    {
+      "lines": {
+        "count": 340,
+        "covered": 144,
+        "percent": 42.35294117647059
+      },
+      "file": "src/api.rs",
+      "sha256": "e895b08703810af8a6358b5ced0adcd6e37a88b0e54f2093f17c5aa9f545cb55"
+    },
+    {
+      "lines": {
+        "count": 99,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/artifact.rs",
+      "sha256": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f"
+    },
+    {
+      "lines": {
+        "count": 11,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/assertion.rs",
+      "sha256": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6"
+    },
+    {
+      "lines": {
+        "count": 440,
+        "covered": 215,
+        "percent": 48.86363636363637
+      },
+      "file": "src/audit.rs",
+      "sha256": "4c54ea24070401fecf64a131861a9d03c8b7aeb371e8160634689940c496576d"
+    },
+    {
+      "lines": {
+        "count": 129,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/audit_ac.rs",
+      "sha256": "c199496186e84358759ef3f4632734e2efd537b7c2871b21ef899b8360097fea"
+    },
+    {
+      "lines": {
+        "count": 125,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/audit_configured.rs",
+      "sha256": "409b8b2a840ce344dd525f9499e5950c6d8282b6bc4cd9c3b4adce65239a1b6e"
+    },
+    {
+      "lines": {
+        "count": 248,
+        "covered": 61,
+        "percent": 24.596774193548388
+      },
+      "file": "src/backend.rs",
+      "sha256": "802c0d1bf2897e36320ee1ca878bd88865fca020225b1b961fde83e5bdade126"
+    },
+    {
+      "lines": {
+        "count": 263,
+        "covered": 69,
+        "percent": 26.23574144486692
+      },
+      "file": "src/backend_faer.rs",
+      "sha256": "28620a5cb47deef1a35a6af6046fcf361e9727f7bbbd34c70f8a71097406efc5"
+    },
+    {
+      "lines": {
+        "count": 37,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/campaign.rs",
+      "sha256": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20"
+    },
+    {
+      "lines": {
+        "count": 16,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/charge.rs",
+      "sha256": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888"
+    },
+    {
+      "lines": {
+        "count": 142,
+        "covered": 72,
+        "percent": 50.70422535211267
+      },
+      "file": "src/circuit.rs",
+      "sha256": "dcf3cd58a825d7855c1456ed6fd510dfd2168891299a4af8c01ee399b66903c5"
+    },
+    {
+      "lines": {
+        "count": 252,
+        "covered": 158,
+        "percent": 62.698412698412696
+      },
+      "file": "src/compile.rs",
+      "sha256": "71aed1f4a381d8382aaa7cd4c2b7da96cd22db164f33564b20f7a22c71546ac0"
+    },
+    {
+      "lines": {
+        "count": 260,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/configured.rs",
+      "sha256": "eef0e6fca55f696372fe65cfb93f0f89082b9951fc4731ed0a63198adc21b59e"
+    },
+    {
+      "lines": {
+        "count": 101,
+        "covered": 15,
+        "percent": 14.85148514851485
+      },
+      "file": "src/dc.rs",
+      "sha256": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7"
+    },
+    {
+      "lines": {
+        "count": 12,
+        "covered": 6,
+        "percent": 50
+      },
+      "file": "src/error.rs",
+      "sha256": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743"
+    },
+    {
+      "lines": {
+        "count": 123,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/experiment.rs",
+      "sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee"
+    },
+    {
+      "lines": {
+        "count": 15,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/grid.rs",
+      "sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019"
+    },
+    {
+      "lines": {
+        "count": 3,
+        "covered": 3,
+        "percent": 100
+      },
+      "file": "src/ids.rs",
+      "sha256": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad"
+    },
+    {
+      "lines": {
+        "count": 81,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/integrator.rs",
+      "sha256": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963"
+    },
+    {
+      "lines": {
+        "count": 173,
+        "covered": 25,
+        "percent": 14.450867052023122
+      },
+      "file": "src/linalg.rs",
+      "sha256": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54"
+    },
+    {
+      "lines": {
+        "count": 52,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/linear_dynamic.rs",
+      "sha256": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605"
+    },
+    {
+      "lines": {
+        "count": 28,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/measurement.rs",
+      "sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60"
+    },
+    {
+      "lines": {
+        "count": 97,
+        "covered": 77,
+        "percent": 79.38144329896907
+      },
+      "file": "src/model.rs",
+      "sha256": "500da23f436a9c916a0e264fb95a201a90189bae645d24858f8bdf17d9ec4d01"
+    },
+    {
+      "lines": {
+        "count": 68,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/mos1.rs",
+      "sha256": "67cf15187b55512219ecb504458666e0553cc2847775ef6123ee8bc8ae9acb6c"
+    },
+    {
+      "lines": {
+        "count": 548,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/netlist.rs",
+      "sha256": "753efdb099a0d7ab7beb380166f833912c43936a391c4db879af7f7078981a12"
+    },
+    {
+      "lines": {
+        "count": 898,
+        "covered": 530,
+        "percent": 59.02004454342984
+      },
+      "file": "src/newton.rs",
+      "sha256": "38d6604ce5fa694e805f4cfe6a05a156f4b2db1a8101f1c897d6af770f8a04e0"
+    },
+    {
+      "lines": {
+        "count": 3,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/ngspice_resistor.rs",
+      "sha256": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3"
+    },
+    {
+      "lines": {
+        "count": 83,
+        "covered": 48,
+        "percent": 57.831325301204814
+      },
+      "file": "src/power.rs",
+      "sha256": "d6e4a3bfd681e68e87ba8b1e658f294eeb699e1ec8b6b9e225c86f81d35876d1"
+    },
+    {
+      "lines": {
+        "count": 22,
+        "covered": 4,
+        "percent": 18.181818181818183
+      },
+      "file": "src/provenance.rs",
+      "sha256": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e"
+    },
+    {
+      "lines": {
+        "count": 42,
+        "covered": 36,
+        "percent": 85.71428571428571
+      },
+      "file": "src/pspice_switch.rs",
+      "sha256": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9"
+    },
+    {
+      "lines": {
+        "count": 43,
+        "covered": 4,
+        "percent": 9.30232558139535
+      },
+      "file": "src/quantity.rs",
+      "sha256": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397"
+    },
+    {
+      "lines": {
+        "count": 30,
+        "covered": 17,
+        "percent": 56.666666666666664
+      },
+      "file": "src/registry.rs",
+      "sha256": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7"
+    },
+    {
+      "lines": {
+        "count": 77,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/sampling.rs",
+      "sha256": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3"
+    },
+    {
+      "lines": {
+        "count": 162,
+        "covered": 18,
+        "percent": 11.11111111111111
+      },
+      "file": "src/solver_contract.rs",
+      "sha256": "c8b1e09a3425bb16881ae3b414c880820cfb3546aa5f6b540273106be357d098"
+    },
+    {
+      "lines": {
+        "count": 106,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/sources.rs",
+      "sha256": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a"
+    },
+    {
+      "lines": {
+        "count": 188,
+        "covered": 115,
+        "percent": 61.170212765957444
+      },
+      "file": "src/sparse.rs",
+      "sha256": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40"
+    },
+    {
+      "lines": {
+        "count": 64,
+        "covered": 60,
+        "percent": 93.75
+      },
+      "file": "src/spice_diode.rs",
+      "sha256": "f15abe8bd656df14abdbd9c6b3939fb706f0086b5d1193a4cf6a59f7fe638504"
+    },
+    {
+      "lines": {
+        "count": 250,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/sweep.rs",
+      "sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f"
+    },
+    {
+      "lines": {
+        "count": 45,
+        "covered": 33,
+        "percent": 73.33333333333333
+      },
+      "file": "src/topology.rs",
+      "sha256": "68aa95bd6a56076330a798e35db3293356573deec59a6867bb55b2feb2ffe923"
+    },
+    {
+      "lines": {
+        "count": 75,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/transient.rs",
+      "sha256": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a"
+    },
+    {
+      "lines": {
+        "count": 192,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/variation.rs",
+      "sha256": "b5bf8045eea6f32052b9b26e5607710cd6236c5a4eea77b8692a3552318a9738"
+    },
+    {
+      "lines": {
+        "count": 261,
+        "covered": 0,
+        "percent": 0
+      },
+      "file": "src/waveform.rs",
+      "sha256": "50a98ec68a4c13786c7324e912e5e59b0ca94715379092b9707e8584b09eaeb3"
+    }
+  ],
+  "branches": null,
+  "limitations": [
+    "Stable Rust instrumentation provides no measured branch coverage.",
+    "Other tests and executable main are outside this run.",
+    "A named test can pin its own seed, overriding the environment seed; retain actual test replay configuration alongside this report."
+  ]
+}

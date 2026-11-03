@@ -1,0 +1,27 @@
+{
+  "revision": "03b9554d083556e52ff98e3e70f77cd72d48d984",
+  "command": "cargo test --locked --manifest-path C:/dev/spice-rust-fix/Cargo.toml",
+  "exit_code": 0,
+  "passed": 532,
+  "failed": 0,
+  "ignored": 2,
+  "target_result_lines": 64,
+  "ignored_tests": [
+    "test seeded_batch ... ignored, bounded batches are launched by scripts/Endurance.cs",
+    "test nonzero_depletion_transport_dc_ac_transient_against_ngspice ... ignored, requires SPICE_NGSPICE and SPICE_ORACLE_ARTIFACT_ROOT"
+  ],
+  "log_sha256": "ccd335b9f10e0f452e74c41d4a40f42aad2444ae12951fbd5744caeb225a6685",
+  "source_sha256": "38d6604ce5fa694e805f4cfe6a05a156f4b2db1a8101f1c897d6af770f8a04e0",
+  "environment": {
+    "CARGO_TARGET_DIR": "E:/Artifacts/Spice-fix-20261103T140559Z/rust/target",
+    "CARGO_BUILD_JOBS": "2",
+    "TEMP": "E:/Artifacts/Spice-fix-20261103T140559Z/rust-switch-replay/temp",
+    "SPICE_SURVIVOR_ARTIFACT_ROOT": "E:/Artifacts/Spice-fix-20261103T140559Z/rust-switch-replay",
+    "TMP": "E:/Artifacts/Spice-fix-20261103T140559Z/rust-switch-replay/temp"
+  },
+  "limitations": [
+    "cargo-nextest unavailable; cargo test includes zero doctests.",
+    "Executed full regression is not whole-suite coverage measurement.",
+    "Ignored external oracle and endurance tests are not counted as passes."
+  ]
+}

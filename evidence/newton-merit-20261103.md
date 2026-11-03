@@ -122,4 +122,3 @@ if(-not(Test-Path -LiteralPath $env:SPICE_CARGO_MUTANTS -PathType Leaf)){throw '
 cargo build --locked --bin circuit-simulator
 cargo test --locked
 ```
-
