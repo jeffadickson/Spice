@@ -21,10 +21,10 @@ public static class XspiceGainLowering
         // Public metadata is immutable but caller-constructible: reject unrelated
         // records, rather than resolve their model under an unrelated catalog.
         if(!catalog.XspiceInstances.Contains(instance))return Fail("foreign_xspice_instance");
-        var validation=ParameterEvaluator.EvaluateValue(catalog,environment,new("0",instance.Range));
-        if(validation.Value==null)return Fail(validation.Diagnostics[0].Code,validation.Diagnostics[0].Range);
         var lookup=catalog.Lookup(DeclarationKind.Model,instance.Model.Text,instance.ScopeId);
         if(lookup.Provisional||lookup.Status!=NameLookupStatus.Found)return Fail("unbound_xspice_model");
+        var validation=ParameterEvaluator.EvaluateValue(catalog,environment,new("0",instance.Range));
+        if(validation.Value==null)return Fail(validation.Diagnostics[0].Code,validation.Diagnostics[0].Range);
         var model=lookup.Candidates.Single();
         if(!string.Equals(model.ModelFamily,"gain",StringComparison.OrdinalIgnoreCase))return Fail("unsupported_xspice_model");
         if(model.HasOpaqueModelTerms)return Fail("unsupported_xspice_parameter",model.Range);

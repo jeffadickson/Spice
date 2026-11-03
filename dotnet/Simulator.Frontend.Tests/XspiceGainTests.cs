@@ -1,5 +1,6 @@
 using FsCheck;
-using FsCheck.Xunit;
+using FsCheck.Fluent;
+using Microsoft.FSharp.Core;
 using Simulator.Syntax;
 using Xunit;
 namespace Simulator.Frontend.Tests;
@@ -88,7 +89,22 @@ public sealed class XspiceGainTests
         Assert.Equal("invalid_parameter_environment",Assert.Single(XspiceGainLowering.Prepare(catalog,instance,ParameterEvaluator.Evaluate(foreign)).Diagnostics).Code);
     }
 
-    [Property(MaxTest=128,Replay="571,20261102")]
+    [Fact]
+    public void Model_parameters_use_the_models_lexical_scope()
+    {
+        var syntax=DeckParser.Parse("t\n.param k=2\n.model amp gain(gain={k})\n.subckt child in out k=3\nA1 in out amp\n.ends\n.end\n",collectDeclarations:true);
+        var catalog=syntax.Declarations!;var instance=Assert.Single(catalog.XspiceInstances);
+        var prepared=XspiceGainLowering.Prepare(catalog,instance,ParameterEvaluator.Evaluate(catalog,instance.ScopeId));
+        Assert.True(prepared.Success);Assert.Equal(2,prepared.Gain!.Gain);
+    }
+    [Fact]
+    public void Affine_gain_property_campaign()
+    {
+        // Execute FsCheck explicitly: this pins the seed and prevents a runner
+        // filter from silently omitting a discovered PropertyAttribute case.
+        var config=Config.QuickThrowOnFailure.WithMaxTest(128).WithReplay(FSharpOption<Replay>.Some(new(new Rnd(20261102UL),null)));
+        Check.One(config,Prop.ForAll<short,short,short>((gain,inputOffset,outputOffset)=>Affine_parameters_preserve_gain_sign_and_offset(gain,inputOffset,outputOffset)));
+    }
     public bool Affine_parameters_preserve_gain_sign_and_offset(short gain,short inputOffset,short outputOffset)
     {
         var result=Prepare(model:$".model amp gain(gain={gain} in_offset={inputOffset} out_offset={outputOffset})");
