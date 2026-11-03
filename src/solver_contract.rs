@@ -174,3 +174,52 @@ pub fn verify_csc_solution(
     }
     Ok(worst)
 }
+
+/// Componentwise complex CSC backward error, before applying an acceptance
+/// threshold. Finite scores greater than the policy limit remain visible for
+/// bounded factor-internal refinement; this is not an acceptance verdict.
+pub fn complex_backward_error(
+    system: &SparseComplexSystem,
+    rhs: &[Complex64],
+    values: &[Complex64],
+) -> SimResult<f64> {
+    system.validate_complex_rhs(rhs)?;
+    let n = system.pattern().dimension();
+    crate::linalg::validate_complex_solution(n, values)?;
+    let mut sums = vec![Complex64::new(0., 0.); n];
+    let mut scales: Vec<_> = rhs.iter().map(|v| v.norm()).collect();
+    for ((row, column), coefficient) in system.pattern().slots().zip(system.values()) {
+        let term = *coefficient * values[column];
+        sums[row] += term;
+        scales[row] += term.norm();
+    }
+    let mut worst = 0_f64;
+    for row in 0..n {
+        let relative = (sums[row] - rhs[row]).norm() / scales[row].max(f64::MIN_POSITIVE);
+        if !scales[row].is_finite() || !relative.is_finite() {
+            return Err(SimError::new(
+                ErrorCode::NumericalFailure,
+                "AC residual failed",
+            ));
+        }
+        worst = worst.max(relative);
+    }
+    Ok(worst)
+}
+
+/// Independently accept complex CSC solutions under the unchanged 1e-10
+/// componentwise policy. The AC public entry point forwards here for compatibility.
+pub fn verify_complex_solution(
+    system: &SparseComplexSystem,
+    rhs: &[Complex64],
+    values: &[Complex64],
+) -> SimResult<f64> {
+    let error = complex_backward_error(system, rhs, values)?;
+    if error > 1e-10 {
+        return Err(SimError::new(
+            ErrorCode::NumericalFailure,
+            "AC residual failed",
+        ));
+    }
+    Ok(error)
+}

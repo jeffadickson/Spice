@@ -1,0 +1,19 @@
+[DOCUMENT]
+TITLE: Bounded complex sparse LU correction
+
+[REQUIREMENT]
+UID: SOLVER-COMPLEX-REFINE-001
+STATUS: Draft
+TITLE: Preserve strict complex acceptance for very small branch currents
+STATEMENT: >>>
+The Faer complex sparse provider shall reuse its existing numeric factor for at most three same-precision residual corrections when the finite componentwise backward error exceeds 1e-10. Only finite, nonworsening candidates may replace the current solution. Wrong or malformed correction output shall not bypass independent acceptance. Failure shall preserve the existing strict complex residual policy, without dense/provider fallback or changing the source model. The canonical solver contract shall distinguish an unbounded finite error score from an acceptance verdict; the public AC verifier shall preserve its signature and 1e-10 threshold.
+<<<
+COMMENT: >>>
+Trigger: a frozen 12x12 public-API linearization of the NPN 10 MHz oracle at its Faer-selected bias had reverse-BC sense-current residual approximately -5.43e-21+2.34e-20j A at componentwise scale 3.20e-20 A. LU satisfied the original checker; Faer did not. The frozen matrix retains frequency, bias, backend and source-request hash and isolates the provider from model expansion.
+Implementation: src/backend_faer.rs refine_complex_solution reuses the original sparse complex factor; src/solver_contract.rs complex_backward_error and verify_complex_solution own the canonical numerical policy. src/ac.rs verify_complex_system remains a compatibility forwarding entry. No model/newton/API charge behavior is changed by this fix.
+Verification: tests/faer_complex_refinement.rs includes the frozen matrix, strict score-versus-verdict/zero-constraint cases, scale sweeps and 128 Proptest genuine complex RHS cases with seed 57120261105. Provider-private countertests challenge wrong factors, bounded attempts, malformed/nonfinite corrections and callback errors. Full original semiconductor oracle evidence belongs to the parent integration, not this isolated matrix test.
+Counters: factor-internal corrections are not new logical AC point solves and do not refactor the matrix. Same-precision refinement remains bounded and can fail; no global conditioning, convergence or complete BJT-model qualification is claimed.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005

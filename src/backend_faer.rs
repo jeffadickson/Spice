@@ -132,8 +132,53 @@ impl SparseLinearBackend for FaerSparseLu {
                 "nonfinite sparse complex solution",
             ));
         }
-        Ok(values)
+        refine_complex_solution(system, rhs, values, |part| {
+            let corrected = lu.solve(faer::Mat::from_fn(n, 1, |row, _| part[row]));
+            Ok((0..n).map(|row| corrected[(row, 0)]).collect())
+        })
     }
+}
+
+/// The sparse factor is reused for at most three same-precision corrections.
+/// Very small branch currents can lose relative accuracy beside large currents;
+/// correct their actual residuals rather than relaxing componentwise acceptance.
+/// These are provider-internal factor solves, not new logical AC point solves.
+fn refine_complex_solution(
+    system: &SparseComplexSystem,
+    rhs: &[num_complex::Complex64],
+    mut values: Vec<num_complex::Complex64>,
+    mut solve_correction: impl FnMut(
+        &[num_complex::Complex64],
+    ) -> SimResult<Vec<num_complex::Complex64>>,
+) -> SimResult<Vec<num_complex::Complex64>> {
+    let mut best_error = crate::solver_contract::complex_backward_error(system, rhs, &values)?;
+    for _ in 0..3 {
+        if best_error <= 1e-10 {
+            return Ok(values);
+        }
+        let mut residual = rhs.to_vec();
+        for ((row, column), coefficient) in system.pattern().slots().zip(system.values()) {
+            residual[row] -= *coefficient * values[column];
+        }
+        let correction = solve_correction(&residual)?;
+        crate::linalg::validate_complex_solution(system.pattern().dimension(), &correction)?;
+        let candidate: Vec<_> = values
+            .iter()
+            .zip(correction)
+            .map(|(value, delta)| *value + delta)
+            .collect();
+        let error = match crate::solver_contract::complex_backward_error(system, rhs, &candidate) {
+            Ok(error) => error,
+            Err(_) => break,
+        };
+        if error > best_error {
+            break;
+        }
+        values = candidate;
+        best_error = error;
+    }
+    crate::solver_contract::verify_complex_solution(system, rhs, &values)?;
+    Ok(values)
 }
 
 impl LinearSolver for FaerSparseLu {
@@ -228,5 +273,94 @@ impl LinearSolver for FaerSparseLu {
     fn solve(&self, a: &Matrix, b: &[f64]) -> SimResult<Vec<f64>> {
         a.validate(b)?;
         self.solve_compiled_csc(&CscMatrix::from_dense(a)?, b)
+    }
+}
+
+#[cfg(test)]
+mod complex_refinement_contracts {
+    use super::*;
+    use crate::{solver_contract::complex_backward_error, sparse::CscPattern};
+    use num_complex::Complex64 as C;
+    use std::cell::Cell;
+    fn identity() -> SparseComplexSystem {
+        SparseComplexSystem::new(
+            CscPattern::new(1, vec![0, 1], vec![0]).unwrap(),
+            vec![C::new(1., 0.)],
+        )
+        .unwrap()
+    }
+    #[test]
+    fn wrong_complex_factors_cannot_bypass_independent_acceptance_or_the_budget() {
+        let system = identity();
+        let rhs = [C::new(1., 2.)];
+        for coefficient in [0., 0.5, -1.] {
+            let calls = Cell::new(0);
+            let result = refine_complex_solution(&system, &rhs, vec![rhs[0] * 2.], |residual| {
+                calls.set(calls.get() + 1);
+                Ok(vec![residual[0] * coefficient])
+            });
+            assert_eq!(result.unwrap_err().code, ErrorCode::NumericalFailure);
+            assert!((1..=3).contains(&calls.get()));
+        }
+        assert_eq!(
+            complex_backward_error(&system, &[C::new(0., 0.)], &[C::new(0., f64::EPSILON)])
+                .unwrap(),
+            1.
+        );
+        assert!(
+            crate::solver_contract::verify_complex_solution(
+                &system,
+                &[C::new(0., 0.)],
+                &[C::new(0., f64::EPSILON)]
+            )
+            .is_err()
+        );
+    }
+    #[test]
+    fn malformed_corrections_and_callback_failures_are_terminal() {
+        let system = identity();
+        let rhs = [C::new(1., 1.)];
+        for correction in [
+            vec![],
+            vec![C::new(0., 0.); 2],
+            vec![C::new(f64::NAN, 0.)],
+            vec![C::new(0., f64::INFINITY)],
+        ] {
+            assert!(
+                refine_complex_solution(&system, &rhs, vec![rhs[0] * 2.], |_| Ok(
+                    correction.clone()
+                ))
+                .is_err()
+            );
+        }
+        let error = refine_complex_solution(&system, &rhs, vec![rhs[0] * 2.], |_| {
+            Err(SimError::new(
+                ErrorCode::NumericalFailure,
+                "correction sentinel",
+            ))
+        })
+        .unwrap_err();
+        assert_eq!(error.message, "correction sentinel");
+        assert!(
+            refine_complex_solution(&system, &rhs, vec![C::new(f64::NAN, 0.)], |_| panic!(
+                "invalid initial solution must not trigger correction"
+            ))
+            .is_err()
+        );
+    }
+    #[test]
+    fn accepted_complex_solutions_need_no_correction_and_zero_rows_stay_strict() {
+        let system = identity();
+        let rhs = [C::new(2., -3.)];
+        let result = refine_complex_solution(&system, &rhs, rhs.to_vec(), |_| {
+            panic!("accepted solution must not be corrected")
+        })
+        .unwrap();
+        assert_eq!(result, rhs);
+        assert_eq!(
+            crate::solver_contract::verify_complex_solution(&system, &rhs, &result).unwrap(),
+            0.
+        );
+        assert!(crate::solver_contract::verify_complex_solution(&system, &[], &result).is_err());
     }
 }

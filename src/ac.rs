@@ -172,26 +172,5 @@ pub fn verify_complex_system(
     rhs: &[Complex64],
     values: &[Complex64],
 ) -> SimResult<f64> {
-    system.validate_complex_rhs(rhs)?;
-    let n = system.pattern().dimension();
-    crate::linalg::validate_complex_solution(n, values)?;
-    let mut sums = vec![Complex64::new(0., 0.); n];
-    let mut scales: Vec<_> = rhs.iter().map(|v| v.norm()).collect();
-    for ((row, column), coefficient) in system.pattern().slots().zip(system.values()) {
-        let term = *coefficient * values[column];
-        sums[row] += term;
-        scales[row] += term.norm();
-    }
-    let mut worst = 0_f64;
-    for row in 0..n {
-        let relative = (sums[row] - rhs[row]).norm() / scales[row].max(f64::MIN_POSITIVE);
-        if !scales[row].is_finite() || !relative.is_finite() || relative > 1e-10 {
-            return Err(SimError::new(
-                ErrorCode::NumericalFailure,
-                "AC residual failed",
-            ));
-        }
-        worst = worst.max(relative);
-    }
-    Ok(worst)
+    crate::solver_contract::verify_complex_solution(system, rhs, values)
 }
