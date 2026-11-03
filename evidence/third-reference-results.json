@@ -1,0 +1,216 @@
+{
+  "state": "completed_with_results",
+  "base_commit": "2fb0699ef2154dc0aed915c0e7802a5c485e2918",
+  "total_inputs": 928,
+  "cohort": 50,
+  "counts": [
+    {
+      "count": 878,
+      "status": "not_in_dc_compared_cohort"
+    },
+    {
+      "count": 1,
+      "status": "numerical_mismatch"
+    },
+    {
+      "count": 13,
+      "status": "reference_unavailable"
+    },
+    {
+      "count": 12,
+      "status": "three_way_op_ac"
+    },
+    {
+      "count": 24,
+      "status": "three_way_op_only"
+    }
+  ],
+  "completed_workers": 73.0,
+  "comparison_checks": 645,
+  "source_sha256": {
+    "evaluation/SpiceSharp.ThirdReference/packages.lock.json": "ca902505479d5a6bcee575d09ed0294d930fe65dd8de5113046dc5d83d27a13c",
+    "evaluation/SpiceSharp.ThirdReference/Program.cs": "cfbbabe89cf435c940be0c42ac96ce3f5b227bbcfef80d8660d9a5a1c7641dc0",
+    "evaluation/SpiceSharp.ThirdReference/SpiceSharp.ThirdReference.csproj": "cc9281cfa7ff7c1cdb15b45ff658ff5d93dd599b851199ae30907b798df38a12",
+    "scripts/Run-FrontendThirdReference.cs": "a09ffb62b815dc0bb9939f35ee350366792ea594c54cf445df223673e8a6bba7"
+  },
+  "worker_sha256": "acfb8466e52fbcec36a436ca3b17512191689080b7fc24a3f2a111b26e83002d",
+  "reference_flavor": "SpiceSharp3.2.3 + Parser3.4.1 + Behavioral3.2.0 long-branch IL patch",
+  "reference_assembly_sha256": {
+    "SpiceSharp": "e9eb3d07b6d8ab5c9315214f00d98bb0b8c130729bbda453c4ce06b8bbdbb474",
+    "SpiceSharpParser": "a2682ac6ce1337f5775b9683768ae5600d861d51b0407f5065dfcff97db45801",
+    "SpiceSharpBehavioral": "be4fe13ca7d7b761c0e4b76046e2cfb1006e107de75f5f064f77768fda9ecd1b"
+  },
+  "patch_manifest_sha256": "31b8e26063975484e8e54511f5700d4d4d89b574a8d72988ef06b1bb01a70d14",
+  "op_summary_sha256": "965bb1d93796f1e048c7abe01c8d4984af8b234ac39cd21a02b1a08b2a9616c9",
+  "ac_summary_sha256": "52307836f980aa7c43e5e34e2726ce1c62b81a9127f99bd90f8cec4799ed085e",
+  "summary_sha256": "9417d997feda80ffd14cdfdb6880f45188c4191c2e59dd7fe7f1d81ff47541bb",
+  "elapsed_seconds": 49.6363679,
+  "owned_bug883": {
+    "status": "three_way_op_ac",
+    "summary_sha256": "13abeb5787e0f1b824fd34a21be5b68d10ea7910c8002ac6ace7cb5f96f9fcb8",
+    "checks": 24
+  },
+  "failures": [
+    {
+      "scope": "ngspice",
+      "path": "examples/control_structs/new-check-3.sp",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: Unsupported waveform: DC"
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/control_structs/new-check-4.sp",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: Unsupported waveform: DC"
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "examples/control_structs/s-param.cir",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: Resistance or model name needs to be specified for resistor;Resistance or model name needs to be specified for resistor",
+        "ac-1: Resistance or model name needs to be specified for resistor;Resistance or model name needs to be specified for resistor",
+        "ac-100: Resistance or model name needs to be specified for resistor;Resistance or model name needs to be specified for resistor",
+        "ac-1000: Resistance or model name needs to be specified for resistor;Resistance or model name needs to be specified for resistor"
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/control_structs/new-check-3.sp",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: Unsupported waveform: DC"
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/control_structs/new-check-4.sp",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: Unsupported waveform: DC"
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "paranoia_parallel/examples/control_structs/s-param.cir",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: Resistance or model name needs to be specified for resistor;Resistance or model name needs to be specified for resistor",
+        "ac-1: Resistance or model name needs to be specified for resistor;Resistance or model name needs to be specified for resistor",
+        "ac-100: Resistance or model name needs to be specified for resistor;Resistance or model name needs to be specified for resistor",
+        "ac-1000: Resistance or model name needs to be specified for resistor;Resistance or model name needs to be specified for resistor"
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/lib-processing/scope-3.cir",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: worker failed/missing output"
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/misc/bugs-2.cir",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: Unsupported waveform: dc"
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/misc/dollar-1.cir",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: Unsupported waveform: dc"
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/pipe/alter-1.cir",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: Unsupported waveform: dc"
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/sens/sens-dc-1.cir",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: Unsupported waveform: dc"
+      ]
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/regression/sens/sens-dc-2.cir",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: Unsupported waveform: dc"
+      ]
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/qualification-rc-ramp.cir",
+      "status": "reference_unavailable",
+      "errors": [
+        "op: There was a problem during reading statement: V1 in 0 PWL(0,0,0.25,1,1,1)"
+      ]
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/semantic-parameters.cir",
+      "status": "numerical_mismatch",
+      "errors": []
+    }
+  ],
+  "known_discrepancy": {
+    "rust": 64,
+    "spicesharp": 512,
+    "path": "compat/ngspice/semantic-parameters.cir",
+    "ngspice": 64,
+    "expression": "2^3^2"
+  },
+  "contracts": {
+    "frequency_boundary": "four representable binary64 steps, exact OP coordinate; self-test passed",
+    "analytical_and_negative_tests": 2,
+    "negative_cases": 10
+  },
+  "coverage": [
+    {
+      "branch_rate": "0.509",
+      "sha256": "32de5e8159e1fb568bdd56c6dcec742f299344c6956d1d7152f8af4dcabf96d0",
+      "scope": "worker-single-analytical-OP",
+      "module": "SpiceSharp.ThirdReference",
+      "line_rate": "0.8856999999999999"
+    },
+    {
+      "branch_rate": "0.6423000000000001",
+      "sha256": "f879fa3532fca5de75833aa99ef26eeb73499a39c65ed64b8d9f769e239bf5a6",
+      "scope": "coordinator-original-corpus",
+      "module": "Run-FrontendThirdReference",
+      "line_rate": "0.9645999999999999"
+    }
+  ],
+  "strictdoc": {
+    "documents": 21,
+    "ids": 340,
+    "resolved_parents": 328
+  },
+  "raw_artifacts": "E:\\Artifacts\\Spice-next-five-20261103T023139Z",
+  "limits": [
+    "Only native-compared OP cohort and its selected AC probes; full original programs remain unqualified.",
+    "Each SpiceSharp observation is compared separately to native ngspice and both stored Rust-provider observations.",
+    "Reference unavailable/timeouts and protocol failures are not numerical passes.",
+    "Patched-reference flavor is explicit: IL branch widths only; no library numerical formulas changed.",
+    "Windows/.NET managed runs only; no new performance, GPU, internal upstream coverage or production qualification."
+  ],
+  "earlier_attempts": [
+    "third-corpus: aborted after long blank-line reference stalls; raw jobs retained",
+    "third-corpus-normalized: one-ulp AC frequency caused protocol refusal; corrected to explicit four-step identity bound, no voltage tolerance change"
+  ]
+}

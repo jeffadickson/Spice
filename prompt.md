@@ -528,3 +528,5 @@ Do not equate these stages or claim signal evaluation/behavioral support. Keep
 bulk artifacts on E: and retain captured-function/lexer-ATN coverage limitations.
 
 November2 waveform checkpoint: original928 inventory now51 selected static solves/50 native matches and14 selected AC files. Read docs/corpus-waveform-results.md and evidence/corpus-waveform-results.json. Original programs and broad transients remain unqualified; third-reference/current-transient work is next. Preserve main's sheet-resistor WIP.
+
+Third reference checkpoint: read docs/third-reference-results.md. Original928 cohort:36 OP agreements (12withAC),13 unavailable,1 associativity discrepancy. Named bug883 independently three-wayOP+AC passed. Patched-reference flavor is explicit, never stock or production. No silent numerical equation patches.

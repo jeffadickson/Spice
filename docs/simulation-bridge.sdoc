@@ -224,3 +224,17 @@ Implementation: src/waveform.rs DampedSine and SourceWaveformPreparation. Indepe
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-WAVE-SOURCE-001
+
+[REQUIREMENT]
+UID: SEM-REFERENCE-THIRD-001
+STATUS: Draft
+TITLE: Independent process-isolated numerical third reference
+STATEMENT: >>>
+Qualification tooling shall run a pinned independent managed SPICE parser/model/solver reference over a validated original-source projection, compare each available root observation separately to native ngspice and both Rust providers, and retain source, executable, dependency, model-patch, unit and coordinate identities. Unsupported reference syntax, numerical mismatches, process failures, timeouts, protocol violations and budget exhaustion shall remain explicit outcomes. Reference-only patches shall not be reported as stock-library behavior or production dependencies.
+<<<
+COMMENT: >>>
+Implementation: evaluation/SpiceSharp.ThirdReference, Setup-SpiceSharpReference.ps1 and Run-FrontendThirdReference.cs. Packages SpiceSharp3.2.3, Parser3.4.1, Behavioral3.2.0; explicit pinned MIT Behavioral source patch changes branch widths only. Original selected source validated before third-parser-only blank-line removal; title and nonblank physical lines including continuation prefixes retained verbatim. Both forms and final job decks hashed. Frequency identity permits at most four adjacent binary64 values; voltage bounds remain1e-9V+1e-8relative. Verification: ThirdReferenceContracts analytical signed current/voltage and ten malformed/ambiguous cases, four-ULP boundary self-test, original928 inventory cohort and named bug883 OP/AC. Evidence: evidence/third-reference-results.json and docs/third-reference-results.md. Coverage excludes uninstrumented upstream library internals; unsupported third-reference dialects and candidate library defects remain open. Draft, not full-SPICE conformance.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SOURCE-001
