@@ -1,0 +1,30 @@
+[DOCUMENT]
+TITLE: Pinned stateless stop-grid qualification experiment
+
+[REQUIREMENT]
+UID: QUAL-STOPGRID-001
+STATUS: Implemented
+TITLE: Bounded owned instrumentation of a pinned original analysis
+STATEMENT: >>>
+The qualification-only helper shall reproduce one io_ordering experiment using pinned SHA256 identities for the original physical deck/analysis bytes, retained engine manifest and existing native executable. It shall reject other input, original controls/resources, missing paths, existing output and excessive data before dispatch. It shall use the existing generated syntax catalog and public typed result contract, preserve every original physical/analysis byte, and insert only owned finite stop-time/run/resume/relative-write/quit commands. Native execution shall have a thirty-second limit; retained engine/native data shall have explicit point/byte bounds. Input/assembly identity changes shall invalidate the result.
+<<<
+COMMENT: >>>
+Implementation: qualification-only StopGridQualification.cs and scripts/Run-StopGridPoc.cs. Reuses the existing generated ANTLR catalog, public ResultManifest reader and bounded ASCII RAW reader; no parser/dependency or production comparator change. Verification: StopGridQualificationTests unpinned-control/resource, malformed shape/unit/grid/value and native replay cases; existing output remains unchanged after refusal. Exactly101 retained engine rows and at most4096 native rows are admitted. Current original is CRLF byte-pinned; canonical-LF conversion is not the same admitted input.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-CORPUS-001
+
+[REQUIREMENT]
+UID: QUAL-STOPGRID-002
+STATUS: Implemented
+TITLE: Actual native rows and honest supplemental scope
+STATEMENT: >>>
+Every retained engine sample shall map to a distinct ordered actual native row within a declared32-ULP time-rounding guard. No interpolation/extrapolation or missing observable may substitute for a row. All101 samples of four pinned root voltage/current identities shall retain units, finite values and the existing dimensional/relative tolerances. Reports shall retain complete axes, hashes, command/pause counts and native extra rows. Supplemental success shall not modify primary corpus statuses or claim unchanged native step history, complete equal grids, arbitrary-model accuracy or performance.
+<<<
+COMMENT: >>>
+Verification: FsCheck100 cases replay2399,20261103 challenge the32-ULP boundary; malformed and numerical-disagreement tests; fresh native and CLI replays preserve101 engine points,504 native points,403 extra native rows,99 pauses and maximum observed2ULP. All four observable errors are near roundoff. This pinned stateless sine/gain circuit does not establish RLC/nonlinear/storage/history parity. Evidence: evidence/stop-grid-poc.json. Future generalized instrumented oracle admission remains unqualified.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005

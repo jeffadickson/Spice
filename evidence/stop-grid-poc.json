@@ -1,0 +1,160 @@
+{
+  "status": "one_pinned_stateless_supplemental_poc_reproduced",
+  "base_commit": "33a40d77d1797c657079a7cf87f924341dcc0291",
+  "branch": "verify/stop-grid-poc-nov3",
+  "artifact_root": "E:/Artifacts/spice-stop-grid-persist-nov3",
+  "requirements": [
+    "QUAL-STOPGRID-001",
+    "QUAL-STOPGRID-002"
+  ],
+  "tested_working_sha256": {
+    "dotnet/Simulator.RequestedQualification/StopGridQualification.cs": "aef133118cb23764ece8b221a577371fa45c3f138f96384995773fd7ddf3fcaf",
+    "dotnet/Simulator.RequestedQualification/AssemblyInfo.cs": "276831bee8be51c8cdcdf1d6afcbf22974e0eaecc72470e40e78533d84018f46",
+    "dotnet/Simulator.Frontend.Tests/StopGridQualificationTests.cs": "dde0c8deb9558f54e4b0f15a9b03ae1f39416d91c1a3b2939d83a2b18058b2a0",
+    "scripts/Run-StopGridPoc.cs": "f456fd9764c4ee50f6a1836e64e2afb7984a7cc980ee6f692a690e3d93fd8df4",
+    "docs/stop-grid-poc.sdoc": "fa8f62706029f2fad28fe6c854d0cc596217809597e2fa61d5e53f9bc263a766"
+  },
+  "reuse": "Existing generated ANTLR catalog, SimulationResponse.ReadManifest and bounded AsciiRaw reader. No new dependency/parser/product comparator.",
+  "pins": {
+    "physical_line_endings": "CRLF",
+    "physical_bytes": 389,
+    "original_analysis": ".tran 1e-5 1e-3",
+    "primary_native_points": 108,
+    "native_version": "ngspice47+ built2026-10-24",
+    "original_input": "Frozen requested-cohort-408d718/cases/0001/requested_0/original-analysis.cir",
+    "original_projection": "4f8e293f78418ae9bdd815c47fc7bb5fd69d27abd933f2752dc546f46e6ed8aa",
+    "native": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "retained_manifest": "9a645dceff79c4454e6cb54d9f66af5b2dcdea22176285e66f41e5557cf54df2"
+  },
+  "replay": {
+    "instrumentation": "cli-replay/instrumentation.txt",
+    "summary": "cli-replay/summary.json",
+    "declared_ulp_guard": 32,
+    "raw": "cli-replay/native.raw",
+    "native_extra_points": 403,
+    "no_interpolation_or_extrapolation": true,
+    "actual_pauses": 99,
+    "instrumented_sha256": "7471b7844db4f25deadf4a0bb2a81c99739571c752a763695865bb27f0a83053",
+    "engine_points": 101,
+    "observables": [
+      {
+        "engine": "v(n1)",
+        "native": "v(1)",
+        "unit": "V",
+        "points": 101,
+        "failed": 0,
+        "maximum_error": 8.881784197001252E-16
+      },
+      {
+        "engine": "v(n2)",
+        "native": "v(2)",
+        "unit": "V",
+        "points": 101,
+        "failed": 0,
+        "maximum_error": 8.881784197001252E-15
+      },
+      {
+        "engine": "i(e0)",
+        "native": "i(v1)",
+        "unit": "A",
+        "points": 101,
+        "failed": 0,
+        "maximum_error": 8.944667923005412E-19
+      },
+      {
+        "engine": "i(e3)",
+        "native": "i(a1)",
+        "unit": "A",
+        "points": 101,
+        "failed": 0,
+        "maximum_error": 8.890457814381136E-18
+      }
+    ],
+    "maximum_observed_ulp": 2,
+    "bit_exact_rows": 77,
+    "provenance_valid": true,
+    "axes": "cli-replay/axes.json",
+    "owned_stops": 99,
+    "raw_sha256": "79266f533032426477c6d26d00da5bdd6eda89aeeae00828f20b2a6b25de7744",
+    "native_points": 504,
+    "primary_statuses_changed": false,
+    "owned_resumes": 99,
+    "original_and_analysis_bytes_preserved": true
+  },
+  "tests": {
+    "final_full": {
+      "skipped": 22,
+      "failed": 0,
+      "passed": 251,
+      "raw": "final-coverage/frontend.trx",
+      "scope": "All frontend tests; only pinned stop-grid native environment enabled, unrelated native integrations skipped.",
+      "total": 273
+    },
+    "red_log": "red.log",
+    "targeted": {
+      "failed": 0,
+      "raw": "verified-coverage/verified.trx",
+      "passed": 8,
+      "note": "Before adding final retained-manifest hash pin; final full suite/CLI include that pin.",
+      "skipped": 0
+    },
+    "property": {
+      "framework": "FsCheck.Xunit3.5.0",
+      "scope": "32ULP row identity boundary with1..64 BitIncrement perturbations",
+      "counterexamples": "none in this run",
+      "cases": 100,
+      "replay": "2399,20261103"
+    },
+    "negative": "Unpinned controls/resources/text, missing paths, existing output preserving prior result, missing/duplicate/nonmonotonic/native axes, units, NaN values, incomplete manifest, row gaps, numerical disagreement.",
+    "initial_red": "New tests failed compilation because qualification helper API was absent; not a behavioral RED result.",
+    "final_stopgrid_rows": 8
+  },
+  "coverage": {
+    "raw": "final-coverage/8e642326-334e-452c-b46a-377b6068d68e/coverage.cobertura.xml",
+    "scope": "StopGridQualification.cs only; final full frontend suite with actual pinned native replay",
+    "limitations": "Timeout/kill, failed-native diagnostics and immutable-endgate-change paths not all exercised. Generated reader/parser and serializers excluded from this helper metric; no completeness proof.",
+    "metrics": {
+      "file": "StopGridQualification.cs",
+      "linesCovered": 62,
+      "linesTotal": 63,
+      "branchesCovered": 110,
+      "branchesTotal": 152
+    }
+  },
+  "mutation": {
+    "ignored_project_wide": 661,
+    "tool": "Stryker.NET5.0.0",
+    "scope": "Exact gap>32*ulp expression in independent disposable E: snapshot; native environments unset",
+    "survived": 0,
+    "raw": "mutation/reports/reports/mutation-report.json",
+    "disposition": "All three selected executable guard mutants killed. Compiler-invalid and ignored project mutations are not passes or broad helper qualification.",
+    "tested": 3,
+    "config": "mutation/source/mutation.json",
+    "compile_error_project_wide": 36,
+    "killed": 3,
+    "no_coverage": 0
+  },
+  "strictdoc": {
+    "documents": 26,
+    "raw": "requirements.json",
+    "parser": "0.30.4",
+    "unique_ids": 360,
+    "resolved_parents": 349,
+    "status": "passed"
+  },
+  "commands": [
+    "dotnet test dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj --artifacts-path <artifact-root>/build -p:AntlrJar=<canonical-repo>/.tools/antlr/antlr-4.13.1-complete.jar --collect:\"XPlat Code Coverage\" --results-directory <artifact-root>/final-coverage --logger \"trx;LogFileName=frontend.trx\"",
+    "Set CODEX_ARTIFACT_ROOT,TEMP,TMP=<artifact-root> with Windows backslash spelling; set SPICE_STOP_GRID_ARTIFACTS=<artifact-root>, SPICE_STOP_GRID_PROJECTION=<frozen-case>/original-analysis.cir, SPICE_STOP_GRID_RESPONSE=<frozen-case>/00000.response.json, SPICE_STOP_GRID_NATIVE=C:/dev/ngspice-install/bin/ngspice.exe.",
+    "dotnet run --file scripts/Run-StopGridPoc.cs --artifacts-path <artifact-root>/cli-build -p:AntlrJar=<canonical-repo>/.tools/antlr/antlr-4.13.1-complete.jar -- <pinned-original> <pinned-retained-manifest> <pinned-ngspice> <fresh-output>",
+    "dotnet run --file scripts/ValidateRequirements.cs --artifacts-path <artifact-root>/requirements-build -- --python <existing-strictdoc-env>/Scripts/python.exe --report <artifact-root>/requirements.json",
+    "dotnet tool run dotnet-stryker -- --config-file mutation.json --test-project dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj --output <mutation>/reports (cwd=<mutation>/source)"
+  ],
+  "limitations": [
+    "Original18 primary cohort statuses/comparator unchanged. One pinned case only; future generalized native-grid oracle remains unqualified.",
+    "99 owned pauses/resumes alter native step history108→504; no general nonlinear/RLC/charge/history/global accuracy or equal-full-grid claim.",
+    "Only existing source/native/retained-manifest byte identities admitted. Engine solver not rerun by helper; frozen retained result independently identified.",
+    "101 engine rows/504 native rows;403 extra native rows are retained, not silently dropped or claimed equal.",
+    "Windows managed .NET10.0.403/ANTLR4.13.1 only; no Native AOT/Linux or broad fuzz campaign. Existing xUnit2013 warning retained.",
+    "No fresh Sphinx build; StrictDoc and generated XMLDoc project build ran. No CI or push. No performance claim from elapsed execution+postprocessing metric."
+  ]
+}
