@@ -108,3 +108,11 @@ fn direct_audit_refuses_channel_states_outside_the_declared_body_domain() {
     let state=[0.5,1.5,0.1,0.,0.,0.];
     assert!(circuit_simulator::audit::dc(&request.circuit,&state,Default::default(),None).is_err());
 }
+#[test]
+fn direct_audit_never_masks_nonfinite_mos_intermediates_as_cutoff() {
+    let mut m=model();m.body_effect_sqrt_volts=0.;m.channel_length_modulation_per_volt=0.;
+    let state=[1e308,1e308,1e308,-1e308];
+    assert!(m.linearize(state).is_err());
+    let circuit=circuit_simulator::circuit::Circuit {nodes:vec!["0".into(),"d".into(),"g".into(),"s".into(),"b".into()],elements:vec![circuit_simulator::circuit::Element::Mos1Channel {id:"M".into(),p:circuit_simulator::ids::NodeId(1),n:circuit_simulator::ids::NodeId(3),gate:circuit_simulator::ids::NodeId(2),bulk:circuit_simulator::ids::NodeId(4),model:m}]};
+    assert!(circuit_simulator::audit::dc(&circuit,&state,Default::default(),None).is_err());
+}

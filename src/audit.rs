@@ -539,6 +539,11 @@ fn independent_mos1_current(m: crate::mos1::Mos1Model, v: [f64; 4]) -> SimResult
     let low = drain.min(source);
     let span = (drain - source).abs();
     let body = polarity * v[3] - low;
+    // Finite terminals can still overflow a differential. Reject before min/max:
+    // their NaN-selecting semantics must never turn unknown physics into cutoff.
+    if !span.is_finite() || !body.is_finite() {
+        return Err(SimError::invalid("nonfinite MOS1 audit voltage difference"));
+    }
     if m.body_effect_sqrt_volts > 0. && body > 0. {
         return Err(SimError::invalid("MOS1 audit state exceeds the qualified body-bias domain"));
     }
@@ -546,7 +551,11 @@ fn independent_mos1_current(m: crate::mos1::Mos1Model, v: [f64; 4]) -> SimResult
         + m.body_effect_sqrt_volts
             * ((m.surface_potential_volts - body.min(0.)).sqrt()
                 - m.surface_potential_volts.sqrt());
-    let over = (polarity * v[1] - low - threshold).max(0.);
+    let overdrive = polarity * v[1] - low - threshold;
+    if !threshold.is_finite() || !overdrive.is_finite() {
+        return Err(SimError::invalid("nonfinite MOS1 audit threshold or overdrive"));
+    }
+    let over = overdrive.max(0.);
     let active = span.min(over);
     let magnitude = m.beta_amps_per_volt_squared
         * (1. + m.channel_length_modulation_per_volt * span)

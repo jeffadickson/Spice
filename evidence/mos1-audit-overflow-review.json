@@ -1,0 +1,75 @@
+{
+  "base": "4a270e2",
+  "requirement_ids": [
+    "SEMI-MOS1-CURRENT-001",
+    "SEMI-MOS1-JACOBIAN-001"
+  ],
+  "finding": "Independent MOS audit could convert nonfinite threshold/overdrive to cutoff through f64::max(NaN,0), despite production refusal.",
+  "reproducer": {
+    "source": "Independent read-only review by requested_analyses_impl",
+    "lambda": 0,
+    "gamma": 0,
+    "phi": 0.6,
+    "finite_terminal_values": [
+      1E+308,
+      1E+308,
+      1E+308,
+      -1E+308
+    ],
+    "vto": 0.7,
+    "beta": 0.0002
+  },
+  "disposition": "Reject nonfinite differential span/body and threshold/overdrive before min/max clipping. Separate independent current reconstruction retained.",
+  "tested_source_hashes": {
+    "src/audit.rs": "4c54ea24070401fecf64a131861a9d03c8b7aeb371e8160634689940c496576d",
+    "tests/mos1_channel.rs": "4e37fc9dfcc5f94227932e68cde0b331149c1ad68a32913105f4fa3b44b4de44"
+  },
+  "canonical_lf_source_sha256": {
+    "src/audit.rs": "4c54ea24070401fecf64a131861a9d03c8b7aeb371e8160634689940c496576d",
+    "tests/mos1_channel.rs": "73d7e1fe5ce5cf3759a77bcb7d64fc8fd8b9aec84367525d3f2fabb8544226a1"
+  },
+  "source_byte_conventions": "Actual tested-byte hashes retained; canonical LF hashes normalize CRLF to LF without BOM for repository eol=lf.",
+  "negative": {
+    "test": "direct_audit_never_masks_nonfinite_mos_intermediates_as_cutoff",
+    "result": "Production linearize rejected but direct audit returned Ok; assertion is_err failed.",
+    "status": "RED confirmed before fix"
+  },
+  "regression": {
+    "breakdown": {
+      "spice_diode": 7,
+      "model_charge": 16,
+      "mos1_channel": 7,
+      "junction_storage": 5
+    },
+    "passed": 35,
+    "env": {
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_TARGET_DIR": "E:/Artifacts/spice-semiconductor-reuse/bd11f7570344446ca2e6bf5a14d0598b/target"
+    },
+    "command": "cargo test --test mos1_channel --test junction_storage --test spice_diode --test model_charge",
+    "failed": 0,
+    "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile"
+  },
+  "coverage": {
+    "instrumented_tests_passed": 7,
+    "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-audit-overflow-coverage\\summary.json",
+    "limitations": "Whole audit-file maps exercised by seven MOS tests, not changed-line or full-suite coverage. Stable branches unavailable. No broad mutation or additional fuzz campaign; existing128-case fixed-seed MOS property ran.",
+    "audit": {
+      "lines_covered": 235,
+      "line_percent": 53.40909090909091,
+      "lines_total": 440
+    },
+    "branches": null,
+    "kernel": {
+      "lines_covered": 68,
+      "line_percent": 100,
+      "lines_total": 68
+    }
+  },
+  "toolchain": "rustc1.99.1 (58cf8f9c3), matching LLVM",
+  "limitations": [
+    "This correction changes only direct physical-audit refusal, not channel equations, stamping, Q or generated binding.",
+    "Previous frozen engine/oracle/managed evidence remains historical for1eda423, not retested on this follow-up.",
+    "No new mutation success, complete MOS1 qualification, push or CI claimed."
+  ]
+}
