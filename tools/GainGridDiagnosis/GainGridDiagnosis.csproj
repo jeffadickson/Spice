@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><TreatWarningsAsErrors>true</TreatWarningsAsErrors><AnalysisLevel>latest</AnalysisLevel></PropertyGroup>
+ <!-- Existing frozen qualification assemblies supply generated syntax/model metadata
+      and the established RAW reader. No source project or product output is rebuilt. -->
+ <ItemGroup><Reference Include="$(QualificationReferenceDir)/Simulator.*.dll"/><Reference Include="$(QualificationReferenceDir)/Antlr4.Runtime.Standard.dll"/></ItemGroup>
+ <Target Name="RequireFrozenMetadata" BeforeTargets="ResolveReferences"><Error Condition="!Exists('$(QualificationReferenceDir)/Simulator.RequestedQualification.dll')" Text="Pass existing frozen compiled metadata through QualificationReferenceDir."/></Target>
+</Project>

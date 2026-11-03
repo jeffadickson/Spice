@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Stateless gain transient grid diagnosis
+
+[REQUIREMENT]
+UID: QUAL-GAIN-GRID-001
+STATUS: Draft
+TITLE: Separate actual-grid physics from interpolation disagreement
+STATEMENT: >>>
+The bounded gain-grid verification helper shall reuse generated frontend model/source metadata and the established native ASCII RAW reader to evaluate independent source, affine gain and KCL references at both retained actual grids. It shall preserve original classifications and tolerances, exclude unrelated dynamic circuits, recheck frozen input identities, and distinguish exact shared knots, unmatched timestamps and interpolated comparisons. Any neutral-source scheduler experiment shall disclose its source, budget and coordinate changes and shall not imply full-grid agreement from a shared subset.
+<<<
+COMMENT: >>>
+Task-specific verification requirement, not a production reporting-grid feature. Implementation: tools/GainGridDiagnosis. Evidence: evidence/gain-grid-diagnosis.json and docs/gain-grid-diagnosis.md; seven deterministic helper contracts, ten retained rows/five distinct decks, full own-grid closed-form checks, exact primary-interpolation reproduction, auxiliary zero-current PWL scheduler execution and scoped Coverlet maps. No new source mutation/fuzz campaign or production feature is claimed.
+<<<

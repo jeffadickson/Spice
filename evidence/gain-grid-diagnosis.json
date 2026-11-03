@@ -1,0 +1,562 @@
+{
+  "state": "completed",
+  "scope": "Independent bounded diagnosis of ten stateless gain transient mismatches, five original decks plus mirrors; no product changes or primary reclassification",
+  "source_base": "2f113e9",
+  "cohort_source_commit": "408d718841d9d3b2f55785ab42400052c3bd94ed",
+  "cohort": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z\\requested-cohort-408d718",
+  "cohort_summary_sha256": "57bb71e6b7efea0a7619b0113028df79c565f7a0f0b9d1ffdac361552909332d",
+  "raw_report": "E:\\Artifacts\\Spice-gain-grid-diagnosis-b4f88fd6b0d14aad880ff584e1848f21\\diagnosis-covered-final\\diagnosis.json",
+  "raw_report_sha256": "db6fd563d76692bc20cc1698f2d8177fa0dd9e778f5aaef6157b5f05a0e462d0",
+  "engine": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z\\fixed-cohort-engine\\circuit-simulator.exe",
+  "engine_sha256": "092f495bc5ae0ab1da057193b7be2d5e283078c0d2f8144996f7daa5ed523712",
+  "metadata_assemblies": {
+    "E:\\Artifacts\\Spice-gain-grid-diagnosis-b4f88fd6b0d14aad880ff584e1848f21\\build\\bin\\GainGridDiagnosis\\debug\\Simulator.Syntax.dll": "8896e478329923a9addbeabbcb26e0fc969185839abd7b209e58ec441c9711ae",
+    "E:\\Artifacts\\Spice-gain-grid-diagnosis-b4f88fd6b0d14aad880ff584e1848f21\\build\\bin\\GainGridDiagnosis\\debug\\Simulator.Frontend.dll": "9c9d532176a115b8e77b4875a1697c85b10cc235bf9e1fe285ced2c5860b399c",
+    "E:\\Artifacts\\Spice-gain-grid-diagnosis-b4f88fd6b0d14aad880ff584e1848f21\\build\\bin\\GainGridDiagnosis\\debug\\Simulator.RequestedQualification.dll": "2538d1e0cf3cb735f5a6f54ddfe3a30e3925635ed60f15c436b8651c0ce1488b",
+    "E:\\Artifacts\\Spice-gain-grid-diagnosis-b4f88fd6b0d14aad880ff584e1848f21\\build\\bin\\GainGridDiagnosis\\debug\\Simulator.Client.dll": "5ef1f47117143746a75dfb2bb15a3452de9448682bfe6a09d8b9887979e9802e"
+  },
+  "frozen_inputs_rechecked_count": 50,
+  "self_tests": [
+    "affine source/gain algebra",
+    "linear interpolation midpoint",
+    "extrapolation refusal",
+    "deliberate 1mV signal fault exceeds original voltage tolerance",
+    "typed gain and signed output current",
+    "dynamic topology refusal",
+    "conflicting voltage constraint refusal"
+  ],
+  "case_count": 10,
+  "distinct_expanded_decks": 5,
+  "excluded": [
+    "compat/ngspice/qualification-rc-ramp.cir"
+  ],
+  "original_tolerances": {
+    "voltage_absolute_v": 1E-06,
+    "current_absolute_a": 1E-09,
+    "relative": 0.0001
+  },
+  "conclusion": "All actual-grid physical samples agree with closed form; interpolating the exact closed form on the native knots reproduces all44 primary failed counts/maxima. Interpolation explains this stateless cohort, not the excluded RC ramp.",
+  "scheduler_conclusion": "One neutral zero-amp current/PWL scheduler source preserves original waveforms, unknowns, method, stop, max_step/max_steps and absence of explicit TMAX. It gives207 engine points,103 bit-exact native matches, five1-ULP displaced timestamps and104 extra times. Exact subset passes; full engine-grid comparison still disagrees and retains original failures.",
+  "recommendation": "Define explicit common reporting coordinates and qualified coordinate-roundtrip/oracle policy for #28. Keep actual solver knots and report interpolation evidence separately. Do not turn this POC/shared subset into primary full-grid qualification.",
+  "cases": [
+    {
+      "path": "examples/xspice/original-examples/dot_model_ref.deck",
+      "row_index": 0,
+      "original_directive_arguments": [
+        1E-05,
+        0.001
+      ],
+      "source": {
+        "offset": 0,
+        "amplitude": 1,
+        "frequency_hz": 1000,
+        "delay_s": 0,
+        "damping_per_s": 0,
+        "phase_rad": 0
+      },
+      "primary_status": "numerical_disagreement",
+      "native_points": 108,
+      "engine_points": 101,
+      "closed_form_engine_failed": 0.0,
+      "closed_form_native_failed": 0.0,
+      "maximum_engine_voltage_error_v": 3.552713678800501E-15,
+      "maximum_native_voltage_error_v": 1.0658141036401503E-14,
+      "maximum_decomposition_residual_v": 8.881784197001252E-15,
+      "maximum_decomposition_residual_a": 6.938893903907228E-18,
+      "engine_law_residuals": {
+        "points": 101,
+        "source_maximum_v": 3.3306690738754696E-16,
+        "gain_maximum_v": 8.881784197001252E-16,
+        "root_kcl_maximum_a": 3.469446951953614E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "native_law_residuals": {
+        "points": 108,
+        "source_maximum_v": 8.881784197001252E-16,
+        "gain_maximum_v": 7.549516567451064E-15,
+        "root_kcl_maximum_a": 1.0408340855860843E-17,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "original_exact_shared": 2,
+      "scheduler_points": 207,
+      "scheduler_native_exact_shared": 103,
+      "scheduler_exact_shared_failed": 0.0,
+      "scheduler_extra_engine_points": 104,
+      "scheduler_missing_bit_exact_native_count": 5,
+      "scheduler_maximum_missing_ulps": 1.0,
+      "scheduler_full_grid_comparison": "numerical_disagreement"
+    },
+    {
+      "path": "examples/xspice/original-examples/io_ordering.deck",
+      "row_index": 1,
+      "original_directive_arguments": [
+        1E-05,
+        0.001
+      ],
+      "source": {
+        "offset": 0,
+        "amplitude": 1,
+        "frequency_hz": 1000,
+        "delay_s": 0,
+        "damping_per_s": 0,
+        "phase_rad": 0
+      },
+      "primary_status": "numerical_disagreement",
+      "native_points": 108,
+      "engine_points": 101,
+      "closed_form_engine_failed": 0.0,
+      "closed_form_native_failed": 0.0,
+      "maximum_engine_voltage_error_v": 1.7763568394002505E-15,
+      "maximum_native_voltage_error_v": 8.881784197001252E-15,
+      "maximum_decomposition_residual_v": 6.217248937900877E-15,
+      "maximum_decomposition_residual_a": 6.938893903907228E-18,
+      "engine_law_residuals": {
+        "points": 101,
+        "source_maximum_v": 1.1102230246251565E-16,
+        "gain_maximum_v": 8.881784197001252E-16,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "native_law_residuals": {
+        "points": 108,
+        "source_maximum_v": 8.881784197001252E-16,
+        "gain_maximum_v": 1.7763568394002505E-15,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "original_exact_shared": 2,
+      "scheduler_points": 207,
+      "scheduler_native_exact_shared": 103,
+      "scheduler_exact_shared_failed": 0.0,
+      "scheduler_extra_engine_points": 104,
+      "scheduler_missing_bit_exact_native_count": 5,
+      "scheduler_maximum_missing_ulps": 1.0,
+      "scheduler_full_grid_comparison": "numerical_disagreement"
+    },
+    {
+      "path": "examples/xspice/original-examples/long_names.deck",
+      "row_index": 2,
+      "original_directive_arguments": [
+        1E-05,
+        0.001
+      ],
+      "source": {
+        "offset": 0,
+        "amplitude": 1,
+        "frequency_hz": 2000,
+        "delay_s": 0,
+        "damping_per_s": 0,
+        "phase_rad": 0
+      },
+      "primary_status": "numerical_disagreement",
+      "native_points": 108,
+      "engine_points": 101,
+      "closed_form_engine_failed": 0.0,
+      "closed_form_native_failed": 0.0,
+      "maximum_engine_voltage_error_v": 1.7763568394002505E-15,
+      "maximum_native_voltage_error_v": 1.7319479184152442E-14,
+      "maximum_decomposition_residual_v": 1.687538997430238E-14,
+      "maximum_decomposition_residual_a": 1.734723475976807E-17,
+      "engine_law_residuals": {
+        "points": 101,
+        "source_maximum_v": 1.1102230246251565E-16,
+        "gain_maximum_v": 8.881784197001252E-16,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "native_law_residuals": {
+        "points": 108,
+        "source_maximum_v": 1.7208456881689926E-15,
+        "gain_maximum_v": 1.7763568394002505E-15,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "original_exact_shared": 2,
+      "scheduler_points": 207,
+      "scheduler_native_exact_shared": 103,
+      "scheduler_exact_shared_failed": 0.0,
+      "scheduler_extra_engine_points": 104,
+      "scheduler_missing_bit_exact_native_count": 5,
+      "scheduler_maximum_missing_ulps": 1.0,
+      "scheduler_full_grid_comparison": "numerical_disagreement"
+    },
+    {
+      "path": "examples/xspice/original-examples/mixed_case.deck",
+      "row_index": 3,
+      "original_directive_arguments": [
+        1E-05,
+        0.001
+      ],
+      "source": {
+        "offset": 0,
+        "amplitude": 1,
+        "frequency_hz": 1000,
+        "delay_s": 0,
+        "damping_per_s": 0,
+        "phase_rad": 0
+      },
+      "primary_status": "numerical_disagreement",
+      "native_points": 108,
+      "engine_points": 101,
+      "closed_form_engine_failed": 0.0,
+      "closed_form_native_failed": 0.0,
+      "maximum_engine_voltage_error_v": 1.7763568394002505E-15,
+      "maximum_native_voltage_error_v": 8.881784197001252E-15,
+      "maximum_decomposition_residual_v": 6.217248937900877E-15,
+      "maximum_decomposition_residual_a": 6.938893903907228E-18,
+      "engine_law_residuals": {
+        "points": 101,
+        "source_maximum_v": 1.1102230246251565E-16,
+        "gain_maximum_v": 8.881784197001252E-16,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "native_law_residuals": {
+        "points": 108,
+        "source_maximum_v": 8.881784197001252E-16,
+        "gain_maximum_v": 1.7763568394002505E-15,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "original_exact_shared": 2,
+      "scheduler_points": 207,
+      "scheduler_native_exact_shared": 103,
+      "scheduler_exact_shared_failed": 0.0,
+      "scheduler_extra_engine_points": 104,
+      "scheduler_missing_bit_exact_native_count": 5,
+      "scheduler_maximum_missing_ulps": 1.0,
+      "scheduler_full_grid_comparison": "numerical_disagreement"
+    },
+    {
+      "path": "examples/xspice/original-examples/parsing.deck",
+      "row_index": 4,
+      "original_directive_arguments": [
+        1E-05,
+        0.001
+      ],
+      "source": {
+        "offset": 0,
+        "amplitude": 1,
+        "frequency_hz": 1000,
+        "delay_s": 0,
+        "damping_per_s": 0,
+        "phase_rad": 0
+      },
+      "primary_status": "numerical_disagreement",
+      "native_points": 108,
+      "engine_points": 101,
+      "closed_form_engine_failed": 0.0,
+      "closed_form_native_failed": 0.0,
+      "maximum_engine_voltage_error_v": 1.7763568394002505E-15,
+      "maximum_native_voltage_error_v": 8.881784197001252E-15,
+      "maximum_decomposition_residual_v": 6.217248937900877E-15,
+      "maximum_decomposition_residual_a": 6.938893903907228E-18,
+      "engine_law_residuals": {
+        "points": 101,
+        "source_maximum_v": 1.1102230246251565E-16,
+        "gain_maximum_v": 8.881784197001252E-16,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "native_law_residuals": {
+        "points": 108,
+        "source_maximum_v": 8.881784197001252E-16,
+        "gain_maximum_v": 1.7763568394002505E-15,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "original_exact_shared": 2,
+      "scheduler_points": 207,
+      "scheduler_native_exact_shared": 103,
+      "scheduler_exact_shared_failed": 0.0,
+      "scheduler_extra_engine_points": 104,
+      "scheduler_missing_bit_exact_native_count": 5,
+      "scheduler_maximum_missing_ulps": 1.0,
+      "scheduler_full_grid_comparison": "numerical_disagreement"
+    },
+    {
+      "path": "paranoia_parallel/examples/xspice/original-examples/dot_model_ref.deck",
+      "row_index": 7,
+      "original_directive_arguments": [
+        1E-05,
+        0.001
+      ],
+      "source": {
+        "offset": 0,
+        "amplitude": 1,
+        "frequency_hz": 1000,
+        "delay_s": 0,
+        "damping_per_s": 0,
+        "phase_rad": 0
+      },
+      "primary_status": "numerical_disagreement",
+      "native_points": 108,
+      "engine_points": 101,
+      "closed_form_engine_failed": 0.0,
+      "closed_form_native_failed": 0.0,
+      "maximum_engine_voltage_error_v": 3.552713678800501E-15,
+      "maximum_native_voltage_error_v": 1.0658141036401503E-14,
+      "maximum_decomposition_residual_v": 8.881784197001252E-15,
+      "maximum_decomposition_residual_a": 6.938893903907228E-18,
+      "engine_law_residuals": {
+        "points": 101,
+        "source_maximum_v": 3.3306690738754696E-16,
+        "gain_maximum_v": 8.881784197001252E-16,
+        "root_kcl_maximum_a": 3.469446951953614E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "native_law_residuals": {
+        "points": 108,
+        "source_maximum_v": 8.881784197001252E-16,
+        "gain_maximum_v": 7.549516567451064E-15,
+        "root_kcl_maximum_a": 1.0408340855860843E-17,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "original_exact_shared": 2,
+      "scheduler_points": 207,
+      "scheduler_native_exact_shared": 103,
+      "scheduler_exact_shared_failed": 0.0,
+      "scheduler_extra_engine_points": 104,
+      "scheduler_missing_bit_exact_native_count": 5,
+      "scheduler_maximum_missing_ulps": 1.0,
+      "scheduler_full_grid_comparison": "numerical_disagreement"
+    },
+    {
+      "path": "paranoia_parallel/examples/xspice/original-examples/io_ordering.deck",
+      "row_index": 8,
+      "original_directive_arguments": [
+        1E-05,
+        0.001
+      ],
+      "source": {
+        "offset": 0,
+        "amplitude": 1,
+        "frequency_hz": 1000,
+        "delay_s": 0,
+        "damping_per_s": 0,
+        "phase_rad": 0
+      },
+      "primary_status": "numerical_disagreement",
+      "native_points": 108,
+      "engine_points": 101,
+      "closed_form_engine_failed": 0.0,
+      "closed_form_native_failed": 0.0,
+      "maximum_engine_voltage_error_v": 1.7763568394002505E-15,
+      "maximum_native_voltage_error_v": 8.881784197001252E-15,
+      "maximum_decomposition_residual_v": 6.217248937900877E-15,
+      "maximum_decomposition_residual_a": 6.938893903907228E-18,
+      "engine_law_residuals": {
+        "points": 101,
+        "source_maximum_v": 1.1102230246251565E-16,
+        "gain_maximum_v": 8.881784197001252E-16,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "native_law_residuals": {
+        "points": 108,
+        "source_maximum_v": 8.881784197001252E-16,
+        "gain_maximum_v": 1.7763568394002505E-15,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "original_exact_shared": 2,
+      "scheduler_points": 207,
+      "scheduler_native_exact_shared": 103,
+      "scheduler_exact_shared_failed": 0.0,
+      "scheduler_extra_engine_points": 104,
+      "scheduler_missing_bit_exact_native_count": 5,
+      "scheduler_maximum_missing_ulps": 1.0,
+      "scheduler_full_grid_comparison": "numerical_disagreement"
+    },
+    {
+      "path": "paranoia_parallel/examples/xspice/original-examples/long_names.deck",
+      "row_index": 9,
+      "original_directive_arguments": [
+        1E-05,
+        0.001
+      ],
+      "source": {
+        "offset": 0,
+        "amplitude": 1,
+        "frequency_hz": 2000,
+        "delay_s": 0,
+        "damping_per_s": 0,
+        "phase_rad": 0
+      },
+      "primary_status": "numerical_disagreement",
+      "native_points": 108,
+      "engine_points": 101,
+      "closed_form_engine_failed": 0.0,
+      "closed_form_native_failed": 0.0,
+      "maximum_engine_voltage_error_v": 1.7763568394002505E-15,
+      "maximum_native_voltage_error_v": 1.7319479184152442E-14,
+      "maximum_decomposition_residual_v": 1.687538997430238E-14,
+      "maximum_decomposition_residual_a": 1.734723475976807E-17,
+      "engine_law_residuals": {
+        "points": 101,
+        "source_maximum_v": 1.1102230246251565E-16,
+        "gain_maximum_v": 8.881784197001252E-16,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "native_law_residuals": {
+        "points": 108,
+        "source_maximum_v": 1.7208456881689926E-15,
+        "gain_maximum_v": 1.7763568394002505E-15,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "original_exact_shared": 2,
+      "scheduler_points": 207,
+      "scheduler_native_exact_shared": 103,
+      "scheduler_exact_shared_failed": 0.0,
+      "scheduler_extra_engine_points": 104,
+      "scheduler_missing_bit_exact_native_count": 5,
+      "scheduler_maximum_missing_ulps": 1.0,
+      "scheduler_full_grid_comparison": "numerical_disagreement"
+    },
+    {
+      "path": "paranoia_parallel/examples/xspice/original-examples/mixed_case.deck",
+      "row_index": 10,
+      "original_directive_arguments": [
+        1E-05,
+        0.001
+      ],
+      "source": {
+        "offset": 0,
+        "amplitude": 1,
+        "frequency_hz": 1000,
+        "delay_s": 0,
+        "damping_per_s": 0,
+        "phase_rad": 0
+      },
+      "primary_status": "numerical_disagreement",
+      "native_points": 108,
+      "engine_points": 101,
+      "closed_form_engine_failed": 0.0,
+      "closed_form_native_failed": 0.0,
+      "maximum_engine_voltage_error_v": 1.7763568394002505E-15,
+      "maximum_native_voltage_error_v": 8.881784197001252E-15,
+      "maximum_decomposition_residual_v": 6.217248937900877E-15,
+      "maximum_decomposition_residual_a": 6.938893903907228E-18,
+      "engine_law_residuals": {
+        "points": 101,
+        "source_maximum_v": 1.1102230246251565E-16,
+        "gain_maximum_v": 8.881784197001252E-16,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "native_law_residuals": {
+        "points": 108,
+        "source_maximum_v": 8.881784197001252E-16,
+        "gain_maximum_v": 1.7763568394002505E-15,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "original_exact_shared": 2,
+      "scheduler_points": 207,
+      "scheduler_native_exact_shared": 103,
+      "scheduler_exact_shared_failed": 0.0,
+      "scheduler_extra_engine_points": 104,
+      "scheduler_missing_bit_exact_native_count": 5,
+      "scheduler_maximum_missing_ulps": 1.0,
+      "scheduler_full_grid_comparison": "numerical_disagreement"
+    },
+    {
+      "path": "paranoia_parallel/examples/xspice/original-examples/parsing.deck",
+      "row_index": 11,
+      "original_directive_arguments": [
+        1E-05,
+        0.001
+      ],
+      "source": {
+        "offset": 0,
+        "amplitude": 1,
+        "frequency_hz": 1000,
+        "delay_s": 0,
+        "damping_per_s": 0,
+        "phase_rad": 0
+      },
+      "primary_status": "numerical_disagreement",
+      "native_points": 108,
+      "engine_points": 101,
+      "closed_form_engine_failed": 0.0,
+      "closed_form_native_failed": 0.0,
+      "maximum_engine_voltage_error_v": 1.7763568394002505E-15,
+      "maximum_native_voltage_error_v": 8.881784197001252E-15,
+      "maximum_decomposition_residual_v": 6.217248937900877E-15,
+      "maximum_decomposition_residual_a": 6.938893903907228E-18,
+      "engine_law_residuals": {
+        "points": 101,
+        "source_maximum_v": 1.1102230246251565E-16,
+        "gain_maximum_v": 8.881784197001252E-16,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "native_law_residuals": {
+        "points": 108,
+        "source_maximum_v": 8.881784197001252E-16,
+        "gain_maximum_v": 1.7763568394002505E-15,
+        "root_kcl_maximum_a": 1.734723475976807E-18,
+        "native_private_voltage_policy": "Only constant affine private potentials reconstructed; all root currents are retained observations."
+      },
+      "original_exact_shared": 2,
+      "scheduler_points": 207,
+      "scheduler_native_exact_shared": 103,
+      "scheduler_exact_shared_failed": 0.0,
+      "scheduler_extra_engine_points": 104,
+      "scheduler_missing_bit_exact_native_count": 5,
+      "scheduler_maximum_missing_ulps": 1.0,
+      "scheduler_full_grid_comparison": "numerical_disagreement"
+    }
+  ],
+  "coverage": {
+    "branches_covered": 210,
+    "raw": "E:\\Artifacts\\Spice-gain-grid-diagnosis-b4f88fd6b0d14aad880ff584e1848f21\\coverage-final.cobertura.xml",
+    "scope": "GainGridDiagnosis executable only; reused generated frontend/RAW libraries and native engine excluded",
+    "branches_total": 266,
+    "lines_total": 117,
+    "lines_covered": 117,
+    "tool": "Existing cached Coverlet.Console10.1.0, net10",
+    "limitations": "First attempt without --include-test-assembly had no modules and is not used. Uncovered malformed branches remain open; no new source mutation or broad fuzz campaign ran. Deliberate1mV observation fault and negative helper contracts ran."
+  },
+  "requirements": {
+    "resolved_parents": 333,
+    "documents": 27,
+    "raw": "E:\\Artifacts\\Spice-gain-grid-diagnosis-b4f88fd6b0d14aad880ff584e1848f21\\strictdoc.json",
+    "id": "QUAL-GAIN-GRID-001",
+    "unique_ids": 354
+  },
+  "tested_source_hashes": {
+    "tools/GainGridDiagnosis/Program.cs": "ffaf236ff8a1def828b9c02eb28412fe583293974e4cf5ce3588fb89e11307dc",
+    "tools/GainGridDiagnosis/GainGridDiagnosis.csproj": "ddc0e0eb5be9317ddbb9421ac55cbc724b0941a105de9fa82ea0e9f5533b4a26",
+    "docs/gain-grid-diagnosis.md": "efa802773d9c25547aaae90f507cfbbff88585e0609dd64576de429568f856f8",
+    "docs/gain-grid-diagnosis.sdoc": "d2c5cee10614effb3608b1d03909b980c4fc5e7599880d3f3b1ac3951ad62495"
+  },
+  "canonical_lf_source_sha256": {
+    "tools/GainGridDiagnosis/Program.cs": "09f15b744c0d8566344cc9f8f13563d49111fda384f46b1157fd804da73bf98d",
+    "tools/GainGridDiagnosis/GainGridDiagnosis.csproj": "dcba09b07fa4699209e88090715ee8a7b007de779ef486cd339d98e128fa1917",
+    "docs/gain-grid-diagnosis.md": "5fd4602cefe80db2ade5c38995cf97af6e9e5fbb45bc89b1717e91783e0ad698",
+    "docs/gain-grid-diagnosis.sdoc": "a99137f15a3b19e335faddf45e0b54776ae1724f31e70f3ee3dc926df9f2691f"
+  },
+  "source_byte_conventions": "Actual working-file and LF-normalized repository hashes recorded separately; no BOM in helper files.",
+  "commands": [
+    {
+      "command": "dotnet run --project tools/GainGridDiagnosis/GainGridDiagnosis.csproj --artifacts-path <fresh-run>/build -p:QualificationReferenceDir=<existing-frozen-bin> -- <retained-cohort> <fresh-output> <frozen-engine>",
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile"
+    },
+    {
+      "command": "dotnet <existing-coverlet10.1.0-net10.dll> <helper.dll> --target dotnet --targetargs \"<helper.dll> <cohort> <fresh-output> <engine>\" --include [GainGridDiagnosis]* --include-test-assembly --format cobertura --output <fresh-run>/coverage-final.cobertura.xml"
+    }
+  ],
+  "limitations": [
+    "Finite owned cohort, not a general interpolation bound or global proof.",
+    "Exact shared timestamps are counted bit-for-bit; five one-ULP differences are not silently snapped or called exact. Their root cause is not established here.",
+    "Full frozen cohort/prod sources/native binaries were read-only and input hashes rechecked; helper owns only its fresh output.",
+    "Managed .NET10 helper; no NativeAOT claim, new production dependency, parser/solver migration, push or CI."
+  ],
+  "sphinx": {
+    "raw": "E:\\Artifacts\\Spice-gain-grid-diagnosis-b4f88fd6b0d14aad880ff584e1848f21\\engineering\\verification.json",
+    "status": "passed"
+  }
+}
