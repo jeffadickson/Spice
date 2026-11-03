@@ -15,6 +15,7 @@ internal sealed class DeclarationExtraction
     private readonly List<NamedDeclaration> symbols=[];
     private readonly List<InstanceHeader> instances=[];
     private readonly List<PrimitiveSyntax> primitives=[];
+    private readonly List<XspiceInstanceSyntax> xspice=[];
     private readonly List<ScopedCard> cards=[];
     private readonly List<LibrarySectionEnd> libraryEnds=[];
     private readonly List<ScopedParameter> parameters=[];
@@ -36,6 +37,8 @@ internal sealed class DeclarationExtraction
             &&reporting.Start.Text.ToLowerInvariant() is ".option" or ".options"
             &&reporting.parameter().Length>0
             &&reporting.parameter().All(p=>p.value()?.identifier()!=null&&p.GetText().ToLowerInvariant() is "acct" or "noacct" or "noinit")});
+        if(card is SpiceParser.XspiceContext codeModel)
+        {xspice.Add(XspiceExtraction.Extract(codeModel,owner,Capture));return;}
         var primitive=PrimitiveExtraction.Extract(card,owner,Capture,Capture);
         if(primitive!=null){primitives.Add(primitive);return;}
         if(card is SpiceParser.ExtensionContext extension && extension.Start.Text.ToLowerInvariant() is ".if" or ".elseif" or ".else" or ".endif" or ".csparam" or ".sndparam")
@@ -79,7 +82,7 @@ internal sealed class DeclarationExtraction
         }
     }
 
-    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray(),primitives.ToImmutableArray(),cards.ToImmutableArray());
+    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray(),primitives.ToImmutableArray(),cards.ToImmutableArray()) { XspiceInstances=xspice.ToImmutableArray() };
 
     private int Enclosing(IParseTree? tree)
     {

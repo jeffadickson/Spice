@@ -68,6 +68,8 @@ public sealed class DeclarationCatalog
     private readonly bool opaqueParameters;
     /// <summary>Generated primitive headers; evaluation and execution are separate stages.</summary>
     public ImmutableArray<PrimitiveSyntax> Primitives { get; }
+    /// <summary>Generated code-model ports; model-specific execution admission remains separate.</summary>
+    public ImmutableArray<XspiceInstanceSyntax> XspiceInstances { get; internal init; } = [];
     /// <summary>All statement kinds with lexical owners, including unsupported/opaque cards.</summary>
     public ImmutableArray<ScopedCard> Cards { get; }
     /// <summary>Generated library closing delimiters; not external file requests.</summary>
