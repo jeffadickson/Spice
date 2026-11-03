@@ -1,0 +1,30 @@
+[DOCUMENT]
+TITLE: Dimensionally Scaled Newton Globalization
+
+[REQUIREMENT]
+UID: NEWTON-MERIT-001
+STATUS: Draft
+TITLE: Frozen dimensional line-search weights
+STATEMENT: >>>
+DC and backward-Euler Newton backtracking shall compare current and candidate residuals with the same row references frozen for each correction: max(abs(rhs_i), sum_j abs(J_ij)*max(abs(x_j),abs(delta_j)), dimensional absolute tolerance). Node-row references have amperes; voltage-defined branch references have volts. Progress merit is max_i abs(F_i)/reference_i.
+<<<
+COMMENT: >>>
+Implementation: src/newton.rs::line_search_references and line_search_norm, DC and backward-Euler loops. Verification: november3_globalization_contracts unit SI and row-unit property checks; tests/switch_stagnation_20261103.rs; evidence/newton-merit-20261103.md. This is a bounded local policy informed by SUNDIALS/KINSOL residual scaling, not a KINSOL implementation or qualification claim. Current-state/correction magnitude avoids evaluating an overflowing full predicted state before backtracking.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-001
+
+[REQUIREMENT]
+UID: NEWTON-MERIT-002
+STATUS: Draft
+TITLE: Preserve final physical convergence and finite guards
+STATEMENT: >>>
+Globalization weights shall not replace final dimensional residual or update acceptance, alter default iteration budgets, silently retain Gmin, or bypass provider failure checks. Malformed/nonfinite row references and merit arithmetic shall fail explicitly, while finite oversized trial directions remain eligible for backtracking.
+<<<
+COMMENT: >>>
+Implementation: src/newton.rs convergence checks and finite guards. Verification: continuation_hardening, nonlinear, difficult_continuation, continuation_networks and november3_globalization_contracts tests; pending endurance-seed replay. No claim of universal Newton convergence follows from this finite evidence.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF4-001

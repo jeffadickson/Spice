@@ -349,6 +349,65 @@ fn scaled_residual_norm(
     }
 }
 
+/// Freeze physical row magnitudes for one line search. The Jacobian times the
+/// larger current-state/correction magnitude estimates each row's SI magnitude without
+/// cancelling opposing terms. These weights guide progress only: acceptance
+/// still requires the unchanged dimensional residual and update tolerances.
+fn line_search_references(
+    plan: &CompiledCircuit,
+    jacobian: &Matrix,
+    rhs: &[f64],
+    values: &[f64],
+    delta: &[f64],
+    options: NewtonOptions,
+) -> SimResult<Vec<f64>> {
+    jacobian.validate(rhs)?;
+    if values.len() != plan.unknown_count()
+        || delta.len() != values.len()
+        || rhs.len() != values.len()
+        || values.iter().chain(delta).any(|value| !value.is_finite())
+    {
+        return Err(SimError::invalid("invalid Newton line-search dimensions"));
+    }
+    let nodes = plan.circuit.nodes.len() - 1;
+    (0..values.len())
+        .map(|row| {
+            let magnitude = (0..values.len())
+                .map(|column| {
+                    jacobian.at(row, column).abs() * values[column].abs().max(delta[column].abs())
+                })
+                .sum::<f64>();
+            let absolute = if row < nodes {
+                options.current_absolute_tolerance
+            } else {
+                options.voltage_absolute_tolerance
+            };
+            let scale = magnitude.max(rhs[row].abs()).max(absolute);
+            if !magnitude.is_finite() || !scale.is_finite() || scale <= 0. {
+                return Err(SimError::invalid("nonfinite Newton line-search scale"));
+            }
+            Ok(scale)
+        })
+        .collect()
+}
+
+/// Use the same frozen weights for the current state and every backtracked trial.
+fn line_search_norm(residual: &[f64], references: &[f64]) -> SimResult<f64> {
+    if residual.len() != references.len() {
+        return Err(SimError::invalid(
+            "invalid Newton line-search residual dimensions",
+        ));
+    }
+    let mut worst = 0_f64;
+    for (value, scale) in residual.iter().zip(references) {
+        let ratio = value.abs() / scale;
+        if !value.is_finite() || !scale.is_finite() || *scale <= 0. || !ratio.is_finite() {
+            return Err(SimError::invalid("nonfinite Newton line-search merit"));
+        }
+        worst = worst.max(ratio);
+    }
+    Ok(worst)
+}
 fn scaled_update_norm(
     plan: &CompiledCircuit,
     update: &[f64],
@@ -707,6 +766,9 @@ fn solve_from_rhs(
         let correction_rhs: Vec<f64> = system.residual.iter().map(|value| -value).collect();
         let delta = solver.solve(&system.jacobian, &correction_rhs)?;
         validate_correction(plan, &delta)?;
+        let references =
+            line_search_references(plan, &system.jacobian, rhs, &values, &delta, options)?;
+        let merit = line_search_norm(&system.residual, &references)?;
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-attempt));
@@ -719,7 +781,9 @@ fn solve_from_rhs(
             };
             let candidate_residual =
                 scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;
-            if candidate_residual < scaled_residual || candidate_residual <= 1. {
+            if line_search_norm(&candidate_system.residual, &references)? < merit
+                || candidate_residual <= 1.
+            {
                 let update = candidate
                     .iter()
                     .zip(&values)
@@ -987,6 +1051,9 @@ pub fn solve_backward_euler_step(
                 .collect::<Vec<_>>(),
         )?;
         validate_correction(plan, &update)?;
+        let references =
+            line_search_references(plan, &system.jacobian, rhs, &values, &update, options)?;
+        let merit = line_search_norm(&system.residual, &references)?;
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) =
@@ -998,7 +1065,9 @@ pub fn solve_backward_euler_step(
             };
             let candidate_residual =
                 scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;
-            if candidate_residual < scaled_residual || candidate_residual <= 1. {
+            if line_search_norm(&candidate_system.residual, &references)? < merit
+                || candidate_residual <= 1.
+            {
                 let update_values = candidate
                     .iter()
                     .zip(&values)
@@ -1182,6 +1251,60 @@ fn stamp_mos1(
             if let (Some(r), Some(c)) = (row.unknown(), column.unknown()) {
                 matrix.add_stamp(r, c, sign * partial);
             }
+        }
+    }
+}
+
+#[cfg(test)]
+mod november3_globalization_contracts {
+    use super::*;
+    fn plan() -> CompiledCircuit {
+        crate::compile::compile(&crate::netlist::parse("title\nV1 x 0 2\nR1 x 0 100").unwrap())
+            .unwrap()
+    }
+    #[test]
+    fn row_references_have_si_units_and_do_not_cancel_opposing_currents() {
+        let p = plan();
+        let weights = line_search_references(
+            &p,
+            &p.conductance,
+            &p.rhs,
+            &[0., 0.],
+            &[2., -0.02],
+            Default::default(),
+        )
+        .unwrap();
+        assert!((weights[0] - 0.04).abs() < 1e-15); // sum of 20 mA load and 20 mA source magnitudes
+        assert_eq!(weights[1], 2.); // voltage-defined branch equation, in volts
+        assert!((line_search_norm(&[0.004, 0.2], &weights).unwrap() - 0.1).abs() < 1e-15);
+    }
+    #[test]
+    fn line_search_rejects_malformed_and_nonfinite_scaling_instead_of_masking_it() {
+        let p = plan();
+        let o = NewtonOptions::default();
+        assert!(line_search_references(&p, &p.conductance, &p.rhs, &[0.], &[0.], o).is_err());
+        assert!(
+            line_search_references(&p, &p.conductance, &p.rhs, &[f64::NAN, 0.], &[0., 0.], o)
+                .is_err()
+        );
+        for scale in [0., -1., f64::NAN, f64::INFINITY] {
+            assert!(line_search_norm(&[0.], &[scale]).is_err());
+        }
+        assert!(line_search_norm(&[0.], &[]).is_err());
+        assert!(line_search_norm(&[f64::NAN], &[1.]).is_err());
+        assert!(line_search_norm(&[f64::MAX], &[f64::MIN_POSITIVE]).is_err());
+    }
+    proptest::proptest! {
+        #![proptest_config(proptest::test_runner::Config {cases:128,rng_seed:proptest::test_runner::RngSeed::Fixed(2026110304),..Default::default()})]
+        #[test]
+        fn frozen_merit_is_invariant_under_finite_row_unit_changes(exponent in -6i32..6, residual in -0.01f64..0.01) {
+            let p=plan();let factor=10f64.powi(exponent);let mut changed=p.conductance.clone();
+            for entry in changed.values.iter_mut().take(2){*entry*=factor;}
+            let base=line_search_references(&p,&p.conductance,&p.rhs,&[0.,0.],&[2.,-0.02],Default::default()).unwrap();
+            let scaled=line_search_references(&p,&changed,&p.rhs,&[0.,0.],&[2.,-0.02],Default::default()).unwrap();
+            let before=line_search_norm(&[residual,0.2],&base).unwrap();
+            let after=line_search_norm(&[residual*factor,0.2],&scaled).unwrap();
+            proptest::prop_assert!((before-after).abs()<1e-13);
         }
     }
 }

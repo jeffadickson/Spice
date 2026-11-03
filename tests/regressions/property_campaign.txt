@@ -6,3 +6,4 @@
 # everyone who runs the test benefits from these saved cases.
 cc 0f91abaa3c28dbaff5be87dfc6ad98b69e3d419e4343e17bf5155c98df09965b # shrinks to exponent1 = 5.931013986326426, exponent2 = 0.0, volts = -45.062082744055054
 cc 2e53bf965525e31058b94962d5eb7fc59ab521378392e32f2f9a7b3a339e344d # shrinks to log_isat = -8.0, log_vt = -0.3, exponent = -18.79553687902499
+cc 0c1b95a3b3d7f5f0e70469d9f178aaa730313e37a6c6425d6ed40d323b385d3b # November 3 endurance failure: ron_log=1, roff_log=4, load_log=2, drive=1.5822841689813791, reverse=true

@@ -167,3 +167,14 @@ nonzero common-mode differential switch controls and the direct audit's inclusiv
 ``evidence/rust-survivors-20261103.md`` records the bounded mutation/coverage
 scope and reproduction commands. The switch reference independently derives the
 midpoint resistance, while the audit still shares the existing switch model law.
+
+Newton globalization follow-up
+------------------------------
+
+The November 3 short changing-seed preflight exposed a reproducible switch-divider
+Newton failure on both CPU providers. ``tests/switch_stagnation_20261103.rs``
+retains the minimized analytical circuit; the original property generator and
+assertions remain unchanged. ``docs/newton-merit-20261103.sdoc`` defines frozen
+physical row references for backtracking, separate from strict final convergence
+bounds. ``evidence/newton-merit-20261103.md`` records RED/GREEN, pending-seed replay,
+mutation/coverage evidence and primary numerical references.

@@ -1,0 +1,262 @@
+{
+  "total_mutants": 3,
+  "missed": 0,
+  "caught": 3,
+  "timeout": 0,
+  "unviable": 0,
+  "start_time": "2026-11-03T14:37:21.8611192Z",
+  "end_time": "2026-11-03T14:41:52.6314657Z",
+  "cargo_mutants_version": "27.1.0",
+  "outcomes": [
+    {
+      "scenario": "Baseline",
+      "summary": "Success",
+      "log_path": "log/baseline.log",
+      "diff_path": null,
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 6.6724207,
+          "process_status": "Success",
+          "argv": [
+            "cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=circuit-simulator@0.1.0",
+            "--lib",
+            "--test",
+            "switch_stagnation_20261103"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 11.4982778,
+          "process_status": "Success",
+          "argv": [
+            "cargo",
+            "test",
+            "--verbose",
+            "--package=circuit-simulator@0.1.0",
+            "--lib",
+            "--test",
+            "switch_stagnation_20261103"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "name": "src/newton.rs:377:52: replace * with / in line_search_references",
+          "package": "circuit-simulator",
+          "file": "src/newton.rs",
+          "function": {
+            "function_name": "line_search_references",
+            "return_type": "-> SimResult<Vec<f64>>",
+            "span": {
+              "start": {
+                "line": 352,
+                "column": 1
+              },
+              "end": {
+                "line": 392,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 377,
+              "column": 52
+            },
+            "end": {
+              "line": 377,
+              "column": 53
+            }
+          },
+          "replacement": "/",
+          "genre": "BinaryOperator"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/src__newton.rs_line_377_col_52.log",
+      "diff_path": "diff/src__newton.rs_line_377_col_52.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 71.052296,
+          "process_status": "Success",
+          "argv": [
+            "cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=circuit-simulator@0.1.0",
+            "--lib",
+            "--test",
+            "switch_stagnation_20261103"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 15.824883,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "cargo",
+            "test",
+            "--verbose",
+            "--package=circuit-simulator@0.1.0",
+            "--lib",
+            "--test",
+            "switch_stagnation_20261103"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "name": "src/newton.rs:403:33: replace / with * in line_search_norm",
+          "package": "circuit-simulator",
+          "file": "src/newton.rs",
+          "function": {
+            "function_name": "line_search_norm",
+            "return_type": "-> SimResult<f64>",
+            "span": {
+              "start": {
+                "line": 394,
+                "column": 1
+              },
+              "end": {
+                "line": 410,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 403,
+              "column": 33
+            },
+            "end": {
+              "line": 403,
+              "column": 34
+            }
+          },
+          "replacement": "*",
+          "genre": "BinaryOperator"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/src__newton.rs_line_403_col_33.log",
+      "diff_path": "diff/src__newton.rs_line_403_col_33.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 67.3272237,
+          "process_status": "Success",
+          "argv": [
+            "cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=circuit-simulator@0.1.0",
+            "--lib",
+            "--test",
+            "switch_stagnation_20261103"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 15.818359,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "cargo",
+            "test",
+            "--verbose",
+            "--package=circuit-simulator@0.1.0",
+            "--lib",
+            "--test",
+            "switch_stagnation_20261103"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "name": "src/newton.rs:784:75: replace < with > in solve_from_rhs",
+          "package": "circuit-simulator",
+          "file": "src/newton.rs",
+          "function": {
+            "function_name": "solve_from_rhs",
+            "return_type": "-> SimResult<(Vec<f64>, NewtonReport)>",
+            "span": {
+              "start": {
+                "line": 730,
+                "column": 1
+              },
+              "end": {
+                "line": 816,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 784,
+              "column": 75
+            },
+            "end": {
+              "line": 784,
+              "column": 76
+            }
+          },
+          "replacement": ">",
+          "genre": "BinaryOperator"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/src__newton.rs_line_784_col_75.log",
+      "diff_path": "diff/src__newton.rs_line_784_col_75.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 67.8036849,
+          "process_status": "Success",
+          "argv": [
+            "cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=circuit-simulator@0.1.0",
+            "--lib",
+            "--test",
+            "switch_stagnation_20261103"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 14.3532517,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "cargo",
+            "test",
+            "--verbose",
+            "--package=circuit-simulator@0.1.0",
+            "--lib",
+            "--test",
+            "switch_stagnation_20261103"
+          ]
+        }
+      ]
+    }
+  ]
+}

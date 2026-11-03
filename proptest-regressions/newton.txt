@@ -1,0 +1,8 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 9223b931c9da75254c8a532c9b21da07cc6559a2e40dd00a6d9102b42471e849 # shrinks to exponent = 2, residual = -0.005709490715145624
+# Minimized against injected merit division-to-multiplication mutant on 2026-11-03; final implementation passes this replay.

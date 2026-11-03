@@ -1,0 +1,52 @@
+{
+  "base_revision": "cd6360c",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+  "mutants": "27.1.0",
+  "primary_property_seed": "3401923026981217896",
+  "primary_property_cases": 512,
+  "row_scaling_property_seed": "2026110304",
+  "row_scaling_property_cases": 128,
+  "artifact_root": "E:/Artifacts/Spice-fix-20261103T140559Z/rust-switch-replay",
+  "files": [
+    {
+      "tested_worktree_sha256": "16bac33290d9bae58d4aa9ee11b55242481249e39b491fa4f8bd9ff8089437a6",
+      "canonical_git_blob_sha256": "16bac33290d9bae58d4aa9ee11b55242481249e39b491fa4f8bd9ff8089437a6",
+      "file": "src/newton.rs",
+      "equal_after_crlf_normalization": true
+    },
+    {
+      "tested_worktree_sha256": "97a439dd90c7453860a06d77609c24531c8bb08f6457191acfcac2cccfbf5af5",
+      "canonical_git_blob_sha256": "97a439dd90c7453860a06d77609c24531c8bb08f6457191acfcac2cccfbf5af5",
+      "file": "tests/switch_stagnation_20261103.rs",
+      "equal_after_crlf_normalization": true
+    },
+    {
+      "tested_worktree_sha256": "51819b382648c504ce4016626e8172b412f8dbc84680ea5e9b4f5de5cff20a91",
+      "canonical_git_blob_sha256": "934e0c925514cc9419baa507b4398f979ffd74895c5cccbe090f594585ff2c08",
+      "file": "tests/regressions/property_campaign.txt",
+      "equal_after_crlf_normalization": true
+    },
+    {
+      "tested_worktree_sha256": "4c932c053b7a65e73a962b26bd267a7f9a17e66a5da488af04489f59a6369f88",
+      "canonical_git_blob_sha256": "361a52f9f8ec775fa41ae3b14a5097646ec1106f862c47c5c6bfa07f05849fb6",
+      "file": "proptest-regressions/newton.txt",
+      "equal_after_crlf_normalization": true
+    },
+    {
+      "tested_worktree_sha256": "4ec7f1b00c18b06ef9066ad04a9fea461c66c5acc056d54e04b0f254e8845c34",
+      "canonical_git_blob_sha256": "d154bc089f5c48f42791cdd385618ff675a53bdf8089d6b085c09df5283a41d0",
+      "file": "docs/newton-merit-20261103.sdoc",
+      "equal_after_crlf_normalization": true
+    }
+  ],
+  "raw_log_sha256": {
+    "mutation/mutants.out/outcomes.json": "8c804c20e696d0a4c4cf21c262d9de1d30f5ac95d854f54b10a0142f5adaacdf",
+    "green-focused.log": "29e126f923b255d661b1fffe6d90a6f5024842091d601a57cd60e5c364552c8f",
+    "coverage/test.log": "c5f87029fa04c816b2be691297f00cb27c56df0ecbc2b755895a9efed1f5d331",
+    "green-focused-v2.log": "e0e5ea0c24d5b13c43d3f2ba626c6813d967e692129679437002c5c160843409",
+    "pending-seed-green.log": "0160ff8881391f6117ef222f162fa7f74a68ac49225ba11552f1dc3c64368ce0",
+    "red.log": "395b0fbe7dbea261b3beda711b027e7c6e73c6387346cf04af5fa99b9a91372f"
+  },
+  "hash_scope": "Exact final source/replay/requirement bytes; Git canonical blobs separately measured from staged objects, preserving tested CRLF worktree hashes."
+}
