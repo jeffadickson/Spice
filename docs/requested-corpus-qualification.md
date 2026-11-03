@@ -97,3 +97,8 @@ Use a separate `dotnet test --artifacts-path` and `GrammarOutput` with Coverlet
 100 cases and replay 2371,20261103. No extra mutation campaign is part of this coordinator
 slice; malformed, provenance, identity, units, shape and original-grid checks target
 the qualification boundaries directly.
+
+The thin fileapp was also executed on the seven owned rows with a one-second admission
+budget: exit 2, provenance valid, all seven rows retained as unknown in every stage.
+No jobs were admitted after the initial reporting overhead consumed that short budget.
+

@@ -109,5 +109,16 @@
     "Transient interpolation on complete engine sample grid; no identical native adaptive integration/output-resampling claim.",
     "No new mutation campaign for this coordinator slice; meaningful malformed, identity, shape, unit, provenance, resource and native-grid checks ran.",
     "Managed .NET qualification CLI; no NativeAOT claim. No CI/push."
-  ]
+  ],
+  "cli_smoke": {
+    "status": "verified_budget_exhaustion",
+    "actual_exit": 2,
+    "admission_seconds": 1,
+    "report": "cli-budget-output/summary.json",
+    "provenance_valid": true,
+    "inventory_rows": 7,
+    "passed_each_stage": 0,
+    "unknown_each_stage": 7,
+    "limitations": "Build time excluded from admission budget. Initial report/provenance rendering consumed the short budget before jobs were admitted; this verifies no fabricated zero-valued unknowns and retention of all rows, not a child-timeout campaign."
+  }
 }
