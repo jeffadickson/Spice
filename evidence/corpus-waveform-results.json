@@ -47,7 +47,7 @@
   "dc_requests": 102,
   "dc_checks": 262,
   "ac_compared_files": 14,
-  "ac_requests": 928,
+  "ac_requests": 28,
   "ac_checks": 288,
   "op_summary_sha256": "965bb1d93796f1e048c7abe01c8d4984af8b234ac39cd21a02b1a08b2a9616c9",
   "ac_summary_sha256": "52307836f980aa7c43e5e34e2726ce1c62b81a9127f99bd90f8cec4799ed085e",
@@ -148,5 +148,6 @@
     ],
     "scope": "Owned library exercised by named integration test; vendor/test source excluded",
     "branches": null
-  }
+  },
+  "ac_request_count_source": "Sum of completed_providers from the immutable AC summary; corrected an earlier read of a non-existent providers field."
 }
