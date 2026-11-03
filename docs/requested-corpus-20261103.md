@@ -1,5 +1,46 @@
 # Original requested-analysis census and identity replay
 
+## Latest full inventory: f64edbd
+
+Results task: [shared blockers and remaining failures, #29](https://github.com/jeffadickson/Spice/issues/29).
+The final frozen run completed in 834.140 seconds with matching provenance.
+
+| Stage | Passed | Refused/failed | Unknown |
+|---|---:|---:|---:|
+| Syntax | 916 | 8 | 4 |
+| Physical preparation | 85 | 809 | 34 |
+| Original requested execution | 23 | 871 | 34 |
+| Native numerical agreement | 9 | 14 | 905 |
+
+![Latest full frozen inventory](../evidence/requested-final-f64edbd.svg)
+
+The earlier full run below prepared77, executed18 and agreed4 on the same928
+inventory. These are original individual requested analyses, not complete control
+programs or selected OP probes. The latest23 executions include nine agreeing
+rows and14 unqualified rows: ten stateless sine/gain interpolation discrepancies,
+two `v(gnd)` observable gaps, the simple-meas transient discrepancy and the RC-ramp
+backward-Euler accuracy discrepancy. No tolerance was relaxed.
+
+Four additional original BJT amplifier transient attempts (spice3.deck and
+xspice_c1.cir, with mirrors) failed with `Newton iteration limit exceeded`.
+They are execution failures, not numerical disagreements or completed solves.
+The finite composite recovery tests do not close these real-circuit failures.
+
+Common diagnostic occurrences include272 unsupported physical directives,
+139 XSPICE models,78 MOS profiles,39 BJT profiles,43 source profiles and23
+resistor profiles. Diagnostics overlap and cannot be summed as distinct decks.
+Among physically prepared decks, unsupported controls dominate the remaining
+request refusals. This motivates shared semantics/model work rather than separate
+patches for each sample.22 resource refusals, four strict UTF-8 failures and eight
+pinned exclusions remain unavailable downstream evidence.
+
+Bounded [manifest](../evidence/requested-final-f64edbd.json) records individual
+executed paths, operation outcomes, grouped diagnostics and raw checksums. Raw
+requests/results/native projections remain on E:. No new Linux, GPU, SpiceSharp
+third-reference, speed parity or production qualification is claimed.
+
+## Earlier full run and targeted identity replay
+
 Results tasks: [full campaign #27](https://github.com/jeffadickson/Spice/issues/27)
 and [targeted replay #28](https://github.com/jeffadickson/Spice/issues/28).
 

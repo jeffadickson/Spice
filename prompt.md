@@ -23,10 +23,10 @@ interpolation effects; primary statuses remain unchanged. One RC-ramp BE accurac
 gap remains. The supplemental stop-grid POC changes native internal step history
 and does not qualify arbitrary charged/nonlinear comparisons.
 
-A final frozen full928 campaign at f64edbd is under
+The final frozen full928 campaign at f64edbd completed834.140seconds with matching provenance:85prepared,23completed requested executions and9native agreements;14unqualified comparisons and4additional Newton-failed amplifier transients remain. Read issue29 and evidence/requested-final-f64edbd.json. Its raw evidence is under
 E:\Artifacts\Spice-compatibility-20261103T043926Z\requested-final-f64edbd.
 Read its actual summary/provenance before reporting results. Running or exhausted
-work is not a passing run. The earlier23:00–06:00 soak stays pinned at8ecc0ab;
+work is not a passing run. Use scripts/Run-RequestedDeck.cs for bounded standalone original-deck execution; see docs/requested-deck-runner.md. The earlier23:00–06:00 soak stays pinned at8ecc0ab;
 do not retarget or confuse it with new-feature qualification. Preserve canonical
 main's seven unknown sheet-resistor/documentation files. No CI dispatch, GPU,
 Linux or production qualification is implied. Bulk artifacts stay on E:.

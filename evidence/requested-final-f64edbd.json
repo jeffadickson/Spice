@@ -1,0 +1,550 @@
+{
+  "state": "completed_with_results",
+  "tested_source": "f64edbd2dea6e78422cb2be6c5fb8757c2e1fbd3",
+  "corpus_source": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+  "inventory_sha256": "639942cf3e489baf7ce4b4e3437601d54781ede3d143ba049ae1c5b33f9ad255",
+  "elapsed_seconds": 834.1395176,
+  "provenance_valid": true,
+  "stages": [
+    {
+      "name": "Syntax accepted",
+      "passed": 916,
+      "refused": 8,
+      "unknown": 4
+    },
+    {
+      "name": "Circuit prepared",
+      "passed": 85,
+      "refused": 809,
+      "unknown": 34
+    },
+    {
+      "name": "Requested analyses executed",
+      "passed": 23,
+      "refused": 871,
+      "unknown": 34
+    },
+    {
+      "name": "Native numerical agreement",
+      "passed": 9,
+      "refused": 14,
+      "unknown": 905
+    }
+  ],
+  "raw_artifact_root": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z\\requested-final-f64edbd",
+  "raw_summary_sha256": "26b6c3a4691ea3e9758e6bc212635a26076723846cfdc7fb36e20536a4b7330c",
+  "chart_sha256": "df92cb6b3de50cf3168ce0379fe7018ea0352065dbb3482fd766e555efa43bee",
+  "row_statuses": [
+    {
+      "count": 9,
+      "status": "all_individual_requested_analyses_agreed"
+    },
+    {
+      "count": 8,
+      "status": "excluded_hash_pinned"
+    },
+    {
+      "count": 4,
+      "status": "input_or_qualification_failure"
+    },
+    {
+      "count": 14,
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "count": 4,
+      "status": "requested_execution_failed"
+    },
+    {
+      "count": 867,
+      "status": "requested_preparation_refused"
+    },
+    {
+      "count": 22,
+      "status": "resource_refused"
+    }
+  ],
+  "diagnostic_occurrences": [
+    {
+      "diagnostic": "unsupported_physical_directive",
+      "count": 272
+    },
+    {
+      "diagnostic": "unsupported_xspice_model",
+      "count": 139
+    },
+    {
+      "diagnostic": "unsupported_active_card",
+      "count": 89
+    },
+    {
+      "diagnostic": "unsupported_mos1_profile",
+      "count": 78
+    },
+    {
+      "diagnostic": "empty_circuit",
+      "count": 55
+    },
+    {
+      "diagnostic": "unsupported_control_command:let",
+      "count": 54
+    },
+    {
+      "diagnostic": "no_requested_analysis",
+      "count": 48
+    },
+    {
+      "diagnostic": "unsafe_control_separator_variable_or_token",
+      "count": 46
+    },
+    {
+      "diagnostic": "unsupported_control_setting:xbrushwidth",
+      "count": 43
+    },
+    {
+      "diagnostic": "unsupported_source_profile",
+      "count": 43
+    },
+    {
+      "diagnostic": "unsupported_bjt_profile",
+      "count": 39
+    },
+    {
+      "diagnostic": "unsupported_control_command:listing",
+      "count": 24
+    },
+    {
+      "diagnostic": "unsupported_resistor_profile",
+      "count": 23
+    },
+    {
+      "diagnostic": "unsupported_control_command:define",
+      "count": 19
+    },
+    {
+      "diagnostic": "unsupported_control_command:option",
+      "count": 17
+    },
+    {
+      "diagnostic": "unsupported_requested_program",
+      "count": 15
+    },
+    {
+      "diagnostic": "unsupported_primitive_header",
+      "count": 14
+    },
+    {
+      "diagnostic": "denied_path",
+      "count": 13
+    },
+    {
+      "diagnostic": "unsupported_diode_parameter",
+      "count": 10
+    },
+    {
+      "diagnostic": "missing_parameter",
+      "count": 10
+    },
+    {
+      "diagnostic": "unsupported_control_command:if",
+      "count": 9
+    },
+    {
+      "diagnostic": "unsupported_control_setting:hcopydevtype",
+      "count": 9
+    },
+    {
+      "diagnostic": "unsupported_control_command:linearize",
+      "count": 9
+    },
+    {
+      "diagnostic": "unsupported_control_command:reset",
+      "count": 9
+    },
+    {
+      "diagnostic": "unsupported_control_command:pre_set",
+      "count": 9
+    }
+  ],
+  "executed_rows": [
+    {
+      "operations": [
+        {
+          "gaps": [
+            "missing_native_observable:v(gnd)"
+          ],
+          "kind": "ac",
+          "status": "observable_gap",
+          "failed_signals": 3
+        }
+      ],
+      "path": "examples/measure/rc-meas-ac.sp",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 3
+        }
+      ],
+      "path": "examples/measure/simple-meas-tran.sp",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "ac",
+          "status": "agreed",
+          "failed_signals": 0
+        }
+      ],
+      "path": "examples/wave/rcsim.cir",
+      "status": "all_individual_requested_analyses_agreed",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 6
+        }
+      ],
+      "path": "examples/xspice/original-examples/dot_model_ref.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 4
+        }
+      ],
+      "path": "examples/xspice/original-examples/io_ordering.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 4
+        }
+      ],
+      "path": "examples/xspice/original-examples/long_names.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 4
+        }
+      ],
+      "path": "examples/xspice/original-examples/mixed_case.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 4
+        }
+      ],
+      "path": "examples/xspice/original-examples/parsing.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "agreed",
+          "failed_signals": 0
+        }
+      ],
+      "path": "examples/xspice/original-examples/xspice.deck",
+      "status": "all_individual_requested_analyses_agreed",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "agreed",
+          "failed_signals": 0
+        }
+      ],
+      "path": "examples/xspice/various/xspice_c2.cir",
+      "status": "all_individual_requested_analyses_agreed",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [
+            "missing_native_observable:v(gnd)"
+          ],
+          "kind": "ac",
+          "status": "observable_gap",
+          "failed_signals": 3
+        }
+      ],
+      "path": "paranoia_parallel/examples/measure/rc-meas-ac.sp",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 6
+        }
+      ],
+      "path": "paranoia_parallel/examples/xspice/original-examples/dot_model_ref.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 4
+        }
+      ],
+      "path": "paranoia_parallel/examples/xspice/original-examples/io_ordering.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 4
+        }
+      ],
+      "path": "paranoia_parallel/examples/xspice/original-examples/long_names.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 4
+        }
+      ],
+      "path": "paranoia_parallel/examples/xspice/original-examples/mixed_case.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 4
+        }
+      ],
+      "path": "paranoia_parallel/examples/xspice/original-examples/parsing.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "agreed",
+          "failed_signals": 0
+        }
+      ],
+      "path": "paranoia_parallel/examples/xspice/original-examples/xspice.deck",
+      "status": "all_individual_requested_analyses_agreed",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "agreed",
+          "failed_signals": 0
+        }
+      ],
+      "path": "paranoia_parallel/examples/xspice/xspice_c2.cir",
+      "status": "all_individual_requested_analyses_agreed",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "agreed",
+          "failed_signals": 0
+        }
+      ],
+      "path": "tests/resistance/res_simple.cir",
+      "status": "all_individual_requested_analyses_agreed",
+      "scope": "ngspice"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "numerical_disagreement",
+          "failed_signals": 2
+        }
+      ],
+      "path": "compat/ngspice/qualification-rc-ramp.cir",
+      "status": "requested_executed_not_fully_qualified",
+      "scope": "repository"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "ac",
+          "status": "agreed",
+          "failed_signals": 0
+        }
+      ],
+      "path": "compat/ngspice/qualification-series-rlc.cir",
+      "status": "all_individual_requested_analyses_agreed",
+      "scope": "repository"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "ac",
+          "status": "agreed",
+          "failed_signals": 0
+        }
+      ],
+      "path": "compat/ngspice/qualification-vccs.cir",
+      "status": "all_individual_requested_analyses_agreed",
+      "scope": "repository"
+    },
+    {
+      "operations": [
+        {
+          "gaps": [],
+          "kind": "tran",
+          "status": "agreed",
+          "failed_signals": 0
+        }
+      ],
+      "path": "compat/ngspice/res_simple.cir",
+      "status": "all_individual_requested_analyses_agreed",
+      "scope": "repository"
+    }
+  ],
+  "execution_failures": [
+    {
+      "path": "examples/xspice/original-examples/spice3.deck",
+      "operations": [
+        {
+          "kind": "tran",
+          "status": "engine_operation_failed_atomically",
+          "points": [
+            {
+              "index": 0,
+              "status": "engine_failed",
+              "detail": "numerical_failure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "examples/xspice/various/xspice_c1.cir",
+      "operations": [
+        {
+          "kind": "tran",
+          "status": "engine_operation_failed_atomically",
+          "points": [
+            {
+              "index": 0,
+              "status": "engine_failed",
+              "detail": "numerical_failure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "paranoia_parallel/examples/xspice/original-examples/spice3.deck",
+      "operations": [
+        {
+          "kind": "tran",
+          "status": "engine_operation_failed_atomically",
+          "points": [
+            {
+              "index": 0,
+              "status": "engine_failed",
+              "detail": "numerical_failure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "paranoia_parallel/examples/xspice/xspice_c1.cir",
+      "operations": [
+        {
+          "kind": "tran",
+          "status": "engine_operation_failed_atomically",
+          "points": [
+            {
+              "index": 0,
+              "status": "engine_failed",
+              "detail": "numerical_failure"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Original individual requested-analysis projections; reporting commands remain explicit omissions, not complete control-program parity.",
+    "23 completed executions and9agreements do not mean23whole-SPICE-program passes. Four additional attempted original BJT transients failed Newton.",
+    "Ten stateless gain interpolation mismatches have supplemental diagnosis but primary failures remain.",
+    "Two GND observable gaps, simple-meas transient discrepancy and RC-ramp BE discrepancy remain.",
+    "Native interpolation and fixed backward Euler do not imply matching adaptive histories or equal performance.",
+    "Diagnostic occurrences overlap across decks and cannot be summed into distinct blockers.",
+    "22 resource refusals,4 encoding failures and8 pinned exclusions are unavailable downstream evidence.",
+    "No fresh Linux/GPU/Sharp third-reference or production qualification. Raw artifacts remain local."
+  ]
+}
