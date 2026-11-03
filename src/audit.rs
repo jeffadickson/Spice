@@ -162,6 +162,24 @@ fn dc_currents(circuit: &Circuit, state: &[f64]) -> SimResult<Vec<f64>> {
             let (p, n) = e.terminals();
             let v = voltage(state, p) - voltage(state, n);
             let current = match e {
+                Element::PspiceSwitch {
+                    cp,
+                    cn,
+                    ron,
+                    roff,
+                    von,
+                    voff,
+                    ..
+                } => {
+                    crate::pspice_switch::SwitchModel {
+                        ron: *ron,
+                        roff: *roff,
+                        von: *von,
+                        voff: *voff,
+                    }
+                    .linearize(v, voltage(state, *cp) - voltage(state, *cn))?
+                    .current
+                }
                 Element::Resistor { ohms, .. } => v / ohms,
                 Element::Capacitor { .. } => 0.,
                 Element::Current { amps, .. } => *amps,

@@ -14,6 +14,15 @@ pub(crate) struct CompiledDiode {
     pub(crate) n: NodeId,
     pub(crate) model: DiodeProfile,
 }
+/// Immutable smooth resistance and its differential control terminals.
+#[derive(Debug, Clone)]
+pub(crate) struct CompiledSwitch {
+    pub(crate) p: NodeId,
+    pub(crate) n: NodeId,
+    pub(crate) cp: NodeId,
+    pub(crate) cn: NodeId,
+    pub(crate) model: crate::pspice_switch::SwitchModel,
+}
 /// Shared bounded stamping surface used by compile-time sparse accumulation and trial Jacobians.
 pub(crate) trait StampMatrix {
     fn add_stamp(&mut self, row: usize, column: usize, value: f64);
@@ -40,6 +49,7 @@ pub struct CompiledCircuit {
     pub(crate) rhs: Vec<f64>,
     pub(crate) branch_ids: Vec<String>,
     pub(crate) diodes: Vec<CompiledDiode>,
+    pub(crate) switches: Vec<CompiledSwitch>,
 }
 impl CompiledCircuit {
     pub fn circuit(&self) -> &Circuit {
@@ -66,7 +76,7 @@ impl CompiledCircuit {
     }
     /// Nonlinear device presence selects Newton operating-point solving.
     pub fn has_nonlinear_devices(&self) -> bool {
-        !self.diodes.is_empty()
+        !self.diodes.is_empty() || !self.switches.is_empty()
     }
     pub fn branch_index(&self, id: &str) -> Option<usize> {
         self.branch_ids
@@ -106,8 +116,31 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     let mut rhs = vec![0.; dimension];
     let mut branch = circuit.nodes.len() - 1;
     let mut diodes = Vec::new();
+    let mut switches = Vec::new();
     for e in &circuit.elements {
         match e {
+            Element::PspiceSwitch {
+                p,
+                n,
+                cp,
+                cn,
+                ron,
+                roff,
+                von,
+                voff,
+                ..
+            } => switches.push(CompiledSwitch {
+                p: *p,
+                n: *n,
+                cp: *cp,
+                cn: *cn,
+                model: crate::pspice_switch::SwitchModel {
+                    ron: *ron,
+                    roff: *roff,
+                    von: *von,
+                    voff: *voff,
+                },
+            }),
             Element::Capacitor { p, n, farads, .. } => stamp_pair(
                 &mut charge,
                 *p,
@@ -263,5 +296,6 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
         rhs,
         branch_ids: branches,
         diodes,
+        switches,
     })
 }

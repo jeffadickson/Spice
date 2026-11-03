@@ -154,3 +154,31 @@ Implementation: CircuitReadiness and Run-FrontendCorpus readiness rows. Verifica
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-EVIDENCE-001
+
+[REQUIREMENT]
+UID: SEM-VSWITCH-001
+STATUS: Draft
+TITLE: Bounded PSpice smooth switch DC and AC contract
+STATEMENT: >>>
+The public circuit model shall support a memoryless PSpice VSWITCH with explicit RON, ROFF, VON and VOFF, output current positive P-to-N, and high-impedance differential control. Resistance shall interpolate logarithmically using cubic smoothstep between the thresholds and remain at endpoint resistances outside them. DC residual/Jacobian and small-signal AC shall include consistent signed output and control partials. AC shall linearize about a converged DC operating point. Invalid parameters, nonfinite contributions and unsupported profiles shall fail explicitly.
+<<<
+COMMENT: >>>
+Implementation: src/pspice_switch.rs, compile.rs, newton.rs, ac.rs, circuit.rs, audit.rs and power.rs. Qualified domain: 1mOhm <= RON <= ROFF <= 1TOhm; finite thresholds with finite span magnitude >=1pV, either ordering. No silent clamps, coincident-threshold perturbation or hysteresis. Verification: tests/pspice_switch.rs midpoint/endpoints, complete Jacobian finite differences and CSC comparison, control AC sensitivity on LU/Faer, negative inputs and128 proptest cases with recorded seed. Native nonlinear AC physical audit remains explicitly not_checked because public results omit the DC bias; residual checking is still performed. Evidence: evidence/pspice-switch-results.json. Draft: no broad transient, noise, temperature or model-family qualification.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-EXEC-001
+
+[REQUIREMENT]
+UID: SEM-VSWITCH-002
+STATUS: Draft
+TITLE: Source-located PSpice switch elaboration and bug883 oracle
+STATEMENT: >>>
+Selected frontend preparation shall bind four S-card terminals to a VSWITCH model, evaluate exactly one of each required scalar assignment in the model declaration's retained lexical environment, and preserve subcircuit port and parameter overrides. Unsupported model terms, other model families, instance parameters and missing/duplicate/unknown assignments shall refuse atomically. The motivating bug883 two-file circuit shall be compared against independent analytical and native ngspice output and control-excitation AC gains on both CPU providers, with compatibility mode and selected analyses recorded.
+<<<
+COMMENT: >>>
+Implementation: InstanceBinder, DeclarationExtraction.HasOpaqueModelTerms, ParameterEvaluator lexical snapshot selection and OperatingPointBridge. Verification: PspiceSwitchTests, PspiceSwitchOracleIntegration and FrontendCorpusIntegration. Native original include uses ps mode; expanded-source selected OP/AC oracle uses explicit psa whole-deck conversion. Fixture provenance: https://sourceforge.net/p/ngspice/bugs/883/; no ngspice implementation code copied. The original native .99/1/1.01Hz sweep is separate from selected frontend1/100/1000Hz probes; Rust analytical tests cover original frequencies. High-impedance control differs from ngspice pswitch's default1TOhm input loading, irrelevant to the qualified ideal-control-source voltage outputs. Evidence: evidence/pspice-switch-results.json. Strict legacy Lower continues to refuse switch cards.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-VSWITCH-001

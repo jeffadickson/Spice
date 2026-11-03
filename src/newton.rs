@@ -60,9 +60,33 @@ pub fn conductance_at_bias_csc(
             contribution.conductance_siemens,
         );
     }
+    for switch in &plan.switches {
+        let c = switch.model.linearize(
+            voltage(values, switch.p, switch.n),
+            voltage(values, switch.cp, switch.cn),
+        )?;
+        stamp_switch(&mut stamps, switch, c.output_siemens, c.control_siemens);
+    }
     stamps.to_csc()
 }
 
+// Output current enters p and leaves n. The AC matrix uses exactly these DC
+// partials; negating either differential gain recreates bug883.
+fn stamp_switch(
+    matrix: &mut impl crate::compile::StampMatrix,
+    s: &crate::compile::CompiledSwitch,
+    g: f64,
+    gm: f64,
+) {
+    crate::compile::stamp_pair(matrix, s.p, s.n, g);
+    for (row, sign) in [(s.p, 1.), (s.n, -1.)] {
+        for (col, polarity) in [(s.cp, 1.), (s.cn, -1.)] {
+            if let (Some(r), Some(c)) = (row.unknown(), col.unknown()) {
+                matrix.add_stamp(r, c, sign * polarity * gm);
+            }
+        }
+    }
+}
 /// Assemble against an explicit independent-source right-hand side.
 ///
 /// Source continuation owns scaling this vector; the circuit topology, device
@@ -105,6 +129,14 @@ fn linearize_with_rhs_gmin(
             diode.n,
             contribution.conductance_siemens,
         );
+    }
+    for switch in &plan.switches {
+        let c = switch.model.linearize(
+            voltage(values, switch.p, switch.n),
+            voltage(values, switch.cp, switch.cn),
+        )?;
+        stamp_vector(&mut residual, switch.p, switch.n, c.current);
+        stamp_switch(&mut jacobian, switch, c.output_siemens, c.control_siemens);
     }
     if let Some(gmin) = gmin_siemens {
         for node in 0..plan.circuit.nodes.len() - 1 {

@@ -29,6 +29,7 @@ pub mod newton;
 mod ngspice_resistor;
 pub mod power;
 pub mod provenance;
+pub mod pspice_switch;
 pub mod quantity;
 pub mod registry;
 pub mod sampling;

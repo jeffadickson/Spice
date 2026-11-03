@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="920" height="410" viewBox="0 0 920 410" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="465" viewBox="0 0 920 465" role="img" aria-labelledby="title desc">
 <title id="title">Spice corpus runtime burndown</title><desc id="desc">Valid roots not solving fall from903 to888 to885. Solved selected DC files rise17 to32 to35; compared files16 to31 to34. Seven final files also match selected AC probes.</desc>
-<rect width="920" height="410" fill="#f5f7fb"/><g font-family="Segoe UI,Arial,sans-serif" fill="#17243b">
+<rect width="920" height="465" fill="#f5f7fb"/><g font-family="Segoe UI,Arial,sans-serif" fill="#17243b">
 <text x="35" y="36" font-size="23" font-weight="bold">Corpus execution: actual solver progress</text>
 <text x="35" y="62" font-size="14">920 valid roots · same928-row inventory · selected analyses only</text>
 <text x="40" y="99" font-size="16" font-weight="bold">Selected DC: files solving / native compared</text>
@@ -15,4 +15,6 @@
 <text x="35" y="345" font-size="15" font-weight="bold">Seven final files also match1/100/1000Hz AC probes on LU and Faer.</text>
 <text x="35" y="372" font-size="13">855 lowering refusals +30 resource refusals remain. One solved zero-port file has no root reference.</text>
 <text x="35" y="393" font-size="12" fill="#5c687a">No numerical discrepancies observed in final DC/AC runs. This is not full original program or full SPICE qualification.</text>
+<text x="35" y="422" font-size="14" font-weight="bold">Nov2 milestone: bug883 VSWITCH and four related owned circuits match selected DC/AC.</text>
+<text x="35" y="446" font-size="12" fill="#5c687a">Original corpus bars unchanged: no new928-row census. Named fixture evidence is separate from corpus coverage.</text>
 </g></svg>

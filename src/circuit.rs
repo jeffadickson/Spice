@@ -56,6 +56,18 @@ pub enum Element {
         cn: NodeId,
         gain: f64,
     },
+    /// Smooth PSpice VSWITCH with ideal high-impedance differential control.
+    PspiceSwitch {
+        id: String,
+        p: NodeId,
+        n: NodeId,
+        cp: NodeId,
+        cn: NodeId,
+        ron: f64,
+        roff: f64,
+        von: f64,
+        voff: f64,
+    },
     /// Current-controlled current source; current p -> n equals gain*i(control_id).
     Cccs {
         id: String,
@@ -100,6 +112,7 @@ impl Element {
             | Self::Current { id, .. }
             | Self::Vccs { id, .. }
             | Self::Vcvs { id, .. }
+            | Self::PspiceSwitch { id, .. }
             | Self::Cccs { id, .. }
             | Self::Ccvs { id, .. }
             | Self::Diode { id, .. }
@@ -115,6 +128,7 @@ impl Element {
             | Self::Current { p, n, .. }
             | Self::Vccs { p, n, .. }
             | Self::Vcvs { p, n, .. }
+            | Self::PspiceSwitch { p, n, .. }
             | Self::Cccs { p, n, .. }
             | Self::Ccvs { p, n, .. }
             | Self::Diode { p, n, .. }
@@ -161,6 +175,27 @@ impl Circuit {
                     "invalid terminals on {}",
                     e.id()
                 )));
+            }
+            if let Element::PspiceSwitch {
+                cp,
+                cn,
+                ron,
+                roff,
+                von,
+                voff,
+                ..
+            } = e
+            {
+                if cp.0 >= self.nodes.len() || cn.0 >= self.nodes.len() {
+                    return Err(SimError::invalid("invalid switch control terminals"));
+                }
+                crate::pspice_switch::SwitchModel {
+                    ron: *ron,
+                    roff: *roff,
+                    von: *von,
+                    voff: *voff,
+                }
+                .validate()?;
             }
             match e {
                 Element::Vccs {

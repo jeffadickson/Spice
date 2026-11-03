@@ -73,7 +73,7 @@ public static class OperatingPointBridge
                 foreach(var card in cards[scope])
                 {
                     if(omittedStarts?.Contains(card.Range.Start)==true)continue;
-                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind=="vcontrol"))
+                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "switchCard")))
                         throw new BridgeFailure("unsupported_active_card",card.Range);
                 }
                 foreach(var primitive in primitives[scope])
@@ -130,6 +130,29 @@ public static class OperatingPointBridge
                 foreach(var call in bound[scope])
                 {
                     if(!names.Add(call.Header.Name))throw new BridgeFailure("duplicate_element",call.Header.Range);
+                    if(selected&&call.Header.Family=="S")
+                    {
+                        if(call.Status!=BindingStatus.Bound)throw new BridgeFailure(call.Code,call.Header.Range);
+                        var model=call.Target!;
+                        if(model.ModelFamily!="vswitch"||model.HasOpaqueModelTerms||!call.Header.Parameters.IsEmpty)throw new BridgeFailure("unsupported_switch_profile",call.Header.Range);
+                        var values=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase);
+                        foreach(var parameter in model.Parameters)
+                        {
+                            if(parameter.Name is not {} name||!new[]{"ron","roff","von","voff"}.Contains(name,StringComparer.OrdinalIgnoreCase)||values.ContainsKey(name))throw new BridgeFailure("unsupported_switch_parameter",parameter.Range);
+                            var value=ParameterEvaluator.EvaluateValue(catalog,environment,parameter.Value,model.ScopeId);
+                            if(value.Value is not {} scalar)throw new BridgeFailure(value.Diagnostics[0].Code,value.Diagnostics[0].Range);
+                            values.Add(name,scalar);
+                        }
+                        if(values.Count!=4)throw new BridgeFailure("missing_switch_parameter",model.Range);
+                        var ron=values["ron"];var roff=values["roff"];var von=values["von"];var voff=values["voff"];var span=von-voff;
+                        if(ron<1e-3||roff<ron||roff>1e12||!double.IsFinite(span)||Math.Abs(span)<1e-12)throw new BridgeFailure("invalid_switch_parameter",model.Range);
+                        var p=Node(call.Ports[0].Actual.Text);var n=Node(call.Ports[1].Actual.Text);var cp=Node(call.Ports[2].Actual.Text);var cn=Node(call.Ports[3].Actual.Text);
+                        if(p==n)throw new BridgeFailure("shorted_primitive",call.Header.Range);
+                        if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);
+                        var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        elements.Add(new PspiceSwitch(id,p,n,cp,cn,ron,roff,von,voff));origins.Add(new(id,call.Header.Name,path,call.Header.Range));
+                        continue;
+                    }
                     if(call.Header.Family!="X")throw new BridgeFailure("unsupported_active_card",call.Header.Range);
                     if(call.Status!=BindingStatus.Bound)throw new BridgeFailure(call.Code,call.Header.Range);
                     var childPorts=new Dictionary<string,int>(StringComparer.OrdinalIgnoreCase);

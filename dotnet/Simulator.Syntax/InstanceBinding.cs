@@ -122,5 +122,5 @@ public static class InstanceBinder
         return lookup.Status switch{NameLookupStatus.Missing=>(BindingStatus.Missing,"missing_reference"),NameLookupStatus.Ambiguous=>(BindingStatus.Ambiguous,"ambiguous_reference"),NameLookupStatus.Deferred=>(BindingStatus.Deferred,"provisional_reference"),_=>null};
     }
     private static bool FamilyMatches(string device,string? model)=>device switch
-    {"D"=>model=="d","Q"=>model is "npn" or "pnp","M"=>model is "nmos" or "pmos","J"=>model is "njf" or "pjf","S"=>model=="sw","W"=>model=="csw",_=>false};
+    {"D"=>model=="d","Q"=>model is "npn" or "pnp","M"=>model is "nmos" or "pmos","J"=>model is "njf" or "pjf","S"=>model is "sw" or "vswitch","W"=>model=="csw",_=>false};
 }

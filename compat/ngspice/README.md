@@ -68,3 +68,12 @@ external Gmin included). The typed request uses 2 us BE and explicit physically
 consistent initial MNA state; the deck uses ngspice UIC. This does not claim
 UIC importer support or equivalent integration algorithms. A separate 1 us BE
 shared-time refinement and passive/monotone envelope check runs in model_charge.
+
+`bug883-vswitch.cir` and `.lib` retain the public bug883 reproducer's circuit
+values, topology and named PSpice model; the title/comment is descriptive.
+Source: https://sourceforge.net/p/ngspice/bugs/883/ (Praveen Sundar's report).
+They are circuit regression data, not copied ngspice implementation code.
+The expected DC OUT is0.05V and AC transfer at1Hz is0.5+j0. Native execution
+requires `-n -D ngbehavior=ps` before reading the original include-based input.
+Selected expanded oracle decks explicitly use `ngbehavior=psa`. These fixtures
+qualify a bounded smooth VSWITCH profile, not hysteretic SW or arbitrary XSPICE.

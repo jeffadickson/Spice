@@ -1,3 +1,22 @@
+## November 2 PSpice VSWITCH bug883 implementation
+
+Smooth bounded S/VSWITCH now lowers through generated model binding and retained
+lexical parameter snapshots to Rust DC/Newton and sparse AC. Read
+`docs/pspice-switch-results.md`, `docs/pspice-switch-plan.md`, requirements
+SEM-VSWITCH-001/002 and `evidence/pspice-switch-results.json` for exact scope.
+Original named two-file bug883 reproducer is under compat/ngspice; expected
+DC OUT0.05V and AC gain0.5+j0. Control-input AC derivative is also qualified.
+High-impedance control differs from ngspice default1TOhm input loading; only
+ideal-control-source output-voltage comparisons are qualified. No hysteretic SW,
+general XSPICE, temperature/noise or broad transient qualification is claimed.
+Configured initial-state checking now uses complete nonlinear residuals before
+observers, fixing a missing-device-current hazard found in static review.
+CLI selected-static-op is accepted; selected-linear-op remains a legacy alias.
+No original928-row census rerun: historical35 DC solves/34 native matches/7 AC
+files remain historical counts. SpiceSharp third-reference switch run is pending.
+Do not launch more mutation-score work in preference to simulation progress.
+Preserve unrelated main sheet-resistor WIP and keep bulk artifacts on E:.
+
 ## November 2 runtime readiness checkpoint
 
 Pending full corpus rerun: linear E/G generated metadata now lowers through the

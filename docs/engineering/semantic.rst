@@ -131,3 +131,29 @@ This is selected-analysis evidence, not original sweep/control/transient executi
 Only qualified reporting flags acct/noacct/noinit are omitted; numerical options remain explicit gaps.
 See the `results report <https://github.com/jeffadickson/Spice/blob/main/docs/corpus-source-execution-results.md>`_
 and `runtime backlog <https://github.com/jeffadickson/Spice/issues/21>`_.
+
+PSpice smooth switch profile
+----------------------------
+
+Selected static preparation supports ``S`` instances bound to an explicit
+``VSWITCH(RON=... ROFF=... VON=... VOFF=...)`` model. Generated model metadata
+and retained lexical parameter snapshots supply the four values; no second
+lexer or source-text card splitting is used. The CLI accepts
+``selected-static-op`` and retains ``selected-linear-op`` as a legacy alias.
+The result profile is named ``generated_frontend_selected_static_op``.
+
+The Rust model uses cubic smoothstep in log resistance. Output conductance and
+control-voltage transconductance use the same signed derivatives in Newton and
+small-signal AC. The latter linearizes about the converged DC bias. The control
+port is ideal high impedance; ngspice pswitch's default finite input loading is
+not reproduced. Native comparisons use ideal control voltage sources and
+compare voltage outputs. Hysteretic ``SW``, general XSPICE, temperature/noise
+and broad transient qualification remain outside this profile.
+
+Requirements ``SEM-VSWITCH-001`` and ``SEM-VSWITCH-002`` retain the exact bounds
+and verification scope. ``compat/ngspice/bug883-vswitch.cir`` and its library
+preserve the motivating public circuit's topology and values. For original
+native include-based execution use ``ngspice -n -D ngbehavior=ps -b``; expanded
+oracle decks explicitly use ``psa`` so whole-deck conversion occurs before
+parsing. Selected frontend probes are distinct from executing the original
+control language or sweep program.

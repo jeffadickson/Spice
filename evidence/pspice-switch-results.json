@@ -1,0 +1,1161 @@
+{
+  "schema_version": 1,
+  "utc": "2026-11-03T00:58:22.5294977Z",
+  "base": "a441367c221f39707735c2e54230b43fa6e7726e",
+  "state": "bounded_pspice_vswitch_dc_ac_qualified",
+  "source_sha256": {
+    "compat/ngspice/README.md": "05fef29de4cb1602f30be5ec4f949adbbf66279e335701a525caf67e5d27416d",
+    "docs/assessments/corpus-execution-burndown.svg": "d32a9faf6ea8c98a33c98248c782fc7b325afce719bbae259ac88e2b9bd131fd",
+    "docs/engineering/semantic.rst": "98448ac342108393d5ce2cb9579045509a1d0c249498b537c77beaa2bcbf73e8",
+    "docs/simulation-bridge.sdoc": "fccfccfa6f208a5daadf9274d1874ee5a58b4acc3c5089a48d7a928abd46991d",
+    "dotnet/Simulator.Client/Requests.cs": "05767a035634c7cd328479ecf3008e3dc904a34dbd9e72eabbd2abae773a52db",
+    "dotnet/Simulator.Frontend.Tests/FrontendCorpusIntegration.cs": "7f0caae39d2d348a5ca7555a67ef873412a0e19683d4026c948c5853a3826146",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "ca7a095365ff39abea75ad80ea0efd8b072b9218985d95c467b65633831e3a6d",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "efbed7e6cbfd1f2ec85cfc08fa98cdae2a88b3578bfdaa54c83ed3a61afab6d7",
+    "dotnet/Simulator.Frontend/OperatingPointSelection.cs": "6342f7292ccef8e7553d2e3449ca89f363254ccefcf104a87d17b7d93f06fd3b",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "71972a84c519236ba697c3570a7599d5740d5b0505b7aa2472a352cc85de36d9",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "43c4393143456446b33a21955c82f2135b132319feaa2b2e412024c72dedf8ec",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "48c7f176300f3db67094fba9f806404e4f4b2707539a898c6e839149ce4258ef",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "5589b48f55cb97b023a1474bd9c45b7a2aafc7c91d5b2498a9be1644a71d5ed5",
+    "prompt.md": "3b2391d94f93f118139bd274fd679f1a36298fd748d0c0de787a991e87d0a79a",
+    "scripts/Run-FrontendAcCorpus.cs": "3fd90d115766c9746243a6e9e95dda341d70b812802624c29b9c8821e8354c37",
+    "scripts/Run-FrontendCorpus.cs": "befd12bd0d8262e1366ebba964077a26d5ae6132cf97ddbd7e4784ec1a57e2f6",
+    "src/audit.rs": "1f7d4485e1c9c99d37461e90f9abdec7260efc42cfa766799ac26d7ab8554346",
+    "src/audit_ac.rs": "4003b67a7fc7b453b0977e09a91a609f307a1ce84d6c3f3d91c76bc080718c22",
+    "src/circuit.rs": "ef3b0fc79896184d131d29cba8c6a9892450cbc323aa9a31cb6e6b4aac45960c",
+    "src/compile.rs": "90cc711d483df0e08a0f1d5d36c40596c082ff1f9a219f67fbccbaa8141a55b2",
+    "src/configured.rs": "ae9f9bcaafb6efd9065e65bace4e214c63d48e907a1d9afce231087dacde63a9",
+    "src/lib.rs": "9eb5ccbf7248107d916ce606b6f64602752a503510527eb848d84f93f7793e02",
+    "src/newton.rs": "a9ad2537bb20d6f815db760ac08ed3b390824fffb44fb43f7c0f35867eeafc8a",
+    "src/power.rs": "931a303f512858af8f96f8455134160009b4bd3c68e85b53d3736a017a68ac98",
+    "src/variation.rs": "b8086c2766316c0c4412ace44bdc596c94055e007bb4975c2ecb35a2d6216831",
+    "compat/ngspice/bug883-vswitch.cir": "015494bf4f342391c938bf9d60f6a94c90e772689dcae13119da805b417fa241",
+    "compat/ngspice/bug883-vswitch.lib": "03f00502218a87a43b8355498a31eec38c96ced471c085b72ef5d4168dd5d9f0",
+    "docs/pspice-switch-plan.md": "e2738ef4ba54142118e408de251c8565ff21b3a858c97fdb6430d95ec792468c",
+    "docs/pspice-switch-results.md": "c1992897ad2d2cd770bf09557a2e7d1b39d7717f3508b7dda24d9b9b9630d6d8",
+    "dotnet/Simulator.Frontend.Tests/PspiceSwitchOracleIntegration.cs": "af73cd7fec234dc377c286819637610dfb7536835b3f20a91c4ec888d1467bed",
+    "dotnet/Simulator.Frontend.Tests/PspiceSwitchTests.cs": "52f3328a5d1dc4866e2dfed4bdbc2019af38c4b4560ff2fb350576e67defde99",
+    "scripts/Measure-RustIntegrationCoverage.ps1": "1d095a7b0b1f6dc4fdb86ca33b048736891c9c338fffa72f6048c48981c46369",
+    "src/pspice_switch.rs": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9",
+    "tests/pspice_switch.rs": "da2b0cfa7e2fb8c6fe5ac3b592dd14ccc31436aaea156fc2609d5d223c3ccbff",
+    "evidence/pspice-switch-requirements.json": "f46830d2ddae44445fb3f167b19ae013b0db49215ccb7548b10f40ea9026467e",
+    "evidence/pspice-switch-engineering.json": "7e158d59c96efaa7b4d83553b36271ddd7e32416b3316cd42188e06da8392d24"
+  },
+  "requirements": [
+    "SEM-VSWITCH-001",
+    "SEM-VSWITCH-002"
+  ],
+  "results_issue": "https://github.com/jeffadickson/Spice/issues/22",
+  "native_fixture_campaign": {
+    "ac_frequency_points": 30,
+    "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "op_summary_sha256": "6b00a78cfef15ab25f7f9504ddb61f86d538bba9218cbbb9dedca43716e40cd7",
+    "profile": "generated_frontend_selected_static_op",
+    "dc_provider_requests": 10,
+    "ac_root_voltage_checks": 84,
+    "expanded_mode": "psa",
+    "original_native_sweep_hz": [
+      0.99,
+      1,
+      1.01
+    ],
+    "files": 5,
+    "original_mode": "ps",
+    "frequencies_hz": [
+      1,
+      100,
+      1000
+    ],
+    "rows": [
+      {
+        "checks": 12,
+        "status": "compared_pass",
+        "path": "bug883-vswitch.cir",
+        "output_checks": [
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 1,
+            "expected_real": 0.5000000000000001,
+            "expected_imag": 0,
+            "actual_real": 0.4999999999999999,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 100,
+            "expected_real": 0.5000000000000001,
+            "expected_imag": 0,
+            "actual_real": 0.4999999999999999,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 1000,
+            "expected_real": 0.5000000000000001,
+            "expected_imag": 0,
+            "actual_real": 0.4999999999999999,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 1,
+            "expected_real": 0.5000000000000001,
+            "expected_imag": 0,
+            "actual_real": 0.49999999999999994,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 100,
+            "expected_real": 0.5000000000000001,
+            "expected_imag": 0,
+            "actual_real": 0.49999999999999994,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 1000,
+            "expected_real": 0.5000000000000001,
+            "expected_imag": 0,
+            "actual_real": 0.49999999999999994,
+            "actual_imag": 0,
+            "passed": true
+          }
+        ]
+      },
+      {
+        "checks": 18,
+        "status": "compared_pass",
+        "path": "control.cir",
+        "output_checks": [
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 1,
+            "expected_real": 0.8634694098727673,
+            "expected_imag": 0,
+            "actual_real": 0.8634694098727673,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 100,
+            "expected_real": 0.8634694098727673,
+            "expected_imag": 0,
+            "actual_real": 0.8634694098727673,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 1000,
+            "expected_real": 0.8634694098727673,
+            "expected_imag": 0,
+            "actual_real": 0.8634694098727673,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 1,
+            "expected_real": 0.8634694098727673,
+            "expected_imag": 0,
+            "actual_real": 0.8634694098727673,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 100,
+            "expected_real": 0.8634694098727673,
+            "expected_imag": 0,
+            "actual_real": 0.8634694098727673,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 1000,
+            "expected_real": 0.8634694098727673,
+            "expected_imag": 0,
+            "actual_real": 0.8634694098727673,
+            "actual_imag": 0,
+            "passed": true
+          }
+        ]
+      },
+      {
+        "checks": 18,
+        "status": "compared_pass",
+        "path": "quarter.cir",
+        "output_checks": [
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 1,
+            "expected_real": 0.17036717656865655,
+            "expected_imag": 0,
+            "actual_real": 0.17036717656865655,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 100,
+            "expected_real": 0.17036717656865655,
+            "expected_imag": 0,
+            "actual_real": 0.17036717656865655,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 1000,
+            "expected_real": 0.17036717656865655,
+            "expected_imag": 0,
+            "actual_real": 0.17036717656865655,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 1,
+            "expected_real": 0.17036717656865655,
+            "expected_imag": 0,
+            "actual_real": 0.17036717656865655,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 100,
+            "expected_real": 0.17036717656865655,
+            "expected_imag": 0,
+            "actual_real": 0.17036717656865655,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 1000,
+            "expected_real": 0.17036717656865655,
+            "expected_imag": 0,
+            "actual_real": 0.17036717656865655,
+            "actual_imag": 0,
+            "passed": true
+          }
+        ]
+      },
+      {
+        "checks": 18,
+        "status": "compared_pass",
+        "path": "three-quarter.cir",
+        "output_checks": [
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 1,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313433,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 100,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313433,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 1000,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313433,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 1,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313433,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 100,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313433,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 1000,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313433,
+            "actual_imag": 0,
+            "passed": true
+          }
+        ]
+      },
+      {
+        "checks": 18,
+        "status": "compared_pass",
+        "path": "reverse.cir",
+        "output_checks": [
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 1,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313436,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 100,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313436,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "lu",
+            "node": "OUT",
+            "frequency_hz": 1000,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313436,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 1,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313435,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 100,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313435,
+            "actual_imag": 0,
+            "passed": true
+          },
+          {
+            "backend": "faer",
+            "node": "OUT",
+            "frequency_hz": 1000,
+            "expected_real": 0.8296328234313434,
+            "expected_imag": 0,
+            "actual_real": 0.8296328234313435,
+            "actual_imag": 0,
+            "passed": true
+          }
+        ]
+      }
+    ],
+    "engine_sha256": "15a4af00305d21dbe2cf948f8c609f29b1fa45c9078866f87126c2737aa7e1f1",
+    "dc_voltage_comparisons": 28,
+    "ac_provider_requests": 10,
+    "ac_summary_sha256": "a2b59ca216db061dc4227c89a5dfd37e1b2c8139f02f697d01f443f34a386d0f"
+  },
+  "regressions": {
+    "frontend_passed": 95,
+    "sphinx_and_merged_api_xml": "passed",
+    "skip_reason": "Configured E exFAT volume cannot create symbolic links",
+    "focused_model_tests": 6,
+    "strictdoc": {
+      "documents": 21,
+      "parents": 324,
+      "ids": 336
+    },
+    "early_harness_failures": "Retained locally: test used private matrix API, malformed fixture inventory shape, unsupported mutation flag combination. Corrected before final evidence.",
+    "cargo_nextest": "unavailable on PATH; used cargo test",
+    "property_seed": "88320261103",
+    "rust_passed": 481,
+    "static_alias_additional_test_passed": 1,
+    "syntax_skipped": 1,
+    "syntax_passed": 406,
+    "property_cases": 128,
+    "rust_binaries": 53,
+    "frontend_skipped": 0
+  },
+  "mutations": {
+    "framework": "cargo-mutants 27.1.0",
+    "scope": "Only the two deleted minus signs in SwitchModel::linearize",
+    "snapshot": "Disposable source snapshot; active checkout was never mutated",
+    "selected": 2,
+    "unviable": 0,
+    "caught": 2,
+    "missed": 0,
+    "report_sha256": "1234790a6a87e6512e7533af3011988b113d7b3b3c414add88139ad884b25093",
+    "timeouts": 0
+  },
+  "managed_coverage": [
+    {
+      "scope": "frontend",
+      "assembly": "Simulator.Client",
+      "line_percent": 0.12,
+      "branch_percent": 0.0,
+      "report_sha256": "0807fd56cd99151967f79bebf06fb4c5ca4857cdd0abb126a4e8a8eb79aea039"
+    },
+    {
+      "scope": "frontend",
+      "assembly": "Simulator.Frontend",
+      "line_percent": 96.21,
+      "branch_percent": 83.96,
+      "report_sha256": "0807fd56cd99151967f79bebf06fb4c5ca4857cdd0abb126a4e8a8eb79aea039"
+    },
+    {
+      "scope": "frontend",
+      "assembly": "Simulator.Syntax",
+      "line_percent": 60.61,
+      "branch_percent": 48.85,
+      "report_sha256": "0807fd56cd99151967f79bebf06fb4c5ca4857cdd0abb126a4e8a8eb79aea039"
+    },
+    {
+      "scope": "syntax",
+      "assembly": "Simulator.Syntax",
+      "line_percent": 73.34,
+      "branch_percent": 75.33,
+      "report_sha256": "a0940db12e54106357dc52e8e733588522b6ad2016a127e06e7b67f6a2711680"
+    }
+  ],
+  "native_coverage": {
+    "tool": "cargo rustc + rustc instrument-coverage + matching LLVM",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "test": "pspice_switch",
+    "seed": "88320261103",
+    "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+    "files": [
+      {
+        "file": "src/ac.rs",
+        "lines": {
+          "count": 142,
+          "covered": 105,
+          "percent": 73.94366197183099
+        },
+        "sha256": "99b71e709bfbb2227a4980b4d491ed1d17def36f74a2db116f237b1d90d3c16c"
+      },
+      {
+        "file": "src/adaptive.rs",
+        "lines": {
+          "count": 34,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "557919a6c31070dc63e084506443bb280a5e8ce635cb0b22616640ccd5f04781"
+      },
+      {
+        "file": "src/api.rs",
+        "lines": {
+          "count": 222,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "54a4725eee031dfef298ce2e92376214afc0e1752a55d4077d79a7666c780c3a"
+      },
+      {
+        "file": "src/artifact.rs",
+        "lines": {
+          "count": 99,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f"
+      },
+      {
+        "file": "src/assertion.rs",
+        "lines": {
+          "count": 11,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6"
+      },
+      {
+        "file": "src/audit.rs",
+        "lines": {
+          "count": 371,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "1f7d4485e1c9c99d37461e90f9abdec7260efc42cfa766799ac26d7ab8554346"
+      },
+      {
+        "file": "src/audit_ac.rs",
+        "lines": {
+          "count": 129,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "4003b67a7fc7b453b0977e09a91a609f307a1ce84d6c3f3d91c76bc080718c22"
+      },
+      {
+        "file": "src/audit_configured.rs",
+        "lines": {
+          "count": 125,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "1c0d951e23b770304e3c2a889c31d26359c46b188246c4ca2b89b56b6dc0ab29"
+      },
+      {
+        "file": "src/backend.rs",
+        "lines": {
+          "count": 228,
+          "covered": 44,
+          "percent": 19.298245614035086
+        },
+        "sha256": "69ebd88de74917bca9a7e61acea193288c0f8490531c3c586c7b5f6f2a5de726"
+      },
+      {
+        "file": "src/backend_faer.rs",
+        "lines": {
+          "count": 221,
+          "covered": 98,
+          "percent": 44.34389140271493
+        },
+        "sha256": "2115a12a1f88416912040f58c4fd5338b81cd8559fac0f18b645efbf5ad5138f"
+      },
+      {
+        "file": "src/campaign.rs",
+        "lines": {
+          "count": 37,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20"
+      },
+      {
+        "file": "src/charge.rs",
+        "lines": {
+          "count": 16,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888"
+      },
+      {
+        "file": "src/circuit.rs",
+        "lines": {
+          "count": 129,
+          "covered": 54,
+          "percent": 41.86046511627907
+        },
+        "sha256": "ef3b0fc79896184d131d29cba8c6a9892450cbc323aa9a31cb6e6b4aac45960c"
+      },
+      {
+        "file": "src/compile.rs",
+        "lines": {
+          "count": 220,
+          "covered": 113,
+          "percent": 51.36363636363637
+        },
+        "sha256": "90cc711d483df0e08a0f1d5d36c40596c082ff1f9a219f67fbccbaa8141a55b2"
+      },
+      {
+        "file": "src/configured.rs",
+        "lines": {
+          "count": 260,
+          "covered": 131,
+          "percent": 50.38461538461539
+        },
+        "sha256": "ae9f9bcaafb6efd9065e65bace4e214c63d48e907a1d9afce231087dacde63a9"
+      },
+      {
+        "file": "src/dc.rs",
+        "lines": {
+          "count": 101,
+          "covered": 18,
+          "percent": 17.82178217821782
+        },
+        "sha256": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7"
+      },
+      {
+        "file": "src/error.rs",
+        "lines": {
+          "count": 12,
+          "covered": 9,
+          "percent": 75
+        },
+        "sha256": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743"
+      },
+      {
+        "file": "src/experiment.rs",
+        "lines": {
+          "count": 123,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee"
+      },
+      {
+        "file": "src/grid.rs",
+        "lines": {
+          "count": 15,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019"
+      },
+      {
+        "file": "src/ids.rs",
+        "lines": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        },
+        "sha256": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad"
+      },
+      {
+        "file": "src/integrator.rs",
+        "lines": {
+          "count": 81,
+          "covered": 11,
+          "percent": 13.580246913580247
+        },
+        "sha256": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963"
+      },
+      {
+        "file": "src/linalg.rs",
+        "lines": {
+          "count": 173,
+          "covered": 47,
+          "percent": 27.167630057803464
+        },
+        "sha256": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54"
+      },
+      {
+        "file": "src/linear_dynamic.rs",
+        "lines": {
+          "count": 52,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605"
+      },
+      {
+        "file": "src/measurement.rs",
+        "lines": {
+          "count": 28,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60"
+      },
+      {
+        "file": "src/model.rs",
+        "lines": {
+          "count": 67,
+          "covered": 7,
+          "percent": 10.44776119402985
+        },
+        "sha256": "62303fbe97f6b095d438f87fcc9e3238e24fa056772a79c7042642a53ce20a05"
+      },
+      {
+        "file": "src/netlist.rs",
+        "lines": {
+          "count": 547,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "8115ae7c961b7a089d1505fef4c10159ac7fca4158262b272cefd2021e70860a"
+      },
+      {
+        "file": "src/newton.rs",
+        "lines": {
+          "count": 727,
+          "covered": 373,
+          "percent": 51.30674002751031
+        },
+        "sha256": "a9ad2537bb20d6f815db760ac08ed3b390824fffb44fb43f7c0f35867eeafc8a"
+      },
+      {
+        "file": "src/ngspice_resistor.rs",
+        "lines": {
+          "count": 3,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3"
+      },
+      {
+        "file": "src/power.rs",
+        "lines": {
+          "count": 74,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "931a303f512858af8f96f8455134160009b4bd3c68e85b53d3736a017a68ac98"
+      },
+      {
+        "file": "src/provenance.rs",
+        "lines": {
+          "count": 22,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e"
+      },
+      {
+        "file": "src/pspice_switch.rs",
+        "lines": {
+          "count": 42,
+          "covered": 42,
+          "percent": 100
+        },
+        "sha256": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9"
+      },
+      {
+        "file": "src/quantity.rs",
+        "lines": {
+          "count": 43,
+          "covered": 4,
+          "percent": 9.30232558139535
+        },
+        "sha256": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397"
+      },
+      {
+        "file": "src/registry.rs",
+        "lines": {
+          "count": 30,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7"
+      },
+      {
+        "file": "src/sampling.rs",
+        "lines": {
+          "count": 77,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3"
+      },
+      {
+        "file": "src/solver_contract.rs",
+        "lines": {
+          "count": 120,
+          "covered": 57,
+          "percent": 47.5
+        },
+        "sha256": "4cc809fe52e98d9cdef63a0773efef885d3aee316b59b4bf763dcafcee26f69f"
+      },
+      {
+        "file": "src/sources.rs",
+        "lines": {
+          "count": 106,
+          "covered": 46,
+          "percent": 43.39622641509434
+        },
+        "sha256": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a"
+      },
+      {
+        "file": "src/sparse.rs",
+        "lines": {
+          "count": 188,
+          "covered": 149,
+          "percent": 79.25531914893617
+        },
+        "sha256": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40"
+      },
+      {
+        "file": "src/sweep.rs",
+        "lines": {
+          "count": 250,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f"
+      },
+      {
+        "file": "src/topology.rs",
+        "lines": {
+          "count": 45,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "e44a5fed6c58fc092bded030a2ca9a66b6334103a3ce364e0dfe205ad9010df4"
+      },
+      {
+        "file": "src/transient.rs",
+        "lines": {
+          "count": 75,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a"
+      },
+      {
+        "file": "src/variation.rs",
+        "lines": {
+          "count": 190,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "b8086c2766316c0c4412ace44bdc596c94055e007bb4975c2ecb35a2d6216831"
+      },
+      {
+        "file": "src/waveform.rs",
+        "lines": {
+          "count": 165,
+          "covered": 0,
+          "percent": 0
+        },
+        "sha256": "8452202a3f589e759cafcaa333ac75db7f970126b3da7bde64d5255c7c7d51f3"
+      }
+    ],
+    "branches": null,
+    "limitations": [
+      "Stable Rust instrumentation provides no measured branch coverage.",
+      "Other tests and executable main are outside this run."
+    ]
+  },
+  "coverage_limits": [
+    "Managed per-suite package rates have different scopes and include generated code; do not compare or merge as equivalent.",
+    "Coverlet can omit captured local functions/callbacks; denominator is incomplete.",
+    "The PspiceSwitch DTO is exercised through native wire execution; generated Client code dominates raw package denominator.",
+    "Focused native coverage is the named integration test only, not complete engine coverage; stable instrumentation has no measured branches.",
+    "No new coverage-guided fuzz or long soak; malformed inputs and reproducible property tests ran.",
+    "Full Rust harness pass counts do not establish optional external integration coverage; the named native fixture campaign was explicitly configured."
+  ],
+  "review": {
+    "fix": "Use complete nonlinear residual before observers with valid/invalid state regressions",
+    "method": "Static independent agent review, not external expert review",
+    "important_finding": "Configured initialization omitted nonlinear switch current",
+    "final_blocking_findings": 0
+  },
+  "limits": [
+    "Ideal high-impedance control, not finite control-loading/current parity",
+    "Explicit four parameters within documented bounded domain; no implicit defaults or clamp emulation",
+    "Hysteretic SW/general XSPICE, temperature/noise and broad transient qualification unavailable",
+    "Nonlinear AC physical audit explicitly not_checked; residual/native reference checks run",
+    "No original928-row census; original corpus counts unchanged",
+    "SpiceSharp switch comparison and release/GPU/production qualification unavailable",
+    "No new managed Stryker.NET campaign; mutation scope is only two native sign changes."
+  ],
+  "raw_artifacts": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z",
+  "commands": [
+    "cargo test --lib --tests",
+    "cargo test --test pspice_switch",
+    "dotnet test dotnet/Simulator.Frontend.Tests --collect:XPlat Code Coverage (explicit corpus/AC/native/fault environment configured)",
+    "dotnet test dotnet/Simulator.Syntax.Tests --collect:XPlat Code Coverage (CODEX_ARTIFACT_ROOT on E)",
+    "scripts/Measure-RustIntegrationCoverage.ps1 -Repository checkout -TargetDirectory run/target -Output fresh-run/rust-coverage",
+    "scripts/ValidateRequirements.cs and scripts/EngineeringDocs.cs; exact raw invocation/build logs retained"
+  ],
+  "reproduction": {
+    "working_directory": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\simulation-bridge",
+    "frontend": {
+      "environment": {
+        "SPICE_FRONTEND_REPOSITORY": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\simulation-bridge",
+        "SPICE_FRONTEND_AC_DLL": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/ac-build/bin/debug/Run-FrontendAcCorpus.dll",
+        "SPICE_FRONTEND_FAULT_ENGINE": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/fault-build/bin/debug/FrontendCorpusFaultEngine.exe",
+        "SPICE_CORPUS_ENGINE": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/target/debug/circuit-simulator.exe",
+        "SPICE_CORPUS_TEST_ROOT": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z",
+        "SPICE_CORPUS_NGSPICE": "C:/dev/ngspice-install/bin/ngspice.exe",
+        "SPICE_FRONTEND_CORPUS_DLL": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/run-build/bin/debug/Run-FrontendCorpus.dll"
+      },
+      "executable": "dotnet",
+      "arguments": [
+        "test",
+        "dotnet/Simulator.Frontend.Tests",
+        "--artifacts-path",
+        "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/tests",
+        "-p:GrammarOutput=E:\\Artifacts\\Spice-vswitch-20261103T003235Z/grammar",
+        "-p:AntlrJar=C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator/.tools/antlr/antlr-4.13.1-complete.jar",
+        "--collect:XPlat Code Coverage",
+        "--results-directory",
+        "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/frontend-final-coverage"
+      ]
+    },
+    "rust": {
+      "environment": {
+        "CARGO_TARGET_DIR": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/target",
+        "PROPTEST_RNG_SEED": "88320261103"
+      },
+      "executable": "cargo",
+      "arguments": [
+        "test",
+        "--lib",
+        "--tests"
+      ]
+    },
+    "coverage": {
+      "script": "scripts/Measure-RustIntegrationCoverage.ps1",
+      "parameters": {
+        "Output": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/rust-coverage",
+        "TargetDirectory": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/target",
+        "Test": "pspice_switch",
+        "Repository": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\simulation-bridge"
+      }
+    },
+    "mutation": {
+      "environment": {
+        "PROPTEST_RNG_SEED": "88320261103",
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_TARGET_DIR": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/target"
+      },
+      "executable": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator/.tools/mutation/cargo-mutants.exe",
+      "arguments": [
+        "mutants",
+        "--in-place",
+        "--file",
+        "src/pspice_switch.rs",
+        "--re",
+        "delete - in SwitchModel::linearize",
+        "--cargo-test-arg=--test=pspice_switch",
+        "--timeout",
+        "180",
+        "--build-timeout",
+        "300",
+        "--output",
+        "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/switch-mutations-final"
+      ],
+      "working_directory": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/mutation-source"
+    },
+    "syntax": {
+      "environment": {
+        "CODEX_ARTIFACT_ROOT": "E:\\Artifacts\\Spice-vswitch-20261103T003235Z"
+      },
+      "executable": "dotnet",
+      "arguments": [
+        "test",
+        "dotnet/Simulator.Syntax.Tests",
+        "--artifacts-path",
+        "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/syntax-tests",
+        "-p:GrammarOutput=E:\\Artifacts\\Spice-vswitch-20261103T003235Z/syntax-grammar",
+        "-p:AntlrJar=C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator/.tools/antlr/antlr-4.13.1-complete.jar",
+        "--collect:XPlat Code Coverage",
+        "--results-directory",
+        "E:\\Artifacts\\Spice-vswitch-20261103T003235Z/syntax-coverage"
+      ]
+    }
+  },
+  "log_sha256": {
+    "rust-regression.log": "a7957fe0ff7100c1988cb6956389120266270c0325c2af3bc26fd09ccb337452",
+    "frontend-final.log": "f26b9eb910fd9393a5ccdd1a809434d109a64f0d26a555fb48a19089453c369a",
+    "syntax-tests.log": "8cff1f2e5ff03f83cd97e9949c240b26b31c80a451984b8d0904f382652c95dc",
+    "static-alias.log": "d250c6c385e80601616672c65c60c718c899c6b26591ce6535a078c86ea585f0",
+    "requirements.log": "72a0fbcaada9f4931f651dab3998b0abfa0cc937ed543ab855548966641f4f3c",
+    "engineering-final.log": "14c60a5fe9f080c32de0d0e5ed9c52e41bae7c107af285357be13ded6b6eaa6d",
+    "engine-final-build.log": "0254f2a3b7165c551028ec53af0a00fc67c4ba1f3c7a2c077a222c8cd9690879",
+    "switch-mutations-final.log": "1f5a901c43832fac14869a272c9f230fcea5bb7695de64970f53402c52f81747"
+  },
+  "paired_benchmark": {
+    "measured_iterations": 3,
+    "raw_report_sha256": "0db492887ef5f2d77240295c4ca49902ccbe01a707faf21a9728d9f723f73f1d",
+    "limits": [
+      "Small supported paired fixtures; different output formats and transient step controllers prevent pure solver-speed claims.",
+      "Warmups excluded; raw repetitions and order rotation retained; machine load/affinity were not controlled.",
+      "Named-point accuracy is finite evidence, not full SPICE or a rigorous global error bound.",
+      "ngspice compatible work counters are unavailable; absent engine counters remain null.",
+      "Executable/source hashes identify inputs; dynamic libraries and the entire OS image are not frozen."
+    ],
+    "warmups": 1,
+    "cases": 5,
+    "results": [
+      {
+        "accuracy_passed": true,
+        "timings": [
+          {
+            "tool": "ngspice",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 112.9185,
+            "minimum_ms": 69.7769,
+            "maximum_ms": 128.6118
+          },
+          {
+            "tool": "lu",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 31.6138,
+            "minimum_ms": 31.4767,
+            "maximum_ms": 33.4368
+          },
+          {
+            "tool": "faer",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 33.831,
+            "minimum_ms": 31.4431,
+            "maximum_ms": 38.057
+          }
+        ],
+        "id": "divider"
+      },
+      {
+        "accuracy_passed": true,
+        "timings": [
+          {
+            "tool": "ngspice",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 67.1014,
+            "minimum_ms": 64.4209,
+            "maximum_ms": 93.958
+          },
+          {
+            "tool": "lu",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 30.9026,
+            "minimum_ms": 29.7013,
+            "maximum_ms": 33.0566
+          },
+          {
+            "tool": "faer",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 28.7974,
+            "minimum_ms": 28.435,
+            "maximum_ms": 35.8633
+          }
+        ],
+        "id": "rc-ac"
+      },
+      {
+        "accuracy_passed": true,
+        "timings": [
+          {
+            "tool": "ngspice",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 70.8967,
+            "minimum_ms": 68.8689,
+            "maximum_ms": 107.6211
+          },
+          {
+            "tool": "lu",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 46.5617,
+            "minimum_ms": 40.1915,
+            "maximum_ms": 63.0114
+          },
+          {
+            "tool": "faer",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 52.1403,
+            "minimum_ms": 52.0607,
+            "maximum_ms": 52.6355
+          }
+        ],
+        "id": "rc-transient"
+      },
+      {
+        "accuracy_passed": true,
+        "timings": [
+          {
+            "tool": "ngspice",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 73.9017,
+            "minimum_ms": 66.4979,
+            "maximum_ms": 76.3421
+          },
+          {
+            "tool": "lu",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 32.3908,
+            "minimum_ms": 31.9334,
+            "maximum_ms": 112.149
+          },
+          {
+            "tool": "faer",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 34.6071,
+            "minimum_ms": 32.7479,
+            "maximum_ms": 51.0498
+          }
+        ],
+        "id": "coupled-clamp-negative"
+      },
+      {
+        "accuracy_passed": true,
+        "timings": [
+          {
+            "tool": "ngspice",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 67.6144,
+            "minimum_ms": 63.526,
+            "maximum_ms": 69.785
+          },
+          {
+            "tool": "lu",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 28.8312,
+            "minimum_ms": 28.4068,
+            "maximum_ms": 28.8405
+          },
+          {
+            "tool": "faer",
+            "eligible": true,
+            "repetitions": 3,
+            "median_ms": 35.9449,
+            "minimum_ms": 30.6434,
+            "maximum_ms": 37.959
+          }
+        ],
+        "id": "coupled-clamp-positive"
+      }
+    ],
+    "status": "passed"
+  }
+}

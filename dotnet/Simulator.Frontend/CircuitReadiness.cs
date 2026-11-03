@@ -47,6 +47,13 @@ public static class CircuitReadiness
                 {
                     if(OperatingPointSelection.OmissionReason(card)!=null||card.Kind=="extension")continue;
                     if(card.Kind is "passive" or "source" or "vcontrol" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard")continue;
+                    if(card.Kind=="switchCard"&&bound[scope].FirstOrDefault(i=>i.Header.Range==card.Range&&i.Status==BindingStatus.Bound&&i.Target?.ModelFamily=="vswitch") is {} sw)
+                    {
+                        var model=sw.Target!;var names=model.Parameters.Select(p=>p.Name).ToArray();
+                        if(model.HasOpaqueModelTerms||!sw.Header.Parameters.IsEmpty||names.Length!=4||names.Distinct(StringComparer.OrdinalIgnoreCase).Count()!=4||names.Any(n=>n==null||!new[]{"ron","roff","von","voff"}.Contains(n,StringComparer.OrdinalIgnoreCase)))
+                            AddIssue(new("model_contract","unsupported_switch_profile",card.Kind,scope,path,card.Range));
+                        continue;
+                    }
                     var layer=card.Kind is "diode" or "bjt" or "mos" or "jfet" or "xspice" or "osdi"?"runtime_model":"runtime_family";
                     if(card.Kind=="icontrol")layer="parser_to_runtime";
                     AddIssue(new(layer,card.Kind=="icontrol"?"missing_typed_current_control":"unsupported_active_family",card.Kind,scope,path,card.Range));

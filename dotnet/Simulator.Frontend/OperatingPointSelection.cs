@@ -10,14 +10,14 @@ public sealed record SelectedOperatingPoint(BridgeResult Prepared,ImmutableArray
     /// <summary>True only for a complete supported typed request; numerical accuracy still requires execution/reference evidence.</summary>
     public bool Success=>Prepared.Success;
 }
-/// <summary>Explicit static-DC selection for ideal R/C/L and independent constant V/I declarations. Does not execute original analysis/control programs.</summary>
+/// <summary>Explicit static-DC selection for bounded R/C/L, independent V/I, linear E/G and smooth PSpice VSWITCH declarations. Does not execute original analysis/control programs.</summary>
 public static class OperatingPointSelection
 {
     private static readonly ImmutableHashSet<string> Observations=ImmutableHashSet.Create(StringComparer.OrdinalIgnoreCase,
         ".print",".plot",".save",".probe",".meas",".measure",".four",".title");
     private static readonly ImmutableHashSet<string> Analyses=ImmutableHashSet.Create(StringComparer.OrdinalIgnoreCase,".tf",".noise",".sens",".pz");
 
-    /// <summary>Selects a linear static operating point instead of executing the deck's analyses, controls or output instructions.</summary>
+    /// <summary>Selects a bounded static operating point instead of executing the deck's analyses, controls or output instructions.</summary>
     /// <remarks>Every omission is reported, including controls in unused bodies. Physical directives such as .global/.ic/.options remain unsupported.
     /// Capacitors and inductors retain typed SI values; the existing Rust operating-point equations supply their open/short steady behavior.
     /// Failed preparation returns no request or omission plan. The strict OperatingPointBridge.Lower API is unchanged.</remarks>

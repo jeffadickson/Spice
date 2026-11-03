@@ -16,7 +16,7 @@ using Simulator.Client;
 // collection. Input control programs are never dispatched. The oracle consumes
 // expanded original source, not values copied back from the lowered request.
 if(args.Length is not (6 or 7 or 8))throw new ArgumentException("Expected checkout, corpus, Rust executable, ngspice executable, syntax inventory JSON, fresh output, optional profile and admission-budget seconds");
-var selected=args.Length>=7&&args[6]=="selected-linear-op";
+var selected=args.Length>=7&&(args[6] is "selected-linear-op" or "selected-static-op");
 if(args.Length>=7&&!selected&&args[6]!="strict-rvi-op")throw new ArgumentException("Unknown analysis selection");
 var admissionSeconds=1800;
 if(args.Length==8&&(!int.TryParse(args[7],NumberStyles.Integer,CultureInfo.InvariantCulture,out admissionSeconds)||admissionSeconds is <1 or >21600))
@@ -127,6 +127,9 @@ foreach(var item in input.RootElement.GetProperty("rows").EnumerateArray())
   var nativeText=end==null?projected+control+".end\n":projected.Insert(end.Range.Start,control);
   var nativeInput=Path.Combine(directory,"reference.cir");File.WriteAllText(nativeInput,nativeText);row.NativeInputSha256=Hash(nativeInput);
   var log=Path.Combine(directory,"ngspice.log");var start=new ProcessStartInfo(ngspice){UseShellExecute=false,CreateNoWindow=true,RedirectStandardOutput=true,RedirectStandardError=true,WorkingDirectory=directory};
+  // Expanded input has no include boundary; 'a' applies the requested PSpice
+  // translation to the whole deck. Record this oracle-only dialect selection.
+  if(prepared.Request!.Circuit.Elements.Any(e=>e is PspiceSwitch)){start.ArgumentList.Add("-D");start.ArgumentList.Add("ngbehavior=psa");row.NativeCompatibility="psa";}
   foreach(var argument in new[]{"-n","-b","-o",log,nativeInput})start.ArgumentList.Add(argument);start.Environment["LC_ALL"]="C";
   using var native=Process.Start(start)!;var stdout=native.StandardOutput.ReadToEndAsync();var stderr=native.StandardError.ReadToEndAsync();
   using(var deadline=new CancellationTokenSource(TimeSpan.FromSeconds(30)))try{await native.WaitForExitAsync(deadline.Token);}catch(OperationCanceledException){native.Kill(true);await native.WaitForExitAsync();row.Status="solver_completed_oracle_timeout";continue;}
@@ -158,16 +161,17 @@ Console.WriteLine(JsonSerializer.Serialize(new{output,counts=rows.GroupBy(r=>r.S
 if(stopped)Environment.ExitCode=2;else if(rows.Any(r=>r.Status is "engine_failure" or "numerical_mismatch" or "input_or_harness_failure" or "input_changed" or "input_changed_during_resolution"))Environment.ExitCode=1;
 void Save(string state)
 {
- var report=new{schema_version=1,state,started_utc=startedUtc,updated_utc=DateTimeOffset.UtcNow,harness_assembly_sha256=Hash(typeof(Row).Assembly.Location),profile=selected?"generated_frontend_selected_linear_op":"generated_frontend_strict_rvi_op",total_inputs=totalInputs,elapsed_seconds=watch.Elapsed.TotalSeconds,inventory_sha256=Hash(inventory),engine_sha256=Hash(engine),ngspice_sha256=Hash(ngspice),source_sha256=hashes,
+ var report=new{schema_version=1,state,started_utc=startedUtc,updated_utc=DateTimeOffset.UtcNow,harness_assembly_sha256=Hash(typeof(Row).Assembly.Location),profile=selected?"generated_frontend_selected_static_op":"generated_frontend_strict_rvi_op",total_inputs=totalInputs,elapsed_seconds=watch.Elapsed.TotalSeconds,inventory_sha256=Hash(inventory),engine_sha256=Hash(engine),ngspice_sha256=Hash(ngspice),source_sha256=hashes,
   assembly_sha256=new[]{typeof(DeckParser).Assembly,typeof(OperatingPointBridge).Assembly,typeof(SimulationClient).Assembly}.ToDictionary(a=>a.GetName().Name!,a=>Hash(a.Location)),
   counts=rows.GroupBy(r=>r.Status).ToDictionary(g=>g.Key,g=>g.Count()),rows,limits=new{max_characters=4_194_304,max_tokens=2_000_000,admission_budget_seconds=admissionSeconds,child_seconds=30,absolute_voltage=1e-9,relative=1e-8},
-  limitations=new[]{"Explicit profile: strict R/V/I, or selected static R/C/L/V/I with recorded analysis/control/observation omissions. Never a complete original program run.","All exposed root-node voltages only; no source-current/internal-node/full-deck/AC/transient/model qualification.","Native oracle uses expanded original source with explicit OP control queries; original input controls are never executed.","Admission budget is checked between inputs; bounded current-row operations can finish after it. No hard whole-process deadline is promised.","Windows managed harness and reused debug Rust executable; no performance ranking, new native coverage, GPU or production qualification."}};
+  limitations=new[]{"Explicit profile: strict R/V/I, or selected static R/C/L/V/I/E/G and bounded PSpice VSWITCH with recorded analysis/control/observation omissions. Never a complete original program run.","All exposed root-node voltages only; no source-current/internal-node/full-deck/AC/transient/model qualification.","Native oracle uses expanded original source with explicit OP control queries; original input controls are never executed.","Admission budget is checked between inputs; bounded current-row operations can finish after it. No hard whole-process deadline is promised.","Windows managed harness and explicit debug Rust executable; coverage is collected separately. No performance ranking, GPU or production qualification."}};
  var destination=Path.Combine(output,"summary.json");var temporary=destination+".tmp";File.WriteAllText(temporary,JsonSerializer.Serialize(report,json));File.Move(temporary,destination,true);
 }
 static string Hash(string path){using var stream=File.OpenRead(path);return Convert.ToHexStringLower(SHA256.HashData(stream));}
 sealed class Row
 {
  public CircuitReadinessReport? Readiness{get;set;}
+ public string? NativeCompatibility{get;set;}
  public string Scope{get;set;}="";public string Path{get;set;}="";public string Status{get;set;}="";public string? Detail{get;set;} public string? Card{get;set;} public string? Family{get;set;} public string? Excerpt{get;set;}
  public string? InputSha256{get;set;} public string? ExpandedSha256{get;set;} public string? NativeInputSha256{get;set;} public string? NativeLogSha256{get;set;} public int? NativeExit{get;set;}
  public OperatingPointOmission[] Omissions{get;set;}=[];public SourceHash[] Sources{get;set;}=[];public List<Provider> Providers{get;}=[];public List<Observation> Comparisons{get;}=[];

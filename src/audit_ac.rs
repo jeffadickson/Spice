@@ -58,7 +58,9 @@ pub fn ac(
     if circuit.elements.iter().any(|e| {
         matches!(
             e,
-            Element::Diode { .. } | Element::DiodeWithCapacitance { .. }
+            Element::Diode { .. }
+                | Element::DiodeWithCapacitance { .. }
+                | Element::PspiceSwitch { .. }
         )
     }) {
         return Ok(AuditReport {

@@ -50,12 +50,13 @@ public static class ParameterEvaluator
         }
         return EvaluateScope(catalog,scope,values,caller);
     }
-    /// <summary>Evaluates a source expression in an unmodified environment belonging to this catalog.</summary>
-    public static ScalarEvaluation EvaluateValue(DeclarationCatalog catalog,ParameterEvaluation environment,SourceSyntax syntax)
+    /// <summary>Evaluates a source expression in an unmodified environment belonging to this catalog. An optional declaration scope selects a retained lexical ancestor snapshot, preserving enclosing instance overrides.</summary>
+    public static ScalarEvaluation EvaluateValue(DeclarationCatalog catalog,ParameterEvaluation environment,SourceSyntax syntax,int? declarationScopeId=null)
     {
         ArgumentNullException.ThrowIfNull(catalog);ArgumentNullException.ThrowIfNull(environment);ArgumentNullException.ThrowIfNull(syntax);
         if(!environment.Success||!ReferenceEquals(environment.Catalog,catalog)||!environment.Environments.TryGetValue(environment.ScopeId,out var values)||!ReferenceEquals(values,environment.Values))
             return new(null,[new("invalid_parameter_environment","",syntax.Range)]);
+        if(declarationScopeId is {} scope&&!environment.Environments.TryGetValue(scope,out values))return new(null,[new("invalid_parameter_environment","",syntax.Range)]);
         try{return new(Expression(syntax.Text,name=>values.TryGetValue(name,out var value)?value:throw new EvaluationFailure("missing_parameter",name)),[]);}
         catch(EvaluationFailure e){return new(null,[new(e.Code,e.Name??"",syntax.Range)]);}
     }

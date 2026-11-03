@@ -89,41 +89,19 @@ fn initial(
     if b.len() != x.len() || b.iter().any(|value| !value.is_finite()) {
         return Err(SimError::invalid("invalid initial excitation"));
     }
-    // Even a dynamic initial row must remain inside its model's current/charge
-    // domain before an observer can see it. Algebraic consistency is checked below.
-    for diode in &plan.diodes {
-        let voltage = diode.p.unknown().map(|index| x[index]).unwrap_or(0.)
-            - diode.n.unknown().map(|index| x[index]).unwrap_or(0.);
-        diode.model.linearize(voltage)?;
-    }
+    // Reuse the complete constitutive residual so newly added nonlinear devices
+    // cannot be omitted from initial consistency checks. Evaluation also checks
+    // model domains on dynamic rows before observers see the initial state.
+    let system = crate::newton::linearize_with_rhs(plan, x, b)?;
     let mut algebraic = vec![true; x.len()];
     for (row, _, value) in plan.charge_sparse().entries() {
         if value != 0. {
             algebraic[row] = false;
         }
     }
-    let mut sums = vec![0.; x.len()];
-    for (row, column, value) in plan.conductance_sparse().entries() {
-        if algebraic[row] {
-            sums[row] += value * x[column];
-        }
-    }
-    // Algebraic KCL includes conduction. Dynamic rows may supply displacement
-    // current and are deliberately excluded by the acceptance mask below.
-    for diode in &plan.diodes {
-        let voltage = diode.p.unknown().map(|index| x[index]).unwrap_or(0.)
-            - diode.n.unknown().map(|index| x[index]).unwrap_or(0.);
-        let current = diode.model.linearize(voltage)?.current_amps;
-        if let Some(row) = diode.p.unknown() {
-            sums[row] += current;
-        }
-        if let Some(row) = diode.n.unknown() {
-            sums[row] -= current;
-        }
-    }
     for (i, &rhs) in b.iter().enumerate() {
         if algebraic[i] {
-            let residual = sums[i] - rhs;
+            let residual = system.residual[i];
             if !residual.is_finite() || residual.abs() > 1e-10 * (1. + rhs.abs()) {
                 return Err(SimError::invalid(format!(
                     "initial algebraic constraint failed at row {i}"

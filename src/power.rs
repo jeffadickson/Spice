@@ -28,6 +28,24 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
         let (p, n) = element.terminals();
         let v = voltage(p) - voltage(n);
         let current = match element {
+            Element::PspiceSwitch {
+                cp,
+                cn,
+                ron,
+                roff,
+                von,
+                voff,
+                ..
+            } => {
+                crate::pspice_switch::SwitchModel {
+                    ron: *ron,
+                    roff: *roff,
+                    von: *von,
+                    voff: *voff,
+                }
+                .linearize(v, voltage(*cp) - voltage(*cn))?
+                .current
+            }
             Element::Resistor { ohms, .. } => v / ohms,
             Element::Current { amps, .. } => *amps,
             Element::Vccs {

@@ -47,6 +47,7 @@ public sealed class FrontendCorpusIntegration
             (Name:"vcvs.cir",Body:"V1 in 0 DC 2 AC 1 -90\nE1 out 0 in 0 -3\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"vccs.cir",Body:"V1 in 0 DC 2 AC 1\nG1 out 0 in 0 -2m\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"controlled-hierarchy.cir",Body:"V1 in 0 DC 2 AC 1\nX1 in out cell gain=3\n.subckt cell p q gain=2\nE1 q 0 p 0 {gain}\nR1 q 0 1k\n.ends",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"vswitch-883.cir",Body:".include 'vswitch.lib'\nVDR IN 0 DC .1 AC 1\nXU IN OUT DEMO",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"zero-port.cir",Body:"X1 noports\n.subckt noports\nV1 hidden 0 1\nR1 hidden 0 1k\n.ends",Expected:"solver_completed_no_root_observables"),
             (Name:"capacitor.cir",Body:"V1 a 0 1\nC1 a 0 1u",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"rlc.cir",Body:"V1 a 0 3\nR1 a b 1k\nL1 b 0 2m\nC1 a b 3u",Expected:selected?"compared_pass":"lowering_refused"),
@@ -63,6 +64,7 @@ public sealed class FrontendCorpusIntegration
             var hash=Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(file)));
             rows.Add(new{scope="ngspice",path=item.Name,result=new{Sha256=item.Name=="changed.cir"?new string('0',64):hash}});
         }
+        File.WriteAllText(Path.Combine(folder,"vswitch.lib"),".subckt DEMO IN OUT\nVCTRL CTRL 0 .1\nS1 IN OUT CTRL 0 MODE\n.model MODE VSWITCH(RON=100 ROFF=10000 VON=.2 VOFF=0)\nR1 OUT 0 1k\n.ends DEMO\n");
         File.WriteAllText(Path.Combine(folder,"settings.inc"),".param r=1k\n");
         File.WriteAllText(Path.Combine(folder,"cell.inc"),".subckt load p n\nR1 p private {3*r}\nR2 private n {r}\n.ends\n");
         var inventory=Path.Combine(folder,"inventory.json");File.WriteAllText(inventory,JsonSerializer.Serialize(new{rows}));
@@ -112,6 +114,9 @@ public sealed class FrontendCorpusIntegration
                     Assert.InRange(observation.GetProperty("rust_volts").GetDouble(),control.Expected-1e-10,control.Expected+1e-10);
                     Assert.InRange(observation.GetProperty("ngspice_volts").GetDouble(),control.Expected-1e-10,control.Expected+1e-10);
                 }
+            foreach(var c in outcomes["vswitch-883.cir"].GetProperty("comparisons").EnumerateArray().Where(c=>c.GetProperty("node").GetString()!.Equals("OUT",StringComparison.OrdinalIgnoreCase)))
+            {Assert.InRange(c.GetProperty("rust_volts").GetDouble(),.05-1e-10,.05+1e-10);Assert.InRange(c.GetProperty("ngspice_volts").GetDouble(),.05-1e-10,.05+1e-10);}
+            Assert.Equal("psa",outcomes["vswitch-883.cir"].GetProperty("native_compatibility").GetString());
             var index=Array.FindIndex(fixtures,f=>f.Name=="control.cir");
             var directory=Path.Combine(output,"cases",index.ToString("D4",CultureInfo.InvariantCulture));
             Assert.Contains("MUST_NOT_RUN",File.ReadAllText(Path.Combine(directory,"expanded.cir")));

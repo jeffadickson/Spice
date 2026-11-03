@@ -36,6 +36,8 @@ public sealed record NamedDeclaration(int Id,DeclarationKind Kind,string Name,in
     public ImmutableArray<SourceSyntax> FormalPorts { get; init; } = [];
     /// <summary>False when header structure needs a further semantic profile.</summary>
     public bool HasTypedPorts { get; init; }
+    /// <summary>True when model terms include syntax beyond direct scalar assignments and separators.</summary>
+    public bool HasOpaqueModelTerms { get; init; }
 }
 /// <summary>An ordered header-default or .param assignment in a lexical scope.</summary>
 public sealed record ScopedParameter(int ScopeId,string Origin,ParameterSyntax Syntax);

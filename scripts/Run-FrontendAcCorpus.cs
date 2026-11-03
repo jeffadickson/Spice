@@ -62,7 +62,7 @@ foreach(var input in inventory.RootElement.GetProperty("rows").EnumerateArray())
    var label=frequency.ToString("R",CultureInfo.InvariantCulture);
    var control="\n.control\nset numdgt=17\nac lin 1 "+label+" "+label+"\n"+string.Concat(names.Select((name,i)=>$"let probe_r_{i} = real(v(\"{name}\"))\nlet probe_i_{i} = imag(v(\"{name}\"))\nprint probe_r_{i}\nprint probe_i_{i}\n"))+"quit\n.endc\n";
    var deck=Path.Combine(directory,"reference-"+label+".cir");var log=Path.Combine(directory,"reference-"+label+".log");File.WriteAllText(deck,text.Insert(end,control));
-   await RunNative(deck,log);
+   await RunNative(deck,log,prepared.Request!.Circuit.Elements.Any(e=>e is PspiceSwitch));
    var data=File.ReadAllText(log);
    for(var n=0;n<names.Length;n++)
    {
@@ -128,9 +128,10 @@ var report=new{state=rows.Any(r=>r.Status=="not_admitted_budget")?"budget_exhaus
 var path=Path.Combine(output,"summary.json");File.WriteAllText(path,JsonSerializer.Serialize(report,json));Console.WriteLine(path);
 Environment.ExitCode=rows.Any(r=>r.Status is "numerical_mismatch" or "execution_or_oracle_failure" or "provider_failure")?1:rows.Any(r=>r.Status=="not_admitted_budget")?2:0;
 string Hash(string path)=>Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(path)));
-async Task RunNative(string deck,string log)
+async Task RunNative(string deck,string log,bool pspice)
 {
  var start=new ProcessStartInfo(native){UseShellExecute=false,CreateNoWindow=true,RedirectStandardOutput=true,RedirectStandardError=true};
+ if(pspice){start.ArgumentList.Add("-D");start.ArgumentList.Add("ngbehavior=psa");}
  foreach(var arg in new[]{"-n","-b","-o",log,deck})start.ArgumentList.Add(arg);start.Environment["LC_ALL"]="C";
  using var process=Process.Start(start)!;var stdout=process.StandardOutput.ReadToEndAsync();var stderr=process.StandardError.ReadToEndAsync();
  using var limit=new CancellationTokenSource(TimeSpan.FromSeconds(30));
