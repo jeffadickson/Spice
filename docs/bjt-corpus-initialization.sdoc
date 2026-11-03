@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Original amplifier convergence acceptance
+
+[REQUIREMENT]
+UID: SEMI-AMP-CONVERGENCE-001
+STATUS: Draft
+TITLE: Explicit initialization recovery and unchanged residual acceptance
+STATEMENT: >>>
+The simulator shall provide a declared bounded initial operating-point policy for admitted original amplifier transients, retaining unregularized physical sources and reporting recovery work. The admitted original fixed-grid transient shall either complete under the unchanged linear residual criterion or return an explicit non-success with its distinct initialization/provider failure. A recovered OP, a changed-backend warm-start experiment or a passing prefix shall not be relabeled as full original-request numerical agreement. Initial-policy and LU residual work shall remain separately traceable.
+<<<
+COMMENT: >>>
+Issue#29 follow-up acceptance, open Draft. Diagnostic: scripts/Diagnose-BjtInitialization.cs and evidence/bjt-corpus-initialization.json. Two byte-identical original wire requests: direct50/gmin50 initialization fails; source50/direct200 recover; gmin200 canonical probe confirms final unregularized solve. Warm LU64-step prefix passes,128-step and full run refuse strict backward error; faer plus explicit source50 warm state completes200steps. No native-waveform comparison or production policy change. Full original default-policy acceptance remains open; charged-junction explicit initial states are outside this diagnostic profile.
+<<<

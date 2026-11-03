@@ -1,0 +1,395 @@
+{
+  "state": "completed_bounded_diagnosis",
+  "base": "f4ab41d",
+  "issue": 29,
+  "requirement": "SEMI-AMP-CONVERGENCE-001",
+  "tested_source_hashes": {
+    "scripts/Diagnose-BjtInitialization.cs": "163d046bf22a1b853ec1202cfcc1d3a9b7a05486818cec57ebcf7bb80f0cd725",
+    "docs/bjt-corpus-initialization.md": "23ff5c87c85e7591270b7ca6ba233cbd7da73185dcb126d371329f165262ca8d",
+    "docs/bjt-corpus-initialization.sdoc": "a0d90643ee747a3089bcd3ac117f593a92c90756abcc65778ee638dd645d075d"
+  },
+  "canonical_lf_source_sha256": {
+    "scripts/Diagnose-BjtInitialization.cs": "210eeb4c459b90976c73ad1374e487247493605e1878fecb7e1d5bc9e194329e",
+    "docs/bjt-corpus-initialization.md": "5cf656be316430c2d3064bd9cf119e686d40cf8c517c3d898c7b70b372a732ec",
+    "docs/bjt-corpus-initialization.sdoc": "7452f4286e92629d430d37adced4fdf48d79b365c456c1b4816882a810c6f447"
+  },
+  "raw_report": "E:\\Artifacts\\Spice-bjt-corpus-initialization-4ccd424167e24fdf8b5b9a0cb8595648\\diagnosis-followup\\diagnosis.json",
+  "raw_sha256": "1efc0ac76ddaa54e75787b43b341185568213f139cd40840296a2673961cb2e9",
+  "identities": {
+    "E:\\Artifacts\\Spice-bjt-corpus-initialization-4ccd424167e24fdf8b5b9a0cb8595648\\circuit-simulator.exe": "ba0507050148e4ad626c05b354145f08ad2a4a3664043ff2143843d0b281459b",
+    "E:\\Artifacts\\Spice-compatibility-20261103T043926Z\\requested-final-f64edbd\\cases\\0458\\requested_0\\00000.request.json": "97b9ba3ba7f15112e01ecde0053e877367ff1a4417a102f7c74109bfaf62cd0e",
+    "E:\\Artifacts\\Spice-compatibility-20261103T043926Z\\requested-final-f64edbd\\cases\\0458\\requested_0\\00000.response.json": "c2252d252d20d6901ec4291457b6565101beb3e9c83b2dbbb9ae8b2b0eacf92e",
+    "E:\\Artifacts\\Spice-compatibility-20261103T043926Z\\requested-final-f64edbd\\cases\\0521\\requested_0\\00000.request.json": "97b9ba3ba7f15112e01ecde0053e877367ff1a4417a102f7c74109bfaf62cd0e",
+    "E:\\Artifacts\\Spice-compatibility-20261103T043926Z\\requested-final-f64edbd\\cases\\0521\\requested_0\\00000.response.json": "c2252d252d20d6901ec4291457b6565101beb3e9c83b2dbbb9ae8b2b0eacf92e"
+  },
+  "calls": 25,
+  "rows": [
+    {
+      "case": "0458",
+      "request_sha256": "97b9ba3ba7f15112e01ecde0053e877367ff1a4417a102f7c74109bfaf62cd0e",
+      "warm_policy": "source50",
+      "trials": [
+        {
+          "name": "original-transient",
+          "backend": "lu",
+          "succeeded": false,
+          "error": {
+            "code": "numerical_failure",
+            "message": "Newton iteration limit exceeded"
+          },
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": null
+        },
+        {
+          "name": "op-direct50",
+          "backend": "lu",
+          "succeeded": false,
+          "error": {
+            "code": "numerical_failure",
+            "message": "Newton iteration limit exceeded"
+          },
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": null
+        },
+        {
+          "name": "op-source50",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": 9,
+          "linear_solves": 105,
+          "source_stages": 4,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": 0
+        },
+        {
+          "name": "op-gmin50",
+          "backend": "lu",
+          "succeeded": false,
+          "error": {
+            "code": "numerical_failure",
+            "message": "Newton iteration limit exceeded"
+          },
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": null
+        },
+        {
+          "name": "op-direct200",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": 98,
+          "linear_solves": 98,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": 0
+        },
+        {
+          "name": "warm-one-step",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": 1,
+          "last_time_s": 1E-05
+        },
+        {
+          "name": "warm-original-transient",
+          "backend": "lu",
+          "succeeded": false,
+          "error": {
+            "code": "numerical_failure",
+            "message": "LU refinement did not meet componentwise backward error"
+          },
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": null
+        },
+        {
+          "name": "warm-prefix-2",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": 2,
+          "last_time_s": 2E-05
+        },
+        {
+          "name": "warm-prefix-4",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": 4,
+          "last_time_s": 4E-05
+        },
+        {
+          "name": "warm-prefix-8",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": 8,
+          "last_time_s": 8E-05
+        },
+        {
+          "name": "warm-prefix-16",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": 16,
+          "last_time_s": 0.00016
+        },
+        {
+          "name": "warm-prefix-32",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": 32,
+          "last_time_s": 0.00032
+        },
+        {
+          "name": "warm-prefix-64",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": 64,
+          "last_time_s": 0.00064
+        },
+        {
+          "name": "warm-prefix-128",
+          "backend": "lu",
+          "succeeded": false,
+          "error": {
+            "code": "numerical_failure",
+            "message": "LU refinement did not meet componentwise backward error"
+          },
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": null
+        },
+        {
+          "name": "faer-op-source50",
+          "backend": "faer",
+          "succeeded": true,
+          "error": null,
+          "iterations": 9,
+          "linear_solves": 105,
+          "source_stages": 4,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": 0
+        },
+        {
+          "name": "faer-warm-original-transient",
+          "backend": "faer",
+          "succeeded": true,
+          "error": null,
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": 200,
+          "last_time_s": 0.002
+        },
+        {
+          "name": "op-gmin200",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": 2,
+          "linear_solves": 227,
+          "source_stages": null,
+          "final_unregularized": true,
+          "accepted_steps": null,
+          "last_time_s": 0
+        },
+        {
+          "name": "direct200-warm-original-transient",
+          "backend": "lu",
+          "succeeded": false,
+          "error": {
+            "code": "numerical_failure",
+            "message": "LU refinement did not meet componentwise backward error"
+          },
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": null
+        }
+      ]
+    },
+    {
+      "case": "0521",
+      "request_sha256": "97b9ba3ba7f15112e01ecde0053e877367ff1a4417a102f7c74109bfaf62cd0e",
+      "warm_policy": "source50",
+      "trials": [
+        {
+          "name": "original-transient",
+          "backend": "lu",
+          "succeeded": false,
+          "error": {
+            "code": "numerical_failure",
+            "message": "Newton iteration limit exceeded"
+          },
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": null
+        },
+        {
+          "name": "op-direct50",
+          "backend": "lu",
+          "succeeded": false,
+          "error": {
+            "code": "numerical_failure",
+            "message": "Newton iteration limit exceeded"
+          },
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": null
+        },
+        {
+          "name": "op-source50",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": 9,
+          "linear_solves": 105,
+          "source_stages": 4,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": 0
+        },
+        {
+          "name": "op-gmin50",
+          "backend": "lu",
+          "succeeded": false,
+          "error": {
+            "code": "numerical_failure",
+            "message": "Newton iteration limit exceeded"
+          },
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": null
+        },
+        {
+          "name": "op-direct200",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": 98,
+          "linear_solves": 98,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": 0
+        },
+        {
+          "name": "warm-one-step",
+          "backend": "lu",
+          "succeeded": true,
+          "error": null,
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": 1,
+          "last_time_s": 1E-05
+        },
+        {
+          "name": "warm-original-transient",
+          "backend": "lu",
+          "succeeded": false,
+          "error": {
+            "code": "numerical_failure",
+            "message": "LU refinement did not meet componentwise backward error"
+          },
+          "iterations": null,
+          "linear_solves": null,
+          "source_stages": null,
+          "final_unregularized": null,
+          "accepted_steps": null,
+          "last_time_s": null
+        }
+      ]
+    }
+  ],
+  "conclusion": "Original default50 failure occurs already in OP. Source50/direct200 recover initial bias; warm LU then has a separate strict residual refusal. Existing faer plus explicit source50 initial state completes200 BE steps. Original results remain failed and no new native agreement is claimed.",
+  "minimal_options": [
+    "Explicit initial-OP policy reusing existing Newton options, with convergence work metadata.",
+    "Existing public two-request warm start for eligible zero-junction-charge profiles; not generalized charged IC parity.",
+    "Track LU64-pass/128-fail public repro separately; no weaker residual criterion or silent fallback."
+  ],
+  "coverage": {
+    "reason": "Bounded diagnosis concluded per task instruction; no further native campaign. No metrics inferred from earlier model/CLI scopes.",
+    "status": "not_collected_for_diagnostic_helper"
+  },
+  "limitations": [
+    "Two byte-identical wire requests, finite25-call diagnosis only.",
+    "Additional prefixes/faer/gmin200/direct200-warm probes executed on canonical0458 only; wire identity of0521 recorded, not a second execution claim.",
+    "No ngspice/native-waveform comparison, no new agreement/qualification, no production/controller/API policy edits.",
+    "Earliest failing LU step not localized; passing64 and failing128 are observed prefixes only.",
+    "No further refinement, new mutation/fuzz campaign, CI or push."
+  ],
+  "requirements_gate": {
+    "documents": 42,
+    "resolved_parents": 365,
+    "unique_ids": 387,
+    "raw": "E:/Artifacts/Spice-bjt-corpus-initialization-4ccd424167e24fdf8b5b9a0cb8595648/strictdoc.json"
+  }
+}
