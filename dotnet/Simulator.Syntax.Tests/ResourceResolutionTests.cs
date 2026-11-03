@@ -72,10 +72,18 @@ public sealed class ResourceResolutionTests
         Assert.True(result.Success);Assert.DoesNotContain("must-not-open",result.Text!);Assert.Single(result.Sources);
     }
     [Fact]
-    public void End_cards_in_fragments_are_explicitly_unsupported()
+    public void Fragment_end_cards_are_inert_and_do_not_hide_following_cards_or_resources()
     {
-        using var f=new Files();var root=f.Put("root.cir","Title\n.include 'stop.inc'\n.end\n");f.Put("stop.inc",".end\n");
-        Assert.Equal("end_in_fragment",Assert.Single(ResourceResolver.Resolve(root,new([f.Root])).Diagnostics).Code);
+        using var f=new Files();var root=f.Put("root.cir","Title\n.include 'stop.inc'\nR2 out 0 1k\n.end\n");
+        f.Put("stop.inc","V1 in 0 2\n.end\nR1 in out 1k\n.include 'nested.inc'\n.end\n");f.Put("nested.inc",".param retained=7\n");
+        var result=ResourceResolver.Resolve(root,new([f.Root]));
+        Assert.True(result.Success);Assert.Contains("R1 in out 1k",result.Text!);Assert.Contains(".param retained=7",result.Text!);
+        Assert.Equal(2,result.FragmentTerminators.Length);
+        foreach(var omitted in result.FragmentTerminators)Assert.Equal(".end",result.Sources[omitted.SourceIndex].Text.Substring(omitted.Range.Start,omitted.Range.Length));
+        Assert.Equal(3,result.Sources.Length);Assert.Single(DeckParser.Parse(result.Text!).Statements.Where(s=>s.Kind=="endCard"));
+        foreach(var segment in result.Segments)Assert.Equal(result.Sources[segment.SourceIndex].Text.Substring(segment.SourceStart,segment.Length),result.Text!.Substring(segment.OutputStart,segment.Length));
+        f.Put("nested.inc",".include 'missing.inc'\n");
+        var failed=ResourceResolver.Resolve(root,new([f.Root]));Assert.False(failed.Success);Assert.Null(failed.Text);Assert.Empty(failed.Sources);
     }
     private sealed class LinkFactAttribute:FactAttribute
     {

@@ -1,0 +1,16 @@
+[DOCUMENT]
+TITLE: Included Fragment Terminators
+
+[REQUIREMENT]
+UID: SEM-RESOURCE-END-001
+STATUS: Draft
+TITLE: Inert included-fragment end cards
+STATEMENT: >>>
+The bounded ngspice include profile shall omit generated top-level .end card ranges in included fragments without stopping subsequent physical cards or include resolution. It shall retain original physical source bytes, exact mappings for retained text and explicit source/range metadata for omitted terminators. Failed subsequent resource resolution shall still fail atomically. Subcircuit terminators and root termination policy remain separate contracts.
+<<<
+COMMENT: >>>
+Implementation: ResourceResolver.FragmentTerminators and mapped Append. Verification: ResourceResolutionTests.Fragment_end_cards_are_inert_and_do_not_hide_following_cards_or_resources; independent original ngspice fragment probe retains a resistor after the fragment .end and produces the analytical 1 V divider result. Inspected primary source src/frontend/inpcom.c inp_readall comments .end and appends the final root terminator. Historical end_in_fragment refusal counts remain historical evidence until a fresh census.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-RESOURCE-001

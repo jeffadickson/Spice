@@ -331,8 +331,13 @@
     }
   ],
   "mutation": {
-    "path": "scalar-mutations",
-    "status": "running_separate_frozen_snapshot"
+    "report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/scalar-mutations/reports/reports/mutation-report.json",
+    "compile_error": 175,
+    "killed": 1,
+    "ignored": 710,
+    "status": "completed_bounded",
+    "survived": 0,
+    "limitations": "One viable selected arithmetic mutant only; 100% tool score is not broad semantic mutation coverage. Compiler-invalid and ignored mutations do not count as detected defects."
   },
   "limitations": [
     "Coverlet does not map captured bridge Expand/Node/CollectGlobals bodies; outer 100% is not core lowering coverage.",

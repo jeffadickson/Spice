@@ -94,8 +94,11 @@ conditional resource availability and one-argument library loading without a
 selected section are refused under this profile. Sections inside subcircuits
 are rejected rather than losing their enclosing scope.
 
-The root `.end` clips inactive tail resources. `.end` in an included fragment or
-inside a subcircuit is explicitly unsupported. Library sections are parsed for
+The root `.end` clips inactive tail resources. Top-level `.end` cards in included
+fragments are inert, matching the inspected ngspice `inp_readall` behavior: their
+generated ranges are omitted, recorded in `FragmentTerminators`, and subsequent
+cards and resources remain active. Original bytes and retained source mappings
+are preserved. `.end` inside a subcircuit remains explicitly unsupported. Library sections are parsed for
 structure, but includes in unselected sections are not opened. The observed
 ngspice-47+ preprocessor does open such includes; this is a deliberate policy
 difference, not a compatibility claim. The failed missing-unused-include oracle

@@ -13,6 +13,8 @@ public sealed record ResourcePolicy(ImmutableArray<string> AllowedRoots,int MaxD
 public sealed record ResolvedSource(string Path,string? Section,string Sha256,string Text);
 /// <summary>Exact contiguous source mapping; all offsets are UTF-16 and zero based.</summary>
 public sealed record SourceSegment(int OutputStart,int Length,int SourceIndex,int SourceStart);
+/// <summary>Physical fragment terminator omitted according to the ngspice include profile.</summary>
+public sealed record FragmentTerminator(int SourceIndex,SourceRange Range);
 /// <summary>Resolution failure at a referring source range and attempted target, when available.</summary>
 public sealed record ResourceDiagnostic(string Code,string SourcePath,SourceRange? Range,string? TargetPath=null)
 {
@@ -22,6 +24,8 @@ public sealed record ResourceDiagnostic(string Code,string SourcePath,SourceRang
 /// <summary>Atomic expanded source/provenance result; failures contain no partial source text or graph.</summary>
 public sealed record ResourceResolution(string? Text,ImmutableArray<ResolvedSource> Sources,ImmutableArray<SourceSegment> Segments,ImmutableArray<ResourceDiagnostic> Diagnostics)
 {
+    /// <summary>Explicitly inert fragment .end cards; original source bytes remain in Sources.</summary>
+    public ImmutableArray<FragmentTerminator> FragmentTerminators {get;init;}=[];
     /// <summary>True only when resolution finished within the explicit resource policy.</summary>
     public bool Success=>Diagnostics.IsEmpty&&Text!=null;
 }
@@ -38,13 +42,13 @@ public static class ResourceResolver
         var comparison=OperatingSystem.IsWindows()?StringComparison.OrdinalIgnoreCase:StringComparison.Ordinal;
         var comparer=OperatingSystem.IsWindows()?StringComparer.OrdinalIgnoreCase:StringComparer.Ordinal;
         var roots=policy.AllowedRoots.Select(Path.GetFullPath).ToArray();
-        var sources=new List<ResolvedSource>();var segments=new List<SourceSegment>();var output=new StringBuilder();
+        var sources=new List<ResolvedSource>();var segments=new List<SourceSegment>();var output=new StringBuilder();var terminators=new List<FragmentTerminator>();
         var active=new HashSet<string>(comparer);var fileCount=0;long bytes=0;
         try
         {
             foreach(var root in roots){if(root.StartsWith("\\\\",StringComparison.Ordinal))throw Fail("denied_path",root,null,root);if(!Directory.Exists(root))throw Fail("missing_allowed_root",root,null,root);RejectLinks(root,root,null);}
             Load(Path.GetFullPath(rootPath),null,0,false,rootPath,null);
-            return new(output.ToString(),sources.ToImmutableArray(),segments.ToImmutableArray(),[]);
+            return new(output.ToString(),sources.ToImmutableArray(),segments.ToImmutableArray(),[]){FragmentTerminators=terminators.ToImmutableArray()};
         }
         catch(ResourceFailure failure){return new(null,[],[],[failure.Diagnostic]);}
         catch(Exception e) when(e is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
@@ -84,10 +88,11 @@ public static class ResourceResolver
                 if(parsed.Status!="accepted_structure"||parsed.Declarations==null)throw ParseFailure("resource_syntax",path,parsed,fragment);
                 var catalog=parsed.Declarations;
                 var start=0;var end=text.Length;
+                var fragmentEnds=fragment?catalog.Cards.Where(c=>c.Kind=="endCard").OrderBy(c=>c.Range.Start).ToArray():[];
+                if(fragmentEnds.Any(c=>c.ScopeId!=0))throw Fail("end_in_subcircuit",path,null,path);
                 var ending=parsed.Statements.FirstOrDefault(s=>s.Kind=="endCard");
-                if(ending!=null)
+                if(ending!=null&&!fragment)
                 {
-                    if(fragment)throw Fail("end_in_fragment",path,null,path);
                     if(catalog.Scopes.Skip(1).Any(s=>ending.Range.Start>=s.Range.Start&&ending.Range.Start<s.Range.Start+s.Range.Length))throw Fail("end_in_subcircuit",path,null,path);
                     end=ending.Range.Start+ending.Range.Length;
                     while(end<text.Length&&text[end] is not ('\r' or '\n'))end++;
@@ -138,7 +143,19 @@ public static class ResourceResolver
                 void Append(int offset,int length)
                 {
                     if(length<=0)return;
-                    segments.Add(new(output.Length,length,index,offset));output.Append(text,offset,length);
+                    // ngspice inp_readall comments fragment .end cards and keeps
+                    // reading. Omit only their generated ranges, preserving all
+                    // subsequent content and exact source mappings of retained text.
+                    var finish=offset+length;var cursor=offset;
+                    foreach(var endingCard in fragmentEnds.Where(c=>c.Range.Start-shift>=offset&&c.Range.Start-shift<finish))
+                    {
+                        var at=endingCard.Range.Start-shift;
+                        Copy(cursor,at-cursor);
+                        terminators.Add(new(index,endingCard.Range with{Start=at,Line=endingCard.Range.Line-1}));
+                        cursor=at+endingCard.Range.Length;
+                    }
+                    Copy(cursor,finish-cursor);
+                    void Copy(int at,int count){if(count<=0)return;segments.Add(new(output.Length,count,index,at));output.Append(text,at,count);}
                 }
             }
             finally{active.Remove(key);}

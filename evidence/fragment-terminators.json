@@ -1,0 +1,83 @@
+{
+  "coverage": {
+    "classes": [
+      {
+        "branch_rate": "1",
+        "line_rate": "1",
+        "name": "Simulator.Syntax.ResourcePolicy",
+        "mapped_lines": 2
+      },
+      {
+        "branch_rate": "1",
+        "line_rate": "1",
+        "name": "Simulator.Syntax.ResolvedSource",
+        "mapped_lines": 1
+      },
+      {
+        "branch_rate": "1",
+        "line_rate": "1",
+        "name": "Simulator.Syntax.SourceSegment",
+        "mapped_lines": 1
+      },
+      {
+        "branch_rate": "1",
+        "line_rate": "1",
+        "name": "Simulator.Syntax.FragmentTerminator",
+        "mapped_lines": 1
+      },
+      {
+        "branch_rate": "1",
+        "line_rate": "1",
+        "name": "Simulator.Syntax.ResourceDiagnostic",
+        "mapped_lines": 2
+      },
+      {
+        "branch_rate": "1",
+        "line_rate": "1",
+        "name": "Simulator.Syntax.ResourceResolution",
+        "mapped_lines": 3
+      },
+      {
+        "branch_rate": "0.7291",
+        "line_rate": "0.8571",
+        "name": "Simulator.Syntax.ResourceResolver",
+        "mapped_lines": 28
+      },
+      {
+        "branch_rate": "1",
+        "line_rate": "1",
+        "name": "Simulator.Syntax.ResourceResolver/ResourceFailure",
+        "mapped_lines": 2
+      },
+      {
+        "branch_rate": "0.9444",
+        "line_rate": "1",
+        "name": "Simulator.Syntax.ResourceResolver/<>c",
+        "mapped_lines": 9
+      }
+    ],
+    "limitations": "Captured Load/Append bodies are only covered where present in the Coverlet mapping; no all-resolver 100% claim. Fresh Linux execution and exFAT symlink coverage unavailable.",
+    "report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/fragment-final-coverage/be26ec1b-19b1-464e-82ec-b5aa5f9c4334/coverage.cobertura.xml"
+  },
+  "requirements": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/integrated-requirements.json",
+  "expected_divider_volts": 1.0,
+  "limitations": [
+    "Existing root end clipping policy is unchanged.",
+    "Missing/denied external files, conditional includes and legacy encoding remain explicit refusals.",
+    "No fresh whole-corpus resource uplift count yet."
+  ],
+  "native_exit": 0,
+  "status": "bounded_checkpoint",
+  "native_probe": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/fragment-end-probe/native.log",
+  "source_hashes": {
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "d6ddf6749e4a8f2a0e3aef617053b5154fdcc9e89e030edf0d54c459e8e4cfdb",
+    "dotnet/Simulator.Syntax.Tests/ResourceResolutionTests.cs": "1dfc5637743bc54e5466406c6bfb07701c076629841c1eb15ebe0f0ee1894b6c",
+    "docs/fragment-terminators.sdoc": "faa2842f6b05431fd0718e2f7371220feecc61e59ca5b3627f20f41b25b98c88"
+  },
+  "tests": {
+    "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/fragment-final.log",
+    "skipped": 1,
+    "passed": 433,
+    "failed": 0
+  }
+}
