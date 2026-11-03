@@ -42,7 +42,7 @@ global build-cache redirection, or migration of existing artifacts.
 - [x] Run a bounded launcher/property preflight on a clean committed checkout;
       distinguish maintained-framework preflight from the separate property run.
       Record actual budgets, cases, seeds, source hashes and skips.
-- [ ] Update issue30, handoff and commands; push verified checkpoints without CI.
+- [x] Update issue30, handoff and commands; push verified checkpoints without CI.
 
 The failed3h14m campaign is not repaired retroactively. Its22killed/3surviving/
 7invalid/220unattempted Rust counts, zero Stryker candidates and zero property

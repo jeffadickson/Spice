@@ -1,0 +1,90 @@
+{
+  "status": "bounded_recovery_verified",
+  "integration_base": "2466a85",
+  "native_producer": "03b9554d083556e52ff98e3e70f77cd72d48d984",
+  "engine_sha256": "42835c20d6ee316cb88b656849e0f5a6b18272d89fedc2ca62420c7a206caaab",
+  "artifact_root": "E:\\Artifacts\\Spice-fix-20261103T140559Z",
+  "native": {
+    "failed": 0,
+    "passed": 532,
+    "ignored": 2
+  },
+  "managed_frontend_native": {
+    "failed": 0,
+    "skipped": 9,
+    "passed": 479,
+    "metadata": "Reused unchanged compiled managed source from ground-guard-build, exercising the fresh corrected engine; no compiled C# API source changes in this numerical delta"
+  },
+  "original_continuation": {
+    "failed": 0,
+    "skipped": 0,
+    "passed": 4,
+    "maximum_corrections_per_stage": 8
+  },
+  "ngspice_oracle": {
+    "expected_source_current_a": -0.003801486345140583,
+    "providers": [
+      "lu",
+      "faer"
+    ],
+    "native": "ngspice47+",
+    "expected_output_v": 0.3801486345140583,
+    "output_v": 0.38014863451405806,
+    "source_current_a": -0.0038014863451405804
+  },
+  "mutation": {
+    "managed_compile_invalid": 1,
+    "original_rust_survivors_caught": 3,
+    "managed_filtered": 200,
+    "original_rust_survivors_selected": 3,
+    "final_newton_selected": 3,
+    "final_newton_caught": 3,
+    "managed_path_proof_killed": 3,
+    "note": "Focused scopes, not a full252-candidate/whole-product mutation closure",
+    "managed_path_proof_tested": 3
+  },
+  "launcher": {
+    "failed": 0,
+    "skipped": 0,
+    "passed": 13
+  },
+  "path_deadline": {
+    "failed": 0,
+    "skipped": 0,
+    "passed": 9
+  },
+  "properties": {
+    "pending_seed": null,
+    "run": "20261103T150313Z-3b69ceae",
+    "completed_requested_cases": 101376,
+    "manifest": "overnight-recovery-final-preflight-20261103.json",
+    "completed_batches": 44,
+    "initial_seed": "17234550214631676546",
+    "status": "budget_exhausted"
+  },
+  "requirements": {
+    "documents": 49,
+    "resolved_parents": 377,
+    "strictdoc": "0.30.4",
+    "unique_ids": 402
+  },
+  "engineering_docs": "Sphinx9.1.0 warnings-as-errors/API projection passed",
+  "review": "overnight-recovery-review.md",
+  "raw_sha256": {
+    "final-engineering/verification.json": "aede5b0f366f8ccdb02f17439f0b77c0bd7de23d4e1fa9d2f7cdb3a5b9533d8c",
+    "rust-switch-replay/pnp-gmin/full-regression-final.log": "ccd335b9f10e0f452e74c41d4a40f42aad2444ae12951fbd5744caeb225a6685",
+    "switch-oracle-final/summary.json": "2803e1f75633962dc433ed0e433a410c08d61b1af1b6d4aa4e0b9ebe78472123",
+    "final-frontend-feasibility.log": "155e1bd18d6c28c37ff281d5e6320d9cc73ebd86262983c105914bf97c5f28ec",
+    "final-requirements.json": "2972c62d3820adb0204dd51f129d5a9b0b53fc6d5e61f9a8790ef99237e94512",
+    "pnp-final-native-enabled.log": "4e4be0e20892b15224306e162381514fc095dca2961f59711cd2702da07e30fb"
+  },
+  "limitations": [
+    "Stable Rust branch coverage unavailable; component line scopes in adjacent coverage records are not summed.",
+    "Coverlet omits captured lowering helpers; full-source handwritten coverage is not claimed.",
+    "All-target Clippy stopped on unchanged spice_diode.rs single-element-loop lint; changed library/analytical scope passed separately.",
+    "Two previous property preflights remain failed/partial; their counts are not combined with the final run.",
+    "Final property-only run explicitly skipped maintained mutations; those were independently verified in focused runs.",
+    "No fresh Linux/GPU, full overnight, whole-corpus conformance, universal convergence or production qualification.",
+    "Canonical main unknown files are preserved; no qualification of their uncommitted edits is claimed."
+  ]
+}
