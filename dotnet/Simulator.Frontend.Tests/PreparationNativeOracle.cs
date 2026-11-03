@@ -24,7 +24,10 @@ public sealed class PreparationNativeOracle
             (Name:"global-formal",Body:".global vdd\nV1 vdd 0 3\nX1 unused out cell\n.subckt cell vdd out\nR1 vdd out 1k\nR2 out 0 1k\n.ends",Expected:1.5),
             (Name:"global-inactive",Body:"V1 vdd 0 3\nX1 out cell\n.subckt unused\n.global vdd\n.ends\n.subckt cell out\nR1 vdd out 1k\nR2 out 0 1k\n.ends",Expected:0d),
             (Name:"global-active",Body:"V1 vdd 0 3\nX0 unused\nX1 out cell\n.subckt unused\n.global vdd\n.ends\n.subckt cell out\nR1 vdd out 1k\nR2 out 0 1k\n.ends",Expected:1.5),
-            (Name:"gain-offset",Body:"V1 in 0 2\nA1 in out amp\n.model amp gain(in_offset=.5 gain=3 out_offset=-1)\nR1 out 0 1k",Expected:6.5)
+            (Name:"gain-offset",Body:"V1 in 0 2\nA1 in out amp\n.model amp gain(in_offset=.5 gain=3 out_offset=-1)\nR1 out 0 1k",Expected:6.5),
+            (Name:"behavior-voltage",Body:"V1 in 0 2\nB1 out 0 V=2*v(in)+.25\nR1 out 0 1k",Expected:4.25),
+            (Name:"behavior-current",Body:"V1 in 0 2\nB1 out 0 I=1m*v(in)+2m\nR1 out 0 1k",Expected:-4d),
+            (Name:"behavior-constant",Body:"B1 out 0 V=1.25\nR1 out 0 1k",Expected:1.25)
         };
         var parent=Environment.GetEnvironmentVariable("SPICE_CORPUS_TEST_ROOT")!;
         var root=Path.Combine(parent,"preparation-oracle-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);

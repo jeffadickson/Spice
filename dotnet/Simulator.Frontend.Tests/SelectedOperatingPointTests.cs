@@ -26,7 +26,7 @@ public sealed class SelectedOperatingPointTests
     [InlineData(".temp 50")]
     [InlineData(".ic v(a)=2")]
     [InlineData(".options reltol=1e-2")]
-    [InlineData("B1 a 0 V=1")]
+    [InlineData("B1 a 0 V=v(a)*v(a)")]
     [InlineData("V2 b 0 SFFM(0 1 1k 2 1)")]
     [InlineData(".end\nR2 b 0 1k")]
     public void Unknown_physical_semantics_never_produce_partial_selected_requests(string unsupported)

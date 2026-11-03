@@ -1,0 +1,35 @@
+{
+  "requirements": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/integrated-requirements.json",
+  "limitations": [
+    "Finite affine voltage/current B sources only; nonlinear/time/current-referenced/stateful expressions remain unsupported.",
+    "Current direction independently checked by load KCL; no generic behavioral energy or digital XSPICE qualification.",
+    "Nine other integration prerequisites skipped. No fresh Linux or whole-corpus result yet."
+  ],
+  "native": {
+    "checks": "78 DC/complex AC/transient voltage comparisons through actual generated bridge and typed client; PreparationNativeOracle adds nine original OP fixtures on lu/faer.",
+    "oracle": "C:/dev/ngspice-install/bin/ngspice.exe",
+    "engine": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/native-target/debug/circuit-simulator.exe",
+    "engine_sha256": "43883aed105cd47b4d01c5e29cf718cdf632cb1c3d49fa35d34574282eb13958"
+  },
+  "source_hashes": {
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "dbd5f0782c59995d13ec2a336da3cc4dabfaa17e8b5f436df09d30cd11e48ac8",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "13c9f9fae4a7057b0a60e6d3f0b879da5d55f44e376179d5112bb510f2c19553",
+    "dotnet/Simulator.Frontend.Tests/PreparationSemanticsTests.cs": "dbd41dbf7109775ac988bfc71d1803decc89a4f5548c65c2ebddfdf7d24aa0c9",
+    "dotnet/Simulator.Frontend.Tests/PreparationNativeOracle.cs": "dccc5b7214f0ae140640ef9c1407aaa9c29428350ec4392b2db265258b4acaae",
+    "dotnet/Simulator.Frontend.Tests/AffineBehaviorOracleIntegration.cs": "be12ac0adcb2c8758896b3f90d97ef21b41cac9be0b1302b4c01b7a0689c4792",
+    "dotnet/Simulator.Frontend.Tests/SelectedOperatingPointTests.cs": "a732862602eba490bea2cd1abc774ab1a588805a58a4f05b3efd79bfaa9cbc19",
+    "docs/affine-behavior.sdoc": "cf80c839cb0f033f1deb4ce03e1dc5c318d7ca9ca7b737a263a16b64c6f8f4e8"
+  },
+  "status": "bounded_affine_bridge_checkpoint",
+  "coverage": {
+    "report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/integrated-second-coverage/d03525b8-e969-43cd-98f7-5ca5d1a60957/coverage.cobertura.xml",
+    "limitations": "Captured core bridge expansion/node functions are omitted by Coverlet. Outer 100% is not lowering coverage. Pure affine helper metrics remain separately scoped."
+  },
+  "tests": {
+    "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/integrated-second.log",
+    "failed": 0,
+    "skipped": 9,
+    "total": 281,
+    "passed": 272
+  }
+}

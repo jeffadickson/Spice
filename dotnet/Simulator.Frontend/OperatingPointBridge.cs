@@ -93,7 +93,7 @@ public static class OperatingPointBridge
                 {
                     if(omittedStarts?.Contains(card.Range.Start)==true)continue;
                     if(selected&&card.GlobalNodes!=null)continue;
-                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice" or "diode")))
+                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice" or "diode" or "behavior")))
                         throw new BridgeFailure("unsupported_active_card",card.Range);
                 }
                 var frameIds=new Dictionary<string,(string Id,string Family)>(StringComparer.OrdinalIgnoreCase);
@@ -177,6 +177,35 @@ public static class OperatingPointBridge
                         elements.Add(new Voltage(offsetId,mid,n,gain.Offset));origins.Add(new(offsetId,gain.Name+"$offset",path,gain.Range));
                         acSources.Add(new(offsetId,0,0));
                     }
+                }
+                foreach(var instance in catalog.BehavioralSources.Where(i=>i.ScopeId==scope))
+                {
+                    if(!selected)throw new BridgeFailure("unsupported_active_card",instance.Range);
+                    if(!names.Add(instance.Name))throw new BridgeFailure("duplicate_element",instance.Range);
+                    var lowered=BehavioralSourceLowering.Prepare(catalog,instance,environment);
+                    if(!lowered.Success)throw new BridgeFailure(lowered.Diagnostics[0].Code,lowered.Diagnostics[0].Range);
+                    var source=lowered.Source!;var p=Node(source.P.Text);var n=Node(source.N.Text);
+                    if(p==n)throw new BridgeFailure("shorted_behavior_output",source.Range);
+                    if(elements.Count+source.Terms.Length+1>limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
+                    var previous=p;var termIndex=0;
+                    foreach(var term in source.Terms)
+                    {
+                        var control=Node(term.Node.Text);var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        var next=n;
+                        if(source.Quantity==BehavioralQuantity.Voltage)
+                        {
+                            if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",source.Range);
+                            next=nodes.Count;nodes.Add("n"+next.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                            elements.Add(new Vcvs(id,previous,next,control,0,term.Coefficient));previous=next;
+                        }
+                        else elements.Add(new Vccs(id,p,n,control,0,term.Coefficient));
+                        origins.Add(new(id,termIndex++==0?source.Name:source.Name+"$term"+termIndex,path,source.Range));
+                    }
+                    // A constant contributes DC bias only. Explicit zero AC
+                    // prevents the independent-source default from exciting it.
+                    var offsetId="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    elements.Add(source.Quantity==BehavioralQuantity.Voltage?new Voltage(offsetId,previous,n,source.Offset):new Current(offsetId,p,n,source.Offset));
+                    origins.Add(new(offsetId,termIndex==0?source.Name:source.Name+"$offset",path,source.Range));acSources.Add(new(offsetId,0,0));
                 }
                 double Evaluate(SourceSyntax valueSyntax)
                 {

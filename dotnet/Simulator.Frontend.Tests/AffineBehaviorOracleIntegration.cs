@@ -34,34 +34,20 @@ public sealed class AffineBehaviorOracleIntegration
                 await File.WriteAllTextAsync(Path.Combine(folder,mode+".stdout"),await stdout);await File.WriteAllTextAsync(Path.Combine(folder,mode+".stderr"),await stderr);Assert.Equal(0,process.ExitCode);
             }
             var native=(await File.ReadAllLinesAsync(data)).Where(line=>!string.IsNullOrWhiteSpace(line)).Select(line=>line.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Select(v=>double.Parse(v,CultureInfo.InvariantCulture)).ToArray()).ToArray();
-            var nodes=new List<string>{"0","in","ref","other","low","out"};
-            var elements=new List<Element>{new Voltage("drive",1,0,mode=="tran"?0:2),new Voltage("reference",2,0,.5),new Voltage("other",3,0,.1),new Voltage("low",4,0,.2),new Resistor("load",5,0,1000)};
-            var ac=new List<AcSourcePhasor>{new("drive",1,0),new("reference",0,0),new("other",0,.5),new("low",0,0)};
-            int Node(string name){var index=nodes.FindIndex(n=>n.Equals(name,StringComparison.OrdinalIgnoreCase));Assert.True(index>=0);return index;}
-            var p=Node(source.P.Text);var n=Node(source.N.Text);
-            if(source.Quantity==BehavioralQuantity.Current)
-            {
-                foreach(var term in source.Terms)elements.Add(new Vccs("term"+elements.Count,p,n,Node(term.Node.Text),0,term.Coefficient));
-                elements.Add(new Current("offset",p,n,source.Offset));ac.Add(new("offset",0,0));
-            }
-            else
-            {
-                var previous=p;
-                foreach(var term in source.Terms)
-                {
-                    var next=nodes.Count;nodes.Add("hidden"+next);
-                    elements.Add(new Vcvs("term"+elements.Count,previous,next,Node(term.Node.Text),0,term.Coefficient));previous=next;
-                }
-                elements.Add(new Voltage("offset",previous,n,source.Offset));ac.Add(new("offset",0,0));
-            }
+            var syntax=DeckParser.Parse("Integrated B source\n"+drive+"\nVREF ref 0 .5\nVOTHER other 0 DC .1 AC .5 90\nVLOW low 0 .2\n"+card+"\nRLOAD out 0 1k\n.end\n",collectDeclarations:true);
+            var selected=OperatingPointSelection.Select(syntax);Assert.True(selected.Success,string.Join(',',selected.Prepared.Diagnostics.Select(d=>d.Code)));
             foreach(var backend in new[]{"lu","faer"})
             {
-                Analysis analysis=mode switch{"dc"=>new OperatingPoint(),"ac"=>new Ac([100],ac.ToArray()),_=>new TransientConfigured(new(.001,.0001,100,Sources:[new("drive",new Pwl([new(0,0),new(.001,1)]))]))};
-                var request=new SimulationRequest("affine-b-"+mode,new(nodes.ToArray(),elements.ToArray()),analysis,backend);
+                var request=selected.Prepared.Request! with{Backend=backend,CaseId="affine-b-"+mode};
+                if(mode=="ac")request=request with{Analysis=new Ac([100],selected.Prepared.AcSources.ToArray())};
+                if(mode=="tran"){
+                    var transient=TransientSelection.Prepare(syntax,.001,.0001,100,backend:backend);
+                    Assert.True(transient.Success,string.Join(',',transient.Prepared.Diagnostics.Select(d=>d.Code)));request=transient.Prepared.Request!;
+                }
                 await File.WriteAllTextAsync(Path.Combine(folder,mode+"-"+backend+".request.json"),JsonSerializer.Serialize(request,WireFormat.Options));
                 var response=await new SimulationClient(Environment.GetEnvironmentVariable("SPICE_CORPUS_ENGINE")!).RunAsync(request);
                 await File.WriteAllTextAsync(Path.Combine(folder,mode+"-"+backend+".response.json"),response.Payload.ToString());Assert.True(response.Succeeded,response.Payload.ToString());
-                var manifest=response.ReadManifest();var index=Array.FindIndex(manifest.Signals,s=>s.Id=="v(out)");Assert.True(index>=0);
+                var manifest=response.ReadManifest();var index=Array.FindIndex(manifest.Signals,s=>s.Id=="v("+selected.Prepared.RootNodes["out"]+")");Assert.True(index>=0);
                 if(mode=="ac")
                 {
                     var actual=Assert.Single(manifest.AcSamples).Values[index];Assert.InRange(Math.Abs(actual.Real-native[0][1]),0,1e-9);Assert.InRange(Math.Abs(actual.Imag-native[0][2]),0,1e-9);

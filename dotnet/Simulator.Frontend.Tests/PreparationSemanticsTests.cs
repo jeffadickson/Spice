@@ -6,6 +6,17 @@ namespace Simulator.Frontend.Tests;
 /// <summary>Generated preparation contracts with independently established SPICE conventions.</summary>
 public sealed class PreparationSemanticsTests
 {
+    [Theory]
+    [InlineData("V=2*v(in)+.25")]
+    [InlineData("I=1m*v(in)+2m")]
+    [InlineData("V=1.25")]
+    public void Affine_behavior_uses_existing_elements_and_explicit_zero_AC_offsets(string expression)
+    {
+        var result=Prepare("V1 in 0 DC 2 AC 1\nB1 out 0 "+expression+"\nR1 out 0 1k");
+        Assert.True(result.Success,string.Join(',',result.Prepared.Diagnostics.Select(d=>d.Code)));
+        Assert.Equal(new[]{"in","out"},result.Prepared.RootNodes.Keys.Order().ToArray());
+        Assert.Contains(result.Prepared.AcSources,s=>s.Real==0&&s.Imag==0);
+    }
     private static SelectedOperatingPoint Prepare(string body)=>OperatingPointSelection.Select(DeckParser.Parse("Preparation\n"+body+"\n.end\n",collectDeclarations:true));
     [Fact]
     public void Current_controls_resolve_forward_voltage_branches_with_signed_SI_values()

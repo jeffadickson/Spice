@@ -47,6 +47,11 @@ public static class CircuitReadiness
                 {
                     if(OperatingPointSelection.OmissionReason(card)!=null||card.Kind=="extension")continue;
                     if(card.Kind is "passive" or "source" or "vcontrol" or "icontrol" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard")continue;
+                    if(card.Kind=="behavior"&&catalog.BehavioralSources.FirstOrDefault(i=>i.Range==card.Range) is {} behavior)
+                    {
+                        if(!behavior.Supported)AddIssue(new("behavior_contract","unsupported_behavior_header",card.Kind,scope,path,card.Range));
+                        continue;
+                    }
                     if(card.Kind=="xspice"&&catalog.XspiceInstances.FirstOrDefault(i=>i.Range==card.Range) is {} xi&&catalog.Lookup(DeclarationKind.Model,xi.Model.Text,scope) is {Status:NameLookupStatus.Found,Provisional:false} lookup&&lookup.Candidates.Single().ModelFamily=="gain"){
                         // Structural analog-gain recognition is distinct from
                         // full parameter/port admission, reported by preparation.
