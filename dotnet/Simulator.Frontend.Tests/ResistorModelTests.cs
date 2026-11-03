@@ -42,6 +42,8 @@ public sealed class ResistorModelTests
     [InlineData("R1 a 0 rm L=2u W=1u M=1",".model rm R(RSH=100)")]
     [InlineData("R1 a 0 rm L=2u W=1u W=2u",".model rm R(RSH=100)")]
     [InlineData("R1 a 0 rm L=2u W=1u TC1=0",".model rm R(RSH=100)")]
+    [InlineData("R1 a 0 rm L=1e-160 W=1e-160",".model rm R(RSH=1e-100)")]
+    [InlineData("R1 a 0 rm L=1e-200 W=1e-200",".model rm R(RSH=100)")]
     [InlineData("R1 a 0 rm L=1e308 W=1e-308",".model rm R(RSH=100)")]
     public void Unsupported_parameters_geometry_binding_and_physics_refuse_atomically(string card,string model)
     {var result=Prepare(card,model);Assert.False(result.Success);Assert.Null(result.Resistor);Assert.NotEmpty(result.Diagnostics);}

@@ -28,5 +28,5 @@ for context and remains untouched. Parent owns bridge integration.
       geometry boundaries, declaration scope and actual instance overrides.
 - [x] Compare original 500/600/1200-ohm R/model cards with ngspice and existing
       typed elements for OP, complex AC and transient on both providers.
-- [ ] Complete frozen lexical model census, coverage, bounded mutations,
+- [x] Complete frozen lexical model census, coverage, bounded mutations,
       full regression, real StrictDoc and evidence before final handoff.

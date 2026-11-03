@@ -72,6 +72,9 @@ public static class ResistorModelLowering
             geometry.Add(name,number);
         }
         if(!geometry.TryGetValue("l",out var length)||!geometry.TryGetValue("w",out var width)||length<=0||width<=0)return Fail("invalid_resistor_geometry");
+        // Preserve native branch selection: an underflowed L*W*RSH would
+        // select its 1 mOhm fallback, which this explicit sheet profile refuses.
+        if(length*width*sheet<=0)return Fail("unsupported_resistor_geometry_underflow");
         // ngspice subtracts both etched edges. Finite negative reductions are
         // permitted, but neither effective dimension may vanish or reverse.
         var effectiveLength=length-2*values.GetValueOrDefault("short");var effectiveWidth=width-2*values.GetValueOrDefault("narrow");
