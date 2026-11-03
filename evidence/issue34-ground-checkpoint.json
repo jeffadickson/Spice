@@ -1,0 +1,657 @@
+{
+  "state": "finite_ground_checkpoint",
+  "base_commit": "d1e46f1d569e160fcce0a7ca7a959f42972693e2",
+  "source_dirty_during_verification": true,
+  "source_hashes": {
+    "dotnet/Simulator.Frontend.Tests/GroundAliasNativeTests.cs": "29ef0e01234790ae805a5234f13a5a4b6ec7590d73f2e68b7a4b9cf27ad96643",
+    "scripts/Probe-NativeTimeGrid.cs": "bcbab6185be1eeef70917a7bb3cfcfcf8fd1bc0aefa958e27e75cc8df70cabd6",
+    "dotnet/Simulator.RequestedQualification/RequestedCorpus.cs": "4eedc7d4642cb56192ea5802698ce788453977b0a978b3712cee977469ae19ba",
+    "dotnet/Simulator.Frontend.Tests/GroundAliasTests.cs": "3b88f4a384e8412c63a4b200c7fe11e9d2e73e011bfcbfdcf1e51bc712faaf1c",
+    "dotnet/Simulator.Frontend.Tests/PreparationSemanticsTests.cs": "57759349251ab1b660af379a563d1400aa3156443f80d64337a0ab33a8a6af7a",
+    "dotnet/Simulator.Frontend/GroundAliasPolicy.cs": "9d9a02a475de0a60e13c6e5ffa92839dab40b2b1e494b236f8695ed90bc6c185",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "10fbc0295d70f31ce80e8cb09aa7efd3a1b25749f0c6db46779707bc3ea8bd4d",
+    "examples/GroundPolicy.cs": "9dddf96228a3d59d29b966b71087d59e33bb9251723f9d57e263e52dbd39f8b2",
+    "dotnet/Simulator.Frontend/GroundBinding.cs": "bbeaa2a7cc80eceac70a35146df8a0f6e92e973c723458d87e4725e947622c9c"
+  },
+  "issue": "https://github.com/jeffadickson/Spice/issues/34",
+  "raw_artifact_root": "E:\\Artifacts\\Spice-issue34-20261103T195804Z",
+  "regression": {
+    "passed": 498,
+    "failed": 0,
+    "skipped": 20,
+    "focused_passed": 53,
+    "property_framework": "FsCheck.Xunit3.5.0",
+    "property_cases": 200,
+    "replay": "363,20261103",
+    "log_sha256": "916bc0dd2b9c7add4b935e782ae2a68a9c561f708c268d1e0627300bf0b0d68e"
+  },
+  "native_ground": [
+    {
+      "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909",
+      "provenance": {
+        "backend": "lu",
+        "scenarios": 21,
+        "engine_sha256": "42835c20d6ee316cb88b656849e0f5a6b18272d89fedc2ca62420c7a206caaab",
+        "native_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f"
+      },
+      "comparisons": [
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\root\\comparison.json",
+          "sha256": "bea467f47ca559f4f57190cfb96a730d54b7148d4c8e3f21ea9d77afd07b971a",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\formal-default\\comparison.json",
+          "sha256": "c5384e3b75da231b6431b8ba57d7852d84a1c77a35f2e5a58a38fd014b3922a2",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\formal-ps\\comparison.json",
+          "sha256": "923b4cd8a75af6933ced2dfd85a5285b61c070f04a9f530c2304cf1c4f6a9a4e",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\formal-disabled\\comparison.json",
+          "sha256": "07356e2317561d400e36201377ba033c70423c3522db13ac91de10a5428bb195",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\switch-auto\\comparison.json",
+          "sha256": "7762b009665dc330e5b787c95901a89fdcd3e662ab402e2073cd34fb87e95701",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\switch-disabled\\comparison.json",
+          "sha256": "54c681381b4ed728958f94e8226e6e39e2183d04d0f1544d47f1301e667f802c",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\header-name\\comparison.json",
+          "sha256": "a2399f14a553a04078817d8ac264cfebf09e60d8d0b8263edb62667a5b91f843",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\header-parameter\\comparison.json",
+          "sha256": "1ee5531cab29ecf46b3dff86d681c464b598187e86d55c3375bd5c5c7132d060",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\formal-zero\\comparison.json",
+          "sha256": "70c063b8d20a396a0fdad059bbaf09b770c1202fc50986dc2a2ab61509d98e13",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\root-disabled\\comparison.json",
+          "sha256": "3be17ca0dc6f5669eaaad954d66c6408b0e7db7b6a7d8027bdb29e6eebda6364",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\global-disabled\\comparison.json",
+          "sha256": "2438e56fd762f6906b94b5986250d242c5783b8584aaf52b1e19a81dc11248f6",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\behavior\\comparison.json",
+          "sha256": "343c3f4845ff128dead65dbfa765089c2256db9a8c4780b9e515da32f58d77e2",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\e-zero\\comparison.json",
+          "sha256": "f6ffc466c8cb77adb893812e6a4ff2025313d1d201b8c65fecf48e4703a12120",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\g-zero\\comparison.json",
+          "sha256": "c044c73ce5fa2b82a47b7d8632b4d2c9a2d30900458eb0bf7ef2478b9a5c4f6a",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\gain-zero\\comparison.json",
+          "sha256": "b797c09b39dc7bc9bed6286e328668e0db0fc333062a767bd2034e99f98f5472",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\summer-zero\\comparison.json",
+          "sha256": "52c1bb36e8a365420e3854e63e9957154aaa64fd261c025e83d8b73601ee6645",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\ac-e-zero\\comparison.json",
+          "sha256": "cf8464ce49090ceaf6fd6739de40dc983384945acdda4ffe97312404cd6b8b51",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\ac-g-zero\\comparison.json",
+          "sha256": "e95770c2e9dc51e8525c7a06003818f25f452fa372a757850697b23e860f0954",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\ac-gain-zero\\comparison.json",
+          "sha256": "95f4bfca565e40ddec00c69ddf1190195337c44684d73fd2696d3226ec996b82",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\ac-summer-zero\\comparison.json",
+          "sha256": "e7acb46e147c8a34df1a1388c19c546e35d3ab192b8a7ac3bef6dc24d3766e50",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-lu-f763c9cadbed4a5fba34c31dcb587909\\exact-name\\comparison.json",
+          "sha256": "2e0b48996b5cda9ce716e54e7242b4cd7828fb060767ba9d949e0b8b98a436ed",
+          "agreed": true
+        }
+      ]
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74",
+      "provenance": {
+        "backend": "faer",
+        "scenarios": 21,
+        "engine_sha256": "42835c20d6ee316cb88b656849e0f5a6b18272d89fedc2ca62420c7a206caaab",
+        "native_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f"
+      },
+      "comparisons": [
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\root\\comparison.json",
+          "sha256": "905b6cf33a93762afcbf1b3615c9ec0d7ce7d7eb019f13095daa7f8d502d7d40",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\formal-default\\comparison.json",
+          "sha256": "1ec41edba36ac4864c22625886c93e5282cbe962d72aa6ccccf301a0da122047",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\formal-ps\\comparison.json",
+          "sha256": "c4b6b49736ce69596990850c994b8501dcd0dac0c2ed785fd186da79e9cf664d",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\formal-disabled\\comparison.json",
+          "sha256": "c3e2a8ef2dcbca6ee1149b6a30b4a595e77734f4615bc35cf99ff4b5b5729eae",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\switch-auto\\comparison.json",
+          "sha256": "6132f1c6a86ab9e86dca73e4e23503b47b58bdd095cfa26f3595120e1958650a",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\switch-disabled\\comparison.json",
+          "sha256": "33699db7f30e20edd80a888c38cc8973c840f41defd58dc937706f22995d93b9",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\header-name\\comparison.json",
+          "sha256": "85dce4de0cb682bfaa66e057ea51de8396ea9aa20b954724714519829634f924",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\header-parameter\\comparison.json",
+          "sha256": "9d44570e6de0554c0531d9b79361fbd66b63ca109eb674b869bf6afd07752d43",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\formal-zero\\comparison.json",
+          "sha256": "4859005de45388c7d15f849f2471bb9a5f442f071c16b6e2de78cf44c992e76b",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\root-disabled\\comparison.json",
+          "sha256": "c4842914c7bf910b7f332b65a72eea4920ed8610ca721fcea53b26255476c87b",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\global-disabled\\comparison.json",
+          "sha256": "1d9ae6bee26a20151e45b7cfcb4addb623a24cb8f3a4422d1f2b7b0d22b80c9d",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\behavior\\comparison.json",
+          "sha256": "b80bafc0cce0193e415296cc2039774f56471fc4ca52b76072aea35922fb9416",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\e-zero\\comparison.json",
+          "sha256": "7fb05f931c92114ffd92e6b1a4d5d8b5aa544297b6448a26b645e672c86f5719",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\g-zero\\comparison.json",
+          "sha256": "1f716cb0a3fc99ce69279df4582a6c17bb5553a114c31bc67f94aa0946a64af5",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\gain-zero\\comparison.json",
+          "sha256": "812bad21a08948e8e58ae145dccafeb66ca4a6c820a6a907793fd8206c5aa816",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\summer-zero\\comparison.json",
+          "sha256": "d60bc4920d8341a1a1bc4003085a64dba992bc356f32e39701ed17c3efa92583",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\ac-e-zero\\comparison.json",
+          "sha256": "23984df34be5ccca1b9dc0a5abdfcf2d98e1eec17f7199a07949942964d70bad",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\ac-g-zero\\comparison.json",
+          "sha256": "c40cce95cad76d3468f38c50fda0d1929268051465b8f233e7849a134d20c6d9",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\ac-gain-zero\\comparison.json",
+          "sha256": "0af1550b196e3d9b44f4d446020f27e71d3d60120225ff64e86e387a8f0867e3",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\ac-summer-zero\\comparison.json",
+          "sha256": "a446f64beb61a413b215e26e7f6734d9efe8860cb3cc92ccf03230ec80fb3526",
+          "agreed": true
+        },
+        {
+          "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-native-faer-b0c23297082a43829212c92b260c3e74\\exact-name\\comparison.json",
+          "sha256": "201439ba287686a2ea708a4b7f04dc543275288db7452b079c9c59c6f3c5679f",
+          "agreed": true
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "collector": "Coverlet10.1.0",
+    "metrics": [
+      {
+        "file": "dotnet/Simulator.Frontend/GroundBinding.cs",
+        "source_sha256": "bbeaa2a7cc80eceac70a35146df8a0f6e92e973c723458d87e4725e947622c9c",
+        "lines": 37,
+        "covered_lines": 37,
+        "branches": 80,
+        "covered_branches": 77
+      },
+      {
+        "file": "dotnet/Simulator.Frontend/OperatingPointBridge.cs",
+        "source_sha256": "10fbc0295d70f31ce80e8cb09aa7efd3a1b25749f0c6db46779707bc3ea8bd4d",
+        "lines": 72,
+        "covered_lines": 72,
+        "branches": 94,
+        "covered_branches": 88
+      }
+    ],
+    "limits": [
+      "Collector-mapped source only. Captured OperatingPointBridge emitter functions are not all represented;72 mapped lines are not the whole emitter.",
+      "No new Rust line/branch coverage; reused qualified executable, no numerical core code changed in ground checkpoint.",
+      "PowerShell and unexecuted prerequisite/platform paths unmeasured."
+    ]
+  },
+  "mutations": {
+    "tool": "Stryker.NET5.0.0",
+    "selected_file": "GroundBinding.cs",
+    "selected_candidates": 90,
+    "outcomes": [
+      {
+        "status": "CompileError",
+        "Count": 3
+      },
+      {
+        "status": "Ignored",
+        "Count": 7
+      },
+      {
+        "status": "Killed",
+        "Count": 76
+      },
+      {
+        "status": "NoCoverage",
+        "Count": 1
+      },
+      {
+        "status": "Survived",
+        "Count": 3
+      }
+    ],
+    "remaining": [
+      {
+        "id": "592",
+        "status": "NoCoverage",
+        "mutatorName": "Statement mutation",
+        "replacement": ";",
+        "location": {
+          "start": {
+            "line": 40,
+            "column": 99
+          },
+          "end": {
+            "line": 40,
+            "column": 108
+          }
+        },
+        "statusReason": "Not covered by any test."
+      },
+      {
+        "id": "605",
+        "status": "Survived",
+        "mutatorName": "Logical mutation",
+        "replacement": "offset<=0&&end>=text.Length",
+        "location": {
+          "start": {
+            "line": 48,
+            "column": 20
+          },
+          "end": {
+            "line": 48,
+            "column": 47
+          }
+        },
+        "statusReason": null
+      },
+      {
+        "id": "607",
+        "status": "Survived",
+        "mutatorName": "Equality mutation",
+        "replacement": "offset<0",
+        "location": {
+          "start": {
+            "line": 48,
+            "column": 20
+          },
+          "end": {
+            "line": 48,
+            "column": 29
+          }
+        },
+        "statusReason": null
+      },
+      {
+        "id": "609",
+        "status": "Survived",
+        "mutatorName": "Equality mutation",
+        "replacement": "end>text.Length",
+        "location": {
+          "start": {
+            "line": 48,
+            "column": 31
+          },
+          "end": {
+            "line": 48,
+            "column": 47
+          }
+        },
+        "statusReason": null
+      },
+      {
+        "id": "615",
+        "status": "CompileError",
+        "mutatorName": "Logical mutation",
+        "replacement": "'(' and ','",
+        "location": {
+          "start": {
+            "line": 48,
+            "column": 92
+          },
+          "end": {
+            "line": 48,
+            "column": 102
+          }
+        },
+        "statusReason": "Mutant caused compile errors"
+      },
+      {
+        "id": "619",
+        "status": "CompileError",
+        "mutatorName": "Logical mutation",
+        "replacement": "')' and ','",
+        "location": {
+          "start": {
+            "line": 49,
+            "column": 54
+          },
+          "end": {
+            "line": 49,
+            "column": 64
+          }
+        },
+        "statusReason": "Mutant caused compile errors"
+      },
+      {
+        "id": "622",
+        "status": "CompileError",
+        "mutatorName": "Logical mutation",
+        "replacement": "' ' or '\\t' or '\\r' or '\\n' or '\\v' and '\\f'",
+        "location": {
+          "start": {
+            "line": 55,
+            "column": 45
+          },
+          "end": {
+            "line": 55,
+            "column": 88
+          }
+        },
+        "statusReason": "Mutant caused compile errors"
+      }
+    ],
+    "scope": "Other generated frontend mutants were filtered or compiler-invalid; this is not product-wide qualification.",
+    "report_sha256": "706954d7b8d47f08c83b4185a3397ca39ae05f1c4c578f239592a1ec62345179"
+  },
+  "example": {
+    "source": "examples/GroundPolicy.cs",
+    "output": {
+      "ground_policy": "Disabled",
+      "output_volts": 3,
+      "reference_volts": 2
+    }
+  },
+  "native_sampling_probe": {
+    "source": "scripts/Probe-NativeTimeGrid.cs",
+    "result": {
+      "state": "finite_probe_passed",
+      "native_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+      "rows": [
+        {
+          "clock": false,
+          "native_points": 208,
+          "requested_points": 201,
+          "missing_exact_points": 199,
+          "maximum_sine_error_volts": 0.0003978907140934629,
+          "input_sha256": "36afb4be830ba0e82cd46c139c6c8c0fab5563f5ce23c51cad324cfdb305e9b8",
+          "raw_sha256": "8c794c9bc069a4b265ac0982ea2c7e529e3be280679d840fb97cf7bd05522099"
+        },
+        {
+          "clock": true,
+          "native_points": 1004,
+          "requested_points": 201,
+          "missing_exact_points": 0,
+          "maximum_sine_error_volts": 3.497202527569243E-15,
+          "input_sha256": "56c7ddd8c23e8cce547a672991caba7a505680a5b065a4bba59309ab69b4e50c",
+          "raw_sha256": "d11c9c87a736617c072aec13b76a4c496367484650a0dc71ea16a868ba9b1b3a"
+        }
+      ],
+      "limits": [
+        "Single analytical memoryless sine fixture; not arbitrary waveform/model or production-oracle qualification.",
+        "Any future projection must prove auxiliary-node isolation, preserve original analysis settings, retain instrumentation and reject unavailable exact-grid coverage."
+      ]
+    },
+    "coverage": {
+      "tool": "dotnet-coverage 18.12",
+      "collector_sha256": "26c887c42e783031cbf14be25688cf0eb8b24f6f6da7e625d53618d8c63aeb87",
+      "metrics": [
+        {
+          "file": "scripts/Probe-NativeTimeGrid.cs",
+          "source_sha256": "bcbab6185be1eeef70917a7bb3cfcfcf8fd1bc0aefa958e27e75cc8df70cabd6",
+          "lines": 46,
+          "covered_lines": 46,
+          "line_percent": 100,
+          "branches": 60,
+          "covered_branches": 41,
+          "branch_percent": 68.33333333333333
+        }
+      ],
+      "limitations": [
+        "Scoped managed tooling execution; synthetic fixture counts are not simulator qualification.",
+        "Per-line maxima for duplicate branch mappings; not complete path coverage.",
+        "PowerShell, native children, vendor internals and unexecuted platform/failure paths are unmeasured."
+      ]
+    },
+    "production_oracle_changed": false
+  },
+  "bjt_current_diagnosis": {
+    "path": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\bjt-current-diagnosis\\diagnosis.json",
+    "sha256": "f1dc9755a8f27f7b663780a001875fa2058e537542f1c470a58d1191091f56a2",
+    "conclusion": "Source continuation recovers initial OP; LU later refuses strict componentwise refinement; faer warm200steps completes. No native waveform agreement claimed."
+  },
+  "requirements": {
+    "status": "passed",
+    "parser": {
+      "strictdoc_version": "0.30.4",
+      "documents": 49
+    },
+    "unique_ids": 404,
+    "parent_relations": 379,
+    "source_hashes": {
+      "docs/affine-behavior.sdoc": "cf80c839cb0f033f1deb4ce03e1dc5c318d7ca9ca7b737a263a16b64c6f8f4e8",
+      "docs/architecture.sdoc": "6a68cbef7671e9db51c07a4ef31cda2350fbccbba17ce060106d40674d8683d2",
+      "docs/behavior-xspice-gain.sdoc": "6b940c37dc04bfbcb0ce9be91f8aadf69956013f2f59064544887ab089f433ae",
+      "docs/bjt-corpus-initialization.sdoc": "7452f4286e92629d430d37adced4fdf48d79b365c456c1b4816882a810c6f447",
+      "docs/bjt-profile.sdoc": "d3d4e00d09a93f8c9d69234bc3289cd4fc37ecd7454cd6aec1dbe5feddc9b451",
+      "docs/capability-inventory.sdoc": "6d9253abacfb057f43356095a67b1b2ca0adc6fb1d3d2f82d7385eb9fcea22ab",
+      "docs/charged-junction-convergence.sdoc": "1af268ad4c2a978896703186c62a5506c656ac4ff2257706d770d32b85869b76",
+      "docs/common-preparation.sdoc": "df51c6d7c690a994cd60c0ac38734042af1de6490aa4598e0b1df4b15498624e",
+      "docs/complex-refinement.sdoc": "c4c9f8f025474b3f0e56d93980d7b7c15e7aa754f7e7f8901382eb603419f1ad",
+      "docs/consistency.sdoc": "e238fc0e721048041db4de7a7f3fb545ea741adda7ffbd55052e627f02600693",
+      "docs/current-control-wire.sdoc": "9b0a2f3608c94823527f7fc411c2136feeacaefc244591962fd79538c63c161a",
+      "docs/declaration-catalog.sdoc": "e8c62b8ff3d1e48050244b871f8d8630cfbfb5c99839d86c38e59b01e2cbb228",
+      "docs/development-standards.sdoc": "1eae2a53a972c6967c99e07b99c7d83d34ce0bc8e284682403b44404b735109c",
+      "docs/fourth-slice.sdoc": "9532a1ff533bd48bf2b712ef8bf35a0618c63bfc95d49aa2ea958d024c0e8349",
+      "docs/fragment-terminators.sdoc": "faa2842f6b05431fd0718e2f7371220feecc61e59ca5b3627f20f41b25b98c88",
+      "docs/framework-physical-paths.sdoc": "c3582a4521605572c69ee4fb49fe56db57dc073b68053648f6a72b25cc27ce68",
+      "docs/gain-grid-diagnosis.sdoc": "a99137f15a3b19e335faddf45e0b54776ae1724f31e70f3ee3dc926df9f2691f",
+      "docs/ground-alias-admission.sdoc": "17b9cb7cdc72e508868a671224a546d376926fa5785230492a601cae5ba3e0dd",
+      "docs/implementation-plan.sdoc": "ccc83c8679fd0548b57c16cb29be42dcf9a60f6200cb9537a51b78cad8ce55c0",
+      "docs/lu-refinement.sdoc": "f74ef458117ab6149aa98190916f5ffac75ce424df5802c98d13dffcde6b0d09",
+      "docs/model-charge-profile.sdoc": "b859f3f37d560c4f653579f1c58ca709c56dc8b80c7e54e2ddc91221eeab9d55",
+      "docs/modern-dsl-proposal.sdoc": "0b05b04e68f5cf5fd52cc71fe953949418a8695f72661fb97c4414de86cedfcf",
+      "docs/modulated-sources.sdoc": "095ee195b4f67848cb468402ffdb6f98aa8fa995a211051579cfb1429a5a4e58",
+      "docs/mos1-profile.sdoc": "89b8cda0fd4b70a726545ae538710098698df34b38e3a9bfcb9c6a21e88a2939",
+      "docs/newton-merit-20261103.sdoc": "b7853a15a8da5dbb357692d371dc3613c61983a228a9bcf4c878218f8aa21246",
+      "docs/ngspice-compatibility.sdoc": "6f49ea821f5c79fdb64f885842a0a54c834fdc8fbe7dad0d35a9e02b5b8f2db0",
+      "docs/original-observables.sdoc": "1dbb028e7cb04c6067fdc316801eaff53659314e96be39ad74c3a452f84c3f33",
+      "docs/overnight-survivors-20261103.sdoc": "2c5fe89ecde0523d8bc62004c5084b49ff275a3c1c66357e7301fee0dc7458f9",
+      "docs/parser-framework-trial.sdoc": "161ebe8e30f6774f296e4ccaec05d75f29f98d45b3a43396ec75bfa079d40846",
+      "docs/parser-only.sdoc": "7fb3866e38f38bb351007c2dfe720a455c1b3f769372fddec7c6253c5c75a6dc",
+      "docs/prototype-contracts.sdoc": "797510755a63f58085daada535b9b183440ab70ddbe1ff53d91fdefa45b7d32a",
+      "docs/requested-analysis.sdoc": "3b2d5228ea22319bcefed8a5c9d1539198040f584bd2dae02c2d6278e14ee815",
+      "docs/requested-control-profile.sdoc": "4bf2bebee8e9de5ccc04adc3879291d61d89c3282db95d8b8312386e636f47d6",
+      "docs/requested-corpus-qualification.sdoc": "a967f97a6de2bb4a5c4fb814adf66c3e83885b770fcb3d7cdc23313d4f56a3e9",
+      "docs/requested-deck-runner.sdoc": "f80c060bd973315cfcb73bf2fe1ca2a8172fb898c025c5c68e1b731c3ea34981",
+      "docs/requested-initial-conditions.sdoc": "eeb6eb7b6019eacb351121d071b168dd6528c32bdd4f82247b973ee38dfb617c",
+      "docs/resistor-model.sdoc": "eaff434960584c1e38536f6fbd2b6c4d4eee5596d8530127f57346ca67b8c229",
+      "docs/reuse-assessment.sdoc": "ccb94a43b0358aea3ff78455532c5ca48e11b2d4b252503a15895bf6424eb1b7",
+      "docs/second-slice-contracts.sdoc": "db30b5a26705f8a25ce753fe47242681d4cb6c37c625db7d501fe5301ad777d3",
+      "docs/second-slice.sdoc": "48666154d4833a5805c89e411c97da16e4f4bdb626a38453662a3adafdc90195",
+      "docs/semantic-elaboration.sdoc": "686ccca48fb8ed509bb072227f992ef44273e60be9f67b22897b9079a2a4b1f2",
+      "docs/semiconductor-profile.sdoc": "96740c37a83705dd49d4ade8739f83848826188c8303d00751c87de4c91cc859",
+      "docs/sforge-language.sdoc": "d0e0691ad306e40a7575b17811effd0c940e0164d098c66136a5e67aad416748",
+      "docs/simulation-bridge.sdoc": "c4413c89cb3592e847a9e1a6e529439ffeaeb9b994b71eb0e77a1264dcebf7bf",
+      "docs/sparse-qualification.sdoc": "ed3787d1d8162315836d1a05fc2a83fea0da73d4f848e179243ec4035050c7c9",
+      "docs/stop-grid-poc.sdoc": "fa8f62706029f2fad28fe6c854d0cc596217809597e2fa61d5e53f9bc263a766",
+      "docs/switch-globalization-oracle.sdoc": "3090a1577342ed0ac3f40f34685536be421dfcebaf72033534aec2bb30cfad3c",
+      "docs/third-slice.sdoc": "4831631874a90d0e5a7e7849d7bc027e0e2ddf096b11f7fe48a829fe5c7bda3a",
+      "docs/xspice-summer.sdoc": "29496e092654aab88da12ad67f6059efa5e0cddc27c12fbc7450e8aa3a109ccc"
+    },
+    "helper_sha256": "3917facf81da105c2a17447d9f37bf25d8f40750fab8ac8a8986ee6a006675f7",
+    "limitations": [
+      "Grammar, unique IDs and resolved parents only; not requirement acceptance or behavioral closure.",
+      "Python is required by real StrictDoc; the orchestration helper executed managed, not NativeAOT."
+    ]
+  },
+  "limitations": [
+    "Original four affected corpus inputs have not yet been replayed on a committed ground checkpoint. Full928 counts remain historical.",
+    "Ground policy scope is bounded; nested protected/global and bracket-adjacent normalization contexts remain refusals.",
+    "The auxiliary native clock is an analytical experiment only; no historical disagreement reclassified.",
+    "No Linux/GPU/SpiceSharp/production claim and no CI dispatch."
+  ],
+  "sphinx": {
+    "status": "built_with_warnings_as_errors",
+    "tool": "sphinx-build 9.1.0",
+    "python": "Python 3.13.15",
+    "xml_member_entries": 916,
+    "api_xml_sha256": {
+      "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\engineering-ground\\managed\\bin\\Simulator.Client\\debug\\Simulator.Client.xml": "61e097409770b35189245546c722b3aec323e18c2d98ba5fe8a3336282fe2b8c",
+      "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\ground-api.xml": "1bca992abf16f88643d3ab9d99e4d72d23d901cf008de42b0d49ef9db13bc3a4"
+    },
+    "source_hashes": {
+      "docs/engineering/conf.py": "fb73f89dd0546fe399755104a2776fafa00c838e75a5cdf643b3befe86c26902",
+      "docs/engineering/index.rst": "59832e12b059bc7e48502acea30e149fa0511105d45c8cbf0d1685cb91a0191a",
+      "docs/engineering/requirements.lock.txt": "a2358262c98ef4db1fb0d0a5b4de40989d4ad905bc96e067c2291378ed49a882",
+      "docs/engineering/requirements.txt": "63ca51d35996cb6982e47820d6ac7f19d875a9f0abec4ac38ae0dee92b580cd6",
+      "docs/engineering/scope.rst": "2f2b289c617d0fc8fd05346ef56b39bcd00bdcc623962c3c5e610bb5683cb6aa",
+      "docs/engineering/semantic.rst": "98448ac342108393d5ce2cb9579045509a1d0c249498b537c77beaa2bcbf73e8",
+      "docs/engineering/testing.rst": "15b7156aa6e17e6afab7caa3010066cab8e68908e990fc009243c0161a5cb422",
+      "docs/affine-behavior.sdoc": "cf80c839cb0f033f1deb4ce03e1dc5c318d7ca9ca7b737a263a16b64c6f8f4e8",
+      "docs/architecture.sdoc": "6a68cbef7671e9db51c07a4ef31cda2350fbccbba17ce060106d40674d8683d2",
+      "docs/behavior-xspice-gain.sdoc": "6b940c37dc04bfbcb0ce9be91f8aadf69956013f2f59064544887ab089f433ae",
+      "docs/bjt-corpus-initialization.sdoc": "7452f4286e92629d430d37adced4fdf48d79b365c456c1b4816882a810c6f447",
+      "docs/bjt-profile.sdoc": "d3d4e00d09a93f8c9d69234bc3289cd4fc37ecd7454cd6aec1dbe5feddc9b451",
+      "docs/capability-inventory.sdoc": "6d9253abacfb057f43356095a67b1b2ca0adc6fb1d3d2f82d7385eb9fcea22ab",
+      "docs/charged-junction-convergence.sdoc": "1af268ad4c2a978896703186c62a5506c656ac4ff2257706d770d32b85869b76",
+      "docs/common-preparation.sdoc": "df51c6d7c690a994cd60c0ac38734042af1de6490aa4598e0b1df4b15498624e",
+      "docs/complex-refinement.sdoc": "c4c9f8f025474b3f0e56d93980d7b7c15e7aa754f7e7f8901382eb603419f1ad",
+      "docs/consistency.sdoc": "e238fc0e721048041db4de7a7f3fb545ea741adda7ffbd55052e627f02600693",
+      "docs/current-control-wire.sdoc": "9b0a2f3608c94823527f7fc411c2136feeacaefc244591962fd79538c63c161a",
+      "docs/declaration-catalog.sdoc": "e8c62b8ff3d1e48050244b871f8d8630cfbfb5c99839d86c38e59b01e2cbb228",
+      "docs/development-standards.sdoc": "1eae2a53a972c6967c99e07b99c7d83d34ce0bc8e284682403b44404b735109c",
+      "docs/fourth-slice.sdoc": "9532a1ff533bd48bf2b712ef8bf35a0618c63bfc95d49aa2ea958d024c0e8349",
+      "docs/fragment-terminators.sdoc": "faa2842f6b05431fd0718e2f7371220feecc61e59ca5b3627f20f41b25b98c88",
+      "docs/framework-physical-paths.sdoc": "c3582a4521605572c69ee4fb49fe56db57dc073b68053648f6a72b25cc27ce68",
+      "docs/gain-grid-diagnosis.sdoc": "a99137f15a3b19e335faddf45e0b54776ae1724f31e70f3ee3dc926df9f2691f",
+      "docs/ground-alias-admission.sdoc": "17b9cb7cdc72e508868a671224a546d376926fa5785230492a601cae5ba3e0dd",
+      "docs/implementation-plan.sdoc": "ccc83c8679fd0548b57c16cb29be42dcf9a60f6200cb9537a51b78cad8ce55c0",
+      "docs/lu-refinement.sdoc": "f74ef458117ab6149aa98190916f5ffac75ce424df5802c98d13dffcde6b0d09",
+      "docs/model-charge-profile.sdoc": "b859f3f37d560c4f653579f1c58ca709c56dc8b80c7e54e2ddc91221eeab9d55",
+      "docs/modern-dsl-proposal.sdoc": "0b05b04e68f5cf5fd52cc71fe953949418a8695f72661fb97c4414de86cedfcf",
+      "docs/modulated-sources.sdoc": "095ee195b4f67848cb468402ffdb6f98aa8fa995a211051579cfb1429a5a4e58",
+      "docs/mos1-profile.sdoc": "89b8cda0fd4b70a726545ae538710098698df34b38e3a9bfcb9c6a21e88a2939",
+      "docs/newton-merit-20261103.sdoc": "b7853a15a8da5dbb357692d371dc3613c61983a228a9bcf4c878218f8aa21246",
+      "docs/ngspice-compatibility.sdoc": "6f49ea821f5c79fdb64f885842a0a54c834fdc8fbe7dad0d35a9e02b5b8f2db0",
+      "docs/original-observables.sdoc": "1dbb028e7cb04c6067fdc316801eaff53659314e96be39ad74c3a452f84c3f33",
+      "docs/overnight-survivors-20261103.sdoc": "2c5fe89ecde0523d8bc62004c5084b49ff275a3c1c66357e7301fee0dc7458f9",
+      "docs/parser-framework-trial.sdoc": "161ebe8e30f6774f296e4ccaec05d75f29f98d45b3a43396ec75bfa079d40846",
+      "docs/parser-only.sdoc": "7fb3866e38f38bb351007c2dfe720a455c1b3f769372fddec7c6253c5c75a6dc",
+      "docs/prototype-contracts.sdoc": "797510755a63f58085daada535b9b183440ab70ddbe1ff53d91fdefa45b7d32a",
+      "docs/requested-analysis.sdoc": "3b2d5228ea22319bcefed8a5c9d1539198040f584bd2dae02c2d6278e14ee815",
+      "docs/requested-control-profile.sdoc": "4bf2bebee8e9de5ccc04adc3879291d61d89c3282db95d8b8312386e636f47d6",
+      "docs/requested-corpus-qualification.sdoc": "a967f97a6de2bb4a5c4fb814adf66c3e83885b770fcb3d7cdc23313d4f56a3e9",
+      "docs/requested-deck-runner.sdoc": "f80c060bd973315cfcb73bf2fe1ca2a8172fb898c025c5c68e1b731c3ea34981",
+      "docs/requested-initial-conditions.sdoc": "eeb6eb7b6019eacb351121d071b168dd6528c32bdd4f82247b973ee38dfb617c",
+      "docs/resistor-model.sdoc": "eaff434960584c1e38536f6fbd2b6c4d4eee5596d8530127f57346ca67b8c229",
+      "docs/reuse-assessment.sdoc": "ccb94a43b0358aea3ff78455532c5ca48e11b2d4b252503a15895bf6424eb1b7",
+      "docs/second-slice-contracts.sdoc": "db30b5a26705f8a25ce753fe47242681d4cb6c37c625db7d501fe5301ad777d3",
+      "docs/second-slice.sdoc": "48666154d4833a5805c89e411c97da16e4f4bdb626a38453662a3adafdc90195",
+      "docs/semantic-elaboration.sdoc": "686ccca48fb8ed509bb072227f992ef44273e60be9f67b22897b9079a2a4b1f2",
+      "docs/semiconductor-profile.sdoc": "96740c37a83705dd49d4ade8739f83848826188c8303d00751c87de4c91cc859",
+      "docs/sforge-language.sdoc": "d0e0691ad306e40a7575b17811effd0c940e0164d098c66136a5e67aad416748",
+      "docs/simulation-bridge.sdoc": "c4413c89cb3592e847a9e1a6e529439ffeaeb9b994b71eb0e77a1264dcebf7bf",
+      "docs/sparse-qualification.sdoc": "ed3787d1d8162315836d1a05fc2a83fea0da73d4f848e179243ec4035050c7c9",
+      "docs/stop-grid-poc.sdoc": "fa8f62706029f2fad28fe6c854d0cc596217809597e2fa61d5e53f9bc263a766",
+      "docs/switch-globalization-oracle.sdoc": "3090a1577342ed0ac3f40f34685536be421dfcebaf72033534aec2bb30cfad3c",
+      "docs/third-slice.sdoc": "4831631874a90d0e5a7e7849d7bc027e0e2ddf096b11f7fe48a829fe5c7bda3a",
+      "docs/xspice-summer.sdoc": "29496e092654aab88da12ad67f6059efa5e0cddc27c12fbc7450e8aa3a109ccc",
+      "dotnet/Simulator.Client/Client.cs": "4af10aae7a41d438196f4ec28abe41bf4dcc3829e2f2f2b9eaac5164a2eb65ff",
+      "dotnet/Simulator.Client/Requests.cs": "548cd49690f38ad537f223341b6efe18a9fcbe7ebba8ab024caab302285c1158",
+      "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+      "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+      "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+      "E:/Artifacts/Spice-issue34-20261103T195804Z/engineering-ground/managed/bin/Simulator.Client/debug/Simulator.Client.xml": "61e097409770b35189245546c722b3aec323e18c2d98ba5fe8a3336282fe2b8c",
+      "scripts/EngineeringDocs.cs": "c5a6ffa5d68cdd46b3763b8144f4ea9b45d9438e91c01ba21d2d8bc05600ecdd",
+      "scripts/Setup-EngineeringDocs.ps1": "f31914cea4e93290bacead5b702239d45f73908a1ae98e8f2cf696fe81ff4a59"
+    },
+    "local_html": "E:\\Artifacts\\Spice-issue34-20261103T195804Z\\engineering-ground\\html\\index.html",
+    "limitations": [
+      "Compiled XML text projection, not a complete semantic API-compatibility proof.",
+      "StrictDoc parsing is a separate required gate.",
+      "Python is required by Sphinx; the C# helper executed managed, not NativeAOT."
+    ]
+  }
+}

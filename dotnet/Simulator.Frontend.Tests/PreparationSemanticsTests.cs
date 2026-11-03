@@ -11,13 +11,21 @@ public sealed class PreparationSemanticsTests
     [InlineData(".global GND\nV1 out GND 1\nR1 out GND 1k")]
     [InlineData("X1 out cell\n.subckt cell out\nV1 out GnD 1\nR1 out GnD 1k\n.ends")]
     [InlineData("V1 in 0 1\nB1 out 0 V=v(gnd)+v(in)\nR1 out 0 1k")]
-    public void Unqualified_active_ground_alias_refuses_instead_of_allocating_a_floating_node(string body)
+    public void Default_ground_alias_normalizes_without_allocating_a_floating_node(string body)
     {
         var result=Prepare(body);
-        Assert.False(result.Success);
-        Assert.Contains(result.Prepared.Diagnostics,d=>d.Code=="unsupported_ground_alias");
-        Assert.Null(result.Prepared.Request);
-        Assert.Empty(result.Prepared.RootNodes);
+        Assert.True(result.Success,string.Join(',',result.Prepared.Diagnostics.Select(d=>d.Code)));
+        Assert.NotNull(result.Prepared.Request);
+        Assert.DoesNotContain(result.Prepared.RootNodes.Keys,n=>n.Equals("gnd",StringComparison.OrdinalIgnoreCase));
+    }
+    [Fact]
+    public void Default_ground_formal_does_not_allocate_its_ignored_actual()
+    {
+        var result=Prepare("V1 in 0 3\nR1 out 0 1k\nX1 out not_used cell\n.subckt cell p gnd\nR2 p gnd 1k\n.ends");
+        Assert.True(result.Success,string.Join(',',result.Prepared.Diagnostics.Select(d=>d.Code)));
+        Assert.False(result.Prepared.RootNodes.ContainsKey("not_used"));
+        Assert.Equal(3,result.Prepared.Request!.Circuit.Nodes.Length);
+        Assert.Equal(0,result.Prepared.Request.Circuit.Elements.Last().N);
     }
     [Fact]
     public void Unused_ground_alias_declarations_and_bodies_do_not_change_a_valid_circuit()

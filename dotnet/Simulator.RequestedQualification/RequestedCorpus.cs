@@ -82,7 +82,8 @@ public static class RequestedCorpus
      if(watch.Elapsed.TotalSeconds>=seconds){result.Status="native_unattempted_budget";continue;}
      var projection=OriginalProjection.Create(expanded,syntax,operation,plan);result.Omissions=projection.Omissions.ToArray();result.NativeInstrumentation=projection.Instrumentation.ToArray();var nativePath=Path.Combine(operationFolder,"original-analysis.cir");await File.WriteAllTextAsync(nativePath,projection.Text);result.NativeProjectionSha256=Hash(nativePath);
      var rawPath=Path.Combine(operationFolder,"native.raw");var nativeArgs=new List<string>{"-n","-D","filetype=ascii"};
-     if(circuit.Request!.Circuit.Elements.Any(e=>e is PspiceSwitch)){nativeArgs.AddRange(["-D","ngbehavior=psa"]);result.NativeDialect="psa";}
+     if(circuit.GroundAliases==GroundAliasPolicy.Pspice||circuit.Request!.Circuit.Elements.Any(e=>e is PspiceSwitch)){nativeArgs.AddRange(["-D","ngbehavior=psa"]);result.NativeDialect="psa";}
+     if(circuit.GroundAliases==GroundAliasPolicy.Disabled){nativeArgs.AddRange(["-D","no_auto_gnd"]);result.NativeDialect+=";no_auto_gnd";}
      nativeArgs.Add("-b");if(!projection.RequiresControlWrite)nativeArgs.AddRange(["-r",rawPath]);nativeArgs.AddRange(["-o",Path.Combine(operationFolder,"native.log"),nativePath]);
      try{
       var native=await Child(ngspice,nativeArgs.ToArray(),operationFolder,null,"native");result.NativeExit=native.Exit;

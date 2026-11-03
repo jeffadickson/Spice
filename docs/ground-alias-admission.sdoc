@@ -4,12 +4,12 @@ TITLE: Ground Alias Admission Boundary
 [REQUIREMENT]
 UID: SEM-GROUND-ALIAS-001
 STATUS: Implemented
-TITLE: Refuse unqualified active ground aliases
+TITLE: Bind qualified ground aliases and refuse unqualified contexts
 STATEMENT: >>>
-Selected preparation shall refuse an active case-insensitive exact gnd node reference with unsupported_ground_alias until dialect-aware ground-alias normalization is qualified. It shall not allocate that alias as a floating unknown, fabricate a grounding source, publish a partial request or remove a failed observable merely to obtain agreement. Literal node zero remains ground. Unused bodies and declarations without an active reference shall remain inert.
+Selected preparation shall either bind active case-insensitive exact gnd node references under a qualified explicit policy or atomically refuse unqualified contexts with a structured unsupported_ground diagnostic. It shall not allocate an automatically grounded alias as a floating unknown, fabricate a grounding source, publish a partial request or remove a failed observable merely to obtain agreement. Literal node zero remains ground. Unused bodies and declarations without an active reference shall remain inert.
 <<<
 COMMENT: >>>
-The frozen f64edbd corpus admitted rc-meas-ac.sp and its mirror as floating circuits, while ngspice47+ normalized gnd to zero. This is a preparation defect, not only a missing RAW column. OperatingPointBridge.Node enforces the interim boundary; PreparationSemanticsTests exercise active root/global/nested/behavioral references and inactive declarations. The original frozen outcomes remain historical failures.
+The frozen f64edbd corpus incorrectly admitted rc-meas-ac.sp and its mirror as floating circuits. The fc5db25 census used the interim unsupported_ground_alias refusal. GroundAliasPolicy and OperatingPointBridge now normalize qualified references; PreparationSemanticsTests, GroundAliasTests and GroundAliasNativeTests cover supported and refused contexts. Historical frozen classifications remain unchanged. Issue34 execution evidence is retained separately.
 <<<
 
 [REQUIREMENT]
@@ -17,8 +17,22 @@ UID: SEM-GROUND-ALIAS-002
 STATUS: Draft
 TITLE: Qualify dialect-aware ground normalization
 STATEMENT: >>>
-Before admitting gnd aliases, preparation shall qualify default native ground normalization, global and subcircuit scope, formal-port exceptions, and explicit no-auto-ground behavior against original ngspice inputs. Ground aliases shall not become independently measured root unknowns. Unsupported options shall refuse rather than be silently masked.
+Before admitting gnd aliases, preparation shall qualify default native ground normalization, global and subcircuit scope, PSpice header exceptions, and explicit no-auto-ground behavior against original ngspice inputs. Automatically grounded aliases shall not become independently measured root unknowns; disabled normalization shall preserve ordinary node/port/global behavior. A grounded formal shall not allocate its ignored actual. Automatic mode shall use PSpice semantics when an active VSWITCH requires that compatibility mode. Unsupported options and unqualified nested, protected-global or delimiter contexts shall refuse rather than be silently masked.
 <<<
 COMMENT: >>>
-Open follow-up in corpus results issue29. Native inpcom.c calls inp_fix_gnd_name before elaboration unless no_auto_gnd is set, with a PSpice formal-port exception. No complete dialect policy is implemented by the interim refusal.
+Issue34 follow-up. Native inpcom.c inp_fix_gnd_name and search_plain_identifier were inspected; three initial native probes established default0V versus PSpice/no-auto1.5V in the same formal-ground divider. The bounded implementation reuses generated header/node/port metadata and the standard .NET nonbacktracking regex engine for the native header identifier-boundary predicate. Tight vector brackets, nested protected bodies and protected explicit global gnd contexts remain named refusals. GroundAliasNativeTests compare original OP/AC fixtures on LU/faer; full-corpus counts require a new frozen run. Status remains Draft pending final corpus/evidence reconciliation.
 <<<
+
+[REQUIREMENT]
+UID: SEM-GROUND-ALIAS-003
+STATUS: Draft
+TITLE: Exact zero control reductions preserve physical source contracts
+STATEMENT: >>>
+After ground and port binding, affine behavioral terms with reference-node voltage shall contribute exactly zero without allocating auxiliary unknowns. A zero differential control shall reduce to a zero voltage constraint for voltage output or a zero current for current output, preserving original observable branch identity where defined. Introduced independent sources shall carry explicit zero AC excitation. Source amplitudes, solver tolerances and unsupported nonlinear-expression refusals shall remain unchanged.
+<<<
+COMMENT: >>>
+Implementation: OperatingPointBridge.Controlled and bound affine-term filtering. Verification: zero-control RED regressions, independent current-driven E/G distinctions, native OP/AC gain/summer tests on both providers. This is exact algebraic reduction, not an approximate behavioral kernel or relaxed engine validation.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-GROUND-ALIAS-002

@@ -1,0 +1,11 @@
+{
+  "stryker-config": {
+    "project": "Simulator.Frontend.csproj",
+    "mutate": ["**/GroundBinding.cs"],
+    "test-case-filter": "FullyQualifiedName~GroundAlias|FullyQualifiedName~PreparationSemanticsTests|FullyQualifiedName~BridgeTests",
+    "reporters": ["json", "cleartext"],
+    "concurrency": 1,
+    "thresholds": {"high": 80, "low": 60, "break": 0},
+    "additional-timeout": 5000
+  }
+}

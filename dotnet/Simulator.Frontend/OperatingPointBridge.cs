@@ -3,7 +3,11 @@ using Simulator.Client;
 using Simulator.Syntax;
 namespace Simulator.Frontend;
 /// <summary>Expansion/output budgets, bounded by the existing Rust operating-point contract.</summary>
-public sealed record BridgeLimits(int MaxDepth=32,int MaxInstances=128,int MaxElements=1024,int MaxNodes=128);
+public sealed record BridgeLimits(int MaxDepth=32,int MaxInstances=128,int MaxElements=1024,int MaxNodes=128)
+{
+    /// <summary>Selected frontend dialect policy. Strict Lower retains its legacy literal-node contract.</summary>
+    public GroundAliasPolicy GroundAliases {get;init;}=GroundAliasPolicy.Automatic;
+}
 /// <summary>Capability/validation failure; ranges refer to the supplied syntax text.</summary>
 public sealed record BridgeDiagnostic(string Code,SourceRange? Range);
 /// <summary>Physical syntax and instance path for one uniquely named wire element.</summary>
@@ -15,6 +19,8 @@ public sealed record ElementOrigin(string WireId,string LocalName,ImmutableArray
 /// <summary>Atomic typed request preparation; this operation does not run a simulator.</summary>
 public sealed record BridgeResult(SimulationRequest? Request,ImmutableDictionary<string,string> RootNodes,ImmutableArray<ElementOrigin> Origins,ImmutableArray<BridgeDiagnostic> Diagnostics)
 {
+    /// <summary>Resolved selected policy, or Disabled for strict literal-node lowering. Oracle adapters must use the same native mode.</summary>
+    public GroundAliasPolicy GroundAliases {get;init;}=GroundAliasPolicy.Disabled;
     /// <summary>Explicit complex AC replacements for every active independent source, including zero for DC-only sources. DC bias remains in Request.Circuit.</summary>
     public ImmutableArray<AcSourcePhasor> AcSources { get; init; } = [];
     /// <summary>Number of active source headers with an explicitly declared AC amplitude.</summary>
@@ -40,6 +46,7 @@ public static class OperatingPointBridge
     {
         ArgumentNullException.ThrowIfNull(syntax);limits??=new();
         if(limits.MaxDepth<0||limits.MaxDepth>128||limits.MaxInstances<1||limits.MaxElements<1||limits.MaxElements>1024||limits.MaxNodes<1||limits.MaxNodes>128)throw new ArgumentOutOfRangeException(nameof(limits));
+        if(!Enum.IsDefined(limits.GroundAliases))throw new ArgumentOutOfRangeException(nameof(limits));
         BridgeResult Failure(string code,SourceRange? range)=>new(null,ImmutableDictionary.Create<string,string>(StringComparer.OrdinalIgnoreCase),[],[new(code,range)]);
         if(syntax.Status!="accepted_structure"||syntax.Declarations is not {} catalog)return Failure("syntax_not_accepted",null);
         if(backend is not ("lu" or "qr" or "faer"))return Failure("unsupported_backend",null);
@@ -54,6 +61,7 @@ public static class OperatingPointBridge
         var acSources=new List<AcSourcePhasor>();var explicitAcSources=0;var sourceWaveforms=new List<PreparedSourceWaveform>();
         var roots=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var bound=InstanceBinder.Bind(catalog).Instances.ToLookup(i=>i.Header.ScopeId);
+        GroundBinding? groundBinding=null;
         var primitives=catalog.Primitives.ToLookup(p=>p.ScopeId);var cards=catalog.Cards.ToLookup(c=>c.ScopeId);
         var globalNames=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var globalNodes=new Dictionary<string,int>(StringComparer.OrdinalIgnoreCase);
         var localNodes=new Dictionary<int,Dictionary<string,int>>();var active=new HashSet<int>();var frames=0;
@@ -61,11 +69,17 @@ public static class OperatingPointBridge
         if(!rootParameters.Success)return Failure(rootParameters.Diagnostics[0].Code,rootParameters.Diagnostics[0].Range);
         try
         {
-            if(selected)CollectGlobals(0,new(),0);
+            if(selected){
+                var reachable=new HashSet<int>();CollectGlobals(0,reachable,0);
+                var requiresPspice=reachable.Any(scope=>bound[scope].Any(c=>c.Status==BindingStatus.Bound&&c.Target?.ModelFamily=="vswitch"));
+                groundBinding=GroundBinding.Prepare(catalog,reachable,requiresPspice,limits.GroundAliases,out var groundFailure);
+                if(groundFailure!=null)throw new BridgeFailure(groundFailure.Code,groundFailure.Range);
+                if(groundBinding!.Policy!=GroundAliasPolicy.Disabled)globalNames.Remove("gnd");
+            }
             Expand(0,rootParameters,new(StringComparer.OrdinalIgnoreCase),[],0);
             if(elements.Count==0)throw new BridgeFailure("empty_circuit",null);
             return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),new OperatingPoint(),backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
-            {AcSources=acSources.ToImmutableArray(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray()};
+            {AcSources=acSources.ToImmutableArray(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
         }
         catch(BridgeFailure e){return Failure(e.Code,e.Range);}
         void CollectGlobals(int scope,HashSet<int> seen,int depth)
@@ -88,6 +102,8 @@ public static class OperatingPointBridge
             if(depth>limits.MaxDepth)throw new BridgeFailure("expansion_depth",catalog.Scopes[scope].Range);
             if(!active.Add(scope))throw new BridgeFailure("recursive_reference",catalog.Scopes[scope].Range);
             if(++frames>limits.MaxInstances)throw new BridgeFailure("instance_budget",catalog.Scopes[scope].Range);
+            var scopeFailure=selected?groundBinding!.CheckScope(scope):null;
+            if(scopeFailure!=null)throw new BridgeFailure(scopeFailure.Code,scopeFailure.Range);
             var frame=frames-1;var names=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             try
             {
@@ -156,8 +172,7 @@ public static class OperatingPointBridge
                     {
                         if(primitive.Control==null)throw new BridgeFailure("unsupported_control_profile",primitive.Range);
                         var cp=Node(primitive.Control.P.Text);var cn=Node(primitive.Control.N.Text);
-                        if(cp==cn)throw new BridgeFailure("shorted_control_profile",primitive.Range);
-                        elements.Add(primitive.Family=="E"?new Vcvs(id,p,n,cp,cn,value):new Vccs(id,p,n,cp,cn,value));
+                        elements.Add(Controlled(id,p,n,cp,cn,value,primitive.Family=="E"));
                     }
                     else elements.Add(primitive.Family switch{"R"=>new Resistor(id,p,n,value),"C"=>new Capacitor(id,p,n,value),"L"=>new Inductor(id,p,n,value),"V"=>new Voltage(id,p,n,value),_=>new Current(id,p,n,value)});
                     if(selected&&primitive.Family is ("V" or "I"))
@@ -173,6 +188,10 @@ public static class OperatingPointBridge
                 foreach(var instance in catalog.XspiceInstances.Where(i=>i.ScopeId==scope))
                 {
                     if(!selected)throw new BridgeFailure("unsupported_active_card",instance.Range);
+                    foreach(var port in instance.Ports.Where(p=>p.IsVector)){
+                        var vectorFailure=groundBinding!.CheckVector(port,scope);
+                        if(vectorFailure!=null)throw new BridgeFailure(vectorFailure.Code,vectorFailure.Range);
+                    }
                     if(!names.Add(instance.Name))throw new BridgeFailure("duplicate_element",instance.Range);
                     var modelLookup=catalog.Lookup(DeclarationKind.Model,instance.Model.Text,scope);
                     if(modelLookup is {Status:NameLookupStatus.Found,Provisional:false}&&modelLookup.Candidates.Single().ModelFamily?.Equals("summer",StringComparison.OrdinalIgnoreCase)==true)
@@ -189,7 +208,7 @@ public static class OperatingPointBridge
                             if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",sum.Range);
                             var next=nodes.Count;nodes.Add("n"+next.ToString(System.Globalization.CultureInfo.InvariantCulture));
                             var summerId="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                            elements.Add(new Vcvs(summerId,previous,next,controlP,controlN,input.Gain));
+                            elements.Add(Controlled(summerId,previous,next,controlP,controlN,input.Gain,true));
                             origins.Add(new(summerId,index==0?sum.Name:sum.Name+"$term"+index,path,sum.Range){NativeBranchName=index==0?sum.Name:null});
                             previous=next;index++;
                         }
@@ -205,7 +224,7 @@ public static class OperatingPointBridge
                     if(elements.Count+(gain.Offset==0?1:2)>limits.MaxElements)throw new BridgeFailure("element_budget",gain.Range);
                     var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);var mid=n;
                     if(gain.Offset!=0){if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",gain.Range);mid=nodes.Count;nodes.Add("n"+mid.ToString(System.Globalization.CultureInfo.InvariantCulture));}
-                    elements.Add(new Vcvs(id,p,mid,cp,cn,gain.Gain));origins.Add(new(id,gain.Name,path,gain.Range){NativeBranchName=gain.Name});
+                    elements.Add(Controlled(id,p,mid,cp,cn,gain.Gain,true));origins.Add(new(id,gain.Name,path,gain.Range){NativeBranchName=gain.Name});
                     if(gain.Offset!=0){
                         var offsetId="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
                         elements.Add(new Voltage(offsetId,mid,n,gain.Offset));origins.Add(new(offsetId,gain.Name+"$offset",path,gain.Range));
@@ -220,11 +239,15 @@ public static class OperatingPointBridge
                     if(!lowered.Success)throw new BridgeFailure(lowered.Diagnostics[0].Code,lowered.Diagnostics[0].Range);
                     var source=lowered.Source!;var p=Node(source.P.Text);var n=Node(source.N.Text);
                     if(p==n)throw new BridgeFailure("shorted_behavior_output",source.Range);
-                    if(elements.Count+source.Terms.Length+1>limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
+                    // Ground substitution can make a named voltage term
+                    // identically zero. Remove it before allocating auxiliaries
+                    // or checking element budgets; retain the offset source.
+                    var terms=source.Terms.Select(t=>(Control:Node(t.Node.Text),t.Coefficient)).Where(t=>t.Control!=0).ToArray();
+                    if(elements.Count+terms.Length+1>limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
                     var previous=p;var termIndex=0;
-                    foreach(var term in source.Terms)
+                    foreach(var term in terms)
                     {
-                        var control=Node(term.Node.Text);var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        var control=term.Control;var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
                         var next=n;
                         if(source.Quantity==BehavioralQuantity.Voltage)
                         {
@@ -306,7 +329,13 @@ public static class OperatingPointBridge
                     var childPorts=new Dictionary<string,int>(StringComparer.OrdinalIgnoreCase);
                     foreach(var port in call.Ports)
                     {
-                        if(port.Formal!.Text=="0")throw new BridgeFailure("reserved_formal_ground",port.Formal.Range);
+                        if(port.Formal!.Text=="0"&&!selected)throw new BridgeFailure("reserved_formal_ground",port.Formal.Range);
+                        // Native automatic normalization precedes elaboration.
+                        // A grounded formal ignores its actual, which must not
+                        // allocate an unconnected matrix node or observable.
+                        if(selected&&groundBinding!.IsGround(port.Formal.Text,call.Target!.BodyScopeId!.Value)){
+                            childPorts.Add(port.Formal.Text,0);continue;
+                        }
                         // A global formal is replaced before ordinary port
                         // substitution. Its unused actual must not create a
                         // floating matrix unknown or a fictitious observable.
@@ -320,11 +349,7 @@ public static class OperatingPointBridge
             finally{active.Remove(scope);}
             int Node(string name)
             {
-                if(name=="0")return 0;
-                // Native gnd normalization precedes elaboration and has dialect
-                // exceptions. Until qualified, never accept a floating substitute.
-                if(selected&&name.Equals("gnd",StringComparison.OrdinalIgnoreCase))
-                    throw new BridgeFailure("unsupported_ground_alias",catalog.Scopes[scope].Range);
+                if(name=="0"||selected&&groundBinding!.IsGround(name,scope))return 0;
                 if(selected&&globalNames.Contains(name)){
                     if(globalNodes.TryGetValue(name,out var global))return global;
                     if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",catalog.Scopes[scope].Range);
@@ -342,6 +367,15 @@ public static class OperatingPointBridge
                 if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",catalog.Scopes[scope].Range);
                 var index=nodes.Count;nodes.Add("n"+index.ToString(System.Globalization.CultureInfo.InvariantCulture));return index;
             }
+        }
+        Element Controlled(string id,int p,int n,int cp,int cn,double coefficient,bool voltage)
+        {
+            if(cp!=cn)return voltage?new Vcvs(id,p,n,cp,cn,coefficient):new Vccs(id,p,n,cp,cn,coefficient);
+            // The exact difference of identical controls is zero. Preserve a
+            // voltage-output branch/current identity while avoiding invalid
+            // controls, and explicitly suppress independent-source AC defaults.
+            acSources.Add(new(id,0,0));
+            return voltage?new Voltage(id,p,n,0):new Current(id,p,n,0);
         }
     }
     private sealed class BridgeFailure(string code,SourceRange? range):Exception(code)

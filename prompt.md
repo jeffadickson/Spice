@@ -1,4 +1,29 @@
-# Latest handoff — November 3 full requested-analysis census
+# Active work — issue34 implementation
+
+The user now authorizes execution of issue34's prioritized plan, superseding the
+measurement-only scope below. Read docs/issue34-execution-plan.md,
+docs/issue34-progress.md and evidence/issue34-ground-checkpoint.json.
+Active branch: feature/issue34-common-semantics-nov3 in work/simulation-bridge.
+Artifacts: E:/Artifacts/Spice-issue34-20261103T195804Z.
+
+Ground normalization now has explicit default/PSpice/disabled policies and exact
+zero-control reductions. 53 focused checks, 498 broader frontend passes and 42
+native OP/AC comparisons pass (20 broader prerequisite skips). GroundBinding
+Stryker: 76 killed / 3 survived / 1 uncovered / 3 compile errors / 7 filtered. Coverage limitations
+and unqualified ground contexts remain explicit. Original ground corpus replay
+and a new full census are pending; keep the 928/81/21/9 baseline historical.
+
+Next: original-ground replay, then explicit initial-OP Newton policy and original
+BJT waveform qualification, keeping LU refinement failures separate. The public
+BJT diagnosis still shows initial source recovery and later LU refusal; faer warm
+transient completes. An isolated native breakpoint-clock experiment fixes the
+analytical sine interpolation discrepancy, but production-oracle integration needs
+isolation/budget/invariance tests before use. Continue shared-control, model-family,
+XSPICE and resource work under the issue plan; do not claim all are complete.
+
+Preserve canonical main's seven unknown sheet-resistor/documentation files. No CI.
+
+# Previous handoff — November 3 full requested-analysis census
 
 User authorized measurement/prioritization steps 1–2 only. Read
 docs/requested-corpus-fc5db25.md and evidence/requested-fc5db25.json first.
