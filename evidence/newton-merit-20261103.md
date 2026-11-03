@@ -1,3 +1,11 @@
+Latest policy note: the unconditional row-merit prototype at 20f5385 passed its
+529-test Rust suite but failed the existing managed PNP-Gmin8 fixture on both
+providers (477 passed/2 failed/9 skipped). It is historical evidence, not final
+qualification. The feasibility follow-up applies physical row merit only until
+linear voltage constraints meet their existing strict bound, then retains legacy
+scaled-residual descent. See newton-feasibility-20261103.md for the correction and
+new exact regression evidence. The earlier counts/hashes below remain scoped to
+the prototype and are not silently reassigned to the corrected controller.
 # Newton mixed-unit globalization correction — November 3
 
 The clean ea19c2e short launcher preflight stopped after three passing batches
@@ -78,3 +86,40 @@ no measured branch coverage. Unit SI/negative/property checks are separately
 executed evidence, not included in this integration coverage percentage.
 
 Observed newton.rs line coverage in that scoped integration run: 329/852 (38.62%). This is the whole mapped file, including unrelated paths, not whole-suite or changed-line coverage. Exact final tested-worktree and canonical Git-blob hashes are separately retained in provenance; all inputs compare equal after CRLF normalization.
+
+Normal production dev-profile binary was freshly built after mutation restoration
+from 20f5385485d07ad942f7d69b4e0e09c2ea8d0473 and copied into the immutable
+raw-root native/circuit-simulator.exe. SHA256:
+a5ebf5cc6e454bf014e145360346e3590e2d240793e1361fe38b73ea8c706feb.
+It is neither a mutant nor instrumented test executable. Adjacent native JSON
+records actual build command, compiler and raw-log/source hashes. The 128-case
+row-unit property checks bounded finite unit changes where the dimensional floor
+is inactive; arbitrary scaling across that floor is not claimed invariant.
+
+Reproduction (PowerShell from an existing checkout; use a fresh existing artifact
+root and the installed pinned cargo-mutants executable):
+
+```powershell
+$repo=(Get-Location).Path
+$artifact=$env:SPICE_NEWTON_REPLAY_ROOT
+if(-not(Test-Path -LiteralPath $repo -PathType Container)){throw 'Missing checkout'}
+if(-not(Test-Path -LiteralPath $artifact -PathType Container)){throw 'Set existing unique artifact root'}
+$env:CARGO_TARGET_DIR=Join-Path $artifact 'target'
+$env:CARGO_BUILD_JOBS='2'
+$env:PROPTEST_RNG_SEED='3401923026981217896'
+$env:PROPTEST_CASES='512'
+cargo test --locked --test property_campaign --test switch_stagnation_20261103 -- --nocapture
+Remove-Item Env:PROPTEST_RNG_SEED
+Remove-Item Env:PROPTEST_CASES
+cargo test --locked --lib --test continuation_hardening --test continuation_networks --test difficult_continuation --test nonlinear
+if(-not(Test-Path -LiteralPath $env:SPICE_CARGO_MUTANTS -PathType Leaf)){throw 'Set pinned executable path'}
+& $env:SPICE_CARGO_MUTANTS mutants --dir $repo --no-config --in-place `
+ --timeout 180 --build-timeout 240 -C '--lib' -C '--test' -C switch_stagnation_20261103 `
+ -f src/newton.rs -F '(src/newton.rs:377:52: replace \* with /|src/newton.rs:403:33: replace / with \*|src/newton.rs:784:75: replace < with >)' `
+ --output (Join-Path $artifact 'mutation')
+./scripts/Measure-RustIntegrationCoverage.ps1 -Repository $repo -TargetDirectory $env:CARGO_TARGET_DIR `
+ -Output (Join-Path $artifact 'coverage') -Test switch_stagnation_20261103
+cargo build --locked --bin circuit-simulator
+cargo test --locked
+```
+

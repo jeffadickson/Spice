@@ -1,0 +1,14 @@
+{
+  "revision": "20f5385485d07ad942f7d69b4e0e09c2ea8d0473",
+  "status": "Historical prototype regression; does not cover subsequently discovered PNP Gmin case",
+  "command": "cargo test --locked --manifest-path C:/dev/spice-rust-fix/Cargo.toml",
+  "exit_code": 0,
+  "passed": 529,
+  "failed": 0,
+  "ignored": 2,
+  "log_sha256": "e6a0f28ec1e79f1868da7c070f3635be693173ccb11c51fb9d5c3056f10a63b8",
+  "limitations": [
+    "PNP Gmin8 managed regression failed despite this Rust suite passing; retained Rust fixture added afterwards.",
+    "No new-policy qualification inferred from historical prototype success."
+  ]
+}

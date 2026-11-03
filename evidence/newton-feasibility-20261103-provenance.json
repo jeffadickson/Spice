@@ -1,0 +1,36 @@
+{
+  "base_revision": "20f5385485d07ad942f7d69b4e0e09c2ea8d0473",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+  "files": [
+    {
+      "tested_worktree_sha256": "38d6604ce5fa694e805f4cfe6a05a156f4b2db1a8101f1c897d6af770f8a04e0",
+      "equal_after_crlf_normalization": true,
+      "file": "src/newton.rs",
+      "canonical_git_blob_sha256": "38d6604ce5fa694e805f4cfe6a05a156f4b2db1a8101f1c897d6af770f8a04e0"
+    },
+    {
+      "tested_worktree_sha256": "c7d11ade999990cbfb102dded344f019ea0dced42dc856284672308b5284e0b1",
+      "equal_after_crlf_normalization": true,
+      "file": "tests/switch_stagnation_20261103.rs",
+      "canonical_git_blob_sha256": "c7d11ade999990cbfb102dded344f019ea0dced42dc856284672308b5284e0b1"
+    },
+    {
+      "tested_worktree_sha256": "a8aca717d6b61f77e687d3d07f20340792900a676cb8d967cd4c0bd35557e21c",
+      "equal_after_crlf_normalization": true,
+      "file": "tests/fixtures/pnp_gmin_20261103.json",
+      "canonical_git_blob_sha256": "a8aca717d6b61f77e687d3d07f20340792900a676cb8d967cd4c0bd35557e21c"
+    },
+    {
+      "tested_worktree_sha256": "b22fe7a3abce2689c9f036055a26986aa927a59376f4aa7eff2497e229a4fc3e",
+      "equal_after_crlf_normalization": true,
+      "file": "docs/newton-merit-20261103.sdoc",
+      "canonical_git_blob_sha256": "1d00084f6a2b1514f7335dea858dcd07169611be3e6f165104995ce52d87dfe9"
+    }
+  ],
+  "red_log_sha256": "7af97af5d9dea88956b45720a1f083c209b49159d7d96cd568595fb0c06e7ae5",
+  "green_log_sha256": "7c09fbb53dabe9d4db068eaf514c287a0b08adabb1aa84c56d0777a0625e5546",
+  "green_tests": 25,
+  "green_command": "cargo test --locked --lib --test switch_stagnation_20261103 -- --nocapture",
+  "hash_scope": "Exact tested worktree input bytes retained separately from canonical staged Git blobs; normalization equivalence checked."
+}

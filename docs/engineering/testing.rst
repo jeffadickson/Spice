@@ -178,3 +178,9 @@ assertions remain unchanged. ``docs/newton-merit-20261103.sdoc`` defines frozen
 physical row references for backtracking, separate from strict final convergence
 bounds. ``evidence/newton-merit-20261103.md`` records RED/GREEN, pending-seed replay,
 mutation/coverage evidence and primary numerical references.
+
+The unconditional row-merit prototype passed its Rust suite but regressed the
+existing PNP Gmin fixture. The corrected controller uses physical merit only while
+linear voltage constraints are infeasible, then retains strict legacy descent.
+``evidence/newton-feasibility-20261103.md`` retains this discovery and its fresh
+PNP source/Gmin eight-iteration, switch, phase-threshold and shared-scale evidence.

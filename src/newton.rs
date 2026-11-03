@@ -349,6 +349,33 @@ fn scaled_residual_norm(
     }
 }
 
+/// Physical merit is needed only to establish linear voltage-constraint
+/// feasibility. Once feasible, keep the established strict residual descent;
+/// a common limited Newton scale preserves those linear constraints.
+fn voltage_constraints_infeasible(
+    plan: &CompiledCircuit,
+    residual: &[f64],
+    rhs: &[f64],
+    options: NewtonOptions,
+) -> SimResult<bool> {
+    if residual.len() != plan.unknown_count() || rhs.len() != residual.len() {
+        return Err(SimError::invalid(
+            "invalid voltage-constraint residual dimensions",
+        ));
+    }
+    for row in plan.circuit.nodes.len() - 1..residual.len() {
+        if scaled_component(
+            residual[row],
+            rhs[row],
+            options.voltage_absolute_tolerance,
+            options.relative_tolerance,
+        )? > 1.
+        {
+            return Ok(true);
+        }
+    }
+    Ok(false)
+}
 /// Freeze physical row magnitudes for one line search. The Jacobian times the
 /// larger current-state/correction magnitude estimates each row's SI magnitude without
 /// cancelling opposing terms. These weights guide progress only: acceptance
@@ -766,9 +793,23 @@ fn solve_from_rhs(
         let correction_rhs: Vec<f64> = system.residual.iter().map(|value| -value).collect();
         let delta = solver.solve(&system.jacobian, &correction_rhs)?;
         validate_correction(plan, &delta)?;
-        let references =
-            line_search_references(plan, &system.jacobian, rhs, &values, &delta, options)?;
-        let merit = line_search_norm(&system.residual, &references)?;
+        let references = if voltage_constraints_infeasible(plan, &system.residual, rhs, options)? {
+            Some(line_search_references(
+                plan,
+                &system.jacobian,
+                rhs,
+                &values,
+                &delta,
+                options,
+            )?)
+        } else {
+            None
+        };
+        let merit = if let Some(ref weights) = references {
+            line_search_norm(&system.residual, weights)?
+        } else {
+            scaled_residual
+        };
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-attempt));
@@ -781,9 +822,12 @@ fn solve_from_rhs(
             };
             let candidate_residual =
                 scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;
-            if line_search_norm(&candidate_system.residual, &references)? < merit
-                || candidate_residual <= 1.
-            {
+            let candidate_merit = if let Some(ref weights) = references {
+                line_search_norm(&candidate_system.residual, weights)?
+            } else {
+                candidate_residual
+            };
+            if candidate_merit < merit || candidate_residual <= 1. {
                 let update = candidate
                     .iter()
                     .zip(&values)
@@ -1051,9 +1095,23 @@ pub fn solve_backward_euler_step(
                 .collect::<Vec<_>>(),
         )?;
         validate_correction(plan, &update)?;
-        let references =
-            line_search_references(plan, &system.jacobian, rhs, &values, &update, options)?;
-        let merit = line_search_norm(&system.residual, &references)?;
+        let references = if voltage_constraints_infeasible(plan, &system.residual, rhs, options)? {
+            Some(line_search_references(
+                plan,
+                &system.jacobian,
+                rhs,
+                &values,
+                &update,
+                options,
+            )?)
+        } else {
+            None
+        };
+        let merit = if let Some(ref weights) = references {
+            line_search_norm(&system.residual, weights)?
+        } else {
+            scaled_residual
+        };
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) =
@@ -1065,9 +1123,12 @@ pub fn solve_backward_euler_step(
             };
             let candidate_residual =
                 scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;
-            if line_search_norm(&candidate_system.residual, &references)? < merit
-                || candidate_residual <= 1.
-            {
+            let candidate_merit = if let Some(ref weights) = references {
+                line_search_norm(&candidate_system.residual, weights)?
+            } else {
+                candidate_residual
+            };
+            if candidate_merit < merit || candidate_residual <= 1. {
                 let update_values = candidate
                     .iter()
                     .zip(&values)
@@ -1305,6 +1366,42 @@ mod november3_globalization_contracts {
             let before=line_search_norm(&[residual,0.2],&base).unwrap();
             let after=line_search_norm(&[residual*factor,0.2],&scaled).unwrap();
             proptest::prop_assert!((before-after).abs()<1e-13);
+        }
+    }
+}
+
+#[cfg(test)]
+mod november3_feasibility_contracts {
+    use super::*;
+    fn plan() -> CompiledCircuit {
+        crate::compile::compile(&crate::netlist::parse("title\nV1 x 0 2\nR1 x 0 100").unwrap())
+            .unwrap()
+    }
+    #[test]
+    fn feasible_zero_source_and_current_driven_systems_retain_legacy_merit() {
+        let p = plan();
+        let o = NewtonOptions::default();
+        let bound = o.voltage_absolute_tolerance + o.relative_tolerance * 2.;
+        assert!(!voltage_constraints_infeasible(&p, &[1., bound], &p.rhs, o).unwrap());
+        assert!(voltage_constraints_infeasible(&p, &[0., bound * 1.01], &p.rhs, o).unwrap());
+        assert!(!voltage_constraints_infeasible(&p, &[1., 0.], &[0., 0.], o).unwrap());
+        let current =
+            crate::compile::compile(&crate::netlist::parse("title\nI1 0 x 1\nR1 x 0 1").unwrap())
+                .unwrap();
+        assert!(!voltage_constraints_infeasible(&current, &[1.], &current.rhs, o).unwrap());
+        assert!(voltage_constraints_infeasible(&p, &[], &p.rhs, o).is_err());
+    }
+    #[test]
+    fn common_backtracking_scale_preserves_feasible_linear_constraints() {
+        let p = plan();
+        let o = NewtonOptions::default();
+        let values = [2. + 0.5e-9, -0.02];
+        let delta = [2. - values[0], 10.];
+        for alpha in [1., 0.5, 0.125] {
+            let (candidate, _) = limited_candidate(&p, &values, &delta, alpha);
+            assert!(
+                !voltage_constraints_infeasible(&p, &[0., candidate[0] - 2.], &p.rhs, o).unwrap()
+            );
         }
     }
 }

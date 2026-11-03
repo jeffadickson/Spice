@@ -94,3 +94,64 @@ fn minimized_midpoint_switch_stagnation() {
     }
     assert!(failures.is_empty(), "{failures:?}");
 }
+
+/// Prepared PNP Ebers–Moll fixture from the existing managed continuation test.
+/// Zero source constraints are already feasible; recovery must keep legacy KCL descent.
+#[test]
+fn pnp_source_and_gmin_recovery_keep_eight_iteration_stages_on_both_providers() {
+    use circuit_simulator::{
+        api::{self, Analysis, Request},
+        circuit::Element,
+        newton::{ContinuationOptions, GminContinuationOptions, NewtonOptions},
+    };
+    let base: Request =
+        serde_json::from_str(include_str!("fixtures/pnp_gmin_20261103.json")).unwrap();
+    let vt = 1.38064852e-23 * 300.15 / 1.6021766208e-19;
+    let expected = -vt * (1e-6_f64 / (1e-15 * 1.01)).ln_1p();
+    let mut failures = vec![];
+    for backend in ["lu", "faer"] {
+        for gmin in [false, true] {
+            let mut request = base.clone();
+            request.backend = backend.into();
+            request.analysis = Analysis::OperatingPointNewton {
+                options: NewtonOptions {
+                    max_iterations: 8,
+                    continuation: (!gmin).then_some(ContinuationOptions {
+                        initial_step: 0.125,
+                        minimum_step: 1e-12,
+                        max_stages: 128,
+                    }),
+                    gmin_continuation: gmin.then_some(GminContinuationOptions {
+                        initial_siemens: 1.,
+                        minimum_siemens: 1e-9,
+                        reduction_factor: 0.5,
+                        max_stages: 64,
+                    }),
+                    ..Default::default()
+                },
+            };
+            match api::run(&request) {
+                Ok(result) => {
+                    let voltage = result.samples[0].values[0];
+                    assert!((voltage - expected).abs() < 2e-7);
+                    assert!((1e-15 * 1.01 * (-voltage / vt).exp_m1() - 1e-6).abs() < 2e-12);
+                    let report = result.newton.unwrap();
+                    assert_eq!(report.gmin_siemens, None);
+                    if gmin {
+                        assert!(report.gmin_continuation.unwrap().final_unregularized);
+                    }
+                    assert!(!result.consistency.has_failures());
+                }
+                Err(error) => failures.push(format!("{backend} gmin={gmin}: {error:?}")),
+            }
+            // Reversing the supply has no physical forward-junction solution.
+            for element in &mut request.circuit.elements {
+                if let Element::Current { amps, .. } = element {
+                    *amps = -*amps;
+                }
+            }
+            assert!(api::run(&request).is_err());
+        }
+    }
+    assert!(failures.is_empty(), "{}", failures.join("\n"));
+}
