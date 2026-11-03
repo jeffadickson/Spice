@@ -16,14 +16,14 @@ public static class TransientSelection
  public static SelectedTransient Prepare(DeckSyntax syntax,double stopS,double maxStepS,int maxSteps=10000,BridgeLimits? limits=null,string backend="lu")
   =>PrepareCore(syntax,stopS,maxStepS,maxStepS,maxSteps,limits,backend);
  // Requested TSTEP controls source defaults independently from the integration ceiling.
- internal static SelectedTransient PrepareRequested(DeckSyntax syntax,double stopS,double outputStepS,double maxStepS,int maxSteps,BridgeLimits? limits,string backend)
-  =>PrepareCore(syntax,stopS,maxStepS,outputStepS,maxSteps,limits,backend);
- private static SelectedTransient PrepareCore(DeckSyntax syntax,double stopS,double maxStepS,double defaultStepS,int maxSteps,BridgeLimits? limits,string backend)
+ internal static SelectedTransient PrepareRequested(DeckSyntax syntax,double stopS,double outputStepS,double maxStepS,int maxSteps,BridgeLimits? limits,string backend,SelectedOperatingPoint? preparedCircuit=null)
+  =>PrepareCore(syntax,stopS,maxStepS,outputStepS,maxSteps,limits,backend,preparedCircuit);
+ private static SelectedTransient PrepareCore(DeckSyntax syntax,double stopS,double maxStepS,double defaultStepS,int maxSteps,BridgeLimits? limits,string backend,SelectedOperatingPoint? preparedCircuit=null)
  {
   SelectedTransient Fail(string code,SourceRange? range)=>new(new(null,ImmutableDictionary.Create<string,string>(StringComparer.OrdinalIgnoreCase),[],[new(code,range)]),[]);
   if(!double.IsFinite(stopS)||stopS<=0||!double.IsFinite(maxStepS)||maxStepS<=0||maxStepS>stopS||maxSteps is <1 or >100000)return Fail("invalid_transient_selection",null);
   if(Math.Ceiling(stopS/maxStepS)>maxSteps)return Fail("transient_step_budget",null);
-  var selected=OperatingPointSelection.Select(syntax,limits,backend);if(!selected.Success)return new(selected.Prepared,[]);
+  var selected=preparedCircuit??OperatingPointSelection.Select(syntax,limits,backend);if(!selected.Success)return new(selected.Prepared,[]);
   var prepared=selected.Prepared;if(prepared.SourceWaveforms.Length>128)return Fail("transient_source_budget",null);
   var sources=new List<SourceOverride>();
   foreach(var source in prepared.SourceWaveforms){

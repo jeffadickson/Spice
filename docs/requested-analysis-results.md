@@ -13,7 +13,7 @@ non-unit steps. It has no continuation/hysteresis equivalence claim. AC uses the
 requested lin/dec/oct grid and all prepared source phasors. Transient retains original
 TSTEP-dependent waveform defaults while using explicit TMAX, or min(TSTEP,TSTOP/50),
 as its backward-Euler computational ceiling. Computational sample grids differ from
-ngspice's adaptive grids. Output resampling, nonzero TSTART, UIC, .IC, input controls,
+ngspice's adaptive grids. Output resampling, UIC, general/device IC, input controls,
 nested analyses and two-source nested DC sweeps remain explicit refusals. Existing
 circuit/device lowering limits still apply. This is not arbitrary control-program or
 whole-corpus execution.
@@ -63,10 +63,11 @@ because local VSTest discovery listed methods absent from executed TRX results. 
 missing method is silently credited as executed. See evidence/requested-analysis.json
 for actual run counts, scope, source hashes and limitations.
 
-Final local evidence:172 passed, 9 skipped, 181 total in the frontend suite;39 requested
+Historical ordinary-slice evidence before the IC/window extension: 172 passed, 9 skipped, 181 total in the frontend suite;39 requested
 cases also pass through the independent invocation inventory. RequestedAnalysis.cs
 has91/91 covered lines and117/124 covered branches. The bounded DC-grid Stryker replay
 killed 14 of 18 tested mutants (4 survivors), with440 span-filter exclusions and62 compile
 errors elsewhere in the frontend mutation assembly. The replay snapshot predates the
 final rounded-count allocation guards; those guards have regression and coverage
 evidence, without a mutation claim. The full evidence JSON distinguishes each scope.
+The later bounded linear node .IC and nonzero reporting-window extension is documented in requested-initial-conditions.sdoc and requested-initial-conditions.md; its separate evidence preserves raw full-history responses.

@@ -53,20 +53,26 @@ public static class RequestedCorpus
     var expanded=resources.Text!;await File.WriteAllTextAsync(Path.Combine(folder,"expanded.cir"),expanded);row.ExpandedSha256=Hash(Path.Combine(folder,"expanded.cir"));
     var syntax=DeckParser.Parse(expanded,limits,collectDeclarations:true);row.ExpandedSyntaxStatus=syntax.Status;
     if(syntax.Status!="accepted_structure"){row.Status="expanded_syntax_refused";continue;}
-    var circuit=OperatingPointSelection.Select(syntax).Prepared;row.CircuitPrepared=circuit.Success;
+    var plan=RequestedAnalysis.Prepare(syntax);var circuit=plan.CircuitPreparation??OperatingPointSelection.Select(syntax).Prepared;row.CircuitPrepared=circuit.Success;
     if(!circuit.Success)row.Diagnostics=circuit.Diagnostics.Select(d=>d.Code).ToArray();
-    var plan=RequestedAnalysis.Prepare(syntax);row.RequestedPrepared=plan.Success;
+    row.RequestedPrepared=plan.Success;
     if(!plan.Success){row.Status="requested_preparation_refused";row.RequestedExecuted=false;row.Diagnostics=row.Diagnostics.Concat(plan.Diagnostics.Select(d=>d.Code)).Distinct().ToArray();continue;}
     if(!circuit.Success){row.Status="circuit_preparation_inconsistent";row.RequestedExecuted=false;continue;}
     row.Status="prepared";
     foreach(var operation in plan.Operations){
-     var result=new OperationRow{Id=row.Id+"/"+operation.Id,Ordinal=row.Operations.Count,Kind=operation.Kind,Range=operation.Range,CoordinateUnit=operation.CoordinateUnit,Arguments=operation.Arguments.ToArray(),RequestedCoordinates=operation.Coordinates.ToArray()};row.Operations.Add(result);
+     var result=new OperationRow{Id=row.Id+"/"+operation.Id,Ordinal=row.Operations.Count,Kind=operation.Kind,Range=operation.Range,CoordinateUnit=operation.CoordinateUnit,Arguments=operation.Arguments.ToArray(),RequestedCoordinates=operation.Coordinates.ToArray(),OutputStartS=operation.OutputStartS,InitialConditions=operation.InitialConditions.ToArray()};row.Operations.Add(result);
      var operationFolder=Path.Combine(folder,operation.Id);Directory.CreateDirectory(operationFolder);var responses=new List<SimulationResponse>();var allExecuted=true;var failed=false;
      for(var point=0;point<operation.Requests.Length;point++){
       if(watch.Elapsed.TotalSeconds>=seconds){result.Points.Add(new(point,"unattempted_budget",null));allExecuted=false;continue;}
       var request=operation.Requests[point];var requestPath=Path.Combine(operationFolder,point.ToString("D5",CultureInfo.InvariantCulture)+".request.json");await File.WriteAllTextAsync(requestPath,JsonSerializer.Serialize(request,WireFormat.Options));
       using var deadline=new CancellationTokenSource(TimeSpan.FromSeconds(30));
       try{
+       if(operation.InitializationRequest is {} initialization)await File.WriteAllTextAsync(Path.Combine(operationFolder,"initialization.request.json"),JsonSerializer.Serialize(initialization,WireFormat.Options));
+       var execution=await RequestedAnalysis.PrepareExecutionAsync(operation,point,client,deadline.Token);
+       if(execution.InitializationResponse is {} initialResponse)await File.WriteAllTextAsync(Path.Combine(operationFolder,"initialization.response.json"),initialResponse.Payload.GetRawText());
+       if(!execution.Success){result.Points.Add(new(point,"initialization_failed",execution.Failure));failed=true;continue;}
+       if(watch.Elapsed.TotalSeconds>=seconds){result.Points.Add(new(point,"unattempted_budget_after_initialization",null));allExecuted=false;continue;}
+       request=execution.Request!;await File.WriteAllTextAsync(requestPath,JsonSerializer.Serialize(request,WireFormat.Options));
        var response=await client.RunAsync(request,deadline.Token);await File.WriteAllTextAsync(Path.Combine(operationFolder,point.ToString("D5",CultureInfo.InvariantCulture)+".response.json"),response.Payload.GetRawText());
        result.Points.Add(new(point,response.Succeeded?"completed":"engine_failed",response.Error?.Code));responses.Add(response);failed|=!response.Succeeded;
       }catch(Exception e)when(e is IOException or InvalidOperationException or OperationCanceledException or System.ComponentModel.Win32Exception or JsonException){result.Points.Add(new(point,e is OperationCanceledException?"timeout":"transport_failed",e.GetType().Name));failed=true;}
@@ -102,7 +108,7 @@ public static class RequestedCorpus
  }
  private static StringComparison PathComparison=>OperatingSystem.IsWindows()?StringComparison.OrdinalIgnoreCase:StringComparison.Ordinal;
  private static string SourcePath([CallerFilePath]string value="")=>value;
- private static IEnumerable<string> SourcePaths(string root)=>new[]{"Simulator.Syntax","Simulator.Client","Simulator.Frontend","Simulator.RequestedQualification"}.SelectMany(p=>Directory.GetFiles(Path.Combine(root,"dotnet",p)).Where(f=>Path.GetExtension(f) is ".cs" or ".csproj" or ".json")).Concat(Directory.GetFiles(Path.Combine(root,"dotnet/Simulator.Syntax/Grammar"),"*.g4")).Concat(new[]{Path.Combine(root,"scripts/Run-RequestedCorpus.cs"),Path.Combine(root,"global.json")});
+ private static IEnumerable<string> SourcePaths(string root)=>new[]{"Simulator.Syntax","Simulator.Client","Simulator.Frontend","Simulator.RequestedQualification"}.SelectMany(p=>Directory.GetFiles(Path.Combine(root,"dotnet",p)).Where(f=>Path.GetExtension(f) is ".cs" or ".csproj" or ".json")).Concat(Directory.GetFiles(Path.Combine(root,"dotnet/Simulator.Syntax/Grammar"),"*.g4")).Concat(Directory.GetFiles(Path.Combine(root,"src"),"*.rs",SearchOption.AllDirectories)).Concat(new[]{"Cargo.toml","Cargo.lock","build.rs","rust-toolchain.toml"}.Select(p=>Path.Combine(root,p)).Where(File.Exists)).Concat(new[]{Path.Combine(root,"scripts/Run-RequestedCorpus.cs"),Path.Combine(root,"global.json")});
  private static Dictionary<string,string> Exclusions(string root){using var document=JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"compat/ngspice/parser-input-adjudications.json")));return document.RootElement.GetProperty("entries").EnumerateArray().Where(e=>e.GetProperty("disposition").GetString() is "non_deck_document" or "invalid_syntax_fixture").ToDictionary(e=>e.GetProperty("scope").GetString()+"/"+e.GetProperty("path").GetString(),e=>e.GetProperty("input_sha256").GetString()!);}
  private static string Hash(string path){using var stream=File.OpenRead(path);return Convert.ToHexStringLower(SHA256.HashData(stream));}
  // A disappearance or lock race at the end gate is changed provenance, never a successful report.
@@ -125,7 +131,7 @@ public static class RequestedCorpus
  private sealed record LoadedSource(string Path,string? Section,string Sha256);
  private sealed record PointRow(int Index,string Status,string? Detail);
  private sealed class OperationRow{
-  public string Id{get;set;}="";public int Ordinal{get;set;}public string Kind{get;set;}="";public SourceRange? Range{get;set;}public string? CoordinateUnit{get;set;}public double[] Arguments{get;set;}=[];public double[] RequestedCoordinates{get;set;}=[];public bool? Executed{get;set;}public bool? Agreed{get;set;}public string Status{get;set;}="pending";public string? Detail{get;set;}public List<PointRow> Points{get;set;}=[];public ProjectionOmission[] Omissions{get;set;}=[];public string? NativeProjectionSha256{get;set;}public string? NativeRawSha256{get;set;}public int? NativeExit{get;set;}public int? NativePoints{get;set;}public string NativeDialect{get;set;}="default";public ComparisonResult? Comparison{get;set;}
+  public string Id{get;set;}="";public int Ordinal{get;set;}public string Kind{get;set;}="";public SourceRange? Range{get;set;}public string? CoordinateUnit{get;set;}public double[] Arguments{get;set;}=[];public double[] RequestedCoordinates{get;set;}=[];public double OutputStartS{get;set;}public PreparedNodeInitialCondition[] InitialConditions{get;set;}=[];public bool? Executed{get;set;}public bool? Agreed{get;set;}public string Status{get;set;}="pending";public string? Detail{get;set;}public List<PointRow> Points{get;set;}=[];public ProjectionOmission[] Omissions{get;set;}=[];public string? NativeProjectionSha256{get;set;}public string? NativeRawSha256{get;set;}public int? NativeExit{get;set;}public int? NativePoints{get;set;}public string NativeDialect{get;set;}="default";public ComparisonResult? Comparison{get;set;}
  }
  private sealed class CorpusRow{
   public string Id{get;set;}="";public string Scope{get;set;}="";public string Path{get;set;}="";public string InputPath{get;set;}="";public string ExpectedSha256{get;set;}="";public string? InputSha256{get;set;}public string Status{get;set;}="unattempted";public bool? SyntaxAccepted{get;set;}public string? SyntaxStatus{get;set;}public string? ExpandedSyntaxStatus{get;set;}public string? ResourceStatus{get;set;}public bool? CircuitPrepared{get;set;}public bool? RequestedPrepared{get;set;}public bool? RequestedExecuted{get;set;}public bool? NativeAgreed{get;set;}public string[] Diagnostics{get;set;}=[];public LoadedSource[] Sources{get;set;}=[];public string? ExpandedSha256{get;set;}public List<OperationRow> Operations{get;set;}=[];

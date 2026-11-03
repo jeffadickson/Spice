@@ -20,7 +20,7 @@ public sealed class RequestedAnalysisTests
  [InlineData(".dc V1 0 1 0")]
  [InlineData(".dc V1 1 0 1")]
  [InlineData(".tran 1u 4u 0 1u uic")]
- [InlineData(".tran 1u 4u 1u")]
+ [InlineData(".tran 1u 4u 5u")]
  [InlineData(".ac dec 0 1 1k")]
  [InlineData(".dc V1 0 1 1 V2 0 1 1")]
  [InlineData(".control\nop\n.endc")]

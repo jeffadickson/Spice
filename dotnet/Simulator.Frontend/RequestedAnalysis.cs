@@ -9,6 +9,12 @@ public sealed record RequestedOperation(string Id,string Kind,SourceRange Range,
  public string? CoordinateUnit { get; init; }
  /// <summary>Evaluated original directive scalar arguments, in grammar order; retained for audit including transient TSTEP/TSTOP/TSTART/TMAX.</summary>
  public ImmutableArray<double> Arguments { get; init; } = [];
+ /// <summary>Requested transient reporting start in seconds; the engine still integrates from zero.</summary>
+ public double OutputStartS { get; init; }
+ /// <summary>Retained root voltage initial conditions handled through a separate temporary public-client bias solve.</summary>
+ public ImmutableArray<PreparedNodeInitialCondition> InitialConditions { get; init; } = [];
+ /// <summary>Optional temporary clamped OP; its extra branches are never part of the original transient state.</summary>
+ public SimulationRequest? InitializationRequest { get; init; }
 }
 /// <summary>Atomic preparation: unsupported original execution semantics publish diagnostics and no partial operation plan.</summary>
 public sealed record RequestedAnalysisPlan(ImmutableArray<RequestedOperation> Operations,ImmutableArray<BridgeDiagnostic> Diagnostics)
@@ -17,15 +23,23 @@ public sealed record RequestedAnalysisPlan(ImmutableArray<RequestedOperation> Op
  public bool Success=>!Operations.IsEmpty&&Diagnostics.IsEmpty;
  /// <summary>Explicit unexecuted output/reporting instructions; analyses and controls are never silently omitted.</summary>
  public ImmutableArray<OperatingPointOmission> Observations { get; init; } = [];
+ /// <summary>Original physical circuit and observable mapping, before temporary initialization clamps.</summary>
+ public BridgeResult? CircuitPreparation { get; init; }
 }
 /// <summary>Result of one independently initialized request. Transport errors remain distinct from engine response errors.</summary>
-public sealed record RequestedPointResult(int Index,SimulationResponse? Response,string? TransportError);
+public sealed record RequestedPointResult(int Index,SimulationResponse? Response,string? TransportError)
+{
+ /// <summary>Separate optional initial-bias response; it is not a requested transient result.</summary>
+ public SimulationResponse? InitializationResponse { get; init; }
+ /// <summary>Explicit reported-window view. Response retains the full raw engine history.</summary>
+ public ResultManifest? ReportedManifest { get; init; }
+}
 /// <summary>All points of one original directive; a failed operation publishes no partial successful responses.</summary>
 public sealed record RequestedOperationResult(string Id,bool Success,ImmutableArray<RequestedPointResult> Points);
 /// <summary>Prepares ordinary root .op/.dc/.ac/.tran cards using generated syntax and the public client contract.</summary>
-public static class RequestedAnalysis
+public static partial class RequestedAnalysis
 {
- /// <summary>Prepares bounded grids. DC uses fresh OP per point, without continuation/hysteresis guarantees; controls, nested analyses, UIC and nonzero transient output starts are refused.</summary>
+ /// <summary>Prepares bounded grids. DC uses fresh OP per point, without continuation/hysteresis guarantees; controls, nested analyses and UIC remain explicit refusals; bounded linear node IC and reporting starts are retained.</summary>
  public static RequestedAnalysisPlan Prepare(DeckSyntax syntax,int maxPoints=10000,BridgeLimits? limits=null,string backend="lu")
  {
   ArgumentNullException.ThrowIfNull(syntax);
@@ -35,28 +49,30 @@ public static class RequestedAnalysis
   var forbidden=catalog.Cards.FirstOrDefault(c=>c.Kind=="control"||c.Kind=="extension"&&OperatingPointSelection.OmissionReason(c)=="analysis_not_selected"||c.ScopeId!=0&&c.Kind is "op" or "dc" or "ac" or "tran");
   if(forbidden!=null)return Fail("unsupported_requested_program",forbidden.Range);
   if(catalog.Analyses.IsEmpty)return Fail("no_requested_analysis",null);
-  var selected=OperatingPointSelection.Select(syntax,limits,backend);
+  if(catalog.InitialConditions.Any(ic=>ic.ScopeId!=0||!ic.Supported))return Fail("unsupported_initial_condition_profile",catalog.InitialConditions.First(ic=>ic.ScopeId!=0||!ic.Supported).Range);
+  if(!catalog.InitialConditions.IsEmpty&&!catalog.Analyses.Any(a=>a.Kind=="tran"))return Fail("initial_conditions_without_transient",catalog.InitialConditions[0].Range);
+  var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,catalog.InitialConditions.Select(ic=>ic.Range.Start).ToImmutableHashSet());
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
   var environment=ParameterEvaluator.Evaluate(catalog);
   var operations=ImmutableArray.CreateBuilder<RequestedOperation>();
   try{
+   var initialConditions=BindInitialConditions(catalog,environment,prepared);
    foreach(var card in catalog.Analyses.OrderBy(c=>c.Range.Start)){
     var id="requested_"+operations.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    if(card.Kind=="tran"&&!card.Names.IsEmpty)throw new PreparationFailure("unsupported_transient_uic",card.Range);
     var values=card.Values.Select(v=>{
      var result=ParameterEvaluator.EvaluateValue(catalog,environment,v);
      if(result.Value is not {} value)throw new PreparationFailure(result.Diagnostics[0].Code,v.Range);
      return value;
     }).ToArray();
-    var requests=ImmutableArray.CreateBuilder<SimulationRequest>();ImmutableArray<double> coordinates=[];string? unit=null;
+    var requests=ImmutableArray.CreateBuilder<SimulationRequest>();ImmutableArray<double> coordinates=[];string? unit=null;var outputStart=0d;SimulationRequest? initialization=null;
     switch(card.Kind){
      case "op":requests.Add(baseRequest with{CaseId=id});break;
      case "dc":
       if(card.Names.Length!=1)throw new PreparationFailure("unsupported_nested_dc_sweep",card.Range);
-      var origin=prepared.Origins.SingleOrDefault(o=>o.InstancePath.IsEmpty&&o.LocalName.Equals(card.Names[0],StringComparison.OrdinalIgnoreCase));
-      if(origin==null)throw new PreparationFailure("unsupported_dc_source",card.Range);
-      var source=baseRequest.Circuit.Elements.Single(e=>e.Id==origin.WireId);
-      if(source is not (Voltage or Current))throw new PreparationFailure("unsupported_dc_source",card.Range);
+      var resolvedSource=RequestedDcSourceBinding.Resolve(catalog,prepared,card.Names[0]);
+      if(resolvedSource.Source is not {} source)throw new PreparationFailure(resolvedSource.Error!,card.Range);
       unit=source is Voltage?"V":"A";
       coordinates=Linear(values[0],values[1],values[2],maxPoints,card.Range);
       foreach(var value in coordinates){
@@ -81,16 +97,18 @@ public static class RequestedAnalysis
      case "tran":
       unit="s";
       if(!card.Names.IsEmpty)throw new PreparationFailure("unsupported_transient_uic",card.Range);
-      if(values.Length>2&&values[2]!=0)throw new PreparationFailure("unsupported_transient_start",card.Range);
-      var maximumStep=values.Length>3?values[3]:Math.Min(values[0],values[1]/50);
-      var transient=TransientSelection.PrepareRequested(syntax,values[1],values[0],maximumStep,maxPoints,limits,backend);
+      outputStart=values.Length>2?values[2]:0;
+      if(outputStart<0||outputStart>values[1])throw new PreparationFailure("invalid_transient_start",card.Range);
+      var maximumStep=values.Length>3?values[3]:Math.Min(values[0],(values[1]-outputStart)/50);
+      var transient=TransientSelection.PrepareRequested(syntax,values[1],values[0],maximumStep,maxPoints,limits,backend,selected);
       if(!transient.Success)throw new PreparationFailure(transient.Prepared.Diagnostics[0].Code,card.Range);
-      requests.Add(transient.Prepared.Request! with{CaseId=id});break;
+      requests.Add(transient.Prepared.Request! with{CaseId=id});
+      if(!initialConditions.IsEmpty)initialization=ClampRequest(baseRequest,id,initialConditions);break;
     }
-    operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { CoordinateUnit=unit,Arguments=values.ToImmutableArray() });
+    operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { CoordinateUnit=unit,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=card.Kind=="tran"?initialConditions:[] });
    }
   }catch(PreparationFailure e){return Fail(e.Code,e.Range);}
-  return new(operations.ToImmutable(),[]) { Observations=selected.Omissions.Where(o=>o.Kind=="extension").ToImmutableArray() };
+  return new(operations.ToImmutable(),[]) { Observations=selected.Omissions.Where(o=>o.Kind=="extension").ToImmutableArray(),CircuitPreparation=prepared };
  }
  private static ImmutableArray<double> Linear(double start,double stop,double step,int maximum,SourceRange range)
  {
@@ -112,11 +130,17 @@ public static class RequestedAnalysis
    var points=ImmutableArray.CreateBuilder<RequestedPointResult>();var success=true;
    foreach(var request in operation.Requests){
     cancellation.ThrowIfCancellationRequested();
-    try{var response=await client.RunAsync(request,cancellation);points.Add(new(points.Count,response,null));success&=response.Succeeded;}
+    try{
+
+     var execution=await PrepareExecutionAsync(operation,points.Count,client,cancellation);
+     if(!execution.Success){points.Add(new(points.Count,null,execution.Failure){InitializationResponse=execution.InitializationResponse});success=false;continue;}
+     var response=await client.RunAsync(execution.Request!,cancellation);
+     points.Add(new(points.Count,response,null){InitializationResponse=execution.InitializationResponse,ReportedManifest=response.Succeeded?ReportedManifest(operation,response):null});success&=response.Succeeded;
+    }
     catch(Exception e) when(e is IOException or InvalidOperationException or System.ComponentModel.Win32Exception or System.Text.Json.JsonException){points.Add(new(points.Count,null,e.GetType().Name));success=false;}
    }
    // Preserve one outcome per requested point, but withhold successful partial payloads on failed operations.
-   results.Add(new(operation.Id,success,success?points.ToImmutable():points.Select(p=>p.Response?.Succeeded==true?p with{Response=null,TransportError="operation_failed_atomically"}:p).ToImmutableArray()));
+   results.Add(new(operation.Id,success,success?points.ToImmutable():points.Select(p=>p.Response?.Succeeded==true?p with{Response=null,ReportedManifest=null,TransportError="operation_failed_atomically"}:p).ToImmutableArray()));
   }
   return results.ToImmutable();
  }

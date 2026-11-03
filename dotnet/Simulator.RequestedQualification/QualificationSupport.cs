@@ -96,7 +96,7 @@ public static class RequestedComparison
   try{
    if(responses.Count!=operation.Requests.Length||responses.Any(r=>!r.Succeeded))throw new InvalidDataException("incomplete_engine_operation");
    var manifests=responses.Select((response,i)=>{
-    var m=response.ReadManifest();var request=operation.Requests[i];
+    var m=RequestedAnalysis.ReportedManifest(operation,response);var request=operation.Requests[i];
     if(m.CaseId!=request.CaseId||m.Backend.Id!=(request.Backend=="lu"?"nalgebra_dense_lu_reference":request.Backend=="faer"?"faer_sparse_lu":"nalgebra_dense_qr_reference")||m.Backend.Gpu||m.Backend.Placement!="cpu"||m.Signals.Select(s=>s.Id).Distinct(StringComparer.Ordinal).Count()!=m.Signals.Length)throw new InvalidDataException("engine_identity_gap");
     if(m.Samples.Any(s=>!double.IsFinite(s.TimeS)||s.Values.Any(v=>!double.IsFinite(v)))||m.AcSamples.Any(s=>!double.IsFinite(s.FrequencyHz)||s.Values.Any(v=>!double.IsFinite(v.Real)||!double.IsFinite(v.Imag))))throw new InvalidDataException("nonfinite_engine_samples");return m;
    }).ToArray();
@@ -112,7 +112,8 @@ public static class RequestedComparison
     if(native.Variables[0].Dimension!="frequency"||manifests.Length!=1||manifests[0].Samples.Length!=0)throw new InvalidDataException("ac_shape_or_unit_gap");actualAxis=manifests[0].AcSamples.Select(s=>s.FrequencyHz).ToArray();Grid(operation.Coordinates.ToArray(),actualAxis);Grid(actualAxis,axis);StrictAxis(axis,true);
    }else if(operation.Kind=="tran"){
     if(native.Variables[0].Dimension!="time"||manifests.Length!=1||manifests[0].AcSamples.Length!=0)throw new InvalidDataException("transient_shape_or_unit_gap");actualAxis=manifests[0].Samples.Select(s=>s.TimeS).ToArray();StrictAxis(axis,false);StrictAxis(actualAxis,false);
-    var stop=operation.Arguments[1];if(!Near(actualAxis[0],0)||!Near(axis[0],0)||!Near(actualAxis[^1],stop)||!Near(axis[^1],stop))throw new InvalidDataException("incomplete_transient_grid");
+        var stop=operation.Arguments[1];var start=operation.OutputStartS;
+    if((actualAxis[0]<start&&!Near(actualAxis[0],start))||(axis[0]<start&&!Near(axis[0],start))||start==0&&(!Near(actualAxis[0],0)||!Near(axis[0],0))||!Near(actualAxis[^1],stop)||!Near(axis[^1],stop))throw new InvalidDataException("incomplete_transient_reporting_grid");
    }else throw new InvalidDataException("unsupported_comparison_analysis");
    var mappings=new List<(string Engine,string Native,string Unit)>();var gaps=ImmutableArray.CreateBuilder<string>();
    foreach(var node in circuit.RootNodes.OrderBy(n=>n.Key,StringComparer.OrdinalIgnoreCase))mappings.Add(("v("+node.Value+")","v("+node.Key+")","V"));

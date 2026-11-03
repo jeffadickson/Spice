@@ -22,6 +22,11 @@ public static class OperatingPointSelection
     /// Capacitors and inductors retain typed SI values; the existing Rust operating-point equations supply their open/short steady behavior.
     /// Failed preparation returns no request or omission plan. The strict OperatingPointBridge.Lower API is unchanged.</remarks>
     public static SelectedOperatingPoint Select(DeckSyntax syntax,BridgeLimits? limits=null,string backend="lu")
+        =>SelectCore(syntax,limits,backend,[]);
+    // Only explicitly handled requested physical instructions enter this omission set.
+    internal static SelectedOperatingPoint SelectRequested(DeckSyntax syntax,BridgeLimits? limits,string backend,ImmutableHashSet<int> handledPhysicalStarts)
+        =>SelectCore(syntax,limits,backend,handledPhysicalStarts);
+    private static SelectedOperatingPoint SelectCore(DeckSyntax syntax,BridgeLimits? limits,string backend,ImmutableHashSet<int> handledPhysicalStarts)
     {
         ArgumentNullException.ThrowIfNull(syntax);
         var omissions=ImmutableArray.CreateBuilder<OperatingPointOmission>();
@@ -31,7 +36,7 @@ public static class OperatingPointSelection
                 var reason=OmissionReason(card);
                 if(reason!=null)omissions.Add(new(card.ScopeId,card.Kind,card.Name,reason,card.Range));
             }
-        var omittedCards=omissions.Select(o=>o.Range.Start).ToImmutableHashSet();
+        var omittedCards=omissions.Select(o=>o.Range.Start).ToImmutableHashSet().Union(handledPhysicalStarts);
         if(syntax.Declarations is {} declarations)
             foreach(var source in declarations.Primitives.Where(p=>p.Excitation?.AcMagnitude!=null))
                 omissions.Add(new(source.ScopeId,"source_ac",source.Name,"ac_excitation_not_selected",source.Range));

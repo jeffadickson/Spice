@@ -107,7 +107,7 @@ public sealed record AcSourcePhasor(string Id, double Real, double Imag);
 /// <summary>Configured dynamic integration with explicit method, history and source policy.</summary>
 public sealed record TransientConfigured(TransientConfiguration Options) : Analysis;
 
-/// <summary>Method is backward_euler or trapezoidal; explicit initial state follows MNA ordering.</summary>
+/// <summary>Method is backward_euler or trapezoidal. InitialState uses Circuit.Nodes excluding node zero, followed by V/L/E/H branch currents in Circuit.Elements order; voltages are volts and branch currents are P-to-N amperes.</summary>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1708:Identifiers should differ by more than case",
     Justification = "Retain existing named-argument/wire compatibility: MaxStepS is seconds and MaxSteps is a count.")]
 public sealed record TransientConfiguration(double StopS, double MaxStepS, int MaxSteps = 10000,

@@ -1,0 +1,63 @@
+[DOCUMENT]
+TITLE: Bounded requested transient initial conditions and reporting windows
+
+[TEXT]
+STATEMENT: >>>
+This extends the earlier ordinary requested-analysis slice. Source research: ngspice47+ manual, sections11.2.2 and11.3.10, https://ngspice.sourceforge.io/docs/ngspice-manual.pdf, inspected2026-11-02. Non-UIC .IC forces node voltages in the initial bias solution and releases those constraints for transient integration. TSTART limits stored output, while integration begins at zero. The implementation composes existing typed OP and configured transient requests; it adds no production parser or legacy runtime dependency.
+<<<
+
+[REQUIREMENT]
+UID: FRONTEND-INITIAL-001
+STATUS: Implemented
+TITLE: Generated bounded node voltage initial conditions
+STATEMENT: >>>
+Retain root .IC v(node)=scalar declarations using generated assignment/call/value contexts and original source ranges. Evaluate values through existing parameter semantics. Reject unsupported targets/scopes, duplicate aliases, missing/reference/non-dynamic nodes, direct ideal-source constraints and unsupported nonlinear/device-state profiles explicitly and atomically.
+<<<
+COMMENT: >>>
+The qualified first profile includes R/C/L, independent V/I and E/G. IC targets must touch a capacitor dynamic node. Device IC= fields, UIC, F/H IC profiles and charged/nonlinear initial states remain unqualified/refused; unspecified states are never replaced with zero. The ordinary requested UIC spelling is recognized even when the generated optional-value rule consumes the keyword.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-001
+
+[REQUIREMENT]
+UID: FRONTEND-INITIAL-002
+STATUS: Implemented
+TITLE: Public-client constrained initial bias and state reconstruction
+STATEMENT: >>>
+Prepare an independent temporary OP circuit with explicit voltage clamps, execute it through the public client, and reconstruct every original initial-state component by public descriptor identity, quantity and unit. The original state shall follow non-ground Circuit.Nodes order and then original V/L/E/H branch order. Extra clamp branches shall be excluded. Missing/non-finite/ambiguous state or failed bias shall publish no transient request, and later independent requested analyses shall retain their identities and execution opportunities.
+<<<
+COMMENT: >>>
+The wire-layout contract is clarified in TransientConfiguration XMLDoc and source-inspected in src/compile.rs; native execution verifies V/L/E ordering in this slice. H initial-state execution is not claimed. Explicit states still pass the existing Rust algebraic consistency checks. RC/RLC/E original .IC decks are compared independently against native ngspice, retaining the original .IC and original .TRAN arguments. No Newton/device internals are accessed by the managed frontend.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-002
+
+[REQUIREMENT]
+UID: FRONTEND-INITIAL-003
+STATUS: Implemented
+TITLE: Separate full integration history and requested reporting window
+STATEMENT: >>>
+Nonzero TSTART shall retain full raw engine history from zero and expose a separate reported-window manifest containing only accepted samples at or after TSTART. It shall not synthesize or resample a TSTART point. The default integration ceiling shall be min(TSTEP,(TSTOP-TSTART)/50), while source defaults retain original TSTEP and TSTOP. Native comparison shall use original retained TSTART and refuse any missing reference interval rather than extrapolate.
+<<<
+COMMENT: >>>
+A nonzero original reporting-window fixture has complete native agreement. A separate window fixture whose first engine sample precedes native's first stored point remains explicitly unqualified with transient_extrapolation. This is an oracle-grid gap, not discarded engine data or a passing vector comparison. Sources with distinct DC and time-zero waveform bias remain under the existing explicit transient-profile refusal.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-003
+
+[REQUIREMENT]
+UID: FRONTEND-REQUESTED-DCIDENTITY-001
+STATUS: Implemented
+TITLE: Original independent DC source eligibility
+STATEMENT: >>>
+A requested DC target shall match exactly one original root V/I primitive, one physical-range-matched root origin and one matching typed wire element. Synthetic behavioral/external-model origins shall not create target eligibility. Missing, ambiguous or inconsistent mappings shall return an atomic diagnostic instead of throwing or preparing a synthetic-source sweep.
+<<<
+COMMENT: >>>
+Implementation: RequestedDcSourceBinding.cs. Tests: RequestedDcSourceBindingTests.cs cover synthetic names, duplicate origins, exact physical-range disambiguation, wrong/missing wire types and behavioral source-name collisions. This addresses the integrated affine-lowering review finding; the frozen earlier census source is unchanged and any affected rows remain unqualified historical evidence.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-001

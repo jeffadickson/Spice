@@ -14,7 +14,7 @@ STATEMENT: >>>
 Prepare every supported root .op, single-source .dc, .ac lin/dec/oct and .tran directive in physical source order, retaining repeated directives with unique identities and original source ranges. Evaluate scalar fields through existing parameter semantics. Publish no partial program when a directive or physical instruction is unsupported.
 <<<
 COMMENT: >>>
-Implementation: dotnet/Simulator.Syntax/AnalysisSyntax.cs, DeclarationExtraction.cs, DeclarationCatalog.cs; dotnet/Simulator.Frontend/RequestedAnalysis.cs. Verification: RequestedAnalysisTests.cs and RequestedAnalysisNativeTests.cs. Controls, nested analyses, nested DC sweep, nonzero transient TSTART and UIC are explicit refusals. Reporting/observation omissions remain explicit metadata and are not executed measurements.
+Implementation: dotnet/Simulator.Syntax/AnalysisSyntax.cs, DeclarationExtraction.cs, DeclarationCatalog.cs; dotnet/Simulator.Frontend/RequestedAnalysis.cs. Verification: RequestedAnalysisTests.cs and RequestedAnalysisNativeTests.cs. Controls, nested analyses, nested DC sweep and UIC are explicit refusals. Bounded linear node .IC and separate reporting windows are specified in requested-initial-conditions.sdoc. Reporting/observation omissions remain explicit metadata and are not executed measurements.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -39,7 +39,7 @@ UID: FRONTEND-REQUESTED-003
 STATUS: Implemented
 TITLE: Requested transient defaults and bounded grids
 STATEMENT: >>>
-Keep original transient TSTEP-dependent source defaults separate from the integration maximum step. Use explicit TMAX when supplied, otherwise min(TSTEP,TSTOP/50) for zero-start analyses. Bound sweep expansion before allocation and reject invalid directions, zero DC steps and unsupported analysis options explicitly.
+Keep original transient TSTEP-dependent source defaults separate from the integration maximum step. Use explicit TMAX when supplied, otherwise min(TSTEP,(TSTOP-TSTART)/50) for supported reporting windows. Bound sweep expansion before allocation and reject invalid directions, zero DC steps and unsupported analysis options explicitly.
 <<<
 COMMENT: >>>
 Existing backward-Euler runtime emits its accepted computational samples. Native adaptive sample grids differ; numerical comparison interpolates independent oracle values without claiming identical internal grids or integration methods. AC LIN2 follows the documented two-point grid; local ngspice47+ emits one point, retained as an oracle discrepancy rather than our requested grid contract.

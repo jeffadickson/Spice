@@ -19,6 +19,7 @@ internal sealed class DeclarationExtraction
     private readonly List<BehavioralSourceSyntax> behavior=[];
     private readonly List<ScopedCard> cards=[];
     private readonly List<AnalysisSyntax> analyses=[];
+    private readonly List<InitialConditionSyntax> initialConditions=[];
     private readonly List<LibrarySectionEnd> libraryEnds=[];
     private readonly List<ScopedParameter> parameters=[];
     private readonly List<DeclaredResource> resources=[];
@@ -44,9 +45,25 @@ internal sealed class DeclarationExtraction
         if(card is SpiceParser.OpContext)analyses.Add(new(owner,"op",[],[],Range(card)));
         if(card is SpiceParser.AcContext ac)analyses.Add(new(owner,"ac",[ac.identifier().GetText()],ac.value().Select(Capture).ToImmutableArray(),Range(card)));
         if(card is SpiceParser.DcContext dc)analyses.Add(new(owner,"dc",dc.identifier().Select(i=>i.GetText()).ToImmutableArray(),dc.value().Select(Capture).ToImmutableArray(),Range(card)));
-        if(card is SpiceParser.TranContext tran)analyses.Add(new(owner,"tran",tran.identifier()==null?[]:[tran.identifier().GetText()],tran.value().Select(Capture).ToImmutableArray(),Range(card)));
         if(card is SpiceParser.BehaviorContext behavioral)
         {behavior.Add(BehavioralSourceExtraction.Extract(behavioral,owner,Capture,Capture));return;}
+        if(card is SpiceParser.TranContext tran){
+            var values=tran.value();var names=tran.identifier()==null?ImmutableArray<string>.Empty:[tran.identifier().GetText()];
+            // The optional generated value rule can consume the final UIC identifier.
+            // Recognize the keyword from that context, never by splitting raw card text.
+            if(names.IsEmpty&&values.Length>2&&values[^1].identifier()?.GetText().Equals("uic",StringComparison.OrdinalIgnoreCase)==true){names=["uic"];values=values[..^1];}
+            analyses.Add(new(owner,"tran",names,values.Select(Capture).ToImmutableArray(),Range(card)));
+        }
+        if(card is SpiceParser.ExtensionContext ic&&ic.Start.Text.Equals(".ic",StringComparison.OrdinalIgnoreCase)){
+            var nodes=ImmutableArray.CreateBuilder<NodeInitialConditionSyntax>();var supported=ic.parameter().Length>0;
+            foreach(var argument in ic.parameter()){
+                var assignment=argument.assignment();
+                if(assignment?.GetChild(0) is not SpiceParser.CallContext target||!target.identifier().GetText().Equals("v",StringComparison.OrdinalIgnoreCase)||target.parameter().Length!=1||target.parameter(0).value() is not {} node){supported=false;continue;}
+                if(node.identifier()==null&&node.NUMBER()==null){supported=false;continue;}
+                nodes.Add(new(Capture(node),Capture((ParserRuleContext)assignment.GetChild(2)),Range(assignment)));
+            }
+            initialConditions.Add(new(owner,supported,nodes.ToImmutable(),Range(card)));
+        }
         var primitive=PrimitiveExtraction.Extract(card,owner,Capture,Capture);
         if(primitive!=null){primitives.Add(primitive);return;}
         if(card is SpiceParser.ExtensionContext extension && extension.Start.Text.ToLowerInvariant() is ".if" or ".elseif" or ".else" or ".endif" or ".csparam" or ".sndparam")
@@ -90,7 +107,7 @@ internal sealed class DeclarationExtraction
         }
     }
 
-    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray(),primitives.ToImmutableArray(),cards.ToImmutableArray()) { XspiceInstances=xspice.ToImmutableArray(), Analyses=analyses.ToImmutableArray(), BehavioralSources=behavior.ToImmutableArray() };
+    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray(),primitives.ToImmutableArray(),cards.ToImmutableArray()) { XspiceInstances=xspice.ToImmutableArray(), Analyses=analyses.ToImmutableArray(), BehavioralSources=behavior.ToImmutableArray(), InitialConditions=initialConditions.ToImmutableArray() };
 
     private int Enclosing(IParseTree? tree)
     {

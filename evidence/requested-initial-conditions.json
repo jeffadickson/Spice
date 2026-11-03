@@ -1,0 +1,173 @@
+{
+  "state": "verified_bounded_linear_initial_conditions_windows_and_dc_identity",
+  "base_commit": "4090c6abb5af9a31d69db02cbe3d65b489095294",
+  "source_sha256": {
+    "dotnet/Simulator.Client/Requests.cs": "61219bf2b0a2797cf2f87f16914f09b2907e8b3cd7ddb2bb927fed3cccadb7a7",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "05963f162c966d3908d4a95ad3b18ea73571001321e5a1504413186730724904",
+    "dotnet/Simulator.Frontend/RequestedInitialConditions.cs": "3644a785205907f83feb8a7c9f32e07029709b4d3989066329dfc3292b6a4228",
+    "dotnet/Simulator.Frontend/RequestedDcSourceBinding.cs": "e3534541a3a0cb0986038fde9e0f4689a57bb9ab9f98fd3851476fb8bf2a4287",
+    "dotnet/Simulator.Frontend/OperatingPointSelection.cs": "fe08aeee07810b7b693fef6e5d6a5d476fcf57ef78da9917280aa039affd5088",
+    "dotnet/Simulator.Frontend/TransientSelection.cs": "2eb182aedcb25c76c15062de4b26742119a2c62e296179d2218ee218363b4004",
+    "dotnet/Simulator.Syntax/InitialConditionSyntax.cs": "6860abd431a43d6e023ee315f702500ab183f6d386b040dfaaa33c10296b9d0f",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "bf629252c1c9eeb7d2c0817d0547d9516856e4f9f2f4da2d6c760b6042b6e50f",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "ce3dac389284c393065806f3facf0ea04ceececa10ec31312f681ba79566cd84",
+    "dotnet/Simulator.RequestedQualification/RequestedCorpus.cs": "fe36086c48e74046d9559ac435dc2820bbfa4e453b261ebddf52a696d68e86ba",
+    "dotnet/Simulator.RequestedQualification/QualificationSupport.cs": "0b772b53ff9f69025fe91f4b081a7936e323511ec075c4f64e3646ed2fdfe1d5",
+    "dotnet/Simulator.Frontend.Tests/RequestedInitialConditionTests.cs": "df174b8578da929fa6f854545271c1b8225aad3b6d90f666a9cc603a0481f9c2",
+    "dotnet/Simulator.Frontend.Tests/RequestedDcSourceBindingTests.cs": "0f0a84292ce678f67b71b6549878d0fd67b519cd108411837b670032a7833978",
+    "dotnet/Simulator.Frontend.Tests/RequestedAnalysisTests.cs": "2f9e0d174585b9bb00778eb3c1807e12aa5588b0673cd1321ca9084d74fd7783",
+    "scripts/Run-SemanticMutations.ps1": "f6525a7cd0d5605dca856406caba5b85ff39d0532a683c7ac9de89fac459f843"
+  },
+  "hash_scope": "Actual tested working-tree source bytes; Git line-ending normalization can differ from these bytes.",
+  "artifact_root": "E:/Artifacts/spice-requested-ic-nov2",
+  "tests": {
+    "total": 216,
+    "failed": 0,
+    "fscheck": {
+      "seed": 2381,
+      "cases": 100,
+      "gamma": 20261103,
+      "scope": "Explicit IC values, original circuit preservation, added clamp identity"
+    },
+    "trx": "review-coverage/frontend.trx",
+    "coverage": "review-coverage/15df836b-63f2-4e04-a68d-9f24d9df6fa5/coverage.cobertura.xml",
+    "passed": 207,
+    "limitations": "Windows native runtime only;9 unrelated configured corpus/reference tests skipped. Existing baseline xUnit2013 warning remains.",
+    "skipped": 9,
+    "analytical": "RC exp(-t/RC) with independent first-order BE bound; source-node analytical KCL across full retained history."
+  },
+  "coverage": {
+    "transient_selection": {
+      "branches_total": 87,
+      "lines_covered": 42,
+      "branches_covered": 73,
+      "lines_total": 43
+    },
+    "dc_source_identity": {
+      "branches_total": 30,
+      "lines_covered": 10,
+      "branches_covered": 26,
+      "lines_total": 10
+    },
+    "limitations": "Whole managed-file scopes including pre-existing code; native Rust and generated ANTLR outside these coverage claims.",
+    "selection": {
+      "branches_total": 36,
+      "lines_covered": 37,
+      "branches_covered": 36,
+      "lines_total": 37
+    },
+    "coordinator": {
+      "branches_total": 156,
+      "lines_covered": 107,
+      "branches_covered": 94,
+      "lines_total": 108
+    },
+    "requested_analysis": {
+      "branches_total": 138,
+      "lines_covered": 106,
+      "branches_covered": 129,
+      "lines_total": 106
+    },
+    "comparison_support": {
+      "branches_total": 328,
+      "lines_covered": 123,
+      "branches_covered": 248,
+      "lines_total": 123
+    },
+    "generated_initial_metadata": {
+      "branches_total": 0,
+      "lines_covered": 2,
+      "branches_covered": 0,
+      "lines_total": 2
+    },
+    "initial_conditions": {
+      "branches_total": 88,
+      "lines_covered": 42,
+      "branches_covered": 74,
+      "lines_total": 43
+    },
+    "declaration_extraction": {
+      "branches_total": 126,
+      "lines_covered": 88,
+      "branches_covered": 104,
+      "lines_total": 92
+    }
+  },
+  "native": {
+    "parameter_independence": "Original RC.IC level*2 and.TRAN dt/duration expressions retained in native input; no evaluated IC/timing values copied to native.",
+    "stages": [
+      {
+        "name": "Syntax accepted",
+        "passed": 5,
+        "refused": 0,
+        "unknown": 0
+      },
+      {
+        "name": "Circuit prepared",
+        "passed": 5,
+        "refused": 0,
+        "unknown": 0
+      },
+      {
+        "name": "Requested analyses executed",
+        "passed": 5,
+        "refused": 0,
+        "unknown": 0
+      },
+      {
+        "name": "Native numerical agreement",
+        "passed": 4,
+        "refused": 1,
+        "unknown": 0
+      }
+    ],
+    "unqualified_grid_gaps": 1,
+    "engine_sha256": "679da74a6d93e6b471617c9cd9c410af29e503ad3821355644d0863042981492",
+    "state_layout": "Public V/L/E descriptor-based reconstruction verified through actual native-backed client bias solves. H layout source-inspected/publicly documented but H IC execution remains refused/unqualified.",
+    "report": "E:\\Artifacts\\spice-requested-ic-nov2\\initial-oracle-a1a8ac80a12a4d04b36a926e4889ab1d\\output",
+    "agreed": 4,
+    "negative_window": "TSTART1.01us: first engine reported1.1us precedes native1.1024us. transient_extrapolation is retained as unqualified. Complete raw history remains available.",
+    "report_sha256": "4a8c6d1db55a478544766c2905cef68c76dd31261c8b206a66143184e5eddb47",
+    "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "compared_points": 11098,
+    "requested_executed": 5,
+    "inputs": 5,
+    "mapped_agreed_observables": 14,
+    "positive_window": "TSTART1.101us: every reported engine sample is bracketed by native original-window samples."
+  },
+  "mutation": {
+    "reported_score_percent": 25.35,
+    "source_span": "RequestedInitialConditions.cs UTF16 offsets1965..7688, covering duplicate/constraint binding and subsequent initialization preparation",
+    "tool": "Stryker.NET5.0.0",
+    "report": "duplicate-mutation/reports/reports/mutation-report.json",
+    "tested": 37,
+    "ignored": 498,
+    "killed": 18,
+    "no_coverage": 34,
+    "survived": 19,
+    "compile_errors": 72,
+    "limitations": "Mutation snapshot omitted environment-gated native tests;34selected runtime mutants have no mutation coverage.19survivors remain. Snapshot precedes added exact diagnostic-code assertions and DC source-identity helper. No mutation closure or full IC mutation qualification claimed.",
+    "created": 641
+  },
+  "strictdoc": {
+    "status": "passed",
+    "parents": 341,
+    "report": "requirements-final.json",
+    "documents": 24,
+    "unique_ids": 352
+  },
+  "review_fix": {
+    "historical_census": "Detached62ae97d source not modified. Its affected rows remain unqualified historical evidence.",
+    "fix": "Original root V/I primitive eligibility, exact physical-range origin match and typed wire element mapping; counted candidates return atomic diagnostics.",
+    "issue": "Affine/external synthetic source origin could falsely qualify a DC target or duplicate origins could throw.",
+    "tests": "Synthetic B/A names, repeated origins, physical-range disambiguation, missing/wrong wire, behavioral real-name collisions."
+  },
+  "limitations": [
+    "Bounded root node-voltage.IC only; device IC= fields, UIC, F/H initial-state profiles and nonlinear/charged-diode explicit states are not implemented/qualified.",
+    "Targets require capacitor dynamics. Direct ideal-source constraints reject; indirect overconstraints can fail the retained bias request without publishing a state.",
+    "No missing state is replaced with zero. Original physical circuit stays separate from temporary clamp branches.",
+    "Full raw engine history remains untouched; reported-window view contains accepted samples only, without resampling/synthetic TSTART points.",
+    "Existing distinct DC/time-zero source bias refusal remains.",
+    "No full corpus census or CI/push ran in this slice. Coordinator source gates now also hash Rust sources/Cargo build manifests."
+  ]
+}

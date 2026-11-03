@@ -68,6 +68,8 @@ public sealed class DeclarationCatalog
     private readonly bool opaqueParameters;
     /// <summary>Ordered generated analysis headers, retaining scope and physical source fields.</summary>
     public ImmutableArray<AnalysisSyntax> Analyses { get; init; } = [];
+    /// <summary>Generated .IC node-voltage cards; evaluation and initial-state preparation remain separate.</summary>
+    public ImmutableArray<InitialConditionSyntax> InitialConditions { get; init; } = [];
     /// <summary>Generated primitive headers; evaluation and execution are separate stages.</summary>
     public ImmutableArray<PrimitiveSyntax> Primitives { get; }
     /// <summary>Generated code-model ports; model-specific execution admission remains separate.</summary>
