@@ -7,6 +7,10 @@ public sealed class SourceProfileTests
     [Theory]
     [InlineData("ac")]
     [InlineData("dc")]
+    [InlineData("pulse")]
+    [InlineData("sin")]
+    [InlineData("pwl")]
+    [InlineData("exp")]
     public void Incomplete_reserved_clauses_are_not_reinterpreted_as_named_parameters(string keyword)
     {
         var syntax=DeckParser.Parse($"Reserved\n.param {keyword}=3\nV1 a 0 {keyword}\nR1 a 0 1k\n.end\n",collectDeclarations:true);
@@ -39,7 +43,7 @@ public sealed class SourceProfileTests
     [InlineData("DC 1 AC 2 AC 3")]
     [InlineData("AC 1 DC 2 DC 3")]
     [InlineData("DC 1 AC missing")]
-    [InlineData("DC 1 SIN(0 1 1k)")]
+    [InlineData("DC 1 SFFM(0 1 1k 1 10k)")]
     public void Unsupported_or_invalid_source_profiles_are_atomic(string header)
     {
         var syntax=DeckParser.Parse("Source\nV1 a 0 "+header+"\nR1 a 0 1k\n.end\n",collectDeclarations:true);

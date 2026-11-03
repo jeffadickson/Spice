@@ -15,6 +15,8 @@ public sealed record BridgeResult(SimulationRequest? Request,ImmutableDictionary
     public ImmutableArray<AcSourcePhasor> AcSources { get; init; } = [];
     /// <summary>Number of active source headers with an explicitly declared AC amplitude.</summary>
     public int ExplicitAcSources { get; init; }
+    /// <summary>Evaluated waveform fields, without an implicit transient analysis or guessed timing defaults.</summary>
+    public ImmutableArray<PreparedSourceWaveform> SourceWaveforms {get;init;}=[];
     /// <summary>All active cards fit the requested bounded operating-point preparation profile.</summary>
     public bool Success=>Request!=null&&Diagnostics.IsEmpty;
 }
@@ -45,7 +47,7 @@ public static class OperatingPointBridge
         var rootEnd=catalog.Cards.FirstOrDefault(c=>c.ScopeId==0&&c.Kind=="endCard");
         if(rootEnd!=null&&catalog.Cards.Any(c=>c.ScopeId==0&&c.Range.Start>rootEnd.Range.Start))return Failure("unprocessed_end_tail",rootEnd.Range);
         var nodes=new List<string>{"0"};var elements=new List<Element>();var origins=new List<ElementOrigin>();
-        var acSources=new List<AcSourcePhasor>();var explicitAcSources=0;
+        var acSources=new List<AcSourcePhasor>();var explicitAcSources=0;var sourceWaveforms=new List<PreparedSourceWaveform>();
         var roots=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var bound=InstanceBinder.Bind(catalog).Instances.ToLookup(i=>i.Header.ScopeId);
         var primitives=catalog.Primitives.ToLookup(p=>p.ScopeId);var cards=catalog.Cards.ToLookup(c=>c.ScopeId);
@@ -57,7 +59,7 @@ public static class OperatingPointBridge
             Expand(0,rootParameters,new(StringComparer.OrdinalIgnoreCase),[],0);
             if(elements.Count==0)throw new BridgeFailure("empty_circuit",null);
             return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),new OperatingPoint(),backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
-            {AcSources=acSources.ToImmutableArray(),ExplicitAcSources=explicitAcSources};
+            {AcSources=acSources.ToImmutableArray(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray()};
         }
         catch(BridgeFailure e){return Failure(e.Code,e.Range);}
         void Expand(int scope,ParameterEvaluation environment,Dictionary<string,int> ports,ImmutableArray<string> path,int depth)
@@ -81,10 +83,15 @@ public static class OperatingPointBridge
                     if(selected&&primitive.RequiresExcitationProfile&&primitive.Excitation==null)throw new BridgeFailure("unsupported_source_profile",primitive.Range);
                     if(primitive.Family is not ("R" or "V" or "I") && !(selected && primitive.Family is ("C" or "L" or "E" or "G")))throw new BridgeFailure("unsupported_active_card",primitive.Range);
                     if(!names.Add(primitive.Name))throw new BridgeFailure("duplicate_element",primitive.Range);
-                    double value;double magnitude=0,phase=0;
+                    double value;double magnitude=0,phase=0;SourceWaveformSyntax? waveformSyntax=null;ImmutableArray<double> waveformValues=[];
                     if(selected&&primitive.Family is ("V" or "I")&&primitive.Excitation is {} excitation)
                     {
-                        value=excitation.Dc==null?0:Evaluate(excitation.Dc);
+                        double initial=0;
+                        if(excitation.Waveform is {} wave){
+                            waveformSyntax=wave;waveformValues=wave.Values.Select(Evaluate).ToImmutableArray();
+                            if(!SourceWaveformPreparation.TryInitial(wave.Kind,waveformValues,out initial))throw new BridgeFailure("unsupported_source_waveform",primitive.Range);
+                        }
+                        value=excitation.Dc==null?initial:Evaluate(excitation.Dc);
                         // Validate explicitly supplied AC fields even though this
                         // selected operating point does not use their excitation.
                         if(excitation.AcMagnitude!=null){magnitude=Evaluate(excitation.AcMagnitude);explicitAcSources++;}
@@ -119,6 +126,7 @@ public static class OperatingPointBridge
                         var radians=phase*(Math.PI/180.0);
                         acSources.Add(new(id,magnitude*Math.Cos(radians),magnitude*Math.Sin(radians)));
                     }
+                    if(waveformSyntax!=null)sourceWaveforms.Add(new(id,waveformSyntax.Kind,waveformValues,primitive.Range));
                     origins.Add(new(id,primitive.Name,path,primitive.Range));
                 }
                 double Evaluate(SourceSyntax valueSyntax)

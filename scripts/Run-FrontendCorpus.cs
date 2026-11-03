@@ -62,7 +62,7 @@ foreach(var item in input.RootElement.GetProperty("rows").EnumerateArray())
   if(parsed.Status!="accepted_structure"){row.Status="syntax_refused";row.Detail=parsed.Status;continue;}
   var selection=selected?OperatingPointSelection.Select(parsed):null;
   var prepared=selection?.Prepared??OperatingPointBridge.Lower(parsed);
-  if(selected)row.Readiness=CircuitReadiness.Audit(parsed);
+  if(selected){row.Readiness=CircuitReadiness.Audit(parsed);row.SourceWaveforms=prepared.SourceWaveforms.ToArray();}
   row.Omissions=selection?.Omissions.ToArray()??[];
   if(!prepared.Success)
   {
@@ -116,7 +116,7 @@ foreach(var item in input.RootElement.GetProperty("rows").EnumerateArray())
   var characters=resolved.Text!.ToCharArray();var previousEnd=0;
   // Source AC metadata records which excitation was not selected. Preserve the
   // original source card for the native OP oracle; only input instructions are masked.
-  foreach(var omission in row.Omissions.Where(o=>o.Kind!="source_ac").OrderBy(o=>o.Range.Start))
+  foreach(var omission in row.Omissions.Where(o=>o.Kind is not ("source_ac" or "source_transient")).OrderBy(o=>o.Range.Start))
   {
    var range=omission.Range;
    if(range.Start<previousEnd||range.Start<0||range.Length<0||range.Start>characters.Length-range.Length)throw new InvalidDataException("Invalid/overlapping omission range");
@@ -172,6 +172,7 @@ sealed class Row
 {
  public CircuitReadinessReport? Readiness{get;set;}
  public string? NativeCompatibility{get;set;}
+ public PreparedSourceWaveform[]? SourceWaveforms{get;set;}
  public string Scope{get;set;}="";public string Path{get;set;}="";public string Status{get;set;}="";public string? Detail{get;set;} public string? Card{get;set;} public string? Family{get;set;} public string? Excerpt{get;set;}
  public string? InputSha256{get;set;} public string? ExpandedSha256{get;set;} public string? NativeInputSha256{get;set;} public string? NativeLogSha256{get;set;} public int? NativeExit{get;set;}
  public OperatingPointOmission[] Omissions{get;set;}=[];public SourceHash[] Sources{get;set;}=[];public List<Provider> Providers{get;}=[];public List<Observation> Comparisons{get;}=[];

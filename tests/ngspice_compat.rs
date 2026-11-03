@@ -473,7 +473,9 @@ fn ngspice_delayed_damped_sine_lowers_with_delay_breakpoint_and_phase() {
     match request.analysis {
         circuit_simulator::api::Analysis::TransientConfigured { options } => {
             assert_eq!(options.sources[0].waveform.breakpoints(), vec![1e-3]);
-            assert_eq!(options.sources[0].waveform.at(0.).unwrap(), 0.);
+            // Independent ngspice vsrcload.c keeps VO+VA*sin(PHASE) before TD.
+            assert!((options.sources[0].waveform.at(0.).unwrap() - 2.).abs() < 1e-12);
+            assert!((options.sources[0].waveform.at(0.5e-3).unwrap() - 2.).abs() < 1e-12);
             assert!((options.sources[0].waveform.at(1e-3).unwrap() - 2.).abs() < 1e-12);
         }
         _ => panic!("expected configured transient analysis"),
@@ -851,4 +853,18 @@ fn ngspice_waveform_tail_is_not_silently_imported() {
     let error =
         parse_ngspice_basic("title\nV1 out 0 DC=2 SIN(0 1 1k)\nR1 out 0 4k\n.end\n").unwrap_err();
     assert_eq!(error.code, ErrorCode::InvalidInput);
+}
+
+#[test]
+fn basic_sine_import_uses_independently_verified_phase_bias() {
+    let circuit = circuit_simulator::netlist::parse_ngspice_basic(
+        "Phase\nV1 out 0 SIN 0 2 1k 1m 0 90\nR1 out 0 1k\n.end\n",
+    )
+    .unwrap();
+    let state = circuit_simulator::dc::operating_point(
+        &circuit_simulator::compile::compile(&circuit).unwrap(),
+        &circuit_simulator::backend::DenseLu,
+    )
+    .unwrap();
+    assert!((state[0] - 2.).abs() < 1e-12);
 }

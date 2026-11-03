@@ -1,19 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="920" height="460" viewBox="0 0 920 460" role="img" aria-labelledby="title desc">
-<title id="title">Original corpus static execution burndown</title><desc id="desc">Solved files17,32,35,38; native compared16,31,34,37. Valid roots not solving903,888,885,882. Ten final files match selected AC probes. Multiple blockers overlap.</desc>
-<rect width="920" height="460" fill="#f5f7fb"/><g font-family="Segoe UI,Arial,sans-serif" fill="#17243b">
-<text x="35" y="36" font-size="23" font-weight="bold">Corpus execution: measured solver progress</text>
-<text x="35" y="62" font-size="13">Original928 paths:920 valid roots and8 hash-pinned exclusions. Selected static analysis only.</text>
-<rect x="35" y="81" width="12" height="12" fill="#2375b8"/><text x="54" y="92" font-size="12">DC solved</text><rect x="150" y="81" width="12" height="12" fill="#15987d"/><text x="169" y="92" font-size="12">Native agreement</text>
-<g font-size="13"><text x="35" y="144">Prior</text><text x="35" y="194">Source clauses</text><text x="35" y="244">Reporting flags</text><text x="35" y="294">E/G census</text></g>
-<g fill="#2375b8"><rect x="165" y="120" width="136" height="18"/><rect x="165" y="170" width="256" height="18"/><rect x="165" y="220" width="280" height="18"/><rect x="165" y="270" width="304" height="18"/></g>
-<g fill="#15987d"><rect x="165" y="139" width="128" height="12"/><rect x="165" y="189" width="248" height="12"/><rect x="165" y="239" width="272" height="12"/><rect x="165" y="289" width="296" height="12"/></g>
-<g font-size="14"><text x="310" y="143">17 /16</text><text x="430" y="193">32 /31</text><text x="454" y="243">35 /34</text><text x="478" y="293">38 /37</text></g>
-<text x="590" y="99" font-size="16" font-weight="bold">Valid roots not solving</text><path d="M600 120V285H875" fill="none" stroke="#a8b3c3"/>
-<g font-size="12" fill="#5c687a"><text x="561" y="135">910</text><text x="561" y="195">895</text><text x="561" y="255">880</text><text x="604" y="310">Zoomed y-axis:875–915</text></g>
-<path d="M620 163L690 223L760 235L830 247" fill="none" stroke="#b05d21" stroke-width="3"/><g fill="#b05d21"><circle cx="620" cy="163" r="5"/><circle cx="690" cy="223" r="5"/><circle cx="760" cy="235" r="5"/><circle cx="830" cy="247" r="5"/></g>
-<g font-size="14" font-weight="bold"><text x="604" y="151">903</text><text x="674" y="211">888</text><text x="744" y="223">885</text><text x="814" y="235">882</text></g>
-<text x="35" y="345" font-size="15" font-weight="bold">10 files match selected AC probes on both CPU providers.</text>
-<text x="35" y="372" font-size="13">852 lowering refusals +30 resource refusals. One solved root remains numerically unqualified.</text>
-<text x="35" y="400" font-size="12">Bug883 named fixtures are separate. No original control/transient/fullSPICE qualification.</text>
-<text x="35" y="428" font-size="12" fill="#5c687a">Audit:89 incomplete graphs;22 truncated reports. Blocker counts overlap and are observed lower bounds.</text>
-</g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="430" viewBox="0 0 940 430" role="img" aria-labelledby="title desc">
+<title id="title">Original928-input simulation progress</title><desc id="desc">Selected static solves increased17,32,35,38,51; native voltage agreement16,31,34,37,50. Valid roots not solving decreased903,888,885,882,869. Fourteen final files match selected AC probes.</desc>
+<rect width="940" height="430" fill="#f5f7fb"/><g font-family="Segoe UI,Arial,sans-serif" fill="#17243b">
+<text x="32" y="40" font-size="24" font-weight="bold">Corpus execution: measured progress</text>
+<text x="32" y="67" font-size="14">920 valid roots +8 pinned exclusions. Selected analyses; original programs remain unqualified.</text>
+<g font-size="14"><text x="32" y="117">Prior</text><text x="32" y="167">Source clauses</text><text x="32" y="217">Reporting flags</text><text x="32" y="267">E/G census</text><text x="32" y="317">Waveform profiles</text></g>
+<g fill="#2375b8"><rect x="185" y="99" width="102" height="17"/><rect x="185" y="149" width="192" height="17"/><rect x="185" y="199" width="210" height="17"/><rect x="185" y="249" width="228" height="17"/><rect x="185" y="299" width="306" height="17"/></g>
+<g fill="#15987d"><rect x="185" y="118" width="96" height="10"/><rect x="185" y="168" width="186" height="10"/><rect x="185" y="218" width="204" height="10"/><rect x="185" y="268" width="222" height="10"/><rect x="185" y="318" width="300" height="10"/></g>
+<g font-size="14"><text x="300" y="118">17 /16</text><text x="390" y="168">32 /31</text><text x="408" y="218">35 /34</text><text x="426" y="268">38 /37</text><text x="504" y="318">51 /50</text></g>
+<text x="615" y="110" font-size="17" font-weight="bold">Remaining valid roots</text><text x="615" y="139" font-size="14">Not solving:903→888→885→882→869</text>
+<text x="615" y="180" font-size="17" font-weight="bold">Latest selected AC</text><text x="615" y="209" font-size="14">14 files;1,100,1000Hz; both CPU providers</text>
+<text x="615" y="250" font-size="17" font-weight="bold">Current limits</text><text x="615" y="279" font-size="14">839 lowering +30 resource refusals</text><text x="615" y="306" font-size="14">1 solve has no root observable</text>
+<rect x="32" y="360" width="16" height="12" fill="#2375b8"/><text x="56" y="372" font-size="13">Solver completed</text><rect x="210" y="360" width="16" height="12" fill="#15987d"/><text x="234" y="372" font-size="13">Native voltage agreement</text>
+<text x="32" y="405" font-size="12">Counts are files, not independent topologies. No whole-corpus transient, full SPICE, GPU or production claim.</text></g></svg>

@@ -50,7 +50,7 @@ foreach(var input in inventory.RootElement.GetProperty("rows").EnumerateArray())
   var directory=Path.Combine(output,"cases",index.ToString("D4",CultureInfo.InvariantCulture));Directory.CreateDirectory(directory);
   var selectedPath=Path.Combine(prior,"selected.cir");var text=File.ReadAllText(selectedPath);row.SelectedSha256=Hash(selectedPath);
   var original=File.ReadAllText(expanded).ToCharArray();
-  foreach(var omission in selected.Omissions.Where(o=>o.Kind!="source_ac"))
+  foreach(var omission in selected.Omissions.Where(o=>o.Kind is not ("source_ac" or "source_transient")))
    for(var i=omission.Range.Start;i<omission.Range.Start+omission.Range.Length;i++)if(original[i] is not ('\r' or '\n'))original[i]=' ';
   if(new string(original)!=text)throw new InvalidDataException("Original-source projection differs");
   var projected=DeckParser.Parse(text,collectDeclarations:true);

@@ -1,0 +1,152 @@
+{
+  "state": "completed_with_results",
+  "base_commit": "86d193d00f17f78239094b2214bf59f7d9b7ba65",
+  "tested_source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "f0686aa05ec94e7ccdbfbe3ea03df104407b4f4fc68ccfda0c3422e0a5f773c2",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "71972a84c519236ba697c3570a7599d5740d5b0505b7aa2472a352cc85de36d9",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "43c4393143456446b33a21955c82f2135b132319feaa2b2e412024c72dedf8ec",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "bf2fc543ed6c90b46ea07ec86166bfeb5b55dc0efffcb8ca042b87d2ec9d02cc",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "48c7f176300f3db67094fba9f806404e4f4b2707539a898c6e839149ce4258ef",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "5589b48f55cb97b023a1474bd9c45b7a2aafc7c91d5b2498a9be1644a71d5ed5",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "5046c3d961485df37d27f7c4fab05d008bacaad568f09489bafd7cf78e8abadd",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "9a16151aaacdae233de733942324458d36c883ab8a3a77d9176ef2abe8d13527",
+    "dotnet/Simulator.Client/Client.cs": "4af10aae7a41d438196f4ec28abe41bf4dcc3829e2f2f2b9eaac5164a2eb65ff",
+    "dotnet/Simulator.Client/Requests.cs": "42c0f98b2e0d56c428c122045981831f9189f849318e5a8e2e8845a119f8cfa8",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "84d66c3c98bddddcd65037643b0cd3b18d35c414fed665fb9f15bcc96f55180f",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "ca7a095365ff39abea75ad80ea0efd8b072b9218985d95c467b65633831e3a6d",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "700f7a66b1c742a6b3c4deca5c02f1426078baa9af9afcb60c3f47d2b63f3fab",
+    "dotnet/Simulator.Frontend/OperatingPointSelection.cs": "56d64a5aa2d3be9dd8bd94b9e3ad2ac4f3056adef415ba7150f09a3c92843023",
+    "dotnet/Simulator.Frontend/packages.lock.json": "ea51b87a36d8e82f42b9839406f5dacdb9cc1a61b4754743075f3dd4d23e402c",
+    "dotnet/Simulator.Frontend/Simulator.Frontend.csproj": "5a69547d0d2f92145f9450e95135646aa308e2fdd4bc465841ed5cf7dd376361",
+    "dotnet/Simulator.Frontend/SourceWaveformPreparation.cs": "8e03f843159861a5494164d3354eff5f471c8b824555c9110e37aa343bbc6c03",
+    "dotnet/Simulator.Frontend/TransientSelection.cs": "d4f16384cf914b47c0eb67cd03030549e3f8d327807514a0ae804d484e2b8875",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "942de52671daf11d86447e7808ee4ade224e211fc31b7f4116b8cc0162f7cb2d",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "d833fa96d3284de955f9192478a4890fefd58f90ab7ee15cd8a271c57583164c",
+    "scripts/Run-FrontendCorpus.cs": "9b317aedf9723852656d2f1d1040a102c3ed32512eda9e63a11f623c6627d3e2",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779"
+  },
+  "total_inputs": 928,
+  "valid_roots": 920,
+  "solver_completed_files": 51,
+  "native_compared_files": 50,
+  "excluded": 8,
+  "resource_refused": 30,
+  "lowering_refused": 839,
+  "no_root_observables": 1,
+  "dc_requests": 102,
+  "dc_checks": 262,
+  "ac_compared_files": 14,
+  "ac_requests": 928,
+  "ac_checks": 288,
+  "op_summary_sha256": "965bb1d93796f1e048c7abe01c8d4984af8b234ac39cd21a02b1a08b2a9616c9",
+  "ac_summary_sha256": "52307836f980aa7c43e5e34e2726ce1c62b81a9127f99bd90f8cec4799ed085e",
+  "engine_sha256": "679da74a6d93e6b471617c9cd9c410af29e503ad3821355644d0863042981492",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "elapsed_op_seconds": 324.6692305,
+  "elapsed_ac_seconds": 22.2159582,
+  "coverage": [
+    {
+      "lines_valid": 17551,
+      "report_sha256": "210493f3c6b18b8034d67b4a33c4f85e0a445271dfe1395699c95b94c3f928c7",
+      "branches_covered": 1802,
+      "lines_covered": 9846,
+      "branches_valid": 3625,
+      "scope": "frontend"
+    },
+    {
+      "lines_valid": 7347,
+      "report_sha256": "172a0cb074239427d4f4aab4cc70fc18813a9cd059a76052bdede1a7cbceb534",
+      "branches_covered": 1879,
+      "lines_covered": 5233,
+      "branches_valid": 2563,
+      "scope": "syntax"
+    }
+  ],
+  "tests": {
+    "frontend_pass": 140,
+    "syntax_skipped": 1,
+    "syntax_pass": 406
+  },
+  "mutation": {
+    "ignored": 303,
+    "survived": 0,
+    "tool": "Stryker.NET",
+    "compile_error": 49,
+    "timeouts": 0,
+    "scope": "SourceWaveformPreparation.cs",
+    "killed": 61
+  },
+  "property": {
+    "cases": 64,
+    "seed": "929,20261103",
+    "tool": "FsCheck"
+  },
+  "strictdoc": {
+    "documents": 21,
+    "ids": 339,
+    "resolved_parents": 327
+  },
+  "replay": {
+    "ngspice_initial_volts": 1,
+    "fixed_rust_initial_volts": 1,
+    "old_rust_initial_volts": 0,
+    "case": "delayed-phase-red"
+  },
+  "limits": [
+    "Selected static OP and named AC probes, not complete input programs.",
+    "No new full-corpus transient/current/GPU/Linux/production qualification.",
+    "One exFAT link-security test skipped; native coverage recorded separately.",
+    "Stryker compile errors and ignored mutations are not kills."
+  ],
+  "raw_artifacts": "E:\\Artifacts\\Spice-next-five-20261103T023139Z",
+  "rust_tests": {
+    "failed": 0,
+    "log_sha256": "f139477070dc619d66a3afe34232d5ce55c6920fdb13aba27c9fcdd3c32ab71d",
+    "command": "cargo test --lib --tests",
+    "passed": 482,
+    "seed": "88320261103"
+  },
+  "rust_coverage": {
+    "test": "ngspice_compat",
+    "report_sha256": "d021104a5b91497ecb059b5c459ad56e01d4a0492486ad09d1f21c548599b371",
+    "limits": [
+      "Stable Rust instrumentation provides no measured branch coverage.",
+      "Other tests and executable main are outside this run."
+    ],
+    "tool": "cargo rustc + rustc instrument-coverage + matching LLVM",
+    "seed": "88320261103",
+    "files": [
+      {
+        "sha256": "753efdb099a0d7ab7beb380166f833912c43936a391c4db879af7f7078981a12",
+        "lines": {
+          "count": 1050,
+          "covered": 913,
+          "percent": 86.95238095238095
+        },
+        "file": "src/netlist.rs"
+      },
+      {
+        "sha256": "2bce955e8d3453700d0a5801a894799d3737034672332d942bc544fdb8d32cd9",
+        "lines": {
+          "count": 165,
+          "covered": 155,
+          "percent": 93.93939393939394
+        },
+        "file": "src/waveform.rs"
+      }
+    ],
+    "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+    "branches": null
+  }
+}

@@ -48,6 +48,14 @@ public sealed class FrontendCorpusIntegration
             (Name:"vccs.cir",Body:"V1 in 0 DC 2 AC 1\nG1 out 0 in 0 -2m\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"controlled-hierarchy.cir",Body:"V1 in 0 DC 2 AC 1\nX1 in out cell gain=3\n.subckt cell p q gain=2\nE1 q 0 p 0 {gain}\nR1 q 0 1k\n.ends",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"vswitch-883.cir",Body:".include 'vswitch.lib'\nVDR IN 0 DC .1 AC 1\nXU IN OUT DEMO",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"pulse-initial.cir",Body:"V1 out 0 PULSE(-1 2 1u 1n 1n 1u 2u)\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"pulse-defaults.cir",Body:"V1 out 0 PULSE(-1 2)\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"sine-phase.cir",Body:"V1 out 0 SIN(1 2 1k 0 0 90)\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"explicit-dc-wave.cir",Body:"V1 out 0 DC -2 SIN(1 2 1k 0 0 90) AC .2 -90\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"pwl-initial.cir",Body:"V1 out 0 PWL(0 -1 1u 2)\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"exp-initial.cir",Body:"V1 out 0 EXP(1 2 1u 2u 3u 4u)\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"delayed-sine-phase.cir",Body:"V1 out 0 SIN(0 1 1 1 0 90)\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"delayed-current-phase.cir",Body:"I1 out 0 SIN(0 1m 1 1 0 90)\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"zero-port.cir",Body:"X1 noports\n.subckt noports\nV1 hidden 0 1\nR1 hidden 0 1k\n.ends",Expected:"solver_completed_no_root_observables"),
             (Name:"capacitor.cir",Body:"V1 a 0 1\nC1 a 0 1u",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"rlc.cir",Body:"V1 a 0 3\nR1 a b 1k\nL1 b 0 2m\nC1 a b 3u",Expected:selected?"compared_pass":"lowering_refused"),
@@ -117,6 +125,9 @@ public sealed class FrontendCorpusIntegration
             foreach(var c in outcomes["vswitch-883.cir"].GetProperty("comparisons").EnumerateArray().Where(c=>c.GetProperty("node").GetString()!.Equals("OUT",StringComparison.OrdinalIgnoreCase)))
             {Assert.InRange(c.GetProperty("rust_volts").GetDouble(),.05-1e-10,.05+1e-10);Assert.InRange(c.GetProperty("ngspice_volts").GetDouble(),.05-1e-10,.05+1e-10);}
             Assert.Equal("psa",outcomes["vswitch-883.cir"].GetProperty("native_compatibility").GetString());
+            foreach(var source in new[]{(Name:"pulse-initial.cir",Expected:-1.0),(Name:"pulse-defaults.cir",Expected:-1.0),(Name:"sine-phase.cir",Expected:3.0),(Name:"explicit-dc-wave.cir",Expected:-2.0),(Name:"pwl-initial.cir",Expected:-1.0),(Name:"exp-initial.cir",Expected:1.0),(Name:"delayed-sine-phase.cir",Expected:1.0),(Name:"delayed-current-phase.cir",Expected:-1.0)})
+                foreach(var c in outcomes[source.Name].GetProperty("comparisons").EnumerateArray())
+                {Assert.InRange(c.GetProperty("rust_volts").GetDouble(),source.Expected-1e-10,source.Expected+1e-10);Assert.InRange(c.GetProperty("ngspice_volts").GetDouble(),source.Expected-1e-10,source.Expected+1e-10);}
             var index=Array.FindIndex(fixtures,f=>f.Name=="control.cir");
             var directory=Path.Combine(output,"cases",index.ToString("D4",CultureInfo.InvariantCulture));
             Assert.Contains("MUST_NOT_RUN",File.ReadAllText(Path.Combine(directory,"expanded.cir")));

@@ -182,3 +182,45 @@ Implementation: InstanceBinder, DeclarationExtraction.HasOpaqueModelTerms, Param
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-VSWITCH-001
+
+[REQUIREMENT]
+UID: SEM-WAVE-SOURCE-001
+STATUS: Draft
+TITLE: Generated waveform fields with separate selected DC and AC semantics
+STATEMENT: >>>
+The generated source profile shall retain ordered signed scalar fields for bounded PULSE, SIN, PWL and EXP forms, with independent optional DC and AC clauses in qualified orders. Duplicate clauses, unknown profiles and unsupported scalar shapes shall refuse atomically. Selected static preparation shall evaluate fields in the active instance environment, use an explicit DC value when supplied and otherwise the qualified waveform value at time zero, and preserve waveform metadata for a later explicit transient operation. Waveform metadata omissions shall never erase physical source cards from the independent native projection.
+<<<
+COMMENT: >>>
+Implementation: SpiceParser sourceClause/waveformExcitation, SourceProfileExtraction, SourceWaveformPreparation and OperatingPointBridge.SourceWaveforms. Qualified static forms: PULSE2-7 fields, SIN2-6, EXP2-6, and ordered nonnegative PWL pairs under the existing256-token semantic-entry bound. Negative delays and extra fields remain unsupported. Timing defaults are not invented during DC preparation. Verification: SourceWaveformTests,64 FsCheck clause-order cases (replay929,20261103), malformed profiles, reserved-keyword tests and original-source native fixtures. Evidence: evidence/corpus-waveform-results.json. Draft pending wider waveform/default qualification.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SOURCE-001
+
+[REQUIREMENT]
+UID: SEM-TRANSIENT-SELECT-001
+STATUS: Draft
+TITLE: Explicit transient selection reusing the existing waveform runtime
+STATEMENT: >>>
+The frontend shall expose an explicit bounded transient operation over the prepared circuit, mapping retained waveform fields to existing typed runtime source overrides with seconds, hertz and radian conventions. Stop/step-dependent defaults shall be named and evaluated from the requested analysis, not an unexecuted original command. Unsupported runtime profiles, mismatched explicit DC and waveform initialization, invalid budgets and source-count excess shall return structured atomic refusals. Original analysis/control omissions shall remain auditable and must not be presented as full-program execution.
+<<<
+COMMENT: >>>
+Implementation: TransientSelection and Client Pulse/DampedSine/Exponential DTOs, existing Rust configured integration/BoundSources/Waveform. Backward Euler only in this operation; source-count128, existing bridge limits, step count<=100000. Defaults follow pinned ngspice vsrcload.c, including the five-field pulse zero-width case. Overlapping pulse edges or distinct declared DC/time-zero bias are explicitly unsupported rather than silently modified. Negative damping/frequency and invalid exponential delays/time constants refuse. Verification: TransientSelectionTests, native waveform/control fixtures and refinement comparisons. Evidence: evidence/corpus-waveform-results.json and subsequent current/transient reference evidence. Draft, not general transient or UIC qualification.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-WAVE-SOURCE-001
+
+[REQUIREMENT]
+UID: SEM-WAVE-SINE-INITIAL-001
+STATUS: Draft
+TITLE: Delayed sinusoid phase consistency at initialization
+STATEMENT: >>>
+A delayed sinusoidal source shall hold offset plus amplitude times sine of its phase before its delay, including transient time zero, and continue from that same value at the delay boundary before subsequent damping/oscillation. Voltage and current source quantities shall share this waveform law. Static source preparation and configured initialization shall not silently disagree on this initial excitation.
+<<<
+COMMENT: >>>
+Implementation: src/waveform.rs DampedSine and SourceWaveformPreparation. Independent primary reference: pinned ngspice vsrcload.c SINE path uses VO+VA*sin(PHASE) for time<=TD. Historical importer regression wrongly expected offset alone; updated with the independently observed value. Verification: delayed-phase red request (old Rust0V versus native1V), ngspice_compat pre-delay/boundary assertions, native voltage/current fixtures and selected transient comparisons. Evidence: evidence/corpus-waveform-results.json and raw replay request/log fingerprints. Draft pending broader waveform qualification.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-WAVE-SOURCE-001

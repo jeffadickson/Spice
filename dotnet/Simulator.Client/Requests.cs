@@ -109,6 +109,9 @@ public sealed record Point(double TimeS, double Value);
 [JsonDerivedType(typeof(Constant), "constant")]
 [JsonDerivedType(typeof(Pwl), "pwl")]
 [JsonDerivedType(typeof(Sine), "sine")]
+[JsonDerivedType(typeof(DampedSine), "damped_sine")]
+[JsonDerivedType(typeof(Pulse), "pulse")]
+[JsonDerivedType(typeof(Exponential), "exponential")]
 public abstract record Waveform;
 /// <summary>Time-independent source value in its SI unit.</summary>
 public sealed record Constant(double Value) : Waveform;
@@ -116,6 +119,12 @@ public sealed record Constant(double Value) : Waveform;
 public sealed record Pwl(Point[] Points) : Waveform;
 /// <summary>Sinusoidal source with hertz frequency and radian phase.</summary>
 public sealed record Sine(double Offset, double Amplitude, double FrequencyHz, double PhaseRad) : Waveform;
+/// <summary>Delayed/damped sinusoid; delay seconds, damping inverse seconds, phase radians. Before delay the phase-biased initial value is held.</summary>
+public sealed record DampedSine(double Offset,double Amplitude,double FrequencyHz,double DelayS,double DampingPerS,double PhaseRad):Waveform;
+/// <summary>Finite-edge periodic pulse with all timing fields in seconds. Engine validates nonoverlapping edges.</summary>
+public sealed record Pulse(double Low,double High,double DelayS,double RiseS,double FallS,double WidthS,double PeriodS):Waveform;
+/// <summary>Exponential rise/return with delays and strictly positive time constants in seconds.</summary>
+public sealed record Exponential(double Initial,double Pulsed,double RiseDelayS,double RiseTauS,double FallDelayS,double FallTauS):Waveform;
 /// <summary>Requested scalar measurements and unit-aware bounds, evaluated from recorded results.</summary>
 public sealed record Experiment(Measurement[] Measurements, Assertion[] Assertions);
 /// <summary>Named scalar operation over a signal descriptor ID.</summary>

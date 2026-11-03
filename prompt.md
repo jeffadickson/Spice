@@ -526,3 +526,5 @@ legacy MCP6041 grouping and TL072 DOS EOF adjudication. Native syntax agrees on
 unqualified. Existing DC regression still passes 12 comparisons/24 Rust solves.
 Do not equate these stages or claim signal evaluation/behavioral support. Keep
 bulk artifacts on E: and retain captured-function/lexer-ATN coverage limitations.
+
+November2 waveform checkpoint: original928 inventory now51 selected static solves/50 native matches and14 selected AC files. Read docs/corpus-waveform-results.md and evidence/corpus-waveform-results.json. Original programs and broad transients remain unqualified; third-reference/current-transient work is next. Preserve main's sheet-resistor WIP.

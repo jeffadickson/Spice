@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
@@ -16,13 +17,23 @@ internal static class SourceProfileExtraction
         try
         {
             var profile=parser.sourceProfile();
-            if(profile.value()?.GetText().ToLowerInvariant() is "ac" or "dc")return null;
-            var dc=profile.dcExcitation()?.value()??profile.value();
-            var ac=profile.acExcitation()?.value();
-            return new(dc==null?null:capture(dc),ac==null?null:capture(ac[0]),ac?.Length==2?capture(ac[1]):null);
+            if(profile.value() is {} bare&&IsReserved(bare.GetText()))return null;
+            var clauses=profile.sourceClause();
+            var dc=clauses.Select(c=>c.dcExcitation()).Where(c=>c!=null).ToArray();
+            var ac=clauses.Select(c=>c.acExcitation()).Where(c=>c!=null).ToArray();
+            var waves=clauses.Select(c=>c.waveformExcitation()).Where(c=>c!=null).ToArray();
+            if(dc.Length>1||ac.Length>1||waves.Length>1||(dc.Length>0&&profile.value()!=null))return null;
+            var nominal=dc.Length==1?dc[0].value():profile.value();var phasor=ac.Length==1?ac[0].value():null;
+            SourceWaveformSyntax? waveform=null;
+            if(waves.Length==1){
+                var wave=waves[0];var kind=wave.identifier().GetText().ToLowerInvariant() switch{"pulse"=>SourceWaveformKind.Pulse,"sin"=>SourceWaveformKind.Sine,"pwl"=>SourceWaveformKind.Pwl,_=>SourceWaveformKind.Exponential};
+                waveform=new(kind,wave.waveformValues().waveformScalar().Select(v=>capture(v.value())).ToImmutableArray());
+            }
+            return new(nominal==null?null:capture(nominal),phasor==null?null:capture(phasor[0]),phasor?.Length==2?capture(phasor[1]):null){Waveform=waveform};
         }
         catch(ParseCanceledException){return null;}
     }
+    internal static bool IsReserved(string text)=>text.ToLowerInvariant() is "dc" or "ac" or "pulse" or "sin" or "pwl" or "exp";
     // Shared bounded adapter for generated semantic entries. Recognition remains
     // in ANTLR; no source text is split or re-tokenized here.
     internal static SpiceParser? CreateParser(IEnumerable<ParserRuleContext> parameters)

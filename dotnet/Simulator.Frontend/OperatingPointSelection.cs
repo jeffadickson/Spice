@@ -35,6 +35,9 @@ public static class OperatingPointSelection
         if(syntax.Declarations is {} declarations)
             foreach(var source in declarations.Primitives.Where(p=>p.Excitation?.AcMagnitude!=null))
                 omissions.Add(new(source.ScopeId,"source_ac",source.Name,"ac_excitation_not_selected",source.Range));
+        if(syntax.Declarations is {} waveformDeclarations)
+            foreach(var source in waveformDeclarations.Primitives.Where(p=>p.Excitation?.Waveform!=null))
+                omissions.Add(new(source.ScopeId,"source_transient",source.Name,"transient_excitation_not_selected",source.Range));
         var prepared=OperatingPointBridge.LowerSelected(syntax,limits,backend,omittedCards);
         return new(prepared,prepared.Success?omissions.ToImmutable():[]);
     }

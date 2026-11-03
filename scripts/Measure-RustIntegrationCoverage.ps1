@@ -23,8 +23,10 @@ try{
  $deps=Join-Path $TargetDirectory 'debug/deps'
  $proptest=@(Get-ChildItem -LiteralPath $deps -Filter 'libproptest-*.rlib' -File)
  if($proptest.Count -ne 1){throw 'Expected unique existing proptest rlib'}
+ $json=@(Get-ChildItem -LiteralPath $deps -Filter 'libserde_json-*.rlib' -File)
+ if($json.Count -ne 1){throw 'Expected unique existing serde_json rlib'}
  $binary=Join-Path $Output 'instrumented-tests.exe'
- & rustc --edition=2024 --test $inputTest --crate-name=spice_integration_coverage -C instrument-coverage --extern "circuit_simulator=$($library[0])" --extern "proptest=$($proptest[0].FullName)" -L "dependency=$deps" -o $binary 2> (Join-Path $Output 'test-build.log')
+ & rustc --edition=2024 --test $inputTest --crate-name=spice_integration_coverage -C instrument-coverage --extern "circuit_simulator=$($library[0])" --extern "proptest=$($proptest[0].FullName)" --extern "serde_json=$($json[0].FullName)" -L "dependency=$deps" -o $binary 2> (Join-Path $Output 'test-build.log')
  if($LASTEXITCODE){throw 'Instrumented integration test build failed'}
  $env:LLVM_PROFILE_FILE=Join-Path $Output '%m-%p.profraw'
  & $binary *> (Join-Path $Output 'test.log');if($LASTEXITCODE){throw 'Instrumented test failed'}

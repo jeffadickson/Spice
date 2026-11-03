@@ -177,7 +177,9 @@ impl Waveform {
                 phase_rad,
             } => {
                 if time < *delay_s {
-                    *offset
+                    // ngspice SIN holds the phase-biased value before delay, so
+                    // DC and transient time-zero excitation remain continuous.
+                    offset + amplitude * phase_rad.sin()
                 } else {
                     let elapsed = time - delay_s;
                     let phase = std::f64::consts::TAU * frequency_hz * elapsed + phase_rad;

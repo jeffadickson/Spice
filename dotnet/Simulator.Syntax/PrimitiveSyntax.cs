@@ -15,7 +15,26 @@ public sealed record PrimitiveSyntax(string Name,string Family,int ScopeId,Sourc
 /// <summary>Control voltage is V(P)-V(N); output polarity remains the primitive P-to-N convention.</summary>
 public sealed record VoltageControlSyntax(SourceSyntax P,SourceSyntax N);
 /// <summary>Unevaluated SI DC and AC amplitude/degree-phase fields. A null DC field in an AC-only header denotes the specified zero DC default.</summary>
-public sealed record SourceExcitationSyntax(SourceSyntax? Dc,SourceSyntax? AcMagnitude,SourceSyntax? AcPhase);
+public sealed record SourceExcitationSyntax(SourceSyntax? Dc,SourceSyntax? AcMagnitude,SourceSyntax? AcPhase)
+{
+    /// <summary>Generated positional waveform fields; timing defaults belong to an explicit transient analysis.</summary>
+    public SourceWaveformSyntax? Waveform {get;init;}
+}
+/// <summary>Recognized source families; recognizing fields is separate from numerical admission.</summary>
+[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SourceWaveformKind>))]
+public enum SourceWaveformKind
+{
+    /// <summary>Finite-edge periodic pulse.</summary>
+    Pulse,
+    /// <summary>Possibly delayed/damped sinusoid with degree phase syntax.</summary>
+    Sine,
+    /// <summary>Piecewise-linear time/value pairs.</summary>
+    Pwl,
+    /// <summary>Exponential rise and return.</summary>
+    Exponential
+}
+/// <summary>Unevaluated ordered scalar fields from the generated waveform rule.</summary>
+public sealed record SourceWaveformSyntax(SourceWaveformKind Kind,ImmutableArray<SourceSyntax> Values);
 /// <summary>Every generated statement's lexical owner, for explicit active-capability checks.</summary>
 public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range)
 {
@@ -64,10 +83,10 @@ internal static class PrimitiveExtraction
         var supported=parameters.Length==valueIndex+1&&parameters[valueIndex].assignment()==null&&!(card is SpiceParser.SourceContext&&parameters[valueIndex].call()!=null);
         var value=supported?capture(parameters[valueIndex]):null;
         return new(card.Start.Text,family,scope,capture(nodes.node(0)),capture(nodes.node(1)),value,supported,capture(card).Range)
-        {RequiresExcitationProfile=card is SpiceParser.SourceContext&&parameters.Length>0&&parameters[0].Start.Text.ToLowerInvariant() is "dc" or "ac",
+        {RequiresExcitationProfile=card is SpiceParser.SourceContext&&parameters.Length>0&&SourceProfileExtraction.IsReserved(parameters[0].Start.Text),
          Excitation=card is SpiceParser.SourceContext sourceCard
             ?supported&&value!=null&&!parameters[0].Start.Text.Equals("ac",StringComparison.OrdinalIgnoreCase)
-                &&!(parameters.Length==1&&parameters[0].GetText().Equals("dc",StringComparison.OrdinalIgnoreCase))
+                &&!(parameters.Length==1&&SourceProfileExtraction.IsReserved(parameters[0].GetText()))
                 ?new(value,null,null):SourceProfileExtraction.Extract(sourceCard,capture)
             :null};
     }

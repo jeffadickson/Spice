@@ -328,10 +328,18 @@ pub fn parse_ngspice_basic(text: &str) -> SimResult<Circuit> {
             .is_some_and(|token| token.eq_ignore_ascii_case("sin"))
             && matches!(tokens.len(), 7 | 9 | 10)
         {
-            // The transient override retains the waveform; the offset is the
-            // bounded circuit's DC initialization value.
-            tokens[3] = tokens[4];
-            tokens.truncate(4);
+            // The independently callable basic importer must retain the SIN
+            // phase-biased time-zero value too, not just its offset.
+            let values = tokens[4..]
+                .iter()
+                .map(|v| spice_scalar(v))
+                .collect::<SimResult<Vec<_>>>()?;
+            let initial = bounded_sine(values)?.at(0.)?;
+            normalized.push_str(&format!(
+                "{} {} {} {}\n",
+                tokens[0], tokens[1], tokens[2], initial
+            ));
+            continue;
         }
         if matches!(
             head.chars().next().map(|c| c.to_ascii_uppercase()),
