@@ -30,17 +30,19 @@ public sealed class XspiceSummerOracleIntegration
             var start=new ProcessStartInfo(Environment.GetEnvironmentVariable("SPICE_CORPUS_NGSPICE")!){UseShellExecute=false,CreateNoWindow=true,RedirectStandardOutput=true,RedirectStandardError=true,WorkingDirectory=folder};foreach(var arg in new[]{"-n","-b",path})start.ArgumentList.Add(arg);
             using(var process=Process.Start(start)!){var output=process.StandardOutput.ReadToEndAsync();var error=process.StandardError.ReadToEndAsync();using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(30));try{await process.WaitForExitAsync(timeout.Token);}catch(OperationCanceledException){process.Kill(true);await process.WaitForExitAsync();throw;}await File.WriteAllTextAsync(Path.Combine(folder,mode+".stdout"),await output);await File.WriteAllTextAsync(Path.Combine(folder,mode+".stderr"),await error);Assert.Equal(0,process.ExitCode);}
             var native=(await File.ReadAllLinesAsync(data)).Where(l=>!string.IsNullOrWhiteSpace(l)).Select(l=>l.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Select(v=>double.Parse(v,CultureInfo.InvariantCulture)).ToArray()).ToArray();
-            var nodes=new List<string>{"0","in","other","ref","low","out"};var elements=new List<Element>{new Voltage("drive",1,0,mode=="tran"?0:2),new Voltage("other",2,0,.1),new Voltage("ref",3,0,differential?.5:0),new Voltage("low",4,0,differential?.2:0),new Resistor("load",5,0,1000)};
-            int Node(SourceSyntax node)=>nodes.FindIndex(n=>n==node.Text);
-            var previous=5;
-            for(var i=0;i<summer.Inputs.Length;i++){var control=summer.Inputs[i];var hidden=nodes.Count;nodes.Add("sum-internal-"+i);elements.Add(new Vcvs("sum-"+i,previous,hidden,Node(control.P),Node(control.N),control.Gain));previous=hidden;}
-            elements.Add(new Voltage("offset",previous,Node(summer.OutputN),summer.Offset));
-            var circuit=new Circuit(nodes.ToArray(),elements.ToArray());
+            var input=mode=="tran"?"VDRIVE in 0 PWL(0 0 1m 1)":"VDRIVE in 0 DC 2 AC 1";
+            var integrated=DeckParser.Parse("Integrated summer\n"+input+"\n"+controls+model+".end\n",collectDeclarations:true);
+            var selected=OperatingPointSelection.Select(integrated);Assert.True(selected.Success,string.Join(',',selected.Prepared.Diagnostics.Select(d=>d.Code)));
             foreach(var backend in new[]{"lu","faer"})
             {
-                Analysis analysis=mode switch{"dc"=>new OperatingPoint(),"ac"=>new Ac([100],[new("drive",1,0),new("other",0,.5),new("ref",0,0),new("low",0,0),new("offset",0,0)]),_=>new TransientConfigured(new(.001,.0001,100,Sources:[new("drive",new Pwl([new(0,0),new(.001,1)]))]))};
-                var request=new SimulationRequest("summer-"+profile+"-"+mode,circuit,analysis,backend);await File.WriteAllTextAsync(Path.Combine(folder,mode+"-"+backend+".request.json"),JsonSerializer.Serialize(request,WireFormat.Options));
-                var response=await new SimulationClient(Environment.GetEnvironmentVariable("SPICE_CORPUS_ENGINE")!).RunAsync(request);await File.WriteAllTextAsync(Path.Combine(folder,mode+"-"+backend+".response.json"),response.Payload.ToString());Assert.True(response.Succeeded,response.Payload.ToString());var manifest=response.ReadManifest();var index=Array.FindIndex(manifest.Signals,s=>s.Id=="v(out)");Assert.True(index>=0);
+                var request=selected.Prepared.Request! with{Backend=backend,CaseId="summer-"+profile+"-"+mode};
+                if(mode=="ac")request=request with{Analysis=new Ac([100],selected.Prepared.AcSources.ToArray())};
+                if(mode=="tran"){
+                    var transient=TransientSelection.Prepare(integrated,.001,.0001,100,backend:backend);
+                    Assert.True(transient.Success,string.Join(',',transient.Prepared.Diagnostics.Select(d=>d.Code)));request=transient.Prepared.Request!;
+                }
+                await File.WriteAllTextAsync(Path.Combine(folder,mode+"-"+backend+".request.json"),JsonSerializer.Serialize(request,WireFormat.Options));
+                var response=await new SimulationClient(Environment.GetEnvironmentVariable("SPICE_CORPUS_ENGINE")!).RunAsync(request);await File.WriteAllTextAsync(Path.Combine(folder,mode+"-"+backend+".response.json"),response.Payload.ToString());Assert.True(response.Succeeded,response.Payload.ToString());var manifest=response.ReadManifest();var index=Array.FindIndex(manifest.Signals,s=>s.Id=="v("+selected.Prepared.RootNodes["out"]+")");Assert.True(index>=0);
                 if(mode=="ac"){var actual=Assert.Single(manifest.AcSamples).Values[index];Assert.InRange(Math.Abs(actual.Real-native[0][1]),0,1e-9);Assert.InRange(Math.Abs(actual.Imag-native[0][2]),0,1e-9);Assert.InRange(Math.Abs(actual.Real-(weighted?8:1)),0,1e-9);Assert.InRange(Math.Abs(actual.Imag-(weighted?-6:.5)),0,1e-9);checks.Add(new{mode,backend,actual.Real,actual.Imag});}
                 else foreach(var sample in manifest.Samples){var reference=mode=="dc"?native[0]:native.MinBy(row=>Math.Abs(row[0]-sample.TimeS))!;if(mode=="tran")Assert.InRange(Math.Abs(reference[0]-sample.TimeS),0,1e-12);var actual=sample.Values[index];var vin=mode=="dc"?2:1000*sample.TimeS;var expected=weighted?8*vin+6.9:differential?vin-.7:vin+.1;Assert.InRange(Math.Abs(actual-reference[1]),0,1e-9);Assert.InRange(Math.Abs(actual-expected),0,1e-9);checks.Add(new{mode,backend,sample.TimeS,actual,expected});}
             }

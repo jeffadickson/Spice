@@ -1,0 +1,27 @@
+{
+  "requirements": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/summer-execution-requirements.json",
+  "tests": {
+    "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/summer-bridge2-green.log",
+    "failed": 0,
+    "passed": 36,
+    "skipped": 0
+  },
+  "coverage": {
+    "limitations": "Captured core bridge functions omitted by Coverlet. Helper-only metrics and three selected Stryker kills are separately scoped in xspice-summer.json.",
+    "report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/summer-bridge2-coverage/e63ceb0d-23d3-4768-b645-e0f533f3381b/coverage.cobertura.xml"
+  },
+  "limitations": [
+    "All12 lexical summer instances prepare in helper census, not12 complete simulated decks.",
+    "Current/noise/event/digital ports, unqualified model parameters and other active models remain explicit gaps.",
+    "No new native kernel, Linux qualification or whole-product mutation closure is claimed."
+  ],
+  "status": "bounded_summer_bridge",
+  "source_hashes": {
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "56002467e29edbb11819f94ee92846cb799206e599a09109907e5f7e04ecee4a",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "b57ca1024d71509be304934335a26c323f299fa7f2f8ab7fb2304b2fb49746ff",
+    "dotnet/Simulator.Frontend.Tests/PreparationSemanticsTests.cs": "f188b8e39d341b867aa70d50acbfef13b7c2d6b6a8b4243187911d22680a1379",
+    "dotnet/Simulator.Frontend.Tests/XspiceSummerOracleIntegration.cs": "4774eb6f3a35ca5a1fcc8ef1152ba724a6b89d2f6800ad563787e825aa8032fa",
+    "docs/xspice-summer.sdoc": "29496e092654aab88da12ad67f6059efa5e0cddc27c12fbc7450e8aa3a109ccc"
+  },
+  "oracle": "78 original default/weighted/differential DC/complex AC/ramp comparisons through actual OperatingPointSelection/TransientSelection and typed public client, LU/faer"
+}

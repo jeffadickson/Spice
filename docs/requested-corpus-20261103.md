@@ -1,5 +1,8 @@
 # Original requested-analysis census and identity replay
 
+Results tasks: [full campaign #27](https://github.com/jeffadickson/Spice/issues/27)
+and [targeted replay #28](https://github.com/jeffadickson/Spice/issues/28).
+
 The frozen 928-input campaign tested `62ae97d` for 1,365.758 seconds and completed
 with matching source, engine, input and resource provenance. It executes individual
 original requested analyses, rather than substituting a selected operating point.

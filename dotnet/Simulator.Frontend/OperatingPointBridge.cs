@@ -168,6 +168,30 @@ public static class OperatingPointBridge
                 {
                     if(!selected)throw new BridgeFailure("unsupported_active_card",instance.Range);
                     if(!names.Add(instance.Name))throw new BridgeFailure("duplicate_element",instance.Range);
+                    var modelLookup=catalog.Lookup(DeclarationKind.Model,instance.Model.Text,scope);
+                    if(modelLookup is {Status:NameLookupStatus.Found,Provisional:false}&&modelLookup.Candidates.Single().ModelFamily?.Equals("summer",StringComparison.OrdinalIgnoreCase)==true)
+                    {
+                        var result=XspiceSummerLowering.Prepare(catalog,instance,environment);
+                        if(!result.Success)throw new BridgeFailure(result.Diagnostics[0].Code,result.Diagnostics[0].Range);
+                        var sum=result.Summer!;var output=Node(sum.OutputP.Text);var ground=Node(sum.OutputN.Text);
+                        if(output==ground)throw new BridgeFailure("shorted_xspice_output",sum.Range);
+                        if(elements.Count+sum.Inputs.Length+1>limits.MaxElements)throw new BridgeFailure("element_budget",sum.Range);
+                        var previous=output;var index=0;
+                        foreach(var input in sum.Inputs)
+                        {
+                            var controlP=Node(input.P.Text);var controlN=Node(input.N.Text);
+                            if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",sum.Range);
+                            var next=nodes.Count;nodes.Add("n"+next.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                            var summerId="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            elements.Add(new Vcvs(summerId,previous,next,controlP,controlN,input.Gain));
+                            origins.Add(new(summerId,index==0?sum.Name:sum.Name+"$term"+index,path,sum.Range){NativeBranchName=index==0?sum.Name:null});
+                            previous=next;index++;
+                        }
+                        var offsetId="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        elements.Add(new Voltage(offsetId,previous,ground,sum.Offset));
+                        origins.Add(new(offsetId,sum.Name+"$offset",path,sum.Range));acSources.Add(new(offsetId,0,0));
+                        continue;
+                    }
                     var lowered=XspiceGainLowering.Prepare(catalog,instance,environment);
                     if(!lowered.Success)throw new BridgeFailure(lowered.Diagnostics[0].Code,lowered.Diagnostics[0].Range);
                     var gain=lowered.Gain!;var p=Node(gain.OutputP.Text);var n=Node(gain.OutputN.Text);var cp=Node(gain.InputP.Text);var cn=Node(gain.InputN.Text);

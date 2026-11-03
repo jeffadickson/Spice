@@ -52,6 +52,12 @@ public static class CircuitReadiness
                         if(!behavior.Supported)AddIssue(new("behavior_contract","unsupported_behavior_header",card.Kind,scope,path,card.Range));
                         continue;
                     }
+                    if(card.Kind=="xspice"&&catalog.XspiceInstances.FirstOrDefault(i=>i.Range==card.Range) is {} sum&&catalog.Lookup(DeclarationKind.Model,sum.Model.Text,scope) is {Status:NameLookupStatus.Found,Provisional:false} summerLookup&&summerLookup.Candidates.Single().ModelFamily=="summer")
+                    {
+                        if(sum.Ports.Length!=2||!sum.Ports[0].IsVoltageVector||sum.Ports[0].Elements.Length is <2 or >16||sum.Ports[0].Elements.Any(p=>!p.Supported)||!sum.Ports[1].Supported)
+                            AddIssue(new("model_contract","unsupported_summer_ports",card.Kind,scope,path,card.Range));
+                        continue;
+                    }
                     if(card.Kind=="xspice"&&catalog.XspiceInstances.FirstOrDefault(i=>i.Range==card.Range) is {} xi&&catalog.Lookup(DeclarationKind.Model,xi.Model.Text,scope) is {Status:NameLookupStatus.Found,Provisional:false} lookup&&lookup.Candidates.Single().ModelFamily=="gain"){
                         // Structural analog-gain recognition is distinct from
                         // full parameter/port admission, reported by preparation.

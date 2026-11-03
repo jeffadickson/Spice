@@ -14,3 +14,17 @@ Implementation: XspiceSyntax.cs, ScalarVectorExtraction.cs, DeclarationExtractio
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: SEM-XSPICE-SUMMER-EXEC-001
+STATUS: Draft
+TITLE: Execute the original voltage summer through the public bridge
+STATEMENT: >>>
+Selected preparation shall emit the complete admitted differential summer relation through existing controlled-voltage elements, keeping auxiliary nodes out of original root observations. Constant synthetic bias shall have explicit zero AC excitation. Only the original output branch shall carry native branch identity. Expansion budgets and atomic refusal shall remain enforced.
+<<<
+COMMENT: >>>
+Implementation: OperatingPointBridge summer dispatch and CircuitReadiness structural admission. Verification: PreparationSemanticsTests and XspiceSummerOracleIntegration now use actual generated selection and the typed client for original default, weighted and differential A/model cards in DC, complex AC and ramp transient on LU/faer. Initial helper-only qualification remains historical evidence. The integrated focused run includes 36 tests and 78 native output comparisons; unrelated models in the measured summer roots remain blockers.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-XSPICE-SUMMER-001

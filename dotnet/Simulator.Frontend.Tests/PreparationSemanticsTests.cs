@@ -7,6 +7,16 @@ namespace Simulator.Frontend.Tests;
 public sealed class PreparationSemanticsTests
 {
     [Theory]
+    [InlineData("summer")]
+    [InlineData("summer(in_gain=[2 -3] in_offset=[.25 -.5] out_gain=4 out_offset=.1)")]
+    public void Analog_summer_vectors_lower_to_existing_voltage_elements(string model)
+    {
+        var result=Prepare("V1 in 0 DC 1 AC 1\nV2 other 0 2\nA1 [in other] out sum\n.model sum "+model+"\nR1 out 0 1k");
+        Assert.True(result.Success,string.Join(',',result.Prepared.Diagnostics.Select(d=>d.Code)));
+        Assert.Equal(new[]{"in","other","out"},result.Prepared.RootNodes.Keys.Order().ToArray());
+        Assert.Contains(result.Prepared.AcSources,s=>s.Real==0&&s.Imag==0);
+    }
+    [Theory]
     [InlineData("V=2*v(in)+.25")]
     [InlineData("I=1m*v(in)+2m")]
     [InlineData("V=1.25")]
