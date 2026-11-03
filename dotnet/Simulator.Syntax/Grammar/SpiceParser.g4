@@ -154,4 +154,6 @@ controlSet: {TokenStream.LT(1).Text.Equals("set",StringComparison.OrdinalIgnoreC
 controlReport: {TokenStream.LT(1).Text.ToLowerInvariant() is "print" or "plot" or "meas" or "measure" or "save" or "gnuplot" or "echo" or "rusage"}? identifier parameter*;
 controlQuit: {TokenStream.LT(1).Text.Equals("quit",StringComparison.OrdinalIgnoreCase)}? identifier;
 controlUnknown: identifier parameter*;
-controlNumber: (PLUS | MINUS)? NUMBER;
+// INPevaluate accepts attached signs, including adjacent signed arguments,
+// but a standalone sign separated from its number is not a literal argument.
+controlNumber: ((PLUS | MINUS) {TokenStream.LT(-1).StopIndex + 1 == TokenStream.LT(1).StartIndex}?)? NUMBER;

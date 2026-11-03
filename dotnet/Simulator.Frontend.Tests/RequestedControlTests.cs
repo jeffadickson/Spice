@@ -35,10 +35,52 @@ public sealed class RequestedControlTests
  }
  [Property(MaxTest=100,Replay="2391,20261103")]
  public bool State_changing_prefix_is_never_silently_omitted(NonNull<string> input){var tail=input.Get.Length>256?input.Get[..256]:input.Get;var plan=RequestedAnalysis.Prepare(Deck(".control\nop\nalter R1="+tail+"\n.endc"));return !plan.Success&&plan.Operations.IsEmpty;}
+ [Theory]
+ [InlineData("dc V$curplot 1 0 -1")]
+ [InlineData("dc V1 1 0 - 1")]
+ [InlineData("set -noaskquit\nop")]
+ [InlineData("set filetype=-ascii\nop")]
+ [InlineData("set +noaskquit\nop")]
+ [InlineData("set filetype=+ascii\nop")]
+ [InlineData("set numdgt=+7\nop")]
+ [InlineData("dc V1 1 0 + 1")]
+ [InlineData("ac dec 1 10 + 1k")]
+ [InlineData("tran .1u + 1u")]
+ public void Native_substitution_or_nonliteral_token_spelling_refuses_atomically(string command){
+  var syntax=DeckParser.Parse("control literal boundary\nV1 a 0 0\nV$curplot b 0 0\nR1 a 0 1k\nR2 b 0 1k\n.control\n"+command+"\n.endc\n.end\n",collectDeclarations:true);
+  Assert.Equal("accepted_structure",syntax.Status);var plan=RequestedAnalysis.Prepare(syntax);Assert.False(plan.Success);Assert.Empty(plan.Operations);
+ }
+ [Theory][InlineData("V$curplot")][InlineData("Vpre$curplot")][InlineData("V$G_node")]
+ public void Dollar_identifiers_remain_valid_deck_names_but_cannot_enter_control_substitution(string source){
+  var circuit="dollar source\n"+source+" a 0 0\nR1 a 0 1k\n";
+  var ordinary=RequestedAnalysis.Prepare(DeckParser.Parse(circuit+".dc "+source+" 1 0 -1\n.end\n",collectDeclarations:true));Assert.True(ordinary.Success,string.Join(',',ordinary.Diagnostics.Select(d=>d.Code)));
+  var controlled=RequestedAnalysis.Prepare(DeckParser.Parse(circuit+".control\ndc "+source+" 1 0 -1\n.endc\n.end\n",collectDeclarations:true));Assert.False(controlled.Success);Assert.Empty(controlled.Operations);
+ }
+ [Theory][InlineData("dc V1 1-1 -1")][InlineData("dc V1 1 -1-1")][InlineData("dc V1 1-1-1")]
+ public void Adjacent_attached_signs_preserve_the_native_literal_grid(string command){var plan=RequestedAnalysis.Prepare(Deck(".control\n"+command+"\n.endc"));Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));Assert.Equal(new[]{1d,0d,-1d},Assert.Single(plan.Operations).Coordinates);}
+ [Property(MaxTest=100,Replay="2393,20261103")]
+ public bool Whitespace_cannot_detach_a_literal_sign(PositiveInt count,bool plus,bool tab){var gap=new string(tab?'\t':' ',1+count.Get%8);var sign=plus?"+":"-";var plan=RequestedAnalysis.Prepare(Deck(".control\ndc V1 1 0 "+sign+gap+"1\n.endc"));return !plan.Success&&plan.Operations.IsEmpty;}
  [Fact] public void Original_control_projection_retains_literal_arguments_and_owns_only_output_instrumentation(){
   var text="control projection\nV1 a 0 AC 1\nR1 a 0 1k\n.tran 1u 1m\n.control\nac lin 3 10 30\nplot v(a)\nquit\n.endc\n.end\n";var syntax=DeckParser.Parse(text,collectDeclarations:true);var plan=RequestedAnalysis.Prepare(syntax);Assert.True(plan.Success);var projection=OriginalProjection.Create(text,syntax,plan.Operations[0],plan);Assert.True(projection.RequiresControlWrite);Assert.Contains("ac lin 3 10 30",projection.Text);Assert.DoesNotContain(".tran 1u",projection.Text);Assert.DoesNotContain("plot v(a)",projection.Text);Assert.Contains("write native.raw all",projection.Text);Assert.Equal(new[]{"write native.raw all","quit"},projection.Instrumentation);
  }
  [Fact] public void Control_RAW_blank_point_separators_do_not_relax_shape_or_index_checks(){var text="Title: raw\nPlotname: DC transfer characteristic\nFlags: real\nNo. Variables: 1\nNo. Points: 2\nVariables:\n0 v(v-sweep) voltage\nValues:\n0 -1\n\n1 1\n\n";Assert.Equal(2,AsciiRaw.Read(text).Points.Length);Assert.Throws<InvalidDataException>(()=>AsciiRaw.Read(text.Replace("1 1\n","2 1\n",StringComparison.Ordinal)));}
+}
+/// <summary>Native command admission witnesses distinguish a constants RAW file
+/// written after failure from an actual successful DC plot.</summary>
+public sealed class RequestedControlAdmissionNativeTests
+{
+ [RequestedNativeFact] public async Task Native_variable_substitution_and_numeric_token_boundaries_are_retained(){
+  var parent=Environment.GetEnvironmentVariable("SPICE_REQUESTED_ARTIFACTS")!;Assert.True(Directory.Exists(parent));var folder=Path.Combine(parent,"control-admission-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(folder);
+  var fixtures=new[]{("embedded-variable","V$curplot","dc V$curplot 1 0 -1",false),("separated-sign","V1","dc V1 1 0 - 1",false),("attached-sign","V1","dc V1 1 0 -1",true),("adjacent-start-stop","V1","dc V1 1-1 -1",true),("adjacent-stop-step","V1","dc V1 1 -1-1",true),("adjacent-all","V1","dc V1 1-1-1",true)};
+  foreach(var (name,source,command,valid) in fixtures){
+   var path=Path.Combine(folder,name);Directory.CreateDirectory(path);var input=Path.Combine(path,"input.cir");await File.WriteAllTextAsync(input,"owned admission\n"+source+" a 0 0\nR1 a 0 1k\n.control\n"+command+"\nwrite native.raw all\nquit\n.endc\n.end\n");
+   var start=new System.Diagnostics.ProcessStartInfo(Environment.GetEnvironmentVariable("SPICE_CORPUS_NGSPICE")!){UseShellExecute=false,CreateNoWindow=true,RedirectStandardOutput=true,RedirectStandardError=true,WorkingDirectory=path};foreach(var arg in new[]{"-n","-D","filetype=ascii","-b",input})start.ArgumentList.Add(arg);
+   using var child=System.Diagnostics.Process.Start(start)!;var stdout=child.StandardOutput.ReadToEndAsync();var stderr=child.StandardError.ReadToEndAsync();using var limit=new CancellationTokenSource(TimeSpan.FromSeconds(30));try{await child.WaitForExitAsync(limit.Token);}catch(OperationCanceledException){if(!child.HasExited)child.Kill(true);await child.WaitForExitAsync();throw;}
+   var log=await stdout;var error=await stderr;await File.WriteAllTextAsync(Path.Combine(path,"stdout.log"),log);await File.WriteAllTextAsync(Path.Combine(path,"stderr.log"),error);Assert.Equal(0,child.ExitCode);
+   var raw=await File.ReadAllTextAsync(Path.Combine(path,"native.raw"));if(!valid){Assert.Contains("dc simulation(s) aborted",error);Assert.Contains(name=="embedded-variable"?"vconst":"Bad syntax",error);Assert.Contains("Plotname: constants",raw);continue;}
+   Assert.Equal("",error);var parsed=AsciiRaw.Read(raw);Assert.Equal("DC transfer characteristic",parsed.PlotName);Assert.Equal(name=="attached-sign"?new[]{1d,0d}:new[]{1d,0d,-1d},parsed.Points.Select(p=>p[0].Real));
+  }
+ }
 }
 public sealed class RequestedControlNativeTests
 {

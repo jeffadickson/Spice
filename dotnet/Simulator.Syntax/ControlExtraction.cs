@@ -33,10 +33,13 @@ internal static class ControlExtraction
      case SpiceParser.ControlReportContext:kind="report";break;
      case SpiceParser.ControlSetContext set:
       kind="set";settings=set.parameter().Select(p=>{
-       if(p.value()?.identifier() is {} flag)return new ControlSettingSyntax(flag.GetText(),null,null,false,Capture(p).Range);
+       if(p.value() is {} flagValue&&flagValue.PLUS()==null&&flagValue.MINUS()==null&&flagValue.identifier() is {} flag)return new ControlSettingSyntax(flag.GetText(),null,null,false,Capture(p).Range);
        if(p.assignment() is not {} assignment)return new(null,null,null,false,Capture(p).Range);
        var value=assignment.GetChild(2) as ParserRuleContext;var scalar=value as SpiceParser.ValueContext;
-       return new ControlSettingSyntax(assignment.referenceName()?.GetText(),value==null?null:Capture(value),scalar?.identifier()?.GetText(),scalar?.NUMBER()!=null,Capture(p).Range);
+       // Reporting allowlists apply to exact unsigned literals. A value context
+       // may retain an identifier/number beneath a unary sign; do not erase it.
+       var unsigned=scalar?.PLUS()==null&&scalar?.MINUS()==null;
+       return new ControlSettingSyntax(assignment.referenceName()?.GetText(),value==null?null:Capture(value),unsigned?scalar?.identifier()?.GetText():null,unsigned&&scalar?.NUMBER()!=null,Capture(p).Range);
       }).ToImmutableArray();break;
     }
     return new(name,kind,analysis,settings,physical,kind=="unsupported"?"unsupported_control_command:"+name:null);

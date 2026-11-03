@@ -1,0 +1,184 @@
+{
+  "state": "review_admission_findings_fixed_with_native_witnesses",
+  "base_commit": "5f625954a937ac1b96fe3c1f3fad51d3e6bc1f99",
+  "requirement": "FRONTEND-CONTROL-005",
+  "artifact_root": "E:/Artifacts/spice-control-admission-nov3",
+  "tested_source_sha256": {
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "945050227610aa23167191db268f7ca89d375ddea8cb0f243e7af0a7c89f3a29",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "a4b19ccc197823707f8f61581593409d762232680b01e9a9ec9cf93ca2087ff5",
+    "dotnet/Simulator.Syntax/ControlExtraction.cs": "c7e8d06ffa12e0ca3c901c55b32ff1966f2874ef67b2cadad477b00554f47216",
+    "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs": "511d50467006374353407fd70f895a5e81a156fcf5b2ccd1d8db1d321432fc1f",
+    "scripts/ControlAdmissionPoc.cs": "1f3de8655012084635d24a32315eee61a2885d76ae4aac97639012790610841d"
+  },
+  "canonical_lf_sha256": {
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "a0edd5402ac6e6033a9cd14db3edd02f6eb74c4e8220878da2c8c5c761bd63dc",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "a4b19ccc197823707f8f61581593409d762232680b01e9a9ec9cf93ca2087ff5",
+    "dotnet/Simulator.Syntax/ControlExtraction.cs": "cf27402c1ddcfcf4226e73c9f42cfcc581cfb971e7f9031f86aaf14e6d732f76",
+    "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs": "9dfca8249188569d4f56251d33fdcf4465def54151cf6cb647fac37817501d13",
+    "scripts/ControlAdmissionPoc.cs": "1f3de8655012084635d24a32315eee61a2885d76ae4aac97639012790610841d"
+  },
+  "source_byte_conventions": "Tested working bytes retained; canonical UTF8 LF hashes normalize CRLF for repository eol=lf. No semantic migration.",
+  "findings": [
+    "Embedded dollar text was swallowed by SOURCE_NAME/NAMECHAR and bypassed the leading-variable token. CONTROL_VARIABLE now matches any dollar-bearing name only in ControlSemantic mode.",
+    "Generated controlNumber accepted whitespace between unary sign and NUMBER. Token-offset adjacency predicate now refuses that spelling while retaining native-supported adjacent attached-sign arguments.",
+    "Reporting value metadata erased unary signs; exact unsigned flag/identifier/number recognition now retains/refuses signs."
+  ],
+  "red": {
+    "expanded": {
+      "failed": 12,
+      "passed": 4,
+      "note": "Three preserved adjacent-sign positive cases plus one already-refused wrong-direction case passed before fix.",
+      "raw": "red-expanded/red-expanded.trx"
+    },
+    "initial": {
+      "failed": 4,
+      "passed": 0,
+      "raw": "red/red.trx"
+    }
+  },
+  "green": {
+    "frontend": {
+      "failed": 0,
+      "passed": 256,
+      "raw": "final-coverage/frontend.trx",
+      "total": 265,
+      "skipped": 9
+    },
+    "property": {
+      "replay": "2393,20261103",
+      "cases": 100,
+      "framework": "FsCheck.Xunit",
+      "contract": "Vary +/- and1..8 spaces/tabs between sign and scalar; refusal remains atomic."
+    },
+    "focused": {
+      "failed": 0,
+      "passed": 44,
+      "note": "Before adding second100-case property and native witness regression.",
+      "raw": "green/green.trx"
+    },
+    "syntax": {
+      "failed": 0,
+      "passed": 406,
+      "raw": "syntax-coverage/syntax.trx",
+      "total": 407,
+      "skipped": 1
+    },
+    "control_framework_rows": 48
+  },
+  "coverage": [
+    {
+      "file": "ControlExtraction.cs",
+      "linesCovered": 36,
+      "linesTotal": 36,
+      "branchesCovered": 56,
+      "branchesTotal": 64
+    },
+    {
+      "file": "RequestedControlPreparation.cs",
+      "linesCovered": 36,
+      "linesTotal": 37,
+      "branchesCovered": 77,
+      "branchesTotal": 80
+    }
+  ],
+  "coverage_raw": "final-coverage/7c56333a-ad55-4b0e-aa03-7d52200d079e/coverage.cobertura.xml",
+  "native": {
+    "sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "summary": "native-witnesses/summary.json",
+    "automated_witness_cases": 6,
+    "primary_sources": {
+      "variable": "C:/dev/ngspice-ngspice/src/frontend/variable.c:846 cp_variablesubst searches strchr for dollars anywhere in each word",
+      "number": "C:/dev/ngspice-ngspice/src/spicelib/parser/inpeval.c:46-64 INPevaluate rejects sign-only token"
+    },
+    "witnesses": 8,
+    "fixtures": [
+      {
+        "name": "embedded-variable",
+        "command": "dc V$curplot 1 0 -1",
+        "exit": 0,
+        "raw_exists": true,
+        "raw_sha256": "164b523aa4073aa04e764bc51d497fc3913649a9bdb9e6f1891ea9811bc30749"
+      },
+      {
+        "name": "separated-sign",
+        "command": "dc V1 1 0 - 1",
+        "exit": 0,
+        "raw_exists": true,
+        "raw_sha256": "164b523aa4073aa04e764bc51d497fc3913649a9bdb9e6f1891ea9811bc30749"
+      },
+      {
+        "name": "attached-sign",
+        "command": "dc V1 1 0 -1",
+        "exit": 0,
+        "raw_exists": true,
+        "raw_sha256": "4eb0dcd81a3e7b37a98ba1508bd317dbb484493b2af1d3ca109213de63a3f45c"
+      },
+      {
+        "name": "adjacent-start-stop",
+        "command": "dc V1 1-1 -1",
+        "exit": 0,
+        "raw_exists": true,
+        "raw_sha256": "319a8702358637a1b4ec9862b192f7e90a057de1bf0aabf37afed2aa3ae83dcc"
+      },
+      {
+        "name": "adjacent-stop-step",
+        "command": "dc V1 1 -1-1",
+        "exit": 0,
+        "raw_exists": true,
+        "raw_sha256": "319a8702358637a1b4ec9862b192f7e90a057de1bf0aabf37afed2aa3ae83dcc"
+      },
+      {
+        "name": "adjacent-all",
+        "command": "dc V1 1-1-1",
+        "exit": 0,
+        "raw_exists": true,
+        "raw_sha256": "319a8702358637a1b4ec9862b192f7e90a057de1bf0aabf37afed2aa3ae83dcc"
+      },
+      {
+        "name": "signed-flag",
+        "command": "set -noaskquit\nop",
+        "exit": 0,
+        "raw_exists": true,
+        "raw_sha256": "0e9dc08a54fa8538e270d850df81e90cf5304e74a342f3b95207755cbe0c2fc2"
+      },
+      {
+        "name": "signed-setting",
+        "command": "set filetype=-ascii\nop",
+        "exit": 0,
+        "raw_exists": true,
+        "raw_sha256": "240dae70e25638b3a79e641ae66d1c6feedfd46d1bd587534337be1a4dc4d2fd"
+      }
+    ],
+    "source_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+    "outcomes": [
+      "Embedded V$curplot becomes vconst and native aborts no such device.",
+      "Separated - 1 produces Bad syntax and aborted DC.",
+      "Attached -1 succeeds; adjacent1-1 -1,1 -1-1,and1-1-1 all independently emit DC grid[1,0,-1].",
+      "Failed native commands still exit0 and write a constants RAW plot; no success inferred from either.",
+      "Signed reporting spellings may be accepted differently or warn in native; bounded exact unsigned allowlist refuses them explicitly."
+    ],
+    "version": "ngspice47+ built2026-10-24"
+  },
+  "requirements": {
+    "resolved_parents": 347,
+    "parser": "StrictDoc0.30.4",
+    "status": "passed",
+    "documents": 25,
+    "raw": "requirements.json",
+    "unique_ids": 358
+  },
+  "commands": [
+    "Set CODEX_ARTIFACT_ROOT,TEMP,TMP=E:\\Artifacts\\spice-control-admission-nov3; SPICE_REQUESTED_ARTIFACTS same; SPICE_REQUESTED_CORPUS=C:/dev/ngspice-ngspice; SPICE_CORPUS_NGSPICE=C:/dev/ngspice-install/bin/ngspice.exe; SPICE_CORPUS_ENGINE=E:/Artifacts/Spice-next-five-20261103T023139Z/verified-wave-engine/circuit-simulator.exe.",
+    "dotnet test dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj --artifacts-path <artifact-root>/build -p:AntlrJar=<canonical-repo>/.tools/antlr/antlr-4.13.1-complete.jar --collect:\"XPlat Code Coverage\" --logger \"trx;LogFileName=frontend.trx\" --results-directory <artifact-root>/final-coverage",
+    "dotnet test dotnet/Simulator.Syntax.Tests/Simulator.Syntax.Tests.csproj --artifacts-path <artifact-root>/syntax-build -p:AntlrJar=<canonical-repo>/.tools/antlr/antlr-4.13.1-complete.jar --collect:\"XPlat Code Coverage\" --logger \"trx;LogFileName=syntax.trx\" --results-directory <artifact-root>/syntax-coverage",
+    "dotnet run --file scripts/ControlAdmissionPoc.cs --artifacts-path <artifact-root>/poc-build -- C:/dev/ngspice-install/bin/ngspice.exe <artifact-root>/native-witnesses",
+    "dotnet run --file scripts/ValidateRequirements.cs --artifacts-path <artifact-root>/requirements-build -- --python <existing-strictdoc-env>/Scripts/python.exe --report <artifact-root>/requirements.json"
+  ],
+  "limitations": [
+    "No new mutation campaign; prior mutation evidence does not establish this fix. Negative/native/property tests ran. No broad fuzz or full-census claim.",
+    "Generated grammar predicates lack meaningful manually authored branch coverage in Coverlet; default lexing protected by full syntax suite and ordinary dollar-name positives.",
+    "One ExFAT symlink test skipped; nine unrelated frontend integration environment skips. Existing xUnit2013 warning remains in ThirdReferenceContracts.cs:32.",
+    "Managed .NET10.0.403/ANTLR4.13.1 helpers; no Native AOT test, CI, push or root worktree changes.",
+    "Native coordinator integration fixtures use the recorded older engine; this change only affects generated control admission, not solver numerics."
+  ]
+}

@@ -44,3 +44,13 @@ limitations are retained in [bounded evidence](../evidence/requested-control-pro
 Native helpers remain managed .NET 10 file apps; Native AOT was not attempted.
 
 The [owned example](../examples/requested-control.cir) demonstrates repeated OP and direct DC/AC/TRAN dispatch with explicit reporting omission.
+
+Review correction: control-semantic tokens refuse dollar substitution embedded in
+names (for example `V$curplot`), without changing ordinary deck name spelling.
+Unary signs must touch their generated NUMBER token; `- 1` is refused. Native
+ngspice accepts adjacent attached-sign DC arguments such as `1-1-1`, producing
+`[1,0,-1]`; those remain supported. Reporting flag/value contexts must also be
+unsigned, so `-noaskquit`, `filetype=-ascii`, and `numdgt=+7` refuse. Original
+native failure witnesses retain constants RAW output to show why file existence
+and a zero process exit do not establish successful requested analysis.
+See [review evidence](../evidence/requested-control-admission-review.json).

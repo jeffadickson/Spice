@@ -61,3 +61,17 @@ Native control RAW uses blank separators between points; the bounded RAW adapter
 RELATIONS:
 - TYPE: Parent
   VALUE: FRONTEND-REQUESTED-CORPUS-001
+
+[REQUIREMENT]
+UID: FRONTEND-CONTROL-005
+STATUS: Implemented
+TITLE: Native literal token boundaries and exact reporting settings
+STATEMENT: >>>
+Control-semantic lexing shall refuse dollar substitution anywhere in an analysis identifier, including embedded source-name dollars, while preserving ordinary deck lexing. A unary sign in an analysis scalar shall touch its NUMBER token in the original physical text. Adjacent signed numeric arguments may remain supported where an independent native witness confirms their grid. Reporting flags and literal values shall retain unary signs during validation so only the exact unsigned allowlist is admitted.
+<<<
+COMMENT: >>>
+Implementation: ControlSemantic-only CONTROL_VARIABLE lexer rule, controlNumber generated token-offset predicate, unsigned value checks in ControlExtraction. Verification: RequestedControlTests malformed/ordinary-dollar/adjacent-grid regressions;100-case FsCheck replay2393,20261103 varies sign/whitespace; RequestedControlAdmissionNativeTests independently confirms native embedded V$curplot substitution to vconst, separated-sign syntax failure and adjacent attached-sign DC grids. Failed native commands can still write a constants RAW plot; existence/zero exit is not an analysis pass. Primary source: ngspice frontend/variable.c cp_variablesubst and spicelib/parser/inpeval.c INPevaluate. Retained RED/green evidence: evidence/requested-control-admission-review.json.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-CONTROL-001
