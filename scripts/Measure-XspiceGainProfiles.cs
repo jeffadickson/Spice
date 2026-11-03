@@ -13,6 +13,7 @@ if(!Directory.Exists(repository)||!Directory.Exists(corpus)||!Directory.Exists(P
 if(File.Exists(output))throw new IOException("Fresh output required");
 using var input=JsonDocument.Parse(File.ReadAllText(inventory));
 var rows=new List<object>();var families=new Dictionary<string,int>(StringComparer.OrdinalIgnoreCase);var profiles=new Dictionary<string,int>(StringComparer.OrdinalIgnoreCase);var accepted=0;var files=0;var gainRoots=0;var refused=0;var changed=0;
+var behavioralRows=new List<object>();var behavioralProfiles=new Dictionary<string,int>(StringComparer.OrdinalIgnoreCase);var behavioralRoots=0;var preparedBehavioralRoots=0;
 var limits=new ParserLimits(4_194_304,2_000_000);
 foreach(var item in input.RootElement.GetProperty("rows").EnumerateArray())
 {
@@ -37,5 +38,17 @@ foreach(var item in input.RootElement.GetProperty("rows").EnumerateArray())
   rows.Add(new{scope,path=relative,root_sha256=resolved.Sources[0].Sha256,name=instance.Name,lexical_scope=instance.ScopeId,profile,model=instance.Model.Text,gain=prepared.Gain?.Gain,offset=prepared.Gain?.Offset});
  }
  if(hasGain)gainRoots++;
+ var hasBehavior=false;var preparedBehavior=false;
+ foreach(var source in catalog.BehavioralSources)
+ {
+  hasBehavior=true;
+  var result=BehavioralSourceLowering.Prepare(catalog,source,ParameterEvaluator.Evaluate(catalog,source.ScopeId));
+  var profile=result.Success?"prepared_affine_lexical_defaults":result.Diagnostics[0].Code;
+  behavioralProfiles[profile]=behavioralProfiles.GetValueOrDefault(profile)+1;
+  preparedBehavior|=result.Success;
+  behavioralRows.Add(new{scope,path=relative,root_sha256=resolved.Sources[0].Sha256,name=source.Name,lexical_scope=source.ScopeId,profile,quantity=source.Quantity.ToString(),terms=result.Source?.Terms.Length,offset=result.Source?.Offset});
+ }
+ if(hasBehavior)behavioralRoots++;
+ if(preparedBehavior)preparedBehavioralRoots++;
 }
-File.WriteAllText(output,JsonSerializer.Serialize(new{scope="lexical generated A-card census over resource-expanded frozen inventory; no hierarchy activation, instance override qualification or full-circuit simulation",files,accepted,resource_refused=refused,input_changed=changed,inventory_sha256=Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(inventory))),gain_roots=gainRoots,families,profiles,rows},new JsonSerializerOptions{WriteIndented=true}));
+File.WriteAllText(output,JsonSerializer.Serialize(new{scope="lexical generated A-card census over resource-expanded frozen inventory; no hierarchy activation, instance override qualification or full-circuit simulation",files,accepted,resource_refused=refused,input_changed=changed,inventory_sha256=Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(inventory))),gain_roots=gainRoots,families,profiles,rows,behavioral_roots=behavioralRoots,prepared_behavioral_roots=preparedBehavioralRoots,behavioral_profiles=behavioralProfiles,behavioral_rows=behavioralRows},new JsonSerializerOptions{WriteIndented=true}));

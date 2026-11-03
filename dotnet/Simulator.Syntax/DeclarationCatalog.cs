@@ -72,6 +72,8 @@ public sealed class DeclarationCatalog
     public ImmutableArray<PrimitiveSyntax> Primitives { get; }
     /// <summary>Generated code-model ports; model-specific execution admission remains separate.</summary>
     public ImmutableArray<XspiceInstanceSyntax> XspiceInstances { get; internal init; } = [];
+    /// <summary>Generated behavioral headers; affine preparation is a separate bounded capability.</summary>
+    public ImmutableArray<BehavioralSourceSyntax> BehavioralSources { get; internal init; } = [];
     /// <summary>All statement kinds with lexical owners, including unsupported/opaque cards.</summary>
     public ImmutableArray<ScopedCard> Cards { get; }
     /// <summary>Generated library closing delimiters; not external file requests.</summary>

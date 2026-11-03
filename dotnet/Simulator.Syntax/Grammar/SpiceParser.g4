@@ -27,6 +27,8 @@ linearControlProfile: twoNodes value EOF;
 // Bounded generated semantic entries over existing card tokens.
 currentControlProfile: value EOF;
 globalNodesProfile: node (COMMA? node)* EOF;
+// A composite B header is decomposed only by the generated lexer in BODY mode.
+behaviorHeaderProfile: BEHAVIOR_NAME twoNodes identifier EQUAL EOF;
 diode: DIODE_NAME twoNodes referenceName parameter*;
 bjt: BJT_NAME (threeNodes | fourNodes | fiveNodes) referenceName parameter*;
 mos: MOS_NAME (threeNodes | fourNodes | fiveNodes | sixNodes | sevenNodes) referenceName parameter*;
