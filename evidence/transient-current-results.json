@@ -1,0 +1,722 @@
+{
+  "state": "completed_with_results",
+  "base_commit": "5ac67e51f82d3eb7b49e5c548df5d8a68e63b8eb",
+  "source_sha256": "498ad8d41b5dac9082f4796459596ef397794181c1448bee7e48b1b7b9c400f4",
+  "summary_sha256": "af05c5973502a9b7cae263bcb63ee98bb0fc6df321d600f59a8b122f2a0ae6e1",
+  "identities": {
+    "E:\\Artifacts\\Spice-next-five-20261103T023139Z\\verified-wave-engine\\circuit-simulator.exe": "679da74a6d93e6b471617c9cd9c410af29e503ad3821355644d0863042981492",
+    "C:\\dev\\ngspice-install\\bin\\ngspice.exe": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "E:\\Artifacts\\Spice-next-five-20261103T023139Z\\reference-setup\\worker\\bin\\SpiceSharp.ThirdReference\\debug\\SpiceSharp.ThirdReference.dll": "acfb8466e52fbcec36a436ca3b17512191689080b7fc24a3f2a111b26e83002d",
+    "E:\\Artifacts\\Spice-next-five-20261103T023139Z\\reference-setup\\patch-manifest.json": "31b8e26063975484e8e54511f5700d4d4d89b574a8d72988ef06b1bb01a70d14"
+  },
+  "reference_assembly_sha256": {
+    "SpiceSharp": "e9eb3d07b6d8ab5c9315214f00d98bb0b8c130729bbda453c4ce06b8bbdbb474",
+    "SpiceSharpParser": "a2682ac6ce1337f5775b9683768ae5600d861d51b0407f5065dfcff97db45801",
+    "SpiceSharpBehavioral": "be4fe13ca7d7b761c0e4b76046e2cfb1006e107de75f5f064f77768fda9ecd1b"
+  },
+  "reference_flavor": "SpiceSharp3.2.3 + Parser3.4.1 + Behavioral3.2.0 long-branch IL patch",
+  "rust_requests": 16,
+  "native_requests": 8,
+  "spicesharp_requests": 8,
+  "shared_grid_points_per_check": 101,
+  "cases": [
+    {
+      "case_id": "switch-rc-pulse",
+      "state": "three_way_compared",
+      "source_sha256": "040cf727c22e54677d1e3718c883a7a3009d79fc77258ec72d6c0bdd033a3e91",
+      "reference_flavor": "SpiceSharp3.2.3 + Parser3.4.1 + Behavioral3.2.0 long-branch IL patch",
+      "unavailable": [],
+      "checks": [
+        {
+          "provider": "lu",
+          "reference": "analytic_control_load",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 0,
+          "fine_error": 0,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "analytic_control_load",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 0,
+          "fine_error": 0,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        },
+        {
+          "provider": "ngspice",
+          "reference": "analytic_control_load",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 5.000012482227287E-13,
+          "fine_error": 5.000024543976456E-13,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        },
+        {
+          "provider": "spicesharp",
+          "reference": "analytic_control_load",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 3.3881317890172014E-21,
+          "fine_error": 3.3881317890172014E-21,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "ngspice",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.0023587960243410255,
+          "fine_error": 0.0011832973551848536,
+          "refinement_delta": 0.001175498669156172,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "ngspice",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 2.3587960231794946E-06,
+          "fine_error": 1.183297354023327E-06,
+          "refinement_delta": 1.1754986691561676E-06,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "ngspice",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 5.000024543976456E-13,
+          "fine_error": 5.000024543976456E-13,
+          "refinement_delta": 0,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "spicesharp",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.0023588018236141983,
+          "fine_error": 0.0011833031544580264,
+          "refinement_delta": 0.001175498669156172,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "spicesharp",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 2.358801823614551E-06,
+          "fine_error": 1.1833031544583833E-06,
+          "refinement_delta": 1.1754986691561676E-06,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "spicesharp",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 3.3881317890172014E-21,
+          "fine_error": 3.3881317890172014E-21,
+          "refinement_delta": 0,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "ngspice",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.0023587960243410255,
+          "fine_error": 0.0011832973551848536,
+          "refinement_delta": 0.001175498669156172,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "ngspice",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 2.3587960231794946E-06,
+          "fine_error": 1.183297354023327E-06,
+          "refinement_delta": 1.1754986691561676E-06,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "ngspice",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 5.000024543976456E-13,
+          "fine_error": 5.000024543976456E-13,
+          "refinement_delta": 0,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "spicesharp",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.0023588018236141983,
+          "fine_error": 0.0011833031544580264,
+          "refinement_delta": 0.001175498669156172,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "spicesharp",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 2.358801823614551E-06,
+          "fine_error": 1.1833031544583833E-06,
+          "refinement_delta": 1.1754986691561676E-06,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "spicesharp",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 3.3881317890172014E-21,
+          "fine_error": 3.3881317890172014E-21,
+          "refinement_delta": 0,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "faer",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 2.7755575615628914E-17,
+          "fine_error": 2.7755575615628914E-17,
+          "refinement_delta": 0,
+          "bound": 1E-08,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "faer",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 5.421010862427522E-20,
+          "fine_error": 5.421010862427522E-20,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "faer",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 0,
+          "fine_error": 0,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "case_id": "switch-control-ramp",
+      "state": "three_way_compared",
+      "source_sha256": "a254d074641dac03dd5b60c68d6ef73181d63964933eeff4903f1c28d73a8170",
+      "reference_flavor": "SpiceSharp3.2.3 + Parser3.4.1 + Behavioral3.2.0 long-branch IL patch",
+      "unavailable": [],
+      "checks": [
+        {
+          "provider": "lu",
+          "reference": "analytic_control_load",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 6.776263578034403E-21,
+          "fine_error": 6.776263578034403E-21,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "analytic_control_load",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 6.776263578034403E-21,
+          "fine_error": 6.776263578034403E-21,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        },
+        {
+          "provider": "ngspice",
+          "reference": "analytic_control_load",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 1.0000025099979847E-12,
+          "fine_error": 1.0000049155715549E-12,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        },
+        {
+          "provider": "spicesharp",
+          "reference": "analytic_control_load",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 1.3552527156068805E-20,
+          "fine_error": 1.4823076576950256E-20,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "ngspice",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.002704740698898145,
+          "fine_error": 0.0013617873593438357,
+          "refinement_delta": 0.0013429533395543092,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "ngspice",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 1.1984877560496966E-05,
+          "fine_error": 6.102453453390739E-06,
+          "refinement_delta": 5.882424107106227E-06,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "ngspice",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 1.0000049155715549E-12,
+          "fine_error": 1.0000049155715549E-12,
+          "refinement_delta": 6.776263578034403E-21,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "spicesharp",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.0027047972756725214,
+          "fine_error": 0.0013618439361182122,
+          "refinement_delta": 0.0013429533395543092,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "spicesharp",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 1.205610689772275E-05,
+          "fine_error": 6.173682790616523E-06,
+          "refinement_delta": 5.882424107106227E-06,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "spicesharp",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 1.4823076576950256E-20,
+          "fine_error": 1.4823076576950256E-20,
+          "refinement_delta": 6.776263578034403E-21,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "ngspice",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.002704740698898145,
+          "fine_error": 0.0013617873593438357,
+          "refinement_delta": 0.0013429533395543092,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "ngspice",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 1.1984877560496966E-05,
+          "fine_error": 6.102453453390739E-06,
+          "refinement_delta": 5.882424107106227E-06,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "ngspice",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 1.0000049155715549E-12,
+          "fine_error": 1.0000049155715549E-12,
+          "refinement_delta": 6.776263578034403E-21,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "spicesharp",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.0027047972756725214,
+          "fine_error": 0.0013618439361182122,
+          "refinement_delta": 0.0013429533395543092,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "spicesharp",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 1.205610689772275E-05,
+          "fine_error": 6.173682790616523E-06,
+          "refinement_delta": 5.882424107106227E-06,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "spicesharp",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 1.4823076576950256E-20,
+          "fine_error": 1.4823076576950256E-20,
+          "refinement_delta": 6.776263578034403E-21,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "faer",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0,
+          "fine_error": 0,
+          "refinement_delta": 0,
+          "bound": 1E-08,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "faer",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 0,
+          "fine_error": 0,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "faer",
+          "probe": "i_VC",
+          "unit": "A",
+          "coarse_error": 0,
+          "fine_error": 0,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "case_id": "delayed-phase-sine",
+      "state": "numerical_mismatch",
+      "source_sha256": "97ac09f1f78912cd01b820cbeb8c3d80edc85917bbfd687291be4e03e8f0f784",
+      "reference_flavor": "SpiceSharp3.2.3 + Parser3.4.1 + Behavioral3.2.0 long-branch IL patch",
+      "unavailable": [],
+      "checks": [
+        {
+          "provider": "lu",
+          "reference": "ngspice",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 9.947830096335153E-07,
+          "fine_error": 9.947830096335153E-07,
+          "refinement_delta": 1.1102230246251565E-16,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "ngspice",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 9.947830291717058E-10,
+          "fine_error": 9.947830291717058E-10,
+          "refinement_delta": 2.168404344971009E-19,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "spicesharp",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 1,
+          "fine_error": 1,
+          "refinement_delta": 1.1102230246251565E-16,
+          "bound": 0.012,
+          "passed": false
+        },
+        {
+          "provider": "lu",
+          "reference": "spicesharp",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 0.001,
+          "fine_error": 0.001,
+          "refinement_delta": 2.168404344971009E-19,
+          "bound": 1.2E-05,
+          "passed": false
+        },
+        {
+          "provider": "faer",
+          "reference": "ngspice",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 9.947830096335153E-07,
+          "fine_error": 9.947830096335153E-07,
+          "refinement_delta": 1.1102230246251565E-16,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "ngspice",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 9.947830291717058E-10,
+          "fine_error": 9.947830291717058E-10,
+          "refinement_delta": 2.168404344971009E-19,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "spicesharp",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 1,
+          "fine_error": 1,
+          "refinement_delta": 1.1102230246251565E-16,
+          "bound": 0.012,
+          "passed": false
+        },
+        {
+          "provider": "faer",
+          "reference": "spicesharp",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 0.001,
+          "fine_error": 0.001,
+          "refinement_delta": 2.168404344971009E-19,
+          "bound": 1.2E-05,
+          "passed": false
+        },
+        {
+          "provider": "lu",
+          "reference": "faer",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0,
+          "fine_error": 0,
+          "refinement_delta": 0,
+          "bound": 1E-08,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "faer",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 0,
+          "fine_error": 0,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "case_id": "exponential-rc",
+      "state": "three_way_compared",
+      "source_sha256": "274b6ab71eee494ca3051f03cd9db604c4513a31bb46b733aae49e7954f37ef4",
+      "reference_flavor": "SpiceSharp3.2.3 + Parser3.4.1 + Behavioral3.2.0 long-branch IL patch",
+      "unavailable": [],
+      "checks": [
+        {
+          "provider": "lu",
+          "reference": "ngspice",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.001920674121951474,
+          "fine_error": 0.0009688739314252098,
+          "refinement_delta": 0.0009518001905262641,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "ngspice",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 5.009907553031177E-06,
+          "fine_error": 5.009907553031177E-06,
+          "refinement_delta": 9.518001905262649E-07,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "spicesharp",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.0019206741219514323,
+          "fine_error": 0.0009688739314251682,
+          "refinement_delta": 0.0009518001905262641,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "spicesharp",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 5.0099075530303575E-06,
+          "fine_error": 5.0099075530303575E-06,
+          "refinement_delta": 9.518001905262649E-07,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "ngspice",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.0019206741219514462,
+          "fine_error": 0.0009688739314252098,
+          "refinement_delta": 0.0009518001905262363,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "ngspice",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 5.009907553031177E-06,
+          "fine_error": 5.009907553031177E-06,
+          "refinement_delta": 9.518001905261565E-07,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "spicesharp",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 0.0019206741219514045,
+          "fine_error": 0.0009688739314251682,
+          "refinement_delta": 0.0009518001905262363,
+          "bound": 0.012,
+          "passed": true
+        },
+        {
+          "provider": "faer",
+          "reference": "spicesharp",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 5.0099075530303575E-06,
+          "fine_error": 5.0099075530303575E-06,
+          "refinement_delta": 9.518001905261565E-07,
+          "bound": 1.2E-05,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "faer",
+          "probe": "v_out",
+          "unit": "V",
+          "coarse_error": 1.4432899320127035E-15,
+          "fine_error": 1.4432899320127035E-15,
+          "refinement_delta": 0,
+          "bound": 1E-08,
+          "passed": true
+        },
+        {
+          "provider": "lu",
+          "reference": "faer",
+          "probe": "i_VDR",
+          "unit": "A",
+          "coarse_error": 1.5178830414797062E-18,
+          "fine_error": 1.5178830414797062E-18,
+          "refinement_delta": 0,
+          "bound": 1E-10,
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "limits": "Four named execution paths; shape/ordering/finiteness/no-extrapolation self-tests executed separately. Upstream libraries and several protocol-failure branches unmeasured.",
+    "line_rate": "0.9582999999999999",
+    "branch_rate": "0.659",
+    "module": "Run-TransientReferences",
+    "report_sha256": "05e2bbd060c0abd095243b4571039d18564819df96a4010fb5d9762d97959d2f"
+  },
+  "limits": [
+    "Four named fixtures; not original-corpus transient qualification.",
+    "Backward Euler at h and h/2; 101 shared samples with linear reference interpolation, no extrapolation.",
+    "Absolute V/A bounds are fixture-specific; refinement observed, no global accuracy proof.",
+    "Explicit20kOhm control resistor on all engines; native intrinsic1TOhm loading remains different from high-impedance Rust input.",
+    "Current sign is element positive-to-negative; source initialization is OP, no UIC/IC/control-program support.",
+    "Windows only; no performance, GPU or production qualification."
+  ],
+  "prior_failure": {
+    "fine_step_seconds": 5E-06,
+    "directory": "transient-reference-final",
+    "switch_control_ramp_step_seconds": 1E-05,
+    "unchanged_bound_A": 1.2E-05,
+    "disposition": "Halved timestep instead of loosening bound; original raw failure retained.",
+    "ngspice_current_error_A": 1.2346310083019042E-05
+  },
+  "raw_artifacts": "E:\\Artifacts\\Spice-next-five-20261103T023139Z"
+}

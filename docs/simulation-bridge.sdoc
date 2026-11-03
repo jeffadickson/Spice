@@ -238,3 +238,17 @@ Implementation: evaluation/SpiceSharp.ThirdReference, Setup-SpiceSharpReference.
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-SOURCE-001
+
+[REQUIREMENT]
+UID: SEM-TRANSIENT-REFERENCE-001
+STATUS: Draft
+TITLE: Current and transient reference qualification with explicit refinement
+STATEMENT: >>>
+Selected transient qualification shall compare named voltage and signed branch-current observables against original-source ngspice and an independently identified managed reference when available. Units, initialization, control loading, integration method, common grid, interpolation, numerical bounds and timestep refinement shall be explicit. Missing probes, invalid traces, identity changes, unavailable references and numerical discrepancies shall not be treated as passes. Refinement observations shall not be claimed as a global accuracy proof.
+<<<
+COMMENT: >>>
+Implementation: scripts/Run-TransientReferences.cs uses TransientSelection and the public client. Four named original-source fixtures, two timesteps and both CPU providers;101-point common grid; strictly ordered finite traces, linear interpolation and no extrapolation beyond a1ps endpoint-roundoff guard. Explicit20kOhm switch control load on every engine; independent P-to-N control-source KCL check bound1e-10A. Dynamic bounds0.012V/1.2e-5A remain unchanged when timestep refinement is required. Verification: trace malformed/shape/finiteness/order/extrapolation self-tests, delayed phase SIN, switch pulse/control ramp with RC load, EXP RC; three circuits agree across all engines and the fourth preserves a managed-reference discrepancy. Evidence: evidence/transient-current-results.json and docs/transient-current-results.md. No UIC/IC, complete original corpus transient, intrinsic switch loading parity, Linux/GPU or global accuracy claim. Draft.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-TRANSIENT-SELECT-001
