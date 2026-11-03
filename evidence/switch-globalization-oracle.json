@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "base_revision": "d30794da06f3a904b33b055b6b4d119a7cad1ebc",
+  "source_hashes": {
+    "docs/switch-globalization-oracle.sdoc": {
+      "tested_working_sha256": "3090a1577342ed0ac3f40f34685536be421dfcebaf72033534aec2bb30cfad3c",
+      "canonical_git_blob_sha1": "9e30aa4b5dcd61d3311ce868449c16ddb216b8cb"
+    },
+    "scripts/Test-SwitchGlobalizationOracle.cs": {
+      "tested_working_sha256": "f8c712f2194286a041eeddd1e653d90648a1714ae02152c7d2c89622ad0276d9",
+      "canonical_git_blob_sha1": "ebc9434f1f05cc2e39450b6ef73afa8f3f38c681"
+    }
+  },
+  "artifact_directory": "E:/Artifacts/Spice-fix-20261103T140559Z/paths/switchoracle",
+  "engine_provenance": {
+    "producer": "Root-provided source-pinned engine from the Rust fix worktree, noninstrumented native build; this helper independently verified and froze its binary hash.",
+    "build_log_sha256": "f69511c58f82f60f5770a8fb2d814a1f190804139df184e66c1e811e0c962a90",
+    "engine_sha256": "a5ebf5cc6e454bf014e145360346e3590e2d240793e1361fe38b73ea8c706feb",
+    "build_log": "E:/Artifacts/Spice-fix-20261103T140559Z/rust-switch-replay/native-build.log",
+    "producer_commit": "20f5385485d07ad942f7d69b4e0e09c2ea8d0473"
+  },
+  "commands": {
+    "coverage": "dotnet-coverage collect -f cobertura -o <artifact>/helper-coverage.xml pwsh -NoProfile -File <artifact>/coverage-driver.ps1",
+    "manual_native": "C:/dev/ngspice-install/bin/ngspice.exe -n -D ngbehavior=psa -b <artifact>/original-vswitch.cir",
+    "actual": "dotnet run --file scripts/Test-SwitchGlobalizationOracle.cs -- E:/Artifacts/Spice-fix-20261103T140559Z/rust-switch-replay/native/circuit-simulator.exe C:/dev/ngspice-install/bin/ngspice.exe <artifact>/typed-new-engine",
+    "self_test": "dotnet run --file scripts/Test-SwitchGlobalizationOracle.cs -- --self-test"
+  },
+  "scalar_contracts": {
+    "status": "passed",
+    "malformed_missing_duplicate": 8,
+    "valid": 2,
+    "red": "Initial reader deliberately unimplemented: --self-test failed NotImplementedException before extraction implementation. Final valid/malformed cases passed both normally and under profiling."
+  },
+  "actual_summary": {
+    "status": "passed",
+    "input_hashes": {
+      "E:\\Artifacts\\Spice-fix-20261103T140559Z\\rust-switch-replay\\native\\circuit-simulator.exe": "a5ebf5cc6e454bf014e145360346e3590e2d240793e1361fe38b73ea8c706feb",
+      "C:\\dev\\ngspice-install\\bin\\ngspice.exe": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f"
+    },
+    "deck_sha256": "92b76ef6efe57cb94903ac5a0c421ac0fd404fb3249f6bddf07d2af83c5f1dfa",
+    "helper_assembly_sha256": "88d2de397e135418c729559c6fd0d348898b838b111674819e78e064d1ab7299",
+    "analytical": {
+      "midpoint_resistance_ohms": 316.22776601683796,
+      "voltage_v": 0.3801486345140583,
+      "source_current_a": -0.003801486345140583
+    },
+    "ngspice": {
+      "voltage_v": 0.3801486345140583,
+      "source_current_a": -0.003801486345140583
+    },
+    "rows": [
+      {
+        "backend": "lu",
+        "status": "executed",
+        "voltage_v": 0.38014863451405806,
+        "source_current_a": -0.0038014863451405804,
+        "passed": true,
+        "newton": {
+          "iterations": 3,
+          "residual_inf": 4.336808689942018E-19,
+          "damped_steps": 0,
+          "update_inf": 9.032221229434823E-08,
+          "linear_solves": 3,
+          "continuation": null,
+          "gmin_siemens": null,
+          "gmin_continuation": null
+        }
+      },
+      {
+        "backend": "faer",
+        "status": "executed",
+        "voltage_v": 0.38014863451405806,
+        "source_current_a": -0.0038014863451405804,
+        "passed": true,
+        "newton": {
+          "iterations": 3,
+          "residual_inf": 4.336808689942018E-19,
+          "damped_steps": 0,
+          "update_inf": 9.032221229434823E-08,
+          "linear_solves": 3,
+          "continuation": null,
+          "gmin_siemens": null,
+          "gmin_continuation": null
+        }
+      }
+    ],
+    "bounds": {
+      "voltage_absolute_v": 1E-09,
+      "current_absolute_a": 1E-12,
+      "relative": 1E-08
+    },
+    "limits": "One fixed original VSWITCH OP plus typed public requests; no parser, corpus23/9, waveform, whole-model or production qualification."
+  },
+  "actual_summary_sha256": "f07d62ed094e7d57022fe3ba2e5e45bbfb330fff16976aa77283649034a1c5ca",
+  "profiled_replay": {
+    "status": "passed",
+    "provider_results": [
+      {
+        "backend": "lu",
+        "status": "executed",
+        "voltage_v": 0.38014863451405806,
+        "source_current_a": -0.0038014863451405804,
+        "passed": true,
+        "newton": {
+          "iterations": 3,
+          "residual_inf": 4.336808689942018E-19,
+          "damped_steps": 0,
+          "update_inf": 9.032221229434823E-08,
+          "linear_solves": 3,
+          "continuation": null,
+          "gmin_siemens": null,
+          "gmin_continuation": null
+        }
+      },
+      {
+        "backend": "faer",
+        "status": "executed",
+        "voltage_v": 0.38014863451405806,
+        "source_current_a": -0.0038014863451405804,
+        "passed": true,
+        "newton": {
+          "iterations": 3,
+          "residual_inf": 4.336808689942018E-19,
+          "damped_steps": 0,
+          "update_inf": 9.032221229434823E-08,
+          "linear_solves": 3,
+          "continuation": null,
+          "gmin_siemens": null,
+          "gmin_continuation": null
+        }
+      }
+    ],
+    "summary_sha256": "f07d62ed094e7d57022fe3ba2e5e45bbfb330fff16976aa77283649034a1c5ca",
+    "input_hashes": {
+      "E:\\Artifacts\\Spice-fix-20261103T140559Z\\rust-switch-replay\\native\\circuit-simulator.exe": "a5ebf5cc6e454bf014e145360346e3590e2d240793e1361fe38b73ea8c706feb",
+      "C:\\dev\\ngspice-install\\bin\\ngspice.exe": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f"
+    }
+  },
+  "coverage": {
+    "tool": "dotnet-coverage 18.12",
+    "collector_sha256": "6bcd01e22a0e109c7414c85cab6fb79e85b6af0b531c47ffa4ee4e4f8b7cf8c3",
+    "metrics": [
+      {
+        "file": "scripts/Test-SwitchGlobalizationOracle.cs",
+        "source_sha256": "f8c712f2194286a041eeddd1e653d90648a1714ae02152c7d2c89622ad0276d9",
+        "lines": 97,
+        "covered_lines": 95,
+        "line_percent": 97.9381443298969,
+        "branches": 106,
+        "covered_branches": 65,
+        "branch_percent": 61.320754716981135
+      }
+    ],
+    "limitations": [
+      "Scoped managed tooling execution; synthetic fixture counts are not simulator qualification.",
+      "Per-line maxima for duplicate branch mappings; not complete path coverage.",
+      "PowerShell, native children, vendor internals and unexecuted platform/failure paths are unmeasured."
+    ]
+  },
+  "strictdoc": {
+    "status": "passed",
+    "documents": 47,
+    "report_sha256": "65c57308bcef124a4b41d82fbb90ad6587513f7f5b4812c74d32fc6ff19aa6f8",
+    "unique_ids": 397,
+    "resolved_parents": 372
+  },
+  "tools": {
+    "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "ngspice": "47+",
+    "sdk": "10.0.403",
+    "strictdoc": "0.30.4",
+    "dotnet_coverage": "18.12.0"
+  },
+  "limitations": [
+    "One fixed reversed-threshold VSWITCH OP, two observables and two CPU providers; no parser/frontend translation changes or broad model/waveform qualification.",
+    "Finite scalar-contract malformed cases and actual oracle comparisons; no fresh fuzz/property/mutation-framework campaign for this thin verification helper. Native numerical testing is tracked separately by the Rust fix owner.",
+    "Helper-only managed line/branch coverage excludes the native numerical implementation, ngspice internals and other assemblies; unexecuted argument/input/process-failure branches remain unmeasured.",
+    "Historical corpus 23/9 counts, the failed overnight campaign and whole-model/production qualification are unchanged. No numerical tolerance was optimized against the observations.",
+    "The native build log records the pre-existing exFAT incremental-cache hard-link fallback warning; this oracle used the completed noninstrumented executable, not an instrumented test binary."
+  ]
+}

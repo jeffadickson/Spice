@@ -1,0 +1,17 @@
+[DOCUMENT]
+TITLE: Fixed VSWITCH globalization independent oracle
+
+[REQUIREMENT]
+UID: VERIFY-SWITCH-GLOBALIZATION-001
+STATUS: Implemented
+TITLE: Independent fixed-counterexample OP voltage and source current
+STATEMENT: >>>
+The bounded verification helper shall compare the reversed-threshold VSWITCH counterexample (RON=10 ohm, ROFF=10000 ohm, VON=0 V, VOFF=1 V, control=0.5 V, drive=1.5822841689813791 V and load=100 ohm) against original-source ngspice47+ OP and an independent midpoint resistor-divider/KCL calculation. Typed public client requests shall check both LU and faer CPU providers, retain actual responses and native/engine hashes, reject missing/duplicate/nonfinite observations and report declared SI bounds without substituting zero.
+<<<
+COMMENT: >>>
+Implementation: scripts/Test-SwitchGlobalizationOracle.cs uses only Simulator.Client and .NET BCL APIs; it does not parse or lower a SPICE deck. The ngspice input is the original standalone VSWITCH circuit with explicit OP queries and ngbehavior=psa. The typed circuit has equivalent ideal source/switch/load topology.
+Verification: helper --self-test exercises two valid and eight malformed/missing/duplicate scalar observations. Actual native plus both new-engine providers and analytical values are retained in evidence/switch-globalization-oracle.json; helper coverage is separately scoped there. Native numerical engine provenance is explicitly recorded. This fixed OP is not whole-model, parser, corpus, waveform, production or global convergence qualification.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: REF-006
