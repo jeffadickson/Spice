@@ -1,0 +1,32 @@
+{
+  "tests": {
+    "failed": 0,
+    "passed": 2,
+    "ignored": 0
+  },
+  "command": "cargo test --locked --target-dir <artifact>/native-target -j 4 --test spice_diode_continuation",
+  "limitations": [
+    "New scenarios are deterministic, not new random/fuzz campaigns.",
+    "cargo-nextest unavailable in resolved environment; established cargo test used, no tool installed.",
+    "No new whole-core line/branch measurement from these two tests; separately scoped model and provider coverage retained in prior evidence.",
+    "Does not establish BJT/MOS, universal convergence or nonlinear energy accounting."
+  ],
+  "recovery": [
+    "source continuation",
+    "Gmin continuation with final shunt removal"
+  ],
+  "source_hashes": {
+    "tests/spice_diode_continuation.rs": "cfef0214ea4920f27ccb9600bc3dae5e2115f45cbc96f2d008f8ad9dc7486c51",
+    "src/newton.rs": "fc24ce2ebec12371fbcc38961986f759f8ea5c5418b96affd14fdd5fbaf87f6e",
+    "src/spice_diode.rs": "f15abe8bd656df14abdbd9c6b3939fb706f0086b5d1193a4cf6a59f7fe638504",
+    "docs/charged-junction-convergence.sdoc": "4b36e1be70ea2219842ac2c591d687f614fbfd43ec4c31448cf54efcfe02c062"
+  },
+  "oracle": "Independent inverse Shockley and physical KCL; impossible reverse current must fail.",
+  "status": "two_finite_scenarios_passed",
+  "providers": [
+    "lu",
+    "qr",
+    "faer"
+  ],
+  "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/diode-continuation-cargo.log"
+}

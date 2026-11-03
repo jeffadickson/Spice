@@ -1,0 +1,16 @@
+[DOCUMENT]
+TITLE: Charged Junction Recovery Qualification
+
+[REQUIREMENT]
+UID: CONV-SPICE-JUNCTION-001
+STATUS: Draft
+TITLE: Recover the charged junction without false physical success
+STATEMENT: >>>
+The admitted SPICE diode profile shall support bounded source and Gmin continuation through the existing CPU providers. Qualification shall first demonstrate a failed direct solve under the same Newton iteration budget, then compare recovered bias against an independent inverse-Shockley and KCL oracle. Successful Gmin recovery shall remove the artificial shunt. Physically impossible reverse-current bias shall remain a failure under both recovery strategies.
+<<<
+COMMENT: >>>
+Verification: tests/spice_diode_continuation.rs exercises LU, QR and faer with real depletion/diffusion parameters, eight direct iterations, rejected source stages, final unit source scale and final unregularized Gmin recovery. The two finite scenarios do not establish universal convergence, BJT/MOS recovery, nonlinear energy accuracy or all requested-transient policies. Coverage is inherited only for separately measured numerical scopes; these tests do not provide new whole-core branch coverage.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
