@@ -1,0 +1,30 @@
+[DOCUMENT]
+TITLE: Bounded AM and SFFM Source Profiles
+
+[REQUIREMENT]
+UID: SEM-SOURCE-MODULATED-001
+STATUS: Draft
+TITLE: Generated AM and SFFM excitation preparation
+STATEMENT: >>>
+The generated frontend shall retain two through eight AM/SFFM scalar fields, evaluate them in the actual instance parameter environment and prepare explicit finite native waveform parameters. Absent explicit DC excitation, both families shall hold zero through the delay, including time zero. Frequencies use hertz, delays use seconds and input phases use degrees converted to radians. The profile shall implement documented stop-dependent defaults and SFFM modulation-index clipping explicitly; invalid or unsupported fields shall refuse preparation atomically.
+<<<
+COMMENT: >>>
+Implementation: generated waveformExcitation, SourceProfileExtraction, SourceWaveformPreparation and TransientSelection. Primary source inspected: ngspice src/spicelib/devices/vsrc/vsrcload.c and matching current-source evaluation. The selected source's explicit DC value remains separate; differing DC versus transient initial bias remains an unsupported initialization policy. Negative/zero carrier and AM modulation frequencies remain outside this bounded profile. Noise, RF ports and legacy handwritten frontend support are not implied.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SOURCE-001
+
+[REQUIREMENT]
+UID: MODEL-SOURCE-MODULATED-001
+STATUS: Draft
+TITLE: Finite modulated waveform evaluation
+STATEMENT: >>>
+The typed native API shall evaluate finite delayed AM and frequency-modulated sine waves with explicit SI parameters and radian phases. It shall expose the delay as a breakpoint and reject invalid frequencies, delay, modulation-index domains, phase overflow and nonfinite outputs rather than substituting zero after the delay. The managed generated serializer shall preserve these waveform tags and fields.
+<<<
+COMMENT: >>>
+Verification: tests/modulated_sources.rs covers special angles, signed inner phase, inclusive delay, breakpoints, malformed domains and seeded Proptest periodicity (128 cases, seed 2026110302). TransientSelectionTests checks defaults/clipping, and ModulatedSourceOracle compares original voltage/current AM/SFFM cards through generated preparation and the actual native client against ngspice. Declared finite tests and numerical tolerances do not establish a global waveform accuracy bound.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SOURCE-MODULATED-001

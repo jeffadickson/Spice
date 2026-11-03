@@ -43,7 +43,7 @@ public sealed class SourceProfileTests
     [InlineData("DC 1 AC 2 AC 3")]
     [InlineData("AC 1 DC 2 DC 3")]
     [InlineData("DC 1 AC missing")]
-    [InlineData("DC 1 SFFM(0 1 1k 1 10k)")]
+    [InlineData("DC 1 TRNOISE(0 1 1k 1 10k)")]
     public void Unsupported_or_invalid_source_profiles_are_atomic(string header)
     {
         var syntax=DeckParser.Parse("Source\nV1 a 0 "+header+"\nR1 a 0 1k\n.end\n",collectDeclarations:true);

@@ -18,7 +18,7 @@ $snapshot=Join-Path $OutputDirectory 'source'
 New-Item -ItemType Directory -Path $snapshot|Out-Null
 foreach($name in @('dotnet-tools.json','global.json')){Copy-Item -LiteralPath (Join-Path $root $name) -Destination $snapshot}
 $dotnet=Join-Path $snapshot 'dotnet';New-Item -ItemType Directory -Path $dotnet|Out-Null
-foreach($project in $(if($Stage -eq 'Bridge'){@('Simulator.Syntax','Simulator.Client','Simulator.Frontend','Simulator.Frontend.Tests')}else{@('Simulator.Syntax','Simulator.Syntax.Tests')})){
+foreach($project in $(if($Stage -eq 'Bridge'){@('Simulator.Syntax','Simulator.Client','Simulator.Frontend','Simulator.RequestedQualification','Simulator.Frontend.Tests')}else{@('Simulator.Syntax','Simulator.Syntax.Tests')})){
  $destination=Join-Path $dotnet $project;New-Item -ItemType Directory -Path $destination|Out-Null
  # Exclude mutable output directories even when another machine built in-place.
  Get-ChildItem -LiteralPath (Join-Path $root "dotnet/$project")|Where-Object Name -notin @('bin','obj','StrykerOutput')|ForEach-Object{Copy-Item -LiteralPath $_.FullName -Destination $destination -Recurse}

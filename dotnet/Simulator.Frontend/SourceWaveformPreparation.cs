@@ -19,6 +19,11 @@ internal static class SourceWaveformPreparation
     initial=p[0]+p[1]*Math.Sin((p.Length>5?p[5]:0)*(Math.PI/180));break;
    case SourceWaveformKind.Exponential:
     if(p.Length is <2 or >6||(p.Length>2&&p[2]<0)||(p.Length>4&&p[4]<0))return false;initial=p[0];break;
+   case SourceWaveformKind.FrequencyModulated:
+   case SourceWaveformKind.AmplitudeModulated:
+    // Native vsrc/isrc hold zero through the delay, including time zero,
+    // even when a nonzero offset/phase is specified for later times.
+    if(p.Length is <2 or >8||(p.Length>5&&p[5]<0))return false;initial=0;break;
    case SourceWaveformKind.Pwl:
     if(p.Length<2||p.Length%2!=0)return false;
     for(var i=0;i<p.Length;i+=2)if(p[i]<0||(i>0&&p[i]<=p[i-2]))return false;

@@ -9,6 +9,28 @@ pub struct Point {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Waveform {
+    /// Delayed FM with explicit hertz/radian parameters; zero through the delay.
+    FrequencyModulated {
+        offset: f64,
+        amplitude: f64,
+        carrier_hz: f64,
+        modulation_index: f64,
+        modulation_hz: f64,
+        delay_s: f64,
+        modulation_phase_rad: f64,
+        carrier_phase_rad: f64,
+    },
+    /// Delayed AM; offset and both modulation amplitudes retain source SI units.
+    AmplitudeModulated {
+        offset: f64,
+        modulation_offset: f64,
+        modulation_amplitude: f64,
+        modulation_hz: f64,
+        carrier_hz: f64,
+        delay_s: f64,
+        modulation_phase_rad: f64,
+        carrier_phase_rad: f64,
+    },
     Constant {
         value: f64,
     },
@@ -53,6 +75,66 @@ pub enum Waveform {
 impl Waveform {
     pub fn validate(&self) -> SimResult<()> {
         match self {
+            Self::FrequencyModulated {
+                offset,
+                amplitude,
+                carrier_hz,
+                modulation_index,
+                modulation_hz,
+                delay_s,
+                modulation_phase_rad,
+                carrier_phase_rad,
+            } if [
+                *offset,
+                *amplitude,
+                *carrier_hz,
+                *modulation_index,
+                *modulation_hz,
+                *delay_s,
+                *modulation_phase_rad,
+                *carrier_phase_rad,
+            ]
+            .iter()
+            .any(|v| !v.is_finite())
+                || *carrier_hz <= 0.
+                || *modulation_hz <= 0.
+                || *delay_s < 0.
+                || *modulation_index < 0.
+                || *modulation_index > carrier_hz / modulation_hz =>
+            {
+                Err(SimError::invalid(
+                    "invalid frequency-modulated source parameters",
+                ))
+            }
+            Self::AmplitudeModulated {
+                offset,
+                modulation_offset,
+                modulation_amplitude,
+                carrier_hz,
+                modulation_hz,
+                delay_s,
+                modulation_phase_rad,
+                carrier_phase_rad,
+            } if [
+                *offset,
+                *modulation_offset,
+                *modulation_amplitude,
+                *carrier_hz,
+                *modulation_hz,
+                *delay_s,
+                *modulation_phase_rad,
+                *carrier_phase_rad,
+            ]
+            .iter()
+            .any(|v| !v.is_finite())
+                || *carrier_hz <= 0.
+                || *modulation_hz <= 0.
+                || *delay_s < 0. =>
+            {
+                Err(SimError::invalid(
+                    "invalid amplitude-modulated source parameters",
+                ))
+            }
             Self::Constant { value } if !value.is_finite() => {
                 Err(SimError::invalid("nonfinite constant source"))
             }
@@ -155,6 +237,54 @@ impl Waveform {
             return Err(SimError::invalid("invalid source time"));
         }
         let value = match self {
+            Self::FrequencyModulated {
+                offset,
+                amplitude,
+                carrier_hz,
+                modulation_index,
+                modulation_hz,
+                delay_s,
+                modulation_phase_rad,
+                carrier_phase_rad,
+            } => {
+                if time <= *delay_s {
+                    0.
+                } else {
+                    let elapsed = time - delay_s;
+                    let carrier = std::f64::consts::TAU * carrier_hz * elapsed + carrier_phase_rad;
+                    let modulation =
+                        std::f64::consts::TAU * modulation_hz * elapsed + modulation_phase_rad;
+                    if !carrier.is_finite() || !modulation.is_finite() {
+                        return Err(SimError::invalid("modulated source phase overflow"));
+                    }
+                    offset + amplitude * (carrier + modulation_index * modulation.sin()).sin()
+                }
+            }
+            Self::AmplitudeModulated {
+                offset,
+                modulation_offset,
+                modulation_amplitude,
+                carrier_hz,
+                modulation_hz,
+                delay_s,
+                modulation_phase_rad,
+                carrier_phase_rad,
+            } => {
+                if time <= *delay_s {
+                    0.
+                } else {
+                    let elapsed = time - delay_s;
+                    let carrier = std::f64::consts::TAU * carrier_hz * elapsed + carrier_phase_rad;
+                    let modulation =
+                        std::f64::consts::TAU * modulation_hz * elapsed + modulation_phase_rad;
+                    if !carrier.is_finite() || !modulation.is_finite() {
+                        return Err(SimError::invalid("modulated source phase overflow"));
+                    }
+                    offset
+                        + (modulation_offset + modulation_amplitude * modulation.sin())
+                            * carrier.sin()
+                }
+            }
             Self::Constant { value } => *value,
             Self::Sine {
                 offset,
@@ -259,7 +389,9 @@ impl Waveform {
             } => {
                 vec![*rise_delay_s, *fall_delay_s]
             }
-            Self::DampedSine { delay_s, .. } => vec![*delay_s],
+            Self::DampedSine { delay_s, .. }
+            | Self::FrequencyModulated { delay_s, .. }
+            | Self::AmplitudeModulated { delay_s, .. } => vec![*delay_s],
             _ => Vec::new(),
         }
     }

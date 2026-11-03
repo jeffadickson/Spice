@@ -20,6 +20,8 @@ public sealed class SourceWaveformTests
  [InlineData("PWL(0 -1 1u 2)",-1)]
  [InlineData("EXP(1 2 1u 2u 3u 4u)",1)]
  [InlineData("2 PULSE(0 1 1u 1n 1n 1u 2u) AC 3",2)]
+ [InlineData("SFFM(.1 2 200 45 10k 1m 0 0)",0)]
+ [InlineData("AM(.1 1 2 200 10k 1m 0 0)",0)]
  public void Static_initial_value_is_selected_without_erasing_the_waveform(string profile,double expected)
  {
   var syntax=DeckParser.Parse("Waveform\nV1 out 0 "+profile+"\nR1 out 0 1k\n.end\n",collectDeclarations:true);

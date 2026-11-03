@@ -1,0 +1,111 @@
+{
+  "requirements": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/modulation-requirements.json",
+  "status": "bounded_am_sffm_checkpoint",
+  "source_hashes": {
+    "src/waveform.rs": "50a98ec68a4c13786c7324e912e5e59b0ca94715379092b9707e8584b09eaeb3",
+    "tests/modulated_sources.rs": "0e5b3ad446d2911b724fb13b280f621a058bae95f314f6d4468f562028353770",
+    "dotnet/Simulator.Client/Requests.cs": "776e4156d07cd2b07607927d0aed9e36be287baff6c28287d6b4c3a83c11cc6f",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "e4b7355e6740713ec5f722ec90e516cd62583bdf671a105fc76b1986375cd9ed",
+    "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "b28e44832d693805fffef22a90c9f96e0098f75530747e861809b3440071e4b2",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "3f75c3162e7bc959f290908f39a72111f1b33ee377e063e6313d7c4ca740bb2e",
+    "dotnet/Simulator.Frontend/SourceWaveformPreparation.cs": "6f47b27a52576b17487ffeef501f15c78a6c0996092004486336f6a5b84a5af1",
+    "dotnet/Simulator.Frontend/TransientSelection.cs": "c8ad0e750f634ed259f05a86a3e4650c5c17b8d0491bfbc85dd2169b816a7414",
+    "dotnet/Simulator.Frontend.Tests/ModulatedSourceOracle.cs": "2d9d0affa4fd08569ce6bfe38ee99d7bebc552eb528b75aa77785f9d68fbb160",
+    "dotnet/Simulator.Frontend.Tests/SourceProfileTests.cs": "cd0be1adc6bcd91dde84a6ffe56baffef79307a68b8e99a2c1ec9f801f63392d",
+    "dotnet/Simulator.Frontend.Tests/SourceWaveformTests.cs": "582a889dc230265de7fcfa1c75c9d7ffc3719a5626d81c5f906dba0406c28100",
+    "dotnet/Simulator.Frontend.Tests/TransientSelectionTests.cs": "e488ce67454d6939a249ed650582598217860f14eafa3708b13ca8e5faf03b7c",
+    "docs/modulated-sources.sdoc": "095ee195b4f67848cb468402ffdb6f98aa8fa995a211051579cfb1429a5a4e58",
+    "scripts/Run-SemanticMutations.ps1": "f6525a7cd0d5605dca856406caba5b85ff39d0532a683c7ac9de89fac459f843",
+    "scripts/Measure-RustIntegrationCoverage.ps1": "452eb4d1198b3df89ae58ae71597aa5c94c84b6d846c90c4b4c06d8084177e50"
+  },
+  "mutation": {
+    "native": {
+      "scope": "Two signed modulation arithmetic mutants; maintained cargo-mutants27.1.0, filtered build/test target modulated_sources",
+      "missed": 0,
+      "caught": 2,
+      "report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/modulation-native-mutations/mutants.out/outcomes.json"
+    },
+    "superseded": "First managed campaign had an obsolete SFFM-negative baseline failure; its100% score is not valid qualification.",
+    "managed": {
+      "scope": "One viable ratio arithmetic mutant; Stryker5.0.0 baseline293 discovered, no failing baseline",
+      "killed": 1,
+      "compile_error": 101,
+      "report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/modulation-managed-mutations2/reports/reports/mutation-report.json",
+      "survived": 0,
+      "ignored": 654
+    }
+  },
+  "native_oracle": {
+    "native_actual_grid_samples_checked": 140070,
+    "engine_sha256": "092f495bc5ae0ab1da057193b7be2d5e283078c0d2f8144996f7daa5ed523712",
+    "reference": "Both actual grids checked against the same independent closed-form resistor/source reference, tolerance1e-9V. No interpolation/extrapolation at the delay corner.",
+    "original_profiles": 7,
+    "providers": [
+      "lu",
+      "faer"
+    ],
+    "engine_samples_checked": 2828,
+    "voltage_current_cases": 14,
+    "path": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z\\modulation-oracle-68942af6ca384a95b7017000a3fe0252"
+  },
+  "coverage": {
+    "managed_classes": [
+      {
+        "branch_rate": "0.9861",
+        "name": "Simulator.Syntax.SourceProfileExtraction",
+        "line_rate": "1",
+        "file": "Simulator.Syntax/SourceProfileExtraction.cs"
+      },
+      {
+        "branch_rate": "1",
+        "name": "Simulator.Frontend.PreparedSourceWaveform",
+        "line_rate": "1",
+        "file": "Simulator.Frontend/SourceWaveformPreparation.cs"
+      },
+      {
+        "branch_rate": "0.8771",
+        "name": "Simulator.Frontend.SourceWaveformPreparation",
+        "line_rate": "0.9285",
+        "file": "Simulator.Frontend/SourceWaveformPreparation.cs"
+      },
+      {
+        "branch_rate": "1",
+        "name": "Simulator.Frontend.SelectedTransient",
+        "line_rate": "1",
+        "file": "Simulator.Frontend/TransientSelection.cs"
+      },
+      {
+        "branch_rate": "0.8828",
+        "name": "Simulator.Frontend.TransientSelection",
+        "line_rate": "0.9791",
+        "file": "Simulator.Frontend/TransientSelection.cs"
+      },
+      {
+        "branch_rate": "1",
+        "name": "Simulator.Frontend.TransientSelection/<>c__DisplayClass2_1",
+        "line_rate": "1",
+        "file": "Simulator.Frontend/TransientSelection.cs"
+      }
+    ],
+    "native_branches": null,
+    "waveform_lines": "112/261=42.91% in this modulation-only scope; legacy waveform arms mostly unexercised here",
+    "native_report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/modulation-native-final-coverage/summary.json",
+    "managed_report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/modulation-integrated-coverage/f3b024c5-28d9-4d42-81f0-b632049c123a/coverage.cobertura.xml"
+  },
+  "tests": {
+    "property_seed": "2026110302",
+    "native_log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/modulation-native-green.log",
+    "native_tests": 4,
+    "property_cases": 128,
+    "managed_passed": 284,
+    "managed_skipped": 9,
+    "managed_failed": 0,
+    "managed_log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/modulation-integrated.log"
+  },
+  "limitations": [
+    "Stable Rust branch coverage unavailable. Line metrics are not full-core coverage.",
+    "First interpolated native delay trace differed158uV due to linearization; preserved original failed trace, corrected oracle uses actual grids.",
+    "Negative/zero carrier and AM modulation frequencies, noise/RF sources and legacy handwritten frontend remain unqualified.",
+    "The running frozen62ae97d corpus census predates this feature, so its totals cannot measure this uplift."
+  ]
+}

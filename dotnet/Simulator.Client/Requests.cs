@@ -126,6 +126,8 @@ public sealed record Point(double TimeS, double Value);
 [JsonDerivedType(typeof(DampedSine), "damped_sine")]
 [JsonDerivedType(typeof(Pulse), "pulse")]
 [JsonDerivedType(typeof(Exponential), "exponential")]
+[JsonDerivedType(typeof(FrequencyModulated), "frequency_modulated")]
+[JsonDerivedType(typeof(AmplitudeModulated), "amplitude_modulated")]
 public abstract record Waveform;
 /// <summary>Time-independent source value in its SI unit.</summary>
 public sealed record Constant(double Value) : Waveform;
@@ -139,6 +141,10 @@ public sealed record DampedSine(double Offset,double Amplitude,double FrequencyH
 public sealed record Pulse(double Low,double High,double DelayS,double RiseS,double FallS,double WidthS,double PeriodS):Waveform;
 /// <summary>Exponential rise/return with delays and strictly positive time constants in seconds.</summary>
 public sealed record Exponential(double Initial,double Pulsed,double RiseDelayS,double RiseTauS,double FallDelayS,double FallTauS):Waveform;
+/// <summary>FM with hertz frequencies, radian phases and seconds delay. Zero through delay; engine requires index in [0, carrier/modulation frequency ratio].</summary>
+public sealed record FrequencyModulated(double Offset,double Amplitude,double CarrierHz,double ModulationIndex,double ModulationHz,double DelayS,double ModulationPhaseRad,double CarrierPhaseRad):Waveform;
+/// <summary>AM with hertz frequencies, radian phases, seconds delay and source-unit offset/amplitudes. Zero through delay.</summary>
+public sealed record AmplitudeModulated(double Offset,double ModulationOffset,double ModulationAmplitude,double ModulationHz,double CarrierHz,double DelayS,double ModulationPhaseRad,double CarrierPhaseRad):Waveform;
 /// <summary>Requested scalar measurements and unit-aware bounds, evaluated from recorded results.</summary>
 public sealed record Experiment(Measurement[] Measurements, Assertion[] Assertions);
 /// <summary>Named scalar operation over a signal descriptor ID.</summary>

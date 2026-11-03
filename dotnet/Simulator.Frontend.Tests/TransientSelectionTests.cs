@@ -5,6 +5,18 @@ using Xunit;
 namespace Simulator.Frontend.Tests;
 public sealed class TransientSelectionTests
 {
+ [Fact]
+ public void Modulation_defaults_and_native_index_clipping_are_explicit()
+ {
+  var selected=TransientSelection.Prepare(Deck("SFFM(.1 2)"),2,.1);
+  Assert.True(selected.Success);var fm=Assert.IsType<FrequencyModulated>(Assert.Single(Assert.IsType<TransientConfigured>(selected.Prepared.Request!.Analysis).Options.Sources!).Waveform);
+  Assert.Equal(2.5,fm.CarrierHz);Assert.Equal(250,fm.ModulationHz);Assert.Equal(.01,fm.ModulationIndex,12);
+  var am=TransientSelection.Prepare(Deck("AM(.1 2)"),2,.1);Assert.True(am.Success);
+  var amplitude=Assert.IsType<AmplitudeModulated>(Assert.Single(Assert.IsType<TransientConfigured>(am.Prepared.Request!.Analysis).Options.Sources!).Waveform);
+  Assert.Equal(1,amplitude.ModulationAmplitude);Assert.Equal(2.5,amplitude.ModulationHz);Assert.Equal(250,amplitude.CarrierHz);
+  var negative=TransientSelection.Prepare(Deck("SFFM(0 1 1 -2 2)"),2,.1);Assert.True(negative.Success);
+  Assert.Equal(0,Assert.IsType<FrequencyModulated>(Assert.Single(Assert.IsType<TransientConfigured>(negative.Prepared.Request!.Analysis).Options.Sources!).Waveform).ModulationIndex);
+ }
  private static DeckSyntax Deck(string profile)=>DeckParser.Parse("Transient\nV1 out 0 "+profile+"\nR1 out 0 1k\n.tran 1u 1m\n.end\n",collectDeclarations:true);
  [Fact]
  public void Explicit_pulse_maps_to_existing_wire_contract_and_preserves_selection_notes()
@@ -33,9 +45,12 @@ public sealed class TransientSelectionTests
  }
  [Theory]
  [InlineData("DC 1 PWL(0 0 1u 1)","unsupported_transient_dc_bias")]
+ [InlineData("DC 1 SFFM(0 1 1k 1 10k)","unsupported_transient_dc_bias")]
  [InlineData("PULSE(0 1)","unsupported_pulse_overlap")]
  [InlineData("SIN(0 1 -1)","unsupported_sine_profile")]
  [InlineData("EXP(1 2 1u -1u 2u 1u)","unsupported_exponential_profile")]
+ [InlineData("AM(0 1 1 0 1)","unsupported_modulated_source_profile")]
+ [InlineData("SFFM(0 1 -1 1 1)","unsupported_modulated_source_profile")]
  public void Unqualified_runtime_profiles_refuse_without_partial_requests(string profile,string code)
  {
   var result=TransientSelection.Prepare(Deck(profile),10e-6,1e-6);

@@ -16,7 +16,7 @@ sourceProfile: value sourceClause* EOF | sourceClause+ EOF;
 sourceClause: dcExcitation | acExcitation | waveformExcitation;
 // Waveform fields are signed scalar values, not general whitespace arithmetic.
 // Delimited/braced expressions retain their existing generated value context.
-waveformExcitation: {TokenStream.LT(1).Text.ToLowerInvariant() is "pulse" or "sin" or "pwl" or "exp"}? identifier
+waveformExcitation: {TokenStream.LT(1).Text.ToLowerInvariant() is "pulse" or "sin" or "pwl" or "exp" or "sffm" or "am"}? identifier
     (LPAREN waveformValues RPAREN | waveformValues);
 waveformValues: waveformScalar (COMMA? waveformScalar)*;
 waveformScalar: {TokenStream.LT(1).Text.ToLowerInvariant() is not ("dc" or "ac")}? value;

@@ -58,6 +58,18 @@ public static class TransientSelection
      var tau2=Field(5,defaultStepS);if(tau2==0)tau2=defaultStepS;
      if(td1<0||td2<td1||tau1<=0||tau2<=0||!double.IsFinite(td2))return Fail("unsupported_exponential_profile",source.Range);
      waveform=new Exponential(p[0],p[1],td1,tau1,td2,tau2);break;
+    case SourceWaveformKind.FrequencyModulated:
+    case SourceWaveformKind.AmplitudeModulated:
+     var fm=source.Kind==SourceWaveformKind.FrequencyModulated;
+     var carrier=Field(fm?2:4,fm?5/stopS:500/stopS);
+     var modulation=Field(fm?4:3,fm?500/stopS:5/stopS);
+     // Native SFFM uses its stop-dependent modulation default when the
+     // explicit frequency is zero. AM has no such zero substitution.
+     if(fm&&modulation==0)modulation=500/stopS;
+     var modulationDelay=Field(5,0);var modulationPhase=Field(6,0)*(Math.PI/180);var carrierPhase=Field(7,0)*(Math.PI/180);
+     if(!double.IsFinite(carrier)||!double.IsFinite(modulation)||carrier<=0||modulation<=0||!double.IsFinite(modulationPhase)||!double.IsFinite(carrierPhase))return Fail("unsupported_modulated_source_profile",source.Range);
+     waveform=fm?new FrequencyModulated(p[0],p[1],carrier,Math.Clamp(Field(3,90),0,carrier/modulation),modulation,modulationDelay,modulationPhase,carrierPhase)
+        :new AmplitudeModulated(p[0],p[1],Field(2,1),modulation,carrier,modulationDelay,modulationPhase,carrierPhase);break;
     default:return Fail("unsupported_source_waveform",source.Range);
    }
    sources.Add(new(source.WireId,waveform));

@@ -26,14 +26,14 @@ internal static class SourceProfileExtraction
             var nominal=dc.Length==1?dc[0].value():profile.value();var phasor=ac.Length==1?ac[0].value():null;
             SourceWaveformSyntax? waveform=null;
             if(waves.Length==1){
-                var wave=waves[0];var kind=wave.identifier().GetText().ToLowerInvariant() switch{"pulse"=>SourceWaveformKind.Pulse,"sin"=>SourceWaveformKind.Sine,"pwl"=>SourceWaveformKind.Pwl,_=>SourceWaveformKind.Exponential};
+                var wave=waves[0];var kind=wave.identifier().GetText().ToLowerInvariant() switch{"pulse"=>SourceWaveformKind.Pulse,"sin"=>SourceWaveformKind.Sine,"pwl"=>SourceWaveformKind.Pwl,"sffm"=>SourceWaveformKind.FrequencyModulated,"am"=>SourceWaveformKind.AmplitudeModulated,_=>SourceWaveformKind.Exponential};
                 waveform=new(kind,wave.waveformValues().waveformScalar().Select(v=>capture(v.value())).ToImmutableArray());
             }
             return new(nominal==null?null:capture(nominal),phasor==null?null:capture(phasor[0]),phasor?.Length==2?capture(phasor[1]):null){Waveform=waveform};
         }
         catch(ParseCanceledException){return null;}
     }
-    internal static bool IsReserved(string text)=>text.ToLowerInvariant() is "dc" or "ac" or "pulse" or "sin" or "pwl" or "exp";
+    internal static bool IsReserved(string text)=>text.ToLowerInvariant() is "dc" or "ac" or "pulse" or "sin" or "pwl" or "exp" or "sffm" or "am";
     // Shared bounded adapter for generated semantic entries. Recognition remains
     // in ANTLR; no source text is split or re-tokenized here.
     internal static SpiceParser? CreateParser(IEnumerable<ParserRuleContext> parameters)

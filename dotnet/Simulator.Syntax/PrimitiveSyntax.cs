@@ -33,7 +33,11 @@ public enum SourceWaveformKind
     /// <summary>Piecewise-linear time/value pairs.</summary>
     Pwl,
     /// <summary>Exponential rise and return.</summary>
-    Exponential
+    Exponential,
+    /// <summary>Single-frequency frequency modulation, with degree phase syntax.</summary>
+    FrequencyModulated,
+    /// <summary>Amplitude modulation, with degree phase syntax.</summary>
+    AmplitudeModulated
 }
 /// <summary>Unevaluated ordered scalar fields from the generated waveform rule.</summary>
 public sealed record SourceWaveformSyntax(SourceWaveformKind Kind,ImmutableArray<SourceSyntax> Values);
