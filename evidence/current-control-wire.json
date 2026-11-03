@@ -1,0 +1,29 @@
+{
+  "state": "completed_with_results",
+  "source_sha256": "0253537888ce9acfc83ea93b8f15c72d8d6cc5a84ad01cc2cc9cbeb2ff539fda",
+  "native_engine_sha256": "679da74a6d93e6b471617c9cd9c410af29e503ad3821355644d0863042981492",
+  "test_cases": 2,
+  "providers": [
+    "lu",
+    "faer"
+  ],
+  "expectations": {
+    "controller_amps": -0.001,
+    "cccs_output_volts": 2,
+    "ccvs_output_volts": -3
+  },
+  "coverage": {
+    "scope": "Client current-control wire tests only; includes generated serialization and instrumented project dependencies",
+    "lines_valid": 10345,
+    "branches_valid": 708,
+    "lines_covered": 5509,
+    "report_sha256": "907af11706b7880945f25cbb28f874e9502536ff0bdb1eca1aaf96cb90daad96",
+    "branches_covered": 245
+  },
+  "limitations": [
+    "Native F/H stamps preexist; this checkpoint exposes typed public serialization only.",
+    "Parser binding and broader dynamic corpus qualification are separate.",
+    "No full-system, Linux or GPU qualification."
+  ],
+  "raw_artifacts": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z"
+}

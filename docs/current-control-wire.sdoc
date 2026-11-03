@@ -1,0 +1,16 @@
+[DOCUMENT]
+TITLE: Typed Current-Control Wire Contracts
+
+[REQUIREMENT]
+UID: SEM-CURRENT-CONTROL-WIRE-001
+STATUS: Draft
+TITLE: Public current-controlled source authoring
+STATEMENT: >>>
+The generated managed request serializer shall expose the existing native CCCS and CCVS element contracts with exact controlling branch identity, positive-to-negative signed current, dimensionless CCCS gain and CCVS transresistance in ohms. Missing or invalid controllers shall not be replaced by zero engineering data. Parser binding and broader dynamic qualification remain separate requirements.
+<<<
+COMMENT: >>>
+Implementation: Simulator.Client/Requests.cs Cccs and Ccvs and existing Rust circuit/compile stamps. Verification: CurrentControlWireTests exercises the real lu/faer native API with independent KCL/voltage-law expectations; PreparationSemanticsTests covers later generated same-instance binding. Source-generator path executes through SimulationClient.RunAsync, not reflection-only JSON. Full corpus, nonlinear control and all dynamic controller combinations are not established by these two OP fixtures.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SOURCE-001

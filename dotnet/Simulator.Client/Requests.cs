@@ -23,6 +23,8 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(Vcvs), "vcvs")]
 [JsonDerivedType(typeof(PspiceSwitch), "pspice_switch")]
 [JsonDerivedType(typeof(Vccs), "vccs")]
+[JsonDerivedType(typeof(Cccs), "cccs")]
+[JsonDerivedType(typeof(Ccvs), "ccvs")]
 [JsonDerivedType(typeof(Diode), "diode")]
 [JsonDerivedType(typeof(DiodeWithCapacitance), "diode_with_capacitance")]
 public abstract record Element(string Id, int P, int N);
@@ -40,6 +42,10 @@ public sealed record Current(string Id, int P, int N, double Amps) : Element(Id,
 public sealed record Vcvs(string Id,int P,int N,int Cp,int Cn,double Gain) : Element(Id,P,N);
 /// <summary>Ideal voltage-controlled current source: current P-to-N equals Siemens*(V(Cp)-V(Cn)).</summary>
 public sealed record Vccs(string Id,int P,int N,int Cp,int Cn,double Siemens) : Element(Id,P,N);
+/// <summary>Output current P-to-N equals Gain times the P-to-N branch current of ControlId; gain is dimensionless.</summary>
+public sealed record Cccs(string Id,int P,int N,string ControlId,double Gain):Element(Id,P,N);
+/// <summary>Output voltage P-to-N equals Ohms times the P-to-N branch current of ControlId.</summary>
+public sealed record Ccvs(string Id,int P,int N,string ControlId,double Ohms):Element(Id,P,N);
 /// <summary>Smooth PSpice VSWITCH, ohms/volts. Current P-to-N is (Vp-Vn)/R(Vcp-Vcn); control is high impedance.</summary>
 public sealed record PspiceSwitch(string Id,int P,int N,int Cp,int Cn,double Ron,double Roff,double Von,double Voff):Element(Id,P,N);
 /// <summary>Shockley diode parameters use SI amps and volts; current flows P to N.</summary>
