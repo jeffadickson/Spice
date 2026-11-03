@@ -63,9 +63,9 @@
   ],
   "log_sha256": {
     "native-five-area-final.log": "b3794834923f2234d7443c35adba03bebbc640e2b29d12145a0edb15669aeac7",
-    "final-integrated-requirements.json": "3fee03891acd78bb9c8f3a7d047a3f8fc6c0cc74a0d86dcaa8fa06884a6eddfe",
+    "final-integrated-requirements.json": "eba8fa013c9eb204f58b1e990d8fd7b1d22904266e1f48bf65173fcd3c40dded",
     "final-managed.log": "31f2ea1b5e9d97c505634e7e0adaad610140a03c7abbfe1bc15d9be0b02f33b9",
-    "final-engineering/verification.json": "49ee9fba1690f427c888fee74043c1126917a9e632425fe124d79a584412ef7f",
+    "final-engineering/verification.json": "b634c4f28afc4aa1c8102023c77f02557172bfb3efb8daad3372c6b01f23b2ba",
     "final-syntax.log": "6bd12485b9cbfafc8485e397a7b1ba8ca82c633fc997b5be863f02122d6c2bb7",
     "final-original-control.log": "82dfa55e206d1643da0f499949b1b833d3f430a5d416eb37b59d449d773acc8c",
     "final-helper-native-tests.log": "b392c0692e199814b20167c8963eaa541ef6e20bd6e9438edaca9411057ad843"
@@ -101,9 +101,9 @@
     "status": "completed"
   },
   "latest_requirements": {
-    "documents": 43,
-    "unique_ids": 391,
-    "resolved_parents": 369
+    "documents": 45,
+    "resolved_parents": 369,
+    "unique_ids": 394
   },
   "final_corpus": {
     "prepared": 85,
@@ -124,5 +124,38 @@
     "adapter_coverage_source": "evidence/requested-deck-runner.json",
     "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/final-deck-smoke.log",
     "review": "Read-only independent review f4ab41d, no Important/Critical findings. No new cancellation/disk fault injection."
+  },
+  "ground_guard": {
+    "stryker_killed": 1,
+    "evidence": "ground-alias-admission.json",
+    "full_green_passed": 479,
+    "stryker_compile_invalid": 184,
+    "source": "add9c12",
+    "full_green_failed": 0,
+    "stryker_filtered": 1164,
+    "new_ground_cases": 5,
+    "red_failures": 4,
+    "note": "This fullsuite includes the8stopgrid checks and originalcontrol replay. Not added to earlier465count. Captured guard coverage is unavailable.",
+    "original_deck_refusals": 2,
+    "full_green_skipped": 9
+  },
+  "tool_versions": {
+    "stryker": "5.0.0",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "git": "git version 2.56.0.windows.3",
+    "strictdoc": "0.30.4",
+    "powershell": "7.6.5",
+    "dotnet": "10.0.403",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "sphinx": "9.1.0",
+    "cargo_mutants": "cargo-mutants 27.1.0"
+  },
+  "bjt_diagnostic_fresh_replay": {
+    "public_calls": 25,
+    "source": "f8246df",
+    "report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/final-bjt-diagnosis/diagnosis.json",
+    "coverage": "Unmeasured diagnostic helper; earlier model/CLI percentages are separate scopes",
+    "mode": "Explicit public OP policy and initial-state experiment; not original-request/native-agreement closure",
+    "sha256": "d1db4b0b686ead808965caa69d0578f53b725defe2968c7d7d8bda9846020fb4"
   }
 }

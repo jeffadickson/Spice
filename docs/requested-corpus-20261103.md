@@ -30,6 +30,10 @@ Four additional original BJT amplifier transient attempts (spice3.deck and
 xspice_c1.cir, with mirrors) failed with `Newton iteration limit exceeded`.
 They are execution failures, not numerical disagreements or completed solves.
 The finite composite recovery tests do not close these real-circuit failures.
+The [bounded public-API diagnosis](bjt-corpus-initialization.md) separates initial
+OP recovery from a later LU residual refusal; an explicit faer warm start completes
+the200steps, without claiming native waveform agreement or reclassifying the
+original requests.
 
 Common diagnostic occurrences include 272 unsupported physical directives,
 139 XSPICE models, 78 MOS profiles, 39 BJT profiles, 43 source profiles and 23
