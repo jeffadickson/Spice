@@ -29,7 +29,7 @@ STATEMENT: >>>
 Gain preparation shall return no prepared relation when model binding is ambiguous, deferred or missing, parameters are unknown, duplicated, opaque, nonfinite or non-scalar, or ports require vectors, inversion, current sensing, digital state or user-defined types. No unsupported term shall be silently ignored or approximated.
 <<<
 COMMENT: >>>
-Implementation: XspiceExtraction retains unsupported ports with null typed terminals; XspiceGainLowering returns structured source-located diagnostics. Verification: XspiceGainTests fixed negative/malformed cases and parameter-evaluator refusal propagation. Summer's vector parameters and every other code-model family remain outside this implementation. Native comparisons qualify named profiles only.
+Implementation: XspiceExtraction retains unsupported ports with null typed terminals; XspiceGainLowering returns structured source-located diagnostics. Verification: XspiceGainTests fixed negative/malformed cases and parameter-evaluator refusal propagation. Summer vector parameters are prepared separately under SEM-XSPICE-SUMMER-001; other code-model families remain outside these bounded helpers. Native comparisons qualify named profiles only.
 <<<
 RELATIONS:
 - TYPE: Parent

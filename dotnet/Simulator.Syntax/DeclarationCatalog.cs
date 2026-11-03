@@ -25,7 +25,11 @@ public enum NameLookupStatus
 /// <summary>Exact source syntax, without parameter evaluation or whitespace reconstruction.</summary>
 public sealed record SourceSyntax(string Text,SourceRange Range);
 /// <summary>A parameter target and value. Null Name denotes a non-simple, uninterpreted assignment target.</summary>
-public sealed record ParameterSyntax(string? Name,SourceSyntax Target,SourceSyntax Value,SourceRange Range);
+public sealed record ParameterSyntax(string? Name,SourceSyntax Target,SourceSyntax Value,SourceRange Range)
+{
+    /// <summary>Generated scalar array members, or null outside the bounded array profile. Empty arrays remain distinct from omitted/default parameters.</summary>
+    public ImmutableArray<SourceSyntax>? ScalarVectorValues { get; init; }
+}
 /// <summary>A lexical scope; IDs are catalog-local and parents precede children.</summary>
 public sealed record DeclarationScope(int Id,int? ParentId,string? Name,SourceRange Range);
 /// <summary>A named definition. Header arguments and model/default parameters remain syntax.</summary>

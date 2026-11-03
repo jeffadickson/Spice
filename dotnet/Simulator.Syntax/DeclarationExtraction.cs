@@ -118,7 +118,8 @@ internal sealed class DeclarationExtraction
     private ParameterSyntax Parameter(SpiceParser.AssignmentContext assignment)
     {
         var target=(ParserRuleContext)assignment.GetChild(0);var value=(ParserRuleContext)assignment.GetChild(2);
-        return new(assignment.referenceName()?.GetText(),Capture(target),Capture(value),Range(assignment));
+        return new(assignment.referenceName()?.GetText(),Capture(target),Capture(value),Range(assignment))
+        {ScalarVectorValues=value is SpiceParser.GroupContext group?ScalarVectorExtraction.Extract(group,Capture):null};
     }
     private SourceSyntax Capture(ParserRuleContext context)=>Capture(context.Start.StartIndex,context.Stop.StopIndex);
     private SourceSyntax Capture(int start,int stop)

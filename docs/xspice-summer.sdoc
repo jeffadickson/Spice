@@ -1,0 +1,16 @@
+[DOCUMENT]
+TITLE: Bounded analog XSPICE summer preparation
+
+[REQUIREMENT]
+UID: SEM-XSPICE-SUMMER-001
+STATUS: Draft
+TITLE: Prepare exact bounded voltage-vector summer relations
+STATEMENT: >>>
+The frontend shall prepare analog summer models with 2..16 noninverted scalar voltage inputs in a generated vector port and one scalar voltage output. Each input may retain differential polarity. The output relation shall be out_gain*sum(in_gain[i]*(input[i]+in_offset[i]))+out_offset, with per-input defaults in_gain=1 and in_offset=0 and output defaults out_gain=1 and out_offset=0. Explicit arrays shall match input count, use generated scalar-value recognition and existing lexical parameter evaluation, and retain physical source locations. Unsupported types, lengths, duplicate or unknown parameters, nonfinite expressions and opaque syntax shall produce no partial relation.
+<<<
+COMMENT: >>>
+Implementation: XspiceSyntax.cs, ScalarVectorExtraction.cs, DeclarationExtraction.cs, XspiceSummerLowering.cs. Verification: XspiceSummerTests includes malformed arrays, ports, lengths, finite arithmetic and a reproducible FsCheck campaign; XspiceSummerOracleIntegration compares original A/model cards in DC, complex AC and transient with analytical references and existing typed elements on both providers. Corpus inspection is lexical and does not establish full-deck execution. Parent worktree owns bridge integration. See xspice-summer-plan.md and subsequent measured results; requirement remains Draft.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
