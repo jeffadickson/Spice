@@ -1,0 +1,143 @@
+{
+  "state": "bounded_affine_helper_measured",
+  "tested_revision": "c87605b",
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "d2890c22ea8f10ef0e7fbe188b8eec20ce965d40033782a064364e48dc9e5c33",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "e22e68cd5c53a3f85a8811aecaf7bfa853d6f2506a1fe86ddfb44c6c3a7ae11a",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "9c13eca33f1e03f647606e38471bfc7dc55b009e4bb44fdc3998bdae7b3b74dd",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "62a648a38ccc84a27451f87e1e3e77aab5b773b0385018fda07e4f7a6caa2d29",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "cb5ff26f5134049a3e7a0bbdb05672ace70cf987454970564474ef451a2f97aa",
+    "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs": "c40fc80f70391a1da0857e562a067c74886245fbcb0783de265baaf97db0b527",
+    "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs": "53f4fc0f067238640b6955d81e38314e02371f47c8b989bf25d258d4f2283b63",
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "b883bac835317eb0da48ac29ea03eca429a60224f1e09d80c3b52f7fa9ce18b0",
+    "dotnet/Simulator.Frontend.Tests/AffineBehaviorTests.cs": "797868a0db8e4367f5f152a1927979912298cf8cec2e1b00fe337695fa8555a0",
+    "dotnet/Simulator.Frontend.Tests/AffineBehaviorOracleIntegration.cs": "eef9e6f1614bd7dac6e6704506a76aa55a27f58721511a15db850cecb24f34cf",
+    "scripts/Measure-XspiceGainProfiles.cs": "ffae15c38c26ead770344f993d7e4adbb1ad89b8cf60ce42d0d2a0bc59bfd0f9"
+  },
+  "integration_scope": "Helper and independently emitted typed requests only; parent owns actual OperatingPointBridge integration.",
+  "tests": {
+    "native": {
+      "voltage_checks": 78,
+      "analyses": [
+        "DC",
+        "100Hz complex AC",
+        "linear ramp transient"
+      ],
+      "fixed_engine_sha256": "09ecd69c6c092fc8bcc148ca799367a254bcbb7dfbd242aa4ff26ffbd1a878e8",
+      "voltage_ac_expected": "2 - 1.5j",
+      "outcome": "passed",
+      "original_B_profiles": 3,
+      "current_kcl_expected": "Vout=-Vin-1.5 with 1kOhm load",
+      "raw_results": "E:/Artifacts/spice/behavior-xspice-nov2/affine-b/native-final/native.trx",
+      "providers": [
+        "lu",
+        "faer"
+      ]
+    },
+    "property": {
+      "framework": "FsCheck 3.5.0 explicit Fact Check.One",
+      "requested_cases": 128,
+      "gamma": "valid default golden gamma via Rnd(seed)",
+      "seed": 20261103,
+      "outcome": "passed"
+    },
+    "syntax": {
+      "passed": 406,
+      "failed": 0,
+      "limitation": "exFAT symbolic-link creation unavailable; final environment uses canonical Windows artifact path",
+      "skipped": 1
+    },
+    "frontend": {
+      "passed": 186,
+      "failed": 0,
+      "skipped": 11,
+      "total": 197
+    },
+    "pure": {
+      "passed": 27,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "coverage": {
+    "tool": "Coverlet 10.1.0",
+    "raw_report": "E:/Artifacts/spice/behavior-xspice-nov2/affine-b/coverage-final/1659e3e5-a3ef-44a4-b1e6-a033506a0fa1/coverage.cobertura.xml",
+    "adapter": {
+      "branches_valid": 12,
+      "lines_covered": 8,
+      "branches_covered": 12,
+      "lines_valid": 8
+    },
+    "scope": "New evaluator/extraction/adapter classes in full frontend managed test collection; generated ANTLR excluded; individual classes reported without record constructor inflation",
+    "evaluator": {
+      "branches_valid": 132,
+      "lines_covered": 96,
+      "branches_covered": 117,
+      "lines_valid": 96
+    },
+    "extraction": {
+      "branches_valid": 30,
+      "lines_covered": 21,
+      "branches_covered": 24,
+      "lines_valid": 22
+    }
+  },
+  "mutation": {
+    "uncovered": 0,
+    "scope": "Combine offset arithmetic only",
+    "raw_report": "E:/Artifacts/spice/behavior-xspice-nov2/affine-b/mutation-combine/reports-direct-reference/reports/mutation-report.json",
+    "selected": 2,
+    "survived": 0,
+    "out_of_scope_ignored": 811,
+    "configuration": "Disposable snapshot adds direct reference to existing Syntax project so Stryker can select transitive target; no production dependency change",
+    "created": 1000,
+    "tool": "Stryker.NET 5.0.0",
+    "killed": 2,
+    "compile_errors_outside_selected_span": 187
+  },
+  "corpus": {
+    "accepted_expanded": 890,
+    "current_instances": 21,
+    "prepared_voltage_instances": 85,
+    "profiles": {
+      "non_affine_behavior": 29,
+      "invalid_parameter_environment": 22,
+      "unsupported_behavior_expression": 6,
+      "missing_parameter": 6,
+      "prepared_affine_lexical_defaults": 87,
+      "unsupported_behavior_header": 6,
+      "unsupported_behavior_runtime": 1,
+      "unsupported_expression": 88
+    },
+    "prepared_lexical_instances": 87,
+    "prepared_current_instances": 2,
+    "raw_sha256": "f5529862bb1f168403f08067c54a373f21ae5272d325c29b91dd4affb0dbace6",
+    "voltage_instances": 224,
+    "raw_report": "E:/Artifacts/spice/behavior-xspice-nov2/affine-b/full-behavior-census.json",
+    "inputs": 928,
+    "prepared_lexical_roots": 10,
+    "scope": "lexical generated A-card census over resource-expanded frozen inventory; no hierarchy activation, instance override qualification or full-circuit simulation",
+    "input_changed": 0,
+    "B_roots": 60,
+    "inventory_sha256": "639942cf3e489baf7ce4b4e3437601d54781ede3d143ba049ae1c5b33f9ad255",
+    "B_instances": 245,
+    "limitation": "Inactive/repeated included lexical sources and default environments; no full-circuit uplift or active-instance-override qualification; source snapshot predates physical-range-only correction",
+    "resource_refused": 38
+  },
+  "strictdoc": {
+    "outcome": "passed",
+    "resolved_parents": 335,
+    "unique_ids": 346,
+    "documents": 24
+  },
+  "requirements": [
+    "SEM-BEHAVIOR-AFFINE-001"
+  ],
+  "limitations": [
+    "No generic behavioral runtime, nonlinear/digital code models, time/current references or complete original control programs.",
+    "Some defensive guard alternatives remain unmeasured.",
+    "No standalone fuzz campaign; fixed negatives and bounded FsCheck ran.",
+    "Initial syntax failures were missing symlink privilege and noncanonical test-environment path strings; final canonical E: replay passed with one explicit filesystem skip."
+  ],
+  "raw_artifacts": "E:/Artifacts/spice/behavior-xspice-nov2/affine-b"
+}

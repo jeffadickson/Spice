@@ -32,8 +32,8 @@ No generic nonlinear expression evaluator or model kernel is added.
 - [x] Add generated semantic-header flag/profile and typed extraction without changing default deck recognition. Regenerate and run syntax regression tests.
 - [x] Add bounded affine derivation over generated AST with existing constant evaluation; run fixed cases plus explicit FsCheck Fact with a valid reproducible Rnd seed.
 - [x] Add frontend preparation helper and send exact integration API to the parent. Preserve atomic refusals and instance environments.
-- [ ] Execute original B-card DC/AC/transient comparisons against the typed existing runtime, measure coverage and run bounded meaningful mutations. Record actual corpus profile counts separately from complete-circuit uplift.
-- [ ] Add StrictDoc requirements and measured evidence, review examples/docs, verify and commit coherent changes. No CI or pushes.
+- [x] Execute original B-card DC/AC/transient comparisons against the typed existing runtime, measure coverage and run bounded meaningful mutations. Record actual corpus profile counts separately from complete-circuit uplift.
+- [x] Add StrictDoc requirements and measured evidence, review examples/docs, verify and commit coherent changes. No CI or pushes.
 
 Bulk artifacts use a unique E: subtree. Coverage collection must not overlap a
 build into the same managed output. Native LU regression is an independent
