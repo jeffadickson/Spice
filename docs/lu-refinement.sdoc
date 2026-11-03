@@ -1,0 +1,19 @@
+[DOCUMENT]
+TITLE: Bounded LU correction for zero source constraints
+
+[REQUIREMENT]
+UID: SOLVER-LU-REFINE-001
+STATUS: Draft
+TITLE: Correct LU roundoff without relaxing independent acceptance
+STATEMENT: >>>
+Dense LU direct and prepared real solves shall reuse their existing factor for at most three same-precision residual corrections when the componentwise backward error exceeds 1e-10. Only finite, nonworsening candidates may replace the current solution. A solution still outside the existing acceptance bound shall fail explicitly; singular and nonfinite solves shall remain terminal. This correction shall not silently change providers, create a new factorization or loosen the independent CSC acceptance policy.
+<<<
+COMMENT: >>>
+Trigger: the nonzero-reference gain ramp initializes an exactly zero voltage source to 1.1102230246251565e-16 V under the original nalgebra LU. The zero source constraint has relative componentwise error one. Existing Faer succeeds; this is numerical roundoff, not a XSPICE model or parser approximation.
+Implementation: src/backend.rs solve_refined_real_lu, DenseLu direct and prepared callbacks. Existing nalgebra 0.34.1 factor solve operations are reused, following the existing DenseQr correction pattern; no new dependency or numerical algorithm replacement is introduced.
+Verification: tests/gain_differential_transient.rs checks analytical output 2.3-2000*t volts and fixed reference nodes on both providers, an 11-RHS direct sweep and 128 Proptest affine-source cases with fixed seed 57120261103. src/backend.rs lu_refinement_contracts checks wrong factors, singular factors, nonfinite results and unchanged strict zero-constraint rejection. XspiceGainOracleIntegration checks original A-card DC/AC/transient against ngspice-47+; all 78 named voltage checks passed with the fixed engine.
+Counters: factor-internal correction solves are not new logical analysis system solves. Existing integration linear_solves counts logical outer solve requests; it does not count each factor's internal correction pass. No global convergence or arbitrary ill-conditioned-system guarantee is claimed.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005

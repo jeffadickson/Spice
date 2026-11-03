@@ -3,7 +3,7 @@ use crate::{
     linalg::{LinearSolver, Matrix},
     solver_contract::{SparseComplexSystem, SparseLinearBackend, SparseRealSystem},
 };
-use nalgebra::{DMatrix, DVector};
+use nalgebra::{DMatrix, DVector, Dyn, linalg::LU};
 /// Dense diagnostic adapter; it is not a production sparse backend.
 #[derive(Debug, Default)]
 pub struct DenseLu;
@@ -67,7 +67,8 @@ impl SparseLinearBackend for DenseLu {
 impl LinearSolver for DenseLu {
     fn prepare(&self, a: &Matrix) -> SimResult<Option<crate::linalg::PreparedReal>> {
         a.validate(&vec![0.0; a.n.min(256)])?;
-        let lu = DMatrix::from_row_slice(a.n, a.n, &a.values).lu();
+        let matrix = DMatrix::from_row_slice(a.n, a.n, &a.values);
+        let lu = matrix.clone().lu();
         if !lu.is_invertible() {
             return Err(SimError::new(
                 ErrorCode::SingularMatrix,
@@ -76,12 +77,7 @@ impl LinearSolver for DenseLu {
         }
         Ok(Some(crate::linalg::PreparedReal::new(
             a.clone(),
-            move |b| {
-                let x = lu.solve(&DVector::from_column_slice(b)).ok_or_else(|| {
-                    SimError::new(ErrorCode::SingularMatrix, "prepared LU failure")
-                })?;
-                Ok(x.as_slice().to_vec())
-            },
+            move |b| solve_refined_real_lu(&matrix, &lu, &DVector::from_column_slice(b)),
         )?))
     }
     fn capabilities(&self) -> crate::linalg::BackendCapabilities {
@@ -148,21 +144,58 @@ impl LinearSolver for DenseLu {
     fn solve(&self, a: &Matrix, b: &[f64]) -> SimResult<Vec<f64>> {
         a.validate(b)?;
         let matrix = DMatrix::from_row_slice(a.n, a.n, &a.values);
-        let rhs = DVector::from_column_slice(b);
-        let x = matrix
-            .lu()
-            .solve(&rhs)
-            .ok_or_else(|| SimError::new(ErrorCode::SingularMatrix, "LU has no unique solution"))?;
-        if x.iter().any(|v| !v.is_finite()) {
-            return Err(SimError::new(
-                ErrorCode::NumericalFailure,
-                "nonfinite solution",
-            ));
-        }
-        Ok(x.as_slice().to_vec())
+        let lu = matrix.clone().lu();
+        solve_refined_real_lu(&matrix, &lu, &DVector::from_column_slice(b))
     }
 }
 
+/// Reuse this LU factor for at most three same-precision corrections. In MNA a
+/// zero-valued source constraint can acquire tiny roundoff: the strict
+/// componentwise error is then one even when the absolute voltage is tiny.
+/// Correct the actual solution rather than weakening that acceptance policy.
+/// These are factor-internal correction solves, not new logical analysis steps.
+fn solve_refined_real_lu(
+    matrix: &DMatrix<f64>,
+    factor: &LU<f64, Dyn, Dyn>,
+    rhs: &DVector<f64>,
+) -> SimResult<Vec<f64>> {
+    let mut values = factor
+        .solve(rhs)
+        .ok_or_else(|| SimError::new(ErrorCode::SingularMatrix, "LU has no unique solution"))?;
+    let mut best_error = real_backward_error(matrix, rhs, &values);
+    for _ in 0..3 {
+        if best_error <= 1e-10 {
+            return Ok(values.as_slice().to_vec());
+        }
+        if !best_error.is_finite() {
+            break;
+        }
+        let residual = rhs - matrix * &values;
+        let correction = factor.solve(&residual).ok_or_else(|| {
+            SimError::new(
+                ErrorCode::SingularMatrix,
+                "LU refinement has no unique solution",
+            )
+        })?;
+        let candidate = &values + correction;
+        let error = real_backward_error(matrix, rhs, &candidate);
+        // Never replace a better finite solve with a worse/nonfinite correction.
+        // Equal errors can still improve an exactly constrained zero component.
+        if error > best_error || !error.is_finite() {
+            break;
+        }
+        values = candidate;
+        best_error = error;
+    }
+    if best_error <= 1e-10 {
+        Ok(values.as_slice().to_vec())
+    } else {
+        Err(SimError::new(
+            ErrorCode::NumericalFailure,
+            "LU refinement did not meet componentwise backward error",
+        ))
+    }
+}
 /// Independent algorithm within the same library, not a second qualified provider.
 #[derive(Debug, Default)]
 pub struct DenseQr;
@@ -194,7 +227,7 @@ impl LinearSolver for DenseQr {
         // iterative refinement. Mixed-unit/ill-conditioned MNA rows can lose
         // small voltages despite a small global residual; the outer componentwise
         // backward-error and physical-oracle checks still decide acceptance.
-        let mut best_error = qr_backward_error(&matrix, &rhs, &x);
+        let mut best_error = real_backward_error(&matrix, &rhs, &x);
         for _ in 0..3 {
             let residual = &rhs - &matrix * &x;
             if residual.iter().all(|value| *value == 0.) {
@@ -210,7 +243,7 @@ impl LinearSolver for DenseQr {
             if candidate.iter().any(|value| !value.is_finite()) {
                 break;
             }
-            let error = qr_backward_error(&matrix, &rhs, &candidate);
+            let error = real_backward_error(&matrix, &rhs, &candidate);
             // Equal normalized errors may still improve tiny components enough
             // for a later correction; permit ties within the fixed three-step budget.
             if error > best_error {
@@ -231,7 +264,7 @@ impl LinearSolver for DenseQr {
 
 /// Refinement is accepted only when independent componentwise backward error
 /// improves. Same-precision corrections may stagnate or worsen an earlier solve.
-fn qr_backward_error(matrix: &DMatrix<f64>, rhs: &DVector<f64>, values: &DVector<f64>) -> f64 {
+fn real_backward_error(matrix: &DMatrix<f64>, rhs: &DVector<f64>, values: &DVector<f64>) -> f64 {
     let mut worst = 0_f64;
     for row in 0..matrix.nrows() {
         let mut sum = 0.;
@@ -254,20 +287,101 @@ fn qr_backward_error(matrix: &DMatrix<f64>, rhs: &DVector<f64>, values: &DVector
 mod october28_contracts {
     use super::*;
     #[test]
-    fn qr_backward_error_has_an_independently_known_nonnegative_scale() {
+    fn real_backward_error_has_an_independently_known_nonnegative_scale() {
         // 2*x=3 at x=1 has residual 1 and componentwise scale 2+3=5.
         let matrix = DMatrix::from_element(1, 1, 2.);
         let rhs = DVector::from_element(1, 3.);
         assert!(
-            (qr_backward_error(&matrix, &rhs, &DVector::from_element(1, 1.)) - 0.2).abs() < 1e-15
+            (real_backward_error(&matrix, &rhs, &DVector::from_element(1, 1.)) - 0.2).abs() < 1e-15
         );
         assert_eq!(
-            qr_backward_error(&matrix, &rhs, &DVector::from_element(1, 1.5)),
+            real_backward_error(&matrix, &rhs, &DVector::from_element(1, 1.5)),
             0.
         );
         assert!(
-            qr_backward_error(&matrix, &rhs, &DVector::from_element(1, f64::INFINITY))
+            real_backward_error(&matrix, &rhs, &DVector::from_element(1, f64::INFINITY))
                 .is_infinite()
+        );
+    }
+}
+
+#[cfg(test)]
+mod lu_refinement_contracts {
+    use super::*;
+
+    #[test]
+    fn wrong_factors_cannot_be_accepted_by_the_refinement_budget() {
+        let matrix = DMatrix::from_element(1, 1, 1.);
+        let rhs = DVector::from_element(1, 1.);
+        // These factors solve different equations: bounded corrections must not
+        // relabel a persistently wrong solution as an accepted one.
+        for wrong_coefficient in [2., -1., 0.5, 1e-308] {
+            let factor = DMatrix::from_element(1, 1, wrong_coefficient).lu();
+            assert_eq!(
+                solve_refined_real_lu(&matrix, &factor, &rhs)
+                    .unwrap_err()
+                    .code,
+                ErrorCode::NumericalFailure
+            );
+        }
+    }
+
+    #[test]
+    fn singular_factors_and_nonfinite_solutions_are_terminal() {
+        let matrix = DMatrix::from_element(1, 1, 1.);
+        let singular = DMatrix::zeros(1, 1).lu();
+        assert_eq!(
+            solve_refined_real_lu(&matrix, &singular, &DVector::from_element(1, 1.))
+                .unwrap_err()
+                .code,
+            ErrorCode::SingularMatrix
+        );
+        let tiny = DMatrix::from_element(1, 1, 1e-308);
+        assert_eq!(
+            solve_refined_real_lu(
+                &tiny,
+                &tiny.clone().lu(),
+                &DVector::from_element(1, f64::MAX)
+            )
+            .unwrap_err()
+            .code,
+            ErrorCode::NumericalFailure
+        );
+    }
+
+    #[test]
+    fn zero_constraint_roundoff_is_still_rejected_independently() {
+        let matrix = DMatrix::from_element(1, 1, 1.);
+        let rhs = DVector::zeros(1);
+        assert_eq!(
+            real_backward_error(&matrix, &rhs, &DVector::from_element(1, f64::EPSILON)),
+            1.
+        );
+        assert_eq!(
+            solve_refined_real_lu(&matrix, &matrix.clone().lu(), &rhs).unwrap(),
+            vec![0.]
+        );
+        assert!(
+            DenseLu
+                .solve(
+                    &Matrix {
+                        n: 1,
+                        values: vec![f64::NAN]
+                    },
+                    &[1.]
+                )
+                .is_err()
+        );
+        assert!(
+            DenseLu
+                .solve(
+                    &Matrix {
+                        n: 1,
+                        values: vec![1.]
+                    },
+                    &[f64::INFINITY]
+                )
+                .is_err()
         );
     }
 }
