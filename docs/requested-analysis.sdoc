@@ -1,0 +1,49 @@
+[DOCUMENT]
+TITLE: Requested ordinary analysis execution
+
+[TEXT]
+STATEMENT: >>>
+Bounded extension over the existing generated ANTLR grammar, immutable parameter evaluator, selected circuit lowering and one-shot public SimulationClient. No production dependency was added. Reuse decision: existing public OP/AC/transient wire requests satisfy this slice; source-sweep execution composes existing OP requests instead of adding a second simulator or parser. Existing SpiceSharp/ngspice qualification remains independent oracle work, not an authorized runtime migration.
+<<<
+
+[REQUIREMENT]
+UID: FRONTEND-REQUESTED-001
+STATUS: Implemented
+TITLE: Ordered original ordinary analysis directives
+STATEMENT: >>>
+Prepare every supported root .op, single-source .dc, .ac lin/dec/oct and .tran directive in physical source order, retaining repeated directives with unique identities and original source ranges. Evaluate scalar fields through existing parameter semantics. Publish no partial program when a directive or physical instruction is unsupported.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Syntax/AnalysisSyntax.cs, DeclarationExtraction.cs, DeclarationCatalog.cs; dotnet/Simulator.Frontend/RequestedAnalysis.cs. Verification: RequestedAnalysisTests.cs and RequestedAnalysisNativeTests.cs. Controls, nested analyses, nested DC sweep, nonzero transient TSTART and UIC are explicit refusals. Reporting/observation omissions remain explicit metadata and are not executed measurements.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
+
+[REQUIREMENT]
+UID: FRONTEND-REQUESTED-002
+STATUS: Implemented
+TITLE: Fresh execution and atomic operation failure
+STATEMENT: >>>
+Execute the prepared analyses through the public client, in order, with a fresh engine process for each request. Execute every prepared point, preserve one outcome per point and operation, withhold partial successful payloads when any point in an operation fails, continue subsequent operations and propagate cancellation.
+<<<
+COMMENT: >>>
+DC explicitly uses fresh OP at every coordinate; this is not continuation or nonlinear hysteresis equivalence. Transport errors and engine failures remain distinct. No command interpreter, control-flow, arbitrary model or whole-corpus execution completeness is claimed.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: FRONTEND-REQUESTED-003
+STATUS: Implemented
+TITLE: Requested transient defaults and bounded grids
+STATEMENT: >>>
+Keep original transient TSTEP-dependent source defaults separate from the integration maximum step. Use explicit TMAX when supplied, otherwise min(TSTEP,TSTOP/50) for zero-start analyses. Bound sweep expansion before allocation and reject invalid directions, zero DC steps and unsupported analysis options explicitly.
+<<<
+COMMENT: >>>
+Existing backward-Euler runtime emits its accepted computational samples. Native adaptive sample grids differ; numerical comparison interpolates independent oracle values without claiming identical internal grids or integration methods. AC LIN2 follows the documented two-point grid; local ngspice47+ emits one point, retained as an oracle discrepancy rather than our requested grid contract.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005

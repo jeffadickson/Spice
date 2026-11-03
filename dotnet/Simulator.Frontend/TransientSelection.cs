@@ -14,6 +14,11 @@ public static class TransientSelection
  /// <summary>Selects backward Euler with explicit seconds and accepted-step budget. No UIC or original control program is executed.</summary>
  /// <remarks>Source DC bias differing from its transient initial value, overlapping pulse edges, negative delays/damping and extra waveform fields are explicit refusals.</remarks>
  public static SelectedTransient Prepare(DeckSyntax syntax,double stopS,double maxStepS,int maxSteps=10000,BridgeLimits? limits=null,string backend="lu")
+  =>PrepareCore(syntax,stopS,maxStepS,maxStepS,maxSteps,limits,backend);
+ // Requested TSTEP controls source defaults independently from the integration ceiling.
+ internal static SelectedTransient PrepareRequested(DeckSyntax syntax,double stopS,double outputStepS,double maxStepS,int maxSteps,BridgeLimits? limits,string backend)
+  =>PrepareCore(syntax,stopS,maxStepS,outputStepS,maxSteps,limits,backend);
+ private static SelectedTransient PrepareCore(DeckSyntax syntax,double stopS,double maxStepS,double defaultStepS,int maxSteps,BridgeLimits? limits,string backend)
  {
   SelectedTransient Fail(string code,SourceRange? range)=>new(new(null,ImmutableDictionary.Create<string,string>(StringComparer.OrdinalIgnoreCase),[],[new(code,range)]),[]);
   if(!double.IsFinite(stopS)||stopS<=0||!double.IsFinite(maxStepS)||maxStepS<=0||maxStepS>stopS||maxSteps is <1 or >100000)return Fail("invalid_transient_selection",null);
@@ -33,8 +38,8 @@ public static class TransientSelection
    Waveform waveform;
    switch(source.Kind){
     case SourceWaveformKind.Pulse:
-     var rise=Field(3,maxStepS);if(rise<=0)rise=maxStepS;
-     var fall=Field(4,maxStepS);if(fall<=0)fall=maxStepS;
+     var rise=Field(3,defaultStepS);if(rise<=0)rise=defaultStepS;
+     var fall=Field(4,defaultStepS);if(fall<=0)fall=defaultStepS;
      var width=p.Length==5?0:Field(5,stopS);if(width<0)width=stopS;
      var period=Field(6,stopS);if(period<=0)period=stopS;
      if(rise+width+fall>period||!double.IsFinite(rise+width+fall))return Fail("unsupported_pulse_overlap",source.Range);
@@ -47,10 +52,10 @@ public static class TransientSelection
     case SourceWaveformKind.Pwl:
      waveform=new Pwl(Enumerable.Range(0,p.Length/2).Select(i=>new Point(p[2*i],p[2*i+1])).ToArray());break;
     case SourceWaveformKind.Exponential:
-     var td1=Field(2,maxStepS);if(td1==0)td1=maxStepS;
-     var tau1=Field(3,maxStepS);if(tau1==0)tau1=maxStepS;
-     var td2=Field(4,td1+maxStepS);if(td2==0)td2=td1+maxStepS;
-     var tau2=Field(5,maxStepS);if(tau2==0)tau2=maxStepS;
+     var td1=Field(2,defaultStepS);if(td1==0)td1=defaultStepS;
+     var tau1=Field(3,defaultStepS);if(tau1==0)tau1=defaultStepS;
+     var td2=Field(4,td1+defaultStepS);if(td2==0)td2=td1+defaultStepS;
+     var tau2=Field(5,defaultStepS);if(tau2==0)tau2=defaultStepS;
      if(td1<0||td2<td1||tau1<=0||tau2<=0||!double.IsFinite(td2))return Fail("unsupported_exponential_profile",source.Range);
      waveform=new Exponential(p[0],p[1],td1,tau1,td2,tau2);break;
     default:return Fail("unsupported_source_waveform",source.Range);

@@ -17,6 +17,7 @@ internal sealed class DeclarationExtraction
     private readonly List<PrimitiveSyntax> primitives=[];
     private readonly List<XspiceInstanceSyntax> xspice=[];
     private readonly List<ScopedCard> cards=[];
+    private readonly List<AnalysisSyntax> analyses=[];
     private readonly List<LibrarySectionEnd> libraryEnds=[];
     private readonly List<ScopedParameter> parameters=[];
     private readonly List<DeclaredResource> resources=[];
@@ -39,6 +40,10 @@ internal sealed class DeclarationExtraction
             &&reporting.parameter().All(p=>p.value()?.identifier()!=null&&p.GetText().ToLowerInvariant() is "acct" or "noacct" or "noinit")});
         if(card is SpiceParser.XspiceContext codeModel)
         {xspice.Add(XspiceExtraction.Extract(codeModel,owner,Capture));return;}
+        if(card is SpiceParser.OpContext)analyses.Add(new(owner,"op",[],[],Range(card)));
+        if(card is SpiceParser.AcContext ac)analyses.Add(new(owner,"ac",[ac.identifier().GetText()],ac.value().Select(Capture).ToImmutableArray(),Range(card)));
+        if(card is SpiceParser.DcContext dc)analyses.Add(new(owner,"dc",dc.identifier().Select(i=>i.GetText()).ToImmutableArray(),dc.value().Select(Capture).ToImmutableArray(),Range(card)));
+        if(card is SpiceParser.TranContext tran)analyses.Add(new(owner,"tran",tran.identifier()==null?[]:[tran.identifier().GetText()],tran.value().Select(Capture).ToImmutableArray(),Range(card)));
         var primitive=PrimitiveExtraction.Extract(card,owner,Capture,Capture);
         if(primitive!=null){primitives.Add(primitive);return;}
         if(card is SpiceParser.ExtensionContext extension && extension.Start.Text.ToLowerInvariant() is ".if" or ".elseif" or ".else" or ".endif" or ".csparam" or ".sndparam")
@@ -82,7 +87,7 @@ internal sealed class DeclarationExtraction
         }
     }
 
-    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray(),primitives.ToImmutableArray(),cards.ToImmutableArray()) { XspiceInstances=xspice.ToImmutableArray() };
+    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray(),primitives.ToImmutableArray(),cards.ToImmutableArray()) { XspiceInstances=xspice.ToImmutableArray(), Analyses=analyses.ToImmutableArray() };
 
     private int Enclosing(IParseTree? tree)
     {

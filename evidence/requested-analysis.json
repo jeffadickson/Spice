@@ -1,0 +1,128 @@
+{
+  "state": "completed_bounded_requested_analysis_slice",
+  "base_commit": "224d044",
+  "recorded_utc": "2026-11-03T04:57:53.2830658Z",
+  "artifact_root": "E:/Artifacts/spice-requested-analyses-nov2",
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/AnalysisSyntax.cs": "371cb9ca79852f59c5be86ab40bc7ea37afd9fdf068be594cc4203bb28f11793",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "14893871c091dc56829d6347dab58897a35cfb42b7ea24f9fb20b1969aa77293",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "a938120b7e694ccec83bd659dd652de98f17d31ba49ef9454968b0a268c2cdab",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "3ebedaeb8005294cb28f36d1fb0d36071673daf3b8296aa6f45c29ef16c54adc",
+    "dotnet/Simulator.Frontend/TransientSelection.cs": "045b3ad7f1927b98749d02f779ae1d19d53c553a849e081b1466cd4cf63dfe38",
+    "dotnet/Simulator.Frontend.Tests/RequestedAnalysisTests.cs": "60dddb00c98d7afbc3122a78504f8d74a6865abb1f99bd8125021a9d938a21ee",
+    "dotnet/Simulator.Frontend.Tests/RequestedAnalysisNativeTests.cs": "1cc58ce28eddbe69d8fabc097a2a9ba6f67b10df168e447e3c41eafc2ff74ee4",
+    "scripts/RequestedAnalysisCheck.cs": "efb5654838458fa6002c4af916b2d1d1676d2e42028a2a8bb7e9b7ac8ba0df91"
+  },
+  "tools": {
+    "fscheck": "3.5.0",
+    "coverlet_collector": "10.1.0",
+    "strictdoc": "0.30.4",
+    "antlr": "4.13.1",
+    "dotnet_sdk": "10.0.403",
+    "target": "net10.0",
+    "stryker": "5.0.0"
+  },
+  "frontend_tests": {
+    "total": 181,
+    "skipped": 9,
+    "trx": "allocation-qualified-coverage/frontend.trx",
+    "coverage": "allocation-qualified-coverage/18346711-6a12-418f-ade8-7ded746076d3/coverage.cobertura.xml",
+    "passed": 172,
+    "failed": 0,
+    "scope": "Full Simulator.Frontend.Tests; nine existing external corpus/reference tests skip because their separate campaign configuration is absent.",
+    "requested_cases": 39
+  },
+  "direct_assertion_runner": {
+    "limitations": "Managed reflection runner, not NativeAOT. Uses the same xUnit assertions plus seeded FsCheck.Check.Method; separate native and engine processes remain independent.",
+    "failed": 0,
+    "log": "direct-final.log",
+    "properties": [
+      {
+        "seed": 2357,
+        "cases": 100,
+        "purpose": "descending DC endpoint/count invariants",
+        "gamma": 20261103
+      },
+      {
+        "seed": 2359,
+        "cases": 100,
+        "purpose": "bounded arbitrary malformed AC tails",
+        "gamma": 20261103
+      }
+    ],
+    "passed": 39
+  },
+  "coverage": {
+    "declaration_catalog": {
+      "branches_total": 38,
+      "branches_covered": 17,
+      "lines_total": 73,
+      "lines_covered": 57
+    },
+    "transient_selection": {
+      "branches_total": 85,
+      "branches_covered": 71,
+      "lines_total": 43,
+      "lines_covered": 42
+    },
+    "analysis_syntax": {
+      "branches_total": 0,
+      "branches_covered": 0,
+      "lines_total": 1,
+      "lines_covered": 1
+    },
+    "requested_analysis": {
+      "branches_total": 124,
+      "branches_covered": 117,
+      "lines_total": 91,
+      "lines_covered": 91
+    },
+    "declaration_extraction": {
+      "branches_total": 98,
+      "branches_covered": 74,
+      "lines_total": 77,
+      "lines_covered": 68
+    },
+    "limitations": "Whole changed-file scope, including existing unchanged code. Generated ANTLR and native Rust runtime are outside these requested managed coverage claims."
+  },
+  "mutation": {
+    "score_percent": 77.78,
+    "compile_errors": 62,
+    "killed": 14,
+    "ignored_by_span_filter": 440,
+    "mutated_source_sha256": "a88e11a2fa679bb4c334533dec0f1a19dc8ab0267c8ae433f4b3128140fb301e",
+    "survived": 4,
+    "tested": 18,
+    "initial_run": "Initial7/18 kill result superseded after correcting invalid even FsCheck gamma and strengthening nonunit-step/nonzero-origin/exact-budget checks.",
+    "scope": "DC Linear helper only. Snapshot precedes final rounded-allocation-count guards and current-source test. Subsequent full regression/coverage includes final guards; these guards were not mutation-tested.",
+    "survivors": "Three finite/zero guard combinations already constrained by parameter evaluation/downstream finite-span checks; multiplication in direction guard remains unqualified for extreme underflow. No equivalent-mutant closure claimed.",
+    "report": "grid-mutation-replay/reports/reports/mutation-report.json"
+  },
+  "native_oracle": {
+    "lin2_discrepancy": "Documented requested [10,30]; native binary emits [10]. Retained lin2.cir/raw/log; not counted as native vector parity.",
+    "original_directives": 9,
+    "comparison": "Passive divider, source PWL; original ordered DC/AC grids; independent native transient interpolation on engine time grid. Includes engine atomic-failure continuation test.",
+    "engine_sha256": "679da74a6d93e6b471617c9cd9c410af29e503ad3821355644d0863042981492",
+    "sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "engine_requests_per_fixture_run": 20,
+    "version": "ngspice47+ build2026-10-24"
+  },
+  "strictdoc": {
+    "status": "passed",
+    "unique_ids": 345,
+    "raw_report": "requirements.json",
+    "documents": 22,
+    "resolved_parents": 334
+  },
+  "red_green": {
+    "red": "red.log: missing RequestedAnalysisPlan compile failure after dependency restore",
+    "green": "Final qualified full framework and direct assertions pass. Initial EXP source-default case replaced an unsupported overlapping default pulse fixture."
+  },
+  "limitations": [
+    "No arbitrary input control programs, nested analyses, nested/two-source DC, UIC, nonzero transient TSTART or unsupported physical/model directives.",
+    "DC starts a fresh OP at every point; no continuation/hysteresis equivalence.",
+    "Backward-Euler computational samples; no identical native adaptive-step or output-resampling claim.",
+    "Initial even FsCheck replay gamma silently omitted discovered methods from executed framework results; final odd gamma inventories agree between framework and direct runner.",
+    "No CI or pushes; no production dependency migration."
+  ]
+}
