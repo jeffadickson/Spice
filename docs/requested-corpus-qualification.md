@@ -102,3 +102,9 @@ The thin fileapp was also executed on the seven owned rows with a one-second adm
 budget: exit 2, provenance valid, all seven rows retained as unknown in every stage.
 No jobs were admitted after the initial reporting overhead consumed that short budget.
 
+
+Running checkpoints now sample the same monotonic admission clock as final duration.
+An event-driven native-backed test observed positive running values and a nondecreasing
+final value; exact samples and scoped coverage are in evidence/requested-progress-clock.json.
+The already frozen62ae97d campaign source was not changed retroactively.
+

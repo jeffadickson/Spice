@@ -47,3 +47,17 @@ No whole928-input campaign was run during coordinator implementation. Owned repr
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: FRONTEND-REQUESTED-CORPUS-004
+STATUS: Implemented
+TITLE: Monotonic running progress durations
+STATEMENT: >>>
+Every running checkpoint shall report elapsed admission time from the same monotonic clock used by the final duration, without remaining zero until completion or regressing at the final checkpoint.
+<<<
+COMMENT: >>>
+RequestedProgressNativeTests observes real atomic checkpoints using FileSystemWatcher and a coalesced notification channel, checking positive running durations and nondecreasing elapsed values. Metadata acquisition/build time is outside the admission clock, preserving the final duration's existing scope. The older detached62ae97d census source is not modified retroactively.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-CORPUS-003

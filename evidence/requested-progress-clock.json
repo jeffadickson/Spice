@@ -1,0 +1,55 @@
+{
+  "state": "verified_running_elapsed_fix",
+  "base_commit": "30b5e2886ca7e05db94cf025935504114c6c9465",
+  "source_sha256": {
+    "test": "3cc45c8c1a1415579bf9f510a0b3974ad32281ce209730a7019c69a1e4481817",
+    "coordinator": "ddd589b99cd0ed82cf251b281c939d8fc6597ec20707d532f787afe36cf746da"
+  },
+  "tests": {
+    "scope": "Native-backed event-driven observer of running/final atomic checkpoints. No fixed polling; FileSystemWatcher plus bounded/coalesced channel and delete-sharing reader.",
+    "passed": 1,
+    "skipped": 0,
+    "failed": 0,
+    "trx": "recorded-coverage/progress.trx"
+  },
+  "observed_checkpoints": [
+    {
+      "running": true,
+      "elapsed_seconds": 0.0021983
+    },
+    {
+      "running": true,
+      "elapsed_seconds": 7.1244854
+    },
+    {
+      "running": true,
+      "elapsed_seconds": 10.4765289
+    },
+    {
+      "running": true,
+      "elapsed_seconds": 14.9636581
+    },
+    {
+      "running": false,
+      "elapsed_seconds": 15.3649825
+    }
+  ],
+  "clock_scope": "Same monotonic admission Stopwatch as final duration, excluding metadata acquisition/build time; no wall-clock subtraction or final regression.",
+  "coverage": {
+    "file": "RequestedCorpus.cs",
+    "lines_total": 109,
+    "lines_covered": 108,
+    "limitations": "Single coordinator smoke scope, not comparable to prior whole-suite coverage percentages. Changed progress writer executes at every observed checkpoint. No dedicated mutation replay for this clock/reporting fix.",
+    "branches_covered": 88,
+    "branches_total": 158,
+    "raw": "recorded-coverage/a6126946-cd6b-464a-99fd-e63eecc44551/coverage.cobertura.xml"
+  },
+  "artifact_root": "E:/Artifacts/spice-requested-progress-nov2",
+  "report": "E:\\Artifacts\\spice-requested-progress-nov2\\progress-0af6f3717bc645949cca83a1863ab617\\output\\summary.json",
+  "frozen_census": "Detached62ae97d source remains unchanged; its running elapsed values stay historical/known-zero until final.",
+  "limitations": [
+    "Windows filesystem notification execution only.",
+    "Full prior regression suite207passes/9skips belongs to the preceding IC/DC source snapshot; this follow-up ran its targeted native checkpoint test.",
+    "No CI/push."
+  ]
+}

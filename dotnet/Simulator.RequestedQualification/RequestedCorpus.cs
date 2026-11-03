@@ -38,7 +38,7 @@ public static class RequestedCorpus
   report.SourceCommit=(await Child("git",["-C",root,"rev-parse","HEAD"],output,null,"source-git")).Output.Trim();
   report.CorpusCommit=(await Child("git",["-C",corpus,"rev-parse","HEAD"],output,null,"corpus-git")).Output.Trim();
   var version=await Child(ngspice,["-n","--version"],output,null,"native-version");report.NativeVersion=version.Output+version.Error;
-  var exclusions=Exclusions(root);var watch=Stopwatch.StartNew();var client=new SimulationClient(engine);var limits=new ParserLimits(4_194_304,2_000_000);WriteProgress(report,output);
+  var exclusions=Exclusions(root);var watch=Stopwatch.StartNew();report.ProgressClock=watch;var client=new SimulationClient(engine);var limits=new ParserLimits(4_194_304,2_000_000);WriteProgress(report,output);
   for(var index=0;index<rows.Count;index++){
    var row=rows[index];if(watch.Elapsed.TotalSeconds>=seconds){row.Status="unattempted_budget";continue;}
    var folder=Path.Combine(output,"cases",index.ToString("D4",CultureInfo.InvariantCulture));Directory.CreateDirectory(folder);
@@ -115,7 +115,7 @@ public static class RequestedCorpus
  private static bool Matches(string path,string expected){try{return File.Exists(path)&&Hash(path).Equals(expected,StringComparison.OrdinalIgnoreCase);}catch(Exception e)when(e is IOException or UnauthorizedAccessException){return false;}}
  private static void Atomic(string path,string text){var temporary=path+"."+Guid.NewGuid().ToString("N")+".tmp";File.WriteAllText(temporary,text);File.Move(temporary,path,true);}
  private static void WriteProgress(CorpusReport report,string output){
-  report.UpdatedUtc=DateTimeOffset.UtcNow;var valid=report.ProvenanceValid!=false;
+  report.UpdatedUtc=DateTimeOffset.UtcNow;report.ElapsedSeconds=Math.Max(report.ElapsedSeconds,report.ProgressClock?.Elapsed.TotalSeconds??report.ElapsedSeconds);var valid=report.ProvenanceValid!=false;
   report.Stages=[StageBurndown.Count("Syntax accepted",report.Rows.Select(r=>r.SyntaxAccepted),valid),StageBurndown.Count("Circuit prepared",report.Rows.Select(r=>r.CircuitPrepared),valid),StageBurndown.Count("Requested analyses executed",report.Rows.Select(r=>r.RequestedExecuted),valid),StageBurndown.Count("Native numerical agreement",report.Rows.Select(r=>r.NativeAgreed),report.ProvenanceValid==true)];
   Atomic(Path.Combine(output,"summary.json"),JsonSerializer.Serialize(report,Json));Atomic(Path.Combine(output,"burndown.svg"),StageBurndown.Svg(report.Stages));
  }
@@ -137,6 +137,8 @@ public static class RequestedCorpus
   public string Id{get;set;}="";public string Scope{get;set;}="";public string Path{get;set;}="";public string InputPath{get;set;}="";public string ExpectedSha256{get;set;}="";public string? InputSha256{get;set;}public string Status{get;set;}="unattempted";public bool? SyntaxAccepted{get;set;}public string? SyntaxStatus{get;set;}public string? ExpandedSyntaxStatus{get;set;}public string? ResourceStatus{get;set;}public bool? CircuitPrepared{get;set;}public bool? RequestedPrepared{get;set;}public bool? RequestedExecuted{get;set;}public bool? NativeAgreed{get;set;}public string[] Diagnostics{get;set;}=[];public LoadedSource[] Sources{get;set;}=[];public string? ExpandedSha256{get;set;}public List<OperationRow> Operations{get;set;}=[];
  }
  private sealed class CorpusReport{
+  // Same monotonic admission clock as final duration; internal state is not serialized.
+  internal Stopwatch? ProgressClock{get;set;}
   public string State{get;set;}="";public DateTimeOffset StartedUtc{get;set;}public DateTimeOffset UpdatedUtc{get;set;}public string SourceCommit{get;set;}="";public string CorpusCommit{get;set;}="";public string InventorySha256{get;set;}="";public string NativeVersion{get;set;}="";public Dictionary<string,string> SourceHashes{get;set;}=[];public bool? ProvenanceValid{get;set;}public string[] ChangedPaths{get;set;}=[];public double ElapsedSeconds{get;set;}public int AdmissionSeconds{get;set;}public StageCount[] Stages{get;set;}=[];public List<CorpusRow> Rows{get;set;}=[];public string Scope{get;set;}="Individual ordinary requested analyses; not input-control-program parity. No hardcoded selected OP counts as requested execution. Full mapped root voltage and supported branch-current grids; declared transient oracle interpolation.";
  }
 }
