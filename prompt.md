@@ -1,4 +1,26 @@
-# Latest handoff — November 3 overnight recovery
+# Latest handoff — November 3 full requested-analysis census
+
+User authorized measurement/prioritization steps 1–2 only. Read
+docs/requested-corpus-fc5db25.md and evidence/requested-fc5db25.json first.
+Results checklist: https://github.com/jeffadickson/Spice/issues/34.
+The complete 928-input immutable fc5db25 census took 957.417 seconds, provenance
+valid: 916 syntax accepted, 81 physically prepared, 21 original requested
+executions, 9 ngspice agreements. Four original BJT transient executions still
+fail Newton; 12 completed comparisons remain unqualified. No simulator feature
+was changed. Raw artifacts: E:/Artifacts/Spice-census-20261103T191728Z.
+Source checkout: C:/dev/spice-census-fc5db25. Keep both immutable; bulk stays on E:.
+
+The bounded readiness ranking observes 218 MOS-profile, 206 active-XSPICE,
+180 options-policy, 116 BJT-profile and 71 diode-profile roots; groups overlap.
+89 graphs are incomplete and 22 observation lists truncated. These are not
+predicted unlocks. Ground normalization and original BJT initialization remain
+near-executable follow-ups; analysis/directive semantics and explicitly named
+model profiles are shared work. Do not restart old iteration quotas or claim
+full compatibility. Reporting helper tests/coverage/mutations are separate from
+simulator qualification. Preserve the seven unknown canonical-main sheet-resistor
+files listed in the older handoff; no CI was dispatched.
+
+# Previous handoff — November 3 overnight recovery
 
 Read docs/overnight-recovery-results.md and docs/overnight-recovery-plan.md first.
 This section supersedes older next-step directions below. Preserve the active M1

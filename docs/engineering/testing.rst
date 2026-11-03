@@ -1,6 +1,27 @@
 Qualification and replay
 ========================
 
+Latest full requested-analysis census
+------------------------------------------------
+
+The November 3 frozen ``fc5db25`` run completed all 928 inventoried paths with
+matching provenance: 916 syntax acceptances, 81 physical preparations, 21 original
+requested executions and 9 ngspice agreements. Four original executions still
+fail Newton; 12 completed comparisons remain unqualified. Preparation is not a
+solve. Model/include fragments and unsupported programs remain in the denominator.
+The full report and four-stage chart are in ``docs/requested-corpus-fc5db25.md``
+and ``evidence/requested-fc5db25.svg`` in Git.
+
+Shared-blocker ranking uses distinct root identities and separate original-content
+hash counts. Primary refusals and bounded secondary observations remain separate;
+overlapping groups and sole observed issues cannot predict successful solves.
+The reporting helper's coverage, seeded aggregation and mutation checks qualify
+the evidence transformation only. PowerShell/native paths and other platforms
+remain outside those managed coverage scopes.
+
+Frameworks and replay
+------------------------------------------------
+
 Proptest 1.9.0 provides bounded Rust generation, shrinking and persisted regression
 seeds. PROPTEST_CASES controls requested cases per property and PROPTEST_RNG_SEED
 selects a replay seed. The ordinary suite uses a fixed default seed. The overnight

@@ -1,6 +1,14 @@
 # Original requested-analysis census and identity replay
 
-## Latest full inventory: f64edbd
+## Current full inventory: fc5db25
+
+The [fresh 928-input census and ranked shared blockers](requested-corpus-fc5db25.md)
+supersedes the measurements below: 81 prepared, 21 requested executions and 9
+ngspice agreements, with matching provenance. Four GND-sensitive preparation
+admissions are now correctly refused; four original BJT executions still fail.
+See the new report for overlapping root/content counts and unavailable evidence.
+
+## Historical full inventory: f64edbd
 
 Results task: [shared blockers and remaining failures, #29](https://github.com/jeffadickson/Spice/issues/29).
 The final frozen run completed in 834.140 seconds with matching provenance.
@@ -12,7 +20,7 @@ The final frozen run completed in 834.140 seconds with matching provenance.
 | Original requested execution | 23 | 871 | 34 |
 | Native numerical agreement | 9 | 14 | 905 |
 
-![Latest full frozen inventory](../evidence/requested-final-f64edbd.svg)
+![Historical full frozen inventory](../evidence/requested-final-f64edbd.svg)
 
 The earlier full run below prepared 77, executed 18 and agreed 4 on the same 928
 inventory. These are original individual requested analyses, not complete control
