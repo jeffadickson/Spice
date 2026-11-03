@@ -50,5 +50,6 @@ unchanged acceptance, then the original circuit replay passed. These finite
 results are not a global accuracy or full GP claim.
 
 See bjt-profile.sdoc and evidence/bjt-profile-verification.json for source,
-coverage, mutation dispositions and reproduction. MOS1 and broader semiconductor
-physics remain open work.
+coverage, mutation dispositions and reproduction. The separate bounded
+[MOS LEVEL1 profile](mos1-profile.md) is implemented; broader semiconductor
+physics and intrinsic MOS charge remain open work.

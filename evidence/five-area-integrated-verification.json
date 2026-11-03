@@ -90,5 +90,15 @@
     "resistor-bridge-integration.json",
     "gain-grid-diagnosis.json",
     "stop-grid-poc.json"
-  ]
+  ],
+  "gain_grid_fresh_replay": {
+    "report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/final-gain-grid-replay/diagnosis.json",
+    "metadata": "Fresh root compiled metadata from final-helper-build; frozen prior cohort engine retained",
+    "self_tests": 7,
+    "report_sha256": "085b95c130c71ace16a7853988162edb41b3ac1ecaa4f5a91cf2bcad83f63121",
+    "primary_statuses_changed": false,
+    "stateless_cases": 10,
+    "excluded": "compat/ngspice/qualification-rc-ramp.cir",
+    "status": "completed"
+  }
 }

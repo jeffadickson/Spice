@@ -1,3 +1,37 @@
+# Latest handoff — five-area compatibility checkpoint, November 3
+
+This section supersedes capability counts and next-step directions in the older
+historical checkpoints below. Read docs/corpus-compatibility-implementation-plan.md
+and evidence/five-area-integrated-verification.json. Generated preparation now
+connects F/H, active globals, AM/SFFM, scoped constant/sheet R, affine B, analog
+XSPICE gain/summer and bounded D/Q/M models to original requested OP/DC/AC/TRAN.
+The diode and bounded BJT/MOS1 profiles include actual storage; intrinsic MOS
+Meyer charge, broad Gummel–Poon and arbitrary control/event programs remain gaps.
+Explicit unsupported parameter contracts remain intentional.
+
+Product checkpoint f64edbd: full Rust521 passed/2ignored, frontend465 passed/
+10skipped plus one previously skipped original-control test passed separately,
+syntax433 passed/1exFAT symlink skip. Component coverage/mutations/property seeds
+and limitations are retained; do not describe outer bridge coverage as complete
+captured-helper coverage. Supplemental stop-grid replay passed8tests with native.
+
+Read docs/requested-corpus-20261103.md and issues27/28: the first full928 requested
+campaign executed18 and agreed4; its separate identity-fixed18cohort agreed7 and
+retained11 numerical discrepancies. These are different analysis scopes from
+older selectedOP counts. Ten stateless sine/gain failures are diagnosed oracle
+interpolation effects; primary statuses remain unchanged. One RC-ramp BE accuracy
+gap remains. The supplemental stop-grid POC changes native internal step history
+and does not qualify arbitrary charged/nonlinear comparisons.
+
+A final frozen full928 campaign at f64edbd is under
+E:\Artifacts\Spice-compatibility-20261103T043926Z\requested-final-f64edbd.
+Read its actual summary/provenance before reporting results. Running or exhausted
+work is not a passing run. The earlier23:00–06:00 soak stays pinned at8ecc0ab;
+do not retarget or confuse it with new-feature qualification. Preserve canonical
+main's seven unknown sheet-resistor/documentation files. No CI dispatch, GPU,
+Linux or production qualification is implied. Bulk artifacts stay on E:.
+
+---
 # Current handoff — November2 five-checkpoint simulation work
 
 Read AGENTS.md, docs/implementation-plan.sdoc, architecture.sdoc,
