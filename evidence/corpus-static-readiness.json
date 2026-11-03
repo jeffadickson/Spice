@@ -1,0 +1,543 @@
+{
+  "tested_commit": "1b9451ab1037f5686427d72b7dda626e507a310b",
+  "state": "completed_with_results",
+  "total_inputs": 928,
+  "valid_roots": 920,
+  "excluded_hash_pinned": 8,
+  "resource_refused": 30,
+  "lowering_refused": 852,
+  "solver_completed_files": 38,
+  "native_compared_files": 37,
+  "no_root_observables": 1,
+  "solved_unique_root_byte_hashes": 33,
+  "dc_provider_requests": 76,
+  "dc_root_voltage_checks": 196,
+  "ac_compared_files": 10,
+  "ac_provider_requests": 20,
+  "ac_frequency_points": 60,
+  "ac_root_voltage_checks": 210,
+  "ac_frequencies_hz": [
+    1,
+    100,
+    1000
+  ],
+  "elapsed_op_seconds": 324.733908,
+  "elapsed_ac_seconds": 9.3870719,
+  "readiness": {
+    "roots_with_report": 890,
+    "observations_truncated": 22,
+    "known_blocker_root_counts": [
+      {
+        "affected_roots": 444,
+        "kind": "V"
+      },
+      {
+        "affected_roots": 228,
+        "kind": "xspice"
+      },
+      {
+        "affected_roots": 217,
+        "kind": "mos"
+      },
+      {
+        "affected_roots": 127,
+        "kind": "bjt"
+      },
+      {
+        "affected_roots": 106,
+        "kind": "M"
+      },
+      {
+        "affected_roots": 97,
+        "kind": ".options"
+      },
+      {
+        "affected_roots": 86,
+        "kind": "diode"
+      },
+      {
+        "affected_roots": 83,
+        "kind": ".option"
+      },
+      {
+        "affected_roots": 58,
+        "kind": ".IC"
+      },
+      {
+        "affected_roots": 46,
+        "kind": "X"
+      },
+      {
+        "affected_roots": 45,
+        "kind": "Q"
+      },
+      {
+        "affected_roots": 42,
+        "kind": "R"
+      },
+      {
+        "affected_roots": 42,
+        "kind": ".csparam"
+      },
+      {
+        "affected_roots": 34,
+        "kind": "behavior"
+      },
+      {
+        "affected_roots": 30,
+        "kind": "osdi"
+      },
+      {
+        "affected_roots": 29,
+        "kind": "icontrol"
+      },
+      {
+        "affected_roots": 23,
+        "kind": ".TEMP"
+      },
+      {
+        "affected_roots": 22,
+        "kind": "I"
+      },
+      {
+        "affected_roots": 22,
+        "kind": ".global"
+      },
+      {
+        "affected_roots": 22,
+        "kind": "subcall"
+      },
+      {
+        "affected_roots": 19,
+        "kind": "jfet"
+      },
+      {
+        "affected_roots": 19,
+        "kind": "G"
+      },
+      {
+        "affected_roots": 19,
+        "kind": "E"
+      },
+      {
+        "affected_roots": 18,
+        "kind": "lineCard"
+      },
+      {
+        "affected_roots": 17,
+        "kind": "cpl"
+      },
+      {
+        "affected_roots": 16,
+        "kind": "J"
+      },
+      {
+        "affected_roots": 14,
+        "kind": "txl"
+      },
+      {
+        "affected_roots": 13,
+        "kind": "D"
+      },
+      {
+        "affected_roots": 11,
+        "kind": "C"
+      },
+      {
+        "affected_roots": 9,
+        "kind": "coupling"
+      },
+      {
+        "affected_roots": 8,
+        "kind": "switchCard"
+      },
+      {
+        "affected_roots": 5,
+        "kind": "function"
+      },
+      {
+        "affected_roots": 5,
+        "kind": ".sp"
+      },
+      {
+        "affected_roots": 3,
+        "kind": ".width"
+      },
+      {
+        "affected_roots": 3,
+        "kind": ".if"
+      },
+      {
+        "affected_roots": 3,
+        "kind": ".else"
+      },
+      {
+        "affected_roots": 3,
+        "kind": "urc"
+      },
+      {
+        "affected_roots": 3,
+        "kind": ".endif"
+      },
+      {
+        "affected_roots": 3,
+        "kind": ".opt"
+      },
+      {
+        "affected_roots": 2,
+        "kind": ".sndparam"
+      },
+      {
+        "affected_roots": 2,
+        "kind": "L"
+      },
+      {
+        "affected_roots": 2,
+        "kind": ".sndprint"
+      },
+      {
+        "affected_roots": 2,
+        "kind": ".elseif"
+      },
+      {
+        "affected_roots": 2,
+        "kind": "S"
+      },
+      {
+        "affected_roots": 1,
+        "kind": ".endc"
+      },
+      {
+        "affected_roots": 1,
+        "kind": "W"
+      },
+      {
+        "affected_roots": 1,
+        "kind": "cswitch"
+      }
+    ],
+    "numerical_validation_exhaustive": false,
+    "active_graph_incomplete": 89
+  },
+  "first_diagnostics": [
+    {
+      "code": "empty_circuit",
+      "count": 55
+    },
+    {
+      "code": "missing_parameter",
+      "count": 12
+    },
+    {
+      "code": "reserved_formal_ground",
+      "count": 1
+    },
+    {
+      "code": "unknown_parameter_override",
+      "count": 2
+    },
+    {
+      "code": "unsupported_active_card",
+      "count": 403
+    },
+    {
+      "code": "unsupported_expression",
+      "count": 9
+    },
+    {
+      "code": "unsupported_physical_directive",
+      "count": 278
+    },
+    {
+      "code": "unsupported_primitive_header",
+      "count": 32
+    },
+    {
+      "code": "unsupported_source_profile",
+      "count": 60
+    }
+  ],
+  "solved_roots": [
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "3f704cb079080e6a56a90eb0095d254c28f2a288bdd49f7982b9d8a6d6fd89ad",
+      "path": "examples/Monte_Carlo/MonteCarlo.sp"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "b0769832f69df561c9d40f5387394f8bfef7b2b0f5cbe2368d200708daa52bc5",
+      "path": "examples/control_structs/if-batchmode.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "e57b4fb59192267c38ade8ea49b828859c7b1919227603ad4f9577d527e4cc89",
+      "path": "examples/control_structs/if-test-1.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "6da3f06dc297adb4078b22d32cee1ec336eb465e316b9020d01d585931607dbf",
+      "path": "examples/control_structs/new-check-3.sp"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "73f08d0adfabae15390b3a225dc6450b681fe2ca2cba48710541e70bd5c7e75f",
+      "path": "examples/control_structs/new-check-4.sp"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "89839cf3d6d0a1af0f3b87e2d9a87627ab8f0219aadf942fca8a176133e1ccd1",
+      "path": "examples/control_structs/s-param.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "6f6b6a303c75df816615189d751c7b725549b6d313fc35e7972ae413f37b5223",
+      "path": "examples/numparam/param-example.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "2f38b91e8b7f4033c30ec5bcace0d10e92c915445c6e59327d6e398116d43fe4",
+      "path": "examples/probe/ac-test.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "d32f91453c2b9e127fd7486f241b1af4dad673200ad7edcfe8c18dd9bdff63d7",
+      "path": "examples/various/atanh.sp"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "4354b93f21ff91cad5c9eb77c7605d88c679548b64426142d8af6d60805d1dc9",
+      "path": "examples/various/param_sweep.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "55d33d81c779e5ea44124b1dc24ee8e3ba03db9534f1536f2f67b790d6a19430",
+      "path": "examples/wave/rcsim.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "014d9a694bce1364c0a521cbf97790794e9edec170693563412949e5b5e744c8",
+      "path": "paranoia_parallel/examples/Monte_Carlo/MonteCarlo.sp"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "b0769832f69df561c9d40f5387394f8bfef7b2b0f5cbe2368d200708daa52bc5",
+      "path": "paranoia_parallel/examples/control_structs/if-batchmode.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "e57b4fb59192267c38ade8ea49b828859c7b1919227603ad4f9577d527e4cc89",
+      "path": "paranoia_parallel/examples/control_structs/if-test-1.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "6da3f06dc297adb4078b22d32cee1ec336eb465e316b9020d01d585931607dbf",
+      "path": "paranoia_parallel/examples/control_structs/new-check-3.sp"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "73f08d0adfabae15390b3a225dc6450b681fe2ca2cba48710541e70bd5c7e75f",
+      "path": "paranoia_parallel/examples/control_structs/new-check-4.sp"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "550a5b992c4b831fab080bab2278e475d5ab1bd7b4debf7d9737e6e045c9f73a",
+      "path": "paranoia_parallel/examples/control_structs/s-param.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "4354b93f21ff91cad5c9eb77c7605d88c679548b64426142d8af6d60805d1dc9",
+      "path": "paranoia_parallel/examples/various/param_sweep.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "cd6ccd81115df42624729b9842e8ff8363c56709cb8df813e3cd8afb0dd857dd",
+      "path": "tests/polezero/simplepz.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "33f32962b5f5d1d6a2c4f5e8f54e4ccab6b4a587b67cd951e37f449d7f21489c",
+      "path": "tests/regression/lib-processing/ex1a.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "7a0e521bda9e6782f11fdfcb78e7e6d9f07d16c7141daac285aa4ad25d6a84ef",
+      "path": "tests/regression/lib-processing/ex1b.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "4a673f13bca1489d3095bae51debfa546f138b90258d936d8e24586a304d1b48",
+      "path": "tests/regression/lib-processing/ex2a.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "f94350617cdebf77d2b866a90af6db52f5f6d54a408aeb7bf28d33c0e0198bda",
+      "path": "tests/regression/lib-processing/ex3a.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "b14df7f80e570096aa68c7aef84c966059e7c565fa8d3b8d8764e5360ba91278",
+      "path": "tests/regression/lib-processing/scope-1.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "756a6208fefe08d86632b856abf5d4234eb2116ddc017f663529f21254014b24",
+      "path": "tests/regression/lib-processing/scope-2.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "af0497412476d23e13a41e310bada49a905660a3ce01459ceea7c33e8410b324",
+      "path": "tests/regression/lib-processing/scope-3.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387",
+      "path": "tests/regression/misc/bugs-2.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "c564db57ac79462cecb48e87ca5f897c8c7d03777d7ae11a0da8be4db2cb877e",
+      "path": "tests/regression/misc/dollar-1.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "4c58e28708a9d2d418594739ab73790653ebc10502726a8024d72419eac9c073",
+      "path": "tests/regression/sens/sens-dc-1.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "a2a8ae66afd652cf5b1cb5e828722297fa2f3d355e6cc9b26c08bc3fca16dd4b",
+      "path": "tests/regression/sens/sens-dc-2.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "ngspice",
+      "root_sha256": "499df6f0ca39c891a7f27cf26f19dd105e1cfeb4c48c29cdb708be795e687d6d",
+      "path": "tests/resistance/res_simple.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "repository",
+      "root_sha256": "7a05a110a3a031849c1a9008c95a473a057e60e49b3c67c61c62253ea0b1626f",
+      "path": "compat/ngspice/qualification-series-rlc.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "repository",
+      "root_sha256": "2a891744713dcd32243145ae0cd7ee77d8ba008edb43a2b1d00e7016896f702d",
+      "path": "compat/ngspice/qualification-vccs.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "repository",
+      "root_sha256": "c394eca0a18e4b229ca442177c5397b24a06ffc08862f9c585579dc7fa576a52",
+      "path": "compat/ngspice/res_simple.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "repository",
+      "root_sha256": "0afcaefb12f11ab81791d4326b36c603374d59b5d2d5bca6e35c5b3bdc25115b",
+      "path": "compat/ngspice/semantic-nested.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "repository",
+      "root_sha256": "07405cb94c842c0e3b28ba2d966a19dd7925d0a4239b3b5637fc679898b2308e",
+      "path": "compat/ngspice/semantic-parameters.cir"
+    },
+    {
+      "status": "compared_pass",
+      "scope": "repository",
+      "root_sha256": "2e67675476390354f09d70b417707330fb725b2913bf940b957f80cdb8e71bc5",
+      "path": "compat/ngspice/semantic-port-order.cir"
+    },
+    {
+      "status": "solver_completed_no_root_observables",
+      "scope": "repository",
+      "root_sha256": "e3d535ec496eba1ea91481a2b69de19fbaf23b4cc174663b2d4cfae78385ee4e",
+      "path": "compat/ngspice/semantic-zero-port.cir"
+    }
+  ],
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "f0686aa05ec94e7ccdbfbe3ea03df104407b4f4fc68ccfda0c3422e0a5f773c2",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "71972a84c519236ba697c3570a7599d5740d5b0505b7aa2472a352cc85de36d9",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "43c4393143456446b33a21955c82f2135b132319feaa2b2e412024c72dedf8ec",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "bf2fc543ed6c90b46ea07ec86166bfeb5b55dc0efffcb8ca042b87d2ec9d02cc",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "48c7f176300f3db67094fba9f806404e4f4b2707539a898c6e839149ce4258ef",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "5589b48f55cb97b023a1474bd9c45b7a2aafc7c91d5b2498a9be1644a71d5ed5",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "64aa944818403151a6a49cade9798fa64eae783564cc86e36b15f9d1acae203c",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "2795143d921b6256ae17ab92881c4c89e8e4f6bad9bb420b2a56d1f6e6089de4",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "4ac6d5e43b299cb9143cdf470df2ea2cadf9842eae9688c0946f4938c88f637f",
+    "dotnet/Simulator.Client/Client.cs": "4af10aae7a41d438196f4ec28abe41bf4dcc3829e2f2f2b9eaac5164a2eb65ff",
+    "dotnet/Simulator.Client/Requests.cs": "05767a035634c7cd328479ecf3008e3dc904a34dbd9e72eabbd2abae773a52db",
+    "dotnet/Simulator.Client/Results.cs": "8ae36451bc9f86d538a43c821503c07313fa2e07a3ff575087a8c5d6da017173",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "84d66c3c98bddddcd65037643b0cd3b18d35c414fed665fb9f15bcc96f55180f",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "ca7a095365ff39abea75ad80ea0efd8b072b9218985d95c467b65633831e3a6d",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "efbed7e6cbfd1f2ec85cfc08fa98cdae2a88b3578bfdaa54c83ed3a61afab6d7",
+    "dotnet/Simulator.Frontend/OperatingPointSelection.cs": "6342f7292ccef8e7553d2e3449ca89f363254ccefcf104a87d17b7d93f06fd3b",
+    "dotnet/Simulator.Frontend/packages.lock.json": "ea51b87a36d8e82f42b9839406f5dacdb9cc1a61b4754743075f3dd4d23e402c",
+    "dotnet/Simulator.Frontend/Simulator.Frontend.csproj": "5a69547d0d2f92145f9450e95135646aa308e2fdd4bc465841ed5cf7dd376361",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "942de52671daf11d86447e7808ee4ade224e211fc31b7f4116b8cc0162f7cb2d",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "01247ccd2b1f86723c001d96ec1016c2066f95cf52e02dba25d0151cd39f1e33",
+    "scripts/Run-FrontendCorpus.cs": "befd12bd0d8262e1366ebba964077a26d5ae6132cf97ddbd7e4784ec1a57e2f6",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779"
+  },
+  "engine_sha256": "15a4af00305d21dbe2cf948f8c609f29b1fa45c9078866f87126c2737aa7e1f1",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "raw_op_sha256": "1492c9ceeaea5795d7c54307b271ff20e2a07542ed0355c3a0fd8f9c2e5a2560",
+  "raw_ac_sha256": "f63451aaf683faf49b8cd1f0535b8e9fa796f69f9a755faa96c50d2320a6da95",
+  "raw_artifacts": "E:\\Artifacts\\Spice-next-five-20261103T023139Z",
+  "requirements": [
+    "SEM-READINESS-001",
+    "SEM-EXEC-001",
+    "SEM-ORACLE-001",
+    "SEM-ACPROBE-001"
+  ],
+  "limitations": [
+    "Multiple blockers overlap; root counts are not independent failures or guaranteed unlock counts.",
+    "22 observation-truncated reports and89 incomplete graphs mean blocker totals are observed lower bounds.",
+    "Root byte hashes do not identify fully expanded circuit topology.",
+    "Selected static DC/AC probes, not original controls/sweeps/transients or full SPICE.",
+    "This checkpoint changes reports only; no fresh line/branch coverage claimed. Existing qualification evidence is evidence/pspice-switch-results.json.",
+    "Newly owned bug883 fixtures are outside this frozen928-row inventory."
+  ],
+  "next": "Bounded PULSE/SIN/PWL/EXP metadata and existing Rust waveform handoff, then current/transient reference checks"
+}
