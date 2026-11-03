@@ -1,3 +1,47 @@
+# Current handoff — November2 five-checkpoint simulation work
+
+Read AGENTS.md, docs/implementation-plan.sdoc, architecture.sdoc,
+development-standards.sdoc, git status/history and the named result evidence.
+Active objective remains convergence hardening, direct sparse assembly/CPU
+provider qualification, bounded model-contract expansion and named ngspice
+corpus/oracle growth with StrictDoc traceability. Prioritize real simulation
+progress over mutation-score detours. Syntax acceptance is not simulation support.
+
+Approved next-five plan: docs/next-five-execution-plan.md. Checkpoints1–4 pushed:
+-86d193d original928-input readiness census:38solves/37native matches/10AC.
+-2fb0699 waveform slice:51solves/50native matches/14selected AC files.
+-5ac67e5 independent third reference:36agreeing OP files (12withAC),13unavailable,
+ 1parameter associativity discrepancy. Named bug883 separately agrees in three-way
+ OP/AC. Reference-only long-IL-branch patch is explicit; no production dependency.
+-9a434d0 named transient/current comparisons:3of4 fixtures agree across all three;
+ delayed phaseSIN retains a1V/1mA SpiceSharp discrepancy.58checks/54boundpasses/
+ 4discrepancies; control-load analytical KCL and step refinement are explicit.
+
+Read docs/corpus-waveform-results.md, third-reference-results.md,
+transient-current-results.md and their evidence JSON. Frozen928 inventory has
+8pinned exclusions,30resource refusals,839lowering refusals and1solved zero-port
+case lacking root observables. No complete original control/sweep programs,
+whole-corpus transient, fullSPICE/GPU/production qualification is claimed.
+
+Checkpoint5 preflight: docs/verified-soak-window.md and
+ evidence/verified-soak-preflight.json.16Pester contracts passed, including shared
+actual-worker locking, outer bootstrap deadline and post-dispatch reporting
+failure cleanup; six clock contracts;18Proptest methods at256requested cases,
+seed88320261103. Latest full frontend142passed; syntax406passed/1exFAT skip;
+Rust full482passed before the additional2property methods. StrictDoc21documents/
+342IDs/331parents. Sphinx/API documentation builds with warnings as errors.
+Actual overnight420-minute completion remains pending for authorized11pm–6am
+Pacific window. Resolve scheduler metadata and ignored work/verified-soak-active.json;
+read real E: summary, mutation logs, source hashes, actual duration and replay seeds.
+Scheduled/startup status is never a completed run. Preserve any active campaign.
+
+Use PowerShell/C#/F#, small verified commits/pushes, E: bulk artifacts, no CI.
+Preserve main's seven unrelated sheet-resistor WIP paths. Do not reset/discard them.
+Next evidence review should distinguish third-reference defects/unavailable inputs,
+actual simulator gaps, explicit skips and budget exhaustion. Prioritize recurring
+XSPICE/model-family/physical-option/resource blockers from readiness reports.
+
+# Archived checkpoint notes (historical; counts superseded above)
 ## November 2 PSpice VSWITCH bug883 implementation
 
 Smooth bounded S/VSWITCH now lowers through generated model binding and retained
@@ -532,3 +576,5 @@ November2 waveform checkpoint: original928 inventory now51 selected static solve
 Third reference checkpoint: read docs/third-reference-results.md. Original928 cohort:36 OP agreements (12withAC),13 unavailable,1 associativity discrepancy. Named bug883 independently three-wayOP+AC passed. Patched-reference flavor is explicit, never stock or production. No silent numerical equation patches.
 
 Current/transient checkpoint: read docs/transient-current-results.md and evidence/transient-current-results.json. Four named fixtures executed16Rust+8native+8Sharp requests; three agree across all engines, delayed-phaseSIN retains1V/1mA Sharp discrepancy.58checks/54boundpasses/4discrepancies. Switch control-load analytical checks and step refinement are explicit. This does not increase original928 static/AC counts.
+
+Overnight window: docs/verified-soak-window.md and evidence/verified-soak-preflight.json describe the pinned clean-checkout launcher and16contract tests. New18-method property campaign includes delayed-phaseSIN and analytic switch divider. Actual420-minute completion remains pending; read real E: summary, seeds, mutations and duration. Preserve canonical worker lock and existing main WIP.

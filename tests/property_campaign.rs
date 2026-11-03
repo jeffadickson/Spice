@@ -30,6 +30,43 @@ fn configuration() -> Config {
 proptest! {
     #![proptest_config(configuration())]
     #[test]
+    fn delayed_sine_holds_phase_bias_before_delay(
+        offset in -10.0_f64..10., amplitude in 0.0_f64..10.,
+        phase in -6.0_f64..6., delay in 0.001_f64..10., fraction in 0.0_f64..1.
+    ) {
+        use circuit_simulator::waveform::Waveform;
+        let wave=Waveform::DampedSine{offset,amplitude,frequency_hz:10.,delay_s:delay,damping_per_s:2.,phase_rad:phase};
+        // Independent ngspice source law: phase-biased initial value is held
+        // before TD. Frequency/damping cannot affect this pre-delay interval.
+        let expected=offset+amplitude*phase.sin();
+        prop_assert!((wave.at(delay*fraction).unwrap()-expected).abs()<1e-12);
+        prop_assert!((wave.at(0.).unwrap()-expected).abs()<1e-12);
+    }
+
+    #[test]
+    fn midpoint_switch_divider_matches_geometric_resistance_on_both_cpu_providers(
+        ron_log in 1.0_f64..3., roff_log in 4.0_f64..5.,
+        load_log in 2.0_f64..4., drive in -2.0_f64..2., reverse in any::<bool>()
+    ) {
+        use circuit_simulator::{circuit::{Circuit,Element},ids::NodeId as N};
+        let ron=10_f64.powf(ron_log);let roff=10_f64.powf(roff_log);let load=10_f64.powf(load_log);
+        let circuit=Circuit{nodes:vec!["0".into(),"in".into(),"out".into(),"control".into()],elements:vec![
+            Element::Voltage{id:"drive".into(),p:N(1),n:N(0),volts:drive},
+            Element::Voltage{id:"control".into(),p:N(3),n:N(0),volts:0.5},
+            Element::PspiceSwitch{id:"switch".into(),p:N(1),n:N(2),cp:N(3),cn:N(0),ron,roff,von:if reverse{0.}else{1.},voff:if reverse{1.}else{0.}},
+            Element::Resistor{id:"load".into(),p:N(2),n:N(0),ohms:load}
+        ]};
+        let plan=compile(&circuit).unwrap();
+        // At the center of the smooth transition the resistance is the
+        // geometric mean; use an independent series-divider reference.
+        let expected=drive*load/(load+(ron*roff).sqrt());
+        for solver in [&DenseLu as &dyn LinearSolver,&FaerSparseLu] {
+            let state=operating_point(&plan,solver).unwrap();
+            prop_assert!((state[1]-expected).abs()<=1e-8+1e-8*expected.abs());
+        }
+    }
+
+    #[test]
     fn qr_refinement_never_worsens_componentwise_error(
         off in prop::collection::vec(-1_f64..1.,9),
         scales in prop::collection::vec(-6_i32..6,3),

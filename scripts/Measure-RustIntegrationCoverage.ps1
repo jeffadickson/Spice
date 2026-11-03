@@ -1,4 +1,4 @@
-param([Parameter(Mandatory)][string]$Repository,[Parameter(Mandatory)][string]$TargetDirectory,[Parameter(Mandatory)][string]$Output,[string]$Test='pspice_switch')
+param([Parameter(Mandatory)][string]$Repository,[Parameter(Mandatory)][string]$TargetDirectory,[Parameter(Mandatory)][string]$Output,[string]$Test='pspice_switch',[string[]]$AdditionalCrates=@())
 # Instrument only the owned library, reusing uninstrumented vendor dependencies.
 # Compile the integration test against that exact rlib. This avoids an unnecessary
 # rebuild of all vendor crates and does not substitute a model/error shim.
@@ -25,8 +25,14 @@ try{
  if($proptest.Count -ne 1){throw 'Expected unique existing proptest rlib'}
  $json=@(Get-ChildItem -LiteralPath $deps -Filter 'libserde_json-*.rlib' -File)
  if($json.Count -ne 1){throw 'Expected unique existing serde_json rlib'}
+ $extra=@();foreach($crate in $AdditionalCrates){
+  if($crate -notmatch '^[a-zA-Z0-9_]+$'){throw 'Invalid additional dependency name'}
+  $dependency=@(Get-ChildItem -LiteralPath $deps -Filter "lib$crate-*.rlib" -File)
+  if($dependency.Count -ne 1){throw "Expected unique existing dependency: $crate"}
+  $extra+=@('--extern',"$crate=$($dependency[0].FullName)")
+ }
  $binary=Join-Path $Output 'instrumented-tests.exe'
- & rustc --edition=2024 --test $inputTest --crate-name=spice_integration_coverage -C instrument-coverage --extern "circuit_simulator=$($library[0])" --extern "proptest=$($proptest[0].FullName)" --extern "serde_json=$($json[0].FullName)" -L "dependency=$deps" -o $binary 2> (Join-Path $Output 'test-build.log')
+ & rustc --edition=2024 --test $inputTest --crate-name=spice_integration_coverage -C instrument-coverage --extern "circuit_simulator=$($library[0])" --extern "proptest=$($proptest[0].FullName)" --extern "serde_json=$($json[0].FullName)" @extra -L "dependency=$deps" -o $binary 2> (Join-Path $Output 'test-build.log')
  if($LASTEXITCODE){throw 'Instrumented integration test build failed'}
  $env:LLVM_PROFILE_FILE=Join-Path $Output '%m-%p.profraw'
  & $binary *> (Join-Path $Output 'test.log');if($LASTEXITCODE){throw 'Instrumented test failed'}

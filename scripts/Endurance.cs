@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
+if(args is ["--lock-probe",var repository]){using var guard=await CampaignLock.AcquireAsync(repository);Console.WriteLine("Canonical campaign lock: "+guard.Name);return;}
 if(args is ["--budget-self-test"]) { CampaignBudget.CheckContracts(); return; }
 if(args is ["--power-probe"]) {
     var request=SystemPowerRequest.Acquire();Console.WriteLine(request.Status);
@@ -18,9 +19,11 @@ if(args is ["--power-probe"]) {
 // A wall-clock supervisor over an isolated source snapshot. Never mutates the
 // caller's source or promotes overnight results to release qualification.
 var minutes=300.0; var seed=BitConverter.ToUInt64(RandomNumberGenerator.GetBytes(8)); var skipMutation=false; var selectedRegressions=false;
+DateTimeOffset? finishByUtc=null;
 for (var i=0;i<args.Length;i++) {
     switch(args[i]) {
         case "--minutes": minutes=double.Parse(args[++i],CultureInfo.InvariantCulture); break;
+        case "--finish-by-utc": finishByUtc=DateTimeOffset.ParseExact(args[++i],"O",CultureInfo.InvariantCulture).ToUniversalTime(); break;
         case "--seed": seed=ulong.Parse(args[++i],CultureInfo.InvariantCulture); break;
         case "--skip-mutation": skipMutation=true; break;
         case "--selected-regressions": selectedRegressions=true; break;
@@ -33,7 +36,9 @@ var root=Directory.GetCurrentDirectory();
 if (!File.Exists(Path.Combine(root,"Cargo.toml"))) throw new ArgumentException("Run from the Spice repository root.");
 EnsureDirectory(Path.Combine(root,"work"));
 // An OS file lock is released even after a crash; stale PID files cannot allow overlap.
-using var campaignLock=new FileStream(Path.Combine(root,"work","endurance.lock"),FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None);
+// Linked worktrees must share the primary repository's lock. Ownership belongs
+// to this actual test worker, so killing an outer shell cannot unlock live tests.
+using var campaignLock=await CampaignLock.AcquireAsync(root);
 var run=Path.Combine(root,"work","endurance",DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8]);
 var archive=Path.Combine(run,"repo"); EnsureDirectory(archive);
 var snapshot=Path.GetFullPath(Path.Combine(root,"work","endurance-workspace"));
@@ -45,9 +50,9 @@ if(Directory.Exists(snapshot)) {
 }
 EnsureDirectory(snapshot);
 using var powerRequest=SystemPowerRequest.Acquire();
-var budget=new CampaignBudget(TimeSpan.FromMinutes(minutes),TimeProvider.System);
+var budget=new CampaignBudget(TimeSpan.FromMinutes(minutes),TimeProvider.System,finishByUtc);
 var report=new CampaignReport { StartedUtc=budget.StartedUtc.UtcDateTime, DeadlineUtc=budget.DeadlineUtc.UtcDateTime,
-    SleepPrevention=powerRequest.Status, BudgetSeconds=minutes*60, InitialSeed=seed.ToString(CultureInfo.InvariantCulture), Snapshot=archive, BuildWorkspace=snapshot };
+    SleepPrevention=powerRequest.Status, CanonicalLock=campaignLock.Name, SupervisorAssemblySha256=Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(typeof(CampaignReport).Assembly.Location))), BudgetSeconds=Math.Max(0,(budget.DeadlineUtc-budget.StartedUtc).TotalSeconds), RequestedBudgetSeconds=minutes*60, InitialSeed=seed.ToString(CultureInfo.InvariantCulture), Snapshot=archive, BuildWorkspace=snapshot };
 var reportPath=Path.Combine(run,"summary.json");
 var options=new JsonSerializerOptions { WriteIndented=true,PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower };
 void Save() {
@@ -233,6 +238,9 @@ sealed class CampaignReport {
     public DateTime StartedUtc { get;set; }
     public DateTime? FinishedUtc { get;set; }
     public double BudgetSeconds { get;set; }
+    public double RequestedBudgetSeconds { get;set; }
+    public string? CanonicalLock {get;set;}
+    public string? SupervisorAssemblySha256 {get;set;}
     public double ElapsedSeconds { get;set; }
     public DateTime DeadlineUtc {get;set;}
     public double MonotonicElapsedSeconds {get;set;}
@@ -271,14 +279,36 @@ sealed class CampaignReport {
 }
 record ProcessResult(int Exit,string Log,bool TimedOut);
 
+// Actual worker ownership outlives an outer shell. Derive one canonical lock
+// from Git metadata, independently of the caller's worktree-specific outputs.
+static class CampaignLock
+{
+    public static async Task<FileStream> AcquireAsync(string root){
+        if(!Directory.Exists(root))throw new DirectoryNotFoundException(root);
+        var start=new ProcessStartInfo("git"){WorkingDirectory=root,UseShellExecute=false,CreateNoWindow=true,RedirectStandardOutput=true,RedirectStandardError=true};
+        foreach(var argument in new[]{"rev-parse","--path-format=absolute","--git-common-dir"})start.ArgumentList.Add(argument);
+        using var identity=Process.Start(start)??throw new IOException("Git identity process failed");
+        var output=identity.StandardOutput.ReadToEndAsync();var error=identity.StandardError.ReadToEndAsync();
+        using(var deadline=new CancellationTokenSource(TimeSpan.FromSeconds(15))){
+            try{await identity.WaitForExitAsync(deadline.Token);}catch(OperationCanceledException){identity.Kill(true);await identity.WaitForExitAsync();throw new IOException("Git lock identity timed out");}
+        }
+        var common=(await output).Trim().TrimEnd(Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar);var diagnostics=await error;
+        if(identity.ExitCode!=0||!Path.IsPathFullyQualified(common)||Path.GetFileName(common)!=".git"||!Directory.Exists(common))throw new IOException("Canonical .git directory required for campaign lock: "+diagnostics);
+        var parent=Path.GetDirectoryName(common)!;if(!Directory.Exists(parent))throw new DirectoryNotFoundException(parent);
+        var work=Path.Combine(parent,"work");if(!Directory.Exists(work))Directory.CreateDirectory(work);
+        return new FileStream(Path.Combine(work,"endurance.lock"),FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None);
+    }
+}
+
 // Domain glue over the BCL clock: neither a backward UTC correction nor a
 // monotonic clock paused by suspension is allowed to extend the campaign.
-sealed class CampaignBudget(TimeSpan duration,TimeProvider provider)
+sealed class CampaignBudget(TimeSpan duration,TimeProvider provider,DateTimeOffset? finishByUtc=null)
 {
     private readonly long started=provider.GetTimestamp();
     private TimeSpan maximumElapsed;
     public DateTimeOffset StartedUtc {get;}=provider.GetUtcNow();
-    public DateTimeOffset DeadlineUtc=>StartedUtc+duration;
+    public DateTimeOffset DeadlineUtc=>finishByUtc is {} limit&&limit<StartedUtc+duration?limit:StartedUtc+duration;
+    private TimeSpan BoundedDuration=>DeadlineUtc-StartedUtc;
     public TimeSpan MonotonicElapsed=>provider.GetElapsedTime(started);
     public TimeSpan UtcElapsed=>TimeSpan.FromTicks(Math.Max(0,(provider.GetUtcNow()-StartedUtc).Ticks));
     public TimeSpan Elapsed {
@@ -289,11 +319,15 @@ sealed class CampaignBudget(TimeSpan duration,TimeProvider provider)
             return maximumElapsed;
         }
     }
-    public TimeSpan Remaining=>TimeSpan.FromTicks(Math.Max(0,(duration-Elapsed).Ticks));
-    public TimeSpan Overrun=>TimeSpan.FromTicks(Math.Max(0,(Elapsed-duration).Ticks));
+    public TimeSpan Remaining=>TimeSpan.FromTicks(Math.Max(0,(BoundedDuration-Elapsed).Ticks));
+    public TimeSpan Overrun=>TimeSpan.FromTicks(Math.Max(0,(Elapsed-BoundedDuration).Ticks));
     // Five seconds is explicitly cleanup/reporting allowance, not test budget.
     public string FinalStatus(string status)=>status.StartsWith("budget_exhausted",StringComparison.Ordinal)&&Overrun>TimeSpan.FromSeconds(5)?"budget_overrun":status;
     public static void CheckContracts() {
+        var windowTime=new SplitClock();var finish=windowTime.GetUtcNow()+TimeSpan.FromMinutes(1);
+        var window=new CampaignBudget(TimeSpan.FromHours(7),windowTime,finish);
+        if(window.DeadlineUtc!=finish||window.Remaining!=TimeSpan.FromMinutes(1))throw new Exception("Finish-by window not applied");
+        windowTime.Advance(61,61);if(window.Remaining!=TimeSpan.Zero)throw new Exception("Finish-by window extended");
         var time=new SplitClock();var budget=new CampaignBudget(TimeSpan.FromSeconds(60),time);
         time.Advance(20,20);if(budget.Remaining!=TimeSpan.FromSeconds(40))throw new Exception("Ordinary budget failed.");
         time.Advance(0,120);if(budget.Remaining!=TimeSpan.Zero||budget.FinalStatus("budget_exhausted")!="budget_overrun")throw new Exception("Suspend/UTC jump extended deadline.");
@@ -301,7 +335,7 @@ sealed class CampaignBudget(TimeSpan duration,TimeProvider provider)
         time=new SplitClock();budget=new CampaignBudget(TimeSpan.FromSeconds(60),time);
         time.Advance(60,-3600);if(budget.Remaining!=TimeSpan.Zero||budget.Elapsed!=TimeSpan.FromSeconds(60))throw new Exception("Backward UTC extended monotonic budget.");
         time.Advance(6,0);if(budget.FinalStatus("failed")!="failed"||budget.FinalStatus("budget_exhausted_partial_batch")!="budget_overrun")throw new Exception("Overrun classification failed.");
-        Console.WriteLine("Four split-clock deadline contracts passed.");
+        Console.WriteLine("Six split-clock deadline contracts passed.");
     }
     // Deliberately independent test clocks model OS suspension/time correction;
     // production uses TimeProvider.System. No production time source is replaced.

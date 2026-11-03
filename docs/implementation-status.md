@@ -95,3 +95,7 @@ and one conditional pulse-guard equivalent. Source/test checkpoint 3e6d8f0 adds
 LLVM mapping warnings, the full-suite managed EOF timeout and Stryker rollback
 remain open verification gaps. Reopen the masked guard if failure-phase or clone
 resource policy changes; do not count it as a semantic equivalent or kill.
+
+## November2 simulation execution and independent references
+
+Original928 inventory:51 selected static solves/50 native matches/14 selected AC files. Third reference:36 agreeing OP files (12withAC),13 unavailable,1 exponent-associativity discrepancy. Separate bug883 two-file case agrees in OP/AC across all three. Four named transient/current fixtures ran; three agree, delayed-phaseSIN retains a managed-reference discrepancy. See corpus-waveform-results.md, third-reference-results.md and transient-current-results.md. The clean-checkpoint overnight launcher is preflight-verified; actual seven-hour completion is pending. See verified-soak-window.md. No full-SPICE/GPU/production claim.

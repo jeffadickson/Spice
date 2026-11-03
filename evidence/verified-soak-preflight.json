@@ -1,0 +1,101 @@
+{
+  "state": "preflight_verified_execution_pending",
+  "requested_window": {
+    "finish": "2026-11-03T06:00:00-08:00",
+    "requested_minutes": 420,
+    "timezone": "America/Los_Angeles",
+    "cleanup_reserved_seconds": 5,
+    "start": "2026-11-02T23:00:00-08:00"
+  },
+  "base_commit": "9a434d0d141f61b8d38bef1297a20fad8facd30d",
+  "source_sha256": {
+    "scripts/tests/SoakSupervision.Tests.ps1": "8688b485566cd9167873272bc8d6de6cacaf6134a0aa5d814901964046c6403d",
+    "scripts/tests/VerifiedSoak.Tests.ps1": "20360a76472d83cce4af54167246393e7c71bcd124ae5c9d592781ec0a0db2d8",
+    "scripts/Measure-RustIntegrationCoverage.ps1": "3d1c98f5f5aa9851ef251ebf5054eb6cf72571d98e3834d35fcd5316cc3a0353",
+    "scripts/Endurance.cs": "cb860485454860be6882739f32d64e38a19cb7ba334347c0c9d8ddd0afa93488",
+    "tests/property_campaign.rs": "4cdfead94cd2823760c4c45b2a73f2a21cc3bf73503500f97400961d5466bfba",
+    "scripts/Run-Endurance.ps1": "c5c43e7aded473a995790f9f8ba7b338eb10a32dc1084e92abfad4e08c99e404",
+    "tests/Endurance.Tests.ps1": "6ef670efed334b0042c153e5551c3082e2eedbe2a9e45ea16342d811e35148a5",
+    "scripts/Run-VerifiedSoak.ps1": "f1febc9e86f1090866b58434af3d79f77968642e55a54af126c7a72fc8663040"
+  },
+  "pester": {
+    "commands_analyzed": 338,
+    "failed": 0,
+    "commands_covered": 203,
+    "command_coverage_percent": 60.0591715976331,
+    "passed": 16,
+    "branch_coverage": null,
+    "skipped": 0,
+    "result_sha256": "ab77f5870893dc3fc22b6367c7b0b14fc4254dc63f6eeb5d38daeae7aee14394",
+    "version": "5.7.1"
+  },
+  "clock_coverage": {
+    "lines_valid": 34,
+    "lines_covered": 34,
+    "branches_valid": 34,
+    "scope": "CampaignBudget self-test only",
+    "branches_covered": 21
+  },
+  "lock_coverage": {
+    "lines_valid": 15,
+    "lines_covered": 15,
+    "branches_valid": 18,
+    "scope": "CampaignLock primary fixture probe only; held-lock/linked cases also executed outside instrumentation",
+    "branches_covered": 10
+  },
+  "property": {
+    "tool": "Proptest1.9.0",
+    "requested_cases_per_method": 256,
+    "log_sha256": "ee844b8c41dfaca6da43befa7208bd92674b1ec84ffd3644393470d33956ba8c",
+    "requested_cases_total": 4608,
+    "methods": 18,
+    "coverage": [
+      {
+        "sha256": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9",
+        "file": "src/pspice_switch.rs",
+        "lines": {
+          "count": 42,
+          "covered": 37,
+          "percent": 88.09523809523809
+        }
+      },
+      {
+        "sha256": "2bce955e8d3453700d0a5801a894799d3737034672332d942bc544fdb8d32cd9",
+        "file": "src/waveform.rs",
+        "lines": {
+          "count": 165,
+          "covered": 43,
+          "percent": 26.060606060606062
+        }
+      }
+    ],
+    "branches": null,
+    "seed": "88320261103"
+  },
+  "limits": [
+    "Scheduled/startup evidence is not actual420-minute completion.",
+    "Bootstrap plus testing have outer deadline; effective test budget shrinks after late startup.",
+    "Forced outer-supervisor death can leave bootstrap tools alive; actual test worker retains canonical exclusion and its deadline. No JobObject guarantee.",
+    "No real forced-suspension, separate external git-dir or Linux-launcher qualification.",
+    "Pester coverage measures commands, not branches; C# scope is clock/lock only, not whole supervisor.",
+    "Mutations and changing seeds will be reported from actual run; no new overnight result is inferred from preflight."
+  ],
+  "raw_artifacts": "E:\\Artifacts\\Spice-next-five-20261103T023139Z",
+  "strictdoc": {
+    "documents": 21,
+    "report_sha256": "1633805e5ab2610a612b4898dc0f0bf4241693312f85af3796367da09adcd483",
+    "ids": 342,
+    "resolved_parents": 331
+  },
+  "final_frontend": {
+    "branches_covered": 1802,
+    "lines_covered": 9846,
+    "passed": 142,
+    "lines_valid": 17551,
+    "failed": 0,
+    "skipped": 0,
+    "report_sha256": "df6ab63c64890ac76b7844dc7f2f32cd8634a9413458fdd7edd7a1c9137868cb",
+    "branches_valid": 3625,
+    "scope": "Full frontend suite with actual native/fault and third-reference prerequisites; generated syntax/client included"
+  }
+}
