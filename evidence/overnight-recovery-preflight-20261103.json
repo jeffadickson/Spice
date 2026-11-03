@@ -1,0 +1,45 @@
+{
+  "run_id": "20261103T142504Z-38d0ed8a",
+  "issue": "https://github.com/jeffadickson/Spice/issues/31",
+  "state": "failed",
+  "mode": "clean committed launcher property-only preflight; maintained mutations explicitly skipped and verified separately",
+  "source": "ea19c2e7988c584c3bebafb69d3e751ad41bd32f",
+  "source_dirty": false,
+  "started_utc": "2026-11-03T14:25:04.3046947Z",
+  "finished_utc": "2026-11-03T14:29:01.0057587Z",
+  "elapsed_seconds": 236.7011358,
+  "requested_seconds": 480,
+  "effective_seconds": 480,
+  "completed_requested_cases": 6912,
+  "completed_batches": 3,
+  "property_methods": 18,
+  "cases_per_method": 128,
+  "initial_seed": "6151774752237793128",
+  "pending_failure_seed": "3401923026981217896",
+  "minimized": {
+    "expected_output_v": 0.3801486345140583,
+    "load": 100,
+    "reverse": true,
+    "ron": 10,
+    "drive": 1.5822841689813791,
+    "roff": 10000
+  },
+  "property": "midpoint_switch_divider_matches_geometric_resistance_on_both_cpu_providers",
+  "error": "Newton iteration limit exceeded",
+  "replay_hash": "0c1b95a3b3d7f5f0e70469d9f178aaa730313e37a6c6425d6ed40d323b385d3b",
+  "raw_directory": "E:\\Artifacts\\Spice-fix-20261103T140559Z\\property-preflight\\work\\endurance\\20261103T142504Z-38d0ed8a",
+  "raw_sha256": {
+    "failure/property_campaign.txt": "f61a6828fda86e2b8c3b650e959f41198c0dc785b8e99695ac684a7a9569a0a9",
+    "failure.log": "fccd431d3283792bff0e822e80fdde18f341aa55b0ccb7e0f48ca8038c6cdcfa",
+    "summary.json": "4ec6f8bf827b9329e1c60ae9e1bd327f22b95ec00dfbdeb080b05e30574716dc"
+  },
+  "source_snapshot_files": 380,
+  "source_snapshot_mismatches": [],
+  "limits": [
+    "Failed preflight, not budget exhaustion or an8-minute/long-soak success.",
+    "Only3completebatches counted; partialfailedbatch andshrinks excluded from case count.",
+    "No new line/branch coverage collected by this campaign; separate scoped coverage reports are independent.",
+    "Windows deadline follow-up was not exercised: mutation phase skipped; it has separate actual-process tests.",
+    "Numerical controller correction remains pending; these original failed results are immutable."
+  ]
+}
