@@ -20,6 +20,8 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(Inductor), "inductor")]
 [JsonDerivedType(typeof(Voltage), "voltage")]
 [JsonDerivedType(typeof(Current), "current")]
+[JsonDerivedType(typeof(Vcvs), "vcvs")]
+[JsonDerivedType(typeof(Vccs), "vccs")]
 [JsonDerivedType(typeof(Diode), "diode")]
 [JsonDerivedType(typeof(DiodeWithCapacitance), "diode_with_capacitance")]
 public abstract record Element(string Id, int P, int N);
@@ -33,6 +35,10 @@ public sealed record Inductor(string Id, int P, int N, double Henries) : Element
 public sealed record Voltage(string Id, int P, int N, double Volts) : Element(Id, P, N);
 /// <summary>Independent signed DC current flowing P to N in amperes.</summary>
 public sealed record Current(string Id, int P, int N, double Amps) : Element(Id, P, N);
+/// <summary>Ideal voltage-controlled voltage source: V(P)-V(N)=Gain*(V(Cp)-V(Cn)); gain is dimensionless.</summary>
+public sealed record Vcvs(string Id,int P,int N,int Cp,int Cn,double Gain) : Element(Id,P,N);
+/// <summary>Ideal voltage-controlled current source: current P-to-N equals Siemens*(V(Cp)-V(Cn)).</summary>
+public sealed record Vccs(string Id,int P,int N,int Cp,int Cn,double Siemens) : Element(Id,P,N);
 /// <summary>Shockley diode parameters use SI amps and volts; current flows P to N.</summary>
 public sealed record Diode(string Id, int P, int N, double SaturationAmps, double ThermalVolts) : Element(Id, P, N);
 /// <summary>Shockley conduction in parallel with constant Q=C*V; SI amps, volts and

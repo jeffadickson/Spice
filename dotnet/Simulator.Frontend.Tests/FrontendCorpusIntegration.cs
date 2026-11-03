@@ -44,6 +44,9 @@ public sealed class FrontendCorpusIntegration
             (Name:"source-current.cir",Body:".param bias=2m\nI1 a 0 AC 1 DC {bias}\nR1 a 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"reporting.cir",Body:"V1 a 0 DC 2 AC 1\nR1 a 0 1k\n.option noinit acct noacct",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"source-mixed.cir",Body:"Vbias a 0 2\nIac b 0 AC 1 DC 0\nR1 a b 1k\nR2 b 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"vcvs.cir",Body:"V1 in 0 DC 2 AC 1 -90\nE1 out 0 in 0 -3\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"vccs.cir",Body:"V1 in 0 DC 2 AC 1\nG1 out 0 in 0 -2m\nR1 out 0 1k",Expected:selected?"compared_pass":"lowering_refused"),
+            (Name:"controlled-hierarchy.cir",Body:"V1 in 0 DC 2 AC 1\nX1 in out cell gain=3\n.subckt cell p q gain=2\nE1 q 0 p 0 {gain}\nR1 q 0 1k\n.ends",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"zero-port.cir",Body:"X1 noports\n.subckt noports\nV1 hidden 0 1\nR1 hidden 0 1k\n.ends",Expected:"solver_completed_no_root_observables"),
             (Name:"capacitor.cir",Body:"V1 a 0 1\nC1 a 0 1u",Expected:selected?"compared_pass":"lowering_refused"),
             (Name:"rlc.cir",Body:"V1 a 0 3\nR1 a b 1k\nL1 b 0 2m\nC1 a b 3u",Expected:selected?"compared_pass":"lowering_refused"),
@@ -102,6 +105,12 @@ public sealed class FrontendCorpusIntegration
                 {
                     Assert.InRange(observation.GetProperty("rust_volts").GetDouble(),source.Expected-1e-10,source.Expected+1e-10);
                     Assert.InRange(observation.GetProperty("ngspice_volts").GetDouble(),source.Expected-1e-10,source.Expected+1e-10);
+                }
+            foreach(var control in new[]{(Name:"vcvs.cir",Expected:-6.0),(Name:"vccs.cir",Expected:4.0),(Name:"controlled-hierarchy.cir",Expected:6.0)})
+                foreach(var observation in outcomes[control.Name].GetProperty("comparisons").EnumerateArray().Where(c=>c.GetProperty("node").GetString()=="out"))
+                {
+                    Assert.InRange(observation.GetProperty("rust_volts").GetDouble(),control.Expected-1e-10,control.Expected+1e-10);
+                    Assert.InRange(observation.GetProperty("ngspice_volts").GetDouble(),control.Expected-1e-10,control.Expected+1e-10);
                 }
             var index=Array.FindIndex(fixtures,f=>f.Name=="control.cir");
             var directory=Path.Combine(output,"cases",index.ToString("D4",CultureInfo.InvariantCulture));

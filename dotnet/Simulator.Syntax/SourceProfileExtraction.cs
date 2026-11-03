@@ -11,12 +11,8 @@ internal static class SourceProfileExtraction
 {
     internal static SourceExcitationSyntax? Extract(SpiceParser.SourceContext source,Func<ParserRuleContext,SourceSyntax> capture)
     {
-        var tokens=new List<IToken>();
-        foreach(var parameter in source.parameter())Visit(parameter);
-        if(tokens.Count==0||tokens.Count>256)return null;
-        tokens.Add(new CommonToken(TokenConstants.EOF));
-        var parser=new SpiceParser(new CommonTokenStream(new ListTokenSource(tokens))){ErrorHandler=new BailErrorStrategy()};
-        parser.RemoveErrorListeners();
+        var parser=CreateParser(source.parameter());
+        if(parser==null)return null;
         try
         {
             var profile=parser.sourceProfile();
@@ -26,6 +22,18 @@ internal static class SourceProfileExtraction
             return new(dc==null?null:capture(dc),ac==null?null:capture(ac[0]),ac?.Length==2?capture(ac[1]):null);
         }
         catch(ParseCanceledException){return null;}
+    }
+    // Shared bounded adapter for generated semantic entries. Recognition remains
+    // in ANTLR; no source text is split or re-tokenized here.
+    internal static SpiceParser? CreateParser(IEnumerable<ParserRuleContext> parameters)
+    {
+        var tokens=new List<IToken>();
+        foreach(var parameter in parameters)Visit(parameter);
+        if(tokens.Count==0||tokens.Count>256)return null;
+        tokens.Add(new CommonToken(TokenConstants.EOF));
+        var parser=new SpiceParser(new CommonTokenStream(new ListTokenSource(tokens))){ErrorHandler=new BailErrorStrategy()};
+        parser.RemoveErrorListeners();
+        return parser;
         void Visit(IParseTree node)
         {
             if(tokens.Count>256)return;

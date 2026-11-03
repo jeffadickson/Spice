@@ -126,3 +126,31 @@ Implementation: BridgeResult.AcSources/ExplicitAcSources and scripts/Run-Fronten
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-EXEC-001
+
+[REQUIREMENT]
+UID: SEM-CONTROL-001
+STATUS: Draft
+TITLE: Typed linear voltage-controlled source handoff
+STATEMENT: >>>
+Selected analysis preparation shall retain E/G output terminals, control terminals and scoped scalar gain using generated grammar contexts and shall lower supported linear profiles to the existing VCVS/VCCS public wire elements. Signed gain and transconductance shall preserve the documented voltage and P-to-N current conventions. Unsupported TABLE, POLY and behavioral profiles shall refuse atomically. Strict legacy lowering shall retain its existing scope.
+<<<
+COMMENT: >>>
+Implementation: PrimitiveSyntax, SourceProfileExtraction, OperatingPointBridge and Simulator.Client Requests. Verification: ControlledSourceTests and FrontendCorpusIntegration. Evidence: evidence/runtime-readiness-checkpoint.json. Draft: full corpus and complex AC qualification remain pending.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SELECT-001
+
+[REQUIREMENT]
+UID: SEM-READINESS-001
+STATUS: Draft
+TITLE: Bounded multiple-blocker structural readiness audit
+STATEMENT: >>>
+The frontend shall expose known capability and binding blockers across reachable bounded instance scopes without first-error bailout. The report shall distinguish preparation success, graph completeness, truncated observations and nonexhaustive numerical validation. Unused device bodies shall not be presented as active device blockers. Observed model families and assignment names shall remain metadata rather than claims of implemented equations or defaults.
+<<<
+COMMENT: >>>
+Implementation: CircuitReadiness and Run-FrontendCorpus readiness rows. Verification: ReadinessTests. Limits: 32 scope depth, 128 visited frames, 4096 issues and model observations, 128 assignment names per model. Numeric validation remains explicitly nonexhaustive; source acceptance does not imply solvability. Evidence: evidence/runtime-readiness-checkpoint.json. Draft pending full corpus audit.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-EVIDENCE-001

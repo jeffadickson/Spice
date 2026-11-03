@@ -62,6 +62,7 @@ foreach(var item in input.RootElement.GetProperty("rows").EnumerateArray())
   if(parsed.Status!="accepted_structure"){row.Status="syntax_refused";row.Detail=parsed.Status;continue;}
   var selection=selected?OperatingPointSelection.Select(parsed):null;
   var prepared=selection?.Prepared??OperatingPointBridge.Lower(parsed);
+  if(selected)row.Readiness=CircuitReadiness.Audit(parsed);
   row.Omissions=selection?.Omissions.ToArray()??[];
   if(!prepared.Success)
   {
@@ -166,6 +167,7 @@ void Save(string state)
 static string Hash(string path){using var stream=File.OpenRead(path);return Convert.ToHexStringLower(SHA256.HashData(stream));}
 sealed class Row
 {
+ public CircuitReadinessReport? Readiness{get;set;}
  public string Scope{get;set;}="";public string Path{get;set;}="";public string Status{get;set;}="";public string? Detail{get;set;} public string? Card{get;set;} public string? Family{get;set;} public string? Excerpt{get;set;}
  public string? InputSha256{get;set;} public string? ExpandedSha256{get;set;} public string? NativeInputSha256{get;set;} public string? NativeLogSha256{get;set;} public int? NativeExit{get;set;}
  public OperatingPointOmission[] Omissions{get;set;}=[];public SourceHash[] Sources{get;set;}=[];public List<Provider> Providers{get;}=[];public List<Observation> Comparisons{get;}=[];

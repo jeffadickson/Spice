@@ -28,16 +28,7 @@ public static class OperatingPointSelection
         if(syntax.Declarations is {} catalog)
             foreach(var card in catalog.Cards)
             {
-                var reason=card.Kind switch
-                {
-                    "control"=>"input_control_not_executed",
-                    "op"=>"analysis_replaced_by_explicit_op",
-                    "ac" or "dc" or "tran"=>"analysis_not_selected",
-                    "extension" when Observations.Contains(card.Name)=>"observation_not_selected",
-                    "extension" when card.ReportingOptionsOnly=>"reporting_options_not_selected",
-                    "extension" when Analyses.Contains(card.Name)=>"analysis_not_selected",
-                    _=>null
-                };
+                var reason=OmissionReason(card);
                 if(reason!=null)omissions.Add(new(card.ScopeId,card.Kind,card.Name,reason,card.Range));
             }
         var omittedCards=omissions.Select(o=>o.Range.Start).ToImmutableHashSet();
@@ -47,4 +38,14 @@ public static class OperatingPointSelection
         var prepared=OperatingPointBridge.LowerSelected(syntax,limits,backend,omittedCards);
         return new(prepared,prepared.Success?omissions.ToImmutable():[]);
     }
+    internal static string? OmissionReason(ScopedCard card)=>card.Kind switch
+    {
+        "control"=>"input_control_not_executed",
+        "op"=>"analysis_replaced_by_explicit_op",
+        "ac" or "dc" or "tran"=>"analysis_not_selected",
+        "extension" when Observations.Contains(card.Name)=>"observation_not_selected",
+        "extension" when card.ReportingOptionsOnly=>"reporting_options_not_selected",
+        "extension" when Analyses.Contains(card.Name)=>"analysis_not_selected",
+        _=>null
+    };
 }

@@ -73,13 +73,13 @@ public static class OperatingPointBridge
                 foreach(var card in cards[scope])
                 {
                     if(omittedStarts?.Contains(card.Range.Start)==true)continue;
-                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op"))
+                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind=="vcontrol"))
                         throw new BridgeFailure("unsupported_active_card",card.Range);
                 }
                 foreach(var primitive in primitives[scope])
                 {
                     if(selected&&primitive.RequiresExcitationProfile&&primitive.Excitation==null)throw new BridgeFailure("unsupported_source_profile",primitive.Range);
-                    if(primitive.Family is not ("R" or "V" or "I") && !(selected && primitive.Family is ("C" or "L")))throw new BridgeFailure("unsupported_active_card",primitive.Range);
+                    if(primitive.Family is not ("R" or "V" or "I") && !(selected && primitive.Family is ("C" or "L" or "E" or "G")))throw new BridgeFailure("unsupported_active_card",primitive.Range);
                     if(!names.Add(primitive.Name))throw new BridgeFailure("duplicate_element",primitive.Range);
                     double value;double magnitude=0,phase=0;
                     if(selected&&primitive.Family is ("V" or "I")&&primitive.Excitation is {} excitation)
@@ -104,7 +104,14 @@ public static class OperatingPointBridge
                     // Compact wire identifiers are collision-free and stay within
                     // Rust's byte limits; original spellings remain in provenance.
                     var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                    elements.Add(primitive.Family switch{"R"=>new Resistor(id,p,n,value),"C"=>new Capacitor(id,p,n,value),"L"=>new Inductor(id,p,n,value),"V"=>new Voltage(id,p,n,value),_=>new Current(id,p,n,value)});
+                    if(primitive.Family is "E" or "G")
+                    {
+                        if(primitive.Control==null)throw new BridgeFailure("unsupported_control_profile",primitive.Range);
+                        var cp=Node(primitive.Control.P.Text);var cn=Node(primitive.Control.N.Text);
+                        if(cp==cn)throw new BridgeFailure("shorted_control_profile",primitive.Range);
+                        elements.Add(primitive.Family=="E"?new Vcvs(id,p,n,cp,cn,value):new Vccs(id,p,n,cp,cn,value));
+                    }
+                    else elements.Add(primitive.Family switch{"R"=>new Resistor(id,p,n,value),"C"=>new Capacitor(id,p,n,value),"L"=>new Inductor(id,p,n,value),"V"=>new Voltage(id,p,n,value),_=>new Current(id,p,n,value)});
                     if(selected&&primitive.Family is ("V" or "I"))
                     {
                         // Degree-to-radian multiplication avoids an overflowing

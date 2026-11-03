@@ -1,0 +1,101 @@
+{
+  "base": "a48e1889269cf26e8943edb0cfe0e36184b9f937",
+  "state": "bounded_checkpoint_not_full_corpus_qualification",
+  "utc": "2026-11-03T00:31:47.3631680Z",
+  "source_sha256": {
+    "docs/simulation-bridge.sdoc": "816300cfa07348d5ee0eca9e7d1cdabe07c309540b6a3204a645fe9f655dda6e",
+    "dotnet/Simulator.Client/Requests.cs": "975106b140a930c59f2ade9481af0f68acef8e6b5771ada380145823438da3ff",
+    "dotnet/Simulator.Frontend.Tests/FrontendCorpusIntegration.cs": "6fff715feb4b33afcaa626d78fe1fa05eedbc6be2a9b446286f23e1381e82ae7",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "786937c1610c9ac03b6d786616380b8725890bf202f53393414e8814e7ee412d",
+    "dotnet/Simulator.Frontend/OperatingPointSelection.cs": "92709d11dea358065f9f1b07c53071db36fb57a5a2939deb95a09d054b136f53",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "01247ccd2b1f86723c001d96ec1016c2066f95cf52e02dba25d0151cd39f1e33",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "64aa944818403151a6a49cade9798fa64eae783564cc86e36b15f9d1acae203c",
+    "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "4ac6d5e43b299cb9143cdf470df2ea2cadf9842eae9688c0946f4938c88f637f",
+    "prompt.md": "fd0fe8037465bdbdd93f96fd0ebcf9e0bbc0fe8fd19b5948fa7fc353c1704389",
+    "scripts/Run-FrontendCorpus.cs": "9b588fd5b934d40a3cd1dee30e801e8bc2c13ebc0c8bf874ba01c34283fca077",
+    "docs/runtime-readiness-controls-plan.md": "ff47431873073ea143198c1d8b33b0dc123ad3d1381a952bc02850a3818d0643",
+    "dotnet/Simulator.Frontend.Tests/ControlledSourceTests.cs": "928262832cd4d9895f4144d0dfe7223676973bd47a0806bcb958b6349dc78e37",
+    "dotnet/Simulator.Frontend.Tests/ReadinessTests.cs": "4b17d8877ce572947805448899b6f666fd52097bcf61db6fd0dffd16ee20cf44",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "e8a78bda8259ae5bc5e686408561cfb9febd29d14c1db5c3a4b17203ea0fdfe0"
+  },
+  "frontend": {
+    "skipped": 2,
+    "skip_scope": "AC/fault engine optional integrations not configured",
+    "failed": 0,
+    "passed": 83
+  },
+  "syntax": {
+    "skipped": 1,
+    "failed": 0,
+    "unavailable": "Symlink test: exFAT unsupported; NTFS retry lacked Windows privilege. Two prior failed attempts retained locally.",
+    "passed": 406
+  },
+  "strictdoc": {
+    "ids": 334,
+    "documents": 21,
+    "parents": 322
+  },
+  "benchmark": {
+    "iterations": 5,
+    "cases": 5,
+    "limits": "Debug Rust; process-level timings; memory unavailable; no release speed ranking",
+    "warmups": 1,
+    "sha256": "aaf5e97ac1ddb27a1956d9113b14359dfe0224dbbe4e2ae403f9a897bd6e9e67",
+    "status": "passed"
+  },
+  "coverage": [
+    {
+      "run": "frontend",
+      "assembly": "Simulator.Client",
+      "line_percent": 0.12,
+      "branch_percent": 0.0,
+      "raw_sha256": "09a535244d77bbda0ddfb9c9770624feb0247f7b6812faea46037f95752f2e87"
+    },
+    {
+      "run": "frontend",
+      "assembly": "Simulator.Syntax",
+      "line_percent": 60.4,
+      "branch_percent": 48.36,
+      "raw_sha256": "09a535244d77bbda0ddfb9c9770624feb0247f7b6812faea46037f95752f2e87"
+    },
+    {
+      "run": "frontend",
+      "assembly": "Simulator.Frontend",
+      "line_percent": 96.03,
+      "branch_percent": 81.38,
+      "raw_sha256": "09a535244d77bbda0ddfb9c9770624feb0247f7b6812faea46037f95752f2e87"
+    },
+    {
+      "run": "syntax",
+      "assembly": "Simulator.Syntax",
+      "line_percent": 73.22,
+      "branch_percent": 75.55,
+      "raw_sha256": "cebcbcbf717a5f8c34f332ea68bd466435ec2ed9b960fdcfedafff8136efa8e7"
+    }
+  ],
+  "coverage_limits": [
+    "Separate test scopes, not comparable aggregate project coverage.",
+    "Raw package metrics include generated parser and Client serialization code.",
+    "Coverlet may omit captured local functions/callbacks; reported denominator is incomplete.",
+    "New Vcvs/Vccs DTO class line rate 100%; no instrumented branch points; native fixture serialization exercised.",
+    "Coordinator/native Rust coverage unmeasured."
+  ],
+  "review": {
+    "mode": "Independent agent static review",
+    "followups": [
+      "Model observations lack instance paths",
+      "Dedicated graph/observation bound tests",
+      "More structural duplicate diagnostics"
+    ],
+    "blocking_findings": 0
+  },
+  "pending": [
+    "Full corpus rerun",
+    "Controlled-source complex AC qualification",
+    "Recurring SpiceSharp third reference",
+    "Bug883 switch runtime",
+    "Sphinx regeneration",
+    "New mutation/long fuzz/soak"
+  ],
+  "raw_artifacts": "E:\\Artifacts\\Spice-runtime-audit-20261102T225216Z"
+}

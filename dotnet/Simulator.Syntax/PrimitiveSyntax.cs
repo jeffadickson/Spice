@@ -9,7 +9,11 @@ public sealed record PrimitiveSyntax(string Name,string Family,int ScopeId,Sourc
     public SourceExcitationSyntax? Excitation { get; init; }
     /// <summary>A leading reserved DC/AC token must satisfy the bounded clause grammar rather than become a same-named scalar parameter.</summary>
     public bool RequiresExcitationProfile { get; init; }
+    /// <summary>Typed differential control terminals for a qualified linear E/G source.</summary>
+    public VoltageControlSyntax? Control { get; init; }
 }
+/// <summary>Control voltage is V(P)-V(N); output polarity remains the primitive P-to-N convention.</summary>
+public sealed record VoltageControlSyntax(SourceSyntax P,SourceSyntax N);
 /// <summary>Unevaluated SI DC and AC amplitude/degree-phase fields. A null DC field in an AC-only header denotes the specified zero DC default.</summary>
 public sealed record SourceExcitationSyntax(SourceSyntax? Dc,SourceSyntax? AcMagnitude,SourceSyntax? AcPhase);
 /// <summary>Every generated statement's lexical owner, for explicit active-capability checks.</summary>
@@ -27,6 +31,22 @@ internal static class PrimitiveExtraction
         SpiceParser.TwoNodesContext nodes;SpiceParser.ParameterContext[] parameters;
         if(card is SpiceParser.PassiveContext passive){nodes=passive.twoNodes();parameters=passive.parameter();}
         else if(card is SpiceParser.SourceContext source){nodes=source.twoNodes();parameters=source.parameter();}
+        else if(card is SpiceParser.VcontrolContext control)
+        {
+            nodes=control.twoNodes();
+            var parser=SourceProfileExtraction.CreateParser(control.parameter());
+            try
+            {
+                if(control.tableTail()==null&&parser!=null)
+                {
+                    var profile=parser.linearControlProfile();
+                    return new(card.Start.Text,card.Start.Text[..1].ToUpperInvariant(),scope,capture(nodes.node(0)),capture(nodes.node(1)),capture(profile.value()),true,capture(card).Range)
+                    {Control=new(capture(profile.twoNodes().node(0)),capture(profile.twoNodes().node(1)))};
+                }
+            }
+            catch(Antlr4.Runtime.Misc.ParseCanceledException){ }
+            return new(card.Start.Text,card.Start.Text[..1].ToUpperInvariant(),scope,capture(nodes.node(0)),capture(nodes.node(1)),null,false,capture(card).Range);
+        }
         else return null;
         var family=card.Start.Text[..1].ToUpperInvariant();
         // The general grammar represents "DC -2" as arithmetic (DC minus 2).

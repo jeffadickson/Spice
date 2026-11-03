@@ -1,3 +1,16 @@
+## November 2 runtime readiness checkpoint
+
+Pending full corpus rerun: linear E/G generated metadata now lowers through the
+public Vcvs/Vccs wire types; CircuitReadiness reports multiple known structural
+blockers with explicit incomplete/truncated/nonexhaustive flags. Read
+`docs/runtime-readiness-controls-plan.md` and
+`evidence/runtime-readiness-checkpoint.json` before claiming corpus growth.
+Last completed corpus counts remain35 DC solves/34 native matches/7 selected AC.
+Next: full corpus readiness census, controlled-source AC comparisons, model
+families; bug883 PSpice VSWITCH is an important named end-to-end milestone.
+SpiceSharp third-reference recurring integration remains pending. Preserve main's
+unrelated sheet-resistor WIP. No new soak has been started by this checkpoint.
+
 # Current continuation — November 2 corpus runtime priority
 
 User priority: make more corpus files simulate; do not substitute mutation-score

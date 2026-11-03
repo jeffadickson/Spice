@@ -15,6 +15,8 @@ source: SOURCE_NAME twoNodes parameter*;
 sourceProfile: dcExcitation acExcitation? EOF | acExcitation dcExcitation? EOF | value EOF;
 dcExcitation: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase)}? identifier EQUAL? value;
 acExcitation: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier value value?;
+// Typed linear E/G tail; TABLE/POLY/behavioral headers remain outside this entry.
+linearControlProfile: twoNodes value EOF;
 diode: DIODE_NAME twoNodes referenceName parameter*;
 bjt: BJT_NAME (threeNodes | fourNodes | fiveNodes) referenceName parameter*;
 mos: MOS_NAME (threeNodes | fourNodes | fiveNodes | sixNodes | sevenNodes) referenceName parameter*;
