@@ -1,0 +1,36 @@
+[DOCUMENT]
+TITLE: Bounded analog XSPICE gain preparation
+
+[TEXT]
+STATEMENT: >>>
+Independent measured subset, November 2 2026. This document specifies generated metadata and affine gain preparation. OperatingPointBridge integration belongs to the parent simulation worktree. No generic XSPICE kernel, digital scheduling, behavioral expression runtime or complete corpus execution closure is claimed.
+<<<
+
+[REQUIREMENT]
+UID: SEM-XSPICE-GAIN-001
+STATUS: Draft
+TITLE: Prepare exact scalar voltage gain relations
+STATEMENT: >>>
+The generated frontend shall retain A-card lexical scope and ordered ports and prepare the ngspice gain relation V(outP)-V(outN)=gain*(V(inP)-V(inN)+in_offset)+out_offset for exactly two noninverted scalar voltage ports. Default parameters shall be in_offset=0, gain=1, out_offset=0. Model parameters shall use retained lexical environments and finite scalar evaluation. Default voltage, explicit %v and explicit %vd terminals shall preserve polarity and source locations.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Syntax/XspiceSyntax.cs, DeclarationExtraction.cs, DeclarationCatalog.cs; dotnet/Simulator.Frontend/XspiceGainLowering.cs.
+Verification: XspiceGainTests covers defaults, explicit and differential ports, lexical scope, engineering values and FsCheck affine algebra. XspiceGainOracleIntegration uses original A/model decks against existing typed VCVS/constant-source requests in DC, AC and ramp transient. The nonzero-reference differential transient case exposes an existing native sparse residual failure and remains unresolved in this branch. Evidence: evidence/behavior-xspice-gain.json, docs/behavior-xspice-gain-results.md. Draft status does not imply full solver capability closure.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: SEM-XSPICE-REFUSAL-001
+STATUS: Draft
+TITLE: Refuse unsupported code-model semantics atomically
+STATEMENT: >>>
+Gain preparation shall return no prepared relation when model binding is ambiguous, deferred or missing, parameters are unknown, duplicated, opaque, nonfinite or non-scalar, or ports require vectors, inversion, current sensing, digital state or user-defined types. No unsupported term shall be silently ignored or approximated.
+<<<
+COMMENT: >>>
+Implementation: XspiceExtraction retains unsupported ports with null typed terminals; XspiceGainLowering returns structured source-located diagnostics. Verification: XspiceGainTests fixed negative/malformed cases and parameter-evaluator refusal propagation. Summer's vector parameters and every other code-model family remain outside this implementation. Native comparisons qualify named profiles only.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
