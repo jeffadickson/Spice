@@ -14,24 +14,24 @@ global build-cache redirection, or migration of existing artifacts.
 
 ## Rust survivor checkpoint
 
-- [ ] Map historical sites onto current source before changing behavior.
-- [ ] Challenge artifact run-ID length at128/129/130; fixed Gmin at and beyond1S;
+- [x] Map historical sites onto current source before changing behavior.
+- [x] Challenge artifact run-ID length at128/129/130; fixed Gmin at and beyond1S;
       and switch current reconstruction with independently calculated nonzero
       differential controls at nonzero common-mode voltage.
-- [ ] Demonstrate each exact mutant fails meaningful assertions; retain a green
+- [x] Demonstrate each exact mutant fails meaningful assertions; retain a green
       baseline, reproducible property seeds and relevant scoped coverage.
-- [ ] Add stable StrictDoc contracts/evidence and commit a coherent checkpoint.
+- [x] Add stable StrictDoc contracts/evidence and commit a coherent checkpoint.
 
 ## Windows path checkpoint
 
-- [ ] Reproduce fixture child-launch failure under a deep logical source alias.
-- [ ] Select and validate a short physical work root, including ancestor junction
+- [x] Reproduce fixture child-launch failure under a deep logical source alias.
+- [x] Select and validate a short physical work root, including ancestor junction
       resolution, with fresh run children and preserved tool/source provenance.
-- [ ] Keep canonical lock behavior and launcher deadline semantics unchanged.
-- [ ] Verify invalid/deep roots fail clearly, and actual baseline fixture child
+- [x] Keep canonical lock behavior and launcher deadline semantics unchanged.
+- [x] Verify invalid/deep roots fail clearly, and actual baseline fixture child
       launch plus a bounded Stryker mutation run succeed through the corrected
       route. No zero-candidate baseline failure counts as mutation qualification.
-- [ ] Add stable StrictDoc contracts, setup instructions and measured limitations;
+- [x] Add stable StrictDoc contracts, setup instructions and measured limitations;
       commit the independently reviewable checkpoint.
 
 ## Integration checkpoint
@@ -48,3 +48,20 @@ The failed3h14m campaign is not repaired retroactively. Its22killed/3surviving/
 7invalid/220unattempted Rust counts, zero Stryker candidates and zero property
 batches remain historical. Whole-product mutation closure, Linux equivalence,
 seven-hour completion and production qualification are outside this recovery claim.
+
+## Failure discovered by the clean property preflight
+
+The first clean eight-minute preflight failed after236.701seconds, three completed
+batches and6912 completed requested cases. The fourth batch's pending seed is
+3401923026981217896. The minimized reversed switch divider hits the Newton limit
+on both CPU providers. The original failed result remains in issue31 and
+evidence/overnight-recovery-preflight-20261103.json; it is not a passing campaign.
+
+- [x] Preserve the failed run, exact seed, minimized replay and independent
+      analytical divider result before changing numerical behavior.
+- [ ] Separate physically scaled globalization merit from unchanged strict final
+      residual/update tolerances; freeze row weights within each line search.
+- [ ] Retain extreme IEEE, malformed/scaling, continuation and physical-audit
+      regressions; replay the original failure seed and relevant mutations.
+- [ ] Review the numerical change, rerun full relevant regressions and a fresh
+      changing-seed preflight, and publish its actual outcome separately.
