@@ -3,6 +3,8 @@
 Goal: execute substantially more original circuits and their requested analyses
 with independent numerical evidence. The approved scope is all five areas below;
 finishing one bounded slice does not close the whole semiconductor/XSPICE scope.
+The checkpoint status below records the implemented subsets as of `f64edbd`.
+Unchecked broad items remain open; they are not acceptance claims for all samples.
 Architecture: preserve the generated ANTLR frontend, typed immutable public API,
 Rust numerical core and qualified CPU providers. Reuse existing stamps/models and
 maintained libraries after concrete license/behavior assessment; no production
@@ -10,9 +12,9 @@ legacy runtime or silent SpiceSharp migration. PowerShell/C#/F# orchestration,
 StrictDoc, bounded parallel builds, E: bulk outputs and no CI dispatch.
 
 ## 1. Common preparation semantics
-- [ ] Expose existing F/H stamps via typed generated control references, resolving
+- [x] Expose existing F/H stamps via typed generated control references, resolving
   forward names within each instance; reject nonbranch/missing controllers atomically.
-- [ ] Bind active .global declarations across frames. Verify precedence and unused
+- [x] Bind active .global declarations across frames. Verify precedence and unused
   declarations against ngspice before deciding alias semantics.
 - [ ] Inspect actual refused expressions/source forms, passive variants and30
   resource failures. Preserve main's unrelated sheet-resistor WIP; don't recreate it.
@@ -20,10 +22,10 @@ StrictDoc, bounded parallel builds, E: bulk outputs and no CI dispatch.
   checks and fresh original928 inventory execution. Record blocker overlap.
 
 ## 2. Semiconductor contracts
-- [ ] Record reuse assessment and representative executable POC. Thevenin kernels
+- [x] Record reuse assessment and representative executable POC. Thevenin kernels
   compile but license notice gaps and charge derivative omissions prevent automatic
   production adoption; inspect exact MIT SpiceSharp source for equation-port reuse.
-- [ ] Implement genuine nonlinear diode depletion/diffusion Q, bias-dependent AC C,
+- [x] Implement genuine nonlinear diode depletion/diffusion Q, bias-dependent AC C,
   BE accepted-charge differences and rollback, with explicit parameter contracts.
 - [ ] Add BJT and explicitly named MOS levels with DC, AC derivatives and real
   transient charge/state semantics. Do not count a zero-charge toy as broad parity.
@@ -35,11 +37,11 @@ StrictDoc, bounded parallel builds, E: bulk outputs and no CI dispatch.
   units, source locations and repeated-analysis IDs; execute via public client.
 - [ ] Match requested start/stop/step/defaults and initial conditions explicitly.
   Fresh OP per DC point is an initial named strategy, not hysteresis parity.
-- [ ] Record native grid anomalies as discrepancies, not silent substitutions.
-- [ ] Extend census to separate parses, prepares, requested execution and agreement.
+- [x] Record native grid anomalies as discrepancies, not silent substitutions.
+- [x] Extend census to separate parses, prepares, requested execution and agreement.
 
 ## 4. Behavioral/XSPICE subsets
-- [ ] Generated typed voltage ports and genuine affine gain model: reuse VCVS and
+- [x] Generated typed voltage ports and genuine affine gain model: reuse VCVS and
   an offset source, with zero AC excitation for a constant synthetic bias.
 - [ ] Extend measured analog/behavioral subsets through existing generated AST;
   no ad hoc token scanner, ignored model parameters or invented digital dynamics.
@@ -59,3 +61,35 @@ Execution uses separate worktrees for independent requested-analysis and model
 work, with integration/review gates at shared interfaces. The fixed8ecc0ab
 11pm soak remains pinned until a later source is independently verified; it does
 not qualify new work merely because main advances. Raw artifacts remain local.
+
+## Implemented bounded slices and remaining work
+
+1. **Preparation:** generated F/H binding, active globals, deterministic numeric
+   functions, AM/SFFM sources, constant/sheet resistor preparation and include
+   fragment terminators have native evidence. User-defined functions, additional
+   passive/source dialects, external resources and non-UTF-8 inputs remain gaps.
+   See `common-preparation.sdoc`, `modulated-sources.sdoc`,
+   `fragment-terminators.sdoc` and `resistor-model.sdoc`.
+2. **Models:** real junction charge, bounded NPN/PNP Ebers–Moll storage and
+   explicitly named MOS LEVEL1 with overlap/body-junction charge are connected to
+   DC, complex AC and backward-Euler transient execution. General Gummel–Poon,
+   MOS intrinsic/Meyer charge, higher MOS levels and temperature/noise parameter
+   families remain unsupported. Parameter refusals are deliberate contracts.
+3. **Analyses:** original OP/DC/AC/TRAN grids, repeated direct commands, bounded
+   literal control commands, initial-condition preparation and transient start
+   windows execute through the public client. Arbitrary control programs,
+   nonlinear device IC/UIC and native hysteresis/continuation history are open.
+4. **Behavioral/XSPICE:** affine voltage/current B sources, scalar analog gain
+   and bounded analog summers execute through the real preparation path. Event
+   simulation, digital models and nonlinear/time/current-referenced expressions
+   are separate unimplemented projects.
+5. **Convergence:** charged diode and composite NPN/PNP recovery and impossible
+   bias refusals are tested with LU/faer. Coarse-step failure, finer recovery and
+   unregularized final solutions are retained. This is finite scenario evidence;
+   universal convergence and production qualification remain open.
+
+The full original requested-analysis census and its targeted identity replay are
+in `requested-corpus-20261103.md`. Their denominators differ from earlier selected
+OP probes. `gain-grid-diagnosis.md` explains interpolation failures;
+`stop-grid-poc.md` is supplemental stateless evidence, not a replacement comparator
+or closure of the primary failed results. Raw artifacts remain on E:.
