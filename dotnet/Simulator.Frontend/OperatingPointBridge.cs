@@ -7,7 +7,11 @@ public sealed record BridgeLimits(int MaxDepth=32,int MaxInstances=128,int MaxEl
 /// <summary>Capability/validation failure; ranges refer to the supplied syntax text.</summary>
 public sealed record BridgeDiagnostic(string Code,SourceRange? Range);
 /// <summary>Physical syntax and instance path for one uniquely named wire element.</summary>
-public sealed record ElementOrigin(string WireId,string LocalName,ImmutableArray<string> InstancePath,SourceRange Range);
+public sealed record ElementOrigin(string WireId,string LocalName,ImmutableArray<string> InstancePath,SourceRange Range)
+{
+    /// <summary>Original native branch identity, when a physical V/L/E/H or admitted voltage-output model has a directly comparable branch. Synthetic decomposition branches have no native identity.</summary>
+    public string? NativeBranchName {get;init;}
+}
 /// <summary>Atomic typed request preparation; this operation does not run a simulator.</summary>
 public sealed record BridgeResult(SimulationRequest? Request,ImmutableDictionary<string,string> RootNodes,ImmutableArray<ElementOrigin> Origins,ImmutableArray<BridgeDiagnostic> Diagnostics)
 {
@@ -158,7 +162,7 @@ public static class OperatingPointBridge
                         acSources.Add(new(id,magnitude*Math.Cos(radians),magnitude*Math.Sin(radians)));
                     }
                     if(waveformSyntax!=null)sourceWaveforms.Add(new(id,waveformSyntax.Kind,waveformValues,primitive.Range));
-                    origins.Add(new(id,primitive.Name,path,primitive.Range));
+                    origins.Add(new(id,primitive.Name,path,primitive.Range){NativeBranchName=primitive.Family is "V" or "L" or "E" or "H"?primitive.Name:null});
                 }
                 foreach(var instance in catalog.XspiceInstances.Where(i=>i.ScopeId==scope))
                 {
@@ -171,7 +175,7 @@ public static class OperatingPointBridge
                     if(elements.Count+(gain.Offset==0?1:2)>limits.MaxElements)throw new BridgeFailure("element_budget",gain.Range);
                     var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);var mid=n;
                     if(gain.Offset!=0){if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",gain.Range);mid=nodes.Count;nodes.Add("n"+mid.ToString(System.Globalization.CultureInfo.InvariantCulture));}
-                    elements.Add(new Vcvs(id,p,mid,cp,cn,gain.Gain));origins.Add(new(id,gain.Name,path,gain.Range));
+                    elements.Add(new Vcvs(id,p,mid,cp,cn,gain.Gain));origins.Add(new(id,gain.Name,path,gain.Range){NativeBranchName=gain.Name});
                     if(gain.Offset!=0){
                         var offsetId="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
                         elements.Add(new Voltage(offsetId,mid,n,gain.Offset));origins.Add(new(offsetId,gain.Name+"$offset",path,gain.Range));
@@ -199,13 +203,14 @@ public static class OperatingPointBridge
                             elements.Add(new Vcvs(id,previous,next,control,0,term.Coefficient));previous=next;
                         }
                         else elements.Add(new Vccs(id,p,n,control,0,term.Coefficient));
-                        origins.Add(new(id,termIndex++==0?source.Name:source.Name+"$term"+termIndex,path,source.Range));
+                        var original=termIndex++==0;
+                        origins.Add(new(id,original?source.Name:source.Name+"$term"+termIndex,path,source.Range){NativeBranchName=original&&source.Quantity==BehavioralQuantity.Voltage?source.Name:null});
                     }
                     // A constant contributes DC bias only. Explicit zero AC
                     // prevents the independent-source default from exciting it.
                     var offsetId="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
                     elements.Add(source.Quantity==BehavioralQuantity.Voltage?new Voltage(offsetId,previous,n,source.Offset):new Current(offsetId,p,n,source.Offset));
-                    origins.Add(new(offsetId,termIndex==0?source.Name:source.Name+"$offset",path,source.Range));acSources.Add(new(offsetId,0,0));
+                    origins.Add(new(offsetId,termIndex==0?source.Name:source.Name+"$offset",path,source.Range){NativeBranchName=termIndex==0&&source.Quantity==BehavioralQuantity.Voltage?source.Name:null});acSources.Add(new(offsetId,0,0));
                 }
                 double Evaluate(SourceSyntax valueSyntax)
                 {

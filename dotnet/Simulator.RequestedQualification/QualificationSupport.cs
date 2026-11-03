@@ -117,12 +117,12 @@ public static class RequestedComparison
    }else throw new InvalidDataException("unsupported_comparison_analysis");
    var mappings=new List<(string Engine,string Native,string Unit)>();var gaps=ImmutableArray.CreateBuilder<string>();
    foreach(var node in circuit.RootNodes.OrderBy(n=>n.Key,StringComparer.OrdinalIgnoreCase))mappings.Add(("v("+node.Value+")","v("+node.Key+")","V"));
-   foreach(var origin in circuit.Origins.Where(o=>o.InstancePath.IsEmpty)){
+   foreach(var origin in circuit.Origins.Where(o=>o.InstancePath.IsEmpty&&o.NativeBranchName!=null)){
     var element=circuit.Request!.Circuit.Elements.Single(e=>e.Id==origin.WireId);
-    if(element is Voltage or Inductor or Vcvs||element.GetType().Name=="Ccvs"){
-     var name="i("+origin.LocalName+")";var alternate=origin.LocalName+"#branch";
+    if(element is Voltage or Inductor or Vcvs or Ccvs){
+     var name="i("+origin.NativeBranchName+")";var alternate=origin.NativeBranchName+"#branch";
      mappings.Add(("i("+origin.WireId+")",native.Variables.Any(v=>v.Name.Equals(name,StringComparison.OrdinalIgnoreCase))?name:alternate,"A"));
-    }
+    }else gaps.Add("invalid_native_branch_metadata:"+origin.WireId);
    }
    var comparisons=ImmutableArray.CreateBuilder<ObservableComparison>();
    foreach(var mapping in mappings){

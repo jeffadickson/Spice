@@ -1,0 +1,32 @@
+{
+  "source_hashes": {
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "d132bc7b97cfeabb0147fac1e0603dc8f8c981eecbcea5e408307e42965fb6d8",
+    "dotnet/Simulator.RequestedQualification/QualificationSupport.cs": "9882940f3f8743d54ff7fb6205d105ac11c2481357a1ec5849dfaff2a3bb1c3f",
+    "dotnet/Simulator.Frontend.Tests/RequestedOriginalObservableTests.cs": "b315f7a5d14d4998da7b736d4c33a17e065ecc6586b85553751afb7201c4a241",
+    "docs/original-observables.sdoc": "1dbb028e7cb04c6067fdc316801eaff53659314e96be39ad74c3a452f84c3f33"
+  },
+  "regressions": {
+    "skipped": 0,
+    "failed": 0,
+    "red": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/original-observable-red.log",
+    "green": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/original-observable-green.log",
+    "passed": 7
+  },
+  "status": "original_identity_regressions_passed",
+  "integrated": {
+    "skipped": 9,
+    "failed": 0,
+    "passed": 310,
+    "log": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/ic-observable-integrated.log",
+    "total": 319
+  },
+  "coverage": {
+    "report": "E:\\Artifacts\\Spice-compatibility-20261103T043926Z/ic-observable-integrated-coverage/501535fb-4888-4d92-9985-cebd9c3f9905/coverage.cobertura.xml",
+    "limitations": "Captured core bridge functions omitted by Coverlet; outer100% does not measure all lowering. No new mutation campaign for this mapping fix; two independently built current/identity counterexamples and DC binding regressions ran."
+  },
+  "limitations": [
+    "Frozen62ae97d corpus retains original false gaps; no historical outcomes rewritten.",
+    "Only declared root branch-current mappings are covered; diode/BJT/MOS terminal-current mappings need separate native observation contracts.",
+    "Fresh Linux and nine external integration prerequisites unavailable."
+  ]
+}

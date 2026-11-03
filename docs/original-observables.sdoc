@@ -1,0 +1,16 @@
+[DOCUMENT]
+TITLE: Original Native Observable Identity
+
+[REQUIREMENT]
+UID: FRONTEND-ORIGINAL-OBSERVABLES-001
+STATUS: Draft
+TITLE: Separate physical branch identity from decomposition labels
+STATEMENT: >>>
+Native numerical qualification shall compare only explicitly identified original branch currents. A decomposition element's diagnostic label shall not imply a native device identity. Auxiliary bias sources and series-control terms shall not introduce invented native observable names. Legitimate original names containing strings also used in generated diagnostic suffixes shall remain comparable. Unsupported model-current mappings shall remain outside the declared mapping scope rather than be replaced by zero.
+<<<
+COMMENT: >>>
+Implementation: ElementOrigin.NativeBranchName is populated for original V/L/E/H branches and the original branch of admitted voltage-output gain/B models. Auxiliary origins have no native branch name. RequestedComparison consumes this typed metadata and checks the branch element type. Verification: RequestedOriginalObservableTests first reproduced false gaps for A1$offset and a real colliding original A1$offset whose current differs; both now compare the independent physical currents with no invented column. RequestedDcSourceBindingTests separately constrains sweep eligibility to original V/I syntax and physical ranges. Frozen 62ae97d census results retain their original false observable gaps; they are not rewritten as fresh passes.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-CORPUS-001
