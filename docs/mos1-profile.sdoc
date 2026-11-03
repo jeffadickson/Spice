@@ -1,0 +1,46 @@
+[DOCUMENT]
+TITLE: Bounded MOS LEVEL=1 semiconductor profile
+
+[REQUIREMENT]
+UID: SEMI-MOS1-CURRENT-001
+STATUS: Draft
+TITLE: Explicit bounded Shichman-Hodges channel
+STATEMENT: >>>
+The native engine shall evaluate MOS LEVEL=1 cutoff, linear and saturation drain-to-source current with source/drain reversal, NMOS/PMOS polarity, threshold, effective beta, GAMMA/PHI body effect and LAMBDA channel-length modulation. Effective parameters and all terminals shall be validated. With nonzero GAMMA, positive effective body bias shall explicitly refuse until the forward continuation is qualified. The generated model shall require explicit positive L and W, and shall refuse unsupported model levels, parameters, temperature and geometry rather than silently omit their effects.
+<<<
+COMMENT: >>>
+Implementation: src/mos1.rs, circuit/compile/Newton, Mos1Preparation. Verification: tests/mos1_channel.rs analytical currents, modes, polarity, malformed values and seeded properties; Mos1Tests and actual typed-client Mos1NativeOracleIntegration. This is a bounded model profile, not general LEVEL=1 compatibility.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-MOS1-JACOBIAN-001
+STATUS: Draft
+TITLE: Four-terminal channel derivatives
+STATEMENT: >>>
+The MOS channel shall supply analytic drain, gate, source and bulk derivatives to DC Newton and complex AC. Derivatives shall conserve terminal current and common-mode invariance and shall be checked against independent finite differences in all supported regions and polarities. Channel observables shall exclude explicitly composed displacement current; generated outer drain senses shall expose total drain current.
+<<<
+COMMENT: >>>
+Implementation: Mos1Model::linearize, newton channel stamping, API i_channel; existing branch i(M) mapping. Verification: deterministic and seeded 128-case derivative properties and independent ngspice complex AC voltage/current comparisons. Independent AC physical audit remains NotChecked when bias is unavailable.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-MOS1-BODY-Q-001
+STATUS: Draft
+TITLE: Physical MOS body-junction storage
+STATEMENT: >>>
+The generated bounded MOS1 model shall compose signed bulk-drain and bulk-source junction conduction and genuine nonlinear depletion storage using IS, CBD/CBS, PB, MJ and FC at TNOM=27. Backward Euler shall use accepted Q history and AC shall use the full nonlinear derivative. Shorted body-junction terminals may be omitted because their differential voltage, net current and charge contribution are identically zero. Nonlinear stored-energy qualification shall remain explicit NotChecked.
+<<<
+COMMENT: >>>
+Reuse: qualified SpiceDiodeModel Q and existing accepted-step history. Verification: generated independent native reference circuits include nonzero CBD/CBS and nonzero source impedance, both polarities/providers, DC/AC/BE.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-MOS1-OVERLAP-Q-001
+STATUS: Draft
+TITLE: Gate overlap storage without false intrinsic parity
+STATEMENT: >>>
+The generated bounded MOS1 model shall stamp gate-source CGSO times W, gate-drain CGDO times W and gate-bulk CGBO times L as explicit overlap capacitances. Derived capacitances shall be finite and preserve nonzero input terms. Absent or zero TOX is supported; nonzero TOX shall explicitly refuse because intrinsic Meyer charge is unimplemented. Overlap capacitance shall never be described as intrinsic or complete MOS gate-charge parity.
+<<<
+COMMENT: >>>
+Source evidence: exact SpiceSharp 3.2.3 model/common parameters and dynamic behavior, and ngspice mos1temp.c disabling oxideCapFactor when TOX absent or zero. Verification: typed binder and nonzero-overlap complex AC/BE native oracle. General intrinsic charge, area/sidewall junction terms, mobility-derived KP and higher MOS levels remain open.
+<<<

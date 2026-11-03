@@ -28,6 +28,18 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
         let (p, n) = element.terminals();
         let v = voltage(p) - voltage(n);
         let current = match element {
+            Element::Mos1Channel {
+                p,
+                n,
+                gate,
+                bulk,
+                model,
+                ..
+            } => {
+                model
+                    .linearize([*p, *gate, *n, *bulk].map(voltage))?
+                    .current_amps
+            }
             Element::JunctionStorage { .. } => 0.,
             Element::SpiceDiode { model, .. } => model.linearize(v)?.current_amps,
             Element::PspiceSwitch {

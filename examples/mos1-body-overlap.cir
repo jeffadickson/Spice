@@ -1,0 +1,12 @@
+Bounded MOS1 current, body and overlap storage
+VDRV input 0 DC 1.5 AC 1
+VCC supply 0 DC 1 AC 0
+RG input gate 1k
+RD supply drain 1k
+RS source 0 100
+M1 drain gate source 0 model1 L=1u W=10u
+.model model1 NMOS(LEVEL=1 VTO=.7 KP=20u GAMMA=.4 PHI=.6 LAMBDA=.03 IS=1e-14 CBD=2p CBS=3p PB=.8 MJ=.5 FC=.5 CGSO=2e-7 CGDO=3e-7 CGBO=1e-6 TNOM=27)
+.op
+.ac lin 1 10Meg 10Meg
+.print v(gate) v(drain) i(M1)
+.end

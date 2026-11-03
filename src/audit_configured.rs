@@ -90,7 +90,7 @@ pub fn configured_step(
     if circuit.elements.iter().any(|e| {
         matches!(
             e,
-            Element::Diode { .. }
+            Element::Mos1Channel { .. } | Element::Diode { .. }
                 | Element::DiodeWithCapacitance { .. }
                 | Element::SpiceDiode { .. }
                 | Element::JunctionStorage { .. }

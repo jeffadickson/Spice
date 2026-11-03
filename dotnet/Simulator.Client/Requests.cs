@@ -29,6 +29,7 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(DiodeWithCapacitance), "diode_with_capacitance")]
 [JsonDerivedType(typeof(SpiceDiode), "spice_diode")]
 [JsonDerivedType(typeof(JunctionStorage), "junction_storage")]
+[JsonDerivedType(typeof(Mos1Channel), "mos1_channel")]
 public abstract record Element(string Id, int P, int N);
 /// <summary>Positive resistance in ohms; validated by the engine before assembly.</summary>
 public sealed record Resistor(string Id, int P, int N, double Ohms) : Element(Id, P, N);
@@ -184,3 +185,9 @@ public static class WireFormat
         TypeInfoResolver=WireContext.Default
     };
 }
+
+/// <summary>Effective MOS1 SI channel parameters at the nominal temperature; beta includes W/L.</summary>
+public sealed record Mos1Model(bool PChannel,double ThresholdVolts,double BetaAmpsPerVoltSquared,
+    double BodyEffectSqrtVolts,double SurfacePotentialVolts,double ChannelLengthModulationPerVolt);
+/// <summary>Drain P to source N channel only. Gate and Bulk are controls; charge is explicit topology.</summary>
+public sealed record Mos1Channel(string Id,int P,int N,int Gate,int Bulk,Mos1Model Model):Element(Id,P,N);

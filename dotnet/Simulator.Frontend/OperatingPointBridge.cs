@@ -97,7 +97,7 @@ public static class OperatingPointBridge
                 {
                     if(omittedStarts?.Contains(card.Range.Start)==true)continue;
                     if(selected&&card.GlobalNodes!=null)continue;
-                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice" or "diode" or "behavior" or "bjt")))
+                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice" or "diode" or "behavior" or "bjt" or "mos")))
                         throw new BridgeFailure("unsupported_active_card",card.Range);
                 }
                 var frameIds=new Dictionary<string,(string Id,string Family)>(StringComparer.OrdinalIgnoreCase);
@@ -245,6 +245,14 @@ public static class OperatingPointBridge
                 foreach(var call in bound[scope])
                 {
                     if(!names.Add(call.Header.Name))throw new BridgeFailure("duplicate_element",call.Header.Range);
+                    if(selected&&call.Header.Family=="M")
+                    {
+                        if(!Mos1Preparation.TryPrepare(catalog,environment,call,out var mos,out var error))throw new BridgeFailure(error!.Code,error.Range);
+                        var d=Node(call.Ports[0].Actual.Text);var g=Node(call.Ports[1].Actual.Text);var source=Node(call.Ports[2].Actual.Text);var b=Node(call.Ports[3].Actual.Text);
+                        var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        mos!.Append(id,d,g,source,b,PrivateNode,element=>{if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);elements.Add(element);});
+                        origins.Add(new(id,call.Header.Name,path,call.Header.Range));continue;
+                    }
                     if(selected&&call.Header.Family=="Q")
                     {
                         if(!BjtPreparation.TryPrepare(catalog,environment,call,out var bjt,out var error))throw new BridgeFailure(error!.Code,error.Range);

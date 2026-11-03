@@ -8,6 +8,15 @@ use std::collections::BTreeSet;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Element {
+    /// Current-only four-terminal MOS1 channel; body and overlap storage are explicit companions.
+    Mos1Channel {
+        id: String,
+        p: NodeId,
+        n: NodeId,
+        gate: NodeId,
+        bulk: NodeId,
+        model: crate::mos1::Mos1Model,
+    },
     /// Charge-only junction companion. Transport IS is a Q scale and contributes
     /// no conduction F; sense branches can therefore exclude displacement.
     JunctionStorage {
@@ -120,7 +129,8 @@ pub enum Element {
 impl Element {
     pub fn id(&self) -> &str {
         match self {
-            Self::Resistor { id, .. }
+            Self::Mos1Channel { id, .. }
+            | Self::Resistor { id, .. }
             | Self::JunctionStorage { id, .. }
             | Self::SpiceDiode { id, .. }
             | Self::Capacitor { id, .. }
@@ -138,7 +148,8 @@ impl Element {
     }
     pub fn terminals(&self) -> (NodeId, NodeId) {
         match self {
-            Self::Resistor { p, n, .. }
+            Self::Mos1Channel { p, n, .. }
+            | Self::Resistor { p, n, .. }
             | Self::JunctionStorage { p, n, .. }
             | Self::SpiceDiode { p, n, .. }
             | Self::Capacitor { p, n, .. }
@@ -217,6 +228,14 @@ impl Circuit {
                 .validate()?;
             }
             match e {
+                Element::Mos1Channel {
+                    gate, bulk, model, ..
+                } => {
+                    if gate.0 >= self.nodes.len() || bulk.0 >= self.nodes.len() {
+                        return Err(SimError::invalid("invalid MOS1 gate/bulk terminal"));
+                    }
+                    model.validate()?;
+                }
                 Element::Vccs {
                     cp, cn, siemens, ..
                 } if cp == cn

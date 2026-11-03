@@ -73,6 +73,12 @@ public static class CircuitReadiness
                             AddIssue(new("model_contract","unsupported_diode_profile",card.Kind,scope,path,card.Range));
                         continue;
                     }
+                    if(card.Kind=="mos")
+                    {
+                        var mos=bound[scope].FirstOrDefault(i=>i.Header.Range==card.Range);
+                        if(mos!=null&&!Mos1Preparation.AssignmentsAreSupported(mos))AddIssue(new("model_contract","unsupported_mos1_profile",card.Kind,scope,path,card.Range));
+                        continue;
+                    }
                     if(card.Kind=="bjt")
                     {
                         var bjt=bound[scope].FirstOrDefault(i=>i.Header.Range==card.Range);

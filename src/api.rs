@@ -385,6 +385,44 @@ pub fn run_with_registry(
             }
         }
     }
+    // The primitive has no Q; its derived current is the channel contribution.
+    // Generated M cards retain their outer branch as the full drain observable.
+    for channel in &plan.mos1 {
+        signals.push(Signal {
+            id: format!("i_channel({})", channel.id),
+            quantity: "current",
+            unit: "A",
+        });
+        let nodes = [channel.p, channel.gate, channel.n, channel.bulk];
+        for sample in &mut samples {
+            sample.values.push(
+                channel
+                    .model
+                    .linearize(
+                        nodes.map(|node| node.unknown().map(|i| sample.values[i]).unwrap_or(0.)),
+                    )?
+                    .current_amps,
+            );
+        }
+        if !ac_samples.is_empty() {
+            let bias = crate::dc::operating_point(&plan, solver)?;
+            let partials = channel
+                .model
+                .linearize(nodes.map(|node| node.unknown().map(|i| bias[i]).unwrap_or(0.)))?
+                .partials_siemens;
+            for sample in &mut ac_samples {
+                let mut real = 0.;
+                let mut imag = 0.;
+                for (node, partial) in nodes.into_iter().zip(partials) {
+                    if let Some(i) = node.unknown() {
+                        real += partial * sample.values[i].real;
+                        imag += partial * sample.values[i].imag;
+                    }
+                }
+                sample.values.push(crate::ac::ComplexValue { real, imag });
+            }
+        }
+    }
     let dc_power = if matches!(
         request.analysis,
         Analysis::OperatingPoint | Analysis::OperatingPointNewton { .. }

@@ -25,7 +25,8 @@ pub fn inspect(circuit: &Circuit) -> SimResult<Vec<Diagnostic>> {
         let (p, n) = element.terminals();
         if !matches!(
             element,
-            Element::Capacitor { .. }
+            Element::Mos1Channel { .. }
+                | Element::Capacitor { .. }
                 | Element::JunctionStorage { .. }
                 | Element::Current { .. }
                 | Element::Vccs { .. }

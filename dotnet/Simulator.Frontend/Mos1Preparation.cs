@@ -1,0 +1,60 @@
+using Simulator.Client;
+using Simulator.Syntax;
+namespace Simulator.Frontend;
+
+/// <summary>Current-only channel with explicit body and overlap companions.
+/// A drain sensor measures the complete drain current, including displacement.</summary>
+internal sealed record PreparedMos1(Mos1Model Channel,SpiceDiodeModel DrainBody,SpiceDiodeModel SourceBody,
+    double GateSourceFarads,double GateDrainFarads,double GateBulkFarads)
+{
+    internal void Append(string id,int drain,int gate,int source,int bulk,Func<int> privateNode,Action<Element> add)
+    {
+        var d=privateNode();add(new Voltage(id,drain,d,0));
+        if(d!=source)add(new Mos1Channel(id+"_channel",d,source,gate,bulk,Channel));
+        // Junction polarity follows the substrate type, independently of channel mode.
+        if(d!=bulk)add(new SpiceDiode(id+"_bd",Channel.PChannel?d:bulk,Channel.PChannel?bulk:d,DrainBody));
+        if(source!=bulk)add(new SpiceDiode(id+"_bs",Channel.PChannel?source:bulk,Channel.PChannel?bulk:source,SourceBody));
+        if(GateSourceFarads>0&&gate!=source)add(new Capacitor(id+"_cgs",gate,source,GateSourceFarads));
+        if(GateDrainFarads>0&&gate!=d)add(new Capacitor(id+"_cgd",gate,d,GateDrainFarads));
+        if(GateBulkFarads>0&&gate!=bulk)add(new Capacitor(id+"_cgb",gate,bulk,GateBulkFarads));
+    }
+}
+/// <summary>Strict bounded LEVEL=1 contract. Nonzero TOX requires intrinsic Meyer
+/// storage and is refused; overlap C is never presented as intrinsic gate charge.</summary>
+internal static class Mos1Preparation
+{
+    private static readonly HashSet<string> Allowed=new(StringComparer.OrdinalIgnoreCase)
+      {"LEVEL","VTO","KP","GAMMA","PHI","LAMBDA","IS","CBD","CBS","PB","MJ","FC","CGSO","CGDO","CGBO","TNOM","TOX"};
+    internal static bool AssignmentsAreSupported(BoundInstance call)
+    {
+        if(call.Status!=BindingStatus.Bound||call.Target is not {} model||model.ModelFamily is not ("nmos" or "pmos")||model.HasOpaqueModelTerms||call.Ports.Length!=4)return false;
+        var names=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if(!model.Parameters.All(p=>p.Name!=null&&Allowed.Contains(p.Name)&&names.Add(p.Name)))return false;
+        names.Clear();
+        return call.Header.Parameters.Length==2&&call.Header.Parameters.All(p=>p.Name is {} name&&(name.Equals("L",StringComparison.OrdinalIgnoreCase)||name.Equals("W",StringComparison.OrdinalIgnoreCase))&&names.Add(name));
+    }
+    internal static bool TryPrepare(DeclarationCatalog catalog,ParameterEvaluation environment,BoundInstance call,out PreparedMos1? profile,out BridgeDiagnostic? diagnostic)
+    {
+        profile=null;diagnostic=null;
+        if(!AssignmentsAreSupported(call)){diagnostic=new("unsupported_mos1_profile",call.Header.Range);return false;}
+        var model=call.Target!;var values=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase);
+        foreach(var p in model.Parameters.Concat(call.Header.Parameters))
+        {
+            var v=ParameterEvaluator.EvaluateValue(catalog,environment,p.Value,model.Parameters.Contains(p)?model.ScopeId:call.Header.ScopeId);
+            if(v.Value is not {} scalar){diagnostic=new(v.Diagnostics[0].Code,v.Diagnostics[0].Range);return false;}
+            values.Add(p.Name!,scalar);
+        }
+        var pmos=model.ModelFamily=="pmos";
+        var l=V("L",0);var w=V("W",0);var kp=V("KP",2e-5);var gamma=V("GAMMA",0);var phi=V("PHI",.6);var lambda=V("LAMBDA",0);
+        var isat=V("IS",1e-14);var cbd=V("CBD",0);var cbs=V("CBS",0);var pb=V("PB",.8);var mj=V("MJ",.5);var fc=V("FC",.5);
+        var cgso=V("CGSO",0);var cgdo=V("CGDO",0);var cgbo=V("CGBO",0);
+        var beta=kp*w/l;var cgs=cgso*w;var cgd=cgdo*w;var cgb=cgbo*l;
+        if(l<=0||w<=0||kp<=0||gamma<0||phi<=0||lambda<0||isat<=0||cbd<0||cbs<0||pb<=0||mj<0||mj>=1||fc<0||fc>=1||cgso<0||cgdo<0||cgbo<0
+          ||V("LEVEL",1)!=1||V("TNOM",27)!=27||V("TOX",0)!=0||!double.IsFinite(beta)||beta<=0||!double.IsFinite(cgs)||!double.IsFinite(cgd)||!double.IsFinite(cgb)
+          ||cgso>0&&cgs==0||cgdo>0&&cgd==0||cgbo>0&&cgb==0)
+        {diagnostic=new("invalid_or_unqualified_mos1_parameter",model.Range);return false;}
+        const double vt=1.38064852e-23/1.6021766208e-19*300.15;
+        profile=new(new(pmos,V("VTO",0),beta,gamma,phi,lambda),new(isat,vt,cbd,pb,mj,fc,0),new(isat,vt,cbs,pb,mj,fc,0),cgs,cgd,cgb);return true;
+        double V(string name,double fallback)=>values.TryGetValue(name,out var value)?value:fallback;
+    }
+}

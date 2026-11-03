@@ -23,6 +23,16 @@ pub(crate) struct CompiledSwitch {
     pub(crate) cn: NodeId,
     pub(crate) model: crate::pspice_switch::SwitchModel,
 }
+/// Immutable four-terminal current-only channel.
+#[derive(Debug, Clone)]
+pub(crate) struct CompiledMos1 {
+    pub(crate) id: String,
+    pub(crate) p: NodeId,
+    pub(crate) n: NodeId,
+    pub(crate) gate: NodeId,
+    pub(crate) bulk: NodeId,
+    pub(crate) model: crate::mos1::Mos1Model,
+}
 /// Shared bounded stamping surface used by compile-time sparse accumulation and trial Jacobians.
 pub(crate) trait StampMatrix {
     fn add_stamp(&mut self, row: usize, column: usize, value: f64);
@@ -50,6 +60,7 @@ pub struct CompiledCircuit {
     pub(crate) branch_ids: Vec<String>,
     pub(crate) diodes: Vec<CompiledDiode>,
     pub(crate) switches: Vec<CompiledSwitch>,
+    pub(crate) mos1: Vec<CompiledMos1>,
 }
 impl CompiledCircuit {
     pub fn circuit(&self) -> &Circuit {
@@ -76,7 +87,7 @@ impl CompiledCircuit {
     }
     /// Nonlinear device presence selects Newton operating-point solving.
     pub fn has_nonlinear_devices(&self) -> bool {
-        !self.diodes.is_empty() || !self.switches.is_empty()
+        !self.diodes.is_empty() || !self.switches.is_empty() || !self.mos1.is_empty()
     }
     pub fn branch_index(&self, id: &str) -> Option<usize> {
         self.branch_ids
@@ -117,8 +128,25 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     let mut branch = circuit.nodes.len() - 1;
     let mut diodes = Vec::new();
     let mut switches = Vec::new();
+    let mut mos1 = Vec::new();
     for e in &circuit.elements {
         match e {
+            Element::Mos1Channel {
+                id,
+                p,
+                n,
+                gate,
+                bulk,
+                model,
+                ..
+            } => mos1.push(CompiledMos1 {
+                id: id.clone(),
+                p: *p,
+                n: *n,
+                gate: *gate,
+                bulk: *bulk,
+                model: *model,
+            }),
             Element::JunctionStorage { id, p, n, model } => {
                 model.validate()?;
                 diodes.push(CompiledDiode {
@@ -315,5 +343,6 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
         branch_ids: branches,
         diodes,
         switches,
+        mos1,
     })
 }

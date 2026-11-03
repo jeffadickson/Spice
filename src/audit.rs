@@ -180,6 +180,17 @@ fn dc_currents(circuit: &Circuit, state: &[f64]) -> SimResult<Vec<f64>> {
                     .linearize(v, voltage(state, *cp) - voltage(state, *cn))?
                     .current
                 }
+                Element::Mos1Channel {
+                    p,
+                    n,
+                    gate,
+                    bulk,
+                    model,
+                    ..
+                } => independent_mos1_current(
+                    *model,
+                    [*p, *gate, *n, *bulk].map(|node| voltage(state, node)),
+                )?,
                 Element::Resistor { ohms, .. } => v / ohms,
                 Element::JunctionStorage { .. } => 0.,
                 Element::SpiceDiode { model, .. } => {
@@ -518,4 +529,28 @@ pub fn compare_refinement(
         });
     }
     Ok(report.checks.remove(0))
+}
+
+// Separate current-only reconstruction for KCL/power audits; no production Jacobian is reused.
+fn independent_mos1_current(m: crate::mos1::Mos1Model, v: [f64; 4]) -> SimResult<f64> {
+    let polarity = if m.p_channel { -1. } else { 1. };
+    let drain = polarity * v[0];
+    let source = polarity * v[2];
+    let low = drain.min(source);
+    let span = (drain - source).abs();
+    let body = polarity * v[3] - low;
+    if m.body_effect_sqrt_volts > 0. && body > 0. {
+        return Err(SimError::invalid("MOS1 audit state exceeds the qualified body-bias domain"));
+    }
+    let threshold = polarity * m.threshold_volts
+        + m.body_effect_sqrt_volts
+            * ((m.surface_potential_volts - body.min(0.)).sqrt()
+                - m.surface_potential_volts.sqrt());
+    let over = (polarity * v[1] - low - threshold).max(0.);
+    let active = span.min(over);
+    let magnitude = m.beta_amps_per_volt_squared
+        * (1. + m.channel_length_modulation_per_volt * span)
+        * active
+        * (over - 0.5 * active);
+    Ok(polarity * if drain >= source { magnitude } else { -magnitude })
 }

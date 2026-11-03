@@ -67,6 +67,10 @@ pub fn conductance_at_bias_csc(
         )?;
         stamp_switch(&mut stamps, switch, c.output_siemens, c.control_siemens);
     }
+    for channel in &plan.mos1 {
+        let c = mos1_contribution(channel, values)?;
+        stamp_mos1(&mut stamps, channel, c.partials_siemens);
+    }
     stamps.to_csc()
 }
 
@@ -160,6 +164,11 @@ fn linearize_with_rhs_gmin(
         )?;
         stamp_vector(&mut residual, switch.p, switch.n, c.current);
         stamp_switch(&mut jacobian, switch, c.output_siemens, c.control_siemens);
+    }
+    for channel in &plan.mos1 {
+        let c = mos1_contribution(channel, values)?;
+        stamp_vector(&mut residual, channel.p, channel.n, c.current_amps);
+        stamp_mos1(&mut jacobian, channel, c.partials_siemens);
     }
     if let Some(gmin) = gmin_siemens {
         for node in 0..plan.circuit.nodes.len() - 1 {
@@ -1150,5 +1159,29 @@ mod november2_contracts {
             calls: std::sync::atomic::AtomicUsize::new(0),
         };
         assert_eq!(counter.name(), "nalgebra_dense_lu_reference");
+    }
+}
+
+/// Evaluate absolute four-terminal potentials; the model owns polarity and mode.
+fn mos1_contribution(
+    m: &crate::compile::CompiledMos1,
+    values: &[f64],
+) -> SimResult<crate::mos1::Mos1Linearization> {
+    m.model.linearize(
+        [m.p, m.gate, m.n, m.bulk].map(|node| node.unknown().map(|i| values[i]).unwrap_or(0.)),
+    )
+}
+/// Channel contributes equal and opposite drain/source residuals; gate/bulk are ideal controls.
+fn stamp_mos1(
+    matrix: &mut impl crate::compile::StampMatrix,
+    m: &crate::compile::CompiledMos1,
+    partials: [f64; 4],
+) {
+    for (row, sign) in [(m.p, 1.), (m.n, -1.)] {
+        for (column, partial) in [m.p, m.gate, m.n, m.bulk].into_iter().zip(partials) {
+            if let (Some(r), Some(c)) = (row.unknown(), column.unknown()) {
+                matrix.add_stamp(r, c, sign * partial);
+            }
+        }
     }
 }

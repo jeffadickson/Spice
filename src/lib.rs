@@ -24,6 +24,7 @@ pub mod linalg;
 pub mod linear_dynamic;
 pub mod measurement;
 pub mod model;
+pub mod mos1;
 pub mod netlist;
 pub mod newton;
 mod ngspice_resistor;

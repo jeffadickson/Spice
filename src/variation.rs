@@ -54,9 +54,9 @@ pub fn scalar_kind(circuit: &Circuit, element_id: &str) -> SimResult<ScalarKind>
         .find(|element| element.id() == element_id)
         .ok_or_else(|| SimError::invalid("variation element ID is unknown"))?;
     Ok(match element {
-        Element::PspiceSwitch { .. } => {
+        Element::PspiceSwitch { .. } | Element::Mos1Channel { .. } => {
             return Err(SimError::invalid(
-                "switch scalar variation requires an explicit parameter selection",
+                "nonlinear multi-parameter scalar variation requires an explicit parameter selection",
             ));
         }
         Element::Resistor { .. } => ScalarKind::Resistance,
@@ -94,9 +94,9 @@ pub fn replace_scalar(circuit: &Circuit, element_id: &str, value: f64) -> SimRes
         Element::SpiceDiode { model, .. } | Element::JunctionStorage { model, .. } => {
             model.saturation_amps = value
         }
-        Element::PspiceSwitch { .. } => {
+        Element::PspiceSwitch { .. } | Element::Mos1Channel { .. } => {
             return Err(SimError::invalid(
-                "switch scalar variation requires an explicit parameter selection",
+                "nonlinear multi-parameter scalar variation requires an explicit parameter selection",
             ));
         }
         Element::Resistor { ohms, .. } => *ohms = value,

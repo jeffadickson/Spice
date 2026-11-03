@@ -1,0 +1,223 @@
+{
+  "scope": "Bounded MOS LEVEL=1 current/Jacobian with explicit nonlinear body Q and overlap C; not general LEVEL=1 compatibility",
+  "source_base": "fb110a0",
+  "tested_source_hashes": {
+    "Cargo.lock": "018b19472c004dd03af3c75aa2bd5a45982f1da3d23a5be41e612ac97e3a41f6",
+    "Cargo.toml": "a833a9a62ab2ce071d92609556c1f01a390699144001c68f30ed3e070a1fd16c",
+    "docs/mos1-profile-plan.md": "3581c79ff3e881c511a58a99420f1c28bf0e060a51e2a8b4246ac7e5c53d21c5",
+    "docs/mos1-profile.md": "bc5a6aded96c3f1e0ad359aaa6f852331d4e1f43302e49b2ce86c106d8b1c8dd",
+    "docs/mos1-profile.sdoc": "c01b1cc3424a1cab54c0ecd83247ad43a271a92e760065365e46ed232308d5f8",
+    "dotnet/Simulator.Client/Requests.cs": "549e4ce78356d0a7553af067008eb8e51d51f6606801c43b8b49db77085f8294",
+    "dotnet/Simulator.Frontend.Tests/mos1-stryker.json": "9b23770c8f2ce931ff2269cb97916fe3986baaa07cc09d166da72bfa89268a60",
+    "dotnet/Simulator.Frontend.Tests/Mos1NativeOracleIntegration.cs": "c76d908931d3e2f4e82074d0db6709485eab4fc5553162216ef03d68c001759f",
+    "dotnet/Simulator.Frontend.Tests/Mos1Tests.cs": "ec94e1fb8f0bc8cf391781e49a20f4523f68aa15469a4bfb89b767fad4b1695f",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "f7e319bbcdb3ee6b43b8a7e1b741edd231fdd36dd0a712e82f029ace7c8bc6b9",
+    "dotnet/Simulator.Frontend/Mos1Preparation.cs": "591d9323e3f4b640959a9985a1240b214d8aa407442653c3c42fff639c35f978",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "6bab81676ddd366b6c389edda1aeb8a37aaf14986b44fc2cb68dfa01e3b13ba4",
+    "examples/mos1-body-overlap.cir": "ef2fea212920d35bac6ae8af9cab31522ade8e009513602ff2b8785e68be9ac5",
+    "src/api.rs": "e895b08703810af8a6358b5ced0adcd6e37a88b0e54f2093f17c5aa9f545cb55",
+    "src/audit_ac.rs": "c199496186e84358759ef3f4632734e2efd537b7c2871b21ef899b8360097fea",
+    "src/audit_configured.rs": "409b8b2a840ce344dd525f9499e5950c6d8282b6bc4cd9c3b4adce65239a1b6e",
+    "src/audit.rs": "390b608005bd84d7ffff427785329927e1d47ec98a1f45f77ae39babfbe6c69d",
+    "src/circuit.rs": "dcf3cd58a825d7855c1456ed6fd510dfd2168891299a4af8c01ee399b66903c5",
+    "src/compile.rs": "71aed1f4a381d8382aaa7cd4c2b7da96cd22db164f33564b20f7a22c71546ac0",
+    "src/lib.rs": "6ae22e3b0c71ea5450de0e020fc7029b6129acbead4025608b9fac39d86f1a86",
+    "src/main.rs": "fdcf0a401fafb268a76d54eea7464852ae6d8a7d19968a76b9c205aaaaf87ab1",
+    "src/mos1.rs": "67cf15187b55512219ecb504458666e0553cc2847775ef6123ee8bc8ae9acb6c",
+    "src/newton.rs": "7c805e639bd634c7a2e905522ad9dd63f1868c3a864d24c5b53adbcfbbbce5ab",
+    "src/power.rs": "d6e4a3bfd681e68e87ba8b1e658f294eeb699e1ec8b6b9e225c86f81d35876d1",
+    "src/topology.rs": "68aa95bd6a56076330a798e35db3293356573deec59a6867bb55b2feb2ffe923",
+    "src/variation.rs": "b5bf8045eea6f32052b9b26e5607710cd6236c5a4eea77b8692a3552318a9738",
+    "src/ac.rs": "cc292a338cb5bbcedff4be3523ac5b086007e16cc2536db1537deb4cd86c38b5",
+    "src/adaptive.rs": "557919a6c31070dc63e084506443bb280a5e8ce635cb0b22616640ccd5f04781",
+    "src/artifact.rs": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
+    "src/assertion.rs": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+    "src/backend_faer.rs": "28620a5cb47deef1a35a6af6046fcf361e9727f7bbbd34c70f8a71097406efc5",
+    "src/backend.rs": "69ebd88de74917bca9a7e61acea193288c0f8490531c3c586c7b5f6f2a5de726",
+    "src/campaign.rs": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+    "src/charge.rs": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+    "src/configured.rs": "eef0e6fca55f696372fe65cfb93f0f89082b9951fc4731ed0a63198adc21b59e",
+    "src/dc.rs": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+    "src/error.rs": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+    "src/experiment.rs": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+    "src/expression.rs": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+    "src/grid.rs": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+    "src/ids.rs": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+    "src/integrator.rs": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+    "src/linalg.rs": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+    "src/linear_dynamic.rs": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+    "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+    "src/model.rs": "500da23f436a9c916a0e264fb95a201a90189bae645d24858f8bdf17d9ec4d01",
+    "src/netlist.rs": "753efdb099a0d7ab7beb380166f833912c43936a391c4db879af7f7078981a12",
+    "src/ngspice_resistor.rs": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3",
+    "src/provenance.rs": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+    "src/pspice_switch.rs": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9",
+    "src/quantity.rs": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397",
+    "src/registry.rs": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7",
+    "src/sampling.rs": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+    "src/solver_contract.rs": "c8b1e09a3425bb16881ae3b414c880820cfb3546aa5f6b540273106be357d098",
+    "src/sources.rs": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+    "src/sparse.rs": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+    "src/spice_diode.rs": "f15abe8bd656df14abdbd9c6b3939fb706f0086b5d1193a4cf6a59f7fe638504",
+    "src/sweep.rs": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+    "src/transient.rs": "19d4fc0000f197c3f762cd795e047d3a690484acd8e627e4d6e37bcdc87d0f0a",
+    "src/waveform.rs": "2bce955e8d3453700d0a5801a894799d3737034672332d942bc544fdb8d32cd9",
+    "tests/mos1_channel.rs": "ea39285de03cc074620047bcffc1c72af7ecb3cd5634cbbad6926f62a4c36043",
+    "third-party/ATTRIBUTION.md": "2ae9896dfbc514dcb663461effd0041deb5aa49c7f93bb670daa5ff9b06db384"
+  },
+  "tools": {
+    "cargo_mutants": "27.1.0",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "ngspice_executable": "C:/dev/ngspice-install/bin/ngspice.exe",
+    "strictdoc": "0.30.4",
+    "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "stryker": "5.0.0",
+    "dotnet": "10.0.403"
+  },
+  "engine": {
+    "source_base": "fb110a0",
+    "sha256": "e42b93c01dc17b3d440bf8f5b435d4e3855d2101e5409c0f8500684c05a7b988",
+    "engine": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-final-2c3fea9c884b46ffaec2545bfb981aba\\circuit-simulator.exe",
+    "dotnet": "10.0.403",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)"
+  },
+  "requirements": [
+    "SEMI-MOS1-CURRENT-001",
+    "SEMI-MOS1-JACOBIAN-001",
+    "SEMI-MOS1-BODY-Q-001",
+    "SEMI-MOS1-OVERLAP-Q-001"
+  ],
+  "native_regression": {
+    "failed": 0,
+    "passed": 34,
+    "command": "cargo test --test mos1_channel --test junction_storage --test spice_diode --test model_charge",
+    "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile",
+    "tests": {
+      "model_charge": 16,
+      "mos1_channel": 6,
+      "spice_diode": 7,
+      "junction_storage": 5
+    },
+    "seed": "2026110202 (MOS proptest fixed in source), 128 cases"
+  },
+  "managed_full": {
+    "skipped": 9,
+    "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-qualified-78c1a64429284aa38c085aa756c64218\\managed-coverage\\frontend.trx",
+    "note": "Before the final direct-audit domain fix; frozen previous engine. Collector emitted an empty coverage map during this --no-build run; no coverage percentage is inferred.",
+    "total": 200,
+    "passed": 191
+  },
+  "managed_final": {
+    "failed": 0,
+    "passed": 13,
+    "command": "dotnet test dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj --no-restore --filter FullyQualifiedName~Mos1 --collect \"XPlat Code Coverage\"",
+    "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile",
+    "env": {
+      "SPICE_SEMICONDUCTOR_ARTIFACT_ROOT": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-final-2c3fea9c884b46ffaec2545bfb981aba",
+      "SPICE_NGSPICE": "C:/dev/ngspice-install/bin/ngspice.exe",
+      "SPICE_SEMICONDUCTOR_ENGINE": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-final-2c3fea9c884b46ffaec2545bfb981aba\\circuit-simulator.exe"
+    },
+    "skipped": 0,
+    "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-final-2c3fea9c884b46ffaec2545bfb981aba\\managed-coverage\\mos1.trx"
+  },
+  "native_oracle": {
+    "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-final-2c3fea9c884b46ffaec2545bfb981aba",
+    "qualification": "finite owned cases, not corpus-wide numerical qualification or arbitrary-step/global error bounds",
+    "parameters": "VTO +/-0.7,KP20u,GAMMA.4,PHI.6,LAMBDA.03,IS1e-14,CBD2p,CBS3p,PB.8,MJ.5,FC.5,CGSO2e-7,CGDO3e-7,CGBO1e-6,L1u,W10u,TNOM27; TOX absent",
+    "executed": "NMOS and PMOS, LU and Faer, generated typed Client requests, OP/10MHz complex AC/10ps BE",
+    "limits": {
+      "dc_current_a": 2E-10,
+      "be_current_a": 2E-06,
+      "be_times_s": [
+        2E-09,
+        1E-08,
+        2E-08
+      ],
+      "be_voltage_v": 0.003,
+      "dc_voltage_v": 2E-07,
+      "ac_component_voltage_v": 2E-05,
+      "ac_component_current_a": 2E-08
+    }
+  },
+  "coverage": {
+    "managed": {
+      "binder": {
+        "lines_covered": 31,
+        "branches_covered": 86,
+        "branches_total": 98,
+        "lines_total": 31
+      },
+      "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-final-2c3fea9c884b46ffaec2545bfb981aba\\managed-coverage\\9562102f-8d75-45f2-9b04-39d1f67a82b6\\coverage.cobertura.xml",
+      "limitations": "Mapped method lines/branches only; captured predicates/getters and bridge callbacks may be omitted. Native code and generated serializers excluded from these method metrics.",
+      "prepared": {
+        "lines_covered": 11,
+        "branches_covered": 18,
+        "branches_total": 26,
+        "lines_total": 11
+      }
+    },
+    "native_kernel": {
+      "lines_total": 68,
+      "note": "Five-test snapshot before later direct-audit negative test. MOS kernel SHA unchanged. Script env seed88320261103 is overridden by fixed MOS source seed2026110202. Stable branch instrumentation unavailable; API/audit/compiler consumers are not represented by this kernel percentage.",
+      "line_percent": 98.52941176470588,
+      "command": "scripts/Measure-RustIntegrationCoverage.ps1 -Repository <worktree> -TargetDirectory <artifact-root>/target -Output <artifact-root>/mos1-rust-coverage -Test mos1_channel",
+      "file": "src/mos1.rs",
+      "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-rust-coverage\\summary.json",
+      "branches": null,
+      "lines_covered": 67
+    }
+  },
+  "mutation": {
+    "native": {
+      "evaluated": 0,
+      "status": "incomplete",
+      "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-mutants\\mutants.out",
+      "selected": 2,
+      "note": "Stopped during broad all-test baseline build at parent request to prioritize executable profile checkpoint. Source SHA67cf15187b55512219ecb504458666e0553cc2847775ef6123ee8bc8ae9acb6c verified unchanged before/after stopping. No native mutation success claimed."
+    },
+    "managed": {
+      "note": "File-specific counts only; unselected project mutations and safe-mode compile exclusions are not scored as this profile evidence. Native oracle env absent; mutation survivors remain open.",
+      "no_coverage": 8,
+      "compile_error": 19,
+      "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-stryker\\reports\\mutation-report.json",
+      "killed": 128,
+      "command": "dotnet tool run dotnet-stryker -- --config-file mos1-stryker.json --test-project Simulator.Frontend.Tests.csproj --output <artifact-root>/mos1-stryker",
+      "ignored": 2,
+      "survived": 58,
+      "open_cases": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-open-mutations.json",
+      "cwd": "C:\\Users\\jeffd\\Documents\\Codex\\2026-10-24\\how\\outputs\\rust-circuit-simulator\\work\\semiconductor-profile\\dotnet\\Simulator.Frontend.Tests"
+    }
+  },
+  "gates": {
+    "sphinx": {
+      "status": "passed",
+      "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-engineering\\verification.json"
+    },
+    "strictdoc": {
+      "raw": "E:\\Artifacts\\spice-semiconductor-reuse\\bd11f7570344446ca2e6bf5a14d0598b\\mos1-strictdoc.json",
+      "unique_ids": 353,
+      "resolved_parents": 333,
+      "documents": 26
+    },
+    "managed_build": {
+      "warnings": 0,
+      "errors": 0,
+      "command": "dotnet build dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj --no-restore --verbosity quiet"
+    }
+  },
+  "negative_history": [
+    "Initial raw MOS tag test failed on unknown mos1_channel before implementation.",
+    "Initial generated NMOS/PMOS lowering tests failed unsupported_active_card before implementation.",
+    "Standalone pure-channel AC failed audit missing complex branch; explicit nonlinear NotChecked dispatch fixed and regression passed.",
+    "Direct public audit outside positive-body/GAMMA domain returned a report instead of refusing; targeted RED confirmed, domain validation fixed, final six MOS tests passed.",
+    "An initial test command named nonexistent diode_charge; corrected to model_charge. Two intermediate audit-edit compile failures were corrected before final regression/build."
+  ],
+  "limitations": [
+    "Nonzero TOX/intrinsic Meyer storage refused; no intrinsic-charge parity claim.",
+    "Positive effective body bias with nonzero GAMMA refused.",
+    "Higher levels, unsupported geometry/sidewall/area terms, series resistance, mobility-derived KP and nonnominal temperature remain unsupported.",
+    "Independent nonlinear stored energy remains NotChecked; nonlinear AC physical audit without retained bias remains NotChecked.",
+    "No new long fuzz campaign ran. Finite malformed cases and seeded proptest ran; coverage/mutation gaps remain open.",
+    "No production dependencies added; no legacy simulator runtime or SpiceSharp production migration. No push or CI dispatched."
+  ]
+}
