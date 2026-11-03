@@ -74,7 +74,12 @@ public static class TransientSelection
    }
    sources.Add(new(source.WireId,waveform));
   }
-  var request=prepared.Request! with{CaseId="frontend_transient",Analysis=new TransientConfigured(new(stopS,maxStepS,maxSteps,Sources:sources.ToArray()))};
+  // Nonlinear requested transients explicitly recover a physical time-zero
+  // bias using the existing bounded source continuation. This changes neither
+  // timestep Newton budgets nor provider selection, and is retained on the wire.
+  var nonlinear=prepared.Request!.Circuit.Elements.Any(e=>e is Diode or DiodeWithCapacitance or SpiceDiode or JunctionStorage or Mos1Channel or PspiceSwitch);
+  var request=prepared.Request with{CaseId="frontend_transient",Analysis=new TransientConfigured(new(stopS,maxStepS,maxSteps,Sources:sources.ToArray(),
+      InitialNewton:nonlinear?new NewtonOptions(Continuation:new()):null))};
   var omissions=selected.Omissions.Where(o=>o.Kind!="source_transient").Select(o=>o.Reason=="analysis_replaced_by_explicit_op"?o with{Reason="analysis_not_selected"}:o).ToImmutableArray();
   return new(prepared with{Request=request},omissions);
  }

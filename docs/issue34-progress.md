@@ -94,3 +94,40 @@ explicit requested-preparation refusals. These are file counts, including mirror
 not unique circuit counts. Raw summary, per-case evidence and burndown are in
 `ground-census` beneath the current E: artifact directory. New BJT work is excluded
 from this immutable checkpoint.
+
+## Explicit initial-bias checkpoint
+
+Configured transient requests now expose optional initial_newton policy, with
+actual initialization evidence returned in IntegrationInfo.InitialNewton. Selected
+nonlinear frontend requests explicitly use the existing50-iteration/64-stage
+source continuation defaults. Subsequent step settings and provider remain
+unchanged. Different time-zero/nominal RHS refuses continuation; explicit state,
+fixed Gmin and linear/inapplicable policy combinations refuse. Direct initial
+bias continues honoring actual source overrides. New StrictDoc contracts
+SIM-TRAN-INITIAL-NEWTON-001/002 remain Draft pending waveform qualification.
+
+The retained original amplifier requests0458/0521 now complete200steps/201samples
+to0.002s with faer, without injecting a warm state. Initial continuation reaches
+source_scale1 in4accepted stages,105provider corrections and4.405e-19 initial
+residual. Both LU runs still fail later componentwise backward-error refinement.
+No original census result or native-waveform agreement is promoted by this replay.
+
+Verification:540Rust regression tests passed,2ignored; the expanded initial-bias
+suite has10passing tests including64Proptest cases, replay3420261103. A changing
+PWL current with one-iteration initial policy requires multiple later corrections;
+a recording provider checks exact solve accounting. Staged Gmin asserts physical
+shunt removal. Managed frontend regression:486passed,34prerequisite skips;
+this differs in prerequisite availability from the earlier ground checkpoint.
+Five focused cargo-mutants27.1.0 candidates were caught, none survived/timed out/
+failed compilation in the final selected campaign. Two interrupted launcher
+attempts tested no candidates and remain raw incomplete evidence. Scope is five
+guards, not all configured-transient mutations. The fresh read-only review found
+no confirmed defect; both identified test gaps were addressed by changing-source
+and provider-accounting regressions.
+
+The faer JSON example transient-initial-bias.request.json independently agrees
+with inverse Shockley at0.5356964219V. No C# mutation campaign for the new dispatch
+was run; Rust branch coverage is unavailable. Exact current coverage and hashes
+are retained separately in evidence/issue34-initial-bias.json. No CI or automatic
+backend substitution was used. Full native BJT waveform qualification and the
+remaining issue34 items stay open.

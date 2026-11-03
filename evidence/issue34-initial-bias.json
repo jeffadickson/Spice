@@ -1,0 +1,119 @@
+{
+  "base_commit": "4842db8a6791c168c0fbd42b3fae16b97beb2dc6",
+  "source_dirty_when_tested": true,
+  "source_hashes": {
+    "src/configured.rs": "f02824508def6fecc3bd6d6d078fe70cc3ca305f55084458cd3162c14e617458",
+    "dotnet/Simulator.Client/Requests.cs": "2318c02fe70d14429e64835e0a608d6f9717c4b0d05be9d82212078389f3e3f8",
+    "dotnet/Simulator.Client/Results.cs": "e7c6059ca4b3ebb25a1ba45cad0b7746f88157577aeaeae7fa412472f46f9a96",
+    "dotnet/Simulator.Frontend/TransientSelection.cs": "d34621b584adee4838ea025338338c9c0f1347d1039e6046b22af06664fcaf21",
+    "tests/initial_newton.rs": "ceb627a55fef13065d0e476bf0b8b91a07b9d30a9d7668667d23c8a5ea330077",
+    "dotnet/Simulator.Frontend.Tests/InitialNewtonPolicyTests.cs": "3d25d2a0709e5626b51484c0aab4314e4098f6501083f8dce9de5595a2c439e3",
+    "scripts/Diagnose-BjtInitialization.cs": "b95c8812acbf3e412312ad19a6ddab2c20ffdbc52b279d9002e1ecdb6e0687dd"
+  },
+  "engine_sha256": "494c1ae831cd0d2c3ba424930db02fd0f12dab488995c53dba6dcc9c6cf7bf1a",
+  "rust_regression": {
+    "note": "Full suite before adding the final two focused tests; unchanged runtime semantics",
+    "passed": 540,
+    "failed": 0,
+    "ignored": 2
+  },
+  "focused": {
+    "post_mutation_unmodified_rebuild": true,
+    "proptest_cases": 64,
+    "passed": 10,
+    "failed": 0,
+    "replay": "3420261103"
+  },
+  "managed": {
+    "note": "External prerequisite skips; not passing evidence",
+    "skipped": 34,
+    "passed": 486,
+    "failed": 0
+  },
+  "mutations": {
+    "compile_error": 0,
+    "tool": "cargo-mutants27.1.0",
+    "timeout": 0,
+    "survived": 0,
+    "interrupted_launcher_attempts": 2,
+    "unattempted": 0,
+    "selected": 5,
+    "scope": "Five initial policy / continuation / nominal RHS guard operators",
+    "caught": 5
+  },
+  "coverage": {
+    "managed_transient_selection_main_class": {
+      "branch_rate": 0.8818,
+      "mapped_lines": 50,
+      "covered_lines": 49
+    },
+    "limitations": [
+      "Focused Rust coverage only, not whole regression aggregate",
+      "Stable Rust branch coverage unavailable",
+      "Captured managed functions have separate mappings; not whole frontend coverage"
+    ],
+    "rust_branches": null,
+    "rust_files": [
+      {
+        "file": "src/configured.rs",
+        "sha256": "f02824508def6fecc3bd6d6d078fe70cc3ca305f55084458cd3162c14e617458",
+        "lines": {
+          "count": 290,
+          "covered": 159,
+          "percent": 54.82758620689655
+        }
+      },
+      {
+        "file": "src/newton.rs",
+        "sha256": "38d6604ce5fa694e805f4cfe6a05a156f4b2db1a8101f1c897d6af770f8a04e0",
+        "lines": {
+          "count": 898,
+          "covered": 586,
+          "percent": 65.25612472160356
+        }
+      }
+    ]
+  },
+  "original_bjt": {
+    "faer": {
+      "final_time_s": 0.002,
+      "final_source_scale": 1,
+      "initial_provider_solves": 105,
+      "samples": 201,
+      "initial_stages": 4,
+      "steps": 200
+    },
+    "retained_cases": [
+      "0458",
+      "0521"
+    ],
+    "lu": "numerical_failure:LU refinement did not meet componentwise backward error",
+    "native_waveform_agreement": "unavailable"
+  },
+  "requirements": {
+    "documents": 50,
+    "parents": 380,
+    "status": "Draft pending native waveform qualification",
+    "parser": "StrictDoc0.30.4",
+    "ids": 406
+  },
+  "documentation": "Sphinx9.1.0 warnings-as-errors passed",
+  "review": {
+    "type": "Fresh read-only agent review, not external expert",
+    "confirmed_defects": 0,
+    "test_gaps_addressed": [
+      "Changing PWL excitation with one-iteration initial policy",
+      "Recording provider and solve accounting"
+    ]
+  },
+  "artifacts": "E:/Artifacts/Spice-issue34-20261103T195804Z",
+  "limitations": [
+    "No full corpus rerun of this BJT checkpoint",
+    "LU refinement unresolved",
+    "No new C# mutation campaign for transient dispatch",
+    "No Linux/GPU/full SPICE qualification"
+  ],
+  "diagnosis_sha256": "da78b7920800f7af283934bc2dcd5c9980c97dc9671cec9d5f2e524fe1a5e26e",
+  "diagnosis_path": "bjt-integrated-final/diagnosis.json",
+  "static_analysis": "cargo clippy --lib --bins -- -D warnings passed"
+}

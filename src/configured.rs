@@ -25,6 +25,10 @@ pub struct TransientConfig {
     pub method: Method,
     #[serde(default)]
     pub initial_state: Option<Vec<f64>>,
+    /// Optional nonlinear time-zero bias policy. It does not change subsequent
+    /// step Newton options or silently select another linear provider.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub initial_newton: Option<crate::newton::NewtonOptions>,
     #[serde(default)]
     pub sources: Vec<SourceOverride>,
     #[serde(default)]
@@ -38,6 +42,7 @@ impl Default for TransientConfig {
             max_steps: 10_000,
             method: Method::BackwardEuler,
             initial_state: None,
+            initial_newton: None,
             sources: Vec::new(),
             adaptive: None,
         }
@@ -47,6 +52,19 @@ impl TransientConfig {
     pub fn validate(&self) -> SimResult<()> {
         positive(self.stop_s, "stop_s")?;
         positive(self.max_step_s, "max_step_s")?;
+        if let Some(policy) = self.initial_newton {
+            policy.validate()?;
+            if self.initial_state.is_some() {
+                return Err(SimError::invalid(
+                    "initial_state and initial_newton are exclusive",
+                ));
+            }
+            // A final physical bias is mandatory. Staged Gmin removes its
+            // shunt; a fixed shunt would silently alter initial stored charge.
+            if policy.gmin_siemens.is_some() {
+                return Err(SimError::invalid("fixed initial Gmin is unsupported"));
+            }
+        }
         if self.max_steps == 0 || self.max_steps > 100_000 {
             return Err(SimError::invalid(
                 "configured step budget must be 1..100000",
@@ -62,6 +80,10 @@ impl TransientConfig {
 pub struct IntegrationReport {
     pub method: Method,
     pub initialization: &'static str,
+    /// Actual nonlinear bias work, including continuation and final physical
+    /// source scale/Gmin removal. Absent for explicit-state and linear starts.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub initial_newton: Option<crate::newton::NewtonReport>,
     pub accepted_steps: usize,
     pub rejected_steps: usize,
     pub attempts: usize,
@@ -129,6 +151,12 @@ pub fn run_observed(
     mut observer: impl FnMut(&Sample) -> SimResult<()>,
 ) -> SimResult<ConfiguredResult> {
     options.validate()?;
+    if !plan.has_nonlinear_devices() && options.initial_newton.is_some() {
+        return Err(SimError::new(
+            ErrorCode::Unsupported,
+            "initial_newton requires nonlinear transient initialization",
+        ));
+    }
     if plan.has_nonlinear_devices() && options.method != Method::BackwardEuler {
         return Err(crate::error::SimError::new(
             crate::error::ErrorCode::Unsupported,
@@ -137,22 +165,38 @@ pub fn run_observed(
     }
     let sources = BoundSources::new(plan, &options.sources)?;
     let mut old_rhs = sources.rhs(0.)?;
-    let (mut state, initialization_solves) =
+    let (mut state, initialization_solves, initial_newton) =
         if plan.has_nonlinear_devices() && options.initial_state.is_none() {
-            let (state, report) = crate::newton::solve_with_rhs(
-                plan,
-                solver,
-                crate::newton::NewtonOptions::default(),
-                vec![0.; plan.unknown_count()],
-                &old_rhs,
-            )?;
+            let policy = options.initial_newton.unwrap_or_default();
+            let (state, report) =
+                if policy.continuation.is_some() || policy.gmin_continuation.is_some() {
+                    // Existing continuation scales the compiled nominal sources.
+                    // Never replace a distinct time-zero excitation by nominal DC
+                    // merely to obtain a more convenient initialization problem.
+                    if old_rhs != plan.rhs {
+                        return Err(SimError::new(
+                            ErrorCode::Unsupported,
+                            "initial continuation requires nominal time-zero sources",
+                        ));
+                    }
+                    crate::newton::solve(plan, solver, policy)?
+                } else {
+                    crate::newton::solve_with_rhs(
+                        plan,
+                        solver,
+                        policy,
+                        vec![0.; plan.unknown_count()],
+                        &old_rhs,
+                    )?
+                };
             // A nonlinear operating point can require several provider calls;
             // counting it as one hides work before the first transient step.
-            (state, report.linear_solves)
+            (state, report.linear_solves, Some(report))
         } else {
             (
                 initial(plan, &old_rhs, options.initial_state.as_deref(), solver)?,
                 usize::from(options.initial_state.is_none()),
+                None,
             )
         };
     let mut samples = vec![Sample {
@@ -344,6 +388,7 @@ pub fn run_observed(
             } else {
                 "operating_point"
             },
+            initial_newton,
             accepted_steps: steps,
             rejected_steps: rejected,
             attempts,

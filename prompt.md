@@ -694,3 +694,17 @@ Third reference checkpoint: read docs/third-reference-results.md. Original928 co
 Current/transient checkpoint: read docs/transient-current-results.md and evidence/transient-current-results.json. Four named fixtures executed16Rust+8native+8Sharp requests; three agree across all engines, delayed-phaseSIN retains1V/1mA Sharp discrepancy.58checks/54boundpasses/4discrepancies. Switch control-load analytical checks and step refinement are explicit. This does not increase original928 static/AC counts.
 
 Overnight window: docs/verified-soak-window.md and evidence/verified-soak-preflight.json describe the pinned clean-checkout launcher and16contract tests. New18-method property campaign includes delayed-phaseSIN and analytic switch divider. Actual420-minute completion remains pending; read real E: summary, seeds, mutations and duration. Preserve canonical worker lock and existing main WIP.
+
+Issue34 current checkpoint: see docs/issue34-progress.md and
+ evidence/issue34-initial-bias.json. Optional transient initial_newton is now a
+real Rust/client feature; rebuild the engine before executing newly selected
+nonlinear transient requests (the earlier ground-only engine cannot accept that
+field). Both retained original BJT requests complete200steps on faer without
+injected warm state; LU still fails later componentwise refinement. Full native
+waveform agreement remains open. Do not promote this replay into frozen corpus
+counts. The clean26cfad9 ground census is85prepared/23executed/11agreements among
+928paths and is tracked in issue35. Next: resolve faithful native transient-grid
+comparison and the LU failure, then bounded shared controls (prepared refusal
+observations let16/define8/unsafe9), named model/XSPICE subsets and resource triage.
+Artifacts: E:/Artifacts/Spice-issue34-20261103T195804Z. Preserve canonical main's
+seven unrelated sheet-resistor/WIP files and all historical/raw evidence. CI off.

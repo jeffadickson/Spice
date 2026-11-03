@@ -1,0 +1,27 @@
+[DOCUMENT]
+TITLE: Explicit Transient Initial Bias Policy
+
+[REQUIREMENT]
+UID: SIM-TRAN-INITIAL-NEWTON-001
+STATUS: Draft
+TITLE: Bound and report nonlinear time-zero initialization independently
+STATEMENT: >>>
+Configured nonlinear transient execution shall accept an optional initial_newton policy for the time-zero operating point only. Its iteration and continuation limits shall be enforced independently of subsequent integration budgets. Omission shall preserve the existing default policy. The integration report shall retain the actual initial Newton report, including final physical continuation stage and linear work. Execution shall preserve the selected provider, original waveforms, integration settings and residual criteria.
+<<<
+COMMENT: >>>
+Issue34 original BJT investigation separates initial Newton exhaustion from later LU componentwise refinement failure. Implementation: configured::run_observed, TransientConfig, client TransientConfiguration and IntegrationInfo, frontend TransientSelection. Verification: tests/initial_newton.rs uses independent inverse-Shockley and KCL checks; InitialNewtonPolicyTests verifies selected nonlinear wire policy and unchanged linear wire shape. Draft pending original BJT full-waveform qualification; successful initialization alone does not close corpus conformance.
+<<<
+
+[REQUIREMENT]
+UID: SIM-TRAN-INITIAL-NEWTON-002
+STATUS: Draft
+TITLE: Refuse ambiguous and nonphysical initialization policy combinations
+STATEMENT: >>>
+An explicit initial state and initial_newton policy shall be mutually exclusive. Fixed initial Gmin shall refuse because it can alter stored charge; staged recovery shall finish at the physical problem. A nonlinear policy supplied for a linear circuit shall refuse rather than be ignored. Continuation using compiled nominal sources shall refuse when the actual time-zero source RHS differs. Direct initialization shall continue using the actual time-zero RHS. Invalid or unknown policy fields shall refuse before publishing samples.
+<<<
+COMMENT: >>>
+Verification: negative wire/configuration tests, differing time-zero constant-current override regression, one-iteration failure, and source-continuation final source_scale=1 assertion. The restriction follows the existing Newton continuation contract; no arbitrary RHS continuation was introduced. No tolerance or backend fallback is permitted by this change.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SIM-TRAN-INITIAL-NEWTON-001

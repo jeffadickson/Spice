@@ -1,0 +1,48 @@
+{
+  "schema_version": "1",
+  "case_id": "explicit-transient-initial-bias",
+  "backend": "faer",
+  "circuit": {
+    "nodes": [
+      "0",
+      "bias"
+    ],
+    "elements": [
+      {
+        "kind": "current",
+        "id": "I1",
+        "p": 0,
+        "n": 1,
+        "amps": 1E-06
+      },
+      {
+        "kind": "diode",
+        "id": "D1",
+        "p": 1,
+        "n": 0,
+        "saturation_amps": 1E-15,
+        "thermal_volts": 0.02585
+      }
+    ]
+  },
+  "analysis": {
+    "kind": "transient_configured",
+    "options": {
+      "stop_s": 1E-06,
+      "max_step_s": 1E-06,
+      "max_steps": 2,
+      "initial_newton": {
+        "max_iterations": 50,
+        "absolute_tolerance": 1E-12,
+        "relative_tolerance": 1E-09,
+        "continuation": {
+          "initial_step": 0.125,
+          "minimum_step": 0.0001,
+          "max_stages": 64
+        },
+        "voltage_absolute_tolerance": 1E-09,
+        "current_absolute_tolerance": 1E-12
+      }
+    }
+  }
+}

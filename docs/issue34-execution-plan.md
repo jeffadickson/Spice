@@ -84,3 +84,9 @@ unique E: directory recorded in ignored `work/issue34-artifacts.txt`; no CI.
   analytical sine probe reproduces the existing comparison error exactly. The
   proposed auxiliary breakpoint clock is experimental until isolation and native
   dynamic invariance are qualified; no historical comparison is waived.
+- Initial-bias checkpoint exposes existing bounded recovery, retaining actual
+  Newton evidence and original analysis/provider settings. Original faer BJT
+  requests complete; LU refinement and native-waveform agreement remain open.
+  Fresh review's changing-source/provider-accounting test gaps were addressed.
+  Shared control blockers among prepared refusals remain let16,define8 and
+  unsafe token9 observations; counts overlap and do not promise unlocks.

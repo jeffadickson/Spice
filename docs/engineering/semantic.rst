@@ -157,3 +157,23 @@ native include-based execution use ``ngspice -n -D ngbehavior=ps -b``; expanded
 oracle decks explicitly use ``psa`` so whole-deck conversion occurs before
 parsing. Selected frontend probes are distinct from executing the original
 control language or sweep program.
+
+Explicit nonlinear transient bias
+----------------------------------------
+
+``TransientConfiguration.InitialNewton`` controls only nonlinear time-zero bias.
+The selected frontend emits bounded source continuation for nonlinear transients;
+linear requests retain their previous wire shape. The policy cannot accompany an
+explicit initial state or a fixed Gmin shunt. Continuation requires actual
+time-zero source RHS to equal nominal DC; direct initialization still uses the
+actual RHS. The provider, later Newton settings and integration budgets are
+preserved. ``IntegrationInfo.InitialNewton`` retains actual bias work and recovery
+stages. A failure remains a failure; another provider is never silently selected.
+
+``examples/transient-initial-bias.request.json`` demonstrates a 1 microampere
+current-driven ideal diode. Its independent inverse-Shockley bias is
+0.5356964219 V with IS=1e-15 A and Vt=0.02585 V. The example completes on faer;
+this finite constitutive check does not qualify full semiconductor families.
+The original BJT amplifier now completes 200 steps on faer with this explicit
+policy, while LU still refuses later componentwise refinement. Native full
+waveform agreement remains open.

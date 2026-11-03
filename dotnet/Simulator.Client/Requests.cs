@@ -112,11 +112,12 @@ public sealed record AcSourcePhasor(string Id, double Real, double Imag);
 /// <summary>Configured dynamic integration with explicit method, history and source policy.</summary>
 public sealed record TransientConfigured(TransientConfiguration Options) : Analysis;
 
-/// <summary>Method is backward_euler or trapezoidal. InitialState uses Circuit.Nodes excluding node zero, followed by V/L/E/H branch currents in Circuit.Elements order; voltages are volts and branch currents are P-to-N amperes.</summary>
+/// <summary>Method is backward_euler or trapezoidal. InitialState uses Circuit.Nodes excluding node zero, followed by V/L/E/H branch currents in Circuit.Elements order; voltages are volts and branch currents are P-to-N amperes. Optional InitialNewton controls nonlinear time-zero bias only; it is exclusive with InitialState and fixed Gmin is unsupported. Continuation requires actual time-zero sources to equal nominal DC.</summary>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1708:Identifiers should differ by more than case",
     Justification = "Retain existing named-argument/wire compatibility: MaxStepS is seconds and MaxSteps is a count.")]
 public sealed record TransientConfiguration(double StopS, double MaxStepS, int MaxSteps = 10000,
-    string Method = "backward_euler", double[]? InitialState = null, SourceOverride[]? Sources = null, AdaptiveOptions? Adaptive = null);
+    string Method = "backward_euler", double[]? InitialState = null, SourceOverride[]? Sources = null, AdaptiveOptions? Adaptive = null,
+    NewtonOptions? InitialNewton = null);
 /// <summary>Step-doubling tolerances in relative, volts and amperes, with minimum seconds and attempt budget.</summary>
 public sealed record AdaptiveOptions(double Relative, double VoltageAbsolute, double CurrentAbsolute, double MinStepS, int MaxAttempts);
 /// <summary>Bind a time waveform to an existing independent source by its identity.</summary>

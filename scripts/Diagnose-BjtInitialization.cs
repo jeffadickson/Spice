@@ -21,6 +21,12 @@ foreach(var index in new[]{"0458","0521"}){
  foreach(var source in transient.Options.Sources!){if(source.Waveform is not DampedSine w||w.Offset!=0||w.DelayS!=0||w.PhaseRad!=0||original.Circuit.Elements.Single(e=>e.Id==source.Id) is not Voltage {Volts:0})throw new InvalidDataException("Time-zero source identity not established.");}
  var destination=Path.Combine(output,index);Directory.CreateDirectory(destination);var trials=new List<object>();var successful=new Dictionary<string,ResultManifest>();
  await Probe("original-transient",original);
+ // The explicit initialization policy keeps original transient settings and
+ // waveforms. A successful bias is not a native-waveform agreement result.
+ foreach(var backend in new[]{"lu","faer"})
+  await Probe("configured-source50-"+backend,original with {
+   Backend=backend,CaseId="case"+index+"_configured_source50_"+backend,
+   Analysis=new TransientConfigured(transient.Options with{InitialNewton=new(Continuation:new())})});
  foreach(var policy in new[]{(Name:"direct50",Options:new NewtonOptions()),(Name:"source50",Options:new NewtonOptions(Continuation:new())),(Name:"gmin50",Options:new NewtonOptions(GminContinuation:new())),(Name:"direct200",Options:new NewtonOptions(MaxIterations:200))}){
   var response=await Probe("op-"+policy.Name,original with{CaseId="case"+index+"_op_"+policy.Name,Analysis=new OperatingPointNewton(policy.Options)});
   if(response.Succeeded)successful.Add(policy.Name,response.ReadManifest());
@@ -45,7 +51,7 @@ foreach(var index in new[]{"0458","0521"}){
  }
 }
 foreach(var item in identities)if(Hash(item.Key)!=item.Value)throw new InvalidDataException("Frozen identity changed.");
-File.WriteAllText(Path.Combine(output,"diagnosis.json"),JsonSerializer.Serialize(new{state="completed",identities,rows,limitations=new[]{"Two original retained requests only; no original status reclassified, no product changes.","Public OperatingPointNewton and explicit-state TransientConfigured only; source/Gmin warm starts remove Gmin in final OP per returned metadata.","Transient original waveforms, step, stop and method retained; extra initial state is an explicit experiment, not an original-request pass.","Convergence experiment, not native-waveform/model numerical qualification."}},json));Console.WriteLine("Public BJT initialization diagnosis completed: "+output);
+File.WriteAllText(Path.Combine(output,"diagnosis.json"),JsonSerializer.Serialize(new{state="completed",identities,rows,limitations=new[]{"Two original retained requests only; no original status reclassified, no product changes.","Public OperatingPointNewton, explicit-state warm trials, and explicit initial_newton configured-policy trials; final physical recovery is retained in returned metadata.","Original transient waveforms, step, stop and method retained; warm-state and explicit-policy trials remain separately named experiments, not frozen-census promotions.","Convergence experiment, not native-waveform/model numerical qualification."}},json));Console.WriteLine("Public BJT initialization diagnosis completed: "+output);
 
 static double[] State(Circuit circuit,ResultManifest bias){var signals=bias.Signals.Select((s,i)=>(s,i)).ToDictionary(p=>p.s.Id,p=>(p.s.Unit,Value:bias.Samples.Single().Values[p.i]),StringComparer.Ordinal);double Read(string id,string unit){var value=signals[id];if(value.Unit!=unit||!double.IsFinite(value.Value))throw new InvalidDataException("Missing/nonfinite/wrong-unit initial state");return value.Value;}return circuit.Nodes.Skip(1).Select(n=>Read("v("+n+")","V")).Concat(circuit.Elements.Where(e=>e is Voltage or Inductor or Vcvs or Ccvs).Select(e=>Read("i("+e.Id+")","A"))).ToArray();}
 static string Hash(string path){using var stream=File.OpenRead(path);return Convert.ToHexStringLower(SHA256.HashData(stream));}
