@@ -158,7 +158,7 @@ measurement remains open. Keep the separate executed mutation/property/oracle
 evidence and do not promote draft requirements based on the partial denominator.
 
 November 3 Rust survivor replay
-------------------------------
+-------------------------------
 
 ``tests/overnight_survivors_20261103.rs`` checks artifact ID byte boundaries,
 nonzero common-mode differential switch controls and the direct audit's inclusive

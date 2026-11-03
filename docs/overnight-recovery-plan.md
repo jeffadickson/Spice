@@ -36,10 +36,10 @@ global build-cache redirection, or migration of existing artifacts.
 
 ## Integration checkpoint
 
-- [ ] Review and integrate both isolated changes; preserve the seven unknown main
+- [x] Review and integrate both isolated changes; preserve the seven unknown main
       files and every previous raw artifact.
-- [ ] Run meaningful combined regression checks and real StrictDoc/Sphinx gates.
-- [ ] Run a bounded launcher/property preflight on a clean committed checkout;
+- [x] Run meaningful combined regression checks and real StrictDoc/Sphinx gates.
+- [x] Run a bounded launcher/property preflight on a clean committed checkout;
       distinguish maintained-framework preflight from the separate property run.
       Record actual budgets, cases, seeds, source hashes and skips.
 - [ ] Update issue30, handoff and commands; push verified checkpoints without CI.
@@ -59,9 +59,9 @@ evidence/overnight-recovery-preflight-20261103.json; it is not a passing campaig
 
 - [x] Preserve the failed run, exact seed, minimized replay and independent
       analytical divider result before changing numerical behavior.
-- [ ] Separate physically scaled globalization merit from unchanged strict final
+- [x] Separate physically scaled globalization merit from unchanged strict final
       residual/update tolerances; freeze row weights within each line search.
-- [ ] Retain extreme IEEE, malformed/scaling, continuation and physical-audit
+- [x] Retain extreme IEEE, malformed/scaling, continuation and physical-audit
       regressions; replay the original failure seed and relevant mutations.
-- [ ] Review the numerical change, rerun full relevant regressions and a fresh
+- [x] Review the numerical change, rerun full relevant regressions and a fresh
       changing-seed preflight, and publish its actual outcome separately.

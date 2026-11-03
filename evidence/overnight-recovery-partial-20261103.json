@@ -1,0 +1,25 @@
+{
+  "run_id": "20261103T144445Z-50f68cdb",
+  "issue": "https://github.com/jeffadickson/Spice/issues/32",
+  "status": "partial_outer_deadline",
+  "launcher_status": "launcher_failed",
+  "inner_checkpoint_status": "running",
+  "inner_finished_utc": null,
+  "source": "c7761dd1eae80689b4942e75d1781262a33aef5d",
+  "source_dirty": false,
+  "requested_seconds": 480,
+  "last_checkpoint_elapsed_seconds": 473.381297,
+  "completed_requested_cases": 214272,
+  "completed_batches": 93,
+  "initial_seed": "12570625128830035709",
+  "pending_unqualified_seed": "1112197940714409981",
+  "raw_directory": "E:\\Artifacts\\Spice-fix-20261103T140559Z\\property-replay",
+  "summary_sha256": "7fab55d86efcaa55c9bef544e6eadc1599f5aa9dbe978c11413be5cea9d38e95",
+  "launch_manifest_sha256": "14bac35655f88f5346024da2bf211807491e76ca88328159baf00906e830e2a2",
+  "limits": [
+    "No terminal inner summary: the outer duration clock killed the later-starting inner relative clock.",
+    "No complete8-minute or long-soak success; completed checkpoint counts only.",
+    "This source is the first numerical prototype with two later-detected managedPNPGmin regressions; not final numerical qualification.",
+    "The final shared absolute deadline fix is488e121 and the numerical phaseguard is27a8288; neither retroactively changes this result."
+  ]
+}

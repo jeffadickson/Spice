@@ -1,3 +1,38 @@
+# Latest handoff — November 3 overnight recovery
+
+Read docs/overnight-recovery-results.md and docs/overnight-recovery-plan.md first.
+This section supersedes older next-step directions below. Preserve the active M1
+objective and the seven unknown canonical-main sheet-resistor/documentation files.
+
+All new bulk artifacts are under E:/Artifacts/Spice-fix-20261103T140559Z.
+Three targeted Rust survivors are caught by new boundary/independent-physics
+regressions. Physical E work roots, real fixture preflight, shared cancellation
+and shared absolute parent/child deadlines fix the Windows campaign failures.
+No registry/global build-root migration or existing artifact removal occurred.
+
+The preflight exposed a reversed-switch Newton failure. Final globalization uses
+frozen dimensional row merit while linear voltage constraints are infeasible,
+then legacy descent after feasibility; strict final tolerances, iteration budgets
+and mandatory final Gmin removal are unchanged. The rejected unconditional-merit
+prototype regressed PNP Gmin recovery and remains recorded, not hidden.
+
+Final actual checks: 532 Rust passed/2 explicitly ignored; 479 frontend/native
+oracle tests passed/9 external-prerequisite skips; original NPN/PNP source/Gmin
+recovery passes with eight-correction stages on LU/faer. Final engine42835c20...
+agrees with ngspice47+ and the analytical minimized switch voltage/current.
+Scoped coverage and mutation reports retain compiler-invalid/filtered/unattempted
+candidates and unavailable stable-Rust branch maps. Do not claim full mutation
+closure from the three-survivor replay or narrow Stryker proof.
+
+Run outcomes: issue30 original failed night; issue31 failed switch-property
+preflight; issue32 partial outer-deadline run; issue33 final clean property-only
+preflight. The last returned normally at its effective time budget: 44 completed
+batches/101376 completed requested cases, no pending batch or recorded numerical
+failure. This is bounded evidence, not a full overnight or production qualification.
+The previously pinned8ecc0ab soak does not qualify current main. Keep CI off and
+raw artifacts local; use existing results-branch policy for authorized remote runs.
+
+---
 # Latest handoff — five-area compatibility checkpoint, November 3
 
 This section supersedes capability counts and next-step directions in the older
