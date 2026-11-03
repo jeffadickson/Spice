@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "issue": "https://github.com/jeffadickson/Spice/issues/30",
+  "base_revision": "6b2383342c19244fb1c2343d85327b15a44d5371",
+  "source_state": "Follow-up to 6b2383342c19244fb1c2343d85327b15a44d5371. Exact working SHA256 identities and canonical Git-filtered blob SHA1 are distinct.",
+  "source_hashes": {
+    "tests/fixtures/FrameworkDeadlineFixture/FrameworkDeadlineFixture.csproj": {
+      "canonical_git_blob_sha1": "4636e215e3b5dc150a9588cf58e130a7fe8b9652",
+      "tested_working_sha256": "3e166ef6b60e2c8a0dd65e67a94177532689c2564d4d2c5d912e0c12da891eb4"
+    },
+    "tests/FrameworkDeadlines.Tests.ps1": {
+      "canonical_git_blob_sha1": "2bdfd7be9571ade6d6d454ae39b5b4794cd070ce",
+      "tested_working_sha256": "f88035719c88635d8aa458cc9d6b9f1d4f1fc98424bd9c9ec75565d1dcccc566"
+    },
+    "docs/framework-physical-paths.sdoc": {
+      "canonical_git_blob_sha1": "9f14d6f9a2f72f11128808ae8157bb40c872d539",
+      "tested_working_sha256": "c3582a4521605572c69ee4fb49fe56db57dc073b68053648f6a72b25cc27ce68"
+    },
+    "scripts/FrameworkMutations.cs": {
+      "canonical_git_blob_sha1": "bb508c2c8ac6b58c8548ce8d4cc44a79a2374ce6",
+      "tested_working_sha256": "fb997a8a610c1d331cf637c1fee1e2056afc781f754a732a00cf5cf42165c3d6"
+    },
+    "tests/FrameworkPhysicalPaths.Tests.ps1": {
+      "canonical_git_blob_sha1": "f86e71919f5b1e2c8275e3abe9ad6442237ec0df",
+      "tested_working_sha256": "e3e45c30a43bf9a25bf5920a8a16d62490199404c98bc0409dd82569d5a306d3"
+    },
+    "tests/fixtures/FrameworkDeadlineFixture/Program.cs": {
+      "canonical_git_blob_sha1": "a1dc89ea20d7faceda3a8c85bef2d4e100fe4916",
+      "tested_working_sha256": "5936cf0f991ec246f55dff13d11c487b7377bb6464c3fcc226529aeac0cd0136"
+    }
+  },
+  "artifact_root": "E:/Artifacts/Spice-fix-20261103T140559Z/paths",
+  "change": "Use one preflight cancellation deadline across stdin, exit and stdout/stderr drainage, capped by min(10 s, remaining campaign time). Reject expired preflight/tool dispatch. Separate two-second owned-process cleanup allowance also reaps an exited parent's pipe holder.",
+  "historical_evidence": "evidence/framework-physical-paths.json describes the original path fix before this deadline correction. Its helper coverage and native/wrapper/Stryker proofs remain historical at their recorded source hashes; they are not fresh follow-up qualification.",
+  "red": {
+    "actual_process_reproduction": {
+      "report": "deadline-process-red.xml",
+      "passed": 0,
+      "not_selected": 2,
+      "runner_sha256": "b59c7b899128e3afb287c9417c8d7e395fc93183bdb846a0f3f6cb6ec29bc7e3",
+      "source": "Old production preflight from 6b23833 plus a test adapter parsing and deliberately ignoring the requested budget. Delayed child requested .25 s but took 10.58 s; inherited-output requested 1.5 s but took 30.37 s. The adapter was replaced by the production budget argument before green.",
+      "fixture_runner": "deadline-1ce63a79/runner/FrameworkMutations.exe",
+      "test_cases": [
+        {
+          "result": "Failure",
+          "seconds": 10.6789,
+          "name": "Framework shared deadlines.bounds a delayed real fixture by the shared near-zero budget and reaps it"
+        },
+        {
+          "result": "Failure",
+          "seconds": 30.3769,
+          "name": "Framework shared deadlines.bounds inherited output after parent exit and reaps the owned pipe holder"
+        }
+      ],
+      "sha256": "32c4eef9cd0dfeb171ad5ca2dd5ebe29e8b5278c00b8a3e2a0d706eb430d2e7a",
+      "failed": 2
+    },
+    "initial_new_api_and_guard": {
+      "result": "Three optional-budget API assertions failed before support existed; the fourth confirmed Execute attempted the nonexistent tool after expiry and raised Win32Exception.",
+      "failed": 4,
+      "skipped": 0,
+      "sha256": "8d0d8d98251187594405b9c350cc119594e178bd10e7825f7a73e41e05097975",
+      "report": "deadline-red.xml",
+      "passed": 0
+    }
+  },
+  "checks": {
+    "strictdoc": {
+      "resolved_parents": 371,
+      "parser": "0.30.4",
+      "documents": 46,
+      "report": "deadline-strictdoc.json",
+      "sha256": "a4154d782d2393e21db21ea520078eb92faaa65a1a39341df0d0f45ee9d9dab8",
+      "unique_ids": 396,
+      "status": "passed"
+    },
+    "combined_under_coverage": {
+      "passed": 9,
+      "failed": 0,
+      "scope": "5 existing physical-path tests plus 4 deadline tests, including actual production fixture launch and the separate owned process/pipe shim.",
+      "skipped": 0,
+      "command": "dotnet-coverage collect -f cobertura -o <artifact>/deadline-coverage.xml pwsh -NoProfile -File <artifact>/deadline-coverage-driver.ps1",
+      "sha256": "3a166702f39a184ad00790fd46c4a60c2301db29be0a092413ef40e5a4bad45e",
+      "report": "deadline-coverage-pester.xml",
+      "seconds": 33.65
+    },
+    "new_deadlines": {
+      "test_cases": [
+        {
+          "result": "Success",
+          "seconds": 0.4722,
+          "name": "Framework shared deadlines.rejects a zero preflight budget before dispatching the real child"
+        },
+        {
+          "result": "Success",
+          "seconds": 1.0868,
+          "name": "Framework shared deadlines.bounds a delayed real fixture by the shared near-zero budget and reaps it"
+        },
+        {
+          "result": "Success",
+          "seconds": 2.2618,
+          "name": "Framework shared deadlines.bounds inherited output after parent exit and reaps the owned pipe holder"
+        },
+        {
+          "result": "Success",
+          "seconds": 0.4086,
+          "name": "Framework shared deadlines.refuses new tool dispatch after campaign expiry instead of attempting a missing executable"
+        }
+      ],
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "command": "$env:SPICE_PATH_TEST_ROOT=\"<artifact>\"; Invoke-Pester -Path tests/FrameworkDeadlines.Tests.ps1",
+      "sha256": "de1cb901a367774e93e53ad0ac1e64560db1577b4fee98ba4a5afc238e88decf",
+      "report": "deadline-green.xml",
+      "verification": "PID markers prove real delayed/held-output process creation; parent and holder PIDs are absent after timeout. Zero-budget refusal creates no marker. Expired campaign tool dispatch reports budget expiry before attempting a nonexistent executable."
+    },
+    "legacy_regression": {
+      "report": "deadline-legacy-pester.xml",
+      "seconds": 94.73,
+      "passed": 6,
+      "pending": 0,
+      "skipped": 0,
+      "scope": "Existing inherited-pipe/owned-worker, exact selection, malformed arguments and actual cargo-mutants inventory contracts.",
+      "command": "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester -Script tests/FrameworkMutations.Tests.ps1",
+      "sha256": "c5d4447c109d4f787463bd96f1e7f7b3b3a171fe4892253998a01a5e2ad4461e",
+      "failed": 0
+    }
+  },
+  "coverage": {
+    "tool": "dotnet-coverage 18.12",
+    "collector_sha256": "6d3436508bd00b483aa724b428c7312f41399c311a52258306c07ee6890e5417",
+    "metrics": [
+      {
+        "file": "scripts/FrameworkMutations.cs",
+        "source_sha256": "fb997a8a610c1d331cf637c1fee1e2056afc781f754a732a00cf5cf42165c3d6",
+        "lines": 328,
+        "covered_lines": 136,
+        "line_percent": 41.46341463414634,
+        "branches": 434,
+        "covered_branches": 134,
+        "branch_percent": 30.87557603686636
+      }
+    ],
+    "limitations": [
+      "Scoped managed tooling execution; synthetic fixture counts are not simulator qualification.",
+      "Per-line maxima for duplicate branch mappings; not complete path coverage.",
+      "PowerShell, native children, vendor internals and unexecuted platform/failure paths are unmeasured."
+    ]
+  },
+  "tools": {
+    "pester_new": "5.7.1",
+    "dotnet_coverage": "18.12.0",
+    "sdk": "10.0.403",
+    "pester_legacy": "3.4.0",
+    "cargo_mutants": "27.1.0"
+  },
+  "limits": [
+    "No fresh numerical engine, Stryker, Coverlet, overnight, Linux, GPU or CI campaign was run for this deadline-only follow-up. Historical Stryker 3 killed and Coverlet 84 passed retain their original identities.",
+    "Fresh helper coverage is whole-file 328 mapped lines and 434 branches; 9-test scope differs from historical 5-test coverage. Do not compare percentages as equivalent scopes.",
+    "PowerShell, shim/internal .NET behavior, native processes and unexecuted campaign paths are not measured by the reported helper metric.",
+    "Finite real-process tests verify observed time bounds and PID reaping on this Windows host, not universal scheduling or formal real-time bounds; synchronous OS process creation/enumeration/kill and timer granularity remain platform limitations.",
+    "No existing transport timeout was raised and no property failure or campaign classification policy changed. No new fuzz/randomized or maintained mutation-framework campaign was needed for this deadline wiring; real red counterexamples are regression evidence, not a mutation score."
+  ]
+}

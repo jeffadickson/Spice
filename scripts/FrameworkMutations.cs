@@ -9,7 +9,14 @@ if(args is ["--physical-path-self-test",var requestedRoot]) {
     Console.WriteLine(PhysicalMutationRoot(requestedRoot));return;
 }
 if(args is ["--fixture-preflight-self-test",var fixturePath]) {
-    await PreflightFixture(fixturePath);Console.WriteLine("Real transport fixture launch passed.");return;
+    await PreflightFixture(fixturePath,TimeSpan.FromSeconds(10));Console.WriteLine("Real transport fixture launch passed.");return;
+}
+// Test adapter exposes the requested budget at the actual process boundary.
+if(args is ["--fixture-preflight-self-test",var budgetFixture,var budgetSeconds]) {
+    var budget=TimeSpan.FromSeconds(double.Parse(budgetSeconds,CultureInfo.InvariantCulture));
+    try {await PreflightFixture(budgetFixture,budget);Console.WriteLine("Real transport fixture launch passed.");}
+    catch(TimeoutException error){Console.Error.WriteLine(error.Message);Environment.ExitCode=1;}
+    return;
 }
 
 // Private process fixtures reproduce inherited-pipe lifetime independently of
@@ -122,11 +129,16 @@ async Task<(int Exit,bool Timeout)> Execute(string file,IEnumerable<string> argu
     foreach(var arg in arguments)start.ArgumentList.Add(arg);
     start.Environment["CARGO_BUILD_JOBS"]=workers.ToString(CultureInfo.InvariantCulture);start.Environment["RUST_TEST_THREADS"]=workers.ToString(CultureInfo.InvariantCulture);
     if(environment is not null)foreach(var pair in environment)start.Environment[pair.Key]=pair.Value;
+    // Check immediately before dispatch. A minimum timeout must never grant a
+    // fresh tool permission to start after the shared campaign has expired.
+    var secondsLeft=Math.Min(seconds,Remaining());
+    if(secondsLeft<=0)throw new TimeoutException("Campaign tool budget expired before dispatch.");
+    using var limit=new CancellationTokenSource(TimeSpan.FromSeconds(secondsLeft));
+    limit.Token.ThrowIfCancellationRequested();
     using var process=Process.Start(start)??throw new IOException("Could not start "+file);
     // The same budget covers execution AND pipe draining. A descendant can
     // retain inherited handles after the immediate parent has already exited.
     var timeout=false;
-    using var limit=new CancellationTokenSource(TimeSpan.FromSeconds(Math.Max(.01,Math.Min(seconds,Remaining()))));
     async Task<string> Read(StreamReader reader) {
         var text=new StringBuilder();var buffer=new char[4096];int count;
         try{while((count=await reader.ReadAsync(buffer.AsMemory(),limit.Token))>0)
@@ -209,7 +221,7 @@ try {
     // a successful managed build alone did not catch the overnight path failure.
     var managedBuild=await Execute("dotnet",["build","dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj","--nologo"],"managed-preflight-build.log",Math.Min(180,Remaining()),directory:managedRoot);
     if(managedBuild.Timeout||managedBuild.Exit!=0)throw new IOException("Managed fixture preflight build failed; inspect managed-preflight-build.log.");
-    await PreflightFixture(Path.Combine(managedRoot,"dotnet","Simulator.Client.Tests","bin","Debug","net10.0","fixture","Simulator.TransportFixture"+(OperatingSystem.IsWindows()?".exe":"")));
+    await PreflightFixture(Path.Combine(managedRoot,"dotnet","Simulator.Client.Tests","bin","Debug","net10.0","fixture","Simulator.TransportFixture"+(OperatingSystem.IsWindows()?".exe":"")),TimeSpan.FromSeconds(Math.Min(10,Remaining())));
     report.ManagedFixturePreflight="passed";Save();
     var stryker=await Execute("dotnet",["tool","run","dotnet-stryker","--","--config-file","dotnet/Simulator.Client.Tests/stryker-config.json","--test-project","dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj","--concurrency",workers.ToString(CultureInfo.InvariantCulture),"--output",Path.Combine(run,"stryker")],"stryker.log",Remaining()*(selectedTool=="dotnet"?1:.4),new(){["SPICE_TEST_ROOT"]=inputsRoot,["SPICE_TEST_EXECUTABLE"]=frozenEngine},managedRoot);
     foreach(var pair in report.ManagedInputHashes)VerifyFrozen(Path.Combine(inputsRoot,pair.Key),pair.Value);
@@ -294,18 +306,39 @@ static string PhysicalMutationRoot(string requested) {
     return resolved;
 }
 // Validate process creation and protocol exchange, including stdin closure.
-// Every exceptional path reaps the owned child; a failed preflight aborts work.
-static async Task PreflightFixture(string executable) {
+// One deadline includes input, process exit and inherited-output drainage. The
+// separate two-second cleanup allowance grants no further useful work or tools.
+static async Task PreflightFixture(string executable,TimeSpan budget) {
+    if(budget<=TimeSpan.Zero)throw new TimeoutException("Transport fixture preflight budget expired before dispatch.");
+    using var limit=new CancellationTokenSource(budget);
     var start=new ProcessStartInfo(executable){UseShellExecute=false,CreateNoWindow=true,RedirectStandardInput=true,RedirectStandardOutput=true,RedirectStandardError=true};
+    limit.Token.ThrowIfCancellationRequested();
     using var process=Process.Start(start)??throw new IOException("Transport fixture did not start.");
+    Task<string>? stdout=null,stderr=null;
     try {
-        var stdout=process.StandardOutput.ReadToEndAsync();var stderr=process.StandardError.ReadToEndAsync();
-        await process.StandardInput.WriteAsync("{\"output\":\"spice-fixture-preflight\"}");process.StandardInput.Close();
-        await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(10));
-        if(process.ExitCode!=0||await stdout.WaitAsync(TimeSpan.FromSeconds(2))!="spice-fixture-preflight"||await stderr.WaitAsync(TimeSpan.FromSeconds(2))!="")
+        stdout=process.StandardOutput.ReadToEndAsync(limit.Token);stderr=process.StandardError.ReadToEndAsync(limit.Token);
+        await process.StandardInput.WriteAsync("{\"output\":\"spice-fixture-preflight\"}".AsMemory(),limit.Token);
+        await process.StandardInput.FlushAsync(limit.Token);process.StandardInput.Close();
+        await process.WaitForExitAsync(limit.Token);
+        await Task.WhenAll(stdout,stderr);
+        if(process.ExitCode!=0||stdout.Result!="spice-fixture-preflight"||stderr.Result!="")
             throw new IOException("Transport fixture launch/protocol preflight failed.");
-    } finally {if(!process.HasExited){process.Kill(true);await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(2));}}
+    } catch(OperationCanceledException error) when(limit.IsCancellationRequested) {
+        throw new TimeoutException("Transport fixture preflight deadline expired.",error);
+    } finally {
+        var cleanup=Stopwatch.StartNew();var cleanupBudget=TimeSpan.FromSeconds(2);
+        if(!process.HasExited){process.Kill(true);await process.WaitForExitAsync().WaitAsync(cleanupBudget);}
+        // A parent can exit while an owned descendant still retains the pipes.
+        // This copied fixture directory belongs exclusively to this campaign.
+        ReapOwnedWorkers(Path.GetDirectoryName(Path.GetFullPath(executable))!,cleanupBudget-cleanup.Elapsed);
+        if(stdout is not null&&stderr is not null) {
+            try {await Task.WhenAll(stdout,stderr).WaitAsync(MaxCleanupRemaining(cleanupBudget-cleanup.Elapsed));}
+            catch(OperationCanceledException) when(limit.IsCancellationRequested){ }
+            catch(IOException) when(limit.IsCancellationRequested){ }
+        }
+    }
 }
+static TimeSpan MaxCleanupRemaining(TimeSpan remaining)=>remaining>TimeSpan.Zero?remaining:throw new TimeoutException("Transport fixture cleanup deadline expired.");
 // Only the filename prefix is a path. The mutation description may legitimately
 // contain Rust rest patterns (".."); it is escaped as regex data and separately
 // checked against the exact native inventory before any mutation is executed.
@@ -322,9 +355,11 @@ static ProcessStartInfo SelfStart(string argument) {
         start.ArgumentList.Add(System.Reflection.Assembly.GetExecutingAssembly().Location);
     start.ArgumentList.Add(argument);return start;
 }
-static int ReapOwnedWorkers(string directory) {
+static int ReapOwnedWorkers(string directory,TimeSpan? budget=null) {
+    var cleanup=Stopwatch.StartNew();
     var prefix=Path.GetFullPath(directory)+Path.DirectorySeparatorChar;var count=0;
     foreach(var process in Process.GetProcesses())using(process) {
+        if(budget is not null)MaxCleanupRemaining(budget.Value-cleanup.Elapsed);
         string? executable;
         try{_=process.Handle;executable=process.MainModule?.FileName;}
         catch(Exception error) when(error is System.ComponentModel.Win32Exception or InvalidOperationException){continue;}
@@ -332,7 +367,9 @@ static int ReapOwnedWorkers(string directory) {
         var name=Path.GetFileNameWithoutExtension(executable);
         if(name is not ("Simulator.TransportFixture" or "circuit-simulator" or "testhost" or "FrameworkMutations"))continue;
         if(process.HasExited)continue;
-        process.Kill(true);if(!process.WaitForExit(1000))throw new IOException("Owned mutation worker did not terminate.");count++;
+        process.Kill(true);
+        var waitMilliseconds=budget is null?1000:(int)Math.Clamp(MaxCleanupRemaining(budget.Value-cleanup.Elapsed).TotalMilliseconds,1,1000);
+        if(!process.WaitForExit(waitMilliseconds))throw new IOException("Owned mutation worker did not terminate.");count++;
     }
     return count;
 }

@@ -32,6 +32,13 @@ exchange a bounded request/response. Managed build success alone is insufficient
 Missing fixtures, nonzero exits, incorrect output and deadline failures propagate.
 Owned children are reaped on exceptional exit.
 
+The preflight uses one cancellation deadline across stdin, exit and output
+drainage, capped by both ten seconds and the remaining campaign time. A separate
+two-second cleanup allowance reaps the owned process and any fixture pipe holder;
+it permits no additional useful work. Expired campaign budgets refuse new tool
+dispatch. The [deadline follow-up evidence](../evidence/framework-deadline-followup.json)
+records real delayed/held-output regression tests and fresh helper coverage.
+
 Reproduce from PowerShell 7 with the checkout and an existing E: artifact parent:
 
 ```powershell

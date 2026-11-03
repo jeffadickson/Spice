@@ -22,12 +22,12 @@ UID: VERIFY-FRAMEWORK-PATH-002
 STATUS: Implemented
 TITLE: Actual transport fixture launch preflight
 STATEMENT: >>>
-Before Stryker baseline execution the supervisor shall build the copied managed test project and launch its actual transport fixture apphost, close its input and verify its output and exit status with a bounded deadline. A build or launch failure shall fail the framework report instead of entering mutation execution.
+Before Stryker baseline execution the supervisor shall build the copied managed test project and launch its actual transport fixture apphost, close its input and verify its output and exit status within one shared deadline bounded by ten seconds and the remaining campaign time. Expired budgets shall prevent dispatch. Input, exit and inherited-output drainage shall share that deadline; owned-process cleanup shall have a separate two-second allowance that cannot authorize further work. A build or launch failure shall fail the framework report instead of entering mutation execution.
 <<<
 COMMENT: >>>
 Implementation: scripts/FrameworkMutations.cs, PreflightFixture and managed-preflight-build.log.
 Verification: tests/FrameworkPhysicalPaths.Tests.ps1 exercises the same actual executable through an overlong logical junction alias and the resolved physical directory, plus missing-fixture failure propagation. The launcher regression verifies explicit physical-root propagation into the owned worker and its manifest.
-Raw logs and coverage scope are identified in evidence/framework-physical-paths.json. A bounded mutation sample is separate from complete framework or release qualification.
+Deadline regressions: tests/FrameworkDeadlines.Tests.ps1 and its owned FrameworkDeadlineFixture exercise zero-budget refusal, a delayed child, inherited output after parent exit, owned-child reaping and expired campaign tool dispatch. Follow-up evidence: evidence/framework-deadline-followup.json. Original path-fix logs and historical coverage scope are identified in evidence/framework-physical-paths.json. A bounded mutation sample is separate from complete framework or release qualification.
 <<<
 RELATIONS:
 - TYPE: Parent
