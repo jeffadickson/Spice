@@ -32,6 +32,7 @@ public static class AffineVoltageExpressionEvaluator
         if(deck.statement().Length!=2||deck.statement(0).paramCard()?.assignment().Length!=1)return Failure("unsupported_behavior_expression");
         var expression=deck.statement(0).paramCard().assignment(0).value()?.expression();
         if(expression==null||expression.Start.StartIndex!=prefix.Length||expression.Stop.StopIndex!=prefix.Length+syntax.Text.Length-1)return Failure("unsupported_behavior_expression");
+        var positions=new DeckParser.PhysicalPositions(syntax.Text);
         var visited=0;
         try
         {
@@ -119,9 +120,10 @@ public static class AffineVoltageExpressionEvaluator
         SourceSyntax Capture(ParserRuleContext node)
         {
             var start=node.Start.StartIndex-prefix.Length;var length=node.Stop.StopIndex-node.Start.StartIndex+1;
-            var line=syntax.Range.Line+node.Start.Line-2;
-            var prefixColumn=prefix.Length-prefix.LastIndexOf('\n')-1;
-            var column=node.Start.Line==2?syntax.Range.Column+node.Start.Column-prefixColumn:node.Start.Column+1;
+            // Reuse the deck physical-offset map: ANTLR itself counts LF only.
+            var (localLine,localColumn)=positions.At(start);
+            var line=syntax.Range.Line+localLine-1;
+            var column=localLine==1?syntax.Range.Column+localColumn-1:localColumn;
             return new(syntax.Text.Substring(start,length),new(syntax.Range.Start+start,length,line,column));
         }
     }

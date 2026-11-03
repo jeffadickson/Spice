@@ -177,7 +177,7 @@ public static class DeckParser
 
     // ANTLR counts LF lines. SPICE also permits bare CR: map generated offsets
     // to physical source locations independently of newline normalization.
-    private sealed class PhysicalPositions
+    internal sealed class PhysicalPositions
     {
         private readonly int[] starts;
         public PhysicalPositions(string text)

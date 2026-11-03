@@ -49,6 +49,7 @@ public sealed class AffineBehaviorTests
     [InlineData("B1 out 0 V=time")]
     [InlineData("B1 out 0 V=v(\"in\")")]
     [InlineData("B1 out 0 V=v(in) tc1=1")]
+    [InlineData("B1 out 0 foo=1")]
     public void Nonlinear_runtime_or_opaque_terms_are_atomic_refusals(string card)
     {
         var result=Prepare(card);Assert.False(result.Success);Assert.Null(result.Source);Assert.NotEmpty(result.Diagnostics);
@@ -69,11 +70,14 @@ public sealed class AffineBehaviorTests
         var result=BehavioralSourceLowering.Prepare(catalog,Assert.Single(catalog.BehavioralSources),environment);
         Assert.True(result.Success);Assert.Equal(14,result.Source!.Offset);Assert.Equal(4,Assert.Single(result.Source.Terms).Coefficient);
     }
-    [Fact]
-    public void Continuation_ranges_retain_the_physical_voltage_node_line()
+    [Theory]
+    [InlineData("\n")]
+    [InlineData("\r\n")]
+    [InlineData("\r")]
+    public void Continuation_ranges_retain_the_physical_voltage_node_line(string newline)
     {
-        var result=Prepare("B1 out 0 V=2*\n+ v(in)+1");Assert.True(result.Success);
-        Assert.Equal(4,Assert.Single(result.Source!.Terms).Node.Range.Line);
+        var result=Prepare($"B1 out 0 V=2*{newline}+ v(in)+1");Assert.True(result.Success);
+        var range=Assert.Single(result.Source!.Terms).Node.Range;Assert.Equal(4,range.Line);Assert.Equal(5,range.Column);
     }
     [Fact]
     public void Term_and_depth_budgets_refuse_without_partial_output()
@@ -89,6 +93,22 @@ public sealed class AffineBehaviorTests
         var foreign=DeckParser.Parse("t\n.end\n",collectDeclarations:true).Declarations!;
         Assert.False(BehavioralSourceLowering.Prepare(catalog,Assert.Single(catalog.BehavioralSources),ParameterEvaluator.Evaluate(foreign)).Success);
         Assert.False(Prepare("B1 out 0 V=time+v(in)",".param time=3").Success);
+    }
+    [Fact]
+    public void Unary_sign_and_scalar_divisor_apply_to_offset_and_coefficients()
+    {
+        var result=Prepare("B1 out 0 V=-(v(in)+2)/4");Assert.True(result.Success);
+        Assert.Equal(-.5,result.Source!.Offset);Assert.Equal(-.25,Assert.Single(result.Source.Terms).Coefficient);
+    }
+    [Fact]
+    public void Public_evaluator_limits_and_catalog_ownership_are_explicit()
+    {
+        var parsed=DeckParser.Parse("t\nB1 out 0 V=v(in)\n.end\n",collectDeclarations:true);var catalog=parsed.Declarations!;var environment=ParameterEvaluator.Evaluate(catalog);
+        var source=Assert.Single(catalog.BehavioralSources);var foreign=DeckParser.Parse("t\n.end\n",collectDeclarations:true).Declarations!;
+        Assert.False(BehavioralSourceLowering.Prepare(foreign,source,ParameterEvaluator.Evaluate(foreign)).Success);
+        Assert.Throws<ArgumentOutOfRangeException>(()=>AffineVoltageExpressionEvaluator.Evaluate(catalog,environment,source.Expression!,0));
+        var oversized=AffineVoltageExpressionEvaluator.Evaluate(catalog,environment,new(new string('1',4097),source.Range));
+        Assert.Null(oversized.Form);Assert.Equal("expression_budget",Assert.Single(oversized.Diagnostics).Code);
     }
     [Fact]
     public void Affine_scalar_property_campaign()
