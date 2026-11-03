@@ -5,6 +5,13 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
+if(args is ["--physical-path-self-test",var requestedRoot]) {
+    Console.WriteLine(PhysicalMutationRoot(requestedRoot));return;
+}
+if(args is ["--fixture-preflight-self-test",var fixturePath]) {
+    await PreflightFixture(fixturePath);Console.WriteLine("Real transport fixture launch passed.");return;
+}
+
 // Private process fixtures reproduce inherited-pipe lifetime independently of
 // mutation tools. The holder is always terminated by its owning self-test.
 if(args is ["--pipe-holder"]) {await Task.Delay(TimeSpan.FromSeconds(30));return;}
@@ -93,10 +100,21 @@ if(!Directory.Exists("work"))Directory.CreateDirectory("work");
 // acquire both locks in the same order; independent one-worker runs may overlap.
 using var rustLock=selectedTool!="dotnet"?new FileStream("work/framework-rust.lock",FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None):null;
 using var managedLock=selectedTool!="rust"?new FileStream("work/framework-dotnet.lock",FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None):null;
-var run=Path.Combine(root,"work","framework-mutations",DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8]);Directory.CreateDirectory(run);
+// The source alias remains the lock/provenance identity. Child processes must
+// instead see a short physical path: MSBuild accepting an extended path does
+// not imply that Windows CreateProcess can launch the copied fixture there.
+var requestedWorkRoot=Environment.GetEnvironmentVariable("SPICE_FRAMEWORK_WORK_ROOT");
+if(requestedWorkRoot is null) {
+    var artifactRoot=Environment.GetEnvironmentVariable("CODEX_ARTIFACT_ROOT")??(OperatingSystem.IsWindows()?@"E:\Artifacts":Path.Combine(root,"work"));
+    if(!Directory.Exists(artifactRoot))throw new DirectoryNotFoundException("Existing artifact root required: "+artifactRoot);
+    requestedWorkRoot=Path.Combine(artifactRoot,"framework-mutations");Directory.CreateDirectory(requestedWorkRoot);
+}
+var physicalWorkRoot=PhysicalMutationRoot(requestedWorkRoot);
+var run=Path.Combine(physicalWorkRoot,DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8]);Directory.CreateDirectory(run);
 var options=new JsonSerializerOptions{WriteIndented=true,PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower};
 var report=new FrameworkReport{RequestedSeconds=minutes*60,Shard=shard,RustFile=rustFile,RustTest=rustTest,Tool=selectedTool,RustFilter=rustFilter,Workers=workers};
 report.RustSelectedNames=selectedNames;report.RustSelectionSha256=selectionHash;
+report.LogicalSourceRoot=root;report.PhysicalWorkRoot=physicalWorkRoot;
 var clock=Stopwatch.StartNew();
 double Remaining()=>Math.Max(0,minutes*60-clock.Elapsed.TotalSeconds);
 async Task<(int Exit,bool Timeout)> Execute(string file,IEnumerable<string> arguments,string log,double seconds,Dictionary<string,string>? environment=null,string? directory=null) {
@@ -174,7 +192,8 @@ try {
     // never bin/obj, so concurrent ordinary client builds remain independent.
     var managedRoot=Path.Combine(run,"managed");Directory.CreateDirectory(managedRoot);
     foreach(var path in new[]{"dotnet-tools.json","global.json"}.Concat(Directory.EnumerateFiles("dotnet","*",SearchOption.AllDirectories).Where(p=>!p.Split(Path.DirectorySeparatorChar).Any(part=>part is "bin" or "obj" or "TestResults")))) {
-        var destination=Path.Combine(managedRoot,path);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Copy(path,destination);
+        var destination=Path.Combine(managedRoot,path);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+        report.ManagedSourceHashes[path.Replace('\\','/')]=FreezeFile(Path.Combine(root,path),destination);
     }
     // Freeze the real native dependency and fixture inputs too: otherwise a
     // concurrent rebuild/edit in the original checkout changes mutant semantics.
@@ -186,8 +205,15 @@ try {
         var destination=Path.Combine(inputsRoot,relative);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
         report.ManagedInputHashes[relative]=FreezeFile(Path.Combine(root,relative),destination);
     }
+    // Exercise the actual apphost before Stryker starts its expensive baseline;
+    // a successful managed build alone did not catch the overnight path failure.
+    var managedBuild=await Execute("dotnet",["build","dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj","--nologo"],"managed-preflight-build.log",Math.Min(180,Remaining()),directory:managedRoot);
+    if(managedBuild.Timeout||managedBuild.Exit!=0)throw new IOException("Managed fixture preflight build failed; inspect managed-preflight-build.log.");
+    await PreflightFixture(Path.Combine(managedRoot,"dotnet","Simulator.Client.Tests","bin","Debug","net10.0","fixture","Simulator.TransportFixture"+(OperatingSystem.IsWindows()?".exe":"")));
+    report.ManagedFixturePreflight="passed";Save();
     var stryker=await Execute("dotnet",["tool","run","dotnet-stryker","--","--config-file","dotnet/Simulator.Client.Tests/stryker-config.json","--test-project","dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj","--concurrency",workers.ToString(CultureInfo.InvariantCulture),"--output",Path.Combine(run,"stryker")],"stryker.log",Remaining()*(selectedTool=="dotnet"?1:.4),new(){["SPICE_TEST_ROOT"]=inputsRoot,["SPICE_TEST_EXECUTABLE"]=frozenEngine},managedRoot);
     foreach(var pair in report.ManagedInputHashes)VerifyFrozen(Path.Combine(inputsRoot,pair.Key),pair.Value);
+    foreach(var pair in report.ManagedSourceHashes)VerifyFrozen(Path.Combine(managedRoot,pair.Key),pair.Value);
     report.Stryker.Status=stryker.Timeout?"partial_timeout":stryker.Exit==0?"completed":"failed";
     report.Stryker.ExitCode=stryker.Exit;report.Stryker.LogSha256=Hash(Path.Combine(run,"stryker.log"));
     var managed=Directory.Exists(Path.Combine(run,"stryker"))?Directory.GetFiles(Path.Combine(run,"stryker"),"mutation-report.json",SearchOption.AllDirectories):[];
@@ -251,6 +277,35 @@ try {
 finally{Save();}
 if(report.Status=="failed")Environment.ExitCode=1;
 static string Hash(string path)=>Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))).ToLowerInvariant();
+// Resolve each component: ResolveLinkTarget on only the leaf misses an ancestor
+// junction. BCL resolution supports both Windows junctions and Unix symlinks.
+static string PhysicalMutationRoot(string requested) {
+    if(!Directory.Exists(requested))throw new DirectoryNotFoundException("Existing physical mutation root required: "+requested);
+    var full=Path.GetFullPath(requested);var resolved=Path.GetPathRoot(full)!;
+    foreach(var part in full[resolved.Length..].Split(Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar).Where(p=>p.Length!=0)) {
+        var directory=new DirectoryInfo(Path.Combine(resolved,part));
+        resolved=directory.ResolveLinkTarget(true)?.FullName??directory.FullName;
+    }
+    // Reserve the exact run/build/fixture suffix plus a safety margin below
+    // legacy CreateProcess's path boundary; Unix has no corresponding 260 cap.
+    var fixture=Path.Combine(resolved,"20000101T000000Z-00000000","managed","dotnet","Simulator.Client.Tests","bin","Debug","net10.0","fixture","Simulator.TransportFixture.exe");
+    if(OperatingSystem.IsWindows()&&fixture.Length>=240)
+        throw new ArgumentException("Choose a shorter physical mutation root (projected fixture path must be under 240 characters): "+resolved);
+    return resolved;
+}
+// Validate process creation and protocol exchange, including stdin closure.
+// Every exceptional path reaps the owned child; a failed preflight aborts work.
+static async Task PreflightFixture(string executable) {
+    var start=new ProcessStartInfo(executable){UseShellExecute=false,CreateNoWindow=true,RedirectStandardInput=true,RedirectStandardOutput=true,RedirectStandardError=true};
+    using var process=Process.Start(start)??throw new IOException("Transport fixture did not start.");
+    try {
+        var stdout=process.StandardOutput.ReadToEndAsync();var stderr=process.StandardError.ReadToEndAsync();
+        await process.StandardInput.WriteAsync("{\"output\":\"spice-fixture-preflight\"}");process.StandardInput.Close();
+        await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        if(process.ExitCode!=0||await stdout.WaitAsync(TimeSpan.FromSeconds(2))!="spice-fixture-preflight"||await stderr.WaitAsync(TimeSpan.FromSeconds(2))!="")
+            throw new IOException("Transport fixture launch/protocol preflight failed.");
+    } finally {if(!process.HasExited){process.Kill(true);await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(2));}}
+}
 // Only the filename prefix is a path. The mutation description may legitimately
 // contain Rust rest patterns (".."); it is escaped as regex data and separately
 // checked against the exact native inventory before any mutation is executed.
@@ -292,8 +347,11 @@ static void VerifyFrozen(string path,string hash) {
     if(Hash(path)!=hash)throw new IOException("Mutation input snapshot changed during execution.");
 }
 
-/// Small path-free evidence suitable for the remote manifest allowlist.
+/// Bounded campaign evidence, retaining logical source and physical layout
+/// identities separately. Remote importers consume their explicit allowlist.
 sealed class FrameworkReport {
+    public string LogicalSourceRoot{get;set;}="";public string PhysicalWorkRoot{get;set;}="";
+    public string ManagedFixturePreflight{get;set;}="not_run";
     public string Status{get;set;}="running";public double RequestedSeconds{get;set;}public double ElapsedSeconds{get;set;}
     public string Shard{get;set;}="";public string RustFile{get;set;}="";
     public string RustTest{get;set;}="all";
@@ -303,6 +361,7 @@ sealed class FrameworkReport {
     public int OwnedWorkersReaped{get;set;}
     public string[]? RustSelectedNames{get;set;}public string? RustSelectionSha256{get;set;}
     public Dictionary<string,string> ManagedInputHashes{get;set;}=new(StringComparer.Ordinal);
+    public Dictionary<string,string> ManagedSourceHashes{get;set;}=new(StringComparer.Ordinal);
     public ToolCounts CargoMutants{get;set;}=new(){Version="27.1.0"};public ToolCounts Stryker{get;set;}=new(){Version="5.0.0"};
 }
 /// Native categories remain separate; unrecognized statuses are never counted as kills.

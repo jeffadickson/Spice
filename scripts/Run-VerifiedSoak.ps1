@@ -50,6 +50,17 @@ catch [IO.IOException]{
 try{
  # No shared mutable output cache: each pinned run gets its own E: directories.
  if(-not(Test-Path -LiteralPath $ArtifactDirectory -PathType Container)){New-Item -ItemType Directory -Path $ArtifactDirectory|Out-Null}
+ # Resolve-Path preserves junction aliases. Resolve every directory component
+ # so descendants launch apphosts through the physical artifact location.
+ $physicalArtifacts=[IO.Path]::GetPathRoot($ArtifactDirectory)
+ foreach($component in $ArtifactDirectory.Substring($physicalArtifacts.Length).Split([char[]]@('\','/'),[StringSplitOptions]::RemoveEmptyEntries)){
+  $directory=[IO.DirectoryInfo]::new((Join-Path $physicalArtifacts $component))
+  $destination=$directory.ResolveLinkTarget($true)
+  $physicalArtifacts=if($null -ne $destination){$destination.FullName}else{$directory.FullName}
+ }
+ $frameworkWorkRoot=Join-Path $physicalArtifacts 'fm'
+ if(Test-Path -LiteralPath $frameworkWorkRoot){throw "Fresh framework mutation output required: $frameworkWorkRoot"}
+ New-Item -ItemType Directory -Path $frameworkWorkRoot|Out-Null
  foreach($name in @('work','target')){
   $target=Join-Path $ArtifactDirectory $name;$link=Join-Path $Checkout $name
   if(Test-Path -LiteralPath $link){throw "Fresh checkout output path required: $link"}
@@ -68,6 +79,7 @@ try{
   New-Item -ItemType Junction -Path $mutationLink -Target $mutationSource|Out-Null
  }
  $state=[ordered]@{state='starting';source_commit=$commit;source_dirty=$false;launcher_sha256=(Get-FileHash -LiteralPath $PSCommandPath).Hash.ToLowerInvariant();worker_pid=$PID;checkout=$Checkout;artifact_directory=$ArtifactDirectory;minutes=$Minutes;finish_by_utc=$FinishByUtc;started_utc=[DateTime]::UtcNow.ToString('o');canonical_lock=Join-Path $work 'endurance.lock';limits='Scheduled or started is not completed; inspect actual endurance summary for cases, seeds, mutations and duration.'}
+ $state['framework_work_root']=$frameworkWorkRoot
  $state|ConvertTo-Json -Depth 5|Set-Content -LiteralPath $pointer
  $state|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $ArtifactDirectory 'launch-manifest.json')
  . (Join-Path $Checkout 'scripts/HostTools.ps1');Import-SpiceTools -Root $Checkout;Import-SpiceMsvc
@@ -76,6 +88,9 @@ try{
  # Reserve the existing five-second cleanup allowance inside the user's window.
  if($FinishByUtc){$testFinish=[DateTimeOffset]::ParseExact($FinishByUtc,'O',[cultureinfo]::InvariantCulture).AddSeconds(-5);$arguments+=@('-FinishByUtc',$testFinish.ToString('o'));$state['test_finish_by_utc']=$testFinish.ToString('o')}
  $start=[Diagnostics.ProcessStartInfo]::new((Get-Command pwsh).Source);$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.WorkingDirectory=$Checkout
+ # Scope this export to the owned worker; do not change global environment or
+ # derive mutation builds from the checkout/work junction's logical alias.
+ $start.Environment['SPICE_FRAMEWORK_WORK_ROOT']=$frameworkWorkRoot
  foreach($argument in $arguments){$start.ArgumentList.Add($argument)}
  $outerStartedUtc=[DateTimeOffset]::UtcNow;$outerClock=[Diagnostics.Stopwatch]::StartNew()
  $remaining=[TimeSpan]::FromMinutes($Minutes)

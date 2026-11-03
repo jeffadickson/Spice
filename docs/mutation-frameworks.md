@@ -1,6 +1,8 @@
 # Generated mutation campaigns
 
 The repository uses cargo-mutants 27.1.0 for Rust and Stryker.NET 5.0.0 for C#.
+Windows campaigns use [short physical artifact paths](framework-physical-paths.md)
+and launch the real transport fixture before entering Stryker's baseline.
 These are developer tools, not simulator runtime dependencies. Maintained frameworks
 run first in overnight campaigns; custom numerical regressions are supplemental,
 explicitly selected checks. Historical 22/22 evidence is not a generated mutation score.

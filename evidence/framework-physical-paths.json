@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "issue": "https://github.com/jeffadickson/Spice/issues/30",
+  "base_revision": "e679def7966cfb5ee5a0c9d09dda6e1907796e3f",
+  "source_state": "Base e679def plus the explicitly hashed working changes; working SHA-256 and Git-filtered blob SHA-1 are separate identities.",
+  "source_hashes": {
+    "tests/FrameworkPhysicalPaths.Tests.ps1": {
+      "canonical_git_blob_sha1": "f86e71919f5b1e2c8275e3abe9ad6442237ec0df",
+      "tested_working_sha256": "e3e45c30a43bf9a25bf5920a8a16d62490199404c98bc0409dd82569d5a306d3"
+    },
+    "scripts/tests/SoakSupervision.Tests.ps1": {
+      "canonical_git_blob_sha1": "1cf6ca35a865f8a99ce475e04f44e7d651fd20aa",
+      "tested_working_sha256": "f56f404818fbf82cc75238a74ad8e77f676c4782d38a604abdb06b35572469e1"
+    },
+    "scripts/Run-VerifiedSoak.ps1": {
+      "canonical_git_blob_sha1": "dcabfb6869e57147ccae1875e829364c250ae540",
+      "tested_working_sha256": "37e03f37f2b6813c8352d89f22e4a06694cc8f05213b1e2aec0bbc81ccd11844"
+    },
+    "docs/framework-physical-paths.sdoc": {
+      "canonical_git_blob_sha1": "e618c7a003105e102c20de7d95ab9d4bca3ffe21",
+      "tested_working_sha256": "22ad93669a567148d6e2a02eb4765623f7418db8caf682b7298b1fc81856d16b"
+    },
+    "scripts/FrameworkMutations.cs": {
+      "canonical_git_blob_sha1": "02eb28e5ef9e966a937ae31e00821df5b8197d09",
+      "tested_working_sha256": "9cf84b4dbc46a2fedeeb7da6d763a8a40b613d76dde4140beea4f9b0d6f91695"
+    }
+  },
+  "artifact_root": "E:/Artifacts/Spice-fix-20261103T140559Z/paths",
+  "tools": {
+    "strictdoc": "0.30.4",
+    "coverlet": "10.1.0",
+    "dotnet_coverage": "18.12.0",
+    "pester_modern": "5.7.1",
+    "sdk": "10.0.403",
+    "pester_legacy": "3.4.0",
+    "stryker": "5.0.0"
+  },
+  "red_green": {
+    "resolver_red": "2 failed / 1 passed before implementation (unknown self-test argument); then 5/5 physical-path contracts passed, including actual >260-char apphost Win32Exception followed by short physical launch.",
+    "launcher_red": "Missing framework_work_root failed expected bootstrap contract; full local SoakSupervision then 4/4 passed."
+  },
+  "checks": {
+    "legacy_framework": {
+      "report": "legacy-pester.xml",
+      "skipped": 0,
+      "seconds": 125.38,
+      "command": "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester -Script tests/FrameworkMutations.Tests.ps1",
+      "failed": 0,
+      "passed": 6
+    },
+    "strictdoc": {
+      "resolved_parents": 371,
+      "status": "passed",
+      "report": "strictdoc.json",
+      "documents": 46,
+      "unique_ids": 396,
+      "initial_environment_failure": "Canonical .tools/sphinx Python lacked strictdoc; reran with existing how/work/strictdoc-env Python."
+    },
+    "physical_paths": {
+      "failed": 0,
+      "passed": 5,
+      "skipped": 0,
+      "command": "Invoke-Pester -Path tests/FrameworkPhysicalPaths.Tests.ps1 -Output Detailed",
+      "scope": "Windows NTFS ancestor junction into exFAT E output, deep/missing root refusal, actual fixture launch and missing fixture failure.",
+      "final_report": "physical-paths-final.xml"
+    },
+    "launcher": {
+      "failed": 0,
+      "passed": 4,
+      "skipped": 0,
+      "scope": "SoakSupervision suite: child physical root export, deadline, canonical lock identity, report-failure cleanup."
+    }
+  },
+  "wrapper_preflight": {
+    "summary": "E:\\Artifacts\\Spice-fix-20261103T140559Z\\paths\\fm\\20261103T141841Z-ddc8f2e1\\summary.json",
+    "native_source": "cargo build --locked from base e679def unchanged native sources, MSVC, two workers; fresh E target cold build initially exceeded framework 80s third-budget; separate incremental continuation completed in4m45s, then actual wrapper build15.16s.",
+    "managed_fixture_preflight": "passed",
+    "command": "SPICE_FRAMEWORK_WORK_ROOT=<artifact>/fm CARGO_TARGET_DIR=<artifact>/native dotnet run --file scripts/FrameworkMutations.cs -- --tool dotnet --minutes 1.5 --workers 2",
+    "native_input_hashes": {
+      "circuit-simulator.exe": "ed6d3a7098e2a37d8a776f70195d6af927eef91902f5bbe978138b58017fde82",
+      "examples/divider.json": "45c269a471691024c36f0cc988653cdcab4914bc33de184210935e99b23e9d71",
+      "examples/rc.json": "8dbaed5c8fc8df663ff6c5b2c9af0425a767d7f3409398d058cba97c2965f31d",
+      "examples/adaptive-rc.json": "80ad2f6145a3e682586cf79455c877b4e0173cae6b0dcdb285532b95d80ef3cf"
+    },
+    "limits": "90-second wrapper timed out during its baseline, 0 mutants counted and no full wrapper mutation report. This is separate from the completed bounded direct Stryker smoke.",
+    "status": "partial_timeout",
+    "stryker": {
+      "version": "5.0.0",
+      "status": "partial_timeout",
+      "exit_code": -1,
+      "candidates": 0,
+      "killed": 0,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": null,
+      "log_sha256": "353027129db22d8c823068f6cae5ceb7332d727417165f89d0ae8c82de5729f8"
+    },
+    "elapsed_seconds": 94.0143205,
+    "summary_sha256": "21632a49702bbfbd75466d92ea4aa3daa83ac789a74d3e85697ac2a2b33230b2",
+    "tested_helper_working_sha256": "618a15af5f882cdcfc1880823642413cce5daeb4d425a166f9c1413ee1bf7c1e",
+    "source_difference": "Final helper differs only in an XML comment correcting the report description; final helper hash is covered by final5/5 selftests and orchestration coverage."
+  },
+  "stryker_smoke": {
+    "command": "dotnet tool run dotnet-stryker -- --config-file dotnet/Simulator.Client.Tests/stryker-config.json --test-project dotnet/Simulator.Client.Tests/Simulator.Client.Tests.csproj --concurrency 2 --mutate **/Client.cs{1838..1871} --output <artifact>/bounded/stryker-selected",
+    "not_covered": 0,
+    "invalid_compile_error": 1,
+    "created": 204,
+    "tested": 3,
+    "report": "E:\\Artifacts\\Spice-fix-20261103T140559Z\\paths\\bounded\\stryker-selected\\reports\\mutation-report.json",
+    "killed": 3,
+    "baseline_tests_discovered": 84,
+    "report_sha256": "a636447151ee189073c843d1fb0af0c601849435fd7f0c866f5c8658a9e03119",
+    "timed_out": 0,
+    "elapsed_seconds": 84.8723145,
+    "ignored": 200,
+    "smoke_engine_sha256": "ba0507050148e4ad626c05b354145f08ad2a4a3664043ff2143843d0b281459b",
+    "smoke_engine_source": "E:/Artifacts/Spice-compatibility-20261103T043926Z/fixed-five-area-engine/circuit-simulator.exe",
+    "survived": 0,
+    "limits": "Three tested mutants of Succeeded expression only, not full Client or helper mutation qualification. Initial {8..20} attempt selected character offsets in using directives:203Ignored,1CompileError,0tested; retained bounded/stryker report. No score claim for that attempt.",
+    "log_sha256": "806fc2dd66dff6ab1863be865129bd098c488422f6563d88278f45e0a5d47f87"
+  },
+  "coverage": {
+    "coverlet_replay": {
+      "report": "E:\\Artifacts\\Spice-fix-20261103T140559Z\\paths\\bounded\\coverage-replay\\ea0f1dec-2306-4342-86da-dfbfa4f4d265\\coverage.cobertura.xml",
+      "branches_covered": 112,
+      "lines_valid": 198,
+      "branches_valid": 114,
+      "skipped": 0,
+      "lines_covered": 175,
+      "passed": 84,
+      "status": "passed",
+      "failed": 0,
+      "sha256": "7b232d7d1fe2c8b2081cb0eaa2009474045a899722d223ef54d9330078d417ae",
+      "scope": "Owned Simulator.Client sources; generated/test/native/helper/PowerShell excluded."
+    },
+    "initial_coverlet": {
+      "disposition": "Quiet full replay passed84/84 with unchanged source and timeouts. Original failed profiling attempt retained; no timeout or policy changes.",
+      "log": "bounded/coverlet.log",
+      "skipped": 0,
+      "status": "failed",
+      "failure": "TransportContracts.StartupFailureBeforeParentAcknowledgementReapsDescendant(false): expected JsonException, actual TaskCanceledException at existing5sdeadline",
+      "failed": 1,
+      "passed": 83
+    },
+    "orchestration": {
+      "tool": "dotnet-coverage 18.12",
+      "collector_sha256": "b2fca3bc991b7a733f8c3fa57c9262ff9bf5c0b93a1af0b6ccf7934f69de64bf",
+      "metrics": [
+        {
+          "file": "scripts/FrameworkMutations.cs",
+          "source_sha256": "9cf84b4dbc46a2fedeeb7da6d763a8a40b613d76dde4140beea4f9b0d6f91695",
+          "lines": 298,
+          "covered_lines": 25,
+          "line_percent": 8.389261744966444,
+          "branches": 408,
+          "covered_branches": 30,
+          "branch_percent": 7.352941176470588
+        }
+      ],
+      "limitations": [
+        "Scoped managed tooling execution; synthetic fixture counts are not simulator qualification.",
+        "Per-line maxima for duplicate branch mappings; not complete path coverage.",
+        "PowerShell, native children, vendor internals and unexecuted platform/failure paths are unmeasured."
+      ]
+    }
+  },
+  "limitations": [
+    "No full overnight rerun, seven-hour success, Linux execution, CI dispatch, GPU or release qualification.",
+    "The direct Stryker smoke uses explicitly declared existing native engine; actual wrapper separately rebuilt its own source-pinned native input.",
+    "Orchestration selftest coverage is low whole-file scope; unexecuted campaign branches remain unmeasured. PowerShell branch coverage unavailable.",
+    "No parser fuzz or randomized campaign added for fixed BCL path wiring; malformed bounds and actual process failures were exercised. Existing randomized numerical policy unchanged."
+  ]
+}

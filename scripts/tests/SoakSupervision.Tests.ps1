@@ -12,7 +12,7 @@ BeforeAll {
  @'
 param([double]$Minutes,[switch]$SkipMutation,[string]$FinishByUtc)
 $root=Split-Path $PSScriptRoot -Parent
-@{pid=$PID;minutes=$Minutes;finish_by_utc=$FinishByUtc}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $root 'work/child-started.json')
+@{pid=$PID;minutes=$Minutes;finish_by_utc=$FinishByUtc;framework_work_root=$env:SPICE_FRAMEWORK_WORK_ROOT}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $root 'work/child-started.json')
 if($env:SPICE_SOAK_FIXTURE_MODE -eq 'slow'){Start-Sleep -Seconds 60}
 exit 0
 '@|Set-Content -LiteralPath (Join-Path $scripts 'Run-Endurance.ps1')
@@ -33,6 +33,9 @@ Describe 'Whole-child soak supervision' {
   $manifest=Get-Content -LiteralPath (Join-Path $output 'launch-manifest.json') -Raw|ConvertFrom-Json
   $manifest.state|Should -Be 'worker_returned';$manifest.source_commit|Should -Be $pinned;$manifest.source_dirty|Should -BeFalse
   Test-Path -LiteralPath (Join-Path $output 'work/child-started.json') -PathType Leaf|Should -BeTrue
+  $childState=Get-Content -LiteralPath (Join-Path $output 'work/child-started.json') -Raw|ConvertFrom-Json
+  $childState.framework_work_root|Should -Be (Join-Path $output 'fm')
+  $manifest.framework_work_root|Should -Be $childState.framework_work_root
  }
  It 'terminates a stuck bootstrap by the outer deadline and never claims completed tests' {
   $checkout=New-Checkout 'slow';$output=Join-Path $artifactParent ('soak-slow-'+[guid]::NewGuid().ToString('N'));$env:SPICE_SOAK_FIXTURE_MODE='slow'
