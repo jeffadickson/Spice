@@ -681,3 +681,17 @@ The managed process transport shall reject a native JSON envelope prefixed by th
 COMMENT: >>>
 Verification: TransportContracts.RejectsUtf8BomBeforeNativeJsonEnvelope emits the actual preamble bytes from the synthetic child. The UTF8Encoding encoder-preamble flag does not affect GetString and its mutation is equivalent at this call site.
 <<<
+
+[REQUIREMENT]
+UID: QUAL-MANAGED-TRANSPORT-RACE-001
+STATUS: Implemented
+TITLE: Verify inline cancellation and the native launch configuration
+STATEMENT: >>>
+The managed transport shall observe caller cancellation when a pipe read returns data concurrently with cancellation and when pending transport tasks are already complete. The native process launch shall configure redirected standard streams, no shell and no console window.
+<<<
+COMMENT: >>>
+Verification: TransportCancellationRaceTests uses a controlled stream and completed tasks. A launch-configuration test checks the ProcessStartInfo used by the public client. Interactive Windows behavior remains separate from this configuration check.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: QUAL-TRANSPORT-002

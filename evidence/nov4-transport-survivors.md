@@ -18,3 +18,14 @@ replay and raw coverage are under E:/Artifacts/Spice-nov4-transport.
 
 The follow-up campaign uses a short NTFS source path with bulk outputs on E:.
 This tests the long-path hypothesis for the prior baseline LNK1104.
+
+## Follow-up on the three open transport mutations
+
+The production launch settings and two inline cancellation checkpoints now have
+deterministic tests in TransportCancellationRaceTests. Each of the three direct
+source replays failed its targeted assertion, and the restored suite passed all
+88 tests with zero skips using the retained corpus engine. Coverlet measured
+90.67% line and 57.06% branch coverage for Simulator.Client.
+Raw mutation and coverage logs are under E:/Artifacts/Spice-nov4-races.
+The launch test verifies process configuration on the headless runner.
+The Stryker-native classifications await a fresh framework run.

@@ -60,30 +60,15 @@ public sealed class SimulationClient(string executable)
         cancellation.ThrowIfCancellationRequested();
         if (System.Text.Encoding.UTF8.GetByteCount(requestJson) > 1_048_576)
             throw new ArgumentException("Request exceeds 1 MiB.", nameof(requestJson));
-        var start = new ProcessStartInfo(executable) {
-            RedirectStandardInput = true, RedirectStandardOutput = true,
-            RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true
-        };
-        using var process = Process.Start(start) ?? throw new IOException("Could not start simulator.");
+        using var process = Process.Start(CreateStartInfo(executable)) ?? throw new IOException("Could not start simulator.");
         try
         {
-            var output = ReadBoundedAsync(process.StandardOutput, cancellation);
-            var errors = ReadBoundedAsync(process.StandardError, cancellation);
+            var output = ReadBoundedAsync(process.StandardOutput.BaseStream, cancellation);
+            var errors = ReadBoundedAsync(process.StandardError.BaseStream, cancellation);
             await process.StandardInput.WriteAsync(requestJson.AsMemory(), cancellation);
             process.StandardInput.Close();
             var exit = process.WaitForExitAsync(cancellation);
-            // Observe failed readers promptly: otherwise a full pipe can block child exit.
-            var pending = new List<Task> { output, errors, exit };
-            // Count cannot be negative. A property pattern also avoids treating
-            // this property as a LINQ Count() call during mutation instrumentation.
-            while (pending is { Count: > 0 })
-            {
-                // Observe cancellation even if an awaited task completes inline.
-                cancellation.ThrowIfCancellationRequested();
-                var completed = await Task.WhenAny(pending);
-                await completed;
-                pending.Remove(completed);
-            }
+            await DrainAsync([output, errors, exit], cancellation);
             var text = await output;
             var diagnostics = await errors;
             using var document = JsonDocument.Parse(text);
@@ -122,14 +107,35 @@ public sealed class SimulationClient(string executable)
             if (!process.HasExited) { process.Kill(entireProcessTree: true); await process.WaitForExitAsync(CancellationToken.None); }
         }
     }
-    private static async Task<string> ReadBoundedAsync(StreamReader reader, CancellationToken cancellation)
+    internal static ProcessStartInfo CreateStartInfo(string executable) =>
+        new(executable) {
+            RedirectStandardInput = true, RedirectStandardOutput = true,
+            RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true
+        };
+
+    internal static async Task DrainAsync(List<Task> pending, CancellationToken cancellation)
+    {
+        // Observe failed readers promptly: otherwise a full pipe can block child exit.
+        // Count cannot be negative. A property pattern also avoids treating
+        // this property as a LINQ Count() call during mutation instrumentation.
+        while (pending is { Count: > 0 })
+        {
+            // Observe cancellation even if an awaited task completes inline.
+            cancellation.ThrowIfCancellationRequested();
+            var completed = await Task.WhenAny(pending);
+            await completed;
+            pending.Remove(completed);
+        }
+    }
+
+    internal static async Task<string> ReadBoundedAsync(Stream stream, CancellationToken cancellation)
     {
         // Count wire bytes, not UTF-16 characters: multibyte text must obey
         // the same 32 MiB bound. Decode only after the bounded stream ends.
         using var bytes = new MemoryStream();
         var buffer = new byte[8192];
         int read;
-        while ((read = await reader.BaseStream.ReadAsync(buffer.AsMemory(), cancellation)) != 0)
+        while ((read = await stream.ReadAsync(buffer.AsMemory(), cancellation)) != 0)
         {
             cancellation.ThrowIfCancellationRequested();
             if (bytes.Length + read > 32 * 1024 * 1024)
