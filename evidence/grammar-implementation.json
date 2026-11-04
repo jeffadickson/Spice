@@ -1,0 +1,2807 @@
+{
+  "state": "generated_inventory",
+  "source_commit": "bb1979926754da27b2770f8c4e694b5bb1e33b23",
+  "source_dirty": false,
+  "assessment_sha256": "54eef944b8f0b2ba44b30cb2603fe924e727362871e84ee6f15ddaf7e0c67ae7",
+  "syntax_assembly_sha256": "189e73b941ddec9f3a866eea6109fa1f7c86ffd9799bfdaa59469b52869da2d2",
+  "source_hashes": {
+    "compat/ngspice/capability-support.json": "b2735a3fd98498ff915c491ff8036a828efb3ee2ba09459bb071de53d5a7a7c9",
+    "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs": "4362473f42c7aa2cc0f4068152b0f62b96fe8d499352ea23d576dfbf0c787249",
+    "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs": "4279d8e4a4b95f0efb3b2694e3f77d865b917564a5bc23ae4d6d49f64bfd21ce",
+    "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs": "0554f019dc95d11428d28f4f8a44f6b4d1782b2107d7e52d44f220996479c7f3",
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "0faa5a9057d83a98fdd5fcfdbde2d704a8ccd3bd505f8a64c84c29fd124f3a57",
+    "dotnet/Simulator.Frontend/BjtPreparation.cs": "6716efd83539e64c53cadc6f37bd3baef9e1600686f84bb05cb09093b0c7a48e",
+    "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs": "9e44fec055368b5dfeeb445ba1d183bfdfc1df9d58c21823c8c93ab3d8930a64",
+    "dotnet/Simulator.Frontend/Mos1Preparation.cs": "7024f190e4b238b1d75254675b524c33bc7ea2c9d3cc31b9d68237b9cf8c0f4b",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "10fbc0295d70f31ce80e8cb09aa7efd3a1b25749f0c6db46779707bc3ea8bd4d",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "8d91d59540a70eed87d75859c1bbfbbcaa1caca0b015dd97388f956078f27e2d",
+    "dotnet/Simulator.Frontend/RequestedControlPreparation.cs": "ad9dda29f40a646e24334ef8751ae39f884e39a19932747af6321111af4f74e8",
+    "dotnet/Simulator.Frontend/ResistorModelLowering.cs": "c8d78f97aa05834f596bbfa72741998b24c9221cbbc446d3bc76bf683b6b0c0f",
+    "dotnet/Simulator.Frontend/SemiconductorPreparation.cs": "6d793cb0006d1015e8c3c37f4fb02acb4743a1c9825203746bc022a7f4d04123",
+    "dotnet/Simulator.Frontend/TransientSelection.cs": "d34621b584adee4838ea025338338c9c0f1347d1039e6046b22af06664fcaf21",
+    "dotnet/Simulator.Frontend/XspiceGainLowering.cs": "ec46c7ee8aac31b420fe52e60c03eaee801e921888a8707603ad05d17c64129f",
+    "dotnet/Simulator.Frontend/XspiceSummerLowering.cs": "5f7eb348433cebee027cd4e6d13dd7640cf9b0b21d86e2415c68260280c5f3d6",
+    "dotnet/Simulator.Syntax.Tests/GrammarTests.cs": "59aafed45bd2ba1b880936b976ecacab9a3117d540e8d60cb3b9f91b3458da07",
+    "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs": "1153905511cb50a5680eba85102e04268e49046fba6d9e06bb2c6127880845b4",
+    "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs": "f23094ce58d7ed080360cffff9ceeb15e8b69a074b773683fa64b6b986b65c48",
+    "dotnet/Simulator.Syntax/ControlExtraction.cs": "bbf82fac4ee29a64b8600b1bac8f73ff260722cf91070bf7a005bc680b22a46f",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "9c13eca33f1e03f647606e38471bfc7dc55b009e4bb44fdc3998bdae7b3b74dd",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "fd3c0afe984fc298903544c1e2058e3d2691b856bc7b064f5bb60f8e060eef73",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "9d12b449cca48c7adae97eeb57973647c57d93c501daf25d27ebac02d707b93f",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "b899d6755a97bfb3a59582f0e295df9f9b9d0a44c86a54a1a86ce1fd683cb82b",
+    "dotnet/Simulator.Syntax/GrammarImplementationInventory.cs": "99c7321832edc94381fef0c27e6b5effdd5bb5316cbbe6b4d28986ebc3dbd26a",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "48c7f176300f3db67094fba9f806404e4f4b2707539a898c6e839149ce4258ef",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "38af84c7a03509348c2c81ea57789ca7ca143b1da0e3d0a81a3e46b1c99d1392",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "f8532b0762321d4814cad34f52182eaceb099d28de0b50aa1ccfbce790f40cb5",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "d6ddf6749e4a8f2a0e3aef617053b5154fdcc9e89e030edf0d54c459e8e4cfdb",
+    "dotnet/Simulator.Syntax/ScalarVectorExtraction.cs": "085ffe8489b4532032dbe5b9a64a2c4947f6b9e1137a1fbf041fc4f46022d253",
+    "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "b28e44832d693805fffef22a90c9f96e0098f75530747e861809b3440071e4b2",
+    "dotnet/Simulator.Syntax/XspiceSyntax.cs": "e0ff95839342379abf1a19a86c8f21f0e57657fe9bb1057d4472ae11e5c4dbe4",
+    "evidence/capability-inventory.json": "a036621f3eaf09354d06acb21a2653c2b21b832b0c7da25d4ac0c3c2ebc871da",
+    "evidence/five-area-integrated-verification.json": "e10f42b6113ba0bf5acc90e74b50f35e58608b80b5c562e8e8302333b34ddeb4",
+    "evidence/issue34-ground-checkpoint.json": "4aeb9d3430a2bf82b373e9774f8a5785948ec9376430edd6e898993be7ee1d50",
+    "evidence/issue34-initial-bias.json": "1e11d5075052606fc7127e54d81794d839de36d0e4827003cb20e7aa26b47841",
+    "evidence/pspice-switch-results.json": "c13ac6b399e793515ab70603ad80e2de6f940470f20ee8a43ca0772743764006",
+    "evidence/requested-fc5db25.json": "1b2cc37e053c86a2c42f0651900492392c5860ce0e62d4827bbd6a048c48667a",
+    "scripts/GrammarImplementationMap.cs": "e49d79d9a4aa6835b828990149847fa3c7ed40c4cc667e58323f94a76eb96510"
+  },
+  "generated_rules": 93,
+  "assessed_rules": 90,
+  "unassessed_rules": 3,
+  "rules": [
+    {
+      "rule": "ac",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "FRONTEND-REQUESTED-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json",
+        "evidence/issue34-initial-bias.json"
+      ],
+      "limitation": "Original ordinary analyses in bounded subsets; unsupported sweeps/IC/UIC/policies and numerical failures remain explicit. Whole control-program parity is not claimed.",
+      "commands": []
+    },
+    {
+      "rule": "acExcitation",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "SEM-SOURCE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction.",
+      "commands": []
+    },
+    {
+      "rule": "arithmetic",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "assignment",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "behavior",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+      ],
+      "requirements": [
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Affine voltage-dependent independent/controlled B-source lowering only; nonlinear/time/current arbitrary behavioral kernels remain refused.",
+      "commands": []
+    },
+    {
+      "rule": "behaviorHeaderProfile",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+      ],
+      "requirements": [
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Affine voltage-dependent independent/controlled B-source lowering only; nonlinear/time/current arbitrary behavioral kernels remain refused.",
+      "commands": []
+    },
+    {
+      "rule": "bjt",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/InstanceExtraction.cs",
+        "dotnet/Simulator.Frontend/BjtPreparation.cs",
+        "dotnet/Simulator.Frontend/Mos1Preparation.cs"
+      ],
+      "requirements": [
+        "SEMI-BJT-001",
+        "SEMI-MOS1-CURRENT-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json",
+        "evidence/issue34-initial-bias.json"
+      ],
+      "limitation": "Explicit ideal Ebers-Moll and named MOS1 channel/storage profiles only. Broad Gummel-Poon, higher MOS levels and intrinsic Meyer charge are refused. BJT waveform and LU convergence gaps remain.",
+      "commands": []
+    },
+    {
+      "rule": "call",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "comparison",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "complexValue",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "concatenation",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "control",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-001",
+        "FRONTEND-CONTROL-002",
+        "FRONTEND-CONTROL-005"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      ],
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "commands": []
+    },
+    {
+      "rule": "controlAc",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-001",
+        "FRONTEND-CONTROL-002",
+        "FRONTEND-CONTROL-005"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      ],
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "commands": [
+        "ac"
+      ]
+    },
+    {
+      "rule": "controlCommandProfile",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-001",
+        "FRONTEND-CONTROL-002",
+        "FRONTEND-CONTROL-005"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      ],
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "commands": []
+    },
+    {
+      "rule": "controlDc",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-001",
+        "FRONTEND-CONTROL-002",
+        "FRONTEND-CONTROL-005"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      ],
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "commands": [
+        "dc"
+      ]
+    },
+    {
+      "rule": "controlDefine",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_executed",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs",
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-006"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs"
+      ],
+      "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented.",
+      "commands": [
+        "define"
+      ]
+    },
+    {
+      "rule": "controlLet",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_executed",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs",
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-006"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs"
+      ],
+      "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented.",
+      "commands": [
+        "let"
+      ]
+    },
+    {
+      "rule": "controlNumber",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-001",
+        "FRONTEND-CONTROL-002",
+        "FRONTEND-CONTROL-005"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      ],
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "commands": []
+    },
+    {
+      "rule": "controlOp",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-001",
+        "FRONTEND-CONTROL-002",
+        "FRONTEND-CONTROL-005"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      ],
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "commands": [
+        "op"
+      ]
+    },
+    {
+      "rule": "controlQuit",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_executed",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-001",
+        "FRONTEND-CONTROL-005",
+        "FRONTEND-CONTROL-006"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"
+      ],
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed.",
+      "commands": [
+        "quit"
+      ]
+    },
+    {
+      "rule": "controlReport",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_executed",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-001",
+        "FRONTEND-CONTROL-005",
+        "FRONTEND-CONTROL-006"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"
+      ],
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed.",
+      "commands": [
+        "print",
+        "plot",
+        "meas",
+        "measure",
+        "save",
+        "gnuplot",
+        "echo",
+        "rusage",
+        "display",
+        "listing"
+      ]
+    },
+    {
+      "rule": "controlRun",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-001",
+        "FRONTEND-CONTROL-002",
+        "FRONTEND-CONTROL-005"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      ],
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "commands": [
+        "run"
+      ]
+    },
+    {
+      "rule": "controlSet",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_executed",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-001",
+        "FRONTEND-CONTROL-005",
+        "FRONTEND-CONTROL-006"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"
+      ],
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed.",
+      "commands": [
+        "set"
+      ]
+    },
+    {
+      "rule": "controlTran",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-001",
+        "FRONTEND-CONTROL-002",
+        "FRONTEND-CONTROL-005"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      ],
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "commands": [
+        "tran"
+      ]
+    },
+    {
+      "rule": "controlUnknown",
+      "assessed": false,
+      "extraction": "unassessed",
+      "preparation": "unassessed",
+      "execution": "unassessed",
+      "implementation": [],
+      "requirements": [],
+      "evidence": [],
+      "limitation": "No reviewed association; syntax recognition establishes no execution capability.",
+      "commands": []
+    },
+    {
+      "rule": "controlUnlet",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_executed",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs",
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-006"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs"
+      ],
+      "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented.",
+      "commands": [
+        "unlet"
+      ]
+    },
+    {
+      "rule": "coupling",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-READINESS-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json"
+      ],
+      "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend.",
+      "commands": []
+    },
+    {
+      "rule": "cpl",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-READINESS-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json"
+      ],
+      "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend.",
+      "commands": []
+    },
+    {
+      "rule": "cswitch",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-READINESS-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json"
+      ],
+      "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend.",
+      "commands": []
+    },
+    {
+      "rule": "currentControlProfile",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "commands": []
+    },
+    {
+      "rule": "dc",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "FRONTEND-REQUESTED-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json",
+        "evidence/issue34-initial-bias.json"
+      ],
+      "limitation": "Original ordinary analyses in bounded subsets; unsupported sweeps/IC/UIC/policies and numerical failures remain explicit. Whole control-program parity is not claimed.",
+      "commands": []
+    },
+    {
+      "rule": "dcExcitation",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "SEM-SOURCE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction.",
+      "commands": []
+    },
+    {
+      "rule": "deck",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "diode",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "commands": []
+    },
+    {
+      "rule": "endCard",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "expression",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ParameterEvaluator.cs",
+        "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
+      ],
+      "requirements": [
+        "SEM-PARAM-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Bounded scalar parameter evaluation and affine behavioral voltage expressions; arbitrary result vectors/functions and nonlinear behavior remain outside this contract.",
+      "commands": []
+    },
+    {
+      "rule": "extension",
+      "assessed": false,
+      "extraction": "unassessed",
+      "preparation": "unassessed",
+      "execution": "unassessed",
+      "implementation": [],
+      "requirements": [],
+      "evidence": [],
+      "limitation": "No reviewed association; syntax recognition establishes no execution capability.",
+      "commands": []
+    },
+    {
+      "rule": "fiveNodes",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "fourNodes",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "function",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ParameterEvaluator.cs",
+        "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
+      ],
+      "requirements": [
+        "SEM-PARAM-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Bounded scalar parameter evaluation and affine behavioral voltage expressions; arbitrary result vectors/functions and nonlinear behavior remain outside this contract.",
+      "commands": []
+    },
+    {
+      "rule": "globalNodesProfile",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ScalarVectorExtraction.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-GLOBAL-BINDING-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json",
+        "evidence/issue34-ground-checkpoint.json"
+      ],
+      "limitation": "Qualified literal global/node/vector profiles only; declaration spelling is separate from active model/port semantics.",
+      "commands": []
+    },
+    {
+      "rule": "group",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "icontrol",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "commands": []
+    },
+    {
+      "rule": "identifier",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "includeCard",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ResourceResolver.cs"
+      ],
+      "requirements": [
+        "SEM-RESOURCE-001",
+        "SEM-RESOURCE-002"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json"
+      ],
+      "limitation": "Bounded allowed-root include/library resolution with provenance, section and path policies; missing/denied external assets are not simulated.",
+      "commands": []
+    },
+    {
+      "rule": "jfet",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-READINESS-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json"
+      ],
+      "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend.",
+      "commands": []
+    },
+    {
+      "rule": "libraryCard",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ResourceResolver.cs"
+      ],
+      "requirements": [
+        "SEM-RESOURCE-001",
+        "SEM-RESOURCE-002"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json"
+      ],
+      "limitation": "Bounded allowed-root include/library resolution with provenance, section and path policies; missing/denied external assets are not simulated.",
+      "commands": []
+    },
+    {
+      "rule": "lineCard",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-READINESS-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json"
+      ],
+      "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend.",
+      "commands": []
+    },
+    {
+      "rule": "linearControlProfile",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "commands": []
+    },
+    {
+      "rule": "model",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Frontend/SemiconductorPreparation.cs",
+        "dotnet/Simulator.Frontend/ResistorModelLowering.cs"
+      ],
+      "requirements": [
+        "SEM-BRIDGE-001",
+        "SEMI-BJT-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Model symbol/parameter resolution is generic; only explicitly named resistor/diode/BJT/MOS1/VSWITCH and gain/summer profiles execute. A model declaration alone does not establish support.",
+      "commands": []
+    },
+    {
+      "rule": "mos",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/InstanceExtraction.cs",
+        "dotnet/Simulator.Frontend/BjtPreparation.cs",
+        "dotnet/Simulator.Frontend/Mos1Preparation.cs"
+      ],
+      "requirements": [
+        "SEMI-BJT-001",
+        "SEMI-MOS1-CURRENT-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json",
+        "evidence/issue34-initial-bias.json"
+      ],
+      "limitation": "Explicit ideal Ebers-Moll and named MOS1 channel/storage profiles only. Broad Gummel-Poon, higher MOS levels and intrinsic Meyer charge are refused. BJT waveform and LU convergence gaps remain.",
+      "commands": []
+    },
+    {
+      "rule": "node",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "op",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "FRONTEND-REQUESTED-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json",
+        "evidence/issue34-initial-bias.json"
+      ],
+      "limitation": "Original ordinary analyses in bounded subsets; unsupported sweeps/IC/UIC/policies and numerical failures remain explicit. Whole control-program parity is not claimed.",
+      "commands": []
+    },
+    {
+      "rule": "osdi",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-READINESS-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json"
+      ],
+      "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend.",
+      "commands": []
+    },
+    {
+      "rule": "paramCard",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ParameterEvaluator.cs",
+        "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
+      ],
+      "requirements": [
+        "SEM-PARAM-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Bounded scalar parameter evaluation and affine behavioral voltage expressions; arbitrary result vectors/functions and nonlinear behavior remain outside this contract.",
+      "commands": []
+    },
+    {
+      "rule": "parameter",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "passive",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "commands": []
+    },
+    {
+      "rule": "referenceName",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "referenceNode",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "resistorModelProfile",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "commands": []
+    },
+    {
+      "rule": "scalarNode",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "scalarVectorProfile",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ScalarVectorExtraction.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-GLOBAL-BINDING-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json",
+        "evidence/issue34-ground-checkpoint.json"
+      ],
+      "limitation": "Qualified literal global/node/vector profiles only; declaration spelling is separate from active model/port semantics.",
+      "commands": []
+    },
+    {
+      "rule": "script",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeckSyntax.cs",
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+      ],
+      "requirements": [
+        "PRS-SCRIPT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Standalone command scripts are recognized structurally; no general command interpreter or script execution is provided.",
+      "commands": []
+    },
+    {
+      "rule": "scriptLine",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeckSyntax.cs",
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+      ],
+      "requirements": [
+        "PRS-SCRIPT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Standalone command scripts are recognized structurally; no general command interpreter or script execution is provided.",
+      "commands": []
+    },
+    {
+      "rule": "sevenNodes",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "sixNodes",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "source",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "commands": []
+    },
+    {
+      "rule": "sourceClause",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "SEM-SOURCE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction.",
+      "commands": []
+    },
+    {
+      "rule": "sourceProfile",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "SEM-SOURCE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction.",
+      "commands": []
+    },
+    {
+      "rule": "statement",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "subcall",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/InstanceBinding.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-CAT-001",
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json",
+        "evidence/issue34-ground-checkpoint.json"
+      ],
+      "limitation": "Bounded lexical parameter, hierarchy/port and qualified ground/global bindings; active-instance expansion budgets and explicit refusals apply.",
+      "commands": []
+    },
+    {
+      "rule": "subcircuit",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/InstanceBinding.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-CAT-001",
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json",
+        "evidence/issue34-ground-checkpoint.json"
+      ],
+      "limitation": "Bounded lexical parameter, hierarchy/port and qualified ground/global bindings; active-instance expansion budgets and explicit refusals apply.",
+      "commands": []
+    },
+    {
+      "rule": "switchCard",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-VSWITCH-001"
+      ],
+      "evidence": [
+        "evidence/pspice-switch-results.json"
+      ],
+      "limitation": "Smooth PSpice VSWITCH profile only; hysteretic SW and arbitrary switch models are not qualified.",
+      "commands": []
+    },
+    {
+      "rule": "tableCoordinate",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+      ],
+      "requirements": [
+        "PRS-TABLE-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "TABLE syntax is recognized; the generated affine behavioral execution path does not implement arbitrary TABLE interpolation.",
+      "commands": []
+    },
+    {
+      "rule": "tablePair",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+      ],
+      "requirements": [
+        "PRS-TABLE-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "TABLE syntax is recognized; the generated affine behavioral execution path does not implement arbitrary TABLE interpolation.",
+      "commands": []
+    },
+    {
+      "rule": "tableSeparator",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+      ],
+      "requirements": [
+        "PRS-TABLE-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "TABLE syntax is recognized; the generated affine behavioral execution path does not implement arbitrary TABLE interpolation.",
+      "commands": []
+    },
+    {
+      "rule": "tableTail",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+      ],
+      "requirements": [
+        "PRS-TABLE-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "TABLE syntax is recognized; the generated affine behavioral execution path does not implement arbitrary TABLE interpolation.",
+      "commands": []
+    },
+    {
+      "rule": "threeNodes",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "tran",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "FRONTEND-REQUESTED-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json",
+        "evidence/issue34-initial-bias.json"
+      ],
+      "limitation": "Original ordinary analyses in bounded subsets; unsupported sweeps/IC/UIC/policies and numerical failures remain explicit. Whole control-program parity is not claimed.",
+      "commands": []
+    },
+    {
+      "rule": "twoNodes",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "txl",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-READINESS-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json"
+      ],
+      "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend.",
+      "commands": []
+    },
+    {
+      "rule": "unknownDevice",
+      "assessed": false,
+      "extraction": "unassessed",
+      "preparation": "unassessed",
+      "execution": "unassessed",
+      "implementation": [],
+      "requirements": [],
+      "evidence": [],
+      "limitation": "No reviewed association; syntax recognition establishes no execution capability.",
+      "commands": []
+    },
+    {
+      "rule": "urc",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "unsupported",
+      "execution": "unsupported",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-READINESS-001"
+      ],
+      "evidence": [
+        "evidence/requested-fc5db25.json"
+      ],
+      "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend.",
+      "commands": []
+    },
+    {
+      "rule": "value",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+      ],
+      "requirements": [
+        "PRS-001",
+        "SEM-CAT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+      ],
+      "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "vcontrol",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SEM-BRIDGE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "commands": []
+    },
+    {
+      "rule": "voltageReference",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ParameterEvaluator.cs",
+        "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
+      ],
+      "requirements": [
+        "SEM-PARAM-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Bounded scalar parameter evaluation and affine behavioral voltage expressions; arbitrary result vectors/functions and nonlinear behavior remain outside this contract.",
+      "commands": []
+    },
+    {
+      "rule": "waveformExcitation",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "SEM-SOURCE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction.",
+      "commands": []
+    },
+    {
+      "rule": "waveformScalar",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "SEM-SOURCE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction.",
+      "commands": []
+    },
+    {
+      "rule": "waveformValues",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "SEM-SOURCE-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction.",
+      "commands": []
+    },
+    {
+      "rule": "xpair",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/XspiceSyntax.cs",
+        "dotnet/Simulator.Frontend/XspiceGainLowering.cs",
+        "dotnet/Simulator.Frontend/XspiceSummerLowering.cs"
+      ],
+      "requirements": [
+        "SEM-XSPICE-GAIN-001",
+        "SEM-XSPICE-SUMMER-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Analog scalar voltage gain/summer subsets only; digital/event/mixed-signal model families and unqualified port contexts remain unsupported.",
+      "commands": []
+    },
+    {
+      "rule": "xport",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/XspiceSyntax.cs",
+        "dotnet/Simulator.Frontend/XspiceGainLowering.cs",
+        "dotnet/Simulator.Frontend/XspiceSummerLowering.cs"
+      ],
+      "requirements": [
+        "SEM-XSPICE-GAIN-001",
+        "SEM-XSPICE-SUMMER-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Analog scalar voltage gain/summer subsets only; digital/event/mixed-signal model families and unqualified port contexts remain unsupported.",
+      "commands": []
+    },
+    {
+      "rule": "xspice",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/XspiceSyntax.cs",
+        "dotnet/Simulator.Frontend/XspiceGainLowering.cs",
+        "dotnet/Simulator.Frontend/XspiceSummerLowering.cs"
+      ],
+      "requirements": [
+        "SEM-XSPICE-GAIN-001",
+        "SEM-XSPICE-SUMMER-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Analog scalar voltage gain/summer subsets only; digital/event/mixed-signal model families and unqualified port contexts remain unsupported.",
+      "commands": []
+    },
+    {
+      "rule": "xvector",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/XspiceSyntax.cs",
+        "dotnet/Simulator.Frontend/XspiceGainLowering.cs",
+        "dotnet/Simulator.Frontend/XspiceSummerLowering.cs"
+      ],
+      "requirements": [
+        "SEM-XSPICE-GAIN-001",
+        "SEM-XSPICE-SUMMER-001"
+      ],
+      "evidence": [
+        "evidence/five-area-integrated-verification.json"
+      ],
+      "limitation": "Analog scalar voltage gain/summer subsets only; digital/event/mixed-signal model families and unqualified port contexts remain unsupported.",
+      "commands": []
+    }
+  ],
+  "historical_inventory_inputs": 924,
+  "observed_control_headings": [
+    {
+      "command": "plot",
+      "decks": 453,
+      "occurrences": 1011,
+      "grammar_rule": "controlReport",
+      "execution": "not_executed",
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+    },
+    {
+      "command": "set",
+      "decks": 241,
+      "occurrences": 798,
+      "grammar_rule": "controlSet",
+      "execution": "not_executed",
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+    },
+    {
+      "command": "quit",
+      "decks": 191,
+      "occurrences": 236,
+      "grammar_rule": "controlQuit",
+      "execution": "not_executed",
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+    },
+    {
+      "command": "tran",
+      "decks": 181,
+      "occurrences": 202,
+      "grammar_rule": "controlTran",
+      "execution": "bounded",
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+    },
+    {
+      "command": "let",
+      "decks": 171,
+      "occurrences": 1662,
+      "grammar_rule": "controlLet",
+      "execution": "not_executed",
+      "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented."
+    },
+    {
+      "command": "run",
+      "decks": 169,
+      "occurrences": 177,
+      "grammar_rule": "controlRun",
+      "execution": "bounded",
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+    },
+    {
+      "command": "end",
+      "decks": 147,
+      "occurrences": 544,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "dc",
+      "decks": 129,
+      "occurrences": 222,
+      "grammar_rule": "controlDc",
+      "execution": "bounded",
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+    },
+    {
+      "command": "echo",
+      "decks": 126,
+      "occurrences": 809,
+      "grammar_rule": "controlReport",
+      "execution": "not_executed",
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+    },
+    {
+      "command": "rusage",
+      "decks": 124,
+      "occurrences": 149,
+      "grammar_rule": "controlReport",
+      "execution": "not_executed",
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+    },
+    {
+      "command": "if",
+      "decks": 121,
+      "occurrences": 385,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "else",
+      "decks": 104,
+      "occurrences": 202,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "save",
+      "decks": 71,
+      "occurrences": 83,
+      "grammar_rule": "controlReport",
+      "execution": "not_executed",
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+    },
+    {
+      "command": "op",
+      "decks": 66,
+      "occurrences": 88,
+      "grammar_rule": "controlOp",
+      "execution": "bounded",
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+    },
+    {
+      "command": "print",
+      "decks": 61,
+      "occurrences": 129,
+      "grammar_rule": "controlReport",
+      "execution": "not_executed",
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+    },
+    {
+      "command": "alter",
+      "decks": 49,
+      "occurrences": 136,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "setplot",
+      "decks": 45,
+      "occurrences": 126,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "meas",
+      "decks": 44,
+      "occurrences": 198,
+      "grammar_rule": "controlReport",
+      "execution": "not_executed",
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+    },
+    {
+      "command": "linearize",
+      "decks": 43,
+      "occurrences": 59,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "fft",
+      "decks": 41,
+      "occurrences": 55,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "settype",
+      "decks": 40,
+      "occurrences": 77,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "destroy",
+      "decks": 38,
+      "occurrences": 50,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "unset",
+      "decks": 38,
+      "occurrences": 42,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "ac",
+      "decks": 37,
+      "occurrences": 39,
+      "grammar_rule": "controlAc",
+      "execution": "bounded",
+      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+    },
+    {
+      "command": "define",
+      "decks": 33,
+      "occurrences": 51,
+      "grammar_rule": "controlDefine",
+      "execution": "not_executed",
+      "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented."
+    },
+    {
+      "command": "shell",
+      "decks": 33,
+      "occurrences": 160,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "foreach",
+      "decks": 32,
+      "occurrences": 38,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "display",
+      "decks": 30,
+      "occurrences": 31,
+      "grammar_rule": "controlReport",
+      "execution": "not_executed",
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+    },
+    {
+      "command": "reset",
+      "decks": 30,
+      "occurrences": 47,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "listing",
+      "decks": 27,
+      "occurrences": 31,
+      "grammar_rule": "controlReport",
+      "execution": "not_executed",
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+    },
+    {
+      "command": "option",
+      "decks": 27,
+      "occurrences": 27,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "write",
+      "decks": 26,
+      "occurrences": 30,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "eprint",
+      "decks": 25,
+      "occurrences": 47,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "dowhile",
+      "decks": 22,
+      "occurrences": 48,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "while",
+      "decks": 22,
+      "occurrences": 72,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "setcs",
+      "decks": 21,
+      "occurrences": 51,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "gnuplot",
+      "decks": 19,
+      "occurrences": 86,
+      "grammar_rule": "controlReport",
+      "execution": "not_executed",
+      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+    },
+    {
+      "command": "remcirc",
+      "decks": 18,
+      "occurrences": 18,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "compose",
+      "decks": 17,
+      "occurrences": 33,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "eprvcd",
+      "decks": 17,
+      "occurrences": 17,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "altermod",
+      "decks": 15,
+      "occurrences": 51,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "edisplay",
+      "decks": 15,
+      "occurrences": 15,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "hardcopy",
+      "decks": 15,
+      "occurrences": 34,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "label",
+      "decks": 15,
+      "occurrences": 27,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "endif",
+      "decks": 14,
+      "occurrences": 29,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "goto",
+      "decks": 14,
+      "occurrences": 26,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "pre_osdi",
+      "decks": 14,
+      "occurrences": 17,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "pre_set",
+      "decks": 14,
+      "occurrences": 17,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "break",
+      "decks": 13,
+      "occurrences": 13,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "cd",
+      "decks": 13,
+      "occurrences": 13,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "mc_source",
+      "decks": 12,
+      "occurrences": 12,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "noise",
+      "decks": 12,
+      "occurrences": 22,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "repeat",
+      "decks": 12,
+      "occurrences": 26,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "setseed",
+      "decks": 10,
+      "occurrences": 16,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "source",
+      "decks": 10,
+      "occurrences": 12,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002B",
+      "decks": 9,
+      "occurrences": 20,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": ".control",
+      "decks": 9,
+      "occurrences": 9,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "alterparam",
+      "decks": 8,
+      "occurrences": 15,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "unlet",
+      "decks": 8,
+      "occurrences": 14,
+      "grammar_rule": "controlUnlet",
+      "execution": "not_executed",
+      "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented."
+    },
+    {
+      "command": "iplot",
+      "decks": 7,
+      "occurrences": 7,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "pss",
+      "decks": 7,
+      "occurrences": 7,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "reshape",
+      "decks": 7,
+      "occurrences": 13,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "setscale",
+      "decks": 7,
+      "occurrences": 11,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": ".endc",
+      "decks": 5,
+      "occurrences": 5,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "inventory",
+      "decks": 5,
+      "occurrences": 5,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "pyplot",
+      "decks": 5,
+      "occurrences": 10,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "sp",
+      "decks": 5,
+      "occurrences": 5,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "wrdata",
+      "decks": 5,
+      "occurrences": 5,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "begin",
+      "decks": 4,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "load",
+      "decks": 4,
+      "occurrences": 6,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "optran",
+      "decks": 4,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "sens",
+      "decks": 4,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "stop",
+      "decks": 4,
+      "occurrences": 6,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "strcmp",
+      "decks": 4,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "wrs2p",
+      "decks": 4,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": ".end",
+      "decks": 3,
+      "occurrences": 3,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "hb",
+      "decks": 3,
+      "occurrences": 3,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "loadpull",
+      "decks": 3,
+      "occurrences": 3,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "pre_snp",
+      "decks": 3,
+      "occurrences": 3,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "resume",
+      "decks": 3,
+      "occurrences": 5,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "show",
+      "decks": 3,
+      "occurrences": 3,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "sndparam",
+      "decks": 3,
+      "occurrences": 3,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "sndprint",
+      "decks": 3,
+      "occurrences": 3,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult1[0][0]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult1[0][1]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult1[0][2]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult1[0][3]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult1[0][4]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult1[0][5]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult2[0][0]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult2[0][1]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult2[0][2]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult2[0][3]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult2[0][4]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult[0][0]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult[0][1]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Bresult[0][2]",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "\u002Btext.txt",
+      "decks": 2,
+      "occurrences": 2,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "esave",
+      "decks": 2,
+      "occurrences": 2,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "fourier",
+      "decks": 2,
+      "occurrences": 2,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "options",
+      "decks": 2,
+      "occurrences": 2,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "psd",
+      "decks": 2,
+      "occurrences": 2,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "setcirc",
+      "decks": 2,
+      "occurrences": 4,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "transpose",
+      "decks": 2,
+      "occurrences": 2,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "$",
+      "decks": 1,
+      "occurrences": 1,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": ";",
+      "decks": 1,
+      "occurrences": 1,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "cutout",
+      "decks": 1,
+      "occurrences": 2,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "hbosc",
+      "decks": 1,
+      "occurrences": 1,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "pz",
+      "decks": 1,
+      "occurrences": 1,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "remzerovec",
+      "decks": 1,
+      "occurrences": 1,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    },
+    {
+      "command": "snsave",
+      "decks": 1,
+      "occurrences": 1,
+      "grammar_rule": null,
+      "execution": "unassessed",
+      "limitation": "No concrete command association; generic command syntax is not execution support."
+    }
+  ],
+  "limitations": [
+    "Reviewed source/evidence associations, not a numerical or full-control-program conformance proof.",
+    "Parser productions only; lexer modes, wildcard command families and model parameter profiles require separate inventories.",
+    "Unexecuted postprocessing remains not_executed, even when independent analyses can run.",
+    "Navigation links follow main; exact tested/reviewed bytes are identified by hashes. StrictDoc grammar parsing and tests are separate gates."
+  ]
+}

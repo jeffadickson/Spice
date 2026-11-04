@@ -1,0 +1,446 @@
+{
+  "state": "completed_with_results",
+  "provenance_valid": true,
+  "source_commit": "bb1979926754da27b2770f8c4e694b5bb1e33b23",
+  "source_dirty": false,
+  "baseline_commit": "26cfad91fd398fa14ed1de1ae8974f454a348409",
+  "corpus_commit": "e8285746c73a8229cf922487c8ccfcf6bea61bce",
+  "inventory_sha256": "639942cf3e489baf7ce4b4e3437601d54781ede3d143ba049ae1c5b33f9ad255",
+  "elapsed_seconds": 1015.6590462,
+  "summary_sha256": "29df471ac8b4d056484b908d47d62d2cd8962b7fef677d960d2799a23fc48e05",
+  "baseline_summary_sha256": "b0a0c6f6fbb5db475df489d8151a64ca551ae6b3b09108e38827afe82ac56f45",
+  "native_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "engine_sha256": "494c1ae831cd0d2c3ba424930db02fd0f12dab488995c53dba6dcc9c6cf7bf1a",
+  "input_paths": 928,
+  "stages": [
+    {
+      "name": "Syntax accepted",
+      "previous": 916,
+      "current": 916,
+      "delta": 0,
+      "refused": 8,
+      "unknown": 4
+    },
+    {
+      "name": "Circuit prepared",
+      "previous": 85,
+      "current": 85,
+      "delta": 0,
+      "refused": 809,
+      "unknown": 34
+    },
+    {
+      "name": "Requested analyses executed",
+      "previous": 23,
+      "current": 25,
+      "delta": 2,
+      "refused": 869,
+      "unknown": 34
+    },
+    {
+      "name": "Native numerical agreement",
+      "previous": 11,
+      "current": 12,
+      "delta": 1,
+      "refused": 13,
+      "unknown": 903
+    }
+  ],
+  "row_statuses": [
+    {
+      "Name": "all_individual_requested_analyses_agreed",
+      "Count": 12
+    },
+    {
+      "Name": "excluded_hash_pinned",
+      "Count": 8
+    },
+    {
+      "Name": "input_or_qualification_failure",
+      "Count": 4
+    },
+    {
+      "Name": "requested_executed_not_fully_qualified",
+      "Count": 13
+    },
+    {
+      "Name": "requested_execution_failed",
+      "Count": 4
+    },
+    {
+      "Name": "requested_preparation_refused",
+      "Count": 865
+    },
+    {
+      "Name": "resource_refused",
+      "Count": 22
+    }
+  ],
+  "transitions": [
+    {
+      "path": "examples/measure/meas_expression.cir",
+      "input_sha256": "3101a8269f9d4296c06653e7fb567c85a16ada9705b0c7593d866c6d13ad1792",
+      "scope": "ngspice",
+      "before": "requested_preparation_refused",
+      "after": "requested_executed_not_fully_qualified",
+      "old_diagnostics": [
+        "unsupported_control_command:let"
+      ],
+      "native_agreed": false,
+      "program_omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control_postprocessing",
+          "name": "let",
+          "reason": "postprocessing_not_executed",
+          "range": {
+            "start": 397,
+            "length": 19,
+            "line": 15,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control_observation",
+          "name": "meas",
+          "reason": "control_output_not_executed",
+          "range": {
+            "start": 418,
+            "length": 42,
+            "line": 16,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control_postprocessing",
+          "name": "unlet",
+          "reason": "postprocessing_not_executed",
+          "range": {
+            "start": 462,
+            "length": 10,
+            "line": 17,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control_observation",
+          "name": "meas",
+          "reason": "control_output_not_executed",
+          "range": {
+            "start": 505,
+            "length": 46,
+            "line": 20,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control_observation",
+          "name": "meas",
+          "reason": "control_output_not_executed",
+          "range": {
+            "start": 597,
+            "length": 66,
+            "line": 23,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control_postprocessing",
+          "name": "let",
+          "reason": "postprocessing_not_executed",
+          "range": {
+            "start": 722,
+            "length": 14,
+            "line": 26,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control_observation",
+          "name": "meas",
+          "reason": "control_output_not_executed",
+          "range": {
+            "start": 738,
+            "length": 78,
+            "line": 27,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control_observation",
+          "name": "plot",
+          "reason": "control_output_not_executed",
+          "range": {
+            "start": 822,
+            "length": 14,
+            "line": 30,
+            "column": 1
+          }
+        }
+      ],
+      "operations": {
+        "kind": "tran",
+        "status": "numerical_disagreement",
+        "comparison": {
+          "status": "numerical_disagreement",
+          "observables": [
+            {
+              "engine_signal": "v(n1)",
+              "native_signal": "v(1)",
+              "unit": "V",
+              "points": 501,
+              "failed": 499,
+              "maximum_absolute_error": 0.00039789071409379595,
+              "absolute_tolerance": 1E-06,
+              "relative_tolerance": 0.0001
+            },
+            {
+              "engine_signal": "v(n2)",
+              "native_signal": "v(2)",
+              "unit": "V",
+              "points": 501,
+              "failed": 497,
+              "maximum_absolute_error": 0.00038677184846358514,
+              "absolute_tolerance": 1E-06,
+              "relative_tolerance": 0.0001
+            },
+            {
+              "engine_signal": "i(e0)",
+              "native_signal": "i(vac1)",
+              "unit": "A",
+              "points": 501,
+              "failed": 0,
+              "maximum_absolute_error": 0,
+              "absolute_tolerance": 1E-09,
+              "relative_tolerance": 0.0001
+            },
+            {
+              "engine_signal": "i(e1)",
+              "native_signal": "i(vac2)",
+              "unit": "A",
+              "points": 501,
+              "failed": 0,
+              "maximum_absolute_error": 0,
+              "absolute_tolerance": 1E-09,
+              "relative_tolerance": 0.0001
+            }
+          ],
+          "gaps": [],
+          "agreed": false
+        }
+      }
+    },
+    {
+      "path": "examples/probe/ac-test.cir",
+      "input_sha256": "2f38b91e8b7f4033c30ec5bcace0d10e92c915445c6e59327d6e398116d43fe4",
+      "scope": "ngspice",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "old_diagnostics": [
+        "unsupported_control_command:display"
+      ],
+      "native_agreed": true,
+      "program_omissions": [
+        {
+          "scope_id": 0,
+          "kind": "control_observation",
+          "name": "display",
+          "reason": "control_output_not_executed",
+          "range": {
+            "start": 171,
+            "length": 7,
+            "line": 16,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control_observation",
+          "name": "print",
+          "reason": "control_output_not_executed",
+          "range": {
+            "start": 180,
+            "length": 17,
+            "line": 17,
+            "column": 1
+          }
+        },
+        {
+          "scope_id": 0,
+          "kind": "control_observation",
+          "name": "plot",
+          "reason": "control_output_not_executed",
+          "range": {
+            "start": 199,
+            "length": 15,
+            "line": 18,
+            "column": 1
+          }
+        }
+      ],
+      "operations": {
+        "kind": "ac",
+        "status": "agreed",
+        "comparison": {
+          "status": "agreed",
+          "observables": [
+            {
+              "engine_signal": "v(n1)",
+              "native_signal": "v(1)",
+              "unit": "V",
+              "points": 16,
+              "failed": 0,
+              "maximum_absolute_error": 0,
+              "absolute_tolerance": 1E-06,
+              "relative_tolerance": 0.0001
+            },
+            {
+              "engine_signal": "v(n2)",
+              "native_signal": "v(2)",
+              "unit": "V",
+              "points": 16,
+              "failed": 0,
+              "maximum_absolute_error": 3.04126265848902E-16,
+              "absolute_tolerance": 1E-06,
+              "relative_tolerance": 0.0001
+            },
+            {
+              "engine_signal": "v(n3)",
+              "native_signal": "v(3)",
+              "unit": "V",
+              "points": 16,
+              "failed": 0,
+              "maximum_absolute_error": 2.0017837022367557E-16,
+              "absolute_tolerance": 1E-06,
+              "relative_tolerance": 0.0001
+            },
+            {
+              "engine_signal": "i(e0)",
+              "native_signal": "i(V1)",
+              "unit": "A",
+              "points": 16,
+              "failed": 0,
+              "maximum_absolute_error": 3.686685968642122E-19,
+              "absolute_tolerance": 1E-09,
+              "relative_tolerance": 0.0001
+            }
+          ],
+          "gaps": [],
+          "agreed": true
+        }
+      }
+    }
+  ],
+  "leading_prepared_refusals": [
+    {
+      "Name": "unsupported_control_command:if",
+      "Count": 14
+    },
+    {
+      "Name": "unsupported_control_postprocessing_before_analysis",
+      "Count": 12
+    },
+    {
+      "Name": "unsafe_control_separator_variable_or_token",
+      "Count": 9
+    },
+    {
+      "Name": "unsupported_requested_program",
+      "Count": 4
+    },
+    {
+      "Name": "no_requested_analysis",
+      "Count": 2
+    },
+    {
+      "Name": "unsupported_control_command:compose",
+      "Count": 2
+    },
+    {
+      "Name": "unsupported_control_command:loadpull",
+      "Count": 2
+    },
+    {
+      "Name": "unsupported_control_command:repeat",
+      "Count": 2
+    }
+  ],
+  "analytical_sine_diagnostic": {
+    "path": "examples/measure/meas_expression.cir",
+    "source_input_sha256": "3101a8269f9d4296c06653e7fb567c85a16ada9705b0c7593d866c6d13ad1792",
+    "response_sha256": "4106aa7ee35c195d318bc2025ea4b60f75b832e15c1de5198df406097b6e1823",
+    "scope": "Independent ideal sine voltage equation at every returned time; diagnostic only, native status unchanged",
+    "metrics": [
+      {
+        "amplitude_v": 1,
+        "frequency_hz": 1000,
+        "maximum_absolute_error_v": 0.0,
+        "points": 501,
+        "signal": "v(n1)"
+      },
+      {
+        "amplitude_v": 1.2,
+        "frequency_hz": 900,
+        "maximum_absolute_error_v": 0.0,
+        "points": 501,
+        "signal": "v(n2)"
+      }
+    ]
+  },
+  "native_suffix_current_recheck": {
+    "skipped": 0,
+    "passed": 2,
+    "test_sha256": "b7de12f502499e8a22cf3336093a91a79dd8300be148eb12a0bd7e4b2defffd4",
+    "cases": [
+      {
+        "backend": "faer",
+        "input_sha256": "64a4d209276b7bda46d94258550859920914f6acd8e69fad51aff5e05c458723",
+        "physical_voltage": 0.5,
+        "physical_current_amps": -0.0005,
+        "native_reporting_value": 1.5
+      },
+      {
+        "backend": "lu",
+        "input_sha256": "64a4d209276b7bda46d94258550859920914f6acd8e69fad51aff5e05c458723",
+        "physical_voltage": 0.5,
+        "physical_current_amps": -0.0005,
+        "native_reporting_value": 1.5
+      }
+    ]
+  },
+  "clean_grammar_map_sha256": "70662e97b2a11ed5b062f73c97f2643a30c0e9a45ac7377761856ae514a2525a",
+  "scope": "Individual ordinary requested analyses; not input-control-program parity. No hardcoded selected OP counts as requested execution. Full mapped root voltage and supported branch-current grids; declared transient oracle interpolation.",
+  "limitations": [
+    "Path counts include mirrors",
+    "13 executed paths have numerical disagreement;903 lack native agreement evidence",
+    "Postprocessing is explicitly unexecuted",
+    "Independent sine diagnostic does not promote native status",
+    "Compatibility census duration includes workflow and concurrent host load, not a solver-speed comparison"
+  ],
+  "artifacts": "E:\\Artifacts\\Spice-controls-20261104T011818Z",
+  "ranking_sha256": "7963038c873a93bd759f9858f481640b1e20f556a7a84c4ddce49a9c1503a5d1",
+  "structurally_audited_inputs": 894,
+  "supplemental_mapped_coverage": [
+    {
+      "file": "RequestedAnalysis.cs",
+      "mapped_lines": 115,
+      "covered_lines": 115,
+      "mapped_branches": 144,
+      "covered_branches": 137
+    },
+    {
+      "file": "ControlSyntax.cs",
+      "mapped_lines": 6,
+      "covered_lines": 6,
+      "mapped_branches": 0,
+      "covered_branches": 0
+    }
+  ]
+}

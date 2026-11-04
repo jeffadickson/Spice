@@ -90,3 +90,8 @@ unique E: directory recorded in ignored `work/issue34-artifacts.txt`; no CI.
   Fresh review's changing-source/provider-accounting test gaps were addressed.
   Shared control blockers among prepared refusals remain let16,define8 and
   unsafe token9 observations; counts overlap and do not promise unlocks.
+- Shared controls: bounded suffix admission fdc4e6c and grammar map bb19799
+  verified. Clean 928-path census moves executions 23 to 25 and agreements 11 to
+  12; 13 numerical discrepancies remain. See shared-control-results.md. Next
+  reached control clusters are if/else/end, earlier declarations and unsupported
+  token effects. This does not close general control execution or physical options.

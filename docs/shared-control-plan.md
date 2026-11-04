@@ -33,7 +33,7 @@ user authorized implementation; continue inline without another approval gate.
   and syntax suites with negative and seeded property checks.
 - [x] Add grammar-map tests for missing/stale/duplicate assessments, real generated
   rules and clear unsupported/unassessed/executed distinctions. Generate JSON/HTML.
-- [ ] Collect coverage, scoped Stryker results, StrictDoc and Sphinx evidence;
+- [x] Collect coverage, scoped Stryker results, StrictDoc and Sphinx evidence;
   review and commit coherent checkpoints. Publish corpus results after execution.
 
 Review focus: a later run after a declaration; a let target aliasing a root node;

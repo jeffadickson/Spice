@@ -131,3 +131,21 @@ was run; Rust branch coverage is unavailable. Exact current coverage and hashes
 are retained separately in evidence/issue34-initial-bias.json. No CI or automatic
 backend substitution was used. Full native BJT waveform qualification and the
 remaining issue34 items stay open.
+
+## Shared control checkpoint
+
+fdc4e6c adds bounded suffix admission and explicit reporting omissions; bb19799
+adds the generated-rule and concrete-command map. See shared-control-results.md,
+grammar-implementation.html and evidence/shared-control-corpus.json/.svg.
+The clean bb19799 census completed with matching provenance: 25 original requested
+executions and 12 ngspice agreements among 928 paths, up from 23 and 11. The only
+primary status changes are original probe/ac-test (now agrees) and
+measure/meas_expression (now executes, native discrepancy retained). Native
+comparison of both ideal sine voltages still uses the existing interpolation;
+independent analytical diagnostics do not change its status.
+
+Remaining reached control blockers: if 14, declarations before later analyses 12,
+unsafe/unsupported tokens 9. Whole control execution and vector evaluation remain
+open, as do physical options and broader model/resource families. Final suites,
+mutation outcomes and mapped coverage are in the linked bounded reports. The
+separate soak is pinned to 6411105 and was not retargeted.

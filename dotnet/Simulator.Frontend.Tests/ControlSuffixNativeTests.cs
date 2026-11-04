@@ -27,7 +27,10 @@ public sealed class ControlSuffixNativeTests
         var response=await new SimulationClient(Environment.GetEnvironmentVariable("SPICE_GROUND_ENGINE")!).RunAsync(request,deadline.Token);
         Assert.True(response.Succeeded,response.Payload.GetRawText());
         var voltage=response.FinalValue("v("+plan.CircuitPreparation!.RootNodes["out"]+")");
+        var source=Assert.Single(plan.CircuitPreparation.Origins,o=>o.InstancePath.IsEmpty&&o.LocalName.Equals("V1",StringComparison.OrdinalIgnoreCase));
+        var current=response.FinalValue("i("+source.WireId+")");
         Assert.InRange(Math.Abs(voltage-0.5),0,1e-12);
+        Assert.InRange(Math.Abs(current-(-0.0005)),0,1e-12);
         // Execute only this owned finite fixture in ngspice. The public compiler
         // still records the reporting expressions as unexecuted omissions.
         var input=Path.Combine(folder,"native.cir");await File.WriteAllTextAsync(input,circuit+suffix+"\nwrite native.raw v(out) i(V1) report_value\nquit\n.endc\n.end\n");
@@ -41,10 +44,10 @@ public sealed class ControlSuffixNativeTests
         Assert.Equal("Operating Point",raw.PlotName);var values=Assert.Single(raw.Points);
         double Read(string name)=>values[Assert.Single(Enumerable.Range(0,raw.Variables.Length),i=>raw.Variables[i].Name==name)].Real;
         Assert.InRange(Math.Abs(Read("v(out)")-voltage),0,1e-12);
-        Assert.InRange(Math.Abs(Read("i(v1)")-(-0.0005)),0,1e-12);
+        Assert.InRange(Math.Abs(Read("i(v1)")-current),0,1e-12);
         Assert.InRange(Math.Abs(Read("report_value")-1.5),0,1e-12);
         await File.WriteAllTextAsync(Path.Combine(folder,"request.json"),JsonSerializer.Serialize(request,WireFormat.Options));
         await File.WriteAllTextAsync(Path.Combine(folder,"response.json"),response.Payload.GetRawText());
-        await File.WriteAllTextAsync(Path.Combine(folder,"evidence.json"),JsonSerializer.Serialize(new{backend,input_sha256=Convert.ToHexStringLower(SHA256.HashData(await File.ReadAllBytesAsync(input))),physical_voltage=voltage,native_reporting_value=Read("report_value"),omissions=plan.ProgramOmissions}));
+        await File.WriteAllTextAsync(Path.Combine(folder,"evidence.json"),JsonSerializer.Serialize(new{backend,input_sha256=Convert.ToHexStringLower(SHA256.HashData(await File.ReadAllBytesAsync(input))),physical_voltage=voltage,physical_current_amps=current,native_reporting_value=Read("report_value"),omissions=plan.ProgramOmissions}));
     }
 }

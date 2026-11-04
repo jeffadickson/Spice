@@ -17,9 +17,11 @@ The grammar implementation inventory enumerates 93 actual productions and includ
  they are not 90 fully implemented features. Concrete unmapped headings remain visible.
  The historical capability labels were reconciled with current generated routes.
 
-Read the verification and frozen-corpus evidence before quoting current counts.
- The preceding clean26cfad9 corpus baseline is 85 prepared/23 executed/11 native
- agreements among 928 paths. Do not infer executable gains from syntax reach.
+Read docs/shared-control-results.md and evidence/shared-control-corpus.json.
+ The clean bb19799 census completed 928 paths: 85 prepared, 25 executed and 12
+ native agreements. Thirteen numeric discrepancies remain. Prior 26cfad9 had
+ 23 executed/11 agreements. Next reached control blockers: if14, earlier
+ declarations12 and unsafe/unsupported tokens9. Do not infer gains from syntax reach.
 
 The separate user-authorized two-hour soak stays pinned 6411105, with its own E:
  output/cache and canonical lock; new frontend work does not qualify that run.
