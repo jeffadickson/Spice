@@ -89,6 +89,17 @@ public sealed class TransportContracts
     }
 
     [Fact]
+    public async Task RejectsUtf8BomBeforeNativeJsonEnvelope()
+    {
+        var request = JsonSerializer.Serialize(new
+        {
+            utf8_bom = true,
+            output = """{"schema_version":"1","status":"succeeded","complete":true}"""
+        });
+        await Assert.ThrowsAnyAsync<JsonException>(() => Fixture().RunJsonAsync(request));
+    }
+
+    [Fact]
     public async Task MultibyteDiagnosticsUseTheByteLimit()
     {
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(15));

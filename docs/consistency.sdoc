@@ -670,3 +670,14 @@ RELATIONS:
   VALUE: END-001
 - TYPE: Parent
   VALUE: END-005
+
+[REQUIREMENT]
+UID: QUAL-MANAGED-WIRE-BOM-001
+STATUS: Implemented
+TITLE: Reject a byte-order mark before native JSON
+STATEMENT: >>>
+The managed process transport shall reject a native JSON envelope prefixed by the UTF-8 byte-order mark.
+<<<
+COMMENT: >>>
+Verification: TransportContracts.RejectsUtf8BomBeforeNativeJsonEnvelope emits the actual preamble bytes from the synthetic child. The UTF8Encoding encoder-preamble flag does not affect GetString and its mutation is equivalent at this call site.
+<<<

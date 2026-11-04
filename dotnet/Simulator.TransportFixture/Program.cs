@@ -36,6 +36,13 @@ if (root.TryGetProperty("flood", out var flood))
     var count = root.TryGetProperty("blocks", out var blocks) ? blocks.GetInt32() : 4097;
     for (var i = 0; i < count; i++) await writer.WriteAsync(block);
 }
+if (root.TryGetProperty("utf8_bom", out _))
+{
+    // Emit the actual wire prefix without altering the fixture's console encoding.
+    var stdout = Console.OpenStandardOutput();
+    await stdout.WriteAsync(System.Text.Encoding.UTF8.GetPreamble());
+    await stdout.FlushAsync();
+}
 if (root.TryGetProperty("invalid_utf8", out var invalid))
 {
     var stream = invalid.GetString() == "stderr" ? Console.OpenStandardError() : Console.OpenStandardOutput();
