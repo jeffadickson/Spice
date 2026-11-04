@@ -20,7 +20,8 @@ internal static class RequestedControlPreparation
   if(hasRun&&catalog.Analyses.GroupBy(a=>a.Kind).Any(g=>g.Count()!=1))return Fail("unsupported_control_run_duplicate_analysis_kind",block.Range);
   if(hasRun&&catalog.Analyses.IsEmpty)return Fail("control_run_without_declared_analysis",block.Range);
   if(hasRun&&catalog.Analyses.Any(a=>a.ScopeId!=0))return Fail("unsupported_control_run_analysis_scope",block.Range);
-  var quit=false;
+  var lastAnalysisStart=block.Commands.Where(c=>c.Kind is "analysis" or "run").Select(c=>c.Range.Start).DefaultIfEmpty(-1).Max();
+  var locals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var quit=false;
   foreach(var command in block.Commands){
    if(command.Kind=="comment")continue;
    if(quit)return Fail("unsupported_control_command_after_quit",command.Range);
@@ -35,10 +36,13 @@ internal static class RequestedControlPreparation
     case "set":
      foreach(var setting in command.Settings){
       var name=setting.Name?.ToLowerInvariant();var accepted=name=="noaskquit"&&setting.Value==null||name=="filetype"&&setting.LiteralIdentifier?.Equals("ascii",StringComparison.OrdinalIgnoreCase)==true;
-      if(name=="numdgt"&&setting.LiteralNumber&&setting.Value!=null){var value=ParameterEvaluator.EvaluateValue(catalog,ParameterEvaluator.Evaluate(catalog),setting.Value);accepted=value.Value is {} digits&&digits>=1&&digits<=17&&digits==Math.Truncate(digits);}
+      if(name is "numdgt" or "xbrushwidth"&&setting.LiteralNumber&&setting.Value!=null){var value=ParameterEvaluator.EvaluateValue(catalog,ParameterEvaluator.Evaluate(catalog),setting.Value);accepted=value.Value is {} digits&&digits>=1&&digits<=(name=="numdgt"?17:64)&&digits==Math.Truncate(digits);}
       if(!accepted)return Fail("unsupported_control_setting:"+(name??"target"),setting.Range);
      }
      omissions.Add(new(0,"control_reporting_setting",command.Name,"reporting_setting_not_executed",command.Range));break;
+    case "postprocessing":
+     if(ControlSuffixAdmission.Admit(command,lastAnalysisStart,locals) is {} suffixFailure)return Fail(suffixFailure,command.Range);
+     omissions.Add(new(0,"control_postprocessing",command.Name,"postprocessing_not_executed",command.Range));break;
     case "report":omissions.Add(new(0,"control_observation",command.Name,"control_output_not_executed",command.Range));break;
     case "quit":quit=true;omissions.Add(new(0,"control_exit",command.Name,"final_process_exit_not_executed",command.Range));break;
     default:return Fail("unsupported_control_command:"+command.Name,command.Range);

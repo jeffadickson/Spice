@@ -1,0 +1,11 @@
+{
+  "stryker-config": {
+    "project": "Simulator.Frontend.csproj",
+    "mutate": ["**/ControlSuffixAdmission.cs", "**/RequestedControlPreparation.cs"],
+    "test-case-filter": "FullyQualifiedName~ControlSuffixTests|FullyQualifiedName~RequestedControlTests|FullyQualifiedName~RequestedAnalysisTests",
+    "reporters": ["json", "cleartext"],
+    "concurrency": 1,
+    "thresholds": {"high": 80, "low": 60, "break": 0},
+    "additional-timeout": 5000
+  }
+}

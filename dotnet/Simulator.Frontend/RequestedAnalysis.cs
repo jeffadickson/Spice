@@ -29,7 +29,7 @@ public sealed record RequestedAnalysisPlan(ImmutableArray<RequestedOperation> Op
  public BridgeResult? CircuitPreparation { get; init; }
  /// <summary>Qualified dispatch profile: deck cards, direct control commands or finite retained-deck run.</summary>
  public string ControlProfile { get; init; } = "deck";
- /// <summary>Explicit unexecuted control reporting/exit and uninvoked deck instructions.</summary>
+ /// <summary>Explicit unexecuted control reporting, deferred suffix declarations, exit and uninvoked deck instructions.</summary>
  public ImmutableArray<OperatingPointOmission> ProgramOmissions { get; init; } = [];
 }
 /// <summary>Result of one independently initialized request. Transport errors remain distinct from engine response errors.</summary>
@@ -61,6 +61,12 @@ public static partial class RequestedAnalysis
   var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,catalog.InitialConditions.Select(ic=>ic.Range.Start).ToImmutableHashSet());
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
+  // Native let may overwrite an existing root result vector by its bare node
+  // name. Do not hide observable replacement as a local reporting declaration.
+  var rootNames=prepared.RootNodes.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
+  var clobber=catalog.ControlBlocks.SelectMany(b=>b.Commands).FirstOrDefault(c=>
+      c.Postprocessing is {Kind:ControlPostprocessingKind.Let} local&&rootNames.Contains(local.Names[0]));
+  if(clobber!=null)return Fail("unsupported_control_observable_assignment",clobber.Range);
   var environment=ParameterEvaluator.Evaluate(catalog);
   var operations=ImmutableArray.CreateBuilder<RequestedOperation>();
   try{

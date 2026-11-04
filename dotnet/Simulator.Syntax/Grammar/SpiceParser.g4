@@ -144,14 +144,19 @@ expression: expression (POWER | CARET) expression
 
 // A bounded semantic entry over generated BODY tokens of one COMMAND_LINE.
 // Numeric command arguments deliberately exclude vectors, substitution and state.
-controlCommandProfile: (controlOp | controlAc | controlDc | controlTran | controlRun | controlSet | controlReport | controlQuit | controlUnknown)? EOF;
+controlCommandProfile: (controlOp | controlAc | controlDc | controlTran | controlRun | controlSet | controlLet | controlDefine | controlUnlet | controlReport | controlQuit | controlUnknown)? EOF;
 controlOp: {TokenStream.LT(1).Text.Equals("op",StringComparison.OrdinalIgnoreCase)}? identifier;
 controlAc: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier identifier controlNumber controlNumber controlNumber;
 controlDc: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase)}? identifier identifier controlNumber controlNumber controlNumber (identifier controlNumber controlNumber controlNumber)?;
 controlTran: {TokenStream.LT(1).Text.Equals("tran",StringComparison.OrdinalIgnoreCase)}? identifier controlNumber controlNumber controlNumber? controlNumber? identifier?;
 controlRun: {TokenStream.LT(1).Text.Equals("run",StringComparison.OrdinalIgnoreCase)}? identifier;
 controlSet: {TokenStream.LT(1).Text.Equals("set",StringComparison.OrdinalIgnoreCase)}? identifier parameter+;
-controlReport: {TokenStream.LT(1).Text.ToLowerInvariant() is "print" or "plot" or "meas" or "measure" or "save" or "gnuplot" or "echo" or "rusage"}? identifier parameter*;
+// These productions preserve declarations; they do not evaluate result vectors
+// or user functions. The requested compiler qualifies only a reporting suffix.
+controlLet: {TokenStream.LT(1).Text.Equals("let",StringComparison.OrdinalIgnoreCase)}? identifier identifier EQUAL expression;
+controlDefine: {TokenStream.LT(1).Text.Equals("define",StringComparison.OrdinalIgnoreCase)}? identifier identifier LPAREN (identifier (COMMA identifier)*)? RPAREN expression;
+controlUnlet: {TokenStream.LT(1).Text.Equals("unlet",StringComparison.OrdinalIgnoreCase)}? identifier identifier+;
+controlReport: {TokenStream.LT(1).Text.ToLowerInvariant() is "print" or "plot" or "meas" or "measure" or "save" or "gnuplot" or "echo" or "rusage" or "display" or "listing"}? identifier parameter*;
 controlQuit: {TokenStream.LT(1).Text.Equals("quit",StringComparison.OrdinalIgnoreCase)}? identifier;
 controlUnknown: identifier parameter*;
 // INPevaluate accepts attached signs, including adjacent signed arguments,

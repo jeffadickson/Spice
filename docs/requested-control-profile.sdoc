@@ -11,7 +11,7 @@ UID: FRONTEND-CONTROL-001
 STATUS: Implemented
 TITLE: Generated bounded ordinary analysis commands
 STATEMENT: >>>
-One root control block may request ordinary op/dc/ac/tran commands with literal signed SI scalar arguments. Repeated direct commands shall retain order, source ranges and independent identities. Unknown effects, vectors/substitution, separators, unsupported scopes and malformed commands shall refuse the whole program atomically. Existing standalone declaration semantics shall remain unchanged.
+One root control block may request ordinary op/dc/ac/tran commands with literal signed SI scalar arguments. Repeated direct commands shall retain order, source ranges and independent identities. Unknown effects, vector/substitution-dependent analysis arguments, separators, unsupported scopes and malformed commands shall refuse the whole program atomically. Existing standalone declaration semantics shall remain unchanged.
 <<<
 COMMENT: >>>
 Implementation: ControlExtraction.cs, ControlSyntax.cs, SpiceLexer/SpiceParser grammar semantic entry and RequestedControlPreparation.cs. No original command text is forwarded to the product engine; public typed requests execute. Source numeric range capture uses the original COMMAND_LINE offsets. Whitespace/full-line comments and bounded dollar-space comments are recognized by generated tokens.
@@ -71,6 +71,20 @@ Control-semantic lexing shall refuse dollar substitution anywhere in an analysis
 <<<
 COMMENT: >>>
 Implementation: ControlSemantic-only CONTROL_VARIABLE lexer rule, controlNumber generated token-offset predicate, unsigned value checks in ControlExtraction. Verification: RequestedControlTests malformed/ordinary-dollar/adjacent-grid regressions;100-case FsCheck replay2393,20261103 varies sign/whitespace; RequestedControlAdmissionNativeTests independently confirms native embedded V$curplot substitution to vconst, separated-sign syntax failure and adjacent attached-sign DC grids. Failed native commands can still write a constants RAW plot; existence/zero exit is not an analysis pass. Primary source: ngspice frontend/variable.c cp_variablesubst and spicelib/parser/inpeval.c INPevaluate. Retained RED/green evidence: evidence/requested-control-admission-review.json.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-CONTROL-001
+
+[REQUIREMENT]
+UID: FRONTEND-CONTROL-006
+STATUS: Draft
+TITLE: Preserve bounded post-analysis declarations without claiming evaluation
+STATEMENT: >>>
+Generated control metadata shall retain simple-target let, named define and explicit unlet declarations with physical ranges. Requested individual analyses may admit these only after the final analysis or run command, recording each as postprocessing_not_executed. Local names shall contain1..64 ASCII letters/digits/underscores, starting with a letter or underscore. Let shall not replace root observable vectors or reserved axes; unlet shall name only suffix-created local vectors. Earlier or interleaved declarations, unsupported names, malformed syntax, substitutions and effectful commands shall refuse the complete plan. Display/listing and unsigned literal xbrushwidth integers1..64 may be retained as explicit unexecuted reporting observations. Reporting settings shall not alter numerical policy.
+<<<
+COMMENT: >>>
+Implementation: ControlExtraction and generated controlLet/controlDefine/controlUnlet productions; ControlSuffixAdmission; RequestedControlPreparation; root-vector guard in RequestedAnalysis. Verification: ControlSuffixTests seeded properties/negative cases and ControlSuffixNativeTests owned native OP/current/reporting-value witness across LU/faer. This profile does not evaluate arbitrary vectors/functions or execute control loops; independent analysis agreement is distinct from complete input-program parity. Primary semantics inspected: ngspice com_let.c vec_get overwrite behavior, define.c and plotting xbrushwidth consumers.
 <<<
 RELATIONS:
 - TYPE: Parent

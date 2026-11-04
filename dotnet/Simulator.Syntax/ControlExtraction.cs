@@ -22,7 +22,7 @@ internal static class ControlExtraction
    try{
     var tree=parser.controlCommandProfile();var item=tree.GetChild(0) as ParserRuleContext;
     if(item==null)return new("","comment",null,[],physical);
-    AnalysisSyntax? analysis=null;var name=item.Start.Text.ToLowerInvariant();var kind="unsupported";ImmutableArray<ControlSettingSyntax> settings=[];
+    AnalysisSyntax? analysis=null;var name=item.Start.Text.ToLowerInvariant();var kind="unsupported";ImmutableArray<ControlSettingSyntax> settings=[];ControlPostprocessingSyntax? postprocessing=null;
     switch(item){
      case SpiceParser.ControlOpContext:kind="analysis";analysis=new(scope,"op",[],[],physical);break;
      case SpiceParser.ControlAcContext ac:kind="analysis";analysis=new(scope,"ac",[ac.identifier(1).GetText()],ac.controlNumber().Select(Capture).ToImmutableArray(),physical);break;
@@ -31,6 +31,12 @@ internal static class ControlExtraction
      case SpiceParser.ControlRunContext:kind="run";break;
      case SpiceParser.ControlQuitContext:kind="quit";break;
      case SpiceParser.ControlReportContext:kind="report";break;
+     case SpiceParser.ControlLetContext let:
+      kind="postprocessing";postprocessing=new(ControlPostprocessingKind.Let,[let.identifier(1).GetText()],Capture(let.expression()));break;
+     case SpiceParser.ControlDefineContext define:
+      kind="postprocessing";postprocessing=new(ControlPostprocessingKind.Define,define.identifier().Skip(1).Select(i=>i.GetText()).ToImmutableArray(),Capture(define.expression()));break;
+     case SpiceParser.ControlUnletContext unlet:
+      kind="postprocessing";postprocessing=new(ControlPostprocessingKind.Unlet,unlet.identifier().Skip(1).Select(i=>i.GetText()).ToImmutableArray(),null);break;
      case SpiceParser.ControlSetContext set:
       kind="set";settings=set.parameter().Select(p=>{
        if(p.value() is {} flagValue&&flagValue.PLUS()==null&&flagValue.MINUS()==null&&flagValue.identifier() is {} flag)return new ControlSettingSyntax(flag.GetText(),null,null,false,Capture(p).Range);
@@ -42,7 +48,7 @@ internal static class ControlExtraction
        return new ControlSettingSyntax(assignment.referenceName()?.GetText(),value==null?null:Capture(value),unsigned?scalar?.identifier()?.GetText():null,unsigned&&scalar?.NUMBER()!=null,Capture(p).Range);
       }).ToImmutableArray();break;
     }
-    return new(name,kind,analysis,settings,physical,kind=="unsupported"?"unsupported_control_command:"+name:null);
+    return new(name,kind,analysis,settings,physical,kind=="unsupported"?"unsupported_control_command:"+name:null){GrammarRule=SpiceParser.ruleNames[item.RuleIndex],Postprocessing=postprocessing};
    }catch(ParseCanceledException){return new(token.Text,"unsupported",null,[],physical,"unsupported_control_syntax");}
   }
  }

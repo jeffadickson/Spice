@@ -1,0 +1,102 @@
+{
+  "tested_base_commit": "6411105d262a179d53579e7b71d5156ef31fece1",
+  "source_dirty_when_tested": true,
+  "source_hashes": {
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "b899d6755a97bfb3a59582f0e295df9f9b9d0a44c86a54a1a86ce1fd683cb82b",
+    "dotnet/Simulator.Syntax/ControlSyntax.cs": "4390689b4fcc52dd09dff2be304a4b9f0725147478adfa995760beeb2b8d711f",
+    "dotnet/Simulator.Syntax/ControlExtraction.cs": "bbf82fac4ee29a64b8600b1bac8f73ff260722cf91070bf7a005bc680b22a46f",
+    "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs": "9e44fec055368b5dfeeb445ba1d183bfdfc1df9d58c21823c8c93ab3d8930a64",
+    "dotnet/Simulator.Frontend/RequestedControlPreparation.cs": "ad9dda29f40a646e24334ef8751ae39f884e39a19932747af6321111af4f74e8",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "8d91d59540a70eed87d75859c1bbfbbcaa1caca0b015dd97388f956078f27e2d",
+    "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs": "83b585f4dd5388fe52d8198a63d851279089bbb717a779e2f6c5ec3a9347cb16",
+    "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs": "4362473f42c7aa2cc0f4068152b0f62b96fe8d499352ea23d576dfbf0c787249",
+    "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs": "0554f019dc95d11428d28f4f8a44f6b4d1782b2107d7e52d44f220996479c7f3"
+  },
+  "frontend_tests": {
+    "failed": 0,
+    "skipped": 22,
+    "passed": 542
+  },
+  "syntax_tests": {
+    "note": "Includes grammar inventory tests committed in the adjacent checkpoint",
+    "failed": 0,
+    "skipped": 1,
+    "passed": 454
+  },
+  "native_owned_suffix": {
+    "reporting_evaluation_in_product": "not_executed",
+    "native_reporting_value": 1.5,
+    "out_volts": 0.5,
+    "source_amps": -0.0005,
+    "providers": [
+      "lu",
+      "faer"
+    ]
+  },
+  "property_replay": "3404,20261105",
+  "property_cases": 100,
+  "mutations": {
+    "limitations": [
+      "Survivors and uncovered/compile-invalid candidates remain open",
+      "Out-of-scope generated candidates are not qualified by selected file counts",
+      "Initial resource-failed Stryker build tested no candidates"
+    ],
+    "counts": {
+      "Ignored": 2,
+      "Killed": 143,
+      "CompileError": 23,
+      "NoCoverage": 3,
+      "Survived": 12
+    },
+    "files": [
+      "ControlSuffixAdmission.cs",
+      "RequestedControlPreparation.cs"
+    ],
+    "framework": "Stryker.NET5.0.0",
+    "reported_score": 90.51,
+    "raw_report_sha256": "1d198dfafb133d67453face4e9324ccf9ca5fab9eba01f72ea8e2a154eea8598"
+  },
+  "mapped_coverage": [
+    {
+      "scope": "frontend",
+      "file": "ControlSuffixAdmission.cs",
+      "mapped_lines": 23,
+      "covered_lines": 22,
+      "mapped_branches": 44,
+      "covered_branches": 37,
+      "raw_sha256": "e03290205dfe3f180fe6963454d187f69412b3fa533b8e469fbedf670db51c8e"
+    },
+    {
+      "scope": "frontend",
+      "file": "RequestedControlPreparation.cs",
+      "mapped_lines": 40,
+      "covered_lines": 39,
+      "mapped_branches": 90,
+      "covered_branches": 88,
+      "raw_sha256": "e03290205dfe3f180fe6963454d187f69412b3fa533b8e469fbedf670db51c8e"
+    },
+    {
+      "scope": "frontend",
+      "file": "ControlExtraction.cs",
+      "mapped_lines": 39,
+      "covered_lines": 39,
+      "mapped_branches": 70,
+      "covered_branches": 66,
+      "raw_sha256": "e03290205dfe3f180fe6963454d187f69412b3fa533b8e469fbedf670db51c8e"
+    }
+  ],
+  "coverage_limitations": [
+    "Reported mappings only; captured helpers can be incomplete",
+    "Not whole simulator or whole frontend coverage"
+  ],
+  "initial_failures": [
+    "Expected RED4missing-feature failures",
+    "First suite missed E artifact environment and failed Windows symlink privilege",
+    "Invalid even FsCheck gamma caught by replay-metadata regression and corrected",
+    "First Stryker baseline build failed host insufficient resources; serial bounded retry completed"
+  ],
+  "artifacts": "E:\\Artifacts\\Spice-controls-20261104T011818Z",
+  "scope": "Individual requested analyses with explicit unexecuted reporting suffix; no full control interpreter/vector evaluation",
+  "review": "Fresh read-only source review found no important blocker; no external experts",
+  "ci": "not dispatched"
+}
