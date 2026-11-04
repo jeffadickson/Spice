@@ -1,0 +1,1653 @@
+[
+  {
+    "rule": "deck",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "statement",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "identifier",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "node",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "scalarNode",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "referenceName",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "referenceNode",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "twoNodes",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "threeNodes",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "fourNodes",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "fiveNodes",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "sixNodes",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "sevenNodes",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "parameter",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "assignment",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "arithmetic",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "comparison",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "call",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "group",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "value",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "complexValue",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "concatenation",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "endCard",
+    "extraction": "structural",
+    "preparation": "not_applicable",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4"
+    ],
+    "requirements": [
+      "PRS-001",
+      "SEM-CAT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics."
+  },
+  {
+    "rule": "expression",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ParameterEvaluator.cs",
+      "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
+    ],
+    "requirements": [
+      "SEM-PARAM-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Bounded scalar parameter evaluation and affine behavioral voltage expressions; arbitrary result vectors/functions and nonlinear behavior remain outside this contract."
+  },
+  {
+    "rule": "function",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ParameterEvaluator.cs",
+      "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
+    ],
+    "requirements": [
+      "SEM-PARAM-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Bounded scalar parameter evaluation and affine behavioral voltage expressions; arbitrary result vectors/functions and nonlinear behavior remain outside this contract."
+  },
+  {
+    "rule": "paramCard",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ParameterEvaluator.cs",
+      "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
+    ],
+    "requirements": [
+      "SEM-PARAM-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Bounded scalar parameter evaluation and affine behavioral voltage expressions; arbitrary result vectors/functions and nonlinear behavior remain outside this contract."
+  },
+  {
+    "rule": "voltageReference",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ParameterEvaluator.cs",
+      "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
+    ],
+    "requirements": [
+      "SEM-PARAM-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Bounded scalar parameter evaluation and affine behavioral voltage expressions; arbitrary result vectors/functions and nonlinear behavior remain outside this contract."
+  },
+  {
+    "rule": "passive",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
+  },
+  {
+    "rule": "source",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
+  },
+  {
+    "rule": "diode",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
+  },
+  {
+    "rule": "vcontrol",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
+  },
+  {
+    "rule": "icontrol",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
+  },
+  {
+    "rule": "linearControlProfile",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
+  },
+  {
+    "rule": "currentControlProfile",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
+  },
+  {
+    "rule": "resistorModelProfile",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
+  },
+  {
+    "rule": "sourceProfile",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "SEM-SOURCE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction."
+  },
+  {
+    "rule": "sourceClause",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "SEM-SOURCE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction."
+  },
+  {
+    "rule": "dcExcitation",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "SEM-SOURCE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction."
+  },
+  {
+    "rule": "acExcitation",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "SEM-SOURCE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction."
+  },
+  {
+    "rule": "waveformExcitation",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "SEM-SOURCE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction."
+  },
+  {
+    "rule": "waveformValues",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "SEM-SOURCE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction."
+  },
+  {
+    "rule": "waveformScalar",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "SEM-SOURCE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction."
+  },
+  {
+    "rule": "bjt",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/InstanceExtraction.cs",
+      "dotnet/Simulator.Frontend/BjtPreparation.cs",
+      "dotnet/Simulator.Frontend/Mos1Preparation.cs"
+    ],
+    "requirements": [
+      "SEMI-BJT-001",
+      "SEMI-MOS1-CURRENT-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json",
+      "evidence/issue34-initial-bias.json"
+    ],
+    "limitation": "Explicit ideal Ebers-Moll and named MOS1 channel/storage profiles only. Broad Gummel-Poon, higher MOS levels and intrinsic Meyer charge are refused. BJT waveform and LU convergence gaps remain."
+  },
+  {
+    "rule": "mos",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/InstanceExtraction.cs",
+      "dotnet/Simulator.Frontend/BjtPreparation.cs",
+      "dotnet/Simulator.Frontend/Mos1Preparation.cs"
+    ],
+    "requirements": [
+      "SEMI-BJT-001",
+      "SEMI-MOS1-CURRENT-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json",
+      "evidence/issue34-initial-bias.json"
+    ],
+    "limitation": "Explicit ideal Ebers-Moll and named MOS1 channel/storage profiles only. Broad Gummel-Poon, higher MOS levels and intrinsic Meyer charge are refused. BJT waveform and LU convergence gaps remain."
+  },
+  {
+    "rule": "switchCard",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-VSWITCH-001"
+    ],
+    "evidence": [
+      "evidence/pspice-switch-results.json"
+    ],
+    "limitation": "Smooth PSpice VSWITCH profile only; hysteretic SW and arbitrary switch models are not qualified."
+  },
+  {
+    "rule": "xspice",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/XspiceSyntax.cs",
+      "dotnet/Simulator.Frontend/XspiceGainLowering.cs",
+      "dotnet/Simulator.Frontend/XspiceSummerLowering.cs"
+    ],
+    "requirements": [
+      "SEM-XSPICE-GAIN-001",
+      "SEM-XSPICE-SUMMER-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Analog scalar voltage gain/summer subsets only; digital/event/mixed-signal model families and unqualified port contexts remain unsupported."
+  },
+  {
+    "rule": "xport",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/XspiceSyntax.cs",
+      "dotnet/Simulator.Frontend/XspiceGainLowering.cs",
+      "dotnet/Simulator.Frontend/XspiceSummerLowering.cs"
+    ],
+    "requirements": [
+      "SEM-XSPICE-GAIN-001",
+      "SEM-XSPICE-SUMMER-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Analog scalar voltage gain/summer subsets only; digital/event/mixed-signal model families and unqualified port contexts remain unsupported."
+  },
+  {
+    "rule": "xpair",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/XspiceSyntax.cs",
+      "dotnet/Simulator.Frontend/XspiceGainLowering.cs",
+      "dotnet/Simulator.Frontend/XspiceSummerLowering.cs"
+    ],
+    "requirements": [
+      "SEM-XSPICE-GAIN-001",
+      "SEM-XSPICE-SUMMER-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Analog scalar voltage gain/summer subsets only; digital/event/mixed-signal model families and unqualified port contexts remain unsupported."
+  },
+  {
+    "rule": "xvector",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/XspiceSyntax.cs",
+      "dotnet/Simulator.Frontend/XspiceGainLowering.cs",
+      "dotnet/Simulator.Frontend/XspiceSummerLowering.cs"
+    ],
+    "requirements": [
+      "SEM-XSPICE-GAIN-001",
+      "SEM-XSPICE-SUMMER-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Analog scalar voltage gain/summer subsets only; digital/event/mixed-signal model families and unqualified port contexts remain unsupported."
+  },
+  {
+    "rule": "subcall",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/InstanceBinding.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-CAT-001",
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json",
+      "evidence/issue34-ground-checkpoint.json"
+    ],
+    "limitation": "Bounded lexical parameter, hierarchy/port and qualified ground/global bindings; active-instance expansion budgets and explicit refusals apply."
+  },
+  {
+    "rule": "subcircuit",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/InstanceBinding.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-CAT-001",
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json",
+      "evidence/issue34-ground-checkpoint.json"
+    ],
+    "limitation": "Bounded lexical parameter, hierarchy/port and qualified ground/global bindings; active-instance expansion budgets and explicit refusals apply."
+  },
+  {
+    "rule": "includeCard",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ResourceResolver.cs"
+    ],
+    "requirements": [
+      "SEM-RESOURCE-001",
+      "SEM-RESOURCE-002"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json"
+    ],
+    "limitation": "Bounded allowed-root include/library resolution with provenance, section and path policies; missing/denied external assets are not simulated."
+  },
+  {
+    "rule": "libraryCard",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ResourceResolver.cs"
+    ],
+    "requirements": [
+      "SEM-RESOURCE-001",
+      "SEM-RESOURCE-002"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json"
+    ],
+    "limitation": "Bounded allowed-root include/library resolution with provenance, section and path policies; missing/denied external assets are not simulated."
+  },
+  {
+    "rule": "globalNodesProfile",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ScalarVectorExtraction.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-GLOBAL-BINDING-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json",
+      "evidence/issue34-ground-checkpoint.json"
+    ],
+    "limitation": "Qualified literal global/node/vector profiles only; declaration spelling is separate from active model/port semantics."
+  },
+  {
+    "rule": "scalarVectorProfile",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ScalarVectorExtraction.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-GLOBAL-BINDING-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json",
+      "evidence/issue34-ground-checkpoint.json"
+    ],
+    "limitation": "Qualified literal global/node/vector profiles only; declaration spelling is separate from active model/port semantics."
+  },
+  {
+    "rule": "behavior",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+    ],
+    "requirements": [
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Affine voltage-dependent independent/controlled B-source lowering only; nonlinear/time/current arbitrary behavioral kernels remain refused."
+  },
+  {
+    "rule": "behaviorHeaderProfile",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+    ],
+    "requirements": [
+      "SEM-BRIDGE-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Affine voltage-dependent independent/controlled B-source lowering only; nonlinear/time/current arbitrary behavioral kernels remain refused."
+  },
+  {
+    "rule": "model",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Frontend/SemiconductorPreparation.cs",
+      "dotnet/Simulator.Frontend/ResistorModelLowering.cs"
+    ],
+    "requirements": [
+      "SEM-BRIDGE-001",
+      "SEMI-BJT-001"
+    ],
+    "evidence": [
+      "evidence/five-area-integrated-verification.json"
+    ],
+    "limitation": "Model symbol/parameter resolution is generic; only explicitly named resistor/diode/BJT/MOS1/VSWITCH and gain/summer profiles execute. A model declaration alone does not establish support."
+  },
+  {
+    "rule": "op",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "FRONTEND-REQUESTED-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json",
+      "evidence/issue34-initial-bias.json"
+    ],
+    "limitation": "Original ordinary analyses in bounded subsets; unsupported sweeps/IC/UIC/policies and numerical failures remain explicit. Whole control-program parity is not claimed."
+  },
+  {
+    "rule": "dc",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "FRONTEND-REQUESTED-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json",
+      "evidence/issue34-initial-bias.json"
+    ],
+    "limitation": "Original ordinary analyses in bounded subsets; unsupported sweeps/IC/UIC/policies and numerical failures remain explicit. Whole control-program parity is not claimed."
+  },
+  {
+    "rule": "ac",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "FRONTEND-REQUESTED-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json",
+      "evidence/issue34-initial-bias.json"
+    ],
+    "limitation": "Original ordinary analyses in bounded subsets; unsupported sweeps/IC/UIC/policies and numerical failures remain explicit. Whole control-program parity is not claimed."
+  },
+  {
+    "rule": "tran",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "FRONTEND-REQUESTED-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json",
+      "evidence/issue34-initial-bias.json"
+    ],
+    "limitation": "Original ordinary analyses in bounded subsets; unsupported sweeps/IC/UIC/policies and numerical failures remain explicit. Whole control-program parity is not claimed."
+  },
+  {
+    "rule": "control",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-001",
+      "FRONTEND-CONTROL-002",
+      "FRONTEND-CONTROL-005"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+    ],
+    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+  },
+  {
+    "rule": "controlCommandProfile",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-001",
+      "FRONTEND-CONTROL-002",
+      "FRONTEND-CONTROL-005"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+    ],
+    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+  },
+  {
+    "rule": "controlOp",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-001",
+      "FRONTEND-CONTROL-002",
+      "FRONTEND-CONTROL-005"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+    ],
+    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+    "commands": [
+      "op"
+    ]
+  },
+  {
+    "rule": "controlDc",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-001",
+      "FRONTEND-CONTROL-002",
+      "FRONTEND-CONTROL-005"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+    ],
+    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+    "commands": [
+      "dc"
+    ]
+  },
+  {
+    "rule": "controlAc",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-001",
+      "FRONTEND-CONTROL-002",
+      "FRONTEND-CONTROL-005"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+    ],
+    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+    "commands": [
+      "ac"
+    ]
+  },
+  {
+    "rule": "controlTran",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-001",
+      "FRONTEND-CONTROL-002",
+      "FRONTEND-CONTROL-005"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+    ],
+    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+    "commands": [
+      "tran"
+    ]
+  },
+  {
+    "rule": "controlRun",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-001",
+      "FRONTEND-CONTROL-002",
+      "FRONTEND-CONTROL-005"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+    ],
+    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+    "commands": [
+      "run"
+    ]
+  },
+  {
+    "rule": "controlNumber",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-001",
+      "FRONTEND-CONTROL-002",
+      "FRONTEND-CONTROL-005"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+    ],
+    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+  },
+  {
+    "rule": "controlLet",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_executed",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs",
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-006"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs"
+    ],
+    "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented.",
+    "commands": [
+      "let"
+    ]
+  },
+  {
+    "rule": "controlDefine",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_executed",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs",
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-006"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs"
+    ],
+    "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented.",
+    "commands": [
+      "define"
+    ]
+  },
+  {
+    "rule": "controlUnlet",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_executed",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs",
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-006"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs"
+    ],
+    "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented.",
+    "commands": [
+      "unlet"
+    ]
+  },
+  {
+    "rule": "controlSet",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_executed",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-001",
+      "FRONTEND-CONTROL-005",
+      "FRONTEND-CONTROL-006"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"
+    ],
+    "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed.",
+    "commands": [
+      "set"
+    ]
+  },
+  {
+    "rule": "controlReport",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_executed",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-001",
+      "FRONTEND-CONTROL-005",
+      "FRONTEND-CONTROL-006"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"
+    ],
+    "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed.",
+    "commands": [
+      "print",
+      "plot",
+      "meas",
+      "measure",
+      "save",
+      "gnuplot",
+      "echo",
+      "rusage",
+      "display",
+      "listing"
+    ]
+  },
+  {
+    "rule": "controlQuit",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_executed",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-001",
+      "FRONTEND-CONTROL-005",
+      "FRONTEND-CONTROL-006"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"
+    ],
+    "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed.",
+    "commands": [
+      "quit"
+    ]
+  },
+  {
+    "rule": "jfet",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-READINESS-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json"
+    ],
+    "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend."
+  },
+  {
+    "rule": "cswitch",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-READINESS-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json"
+    ],
+    "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend."
+  },
+  {
+    "rule": "coupling",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-READINESS-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json"
+    ],
+    "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend."
+  },
+  {
+    "rule": "lineCard",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-READINESS-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json"
+    ],
+    "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend."
+  },
+  {
+    "rule": "osdi",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-READINESS-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json"
+    ],
+    "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend."
+  },
+  {
+    "rule": "cpl",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-READINESS-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json"
+    ],
+    "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend."
+  },
+  {
+    "rule": "txl",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-READINESS-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json"
+    ],
+    "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend."
+  },
+  {
+    "rule": "urc",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SEM-READINESS-001"
+    ],
+    "evidence": [
+      "evidence/requested-fc5db25.json"
+    ],
+    "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend."
+  },
+  {
+    "rule": "script",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeckSyntax.cs",
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+    ],
+    "requirements": [
+      "PRS-SCRIPT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Standalone command scripts are recognized structurally; no general command interpreter or script execution is provided."
+  },
+  {
+    "rule": "scriptLine",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeckSyntax.cs",
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+    ],
+    "requirements": [
+      "PRS-SCRIPT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "Standalone command scripts are recognized structurally; no general command interpreter or script execution is provided."
+  },
+  {
+    "rule": "tableTail",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+    ],
+    "requirements": [
+      "PRS-TABLE-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "TABLE syntax is recognized; the generated affine behavioral execution path does not implement arbitrary TABLE interpolation."
+  },
+  {
+    "rule": "tablePair",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+    ],
+    "requirements": [
+      "PRS-TABLE-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "TABLE syntax is recognized; the generated affine behavioral execution path does not implement arbitrary TABLE interpolation."
+  },
+  {
+    "rule": "tableCoordinate",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+    ],
+    "requirements": [
+      "PRS-TABLE-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "TABLE syntax is recognized; the generated affine behavioral execution path does not implement arbitrary TABLE interpolation."
+  },
+  {
+    "rule": "tableSeparator",
+    "extraction": "structural",
+    "preparation": "unsupported",
+    "execution": "unsupported",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+    ],
+    "requirements": [
+      "PRS-TABLE-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
+    ],
+    "limitation": "TABLE syntax is recognized; the generated affine behavioral execution path does not implement arbitrary TABLE interpolation."
+  }
+]

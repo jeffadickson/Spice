@@ -4,6 +4,7 @@
     <IsTestProject>true</IsTestProject><IsPackable>false</IsPackable><RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="../../compat/ngspice/grammar-implementation.json" Link="grammar-implementation.json" CopyToOutputDirectory="PreserveNewest" />
     <ProjectReference Include="../Simulator.Syntax/Simulator.Syntax.csproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="xunit" Version="2.9.3" />

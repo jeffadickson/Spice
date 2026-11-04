@@ -1,0 +1,92 @@
+{
+  "tested_base_commit": "6411105d262a179d53579e7b71d5156ef31fece1",
+  "source_dirty_when_tested": true,
+  "source_hashes": {
+    "dotnet/Simulator.Syntax/GrammarImplementationInventory.cs": "99c7321832edc94381fef0c27e6b5effdd5bb5316cbbe6b4d28986ebc3dbd26a",
+    "dotnet/Simulator.Syntax.Tests/GrammarImplementationTests.cs": "355dc97f9b3c28b9115f282387949d904b9af936f1db05a02677e8f6456d6e8e",
+    "dotnet/Simulator.Syntax.Tests/Simulator.Syntax.Tests.csproj": "78aafa05e419e252f3a186f04948dbdd395df05a9555ee1ea70c980dcc7baf44",
+    "compat/ngspice/grammar-implementation.json": "a8f5ac0bce02ca8316decb3934e6a15377acae242120f4742e299ddc06ada999",
+    "compat/ngspice/capability-support.json": "e1c8ecd5b1b23b2efd9fd4b8f33d132d34c2aa833560da07bc3086db194cfbfa",
+    "scripts/GrammarImplementationMap.cs": "e49d79d9a4aa6835b828990149847fa3c7ed40c4cc667e58323f94a76eb96510"
+  },
+  "syntax_tests": {
+    "passed": 454,
+    "skipped": 1,
+    "failed": 0
+  },
+  "frontend_tests": {
+    "passed": 542,
+    "skipped": 22,
+    "failed": 0
+  },
+  "generated_parser_productions": 93,
+  "reviewed_associations": 90,
+  "unassessed_productions": [
+    "controlUnknown",
+    "extension",
+    "unknownDevice"
+  ],
+  "historical_inventory_inputs": 924,
+  "observed_control_headings": 111,
+  "unmapped_headings": 92,
+  "registered_heading_witnesses": 20,
+  "map_cli_negative_cases": [
+    "stale_rule",
+    "missing_uid",
+    "escape_source"
+  ],
+  "map_cli_negative_published_outputs": 0,
+  "mapped_coverage": [
+    {
+      "scope": "syntax",
+      "file": "GrammarImplementationInventory.cs",
+      "mapped_lines": 30,
+      "covered_lines": 30,
+      "mapped_branches": 40,
+      "covered_branches": 40,
+      "raw_sha256": "88986751a82e9756ff8688d63dde39c590811af78053485c1a70f76e7a86b0da"
+    },
+    {
+      "scope": "helper_positive",
+      "file": "GrammarImplementationMap.cs",
+      "mapped_lines": 63,
+      "covered_lines": 63,
+      "mapped_branches": 106,
+      "covered_branches": 89,
+      "raw_sha256": "a961fb5e2e35e1584759dbe3da5330b1a3735884c31292369a05068785b0de28"
+    }
+  ],
+  "coverage_limitations": [
+    "Mapped lines/branches only",
+    "Helper positive-run coverage; negative CLI runs collected separately",
+    "No lexer-mode or family-wide conformance inferred"
+  ],
+  "mutations": {
+    "initial_timeout": "Retained separately in initial map campaign",
+    "remaining": "Ordering-direction survivor retained; not labelled killed or formally equivalent",
+    "reported_score": 97.87,
+    "file": "GrammarImplementationInventory.cs",
+    "counts": {
+      "CompileError": 2,
+      "Ignored": 2,
+      "Killed": 46,
+      "Survived": 1
+    },
+    "raw_report_sha256": "004cdae475ce34c9e0e1996abb850bb3cee458e916893ab7f1704eab9779239f",
+    "framework": "Stryker.NET5.0.0"
+  },
+  "strictdoc": {
+    "ids": 408,
+    "parents": 381,
+    "documents": 51,
+    "version": "0.30.4"
+  },
+  "sphinx": "9.1.0 warnings-as-errors with compiled client/syntax/frontend XML passed",
+  "visual_review": "Owned Edge headless screenshot inspected: readable table and explicit unavailable statuses",
+  "review": "Fresh read-only review found no important source/qualification blocker",
+  "limitations": [
+    "Reviewed associations are not proof of full implementation",
+    "Historical heading observations overlap and do not predict executable circuits",
+    "No full SPICE/Linux/GPU/production qualification"
+  ]
+}

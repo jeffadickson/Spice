@@ -3,8 +3,8 @@
     "Status": "partial",
     "Category": "device",
     "Name": "r",
-    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json"
   },
   {
     "Status": "partial",
@@ -38,8 +38,8 @@
     "Status": "partial",
     "Category": "device",
     "Name": "d",
-    "Limitation": "Bounded legacy importer subset only; parameter restrictions and analysis limits apply. ANTLR-to-core elaboration is absent.",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc; evidence/ordered-followup-review.md"
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json"
   },
   {
     "Status": "partial",
@@ -73,43 +73,43 @@
     "Status": "partial",
     "Category": "model",
     "Name": "d",
-    "Limitation": "Restricted diode or positive constant resistor contract; geometry, transport, temperature and other parameters are not generally supported.",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; src/ngspice_resistor.rs; evidence/resistor-model-verification.json"
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json"
   },
   {
     "Status": "partial",
     "Category": "model",
     "Name": "r",
-    "Limitation": "Restricted diode or positive constant resistor contract; geometry, transport, temperature and other parameters are not generally supported.",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; src/ngspice_resistor.rs; evidence/resistor-model-verification.json"
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json"
   },
   {
-    "Status": "unsupported",
+    "Status": "partial",
     "Category": "model",
     "Name": "nmos",
-    "Limitation": "The bounded importer accepts only restricted D/R model families. No numerical implementation is qualified for this family.",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; docs/corpus-followup-contracts.md"
+    "Limitation": "Explicit MOS1 channel/body/overlap profiles only; higher levels, intrinsic Meyer charge and unqualified model parameters refuse.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json"
   },
   {
-    "Status": "unsupported",
+    "Status": "partial",
     "Category": "model",
     "Name": "pmos",
-    "Limitation": "The bounded importer accepts only restricted D/R model families. No numerical implementation is qualified for this family.",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; docs/corpus-followup-contracts.md"
+    "Limitation": "Explicit MOS1 channel/body/overlap profiles only; higher levels, intrinsic Meyer charge and unqualified model parameters refuse.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json"
   },
   {
-    "Status": "unsupported",
+    "Status": "partial",
     "Category": "model",
     "Name": "npn",
-    "Limitation": "The bounded importer accepts only restricted D/R model families. No numerical implementation is qualified for this family.",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; docs/corpus-followup-contracts.md"
+    "Limitation": "Ideal Ebers-Moll and explicitly named storage subsets only; Gummel-Poon profiles, native BJT waveform qualification and LU convergence gaps remain.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json"
   },
   {
-    "Status": "unsupported",
+    "Status": "partial",
     "Category": "model",
     "Name": "pnp",
-    "Limitation": "The bounded importer accepts only restricted D/R model families. No numerical implementation is qualified for this family.",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs:bounded_diode_models; docs/corpus-followup-contracts.md"
+    "Limitation": "Ideal Ebers-Moll and explicitly named storage subsets only; Gummel-Poon profiles, native BJT waveform qualification and LU convergence gaps remain.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json"
   },
   {
     "Status": "unsupported",
@@ -246,71 +246,71 @@
   },
   {
     "Category": "analysis",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
-    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json",
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
     "Name": "op",
     "Status": "partial"
   },
   {
     "Category": "directive",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
-    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json",
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
     "Name": ".op",
     "Status": "partial"
   },
   {
     "Category": "analysis",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
-    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json",
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
     "Name": "tran",
     "Status": "partial"
   },
   {
     "Category": "directive",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
-    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json",
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
     "Name": ".tran",
     "Status": "partial"
   },
   {
     "Category": "analysis",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
-    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json",
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
     "Name": "ac",
     "Status": "partial"
   },
   {
     "Category": "directive",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
-    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json",
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
     "Name": ".ac",
     "Status": "partial"
   },
   {
     "Category": "analysis",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
-    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json",
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
     "Name": "dc",
     "Status": "partial"
   },
   {
     "Category": "directive",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
-    "Limitation": "Selected bounded legacy analysis/import profile only; repeated analyses, initial conditions, control context and option combinations are not generally qualified. No ANTLR-to-core elaboration.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json",
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
     "Name": ".dc",
     "Status": "partial"
   },
   {
     "Category": "directive",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
-    "Limitation": "Recognized deck terminator in the bounded importer; not a missing execution feature. This does not implement hierarchy, control semantics or the ANTLR bridge.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json",
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
     "Name": ".end",
     "Status": "partial"
   },
   {
     "Category": "directive",
-    "Evidence": "Assessed committed source bc48c645088237e30f28370feff5f3b2b4e76347 (excludes dirty sheet-resistor work); src/netlist.rs; docs/ngspice-compatibility.sdoc",
-    "Limitation": "Only restricted D/R model contracts; see separate family/LEVEL/parameter rows for unsupported and unassessed profiles.",
+    "Evidence": "Current bounded generated frontend: compat/ngspice/grammar-implementation.json; evidence/five-area-integrated-verification.json; evidence/issue34-initial-bias.json",
+    "Limitation": "Generated ANTLR metadata connects to bounded typed preparation/execution; explicit parameter/model/analysis restrictions apply. See the per-production grammar implementation map.",
     "Name": ".model",
     "Status": "partial"
   }

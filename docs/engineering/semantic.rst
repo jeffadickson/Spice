@@ -177,3 +177,19 @@ this finite constitutive check does not qualify full semiconductor families.
 The original BJT amplifier now completes 200 steps on faer with this explicit
 policy, while LU still refuses later componentwise refinement. Native full
 waveform agreement remains open.
+
+Grammar implementation map
+----------------------------------------
+
+The generated parser's complete production list is joined with reviewed
+extraction, preparation and execution assessments. Unassessed productions remain
+visible. Concrete historical control headings are listed separately, exposing
+missing command families behind generic syntax. Each association retains stable
+requirements, source/evidence paths and explicit limits. See the repository's
+``docs/grammar-implementation.md`` and generated HTML/JSON inventories.
+
+Simple local let/define/unlet declarations after the final analysis may be
+retained as explicit unexecuted postprocessing. Root observable/axis replacement,
+nonlocal deletion and declarations before a later analysis refuse atomically.
+The retained expressions are not evaluated. Individual requested-analysis
+qualification remains separate from full control-program parity.

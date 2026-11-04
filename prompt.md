@@ -1,3 +1,30 @@
+# Latest work — shared controls and grammar implementation map
+
+This section supersedes older next-step directions below. Execute issue34 using
+ docs/shared-control-plan.md. Branch feature/issue34-shared-controls in
+ work/simulation-bridge. Artifacts are recorded in ignored work/control-artifacts.txt
+ (E:/Artifacts/Spice-controls-20261104T011818Z).
+
+Generated let/define/unlet metadata now supports a bounded reporting suffix after
+ the final analysis/run, explicitly postprocessing_not_executed. Root/axis
+ clobbering, nonlocal deletion, earlier/interleaved declarations and unsupported
+ effects refuse atomically. Display/listing and literal xbrushwidth are reporting
+ omissions. No arbitrary control interpreter/vector evaluation is claimed.
+
+The grammar implementation inventory enumerates 93 actual productions and includes
+ a separate 111 historical control-heading view. 90 reviewed associations include
+ structural infrastructure, bounded profiles, refusals and unexecuted observations;
+ they are not 90 fully implemented features. Concrete unmapped headings remain visible.
+ The historical capability labels were reconciled with current generated routes.
+
+Read the verification and frozen-corpus evidence before quoting current counts.
+ The preceding clean26cfad9 corpus baseline is 85 prepared/23 executed/11 native
+ agreements among 928 paths. Do not infer executable gains from syntax reach.
+
+The separate user-authorized two-hour soak stays pinned 6411105, with its own E:
+ output/cache and canonical lock; new frontend work does not qualify that run.
+ Preserve canonical main's seven unrelated WIP files; CI stays off.
+
 # Active work — issue34 implementation
 
 The user now authorizes execution of issue34's prioritized plan, superseding the

@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Grammar to Implementation Inventory
+
+[REQUIREMENT]
+UID: GRAMMAR-IMPLEMENTATION-001
+STATUS: Draft
+TITLE: Enumerate actual generated rules without inferring execution support
+STATEMENT: >>>
+The implementation inventory shall enumerate every actual generated parser production and join explicit reviewed extraction, preparation and execution assessments. Missing associations shall remain visible as unassessed. A stale, duplicate or invalid assessment shall refuse report generation. Each assessment shall retain implementation paths, stable requirement IDs, verification references and limitations. Generic grammar containers and syntax acceptance shall not imply feature-family or numerical qualification.
+<<<
+COMMENT: >>>
+Implementation: GrammarImplementationInventory and scripts/GrammarImplementationMap.cs. Generated ruleNames is authoritative; no SPICE or ANTLR grammar text scanner is introduced. Verification: GrammarImplementationTests checks absence, stale identities, duplicate claims, invalid stage values and deterministic output. Source hashes and assembly identity accompany generated JSON/HTML. Source associations are reviewed metadata, not proof that every visitor branch, lexer mode or parameter profile is implemented. StrictDoc parsing remains a separate required gate.
+<<<

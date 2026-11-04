@@ -1,3 +1,5 @@
+Historical inventory and assessments below describe the recorded older source. Current implementation associations are in compat/ngspice/grammar-implementation.json and the generated grammar map; the older ANTLR-elaboration-absent and wholly unsupported bounded-model labels are superseded. Input-count scopes also differ from the later928-path requested census.
+
 # Corpus capability inventory
 
 State: **complete_inventory**. Accepted observations: **916/916** required decks; 8 explicitly adjudicated exclusions from 924 inputs.
