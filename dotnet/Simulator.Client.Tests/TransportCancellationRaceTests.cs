@@ -34,6 +34,26 @@ public sealed class TransportCancellationRaceTests
             SimulationClient.DrainAsync([Task.CompletedTask], cancellation.Token));
     }
 
+    [Fact]
+    public async Task TerminationAwaitsTheExitAcknowledgement()
+    {
+        var exit = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var killRequested = false;
+        var cleanup = SimulationClient.TerminateAsync(
+            () => killRequested = true,
+            () => killRequested ? exit.Task : throw new InvalidOperationException("Wait began before termination."));
+        try
+        {
+            Assert.True(killRequested);
+            Assert.False(cleanup.IsCompleted);
+        }
+        finally
+        {
+            exit.TrySetResult();
+            await cleanup.WaitAsync(TimeSpan.FromSeconds(2));
+        }
+    }
+
     // Model a pipe read that wins the IO race while the caller's token is cancelled.
     private sealed class CancellingRead(CancellationTokenSource cancellation) : MemoryStream
     {

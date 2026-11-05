@@ -29,3 +29,22 @@ source replays failed its targeted assertion, and the restored suite passed all
 Raw mutation and coverage logs are under E:/Artifacts/Spice-nov4-races.
 The launch test verifies process configuration on the headless runner.
 The Stryker-native classifications await a fresh framework run.
+
+## Issue #38 native replay
+
+The 9ecef1d native Stryker run killed the three targeted mutations. It reported
+186 killed, two survived, one compile error, one uncovered and 14 ignored.
+The cleanup survivor removes only the exit wait. The prior source replay
+removed both the kill and the wait, which explains the differing outcomes.
+The separate kill-deletion mutation was killed by Stryker.
+
+The follow-up keeps process ownership until a termination acknowledgement.
+A controlled incomplete task makes removal of the wait fail deterministically.
+The restored managed suite passed 89 tests with zero skips. Coverlet measured
+line rate 0.9067000000000001 and branch rate 0.5706 for Simulator.Client.
+
+Cargo-mutants completed shard 4/1024 against library tests in the same
+short-path run. All five candidates were attempted, with two survivors and
+three compile-invalid candidates. The CLI survivor requires binary tests,
+and the transient survivor requires testing the step-budget boundary.
+Evidence root: E:/Artifacts/Spice-issue38-replay.

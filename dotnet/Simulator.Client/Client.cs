@@ -104,9 +104,18 @@ public sealed class SimulationClient(string executable)
         finally
         {
             // Cancellation must not leave the native child running.
-            if (!process.HasExited) { process.Kill(entireProcessTree: true); await process.WaitForExitAsync(CancellationToken.None); }
+            if (!process.HasExited)
+                await TerminateAsync(() => process.Kill(entireProcessTree: true),
+                    () => process.WaitForExitAsync(CancellationToken.None));
         }
     }
+    // Termination is asynchronous on the host. Keep ownership until exit is acknowledged.
+    internal static async Task TerminateAsync(Action terminate, Func<Task> waitForExit)
+    {
+        terminate();
+        await waitForExit();
+    }
+
     internal static ProcessStartInfo CreateStartInfo(string executable) =>
         new(executable) {
             RedirectStandardInput = true, RedirectStandardOutput = true,
