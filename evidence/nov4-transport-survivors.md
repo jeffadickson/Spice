@@ -48,3 +48,16 @@ short-path run. All five candidates were attempted, with two survivors and
 three compile-invalid candidates. The CLI survivor requires binary tests,
 and the transient survivor requires testing the step-budget boundary.
 Evidence root: E:/Artifacts/Spice-issue38-replay.
+
+Final Stryker replay on a3207a4 completed with 188 killed, one survived
+(the decode-only preamble flag), one compile-invalid, one uncovered, and
+14 ignored. There were no timeouts or unattempted candidates. The exit-wait
+deletion is detected. Summary: 20261105T142723Z-a4614eb4/summary.json.
+The uncovered branch is the diagnostic for Process.Start returning null.
+The compile-invalid result came from Count-pattern instrumentation.
+
+The exact-name Rust replay failed closed because the native inventory also
+returned two out-of-scope names. A second replay of shard 4/1024 with the
+existing import_cli and transient integration suites caught both previously
+surviving mutations. All five candidates were attempted, with two killed and
+three compile-invalid. Summary: 20261105T142730Z-8c363770/summary.json.
