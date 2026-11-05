@@ -80,3 +80,17 @@ Linux qualification; use the established native Linux workflow there. END-006
 remains Draft until the actual overnight evidence is reviewed.
 
 Scheduler registration is confirmed in evidence/overnight-schedule-20261102.json: one-time11pm launch and6:10am review are active; exact source pin8ecc0ab remains fixed. The recurring midnight300-minute campaign now uses clean committed-main checkouts and unique E: bulk directories, preserving any active run. Its5:05am review understands an active seven-hour run and new E: manifest pointers. Scheduling is not execution evidence.
+
+## Windows checkout path for scheduled runs
+
+Use a fresh short NTFS checkout under the existing C:/dev directory, keeping
+the full checkout path at most 55 characters. Keep the canonical lock and
+active-run pointer under the canonical repository and put bulk campaign
+artifacts under the configured E: root. The runner still owns a local Cargo
+mutation cache under its short build workspace.
+
+The November 4 midnight run hit MSVC LNK1104 on a 262-character generated
+build-script executable. The same launcher completed the Rust baseline and
+reached Proptest from C:/dev/spice-s4, where the corresponding path was 148
+characters. This bounds the observed setup, and future toolchains or build
+targets can generate longer paths. See issue #38 for the campaign evidence.
