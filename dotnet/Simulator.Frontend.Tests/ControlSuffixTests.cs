@@ -131,4 +131,26 @@ public sealed class ControlSuffixTests
         Assert.False(plan.Success);Assert.Empty(plan.Operations);
         Assert.Contains(plan.Diagnostics,d=>d.Code=="unsupported_control_scope");
     }
+    [Fact]
+    public void Reporting_conditional_preserves_only_the_original_analysis()
+    {
+        var plan = RequestedAnalysis.Prepare(Deck(
+            "op\nif abs(v(out)) <= 1\necho \"value=$&v(out)\"\nquit 0\nelse\nlet report_value = v(out)\nprint report_value\nend\nquit 1"));
+        Assert.True(plan.Success, string.Join(',', plan.Diagnostics.Select(d => d.Code)));
+        Assert.Equal("op", Assert.Single(plan.Operations).Kind);
+        Assert.Contains(plan.ProgramOmissions, o => o.Reason == "conditional_reporting_not_executed");
+    }
+
+    [Theory]
+    [InlineData("op\nif v(out)\nac lin 1 1k 1k\nend")]
+    [InlineData("op\nif v(out)\nprint v(out) > result\nend")]
+    [InlineData("op\nif v(out)\necho value | other\nend")]
+    [InlineData("op\nif v(out)\nshell echo unsafe\nend")]
+    [InlineData("op\nif v(out)\necho report")]
+    [InlineData("op\nif v(out)\nelse\nelse\nend")]
+    [InlineData("op\nif v(out)\nquit 0\nend\nop")]
+    [InlineData("op\nif v(out)\nlet time = 1\nend")]
+    public void Conditional_refuses_unbounded_or_analysis_affecting_commands(string commands)
+        => Assert.False(RequestedAnalysis.Prepare(Deck(commands)).Success);
+
 }

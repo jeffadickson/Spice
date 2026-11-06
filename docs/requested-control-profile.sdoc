@@ -89,3 +89,14 @@ Implementation: ControlExtraction and generated controlLet/controlDefine/control
 RELATIONS:
 - TYPE: Parent
   VALUE: FRONTEND-CONTROL-001
+
+[REQUIREMENT]
+UID: QUAL-CONTROL-TERMINAL-IF-001
+STATUS: Implemented
+TITLE: Isolate terminal conditional reporting from requested analyses
+STATEMENT: >>>
+A requested-analysis projection may omit a balanced terminal control conditional of depth at most eight after the last dispatched analysis. Conditional bodies shall be limited to echo or print observations without redirection, simple local let declarations, and literal process exit statuses. Every omitted command shall retain its source span and explicit omission reason. A conditional shall not dispatch a simulation or change settings. Echo substitutions shall not enter analysis arguments or execute in either projected simulator.
+<<<
+COMMENT: >>>
+Verification: ControlSuffixTests positive original OP and negative conditional shape, ordering, and effect cases. The bounded profile admits reporting syntax and does not claim vector evaluation, interpolation of vectors, computed branching or control exit-status parity.
+<<<

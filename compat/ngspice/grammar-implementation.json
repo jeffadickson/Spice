@@ -1358,6 +1358,39 @@
     ]
   },
   {
+    "rule": "controlIf",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_executed",
+    "implementation": ["dotnet/Simulator.Syntax/ControlExtraction.cs", "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"],
+    "requirements": ["QUAL-CONTROL-TERMINAL-IF-001"],
+    "evidence": ["dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"],
+    "commands": ["if"],
+    "limitation": "Terminal reporting syntax only. Conditional vectors and substitutions are omitted from analysis execution."
+  },
+  {
+    "rule": "controlBoundary",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_executed",
+    "implementation": ["dotnet/Simulator.Syntax/ControlExtraction.cs", "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"],
+    "requirements": ["QUAL-CONTROL-TERMINAL-IF-001"],
+    "evidence": ["dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"],
+    "commands": ["else", "end"],
+    "limitation": "Terminal reporting syntax only. Conditional vectors and substitutions are omitted from analysis execution."
+  },
+  {
+    "rule": "controlEcho",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_executed",
+    "implementation": ["dotnet/Simulator.Syntax/ControlExtraction.cs", "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"],
+    "requirements": ["QUAL-CONTROL-TERMINAL-IF-001"],
+    "evidence": ["dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"],
+    "commands": ["echo"],
+    "limitation": "Terminal reporting syntax only. Conditional vectors and substitutions are omitted from analysis execution."
+  },
+  {
     "rule": "controlReport",
     "extraction": "bounded",
     "preparation": "bounded",
@@ -1383,7 +1416,6 @@
       "measure",
       "save",
       "gnuplot",
-      "echo",
       "rusage",
       "display",
       "listing"

@@ -15,7 +15,12 @@ internal static class ControlExtraction
    var physical=Token(token);if(token.Text.Length>4096)return new("","unsupported",null,[],physical,"control_command_length_budget");
    var lexer=new SpiceLexer(new AntlrInputStream(token.Text)){ControlSemantic=true};lexer.Mode(SpiceLexer.BODY);lexer.RemoveErrorListeners();var tokens=new CommonTokenStream(lexer);tokens.Fill();
    if(tokens.Size>256)return new("","unsupported",null,[],physical,"control_token_budget");
-   var unsafeToken=tokens.GetTokens().FirstOrDefault(t=>t.Type is SpiceLexer.CONTROL_SEPARATOR or SpiceLexer.CONTROL_VARIABLE or SpiceLexer.INVALID or SpiceLexer.SLASH_COMMENT);
+   var first=tokens.LT(1).Text;
+   var echo=first.Equals("echo",StringComparison.OrdinalIgnoreCase);
+   var reportOutput=echo||first.Equals("print",StringComparison.OrdinalIgnoreCase);
+   var unsafeToken=tokens.GetTokens().FirstOrDefault(t=>t.Type is SpiceLexer.CONTROL_SEPARATOR or SpiceLexer.INVALID or SpiceLexer.SLASH_COMMENT ||
+       reportOutput&&t.Text is ("<" or ">" or ">>" or "|" or "&") ||
+       t.Type==SpiceLexer.CONTROL_VARIABLE&&(!echo||!t.Text.StartsWith("$&",StringComparison.Ordinal)));
    if(unsafeToken!=null)return new("","unsupported",null,[],physical,"unsafe_control_separator_variable_or_token");
    tokens.Seek(0);var parser=new SpiceParser(tokens){ErrorHandler=new BailErrorStrategy()};parser.RemoveErrorListeners();
    SourceSyntax Capture(ParserRuleContext context)=>capture(token.StartIndex+context.Start.StartIndex,token.StartIndex+context.Stop.StopIndex);
@@ -29,7 +34,11 @@ internal static class ControlExtraction
      case SpiceParser.ControlDcContext dc:kind="analysis";analysis=new(scope,"dc",dc.identifier().Skip(1).Select(i=>i.GetText()).ToImmutableArray(),dc.controlNumber().Select(Capture).ToImmutableArray(),physical);break;
      case SpiceParser.ControlTranContext tran:kind="analysis";analysis=new(scope,"tran",tran.identifier().Skip(1).Select(i=>i.GetText()).ToImmutableArray(),tran.controlNumber().Select(Capture).ToImmutableArray(),physical);break;
      case SpiceParser.ControlRunContext:kind="run";break;
-     case SpiceParser.ControlQuitContext:kind="quit";break;
+     case SpiceParser.ControlIfContext:kind="if";break;
+     case SpiceParser.ControlBoundaryContext:kind=name;break;
+     case SpiceParser.ControlEchoContext:kind=token.Text.Contains('$')?"report_substitution":"report";break;
+     case SpiceParser.ControlQuitContext exit:
+      kind=exit.NUMBER()?.GetText() switch {null=>"quit","0" or "1"=>"quit_status",_=>"unsupported"};break;
      case SpiceParser.ControlReportContext:kind="report";break;
      case SpiceParser.ControlLetContext let:
       kind="postprocessing";postprocessing=new(ControlPostprocessingKind.Let,[let.identifier(1).GetText()],Capture(let.expression()));break;

@@ -21,11 +21,38 @@ internal static class RequestedControlPreparation
   if(hasRun&&catalog.Analyses.IsEmpty)return Fail("control_run_without_declared_analysis",block.Range);
   if(hasRun&&catalog.Analyses.Any(a=>a.ScopeId!=0))return Fail("unsupported_control_run_analysis_scope",block.Range);
   var lastAnalysisStart=block.Commands.Where(c=>c.Kind is "analysis" or "run").Select(c=>c.Range.Start).DefaultIfEmpty(-1).Max();
-  var locals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var quit=false;
+  var locals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var quit=false;var branches=new Stack<bool>();
   foreach(var command in block.Commands){
    if(command.Kind=="comment")continue;
    if(quit)return Fail("unsupported_control_command_after_quit",command.Range);
    if(command.Diagnostic!=null)return Fail(command.Diagnostic,command.Range);
+   // Only a terminal reporting region can be projected away. No branch may
+   // affect a later dispatch, physical setting, external command or artifact.
+   if(command.Kind is "if" or "else" or "end" || branches.Count!=0){
+    if(lastAnalysisStart<0||command.Range.Start<=lastAnalysisStart)return Fail("conditional_before_last_analysis",command.Range);
+    switch(command.Kind){
+     case "if":
+      if(branches.Count>=8)return Fail("conditional_depth_budget",command.Range);
+      branches.Push(false);break;
+     case "else":
+      if(branches.Count==0||branches.Pop())return Fail("invalid_conditional_else",command.Range);
+      branches.Push(true);break;
+     case "end":
+      if(branches.Count==0)return Fail("invalid_conditional_end",command.Range);
+      branches.Pop();break;
+     case "report" when command.Name is "echo" or "print":
+     case "report_substitution":
+     case "quit":
+     case "quit_status":break;
+     case "postprocessing" when command.Postprocessing?.Kind==ControlPostprocessingKind.Let:
+      // Conditional assignments are not guaranteed to exist outside a branch.
+      if(ControlSuffixAdmission.Admit(command,lastAnalysisStart,new(StringComparer.OrdinalIgnoreCase)) is {} error)return Fail(error,command.Range);
+      break;
+     default:return Fail("unsupported_conditional_effect:"+command.Name,command.Range);
+    }
+    omissions.Add(new(0,"control_conditional_reporting",command.Name,"conditional_reporting_not_executed",command.Range));
+    continue;
+   }
    switch(command.Kind){
     case "analysis":result.Add(new(command.Analysis!,new("direct",block.Range,command.Range,null)));break;
     case "run":
@@ -44,11 +71,18 @@ internal static class RequestedControlPreparation
      if(ControlSuffixAdmission.Admit(command,lastAnalysisStart,locals) is {} suffixFailure)return Fail(suffixFailure,command.Range);
      omissions.Add(new(0,"control_postprocessing",command.Name,"postprocessing_not_executed",command.Range));break;
     case "report":omissions.Add(new(0,"control_observation",command.Name,"control_output_not_executed",command.Range));break;
+    case "report_substitution":
+     if(lastAnalysisStart<0||command.Range.Start<=lastAnalysisStart)return Fail("substitution_before_last_analysis",command.Range);
+     omissions.Add(new(0,"control_observation",command.Name,"control_substitution_not_executed",command.Range));break;
+    case "quit_status":
+     if(lastAnalysisStart<0||command.Range.Start<=lastAnalysisStart)return Fail("exit_before_last_analysis",command.Range);
+     goto case "quit";
     case "quit":quit=true;omissions.Add(new(0,"control_exit",command.Name,"final_process_exit_not_executed",command.Range));break;
     default:return Fail("unsupported_control_command:"+command.Name,command.Range);
    }
    if(result.Count>128)return Fail("control_analysis_budget",command.Range);
   }
+  if(branches.Count!=0)return Fail("unclosed_reporting_conditional",block.Range);
   if(!hasRun)foreach(var analysis in catalog.Analyses)omissions.Add(new(analysis.ScopeId,analysis.Kind,"."+analysis.Kind,"deck_analysis_not_dispatched_by_control",analysis.Range));
   return new(result.ToImmutable(),omissions.ToImmutable(),hasRun?"finite_deck_run":"direct_commands",null);
  }
