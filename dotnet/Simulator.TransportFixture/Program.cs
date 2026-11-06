@@ -69,13 +69,16 @@ if (root.TryGetProperty("mode", out var mode) && mode.GetString() == "hang")
                 throw new IOException("Synthetic failure before parent acknowledgement.");
             await PublishPid(marker);
         }
-        catch
+        catch (Exception error)
         {
             // Ownership starts at launch, not acknowledgement. A failed marker
             // write or startup timeout must not orphan the already-started child.
             if (!child.HasExited) child.Kill(true);
             await child.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(2));
-            throw;
+            if (error is not (IOException or OperationCanceledException)) throw;
+            // Return a controlled failure without invoking OS crash reporting.
+            await Console.Error.WriteLineAsync(error.Message);
+            return 1;
         }
     }
     // Publish acknowledgement only after closing the writer; File.Exists
