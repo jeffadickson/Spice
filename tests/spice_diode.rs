@@ -123,3 +123,29 @@ fn unknown_wire_parameters_and_unqualified_history_policies_refuse() {
         circuit_simulator::error::ErrorCode::Unsupported
     );
 }
+
+#[test]
+fn complex_terminal_current_balances_source_at_each_frequency() {
+    for backend in ["lu", "faer"] {
+        let request = serde_json::from_value(serde_json::json!({
+            "schema_version": "1", "case_id": "ac-terminal-kcl", "backend": backend,
+            "circuit": {"nodes": ["0", "out"], "elements": [
+                {"kind": "voltage", "id": "V1", "p": 1, "n": 0, "volts": 0.3},
+                {"kind": "spice_diode", "id": "D1", "p": 1, "n": 0, "model": model()}
+            ]},
+            "analysis": {"kind": "ac", "frequencies_hz": [1e3, 1e6],
+                "source_phasors": [{"id": "V1", "real": 0.75, "imag": 0.25}]}
+        }))
+        .unwrap();
+        let result = circuit_simulator::api::run(&request).unwrap();
+        let column = |id| result.signals.iter().position(|s| s.id == id).unwrap();
+        let source = column("i(V1)");
+        let diode = column("i(D1)");
+        for sample in &result.ac_samples {
+            let a = &sample.values[source];
+            let b = &sample.values[diode];
+            assert!((a.real + b.real).abs() < 1e-12);
+            assert!((a.imag + b.imag).abs() < 1e-12);
+        }
+    }
+}

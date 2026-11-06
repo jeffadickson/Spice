@@ -695,3 +695,14 @@ Verification: TransportCancellationRaceTests uses a controlled stream and comple
 RELATIONS:
 - TYPE: Parent
   VALUE: QUAL-TRANSPORT-002
+
+[REQUIREMENT]
+UID: QUAL-NOV06-AC-BOUNDS-001
+STATUS: Implemented
+TITLE: Diode AC terminal current and finite assertion bounds
+STATEMENT: >>>
+For a voltage-clamped SPICE diode with nonzero junction storage, the reported complex terminal current shall balance the source branch current at each tested frequency on the dense LU and CPU sparse LU paths. An assertion shall be indeterminate if either bound is nonfinite independently of the other bound.
+<<<
+COMMENT: >>>
+Verification: complex_terminal_current_balances_source_at_each_frequency in tests/spice_diode.rs and assertion_rejects_either_nonfinite_bound_independently in tests/overnight_survivors.rs. The AC regression tests the exported current through Kirchhoff current balance, independently of its frequency-scaling formula.
+<<<

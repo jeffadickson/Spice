@@ -517,3 +517,17 @@ fn splitmix_stream_matches_published_reference_vectors() {
         assert_eq!(sequence.next_u64(), expected);
     }
 }
+
+#[test]
+fn assertion_rejects_either_nonfinite_bound_independently() {
+    use circuit_simulator::assertion::{Outcome, within};
+    for (low, high) in [
+        (f64::NEG_INFINITY, 1.),
+        (0., f64::INFINITY),
+        (f64::NAN, 1.),
+        (0., f64::NAN),
+    ] {
+        assert_eq!(within(Some(0.5), low, high), Outcome::Indeterminate);
+    }
+    assert_eq!(within(Some(0.5), 0., 1.), Outcome::Pass);
+}
