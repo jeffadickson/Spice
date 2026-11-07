@@ -13,10 +13,16 @@ internal static class SemiconductorPreparation
         foreach(var parameter in model.Parameters)
         {
             var name=parameter.Name?.ToUpperInvariant();if(name=="CJ0")name="CJO";
-            if(name is not ("IS" or "N" or "CJO" or "VJ" or "M" or "FC" or "TT" or "TNOM")||!names.Add(name))return false;
+            if(!SupportsDiodeAssignment(name,parameter.Value)||!names.Add(name))return false;
         }
         return true;
     }
+    // Explicit zero leaves the original diode topology intact. A nonzero
+    // series resistance needs an internal node and separate charge behavior.
+    private static bool SupportsDiodeAssignment([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? name,SourceSyntax value) =>
+        name is "IS" or "N" or "CJO" or "VJ" or "M" or "FC" or "TT" or "TNOM"
+        || (name=="RS" && value.Text.Trim()=="0");
+
     internal static bool TryDiode(DeclarationCatalog catalog,ParameterEvaluation environment,
         BoundInstance call,out SpiceDiodeModel? result,out BridgeDiagnostic? diagnostic)
     {
@@ -30,7 +36,7 @@ internal static class SemiconductorPreparation
         {
             var name=parameter.Name?.ToUpperInvariant();
             if(name=="CJ0")name="CJO";
-            if(name is not ("IS" or "N" or "CJO" or "VJ" or "M" or "FC" or "TT" or "TNOM")||values.ContainsKey(name))
+            if(!SupportsDiodeAssignment(name,parameter.Value)||values.ContainsKey(name))
             {diagnostic=new("unsupported_diode_parameter",parameter.Range);return false;}
             var evaluated=ParameterEvaluator.EvaluateValue(catalog,environment,parameter.Value,model.ScopeId);
             if(evaluated.Value is not {} scalar)

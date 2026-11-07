@@ -55,3 +55,47 @@ was measured. Stryker.NET 5.0.0 killed all four executed selected mutants in
 OperatingPointSelection. Five candidates in the file had compile errors
 and five were filtered. Other files and mutations are outside this selected
 score.
+
+## Follow-up checkpoint
+
+Admit literal NUMDGT from 1 to 17 as output precision and explicit diode RS=0
+as the existing zero-series-resistance topology. Positive, negative, duplicate
+and expression-valued RS remain refused. The native diode projection preserves
+the original model parameters.
+
+The 77-path follow-up added the NUMDGT candidates to the original focused
+inventory. All input and expanded hashes matched the historical census.
+Requested execution and native agreement each improved from zero to three.
+The matching decks are compat/benchmarks/divider.cir (OP),
+compat/benchmarks/rc-ac.cir (AC), and
+compat/ngspice/qualification-diode-constant-charge.cir (AC). The other 74
+paths were refused in preparation. The diode charge transient now reaches an
+explicit UIC refusal. The RC transient still needs its integration-method
+option and UIC state contract. The RLC decay also needs the inductor IC=0
+header. No 928-path total is inferred.
+
+The final report has valid provenance and took 147.41 seconds. It tested
+c23e438 plus the follow-up patch with the same native executables and corpus
+revision. Artifact paths under the same E: root are
+followup-inventory-v2.json and followup-final/summary.json, with SHA-256
+4f2728761365f187803c70c8f2ff0e99a92eaf2653984f9afe481b98ba95b9da and
+36a448afd662de5d4ea9415384ffa76147b2e7540d379f54d2610aad2c0b72d9.
+Use the Run-RequestedCorpus.cs invocation in
+docs/requested-corpus-qualification.md with this inventory.
+
+Final frontend tests passed 580 with 24 opt-in skips. Syntax passed 471 with
+one symlink skip. StrictDoc parsed 52 documents, 420 unique IDs and 388
+resolved parents. The new focused tests detected both deliberate guard changes
+in a disposable snapshot: allowing NUMDGT=0 and inverting the RS=0 predicate.
+The combined mutation produced five expected assertion failures in eleven
+tests. Coverlet measured 77.38% managed line and 61.47% managed branch
+coverage, including 97.50%/89.36% for SemiconductorPreparation and
+97.27%/82.52% for DeclarationExtraction. No new Rust coverage or standalone
+input fuzzing was collected.
+
+The remaining directive families need separate semantic contracts. .CSPARAM
+exports constant vectors to control programs, netlist .IF selects physical
+cards, .SP needs RF port excitation and S-parameter observables, and .SNDPARAM
+belongs to the audio I/O path. The largest unresolved option groups still
+require explicit device tolerance, continuation, temperature or integration
+policy. The 23 ACCT BYPASS=1 cases additionally depend on CIDER device support.

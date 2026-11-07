@@ -104,7 +104,7 @@ UID: SEM-REPORT-OPTIONS-001
 STATUS: Draft
 TITLE: Qualified reporting-only option selection
 STATEMENT: >>>
-Explicit selected analysis preparation may omit a nonempty .option or .options card only when every generated parameter is a bare acct, noacct or noinit reporting flag or the raw output encoding assignment filetype=ascii or filetype=binary. Each such omission shall retain its original range and reason. Unqualified settings, empty lists and physical options adjacent to reporting flags shall remain explicit refusals except for separately specified physical profiles. Strict lowering shall remain unchanged.
+Explicit selected analysis preparation may omit a nonempty .option or .options card only when every generated parameter is a bare acct, noacct or noinit reporting flag or the raw output encoding assignment filetype=ascii or filetype=binary or literal NUMDGT reporting precision from 1 through 17. Each such omission shall retain its original range and reason. Unqualified settings, empty lists and physical options adjacent to reporting flags shall remain explicit refusals except for separately specified physical profiles. Strict lowering shall remain unchanged.
 <<<
 COMMENT: >>>
 Implementation: DeclarationExtraction.ReportingOptionsOnly and OperatingPointSelection. Primary source inspection: ngspice frontend/spiceif.c returns for acct/noacct/noinit after setting print flags, frontend/options.c exposes corresponding print state, and dotcards.c/dctran.c use them to gate reporting. Verification: AccountingOptionTests, original-source native fixture and full corpus execution. No solver tolerances or physical model options are treated as reporting flags. Evidence: evidence/corpus-sources-results.json. Draft, not broad option compatibility.

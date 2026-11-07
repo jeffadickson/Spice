@@ -36,9 +36,17 @@ internal sealed class DeclarationExtraction
     {
         if (parameter.value()?.identifier() != null)
             return parameter.GetText().ToLowerInvariant() is "acct" or "noacct" or "noinit";
-        return parameter.assignment() is {} assignment
-            && assignment.referenceName()?.GetText().Equals("filetype",StringComparison.OrdinalIgnoreCase) == true
-            && assignment.value()?.GetText().ToLowerInvariant() is "ascii" or "binary";
+        var assignment=parameter.assignment();
+        var value=assignment?.value()?.GetText();
+        return assignment?.referenceName()?.GetText().ToLowerInvariant() switch
+        {
+            "filetype" => value?.ToLowerInvariant() is "ascii" or "binary",
+            // NUMDGT is a display setting. Bound literal precision to the
+            // useful round-trip range for binary64 decimal output.
+            "numdgt" => int.TryParse(value,System.Globalization.NumberStyles.None,
+                System.Globalization.CultureInfo.InvariantCulture,out var digits) && digits is >= 1 and <= 17,
+            _ => false
+        };
     }
 
     // A literal operating temperature equal to the current fixed Celsius

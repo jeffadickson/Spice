@@ -28,3 +28,17 @@ ngspice src/frontend/inp.c takes .WIDTH out of the physical input. src/frontend/
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-SELECT-001
+
+[REQUIREMENT]
+UID: FRONTEND-DIODE-ZERO-RS-001
+STATUS: Draft
+TITLE: Explicit zero diode series resistance
+STATEMENT: >>>
+The generated diode profile shall admit the explicit literal RS=0 with unchanged topology and charge parameters. Nonzero, duplicate and expression-valued RS shall remain outside this profile. Circuit readiness and physical preparation shall use the same admissibility rule. The independent ngspice comparison shall retain the original model card.
+<<<
+COMMENT: >>>
+Implementation: SemiconductorPreparation. Verification: DirectiveFollowupTests and the original qualification-diode-constant-charge.cir replay.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-001
