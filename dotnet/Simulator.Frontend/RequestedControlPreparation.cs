@@ -40,7 +40,7 @@ internal static class RequestedControlPreparation
    try{ControlVectorExecution.Execute(prefix,new Dictionary<string,double[]>(),constants:constants);}
    catch(InvalidDataException error){return Fail(error.Message,block.Range);}
   }
-  var locals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var quit=false;var branches=new Stack<bool>();
+  var locals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var quit=false;var inLoop=false;var branches=new Stack<bool>();
   foreach(var command in block.Commands){
    if(command.Kind=="comment")continue;
    if(prefixReporting&&command.Range.Start<lastAnalysisStart){
@@ -48,11 +48,17 @@ internal static class RequestedControlPreparation
    }
    if(quit)return Fail("unsupported_control_command_after_quit",command.Range);
    if(command.Diagnostic!=null)return Fail(command.Diagnostic,command.Range);
+   if(!inLoop&&command.Postprocessing is {Kind:ControlPostprocessingKind.Let,Expression: {} expression}&&expression.Text.Contains('$'))
+    return Fail("control_loop_reference_outside_loop",command.Range);
    // Only a terminal reporting region can be projected away. No branch may
    // affect a later dispatch, physical setting, external command or artifact.
-   if(command.Kind is "if" or "else" or "end" || branches.Count!=0){
+   if(command.Kind is "if" or "else" or "end" or "foreach" || branches.Count!=0 || inLoop){
     if(lastAnalysisStart<0||command.Range.Start<=lastAnalysisStart)return Fail("conditional_before_last_analysis",command.Range);
     switch(command.Kind){
+     case "foreach":
+      if(inLoop||branches.Count!=0||command.Foreach==null)return Fail("unsupported_reporting_loop_shape",command.Range);
+      inLoop=true;break;
+     case "loop_set" when inLoop:break;
      case "if":
       if(branches.Count>=8)return Fail("conditional_depth_budget",command.Range);
       branches.Push(false);break;
@@ -60,12 +66,13 @@ internal static class RequestedControlPreparation
       if(branches.Count==0||branches.Pop())return Fail("invalid_conditional_else",command.Range);
       branches.Push(true);break;
      case "end":
+      if(branches.Count==0&&inLoop){inLoop=false;break;}
       if(branches.Count==0)return Fail("invalid_conditional_end",command.Range);
       branches.Pop();break;
      case "report" when command.Name is "echo" or "print":
      case "report_substitution":
-     case "quit":
-     case "quit_status":break;
+     case "quit" when !inLoop:
+     case "quit_status" when !inLoop:break;
      case "postprocessing" when command.Postprocessing?.Kind==ControlPostprocessingKind.Let:
       // Conditional assignments are not guaranteed to exist outside a branch.
       if(ControlSuffixAdmission.Admit(command,lastAnalysisStart,new(StringComparer.OrdinalIgnoreCase)) is {} error)return Fail(error,command.Range);
@@ -107,7 +114,7 @@ internal static class RequestedControlPreparation
    }
    if(result.Count>128)return Fail("control_analysis_budget",command.Range);
   }
-  if(branches.Count!=0)return Fail("unclosed_reporting_conditional",block.Range);
+  if(branches.Count!=0||inLoop)return Fail("unclosed_reporting_conditional",block.Range);
   if(!hasRun)foreach(var analysis in catalog.Analyses)omissions.Add(new(analysis.ScopeId,analysis.Kind,"."+analysis.Kind,"deck_analysis_not_dispatched_by_control",analysis.Range));
   return new(result.ToImmutable(),omissions.ToImmutable(),hasRun?"finite_deck_run":"direct_commands",null);
  }

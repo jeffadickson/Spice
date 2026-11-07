@@ -1375,6 +1375,27 @@
     "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections."
   },
   {
+    "rule": "controlForeach",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+      "dotnet/Simulator.Syntax/ControlVectorExecution.cs"
+    ],
+    "requirements": [
+      "FRONTEND-CONTROL-008"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedForeachTests.cs"
+    ],
+    "limitation": "Terminal reporting only. Bounded integer vector iteration and node templates. Nested loops and physical effects refuse.",
+    "commands": [
+      "foreach"
+    ]
+  },
+  {
     "rule": "controlBoundary",
     "extraction": "bounded",
     "preparation": "bounded",

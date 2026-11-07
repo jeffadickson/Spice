@@ -7,6 +7,9 @@ namespace Simulator.Syntax;
 // interprets commands; default deck lexing remains unchanged outside this entry.
 internal static class ControlExtraction
 {
+ private static bool SimpleName(string value)=>value.Length is >0 and <=64
+     &&(char.IsAsciiLetter(value[0])||value[0]=='_')&&value.All(c=>char.IsAsciiLetterOrDigit(c)||c=='_');
+
  internal static ControlBlockSyntax Extract(SpiceParser.ControlContext control,int scope,Func<int,int,SourceSyntax> capture,Func<ParserRuleContext,SourceRange> range){
   SourceRange Token(IToken token)=>capture(token.StartIndex,token.StopIndex).Range;
   var lines=control.COMMAND_LINE();if(lines.Length>256)return new(scope,range(control),Token(control.CONTROL().Symbol),Token(control.ENDC().Symbol),[],"control_command_budget");
@@ -18,16 +21,25 @@ internal static class ControlExtraction
    var first=tokens.LT(1).Text;
    var echo=first.Equals("echo",StringComparison.OrdinalIgnoreCase);
    var print=first.Equals("print",StringComparison.OrdinalIgnoreCase);
+   var loop=first.Equals("foreach",StringComparison.OrdinalIgnoreCase);
+   var letCommand=first.Equals("let",StringComparison.OrdinalIgnoreCase);
+   var visible=tokens.GetTokens().Where(t=>t.Channel==TokenConstants.DefaultChannel).ToArray();
+   bool IsLetNodeVariable(IToken token){
+    var index=Array.IndexOf(visible,token);
+    return index>=2&&index+1<visible.Length&&visible[index-2].Text.Equals("v",StringComparison.OrdinalIgnoreCase)
+        &&visible[index-1].Type==SpiceLexer.LPAREN&&visible[index+1].Type==SpiceLexer.RPAREN
+        &&token.Text.StartsWith('$')&&SimpleName(token.Text[1..]);
+   }
    var unsafeToken=tokens.GetTokens().FirstOrDefault(t=>t.Type is SpiceLexer.CONTROL_SEPARATOR or SpiceLexer.INVALID or SpiceLexer.SLASH_COMMENT ||
        (echo||print)&&t.Text is ("<" or ">>" or "|" or "&") || echo&&t.Text==">" ||
-       t.Type==SpiceLexer.CONTROL_VARIABLE&&(!echo&&!first.Equals("if",StringComparison.OrdinalIgnoreCase)||!t.Text.StartsWith('$')));
+       t.Type==SpiceLexer.CONTROL_VARIABLE&&(!echo&&!first.Equals("if",StringComparison.OrdinalIgnoreCase)&&!loop&&!(letCommand&&IsLetNodeVariable(t))||!t.Text.StartsWith('$')));
    if(unsafeToken!=null)return new("","unsupported",null,[],physical,"unsafe_control_separator_variable_or_token");
    tokens.Seek(0);var parser=new SpiceParser(tokens){ErrorHandler=new BailErrorStrategy()};parser.RemoveErrorListeners();
    SourceSyntax Capture(ParserRuleContext context)=>capture(token.StartIndex+context.Start.StartIndex,token.StartIndex+context.Stop.StopIndex);
    try{
     var tree=parser.controlCommandProfile();var item=tree.GetChild(0) as ParserRuleContext;
     if(item==null)return new("","comment",null,[],physical);
-    AnalysisSyntax? analysis=null;var name=item.Start.Text.ToLowerInvariant();var kind="unsupported";ImmutableArray<ControlSettingSyntax> settings=[];ControlPostprocessingSyntax? postprocessing=null;string? redirect=null;string? argument=null;
+    AnalysisSyntax? analysis=null;var name=item.Start.Text.ToLowerInvariant();var kind="unsupported";ImmutableArray<ControlSettingSyntax> settings=[];ControlPostprocessingSyntax? postprocessing=null;string? redirect=null;string? argument=null;ControlForeachSyntax? foreachHeader=null;
     switch(item){
      case SpiceParser.ControlOpContext:kind="analysis";analysis=new(scope,"op",[],[],physical);break;
      case SpiceParser.ControlAcContext ac:kind="analysis";analysis=new(scope,"ac",[ac.identifier(1).GetText()],ac.controlNumber().Select(Capture).ToImmutableArray(),physical);break;
@@ -35,6 +47,13 @@ internal static class ControlExtraction
      case SpiceParser.ControlTranContext tran:kind="analysis";analysis=new(scope,"tran",tran.identifier().Skip(1).Select(i=>i.GetText()).ToImmutableArray(),tran.controlNumber().Select(Capture).ToImmutableArray(),physical);break;
      case SpiceParser.ControlRunContext:kind="run";break;
      case SpiceParser.ControlIfContext:kind="if";break;
+     case SpiceParser.ControlForeachContext each:
+      var variable=each.identifier(1).GetText();
+      var vector=each.CONTROL_VARIABLE().GetText();
+      if(SimpleName(variable)&&vector.StartsWith("$&",StringComparison.Ordinal)&&SimpleName(vector[2..])){
+       kind="foreach";foreachHeader=new(variable,vector[2..]);
+      }
+      break;
      case SpiceParser.ControlBoundaryContext:kind=name;break;
      case SpiceParser.ControlEchoContext:kind=token.Text.Contains('$')?"report_substitution":"report";break;
      case SpiceParser.ControlQuitContext exit:
@@ -63,9 +82,11 @@ internal static class ControlExtraction
          (local.StartsWith("local_",StringComparison.OrdinalIgnoreCase)||local.StartsWith("testvar_",StringComparison.OrdinalIgnoreCase)) &&
          local.Length<=64 && local.All(c=>char.IsAsciiLetterOrDigit(c)||c=='_') &&
          (setting.Value==null||setting.Value.Text=="\"\"")) kind="local_set";
+      if(settings.Length==1&&settings[0] is {Name: {} target,Value: {} template}
+         &&SimpleName(target)&&ControlVectorExecution.IsLoopTemplate(template.Text))kind="loop_set";
       break;
     }
-    return new(name,kind,analysis,settings,physical,kind=="unsupported"?"unsupported_control_command:"+name:null){GrammarRule=SpiceParser.ruleNames[item.RuleIndex],Postprocessing=postprocessing,Argument=argument??token.Text[(item.Start.StopIndex+1)..].Trim(),RedirectTarget=redirect};
+    return new(name,kind,analysis,settings,physical,kind=="unsupported"?"unsupported_control_command:"+name:null){GrammarRule=SpiceParser.ruleNames[item.RuleIndex],Postprocessing=postprocessing,Argument=argument??token.Text[(item.Start.StopIndex+1)..].Trim(),RedirectTarget=redirect,Foreach=foreachHeader};
    }catch(ParseCanceledException){return new(token.Text,"unsupported",null,[],physical,"unsupported_control_syntax");}
   }
  }

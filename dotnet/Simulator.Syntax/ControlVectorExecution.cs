@@ -21,6 +21,12 @@ public sealed record ControlVectorReport(ImmutableArray<string> Output,
 public static partial class ControlVectorExecution
 {
     private const int VectorLimit = 4096;
+    private const int LoopLimit = 64;
+    [GeneratedRegex("^\u0022(?<prefix>[A-Za-z_0-9]+)\\{\\$(?<variable>[A-Za-z_][A-Za-z_0-9]*)\\}(?<suffix>[A-Za-z_0-9]*)\u0022$", RegexOptions.CultureInvariant)]
+    private static partial Regex LoopTemplate();
+    [GeneratedRegex(@"\bv\(\$(?<name>[A-Za-z_][A-Za-z_0-9]*)\)", RegexOptions.CultureInvariant|RegexOptions.IgnoreCase)]
+    private static partial Regex DynamicVoltage();
+    internal static bool IsLoopTemplate(string value)=>value.Length<=128&&LoopTemplate().IsMatch(value);
     [GeneratedRegex(@"\$&(?<name>[A-Za-z_][A-Za-z_0-9]*(?:\([A-Za-z_0-9]+\))?)(?![A-Za-z_0-9.\[(])", RegexOptions.CultureInvariant)]
     private static partial Regex Substitution();
     [GeneratedRegex(@"\$(?<name>[A-Za-z_][A-Za-z_0-9]*)(?![A-Za-z_0-9.\[(])", RegexOptions.CultureInvariant)]
@@ -64,8 +70,15 @@ public static partial class ControlVectorExecution
         var active = true;
         int? exit = null;
         var nodes = 0;
-        foreach (var command in program)
+        ControlForeachSyntax? loop=null;
+        double[] loopValues=[];
+        var loopHeader=0;
+        var loopIndex=0;
+        var commandsExecuted=0;
+        for(var cursor=0;cursor<program.Length;cursor++)
         {
+            if(++commandsExecuted>4096)throw new InvalidDataException("control_execution_budget");
+            var command=program[cursor];
             if (command.Diagnostic != null) throw new InvalidDataException(command.Diagnostic);
             var argument = command.Argument ?? "";
             switch (command.Kind)
@@ -75,6 +88,31 @@ public static partial class ControlVectorExecution
                     BindInputs(); bound=true; break;
                 case "local_set":
                     if(active && exit is null) variables[command.Settings[0].Name!] = command.Settings[0].Value==null?"TRUE":"";
+                    break;
+                case "foreach":
+                    if(loop!=null||stack.Count!=0||!bound||command.Foreach is not {} header||variables.ContainsKey(header.Variable))
+                        throw new InvalidDataException("unsupported_reporting_loop_shape");
+                    loop=header;
+                    loopHeader=cursor;
+                    loopIndex=0;
+                    loopValues=exit==null?Resolve(header.Vector,null).ToArray():[];
+                    if(loopValues.Length>LoopLimit||loopValues.Any(v=>!double.IsFinite(v)||v<0||v>int.MaxValue||v!=Math.Truncate(v)))
+                        throw new InvalidDataException("control_loop_items");
+                    active=loopValues.Length>0;
+                    if(active)BindLoopValue();
+                    break;
+                case "loop_set":
+                    if(loop==null)throw new InvalidDataException("control_loop_template_outside_loop");
+                    if(active&&exit==null){
+                        var setting=command.Settings.Single();
+                        var match=LoopTemplate().Match(setting.Value!.Text);
+                        if(!match.Success||!match.Groups["variable"].Value.Equals(loop.Variable,StringComparison.OrdinalIgnoreCase)
+                            ||string.Equals(setting.Name,loop.Variable,StringComparison.OrdinalIgnoreCase))
+                            throw new InvalidDataException("invalid_control_loop_template");
+                        var node=match.Groups["prefix"].Value+LookupVariable(loop.Variable)+match.Groups["suffix"].Value;
+                        if(node.Length>64)throw new InvalidDataException("control_loop_node_budget");
+                        variables[setting.Name!]=node;
+                    }
                     break;
                 case "if":
                     if (stack.Count == 8) throw new InvalidDataException("conditional_depth_budget");
@@ -87,6 +125,12 @@ public static partial class ControlVectorExecution
                         throw new InvalidDataException("invalid_conditional_else");
                     stack.Push((branch.Parent,branch.Condition,true));
                     active = branch.Parent && !branch.Condition;
+                    break;
+                case "end" when stack.Count==0&&loop!=null:
+                    if(exit==null&&++loopIndex<loopValues.Length){BindLoopValue();cursor=loopHeader;break;}
+                    variables.Remove(loop.Variable);
+                    loop=null;
+                    active=true;
                     break;
                 case "end":
                     if (!stack.TryPop(out var ended)) throw new InvalidDataException("invalid_conditional_end");
@@ -141,9 +185,11 @@ public static partial class ControlVectorExecution
             }
         }
         if (!bound) throw new InvalidDataException("missing_control_analysis_boundary");
-        if (stack.Count!=0) throw new InvalidDataException("unclosed_reporting_conditional");
+        if (stack.Count!=0||loop!=null) throw new InvalidDataException("unclosed_reporting_conditional");
         return new(output.ToImmutable(),values.Where(p=>!inputs.Keys.Contains(p.Key,StringComparer.OrdinalIgnoreCase))
             .ToImmutableDictionary(p=>p.Key,p=>p.Value.ToImmutableArray(),StringComparer.OrdinalIgnoreCase),exit) {Diagnostics=diagnostics.ToImmutable(),Redirected=redirected.ToImmutable()};
+
+        void BindLoopValue()=>variables[loop!.Variable]=loopValues[loopIndex].ToString("0",CultureInfo.InvariantCulture);
 
         string LookupVariable(string name) => variables.TryGetValue(name,out var value)?value:
             throw new InvalidDataException("unknown_control_variable:"+name);
@@ -157,8 +203,8 @@ public static partial class ControlVectorExecution
                     return LookupVariable(expression[1..]).Length!=0;
                 return Evaluate(expression,condition:true).Any(v=>v!=0);
             }
-            catch(InvalidDataException error) when(error.Message.StartsWith("unknown_control_vector:",StringComparison.Ordinal)||
-                error.Message.StartsWith("unknown_control_variable:",StringComparison.Ordinal))
+            catch(InvalidDataException error) when(loop==null&&(error.Message.StartsWith("unknown_control_vector:",StringComparison.Ordinal)||
+                error.Message.StartsWith("unknown_control_variable:",StringComparison.Ordinal)))
             { diagnostics.Add(error.Message);return false; }
         }
 
@@ -202,6 +248,8 @@ public static partial class ControlVectorExecution
         {
             if (depth>16 || expression.Length>4096) throw new InvalidDataException("control_expression_budget");
             if (values.TryGetValue(expression,out var exact) && expression.StartsWith('@')) return exact;
+            if(loop!=null)
+                expression=DynamicVoltage().Replace(expression,match=>"v("+LookupVariable(match.Groups["name"].Value)+")");
             var lexer = new SpiceLexer(new AntlrInputStream(expression)){ControlSemantic=true};
             lexer.Mode(SpiceLexer.BODY);
             lexer.RemoveErrorListeners();
@@ -255,6 +303,7 @@ public static partial class ControlVectorExecution
                     ("length",1)=>[args[0].Length],
                     ("abs",1)=>args[0].Select(Math.Abs).ToArray(),
                     ("unitvec",1)=>Ones(Scalar(args[0])),
+                    ("vector",1)=>IndexVector(Scalar(args[0])),
                     _=>throw new InvalidDataException("unsupported_control_function:"+name)
                 };
             }
@@ -285,6 +334,10 @@ public static partial class ControlVectorExecution
         if (values.Length is <1 or >VectorLimit || values.Any(v=>!double.IsFinite(v)))
             throw new InvalidDataException("invalid_control_vector");
     }
+
+    private static double[] IndexVector(double count)=>count>=1&&count<=VectorLimit&&count==Math.Truncate(count)
+        ?Enumerable.Range(0,(int)count).Select(i=>(double)i).ToArray()
+        :throw new InvalidDataException("invalid_control_vector_length");
 
     private static double[] Ones(double count) => count>=1 && count<=VectorLimit && count==Math.Truncate(count)
         ? Enumerable.Repeat(1d,(int)count).ToArray() : throw new InvalidDataException("invalid_unitvec_length");

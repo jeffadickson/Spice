@@ -110,7 +110,7 @@ public sealed class GrammarImplementationTests
             ["op"]="op",["ac"]="ac lin 2 10 20",["dc"]="dc V1 0 1 1",["tran"]="tran 1u 2u",["run"]="run",
             ["set"]="set numdgt=7",["let"]="let scratch=2*v(out)",["define"]="define scale(x) 2*x",["unlet"]="unlet scratch",
             ["print"]="print v(out)",["plot"]="plot v(out)",["meas"]="meas tran sample max v(out)",["measure"]="measure tran sample max v(out)",
-            ["save"]="save v(out)",["gnuplot"]="gnuplot output v(out)",["echo"]="echo result",["if"]="if v(out) < 1",["else"]="else",["end"]="end",["rusage"]="rusage",["display"]="display",["listing"]="listing",["quit"]="quit"
+            ["save"]="save v(out)",["gnuplot"]="gnuplot output v(out)",["echo"]="echo result",["if"]="if v(out) < 1",["foreach"]="foreach n $&tests",["else"]="else",["end"]="end",["rusage"]="rusage",["display"]="display",["listing"]="listing",["quit"]="quit"
         };
         foreach(var assessment in assessments)
         foreach(var heading in assessment.Commands)

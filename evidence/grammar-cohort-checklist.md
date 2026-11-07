@@ -69,3 +69,50 @@ coverage across managed assemblies. A deliberate plus-for-minus mutation
 changed the reporting exit from zero to one and was caught. The frontend
 suite included its existing seed-based properties. Standalone fuzzing and
 Rust coverage were outside this checkpoint.
+
+## Original terminal foreach cohort
+
+The six paths previously refused on unsafe control tokens form a shared
+reporting profile. Generated controlForeach retains the loop header,
+controlSet retains the node-name templates, and controlLet/controlIf consume
+the resulting named observables. All six original paths have distinct
+expanded hashes. Each matches its previous replay identity and expansion.
+
+| Original deck | Operating point | Native report checks |
+|---|---|---:|
+| tests/regression/lib-processing/scope-1.cir | Agreed | 2 |
+| tests/regression/lib-processing/scope-2.cir | Agreed | 3 |
+| tests/regression/lib-processing/scope-3.cir | Agreed | 3 |
+| tests/regression/misc/bugs-1.cir | Agreed | 8 |
+| tests/regression/subckt-processing/global-1.cir | Agreed | 3 |
+| tests/regression/subckt-processing/model-scope-5.cir | Agreed | 7 |
+
+Original executions and native operating-point agreements both rose from
+zero to six in this cohort. The independent unchanged ngspice-47+ runs
+and our separate reporting runs emitted the same six success lines,
+covering 26 assertions, with exit zero and no reporting diagnostics.
+The projected comparisons covered 89 original voltage and branch-current
+observables. The native numeric projections explicitly omit reporting
+commands while retaining the original analysis. These are six original
+results rather than a fresh full-corpus count.
+
+Windows artifacts are under E:/Artifacts/Spice-foreach-2668bf1.
+The final run tested base 2668bf1 plus the patch with the existing issue40
+engine and pinned corpus e8285746c73a8229cf922487c8ccfcf6bea61bce. It finished
+in 9.46 seconds with valid provenance. The inventory SHA-256 is
+48bb666668161e45c36180bb41f785dfe2a4343364aa7df89ba1ca0b1b60e8cc.
+The summary SHA-256 is
+cf2fb5d7df8bab0cc243a010bb8f1e4218756c3ba8efb8a8a1efd31c5e2f5fda.
+Use the documented Run-RequestedCorpus.cs invocation with inventory.json.
+The six *.native.log files retain the separate unchanged reporting runs.
+
+Verification passed 598 frontend tests with 37 opt-in skips and 471
+syntax tests with one symlink skip. StrictDoc parsed 52 documents and
+426 unique IDs. The regenerated grammar map assessed 95 of 98 rules.
+Managed coverage measured 77.45% line and 60.35% branch. The new FsCheck
+loop-count property requested 100 cases with seed 2668,20261107. A
+skip-every-other-item mutant failed both the property and the two-item
+report. FsCheck found input NonNegativeInt 1 and saved the failing replay
+15956658760579799124,10030303121570407149,3. Negative tests also exercise
+oversized loops, missing observables, physical commands and nesting.
+Rust coverage and a standalone fuzz campaign were outside this checkpoint.

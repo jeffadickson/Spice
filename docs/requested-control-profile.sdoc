@@ -142,3 +142,17 @@ Implementation: RequestedControlPreparation, ControlSuffixAdmission and ControlV
 RELATIONS:
 - TYPE: Parent
   VALUE: FRONTEND-CONTROL-006
+
+[REQUIREMENT]
+UID: FRONTEND-CONTROL-008
+STATUS: Draft
+TITLE: Terminal reporting foreach over bounded vectors
+STATEMENT: >>>
+A terminal control reporting block may iterate a named real vector of at most 64 nonnegative integer values after the final analysis. Vector(n) shall produce zero-based indices. The loop variable may populate a bounded ASCII node-name template, and the template value may select an existing voltage observable. Conditional reporting and local computations shall execute in input order. Bound total command execution to 4096. Refuse loops that dispatch analyses or change physical settings, nested loops, invalid templates and missing loop observables.
+<<<
+COMMENT: >>>
+Implementation: generated controlForeach metadata, RequestedControlPreparation and ControlVectorExecution. Verification: RequestedForeachTests and the six original scope and regression decks identified in evidence/grammar-cohort-checklist.md. Original native reporting and separate projected circuit comparisons are independently recorded.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-CONTROL-007

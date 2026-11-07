@@ -13,7 +13,11 @@ public sealed record ControlCommandSyntax(string Name,string Kind,AnalysisSyntax
     public string? RedirectTarget { get; init; }
     /// <summary>Unevaluated local declaration candidate; null for other commands.</summary>
     public ControlPostprocessingSyntax? Postprocessing { get; init; }
+    /// <summary>Qualified reporting loop variable and source vector names.</summary>
+    public ControlForeachSyntax? Foreach { get; init; }
 }
+/// <summary>Bounded foreach header over a named real reporting vector.</summary>
+public sealed record ControlForeachSyntax(string Variable,string Vector);
 /// <summary>Recognized local result declarations, independent of any evaluation support.</summary>
 public enum ControlPostprocessingKind
 {
