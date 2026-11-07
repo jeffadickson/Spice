@@ -9,7 +9,13 @@ namespace Simulator.Syntax;
 
 /// <summary>Output and local values from a successful bounded reporting program.</summary>
 public sealed record ControlVectorReport(ImmutableArray<string> Output,
-    ImmutableDictionary<string,ImmutableArray<double>> Locals, int? ExitCode);
+    ImmutableDictionary<string,ImmutableArray<double>> Locals, int? ExitCode)
+{
+    /// <summary>Recoverable condition and assignment diagnostics.</summary>
+    public ImmutableArray<string> Diagnostics { get; init; } = [];
+    /// <summary>Output captured under logical names. No filesystem is accessed.</summary>
+    public ImmutableDictionary<string,string> Redirected { get; init; } = ImmutableDictionary<string,string>.Empty;
+}
 
 /// <summary>Executes bounded real-vector reporting against caller-supplied data.</summary>
 public static partial class ControlVectorExecution
@@ -17,22 +23,32 @@ public static partial class ControlVectorExecution
     private const int VectorLimit = 4096;
     [GeneratedRegex(@"\$&(?<name>[A-Za-z_][A-Za-z_0-9]*(?:\([A-Za-z_0-9]+\))?)(?![A-Za-z_0-9.\[(])", RegexOptions.CultureInvariant)]
     private static partial Regex Substitution();
+    [GeneratedRegex(@"\$(?<name>[A-Za-z_][A-Za-z_0-9]*)(?![A-Za-z_0-9.\[(])", RegexOptions.CultureInvariant)]
+    private static partial Regex ShellVariable();
 
     /// <summary>Executes a reporting region atomically, returning no output on failure.</summary>
     public static ControlVectorReport Execute(IEnumerable<ControlCommandSyntax> commands,
-        IReadOnlyDictionary<string,double[]> inputs)
+        IReadOnlyDictionary<string,double[]> inputs, bool activateAtAnalysis = false)
     {
         var program = commands.Take(257).ToArray();
         if (program.Length > 256 || inputs.Count > 256)
             throw new InvalidDataException("control_execution_budget");
         var values = new Dictionary<string,double[]>(StringComparer.OrdinalIgnoreCase);
         var functions = new Dictionary<string,ControlPostprocessingSyntax>(StringComparer.OrdinalIgnoreCase);
+        var variables = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+        var redirected = ImmutableDictionary.CreateBuilder<string,string>(StringComparer.Ordinal);
+        var diagnostics = ImmutableArray.CreateBuilder<string>();
+        if (!activateAtAnalysis) BindInputs();
+        void BindInputs()
+        {
         foreach (var (name, vector) in inputs)
         {
             Validate(vector);
             if (!values.TryAdd(name,vector.ToArray()))
                 throw new InvalidDataException("duplicate_control_input");
         }
+        }
+        var bound = !activateAtAnalysis;
         var stack = new Stack<(bool Parent, bool Condition, bool Else)>();
         var output = ImmutableArray.CreateBuilder<string>();
         var active = true;
@@ -45,9 +61,14 @@ public static partial class ControlVectorExecution
             switch (command.Kind)
             {
                 case "comment": break;
+                case "analysis" when !bound && stack.Count==0 && exit is null:
+                    BindInputs(); bound=true; break;
+                case "local_set":
+                    if(active && exit is null) variables[command.Settings[0].Name!] = command.Settings[0].Value==null?"TRUE":"";
+                    break;
                 case "if":
                     if (stack.Count == 8) throw new InvalidDataException("conditional_depth_budget");
-                    var condition = active && exit is null && Evaluate(argument,condition:true).Any(v => v != 0);
+                    var condition = active && exit is null && Condition(argument);
                     stack.Push((active, condition, false));
                     active = condition;
                     break;
@@ -76,13 +97,16 @@ public static partial class ControlVectorExecution
                         var name = declaration.Names[0];
                         if (inputs.Keys.Contains(name,StringComparer.OrdinalIgnoreCase))
                             throw new InvalidDataException("control_input_assignment");
-                        values[name] = Evaluate(declaration.Expression!.Text);
+                        try { values[name] = Evaluate(declaration.Expression!.Text); }
+                        catch (InvalidDataException error) when(error.Message.StartsWith("invalid_control_assignment_rhs:",StringComparison.Ordinal))
+                        { diagnostics.Add(error.Message); }
                     }
                     break;
                 case "report" or "report_substitution" when command.Name == "echo":
                     if (!active || exit is not null) break;
                     var expanded = Substitution().Replace(argument, match =>
                         Scalar(Resolve(match.Groups["name"].Value,null)).ToString("G",CultureInfo.InvariantCulture));
+                    expanded = ShellVariable().Replace(expanded, match => LookupVariable(match.Groups["name"].Value));
                     if (expanded.Contains('$')) throw new InvalidDataException("unsupported_control_substitution");
                     output.Add(expanded.Replace("\"","",StringComparison.Ordinal));
                     break;
@@ -90,15 +114,43 @@ public static partial class ControlVectorExecution
                     if (active && exit is null)
                         output.Add(argument+" = "+string.Join(' ',Evaluate(argument).Select(v=>v.ToString("G",CultureInfo.InvariantCulture))));
                     break;
+                case "report_redirect":
+                    if(active && exit is null)
+                    {
+                        var target=command.RedirectTarget!;
+                        if(target.Length is <1 or >64 || target.Any(c=>!char.IsAsciiLetterOrDigit(c)&&c!='_'))
+                            throw new InvalidDataException("invalid_control_redirect_target");
+                        var value=Scalar(Evaluate(argument));
+                        redirected[target]=argument+" = "+value.ToString("0.000000e+00",CultureInfo.InvariantCulture);
+                    }
+                    break;
                 case "quit" or "quit_status":
                     if (active && exit is null) exit = argument == "1" ? 1 : 0;
                     break;
                 default: throw new InvalidDataException("unsupported_control_execution:"+command.Name);
             }
         }
+        if (!bound) throw new InvalidDataException("missing_control_analysis_boundary");
         if (stack.Count!=0) throw new InvalidDataException("unclosed_reporting_conditional");
         return new(output.ToImmutable(),values.Where(p=>!inputs.Keys.Contains(p.Key,StringComparer.OrdinalIgnoreCase))
-            .ToImmutableDictionary(p=>p.Key,p=>p.Value.ToImmutableArray(),StringComparer.OrdinalIgnoreCase),exit);
+            .ToImmutableDictionary(p=>p.Key,p=>p.Value.ToImmutableArray(),StringComparer.OrdinalIgnoreCase),exit) {Diagnostics=diagnostics.ToImmutable(),Redirected=redirected.ToImmutable()};
+
+        string LookupVariable(string name) => variables.TryGetValue(name,out var value)?value:
+            throw new InvalidDataException("unknown_control_variable:"+name);
+
+        bool Condition(string expression)
+        {
+            if(expression.Length==0){diagnostics.Add("missing_control_condition");return false;}
+            try
+            {
+                if(expression.StartsWith('$')&&!expression.StartsWith("$&",StringComparison.Ordinal))
+                    return LookupVariable(expression[1..]).Length!=0;
+                return Evaluate(expression,condition:true).Any(v=>v!=0);
+            }
+            catch(InvalidDataException error) when(error.Message.StartsWith("unknown_control_vector:",StringComparison.Ordinal)||
+                error.Message.StartsWith("unknown_control_variable:",StringComparison.Ordinal))
+            { diagnostics.Add(error.Message);return false; }
+        }
 
         double[] Resolve(string name,IReadOnlyDictionary<string,double[]>? locals) =>
             locals?.TryGetValue(name,out var local)==true ? local :
@@ -116,7 +168,15 @@ public static partial class ControlVectorExecution
             // In ngspice these standalone tokens can redirect let/define
             // commands. Only the conditional grammar gives them a safe meaning.
             if (!condition && tokens.GetTokens().Any(t=>t.Text is "<" or ">"))
+            {
+                var visible=tokens.GetTokens().Where(t=>t.Channel==TokenConstants.DefaultChannel).ToArray();
+                if(visible.Length==4 && visible[1].Text==">" &&
+                   (char.IsAsciiLetter(visible[2].Text[0])||visible[2].Text[0]=='_') &&
+                   visible[2].Text.All(c=>char.IsAsciiLetterOrDigit(c)||c=='_') &&
+                   !values.ContainsKey(visible[2].Text))
+                    throw new InvalidDataException("invalid_control_assignment_rhs:"+visible[2].Text);
                 throw new InvalidDataException("ambiguous_control_redirection");
+            }
             if (tokens.Size>256) throw new InvalidDataException("control_expression_budget");
             var parser = new SpiceParser(tokens){ErrorHandler=new BailErrorStrategy()};
             parser.RemoveErrorListeners();
@@ -136,7 +196,7 @@ public static partial class ControlVectorExecution
             double[] Child(int i)=>Eval(children[i],locals,depth+1);
             double[] result;
             if (node.voltageReference()!=null ||
-                node.identifier()?.GetText().Equals("i",StringComparison.OrdinalIgnoreCase)==true && node.LPAREN()!=null)
+                (node.identifier()?.GetText().ToLowerInvariant() is "i" or "v") && node.LPAREN()!=null)
                 result=Resolve(node.GetText(),locals);
             else if (node.ChildCount==1)
                 result=node.NUMBER()!=null ? [ParameterEvaluator.Number(node.GetText())] :
@@ -199,7 +259,7 @@ public static partial class ControlVectorExecution
             result[i]=op switch
             {
                 "+"=>x+y, "-"=>x-y, "*"=>x*y, "/"=>x/y,
-                "eq" or "=" or "=="=>x==y?1:0, "!=" or "<>"=>x!=y?1:0,
+                "eq" or "=" or "=="=>x==y?1:0, "!=" or "<>" or "><"=>x!=y?1:0,
                 "<"=>x<y?1:0, ">"=>x>y?1:0, "<="=>x<=y?1:0, ">="=>x>=y?1:0,
                 "&" or "&&"=>x!=0&&y!=0?1:0, "|" or "||"=>x!=0||y!=0?1:0,
                 _=>throw new InvalidDataException("unsupported_control_operator:"+op)

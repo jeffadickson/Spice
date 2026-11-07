@@ -1,0 +1,150 @@
+{
+  "state": "completed_with_results",
+  "provenance_valid": true,
+  "tested_base": "b2c50e41dc89500f3043ea8b057552e21faa9d92",
+  "tested_working_patch": true,
+  "summary_sha256": "bd818e28d131a3c42eef30f804f7778659346ea987d893f8ec50689f2b5c0826",
+  "inventory_sha256": "e08e74504aebcf8d66aefa9cd2fafe7766b44c25fb976cab901e453a326b0f17",
+  "elapsed_seconds": 1010.9481609,
+  "stages": [
+    {
+      "name": "Syntax accepted",
+      "passed": 916,
+      "refused": 8,
+      "unknown": 4
+    },
+    {
+      "name": "Circuit prepared",
+      "passed": 85,
+      "refused": 809,
+      "unknown": 34
+    },
+    {
+      "name": "Requested analyses executed",
+      "passed": 43,
+      "refused": 851,
+      "unknown": 34
+    },
+    {
+      "name": "Native numerical agreement",
+      "passed": 29,
+      "refused": 14,
+      "unknown": 885
+    }
+  ],
+  "transitions": [
+    {
+      "path": "examples/control_structs/if-test-1.cir",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "executed"
+    },
+    {
+      "path": "examples/control_structs/new-check-3.sp",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "executed"
+    },
+    {
+      "path": "examples/control_structs/new-check-4.sp",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "executed"
+    },
+    {
+      "path": "examples/measure/rc-meas-ac-control.sp",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "control_reporting_requires_complete_real_analysis"
+    },
+    {
+      "path": "paranoia_parallel/examples/control_structs/if-test-1.cir",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "executed"
+    },
+    {
+      "path": "paranoia_parallel/examples/control_structs/new-check-3.sp",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "executed"
+    },
+    {
+      "path": "paranoia_parallel/examples/control_structs/new-check-4.sp",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "executed"
+    },
+    {
+      "path": "paranoia_parallel/examples/measure/rc-meas-ac-control.sp",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "control_reporting_requires_complete_real_analysis"
+    },
+    {
+      "path": "tests/regression/lib-processing/ex1a.cir",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "executed"
+    },
+    {
+      "path": "tests/regression/lib-processing/ex1b.cir",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "executed"
+    },
+    {
+      "path": "tests/regression/lib-processing/ex2a.cir",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "executed"
+    },
+    {
+      "path": "tests/regression/lib-processing/ex3a.cir",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "executed"
+    },
+    {
+      "path": "tests/regression/misc/bugs-2.cir",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "unsupported_control_expression"
+    },
+    {
+      "path": "tests/regression/parser/xpressn-2.cir",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": "ambiguous_control_redirection"
+    },
+    {
+      "path": "compat/ngspice/semantic-nested.cir",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": null
+    },
+    {
+      "path": "compat/ngspice/semantic-parameters.cir",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": null
+    },
+    {
+      "path": "compat/ngspice/semantic-port-order.cir",
+      "before": "requested_preparation_refused",
+      "after": "all_individual_requested_analyses_agreed",
+      "reporting": null
+    },
+    {
+      "path": "compat/ngspice/semantic-zero-port.cir",
+      "before": "requested_preparation_refused",
+      "after": "requested_executed_not_fully_qualified",
+      "reporting": null
+    }
+  ],
+  "limits": [
+    "Circuit comparisons are separate from reporting execution.",
+    "Original 928 path inventory includes mirrors.",
+    "Raw artifacts remain on E:."
+  ]
+}

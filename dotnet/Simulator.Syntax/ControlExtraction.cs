@@ -17,17 +17,17 @@ internal static class ControlExtraction
    if(tokens.Size>256)return new("","unsupported",null,[],physical,"control_token_budget");
    var first=tokens.LT(1).Text;
    var echo=first.Equals("echo",StringComparison.OrdinalIgnoreCase);
-   var reportOutput=echo||first.Equals("print",StringComparison.OrdinalIgnoreCase);
+   var print=first.Equals("print",StringComparison.OrdinalIgnoreCase);
    var unsafeToken=tokens.GetTokens().FirstOrDefault(t=>t.Type is SpiceLexer.CONTROL_SEPARATOR or SpiceLexer.INVALID or SpiceLexer.SLASH_COMMENT ||
-       reportOutput&&t.Text is ("<" or ">" or ">>" or "|" or "&") ||
-       t.Type==SpiceLexer.CONTROL_VARIABLE&&(!echo||!t.Text.StartsWith("$&",StringComparison.Ordinal)));
+       (echo||print)&&t.Text is ("<" or ">>" or "|" or "&") || echo&&t.Text==">" ||
+       t.Type==SpiceLexer.CONTROL_VARIABLE&&(!echo&&!first.Equals("if",StringComparison.OrdinalIgnoreCase)||!t.Text.StartsWith('$')));
    if(unsafeToken!=null)return new("","unsupported",null,[],physical,"unsafe_control_separator_variable_or_token");
    tokens.Seek(0);var parser=new SpiceParser(tokens){ErrorHandler=new BailErrorStrategy()};parser.RemoveErrorListeners();
    SourceSyntax Capture(ParserRuleContext context)=>capture(token.StartIndex+context.Start.StartIndex,token.StartIndex+context.Stop.StopIndex);
    try{
     var tree=parser.controlCommandProfile();var item=tree.GetChild(0) as ParserRuleContext;
     if(item==null)return new("","comment",null,[],physical);
-    AnalysisSyntax? analysis=null;var name=item.Start.Text.ToLowerInvariant();var kind="unsupported";ImmutableArray<ControlSettingSyntax> settings=[];ControlPostprocessingSyntax? postprocessing=null;
+    AnalysisSyntax? analysis=null;var name=item.Start.Text.ToLowerInvariant();var kind="unsupported";ImmutableArray<ControlSettingSyntax> settings=[];ControlPostprocessingSyntax? postprocessing=null;string? redirect=null;string? argument=null;
     switch(item){
      case SpiceParser.ControlOpContext:kind="analysis";analysis=new(scope,"op",[],[],physical);break;
      case SpiceParser.ControlAcContext ac:kind="analysis";analysis=new(scope,"ac",[ac.identifier(1).GetText()],ac.controlNumber().Select(Capture).ToImmutableArray(),physical);break;
@@ -39,7 +39,10 @@ internal static class ControlExtraction
      case SpiceParser.ControlEchoContext:kind=token.Text.Contains('$')?"report_substitution":"report";break;
      case SpiceParser.ControlQuitContext exit:
       kind=exit.NUMBER()?.GetText() switch {null=>"quit","0" or "1"=>"quit_status",_=>"unsupported"};break;
-     case SpiceParser.ControlReportContext:kind="report";break;
+     case SpiceParser.ControlRedirectContext capturePrint:
+      redirect=capturePrint.identifier(2).GetText();argument=capturePrint.identifier(1).GetText();
+      kind=redirect.Length is >0 and <=64&&redirect.All(c=>char.IsAsciiLetterOrDigit(c)||c=='_')?"report_redirect":"unsupported";break;
+     case SpiceParser.ControlReportContext:kind=print&&tokens.GetTokens().Any(t=>t.Text==">")?"unsupported":"report";break;
      case SpiceParser.ControlLetContext let:
       kind="postprocessing";postprocessing=new(ControlPostprocessingKind.Let,[let.identifier(1).GetText()],Capture(let.expression()));break;
      case SpiceParser.ControlDefineContext define:
@@ -55,9 +58,14 @@ internal static class ControlExtraction
        // may retain an identifier/number beneath a unary sign; do not erase it.
        var unsigned=scalar?.PLUS()==null&&scalar?.MINUS()==null;
        return new ControlSettingSyntax(assignment.referenceName()?.GetText(),value==null?null:Capture(value),unsigned?scalar?.identifier()?.GetText():null,unsigned&&scalar?.NUMBER()!=null,Capture(p).Range);
-      }).ToImmutableArray();break;
+      }).ToImmutableArray();
+      if(settings.Length==1 && settings[0] is {Name: {} local} setting &&
+         (local.StartsWith("local_",StringComparison.OrdinalIgnoreCase)||local.StartsWith("testvar_",StringComparison.OrdinalIgnoreCase)) &&
+         local.Length<=64 && local.All(c=>char.IsAsciiLetterOrDigit(c)||c=='_') &&
+         (setting.Value==null||setting.Value.Text=="\"\"")) kind="local_set";
+      break;
     }
-    return new(name,kind,analysis,settings,physical,kind=="unsupported"?"unsupported_control_command:"+name:null){GrammarRule=SpiceParser.ruleNames[item.RuleIndex],Postprocessing=postprocessing,Argument=token.Text[(item.Start.StopIndex+1)..].Trim()};
+    return new(name,kind,analysis,settings,physical,kind=="unsupported"?"unsupported_control_command:"+name:null){GrammarRule=SpiceParser.ruleNames[item.RuleIndex],Postprocessing=postprocessing,Argument=argument??token.Text[(item.Start.StopIndex+1)..].Trim(),RedirectTarget=redirect};
    }catch(ParseCanceledException){return new(token.Text,"unsupported",null,[],physical,"unsupported_control_syntax");}
   }
  }

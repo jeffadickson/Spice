@@ -114,3 +114,17 @@ ControlVectorExecutionTests exercises the generated expression grammar, selected
 RELATIONS:
 - TYPE: Parent
   VALUE: QUAL-CONTROL-TERMINAL-IF-001
+
+[REQUIREMENT]
+UID: QUAL-CONTROL-PREFIX-REDIRECT-001
+STATUS: Implemented
+TITLE: Isolate pre-analysis variables and redirected scalar reports
+STATEMENT: >>>
+One direct analysis may follow a bounded reporting prefix using local_ or testvar_ flags and empty strings, local vector assignments, echo and balanced conditionals. Missing conditions and unknown condition variables or vectors shall select the false branch with a diagnostic. Circuit inputs shall become visible only at the analysis boundary. The reverse inequality operator >< shall have the same meaning as <> in conditions. A terminal print of a scalar identifier may capture output under a logical ASCII name of at most 64 letters, digits or underscores. No deck-derived path shall be opened. Traversal, append and command separators shall refuse.
+<<<
+COMMENT: >>>
+Verification: ControlVectorExecutionTests, native if-test-1 and new-check-4 witnesses, and the frozen requested corpus. The reference fixture runs inside an owned artifact directory. Managed redirects are serialized inside the control report. An invalid simple greater-than assignment with an unknown identifier RHS records a diagnostic and leaves the prior local value intact. The original analysis projection remains independent of reporting outcomes.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: QUAL-CONTROL-TERMINAL-VECTOR-001

@@ -21,9 +21,21 @@ internal static class RequestedControlPreparation
   if(hasRun&&catalog.Analyses.IsEmpty)return Fail("control_run_without_declared_analysis",block.Range);
   if(hasRun&&catalog.Analyses.Any(a=>a.ScopeId!=0))return Fail("unsupported_control_run_analysis_scope",block.Range);
   var lastAnalysisStart=block.Commands.Where(c=>c.Kind is "analysis" or "run").Select(c=>c.Range.Start).DefaultIfEmpty(-1).Max();
+  var prefix=block.Commands.Where(c=>c.Range.Start<lastAnalysisStart).ToArray();
+  var prefixReporting=hasDirect&&!hasRun&&block.Commands.Count(c=>c.Kind=="analysis")==1&&prefix.Any(c=>c.Kind=="local_set");
+  if(prefixReporting){
+   if(prefix.Any(c=>c.Kind is not ("comment" or "if" or "else" or "end" or "local_set" or "report_substitution") &&
+      !(c.Kind=="report"&&c.Name=="echo") && !(c.Kind=="postprocessing"&&c.Postprocessing?.Kind==ControlPostprocessingKind.Let)))
+    return Fail("unsupported_control_prefix_effect",block.Range);
+   try{ControlVectorExecution.Execute(prefix,new Dictionary<string,double[]>());}
+   catch(InvalidDataException error){return Fail(error.Message,block.Range);}
+  }
   var locals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var quit=false;var branches=new Stack<bool>();
   foreach(var command in block.Commands){
    if(command.Kind=="comment")continue;
+   if(prefixReporting&&command.Range.Start<lastAnalysisStart){
+    omissions.Add(new(0,"control_prefix_reporting",command.Name,"prefix_reporting_executed_separately",command.Range));continue;
+   }
    if(quit)return Fail("unsupported_control_command_after_quit",command.Range);
    if(command.Diagnostic!=null)return Fail(command.Diagnostic,command.Range);
    // Only a terminal reporting region can be projected away. No branch may
@@ -71,6 +83,9 @@ internal static class RequestedControlPreparation
      if(ControlSuffixAdmission.Admit(command,lastAnalysisStart,locals) is {} suffixFailure)return Fail(suffixFailure,command.Range);
      omissions.Add(new(0,"control_postprocessing",command.Name,"postprocessing_not_executed",command.Range));break;
     case "report":omissions.Add(new(0,"control_observation",command.Name,"control_output_not_executed",command.Range));break;
+    case "report_redirect":
+     if(lastAnalysisStart<0||command.Range.Start<=lastAnalysisStart)return Fail("redirect_before_last_analysis",command.Range);
+     omissions.Add(new(0,"control_observation",command.Name,"redirect_captured_separately",command.Range));break;
     case "report_substitution":
      if(lastAnalysisStart<0||command.Range.Start<=lastAnalysisStart)return Fail("substitution_before_last_analysis",command.Range);
      omissions.Add(new(0,"control_observation",command.Name,"control_substitution_not_executed",command.Range));break;

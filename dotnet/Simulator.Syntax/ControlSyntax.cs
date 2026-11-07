@@ -9,6 +9,8 @@ public sealed record ControlCommandSyntax(string Name,string Kind,AnalysisSyntax
     public string GrammarRule { get; init; } = "unclassified";
     /// <summary>Original condition or reporting argument, preserved for bounded evaluation.</summary>
     public string? Argument { get; init; }
+    /// <summary>Validated logical destination for an isolated reporting capture.</summary>
+    public string? RedirectTarget { get; init; }
     /// <summary>Unevaluated local declaration candidate; null for other commands.</summary>
     public ControlPostprocessingSyntax? Postprocessing { get; init; }
 }

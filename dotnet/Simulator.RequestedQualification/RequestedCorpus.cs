@@ -79,7 +79,7 @@ public static class RequestedCorpus
      }
      result.Executed=failed?false:allExecuted?true:null;
      if(result.Executed!=true){result.Status=failed?"engine_operation_failed_atomically":"unattempted_budget";continue;}
-     if(operation==plan.Operations[^1]&&row.ProgramOmissions.Any(o=>o.Reason=="conditional_reporting_not_executed")){
+     if(operation==plan.Operations[^1]&&row.ProgramOmissions.Any(o=>o.Reason is "conditional_reporting_not_executed" or "prefix_reporting_executed_separately" or "redirect_captured_separately")){
       try{
        var reporting=RequestedAnalysis.ExecuteTerminalReporting(syntax,plan,responses);
        await File.WriteAllTextAsync(Path.Combine(folder,"control-report.json"),JsonSerializer.Serialize(reporting,Json));

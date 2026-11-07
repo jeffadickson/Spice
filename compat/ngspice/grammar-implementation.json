@@ -1391,6 +1391,16 @@
     "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections."
   },
   {
+    "rule": "controlRedirect",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": ["dotnet/Simulator.Syntax/ControlExtraction.cs", "dotnet/Simulator.Syntax/ControlVectorExecution.cs"],
+    "requirements": ["QUAL-CONTROL-PREFIX-REDIRECT-001"],
+    "evidence": ["dotnet/Simulator.Syntax.Tests/ControlVectorExecutionTests.cs"],
+    "limitation": "Terminal scalar identifier capture under an ASCII logical name. No host path is opened."
+  },
+  {
     "rule": "controlReport",
     "extraction": "bounded",
     "preparation": "bounded",
