@@ -76,6 +76,48 @@ public sealed class RequestedAnalysisTests
   Assert.Empty(plan.Operations);
   Assert.Equal("unsupported_nonlinear_ac_resistance",Assert.Single(plan.Diagnostics).Code);
  }
+ [Fact] public void Resistor_array_separates_effective_dc_transient_and_ac_resistances()
+ {
+  var syntax=DeckParser.Parse("array\nVin in 0 DC 1 SIN(0 1 100meg 1n 0) AC 1\nR1 in 0 rm L=11u W=3u AC=2.5k\nR2 in 0 10k AC=5k M=2\nR3 in 0 10 AC=5 SCALE=1k\n.model rm R(RSH=1000 NARROW=1u)\n.op\n.tran 1n 10n\n.ac dec 100 1meg 100meg\n.end\n",collectDeclarations:true);
+  var plan=RequestedAnalysis.Prepare(syntax);
+  Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
+  Assert.Equal(new[]{11000d,5000d,10000d},Resistances(0));
+  Assert.Equal(new[]{11000d,5000d,10000d},Resistances(1));
+  Assert.Equal(new[]{2500d,2500d,5000d},Resistances(2));
+  Assert.Equal(1,plan.Operations[0].Requests[0].Circuit.Elements.OfType<Voltage>().Single().Volts);
+  Assert.Equal(0,Assert.IsType<DampedSine>(Assert.IsType<TransientConfigured>(plan.Operations[1].Requests[0].Analysis).Options.Sources!.Single().Waveform).Offset);
+  double[] Resistances(int operation)=>plan.Operations[operation].Requests[0].Circuit.Elements.OfType<Resistor>().Select(r=>Math.Round(r.Ohms,8)).ToArray();
+ }
+ [Fact] public void Zero_effective_width_is_open_only_outside_ac()
+ {
+  var syntax=DeckParser.Parse("open\nV1 in 0 DC 1 AC 1\nR1 in 0 rm L=11u W=2u AC=2.5k\n.model rm R(RSH=1000 NARROW=1u)\n.op\n.ac lin 3 1 3\n.end\n",collectDeclarations:true);
+  var plan=RequestedAnalysis.Prepare(syntax);
+  Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
+  var dc=Assert.Single(plan.Operations[0].Requests[0].Circuit.Elements.OfType<Vccs>());
+  Assert.Equal(0,dc.Siemens);
+  var ac=Assert.Single(plan.Operations[1].Requests[0].Circuit.Elements.OfType<Resistor>());
+  Assert.Equal(dc.Id,ac.Id);
+  Assert.Equal(2500,ac.Ohms);
+ }
+ [Theory]
+ [InlineData("R1 in 0 10k M=-1")]
+ [InlineData("R1 in 0 10k SCALE=0")]
+ [InlineData("R1 in 0 10k M=1 M=2")]
+ [InlineData("R1 in 0 rm L=11u W=1u AC=2.5k")]
+ public void Invalid_resistor_assignments_refuse_atomically(string card)
+ {
+  var syntax=DeckParser.Parse($"invalid\nV1 in 0 1\n{card}\n.model rm R(RSH=1000 NARROW=1u)\n.op\n.end\n",collectDeclarations:true);
+  var plan=RequestedAnalysis.Prepare(syntax);
+  Assert.False(plan.Success);
+  Assert.Empty(plan.Operations);
+ }
+ [Fact] public void Distinct_sine_bias_with_storage_remains_a_refusal()
+ {
+  var syntax=DeckParser.Parse("storage\nV1 in 0 DC 1 SIN(0 1 1k)\nR1 in out 1k\nC1 out 0 1u\n.tran 1u 100u\n.end\n",collectDeclarations:true);
+  var plan=RequestedAnalysis.Prepare(syntax);
+  Assert.Equal("unsupported_transient_dc_bias",Assert.Single(plan.Diagnostics).Code);
+  Assert.Empty(plan.Operations);
+ }
  [Fact] public void Documented_two_point_linear_grid_is_preserved_despite_native_oracle_bug()
  {var plan=Prepare(".ac lin 2 10 30");Assert.True(plan.Success);Assert.Equal(new[]{10d,30},plan.Operations[0].Coordinates);}
  [Fact] public void No_analysis_is_an_explicit_refusal()=>Assert.False(Prepare("").Success);

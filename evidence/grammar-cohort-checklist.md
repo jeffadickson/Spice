@@ -281,3 +281,45 @@ scope. The positive test failed before implementation and caught a
 deliberate mutant that reused the DC resistance in AC. The frontend
 suite ran its existing seeded properties. Rust coverage and standalone
 fuzzing were outside this checkpoint.
+
+## Original resistor array
+
+The original tests/resistance/res_array.cir now completes its requested
+OP, 201-point AC sweep and 51-point transient. OP and AC agree with
+ngspice on all compared observables. The greatest AC current difference
+was 2.17e-19 A. The native R3 sheet width is exactly zero after narrowing,
+so i(vr3) is 0 A in OP and 400 µA at unit AC excitation. The explicit AC
+resistance is applied only in small-signal analysis.
+
+The unmodified transient comparison still flags a 25.329 mV source
+difference at 1 ns. The ngspice samples bracketing the delayed sine
+onset are at 0.856 ns and 1.056 ns. Linear interpolation between them
+gives 25.329 mV at the onset, where the exact value and the engine value
+are both zero. Using V(t) = sin(2 pi 1e8 max(0,t - 1e-9)) and
+i(Vin) = -0.0005 V(t) A, each trace agrees on its own sample grid within
+3.56e-15 V and 1.79e-18 A. This is analytical evidence for the source and
+source current, separate from strict paired trace qualification.
+The comparison policy and tolerances are unchanged.
+
+The 24-row replay of previously resistor- or source-bias-blocked
+inputs completed with valid provenance. Both previously fixed divider
+copies still agree, the array newly executes, and 21 remain blocked.
+Relative to the preceding checkpoint this is one new deck executing
+and zero new decks fully agreeing under the existing comparator.
+No full corpus rerun was performed.
+
+FRONTEND-RESISTOR-ARRAY-001 traces the requested instance options and
+bounded memoryless SIN startup. Frontend tests passed 613 with 37
+opt-in skips. Syntax tests passed 471 with one symlink skip. The
+positive test failed before implementation and caught a mutant
+multiplying the AC resistance by M. The suite ran its existing
+seeded properties. Managed coverage was 77.49% line and 60.93% branch.
+StrictDoc parsed 52 documents, 433 unique IDs and 401 parents. Rust
+coverage and standalone fuzzing were outside this checkpoint.
+
+The final replay tested base 8ca32b0 plus the patch on corpus
+e8285746c73a8229cf922487c8ccfcf6bea61bce. Artifacts are under
+E:/Artifacts/Spice-res-array-8ca32b0. The final-replay/summary.json
+SHA-256 is ac6f28b31d4f8ca0644bc9c1bc5f37b11d906e3e4056767a71d477832e5b4842.
+The sine-audit.json SHA-256 is
+6d1f503df95c41ba101651b134c8e9ef8c5c4ae4ce15f636ba2798e8740522da.

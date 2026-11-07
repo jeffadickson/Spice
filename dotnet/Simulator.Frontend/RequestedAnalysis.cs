@@ -128,7 +128,7 @@ public static partial class RequestedAnalysis
        if(acCircuit.Elements.Any(e=>e is not (Resistor or Capacitor or Inductor or Voltage or Current or Vcvs or Vccs or Cccs or Ccvs)))
         throw new PreparationFailure("unsupported_nonlinear_ac_resistance",card.Range);
        acCircuit=acCircuit with{Elements=acCircuit.Elements.Select(e=>
-           e is Resistor r&&prepared.AcResistances.TryGetValue(r.Id,out var ohms)?r with{Ohms=ohms}:e).ToArray()};
+           prepared.AcResistances.TryGetValue(e.Id,out var ohms)?new Resistor(e.Id,e.P,e.N,ohms):e).ToArray()};
       }
       requests.Add(baseRequest with{CaseId=id,Circuit=acCircuit,Analysis=new Ac(coordinates.ToArray(),prepared.AcSources.ToArray())});break;
      case "tran":

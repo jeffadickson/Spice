@@ -132,7 +132,7 @@ public static class OperatingPointBridge
                     if(selected&&primitive.RequiresExcitationProfile&&primitive.Excitation==null)throw new BridgeFailure("unsupported_source_profile",primitive.Range);
                     if(primitive.Family is not ("R" or "V" or "I") && !(selected && primitive.Family is ("C" or "L" or "E" or "G" or "F" or "H")))throw new BridgeFailure("unsupported_active_card",primitive.Range);
                     if(!names.Add(primitive.Name))throw new BridgeFailure("duplicate_element",primitive.Range);
-                    double value;double? acOhms=null;double magnitude=0,phase=0;SourceWaveformSyntax? waveformSyntax=null;ImmutableArray<double> waveformValues=[];
+                    double value;double? acOhms=null;var dcOpen=false;double magnitude=0,phase=0;SourceWaveformSyntax? waveformSyntax=null;ImmutableArray<double> waveformValues=[];
                     if(selected&&primitive.Family is ("V" or "I")&&primitive.Excitation is {} excitation)
                     {
                         double initial=0;
@@ -146,18 +146,12 @@ public static class OperatingPointBridge
                         if(excitation.AcMagnitude!=null){magnitude=Evaluate(excitation.AcMagnitude);explicitAcSources++;}
                         if(excitation.AcPhase!=null)phase=Evaluate(excitation.AcPhase);
                     }
-                    else if(requested&&primitive.AcResistance is {} acResistance)
-                    {
-                        value=Evaluate(primitive.Value!);
-                        var resistance=Evaluate(acResistance);
-                        if(!double.IsFinite(resistance)||resistance<=0)throw new BridgeFailure("invalid_ac_resistance",acResistance.Range);
-                        acOhms=resistance;
-                    }
+
                     else if(selected&&primitive.Family=="R")
                     {
-                        var preparedResistor=ResistorModelLowering.Prepare(catalog,primitive,environment);
+                        var preparedResistor=requested?ResistorModelLowering.PrepareRequested(catalog,primitive,environment):ResistorModelLowering.Prepare(catalog,primitive,environment);
                         if(!preparedResistor.Success)throw new BridgeFailure(preparedResistor.Diagnostics[0].Code,preparedResistor.Diagnostics[0].Range);
-                        value=preparedResistor.Resistor!.Ohms;
+                        value=preparedResistor.Resistor!.Ohms;acOhms=preparedResistor.Resistor.AcOhms;dcOpen=preparedResistor.Resistor.DcOpen;
                     }
                     else
                     {
@@ -188,6 +182,7 @@ public static class OperatingPointBridge
                         var cp=Node(primitive.Control.P.Text);var cn=Node(primitive.Control.N.Text);
                         elements.Add(Controlled(id,p,n,cp,cn,value,primitive.Family=="E"));
                     }
+                    else if(dcOpen)elements.Add(new Vccs(id,p,n,p,n,0)); // Exact open with stable terminals and wire ID.
                     else elements.Add(primitive.Family switch{"R"=>new Resistor(id,p,n,value),"C"=>new Capacitor(id,p,n,value),"L"=>new Inductor(id,p,n,value),"V"=>new Voltage(id,p,n,value),_=>new Current(id,p,n,value)});
                     if(selected&&primitive.Family is ("V" or "I"))
                     {
