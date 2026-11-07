@@ -162,9 +162,41 @@ public static partial class ControlVectorExecution
             { diagnostics.Add(error.Message);return false; }
         }
 
-        double[] Resolve(string name,IReadOnlyDictionary<string,double[]>? locals) =>
-            locals?.TryGetValue(name,out var local)==true ? local :
-            values.TryGetValue(name,out var value) ? value : throw new InvalidDataException("unknown_control_vector:"+name);
+        double[] Resolve(string name,IReadOnlyDictionary<string,double[]>? locals)
+        {
+            if(locals?.TryGetValue(name,out var local)==true)return local;
+            if(values.TryGetValue(name,out var value))return value;
+            // Native reporting accepts v(name) for a named local vector.
+            // Prefer an actual circuit voltage whenever both forms exist.
+            if(name.StartsWith("v(",StringComparison.OrdinalIgnoreCase)&&name.EndsWith(')'))
+            {
+                var bare=name[2..^1];
+                if(!constantNames.Contains(bare)&&!inputs.Keys.Contains(bare,StringComparer.OrdinalIgnoreCase)
+                    &&values.TryGetValue(bare,out value))return value;
+            }
+            if(locals!=null&&name.Contains('-')&&TryFormalDifference(name,locals) is {} difference)
+                return difference;
+            throw new InvalidDataException("unknown_control_vector:"+name);
+        }
+
+        // BODY lexing preserves hyphenated names. Reuse the arithmetic lexer
+        // for an otherwise unresolved token composed only of bound formals.
+        double[]? TryFormalDifference(string name,IReadOnlyDictionary<string,double[]> formals)
+        {
+            var lexer=new SpiceLexer(new AntlrInputStream(name));
+            lexer.Mode(SpiceLexer.EXPRESSION);
+            lexer.RemoveErrorListeners();
+            var tokens=new CommonTokenStream(lexer);
+            tokens.Fill();
+            var parts=tokens.GetTokens().Where(t=>t.Channel==TokenConstants.DefaultChannel&&t.Type!=TokenConstants.EOF).ToArray();
+            if(parts.Length is <3 or >17||parts.Length%2==0||parts[^1].StopIndex!=name.Length-1)return null;
+            for(var index=0;index<parts.Length;index++)
+                if(index%2==0?(parts[index].Type!=SpiceLexer.WORD||!formals.ContainsKey(parts[index].Text)):
+                    parts[index].Type!=SpiceLexer.MINUS)return null;
+            var value=formals[parts[0].Text];
+            for(var index=2;index<parts.Length;index+=2)value=Binary("-",value,formals[parts[index].Text]);
+            return value;
+        }
 
         double[] Evaluate(string expression,IReadOnlyDictionary<string,double[]>? locals=null,int depth=0,bool condition=false)
         {
@@ -194,16 +226,16 @@ public static partial class ControlVectorExecution
             {
                 var tree = parser.expression();
                 if (tokens.LA(1)!=TokenConstants.EOF) throw new InvalidDataException("invalid_control_expression");
-                return Eval(tree,locals,depth);
+                return Eval(tree,locals,depth,condition);
             }
             catch (ParseCanceledException error) { throw new InvalidDataException("invalid_control_expression",error); }
         }
 
-        double[] Eval(SpiceParser.ExpressionContext node,IReadOnlyDictionary<string,double[]>? locals,int depth)
+        double[] Eval(SpiceParser.ExpressionContext node,IReadOnlyDictionary<string,double[]>? locals,int depth,bool condition)
         {
             if (++nodes>16384 || depth>64) throw new InvalidDataException("control_expression_budget");
             var children=node.expression();
-            double[] Child(int i)=>Eval(children[i],locals,depth+1);
+            double[] Child(int i)=>Eval(children[i],locals,depth+1,condition);
             double[] result;
             if (node.voltageReference()!=null ||
                 (node.identifier()?.GetText().ToLowerInvariant() is "i" or "v") && node.LPAREN()!=null)
@@ -214,10 +246,10 @@ public static partial class ControlVectorExecution
             else if (node.identifier()!=null && node.LPAREN()!=null)
             {
                 var name=node.identifier().GetText().ToLowerInvariant();
-                var args=children.Select(child=>Eval(child,locals,depth+1)).ToArray();
+                var args=children.Select(child=>Eval(child,locals,depth+1,condition)).ToArray();
                 if (functions.TryGetValue(name,out var function) && function.Names.Length==args.Length+1)
                     result=Evaluate(function.Expression!.Text,function.Names.Skip(1).Zip(args)
-                        .ToDictionary(p=>p.First,p=>p.Second,StringComparer.OrdinalIgnoreCase),depth+1);
+                        .ToDictionary(p=>p.First,p=>p.Second,StringComparer.OrdinalIgnoreCase),depth+1,condition);
                 else result=(name,args.Length) switch
                 {
                     ("length",1)=>[args[0].Length],

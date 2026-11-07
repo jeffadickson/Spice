@@ -22,11 +22,21 @@ internal static class RequestedControlPreparation
   if(hasRun&&catalog.Analyses.Any(a=>a.ScopeId!=0))return Fail("unsupported_control_run_analysis_scope",block.Range);
   var lastAnalysisStart=block.Commands.Where(c=>c.Kind is "analysis" or "run").Select(c=>c.Range.Start).DefaultIfEmpty(-1).Max();
   var prefix=block.Commands.Where(c=>c.Range.Start<lastAnalysisStart).ToArray();
-  var prefixReporting=hasDirect&&!hasRun&&block.Commands.Count(c=>c.Kind=="analysis")==1&&prefix.Any(c=>c.Kind=="local_set");
+  var hasLocalSettings=prefix.Any(c=>c.Kind=="local_set");
+  var prefixReporting=hasDirect&&!hasRun&&block.Commands.Count(c=>c.Kind=="analysis")==1&&
+      (hasLocalSettings||prefix.Any(c=>c.Postprocessing?.Kind==ControlPostprocessingKind.Define));
   if(prefixReporting){
-   if(prefix.Any(c=>c.Kind is not ("comment" or "if" or "else" or "end" or "local_set" or "report_substitution") &&
-      !(c.Kind=="report"&&c.Name=="echo") && !(c.Kind=="postprocessing"&&c.Postprocessing?.Kind==ControlPostprocessingKind.Let)))
-    return Fail("unsupported_control_prefix_effect",block.Range);
+   foreach(var command in prefix){
+    if(command.Postprocessing?.Kind==ControlPostprocessingKind.Define){
+     if(ControlSuffixAdmission.Admit(command,lastAnalysisStart,new(StringComparer.OrdinalIgnoreCase),allowPrefixDefinition:true) is {} error)
+      return Fail(error,command.Range);
+     continue;
+    }
+    if(command.Kind=="comment")continue;
+    if(!hasLocalSettings||command.Kind is not ("if" or "else" or "end" or "local_set" or "report_substitution")&&
+       !(command.Kind=="report"&&command.Name=="echo")&&command.Postprocessing?.Kind!=ControlPostprocessingKind.Let)
+     return Fail("unsupported_control_prefix_effect",command.Range);
+   }
    try{ControlVectorExecution.Execute(prefix,new Dictionary<string,double[]>(),constants:constants);}
    catch(InvalidDataException error){return Fail(error.Message,block.Range);}
   }

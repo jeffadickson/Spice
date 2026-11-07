@@ -1272,20 +1272,23 @@
     "rule": "controlLet",
     "extraction": "bounded",
     "preparation": "bounded",
-    "execution": "not_executed",
+    "execution": "bounded",
     "implementation": [
       "dotnet/Simulator.Syntax/ControlExtraction.cs",
       "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs",
-      "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+      "dotnet/Simulator.Syntax/ControlVectorExecution.cs"
     ],
     "requirements": [
-      "FRONTEND-CONTROL-006"
+      "FRONTEND-CONTROL-006",
+      "FRONTEND-CONTROL-007"
     ],
     "evidence": [
       "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
-      "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs"
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs",
+      "dotnet/Simulator.Frontend.Tests/RequestedPrefixFunctionTests.cs"
     ],
-    "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented.",
+    "limitation": "Bounded local vector assignments execute in admitted reporting programs. Other suffix declarations may be retained as explicit omissions.",
     "commands": [
       "let"
     ]
@@ -1294,20 +1297,23 @@
     "rule": "controlDefine",
     "extraction": "bounded",
     "preparation": "bounded",
-    "execution": "not_executed",
+    "execution": "bounded",
     "implementation": [
       "dotnet/Simulator.Syntax/ControlExtraction.cs",
       "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs",
-      "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+      "dotnet/Simulator.Syntax/ControlVectorExecution.cs"
     ],
     "requirements": [
-      "FRONTEND-CONTROL-006"
+      "FRONTEND-CONTROL-006",
+      "FRONTEND-CONTROL-007"
     ],
     "evidence": [
       "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
-      "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs"
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs",
+      "dotnet/Simulator.Frontend.Tests/RequestedPrefixFunctionTests.cs"
     ],
-    "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented.",
+    "limitation": "Bounded pure prefix functions around one direct analysis and bounded terminal reporting. Repeated dispatch and effectful prefix programs remain outside the profile.",
     "commands": [
       "define"
     ]

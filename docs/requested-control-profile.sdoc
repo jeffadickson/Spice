@@ -81,7 +81,7 @@ UID: FRONTEND-CONTROL-006
 STATUS: Draft
 TITLE: Preserve bounded post-analysis declarations without claiming evaluation
 STATEMENT: >>>
-Generated control metadata shall retain simple-target let, named define and explicit unlet declarations with physical ranges. Requested individual analyses may admit these only after the final analysis or run command, recording each as postprocessing_not_executed. Local names shall contain1..64 ASCII letters/digits/underscores, starting with a letter or underscore. Let shall not replace root observable vectors or reserved axes; unlet shall name only suffix-created local vectors. Earlier or interleaved declarations, unsupported names, malformed syntax, substitutions and effectful commands shall refuse the complete plan. Display/listing and unsigned literal xbrushwidth integers1..64 may be retained as explicit unexecuted reporting observations. Reporting settings shall not alter numerical policy.
+Generated control metadata shall retain simple-target let, named define and explicit unlet declarations with physical ranges. Requested individual analyses may retain these in the terminal omission profile after the final analysis or run command, recording each as postprocessing_not_executed. Local names shall contain1..64 ASCII letters/digits/underscores, starting with a letter or underscore. Let shall not replace root observable vectors or reserved axes; unlet shall name only suffix-created local vectors. Earlier declarations shall require a separately qualified prefix profile. Interleaved declarations, unsupported names, malformed syntax, substitutions and effectful commands shall refuse the complete plan. Display/listing and unsigned literal xbrushwidth integers1..64 may be retained as explicit unexecuted reporting observations. Reporting settings shall not alter numerical policy.
 <<<
 COMMENT: >>>
 Implementation: ControlExtraction and generated controlLet/controlDefine/controlUnlet productions; ControlSuffixAdmission; RequestedControlPreparation; root-vector guard in RequestedAnalysis. Verification: ControlSuffixTests seeded properties/negative cases and ControlSuffixNativeTests owned native OP/current/reporting-value witness across LU/faer. This profile does not evaluate arbitrary vectors/functions or execute control loops; independent analysis agreement is distinct from complete input-program parity. Primary semantics inspected: ngspice com_let.c vec_get overwrite behavior, define.c and plotting xbrushwidth consumers.
@@ -128,3 +128,17 @@ Verification: ControlVectorExecutionTests, native if-test-1 and new-check-4 witn
 RELATIONS:
 - TYPE: Parent
   VALUE: QUAL-CONTROL-TERMINAL-VECTOR-001
+
+[REQUIREMENT]
+UID: FRONTEND-CONTROL-007
+STATUS: Draft
+TITLE: Pure reporting functions before a single analysis
+STATEMENT: >>>
+A bounded direct control block may define validated reporting functions before its single analysis. Bind physical analysis vectors only when the analysis completes. Evaluate function bodies in the caller's expression context, including relational operators in a reporting condition. Resolve v(name) to a declared local reporting vector when no circuit voltage matches that name. Keep effectful prefix commands, ambiguous formals and repeated or interleaved analyses outside this profile.
+<<<
+COMMENT: >>>
+Implementation: RequestedControlPreparation, ControlSuffixAdmission and ControlVectorExecution. Verification: RequestedPrefixFunctionTests and original tests/regression/parser/minus-minus.cir replay. The native analysis projection omits reporting commands explicitly. A separate unchanged native run checks the original report output.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-CONTROL-006

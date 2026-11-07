@@ -22,6 +22,12 @@ or axis replacement and nonlocal deletion refuse atomically. Display/listing and
 literal xbrushwidth1..64 are reporting omissions. Loops, alter, setplot, shell,
 arbitrary writes and substitutions remain blockers.
 
+## Original-deck checklist
+
+The [named cohort checklist](../evidence/grammar-cohort-checklist.md) joins actual
+production names to blockers observed on original decks and records independent
+numerical evidence by input hash. A diagnostic derivative is tracked separately.
+
 ## Regenerate
 
 From the checkout root in PowerShell7 with the pinned .NET SDK, Java and ANTLR
