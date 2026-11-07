@@ -116,3 +116,43 @@ report. FsCheck found input NonNegativeInt 1 and saved the failing replay
 15956658760579799124,10030303121570407149,3. Negative tests also exercise
 oversized loops, missing observables, physical commands and nesting.
 Rust coverage and a standalone fuzz campaign were outside this checkpoint.
+
+## Short PULSE transient
+
+The original tests/general/rc.cir now completes its requested transient.
+This adds one original execution and zero complete ngspice agreements in
+the targeted replay. The generated grammar already accepted the deck.
+FRONTEND-PULSE-HORIZON-001 covers preparation of the first rise and hold
+when width and period default to the requested stop time.
+
+| Observable | Compared points | Outside tolerance | Maximum absolute error |
+|---|---:|---:|---:|
+| Source voltage v(1) | 71 | 0 | 2.22e-16 V |
+| Capacitor voltage v(2) | 71 | 70 | 0.04260 V |
+| Source current i(vin) | 71 | 70 | 0.04260 A |
+
+The next RC investigation is the transient integration method and time grid.
+The full corpus was outside this replay.
+
+| Remaining original control paths | Behavior needed after parsing |
+|---|---|
+| examples/various/atanh.sp | Vector composition, scale selection, complex atanh and polar reporting |
+| Both param_sweep.cir copies | Bounded while, resistor alteration, repeated run and plot/output state |
+| Both MonteCarlo.sp copies | Plot state, dynamic substitutions, stochastic functions and replayable seeds, alteration, repeated AC and measurements |
+
+The final Run-RequestedCorpus.cs replay used base 874e8e6 plus the patch,
+the existing issue40 Rust engine and corpus
+e8285746c73a8229cf922487c8ccfcf6bea61bce. It reported valid provenance.
+Artifacts are under E:/Artifacts/Spice-short-pulse-874e8e6. The inventory
+SHA-256 is 8cb95a49f540792ff680edc889d56afdf0e6a7477d24617e760b55c8c6175e87.
+The final/summary.json SHA-256 is
+6e8c3ffcba6cd428fcb31b8a5a004fed56f5e7dd5b8d86ba43a3ed9f0ece1e64.
+The independent unchanged ngspice execution is retained in rc-original.log
+and rc-original.raw.
+
+The frontend suite passed 600 tests with 37 opt-in skips. Managed Coverlet
+coverage was 77.46% line and 60.37% branch. StrictDoc parsed 52 documents
+with 428 unique IDs and 396 resolved parents. Both short-pulse assertions
+failed before the fix and also caught a deliberate doubled-rise mutant.
+The existing frontend suite includes seeded properties. Rust coverage and
+standalone fuzzing were outside this checkpoint.

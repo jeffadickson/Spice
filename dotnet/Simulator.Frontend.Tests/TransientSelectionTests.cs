@@ -44,9 +44,24 @@ public sealed class TransientSelectionTests
   Assert.True(result.Success);var p=Assert.IsType<Pulse>(Assert.Single(Assert.IsType<TransientConfigured>(result.Prepared.Request!.Analysis).Options.Sources!).Waveform);Assert.Equal(0,p.WidthS);Assert.Equal(10e-6,p.PeriodS);
  }
  [Theory]
+ [InlineData("PULSE(0 1)",0,1e-6)]
+ [InlineData("PULSE(0 1 2u .5u)",2e-6,.5e-6)]
+ public void Short_pulse_preserves_first_rise_and_holds_through_stop(string profile,double delay,double rise)
+ {
+  var result=TransientSelection.Prepare(Deck(profile),10e-6,1e-6);
+  Assert.True(result.Success,string.Join(',',result.Prepared.Diagnostics.Select(d=>d.Code)));
+  var config=Assert.IsType<TransientConfigured>(result.Prepared.Request!.Analysis).Options;
+  var ramp=Assert.IsType<Pwl>(Assert.Single(config.Sources!).Waveform);
+  Assert.Equal(0,ramp.Points[0].TimeS);
+  Assert.Equal(0,ramp.Points[0].Value);
+  if(delay>0){Assert.Equal(delay,ramp.Points[1].TimeS,14);Assert.Equal(0,ramp.Points[1].Value);}
+  Assert.Equal(delay+rise,ramp.Points[^1].TimeS,14);
+  Assert.Equal(1,ramp.Points[^1].Value);
+ }
+ [Theory]
  [InlineData("DC 1 PWL(0 0 1u 1)","unsupported_transient_dc_bias")]
  [InlineData("DC 1 SFFM(0 1 1k 1 10k)","unsupported_transient_dc_bias")]
- [InlineData("PULSE(0 1)","unsupported_pulse_overlap")]
+ [InlineData("PULSE(0 1 0 1u 1u 2u 3u)","unsupported_pulse_overlap")]
  [InlineData("SIN(0 1 -1)","unsupported_sine_profile")]
  [InlineData("EXP(1 2 1u -1u 2u 1u)","unsupported_exponential_profile")]
  [InlineData("AM(0 1 1 0 1)","unsupported_modulated_source_profile")]

@@ -39,6 +39,16 @@ public static class TransientSelection
    switch(source.Kind){
     case SourceWaveformKind.Pulse:
      var rise=Field(3,defaultStepS);if(rise<=0)rise=defaultStepS;
+     if(p.Length<=4){
+      // ngspice defaults both width and period to TSTOP. A fall or repeat
+      // cannot occur in this request, including at the exact stop endpoint.
+      var pulseDelay=Field(2,0);
+      var riseEnd=pulseDelay+rise;
+      if(pulseDelay<0||!double.IsFinite(riseEnd)||riseEnd<=pulseDelay)return Fail("invalid_short_pulse_timing",source.Range);
+      waveform=new Pwl(pulseDelay==0?[new(0,p[0]),new(riseEnd,p[1])]:
+          [new(0,p[0]),new(pulseDelay,p[0]),new(riseEnd,p[1])]);
+      break;
+     }
      var fall=Field(4,defaultStepS);if(fall<=0)fall=defaultStepS;
      var width=p.Length==5?0:Field(5,stopS);if(width<0)width=stopS;
      var period=Field(6,stopS);if(period<=0)period=stopS;
