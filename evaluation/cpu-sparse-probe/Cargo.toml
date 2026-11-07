@@ -1,0 +1,16 @@
+[package]
+name = "spice-cpu-sparse-probe"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[[bin]]
+name = "spice-cpu-sparse-probe"
+path = "main.rs"
+
+[dependencies]
+faer = { version = "=0.24.4", default-features = false, features = ["std", "sparse-linalg", "rayon"] }
+rayon = "=1.11.0"
+
+[lints.rust]
+unsafe_code = "forbid"
