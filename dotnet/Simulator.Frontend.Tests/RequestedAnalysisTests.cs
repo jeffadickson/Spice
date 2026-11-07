@@ -57,6 +57,25 @@ public sealed class RequestedAnalysisTests
    Assert.Equal(new AdaptiveOptions(1e-7,1e-9,1e-9,.1/1e6,4*options.MaxSteps),policy);
   }else Assert.Null(options.Adaptive);
  }
+ [Theory]
+ [InlineData("15k", true)]
+ [InlineData("0", false)]
+ public void Ac_resistance_applies_only_to_linear_small_signal_request(string acOhms,bool supported)
+ {
+  var syntax=DeckParser.Parse($"partition\nV1 in 0 DC 1 AC 1\nR1 in out 5k\nR2 out 0 5k AC={acOhms}\n.op\n.ac lin 3 1 3\n.end\n",collectDeclarations:true);
+  var plan=RequestedAnalysis.Prepare(syntax);
+  Assert.Equal(supported,plan.Success);
+  if(!supported){Assert.Empty(plan.Operations);return;}
+  Assert.All(plan.Operations[0].Requests[0].Circuit.Elements.OfType<Resistor>(),r=>Assert.Equal(5000,r.Ohms));
+  Assert.Equal(new[]{5000d,15000d},plan.Operations[1].Requests[0].Circuit.Elements.OfType<Resistor>().Select(r=>r.Ohms));
+ }
+ [Fact] public void Ac_resistance_refuses_a_bias_dependent_ac_circuit()
+ {
+  var syntax=DeckParser.Parse("nonlinear\nV1 in 0 DC 1 AC 1\nR1 in out 5k AC=15k\nD1 out 0 model\n.model model D\n.op\n.ac lin 3 1 3\n.end\n",collectDeclarations:true);
+  var plan=RequestedAnalysis.Prepare(syntax);
+  Assert.Empty(plan.Operations);
+  Assert.Equal("unsupported_nonlinear_ac_resistance",Assert.Single(plan.Diagnostics).Code);
+ }
  [Fact] public void Documented_two_point_linear_grid_is_preserved_despite_native_oracle_bug()
  {var plan=Prepare(".ac lin 2 10 30");Assert.True(plan.Success);Assert.Equal(new[]{10d,30},plan.Operations[0].Coordinates);}
  [Fact] public void No_analysis_is_an_explicit_refusal()=>Assert.False(Prepare("").Success);

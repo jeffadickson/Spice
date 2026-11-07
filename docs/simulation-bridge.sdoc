@@ -280,3 +280,17 @@ RequestedAnalysis supplies the existing Rust adaptive controller with relative t
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-TRANSIENT-SELECT-001
+
+[REQUIREMENT]
+UID: FRONTEND-RESISTOR-AC-001
+STATUS: Draft
+TITLE: Distinct scalar resistance in requested small-signal analysis
+STATEMENT: >>>
+A scalar resistor with one AC assignment shall retain positive finite DC and AC resistances in ohms. Requested OP, DC and transient shall retain the DC resistance. Requested AC on a linear circuit shall use the AC resistance for that resistor without mutating the other requests. A requested AC circuit with bias-dependent elements shall refuse this profile until DC bias and AC conductance are supplied separately.
+<<<
+COMMENT: >>>
+PrimitiveExtraction retains the generated assignment, OperatingPointBridge binds both values in instance scope, and RequestedAnalysis projects the existing linear wire model for AC only. Reference behavior is ngspice resload.c and restemp.c. Evidence uses RequestedAnalysisTests and the two original res_partition paths.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SELECT-001

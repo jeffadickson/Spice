@@ -121,7 +121,16 @@ public static partial class RequestedAnalysis
        if(points>maxPoints)throw new PreparationFailure("requested_point_budget",card.Range);
        coordinates=Enumerable.Range(0,points).Select(i=>values[1]*Math.Pow(ratio,i/count)).ToImmutableArray();
       }else throw new PreparationFailure("unsupported_ac_grid",card.Range);
-      requests.Add(baseRequest with{CaseId=id,Analysis=new Ac(coordinates.ToArray(),prepared.AcSources.ToArray())});break;
+      var acCircuit=baseRequest.Circuit;
+      if(!prepared.AcResistances.IsEmpty){
+       // The engine biases and linearizes nonlinear elements from the same
+       // circuit. Substitution is exact only when AC stamps are bias independent.
+       if(acCircuit.Elements.Any(e=>e is not (Resistor or Capacitor or Inductor or Voltage or Current or Vcvs or Vccs or Cccs or Ccvs)))
+        throw new PreparationFailure("unsupported_nonlinear_ac_resistance",card.Range);
+       acCircuit=acCircuit with{Elements=acCircuit.Elements.Select(e=>
+           e is Resistor r&&prepared.AcResistances.TryGetValue(r.Id,out var ohms)?r with{Ohms=ohms}:e).ToArray()};
+      }
+      requests.Add(baseRequest with{CaseId=id,Circuit=acCircuit,Analysis=new Ac(coordinates.ToArray(),prepared.AcSources.ToArray())});break;
      case "tran":
       unit="s";
       if(!card.Names.IsEmpty&&!usesUic)throw new PreparationFailure("unsupported_transient_uic",card.Range);

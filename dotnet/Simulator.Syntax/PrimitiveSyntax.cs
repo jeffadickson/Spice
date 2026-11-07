@@ -9,6 +9,8 @@ public sealed record PrimitiveSyntax(string Name,string Family,int ScopeId,Sourc
     public SourceExcitationSyntax? Excitation { get; init; }
     /// <summary>Generated resistor model candidate and assignment tail; scalar/parameter evaluation still has precedence.</summary>
     public ResistorModelSyntax? ResistorModel {get;init;}
+    /// <summary>Unevaluated AC-only resistance in ohms, paired with the scalar DC Value.</summary>
+    public SourceSyntax? AcResistance {get;init;}
     /// <summary>A leading reserved DC/AC token must satisfy the bounded clause grammar rather than become a same-named scalar parameter.</summary>
     public bool RequiresExcitationProfile { get; init; }
     /// <summary>Typed differential control terminals for a qualified linear E/G source.</summary>
@@ -112,6 +114,13 @@ internal static class PrimitiveExtraction
             &&initial.referenceName()?.GetText().Equals("ic",StringComparison.OrdinalIgnoreCase)==true
             &&initial.value()?.GetText()=="0")
             return new(card.Start.Text,family,scope,capture(nodes.node(0)),capture(nodes.node(1)),capture(parameters[0]),true,capture(card).Range);
+        // Retain the exact generated assignment shape. Other tails, including
+        // multiplicity or model geometry, require their own semantic profile.
+        if(family=="R"&&parameters.Length==2&&parameters[0].value()!=null
+            &&parameters[1].assignment() is {} acResistance
+            &&acResistance.referenceName()?.GetText().Equals("ac",StringComparison.OrdinalIgnoreCase)==true)
+            return new(card.Start.Text,family,scope,capture(nodes.node(0)),capture(nodes.node(1)),capture(parameters[0]),false,capture(card).Range)
+            {AcResistance=capture((ParserRuleContext)acResistance.GetChild(2))};
         var valueIndex=card is SpiceParser.SourceContext&&parameters.Length>0&&parameters[0].GetText().Equals("dc",StringComparison.OrdinalIgnoreCase)?1:0;
         var supported=parameters.Length==valueIndex+1&&parameters[valueIndex].assignment()==null&&!(card is SpiceParser.SourceContext&&parameters[valueIndex].call()!=null);
         var value=supported?capture(parameters[valueIndex]):null;

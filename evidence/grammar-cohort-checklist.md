@@ -241,3 +241,43 @@ ceiling to one. Managed Coverlet reported 77.47% line and 60.45% branch
 coverage. StrictDoc parsed 52 documents with 429 IDs and 397 resolved
 parents. Rust coverage, standalone fuzzing and a full census were
 outside this checkpoint.
+
+## Scalar resistor AC override
+
+The original tests/resistance/res_partition.cir and repository
+compat/ngspice/res_partition.cir previously refused the AC resistance
+assignment. Both now execute and agree with ngspice on their requested
+OP and all 41 AC frequencies. Each comparison covers two voltages and
+the signed source current. The expected output divider ratio is 0.5
+at DC and 0.75 at AC. The maximum AC current difference was 6.78e-21 A.
+FRONTEND-RESISTOR-AC-001 traces the bounded linear profile. Resistor
+model geometry, multiplicity and scaling combinations in res_array.cir
+remain separate work. Bias-dependent AC still needs separate DC and AC
+conductance stamps.
+
+The current engine also completed the four previously failed transistor
+amplifier transients, comprising spice3.deck and xspice_c1.cir and
+their parallel copies. All four still have numeric discrepancies.
+The largest voltage difference was 1.389 mV at the collector. This
+replay did not reproduce the historical LU refinement failure and does
+not assign a cause or count the four decks as native agreements.
+
+The two bounded Run-RequestedCorpus.cs reports have valid provenance
+and are under E:/Artifacts/Spice-blockers-fab8472. The transistor replay
+tested fab8472 before the resistor patch, and the resistor replay tested
+fab8472 plus the patch. The corpus pin is
+e8285746c73a8229cf922487c8ccfcf6bea61bce. SHA-256 for
+resistor-replay/summary.json is
+2987edea5e2791904b2c04f7177cbe9120e1739a2541eeb2d9403f8d67c7c4a4.
+SHA-256 for bjt-replay/summary.json is
+f89c7f4169ceaa1dd2b28673522190cd9aa5f334b443c833bf6e37b470b475e7.
+The 928-row census was not repeated.
+
+Frontend verification passed 606 tests with 37 opt-in skips. Syntax
+verification passed 471 tests with one symlink skip. StrictDoc parsed
+52 documents, 430 unique IDs and 398 resolved parents. Coverlet measured
+77.48% line and 60.65% branch coverage across the managed frontend test
+scope. The positive test failed before implementation and caught a
+deliberate mutant that reused the DC resistance in AC. The frontend
+suite ran its existing seeded properties. Rust coverage and standalone
+fuzzing were outside this checkpoint.

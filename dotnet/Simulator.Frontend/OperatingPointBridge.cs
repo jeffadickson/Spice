@@ -25,6 +25,8 @@ public sealed record BridgeResult(SimulationRequest? Request,ImmutableDictionary
     public GroundAliasPolicy GroundAliases {get;init;}=GroundAliasPolicy.Disabled;
     /// <summary>Explicit complex AC replacements for every active independent source, including zero for DC-only sources. DC bias remains in Request.Circuit.</summary>
     public ImmutableArray<AcSourcePhasor> AcSources { get; init; } = [];
+    // Requested AC can replace resistance by wire ID after checking linearity.
+    internal ImmutableDictionary<string,double> AcResistances {get;init;}=ImmutableDictionary<string,double>.Empty;
     /// <summary>Number of active source headers with an explicitly declared AC amplitude.</summary>
     public int ExplicitAcSources { get; init; }
     /// <summary>Evaluated waveform fields, without an implicit transient analysis or guessed timing defaults.</summary>
@@ -41,10 +43,10 @@ public static class OperatingPointBridge
 
     // Only the explicit selection adapter supplies omissions. The legacy public
     // Lower contract remains strict R/V/I with no ignored input instructions.
-    internal static BridgeResult LowerSelected(DeckSyntax syntax,BridgeLimits? limits,string backend,ImmutableHashSet<int> omittedStarts)
-        =>LowerCore(syntax,limits,backend,true,omittedStarts);
+    internal static BridgeResult LowerSelected(DeckSyntax syntax,BridgeLimits? limits,string backend,ImmutableHashSet<int> omittedStarts,bool requested)
+        =>LowerCore(syntax,limits,backend,true,omittedStarts,requested);
 
-    private static BridgeResult LowerCore(DeckSyntax syntax,BridgeLimits? limits,string backend,bool selected,ImmutableHashSet<int>? omittedStarts)
+    private static BridgeResult LowerCore(DeckSyntax syntax,BridgeLimits? limits,string backend,bool selected,ImmutableHashSet<int>? omittedStarts,bool requested=false)
     {
         ArgumentNullException.ThrowIfNull(syntax);limits??=new();
         if(limits.MaxDepth<0||limits.MaxDepth>128||limits.MaxInstances<1||limits.MaxElements<1||limits.MaxElements>1024||limits.MaxNodes<1||limits.MaxNodes>128)throw new ArgumentOutOfRangeException(nameof(limits));
@@ -60,6 +62,7 @@ public static class OperatingPointBridge
         var rootEnd=catalog.Cards.FirstOrDefault(c=>c.ScopeId==0&&c.Kind=="endCard");
         if(rootEnd!=null&&catalog.Cards.Any(c=>c.ScopeId==0&&c.Range.Start>rootEnd.Range.Start))return Failure("unprocessed_end_tail",rootEnd.Range);
         var nodes=new List<string>{"0"};var elements=new List<Element>();var origins=new List<ElementOrigin>();
+        var acResistances=ImmutableDictionary.CreateBuilder<string,double>();
         var acSources=new List<AcSourcePhasor>();var explicitAcSources=0;var sourceWaveforms=new List<PreparedSourceWaveform>();
         var roots=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var internalNodes=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
@@ -82,7 +85,7 @@ public static class OperatingPointBridge
             Expand(0,rootParameters,new(StringComparer.OrdinalIgnoreCase),[],0);
             if(elements.Count==0)throw new BridgeFailure("empty_circuit",null);
             return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),new OperatingPoint(),backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
-            {InternalNodes=internalNodes.ToImmutable(),AcSources=acSources.ToImmutableArray(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
+            {InternalNodes=internalNodes.ToImmutable(),AcSources=acSources.ToImmutableArray(),AcResistances=acResistances.ToImmutable(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
         }
         catch(BridgeFailure e){return Failure(e.Code,e.Range);}
         void CollectGlobals(int scope,HashSet<int> seen,int depth)
@@ -129,7 +132,7 @@ public static class OperatingPointBridge
                     if(selected&&primitive.RequiresExcitationProfile&&primitive.Excitation==null)throw new BridgeFailure("unsupported_source_profile",primitive.Range);
                     if(primitive.Family is not ("R" or "V" or "I") && !(selected && primitive.Family is ("C" or "L" or "E" or "G" or "F" or "H")))throw new BridgeFailure("unsupported_active_card",primitive.Range);
                     if(!names.Add(primitive.Name))throw new BridgeFailure("duplicate_element",primitive.Range);
-                    double value;double magnitude=0,phase=0;SourceWaveformSyntax? waveformSyntax=null;ImmutableArray<double> waveformValues=[];
+                    double value;double? acOhms=null;double magnitude=0,phase=0;SourceWaveformSyntax? waveformSyntax=null;ImmutableArray<double> waveformValues=[];
                     if(selected&&primitive.Family is ("V" or "I")&&primitive.Excitation is {} excitation)
                     {
                         double initial=0;
@@ -142,6 +145,13 @@ public static class OperatingPointBridge
                         // selected operating point does not use their excitation.
                         if(excitation.AcMagnitude!=null){magnitude=Evaluate(excitation.AcMagnitude);explicitAcSources++;}
                         if(excitation.AcPhase!=null)phase=Evaluate(excitation.AcPhase);
+                    }
+                    else if(requested&&primitive.AcResistance is {} acResistance)
+                    {
+                        value=Evaluate(primitive.Value!);
+                        var resistance=Evaluate(acResistance);
+                        if(!double.IsFinite(resistance)||resistance<=0)throw new BridgeFailure("invalid_ac_resistance",acResistance.Range);
+                        acOhms=resistance;
                     }
                     else if(selected&&primitive.Family=="R")
                     {
@@ -163,6 +173,7 @@ public static class OperatingPointBridge
                     // Compact wire identifiers are collision-free and stay within
                     // Rust's byte limits; original spellings remain in provenance.
                     var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    if(acOhms is {} acValue)acResistances.Add(id,acValue);
                     if(primitive.Family is "F" or "H")
                     {
                         if(primitive.CurrentReference is not {} reference||!frameIds.TryGetValue(reference.Text,out var controller))throw new BridgeFailure("missing_current_control",primitive.Range);

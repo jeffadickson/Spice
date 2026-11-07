@@ -25,8 +25,8 @@ public static class OperatingPointSelection
         =>SelectCore(syntax,limits,backend,[]);
     // Only explicitly handled requested physical instructions enter this omission set.
     internal static SelectedOperatingPoint SelectRequested(DeckSyntax syntax,BridgeLimits? limits,string backend,ImmutableHashSet<int> handledPhysicalStarts)
-        =>SelectCore(syntax,limits,backend,handledPhysicalStarts);
-    private static SelectedOperatingPoint SelectCore(DeckSyntax syntax,BridgeLimits? limits,string backend,ImmutableHashSet<int> handledPhysicalStarts)
+        =>SelectCore(syntax,limits,backend,handledPhysicalStarts,requested:true);
+    private static SelectedOperatingPoint SelectCore(DeckSyntax syntax,BridgeLimits? limits,string backend,ImmutableHashSet<int> handledPhysicalStarts,bool requested=false)
     {
         ArgumentNullException.ThrowIfNull(syntax);
         var omissions=ImmutableArray.CreateBuilder<OperatingPointOmission>();
@@ -43,7 +43,7 @@ public static class OperatingPointSelection
         if(syntax.Declarations is {} waveformDeclarations)
             foreach(var source in waveformDeclarations.Primitives.Where(p=>p.Excitation?.Waveform!=null))
                 omissions.Add(new(source.ScopeId,"source_transient",source.Name,"transient_excitation_not_selected",source.Range));
-        var prepared=OperatingPointBridge.LowerSelected(syntax,limits,backend,omittedCards);
+        var prepared=OperatingPointBridge.LowerSelected(syntax,limits,backend,omittedCards,requested);
         return new(prepared,prepared.Success?omissions.ToImmutable():[]);
     }
     internal static string? OmissionReason(ScopedCard card)=>card.Kind switch
