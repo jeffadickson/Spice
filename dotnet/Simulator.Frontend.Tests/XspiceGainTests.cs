@@ -40,15 +40,30 @@ public sealed class XspiceGainTests
         Assert.Equal("op",gain.OutputP.Text);Assert.Equal("om",gain.OutputN.Text);
     }
 
+    [Fact]
+    public void Current_gain_ports_stamp_a_sensor_and_signed_controlled_sources()
+    {
+        var syntax=DeckParser.Parse("current gain\nV1 in 0 1\nR1 in sense 1k\nA1 %i sense %v out amp\nA2 %v in %i load amp\nR2 out 0 1k\nR3 load 0 1k\n.model amp gain(gain=10)\n.op\n.end\n",collectDeclarations:true);
+        var plan=RequestedAnalysis.Prepare(syntax);
+        Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
+        var elements=Assert.Single(Assert.Single(plan.Operations).Requests).Circuit.Elements;
+        var cv=Assert.Single(elements.OfType<Simulator.Client.Ccvs>());
+        var sensor=Assert.Single(elements.OfType<Simulator.Client.Voltage>(),v=>v.Id==cv.ControlId);
+        Assert.Equal(0,sensor.Volts);
+        Assert.Equal(0,sensor.N);
+        Assert.Equal(10,cv.Ohms);
+        Assert.Equal(10,Assert.Single(elements.OfType<Simulator.Client.Vccs>()).Siemens);
+    }
+
     [Theory]
     [InlineData("A1 null out amp")]
     [InlineData("A1 ~in out amp")]
     [InlineData("A1 [in] out amp")]
     [InlineData("A1 (in) out amp")]
-    [InlineData("A1 %i(in) out amp")]
-    [InlineData("A1 %id(in 0) out amp")]
+    [InlineData("A1 %g(in) out amp")]
+    [InlineData("A1 %hd(in 0) out amp")]
     [InlineData("A1 %vnam(V1) out amp")]
-    [InlineData("A1 in %i(out) amp")]
+    [InlineData("A1 in %h(out) amp")]
     [InlineData("A1 %d(in) out amp")]
     [InlineData("A1 in middle out amp")]
     [InlineData("A1 in amp")]
@@ -56,6 +71,17 @@ public sealed class XspiceGainTests
     {
         var result=Prepare(card);Assert.False(result.Success);Assert.Null(result.Gain);
         Assert.Equal("unsupported_xspice_gain_ports",Assert.Single(result.Diagnostics).Code);
+    }
+
+    [Fact]
+    public void Differential_current_ports_preserve_terminals_and_require_zero_effective_offset()
+    {
+        const string card="A1 %id(ip im) %id(op om) amp";
+        var gain=Assert.IsType<PreparedXspiceGain>(Prepare(card).Gain);
+        Assert.True(gain.CurrentInput);
+        Assert.True(gain.CurrentOutput);
+        Assert.Equal(("ip","im","op","om"),(gain.InputP.Text,gain.InputN.Text,gain.OutputP.Text,gain.OutputN.Text));
+        Assert.Equal("unsupported_xspice_current_offset",Assert.Single(Prepare(card,".model amp gain(out_offset=1)").Diagnostics).Code);
     }
 
     [Theory]

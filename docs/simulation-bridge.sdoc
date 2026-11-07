@@ -336,3 +336,31 @@ Implementation: MemorylessReference, RequestedComparison and RequestedCorpus. Th
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-TRANSIENT-REFERENCE-001
+
+[REQUIREMENT]
+UID: FRONTEND-MEMORYLESS-PWL-001
+STATUS: Draft
+TITLE: Memoryless PWL startup with a distinct DC source
+STATEMENT: >>>
+Requested memoryless linear transients with a valid PWL source shall initialize at the waveform value while a separate operating point retains the explicit DC source. A distinct PWL startup bias in a circuit with storage or nonlinear devices shall remain a refusal under this profile.
+<<<
+COMMENT: >>>
+TransientSelection and RequestedAnalysisTests cover the memoryless and storage paths. The original cntrl-sources.cir supplies the native E/G/F/H replay.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-RESISTOR-ARRAY-001
+
+[REQUIREMENT]
+UID: FRONTEND-XSPICE-GAIN-CURRENT-001
+STATUS: Draft
+TITLE: Scalar current ports on zero-offset XSPICE gain
+STATEMENT: >>>
+A native scalar gain with noninverted current input or output and zero effective offset shall use positive P-to-N current. Current input shall use a zero-volt sensing branch and output shall use the corresponding controlled source. Voltage-only gain shall retain its existing affine profile. Current-port nonzero effective offset and unsupported port types shall refuse.
+<<<
+COMMENT: >>>
+XspiceSyntax retains scalar %i and %id separately from voltage support. XspiceGainLowering and OperatingPointBridge map the ports through existing typed sources. XspiceGainTests and the original polarity.deck copies exercise the bounded profile.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SELECT-001

@@ -2,18 +2,24 @@ using System.Collections.Immutable;
 using Simulator.Syntax;
 namespace Simulator.Frontend;
 
-/// <summary>Exact affine voltage relation V(outP)-V(outN)=Gain*(V(inP)-V(inN))+Offset, in volts. Existing VCVS and a series constant voltage source implement it.</summary>
-public sealed record PreparedXspiceGain(string Name,SourceSyntax InputP,SourceSyntax InputN,SourceSyntax OutputP,SourceSyntax OutputN,double Gain,double Offset,SourceRange Range);
+/// <summary>Exact affine scalar gain. Current-port units follow the selected input and output quantity.</summary>
+public sealed record PreparedXspiceGain(string Name,SourceSyntax InputP,SourceSyntax InputN,SourceSyntax OutputP,SourceSyntax OutputN,double Gain,double Offset,SourceRange Range)
+{
+    /// <summary>Input is measured as positive P-to-N current through a zero-volt sensor.</summary>
+    public bool CurrentInput {get;init;}
+    /// <summary>Output is a positive P-to-N current instead of voltage.</summary>
+    public bool CurrentOutput {get;init;}
+}
 /// <summary>Atomic model admission: no prepared relation is returned on any unsupported parameter or port.</summary>
 public sealed record XspiceGainPreparation(PreparedXspiceGain? Gain,ImmutableArray<BridgeDiagnostic> Diagnostics)
 {
-    /// <summary>True only for a fully evaluated supported scalar voltage gain relation.</summary>
+    /// <summary>True only for a fully evaluated supported scalar gain relation.</summary>
     public bool Success=>Gain!=null&&Diagnostics.IsEmpty;
 }
 /// <summary>Bounded ngspice analog gain contract; this does not implement a generic XSPICE kernel.</summary>
 public static class XspiceGainLowering
 {
-    /// <summary>Resolves a lexical model and evaluates its scalar parameters through the existing environment. Unsupported current, digital, vector and inverted ports remain explicit refusals.</summary>
+    /// <summary>Resolves a lexical model and evaluates its scalar parameters through the existing environment. Digital, vector and inverted ports remain explicit refusals. Current ports require zero effective offset.</summary>
     public static XspiceGainPreparation Prepare(DeclarationCatalog catalog,XspiceInstanceSyntax instance,ParameterEvaluation environment)
     {
         ArgumentNullException.ThrowIfNull(catalog);ArgumentNullException.ThrowIfNull(instance);ArgumentNullException.ThrowIfNull(environment);
@@ -28,7 +34,7 @@ public static class XspiceGainLowering
         var model=lookup.Candidates.Single();
         if(!string.Equals(model.ModelFamily,"gain",StringComparison.OrdinalIgnoreCase))return Fail("unsupported_xspice_model");
         if(model.HasOpaqueModelTerms)return Fail("unsupported_xspice_parameter",model.Range);
-        if(instance.Ports.Length!=2||instance.Ports.Any(p=>!p.Supported))return Fail("unsupported_xspice_gain_ports");
+        if(instance.Ports.Length!=2||instance.Ports.Any(p=>!p.Supported&&!p.IsCurrent))return Fail("unsupported_xspice_gain_ports");
         var values=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"in_offset",0},{"gain",1},{"out_offset",0}};
         var seen=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach(var parameter in model.Parameters)
@@ -41,6 +47,8 @@ public static class XspiceGainLowering
         var offset=values["gain"]*values["in_offset"]+values["out_offset"];
         if(!double.IsFinite(offset))return Fail("nonfinite_xspice_offset");
         var input=instance.Ports[0];var output=instance.Ports[1];
-        return new(new(instance.Name,input.P!,input.N!,output.P!,output.N!,values["gain"],offset,instance.Range),[]);
+        if((input.IsCurrent||output.IsCurrent)&&offset!=0)return Fail("unsupported_xspice_current_offset",model.Range);
+        return new(new(instance.Name,input.P!,input.N!,output.P!,output.N!,values["gain"],offset,instance.Range)
+            {CurrentInput=input.IsCurrent,CurrentOutput=output.IsCurrent},[]);
     }
 }

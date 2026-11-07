@@ -25,7 +25,7 @@ public static class TransientSelection
   if(Math.Ceiling(stopS/maxStepS)>maxSteps)return Fail("transient_step_budget",null);
   var selected=preparedCircuit??OperatingPointSelection.Select(syntax,limits,backend);if(!selected.Success)return new(selected.Prepared,[]);
   var prepared=selected.Prepared;if(prepared.SourceWaveforms.Length>128)return Fail("transient_source_budget",null);
-  // For requested memoryless linear SIN and PULSE, ngspice starts from
+  // For requested memoryless linear SIN, PULSE and PWL, ngspice starts from
   // the waveform value while a separate OP uses the declared DC source.
   var memorylessRequested=preparedCircuit!=null&&prepared.Request!.Circuit.Elements.All(e=>
       e is Resistor or Voltage or Current or Vcvs or Vccs or Cccs or Ccvs);
@@ -36,7 +36,7 @@ public static class TransientSelection
    var nominal=element switch{Voltage v=>v.Volts,Current i=>i.Amps,_=>double.NaN};
    // The current configured runtime initializes from the time-zero source RHS.
    // A distinct bias on storage or nonlinear circuits needs separate qualification.
-   if(nominal!=initial&&!(memorylessRequested&&source.Kind is (SourceWaveformKind.Sine or SourceWaveformKind.Pulse)))return Fail("unsupported_transient_dc_bias",source.Range);
+   if(nominal!=initial&&!(memorylessRequested&&source.Kind is (SourceWaveformKind.Sine or SourceWaveformKind.Pulse or SourceWaveformKind.Pwl)))return Fail("unsupported_transient_dc_bias",source.Range);
    var p=source.Parameters;
    double Field(int i,double fallback)=>p.Length>i?p[i]:fallback;
    Waveform waveform;

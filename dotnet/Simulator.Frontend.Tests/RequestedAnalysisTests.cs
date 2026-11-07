@@ -135,6 +135,20 @@ public sealed class RequestedAnalysisTests
   Assert.Equal(-1,pulse.Low);
   Assert.Equal(.001,pulse.PeriodS);
  }
+ [Theory]
+ [InlineData(false)]
+ [InlineData(true)]
+ public void Requested_pwl_uses_waveform_start_only_for_memoryless_circuits(bool storage)
+ {
+  var capacitor=storage?"C1 out 0 1u\n":"";
+  var syntax=DeckParser.Parse("pwl startup\nV1 in 0 DC 0 PWL(0 .9 2m 2 4m .4)\nE1 out 0 in 0 2\nR1 out 0 1k\n"+capacitor+".op\n.tran 2u 5m\n.end\n",collectDeclarations:true);
+  var plan=RequestedAnalysis.Prepare(syntax);
+  if(storage){Assert.Empty(plan.Operations);Assert.Equal("unsupported_transient_dc_bias",Assert.Single(plan.Diagnostics).Code);return;}
+  Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
+  Assert.Equal(0,plan.Operations[0].Requests[0].Circuit.Elements.OfType<Voltage>().Single().Volts);
+  var options=Assert.IsType<TransientConfigured>(plan.Operations[1].Requests[0].Analysis).Options;
+  Assert.Equal(.9,Assert.IsType<Pwl>(Assert.Single(options.Sources!).Waveform).Points[0].Value);
+ }
  [Fact] public void Documented_two_point_linear_grid_is_preserved_despite_native_oracle_bug()
  {var plan=Prepare(".ac lin 2 10 30");Assert.True(plan.Success);Assert.Equal(new[]{10d,30},plan.Operations[0].Coordinates);}
  [Fact] public void No_analysis_is_an_explicit_refusal()=>Assert.False(Prepare("").Success);

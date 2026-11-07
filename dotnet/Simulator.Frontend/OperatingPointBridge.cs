@@ -230,6 +230,25 @@ public static class OperatingPointBridge
                     if(!lowered.Success)throw new BridgeFailure(lowered.Diagnostics[0].Code,lowered.Diagnostics[0].Range);
                     var gain=lowered.Gain!;var p=Node(gain.OutputP.Text);var n=Node(gain.OutputN.Text);var cp=Node(gain.InputP.Text);var cn=Node(gain.InputN.Text);
                     if(p==n)throw new BridgeFailure("shorted_xspice_output",gain.Range);
+                    if(gain.CurrentInput||gain.CurrentOutput)
+                    {
+                        if(elements.Count+(gain.CurrentInput?2:1)>limits.MaxElements)throw new BridgeFailure("element_budget",gain.Range);
+                        var wire="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        var sensor=wire+"_sense";
+                        // The zero-volt branch draws the native input current.
+                        // Output current flows from P to N, including single-ended outputs.
+                        if(gain.CurrentInput)
+                        {
+                            if(cp==cn)throw new BridgeFailure("shorted_xspice_current_input",gain.Range);
+                            elements.Add(new Voltage(sensor,cp,cn,0));acSources.Add(new(sensor,0,0));
+                            origins.Add(new(sensor,gain.Name+"$sense",path,gain.Range));
+                        }
+                        elements.Add(gain.CurrentInput
+                            ?gain.CurrentOutput?new Cccs(wire,p,n,sensor,gain.Gain):new Ccvs(wire,p,n,sensor,gain.Gain)
+                            :Controlled(wire,p,n,cp,cn,gain.Gain,false));
+                        origins.Add(new(wire,gain.Name,path,gain.Range){NativeBranchName=gain.CurrentOutput?null:gain.Name});
+                        continue;
+                    }
                     if(elements.Count+(gain.Offset==0?1:2)>limits.MaxElements)throw new BridgeFailure("element_budget",gain.Range);
                     var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);var mid=n;
                     if(gain.Offset!=0){if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",gain.Range);mid=nodes.Count;nodes.Add("n"+mid.ToString(System.Globalization.CultureInfo.InvariantCulture));}

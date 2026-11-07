@@ -7,7 +7,9 @@ namespace Simulator.Syntax;
 public sealed record XspiceVoltagePortSyntax(SourceSyntax? P,SourceSyntax? N,SourceSyntax Original)
 {
     /// <summary>Only noninverted scalar v/vd ports enter the bounded scalar analog profile.</summary>
-    public bool Supported => P != null && N != null;
+    public bool Supported => P != null && N != null && !IsCurrent;
+    /// <summary>True for a noninverted scalar %i or %id port, whose positive current flows P to N.</summary>
+    public bool IsCurrent {get;init;}
     /// <summary>True for a generated vector, including unsupported vector types.</summary>
     public bool IsVector {get;init;}
     /// <summary>True only for a noninverted default-v or explicitly %v vector container. Each child still requires its own supported scalar semantics.</summary>
@@ -36,9 +38,13 @@ internal static class XspiceExtraction
         var nodes=port.xpair()?.scalarNode()??port.scalarNode();
         if(nodes.Any(n=>n.GetText().Equals("null",StringComparison.OrdinalIgnoreCase)))return new(null,null,original);
         if(port.XDIFF()!=null)
-            return port.XDIFF().GetText().Equals("%vd",StringComparison.OrdinalIgnoreCase)&&nodes.Length==2
-                ?new(capture(nodes[0]),capture(nodes[1]),original):new(null,null,original);
-        if(port.XSINGLE()!=null&&!port.XSINGLE().GetText().Equals("%v",StringComparison.OrdinalIgnoreCase))return new(null,null,original);
-        return nodes.Length==1?new(capture(nodes[0]),new("0",original.Range),original):new(null,null,original);
+        {
+            var type=port.XDIFF().GetText().ToLowerInvariant();
+            return type is "%vd" or "%id"&&nodes.Length==2
+                ?new(capture(nodes[0]),capture(nodes[1]),original){IsCurrent=type=="%id"}:new(null,null,original);
+        }
+        var single=port.XSINGLE()?.GetText().ToLowerInvariant();
+        return single is null or "%v" or "%i"&&nodes.Length==1
+            ?new(capture(nodes[0]),new("0",original.Range),original){IsCurrent=single=="%i"}:new(null,null,original);
     }
 }

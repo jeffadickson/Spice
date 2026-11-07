@@ -397,3 +397,47 @@ A reversed reference-current sign was caught by the focused tests.
 The frontend suite ran its existing seeded properties. StrictDoc parsed
 52 documents, 435 unique IDs and 403 resolved parents. Rust coverage,
 standalone fuzzing and a full corpus replay were outside this checkpoint.
+
+## Controlled PWL startup and XSPICE current gain
+
+Two distinct preparation blockers were cleared in a matched five-path
+replay. Baseline 65a411f refused all five paths. With the patch, three
+paths execute and one fully agrees under the existing comparator.
+
+| Original paths | Current outcome |
+|---|---|
+| examples/probe/cntrl-sources.cir | Requested transient agreed on all 12 mapped voltages and signed branch currents |
+| Both polarity.deck copies | Requested transient completed and strict interpolation comparison still differs |
+| Both mixed_ref.deck copies | Gain current ports are admitted and the next refusal is the unsupported XSPICE model |
+
+Native startup for cntrl-sources.cir applies the 0.9 V PWL waveform at
+zero time even with a distinct explicit DC value. The engine now uses
+that same startup for the memoryless circuit. Maximum compared voltage
+error was 8.89e-16 V.
+
+For polarity.deck let s = sin(2 pi 1000 t). The five node voltages in
+node order 1, 10, 2, 11, 12 are s, 10s, 0, .01s and -10000s V.
+The signed currents i(v1), i(a1) and i(a2) are -.002s, -.01s and
+-.00001s A. The own-grid audit of all eight mapped observables found
+maximum errors of 9.10e-12 V and 9.11e-18 A across engine and ngspice.
+The strict comparison interpolates between native samples and differs by
+up to 3.98 V at node 12, which amplifies the source interpolation error
+by 10000. Strict qualification and tolerances are unchanged.
+
+The paired reports used the same corpus e8285746c73a8229cf922487c8ccfcf6bea61bce
+and prebuilt engine, with valid source provenance in both runs. Artifacts
+are under E:/Artifacts/Spice-deck-blockers-65a411f. The baseline-cohort
+summary SHA-256 is 48559446199d0ccac17882e601d6d8bb64f250f0f7a157c6a4997f0697c14b98.
+The updated cohort summary SHA-256 is
+d418948ee6b7684c6e98f22b24f85965e1c96c127da87455ded1a5702ab1fd1a.
+The polarity-audit.json SHA-256 is
+e754bde23645464837d3b10f013b27088f05afd5e82e768d35bfc7881d7e26f1.
+The exploratory broad baseline was interrupted after the matched cohort
+was available. This checkpoint does not count the incomplete census.
+
+Frontend verification passed 626 tests with 37 opt-in skips and included
+the existing seeded properties. Managed coverage measured 77.53% line
+and 61.19% branch. A current-output sign mutant produced -10 S and was
+caught by the controlled-source stamp test. StrictDoc parsed 52 documents
+with 437 unique IDs and 405 resolved parents. Rust coverage and standalone
+fuzzing were outside this checkpoint.
