@@ -100,3 +100,17 @@ A requested-analysis projection may omit a balanced terminal control conditional
 COMMENT: >>>
 Verification: ControlSuffixTests positive original OP and negative conditional shape, ordering, and effect cases. The bounded profile admits reporting syntax and does not claim vector evaluation, interpolation of vectors, computed branching or control exit-status parity.
 <<<
+
+[REQUIREMENT]
+UID: QUAL-CONTROL-TERMINAL-VECTOR-001
+STATUS: Implemented
+TITLE: Execute bounded terminal real-vector reporting
+STATEMENT: >>>
+After a completed real requested analysis, terminal reporting shall evaluate real vectors of at most 4096 finite elements, scalar broadcasting, bounded local functions and scalar ternaries. A conditional is true when at least one result element is nonzero. Inactive branches shall not evaluate expressions or substitutions. Echo shall support scalar vector substitution without command re-tokenization. Unknown values, unsupported effects, invalid shapes, and exceeded bounds shall refuse reporting without publishing partial output. Reporting status shall remain separate from circuit numerical agreement.
+<<<
+COMMENT: >>>
+ControlVectorExecutionTests exercises the generated expression grammar, selected branches, substitutions and refusal paths. RequestedAnalysis.ExecuteTerminalReporting exposes the original real-analysis results and source DC settings to the evaluator. The six-path ngspice cohort and native substitution witness are recorded in evidence/control-vector-cohort.md. The profile excludes complex vectors, pre-analysis execution, shell variables, redirection and external commands.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: QUAL-CONTROL-TERMINAL-IF-001

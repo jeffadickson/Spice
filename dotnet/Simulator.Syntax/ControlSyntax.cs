@@ -7,6 +7,8 @@ public sealed record ControlCommandSyntax(string Name,string Kind,AnalysisSyntax
 {
     /// <summary>Exact generated semantic production, or unclassified when lexical admission fails.</summary>
     public string GrammarRule { get; init; } = "unclassified";
+    /// <summary>Original condition or reporting argument, preserved for bounded evaluation.</summary>
+    public string? Argument { get; init; }
     /// <summary>Unevaluated local declaration candidate; null for other commands.</summary>
     public ControlPostprocessingSyntax? Postprocessing { get; init; }
 }

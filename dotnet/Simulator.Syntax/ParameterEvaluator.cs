@@ -180,7 +180,7 @@ public static class ParameterEvaluator
             return result;
         }
     }
-    private static double Number(string text)
+    internal static double Number(string text)
     {
         // NUM is already a generated NUMBER token. This decodes its engineering
         // multiplier, not the input language. Longest suffixes precede M.

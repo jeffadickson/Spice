@@ -1,0 +1,210 @@
+using System.Collections.Immutable;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using Antlr4.Runtime;
+using Antlr4.Runtime.Misc;
+using Simulator.Syntax.Generated;
+
+namespace Simulator.Syntax;
+
+/// <summary>Output and local values from a successful bounded reporting program.</summary>
+public sealed record ControlVectorReport(ImmutableArray<string> Output,
+    ImmutableDictionary<string,ImmutableArray<double>> Locals, int? ExitCode);
+
+/// <summary>Executes bounded real-vector reporting against caller-supplied data.</summary>
+public static partial class ControlVectorExecution
+{
+    private const int VectorLimit = 4096;
+    [GeneratedRegex(@"\$&(?<name>[A-Za-z_][A-Za-z_0-9]*(?:\([A-Za-z_0-9]+\))?)(?![A-Za-z_0-9.\[(])", RegexOptions.CultureInvariant)]
+    private static partial Regex Substitution();
+
+    /// <summary>Executes a reporting region atomically, returning no output on failure.</summary>
+    public static ControlVectorReport Execute(IEnumerable<ControlCommandSyntax> commands,
+        IReadOnlyDictionary<string,double[]> inputs)
+    {
+        var program = commands.Take(257).ToArray();
+        if (program.Length > 256 || inputs.Count > 256)
+            throw new InvalidDataException("control_execution_budget");
+        var values = new Dictionary<string,double[]>(StringComparer.OrdinalIgnoreCase);
+        var functions = new Dictionary<string,ControlPostprocessingSyntax>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (name, vector) in inputs)
+        {
+            Validate(vector);
+            if (!values.TryAdd(name,vector.ToArray()))
+                throw new InvalidDataException("duplicate_control_input");
+        }
+        var stack = new Stack<(bool Parent, bool Condition, bool Else)>();
+        var output = ImmutableArray.CreateBuilder<string>();
+        var active = true;
+        int? exit = null;
+        var nodes = 0;
+        foreach (var command in program)
+        {
+            if (command.Diagnostic != null) throw new InvalidDataException(command.Diagnostic);
+            var argument = command.Argument ?? "";
+            switch (command.Kind)
+            {
+                case "comment": break;
+                case "if":
+                    if (stack.Count == 8) throw new InvalidDataException("conditional_depth_budget");
+                    var condition = active && exit is null && Evaluate(argument,condition:true).Any(v => v != 0);
+                    stack.Push((active, condition, false));
+                    active = condition;
+                    break;
+                case "else":
+                    if (!stack.TryPop(out var branch) || branch.Else)
+                        throw new InvalidDataException("invalid_conditional_else");
+                    stack.Push((branch.Parent,branch.Condition,true));
+                    active = branch.Parent && !branch.Condition;
+                    break;
+                case "end":
+                    if (!stack.TryPop(out var ended)) throw new InvalidDataException("invalid_conditional_end");
+                    active = ended.Parent;
+                    break;
+                case "postprocessing" when command.Postprocessing is {} declaration:
+                    if (!active || exit is not null) break;
+                    if (declaration.Kind == ControlPostprocessingKind.Unlet)
+                    {
+                        foreach (var name in declaration.Names)
+                            if (inputs.Keys.Contains(name,StringComparer.OrdinalIgnoreCase) || !values.Remove(name))
+                                throw new InvalidDataException("unknown_control_local");
+                    }
+                    else if (declaration.Kind == ControlPostprocessingKind.Define)
+                        functions[declaration.Names[0]] = declaration;
+                    else
+                    {
+                        var name = declaration.Names[0];
+                        if (inputs.Keys.Contains(name,StringComparer.OrdinalIgnoreCase))
+                            throw new InvalidDataException("control_input_assignment");
+                        values[name] = Evaluate(declaration.Expression!.Text);
+                    }
+                    break;
+                case "report" or "report_substitution" when command.Name == "echo":
+                    if (!active || exit is not null) break;
+                    var expanded = Substitution().Replace(argument, match =>
+                        Scalar(Resolve(match.Groups["name"].Value,null)).ToString("G",CultureInfo.InvariantCulture));
+                    if (expanded.Contains('$')) throw new InvalidDataException("unsupported_control_substitution");
+                    output.Add(expanded.Replace("\"","",StringComparison.Ordinal));
+                    break;
+                case "report" when command.Name == "print":
+                    if (active && exit is null)
+                        output.Add(argument+" = "+string.Join(' ',Evaluate(argument).Select(v=>v.ToString("G",CultureInfo.InvariantCulture))));
+                    break;
+                case "quit" or "quit_status":
+                    if (active && exit is null) exit = argument == "1" ? 1 : 0;
+                    break;
+                default: throw new InvalidDataException("unsupported_control_execution:"+command.Name);
+            }
+        }
+        if (stack.Count!=0) throw new InvalidDataException("unclosed_reporting_conditional");
+        return new(output.ToImmutable(),values.Where(p=>!inputs.Keys.Contains(p.Key,StringComparer.OrdinalIgnoreCase))
+            .ToImmutableDictionary(p=>p.Key,p=>p.Value.ToImmutableArray(),StringComparer.OrdinalIgnoreCase),exit);
+
+        double[] Resolve(string name,IReadOnlyDictionary<string,double[]>? locals) =>
+            locals?.TryGetValue(name,out var local)==true ? local :
+            values.TryGetValue(name,out var value) ? value : throw new InvalidDataException("unknown_control_vector:"+name);
+
+        double[] Evaluate(string expression,IReadOnlyDictionary<string,double[]>? locals=null,int depth=0,bool condition=false)
+        {
+            if (depth>16 || expression.Length>4096) throw new InvalidDataException("control_expression_budget");
+            if (values.TryGetValue(expression,out var exact) && expression.StartsWith('@')) return exact;
+            var lexer = new SpiceLexer(new AntlrInputStream(expression)){ControlSemantic=true};
+            lexer.Mode(SpiceLexer.BODY);
+            lexer.RemoveErrorListeners();
+            var tokens = new CommonTokenStream(lexer);
+            tokens.Fill();
+            // In ngspice these standalone tokens can redirect let/define
+            // commands. Only the conditional grammar gives them a safe meaning.
+            if (!condition && tokens.GetTokens().Any(t=>t.Text is "<" or ">"))
+                throw new InvalidDataException("ambiguous_control_redirection");
+            if (tokens.Size>256) throw new InvalidDataException("control_expression_budget");
+            var parser = new SpiceParser(tokens){ErrorHandler=new BailErrorStrategy()};
+            parser.RemoveErrorListeners();
+            try
+            {
+                var tree = parser.expression();
+                if (tokens.LA(1)!=TokenConstants.EOF) throw new InvalidDataException("invalid_control_expression");
+                return Eval(tree,locals,depth);
+            }
+            catch (ParseCanceledException error) { throw new InvalidDataException("invalid_control_expression",error); }
+        }
+
+        double[] Eval(SpiceParser.ExpressionContext node,IReadOnlyDictionary<string,double[]>? locals,int depth)
+        {
+            if (++nodes>16384 || depth>64) throw new InvalidDataException("control_expression_budget");
+            var children=node.expression();
+            double[] Child(int i)=>Eval(children[i],locals,depth+1);
+            double[] result;
+            if (node.voltageReference()!=null ||
+                node.identifier()?.GetText().Equals("i",StringComparison.OrdinalIgnoreCase)==true && node.LPAREN()!=null)
+                result=Resolve(node.GetText(),locals);
+            else if (node.ChildCount==1)
+                result=node.NUMBER()!=null ? [ParameterEvaluator.Number(node.GetText())] :
+                    Resolve(node.GetText().Trim('"'),locals);
+            else if (node.identifier()!=null && node.LPAREN()!=null)
+            {
+                var name=node.identifier().GetText().ToLowerInvariant();
+                var args=children.Select(child=>Eval(child,locals,depth+1)).ToArray();
+                if (functions.TryGetValue(name,out var function) && function.Names.Length==args.Length+1)
+                    result=Evaluate(function.Expression!.Text,function.Names.Skip(1).Zip(args)
+                        .ToDictionary(p=>p.First,p=>p.Second,StringComparer.OrdinalIgnoreCase),depth+1);
+                else result=(name,args.Length) switch
+                {
+                    ("length",1)=>[args[0].Length],
+                    ("abs",1)=>args[0].Select(Math.Abs).ToArray(),
+                    ("unitvec",1)=>Ones(Scalar(args[0])),
+                    _=>throw new InvalidDataException("unsupported_control_function:"+name)
+                };
+            }
+            else if (node.QUESTION()!=null)
+                result=Scalar(Child(0))!=0?Child(1):Child(2);
+            else if (node.ChildCount==2)
+                result=node.GetChild(0).GetText() switch
+                {
+                    "+"=>Child(0), "-"=>Child(0).Select(v=>-v).ToArray(),
+                    "!" or "~"=>Child(0).Select(v=>v==0?1d:0d).ToArray(),
+                    _=>throw new InvalidDataException("unsupported_control_unary")
+                };
+            else if (children.Length==1 && node.ChildCount==3)
+                result=Child(0);
+            else if (children.Length==2 && node.ChildCount==3)
+                result=Binary(node.GetChild(1).GetText().ToLowerInvariant(),Child(0),Child(1));
+            else throw new InvalidDataException("unsupported_control_expression");
+            Validate(result);
+            return result;
+        }
+    }
+
+    private static double Scalar(double[] values) => values.Length==1 ? values[0] :
+        throw new InvalidDataException("control_scalar_required");
+
+    private static void Validate(double[] values)
+    {
+        if (values.Length is <1 or >VectorLimit || values.Any(v=>!double.IsFinite(v)))
+            throw new InvalidDataException("invalid_control_vector");
+    }
+
+    private static double[] Ones(double count) => count>=1 && count<=VectorLimit && count==Math.Truncate(count)
+        ? Enumerable.Repeat(1d,(int)count).ToArray() : throw new InvalidDataException("invalid_unitvec_length");
+
+    private static double[] Binary(string op,double[] a,double[] b)
+    {
+        if (a.Length!=b.Length && a.Length!=1 && b.Length!=1)
+            throw new InvalidDataException("control_vector_shape");
+        var result=new double[Math.Max(a.Length,b.Length)];
+        for(var i=0;i<result.Length;i++)
+        {
+            var x=a[a.Length==1?0:i];
+            var y=b[b.Length==1?0:i];
+            result[i]=op switch
+            {
+                "+"=>x+y, "-"=>x-y, "*"=>x*y, "/"=>x/y,
+                "eq" or "=" or "=="=>x==y?1:0, "!=" or "<>"=>x!=y?1:0,
+                "<"=>x<y?1:0, ">"=>x>y?1:0, "<="=>x<=y?1:0, ">="=>x>=y?1:0,
+                "&" or "&&"=>x!=0&&y!=0?1:0, "|" or "||"=>x!=0||y!=0?1:0,
+                _=>throw new InvalidDataException("unsupported_control_operator:"+op)
+            };
+        }
+        return result;
+    }
+}

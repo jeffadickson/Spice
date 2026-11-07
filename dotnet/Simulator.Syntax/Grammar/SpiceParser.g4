@@ -131,7 +131,7 @@ expression: expression (POWER | CARET) expression
     | expression (STAR | SLASH | PERCENT) expression
     | expression (PLUS | MINUS) expression
     | expression LBRACKET expression RBRACKET
-    | expression (COMPARE | EQUAL | COMPLEX_OPEN | COMPLEX_CLOSE) expression
+    | expression (COMPARE | EQUAL | COMPLEX_OPEN | COMPLEX_CLOSE | CONTROL_EQ) expression
     | expression AND expression
     | expression OR expression
     | <assoc=right> expression QUESTION expression COLON expression

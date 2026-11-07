@@ -1361,34 +1361,34 @@
     "rule": "controlIf",
     "extraction": "bounded",
     "preparation": "bounded",
-    "execution": "not_executed",
+    "execution": "bounded",
     "implementation": ["dotnet/Simulator.Syntax/ControlExtraction.cs", "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"],
     "requirements": ["QUAL-CONTROL-TERMINAL-IF-001"],
     "evidence": ["dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"],
     "commands": ["if"],
-    "limitation": "Terminal reporting syntax only. Conditional vectors and substitutions are omitted from analysis execution."
+    "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections."
   },
   {
     "rule": "controlBoundary",
     "extraction": "bounded",
     "preparation": "bounded",
-    "execution": "not_executed",
+    "execution": "bounded",
     "implementation": ["dotnet/Simulator.Syntax/ControlExtraction.cs", "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"],
     "requirements": ["QUAL-CONTROL-TERMINAL-IF-001"],
     "evidence": ["dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"],
     "commands": ["else", "end"],
-    "limitation": "Terminal reporting syntax only. Conditional vectors and substitutions are omitted from analysis execution."
+    "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections."
   },
   {
     "rule": "controlEcho",
     "extraction": "bounded",
     "preparation": "bounded",
-    "execution": "not_executed",
+    "execution": "bounded",
     "implementation": ["dotnet/Simulator.Syntax/ControlExtraction.cs", "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"],
     "requirements": ["QUAL-CONTROL-TERMINAL-IF-001"],
     "evidence": ["dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"],
     "commands": ["echo"],
-    "limitation": "Terminal reporting syntax only. Conditional vectors and substitutions are omitted from analysis execution."
+    "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections."
   },
   {
     "rule": "controlReport",

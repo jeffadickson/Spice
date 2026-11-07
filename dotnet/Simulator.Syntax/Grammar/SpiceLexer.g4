@@ -49,6 +49,7 @@ CONTROL_SEPARATOR: {ControlSemantic}? ';' ~[\r\n]*;
 DOLLAR_COMMENT: {!ControlSemantic || InputStream.LA(2) == ' ' || InputStream.LA(2) == '\t'}? DOLLAR_MARKER ~[\r\n]* -> channel(HIDDEN);
 // Native cp_variablesubst searches anywhere in a word, including source names.
 // This semantic-only rule wins a whole-name tie without changing deck names.
+CONTROL_EQ: {ControlSemantic}? 'eq';
 CONTROL_VARIABLE: {ControlSemantic}? ('$&' NAMECHAR+ | NAMECHAR* '$' NAMECHAR*);
 SLASH_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 WS: [ \t\f]+ -> channel(HIDDEN);

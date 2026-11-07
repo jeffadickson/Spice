@@ -79,6 +79,13 @@ public static class RequestedCorpus
      }
      result.Executed=failed?false:allExecuted?true:null;
      if(result.Executed!=true){result.Status=failed?"engine_operation_failed_atomically":"unattempted_budget";continue;}
+     if(operation==plan.Operations[^1]&&row.ProgramOmissions.Any(o=>o.Reason=="conditional_reporting_not_executed")){
+      try{
+       var reporting=RequestedAnalysis.ExecuteTerminalReporting(syntax,plan,responses);
+       await File.WriteAllTextAsync(Path.Combine(folder,"control-report.json"),JsonSerializer.Serialize(reporting,Json));
+       row.ControlReportingStatus="executed";
+      }catch(InvalidDataException e){row.ControlReportingStatus=e.Message;}
+     }
      if(watch.Elapsed.TotalSeconds>=seconds){result.Status="native_unattempted_budget";continue;}
      var projection=OriginalProjection.Create(expanded,syntax,operation,plan);result.Omissions=projection.Omissions.ToArray();result.NativeInstrumentation=projection.Instrumentation.ToArray();var nativePath=Path.Combine(operationFolder,"original-analysis.cir");await File.WriteAllTextAsync(nativePath,projection.Text);result.NativeProjectionSha256=Hash(nativePath);
      var rawPath=Path.Combine(operationFolder,"native.raw");var nativeArgs=new List<string>{"-n","-D","filetype=ascii"};
@@ -135,7 +142,7 @@ public static class RequestedCorpus
   public string Id{get;set;}="";public int Ordinal{get;set;}public string Kind{get;set;}="";public SourceRange? Range{get;set;}public string? CoordinateUnit{get;set;}public double[] Arguments{get;set;}=[];public double[] RequestedCoordinates{get;set;}=[];public double OutputStartS{get;set;}public PreparedNodeInitialCondition[] InitialConditions{get;set;}=[];public RequestedControlOrigin? ControlOrigin{get;set;}public string[] NativeInstrumentation{get;set;}=[];public bool? Executed{get;set;}public bool? Agreed{get;set;}public string Status{get;set;}="pending";public string? Detail{get;set;}public List<PointRow> Points{get;set;}=[];public ProjectionOmission[] Omissions{get;set;}=[];public string? NativeProjectionSha256{get;set;}public string? NativeRawSha256{get;set;}public int? NativeExit{get;set;}public int? NativePoints{get;set;}public string NativeDialect{get;set;}="default";public ComparisonResult? Comparison{get;set;}
  }
  private sealed class CorpusRow{
-  public string Id{get;set;}="";public string Scope{get;set;}="";public string Path{get;set;}="";public string InputPath{get;set;}="";public string ExpectedSha256{get;set;}="";public string? InputSha256{get;set;}public string Status{get;set;}="unattempted";public bool? SyntaxAccepted{get;set;}public string? SyntaxStatus{get;set;}public string? ExpandedSyntaxStatus{get;set;}public string? ResourceStatus{get;set;}public bool? CircuitPrepared{get;set;}public string? ControlProfile{get;set;}public OperatingPointOmission[] ProgramOmissions{get;set;}=[];public bool? RequestedPrepared{get;set;}public bool? RequestedExecuted{get;set;}public bool? NativeAgreed{get;set;}public string[] Diagnostics{get;set;}=[];public LoadedSource[] Sources{get;set;}=[];public string? ExpandedSha256{get;set;}public List<OperationRow> Operations{get;set;}=[];
+  public string Id{get;set;}="";public string Scope{get;set;}="";public string Path{get;set;}="";public string InputPath{get;set;}="";public string ExpectedSha256{get;set;}="";public string? InputSha256{get;set;}public string Status{get;set;}="unattempted";public bool? SyntaxAccepted{get;set;}public string? SyntaxStatus{get;set;}public string? ExpandedSyntaxStatus{get;set;}public string? ResourceStatus{get;set;}public bool? CircuitPrepared{get;set;}public string? ControlProfile{get;set;}public string? ControlReportingStatus{get;set;}public OperatingPointOmission[] ProgramOmissions{get;set;}=[];public bool? RequestedPrepared{get;set;}public bool? RequestedExecuted{get;set;}public bool? NativeAgreed{get;set;}public string[] Diagnostics{get;set;}=[];public LoadedSource[] Sources{get;set;}=[];public string? ExpandedSha256{get;set;}public List<OperationRow> Operations{get;set;}=[];
  }
  private sealed class CorpusReport{
   // Same monotonic admission clock as final duration; internal state is not serialized.

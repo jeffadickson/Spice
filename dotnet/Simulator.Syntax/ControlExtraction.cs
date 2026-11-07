@@ -57,7 +57,7 @@ internal static class ControlExtraction
        return new ControlSettingSyntax(assignment.referenceName()?.GetText(),value==null?null:Capture(value),unsigned?scalar?.identifier()?.GetText():null,unsigned&&scalar?.NUMBER()!=null,Capture(p).Range);
       }).ToImmutableArray();break;
     }
-    return new(name,kind,analysis,settings,physical,kind=="unsupported"?"unsupported_control_command:"+name:null){GrammarRule=SpiceParser.ruleNames[item.RuleIndex],Postprocessing=postprocessing};
+    return new(name,kind,analysis,settings,physical,kind=="unsupported"?"unsupported_control_command:"+name:null){GrammarRule=SpiceParser.ruleNames[item.RuleIndex],Postprocessing=postprocessing,Argument=token.Text[(item.Start.StopIndex+1)..].Trim()};
    }catch(ParseCanceledException){return new(token.Text,"unsupported",null,[],physical,"unsupported_control_syntax");}
   }
  }
