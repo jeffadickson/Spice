@@ -118,6 +118,23 @@ public sealed class RequestedAnalysisTests
   Assert.Equal("unsupported_transient_dc_bias",Assert.Single(plan.Diagnostics).Code);
   Assert.Empty(plan.Operations);
  }
+ [Theory]
+ [InlineData("45",true)]
+ [InlineData("0",true)]
+ [InlineData("2",true)]
+ [InlineData("1",false)]
+ public void Pulse_count_is_admitted_only_without_a_cutoff_inside_the_requested_horizon(string count,bool expected)
+ {
+  var syntax=DeckParser.Parse($"pulse count\nV1 in 0 DC 0 PULSE(-1 1 0 10u 10u 500u 1m {count})\nR1 in 0 1k\n.op\n.tran 20u 2m\n.end\n",collectDeclarations:true);
+  var plan=RequestedAnalysis.Prepare(syntax);
+  Assert.Equal(expected,plan.Success);
+  if(!expected){Assert.Empty(plan.Operations);Assert.Equal("unsupported_pulse_count_cutoff",Assert.Single(plan.Diagnostics).Code);return;}
+  Assert.Equal(0,plan.Operations[0].Requests[0].Circuit.Elements.OfType<Voltage>().Single().Volts);
+  var options=Assert.IsType<TransientConfigured>(plan.Operations[1].Requests[0].Analysis).Options;
+  var pulse=Assert.IsType<Pulse>(Assert.Single(options.Sources!).Waveform);
+  Assert.Equal(-1,pulse.Low);
+  Assert.Equal(.001,pulse.PeriodS);
+ }
  [Fact] public void Documented_two_point_linear_grid_is_preserved_despite_native_oracle_bug()
  {var plan=Prepare(".ac lin 2 10 30");Assert.True(plan.Success);Assert.Equal(new[]{10d,30},plan.Operations[0].Coordinates);}
  [Fact] public void No_analysis_is_an_explicit_refusal()=>Assert.False(Prepare("").Success);

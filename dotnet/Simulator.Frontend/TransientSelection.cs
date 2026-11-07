@@ -25,7 +25,7 @@ public static class TransientSelection
   if(Math.Ceiling(stopS/maxStepS)>maxSteps)return Fail("transient_step_budget",null);
   var selected=preparedCircuit??OperatingPointSelection.Select(syntax,limits,backend);if(!selected.Success)return new(selected.Prepared,[]);
   var prepared=selected.Prepared;if(prepared.SourceWaveforms.Length>128)return Fail("transient_source_budget",null);
-  // For the requested memoryless linear SIN profile, ngspice starts from
+  // For requested memoryless linear SIN and PULSE, ngspice starts from
   // the waveform value while a separate OP uses the declared DC source.
   var memorylessRequested=preparedCircuit!=null&&prepared.Request!.Circuit.Elements.All(e=>
       e is Resistor or Voltage or Current or Vcvs or Vccs or Cccs or Ccvs);
@@ -36,7 +36,7 @@ public static class TransientSelection
    var nominal=element switch{Voltage v=>v.Volts,Current i=>i.Amps,_=>double.NaN};
    // The current configured runtime initializes from the time-zero source RHS.
    // A distinct bias on storage or nonlinear circuits needs separate qualification.
-   if(nominal!=initial&&!(memorylessRequested&&source.Kind==SourceWaveformKind.Sine))return Fail("unsupported_transient_dc_bias",source.Range);
+   if(nominal!=initial&&!(memorylessRequested&&source.Kind is (SourceWaveformKind.Sine or SourceWaveformKind.Pulse)))return Fail("unsupported_transient_dc_bias",source.Range);
    var p=source.Parameters;
    double Field(int i,double fallback)=>p.Length>i?p[i]:fallback;
    Waveform waveform;
@@ -57,7 +57,12 @@ public static class TransientSelection
      var width=p.Length==5?0:Field(5,stopS);if(width<0)width=stopS;
      var period=Field(6,stopS);if(period<=0)period=stopS;
      if(rise+width+fall>period||!double.IsFinite(rise+width+fall))return Fail("unsupported_pulse_overlap",source.Range);
-     waveform=new Pulse(p[0],p[1],Field(2,0),rise,fall,width,period);break;
+     var delayS=Field(2,0);
+     // In native default mode the eighth field limits repetition only when
+     // positive. The cutoff uses a strict inequality, including at TSTOP.
+     if(p.Length==8&&p[7]>0&&stopS-delayS>p[7]*period)
+      return Fail("unsupported_pulse_count_cutoff",source.Range);
+     waveform=new Pulse(p[0],p[1],delayS,rise,fall,width,period);break;
     case SourceWaveformKind.Sine:
      var frequency=Field(2,1/stopS);if(frequency==0)frequency=1/stopS;
      var delay=Field(3,0);var damping=Field(4,0);var phase=Field(5,0)*(Math.PI/180);

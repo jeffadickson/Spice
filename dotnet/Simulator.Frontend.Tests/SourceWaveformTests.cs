@@ -38,7 +38,7 @@ public sealed class SourceWaveformTests
  [InlineData("EXP(1)")]
  [InlineData("SIN(0 1 1k -1u)")]
  [InlineData("PWL(-1u 1 1u 2)")]
- [InlineData("PULSE(0 1 0 1n 1n 1u 2u 1)")]
+ [InlineData("PULSE(0 1 0 1n 1n 1u 2u 1 2)")]
  [InlineData("SIN(0 1 1k 0 0 0 2)")]
  [InlineData("PWL(0 1 0 2)")]
  [InlineData("EXP(1 2 -1u 1u 2u 1u)")]

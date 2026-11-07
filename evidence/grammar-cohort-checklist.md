@@ -323,3 +323,43 @@ E:/Artifacts/Spice-res-array-8ca32b0. The final-replay/summary.json
 SHA-256 is ac6f28b31d4f8ca0644bc9c1bc5f37b11d906e3e4056767a71d477832e5b4842.
 The sine-audit.json SHA-256 is
 6d1f503df95c41ba101651b134c8e9ef8c5c4ae4ce15f636ba2798e8740522da.
+
+## Native-default pulse count
+
+The two arbitrary_phase.deck paths now run the original 2 ms transient.
+They are byte-identical, so this is two newly executable corpus paths
+covering one distinct circuit. In default ngspice mode the last PULSE
+field is a count. The positive count 45 leaves the full requested window
+periodic. The actual native startup is 0.707106781 V for the phased sine
+and -1 V for the pulse. Neither original deck was edited. The eight-field
+cutoff inside a requested horizon remains explicit, as does the separate
+XSPICE phase dialect.
+
+Pulse voltage and signed source current agree at all 101 compared points.
+Sine voltage and signed source current each fail 91 strict comparisons,
+with peaks 1.972 mV and 1.972 µA after native interpolation. On their own
+grids the 101 engine and 136 native samples match
+sin(2 pi 1000 t + pi/4) within 3.50e-15 V. The 1 ms periodic pulse
+with 10 µs edges and 500 µs high time matches within 1.12e-16 V.
+These analytical checks leave the strict whole-deck classification
+unqualified. The previous resistor array retained its classification.
+The two counter decks still refuse XSPICE models and control paths.
+
+FRONTEND-PULSE-COUNT-001 links the boundary tests and the native replay.
+The cutoff comparison mutant changed strict greater-than to greater-than
+or equal and failed the exact TSTOP case. The new positive cases failed
+before implementation. The malformed waveform test now uses nine fields.
+StrictDoc parsed 52 documents, 434 unique IDs and 402 resolved parents.
+
+The replay tested base cc5aeb9 plus the implementation with valid
+provenance and corpus e8285746c73a8229cf922487c8ccfcf6bea61bce.
+Artifacts are under E:/Artifacts/Spice-pulse-count-cc5aeb9. The replay
+summary SHA-256 is 401f572b2bf8c5e8c015f9b139ec3d1d263d9e8c50f58518aedd13c27733f735.
+The analytical audit SHA-256 is
+484ef96186580e8e03a209f4297de571764a0b241da2bce6af99ae7223a1ccfb.
+The full corpus, standalone fuzzing and Rust coverage were outside this
+checkpoint.
+
+The final frontend suite passed 617 tests with 37 opt-in skips and
+included the existing seeded properties. Managed line coverage was
+77.49% and branch coverage was 60.96%.

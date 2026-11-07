@@ -308,3 +308,17 @@ Generated assignment ranges feed ResistorModelLowering. OperatingPointBridge use
 RELATIONS:
 - TYPE: Parent
   VALUE: FRONTEND-RESISTOR-AC-001
+
+[REQUIREMENT]
+UID: FRONTEND-PULSE-COUNT-001
+STATUS: Draft
+TITLE: Native pulse-count horizon and memoryless startup
+STATEMENT: >>>
+A native-default PULSE with an eighth scalar field shall treat it as a repetition count. A positive count may use the periodic representation when TSTOP minus delay is no greater than count times period. A cutoff inside the requested horizon shall refuse. A nonpositive count shall keep the periodic profile. A requested memoryless linear PULSE transient may start from the waveform low value while an independent operating point uses the declared DC source. The XSPICE phase dialect and distinct pulse startup for storage or nonlinear circuits require separate contracts.
+<<<
+COMMENT: >>>
+Implementation: SourceWaveformPreparation and TransientSelection retain the native-default vsrc/isrc load semantics. RequestedAnalysisTests verify the endpoint, zero-count and cutoff cases. Native evidence uses the two unchanged arbitrary_phase decks. The title does not select a compatibility dialect.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-PULSE-HORIZON-001
