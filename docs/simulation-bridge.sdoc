@@ -322,3 +322,17 @@ Implementation: SourceWaveformPreparation and TransientSelection retain the nati
 RELATIONS:
 - TYPE: Parent
   VALUE: FRONTEND-PULSE-HORIZON-001
+
+[REQUIREMENT]
+UID: SEM-TRANSIENT-MEMORYLESS-001
+STATUS: Draft
+TITLE: Supplemental own-grid reference for named memoryless decks
+STATEMENT: >>>
+The qualification report shall attach a closed-form check for the exact expanded hashes of the named memoryless resistor-array and arbitrary-phase transients. The check shall compare all mapped voltages and signed branch currents separately on the engine and native sample grids, with the existing absolute and relative bounds applied to the analytical value. Missing observables or incomplete grids shall not count as analytical agreement. The supplemental result shall not change strict paired-trace classification.
+<<<
+COMMENT: >>>
+Implementation: MemorylessReference, RequestedComparison and RequestedCorpus. The formulas are derived from the original physical source functions and resistor conductances. Verification: MemorylessReferenceTests and the three original input paths in evidence/grammar-cohort-checklist.md.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-TRANSIENT-REFERENCE-001

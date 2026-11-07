@@ -97,7 +97,7 @@ public static class RequestedCorpus
       if(native.Exit!=0){result.Status="native_failed";continue;}
       if(!File.Exists(rawPath)||new FileInfo(rawPath).Length>64*1024*1024){result.Status="native_raw_missing_or_oversized";continue;}
       result.NativeRawSha256=Hash(rawPath);var raw=AsciiRaw.Read(await File.ReadAllTextAsync(rawPath));result.NativePoints=raw.Points.Length;
-      result.Comparison=RequestedComparison.Compare(operation,circuit,responses,raw);result.Agreed=result.Comparison.Agreed;result.Status=result.Comparison.Status;
+      result.Comparison=RequestedComparison.Compare(operation,circuit,responses,raw,row.ExpandedSha256);result.Agreed=result.Comparison.Agreed;result.Status=result.Comparison.Status;
      }catch(Exception e)when(e is IOException or InvalidDataException or TimeoutException){result.Status=e is TimeoutException?"native_timeout":"native_result_refused";result.Detail=e.Message;}
     }
     row.RequestedExecuted=row.Operations.Any(o=>o.Executed==false)?false:row.Operations.All(o=>o.Executed==true)?true:null;

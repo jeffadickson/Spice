@@ -116,6 +116,8 @@ public sealed record ComparisonResult(string Status,ImmutableArray<ObservableCom
 {
  /// <summary>Number of engine startup samples outside native coverage. Only a UIC sample at zero may be excluded.</summary>
  public int ExcludedStartupSamples { get; init; }
+ /// <summary>Supplementary own-grid agreement for an exact known circuit. Does not change Agreed.</summary>
+ public MemorylessReferenceResult? AnalyticalReference { get; init; }
  /// <summary>Every required observable and compared point passed within the reported scope.</summary>
  public bool Agreed=>Status=="agreed"&&!Observables.IsEmpty&&Gaps.IsEmpty;
 }
@@ -124,6 +126,9 @@ public static class RequestedComparison
 {
  /// <summary>Validates identity, units, shapes, finiteness and complete grids before any bound checks. Transient interpolation never extrapolates.</summary>
  public static ComparisonResult Compare(RequestedOperation operation,BridgeResult circuit,IReadOnlyList<SimulationResponse> responses,NativeRaw native,double voltageAbsolute=1e-6,double currentAbsolute=1e-9,double relative=1e-4)
+  =>Compare(operation,circuit,responses,native,null,voltageAbsolute,currentAbsolute,relative);
+
+ internal static ComparisonResult Compare(RequestedOperation operation,BridgeResult circuit,IReadOnlyList<SimulationResponse> responses,NativeRaw native,string? expandedSha256,double voltageAbsolute=1e-6,double currentAbsolute=1e-9,double relative=1e-4)
  {
   if(!double.IsFinite(voltageAbsolute)||voltageAbsolute<=0||!double.IsFinite(currentAbsolute)||currentAbsolute<=0||!double.IsFinite(relative)||relative<0)throw new ArgumentOutOfRangeException(nameof(relative));
   try{
@@ -181,7 +186,10 @@ public static class RequestedComparison
     comparisons.Add(new(mapping.Engine,mapping.Native,mapping.Unit,actualAxis.Length-startupOffset,failed,maximum,absolute,relative));
    }
    if(mappings.Count==0)gaps.Add("no_root_observables");
-   return new(gaps.Count>0?"observable_gap":comparisons.Any(c=>c.Failed>0)?"numerical_disagreement":"agreed",comparisons.ToImmutable(),gaps.ToImmutable()){ExcludedStartupSamples=startupOffset};
+   var result=new ComparisonResult(gaps.Count>0?"observable_gap":comparisons.Any(c=>c.Failed>0)?"numerical_disagreement":"agreed",comparisons.ToImmutable(),gaps.ToImmutable()){ExcludedStartupSamples=startupOffset};
+   if(expandedSha256!=null&&operation.Kind=="tran"&&!operation.UsesUic&&operation.OutputStartS==0&&operation.ControlOrigin==null)
+    result=result with{AnalyticalReference=MemorylessReference.Compare(expandedSha256,result,manifests[0],native)};
+   return result;
   }catch(InvalidDataException e){return new(e.Message,[],[e.Message]);}
  }
  private static void Grid(double[] requested,double[] actual){if(requested.Length==0||requested.Length!=actual.Length||requested.Where((v,i)=>!Near(v,actual[i])).Any())throw new InvalidDataException("original_grid_discrepancy");}

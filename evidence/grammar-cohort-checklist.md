@@ -363,3 +363,37 @@ checkpoint.
 The final frontend suite passed 617 tests with 37 opt-in skips and
 included the existing seeded properties. Managed line coverage was
 77.49% and branch coverage was 60.96%.
+
+## Own-grid analytical reference
+
+SEM-TRANSIENT-MEMORYLESS-001 adds supplemental analytical evidence for
+the exact expanded hashes of the two distinct memoryless circuits below.
+It checks every mapped voltage and signed branch current against the
+closed form at each engine and native sample time. The strict comparison
+and its existing classification are independent of this result.
+
+| Original entries | Observables per entry | Engine / native samples | Maximum voltage error | Maximum current error |
+|---|---:|---:|---:|---:|
+| Both arbitrary_phase.deck paths | 4 | 101 / 136 | 3.50e-15 V | 3.53e-18 A |
+| tests/resistance/res_array.cir | 12 | 51 / 59 | 7.78e-16 V | 4.34e-19 A |
+
+All 3216 analytical comparisons passed across the three original entries.
+All three strict transient comparisons retained their interpolation-driven
+disagreement. The array OP and AC retained strict agreement.
+
+The replay tested base 6587a6d plus the implementation with valid source
+provenance and corpus e8285746c73a8229cf922487c8ccfcf6bea61bce.
+The report is under E:/Artifacts/Spice-memoryless-6587a6d/replay.
+Its summary.json SHA-256 is
+d65a80e9e05e255155fdbc84ddd6816e16c0e1edce6e850a777c2a5b35c510f0.
+The exact verified source and test snapshot are in the sibling verified
+directory because C: reached zero free bytes.
+
+The frontend suite passed 622 tests with 37 opt-in skips. Managed
+coverage was 77.53% line and 61.11% branch. The reference implementation
+class reached 87.93% line and 82.14% branch. Tests cover mismatched grids,
+corrupt signed current on each side, missing probes and unknown hashes.
+A reversed reference-current sign was caught by the focused tests.
+The frontend suite ran its existing seeded properties. StrictDoc parsed
+52 documents, 435 unique IDs and 403 resolved parents. Rust coverage,
+standalone fuzzing and a full corpus replay were outside this checkpoint.
