@@ -24,3 +24,21 @@ corpus-compare:
 .PHONY: benchmark
 benchmark:
 	pwsh -NoProfile -File scripts/Run-ComparisonBenchmark.ps1 -NgspicePath "$(NGSPICE)" -Iterations $(BENCH_ITERATIONS)
+
+# Run performance targets independently to avoid CPU/GPU timing contention.
+.PHONY: parallel-test parallel-test-cpu parallel-test-intel parallel-test-launchers parallel-cpu parallel-intel parallel-cuda-preflight parallel-cuda
+parallel-test: parallel-test-cpu parallel-test-intel parallel-test-launchers
+parallel-test-cpu:
+	pwsh -NoProfile -File scripts/Run-ParallelProbe.ps1 -Probe Cpu -TestOnly
+parallel-test-intel:
+	pwsh -NoProfile -File scripts/Run-ParallelProbe.ps1 -Probe Intel -TestOnly
+parallel-test-launchers:
+	pwsh -NoProfile -Command "Invoke-Pester -Configuration @{Run=@{Path=@('scripts/tests/ParallelProbe.Tests.ps1','scripts/tests/CuDssProbe.Tests.ps1');Exit=[bool]1}}"
+parallel-cpu:
+	pwsh -NoProfile -File scripts/Run-ParallelProbe.ps1 -Probe Cpu
+parallel-intel:
+	pwsh -NoProfile -File scripts/Run-ParallelProbe.ps1 -Probe Intel
+parallel-cuda-preflight:
+	pwsh -NoProfile -File scripts/Run-CuDssProbe.ps1 -PreflightOnly
+parallel-cuda:
+	pwsh -NoProfile -File scripts/Run-CuDssProbe.ps1

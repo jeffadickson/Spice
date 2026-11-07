@@ -414,4 +414,18 @@ RELATIONS:
 - TYPE: Parent
   VALUE: DEV-GPU-006
 
+[REQUIREMENT]
+UID: DEV-SOLVER-PROBE-TARGETS-001
+STATUS: Draft
+TITLE: Separate solver probe build targets
+STATEMENT: >>>
+The build entry point shall provide hardware-independent probe checks and individually selectable CPU timing, Intel compute and CUDA smoke targets. Test-only execution shall exclude accelerator dispatch and benchmark timing. Launch failures and unavailable CUDA prerequisites shall remain observable. Concurrent test targets shall use distinct artifact directories.
+<<<
+COMMENT: >>>
+Verification: Makefile, Run-ParallelProbe.ps1, Run-CuDssProbe.ps1 and the corresponding Pester tests. Reproduction is in docs/solver-parallelism-probes.md.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: DEV-SOLVER-PROBE-001
+
 [[/SECTION]]

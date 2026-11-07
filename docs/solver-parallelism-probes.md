@@ -4,6 +4,38 @@ This checkpoint follows DEV-SOLVER-PROBE-001. It evaluates three independently
 runnable paths. The production solver, netlist execution policies and package
 dependencies are unchanged.
 
+## Build targets
+
+Run from the existing Spice checkout with GNU Make, PowerShell 7 and an
+existing writable CODEX_ARTIFACT_ROOT. On Windows the probes default to
+E:/Artifacts when that variable is unset. The hardware-independent aggregate
+also needs Rust, .NET 10 and Pester 5.
+
+| Target | Operation |
+|---|---|
+| `make -j3 parallel-test` | CPU unit tests, Intel validation self-test and launcher Pester tests |
+| `make parallel-cpu` | CPU unit tests followed by the threaded sparse LU benchmark |
+| `make parallel-intel` | Intel validation self-test followed by the FP64 OpenCL probe |
+| `make parallel-cuda-preflight` | CUDA hardware and toolchain prerequisites, with no download or build |
+| `make parallel-cuda` | Pinned cuDSS smoke test using CUDSS_CONFIG_DIR and CUDSS_RUNTIME_DIR |
+
+Run the timed targets individually to avoid contention. For a host without
+Make, invoke scripts/Run-ParallelProbe.ps1 with -Probe Cpu or -Probe Intel
+and add -TestOnly to omit timing and hardware execution. Each CPU and Intel
+invocation prints its unique report directory. Builds use an incremental cache per checkout and probe. A lock prevents two invocations from using the same cache concurrently. GNU Make reports a failed
+recipe when the underlying probe fails or the CUDA prerequisites are missing.
+The CUDA script itself returns 2 for unavailable prerequisites.
+
+The target checkpoint used GNU Make 4.4.1, PowerShell 7.6.5 and Pester 5.7.1
+on Windows. The CPU benchmark target completed, and the aggregate target passed three Rust tests, the Intel self-test and seven Pester tests. The aggregate reused the CPU build cache. The Intel target produced a fresh FP64 report with zero maximum
+absolute error for all six workloads. Both CUDA targets reported unavailable.
+Pester measured 49 of 64 launcher commands exercised (76.56%). Line and
+branch metrics were unavailable for the PowerShell launcher. Removing the CPU
+test-only guard in a disposable snapshot was caught. The lock test holds the
+cache lock and checks that no extra Cargo invocation occurs.
+StrictDoc parsed 52 documents with 432 unique IDs and 400 resolved parents.
+The target verification artifacts are under E:/Artifacts/Spice-parallel-targets-5fb53a3.
+
 ## CPU sparse LU
 
 The standalone Rust probe pins the existing Faer version (0.24.4) with its Rayon
