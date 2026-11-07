@@ -48,8 +48,12 @@ public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range)
 {
     /// <summary>Original generated leading-token spelling; composite lexical headers may span more than one word.</summary>
     public string Name { get; init; } = "";
-    /// <summary>True only for a nonempty generated .option(s) tail composed entirely of the qualified output flags acct/noacct/noinit.</summary>
+    /// <summary>True only for a nonempty generated .option(s) tail composed entirely of the qualified reporting and raw-file encoding settings.</summary>
     public bool ReportingOptionsOnly { get; init; }
+    /// <summary>Generated directive whose only physical setting explicitly selects the fixed 27 Celsius model temperature.</summary>
+    public bool DefaultTemperature { get; init; }
+    /// <summary>Generated legacy reporting width with bounded literal IN and OUT settings.</summary>
+    public bool ReportingWidth { get; init; }
     /// <summary>Generated .global node list; null denotes another directive or an unsupported global header.</summary>
     public ImmutableArray<SourceSyntax>? GlobalNodes {get;init;}
 }

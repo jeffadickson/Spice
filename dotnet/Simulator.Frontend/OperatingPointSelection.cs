@@ -18,7 +18,7 @@ public static class OperatingPointSelection
     private static readonly ImmutableHashSet<string> Analyses=ImmutableHashSet.Create(StringComparer.OrdinalIgnoreCase,".tf",".noise",".sens",".pz");
 
     /// <summary>Selects a bounded static operating point instead of executing the deck's analyses, controls or output instructions.</summary>
-    /// <remarks>Every omission is reported, including controls in unused bodies. Active .global nodes are bound explicitly; physical directives such as .ic and numerical .options remain unsupported.
+    /// <remarks>Every omission is reported, including controls in unused bodies. Active .global nodes are bound explicitly; unmodeled physical directives and numerical settings remain unsupported.
     /// Capacitors and inductors retain typed SI values; the existing Rust operating-point equations supply their open/short steady behavior.
     /// Failed preparation returns no request or omission plan. The strict OperatingPointBridge.Lower API is unchanged.</remarks>
     public static SelectedOperatingPoint Select(DeckSyntax syntax,BridgeLimits? limits=null,string backend="lu")
@@ -52,6 +52,8 @@ public static class OperatingPointSelection
         "op"=>"analysis_replaced_by_explicit_op",
         "ac" or "dc" or "tran"=>"analysis_not_selected",
         "extension" when Observations.Contains(card.Name)=>"observation_not_selected",
+        "extension" when card.ScopeId == 0 && card.DefaultTemperature => "fixed_default_temperature",
+        "extension" when card.ScopeId == 0 && card.ReportingWidth => "reporting_width_not_selected",
         "extension" when card.ReportingOptionsOnly=>"reporting_options_not_selected",
         "extension" when Analyses.Contains(card.Name)=>"analysis_not_selected",
         _=>null

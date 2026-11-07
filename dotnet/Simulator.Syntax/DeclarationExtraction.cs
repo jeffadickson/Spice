@@ -32,15 +32,66 @@ internal sealed class DeclarationExtraction
         this.text=text;this.locate=locate;scopes.Add(new(0,null,null,new(0,text.Length,1,1)));
     }
 
+    private static bool IsReportingOption(SpiceParser.ParameterContext parameter)
+    {
+        if (parameter.value()?.identifier() != null)
+            return parameter.GetText().ToLowerInvariant() is "acct" or "noacct" or "noinit";
+        return parameter.assignment() is {} assignment
+            && assignment.referenceName()?.GetText().Equals("filetype",StringComparison.OrdinalIgnoreCase) == true
+            && assignment.value()?.GetText().ToLowerInvariant() is "ascii" or "binary";
+    }
+
+    // A literal operating temperature equal to the current fixed Celsius
+    // model temperature changes no equations. Expressions and other settings
+    // require an engine/model contract and remain physical refusals.
+    private static bool IsDefaultTemperature(SpiceParser.ValueContext? value) =>
+        value?.NUMBER() != null
+        && double.TryParse(value.GetText(),System.Globalization.NumberStyles.Float,
+            System.Globalization.CultureInfo.InvariantCulture,out var celsius)
+        && celsius == 27;
+
+    private static bool IsDefaultTemperatureOption(SpiceParser.ParameterContext parameter) =>
+        parameter.assignment() is {} assignment
+        && assignment.referenceName()?.GetText().Equals("temp",StringComparison.OrdinalIgnoreCase) == true
+        && IsDefaultTemperature(assignment.value());
+
+    // Legacy .WIDTH controls printed columns in ngspice. Only a bounded
+    // literal IN/OUT pair can be classified as a reporting omission.
+    private static bool IsReportingWidth(SpiceParser.ParameterContext[] parameters)
+    {
+        if (parameters.Length is < 1 or > 2) return false;
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var parameter in parameters)
+        {
+            var assignment = parameter.assignment();
+            var key = assignment?.referenceName()?.GetText();
+            if (key?.ToLowerInvariant() is not ("in" or "out") || !seen.Add(key)
+                || !int.TryParse(assignment!.value()?.GetText(),System.Globalization.NumberStyles.None,
+                    System.Globalization.CultureInfo.InvariantCulture,out var width) || width <= 0)
+                return false;
+        }
+        return true;
+    }
+
     internal void Observe(IParseTree item)
     {
         if(item is not SpiceParser.StatementContext statement || statement.GetChild(0) is not ParserRuleContext card)return;
         var owner=Enclosing(statement.Parent);
+        var directive = card as SpiceParser.ExtensionContext;
+        var directiveName = directive?.Start.Text.ToLowerInvariant();
+        var directiveParameters = directive?.parameter() ?? [];
+        var optionCard = directiveName is ".option" or ".options" && directiveParameters.Length > 0;
+        var reportingOnly = optionCard && directiveParameters.All(IsReportingOption);
         cards.Add(new(owner,SpiceParser.ruleNames[card.RuleIndex],Range(card))
-        {Name=card.Start.Text,GlobalNodes=GlobalNodeExtraction.Extract(card,Capture),ReportingOptionsOnly=card is SpiceParser.ExtensionContext reporting
-            &&reporting.Start.Text.ToLowerInvariant() is ".option" or ".options"
-            &&reporting.parameter().Length>0
-            &&reporting.parameter().All(p=>p.value()?.identifier()!=null&&p.GetText().ToLowerInvariant() is "acct" or "noacct" or "noinit")});
+        {
+            Name = card.Start.Text,
+            GlobalNodes = GlobalNodeExtraction.Extract(card,Capture),
+            ReportingOptionsOnly = reportingOnly,
+            DefaultTemperature = (optionCard && !reportingOnly
+                && directiveParameters.All(p => IsReportingOption(p) || IsDefaultTemperatureOption(p)))
+                || (directiveName == ".temp" && directiveParameters.Length == 1 && IsDefaultTemperature(directiveParameters[0].value())),
+            ReportingWidth = directiveName == ".width" && IsReportingWidth(directiveParameters)
+        });
         if(card is SpiceParser.XspiceContext codeModel)
         {xspice.Add(XspiceExtraction.Extract(codeModel,owner,Capture));return;}
         if(card is SpiceParser.OpContext)analyses.Add(new(owner,"op",[],[],Range(card)));

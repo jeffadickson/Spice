@@ -21,9 +21,16 @@ public sealed class RequestedInitialConditionTests
  [InlineData(".ic v(missing)=1\n.tran 1u 10u","initial_condition_node_missing")]
  [InlineData(".ic i(L1)=1\n.tran 1u 10u","unsupported_initial_condition_profile")]
  [InlineData(".ic v(out)={missing}\n.tran 1u 10u","missing_parameter")]
- [InlineData(".ic v(out)=1\n.op","initial_conditions_without_transient")]
  [InlineData(".tran 1u 10u 11u","invalid_transient_start")]
  public void Unsupported_or_inconsistent_IC_and_windows_refuse_atomically(string cards,string code){var plan=RequestedAnalysis.Prepare(Deck(cards));Assert.False(plan.Success);Assert.Empty(plan.Operations);Assert.Contains(plan.Diagnostics,d=>d.Code==code);}
+ [Fact] public void Root_IC_without_transient_is_recorded_but_does_not_clamp_an_OP(){
+  var plan=RequestedAnalysis.Prepare(Deck(".ic v(out)=1\n.op"));
+  Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
+  var operation=Assert.Single(plan.Operations);
+  Assert.Null(operation.InitializationRequest);
+  Assert.Empty(operation.InitialConditions);
+  Assert.Contains(plan.Observations,o=>o.Reason=="initial_conditions_not_used_by_requested_analyses");
+ }
  [Fact] public void Ordinary_short_UIC_spelling_has_an_explicit_semantic_refusal(){var plan=RequestedAnalysis.Prepare(Deck(".tran 1u 10u uic"));Assert.False(plan.Success);Assert.Contains(plan.Diagnostics,d=>d.Code=="unsupported_transient_uic");}
  [Property(MaxTest=100,Replay="2381,20261103")]
  public bool Initial_condition_bias_preserves_the_original_circuit_and_unique_branch_identity(NonNegativeInt input){
@@ -69,12 +76,13 @@ public sealed class RequestedInitialNativeOracleTests
    ["rc.cir"]="rc initial\n.param level=.5 dt=.01u duration=10u\nR1 out 0 1k\nC1 out 0 1u\n.ic v(out)={level*2}\n.tran {dt} {duration}\n.end\n",
    ["rlc.cir"]="rlc initial\nV1 in 0 0\nR1 in middle 1k\nL1 middle out 1m\nC1 out 0 1u\n.ic v(out)=1\n.tran .001u 1u\n.end\n",
    ["e-branch.cir"]="E initial\nV1 in 0 1\nE1 drive 0 in 0 2\nR1 drive out 1k\nC1 out 0 1u\n.ic v(out)=1\n.tran .001u 1u\n.end\n",
+   ["op-ic.cir"]="op ignores ic\nV1 in 0 2\nR1 in out 1k\nR2 out 0 1k\n.ic v(out)=99\n.op\n.end\n",
    ["window.cir"]="window\nV1 in 0 DC 0 PWL(0 0 4u 4)\nR1 in out 1k\nR2 out 0 1k\n.tran .1u 4u 1.101u .1u\n.end\n",
    ["window-gap.cir"]="window gap\nV1 in 0 DC 0 PWL(0 0 4u 4)\nR1 in out 1k\nR2 out 0 1k\n.tran .1u 4u 1.01u .1u\n.end\n"};
   foreach(var item in fixtures)await File.WriteAllTextAsync(Path.Combine(folder,item.Key),item.Value);var inventory=Path.Combine(folder,"inventory.json");var rows=fixtures.Keys.Select(name=>new{scope="ngspice",path=name,result=new{Sha256=Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(Path.Combine(folder,name))))}});await File.WriteAllTextAsync(inventory,System.Text.Json.JsonSerializer.Serialize(new{rows}));
   var root=Directory.GetParent(Path.GetDirectoryName(SourceFile())!)!.Parent!.FullName;var output=Path.Combine(folder,"output");var exit=await Simulator.RequestedQualification.RequestedCorpus.RunAsync([root,folder,Environment.GetEnvironmentVariable("SPICE_CORPUS_ENGINE")!,Environment.GetEnvironmentVariable("SPICE_CORPUS_NGSPICE")!,inventory,output,"300"]);Assert.Equal(0,exit);
   using var report=System.Text.Json.JsonDocument.Parse(await File.ReadAllTextAsync(Path.Combine(output,"summary.json")));Assert.True(report.RootElement.GetProperty("provenance_valid").GetBoolean());foreach(var row in report.RootElement.GetProperty("rows").EnumerateArray()){if(row.GetProperty("path").GetString()=="window-gap.cir"){Assert.True(row.GetProperty("requested_executed").GetBoolean());Assert.False(row.GetProperty("native_agreed").GetBoolean());Assert.Equal("transient_extrapolation",row.GetProperty("operations")[0].GetProperty("status").GetString());}else Assert.True(row.GetProperty("native_agreed").ValueKind==System.Text.Json.JsonValueKind.True,row.GetRawText());}
-  foreach(var file in Directory.GetFiles(output,"original-analysis.cir",SearchOption.AllDirectories)){var projected=await File.ReadAllTextAsync(file);Assert.Contains(".tran",projected);if(!projected.StartsWith("window",StringComparison.Ordinal))Assert.Contains(".ic v(out)=",projected);}
+  foreach(var file in Directory.GetFiles(output,"original-analysis.cir",SearchOption.AllDirectories)){var projected=await File.ReadAllTextAsync(file);if(projected.StartsWith("op ignores ic",StringComparison.Ordinal)){Assert.Contains(".op",projected);Assert.Contains(".ic v(out)=99",projected);}else{Assert.Contains(".tran",projected);if(!projected.StartsWith("window",StringComparison.Ordinal))Assert.Contains(".ic v(out)=",projected);}}
  }
  private static string SourceFile([System.Runtime.CompilerServices.CallerFilePath]string path="")=>path;
 }

@@ -24,7 +24,7 @@ public sealed class RequestedAnalysisTests
  [InlineData(".ac dec 0 1 1k")]
  [InlineData(".dc V1 0 1 1 V2 0 1 1")]
  [InlineData(".control\nalter R1=2\nop\n.endc")]
- [InlineData(".ic v(a)=1\n.op")]
+ [InlineData(".ic i(V1)=1\n.op")]
  public void Unsupported_or_invalid_programs_publish_no_partial_operations(string cards)
  {var plan=Prepare(cards);Assert.False(plan.Success);Assert.Empty(plan.Operations);Assert.NotEmpty(plan.Diagnostics);}
  [Property(MaxTest=100,Replay="2357,20261103")]

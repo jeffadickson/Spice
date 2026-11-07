@@ -61,3 +61,17 @@ Implementation: RequestedDcSourceBinding.cs. Tests: RequestedDcSourceBindingTest
 RELATIONS:
 - TYPE: Parent
   VALUE: FRONTEND-REQUESTED-001
+
+[REQUIREMENT]
+UID: FRONTEND-INITIAL-004
+STATUS: Draft
+TITLE: Analysis-specific effect of root initial conditions
+STATEMENT: >>>
+A structurally supported root .IC card shall constrain only the non-UIC transient initialization. Requested OP, DC, and AC shall proceed without clamps when no transient is requested, recording the unused source range. When a transient is requested, its existing validation and initialization contract applies. The ngspice oracle shall retain the original .IC card when comparing an unaffected analysis.
+<<<
+COMMENT: >>>
+Reference behavior: ngspice src/spicelib/analysis/cktload.c applies .IC only with MODETRANOP and without MODEUIC. Implementation: RequestedAnalysis.Prepare and OriginalProjection. Verification: RequestedInitialConditionTests and RequestedInitialNativeOracleTests.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-INITIAL-001

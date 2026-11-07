@@ -79,13 +79,19 @@ public static class OriginalProjection
   if(catalog.Cards.Any(c=>c.Kind=="control"))throw new InvalidDataException("unsafe_or_unprepared_projection");
   if(!catalog.Analyses.Any(a=>a.ScopeId==0&&a.Range==operation.Range&&a.Kind==operation.Kind))throw new InvalidDataException("analysis_identity_gap");
   var omissions=catalog.Analyses.Where(a=>a.Range!=operation.Range).Select(a=>new ProjectionOmission(a.Kind,"other_requested_analysis_not_in_this_oracle_job",a.Range))
-   .Concat(plan.Observations.Select(o=>new ProjectionOmission(o.Kind,"reporting_or_observation_not_executed",o.Range))).OrderBy(o=>o.Range.Start).ToImmutableArray();
+   .Concat(ReportingOmissions(plan)).OrderBy(o=>o.Range.Start).ToImmutableArray();
   var chars=expanded.ToCharArray();var end=0;
   foreach(var omission in omissions){var range=omission.Range;if(range.Start<end||range.Start<0||range.Length<0||range.Start>chars.Length-range.Length)throw new InvalidDataException("invalid_projection_ranges");end=range.Start+range.Length;for(var i=range.Start;i<end;i++)if(chars[i] is not ('\r' or '\n'))chars[i]=' ';}
   var text=new string(chars);var parsed=DeckParser.Parse(text,collectDeclarations:true);
   if(parsed.Status!="accepted_structure"||parsed.Declarations?.Analyses.Length!=1||parsed.Declarations.Analyses[0].Range!=operation.Range||parsed.Declarations.Analyses[0].Kind!=operation.Kind)throw new InvalidDataException("projected_analysis_identity_gap");
   return new(text,omissions);
  }
+ // Preserve physical source cards even when a particular analysis has no use
+ // for them. The independent engine must see the original temperature and IC.
+ private static IEnumerable<ProjectionOmission> ReportingOmissions(RequestedAnalysisPlan plan) =>
+  plan.Observations.Where(o=>o.Reason is not ("fixed_default_temperature" or "initial_conditions_not_used_by_requested_analyses"))
+      .Select(o=>new ProjectionOmission(o.Kind,"reporting_or_observation_not_executed",o.Range));
+
  private static NativeProjection Control(string expanded,DeckSyntax syntax,RequestedOperation operation,RequestedAnalysisPlan plan,RequestedControlOrigin origin){
   var catalog=syntax.Declarations!;var blocks=catalog.ControlBlocks.Where(b=>b.ScopeId==0&&b.Range==origin.BlockRange).ToArray();
   if(blocks.Length!=1||catalog.ControlBlocks.Length!=1||plan.ControlProfile is not ("direct_commands" or "finite_deck_run"))throw new InvalidDataException("control_projection_identity_gap");
@@ -93,7 +99,7 @@ public static class OriginalProjection
   if(commands.Length!=1||origin.Kind=="direct"&&(commands[0].Analysis?.Kind!=operation.Kind||operation.Range!=commands[0].Range)||origin.Kind=="run"&&(commands[0].Kind!="run"||origin.DeclaredAnalysisRange!=operation.Range)||origin.Kind is not ("direct" or "run"))throw new InvalidDataException("control_analysis_identity_gap");
   var omissions=catalog.Analyses.Where(a=>origin.Kind=="direct"||a.Range!=operation.Range).Select(a=>new ProjectionOmission(a.Kind,"other_deck_analysis_not_in_this_control_oracle",a.Range))
    .Concat(block.Commands.Where(c=>c.Range!=origin.CommandRange).Select(c=>new ProjectionOmission("control_"+c.Kind,"other_control_instruction_not_in_this_individual_oracle",c.Range)))
-   .Concat(plan.Observations.Select(o=>new ProjectionOmission(o.Kind,"reporting_or_observation_not_executed",o.Range))).OrderBy(o=>o.Range.Start).ToImmutableArray();
+   .Concat(ReportingOmissions(plan)).OrderBy(o=>o.Range.Start).ToImmutableArray();
   var characters=expanded.ToCharArray();var end=0;foreach(var omission in omissions){var range=omission.Range;if(range.Start<end||range.Start<0||range.Length<0||range.Start>characters.Length-range.Length)throw new InvalidDataException("invalid_projection_ranges");end=range.Start+range.Length;for(var i=range.Start;i<end;i++)if(characters[i] is not ('\r' or '\n'))characters[i]=' ';}
   var projected=new string(characters);var checkedSyntax=DeckParser.Parse(projected,collectDeclarations:true);
   if(checkedSyntax.Status!="accepted_structure"||checkedSyntax.Declarations?.ControlBlocks.Length!=1||origin.Kind=="run"&&(checkedSyntax.Declarations.Analyses.Length!=1||checkedSyntax.Declarations.Analyses[0].Range!=operation.Range)||origin.Kind=="direct"&&checkedSyntax.Declarations.Analyses.Length!=0)throw new InvalidDataException("projected_control_identity_gap");

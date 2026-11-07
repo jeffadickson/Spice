@@ -1,0 +1,30 @@
+[DOCUMENT]
+TITLE: Bounded requested deck option and directive profiles
+
+[REQUIREMENT]
+UID: FRONTEND-OPTIONS-DEFAULTTEMP-001
+STATUS: Draft
+TITLE: Explicit fixed operating temperature
+STATEMENT: >>>
+Generated preparation shall accept root .OPTION or .OPTIONS TEMP=27 and root .TEMP 27 with a literal Celsius value numerically equal to 27. A temperature option may share a card with individually admitted reporting settings. The adapter shall retain the source range and leave the fixed 300.15 K model contract in effect. The original temperature card shall remain present in the native oracle input. Other temperatures, unsupported expressions, temperature lists and unsupported co-options shall refuse explicitly.
+<<<
+COMMENT: >>>
+Implementation: DeclarationExtraction, OperatingPointSelection, and OriginalProjection. Verification: AccountingOptionTests and original requested corpus replay. The engine does not expose a general operating temperature, nominal temperature or native device convergence policy through this profile.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SELECT-001
+
+[REQUIREMENT]
+UID: FRONTEND-REPORT-WIDTH-001
+STATUS: Draft
+TITLE: Bounded legacy reporting width
+STATEMENT: >>>
+Explicit selection may omit a root .WIDTH card consisting of one or both of IN and OUT with positive integer literal values, each key at most once. The omission shall retain the original source range. Other width forms shall remain explicit refusals. Strict lowering shall remain unchanged.
+<<<
+COMMENT: >>>
+ngspice src/frontend/inp.c takes .WIDTH out of the physical input. src/frontend/dotcards.c applies output width to reporting. Verification: AccountingOptionTests and original requested corpus replay.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SELECT-001

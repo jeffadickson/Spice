@@ -57,7 +57,8 @@ public static partial class RequestedAnalysis
   var control=RequestedControlPreparation.Compile(catalog);if(control.Diagnostic is {} controlFailure)return Fail(controlFailure.Code,controlFailure.Range);
   if(control.Directives.IsEmpty)return Fail("no_requested_analysis",null);
   if(catalog.InitialConditions.Any(ic=>ic.ScopeId!=0||!ic.Supported))return Fail("unsupported_initial_condition_profile",catalog.InitialConditions.First(ic=>ic.ScopeId!=0||!ic.Supported).Range);
-  if(!catalog.InitialConditions.IsEmpty&&!control.Directives.Any(a=>a.Analysis.Kind=="tran"))return Fail("initial_conditions_without_transient",catalog.InitialConditions[0].Range);
+  // Node .IC constrains only the non-UIC transient bias, never a DC or AC operation.
+  var hasTransient=control.Directives.Any(a=>a.Analysis.Kind=="tran");
   var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,catalog.InitialConditions.Select(ic=>ic.Range.Start).ToImmutableHashSet());
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
@@ -70,7 +71,7 @@ public static partial class RequestedAnalysis
   var environment=ParameterEvaluator.Evaluate(catalog);
   var operations=ImmutableArray.CreateBuilder<RequestedOperation>();
   try{
-   var initialConditions=BindInitialConditions(catalog,environment,prepared);
+   var initialConditions=hasTransient?BindInitialConditions(catalog,environment,prepared):[];
    foreach(var directive in control.Directives){
     var card=directive.Analysis;
     var id="requested_"+operations.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
@@ -122,7 +123,10 @@ public static partial class RequestedAnalysis
     operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { CoordinateUnit=unit,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=card.Kind=="tran"?initialConditions:[],ControlOrigin=directive.Origin });
    }
   }catch(PreparationFailure e){return Fail(e.Code,e.Range);}
-  return new(operations.ToImmutable(),[]) { Observations=selected.Omissions.Where(o=>o.Kind=="extension").ToImmutableArray(),CircuitPreparation=prepared,ControlProfile=control.Profile,ProgramOmissions=control.Omissions };
+  var observations=selected.Omissions.Where(o=>o.Kind=="extension").ToImmutableArray();
+  if(!hasTransient)observations=observations.AddRange(catalog.InitialConditions.Select(ic=>
+      new OperatingPointOmission(ic.ScopeId,"extension",".ic","initial_conditions_not_used_by_requested_analyses",ic.Range)));
+  return new(operations.ToImmutable(),[]) { Observations=observations,CircuitPreparation=prepared,ControlProfile=control.Profile,ProgramOmissions=control.Omissions };
  }
  private static ImmutableArray<double> Linear(double start,double stop,double step,int maximum,SourceRange range)
  {
