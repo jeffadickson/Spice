@@ -38,3 +38,17 @@ The generated frontend shall bind qualified diode model assignments in their dec
 COMMENT: >>>
 Implementation: dotnet/Simulator.Frontend/SemiconductorPreparation.cs, additive diode lowering in OperatingPointBridge.cs, typed DTOs in Simulator.Client/Requests.cs. Verification: SemiconductorTests.cs (8 initial cases), full frontend regressions and actual engine oracle integration. First profile supports IS,N,CJO/CJ0,VJ,M,FC,TT and TNOM=27 only; RS,BV and other terms reject. Binding readiness is not numerical qualification.
 <<<
+
+[REQUIREMENT]
+UID: SEMI-DIODE-AC-FLOATING-001
+STATUS: Draft
+TITLE: Signed complex current of a floating charged diode
+STATEMENT: >>>
+The published total AC current shall use the complex differential terminal voltage V(P)-V(N), including subtraction of the imaginary part at N. With both terminals independently excited, the total device current shall equal differential voltage multiplied by the small-signal junction admittance. At each ideal source, the signed source branch current shall satisfy terminal KCL.
+<<<
+COMMENT: >>>
+Implementation: src/api.rs. Verification: tests/spice_diode.rs::floating_diode_ac_current_uses_signed_terminal_phasor_difference, independent zero-bias Shockley slope and charge derivative on dense LU and sparse faer. Issue 41 captures the exact subtraction-to-addition mutant.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEMI-DIODE-OBS-001

@@ -149,3 +149,44 @@ fn complex_terminal_current_balances_source_at_each_frequency() {
         }
     }
 }
+
+#[test]
+fn floating_diode_ac_current_uses_signed_terminal_phasor_difference() {
+    use circuit_simulator::api::{Request, run};
+    use num_complex::Complex64;
+
+    // Equal DC terminals give an independently known slope IS/VT.
+    // Unequal, nonzero imaginary terminal drives distinguish subtraction
+    // from addition in both parts of the published junction current.
+    let junction = model();
+    let g = junction.saturation_amps / junction.thermal_volts;
+    let frequency = 1000.;
+    let c = junction.junction_farads + junction.transit_seconds * g;
+    let expected =
+        Complex64::new(1.5, -0.75) * Complex64::new(g, std::f64::consts::TAU * frequency * c);
+    for backend in ["lu", "faer"] {
+        let request: Request = serde_json::from_value(serde_json::json!({
+            "schema_version":"1","case_id":"floating-diode-ac","backend":backend,
+            "circuit":{"nodes":["0","p","n"],"elements":[
+                {"kind":"voltage","id":"Vp","p":1,"n":0,"volts":0.1},
+                {"kind":"voltage","id":"Vn","p":2,"n":0,"volts":0.1},
+                {"kind":"spice_diode","id":"D1","p":1,"n":2,"model":junction}
+            ]},
+            "analysis":{"kind":"ac","frequencies_hz":[frequency],"source_phasors":[
+                {"id":"Vp","real":2.,"imag":0.25},
+                {"id":"Vn","real":0.5,"imag":1.}
+            ]}
+        }))
+        .unwrap();
+        let result = run(&request).unwrap();
+        let index = |id: &str| result.signals.iter().position(|s| s.id == id).unwrap();
+        let values = &result.ac_samples[0].values;
+        let current = |id| {
+            let x = &values[index(id)];
+            Complex64::new(x.real, x.imag)
+        };
+        assert!((current("i(D1)") - expected).norm() < 1e-16, "{backend}");
+        assert!((current("i(Vp)") + expected).norm() < 1e-16, "{backend}");
+        assert!((current("i(Vn)") - expected).norm() < 1e-16, "{backend}");
+    }
+}
