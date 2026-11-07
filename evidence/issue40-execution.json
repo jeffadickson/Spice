@@ -1,0 +1,386 @@
+{
+  "state": "completed_with_results",
+  "provenance_valid": true,
+  "tested_base": "be33d0b1a5f454481411e3445ad33689e23a5a3c",
+  "tested_working_patch": true,
+  "summary_sha256": "be824a088f9d49167c7cee7bbd93e6f21847db365c1ae595d24ef2ca58713fe5",
+  "elapsed_seconds": 12.6400059,
+  "stages": [
+    {
+      "name": "Syntax accepted",
+      "passed": 5,
+      "refused": 0,
+      "unknown": 0
+    },
+    {
+      "name": "Circuit prepared",
+      "passed": 5,
+      "refused": 0,
+      "unknown": 0
+    },
+    {
+      "name": "Requested analyses executed",
+      "passed": 5,
+      "refused": 0,
+      "unknown": 0
+    },
+    {
+      "name": "Native numerical agreement",
+      "passed": 1,
+      "refused": 4,
+      "unknown": 0
+    }
+  ],
+  "rows": [
+    {
+      "path": "examples/xspice/original-examples/spice3.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "comparisons": {
+        "status": "numerical_disagreement",
+        "observables": [
+          {
+            "engine_signal": "v(n2)",
+            "native_signal": "v(1)",
+            "unit": "V",
+            "points": 201,
+            "failed": 199,
+            "maximum_absolute_error": 0.0003978907140934629,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n3)",
+            "native_signal": "v(base)",
+            "unit": "V",
+            "points": 201,
+            "failed": 112,
+            "maximum_absolute_error": 0.0003707956392131617,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n4)",
+            "native_signal": "v(coll)",
+            "unit": "V",
+            "points": 201,
+            "failed": 128,
+            "maximum_absolute_error": 0.001388698255666565,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n5)",
+            "native_signal": "v(emit)",
+            "unit": "V",
+            "points": 201,
+            "failed": 148,
+            "maximum_absolute_error": 0.0003596398131167078,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n1)",
+            "native_signal": "v(vcc)",
+            "unit": "V",
+            "points": 201,
+            "failed": 0,
+            "maximum_absolute_error": 0,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "i(e0)",
+            "native_signal": "i(vcc)",
+            "unit": "A",
+            "points": 201,
+            "failed": 144,
+            "maximum_absolute_error": 3.524396235249881E-07,
+            "absolute_tolerance": 1E-09,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "i(e1)",
+            "native_signal": "i(vin)",
+            "unit": "A",
+            "points": 201,
+            "failed": 191,
+            "maximum_absolute_error": 2.253841713212117E-08,
+            "absolute_tolerance": 1E-09,
+            "relative_tolerance": 0.0001
+          }
+        ],
+        "gaps": []
+      }
+    },
+    {
+      "path": "examples/xspice/various/xspice_c1.cir",
+      "status": "requested_executed_not_fully_qualified",
+      "comparisons": {
+        "status": "numerical_disagreement",
+        "observables": [
+          {
+            "engine_signal": "v(n2)",
+            "native_signal": "v(1)",
+            "unit": "V",
+            "points": 201,
+            "failed": 199,
+            "maximum_absolute_error": 0.0003978907140934629,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n3)",
+            "native_signal": "v(base)",
+            "unit": "V",
+            "points": 201,
+            "failed": 112,
+            "maximum_absolute_error": 0.0003707956392131617,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n4)",
+            "native_signal": "v(coll)",
+            "unit": "V",
+            "points": 201,
+            "failed": 128,
+            "maximum_absolute_error": 0.001388698255666565,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n5)",
+            "native_signal": "v(emit)",
+            "unit": "V",
+            "points": 201,
+            "failed": 148,
+            "maximum_absolute_error": 0.0003596398131167078,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n1)",
+            "native_signal": "v(vcc)",
+            "unit": "V",
+            "points": 201,
+            "failed": 0,
+            "maximum_absolute_error": 0,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "i(e0)",
+            "native_signal": "i(vcc)",
+            "unit": "A",
+            "points": 201,
+            "failed": 144,
+            "maximum_absolute_error": 3.524396235249881E-07,
+            "absolute_tolerance": 1E-09,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "i(e1)",
+            "native_signal": "i(vin)",
+            "unit": "A",
+            "points": 201,
+            "failed": 191,
+            "maximum_absolute_error": 2.253841713212117E-08,
+            "absolute_tolerance": 1E-09,
+            "relative_tolerance": 0.0001
+          }
+        ],
+        "gaps": []
+      }
+    },
+    {
+      "path": "paranoia_parallel/examples/xspice/original-examples/spice3.deck",
+      "status": "requested_executed_not_fully_qualified",
+      "comparisons": {
+        "status": "numerical_disagreement",
+        "observables": [
+          {
+            "engine_signal": "v(n2)",
+            "native_signal": "v(1)",
+            "unit": "V",
+            "points": 201,
+            "failed": 199,
+            "maximum_absolute_error": 0.0003978907140934629,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n3)",
+            "native_signal": "v(base)",
+            "unit": "V",
+            "points": 201,
+            "failed": 112,
+            "maximum_absolute_error": 0.0003707956392131617,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n4)",
+            "native_signal": "v(coll)",
+            "unit": "V",
+            "points": 201,
+            "failed": 128,
+            "maximum_absolute_error": 0.001388698255666565,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n5)",
+            "native_signal": "v(emit)",
+            "unit": "V",
+            "points": 201,
+            "failed": 148,
+            "maximum_absolute_error": 0.0003596398131167078,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n1)",
+            "native_signal": "v(vcc)",
+            "unit": "V",
+            "points": 201,
+            "failed": 0,
+            "maximum_absolute_error": 0,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "i(e0)",
+            "native_signal": "i(vcc)",
+            "unit": "A",
+            "points": 201,
+            "failed": 144,
+            "maximum_absolute_error": 3.524396235249881E-07,
+            "absolute_tolerance": 1E-09,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "i(e1)",
+            "native_signal": "i(vin)",
+            "unit": "A",
+            "points": 201,
+            "failed": 191,
+            "maximum_absolute_error": 2.253841713212117E-08,
+            "absolute_tolerance": 1E-09,
+            "relative_tolerance": 0.0001
+          }
+        ],
+        "gaps": []
+      }
+    },
+    {
+      "path": "paranoia_parallel/examples/xspice/xspice_c1.cir",
+      "status": "requested_executed_not_fully_qualified",
+      "comparisons": {
+        "status": "numerical_disagreement",
+        "observables": [
+          {
+            "engine_signal": "v(n2)",
+            "native_signal": "v(1)",
+            "unit": "V",
+            "points": 101,
+            "failed": 99,
+            "maximum_absolute_error": 0.00039789071409324084,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n3)",
+            "native_signal": "v(base)",
+            "unit": "V",
+            "points": 101,
+            "failed": 56,
+            "maximum_absolute_error": 0.0003707956392131617,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n4)",
+            "native_signal": "v(coll)",
+            "unit": "V",
+            "points": 101,
+            "failed": 64,
+            "maximum_absolute_error": 0.0013886165256802308,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n5)",
+            "native_signal": "v(emit)",
+            "unit": "V",
+            "points": 101,
+            "failed": 74,
+            "maximum_absolute_error": 0.00035961864712508174,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "v(n1)",
+            "native_signal": "v(vcc)",
+            "unit": "V",
+            "points": 101,
+            "failed": 0,
+            "maximum_absolute_error": 0,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "i(e0)",
+            "native_signal": "i(vcc)",
+            "unit": "A",
+            "points": 101,
+            "failed": 72,
+            "maximum_absolute_error": 3.5241888115796274E-07,
+            "absolute_tolerance": 1E-09,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "i(e1)",
+            "native_signal": "i(vin)",
+            "unit": "A",
+            "points": 101,
+            "failed": 95,
+            "maximum_absolute_error": 2.253841713212117E-08,
+            "absolute_tolerance": 1E-09,
+            "relative_tolerance": 0.0001
+          }
+        ],
+        "gaps": []
+      }
+    },
+    {
+      "path": "compat/ngspice/semantic-zero-port.cir",
+      "status": "all_individual_requested_analyses_agreed",
+      "comparisons": {
+        "status": "agreed",
+        "observables": [
+          {
+            "engine_signal": "v(n1)",
+            "native_signal": "v(X1.hidden)",
+            "unit": "V",
+            "points": 1,
+            "failed": 0,
+            "maximum_absolute_error": 0,
+            "absolute_tolerance": 1E-06,
+            "relative_tolerance": 0.0001
+          },
+          {
+            "engine_signal": "i(e1)",
+            "native_signal": "i(V.X1.V1)",
+            "unit": "A",
+            "points": 1,
+            "failed": 0,
+            "maximum_absolute_error": 0,
+            "absolute_tolerance": 1E-09,
+            "relative_tolerance": 0.0001
+          }
+        ],
+        "gaps": []
+      }
+    }
+  ]
+}

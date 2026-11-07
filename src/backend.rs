@@ -162,6 +162,13 @@ fn solve_refined_real_lu(
     let mut values = factor
         .solve(rhs)
         .ok_or_else(|| SimError::new(ErrorCode::SingularMatrix, "LU has no unique solution"))?;
+    if values.iter().any(|value| !value.is_finite()) {
+        return Err(SimError::new(
+            ErrorCode::NumericalFailure,
+            "nonfinite LU solution",
+        ));
+    }
+    enforce_homogeneous_singletons(matrix, rhs, &mut values);
     let mut best_error = real_backward_error(matrix, rhs, &values);
     for _ in 0..3 {
         if best_error <= 1e-10 {
@@ -177,7 +184,11 @@ fn solve_refined_real_lu(
                 "LU refinement has no unique solution",
             )
         })?;
-        let candidate = &values + correction;
+        let mut candidate = &values + correction;
+        if candidate.iter().any(|value| !value.is_finite()) {
+            break;
+        }
+        enforce_homogeneous_singletons(matrix, rhs, &mut candidate);
         let error = real_backward_error(matrix, rhs, &candidate);
         // Never replace a better finite solve with a worse/nonfinite correction.
         // Equal errors can still improve an exactly constrained zero component.
@@ -194,6 +205,27 @@ fn solve_refined_real_lu(
             ErrorCode::NumericalFailure,
             "LU refinement did not meet componentwise backward error",
         ))
+    }
+}
+/// Enforce exact equations a*x[j] = 0 before checking the complete original
+/// system. Such rows occur for grounded zero-voltage sources. Refinement can
+/// leave a nonzero subnormal correction whose relative row error remains one.
+/// This changes the candidate solution, never the equations or acceptance bound.
+fn enforce_homogeneous_singletons(
+    matrix: &DMatrix<f64>,
+    rhs: &DVector<f64>,
+    values: &mut DVector<f64>,
+) {
+    for row in 0..matrix.nrows() {
+        if rhs[row] != 0. {
+            continue;
+        }
+        let mut nonzero = (0..matrix.ncols()).filter(|&column| matrix[(row, column)] != 0.);
+        if let Some(column) = nonzero.next() {
+            if nonzero.next().is_none() {
+                values[column] = 0.;
+            }
+        }
     }
 }
 /// Independent algorithm within the same library, not a second qualified provider.

@@ -706,3 +706,25 @@ For a voltage-clamped SPICE diode with nonzero junction storage, the reported co
 COMMENT: >>>
 Verification: complex_terminal_current_balances_source_at_each_frequency in tests/spice_diode.rs and assertion_rejects_either_nonfinite_bound_independently in tests/overnight_survivors.rs. The AC regression tests the exported current through Kirchhoff current balance, independently of its frequency-scaling formula.
 <<<
+
+[REQUIREMENT]
+UID: QUAL-ZERO-PORT-OBSERVABLES-001
+STATUS: Implemented
+TITLE: Compare original internal observables when no root ports exist
+STATEMENT: >>>
+An executable circuit without root nodes shall compare original internal node voltages and original voltage-output branch currents using qualified native instance paths. Synthetic decomposition nodes and branch currents shall not become native observables. Missing, incorrectly valued or wrongly dimensioned native data shall not count as agreement.
+<<<
+COMMENT: >>>
+Implementation: OperatingPointBridge.InternalNodes and RequestedComparison internal fallback. Verification: ZeroPortObservableTests checks correct and perturbed voltage/current values; semantic-zero-port.cir replay against native ngspice. Root-bearing circuits retain their existing comparison scope.
+<<<
+
+[REQUIREMENT]
+UID: QUAL-LU-HOMOGENEOUS-001
+STATUS: Implemented
+TITLE: Enforce exact homogeneous singleton equations without relaxing residual acceptance
+STATEMENT: >>>
+Dense real LU candidates may enforce a finite original equation with one nonzero coefficient and zero right-hand side by assigning the corresponding unknown exactly zero. Provider nonfinite results shall be refused before correction. The full original system shall retain its componentwise backward-error acceptance threshold and bounded refinement count.
+<<<
+COMMENT: >>>
+Implementation: backend.rs homogeneous singleton enforcement. Verification: captured BJT Newton correction fixture in lu_homogeneous_constraints.rs, existing wrong-factor and nonfinite-provider tests, and the requested amplifier cohort against ngspice. This is an algebraic equality correction and does not waive circuit convergence or comparison bounds.
+<<<

@@ -19,6 +19,8 @@ public sealed record ElementOrigin(string WireId,string LocalName,ImmutableArray
 /// <summary>Atomic typed request preparation; this operation does not run a simulator.</summary>
 public sealed record BridgeResult(SimulationRequest? Request,ImmutableDictionary<string,string> RootNodes,ImmutableArray<ElementOrigin> Origins,ImmutableArray<BridgeDiagnostic> Diagnostics)
 {
+    /// <summary>Native hierarchical names for original internal nodes, excluding decomposition nodes.</summary>
+    public ImmutableDictionary<string,string> InternalNodes {get;init;}=ImmutableDictionary<string,string>.Empty;
     /// <summary>Resolved selected policy, or Disabled for strict literal-node lowering. Oracle adapters must use the same native mode.</summary>
     public GroundAliasPolicy GroundAliases {get;init;}=GroundAliasPolicy.Disabled;
     /// <summary>Explicit complex AC replacements for every active independent source, including zero for DC-only sources. DC bias remains in Request.Circuit.</summary>
@@ -60,6 +62,7 @@ public static class OperatingPointBridge
         var nodes=new List<string>{"0"};var elements=new List<Element>();var origins=new List<ElementOrigin>();
         var acSources=new List<AcSourcePhasor>();var explicitAcSources=0;var sourceWaveforms=new List<PreparedSourceWaveform>();
         var roots=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
+        var internalNodes=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var bound=InstanceBinder.Bind(catalog).Instances.ToLookup(i=>i.Header.ScopeId);
         GroundBinding? groundBinding=null;
         var primitives=catalog.Primitives.ToLookup(p=>p.ScopeId);var cards=catalog.Cards.ToLookup(c=>c.ScopeId);
@@ -79,7 +82,7 @@ public static class OperatingPointBridge
             Expand(0,rootParameters,new(StringComparer.OrdinalIgnoreCase),[],0);
             if(elements.Count==0)throw new BridgeFailure("empty_circuit",null);
             return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),new OperatingPoint(),backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
-            {AcSources=acSources.ToImmutableArray(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
+            {InternalNodes=internalNodes.ToImmutable(),AcSources=acSources.ToImmutableArray(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
         }
         catch(BridgeFailure e){return Failure(e.Code,e.Range);}
         void CollectGlobals(int scope,HashSet<int> seen,int depth)
@@ -360,7 +363,14 @@ public static class OperatingPointBridge
                 if(table.TryGetValue(name,out index))return index;
                 if(nodes.Count>=limits.MaxNodes)throw new BridgeFailure("node_budget",catalog.Scopes[scope].Range);
                 index=nodes.Count;var wire="n"+index.ToString(System.Globalization.CultureInfo.InvariantCulture);nodes.Add(wire);table.Add(name,index);
-                if(scope==0)roots[name]=wire;return index;
+                if(scope==0)roots[name]=wire;
+                else {
+                    var nativeName=string.Join('.',path)+"."+name;
+                    if(internalNodes.TryGetValue(nativeName,out var existing)&&existing!=wire)
+                        throw new BridgeFailure("ambiguous_native_internal_node",catalog.Scopes[scope].Range);
+                    internalNodes[nativeName]=wire;
+                }
+                return index;
             }
             int PrivateNode()
             {

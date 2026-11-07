@@ -141,11 +141,15 @@ public static class RequestedComparison
     if((actualAxis[0]<start&&!Near(actualAxis[0],start))||(axis[0]<start&&!Near(axis[0],start))||start==0&&(!Near(actualAxis[0],0)||!Near(axis[0],0))||!Near(actualAxis[^1],stop)||!Near(axis[^1],stop))throw new InvalidDataException("incomplete_transient_reporting_grid");
    }else throw new InvalidDataException("unsupported_comparison_analysis");
    var mappings=new List<(string Engine,string Native,string Unit)>();var gaps=ImmutableArray.CreateBuilder<string>();
-   foreach(var node in circuit.RootNodes.OrderBy(n=>n.Key,StringComparer.OrdinalIgnoreCase))mappings.Add(("v("+node.Value+")","v("+node.Key+")","V"));
-   foreach(var origin in circuit.Origins.Where(o=>o.InstancePath.IsEmpty&&o.NativeBranchName!=null)){
+   var internalFallback=circuit.RootNodes.IsEmpty;
+   var observableNodes=internalFallback?circuit.InternalNodes:circuit.RootNodes;
+   foreach(var node in observableNodes.OrderBy(n=>n.Key,StringComparer.OrdinalIgnoreCase))mappings.Add(("v("+node.Value+")","v("+node.Key+")","V"));
+   foreach(var origin in circuit.Origins.Where(o=>(o.InstancePath.IsEmpty||internalFallback)&&o.NativeBranchName!=null)){
     var element=circuit.Request!.Circuit.Elements.Single(e=>e.Id==origin.WireId);
     if(element is Voltage or Inductor or Vcvs or Ccvs){
-     var name="i("+origin.NativeBranchName+")";var alternate=origin.NativeBranchName+"#branch";
+     var branch=origin.InstancePath.IsEmpty?origin.NativeBranchName:
+        origin.NativeBranchName![0]+"."+string.Join('.',origin.InstancePath)+"."+origin.NativeBranchName;
+     var name="i("+branch+")";var alternate=branch+"#branch";
      mappings.Add(("i("+origin.WireId+")",native.Variables.Any(v=>v.Name.Equals(name,StringComparison.OrdinalIgnoreCase))?name:alternate,"A"));
     }else gaps.Add("invalid_native_branch_metadata:"+origin.WireId);
    }
