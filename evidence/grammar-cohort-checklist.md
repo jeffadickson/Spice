@@ -156,3 +156,47 @@ with 428 unique IDs and 396 resolved parents. Both short-pulse assertions
 failed before the fix and also caught a deliberate doubled-rise mutant.
 The existing frontend suite includes seeded properties. Rust coverage and
 standalone fuzzing were outside this checkpoint.
+
+### RC transient discrepancy diagnosis
+
+At the end of the 0.1 s source ramp, the exact 1-ohm, 1-farad response
+is 0.04837418036 V. The configured request advances from 0 to 0.1 s in
+one backward-Euler step. Evaluating the input at the right endpoint
+gives (0 + 0.1 * 1) / (1 + 0.1) = 0.09090909091 V, exactly the Rust
+result. ngspice starts at 0.0007 s and gives 0.04830771117 V at 0.1 s.
+The source current follows i(vin) = (v(2) - v(1)) / 1 ohm, so the
+capacitor voltage error explains both discrepancies. The engine
+satisfies that relation within 1.12e-16 A in the trials below.
+
+Replaying the same serialized request through the same Rust executable,
+with only integration controls varied, gave these maximum capacitor
+voltage errors against the exact solution on each run's own time grid.
+
+| Integration | Accepted steps | Maximum error |
+|---|---:|---:|
+| Baseline backward Euler, 0.1 s ceiling | 70 | 0.042535 V |
+| Trapezoidal, same ceiling | 70 | 0.00075513 V |
+| Backward Euler, 0.001 s ceiling | 7000 | 0.00045213 V |
+| Trapezoidal, 0.001 s ceiling | 7000 | 0.00000007540 V |
+| Trapezoidal with local error control, 0.1 s ceiling | 449 | 0.000001282 V |
+| Original ngspice trace | 85 | 0.00024156 V |
+
+The analytical voltage during the ramp is 10 * (t - 1 + exp(-t))
+in volts with t in seconds. After 0.1 s, the remaining deficit from
+1 V decays with the 1 s time constant. The method-only replay confirms
+that the dominant error is the coarse right-endpoint approximation
+during the ramp. The refined and adaptive replays demonstrate numerical
+convergence on this circuit. They are analytical diagnostics. The
+original strict ngspice comparison remains unqualified, and the
+native trace has measurable integration error of its own.
+
+The adaptive trial used relative tolerance 1e-7, absolute voltage and
+current tolerances 1e-9, minimum step 1e-7 s and 40000 attempts. It
+rejected six steps. The unchanged request and all diagnostic responses
+are under E:/Artifacts/Spice-short-pulse-874e8e6/rc-root-cause.
+The audit.json SHA-256 is
+1b1a3ae271bf297e6f77a35ddb63c82e0c9beeec67b101aa683f4b0d5c382286.
+The reused Rust engine SHA-256 is
+037406562cd2518633d4d05debeceb3c5cf3252f16a52f4b68d9bbdde318b4cce.
+This investigation tested a2811d2 artifacts and made no solver or
+comparison policy change.
