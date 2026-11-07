@@ -266,3 +266,17 @@ Implementation: TransientSelection and the existing typed PWL wire profile. Refe
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-SELECT-001
+
+[REQUIREMENT]
+UID: FRONTEND-TRAN-DRIVEN-LTE-001
+STATUS: Draft
+TITLE: Bounded adaptive integration of driven linear storage
+STATEMENT: >>>
+Requested transient analyses with a time-dependent source and linear capacitor or inductor storage shall use trapezoidal integration with local step-doubling error control when no method or trapezoidal order two is selected and initialization uses the ordinary operating point. The original maximum step and accepted-step ceiling shall be preserved, and the attempts ceiling shall be four times the accepted-step ceiling. An explicit first-order method shall retain its selected integration policy.
+<<<
+COMMENT: >>>
+RequestedAnalysis supplies the existing Rust adaptive controller with relative tolerance 1e-7, absolute floors 1e-9 V and 1e-9 A, and minimum step equal to the larger of the smallest positive binary64 value and the step ceiling divided by one million. Verification uses RequestedAnalysisTests, original tests/general/rc.cir and the exact RC response. These local tolerances do not establish a global error bound or native trace agreement.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-TRANSIENT-SELECT-001

@@ -158,6 +158,16 @@ public static partial class RequestedAnalysis
             Math.Max(double.Epsilon,options.MaxStepS/1024),4*options.MaxSteps):null
        };
       }else if(!initialConditions.IsEmpty)initialization=ClampRequest(baseRequest,id,initialConditions);
+      else if(options.InitialNewton==null&&(requestedMethod is null or "trapezoidal")&&
+              options.Sources is {Length:>0}&&transientRequest.Circuit.Elements.Any(e=>e is Capacitor or Inductor)){
+       // A coarse step across a driven storage ramp can give a large charge error.
+       // Retain the deck's step ceiling and bound rejected work independently.
+       options=options with{
+        Method="trapezoidal",
+        Adaptive=new AdaptiveOptions(1e-7,1e-9,1e-9,
+            Math.Max(double.Epsilon,options.MaxStepS/1e6),4*options.MaxSteps)
+       };
+      }
       requests.Add(transientRequest with{Analysis=new TransientConfigured(options)});break;
     }
     operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { CoordinateUnit=unit,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=initialConditions,UsesUic=usesUic,ControlOrigin=directive.Origin });

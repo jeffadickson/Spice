@@ -200,3 +200,44 @@ The reused Rust engine SHA-256 is
 037406562cd2518633d4d05debeceb3c5cf3252f16a52f4b68d9bbdde318b4cce.
 This investigation tested a2811d2 artifacts and made no solver or
 comparison policy change.
+
+### Adaptive trapezoidal checkpoint
+
+FRONTEND-TRAN-DRIVEN-LTE-001 applies the existing Rust step-doubling
+controller to requested, waveform-driven linear storage transients
+with ordinary operating-point startup. The default and explicit
+second-order trapezoidal settings use it. Explicit first-order
+settings, UIC, clamped IC and nonlinear startup retain their prior
+policies. The Rust executable and comparison tolerances are unchanged.
+
+The original tests/general/rc.cir accepted 449 steps and rejected six.
+The exact RC peak voltage and signed source-current errors are
+1.28211e-6 V and 1.28211e-6 A. The strict native replay remains
+unqualified. Of 450 points, zero source voltage, 180 capacitor voltage
+and 429 source current comparisons exceed their bounds. The peak native
+difference is 1.71971e-3 V and A at 0.07971864 s. Interpolating the exact
+solution between the two bracketing ngspice points alone introduces
+1.76315e-3 V there. The ngspice endpoint errors contribute -4.35017e-5 V
+after interpolation and our trace differs from exact by -5.66179e-8 V
+there. This separates the output-grid effect from integration error.
+
+The 19 previously executable transient decks selected from the prior
+928-row report retained their row classifications. Six agreed on all
+requested analyses and 13 remained partially qualified. The original RC
+deck is additional to that cohort. Both reports had valid provenance.
+Artifacts are under E:/Artifacts/Spice-adaptive-trap-ea14ede.
+SHA-256 for original/summary.json is
+dede4dccdb6b0b824a8f2d313d6e7b49aad9013347f052f87f39c06e148c2159.
+SHA-256 for transient-cohort/summary.json is
+5292b6023b3dab1c01ea7e79efe53e27a9d99b468ed1407e720afd144c375f58.
+SHA-256 for analytic-audit.json is
+7731c763999a1b646771d76a8c67bcbd8008d40e3c042ba269eaf74c11cc0b43.
+
+Frontend verification passed 603 tests with 37 opt-in skips, including
+the existing seeded properties in the executed suite. The new default
+and explicit trapezoidal cases failed before the fix and both caught a
+mutant that cut the attempts allowance from four times the accepted-step
+ceiling to one. Managed Coverlet reported 77.47% line and 60.45% branch
+coverage. StrictDoc parsed 52 documents with 429 IDs and 397 resolved
+parents. Rust coverage, standalone fuzzing and a full census were
+outside this checkpoint.

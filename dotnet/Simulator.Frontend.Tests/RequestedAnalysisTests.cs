@@ -40,6 +40,23 @@ public sealed class RequestedAnalysisTests
   var options=Assert.IsType<TransientConfigured>(plan.Operations[0].Requests[0].Analysis).Options;
   Assert.Equal(.2e-6,options.MaxStepS,14);Assert.Equal(1e-6,Assert.IsType<Exponential>(options.Sources![0].Waveform).RiseTauS,14);
  }
+ [Theory]
+ [InlineData("", "trapezoidal", true)]
+ [InlineData(".options method=trap", "trapezoidal", true)]
+ [InlineData(".options method=gear maxord=1", "backward_euler", false)]
+ public void Driven_linear_storage_uses_bounded_adaptive_trapezoidal(string setting,string method,bool adaptive)
+ {
+  var deck=DeckParser.Parse("RC ramp\nVin in 0 PULSE(0 1)\nR1 in out 1\nC1 out 0 1\n"+setting+"\n.tran .1 7\n.end\n",collectDeclarations:true);
+  var plan=RequestedAnalysis.Prepare(deck);
+  Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
+  var options=Assert.IsType<TransientConfigured>(Assert.Single(Assert.Single(plan.Operations).Requests).Analysis).Options;
+  Assert.Equal(method,options.Method);
+  Assert.Equal(.1,options.MaxStepS);
+  if(adaptive){
+   var policy=Assert.IsType<AdaptiveOptions>(options.Adaptive);
+   Assert.Equal(new AdaptiveOptions(1e-7,1e-9,1e-9,.1/1e6,4*options.MaxSteps),policy);
+  }else Assert.Null(options.Adaptive);
+ }
  [Fact] public void Documented_two_point_linear_grid_is_preserved_despite_native_oracle_bug()
  {var plan=Prepare(".ac lin 2 10 30");Assert.True(plan.Success);Assert.Equal(new[]{10d,30},plan.Operations[0].Coordinates);}
  [Fact] public void No_analysis_is_an_explicit_refusal()=>Assert.False(Prepare("").Success);
