@@ -400,4 +400,18 @@ COMMENT: >>>
 Verification: Reconcile the delivery report with retained test and coverage artifacts.
 <<<
 
+[REQUIREMENT]
+UID: DEV-SOLVER-PROBE-001
+STATUS: Draft
+TITLE: Independent solver parallelism experiments
+STATEMENT: >>>
+A candidate parallel solver experiment shall distinguish independent case scheduling, symbolic analysis, numeric factorization and solve where those phases are available. It shall record thread or device identity, workload size, setup and warm execution scope, numerical checks against known results, and unavailable prerequisites. A GPU sparse matrix-vector probe alone shall not qualify a sparse solver. An optional vendor-specific workstation probe shall remain independently runnable.
+<<<
+COMMENT: >>>
+Verification: evaluation/cpu-sparse-probe exercises deterministic circuit-like matrices with known solutions. evaluation/IntelGpuProbe exercises FP64 sparse matrix-vector multiplication on an enumerated physical OpenCL GPU. scripts/Run-CuDssProbe.ps1 retains prerequisites and a pinned vendor sample. Evidence and reproduction are in docs/solver-parallelism-probes.md.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: DEV-GPU-006
+
 [[/SECTION]]
