@@ -13,8 +13,10 @@ public sealed record RequestedOperation(string Id,string Kind,SourceRange Range,
  public double OutputStartS { get; init; }
  /// <summary>Retained root voltage initial conditions handled through a separate temporary public-client bias solve.</summary>
  public ImmutableArray<PreparedNodeInitialCondition> InitialConditions { get; init; } = [];
- /// <summary>Optional temporary clamped OP; its extra branches are never part of the original transient state.</summary>
+ /// <summary>Optional startup consistency solve. Temporary constraints are never part of the original transient circuit.</summary>
  public SimulationRequest? InitializationRequest { get; init; }
+ /// <summary>True for a requested UIC startup with storage constraints and no physical DC bias solve.</summary>
+ public bool UsesUic { get; init; }
  /// <summary>Optional original root control command or finite run invocation.</summary>
  public RequestedControlOrigin? ControlOrigin { get; init; }
 }
@@ -45,7 +47,7 @@ public sealed record RequestedOperationResult(string Id,bool Success,ImmutableAr
 /// <summary>Prepares ordinary root .op/.dc/.ac/.tran cards using generated syntax and the public client contract.</summary>
 public static partial class RequestedAnalysis
 {
- /// <summary>Prepares bounded grids. DC uses fresh OP per point, without continuation/hysteresis guarantees; unmodeled controls, nested analyses and UIC remain explicit refusals; bounded linear node IC and reporting starts are retained.</summary>
+ /// <summary>Prepares bounded grids. DC uses fresh OP per point, without continuation/hysteresis guarantees; unmodeled controls and nested analyses refuse explicitly. Bounded bias IC, UIC and reporting starts are retained.</summary>
  public static RequestedAnalysisPlan Prepare(DeckSyntax syntax,int maxPoints=10000,BridgeLimits? limits=null,string backend="lu")
  {
   ArgumentNullException.ThrowIfNull(syntax);
@@ -59,7 +61,9 @@ public static partial class RequestedAnalysis
   if(catalog.InitialConditions.Any(ic=>ic.ScopeId!=0||!ic.Supported))return Fail("unsupported_initial_condition_profile",catalog.InitialConditions.First(ic=>ic.ScopeId!=0||!ic.Supported).Range);
   // Node .IC constrains only the non-UIC transient bias, never a DC or AC operation.
   var hasTransient=control.Directives.Any(a=>a.Analysis.Kind=="tran");
-  var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,catalog.InitialConditions.Select(ic=>ic.Range.Start).ToImmutableHashSet());
+  var trapCards=catalog.Cards.Where(c=>hasTransient&&c.ScopeId==0&&c.TrapezoidalOption).ToArray();
+  var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,
+      catalog.InitialConditions.Select(ic=>ic.Range.Start).Concat(trapCards.Select(c=>c.Range.Start)).ToImmutableHashSet());
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
   // Native let may overwrite an existing root result vector by its bare node
@@ -71,11 +75,14 @@ public static partial class RequestedAnalysis
   var environment=ParameterEvaluator.Evaluate(catalog);
   var operations=ImmutableArray.CreateBuilder<RequestedOperation>();
   try{
-   var initialConditions=hasTransient?BindInitialConditions(catalog,environment,prepared):[];
+   var biasedConditions=control.Directives.Any(a=>a.Analysis.Kind=="tran"&&a.Analysis.Names.IsEmpty)
+       ? BindInitialConditions(catalog,environment,prepared) : [];
    foreach(var directive in control.Directives){
     var card=directive.Analysis;
     var id="requested_"+operations.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
-    if(card.Kind=="tran"&&!card.Names.IsEmpty)throw new PreparationFailure("unsupported_transient_uic",card.Range);
+    var usesUic=card.Kind=="tran"&&card.Names.Length==1
+        &&card.Names[0].Equals("uic",StringComparison.OrdinalIgnoreCase);
+    var initialConditions=card.Kind=="tran"?biasedConditions:[];
     var values=card.Values.Select(v=>{
      var result=ParameterEvaluator.EvaluateValue(catalog,environment,v);
      if(result.Value is not {} value)throw new PreparationFailure(result.Diagnostics[0].Code,v.Range);
@@ -111,16 +118,42 @@ public static partial class RequestedAnalysis
       requests.Add(baseRequest with{CaseId=id,Analysis=new Ac(coordinates.ToArray(),prepared.AcSources.ToArray())});break;
      case "tran":
       unit="s";
-      if(!card.Names.IsEmpty)throw new PreparationFailure("unsupported_transient_uic",card.Range);
+      if(!card.Names.IsEmpty&&!usesUic)throw new PreparationFailure("unsupported_transient_uic",card.Range);
       outputStart=values.Length>2?values[2]:0;
       if(outputStart<0||outputStart>values[1])throw new PreparationFailure("invalid_transient_start",card.Range);
       var maximumStep=values.Length>3?values[3]:Math.Min(values[0],(values[1]-outputStart)/50);
       var transient=TransientSelection.PrepareRequested(syntax,values[1],values[0],maximumStep,maxPoints,limits,backend,selected);
       if(!transient.Success)throw new PreparationFailure(transient.Prepared.Diagnostics[0].Code,card.Range);
-      requests.Add(transient.Prepared.Request! with{CaseId=id});
-      if(!initialConditions.IsEmpty)initialization=ClampRequest(baseRequest,id,initialConditions);break;
+      var transientRequest=transient.Prepared.Request! with{CaseId=id};
+      var options=((TransientConfigured)transientRequest.Analysis).Options;
+      if(trapCards.Length>0){
+       if(options.InitialNewton!=null)throw new PreparationFailure("unsupported_trapezoidal_device",trapCards[0].Range);
+       options=options with{Method="trapezoidal"};
+      }
+      if(usesUic){
+       var hints=BindInitialConditions(catalog,environment,prepared,uic:true);
+       (initialization,initialConditions)=UicStartup(baseRequest,id,hints,options,card.Range);
+       // M=TT=0 reduces the junction to Q=C*V and the same Shockley
+       // conduction law. Use the existing explicit-state wire profile.
+       var elements=transientRequest.Circuit.Elements.Select(e=>e is SpiceDiode diode
+           ? new DiodeWithCapacitance(diode.Id,diode.P,diode.N,diode.Model.SaturationAmps,
+               diode.Model.ThermalVolts,diode.Model.JunctionFarads)
+           : e).ToArray();
+       transientRequest=transientRequest with{Circuit=transientRequest.Circuit with{Elements=elements}};
+       // Match native's default method for the bounded linear UIC profile.
+       // For constant-charge diodes use local step doubling with a fixed
+       // accuracy policy and preserve the requested step and work ceilings.
+       var hasDiode=elements.Any(e=>e is DiodeWithCapacitance);
+       options=options with{
+        InitialNewton=null,
+        Method=hasDiode?"backward_euler":"trapezoidal",
+        Adaptive=hasDiode?new AdaptiveOptions(1e-7,1e-9,1e-12,
+            Math.Max(double.Epsilon,options.MaxStepS/1024),4*options.MaxSteps):null
+       };
+      }else if(!initialConditions.IsEmpty)initialization=ClampRequest(baseRequest,id,initialConditions);
+      requests.Add(transientRequest with{Analysis=new TransientConfigured(options)});break;
     }
-    operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { CoordinateUnit=unit,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=card.Kind=="tran"?initialConditions:[],ControlOrigin=directive.Origin });
+    operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { CoordinateUnit=unit,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=initialConditions,UsesUic=usesUic,ControlOrigin=directive.Origin });
    }
   }catch(PreparationFailure e){return Fail(e.Code,e.Range);}
   var observations=selected.Omissions.Where(o=>o.Kind=="extension").ToImmutableArray();

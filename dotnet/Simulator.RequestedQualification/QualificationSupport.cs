@@ -114,7 +114,9 @@ public sealed record ObservableComparison(string EngineSignal,string NativeSigna
 /// <summary>Independent grid/shape validation outcome; unavailable observables and grid anomalies never count as agreement.</summary>
 public sealed record ComparisonResult(string Status,ImmutableArray<ObservableComparison> Observables,ImmutableArray<string> Gaps)
 {
- /// <summary>Every required observable and all points passed, without shape or grid gaps.</summary>
+ /// <summary>Number of engine startup samples outside native coverage. Only a UIC sample at zero may be excluded.</summary>
+ public int ExcludedStartupSamples { get; init; }
+ /// <summary>Every required observable and compared point passed within the reported scope.</summary>
  public bool Agreed=>Status=="agreed"&&!Observables.IsEmpty&&Gaps.IsEmpty;
 }
 /// <summary>Compares complete root voltages and supported root branch currents on the original requested grids.</summary>
@@ -134,7 +136,7 @@ public static class RequestedComparison
    var expectedPlot=operation.Kind switch{"op"=>"Operating Point","dc"=>"DC transfer characteristic","ac"=>"AC Analysis","tran"=>"Transient Analysis",_=>""};
    if(native.PlotName!=expectedPlot)throw new InvalidDataException("native_plot_identity_gap");
    var isAc=operation.Kind=="ac";if(native.Complex!=isAc)throw new InvalidDataException("native_analysis_shape_gap");
-   var axis=native.Points.Select(p=>p[0].Real).ToArray();double[] actualAxis;
+   var axis=native.Points.Select(p=>p[0].Real).ToArray();double[] actualAxis;var startupOffset=0;
    if(operation.Kind=="op"){
     if(native.Points.Length!=1||manifests.Length!=1||manifests[0].Samples.Length!=1||manifests[0].AcSamples.Length!=0)throw new InvalidDataException("op_shape_gap");actualAxis=[0];
    }else if(operation.Kind=="dc"){
@@ -143,8 +145,12 @@ public static class RequestedComparison
     if(native.Variables[0].Dimension!="frequency"||manifests.Length!=1||manifests[0].Samples.Length!=0)throw new InvalidDataException("ac_shape_or_unit_gap");actualAxis=manifests[0].AcSamples.Select(s=>s.FrequencyHz).ToArray();Grid(operation.Coordinates.ToArray(),actualAxis);Grid(actualAxis,axis);StrictAxis(axis,true);
    }else if(operation.Kind=="tran"){
     if(native.Variables[0].Dimension!="time"||manifests.Length!=1||manifests[0].AcSamples.Length!=0)throw new InvalidDataException("transient_shape_or_unit_gap");actualAxis=manifests[0].Samples.Select(s=>s.TimeS).ToArray();StrictAxis(axis,false);StrictAxis(actualAxis,false);
-        var stop=operation.Arguments[1];var start=operation.OutputStartS;
-    if((actualAxis[0]<start&&!Near(actualAxis[0],start))||(axis[0]<start&&!Near(axis[0],start))||start==0&&(!Near(actualAxis[0],0)||!Near(axis[0],0))||!Near(actualAxis[^1],stop)||!Near(axis[^1],stop))throw new InvalidDataException("incomplete_transient_reporting_grid");
+    var stop=operation.Arguments[1];var start=operation.OutputStartS;
+    // ngspice UIC starts saving at its first accepted positive step.
+    // Keep the engine's zero sample in its manifest and never extrapolate.
+    if(operation.UsesUic&&start==0&&actualAxis.Length>1&&actualAxis[0]==0&&axis[0]>0
+        &&(axis[0]<=actualAxis[1]||Near(axis[0],actualAxis[1])))startupOffset=1;
+    if((actualAxis[0]<start&&!Near(actualAxis[0],start))||(axis[0]<start&&!Near(axis[0],start))||start==0&&(!Near(actualAxis[0],0)||startupOffset==0&&!Near(axis[0],0))||!Near(actualAxis[^1],stop)||!Near(axis[^1],stop))throw new InvalidDataException("incomplete_transient_reporting_grid");
    }else throw new InvalidDataException("unsupported_comparison_analysis");
    var mappings=new List<(string Engine,string Native,string Unit)>();var gaps=ImmutableArray.CreateBuilder<string>();
    var internalFallback=circuit.RootNodes.IsEmpty;
@@ -166,16 +172,16 @@ public static class RequestedComparison
     var columns=manifests.Select(m=>Array.FindIndex(m.Signals,s=>s.Id==mapping.Engine&&s.Unit==mapping.Unit&&s.Quantity==(mapping.Unit=="V"?"voltage":"current"))).ToArray();
     if(columns.Any(c=>c<0)){gaps.Add("missing_engine_observable:"+mapping.Engine);continue;}
     var failed=0;var maximum=0d;var absolute=mapping.Unit=="V"?voltageAbsolute:currentAbsolute;
-    for(var i=0;i<actualAxis.Length;i++){
+    for(var i=startupOffset;i<actualAxis.Length;i++){
      var expected=operation.Kind=="tran"?Interpolate(native,axis,column[0],actualAxis[i]):native.Points[i][column[0]];
      var actual=isAc?manifests[0].AcSamples[i].Values[columns[0]]:operation.Kind=="dc"?new ComplexValue(manifests[i].Samples[0].Values[columns[i]],0):new ComplexValue(manifests[0].Samples[operation.Kind=="op"?0:i].Values[columns[0]],0);
      var error=System.Numerics.Complex.Abs(new(expected.Real-actual.Real,expected.Imag-actual.Imag));var scale=System.Numerics.Complex.Abs(new(expected.Real,expected.Imag));var bound=absolute+relative*scale;
      if(!double.IsFinite(error)||!double.IsFinite(bound))throw new InvalidDataException("nonfinite_comparison");if(error>bound)failed++;maximum=Math.Max(maximum,error);
     }
-    comparisons.Add(new(mapping.Engine,mapping.Native,mapping.Unit,actualAxis.Length,failed,maximum,absolute,relative));
+    comparisons.Add(new(mapping.Engine,mapping.Native,mapping.Unit,actualAxis.Length-startupOffset,failed,maximum,absolute,relative));
    }
    if(mappings.Count==0)gaps.Add("no_root_observables");
-   return new(gaps.Count>0?"observable_gap":comparisons.Any(c=>c.Failed>0)?"numerical_disagreement":"agreed",comparisons.ToImmutable(),gaps.ToImmutable());
+   return new(gaps.Count>0?"observable_gap":comparisons.Any(c=>c.Failed>0)?"numerical_disagreement":"agreed",comparisons.ToImmutable(),gaps.ToImmutable()){ExcludedStartupSamples=startupOffset};
   }catch(InvalidDataException e){return new(e.Message,[],[e.Message]);}
  }
  private static void Grid(double[] requested,double[] actual){if(requested.Length==0||requested.Length!=actual.Length||requested.Where((v,i)=>!Near(v,actual[i])).Any())throw new InvalidDataException("original_grid_discrepancy");}

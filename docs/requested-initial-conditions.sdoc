@@ -14,7 +14,7 @@ STATEMENT: >>>
 Retain root .IC v(node)=scalar declarations using generated assignment/call/value contexts and original source ranges. Evaluate values through existing parameter semantics. Reject unsupported targets/scopes, duplicate aliases, missing/reference/non-dynamic nodes, direct ideal-source constraints and unsupported nonlinear/device-state profiles explicitly and atomically.
 <<<
 COMMENT: >>>
-The qualified first profile includes R/C/L, independent V/I and E/G. IC targets must touch a capacitor dynamic node. Device IC= fields, UIC, F/H IC profiles and charged/nonlinear initial states remain unqualified/refused; unspecified states are never replaced with zero. The ordinary requested UIC spelling is recognized even when the generated optional-value rule consumes the keyword.
+The qualified first profile includes R/C/L, independent V/I and E/G. IC targets must touch a capacitor dynamic node. This non-UIC bias profile refuses F/H IC profiles and charged/nonlinear initial states. The only admitted device IC field is literal inductor IC=0, which is inactive outside UIC. It requires every component of the solved bias state. UIC has its own bounded storage profile. The ordinary requested UIC spelling is recognized even when the generated optional-value rule consumes the keyword.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -67,7 +67,7 @@ UID: FRONTEND-INITIAL-004
 STATUS: Draft
 TITLE: Analysis-specific effect of root initial conditions
 STATEMENT: >>>
-A structurally supported root .IC card shall constrain only the non-UIC transient initialization. Requested OP, DC, and AC shall proceed without clamps when no transient is requested, recording the unused source range. When a transient is requested, its existing validation and initialization contract applies. The ngspice oracle shall retain the original .IC card when comparing an unaffected analysis.
+A structurally supported root .IC card shall constrain a physical bias solve only during non-UIC transient initialization. UIC storage hints follow FRONTEND-INITIAL-UIC-001. Requested OP, DC, and AC shall proceed without clamps when no transient is requested, recording the unused source range. When a transient is requested, its existing validation and initialization contract applies. The ngspice oracle shall retain the original .IC card when comparing an unaffected analysis.
 <<<
 COMMENT: >>>
 Reference behavior: ngspice src/spicelib/analysis/cktload.c applies .IC only with MODETRANOP and without MODEUIC. Implementation: RequestedAnalysis.Prepare and OriginalProjection. Verification: RequestedInitialConditionTests and RequestedInitialNativeOracleTests.
@@ -75,3 +75,45 @@ Reference behavior: ngspice src/spicelib/analysis/cktload.c applies .IC only wit
 RELATIONS:
 - TYPE: Parent
   VALUE: FRONTEND-INITIAL-001
+
+[REQUIREMENT]
+UID: FRONTEND-INITIAL-UIC-001
+STATUS: Draft
+TITLE: Bounded requested UIC startup
+STATEMENT: >>>
+The requested transient adapter shall retain the original UIC intent and initialize the supported circuit without a physical DC operating point. For the bounded constant-source profile, grounded capacitor and grounded constant-charge diode storage with M=TT=0 shall use the corresponding root node voltage hint, with zero as the UIC storage default. Inductors shall use zero branch current, including the explicit literal IC=0 spelling. A separate public-client solve shall establish algebraic node voltages and source currents. Non-storage node hints shall not clamp that solve. Inconsistent startup or unsupported devices, waveforms and device IC fields shall remain explicit failures.
+<<<
+COMMENT: >>>
+Implementation: RequestedUicStartup and RequestedInitialConditions. Verification: RequestedUicTests and original requested corpus replay. Native references: ngspice dctran.c, cktload.c, diogetic.c and indload.c. Linear UIC uses trapezoidal integration. The M=TT=0 diode reuses the existing constant-charge wire profile with adaptive backward Euler, local relative/voltage/current tolerances 1e-7/1e-9 V/1e-12 A, a minimum step of the request ceiling divided by 1024 (bounded below by the smallest positive double), and at most four attempts per accepted-step budget unit. The local error policy does not imply a global error bound. Floating storage and general nonlinear DAE initialization remain outside the profile.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-INITIAL-002
+
+[REQUIREMENT]
+UID: FRONTEND-OPTIONS-TRAP-001
+STATUS: Draft
+TITLE: Explicit linear trapezoidal request
+STATEMENT: >>>
+Requested preparation shall map root METHOD=TRAP to the existing trapezoidal integrator for linear transient requests and preserve the source option in the native oracle. Only supported reporting co-options may share the card. Nonlinear trapezoidal requests and unmodeled numerical co-options shall refuse explicitly.
+<<<
+COMMENT: >>>
+Implementation: DeclarationExtraction and RequestedAnalysis. Verification: RequestedUicTests and compat/benchmarks/rc-transient.cir.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-001
+
+[REQUIREMENT]
+UID: FRONTEND-INITIAL-UIC-ORACLE-001
+STATUS: Draft
+TITLE: Native UIC startup comparison scope
+STATEMENT: >>>
+When native UIC output begins at positive time and covers all positive engine samples through TSTOP, the comparison may exclude only the engine sample at zero. The result shall report the exclusion explicitly and retain the unmodified engine sample in the result history. Startup state shall have separate checks. Any additional missing interval shall fail comparison without extrapolation.
+<<<
+COMMENT: >>>
+Implementation: RequestedComparison. Verification: RequestedUicTests and the original requested corpus replay.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-INITIAL-UIC-001

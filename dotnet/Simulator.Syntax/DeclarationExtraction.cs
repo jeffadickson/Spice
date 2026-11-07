@@ -63,6 +63,11 @@ internal sealed class DeclarationExtraction
         && assignment.referenceName()?.GetText().Equals("temp",StringComparison.OrdinalIgnoreCase) == true
         && IsDefaultTemperature(assignment.value());
 
+    private static bool IsTrapezoidalOption(SpiceParser.ParameterContext parameter) =>
+        parameter.assignment() is {} assignment
+        && assignment.referenceName()?.GetText().Equals("method",StringComparison.OrdinalIgnoreCase)==true
+        && assignment.value()?.GetText().Equals("trap",StringComparison.OrdinalIgnoreCase)==true;
+
     // Legacy .WIDTH controls printed columns in ngspice. Only a bounded
     // literal IN/OUT pair can be classified as a reporting omission.
     private static bool IsReportingWidth(SpiceParser.ParameterContext[] parameters)
@@ -95,6 +100,8 @@ internal sealed class DeclarationExtraction
             Name = card.Start.Text,
             GlobalNodes = GlobalNodeExtraction.Extract(card,Capture),
             ReportingOptionsOnly = reportingOnly,
+            TrapezoidalOption = optionCard && directiveParameters.Count(IsTrapezoidalOption)==1
+                && directiveParameters.All(p=>IsReportingOption(p)||IsTrapezoidalOption(p)),
             DefaultTemperature = (optionCard && !reportingOnly
                 && directiveParameters.All(p => IsReportingOption(p) || IsDefaultTemperatureOption(p)))
                 || (directiveName == ".temp" && directiveParameters.Length == 1 && IsDefaultTemperature(directiveParameters[0].value())),

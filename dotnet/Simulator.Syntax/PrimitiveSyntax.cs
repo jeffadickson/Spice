@@ -54,6 +54,8 @@ public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range)
     public bool DefaultTemperature { get; init; }
     /// <summary>Generated legacy reporting width with bounded literal IN and OUT settings.</summary>
     public bool ReportingWidth { get; init; }
+    /// <summary>Generated METHOD=TRAP with only qualified reporting co-options.</summary>
+    public bool TrapezoidalOption { get; init; }
     /// <summary>Generated .global node list; null denotes another directive or an unsupported global header.</summary>
     public ImmutableArray<SourceSyntax>? GlobalNodes {get;init;}
 }
@@ -101,6 +103,13 @@ internal static class PrimitiveExtraction
             return new(card.Start.Text,family,scope,capture(nodes.node(0)),capture(nodes.node(1)),
                 captureRange(sign.Symbol.StartIndex,arithmetic.Stop.StopIndex),true,capture(card).Range);
         }
+        // Native inductors use zero current by default under UIC. Admit
+        // its explicit spelling without dropping any nonzero device state.
+        if(family=="L"&&parameters.Length==2&&parameters[0].value()!=null
+            &&parameters[1].assignment() is {} initial
+            &&initial.referenceName()?.GetText().Equals("ic",StringComparison.OrdinalIgnoreCase)==true
+            &&initial.value()?.GetText()=="0")
+            return new(card.Start.Text,family,scope,capture(nodes.node(0)),capture(nodes.node(1)),capture(parameters[0]),true,capture(card).Range);
         var valueIndex=card is SpiceParser.SourceContext&&parameters.Length>0&&parameters[0].GetText().Equals("dc",StringComparison.OrdinalIgnoreCase)?1:0;
         var supported=parameters.Length==valueIndex+1&&parameters[valueIndex].assignment()==null&&!(card is SpiceParser.SourceContext&&parameters[valueIndex].call()!=null);
         var value=supported?capture(parameters[valueIndex]):null;

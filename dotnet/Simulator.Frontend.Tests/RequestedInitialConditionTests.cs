@@ -31,7 +31,7 @@ public sealed class RequestedInitialConditionTests
   Assert.Empty(operation.InitialConditions);
   Assert.Contains(plan.Observations,o=>o.Reason=="initial_conditions_not_used_by_requested_analyses");
  }
- [Fact] public void Ordinary_short_UIC_spelling_has_an_explicit_semantic_refusal(){var plan=RequestedAnalysis.Prepare(Deck(".tran 1u 10u uic"));Assert.False(plan.Success);Assert.Contains(plan.Diagnostics,d=>d.Code=="unsupported_transient_uic");}
+ [Fact] public void Ordinary_short_UIC_spelling_uses_zero_default_capacitor_voltage(){var plan=RequestedAnalysis.Prepare(Deck(".tran 1u 10u uic"));Assert.True(plan.Success);Assert.True(Assert.Single(plan.Operations).UsesUic);}
  [Property(MaxTest=100,Replay="2381,20261103")]
  public bool Initial_condition_bias_preserves_the_original_circuit_and_unique_branch_identity(NonNegativeInt input){
   var value=input.Get%2001-1000;var plan=RequestedAnalysis.Prepare(Deck(".ic v(out)="+value.ToString(System.Globalization.CultureInfo.InvariantCulture)+"\n.tran 1u 10u"));if(!plan.Success)return false;
