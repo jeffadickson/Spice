@@ -9,7 +9,7 @@ internal sealed record CompiledControlProfile(ImmutableArray<ControlDirective> D
 // no command interpreter or opaque command text is forwarded to the engine.
 internal static class RequestedControlPreparation
 {
- internal static CompiledControlProfile Compile(DeclarationCatalog catalog){
+ internal static CompiledControlProfile Compile(DeclarationCatalog catalog,IReadOnlyDictionary<string,double> constants){
   CompiledControlProfile Fail(string code,SourceRange? range)=>new([],[],"refused",new(code,range));
   if(catalog.ControlBlocks.IsEmpty)return new(catalog.Analyses.OrderBy(a=>a.Range.Start).Select(a=>new ControlDirective(a,null)).ToImmutableArray(),[],"deck",null);
   if(catalog.ControlBlocks.Length!=1)return Fail("unsupported_multiple_control_blocks",catalog.ControlBlocks[0].Range);
@@ -27,7 +27,7 @@ internal static class RequestedControlPreparation
    if(prefix.Any(c=>c.Kind is not ("comment" or "if" or "else" or "end" or "local_set" or "report_substitution") &&
       !(c.Kind=="report"&&c.Name=="echo") && !(c.Kind=="postprocessing"&&c.Postprocessing?.Kind==ControlPostprocessingKind.Let)))
     return Fail("unsupported_control_prefix_effect",block.Range);
-   try{ControlVectorExecution.Execute(prefix,new Dictionary<string,double[]>());}
+   try{ControlVectorExecution.Execute(prefix,new Dictionary<string,double[]>(),constants:constants);}
    catch(InvalidDataException error){return Fail(error.Message,block.Range);}
   }
   var locals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var quit=false;var branches=new Stack<bool>();

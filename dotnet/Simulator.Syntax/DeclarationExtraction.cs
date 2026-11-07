@@ -63,10 +63,30 @@ internal sealed class DeclarationExtraction
         && assignment.referenceName()?.GetText().Equals("temp",StringComparison.OrdinalIgnoreCase) == true
         && IsDefaultTemperature(assignment.value());
 
-    private static bool IsTrapezoidalOption(SpiceParser.ParameterContext parameter) =>
-        parameter.assignment() is {} assignment
-        && assignment.referenceName()?.GetText().Equals("method",StringComparison.OrdinalIgnoreCase)==true
-        && assignment.value()?.GetText().Equals("trap",StringComparison.OrdinalIgnoreCase)==true;
+    // ngspice order one is backward Euler for both Gear and trapezoidal.
+    // Higher Gear orders need BDF history that the engine does not expose.
+    private static string? IntegrationMethod(SpiceParser.ParameterContext[] parameters)
+    {
+        string? method=null,order=null;
+        foreach(var parameter in parameters)
+        {
+            if(IsReportingOption(parameter))continue;
+            var assignment=parameter.assignment();
+            var value=assignment?.value()?.GetText().ToLowerInvariant();
+            switch(assignment?.referenceName()?.GetText().ToLowerInvariant())
+            {
+                case "method" when method==null && value is "trap" or "gear":method=value;break;
+                case "maxord" when order==null && value is "1" or "2":order=value;break;
+                default:return null;
+            }
+        }
+        return (method,order) switch
+        {
+            ("gear" or "trap","1")=>"backward_euler",
+            ("trap",null or "2")=>"trapezoidal",
+            _=>null
+        };
+    }
 
     // Legacy .WIDTH controls printed columns in ngspice. Only a bounded
     // literal IN/OUT pair can be classified as a reporting omission.
@@ -95,13 +115,17 @@ internal sealed class DeclarationExtraction
         var directiveParameters = directive?.parameter() ?? [];
         var optionCard = directiveName is ".option" or ".options" && directiveParameters.Length > 0;
         var reportingOnly = optionCard && directiveParameters.All(IsReportingOption);
+        var exports = directiveName==".csparam" && owner==0 && directiveParameters.Length>0
+            && directiveParameters.All(p=>p.assignment()?.referenceName()?.identifier()!=null)
+            ? directiveParameters.Select(p=>Parameter(p.assignment())).ToImmutableArray()
+            : ImmutableArray<ParameterSyntax>.Empty;
         cards.Add(new(owner,SpiceParser.ruleNames[card.RuleIndex],Range(card))
         {
             Name = card.Start.Text,
             GlobalNodes = GlobalNodeExtraction.Extract(card,Capture),
             ReportingOptionsOnly = reportingOnly,
-            TrapezoidalOption = optionCard && directiveParameters.Count(IsTrapezoidalOption)==1
-                && directiveParameters.All(p=>IsReportingOption(p)||IsTrapezoidalOption(p)),
+            TransientMethodOption = optionCard ? IntegrationMethod(directiveParameters) : null,
+            ControlConstants = exports,
             DefaultTemperature = (optionCard && !reportingOnly
                 && directiveParameters.All(p => IsReportingOption(p) || IsDefaultTemperatureOption(p)))
                 || (directiveName == ".temp" && directiveParameters.Length == 1 && IsDefaultTemperature(directiveParameters[0].value())),
@@ -134,6 +158,7 @@ internal sealed class DeclarationExtraction
         if(card is SpiceParser.ControlContext control)controlBlocks.Add(ControlExtraction.Extract(control,owner,Capture,Range));
         var primitive=PrimitiveExtraction.Extract(card,owner,Capture,Capture);
         if(primitive!=null){primitives.Add(primitive);return;}
+        if(!exports.IsEmpty)return;
         if(card is SpiceParser.ExtensionContext extension && extension.Start.Text.ToLowerInvariant() is ".if" or ".elseif" or ".else" or ".endif" or ".csparam" or ".sndparam")
         {deferredContexts.Add(new(extension.Start.Text.ToLowerInvariant(),Range(extension)));return;}
         if(card is SpiceParser.ExtensionContext ending&&ending.Start.Text.Equals(".endl",StringComparison.OrdinalIgnoreCase))

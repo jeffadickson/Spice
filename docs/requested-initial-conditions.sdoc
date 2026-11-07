@@ -93,9 +93,9 @@ RELATIONS:
 [REQUIREMENT]
 UID: FRONTEND-OPTIONS-TRAP-001
 STATUS: Draft
-TITLE: Explicit linear trapezoidal request
+TITLE: Explicit transient integration method and order
 STATEMENT: >>>
-Requested preparation shall map root METHOD=TRAP to the existing trapezoidal integrator for linear transient requests and preserve the source option in the native oracle. Only supported reporting co-options may share the card. Nonlinear trapezoidal requests and unmodeled numerical co-options shall refuse explicitly.
+Requested preparation shall map root METHOD=TRAP, with default order or explicit MAXORD=2, to trapezoidal integration on supported linear circuits. Explicit METHOD=TRAP MAXORD=1 and METHOD=GEAR MAXORD=1 shall select backward Euler. Preserve the option card in the native oracle. Only supported reporting co-options may share the card. Conflicting declarations, higher Gear orders and unmodeled numerical co-options shall refuse explicitly.
 <<<
 COMMENT: >>>
 Implementation: DeclarationExtraction and RequestedAnalysis. Verification: RequestedUicTests and compat/benchmarks/rc-transient.cir.

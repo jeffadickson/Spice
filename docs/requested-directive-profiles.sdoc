@@ -42,3 +42,17 @@ Implementation: SemiconductorPreparation. Verification: DirectiveFollowupTests a
 RELATIONS:
 - TYPE: Parent
   VALUE: FRONTEND-REQUESTED-001
+
+[REQUIREMENT]
+UID: FRONTEND-CSPARAM-001
+STATUS: Draft
+TITLE: Bounded scalar control constant exports
+STATEMENT: >>>
+A root .CSPARAM assignment with a simple name shall evaluate one finite scalar from the deck parameter environment and export it only to the bounded control reporting namespace. The export shall be available before and after dispatch. Preserve the original card in the native oracle. Refuse invalid or duplicate exports, names reserved by the native constant plot or analysis axes, and writes to an exported constant. Nested or opaque exports shall remain explicit refusals.
+<<<
+COMMENT: >>>
+Implementation: DeclarationExtraction, RequestedControlConstants, and ControlVectorExecution. Native reference: ngspice frontend inp.c const-plot initialization and cpitf.c built-in constants. Verification: RequestedOptionConstantTests, original corpus replay and separate native scalar export fixture. Control loops, model edits and conditional netlist semantics are outside this requirement.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-001

@@ -28,16 +28,26 @@ public static partial class ControlVectorExecution
 
     /// <summary>Executes a reporting region atomically, returning no output on failure.</summary>
     public static ControlVectorReport Execute(IEnumerable<ControlCommandSyntax> commands,
-        IReadOnlyDictionary<string,double[]> inputs, bool activateAtAnalysis = false)
+        IReadOnlyDictionary<string,double[]> inputs, bool activateAtAnalysis = false, IReadOnlyDictionary<string,double>? constants = null)
     {
         var program = commands.Take(257).ToArray();
-        if (program.Length > 256 || inputs.Count > 256)
+        if (program.Length > 256 || inputs.Count + (constants?.Count??0) > 256)
             throw new InvalidDataException("control_execution_budget");
         var values = new Dictionary<string,double[]>(StringComparer.OrdinalIgnoreCase);
         var functions = new Dictionary<string,ControlPostprocessingSyntax>(StringComparer.OrdinalIgnoreCase);
         var variables = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
         var redirected = ImmutableDictionary.CreateBuilder<string,string>(StringComparer.Ordinal);
         var diagnostics = ImmutableArray.CreateBuilder<string>();
+        // Const-plot scalars exist before the first dispatch and cannot be
+        // overwritten by the bounded reporting program.
+        var constantNames=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if(constants!=null)
+            foreach(var (name,value) in constants)
+            {
+                if(!double.IsFinite(value)||!constantNames.Add(name))
+                    throw new InvalidDataException("invalid_control_constant");
+                values.Add(name,[value]);
+            }
         if (!activateAtAnalysis) BindInputs();
         void BindInputs()
         {
@@ -87,7 +97,7 @@ public static partial class ControlVectorExecution
                     if (declaration.Kind == ControlPostprocessingKind.Unlet)
                     {
                         foreach (var name in declaration.Names)
-                            if (inputs.Keys.Contains(name,StringComparer.OrdinalIgnoreCase) || !values.Remove(name))
+                            if (constantNames.Contains(name) || inputs.Keys.Contains(name,StringComparer.OrdinalIgnoreCase) || !values.Remove(name))
                                 throw new InvalidDataException("unknown_control_local");
                     }
                     else if (declaration.Kind == ControlPostprocessingKind.Define)
@@ -95,7 +105,7 @@ public static partial class ControlVectorExecution
                     else
                     {
                         var name = declaration.Names[0];
-                        if (inputs.Keys.Contains(name,StringComparer.OrdinalIgnoreCase))
+                        if (constantNames.Contains(name) || inputs.Keys.Contains(name,StringComparer.OrdinalIgnoreCase))
                             throw new InvalidDataException("control_input_assignment");
                         try { values[name] = Evaluate(declaration.Expression!.Text); }
                         catch (InvalidDataException error) when(error.Message.StartsWith("invalid_control_assignment_rhs:",StringComparison.Ordinal))

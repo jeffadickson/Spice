@@ -184,7 +184,7 @@ public sealed class DeclarationTests
     [Theory]
     [InlineData(".ELSEIF (choose==2)",".elseif")]
     [InlineData(".ELSE",".else")]
-    [InlineData(".CSPARAM gain=1",".csparam")]
+    [InlineData(".CSPARAM gain",".csparam")]
     [InlineData(".SNDPARAM rate=1",".sndparam")]
     public void Alternate_declaration_contexts_are_preserved_and_defer_lookup(string body,string kind)
     {

@@ -54,8 +54,10 @@ public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range)
     public bool DefaultTemperature { get; init; }
     /// <summary>Generated legacy reporting width with bounded literal IN and OUT settings.</summary>
     public bool ReportingWidth { get; init; }
-    /// <summary>Generated METHOD=TRAP with only qualified reporting co-options.</summary>
-    public bool TrapezoidalOption { get; init; }
+    /// <summary>Wire method for a fully recognized METHOD/MAXORD card, or null.</summary>
+    public string? TransientMethodOption { get; init; }
+    /// <summary>Root scalar exports to the control namespace, separate from physical parameters.</summary>
+    public ImmutableArray<ParameterSyntax> ControlConstants { get; init; } = [];
     /// <summary>Generated .global node list; null denotes another directive or an unsupported global header.</summary>
     public ImmutableArray<SourceSyntax>? GlobalNodes {get;init;}
 }

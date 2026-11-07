@@ -43,7 +43,7 @@ public static partial class RequestedAnalysis
         if(operation.Kind=="tran")inputs.Add("time",samples.Select(s=>s.TimeS).ToArray());
         var prefix=plan.ProgramOmissions.Any(o=>o.Kind=="control_prefix_reporting");
         return ControlVectorExecution.Execute(prefix?blocks[0].Commands:
-            blocks[0].Commands.Where(c=>c.Range.Start>origin.CommandRange.Start),inputs,activateAtAnalysis:prefix);
+            blocks[0].Commands.Where(c=>c.Range.Start>origin.CommandRange.Start),inputs,activateAtAnalysis:prefix,constants:plan.ControlConstants);
 
         void Add(string name,string wire)
         {

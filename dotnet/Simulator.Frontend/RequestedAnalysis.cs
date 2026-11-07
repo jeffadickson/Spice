@@ -31,6 +31,8 @@ public sealed record RequestedAnalysisPlan(ImmutableArray<RequestedOperation> Op
  public BridgeResult? CircuitPreparation { get; init; }
  /// <summary>Qualified dispatch profile: deck cards, direct control commands or finite retained-deck run.</summary>
  public string ControlProfile { get; init; } = "deck";
+ /// <summary>Bounded root scalar exports, available before any control analysis.</summary>
+ public ImmutableDictionary<string,double> ControlConstants { get; init; } = ImmutableDictionary<string,double>.Empty;
  /// <summary>Explicit unexecuted control reporting, deferred suffix declarations, exit and uninvoked deck instructions.</summary>
  public ImmutableArray<OperatingPointOmission> ProgramOmissions { get; init; } = [];
 }
@@ -56,14 +58,18 @@ public static partial class RequestedAnalysis
   if(syntax.Status!="accepted_structure"||syntax.Declarations is not {} catalog)return Fail("syntax_not_accepted",null);
   var forbidden=catalog.Cards.FirstOrDefault(c=>c.Kind=="extension"&&OperatingPointSelection.OmissionReason(c)=="analysis_not_selected"||c.ScopeId!=0&&c.Kind is "op" or "dc" or "ac" or "tran");
   if(forbidden!=null)return Fail("unsupported_requested_program",forbidden.Range);
-  var control=RequestedControlPreparation.Compile(catalog);if(control.Diagnostic is {} controlFailure)return Fail(controlFailure.Code,controlFailure.Range);
+  var constants=BindControlConstants(catalog,out var constantError);
+  if(constantError!=null)return Fail(constantError.Code,constantError.Range);
+  var control=RequestedControlPreparation.Compile(catalog,constants);if(control.Diagnostic is {} controlFailure)return Fail(controlFailure.Code,controlFailure.Range);
   if(control.Directives.IsEmpty)return Fail("no_requested_analysis",null);
   if(catalog.InitialConditions.Any(ic=>ic.ScopeId!=0||!ic.Supported))return Fail("unsupported_initial_condition_profile",catalog.InitialConditions.First(ic=>ic.ScopeId!=0||!ic.Supported).Range);
   // Node .IC constrains only the non-UIC transient bias, never a DC or AC operation.
   var hasTransient=control.Directives.Any(a=>a.Analysis.Kind=="tran");
-  var trapCards=catalog.Cards.Where(c=>hasTransient&&c.ScopeId==0&&c.TrapezoidalOption).ToArray();
+  var methodCards=catalog.Cards.Where(c=>hasTransient&&c.ScopeId==0&&c.TransientMethodOption!=null).ToArray();
+  if(methodCards.Length>1)return Fail("ambiguous_transient_method",methodCards[1].Range);
+  var requestedMethod=methodCards.SingleOrDefault()?.TransientMethodOption;
   var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,
-      catalog.InitialConditions.Select(ic=>ic.Range.Start).Concat(trapCards.Select(c=>c.Range.Start)).ToImmutableHashSet());
+      catalog.InitialConditions.Select(ic=>ic.Range.Start).Concat(methodCards.Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet());
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
   // Native let may overwrite an existing root result vector by its bare node
@@ -126,9 +132,10 @@ public static partial class RequestedAnalysis
       if(!transient.Success)throw new PreparationFailure(transient.Prepared.Diagnostics[0].Code,card.Range);
       var transientRequest=transient.Prepared.Request! with{CaseId=id};
       var options=((TransientConfigured)transientRequest.Analysis).Options;
-      if(trapCards.Length>0){
-       if(options.InitialNewton!=null)throw new PreparationFailure("unsupported_trapezoidal_device",trapCards[0].Range);
-       options=options with{Method="trapezoidal"};
+      if(requestedMethod!=null){
+       if(requestedMethod=="trapezoidal"&&options.InitialNewton!=null)
+        throw new PreparationFailure("unsupported_trapezoidal_device",methodCards[0].Range);
+       options=options with{Method=requestedMethod};
       }
       if(usesUic){
        var hints=BindInitialConditions(catalog,environment,prepared,uic:true);
@@ -146,7 +153,7 @@ public static partial class RequestedAnalysis
        var hasDiode=elements.Any(e=>e is DiodeWithCapacitance);
        options=options with{
         InitialNewton=null,
-        Method=hasDiode?"backward_euler":"trapezoidal",
+        Method=requestedMethod??(hasDiode?"backward_euler":"trapezoidal"),
         Adaptive=hasDiode?new AdaptiveOptions(1e-7,1e-9,1e-12,
             Math.Max(double.Epsilon,options.MaxStepS/1024),4*options.MaxSteps):null
        };
@@ -159,7 +166,7 @@ public static partial class RequestedAnalysis
   var observations=selected.Omissions.Where(o=>o.Kind=="extension").ToImmutableArray();
   if(!hasTransient)observations=observations.AddRange(catalog.InitialConditions.Select(ic=>
       new OperatingPointOmission(ic.ScopeId,"extension",".ic","initial_conditions_not_used_by_requested_analyses",ic.Range)));
-  return new(operations.ToImmutable(),[]) { Observations=observations,CircuitPreparation=prepared,ControlProfile=control.Profile,ProgramOmissions=control.Omissions };
+  return new(operations.ToImmutable(),[]) { Observations=observations,CircuitPreparation=prepared,ControlProfile=control.Profile,ControlConstants=constants,ProgramOmissions=control.Omissions };
  }
  private static ImmutableArray<double> Linear(double start,double stop,double step,int maximum,SourceRange range)
  {

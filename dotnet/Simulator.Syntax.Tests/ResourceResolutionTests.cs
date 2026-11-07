@@ -127,14 +127,18 @@ public sealed class ResourceResolutionTests
         Assert.Same(ParserLimits.Default,new ResourcePolicy([f.Root]).ParsingLimits);
     }
     [Fact]
-    public void Control_vector_exports_do_not_select_include_branches_or_gain_evaluation_support()
+    public void Control_vector_exports_do_not_select_include_branches_or_modify_parameters()
     {
         using var f=new Files();var root=f.Put("root.cir","Title\n.param r=1k\n.csparam exported='r'\n.include 'values.inc'\n.end\n");
         f.Put("values.inc","R1 a 0 1k\n");
         var result=ResourceResolver.Resolve(root,new([f.Root]));
         Assert.True(result.Success);Assert.Equal(2,result.Sources.Length);Assert.Contains(".csparam exported='r'",result.Text!);
         var catalog=DeckParser.Parse(result.Text!,collectDeclarations:true).Declarations!;
-        Assert.Contains(catalog.DeferredContexts,c=>c.Kind==".csparam");Assert.False(ParameterEvaluator.Evaluate(catalog).Success);
+                Assert.Empty(catalog.DeferredContexts);
+        Assert.Contains(catalog.Cards,c=>c.ControlConstants.Any(p=>p.Name=="exported"));
+        var parameters=ParameterEvaluator.Evaluate(catalog);
+        Assert.True(parameters.Success);
+        Assert.DoesNotContain("exported",parameters.Values.Keys);
     }
     [Fact]
     public void A_control_vector_export_does_not_enable_conditional_resource_loading()
