@@ -5,7 +5,7 @@ namespace Simulator.Frontend;
 /// <summary>Qualified Ebers–Moll subset of the default BJT parameter model.
 /// The numerical engine still evaluates ordinary native junctions and sources.</summary>
 internal sealed record PreparedBjt(bool Pnp,double BetaForward,double BetaReverse,
-    SpiceDiodeModel ForwardStorage,SpiceDiodeModel ReverseStorage)
+    SpiceDiodeModel ForwardStorage,SpiceDiodeModel ReverseStorage,double BaseOhms,double CollectorOhms,double EmitterOhms)
 {
     internal void Append(string id,int collector,int baseNode,int emitter,int? substrate,Func<int> privateNode,Action<Element> add)
     {
@@ -13,6 +13,10 @@ internal sealed record PreparedBjt(bool Pnp,double BetaForward,double BetaRevers
         // The outer sensor measures total collector current. The BE/BC sensors
         // below deliberately exclude the parallel charge-only companions.
         add(new Voltage(id,collector,c,0));
+        // Junctions, substrate shunts and charge use the intrinsic terminals.
+        c=Series(c,CollectorOhms,"_rc");
+        baseNode=Series(baseNode,BaseOhms,"_rb");
+        emitter=Series(emitter,EmitterOhms,"_re");
         add(new Voltage(id+"_be_sense",Pnp?emitter:baseNode,be,0));
         add(new Diode(id+"_be",be,Pnp?baseNode:emitter,ForwardStorage.SaturationAmps/BetaForward,ForwardStorage.ThermalVolts));
         add(new Voltage(id+"_bc_sense",Pnp?c:baseNode,bc,0));
@@ -29,6 +33,14 @@ internal sealed record PreparedBjt(bool Pnp,double BetaForward,double BetaRevers
             add(new JunctionStorage(id+"_qbe",Pnp?emitter:baseNode,Pnp?baseNode:emitter,ForwardStorage));
         if(ReverseStorage.JunctionFarads>0||ReverseStorage.TransitSeconds>0)
             add(new JunctionStorage(id+"_qbc",Pnp?c:baseNode,Pnp?baseNode:c,ReverseStorage));
+
+        int Series(int external,double ohms,string suffix)
+        {
+            if(ohms==0)return external;
+            var intrinsic=privateNode();
+            add(new Resistor(id+suffix,external,intrinsic,ohms));
+            return intrinsic;
+        }
     }
 }
 
@@ -37,7 +49,7 @@ internal sealed record PreparedBjt(bool Pnp,double BetaForward,double BetaRevers
 internal static class BjtPreparation
 {
     private static readonly HashSet<string> Allowed=new(StringComparer.OrdinalIgnoreCase)
-        {"IS","BF","BR","NF","NR","CJE","VJE","MJE","CJC","VJC","MJC","FC","TF","TR","TNOM","LEVEL"};
+        {"IS","BF","BR","NF","NR","CJE","VJE","MJE","CJC","VJC","MJC","FC","TF","TR","TNOM","LEVEL","RB","RC","RE"};
     internal static bool AssignmentsAreSupported(BoundInstance call)
     {
         if(call.Status!=BindingStatus.Bound||call.Target is not {} model||model.ModelFamily is not ("npn" or "pnp")
@@ -63,14 +75,15 @@ internal static class BjtPreparation
         var vje=Value(values,"VJE",.75);var vjc=Value(values,"VJC",.75);
         var mje=Value(values,"MJE",.33);var mjc=Value(values,"MJC",.33);var fc=Value(values,"FC",.5);
         var tf=Value(values,"TF",0);var tr=Value(values,"TR",0);
-        if(isat<=0||bf<=0||br<=0||nf<=0||nr<=0||cje<0||cjc<0||vje<=0||vjc<=0||mje<0||mje>=1||mjc<0||mjc>=1||fc<0||fc>=1||tf<0||tr<0
+        var rb=Value(values,"RB",0);var rc=Value(values,"RC",0);var re=Value(values,"RE",0);
+        if(rb<0||rc<0||re<0||rb>0&&!double.IsFinite(1/rb)||rc>0&&!double.IsFinite(1/rc)||re>0&&!double.IsFinite(1/re)||isat<=0||bf<=0||br<=0||nf<=0||nr<=0||cje<0||cjc<0||vje<=0||vjc<=0||mje<0||mje>=1||mjc<0||mjc>=1||fc<0||fc>=1||tf<0||tr<0
             ||Value(values,"TNOM",27)!=27||Value(values,"LEVEL",1)!=1||!double.IsFinite(isat/bf)||!double.IsFinite(isat/br)||isat/bf<=0||isat/br<=0)
         {diagnostic=new("invalid_or_unqualified_bjt_parameter",model.Range);return false;}
         const double vt=1.38064852e-23/1.6021766208e-19*300.15;
         var vf=nf*vt;var vr=nr*vt;
         if(!double.IsFinite(vf)||!double.IsFinite(vr)||vf<=0||vr<=0)
         {diagnostic=new("invalid_bjt_thermal_voltage",model.Range);return false;}
-        profile=new(model.ModelFamily=="pnp",bf,br,new(isat,vf,cje,vje,mje,fc,tf),new(isat,vr,cjc,vjc,mjc,fc,tr));return true;
+        profile=new(model.ModelFamily=="pnp",bf,br,new(isat,vf,cje,vje,mje,fc,tf),new(isat,vr,cjc,vjc,mjc,fc,tr),rb,rc,re);return true;
     }
     private static double Value(IReadOnlyDictionary<string,double> values,string name,double fallback)=>values.TryGetValue(name,out var value)?value:fallback;
 }

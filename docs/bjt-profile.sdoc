@@ -38,3 +38,14 @@ Implementation: BjtPreparation and OperatingPointBridge. Verification: BjtTests.
 STATEMENT: >>>
 Qualification investigation: the initial50ps BE grid missed the declared3mV early collector-voltage bound by4.968mV on an owned NPN circuit. At10ps the discrepancy reduced to0.983mV; at2ps early-slice refinement it reduced to0.184mV, consistent with first-order time discretization. The original failed run and fixed bounds remain in local artifacts. The initial Faer AC refusal was retained and referred to the numerical-provider owner. After importing06e8a6b (local47b9809), both LU and Faer passed the original NPN/PNP DC, complex AC and10ps BE comparisons, including signed collector currents and formal coarse/fine error reduction. The unchanged complex residual acceptance is independently qualified by the provider regression. This finite subset does not establish full Gummel-Poon or arbitrary timestep accuracy.
 <<<
+
+[REQUIREMENT]
+UID: SEMI-BJT-SERIES-R-001
+STATUS: Draft
+TITLE: Constant level-1 BJT terminal resistance
+STATEMENT: >>>
+The bounded unit-area level-1 profile shall stamp nonnegative model RB, RC and RE in ohms between external and intrinsic terminals. Zero shall preserve the original node allocation. Conduction, substrate reference and junction charge shall use the intrinsic terminals, and the collector observable shall retain total external current. Current-dependent base resistance parameters and a positive resistance with unrepresentable conductance shall refuse.
+<<<
+COMMENT: >>>
+Verification uses BjtTests and compat/ngspice/bjt-ohmic-resistance.cir. Ngspice bjttemp.c assigns RBM=RB when RBM is omitted. The retained default and tight reference sweep results are separate.
+<<<

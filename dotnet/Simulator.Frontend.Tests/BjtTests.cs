@@ -36,7 +36,23 @@ public sealed class BjtTests
   Assert.Equal(elements.Length,elements.Select(v=>v.Id).Distinct(StringComparer.Ordinal).Count());
   Assert.DoesNotContain(result.RootNodes.Keys,k=>k.StartsWith("$",StringComparison.Ordinal));
  }
- [Theory][InlineData("NPN(VAF=100)")][InlineData("NPN(IKF=1m)")][InlineData("NPN(RB=10)")][InlineData("NPN(BF=0)")][InlineData("NPN(IS=1 BF=5e-324)")][InlineData("NPN(IS=0)")][InlineData("NPN(CJE=-1p)")][InlineData("NPN(MJE=1)")][InlineData("NPN(TF=-1n)")][InlineData("NPN(TNOM=30)")][InlineData("NPN(LEVEL=4)")][InlineData("NPN(BF=100 BF=200)")]
+ [Theory][InlineData("NPN")][InlineData("PNP")]
+ public void Ohmic_resistances_separate_external_and_intrinsic_bjt_terminals(string family)
+ {
+  var result=Select(family+"(RB=100 RC=20 RE=10 CJE=1p CJC=1p)");
+  Assert.True(result.Success,string.Join(',',result.Diagnostics.Select(d=>d.Code)));
+  var circuit=result.Request!.Circuit;
+  var resistors=circuit.Elements.OfType<Resistor>().ToArray();
+  Assert.Equal(new double[]{10,20,100},resistors.Select(r=>r.Ohms).Order());
+  var rb=Assert.Single(resistors,r=>r.Ohms==100);
+  var re=Assert.Single(resistors,r=>r.Ohms==10);
+  var rc=Assert.Single(resistors,r=>r.Ohms==20);
+  Assert.Equal(Array.IndexOf(circuit.Nodes,result.RootNodes["b"]),rb.P);
+  var storage=circuit.Elements.OfType<JunctionStorage>().ToArray();
+  Assert.Contains(storage,q=>family=="NPN"?q.P==rb.N&&q.N==re.N:q.P==re.N&&q.N==rb.N);
+  Assert.Contains(storage,q=>family=="NPN"?q.P==rb.N&&q.N==rc.N:q.P==rc.N&&q.N==rb.N);
+ }
+ [Theory][InlineData("NPN(VAF=100)")][InlineData("NPN(IKF=1m)")][InlineData("NPN(RB=-1)")][InlineData("NPN(RBM=10)")][InlineData("NPN(IRB=1m)")][InlineData("NPN(RC=-1)")][InlineData("NPN(RE=-1)")][InlineData("NPN(BF=0)")][InlineData("NPN(IS=1 BF=5e-324)")][InlineData("NPN(IS=0)")][InlineData("NPN(CJE=-1p)")][InlineData("NPN(MJE=1)")][InlineData("NPN(TF=-1n)")][InlineData("NPN(TNOM=30)")][InlineData("NPN(LEVEL=4)")][InlineData("NPN(BF=100 BF=200)")]
  public void Unsupported_or_invalid_BJT_terms_refuse_atomically(string model){var r=Select(model);Assert.False(r.Success);Assert.Null(r.Request);Assert.Empty(r.Origins);}
  [Theory][InlineData("NPN","c")][InlineData("PNP","b")]
  public void Explicit_substrate_uses_default_native_leakage_reference(string family,string reference)
