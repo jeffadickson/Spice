@@ -13,7 +13,7 @@ public sealed class SemiconductorTests {
  }
  [Fact] public void Underflowed_thermal_voltage_is_refused() {Assert.False(Select("D(N=5e-324)").Success);}
  [Fact] public void Unsupported_assignments_remain_visible_behind_an_earlier_directive() {
-  var syntax=DeckParser.Parse("Multiple\n.options reltol=1m\nV1 a 0 .5\nD1 a 0 dm\n.model dm D(RS=1)\n.end\n",collectDeclarations:true);
+  var syntax=DeckParser.Parse("Multiple\n.options reltol=1m\nV1 a 0 .5\nD1 a 0 dm\n.model dm D(BV=1)\n.end\n",collectDeclarations:true);
   var audit=CircuitReadiness.Audit(syntax);Assert.Contains(audit.Issues,i=>i.Layer=="directive_policy");Assert.Contains(audit.Issues,i=>i.Code=="unsupported_diode_profile");
  }
  [Fact] public void Model_values_use_declaration_scope_inside_nested_instances() {
@@ -22,6 +22,21 @@ public sealed class SemiconductorTests {
   Assert.Equal(2e-12,Assert.Single(result.Request!.Circuit.Elements.OfType<SpiceDiode>()).Model.JunctionFarads);
  }
  [Fact] public void Nonzero_depletion_and_transport_parameters_are_lowered() {var r=Select("D(IS=1e-14 N=1 CJO=2p VJ=.8 M=.5 FC=.5 TT=1n)");Assert.True(r.Success,string.Join(',',r.Diagnostics.Select(d=>d.Code)));var d=Assert.Single(r.Request!.Circuit.Elements.OfType<SpiceDiode>());Assert.Equal(2e-12,d.Model.JunctionFarads);Assert.Equal(1e-9,d.Model.TransitSeconds);}
- [Theory][InlineData("D(IS=1e-14 TYPO=1)")][InlineData("D(IS=1e-14 RS=1)")][InlineData("D(M=1)")][InlineData("D(FC=1)")][InlineData("D(TT=-1n)")][InlineData("D(IS=1e-14 IS=2e-14)")][InlineData("D(BV=10)")][InlineData("D(IS={missing})")][InlineData("D(FLAG)")][InlineData("D(TNOM=30)")][InlineData("D(IS=0)")][InlineData("D(N=0)")][InlineData("D(VJ=0)")][InlineData("D(CJO=-1p)")][InlineData("D(CJO=1p CJ0=2p)")]public void Unsupported_or_invalid_parameters_refuse_atomically(string model){var r=Select(model);Assert.False(r.Success);Assert.Null(r.Request);Assert.Empty(r.Origins);Assert.All(r.Diagnostics,d=>Assert.False(string.IsNullOrWhiteSpace(d.Code)));}
+ [Fact]
+ public void Series_resistance_connects_to_the_intrinsic_charged_junction()
+ {
+  var result=Select("D(IS=1n RS=1 CJO=10p TT=1n)");
+  Assert.True(result.Success,string.Join(',',result.Diagnostics.Select(d=>d.Code)));
+  var circuit=result.Request!.Circuit;
+  var diode=Assert.Single(circuit.Elements.OfType<SpiceDiode>());
+  var resistor=Assert.Single(circuit.Elements.OfType<Resistor>(),r=>r.Id==diode.Id+"_rs");
+  Assert.Equal(1,resistor.Ohms);
+  Assert.Equal(diode.P,resistor.N);
+  Assert.Equal(Array.IndexOf(circuit.Nodes,result.RootNodes["out"]),resistor.P);
+  Assert.InRange(diode.Model.JunctionFarads,9.999e-12,1.0001e-11);
+  Assert.Equal(1e-9,diode.Model.TransitSeconds);
+  Assert.Equal(result.Origins.Single(o=>o.LocalName=="D1").WireId,diode.Id);
+ }
+ [Theory][InlineData("D(IS=1e-14 TYPO=1)")][InlineData("D(IS=1e-14 RS=-1)")][InlineData("D(M=1)")][InlineData("D(FC=1)")][InlineData("D(TT=-1n)")][InlineData("D(IS=1e-14 IS=2e-14)")][InlineData("D(BV=10)")][InlineData("D(IS={missing})")][InlineData("D(FLAG)")][InlineData("D(TNOM=30)")][InlineData("D(IS=0)")][InlineData("D(N=0)")][InlineData("D(VJ=0)")][InlineData("D(CJO=-1p)")][InlineData("D(CJO=1p CJ0=2p)")]public void Unsupported_or_invalid_parameters_refuse_atomically(string model){var r=Select(model);Assert.False(r.Success);Assert.Null(r.Request);Assert.Empty(r.Origins);Assert.All(r.Diagnostics,d=>Assert.False(string.IsNullOrWhiteSpace(d.Code)));}
  private static BridgeResult Select(string model)=>OperatingPointSelection.Select(DeckParser.Parse("Junction\nV1 in 0 .5\nR1 in out 1k\nD1 out 0 dm\n.model dm "+model+"\n.end\n",collectDeclarations:true)).Prepared;
 }

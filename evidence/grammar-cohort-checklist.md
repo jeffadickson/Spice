@@ -594,3 +594,60 @@ before testing gate charge and switching transients.
 
 References: https://epc-co.com/epc/design-support/device-models/pspicem
 and https://openvaf.github.io/docs/help/compact-models/.
+
+## 12AX7 published reference and grid diode
+
+The reproducible wrappers under `compat/12ax7-reference` use the 12AX7
+subcircuit from Norman Koren, *Improved vacuum tube models for SPICE*,
+[Appendix A3](https://www.normankoren.com/Audio/Tubemodspice_article_2.html).
+The local transcription retains the equations and values, and its
+SHA-256 is `d600223b438aca91ae0753cd1245498d5e29fbbbe21a4aea9bd6fa6e7570b782`.
+The installed ngspice 47+ was run with `-n -D ngbehavior=ps -D filetype=ascii -b`.
+The vendor-independent published subcircuit stays in the local artifact
+directory. The two wrappers are maintained in Git.
+
+Ngspice completed 909 plate points in a 101-by-9 grid. The common-cathode
+stage gave 170.067 V at the plate, 1.1990 V at the cathode and 0.79933 mA
+of supply current. It completed 81 AC frequencies, with 29.53266 V/V
+gain magnitude and −179.261° phase at 1 kHz. An independent direct
+evaluation of the plate law plus the plate shunt differed from native
+plate current by at most 1.201 µA over the default-tolerance sweep.
+That finite-scenario comparison is separate from agreement between
+simulators.
+
+Both original inputs parsed and resolved their include in the C#
+frontend pipeline, then refused with `unsupported_primitive_header`
+at PSpice VALUE source preparation. A local dialect translation to
+B voltage/current sources kept the native plate current within 27.2 pA
+and output AC gain within 5.79e-10 V/V of the original reference.
+That translation reached `non_affine_behavior` in our simulator.
+The next required behaviors are runtime nonlinear voltage/current
+relations, signed power/rectification semantics and derivatives for
+DC Newton and AC. The existing affine backend can execute the
+derivative circuit once supplied with a fixed bias.
+
+At the native operating point, independent centered differences of
+the plate law gave gm=1.75549 mS and plate resistance=52.7713 kΩ.
+A local affine snapshot preserved the capacitors, plate shunt and
+grid diode. The simulator agreed with ngspice on that snapshot across
+all 81 AC points. The engine's output also differed from the published
+nonlinear native model by at most 6.192e-6 V/V in complex gain on the
+same grid. The snapshot's own native OP comparison retains two small
+grid-node disagreements, with a maximum of 1.187 µV. A fixed-bias
+snapshot cannot reproduce plate curves or a changed bias.
+
+The published grid diode uses RS=1 Ω with CJO and TT. The new lowering
+stamps its resistance before the intrinsic charged junction. The
+standalone grid diode fixture matched ngspice at OP, 9 DC points and
+17 AC frequencies. Tests preserve zero topology, keep the original
+diode identity and reject invalid terms. The positive regression failed
+before implementation. A mutation that omitted the positive RS stamp
+was detected. Final frontend tests passed 681 with 37 opt-in skips,
+including existing seeded properties. Managed coverage measured
+18,413/23,698 lines and 4,943/7,938 branches. Native and Rust coverage
+were outside that scope. StrictDoc parsed 55 documents and 449 IDs.
+
+Raw decks, logs, coverage and all four provenance-checked runner
+summaries are under `E:/Artifacts/Spice-12ax7-4290317`. The reference
+metrics and fixed-bias comparison are in `reference-metrics.json` and
+`small-signal-vs-published.json`.

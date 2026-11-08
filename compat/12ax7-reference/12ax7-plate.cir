@@ -1,0 +1,7 @@
+12AX7 plate characteristics
+.include 12ax7.inc
+Vplate p 0 0
+Vgrid g 0 0
+Xtriode p g 0 12AX7
+.dc Vplate 0 400 4 Vgrid 0 -4 -0.5
+.end

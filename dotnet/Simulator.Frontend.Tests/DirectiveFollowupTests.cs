@@ -24,18 +24,20 @@ public sealed class DirectiveFollowupTests
 
     [Theory]
     [InlineData("RS=0",true)]
-    [InlineData("RS=1",false)]
+    [InlineData("RS=1",true)]
     [InlineData("RS=-1",false)]
     [InlineData("RS=0 RS=0",false)]
-    [InlineData("RS={0}",false)]
-    public void Only_explicit_literal_zero_series_resistance_maps_to_the_existing_diode(string settings,bool supported)
+    [InlineData("RS={0}",true)]
+    public void Diode_series_resistance_preserves_charge_and_zero_topology(string settings,bool supported)
     {
         var syntax=DeckParser.Parse("Diode\nV1 in 0 0 AC 1\nR1 in out 1k\nD1 out 0 dm\n.model dm D(IS=1u CJO=1u M=0 "+settings+")\n.ac lin 1 1k 1k\n.end\n",collectDeclarations:true);
         var plan=RequestedAnalysis.Prepare(syntax);
         Assert.Equal(supported,plan.Success);
         if(supported)
         {
-            var diode=Assert.Single(Assert.Single(Assert.Single(plan.Operations).Requests).Circuit.Elements.OfType<SpiceDiode>());
+            var elements=Assert.Single(Assert.Single(plan.Operations).Requests).Circuit.Elements;
+            var diode=Assert.Single(elements.OfType<SpiceDiode>());
+            Assert.Equal(settings=="RS=1"?2:1,elements.OfType<Resistor>().Count());
             Assert.Equal(1e-6,diode.Model.JunctionFarads);
         }
     }

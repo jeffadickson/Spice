@@ -36,7 +36,7 @@ STATEMENT: >>>
 The generated frontend shall bind qualified diode model assignments in their declaration scope with the active instance environment. It shall reject unknown, duplicate, opaque, invalid or unqualified assignments atomically before returning a request, preserve source origins, and use the same typed native model in DC, AC and transient preparation.
 <<<
 COMMENT: >>>
-Implementation: dotnet/Simulator.Frontend/SemiconductorPreparation.cs, additive diode lowering in OperatingPointBridge.cs, typed DTOs in Simulator.Client/Requests.cs. Verification: SemiconductorTests.cs (8 initial cases), full frontend regressions and actual engine oracle integration. First profile supports IS,N,CJO/CJ0,VJ,M,FC,TT and TNOM=27 only; RS,BV and other terms reject. Binding readiness is not numerical qualification.
+Implementation: dotnet/Simulator.Frontend/SemiconductorPreparation.cs, additive diode lowering in OperatingPointBridge.cs, typed DTOs in Simulator.Client/Requests.cs. Verification: SemiconductorTests.cs (8 initial cases), full frontend regressions and actual engine oracle integration. The bounded profile supports IS,N,CJO/CJ0,VJ,M,FC,TT,RS and TNOM=27. BV and other unqualified terms reject. Binding readiness is not numerical qualification.
 <<<
 
 [REQUIREMENT]
@@ -52,3 +52,28 @@ Implementation: src/api.rs. Verification: tests/spice_diode.rs::floating_diode_a
 RELATIONS:
 - TYPE: Parent
   VALUE: SEMI-DIODE-OBS-001
+
+[REQUIREMENT]
+UID: SEMI-DIODE-SERIES-R-001
+STATUS: Draft
+TITLE: Diode series resistance before the charged junction
+STATEMENT: >>>
+The frontend shall stamp positive diode model RS in ohms between the external anode and the intrinsic charged junction. Zero shall preserve the original topology. Negative values and unrepresentable conductance shall refuse. The original diode current identity shall identify the intrinsic junction current because the series branch has no additional paths.
+<<<
+COMMENT: >>>
+Verification: SemiconductorTests and compat/ngspice/tube-grid-diode.cir. The new node and resistor are subject to existing bridge resource budgets.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEMI-DIODE-BIND-001
+
+[REQUIREMENT]
+UID: SEMI-TUBE-12AX7-REF-001
+STATUS: Draft
+TITLE: Published 12AX7 nonlinear reference comparison
+STATEMENT: >>>
+The simulator shall bind a pinned three-terminal 12AX7 reference subcircuit and retain its nonlinear voltage and current relations. Verification shall compare plate current over both axes of a nested DC sweep and compare common-cathode bias and complex AC gain with ngspice using the same model and circuit. A linearization supplied at a known bias shall be reported separately from nonlinear support.
+<<<
+COMMENT: >>>
+Inferred from the accepted 12AX7 experiment. The published PSpice VALUE sources and their normalized nonlinear B forms remain unsupported. See evidence/grammar-cohort-checklist.md.
+<<<

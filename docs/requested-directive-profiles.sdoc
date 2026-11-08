@@ -34,7 +34,7 @@ UID: FRONTEND-DIODE-ZERO-RS-001
 STATUS: Draft
 TITLE: Explicit zero diode series resistance
 STATEMENT: >>>
-The generated diode profile shall admit the explicit literal RS=0 with unchanged topology and charge parameters. Nonzero, duplicate and expression-valued RS shall remain outside this profile. Circuit readiness and physical preparation shall use the same admissibility rule. The independent ngspice comparison shall retain the original model card.
+The generated diode profile shall admit an RS value that evaluates to zero with unchanged topology and charge parameters. Positive values follow SEMI-DIODE-SERIES-R-001. Duplicate and invalid values shall refuse. Circuit readiness and physical preparation shall use the same admissibility rule. The independent ngspice comparison shall retain the original model card.
 <<<
 COMMENT: >>>
 Implementation: SemiconductorPreparation. Verification: DirectiveFollowupTests and the original qualification-diode-constant-charge.cir replay.

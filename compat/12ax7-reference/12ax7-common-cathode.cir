@@ -1,0 +1,14 @@
+12AX7 self-biased common-cathode stage
+.include 12ax7.inc
+Vbplus bplus 0 250
+Vin in 0 DC 0 AC 1
+Cin in g 22n
+Rg g 0 1meg
+Rp bplus p 100k
+Rk k 0 1.5k
+Cout p out 22n
+Rload out 0 1meg
+Xtriode p g k 12AX7
+.op
+.ac dec 20 10 100k
+.end

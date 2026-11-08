@@ -1,0 +1,9 @@
+12AX7 grid diode series resistance and charge
+Vgrid grid 0 DC 0.55 AC 1
+Rgrid grid anode 2k
+Dgrid anode 0 dx
+.model dx D(IS=1n RS=1 CJO=10p TT=1n)
+.op
+.dc Vgrid -1.25 0.75 0.25
+.ac dec 4 10 100k
+.end
