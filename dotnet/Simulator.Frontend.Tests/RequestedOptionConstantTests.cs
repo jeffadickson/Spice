@@ -8,6 +8,8 @@ public sealed class RequestedOptionConstantTests
 {
     [Theory]
     [InlineData("DISTOF1 0 DISTOF2 0",true)]
+    [InlineData("DISTOF1 0.0 DISTOF2 0e-3",true)]
+    [InlineData("DISTOF1 1e-999",false)]
     [InlineData("DISTOF1 1 DISTOF2 0",false)]
     [InlineData("DISTOF1 0 DISTOF1 0",false)]
     [InlineData("DISTOF1 0 90",false)]

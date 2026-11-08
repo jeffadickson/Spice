@@ -6,10 +6,10 @@ UID: SEM-LEGACY-LINEAR-ANNOTATION-001
 STATUS: Draft
 TITLE: Prepare bounded legacy listing and disabled distortion annotations
 STATEMENT: >>>
-Ordinary analysis preparation shall admit bare LIST, NODE, POST and TRANS options in the reporting-only option profile, without changing electrical inputs. Source preparation shall admit at most one DISTOF1 0 and one DISTOF2 0 on an otherwise supported independent excitation. Assigned forms of these reporting options, nonzero or duplicate distortion markers, additional phase terms and distortion-only source profiles shall refuse. This requirement does not admit a distortion analysis.
+Ordinary analysis preparation shall admit bare LIST, NODE, POST and TRANS options in the reporting-only option profile, without changing electrical inputs. Source preparation shall admit at most one DISTOF1 0 and one DISTOF2 0 on an otherwise supported independent excitation. The zero coefficient may use an unsigned decimal or scientific spelling with an exactly zero mantissa and no suffix. Assigned forms of these reporting options, nonzero or duplicate distortion markers, additional phase terms and distortion-only source profiles shall refuse. This requirement does not admit a distortion analysis.
 <<<
 COMMENT: >>>
-DeclarationExtraction.cs, SpiceParser.g4 and SourceProfileExtraction.cs implement the boundaries. RequestedOptionConstantTests covers valid and refusing profiles. The original ngspice tests/filters/lowpass.cir qualifies OP and AC against ngspice 47+. See evidence/legacy-linear-annotations.md.
+DeclarationExtraction.cs, SpiceParser.g4 and SourceProfileExtraction.cs implement the boundaries. RequestedOptionConstantTests covers valid and refusing profiles. The original ngspice tests/filters/lowpass.cir and the legacy-zero fixture verify the bounded profile against ngspice 47+. See evidence/legacy-linear-annotations.md.
 <<<
 RELATIONS:
 - TYPE: Parent

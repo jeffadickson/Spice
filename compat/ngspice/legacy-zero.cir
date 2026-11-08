@@ -1,0 +1,7 @@
+Legacy option and distortion zero spellings
+.options LIST NODE POST TRANS
+V1 in 0 DC 0 AC 1 SIN 0 1 1k 0 0 DISTOF1 0.0 DISTOF2 0e-3
+R1 in out 1k
+C1 out 0 1n
+.ac dec 10 1k 1meg
+.end

@@ -30,7 +30,7 @@ internal static class SourceProfileExtraction
             var distortion=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach(var clause in clauses)
                 if(clause.distortionExcitation() is {} marker &&
-                    (marker.NUMBER().GetText()!="0" || !distortion.Add(marker.identifier().GetText())))
+                    (!IsExactDecimalZero(marker.NUMBER().GetText()) || !distortion.Add(marker.identifier().GetText())))
                     return null;
             // Admit only disabled distortion markers on an otherwise valid
             // source; a nonzero coefficient or phase tail stays a refusal.
@@ -47,6 +47,18 @@ internal static class SourceProfileExtraction
         }
         catch(ParseCanceledException){return null;}
     }
+    // NUMBER already validates the decimal grammar. Check the mantissa before
+    // conversion so a nonzero coefficient cannot pass by underflowing to zero.
+    private static bool IsExactDecimalZero(string text)
+    {
+        var number=text.AsSpan();
+        var exponent=number.IndexOfAny('e','E');
+        if(exponent<0)return number.IndexOfAnyExcept('0','.')<0;
+        var digits=number[(exponent+1)..];
+        if(!digits.IsEmpty&&digits[0] is '+' or '-')digits=digits[1..];
+        return !digits.IsEmpty&&digits.IndexOfAnyExceptInRange('0','9')<0&&number[..exponent].IndexOfAnyExcept('0','.')<0;
+    }
+
     internal static bool IsReserved(string text)=>text.ToLowerInvariant() is "dc" or "ac" or "pulse" or "sin" or "pwl" or "exp" or "sffm" or "am" or "distof1" or "distof2";
     // Shared bounded adapter for generated semantic entries. Recognition remains
     // in ANTLR; no source text is split or re-tokenized here.
