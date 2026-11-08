@@ -122,12 +122,13 @@ public static partial class RequestedAnalysis
        nestedDc=new("v("+terminal+")",outer.SelectMany(value=>Enumerable.Repeat(value,primary.Length)).ToImmutableArray());
       }
       coordinates=outer.SelectMany(_=>primary).ToImmutableArray();
+      var dcAnalysis=DcSweepAnalysis(baseRequest);
       foreach(var outerValue in outer)foreach(var value in primary){
        // Each request owns its element array, preventing mutation/state carryover between points.
        var elements=baseRequest.Circuit.Elements.Select(e=>e.Id==source.Id
           ?e is Voltage v?v with{Volts=value}:(Element)((Current)e with{Amps=value})
           :outerSource!=null&&e.Id==outerSource.Id?outerSource with{Volts=outerValue}:e).ToArray();
-       requests.Add(baseRequest with{CaseId=id+"_"+requests.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),Circuit=baseRequest.Circuit with{Elements=elements}});
+       requests.Add(baseRequest with{CaseId=id+"_"+requests.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),Circuit=baseRequest.Circuit with{Elements=elements},Analysis=dcAnalysis});
       }
       break;
      case "ac":
@@ -241,6 +242,17 @@ public static partial class RequestedAnalysis
    results.Add(new(operation.Id,success,success?points.ToImmutable():points.Select(p=>p.Response?.Succeeded==true?p with{Response=null,ReportedManifest=null,TransportError="operation_failed_atomically"}:p).ToImmutableArray()));
   }
   return results.ToImmutable();
+ }
+ // A fresh nonlinear point can take more work around device transitions.
+ // InitialStep=1 tries the physical sources first and reduces only on failure.
+ // Switches can be hysteretic, so keep their existing initial-state policy.
+ private static Analysis DcSweepAnalysis(SimulationRequest request)
+ {
+     var elements=request.Circuit.Elements;
+     return elements.Any(e=>e is Diode or DiodeWithCapacitance or SpiceDiode or Mos1Channel)
+         &&!elements.Any(e=>e is PspiceSwitch)
+         ? new OperatingPointNewton(new NewtonOptions(MaxIterations:200,Continuation:new(InitialStep:1)))
+         : request.Analysis;
  }
  private sealed class PreparationFailure(string code,SourceRange? range):Exception
  {internal string Code{get;}=code;internal SourceRange? Range{get;}=range;}

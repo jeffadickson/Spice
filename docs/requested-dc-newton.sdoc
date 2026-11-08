@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Requested nonlinear DC sweep convergence policy
+
+[REQUIREMENT]
+UID: SIM-REQUESTED-DC-NEWTON-001
+STATUS: Draft
+TITLE: Explicit bounded fresh nonlinear DC points
+STATEMENT: >>>
+The frontend shall execute each point of a requested DC sweep of a supported diode or MOS channel circuit without a hysteretic switch as a fresh Newton solve, with a 200-iteration limit per stage and a 64-attempt source continuation limit. The first stage shall try full excitation. Recovery shall return success only after solving at full excitation. The request shall retain the nominal physical model and existing voltage, current and relative convergence tolerances. Linear and switch-containing DC sweeps and ordinary OP directives shall retain their existing request policies. A failed point shall prevent publication of partial successful results for its operation.
+<<<
+COMMENT: >>>
+Implementation: RequestedAnalysis.DcSweepAnalysis. Verification: RequestedDcNewtonTests and requested-corpus original-deck replays. Default fresh OP stopped at 50 iterations for seven DC points in examples/probe/probe-i-dev.cir, from 0.83 V to 0.89 V. Replaying the same wire circuit and existing tolerance values with a 200-iteration cap completed all seven and the original executed 201/201 points. The default ngspice-47+ comparison fails at seven collector-voltage points, with maximum difference 109.917 microvolts. A diagnostic replay of the native projection at RELTOL=1e-9, ABSTOL=1e-12 and VNTOL=1e-9 reduces this maximum to 5.759 nanovolts. The diagnostic is separate from default-oracle qualification. Source recovery carries no accepted state between points.
+<<<
