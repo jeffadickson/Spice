@@ -350,3 +350,52 @@ The targeted Rust command was cargo test --offline --locked --test
 bsim330 -- --include-ignored. The two native replay manifests are
 dynamic-replay/summary.json and loaded-replay/summary.json. They record
 source hashes, reference tool version, tolerances and per-signal counts.
+
+### BSIM3 SOI native device trial
+
+The 15 observed RSpice reference passes include 12 DC decks and three gate-ramp transients. The FD ring is a separate smoke contract.
+The three families require distinct kernels. FD is level 55, DD is level
+56, and PD is level 57. The observed decks use numerical option cards and
+resolved model includes. Those options currently fail preparation before
+device binding. A four-node MOS card names the back gate as the fourth
+terminal. Its treatment of a floating body depends on the level. The
+DD and PD t3 cards allocate a separate internal body unknown.
+
+The standalone experiment used Berkeley BSIM Research Group model code
+from ngspice commit e8285746c73a8229cf922487c8ccfcf6bea61bce, with the
+individual BsimTerms_use conditions in each model directory. It compiled
+the model load, setup, parameter and temperature objects without linking
+the ngspice analysis engine. A small local DC matrix and RHS captured the
+stamps. The probe recovered signed terminal current as Jv minus the
+linearized RHS. The existing ngspice executable was used independently as
+the full-circuit oracle. RSpice source was not incorporated.
+
+| t3 device | Bias points | Points outside tolerance | Maximum terminal-current error |
+| --- | ---: | ---: | ---: |
+| FD | 1806 | 0 | 8.67e-18 A |
+| DD | 1806 | 860 | 25.10 µA |
+| PD | 1806 | 72 | 0.326 µA |
+
+The test compared drain, gate, source and back-gate currents, using an
+absolute tolerance of 1 nA plus 1e-4 times the reference magnitude.
+The FD maximum terminal KCL residual was 1.74e-18 A. The local floating-body
+solve for DD and PD returned finite values at all biases, but current
+disagreements remain. A small body residual does not establish agreement
+with ngspice's continuation path. No normal simulator deck was enabled
+by this trial.
+
+The FD harness is scripts/Bsim3SoiFdProbe.c. To reproduce, use VS
+developer PowerShell in a checked artifact directory with the pinned
+ngspice checkout. Generate fd-card.inc as an array of name/value entries
+from the pinned bsim3soifd/nmosfd.mod, omitting the LEVEL selector. Its
+verified SHA-256 is
+97130d27d2de147dda7c7cb3cb4366e89cd58b544d4a0d08b02bf8e02667df20.
+Compile b3soifd, b3soifdset, b3soifdtemp, b3soifdcheck, b3soifdmpar
+and b3soifdld from src/spicelib/devices/bsim3soi_fd with MSVC /O2.
+Include visualc/src/include, src/include, the device directory and the
+artifact directory. Link these objects with the harness. The tracked
+source reproduced the complete FD trial byte for byte. An unknown
+model field was rejected in a separate compile-and-run negative check.
+No line or branch coverage or randomized campaign was collected for
+this standalone harness. Artifacts are under
+E:/Artifacts/Spice-soi-20261108T115024Z.

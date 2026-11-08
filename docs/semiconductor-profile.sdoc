@@ -116,3 +116,14 @@ Verification: tests/bsim330.rs compares ngspice gate charge, its derivative, and
 RELATIONS:
 - TYPE: Parent
   VALUE: SEMI-BSIM330-NATIVE-001
+
+[REQUIREMENT]
+UID: SEMI-BSIM3SOI-001
+STATUS: Draft
+TITLE: Distinct Berkeley BSIM3 SOI device topology and charge
+STATEMENT: >>>
+The simulator shall distinguish FD level 55, DD level 56, and PD level 57. It shall preserve the back gate, external body contact where present, and any internal floating-body unknown required by the selected model. Model-card parameters, dimensions, and admitted numerical settings shall retain their semantics. The same device shall contribute terminal current and charge to the requested analyses, with accepted transient history preserved on retry.
+<<<
+COMMENT: >>>
+Acceptance is the 15 RSpice reference-pass decks in the pinned shared corpus. The standalone FD DC probe in scripts/Bsim3SoiFdProbe.c verifies one device sweep only. Frontend binding, Rust assembly, coupled solves, transient verification and per-deck acceptance remain open. See semiconductor-reuse-assessment.md.
+<<<
