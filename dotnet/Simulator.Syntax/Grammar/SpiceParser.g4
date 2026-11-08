@@ -12,15 +12,21 @@ passive: PASSIVE_NAME twoNodes parameter+;
 source: SOURCE_NAME twoNodes parameter*;
 // Bounded semantic entry over the existing source-tail tokens. The general
 // source rule continues accepting other syntactically valid source families.
-sourceProfile: value sourceClause* EOF | sourceClause+ EOF;
-sourceClause: dcExcitation | acExcitation | waveformExcitation;
+sourceProfile: sourceClause+ EOF | {TokenStream.LT(1).Text.ToLowerInvariant() is not ("dc" or "ac" or "pulse" or "sin" or "pwl" or "exp" or "sffm" or "am")}? value sourceClause* EOF;
+sourceClause: barePwlDc | dcExcitation | acExcitation | groupedPwlExcitation | waveformExcitation;
+// Native accepts an explicit zero DC value spelled as bare DC before PWL.
+barePwlDc: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase)
+    && string.Equals(TokenStream.LT(2)?.Text,"pwl",StringComparison.OrdinalIgnoreCase)}? identifier;
+groupedPwlExcitation: {TokenStream.LT(1).Text.Equals("pwl",StringComparison.OrdinalIgnoreCase)}? identifier
+    LPAREN pwlPair (COMMA? pwlPair)* RPAREN;
+pwlPair: LPAREN waveformScalar COMMA? waveformScalar RPAREN;
 // Waveform fields are signed scalar values, not general whitespace arithmetic.
 // Delimited/braced expressions retain their existing generated value context.
 waveformExcitation: {TokenStream.LT(1).Text.ToLowerInvariant() is "pulse" or "sin" or "pwl" or "exp" or "sffm" or "am"}? identifier
     (LPAREN waveformValues RPAREN | waveformValues);
 waveformValues: waveformScalar (COMMA? waveformScalar)*;
 waveformScalar: {TokenStream.LT(1).Text.ToLowerInvariant() is not ("dc" or "ac")}? value;
-dcExcitation: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase)}? identifier EQUAL? value;
+dcExcitation: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase) && !string.Equals(TokenStream.LT(2)?.Text,"pwl",StringComparison.OrdinalIgnoreCase)}? identifier EQUAL? value;
 acExcitation: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier value value?;
 // Typed linear E/G tail; TABLE/POLY/behavioral headers remain outside this entry.
 linearControlProfile: twoNodes value EOF;

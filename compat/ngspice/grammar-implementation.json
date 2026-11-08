@@ -618,6 +618,57 @@
     "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
   },
   {
+    "rule": "barePwlDc",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "FRONTEND-SOURCE-GROUPED-PWL-001"
+    ],
+    "evidence": [
+      "evidence/grammar-cohort-checklist.md"
+    ],
+    "limitation": "Generated PWL pairs and explicit zero DC prefix. Preparation and executable model support are separate."
+  },
+  {
+    "rule": "groupedPwlExcitation",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "FRONTEND-SOURCE-GROUPED-PWL-001"
+    ],
+    "evidence": [
+      "evidence/grammar-cohort-checklist.md"
+    ],
+    "limitation": "Generated PWL pairs and explicit zero DC prefix. Preparation and executable model support are separate."
+  },
+  {
+    "rule": "pwlPair",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+      "dotnet/Simulator.Frontend/TransientSelection.cs"
+    ],
+    "requirements": [
+      "FRONTEND-SOURCE-GROUPED-PWL-001"
+    ],
+    "evidence": [
+      "evidence/grammar-cohort-checklist.md"
+    ],
+    "limitation": "Generated PWL pairs and explicit zero DC prefix. Preparation and executable model support are separate."
+  },
+  {
     "rule": "sourceProfile",
     "extraction": "bounded",
     "preparation": "bounded",

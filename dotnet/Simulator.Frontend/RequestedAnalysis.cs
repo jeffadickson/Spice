@@ -7,6 +7,8 @@ public sealed record RequestedOperation(string Id,string Kind,SourceRange Range,
 {
  /// <summary>SI coordinate unit: V/A for DC source sweeps, Hz for AC, s for transient, absent for OP.</summary>
  public string? CoordinateUnit { get; init; }
+ /// <summary>Outer DC coordinates in request order, independently identified by the grounded source voltage.</summary>
+ public NestedDcSweep? NestedDc { get; init; }
  /// <summary>Evaluated original directive scalar arguments, in grammar order; retained for audit including transient TSTEP/TSTOP/TSTART/TMAX.</summary>
  public ImmutableArray<double> Arguments { get; init; } = [];
  /// <summary>Requested transient reporting start in seconds; the engine still integrates from zero.</summary>
@@ -20,6 +22,9 @@ public sealed record RequestedOperation(string Id,string Kind,SourceRange Range,
  /// <summary>Optional original root control command or finite run invocation.</summary>
  public RequestedControlOrigin? ControlOrigin { get; init; }
 }
+/// <summary>Secondary grounded voltage axis for a two-source DC sweep.</summary>
+public sealed record NestedDcSweep(string NativeVoltageSignal,ImmutableArray<double> Coordinates);
+
 /// <summary>Atomic preparation: unsupported original execution semantics publish diagnostics and no partial operation plan.</summary>
 public sealed record RequestedAnalysisPlan(ImmutableArray<RequestedOperation> Operations,ImmutableArray<BridgeDiagnostic> Diagnostics)
 {
@@ -94,18 +99,34 @@ public static partial class RequestedAnalysis
      if(result.Value is not {} value)throw new PreparationFailure(result.Diagnostics[0].Code,v.Range);
      return value;
     }).ToArray();
-    var requests=ImmutableArray.CreateBuilder<SimulationRequest>();ImmutableArray<double> coordinates=[];string? unit=null;var outputStart=0d;SimulationRequest? initialization=null;
+    var requests=ImmutableArray.CreateBuilder<SimulationRequest>();ImmutableArray<double> coordinates=[];string? unit=null;var outputStart=0d;SimulationRequest? initialization=null;NestedDcSweep? nestedDc=null;
     switch(card.Kind){
      case "op":requests.Add(baseRequest with{CaseId=id});break;
      case "dc":
-      if(card.Names.Length!=1)throw new PreparationFailure("unsupported_nested_dc_sweep",card.Range);
+      if(card.Names.Length is <1 or >2)throw new PreparationFailure("unsupported_nested_dc_sweep",card.Range);
       var resolvedSource=RequestedDcSourceBinding.Resolve(catalog,prepared,card.Names[0]);
       if(resolvedSource.Source is not {} source)throw new PreparationFailure(resolvedSource.Error!,card.Range);
       unit=source is Voltage?"V":"A";
-      coordinates=Linear(values[0],values[1],values[2],maxPoints,card.Range);
-      foreach(var value in coordinates){
+      var primary=Linear(values[0],values[1],values[2],maxPoints,card.Range);
+      Voltage? outerSource=null;
+      ImmutableArray<double> outer=[0];
+      if(card.Names.Length==2){
+       var secondary=RequestedDcSourceBinding.Resolve(catalog,prepared,card.Names[1]);
+       if(secondary.Source is not Voltage{N:0,P:>0} v||v.Id==source.Id)
+        throw new PreparationFailure("unsupported_nested_dc_secondary_source",card.Range);
+       outerSource=v;
+       outer=Linear(values[3],values[4],values[5],maxPoints/primary.Length,card.Range);
+       // Native RAW repeats its first sweep axis. A grounded source exposes
+       // the second coordinate independently as its original positive node.
+       var terminal=catalog.Primitives.Single(p=>p.ScopeId==0&&p.Name.Equals(card.Names[1],StringComparison.OrdinalIgnoreCase)&&p.Family=="V").P.Text;
+       nestedDc=new("v("+terminal+")",outer.SelectMany(value=>Enumerable.Repeat(value,primary.Length)).ToImmutableArray());
+      }
+      coordinates=outer.SelectMany(_=>primary).ToImmutableArray();
+      foreach(var outerValue in outer)foreach(var value in primary){
        // Each request owns its element array, preventing mutation/state carryover between points.
-       var elements=baseRequest.Circuit.Elements.Select(e=>e.Id!=source.Id?e:source is Voltage v?v with{Volts=value}:(Element)((Current)source with{Amps=value})).ToArray();
+       var elements=baseRequest.Circuit.Elements.Select(e=>e.Id==source.Id
+          ?e is Voltage v?v with{Volts=value}:(Element)((Current)e with{Amps=value})
+          :outerSource!=null&&e.Id==outerSource.Id?outerSource with{Volts=outerValue}:e).ToArray();
        requests.Add(baseRequest with{CaseId=id+"_"+requests.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),Circuit=baseRequest.Circuit with{Elements=elements}});
       }
       break;
@@ -179,7 +200,7 @@ public static partial class RequestedAnalysis
       }
       requests.Add(transientRequest with{Analysis=new TransientConfigured(options)});break;
     }
-    operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { CoordinateUnit=unit,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=initialConditions,UsesUic=usesUic,ControlOrigin=directive.Origin });
+    operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { CoordinateUnit=unit,NestedDc=nestedDc,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=initialConditions,UsesUic=usesUic,ControlOrigin=directive.Origin });
    }
   }catch(PreparationFailure e){return Fail(e.Code,e.Range);}
   var observations=selected.Omissions.Where(o=>o.Kind=="extension").ToImmutableArray();

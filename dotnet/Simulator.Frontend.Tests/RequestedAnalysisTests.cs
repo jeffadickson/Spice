@@ -22,7 +22,6 @@ public sealed class RequestedAnalysisTests
  [InlineData(".tran 1u 4u 0 1u uic")]
  [InlineData(".tran 1u 4u 5u")]
  [InlineData(".ac dec 0 1 1k")]
- [InlineData(".dc V1 0 1 1 V2 0 1 1")]
  [InlineData(".control\nalter R1=2\nop\n.endc")]
  [InlineData(".ic i(V1)=1\n.op")]
  public void Unsupported_or_invalid_programs_publish_no_partial_operations(string cards)
@@ -148,6 +147,29 @@ public sealed class RequestedAnalysisTests
   Assert.Equal(0,plan.Operations[0].Requests[0].Circuit.Elements.OfType<Voltage>().Single().Volts);
   var options=Assert.IsType<TransientConfigured>(plan.Operations[1].Requests[0].Analysis).Options;
   Assert.Equal(.9,Assert.IsType<Pwl>(Assert.Single(options.Sources!).Waveform).Points[0].Value);
+ }
+ [Theory]
+ [InlineData("DC PWL(0 .9 2m 2)",0)]
+ [InlineData("DC PWL((0 .9) (2m 2))",0)]
+ [InlineData("PWL((0 .9) (2m 2))",.9)]
+ public void Grouped_pwl_preserves_pairs_and_bare_dc_preserves_explicit_zero(string tail,double dc)
+ {
+  var syntax=DeckParser.Parse($"grouped\nV1 in 0 {tail}\nR1 in 0 1k\n.op\n.tran 10u 2m\n.end\n",collectDeclarations:true);
+  var plan=RequestedAnalysis.Prepare(syntax);
+  Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
+  Assert.Equal(dc,plan.Operations[0].Requests[0].Circuit.Elements.OfType<Voltage>().Single().Volts);
+  var options=Assert.IsType<TransientConfigured>(plan.Operations[1].Requests[0].Analysis).Options;
+  Assert.Equal(new[]{new Point(0,.9),new Point(.002,2)},Assert.IsType<Pwl>(Assert.Single(options.Sources!).Waveform).Points);
+ }
+ [Fact] public void Nested_dc_sweeps_primary_inside_secondary_and_obeys_total_budget()
+ {
+  var syntax=DeckParser.Parse("nested\nV1 a 0 0\nV2 b 0 0\nR1 a b 1k\n.dc V1 0 1 .5 V2 -1 1 2\n.end\n",collectDeclarations:true);
+  var plan=RequestedAnalysis.Prepare(syntax,maxPoints:6);
+  Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
+  var operation=Assert.Single(plan.Operations);
+  Assert.Equal(new[]{0d,.5,1,0,.5,1},operation.Coordinates);
+  Assert.Equal(new[]{-1d,-1,-1,1,1,1},operation.Requests.Select(r=>r.Circuit.Elements.OfType<Voltage>().Last().Volts));
+  Assert.Equal("requested_point_budget",Assert.Single(RequestedAnalysis.Prepare(syntax,maxPoints:5).Diagnostics).Code);
  }
  [Fact] public void Documented_two_point_linear_grid_is_preserved_despite_native_oracle_bug()
  {var plan=Prepare(".ac lin 2 10 30");Assert.True(plan.Success);Assert.Equal(new[]{10d,30},plan.Operations[0].Coordinates);}

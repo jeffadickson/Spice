@@ -20,16 +20,22 @@ internal static class SourceProfileExtraction
             if(profile.value() is {} bare&&IsReserved(bare.GetText()))return null;
             var clauses=profile.sourceClause();
             var dc=clauses.Select(c=>c.dcExcitation()).Where(c=>c!=null).ToArray();
+            var bareDc=clauses.Select(c=>c.barePwlDc()).Where(c=>c!=null).ToArray();
             var ac=clauses.Select(c=>c.acExcitation()).Where(c=>c!=null).ToArray();
             var waves=clauses.Select(c=>c.waveformExcitation()).Where(c=>c!=null).ToArray();
-            if(dc.Length>1||ac.Length>1||waves.Length>1||(dc.Length>0&&profile.value()!=null))return null;
+            var grouped=clauses.Select(c=>c.groupedPwlExcitation()).Where(c=>c!=null).ToArray();
+            var dcCount=dc.Length+bareDc.Length;
+            if(dcCount>1||ac.Length>1||waves.Length+grouped.Length>1||(dcCount>0&&profile.value()!=null))return null;
             var nominal=dc.Length==1?dc[0].value():profile.value();var phasor=ac.Length==1?ac[0].value():null;
             SourceWaveformSyntax? waveform=null;
             if(waves.Length==1){
                 var wave=waves[0];var kind=wave.identifier().GetText().ToLowerInvariant() switch{"pulse"=>SourceWaveformKind.Pulse,"sin"=>SourceWaveformKind.Sine,"pwl"=>SourceWaveformKind.Pwl,"sffm"=>SourceWaveformKind.FrequencyModulated,"am"=>SourceWaveformKind.AmplitudeModulated,_=>SourceWaveformKind.Exponential};
                 waveform=new(kind,wave.waveformValues().waveformScalar().Select(v=>capture(v.value())).ToImmutableArray());
             }
-            return new(nominal==null?null:capture(nominal),phasor==null?null:capture(phasor[0]),phasor?.Length==2?capture(phasor[1]):null){Waveform=waveform};
+            if(grouped.Length==1)
+                waveform=new(SourceWaveformKind.Pwl,grouped[0].pwlPair().SelectMany(p=>p.waveformScalar()).Select(v=>capture(v.value())).ToImmutableArray());
+            var dcValue=bareDc.Length==1?new SourceSyntax("0",capture(bareDc[0]).Range):nominal==null?null:capture(nominal);
+            return new(dcValue,phasor==null?null:capture(phasor[0]),phasor?.Length==2?capture(phasor[1]):null){Waveform=waveform};
         }
         catch(ParseCanceledException){return null;}
     }

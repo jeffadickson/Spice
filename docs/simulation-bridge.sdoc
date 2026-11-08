@@ -364,3 +364,31 @@ XspiceSyntax retains scalar %i and %id separately from voltage support. XspiceGa
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-SELECT-001
+
+[REQUIREMENT]
+UID: FRONTEND-SOURCE-GROUPED-PWL-001
+STATUS: Draft
+TITLE: Grouped PWL and explicit bare DC prefix
+STATEMENT: >>>
+A source PWL containing generated two-field parenthesized pairs shall preserve their original ordered scalar values. An immediately preceding bare DC keyword shall bind zero for a separate DC operating point. The transient shall retain its waveform and the existing startup admission rules. Duplicate source clauses and malformed pairs shall refuse.
+<<<
+COMMENT: >>>
+SpiceParser.g4 and SourceProfileExtraction retain generated tokens and source ranges. RequestedAnalysisTests cover flattened and grouped fields and the difference between an explicit zero DC prefix and omitted DC. The native fixture independently checks startup with a first PWL value of 0.9 V.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-SOURCE-001
+
+[REQUIREMENT]
+UID: FRONTEND-NESTED-DC-001
+STATUS: Draft
+TITLE: Bounded nested DC sweep with a grounded voltage outer axis
+STATEMENT: >>>
+A DC directive with two distinct root independent sources may sweep the first source inside the second when the second is a grounded voltage source. The product of grid sizes shall fit the configured point budget. Each point shall use a fresh circuit request. Native qualification shall validate the repeated primary RAW coordinate and the second source voltage against both requested axes in order.
+<<<
+COMMENT: >>>
+RequestedAnalysis binds both declared sources and RequestedComparison validates the secondary RAW signal. Verification uses RequestedAnalysisTests and the original MOS1_out paths where available. Stateful sweep continuation and floating or current secondary axes require separate contracts.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: FRONTEND-REQUESTED-001

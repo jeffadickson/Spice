@@ -146,6 +146,11 @@ public static class RequestedComparison
     if(native.Points.Length!=1||manifests.Length!=1||manifests[0].Samples.Length!=1||manifests[0].AcSamples.Length!=0)throw new InvalidDataException("op_shape_gap");actualAxis=[0];
    }else if(operation.Kind=="dc"){
     if(native.Variables[0].Dimension!=(operation.CoordinateUnit=="V"?"voltage":"current")||manifests.Any(m=>m.Samples.Length!=1||m.AcSamples.Length!=0))throw new InvalidDataException("dc_shape_or_unit_gap");actualAxis=operation.Coordinates.ToArray();Grid(actualAxis,axis);
+    if(operation.NestedDc is {} secondary){
+     var column=Enumerable.Range(0,native.Variables.Length).Where(i=>native.Variables[i].Name.Equals(secondary.NativeVoltageSignal,StringComparison.OrdinalIgnoreCase)&&native.Variables[i].Dimension=="voltage").ToArray();
+     if(column.Length!=1)throw new InvalidDataException("missing_native_nested_dc_axis");
+     Grid(secondary.Coordinates.ToArray(),native.Points.Select(p=>p[column[0]].Real).ToArray());
+    }
    }else if(isAc){
     if(native.Variables[0].Dimension!="frequency"||manifests.Length!=1||manifests[0].Samples.Length!=0)throw new InvalidDataException("ac_shape_or_unit_gap");actualAxis=manifests[0].AcSamples.Select(s=>s.FrequencyHz).ToArray();Grid(operation.Coordinates.ToArray(),actualAxis);Grid(actualAxis,axis);StrictAxis(axis,true);
    }else if(operation.Kind=="tran"){
