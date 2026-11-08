@@ -1495,6 +1495,20 @@
     "limitation": "Terminal scalar identifier capture under an ASCII logical name. No host path is opened."
   },
   {
+    "rule": "controlPowerVectorType",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_executed",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": ["FRONTEND-CONTROL-VECTORTYPE-001"],
+    "evidence": ["dotnet/Simulator.Frontend.Tests/RequestedPowerVectorTypeTests.cs"],
+    "limitation": "Terminal settype power on a simple device power vector is recorded as a reporting omission.",
+    "commands": ["settype"]
+  },
+  {
     "rule": "controlReport",
     "extraction": "bounded",
     "preparation": "bounded",
