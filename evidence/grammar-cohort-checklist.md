@@ -707,3 +707,29 @@ charge history.
 All artifacts are under `E:/Artifacts/Spice-validation-05e2a48`. The
 direct reference probe also emitted `b3v33check.log` in the working
 directory. It was relocated to the BSIM artifact directory.
+
+## BSIM3 3.3.0 selector and native kernel candidate
+
+The C# frontend now captures dotted model VERSION metadata intact.
+LEVEL 8 and 49 BSIM3 cards distinguish an unavailable exact 3.3.0
+kernel from a different version or invalid selector. The exact
+reference card parsed and refused before emitting operations in the
+valid replay at base `37aab2e` plus the working source snapshot.
+Summary SHA-256
+`b671b0ff19a7c010d794d6af43beebede3c2cf5bef95c244296437d99d5a2a65`.
+The production engine still has no BSIM3 kernel.
+
+The successful generated OSDI candidate and the build failures are
+recorded in the [semiconductor reuse assessment](../docs/semiconductor-reuse-assessment.md).
+Both native kernels ran in ngspice, with a maximum difference of 1.269 pA
+over three complementary DC biases and 1.085e-19 A over 25 AC frequencies.
+The larger 246-point NMOS corpus projection showed up to 0.506 µA
+drain supply current difference. That comparison is not a simulator
+parity claim.
+
+Frontend tests passed 697 with 37 opt-in skips. Syntax tests passed
+471 with one symlink skip before the final malformed-version guard.
+The guard was included in the final frontend run. Managed coverage
+was 18,523/23,825 lines and 5,046/8,071 branches. A mutation substituting
+the wrong version was detected. StrictDoc parsed 55 documents and
+452 IDs. Artifacts are under `E:/Artifacts/Spice-BSIM330-admission-37aab2e`.

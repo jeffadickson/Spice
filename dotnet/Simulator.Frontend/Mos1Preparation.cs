@@ -29,6 +29,18 @@ internal static class Mos1Preparation
 {
     private static readonly HashSet<string> Allowed=new(StringComparer.OrdinalIgnoreCase)
       {"LEVEL","VTO","KP","GAMMA","PHI","LAMBDA","IS","CBD","CBS","PB","MJ","FC","CGSO","CGDO","CGBO","TNOM","TOX","L","W","RD","RS"};
+    // Recognize only explicit Level 8/49 selectors at this boundary. An
+    // identified card still refuses until an exact native kernel is present.
+    internal static string? Bsim3Diagnostic(BoundInstance call)
+    {
+        if(call.Target is not { ModelFamily: "nmos" or "pmos" } model)return null;
+        var levels=model.Parameters.Where(p=>string.Equals(p.Name,"level",StringComparison.OrdinalIgnoreCase)).ToArray();
+        if(levels.Length!=1||!double.TryParse(levels[0].Value.Text,System.Globalization.NumberStyles.Float,
+            System.Globalization.CultureInfo.InvariantCulture,out var level)||level is not (8 or 49))return null;
+        var versions=model.Parameters.Where(p=>string.Equals(p.Name,"version",StringComparison.OrdinalIgnoreCase)).ToArray();
+        if(versions.Length!=1||model.HasOpaqueModelTerms)return "invalid_bsim3_model_selector";
+        return versions[0].Value.Text.Trim() == "3.3.0" ? "bsim3_kernel_unavailable" : "unsupported_bsim3_version";
+    }
     internal static bool AssignmentsAreSupported(BoundInstance call)
     {
         if(call.Status!=BindingStatus.Bound||call.Target is not {} model||model.ModelFamily is not ("nmos" or "pmos")||model.HasOpaqueModelTerms||call.Ports.Length!=4)return false;
@@ -40,7 +52,7 @@ internal static class Mos1Preparation
     internal static bool TryPrepare(DeclarationCatalog catalog,ParameterEvaluation environment,BoundInstance call,out PreparedMos1? profile,out BridgeDiagnostic? diagnostic)
     {
         profile=null;diagnostic=null;
-        if(!AssignmentsAreSupported(call)){diagnostic=new("unsupported_mos1_profile",call.Header.Range);return false;}
+        if(!AssignmentsAreSupported(call)){diagnostic=new(Bsim3Diagnostic(call)??"unsupported_mos1_profile",call.Header.Range);return false;}
         var model=call.Target!;var values=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase);
         // Dimensions are resolved separately, with instance geometry overriding
         // model geometry. Each expression is evaluated in its declaring scope.

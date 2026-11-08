@@ -76,7 +76,7 @@ public static class CircuitReadiness
                     if(card.Kind=="mos")
                     {
                         var mos=bound[scope].FirstOrDefault(i=>i.Header.Range==card.Range);
-                        if(mos!=null&&!Mos1Preparation.AssignmentsAreSupported(mos))AddIssue(new("model_contract","unsupported_mos1_profile",card.Kind,scope,path,card.Range));
+                        if(mos!=null&&!Mos1Preparation.AssignmentsAreSupported(mos))AddIssue(new("model_contract",Mos1Preparation.Bsim3Diagnostic(mos)??"unsupported_mos1_profile",card.Kind,scope,path,card.Range));
                         continue;
                     }
                     if(card.Kind=="bjt")

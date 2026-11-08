@@ -66,3 +66,14 @@ The bounded MOS1 profile shall stamp nonnegative model RD and RS in ohms between
 COMMENT: >>>
 Verification uses Mos1Tests and compat/ngspice/mos1-series-resistance.cir. Sheet-resistance geometry and other MOS levels remain outside this profile.
 <<<
+
+[REQUIREMENT]
+UID: SEMI-BSIM330-SELECT-001
+STATUS: Draft
+TITLE: Exact BSIM3 selector and unsupported-kernel diagnostic
+STATEMENT: >>>
+A model VERSION assignment using a contiguous three-part dotted number shall retain its full physical source range and value. Explicit NMOS and PMOS LEVEL 8 or 49 with VERSION 3.3.0 shall identify the exact model. If that kernel is unavailable, preparation shall refuse before publishing an operation plan. It shall neither select MOS1 nor accept a different BSIM version as 3.3.0.
+<<<
+COMMENT: >>>
+Implementation: generated modelVersionAssignment, DeclarationExtraction, Mos1Preparation and CircuitReadiness. Verification: Mos1Tests and the BSIM330 admission replay. Native DC/AC/transient support is a separate contract.
+<<<

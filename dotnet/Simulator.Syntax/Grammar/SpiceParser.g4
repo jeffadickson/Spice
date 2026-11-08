@@ -83,7 +83,7 @@ xpair: LPAREN scalarNode COMMA? scalarNode RPAREN;
 xvector: LBRACKET xport+ RBRACKET;
 // ngspice's model token readers treat outer parentheses as separators, including
 // historical one-sided wrappers. Expression/call/complex delimiters stay strict.
-model: MODEL referenceName identifier (assignment | call | value | COMMA | CARET identifier | LPAREN | RPAREN)*;
+model: MODEL referenceName identifier (modelVersionAssignment | assignment | call | value | COMMA | CARET identifier | LPAREN | RPAREN)*;
 includeCard: INCLUDE (STRING | QUOTED | WORD);
 libraryCard: LIB (STRING | QUOTED | WORD) identifier?;
 paramCard: PARAM assignment+;
@@ -104,6 +104,16 @@ parameter: assignment | arithmetic | comparison | call | group | value | COMMA;
 // Start arithmetic with an atom, keeping bare nested groups unambiguous.
 arithmetic: (call | value) (STAR | SLASH | PLUS | MINUS | POWER) expression;
 comparison: (call | value) (COMPARE | EQUAL | COMPLEX_OPEN | COMPLEX_CLOSE) (call | value);
+// The lexer splits 3.3.0 into two NUMBER tokens. The second token must
+// immediately follow the first, so an unrelated positional term stays opaque.
+modelVersionAssignment: {string.Equals(TokenStream.LT(1)?.Text,"version",StringComparison.OrdinalIgnoreCase)
+    && TokenStream.LA(3)==NUMBER && TokenStream.LA(4)==NUMBER
+    && TokenStream.LT(3).StopIndex+1==TokenStream.LT(4).StartIndex
+    && TokenStream.LT(3).Text.Split('.').Length==2
+    && char.IsAsciiDigit(TokenStream.LT(3).Text[0]) && char.IsAsciiDigit(TokenStream.LT(3).Text[^1])
+    && TokenStream.LT(3).Text.All(c=>char.IsAsciiDigit(c)||c=='.')
+    && TokenStream.LT(4).Text.StartsWith(".",StringComparison.Ordinal)
+    && TokenStream.LT(4).Text.Skip(1).All(char.IsAsciiDigit)}? identifier EQUAL NUMBER NUMBER;
 assignment: (referenceName | call) EQUAL (concatenation | value | group | call | expression);
 concatenation: (identifier | NUMBER | STRING | QUOTED | LBRACE expression RBRACE)
     (LBRACE expression RBRACE (identifier | NUMBER | STRING | QUOTED)?)+;

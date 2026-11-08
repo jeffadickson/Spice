@@ -76,3 +76,48 @@ offers a wider future path for compact models, subject to exact model
 provenance and ABI, state and sparse-stamp qualification. Prefer a
 native DC comparison with explicit model versions before integrating
 an adapter. Retain AC and transient charge as distinct acceptance gates.
+
+### Executable BSIM3 3.3.0 candidate screen
+
+The native ngspice 3.3.0 and 3.2.4 comparison used identical device
+geometry and three gate bias points around signed 0.8 V. At the center
+the terminal currents and gm agreed to the retained precision, but NMOS
+gate charge was 3.8610991 fC versus 3.8608377 fC. Thevenin's documented
+3.2.4 implementation therefore remains a separate candidate/version.
+Its terms and numerical scope would need their own review.
+[Thevenin device matrix](https://github.com/cramt/thevenin/blob/main/docs/devices.md).
+
+Cogenda VA-BSIM3v3 at `e16cbec5e77bc7bad1d29b8fd392860bdc180a19`
+declares CC BY-NC 4.0. The published file also refused compilation in
+OpenVAF 23.5.0 because BSIM3toxmGiven was undeclared. Neither a repaired
+copy nor this older revision is selected for production.
+[Cogenda source and license](https://github.com/cogenda/VA-BSIM3v3/tree/e16cbec5e77bc7bad1d29b8fd392860bdc180a19).
+
+The generated `sp_bsim3v3` source from VACASK declares
+AGPL-3.0-or-later and identifies its origin as ngspice
+`ngspice-45-84-g7f75f09ec`. The exact downloaded input SHA-256 is
+`14e9d752a6db896959f3c97a32112899365e7528221e308250cee9cbc8141f84`.
+The OpenVAF Reloaded Windows build `20260616-3-g0e83f1ed` compiled
+it to an OSDI 0.4 module with SHA-256
+`57dc3bebe54a95b36723b3b1e1b543ba01b32a7c9c9a00524b966b3459161608`.
+The older compiler attempt ended in an access violation.
+[Generated source](https://raw.githubusercontent.com/robtaylor/VACASK/main/devices/spice/bsim3v3.va)
+and [compiler builds](https://fides.fe.uni-lj.si/openvaf/download/).
+
+Ngspice 47+ hosted both the built-in and generated 3.3.0 kernels.
+Across three DC points the largest signed drain-current difference was
+1.269 pA. Across 25 AC frequencies from 1 kHz to 1 GHz the largest
+complex drain-current difference was 1.085e-19 A for a 1 V AC drive.
+This is a small comparative kernel probe in the same host. Native
+integration into this Rust engine, charge history, general geometry
+and model-card coverage remain open. External source and compiled
+modules are retained only under the E: experiment directory. Review
+exact licensing and select the production kernel before integration.
+
+The larger NMOS check reused the first nested sweep in the ngspice
+corpus BSIM330 example, with reporting controls removed. The built-in
+and OSDI versions both completed 246 points and shared the checked
+drain/gate axes. The maximum absolute drain supply current difference
+was 0.506 µA, larger than in the three-point probe. This remains
+a measured difference, with no numerical qualification claimed
+for the larger grid.

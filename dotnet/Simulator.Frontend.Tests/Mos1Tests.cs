@@ -3,6 +3,31 @@ using Simulator.Client;
 using Xunit;
 namespace Simulator.Frontend.Tests;
 public sealed class Mos1Tests {
+ [Theory]
+ [InlineData("NMOS", "8", "3.3.0", "bsim3_kernel_unavailable")]
+ [InlineData("PMOS", "49", "3.3.0", "bsim3_kernel_unavailable")]
+ [InlineData("NMOS", "49", "3.2.4", "unsupported_bsim3_version")]
+ public void Bsim3_version_is_retained_and_never_lowered_as_mos1(string family,string level,string version,string diagnostic)
+ {
+  var deck=$"BSIM card\nVd d 0 .8\nVg g 0 .8\nM1 d g 0 0 mm L=.35u W=1u\n.model mm {family}(LEVEL={level} VERSION={version} TOX=3.5n)\n.op\n.end\n";
+  var syntax=DeckParser.Parse(deck,collectDeclarations:true);
+  var symbol=Assert.Single(syntax.Declarations!.Symbols);
+  Assert.False(symbol.HasOpaqueModelTerms);
+  Assert.Equal(version,Assert.Single(symbol.Parameters,p=>p.Name!.Equals("version",StringComparison.OrdinalIgnoreCase)).Value.Text);
+  var plan=RequestedAnalysis.Prepare(syntax);
+  Assert.Empty(plan.Operations);
+  Assert.Contains(plan.Diagnostics,d=>d.Code==diagnostic);
+ }
+ [Theory]
+ [InlineData("3..0")]
+ [InlineData("3.3 .0")]
+ public void Malformed_version_does_not_absorb_a_positional_number(string version)
+ {
+  var text=$"BSIM card\nVd d 0 1\nM1 d d 0 0 mm\n.model mm NMOS(level=49 version={version})\n.op\n.end\n";
+  var syntax=DeckParser.Parse(text,collectDeclarations:true);
+  Assert.True(Assert.Single(syntax.Declarations!.Symbols).HasOpaqueModelTerms);
+  Assert.Contains(RequestedAnalysis.Prepare(syntax).Diagnostics,d=>d.Code=="invalid_bsim3_model_selector");
+ }
  [Theory][InlineData("NMOS")][InlineData("PMOS")]
  public void Qualified_mos1_body_and_overlap_profile_lowers(string family) {
   var result=OperatingPointSelection.Select(DeckParser.Parse("MOS\nVd d 0 1\nVg g 0 1.5\nM1 d g 0 0 mm L=1u W=10u\n.model mm "+family+"(LEVEL=1 VTO=.7 KP=20u GAMMA=.4 PHI=.6 LAMBDA=.03 CBD=2p CBS=3p CGSO=2e-7 CGDO=3e-7 CGBO=1e-6)\n.end\n",collectDeclarations:true)).Prepared;

@@ -187,7 +187,10 @@ internal sealed class DeclarationExtraction
                 break;
             case SpiceParser.ModelContext model:
                 symbols.Add(new(symbols.Count,DeclarationKind.Model,model.referenceName().GetText(),scope,null,
-                    model.identifier(0).GetText().ToLowerInvariant(),[],model.assignment().Select(Parameter).ToImmutableArray(),Range(model)){HasOpaqueModelTerms=model.value().Length>0||model.call().Length>0||model.identifier().Length>1});
+                    model.identifier(0).GetText().ToLowerInvariant(),[],model.assignment().Select(Parameter)
+                    .Concat(model.modelVersionAssignment().Select(v=>new ParameterSyntax(v.identifier().GetText(),Capture(v.identifier()),
+                        Capture(v.NUMBER(0).Symbol.StartIndex,v.NUMBER(1).Symbol.StopIndex),Range(v))))
+                    .OrderBy(p=>p.Range.Start).ToImmutableArray(),Range(model)){HasOpaqueModelTerms=model.value().Length>0||model.call().Length>0||model.identifier().Length>1});
                 break;
             case SpiceParser.ParamCardContext param:
                 parameters.AddRange(param.assignment().Select(p=>new ScopedParameter(scope,"param_card",Parameter(p))));

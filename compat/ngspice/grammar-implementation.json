@@ -1078,6 +1078,19 @@
     "limitation": "Affine voltage-dependent independent/controlled B-source lowering only; nonlinear/time/current arbitrary behavioral kernels remain refused."
   },
   {
+    "rule": "modelVersionAssignment",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_executed",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Frontend/Mos1Preparation.cs"
+    ],
+    "requirements": ["SEMI-BSIM330-SELECT-001"],
+    "evidence": ["dotnet/Simulator.Frontend.Tests/Mos1Tests.cs"],
+    "limitation": "Preserves a contiguous dotted VERSION selector and reports the unimplemented exact BSIM3 kernel."
+  },
+  {
     "rule": "model",
     "extraction": "bounded",
     "preparation": "bounded",
