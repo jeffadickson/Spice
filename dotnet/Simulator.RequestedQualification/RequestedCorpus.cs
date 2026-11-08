@@ -30,7 +30,8 @@ public static class RequestedCorpus
    if(expected.Length!=64||expected.Any(c=>!char.IsAsciiHexDigit(c))||!identities.Add(scope+"/"+relative))throw new InvalidDataException("invalid_or_duplicate_inventory_identity");
    var basePath=scope=="repository"?root:scope=="ngspice"?corpus:throw new InvalidDataException("unknown_scope");var path=Path.GetFullPath(relative,basePath);
    if(!path.StartsWith(Path.TrimEndingDirectorySeparator(basePath)+Path.DirectorySeparatorChar,PathComparison))throw new InvalidDataException("inventory_path_escape");
-   rows.Add(new(){Scope=scope,Path=relative,InputPath=path,ExpectedSha256=expected.ToLowerInvariant(),Id=scope+"/"+relative+"@"+expected.ToLowerInvariant()});
+   var validation=item.TryGetProperty("validation",out var contract)?DeckValidationContract.Read(contract):null;
+   rows.Add(new(){Validation=validation,Scope=scope,Path=relative,InputPath=path,ExpectedSha256=expected.ToLowerInvariant(),Id=scope+"/"+relative+"@"+expected.ToLowerInvariant()});
   }
   if(rows.Count==0)throw new InvalidDataException("empty_inventory");
   Directory.CreateDirectory(output);var snapshot=SourcePaths(root).Concat(new[]{inventory,engine,ngspice,typeof(RequestedCorpus).Assembly.Location,typeof(RequestedAnalysis).Assembly.Location,typeof(DeckParser).Assembly.Location,typeof(SimulationClient).Assembly.Location}).Distinct(StringComparer.OrdinalIgnoreCase).ToDictionary(p=>p,Hash,StringComparer.OrdinalIgnoreCase);
@@ -86,6 +87,7 @@ public static class RequestedCorpus
        row.ControlReportingStatus="executed";
       }catch(InvalidDataException e){row.ControlReportingStatus=e.Message;}
      }
+     if(row.Validation?.Mode=="execution_only"){result.Status="native_not_requested_by_contract";continue;}
      if(watch.Elapsed.TotalSeconds>=seconds){result.Status="native_unattempted_budget";continue;}
      var projection=OriginalProjection.Create(expanded,syntax,operation,plan);result.Omissions=projection.Omissions.ToArray();result.NativeInstrumentation=projection.Instrumentation.ToArray();var nativePath=Path.Combine(operationFolder,"original-analysis.cir");await File.WriteAllTextAsync(nativePath,projection.Text);result.NativeProjectionSha256=Hash(nativePath);
      var rawPath=Path.Combine(operationFolder,"native.raw");var nativeArgs=new List<string>{"-n","-D","filetype=ascii"};
@@ -112,7 +114,7 @@ public static class RequestedCorpus
    foreach(var source in row.Sources)if(!Matches(source.Path,source.Sha256))changed.Add(source.Path);
   }
   report.ChangedPaths=changed.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();report.ProvenanceValid=changed.Count==0;report.ElapsedSeconds=watch.Elapsed.TotalSeconds;report.State=changed.Count>0?"provenance_changed":rows.Any(r=>r.Status.Contains("budget",StringComparison.Ordinal)||r.Operations.Any(o=>o.Status.Contains("budget",StringComparison.Ordinal)))?"budget_exhausted":"completed_with_results";WriteProgress(report,output);
-  return report.ProvenanceValid==false?3:report.State=="budget_exhausted"?2:0;
+  return report.ProvenanceValid==false?3:report.State=="budget_exhausted"?2:rows.Any(r=>r.Validation!=null&&r.ValidationSatisfied!=true)?4:0;
  }
  private static StringComparison PathComparison=>OperatingSystem.IsWindows()?StringComparison.OrdinalIgnoreCase:StringComparison.Ordinal;
  private static string SourcePath([CallerFilePath]string value="")=>value;
@@ -142,6 +144,8 @@ public static class RequestedCorpus
   public string Id{get;set;}="";public int Ordinal{get;set;}public string Kind{get;set;}="";public SourceRange? Range{get;set;}public string? CoordinateUnit{get;set;}public double[] Arguments{get;set;}=[];public double[] RequestedCoordinates{get;set;}=[];public NestedDcSweep? NestedDc{get;set;}public double OutputStartS{get;set;}public bool UsesUic{get;set;}public PreparedNodeInitialCondition[] InitialConditions{get;set;}=[];public RequestedControlOrigin? ControlOrigin{get;set;}public string[] NativeInstrumentation{get;set;}=[];public bool? Executed{get;set;}public bool? Agreed{get;set;}public string Status{get;set;}="pending";public string? Detail{get;set;}public List<PointRow> Points{get;set;}=[];public ProjectionOmission[] Omissions{get;set;}=[];public string? NativeProjectionSha256{get;set;}public string? NativeRawSha256{get;set;}public int? NativeExit{get;set;}public int? NativePoints{get;set;}public string NativeDialect{get;set;}="default";public ComparisonResult? Comparison{get;set;}
  }
  private sealed class CorpusRow{
+  public DeckValidationContract? Validation{get;init;}
+  public bool? ValidationSatisfied=>Validation?.Evaluate(RequestedExecuted,NativeAgreed,Status,Diagnostics);
   public string Id{get;set;}="";public string Scope{get;set;}="";public string Path{get;set;}="";public string InputPath{get;set;}="";public string ExpectedSha256{get;set;}="";public string? InputSha256{get;set;}public string Status{get;set;}="unattempted";public bool? SyntaxAccepted{get;set;}public string? SyntaxStatus{get;set;}public string? ExpandedSyntaxStatus{get;set;}public string? ResourceStatus{get;set;}public bool? CircuitPrepared{get;set;}public string? ControlProfile{get;set;}public string? ControlReportingStatus{get;set;}public OperatingPointOmission[] ProgramOmissions{get;set;}=[];public bool? RequestedPrepared{get;set;}public bool? RequestedExecuted{get;set;}public bool? NativeAgreed{get;set;}public string[] Diagnostics{get;set;}=[];public LoadedSource[] Sources{get;set;}=[];public string? ExpandedSha256{get;set;}public List<OperationRow> Operations{get;set;}=[];
  }
  private sealed class CorpusReport{

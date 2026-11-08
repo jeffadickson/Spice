@@ -651,3 +651,59 @@ Raw decks, logs, coverage and all four provenance-checked runner
 summaries are under `E:/Artifacts/Spice-12ax7-4290317`. The reference
 metrics and fixed-bias comparison are in `reference-metrics.json` and
 `small-signal-vs-published.json`.
+
+## Per-deck contracts and nonlinear reference experiments
+
+Requested corpus inventories now accept an optional `validation` object
+on a hash-pinned row. Its mode is `native_agreement`, `execution_only` or
+`expected_preparation_refusal`. The last mode requires the exact diagnostic
+identifier. For example, `{"mode":"execution_only"}` requires all requested
+operations to execute and leaves native agreement unset. A valid completed
+run with an unmet or unavailable explicit contract exits 4. Existing
+unannotated inventories retain their behavior.
+
+The three-deck live pilot on RSpice's pinned inputs confirmed native
+agreement for low-pass, execution-only for RC, and the named preparation
+refusal for the BSIM SOI ramp. A separate run used the wrong diagnostic
+for the ramp and exited 4. Both retained valid source provenance.
+The matched report SHA-256 is
+`e15588fc4cdb50308c53582e22379826a477fe4a3a3f8ea316ae30bc0d0c42ed`.
+A mutation accepting any preparation refusal was detected. Final tests
+passed 692 with 37 opt-in skips. Managed coverage was 18,447/23,737
+lines and 4,982/7,992 branches. Rust/native coverage was outside scope.
+StrictDoc parsed 55 documents and 451 IDs.
+
+The supplemental native experiment used the saved free-running
+projections and engine manifests. It inserted only owned stop/resume
+commands at retained engine times and matched unique native rows within
+32 ULP without interpolation. All 51 resistor-array times matched
+within 2 ULP and all its compared signals agreed. All 450 RC times
+matched within 4 ULP. The RC voltages passed, while 154 of 449
+post-startup current samples still differed, with maximum difference
+7.81 µA. Ngspice produced 255 and 2,251 rows respectively. This is
+aligned observation time with changed native history. Neither free-running
+status was modified, and this does not establish locked internal steps.
+
+The independent C# 12AX7 probe evaluated stable softplus and analytic
+plate and grid derivatives. Centered finite differences at 900 positive
+plate biases gave maximum errors of 3.38e-14 S and 4.17e-11 S.
+Its self-bias solve, including the reverse grid diode and its series
+path, gave 170.0670017209 V at the plate, 1.1989934724 V at the cathode
+and 0.7993299828 mA supply current. The native plate voltage differed by
+4.59 nV. The next engine slice needs bounded elaborated expressions,
+differential voltage inputs, residual and Jacobian stamps for both
+voltage and current relations, and AC linearization at the solved bias.
+The independent probe contains no runtime deck-expression support.
+
+The ngspice-47+ BSIM3 3.3.0 fixture exercised NMOS and PMOS model cards
+at signed 0.8 V drain/gate bias. Terminal current magnitudes were
+73.4295 µA and 28.3879 µA. Reported gm magnitudes were 262.2133 µS
+and 110.9401 µS, and a centered ±0.1 mV native sweep reproduced each
+within 4e-9 relative. The RAW also retains gate, drain and bulk charge
+for both devices. This is a native reference and self-consistency check.
+It does not exercise a production compact-model adapter or transient
+charge history.
+
+All artifacts are under `E:/Artifacts/Spice-validation-05e2a48`. The
+direct reference probe also emitted `b3v33check.log` in the working
+directory. It was relocated to the BSIM artifact directory.

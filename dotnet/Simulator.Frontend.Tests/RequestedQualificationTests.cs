@@ -67,6 +67,30 @@ public sealed class RequestedQualificationTests
   var wrong=(ComplexValue[])raw.Points[2].Clone();wrong[2]=new(2,0);
   Assert.Equal("original_grid_discrepancy",RequestedComparison.Compare(op,circuit,responses,raw with{Points=raw.Points.SetItem(2,wrong)}).Status);
  }
+ [Theory]
+ [InlineData("execution_only",null,true,null,"requested_executed_not_fully_qualified",true)]
+ [InlineData("native_agreement",null,true,null,"requested_executed_not_fully_qualified",null)]
+ [InlineData("native_agreement",null,true,false,"requested_executed_not_fully_qualified",false)]
+ [InlineData("expected_preparation_refusal","unsupported_mos1_profile",false,null,"requested_preparation_refused",true)]
+ [InlineData("expected_preparation_refusal","unsupported_mos1_profile",false,null,"resource_refused",null)]
+ [InlineData("expected_preparation_refusal","node_budget",false,null,"requested_preparation_refused",false)]
+ [InlineData("expected_preparation_refusal","unsupported_mos1_profile",true,true,"all_individual_requested_analyses_agreed",false)]
+ public void Corpus_validation_contract_preserves_stage_boundaries(string mode,string? diagnostic,bool? executed,bool? agreed,string status,bool? expected)
+ {
+  using var json=JsonDocument.Parse(JsonSerializer.Serialize(new{mode,diagnostic}));
+  var contract=DeckValidationContract.Read(json.RootElement);
+  Assert.Equal(expected,contract.Evaluate(executed,agreed,status,["unsupported_mos1_profile"]));
+ }
+ [Theory]
+ [InlineData("{\"mode\":\"smoke\"}")]
+ [InlineData("{\"mode\":\"expected_preparation_refusal\"}")]
+ [InlineData("{\"mode\":\"execution_only\",\"diagnostic\":\"ignore\"}")]
+ [InlineData("{\"mode\":\"native_agreement\",\"mode\":\"execution_only\"}")]
+ public void Invalid_corpus_contracts_refuse(string input)
+ {
+  using var json=JsonDocument.Parse(input);
+  Assert.Throws<InvalidDataException>(()=>DeckValidationContract.Read(json.RootElement));
+ }
  [RequestedNativeFact] public async Task Inventory_path_escape_and_duplicate_identity_fail_before_output(){
   var parent=Environment.GetEnvironmentVariable("SPICE_REQUESTED_ARTIFACTS");Assert.True(Directory.Exists(parent));
   var folder=Path.Combine(parent!,"invalid-inventory-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(folder);var root=RepositoryRoot();var inventory=Path.Combine(folder,"inventory.json");var fake=Path.Combine(folder,"fake.exe");await File.WriteAllTextAsync(fake,"");

@@ -46,3 +46,33 @@ Frozen waveform summary `E:/Artifacts/Spice-next-five-20261103T023139Z/corpus-wa
 ## Decision after native experiment
 
 Proceed with the exact MIT SpiceSharp-derived diode charge vertical slice described in semiconductor-profile.sdoc, rather than redistribute Thevenin source with incomplete notice provenance and inspected model gaps. Native Rust analyses and providers remain. The first slice retains explicit parameter refusals and does not close broad diode/BJT/MOS compatibility. A bounded Ebers–Moll BJT can next compose sensed conduction-only junctions, CCCS transport and explicitly separate charge-only junctions; it must reject GP base-charge couplings until implemented and qualified. MOS model integration still requires an explicit current/Jacobian and conservative-Q versus legacy Meyer-history decision.
+
+## BSIM3 3.3.0 follow-up
+
+Berkeley publishes the versioned model under its [BSIM3 model catalog](https://bsim.berkeley.edu/models/bsim3/).
+The installed ngspice reference is 47+ at corpus/source pin
+`e8285746c73a8229cf922487c8ccfcf6bea61bce`. The local
+`src/spicelib/devices/bsim3/B3TERMS_OF_USE` identifies acknowledgment
+and distribution terms specific to the Berkeley code. Exact files and
+notices would need review before redistribution. The ngspice device
+directory separates setup/temperature, load and AC routines, but load
+still writes simulator state and matrix entries. A reusable interface
+must separate trial terminal currents and charge, their Jacobians and
+any accepted history from those engine-specific writes.
+
+A native executable probe captured signed drain currents, gm and
+gate/drain/bulk charge for NMOS and PMOS. The reported gm magnitudes
+matched centered finite differences on a small native sweep. The probe
+used omitted junction geometries and ngspice reported perimeter
+warnings, so the result is scoped to this reference case. It does not
+show that a kernel can be extracted or that charge history agrees
+through a switching transient. See the current
+[verification record](../evidence/grammar-cohort-checklist.md).
+
+RSpice documents a native implementation and is a technical comparison
+point. Its [repository license](https://github.com/JaimeHW/RSpice/blob/29c28a022625fd7cc2c56ead1cce2d3066663074/LICENSE)
+restricts reuse. An [OSDI adapter](https://openvaf.github.io/docs/details/osdi/)
+offers a wider future path for compact models, subject to exact model
+provenance and ABI, state and sparse-stamp qualification. Prefer a
+native DC comparison with explicit model versions before integrating
+an adapter. Retain AC and transient charge as distinct acceptance gates.

@@ -392,3 +392,25 @@ RequestedAnalysis binds both declared sources and RequestedComparison validates 
 RELATIONS:
 - TYPE: Parent
   VALUE: FRONTEND-REQUESTED-001
+
+[REQUIREMENT]
+UID: QUAL-DECK-VALIDATION-CONTRACT-001
+STATUS: Draft
+TITLE: Explicit inventory expectations with independent stage evidence
+STATEMENT: >>>
+An inventory row may require native agreement, execution only, or an expected preparation refusal with a named diagnostic. The runner shall reject malformed contracts before output creation. Execution-only cases shall report numerical agreement as unavailable. A refusal contract shall be satisfied only by the named diagnostic at the preparation boundary. Missing evidence and unexpected refusal shall remain distinct from a satisfied contract. Explicit unmet or unavailable contracts shall return a distinct unsuccessful exit status, with provenance and budget statuses retaining priority. Legacy inventory behavior shall remain compatible.
+<<<
+COMMENT: >>>
+Implementation: DeckValidationContract and RequestedCorpus. Verification: RequestedQualificationTests and the three-deck replay recorded in evidence/grammar-cohort-checklist.md.
+<<<
+
+[REQUIREMENT]
+UID: QUAL-TRANSIENT-ALIGNED-TIME-001
+STATUS: Draft
+TITLE: Supplemental time-aligned transient reference
+STATEMENT: >>>
+A supplemental time-aligned reference shall retain the primary free-running result and use unique native rows at each declared retained engine time within an explicit representational bound. It shall disclose native breakpoints and additional native rows. Failure to align shall not permit interpolation to satisfy the supplemental check.
+<<<
+COMMENT: >>>
+Inferred for the agreed investigation. Native breakpoint pilots on rc.cir and res_array.cir qualify observed time alignment only, since native internal timesteps change. General opt-in dispatch and locked accepted-step replay remain open.
+<<<
