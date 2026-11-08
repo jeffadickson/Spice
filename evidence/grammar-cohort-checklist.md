@@ -547,3 +547,50 @@ resolved parent relations.
 A disposable comparator mutant that omitted the negative terminal voltage
 failed the floating-axis test while the grounded-axis test still passed.
 The replayed changes are in `50e04b1` and `28ca83d`.
+
+## MOS1 and BJT terminal resistances
+
+The MOS1 fixture uses RD=35 ohms and RS=25 ohms with overlap capacitance.
+It agreed with ngspice 47+ at OP, all 11 DC bias points and all 13 AC
+frequencies. The level-1 NPN fixture uses RB=100 ohms, RC=35 ohms and
+RE=25 ohms with junction capacitance. It agreed at OP and all 13 AC
+frequencies. All 11 DC points executed. At default native tolerances
+two collector current points and one base current point disagreed.
+The maximum differences were 2.1262 microamperes and 21.2622 nanoamperes.
+A separate native-only replay at RELTOL=1e-9, ABSTOL=1e-12 and VNTOL=1e-9
+reduced the largest absolute differences to 3.815 and 0.900 picoamperes
+respectively. The default native classification remains a disagreement.
+
+The front end reuses existing resistor elements and private nodes. Native
+MOS1 and BJT stamping are the independent reference. Structural tests
+also cover PNP attachment, negative terms and refusal of RBM and IRB.
+Three new cases failed before implementation and passed afterward. In a
+disposable copy, disabling the MOS source drop and bypassing the BJT
+intrinsic base caused all three cases to fail again. The broader frontend
+suite passed 680 tests with 37 opt-in skips, including existing seeded
+properties. Managed coverage was 18,414/23,699 lines and 4,939/7,934
+branches. StrictDoc parsed 55 documents and 447 IDs. Native and Rust
+coverage were outside the managed run.
+
+The replay used base `c5166d1ab3b6c23c3f620be790f1c548f4998058` and
+the working source recorded by the immutable hash gate.
+`E:/Artifacts/Spice-device-resistance-c5166d1/replay/summary.json` has
+SHA-256 `95909041cf65f2b7ff86c3bb4115e095e74cb304bb6b53851ec7211e5505bcd0`.
+The same root contains the inventory, the two reference runs, tests,
+mutation logs and coverage XML.
+
+For GaN power switching, the first reuse candidate is EPC2218 V5 PSpice.
+Vendor subcircuits preserve the declared pin order and can be compared
+through the existing requested-deck runner once the exact model and
+license are available. The official file could not be downloaded from
+this Windows session because DNS resolution failed. No vendor model
+was redistributed or executed. For compact HEMT characterization,
+ASM-HEMT is a separate Verilog-A candidate. The installed ngspice
+recognized its OSDI loading command in a missing-library probe, and no
+installed OpenVAF executable or compiled GaN model was found. Neither
+route has GaN numerical evidence yet. A first acceptance run should
+freeze one model revision, verify pin mapping and compare bias currents
+before testing gate charge and switching transients.
+
+References: https://epc-co.com/epc/design-support/device-models/pspicem
+and https://openvaf.github.io/docs/help/compact-models/.
