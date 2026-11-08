@@ -618,6 +618,22 @@
     "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
   },
   {
+    "rule": "distortionExcitation",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "not_applicable",
+    "implementation": [
+      "dotnet/Simulator.Syntax/SourceProfileExtraction.cs"
+    ],
+    "requirements": [
+      "SEM-LEGACY-LINEAR-ANNOTATION-001"
+    ],
+    "evidence": [
+      "evidence/legacy-linear-annotations.md"
+    ],
+    "limitation": "Only distinct DISTOF1 0 and DISTOF2 0 annotations on an otherwise supported excitation."
+  },
+  {
     "rule": "barePwlDc",
     "extraction": "bounded",
     "preparation": "bounded",
