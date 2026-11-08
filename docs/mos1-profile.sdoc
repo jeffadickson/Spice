@@ -55,3 +55,14 @@ The generated bounded MOS1 model shall stamp gate-source CGSO times W, gate-drai
 COMMENT: >>>
 Source evidence: exact SpiceSharp 3.2.3 model/common parameters and dynamic behavior, and ngspice mos1temp.c disabling oxideCapFactor when TOX absent or zero. Verification: typed binder and nonzero-overlap complex AC/BE native oracle. General intrinsic charge, area/sidewall junction terms, mobility-derived KP and higher MOS levels remain open.
 <<<
+
+[REQUIREMENT]
+UID: SEMI-MOS1-SERIES-R-001
+STATUS: Draft
+TITLE: Explicit MOS1 terminal resistance
+STATEMENT: >>>
+The bounded MOS1 profile shall stamp nonnegative model RD and RS in ohms between the corresponding external and intrinsic terminals. Zero shall preserve the original node allocation. The channel, body junctions and overlap capacitance shall attach to the intrinsic terminals, and the drain observable shall retain total external current. A positive resistance with unrepresentable conductance shall refuse.
+<<<
+COMMENT: >>>
+Verification uses Mos1Tests and compat/ngspice/mos1-series-resistance.cir. Sheet-resistance geometry and other MOS levels remain outside this profile.
+<<<

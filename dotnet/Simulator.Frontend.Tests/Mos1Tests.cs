@@ -39,7 +39,19 @@ public sealed class Mos1Tests {
   var result=OperatingPointSelection.Select(DeckParser.Parse(deck,collectDeclarations:true)).Prepared;
   Assert.False(result.Success);Assert.Null(result.Request);Assert.Empty(result.Origins);
  }
- [Theory][InlineData("TOX=10n")][InlineData("LEVEL=2")][InlineData("UO=600")][InlineData("KP=0")][InlineData("VTO=.7 VTO=.8")][InlineData("MJ=1")][InlineData("CBD=-1p")][InlineData("TNOM=28")][InlineData("KP=1e308")]
+ [Fact]
+ public void Series_resistances_connect_to_the_intrinsic_mos_terminals() {
+  var deck="MOS resistance\nVd d 0 1\nVg g 0 2\nM1 d g 0 0 mm\n.model mm NMOS(RD=20 RS=10 CBD=1p CBS=1p)\n.end\n";
+  var result=OperatingPointSelection.Select(DeckParser.Parse(deck,collectDeclarations:true)).Prepared;
+  Assert.True(result.Success,string.Join(',',result.Diagnostics.Select(d=>d.Code)));
+  var elements=result.Request!.Circuit.Elements;
+  var channel=Assert.Single(elements.OfType<Mos1Channel>());
+  var sensor=Assert.Single(elements.OfType<Voltage>(),v=>v.Id==result.Origins.Single(o=>o.LocalName=="M1").WireId);
+  Assert.Contains(elements.OfType<Resistor>(),r=>r.Ohms==20&&r.P==sensor.N&&r.N==channel.P);
+  Assert.Contains(elements.OfType<Resistor>(),r=>r.Ohms==10&&r.P==0&&r.N==channel.N);
+  Assert.Contains(elements.OfType<SpiceDiode>(),v=>v.N==channel.N&&v.Model.JunctionFarads==1e-12);
+ }
+ [Theory][InlineData("TOX=10n")][InlineData("RD=-1")][InlineData("RS=-1")][InlineData("LEVEL=2")][InlineData("UO=600")][InlineData("KP=0")][InlineData("VTO=.7 VTO=.8")][InlineData("MJ=1")][InlineData("CBD=-1p")][InlineData("TNOM=28")][InlineData("KP=1e308")]
  public void Unsupported_profile_refuses_atomically(string terms) {
   var result=OperatingPointSelection.Select(DeckParser.Parse("MOS\nVd d 0 1\nVg g 0 1.5\nM1 d g 0 0 mm L=1u W=10u\n.model mm NMOS("+terms+")\n.end\n",collectDeclarations:true)).Prepared;
   Assert.False(result.Success);Assert.Null(result.Request);Assert.Empty(result.Origins);

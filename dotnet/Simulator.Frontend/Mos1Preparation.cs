@@ -5,11 +5,15 @@ namespace Simulator.Frontend;
 /// <summary>Current-only channel with explicit body and overlap companions.
 /// A drain sensor measures the complete drain current, including displacement.</summary>
 internal sealed record PreparedMos1(Mos1Model Channel,SpiceDiodeModel DrainBody,SpiceDiodeModel SourceBody,
-    double GateSourceFarads,double GateDrainFarads,double GateBulkFarads)
+    double GateSourceFarads,double GateDrainFarads,double GateBulkFarads,double DrainOhms,double SourceOhms)
 {
     internal void Append(string id,int drain,int gate,int source,int bulk,Func<int> privateNode,Action<Element> add)
     {
+        // Keep the sensor on the external drain. Channel, junctions and
+        // overlap capacitances use the intrinsic terminals after the drops.
         var d=privateNode();add(new Voltage(id,drain,d,0));
+        if(DrainOhms>0){var intrinsic=privateNode();add(new Resistor(id+"_rd",d,intrinsic,DrainOhms));d=intrinsic;}
+        if(SourceOhms>0){var intrinsic=privateNode();add(new Resistor(id+"_rs",source,intrinsic,SourceOhms));source=intrinsic;}
         if(d!=source)add(new Mos1Channel(id+"_channel",d,source,gate,bulk,Channel));
         // Junction polarity follows the substrate type, independently of channel mode.
         if(d!=bulk)add(new SpiceDiode(id+"_bd",Channel.PChannel?d:bulk,Channel.PChannel?bulk:d,DrainBody));
@@ -24,7 +28,7 @@ internal sealed record PreparedMos1(Mos1Model Channel,SpiceDiodeModel DrainBody,
 internal static class Mos1Preparation
 {
     private static readonly HashSet<string> Allowed=new(StringComparer.OrdinalIgnoreCase)
-      {"LEVEL","VTO","KP","GAMMA","PHI","LAMBDA","IS","CBD","CBS","PB","MJ","FC","CGSO","CGDO","CGBO","TNOM","TOX","L","W"};
+      {"LEVEL","VTO","KP","GAMMA","PHI","LAMBDA","IS","CBD","CBS","PB","MJ","FC","CGSO","CGDO","CGBO","TNOM","TOX","L","W","RD","RS"};
     internal static bool AssignmentsAreSupported(BoundInstance call)
     {
         if(call.Status!=BindingStatus.Bound||call.Target is not {} model||model.ModelFamily is not ("nmos" or "pmos")||model.HasOpaqueModelTerms||call.Ports.Length!=4)return false;
@@ -52,13 +56,14 @@ internal static class Mos1Preparation
         var l=V("L",1e-4);var w=V("W",1e-4);var kp=V("KP",2e-5);var gamma=V("GAMMA",0);var phi=V("PHI",.6);var lambda=V("LAMBDA",0);
         var isat=V("IS",1e-14);var cbd=V("CBD",0);var cbs=V("CBS",0);var pb=V("PB",.8);var mj=V("MJ",.5);var fc=V("FC",.5);
         var cgso=V("CGSO",0);var cgdo=V("CGDO",0);var cgbo=V("CGBO",0);
+        var rd=V("RD",0);var rs=V("RS",0);
         var beta=kp*w/l;var cgs=cgso*w;var cgd=cgdo*w;var cgb=cgbo*l;
-        if(l<=0||w<=0||kp<=0||gamma<0||phi<=0||lambda<0||isat<=0||cbd<0||cbs<0||pb<=0||mj<0||mj>=1||fc<0||fc>=1||cgso<0||cgdo<0||cgbo<0
+        if(rd<0||rs<0||rd>0&&!double.IsFinite(1/rd)||rs>0&&!double.IsFinite(1/rs)||l<=0||w<=0||kp<=0||gamma<0||phi<=0||lambda<0||isat<=0||cbd<0||cbs<0||pb<=0||mj<0||mj>=1||fc<0||fc>=1||cgso<0||cgdo<0||cgbo<0
           ||V("LEVEL",1)!=1||V("TNOM",27)!=27||V("TOX",0)!=0||!double.IsFinite(beta)||beta<=0||!double.IsFinite(cgs)||!double.IsFinite(cgd)||!double.IsFinite(cgb)
           ||cgso>0&&cgs==0||cgdo>0&&cgd==0||cgbo>0&&cgb==0)
         {diagnostic=new("invalid_or_unqualified_mos1_parameter",model.Range);return false;}
         const double vt=1.38064852e-23/1.6021766208e-19*300.15;
-        profile=new(new(pmos,V("VTO",0),beta,gamma,phi,lambda),new(isat,vt,cbd,pb,mj,fc,0),new(isat,vt,cbs,pb,mj,fc,0),cgs,cgd,cgb);return true;
+        profile=new(new(pmos,V("VTO",0),beta,gamma,phi,lambda),new(isat,vt,cbd,pb,mj,fc,0),new(isat,vt,cbs,pb,mj,fc,0),cgs,cgd,cgb,rd,rs);return true;
         double V(string name,double fallback)=>values.TryGetValue(name,out var value)?value:fallback;
     }
 }
