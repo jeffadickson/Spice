@@ -96,6 +96,11 @@ pub fn charge_at_bias_csc(
             crate::compile::stamp_pair(&mut stamps, diode.p, diode.n, q.capacitance_farads);
         }
     }
+    for channel in &plan.mos1 {
+        for (terminal, farads) in meyer_branches(channel, values)? {
+            crate::compile::stamp_pair(&mut stamps, channel.gate, terminal, farads);
+        }
+    }
     stamp_bsim_bias(plan, values, &mut stamps, true)?;
     stamps.to_csc()
 }
@@ -204,6 +209,20 @@ fn linearize_with_rhs_gmin(
         let c = mos1_contribution(channel, values)?;
         stamp_vector(&mut residual, channel.p, channel.n, c.current_amps);
         stamp_mos1(&mut jacobian, channel, c.partials_siemens);
+        if let Some((previous, step)) = charge_history.filter(|_| channel.model.oxide_farads != 0.)
+        {
+            let old = meyer_branches(channel, previous)?;
+            let trial = meyer_branches(channel, values)?;
+            for ((terminal, farads), (_, old_farads)) in trial.into_iter().zip(old) {
+                // Average accepted and trial capacitance across the step. The
+                // incremental conductance is a quasi-Newton approximation.
+                let conductance = (0.5 * farads + 0.5 * old_farads) / step;
+                let change = voltage(values, channel.gate, terminal)
+                    - voltage(previous, channel.gate, terminal);
+                stamp_vector(&mut residual, channel.gate, terminal, conductance * change);
+                crate::compile::stamp_pair(&mut jacobian, channel.gate, terminal, conductance);
+            }
+        }
     }
     for &(nodes, model) in &plan.bsim330 {
         let trial = crate::bsim330::linearize(model, crate::bsim330::voltages(nodes, values))?;
@@ -1364,6 +1383,15 @@ mod november2_contracts {
         };
         assert_eq!(counter.name(), "nalgebra_dense_lu_reference");
     }
+}
+
+fn meyer_branches(
+    m: &crate::compile::CompiledMos1,
+    values: &[f64],
+) -> SimResult<[(crate::ids::NodeId, f64); 3]> {
+    let volts = [m.p, m.gate, m.n, m.bulk].map(|node| voltage(values, node, crate::ids::NodeId(0)));
+    let [gs, gd, gb] = m.model.meyer(volts)?;
+    Ok([(m.n, gs), (m.p, gd), (m.bulk, gb)])
 }
 
 /// Evaluate absolute four-terminal potentials; the model owns polarity and mode.

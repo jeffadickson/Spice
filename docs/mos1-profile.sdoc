@@ -50,7 +50,7 @@ UID: SEMI-MOS1-OVERLAP-Q-001
 STATUS: Draft
 TITLE: Gate overlap storage without false intrinsic parity
 STATEMENT: >>>
-The generated bounded MOS1 model shall stamp gate-source CGSO times W, gate-drain CGDO times W and gate-bulk CGBO times L as explicit overlap capacitances. Derived capacitances shall be finite and preserve nonzero input terms. Absent or zero TOX is supported; nonzero TOX shall explicitly refuse because intrinsic Meyer charge is unimplemented. Overlap capacitance shall never be described as intrinsic or complete MOS gate-charge parity.
+The generated bounded MOS1 model shall stamp gate-source CGSO times W, gate-drain CGDO times W and gate-bulk CGBO times L as explicit overlap capacitances. Derived capacitances shall be finite and preserve nonzero input terms. Absent or zero TOX is supported; nonzero TOX shall explicitly refuse because the generated card binder does not derive effective oxide capacitance. Overlap capacitance shall never be described as intrinsic or complete MOS gate-charge parity.
 <<<
 COMMENT: >>>
 Source evidence: exact SpiceSharp 3.2.3 model/common parameters and dynamic behavior, and ngspice mos1temp.c disabling oxideCapFactor when TOX absent or zero. Verification: typed binder and nonzero-overlap complex AC/BE native oracle. General intrinsic charge, area/sidewall junction terms, mobility-derived KP and higher MOS levels remain open.
@@ -76,4 +76,14 @@ A model VERSION assignment using a contiguous three-part dotted number shall ret
 <<<
 COMMENT: >>>
 Implementation: generated modelVersionAssignment, DeclarationExtraction, Mos1Preparation and CircuitReadiness. Verification: Mos1Tests and the BSIM330 admission replay. Native DC/AC/transient support is a separate contract.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-MOS1-MEYER-001
+TITLE: Effective intrinsic MOS1 displacement
+STATEMENT: >>>
+The native MOS1 channel primitive shall accept a finite nonnegative effective oxide capacitance in farads, defaulting to zero. AC shall stamp the three incremental Meyer gate branches at the solved bias. Backward Euler shall use the mean of trial and previously accepted branch capacitances times the branch voltage increment divided by the step, with equal and opposite terminal currents.
+<<<
+COMMENT: >>>
+The classic Meyer partition follows the Berkeley/ngspice convention, cross-checked against the local pinned RSpice source in classic/capacitance.rs. It is a branch displacement law, not a globally integrable terminal charge or energy model. Verification uses mos1_channel and the SchematicLab mos1-meyer ngspice fixture. Generated TOX binding is separate.
 <<<

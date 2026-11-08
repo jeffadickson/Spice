@@ -385,7 +385,7 @@ pub fn run_with_registry(
             }
         }
     }
-    // The primitive has no Q; its derived current is the channel contribution.
+    // This observable is channel conduction only; Meyer displacement uses separate gate branches.
     // Generated M cards retain their outer branch as the full drain observable.
     for channel in &plan.mos1 {
         signals.push(Signal {

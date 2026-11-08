@@ -258,6 +258,33 @@ fn kcl_checks(
             }
             continue;
         }
+        if let (
+            Element::Mos1Channel {
+                p,
+                n,
+                gate,
+                bulk,
+                model,
+                ..
+            },
+            Some((previous, h)),
+        ) = (element, charge_history)
+        {
+            if model.oxide_farads != 0. {
+                let terminals = [*p, *gate, *n, *bulk];
+                let before = model.meyer(terminals.map(|node| voltage(previous, node)))?;
+                let after = model.meyer(terminals.map(|node| voltage(state, node)))?;
+                for (index, node) in [*n, *p, *bulk].into_iter().enumerate() {
+                    let dv = (voltage(state, *gate) - voltage(state, node))
+                        - (voltage(previous, *gate) - voltage(previous, node));
+                    let displacement = (0.5 * before[index] + 0.5 * after[index]) * dv / h;
+                    sums[gate.0] += displacement;
+                    sums[node.0] -= displacement;
+                    scales[gate.0] += displacement.abs();
+                    scales[node.0] += displacement.abs();
+                }
+            }
+        }
         let (p, n) = element.terminals();
         sums[p.0] += current;
         sums[n.0] -= current;
@@ -417,6 +444,11 @@ pub fn backward_euler_step(
         let v = voltage(state, p) - voltage(state, n);
         let old_v = voltage(previous, p) - voltage(previous, n);
         let term = match element {
+            Element::Mos1Channel { model, .. } if model.oxide_farads != 0. => {
+                // Meyer is a branch displacement law, not a stored-energy state function.
+                nonlinear_storage = true;
+                step_s * v * *current
+            }
             Element::Bsim330 { .. } => {
                 nonlinear_storage = true;
                 0.

@@ -13,6 +13,7 @@ fn mos1_channel_dc_uses_gate_and_body_bias() {
 fn model() -> circuit_simulator::mos1::Mos1Model {
     circuit_simulator::mos1::Mos1Model {
         p_channel: false,
+        oxide_farads: 0.,
         threshold_volts: 0.7,
         beta_amps_per_volt_squared: 2e-4,
         body_effect_sqrt_volts: 0.4,
@@ -115,4 +116,24 @@ fn direct_audit_never_masks_nonfinite_mos_intermediates_as_cutoff() {
     assert!(m.linearize(state).is_err());
     let circuit=circuit_simulator::circuit::Circuit {nodes:vec!["0".into(),"d".into(),"g".into(),"s".into(),"b".into()],elements:vec![circuit_simulator::circuit::Element::Mos1Channel {id:"M".into(),p:circuit_simulator::ids::NodeId(1),n:circuit_simulator::ids::NodeId(3),gate:circuit_simulator::ids::NodeId(2),bulk:circuit_simulator::ids::NodeId(4),model:m}]};
     assert!(circuit_simulator::audit::dc(&circuit,&state,Default::default(),None).is_err());
+}
+
+#[test]
+fn meyer_limits_and_reversal_follow_intrinsic_geometry() {
+    let m = circuit_simulator::mos1::Mos1Model {
+        oxide_farads: 3e-9,
+        body_effect_sqrt_volts: 0.,
+        ..model()
+    };
+    assert_eq!(m.meyer([1., -1., 0., 0.]).unwrap(), [0., 0., 3e-9]);
+    let saturation = m.meyer([2., 1.5, 0., 0.]).unwrap();
+    assert!((saturation[0] - 2e-9).abs() < 1e-23);
+    assert_eq!(saturation[1..], [0., 0.]);
+    assert_eq!(m.meyer([0., 1.5, 2., 0.]).unwrap(), [0., saturation[0], 0.]);
+    let triode = m.meyer([0., 1.5, 0., 0.]).unwrap();
+    assert!((triode[0] - 1.5e-9).abs() < 1e-23);
+    assert_eq!(triode[0], triode[1]);
+    let p = circuit_simulator::mos1::Mos1Model { p_channel: true, threshold_volts: -0.7, ..m };
+    assert_eq!(p.meyer([-2., -1.5, 0., 0.]).unwrap(), saturation);
+    assert!(circuit_simulator::mos1::Mos1Model { oxide_farads: -1., ..m }.validate().is_err());
 }

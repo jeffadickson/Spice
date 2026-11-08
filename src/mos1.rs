@@ -8,6 +8,9 @@ use serde::{Deserialize, Serialize};
 #[serde(deny_unknown_fields)]
 pub struct Mos1Model {
     pub p_channel: bool,
+    /// Total intrinsic oxide capacitance Cox × effective width × effective length, in farads.
+    #[serde(default)]
+    pub oxide_farads: f64,
     pub threshold_volts: f64,
     pub beta_amps_per_volt_squared: f64,
     pub body_effect_sqrt_volts: f64,
@@ -23,7 +26,9 @@ pub struct Mos1Linearization {
 impl Mos1Model {
     /// Reject invalid physical parameters before evaluating any trial.
     pub fn validate(self) -> SimResult<()> {
-        if !self.threshold_volts.is_finite()
+        if !self.oxide_farads.is_finite()
+            || self.oxide_farads < 0.
+            || !self.threshold_volts.is_finite()
             || !self.beta_amps_per_volt_squared.is_finite()
             || self.beta_amps_per_volt_squared <= 0.
             || !self.body_effect_sqrt_volts.is_finite()
@@ -37,6 +42,47 @@ impl Mos1Model {
         }
         Ok(())
     }
+    /// Full Meyer capacitances ordered gate-source, gate-drain, gate-bulk.
+    /// The effective source follows channel polarity and reverses with Vds.
+    pub fn meyer(self, volts: [f64; 4]) -> SimResult<[f64; 3]> {
+        self.validate()?;
+        if self.oxide_farads == 0. {
+            return Ok([0.; 3]);
+        }
+        let [d, g, s, b] = volts;
+        let polarity = if self.p_channel { -1. } else { 1. };
+        let reverse = polarity * (d - s) < 0.;
+        let source = if reverse { d } else { s };
+        let phi = self.surface_potential_volts;
+        let vbs = polarity * (b - source);
+        let threshold = polarity * self.threshold_volts
+            + self.body_effect_sqrt_volts * ((phi - vbs.min(0.)).sqrt() - phi.sqrt());
+        let overdrive = polarity * (g - source) - threshold;
+        let vds = (d - s).abs();
+        if !overdrive.is_finite() || !vds.is_finite() {
+            return Err(SimError::invalid("nonfinite Meyer bias"));
+        }
+        let vdsat = overdrive.max(0.025);
+        let bulk = (-overdrive / phi).clamp(0., 1.);
+        let inversion = (1. - 2. * bulk).max(0.) * (2. / 3.);
+        let (source_fraction, drain_fraction) = if vds >= vdsat {
+            (inversion, 0.)
+        } else {
+            let ratio = vds / vdsat;
+            let denominator = 2. - ratio;
+            (
+                inversion * (1. - ((1. - ratio) / denominator).powi(2)),
+                inversion * (1. - (1. / denominator).powi(2)),
+            )
+        };
+        let mut caps =
+            [source_fraction, drain_fraction, bulk].map(|fraction| fraction * self.oxide_farads);
+        if reverse {
+            caps.swap(0, 1);
+        }
+        Ok(caps)
+    }
+
     /// Evaluate cutoff, linear or saturation region with source/drain reversal.
     /// With nonzero GAMMA, forward effective body bias is outside this profile:
     /// SPICE's forward continuation and its AC approximation are not the same derivative.
