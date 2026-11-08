@@ -14,3 +14,17 @@ RequestedControlPreparation, OriginalProjection and RequestedBatchControlTests i
 RELATIONS:
 - TYPE: Parent
   VALUE: SEM-CONTROL-001
+
+[REQUIREMENT]
+UID: FRONTEND-CONTROL-VECTORTYPE-001
+STATUS: Draft
+TITLE: Record terminal power vector type as a reporting omission
+STATEMENT: >>>
+The requested analysis dispatcher shall admit settype power followed by a single simple device power vector name only in the unbranched terminal reporting region after the last analysis. It shall preserve the omitted plot metadata change in the result and leave analysis preparation and native numerical projection unchanged. Other target shapes, types, separators and dispatch-affecting placements shall be refused.
+<<<
+COMMENT: >>>
+ControlPowerVectorType in the generated grammar, ControlExtraction and RequestedControlPreparation implement admission. RequestedPowerVectorTypeTests cover the terminal command, projection and malformed placements. The paranoia_parallel probe-i-dev.cir contains this original reporting command. No plot metadata parity is claimed.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-CONTROL-001

@@ -152,7 +152,7 @@ expression: expression (POWER | CARET) expression
 
 // A bounded semantic entry over generated BODY tokens of one COMMAND_LINE.
 // Numeric command arguments deliberately exclude vectors, substitution and state.
-controlCommandProfile: (controlOp | controlAc | controlDc | controlTran | controlRun | controlSet | controlLet | controlDefine | controlUnlet | controlIf | controlForeach | controlBoundary | controlEcho | controlRedirect | controlReport | controlQuit | controlUnknown)? EOF;
+controlCommandProfile: (controlOp | controlAc | controlDc | controlTran | controlRun | controlSet | controlLet | controlDefine | controlUnlet | controlIf | controlForeach | controlBoundary | controlEcho | controlRedirect | controlPowerVectorType | controlReport | controlQuit | controlUnknown)? EOF;
 controlOp: {TokenStream.LT(1).Text.Equals("op",StringComparison.OrdinalIgnoreCase)}? identifier;
 controlAc: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier identifier controlNumber controlNumber controlNumber;
 controlDc: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase)}? identifier identifier controlNumber controlNumber controlNumber (identifier controlNumber controlNumber controlNumber)?;
@@ -169,6 +169,7 @@ controlForeach: {TokenStream.LT(1).Text.Equals("foreach",StringComparison.Ordina
 controlBoundary: {TokenStream.LT(1).Text.ToLowerInvariant() is "else" or "end"}? identifier;
 controlEcho: {TokenStream.LT(1).Text.Equals("echo",StringComparison.OrdinalIgnoreCase)}? identifier (~(CONTROL_SEPARATOR | INVALID | SLASH_COMMENT))*;
 controlRedirect: {TokenStream.LT(1).Text.Equals("print",StringComparison.OrdinalIgnoreCase)}? identifier identifier COMPLEX_CLOSE identifier;
+controlPowerVectorType: {TokenStream.LT(1).Text.Equals("settype", System.StringComparison.OrdinalIgnoreCase)}? identifier identifier identifier;
 controlReport: {TokenStream.LT(1).Text.ToLowerInvariant() is "print" or "plot" or "meas" or "measure" or "save" or "gnuplot" or "rusage" or "display" or "listing"}? identifier parameter*;
 controlQuit: {TokenStream.LT(1).Text.Equals("quit",StringComparison.OrdinalIgnoreCase)}? identifier NUMBER?;
 controlUnknown: identifier parameter*;

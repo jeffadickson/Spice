@@ -61,6 +61,13 @@ internal static class ControlExtraction
      case SpiceParser.ControlRedirectContext capturePrint:
       redirect=capturePrint.identifier(2).GetText();argument=capturePrint.identifier(1).GetText();
       kind=redirect.Length is >0 and <=64&&redirect.All(c=>char.IsAsciiLetterOrDigit(c)||c=='_')?"report_redirect":"unsupported";break;
+     case SpiceParser.ControlPowerVectorTypeContext vectorType:
+      const string powerSuffix=":power";
+      var vectorName=vectorType.identifier(2).GetText();
+      if(vectorType.identifier(1).GetText().Equals("power",StringComparison.OrdinalIgnoreCase)&&
+          vectorName.EndsWith(powerSuffix,StringComparison.OrdinalIgnoreCase)&&SimpleName(vectorName[..^powerSuffix.Length]))
+       kind="power_vector_type";
+      break;
      case SpiceParser.ControlReportContext:kind=print&&tokens.GetTokens().Any(t=>t.Text==">")?"unsupported":"report";break;
      case SpiceParser.ControlLetContext let:
       kind="postprocessing";postprocessing=new(ControlPostprocessingKind.Let,[let.identifier(1).GetText()],Capture(let.expression()));break;

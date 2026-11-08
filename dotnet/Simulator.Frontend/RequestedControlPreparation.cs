@@ -120,6 +120,11 @@ internal static class RequestedControlPreparation
     case "postprocessing":
      if(ControlSuffixAdmission.Admit(command,lastAnalysisStart,locals) is {} suffixFailure)return Fail(suffixFailure,command.Range);
      omissions.Add(new(0,"control_postprocessing",command.Name,"postprocessing_not_executed",command.Range));break;
+    case "power_vector_type":
+     // settype changes plot metadata only. Keep it after all analysis dispatch,
+     // and preserve the omitted reporting command for the caller to audit.
+     if(lastAnalysisStart<0||command.Range.Start<=lastAnalysisStart)return Fail("vector_type_before_last_analysis",command.Range);
+     omissions.Add(new(0,"control_reporting_setting",command.Name,"vector_type_reporting_not_executed",command.Range));break;
     case "report":omissions.Add(new(0,"control_observation",command.Name,"control_output_not_executed",command.Range));break;
     case "report_redirect":
      if(lastAnalysisStart<0||command.Range.Start<=lastAnalysisStart)return Fail("redirect_before_last_analysis",command.Range);
