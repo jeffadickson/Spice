@@ -65,6 +65,22 @@ internal sealed class DeclarationExtraction
         && assignment.referenceName()?.GetText().Equals("temp",StringComparison.OrdinalIgnoreCase) == true
         && IsDefaultTemperature(assignment.value());
 
+    private static bool IsBsimSoiFdStaticOptions(SpiceParser.ParameterContext[] parameters)
+    {
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var parameter in parameters)
+        {
+            if (IsReportingOption(parameter)) continue;
+            var assignment = parameter.assignment();
+            var name = assignment?.referenceName()?.GetText().ToLowerInvariant();
+            var value = assignment?.value()?.GetText().ToLowerInvariant();
+            if (name is null || !seen.Add(name) ||
+                (name, value) is not (("gmin", "1e-25") or ("itl1", "500")))
+                return false;
+        }
+        return seen.Count == 2;
+    }
+
     // ngspice order one is backward Euler for both Gear and trapezoidal.
     // Higher Gear orders need BDF history that the engine does not expose.
     private static string? IntegrationMethod(SpiceParser.ParameterContext[] parameters)
@@ -126,6 +142,7 @@ internal sealed class DeclarationExtraction
             Name = card.Start.Text,
             GlobalNodes = GlobalNodeExtraction.Extract(card,Capture),
             ReportingOptionsOnly = reportingOnly,
+            BsimSoiFdStaticOptions = optionCard && owner == 0 && IsBsimSoiFdStaticOptions(directiveParameters),
             TransientMethodOption = optionCard ? IntegrationMethod(directiveParameters) : null,
             ControlConstants = exports,
             DefaultTemperature = (optionCard && !reportingOnly

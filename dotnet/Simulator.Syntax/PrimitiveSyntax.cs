@@ -56,6 +56,8 @@ public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range)
     public bool DefaultTemperature { get; init; }
     /// <summary>Generated legacy reporting width with bounded literal IN and OUT settings.</summary>
     public bool ReportingWidth { get; init; }
+    /// <summary>Exact numerical settings of the pinned Berkeley FD static profile.</summary>
+    public bool BsimSoiFdStaticOptions { get; init; }
     /// <summary>Wire method for a fully recognized METHOD/MAXORD card, or null.</summary>
     public string? TransientMethodOption { get; init; }
     /// <summary>Root scalar exports to the control namespace, separate from physical parameters.</summary>

@@ -81,6 +81,9 @@ public static partial class RequestedAnalysis
       catalog.InitialConditions.Select(ic=>ic.Range.Start).Concat(methodCards.Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet());
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
+  if(baseRequest.Circuit.Elements.Any(e=>e is BsimSoiFdReference) &&
+      control.Directives.FirstOrDefault(d=>d.Analysis.Kind is not ("op" or "dc")) is {} dynamicFd)
+    return Fail("unsupported_bsim_soi_fd_dynamic",dynamicFd.Analysis.Range);
   // Native let may overwrite an existing root result vector by its bare node
   // name. Do not hide observable replacement as a local reporting declaration.
   var rootNames=prepared.RootNodes.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);

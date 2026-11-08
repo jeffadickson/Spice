@@ -141,3 +141,17 @@ Verification: tests/bsim330.rs exercises the native stamp, the normal request di
 RELATIONS:
 - TYPE: Parent
   VALUE: SEMI-BSIM3SOI-001
+
+[REQUIREMENT]
+UID: SEMI-BSIM3SOI-FD-DECK-001
+STATUS: Draft
+TITLE: Pinned Berkeley FD model card and original static sweeps
+STATEMENT: >>>
+Requested analysis preparation shall bind the pinned NMOS level-55 card with its original four terminal order and supported geometry into the FD reference device. The exact Gmin and ITL1 option profile shall apply only to circuits whose active device equations honor it. A changed model assignment, geometry, option, or unsupported dynamic request shall refuse without publishing a partial analysis.
+<<<
+COMMENT: >>>
+Inferred from the RSpice device-catalog work. The model card uses lexical assignment fingerprinting, the device fixes Gmin at 1e-25 S and the bounded Newton policy uses an ITL1 limit of 500. Verification uses the original FD t3 and t5 decks, the Windows frontend negative tests, and independent ngspice DC output.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEMI-BSIM3SOI-FD-STATIC-001

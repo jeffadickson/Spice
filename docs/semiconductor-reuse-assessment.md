@@ -427,9 +427,8 @@ length, 27 °C and 1e-25 S model Gmin. It does not represent arbitrary
 model cards. The Rust solver stamps D/G/S/E currents and their
 derivatives and audits all four terminals. The legacy device workspace
 is serialized per process, and unavailable charge is represented
-explicitly. AC and transient refuse this profile. Original SOI netlist
-binding and options, DD and PD, and all 15 corpus acceptance gates
-remain open.
+explicitly. AC and transient refuse this profile. At the typed API checkpoint, original SOI netlist binding and options,
+DD and PD, and all 15 corpus acceptance gates remained open.
 
 On Ubuntu 24.04 in WSL, the four opt-in Rust checks passed, including
 the existing 64 seeded bulk bias cases, AC charge and backward-Euler
@@ -448,3 +447,46 @@ The same four tests and single-response back-gate CLI check passed on
 Windows x64. Both CLI comparisons differed from ngspice by 1.63e-19 A
 at the reported bias. Raw OSDI modules, native libraries and model
 fixtures remain external build inputs.
+
+### Original pinned FD static decks
+
+The requested netlist frontend binds the exact Berkeley NMOS level-55
+reference card used by bsim3soifd/t3.cir and t5.cir. It checks the full
+113-assignment fingerprint, the 10 µm by 0.25 µm instance geometry, and
+D/G/S/E port order. It accepts the matching 1e-25 S model Gmin and
+500-iteration operating-point option card in the bounded static circuit
+context. Gmin remains inside the reference model rather than adding a
+solver-wide shunt. The Newton iteration upper bound is 500, and the
+default remains 50. Changed cards, incompatible circuits, other
+numerical options and charge-dependent analyses refuse explicitly.
+
+The checked inputs were the unmodified original decks and include at the
+pinned RSpice corpus revision. The generated frontend expanded the
+include and prepared the original two-axis sweep. The public Rust
+request API independently solved each point on Ubuntu 24.04 under WSL.
+Live ngspice-47+ ran the same input bytes. Voltage and branch-current
+comparison used 1 µV and 1 nA absolute tolerances respectively, plus
+1e-4 times the reference magnitude. Artifacts and the comparison driver
+are under E:/Artifacts/Spice-catalog-fd-20261108.
+
+| Original deck | Points | Mapped signals | Failures | Maximum supply current error |
+| --- | ---: | ---: | ---: | ---: |
+| bsim3soifd/t3.cir | 1806 | 8 | 0 | 8.67e-18 A |
+| bsim3soifd/t5.cir | 1359 | 8 | 0 | 2.82e-13 A |
+
+CatalogExport.cs and catalog_batch.rs in the artifact directory show the
+full preparation and execution entry points. The batch driver avoids
+per-point process startup while retaining the same independent typed
+requests. The duplicate one-shot CLI replay was stopped after the
+complete public-API comparison. Its partial results are preserved.
+The remaining 13 observed SOI reference passes and the broader RSpice
+device catalog remain open.
+
+Verification also passed 705 frontend tests with 37 opt-in skips, 39
+targeted Rust tests, and StrictDoc parsing of 55 documents and 458
+requirement IDs. A changed TOX value in the otherwise complete model card
+was rejected. The isolated mutation reversing the fingerprint guard was
+killed by original t3 admission. Coverlet measured frontend line and
+branch coverage of 93.03% and 82.59%, and syntax coverage of 70.39% and
+57.04%. The targeted Rust instrumented run covered 46.89% of the entire
+Newton file. Rust branch and native provider coverage were unmeasured.

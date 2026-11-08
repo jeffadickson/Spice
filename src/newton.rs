@@ -582,7 +582,7 @@ impl Default for NewtonOptions {
 impl NewtonOptions {
     pub fn validate(self) -> SimResult<()> {
         if self.max_iterations == 0
-            || self.max_iterations > 256
+            || self.max_iterations > 500
             || !self.absolute_tolerance.is_finite()
             || !self.relative_tolerance.is_finite()
             || self.absolute_tolerance <= 0.

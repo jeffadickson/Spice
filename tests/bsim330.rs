@@ -131,3 +131,24 @@ fn soi_fd_static_stamps_match_berkeley_t3() {
         .unwrap();
     assert!((response.samples[0].values[index] + 3.4034476219864e-6).abs() < 1e-12);
 }
+
+#[test]
+fn soi_fd_deck_iteration_limit_is_bounded() {
+    use circuit_simulator::newton::NewtonOptions;
+    assert!(
+        NewtonOptions {
+            max_iterations: 500,
+            ..NewtonOptions::default()
+        }
+        .validate()
+        .is_ok()
+    );
+    assert!(
+        NewtonOptions {
+            max_iterations: 501,
+            ..NewtonOptions::default()
+        }
+        .validate()
+        .is_err()
+    );
+}

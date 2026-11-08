@@ -57,6 +57,11 @@ public static class OperatingPointBridge
         // Extensions may have globally physical effects even when spelled in
         // an unused body. Only the explicit selection's named observations and
         // analyses may be omitted; all other extensions remain conservative.
+        var fdOptions = selected && requested
+            ? catalog.Cards.Where(c => c.BsimSoiFdStaticOptions).ToArray()
+            : [];
+        if (fdOptions.Length > 1) return Failure("ambiguous_bsim_soi_fd_options",fdOptions[1].Range);
+        if(fdOptions.Length==1) omittedStarts=(omittedStarts??[]).Add(fdOptions[0].Range.Start);
         if(selected && catalog.Cards.FirstOrDefault(c=>c.Kind=="extension"&&omittedStarts?.Contains(c.Range.Start)!=true&&!c.Name.Equals(".global",StringComparison.OrdinalIgnoreCase)) is {} unsupportedDirective)
             return Failure("unsupported_physical_directive",unsupportedDirective.Range);
         var rootEnd=catalog.Cards.FirstOrDefault(c=>c.ScopeId==0&&c.Kind=="endCard");
@@ -84,7 +89,13 @@ public static class OperatingPointBridge
             }
             Expand(0,rootParameters,new(StringComparer.OrdinalIgnoreCase),[],0);
             if(elements.Count==0)throw new BridgeFailure("empty_circuit",null);
-            return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),new OperatingPoint(),backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
+            var hasFd=elements.Any(e=>e is BsimSoiFdReference);
+            if(fdOptions.Length==1 && (!hasFd || elements.Any(e=>e is not (BsimSoiFdReference or Voltage or Current or Resistor))))
+                throw new BridgeFailure("unsupported_bsim_soi_fd_option_context",fdOptions[0].Range);
+            Analysis analysis=hasFd
+                ? new OperatingPointNewton(new NewtonOptions(MaxIterations:500,Continuation:new(InitialStep:1)))
+                : new OperatingPoint();
+            return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),analysis,backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
             {InternalNodes=internalNodes.ToImmutable(),AcSources=acSources.ToImmutableArray(),AcResistances=acResistances.ToImmutable(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
         }
         catch(BridgeFailure e){return Failure(e.Code,e.Range);}
@@ -304,6 +315,17 @@ public static class OperatingPointBridge
                     if(!names.Add(call.Header.Name))throw new BridgeFailure("duplicate_element",call.Header.Range);
                     if(selected&&call.Header.Family=="M")
                     {
+                        if(BsimSoiFdPreparation.IsFdSelector(call))
+                        {
+                            if(!requested || fdOptions.Length!=1 || !BsimSoiFdPreparation.IsReference(catalog,environment,call))
+                                throw new BridgeFailure("unsupported_bsim_soi_fd_profile",call.Header.Range);
+                            if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);
+                            var fdId="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            elements.Add(new BsimSoiFdReference(fdId,Node(call.Ports[0].Actual.Text),
+                                Node(call.Ports[2].Actual.Text),Node(call.Ports[1].Actual.Text),Node(call.Ports[3].Actual.Text)));
+                            origins.Add(new(fdId,call.Header.Name,path,call.Header.Range));
+                            continue;
+                        }
                         if(Mos1Preparation.Bsim3Diagnostic(call)=="bsim3_kernel_unavailable")
                         {
                             if(!Bsim330Preparation.TryBind(catalog,environment,call,out var nativeModel))
