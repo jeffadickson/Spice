@@ -77,3 +77,14 @@ The simulator shall bind a pinned three-terminal 12AX7 reference subcircuit and 
 COMMENT: >>>
 Inferred from the accepted 12AX7 experiment. The published PSpice VALUE sources and their normalized nonlinear B forms remain unsupported. See evidence/grammar-cohort-checklist.md.
 <<<
+
+[REQUIREMENT]
+UID: SEMI-BSIM330-NATIVE-001
+STATUS: Draft
+TITLE: Native bulk BSIM3 3.3.0 terminal currents and charges
+STATEMENT: >>>
+A supported four-terminal bulk BSIM3 VERSION=3.3.0 device shall evaluate signed NMOS and PMOS terminal currents and charges in the solver process. DC shall use consistent current derivatives, AC shall linearize current and charge at the operating point, and transient shall preserve accepted charge history across rejected steps. Unsupported versions, SOI model families, or unqualified parameters shall receive explicit diagnostics. The verification shall compare like model cards, geometry, temperatures and biases with ngspice and check current and charge conservation independently.
+<<<
+COMMENT: >>>
+Draft inferred from the accepted model implementation request. The standalone OSDI evaluator in semiconductor-reuse-assessment.md exercises only terminal current and charge. Frontend admission and Rust assembly remain open. The standalone experiment does not close this requirement.
+<<<

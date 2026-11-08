@@ -121,3 +121,68 @@ drain/gate axes. The maximum absolute drain supply current difference
 was 0.506 µA, larger than in the three-point probe. This remains
 a measured difference, with no numerical qualification claimed
 for the larger grid.
+
+### RSpice design and standalone native evaluation
+
+RSpice commit `29c28a022625fd7cc2c56ead1cce2d3066663074` separates model
+parameters, temperature and geometry preprocessing, the intrinsic current and
+charge evaluator, and the device stamp with accepted history. Its bulk
+BSIM3 3.3.0 implementation is separate from legacy BSIM1/2 and B3SOI
+DD/FD/PD. The bulk Rust files inherit RSpice's personal-use license. Use
+that split as a design reference and derive the simulator implementation from
+appropriately licensed, versioned Berkeley sources.
+[RSpice bulk model](https://github.com/JaimeHW/RSpice/tree/29c28a022625fd7cc2c56ead1cce2d3066663074/crates/rspice-core-devices/src/device/mosfet/bsim3v3),
+[RSpice license](https://github.com/JaimeHW/RSpice/blob/29c28a022625fd7cc2c56ead1cce2d3066663074/LICENSE),
+[Berkeley release catalog](https://bsim.berkeley.edu/models/bsim3/).
+
+A Windows x64 standalone C host loaded the previously built, hash-pinned OSDI
+0.4 experiment and called its setup, evaluation, and terminal current and charge
+callbacks directly. It evaluated three points each for NMOS and PMOS, with
+signed gate bias magnitudes 0.7999, 0.8 and 0.8001 V and signed drain bias
+magnitude 0.8 V. Source and bulk were grounded, temperature was 300.15 K,
+and the model and geometry were those of the earlier complementary fixture.
+With current defined into the device and PMOS gate charge sign normalized
+against the ngspice raw observable, maximum differences were
+1.269 pA for drain terminal current and 7.89e-31 C for gate charge.
+The largest net terminal current and charge residuals were 1.12e-21 A and
+3.95e-31 C. This probe uses a generated module for research under its source
+license. It is a separate executable and does not connect BSIM3 to the Rust
+solver. Production model selection, derivative and transient stamp verification,
+dynamic state, and coverage remain open.
+
+The Windows artifacts are in
+`E:/Artifacts/Spice-BSIM330-native-probe-20261108T042121361Z`. Build from
+that directory after copying the tracked `scripts/Bsim330Probe.c` to `probe.c`, with VS developer PowerShell and
+`cl /nologo /W4 /O2 /I <ngspice-osdi-header-directory> probe.c /Fe:probe.exe`.
+Run `probe.exe` with the absolute path to the experiment module, after
+verifying SHA-256
+`57dc3bebe54a95b36723b3b1e1b543ba01b32a7c9c9a00524b966b3459161608`.
+The module advertises a 352-byte descriptor and this probe consumes only the
+matching prefix of the pinned header layout. `probe.csv` records the terminal
+results and `oracle-comparison.json` records differences against the prior
+ngspice-47+ built-in BSIM3 3.3.0 raw output. No line or branch coverage,
+mutation campaign, or fuzz run was collected for this probe. The ABI negative control rejected Windows version.dll before calling any model functions. StrictDoc 0.30.4 parsed 55 documents with 453 unique IDs and 411 resolved parents.
+
+The same artifact directory contains `corpus-source-audit.csv`, a
+per-deck triage index for all 96 decks that did not agree in our 113-deck
+replay at `05e2a48`. Each row identifies the local diagnostic, the pinned
+RSpice validation contract or saved-table candidate, and a source starting
+point. There are 54 saved-table candidates, two locked-grid contracts,
+four measure contracts, 14 execution-only smoke contracts, 21 scripted
+control contracts and one reference-unsolvable contract. Source paths and
+deck paths were checked against the pinned Git tree. A source lead is a
+family-level pointer. RSpice runtime pass status remains unverified.
+
+The relevant implementation differences are concrete. RSpice separates
+BSIM1/2 level 4/5 parameters and terminal charges from BSIM3. Its SOI
+implementations include explicit body currents and topology for DD, FD and
+PD. These are 20 of our 96 gaps across the five affected directories.
+Its regression harness can extract analysis directives from control blocks
+without interpreting the full script. It separately runs named pole-zero and
+sensitivity analyses, and has an accepted-step-grid replay path for
+transient references. These explain why a RSpice contract can be satisfied
+while our original requested-analysis or stricter waveform comparison remains
+open. The resistance array already matched 51/51 rows on an aligned grid.
+The RC deck is an RSpice smoke test and our aligned-grid source-current
+disagreement remains open.
+[RSpice validation runner](https://github.com/JaimeHW/RSpice/tree/29c28a022625fd7cc2c56ead1cce2d3066663074/tools/rspice-conformance/src/suites/ngspice).
