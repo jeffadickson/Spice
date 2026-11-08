@@ -7,7 +7,7 @@ public sealed record RequestedOperation(string Id,string Kind,SourceRange Range,
 {
  /// <summary>SI coordinate unit: V/A for DC source sweeps, Hz for AC, s for transient, absent for OP.</summary>
  public string? CoordinateUnit { get; init; }
- /// <summary>Outer DC coordinates in request order, independently identified by the grounded source voltage.</summary>
+ /// <summary>Outer DC coordinates in request order, independently identified by the source terminal voltage difference.</summary>
  public NestedDcSweep? NestedDc { get; init; }
  /// <summary>Evaluated original directive scalar arguments, in grammar order; retained for audit including transient TSTEP/TSTOP/TSTART/TMAX.</summary>
  public ImmutableArray<double> Arguments { get; init; } = [];
@@ -22,8 +22,12 @@ public sealed record RequestedOperation(string Id,string Kind,SourceRange Range,
  /// <summary>Optional original root control command or finite run invocation.</summary>
  public RequestedControlOrigin? ControlOrigin { get; init; }
 }
-/// <summary>Secondary grounded voltage axis for a two-source DC sweep.</summary>
-public sealed record NestedDcSweep(string NativeVoltageSignal,ImmutableArray<double> Coordinates);
+/// <summary>Secondary voltage axis for a two-source DC sweep. A null terminal signal denotes ground.</summary>
+public sealed record NestedDcSweep(string? NativeVoltageSignal,ImmutableArray<double> Coordinates)
+{
+ /// <summary>Native voltage signal at the negative terminal, subtracted from the positive terminal voltage.</summary>
+ public string? NativeNegativeVoltageSignal { get; init; }
+}
 
 /// <summary>Atomic preparation: unsupported original execution semantics publish diagnostics and no partial operation plan.</summary>
 public sealed record RequestedAnalysisPlan(ImmutableArray<RequestedOperation> Operations,ImmutableArray<BridgeDiagnostic> Diagnostics)
@@ -112,14 +116,15 @@ public static partial class RequestedAnalysis
       ImmutableArray<double> outer=[0];
       if(card.Names.Length==2){
        var secondary=RequestedDcSourceBinding.Resolve(catalog,prepared,card.Names[1]);
-       if(secondary.Source is not Voltage{N:0,P:>0} v||v.Id==source.Id)
+       if(secondary.Source is not Voltage v||v.P==v.N||v.Id==source.Id)
         throw new PreparationFailure("unsupported_nested_dc_secondary_source",card.Range);
        outerSource=v;
        outer=Linear(values[3],values[4],values[5],maxPoints/primary.Length,card.Range);
-       // Native RAW repeats its first sweep axis. A grounded source exposes
-       // the second coordinate independently as its original positive node.
-       var terminal=catalog.Primitives.Single(p=>p.ScopeId==0&&p.Name.Equals(card.Names[1],StringComparison.OrdinalIgnoreCase)&&p.Family=="V").P.Text;
-       nestedDc=new("v("+terminal+")",outer.SelectMany(value=>Enumerable.Repeat(value,primary.Length)).ToImmutableArray());
+       // Native RAW repeats the primary axis. Reconstruct the independent
+       // outer voltage from the original terminal columns and known ground.
+       var terminals=catalog.Primitives.Single(p=>p.ScopeId==0&&p.Name.Equals(card.Names[1],StringComparison.OrdinalIgnoreCase)&&p.Family=="V");
+       nestedDc=new(v.P==0?null:"v("+terminals.P.Text+")",outer.SelectMany(value=>Enumerable.Repeat(value,primary.Length)).ToImmutableArray())
+        {NativeNegativeVoltageSignal=v.N==0?null:"v("+terminals.N.Text+")"};
       }
       coordinates=outer.SelectMany(_=>primary).ToImmutableArray();
       var dcAnalysis=DcSweepAnalysis(baseRequest);

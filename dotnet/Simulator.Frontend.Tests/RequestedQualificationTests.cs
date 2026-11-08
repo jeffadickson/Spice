@@ -45,15 +45,15 @@ public sealed class RequestedQualificationTests
   Assert.False(RequestedComparison.Compare(op,circuit,[Response(op.Requests[0].CaseId,signals,2)],raw).Agreed);
   Assert.False(RequestedComparison.Compare(op,circuit,[Response(op.Requests[0].CaseId,signals)],raw with{Variables=[raw.Variables[0],new("other","current")]}).Agreed);
  }
- [Fact] public void Nested_dc_comparison_checks_the_secondary_raw_axis()
+ [Theory][InlineData(false)][InlineData(true)] public void Nested_dc_comparison_checks_the_secondary_raw_axis(bool floating)
  {
-  var syntax=DeckParser.Parse("nested\nV1 a 0 0\nV2 b 0 0\nR1 a b 1k\n.dc V1 0 1 1 V2 2 3 1\n.end\n",collectDeclarations:true);
+  var syntax=DeckParser.Parse($"nested\nV1 a 0 0\nV2 b {(floating?"a":"0")} 0\nR1 a b 1k\n.dc V1 0 1 1 V2 2 3 1\n.end\n",collectDeclarations:true);
   var plan=RequestedAnalysis.Prepare(syntax);
   var op=Assert.Single(plan.Operations);
   var circuit=plan.CircuitPreparation!;
   var coordinates=new[]{(0d,2d),(1d,2d),(0d,3d),(1d,3d)};
   var signals=new[]{new SignalInfo("v(n1)","voltage","V"),new("v(n2)","voltage","V"),new("i(e0)","current","A"),new("i(e1)","current","A")};
-  double[] Values((double A,double B) p)=>[p.A,p.B,(p.B-p.A)/1000,(p.A-p.B)/1000];
+  double[] Values((double A,double B) p){var b=p.B+(floating?p.A:0);return [p.A,b,floating?0:(b-p.A)/1000,(p.A-b)/1000];}
   var responses=coordinates.Select((p,i)=>{
    var manifest=new ResultManifest("1",op.Requests[i].CaseId,"succeeded",true,signals,[new(0,Values(p))],[],[],[],null,new("nalgebra_dense_lu_reference","cpu",128,false,false,true,false,"test"),"hash");
    return new SimulationResponse("1","succeeded",true,JsonSerializer.SerializeToElement(manifest,WireFormat.Options));
@@ -62,6 +62,8 @@ public sealed class RequestedQualificationTests
    coordinates.Select(p=>new[]{p.Item1}.Concat(Values(p)).Select(v=>new ComplexValue(v,0)).ToArray()).ToImmutableArray()){PlotName="DC transfer characteristic"};
   Assert.True(RequestedComparison.Compare(op,circuit,responses,raw).Agreed);
   Assert.Equal("missing_native_nested_dc_axis",RequestedComparison.Compare(op,circuit,responses,raw with{Variables=raw.Variables.SetItem(2,new("v(other)","voltage"))}).Status);
+  if(floating)
+   Assert.Equal("missing_native_nested_dc_axis",RequestedComparison.Compare(op,circuit,responses,raw with{Variables=raw.Variables.SetItem(1,new("v(other)","voltage"))}).Status);
   var wrong=(ComplexValue[])raw.Points[2].Clone();wrong[2]=new(2,0);
   Assert.Equal("original_grid_discrepancy",RequestedComparison.Compare(op,circuit,responses,raw with{Points=raw.Points.SetItem(2,wrong)}).Status);
  }

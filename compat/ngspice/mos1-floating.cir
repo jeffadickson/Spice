@@ -1,0 +1,8 @@
+MOS1 output curves with a floating gate supply
+Vd d 0 0
+Vbias s 0 0.2
+Vgs g s 0
+M1 d g s s channel
+.model channel nmos(level=1 l=3u w=9u vto=0.8 kp=20u)
+.dc Vd 0.2 3.2 0.5 Vgs 0 3 0.5
+.end

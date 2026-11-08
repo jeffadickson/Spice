@@ -382,12 +382,12 @@ RELATIONS:
 [REQUIREMENT]
 UID: FRONTEND-NESTED-DC-001
 STATUS: Draft
-TITLE: Bounded nested DC sweep with a grounded voltage outer axis
+TITLE: Bounded nested DC sweep with a differential voltage outer axis
 STATEMENT: >>>
-A DC directive with two distinct root independent sources may sweep the first source inside the second when the second is a grounded voltage source. The product of grid sizes shall fit the configured point budget. Each point shall use a fresh circuit request. Native qualification shall validate the repeated primary RAW coordinate and the second source voltage against both requested axes in order.
+A DC directive with two distinct root independent sources may sweep the first source inside the second when the second is a voltage source with distinct terminals. The product of grid sizes shall fit the configured point budget. Each point shall use a fresh circuit request. Native qualification shall validate the repeated primary RAW coordinate and the second source voltage against both requested axes in order. The second voltage shall be reconstructed from its original positive terminal minus its original negative terminal, with known ground represented as zero. Missing terminal data shall refuse comparison.
 <<<
 COMMENT: >>>
-RequestedAnalysis binds both declared sources and RequestedComparison validates the secondary RAW signal. Verification uses RequestedAnalysisTests and the original MOS1_out paths where available. Stateful sweep continuation and floating or current secondary axes require separate contracts.
+RequestedAnalysis binds both declared sources and RequestedComparison validates the secondary RAW signal. Verification uses RequestedAnalysisTests and the original MOS1_out paths where available. The MOS1 gate-to-source fixture exercises a floating outer axis. Stateful sweep continuation and current secondary axes require separate contracts.
 <<<
 RELATIONS:
 - TYPE: Parent
