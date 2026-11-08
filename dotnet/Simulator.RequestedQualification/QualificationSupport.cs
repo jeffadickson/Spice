@@ -76,14 +76,16 @@ public static class OriginalProjection
   ArgumentNullException.ThrowIfNull(expanded);ArgumentNullException.ThrowIfNull(syntax);ArgumentNullException.ThrowIfNull(operation);ArgumentNullException.ThrowIfNull(plan);
   if(!plan.Success||syntax.Declarations is not {} catalog)throw new InvalidDataException("unsafe_or_unprepared_projection");
   if(operation.ControlOrigin is {} controlOrigin)return Control(expanded,syntax,operation,plan,controlOrigin);
-  if(catalog.Cards.Any(c=>c.Kind=="control"))throw new InvalidDataException("unsafe_or_unprepared_projection");
+  var batch=plan.ControlProfile=="batchmode_root"&&catalog.ControlBlocks is [{ScopeId:0} block]
+      ?new ProjectionOmission("control","batchmode_reporting_and_interactive_branch_not_executed",block.Range):null;
+  if(catalog.Cards.Any(c=>c.Kind=="control")&&batch==null)throw new InvalidDataException("unsafe_or_unprepared_projection");
   if(!catalog.Analyses.Any(a=>a.ScopeId==0&&a.Range==operation.Range&&a.Kind==operation.Kind))throw new InvalidDataException("analysis_identity_gap");
   var omissions=catalog.Analyses.Where(a=>a.Range!=operation.Range).Select(a=>new ProjectionOmission(a.Kind,"other_requested_analysis_not_in_this_oracle_job",a.Range))
-   .Concat(ReportingOmissions(plan)).OrderBy(o=>o.Range.Start).ToImmutableArray();
+   .Concat(ReportingOmissions(plan)).Concat(batch==null?[]:[batch]).OrderBy(o=>o.Range.Start).ToImmutableArray();
   var chars=expanded.ToCharArray();var end=0;
   foreach(var omission in omissions){var range=omission.Range;if(range.Start<end||range.Start<0||range.Length<0||range.Start>chars.Length-range.Length)throw new InvalidDataException("invalid_projection_ranges");end=range.Start+range.Length;for(var i=range.Start;i<end;i++)if(chars[i] is not ('\r' or '\n'))chars[i]=' ';}
   var text=new string(chars);var parsed=DeckParser.Parse(text,collectDeclarations:true);
-  if(parsed.Status!="accepted_structure"||parsed.Declarations?.Analyses.Length!=1||parsed.Declarations.Analyses[0].Range!=operation.Range||parsed.Declarations.Analyses[0].Kind!=operation.Kind)throw new InvalidDataException("projected_analysis_identity_gap");
+  if(parsed.Status!="accepted_structure"||parsed.Declarations?.ControlBlocks.IsEmpty!=true||parsed.Declarations.Analyses.Length!=1||parsed.Declarations.Analyses[0].Range!=operation.Range||parsed.Declarations.Analyses[0].Kind!=operation.Kind)throw new InvalidDataException("projected_analysis_identity_gap");
   return new(text,omissions);
  }
  // Preserve physical source cards even when a particular analysis has no use

@@ -9,11 +9,32 @@ internal sealed record CompiledControlProfile(ImmutableArray<ControlDirective> D
 // no command interpreter or opaque command text is forwarded to the engine.
 internal static class RequestedControlPreparation
 {
+ // Qualification uses ngspice -b. In this shape the true branch only
+ // reports, so the native batch driver dispatches the sole root analysis.
+ // Refuse unmodeled active commands and arbitrary dormant program shapes.
+ private static CompiledControlProfile? BatchModeRoot(DeclarationCatalog catalog,ControlBlockSyntax block)
+ {
+  var commands=block.Commands.Where(c=>c.Kind!="comment").ToArray();
+  if(catalog.Analyses is not [{ScopeId:0,Kind:"tran"} analysis]||commands.Length<3||
+     commands[0] is not {Kind:"if",Argument:"$?batchmode",Diagnostic:null}||commands[^1].Kind!="end")return null;
+  var split=Array.FindIndex(commands,c=>c.Kind=="else");
+  if(split<1||!commands[1..split].All(Echo)||!commands[(split+1)..^1].All(c=>
+       Echo(c)||c.Diagnostic==null&&(c.Kind=="analysis"||c is {Kind:"report",Name:"plot"})||
+       c is {Kind:"unsupported",Name:"unset",GrammarRule:"controlUnknown",Argument:"ngdebug"}))
+   return null;
+  return new([new(analysis,null)],
+      [new(0,"control","if","batchmode_reporting_and_interactive_branch_not_executed",block.Range)],
+      "batchmode_root",null);
+
+  static bool Echo(ControlCommandSyntax command)=>command is {Kind:"report",Name:"echo",Diagnostic:null};
+ }
+
  internal static CompiledControlProfile Compile(DeclarationCatalog catalog,IReadOnlyDictionary<string,double> constants){
   CompiledControlProfile Fail(string code,SourceRange? range)=>new([],[],"refused",new(code,range));
   if(catalog.ControlBlocks.IsEmpty)return new(catalog.Analyses.OrderBy(a=>a.Range.Start).Select(a=>new ControlDirective(a,null)).ToImmutableArray(),[],"deck",null);
   if(catalog.ControlBlocks.Length!=1)return Fail("unsupported_multiple_control_blocks",catalog.ControlBlocks[0].Range);
   var block=catalog.ControlBlocks[0];if(block.ScopeId!=0)return Fail("unsupported_control_scope",block.Range);if(block.Diagnostic!=null)return Fail(block.Diagnostic,block.Range);
+  if(BatchModeRoot(catalog,block) is {} batch)return batch;
   var result=ImmutableArray.CreateBuilder<ControlDirective>();var omissions=ImmutableArray.CreateBuilder<OperatingPointOmission>();
   var hasRun=block.Commands.Any(c=>c.Kind=="run");var hasDirect=block.Commands.Any(c=>c.Kind=="analysis");
   if(hasRun&&hasDirect)return Fail("unsupported_control_mixed_run_and_direct",block.Range);

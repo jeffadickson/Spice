@@ -34,7 +34,7 @@ public sealed record RequestedAnalysisPlan(ImmutableArray<RequestedOperation> Op
  public ImmutableArray<OperatingPointOmission> Observations { get; init; } = [];
  /// <summary>Original physical circuit and observable mapping, before temporary initialization clamps.</summary>
  public BridgeResult? CircuitPreparation { get; init; }
- /// <summary>Qualified dispatch profile: deck cards, direct control commands or finite retained-deck run.</summary>
+ /// <summary>Qualified dispatch profile: deck cards, batch-selected root transient, direct control commands or finite retained-deck run.</summary>
  public string ControlProfile { get; init; } = "deck";
  /// <summary>Bounded root scalar exports, available before any control analysis.</summary>
  public ImmutableDictionary<string,double> ControlConstants { get; init; } = ImmutableDictionary<string,double>.Empty;

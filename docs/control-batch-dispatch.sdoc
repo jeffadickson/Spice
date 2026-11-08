@@ -1,0 +1,16 @@
+[DOCUMENT]
+TITLE: Requested batch control dispatch
+
+[REQUIREMENT]
+UID: FRONTEND-CONTROL-BATCHMODE-001
+STATUS: Draft
+TITLE: Select the original root transient in a bounded batch branch
+STATEMENT: >>>
+For one root transient and a single root control block conditioned on the exact ngspice batchmode existence query, the batch profile shall retain the root transient when the true branch only reports through echo. The unselected interactive branch shall admit only echo, plot, parsed analysis commands and unset ngdebug. Other commands, nested branching and commands outside the envelope shall refuse this profile. Qualification shall omit the entire control block from its isolated projection, retain the exact root transient source, and record the omitted reporting and interactive effects.
+<<<
+COMMENT: >>>
+RequestedControlPreparation, OriginalProjection and RequestedBatchControlTests implement and verify this bounded behavior. Both original if-batchmode.cir paths in the pinned ngspice corpus provide execution evidence. Reporting reproduction, interactive execution and transient numerical agreement are separate concerns.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEM-CONTROL-001
