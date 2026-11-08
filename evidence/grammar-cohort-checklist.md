@@ -441,3 +441,75 @@ and 61.19% branch. A current-output sign mutant produced -10 S and was
 caught by the controlled-source stamp test. StrictDoc parsed 52 documents
 with 437 unique IDs and 405 resolved parents. Rust coverage and standalone
 fuzzing were outside this checkpoint.
+
+## Eight original-deck blockers
+
+The follow-up used untouched ngspice corpus files pinned at
+`e8285746c73a8229cf922487c8ccfcf6bea61bce`, the installed ngspice 47+
+KLU build, and a frozen local Rust engine. The unit of blocker count is a
+distinct failed preparation or execution boundary, and the unit of corpus
+count is a path. Byte-identical paths do not increase the blocker count.
+
+| Blocker | Original-deck evidence |
+| --- | --- |
+| Batch guard before a root analysis | The batch branch of `if-batchmode.cir` now dispatches its root transient. Terminal interactive/reporting work is omitted explicitly. |
+| Legacy listing options | The original `tests/filters/lowpass.cir` still refuses on an unsupported directive when only the source fix is enabled. |
+| Disabled distortion source coefficients | The same low-pass deck still refuses source preparation when only the options fix is enabled. Both fixes together yield agreement at OP and all 31 AC frequencies. |
+| Resistor model instance default | The original `instance-defaults.cir` now executes and agrees at OP. Unmodified ngspice independently reports `INFO: ok` for its terminal assertion. |
+| MOS1 model geometry | The frozen originals refused the MOS1 profile. Native instrumentation independently confirms model L/W of 3/9 µm, explicit instance override 5/10 µm and default 100/100 µm. |
+| Nested DC execution | Both unchanged MOS1 originals still refuse the nested sweep with geometry and recovery enabled but nested DC removed. The primary axis is inner, and the comparator validates the independent outer voltage column. |
+| Nonlinear DC recovery | With geometry and nested DC enabled, both MOS1 paths still have three line-search failures each under direct Newton with a 200-iteration limit. The same original points converge with direct-first bounded source continuation. |
+| BJT substrate lowering | The original `probe-i-dev.cir` refused its four-terminal BJT. Substrate lowering alone reaches the entire requested grid, completing 194/201 points. With bounded DC recovery all 201 points execute. |
+
+The parallel BJT path additionally needs bounded terminal `settype power`
+admission. That preserves the solved values and records the metadata as a
+reporting omission. The grouped and bare-DC PWL source forms are covered by
+focused regressions and an independent ngspice fixture. They are not counted
+as an additional original-deck execution.
+
+The integrated 11-path replay completed in 357.95 seconds with valid source
+provenance at `0a78aff758af44c633cfda31f226634c68f70598`. Eight formerly
+blocked original paths executed. Four agreed with default ngspice: two
+MOS1 paths with 306 points each, the original low-pass and the resistor
+default fixture. Both batch RC paths still differ by up to 287.982 µV at
+the output. Both BJT paths execute 201/201 points and still differ by up
+to 109.917 µV at the collector under the default native tolerances. A
+separate tighter native comparison reduced the collector discrepancy to
+5.759 nV. No comparator thresholds were changed. The repository low-pass
+regression also agreed. Both `func_cap.sp` paths remain preparation refusals.
+These are cohort counts, not a refreshed full-corpus total.
+
+Run the existing `scripts/Run-RequestedCorpus.cs` with the exact source
+checkout, pinned corpus, frozen engine, ngspice, `integrated-inventory.json`,
+a fresh output folder and admission budget 720. The raw output is
+`E:/Artifacts/Spice-eight-source-9ce8c80/integrated-replay`.
+Its `summary.json` SHA-256 is
+`28e402d0c15e1f2cd0fe967776973f2d3b9151ebf97252d6140a96427ffe4355`.
+The frozen engine SHA-256 is
+`037406562cd2518633d4d05debceb3c5cf3252f16a52f4b68d9bbdde318b4cce`
+and the ngspice binary SHA-256 is
+`12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f`.
+The ablation summaries are in the sibling E: roots
+`Spice-passive-lowpass-9ce8c80`, `Spice-eight-model-9ce8c80`
+and `Spice-eight-ctrl-9ce8c80`.
+
+Final managed verification passed 684 frontend tests with 26 opt-in skips
+and 471 syntax tests with one exFAT symlink skip. Coverlet reported
+18,558/23,676 lines and 4,937/7,880 branches in the frontend run, and
+6,755/10,289 lines and 2,467/4,120 branches in the syntax run. These
+are separate instrumentation scopes. Rust and ngspice coverage were
+outside the managed measurements. The runs included 512 bounded
+malformed-input cases at replay seed `362,20261031`, 128 resistor
+default cases at seed `20261107`, and the existing seeded properties.
+Focused mutations were detected for the batch guard, disabled distortion
+guard, resistor alias, MOS1 fallback, BJT substrate reference, first
+continuation step and independent secondary-axis comparison. No broad
+mutation score is inferred.
+
+The post-replay grouped PWL and DISTOF interaction was reproduced as
+one failing regression, then verified by the frontend suite. Independent
+ngspice fixture evidence for the combination has 0.9 V at both OP and
+transient time zero. The 11-path totals refer to the pinned replay above.
+The grammar report resolved 100 of 103 generated rules to assessments.
+StrictDoc 0.30.4 parsed 55 documents, 445 unique IDs and 410 parent
+relations. Logs and coverage XML are under the same E: root.
