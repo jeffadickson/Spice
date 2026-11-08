@@ -7,6 +7,39 @@ namespace Simulator.Frontend.Tests;
 public sealed class RequestedOptionConstantTests
 {
     [Theory]
+    [InlineData("DISTOF1 0 DISTOF2 0",true)]
+    [InlineData("DISTOF1 1 DISTOF2 0",false)]
+    [InlineData("DISTOF1 0 DISTOF1 0",false)]
+    [InlineData("DISTOF1 0 90",false)]
+    public void Legacy_listing_and_zero_distortion_leave_op_and_ac_excitation_intact(string distortion,bool accepted)
+    {
+        var text="legacy lowpass\n.options LIST NODE POST TRANS noacct\nV1 in 0 DC 0 AC 1 SIN 0 1 1K 0 0 "+distortion
+            +"\nR1 in out 10k\nR2 out 0 10k\nC1 out 0 1n\n.op\n.ac dec 10 1k 1meg\n.end\n";
+        var syntax=DeckParser.Parse(text,collectDeclarations:true);
+        var plan=RequestedAnalysis.Prepare(syntax);
+        Assert.Equal(accepted,plan.Success);
+        if(!accepted){Assert.Empty(plan.Operations);return;}
+        Assert.Equal(new[]{"op","ac"},plan.Operations.Select(o=>o.Kind));
+        var ac=Assert.IsType<Ac>(Assert.Single(plan.Operations[1].Requests).Analysis);
+        Assert.Equal(1,Assert.Single(ac.SourcePhasors!).Real);
+        Assert.Equal(31,ac.FrequenciesHz.Length);
+        var original=Simulator.RequestedQualification.OriginalProjection.Create(text,syntax,plan.Operations[1],plan);
+        Assert.Contains(distortion,original.Text);
+    }
+
+    [Theory]
+    [InlineData(".options POST=1")]
+    [InlineData(".options LIST RELTOL=1e-2")]
+    [InlineData(".options NODE BYPASS=1")]
+    public void Listing_flags_do_not_admit_unqualified_option_assignments(string options)
+    {
+        var syntax=DeckParser.Parse("legacy\n"+options+"\nV1 in 0 1\nR1 in 0 1k\n.op\n.end\n",collectDeclarations:true);
+        var plan=RequestedAnalysis.Prepare(syntax);
+        Assert.False(plan.Success);
+        Assert.Empty(plan.Operations);
+    }
+
+    [Theory]
     [InlineData("gear","1","backward_euler")]
     [InlineData("trap","1","backward_euler")]
     [InlineData("trap","2","trapezoidal")]

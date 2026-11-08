@@ -27,6 +27,14 @@ internal static class SourceProfileExtraction
             var dcCount=dc.Length+bareDc.Length;
             if(dcCount>1||ac.Length>1||waves.Length+grouped.Length>1||(dcCount>0&&profile.value()!=null))return null;
             var nominal=dc.Length==1?dc[0].value():profile.value();var phasor=ac.Length==1?ac[0].value():null;
+            var distortion=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach(var clause in clauses)
+                if(clause.distortionExcitation() is {} marker &&
+                    (marker.NUMBER().GetText()!="0" || !distortion.Add(marker.identifier().GetText())))
+                    return null;
+            // Admit only disabled distortion markers on an otherwise valid
+            // source; a nonzero coefficient or phase tail stays a refusal.
+            if(distortion.Count>0&&nominal==null&&phasor==null&&waves.Length==0)return null;
             SourceWaveformSyntax? waveform=null;
             if(waves.Length==1){
                 var wave=waves[0];var kind=wave.identifier().GetText().ToLowerInvariant() switch{"pulse"=>SourceWaveformKind.Pulse,"sin"=>SourceWaveformKind.Sine,"pwl"=>SourceWaveformKind.Pwl,"sffm"=>SourceWaveformKind.FrequencyModulated,"am"=>SourceWaveformKind.AmplitudeModulated,_=>SourceWaveformKind.Exponential};
@@ -39,7 +47,7 @@ internal static class SourceProfileExtraction
         }
         catch(ParseCanceledException){return null;}
     }
-    internal static bool IsReserved(string text)=>text.ToLowerInvariant() is "dc" or "ac" or "pulse" or "sin" or "pwl" or "exp" or "sffm" or "am";
+    internal static bool IsReserved(string text)=>text.ToLowerInvariant() is "dc" or "ac" or "pulse" or "sin" or "pwl" or "exp" or "sffm" or "am" or "distof1" or "distof2";
     // Shared bounded adapter for generated semantic entries. Recognition remains
     // in ANTLR; no source text is split or re-tokenized here.
     internal static SpiceParser? CreateParser(IEnumerable<ParserRuleContext> parameters)

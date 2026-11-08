@@ -12,8 +12,8 @@ passive: PASSIVE_NAME twoNodes parameter+;
 source: SOURCE_NAME twoNodes parameter*;
 // Bounded semantic entry over the existing source-tail tokens. The general
 // source rule continues accepting other syntactically valid source families.
-sourceProfile: sourceClause+ EOF | {TokenStream.LT(1).Text.ToLowerInvariant() is not ("dc" or "ac" or "pulse" or "sin" or "pwl" or "exp" or "sffm" or "am")}? value sourceClause* EOF;
-sourceClause: barePwlDc | dcExcitation | acExcitation | groupedPwlExcitation | waveformExcitation;
+sourceProfile: sourceClause+ EOF | {TokenStream.LT(1).Text.ToLowerInvariant() is not ("dc" or "ac" or "pulse" or "sin" or "pwl" or "exp" or "sffm" or "am" or "distof1" or "distof2")}? value sourceClause* EOF;
+sourceClause: barePwlDc | dcExcitation | acExcitation | groupedPwlExcitation | waveformExcitation | distortionExcitation;
 // Native accepts an explicit zero DC value spelled as bare DC before PWL.
 barePwlDc: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase)
     && string.Equals(TokenStream.LT(2)?.Text,"pwl",StringComparison.OrdinalIgnoreCase)}? identifier;
@@ -25,9 +25,11 @@ pwlPair: LPAREN waveformScalar COMMA? waveformScalar RPAREN;
 waveformExcitation: {TokenStream.LT(1).Text.ToLowerInvariant() is "pulse" or "sin" or "pwl" or "exp" or "sffm" or "am"}? identifier
     (LPAREN waveformValues RPAREN | waveformValues);
 waveformValues: waveformScalar (COMMA? waveformScalar)*;
-waveformScalar: {TokenStream.LT(1).Text.ToLowerInvariant() is not ("dc" or "ac")}? value;
+waveformScalar: {TokenStream.LT(1).Text.ToLowerInvariant() is not ("dc" or "ac" or "distof1" or "distof2")}? value;
 dcExcitation: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase) && !string.Equals(TokenStream.LT(2)?.Text,"pwl",StringComparison.OrdinalIgnoreCase)}? identifier EQUAL? value;
 acExcitation: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier value value?;
+// Distortion-only source coefficients are separate from ordinary waveforms.
+distortionExcitation: {TokenStream.LT(1).Text.ToLowerInvariant() is "distof1" or "distof2"}? identifier NUMBER;
 // Typed linear E/G tail; TABLE/POLY/behavioral headers remain outside this entry.
 linearControlProfile: twoNodes value EOF;
 // Bounded generated semantic entries over existing card tokens.

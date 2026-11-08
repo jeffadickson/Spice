@@ -35,7 +35,9 @@ internal sealed class DeclarationExtraction
     private static bool IsReportingOption(SpiceParser.ParameterContext parameter)
     {
         if (parameter.value()?.identifier() != null)
-            return parameter.GetText().ToLowerInvariant() is "acct" or "noacct" or "noinit";
+            // LIST and NODE print circuit summaries. Bare POST and TRANS are
+            // inert in native-default ngspice; assigned forms stay unsupported.
+            return parameter.GetText().ToLowerInvariant() is "acct" or "noacct" or "noinit" or "list" or "node" or "post" or "trans";
         var assignment=parameter.assignment();
         var value=assignment?.value()?.GetText();
         return assignment?.referenceName()?.GetText().ToLowerInvariant() switch
