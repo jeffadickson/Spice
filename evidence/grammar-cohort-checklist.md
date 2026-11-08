@@ -513,3 +513,37 @@ transient time zero. The 11-path totals refer to the pinned replay above.
 The grammar report resolved 100 of 103 generated rules to assessments.
 StrictDoc 0.30.4 parsed 55 documents, 445 unique IDs and 410 parent
 relations. Logs and coverage XML are under the same E: root.
+
+## MOS1 characterization with a floating gate supply
+
+The `compat/ngspice/mos1-floating.cir` fixture sweeps drain voltage
+inside a gate-to-source sweep with the source biased at 0.2 V. It uses
+model L/W defaults and the existing bounded nonlinear DC policy. Native
+RAW supplies both terminal voltages. The comparator subtracts them to
+check the outer grid independently and refuses missing or non-voltage
+terminal columns. The grounded-axis comparison remains covered.
+The `compat/ngspice/legacy-zero.cir` fixture uses reporting options and
+decimal/scientific spellings of disabled distortion coefficients.
+The regression also refuses a nonzero coefficient that would underflow
+to zero if converted first.
+
+Both new regressions failed before the changes. The ngspice 47+ replay
+then agreed on all mapped values across 49 MOS1 DC points and 31 legacy
+AC points. It ran against base `1691f131cf4309f9f8319fd0dd1c8b0ca773d55e`
+plus the working changes retained by the runner's source hash snapshot.
+The valid replay summary SHA-256 is
+`28c1cede213f303bf77fc0a7e36de20b56e5cd214a79a7df76ac072f6f1255f3`.
+Run `scripts/Run-RequestedCorpus.cs` with the current checkout, pinned
+corpus, existing engine and ngspice, `inventory.json`, a fresh output
+directory and 180 seconds. The inventory, native RAW and logs are under
+`E:/Artifacts/Spice-characterization-1691f13`.
+
+Frontend verification passed 671 tests with 37 opt-in skips. Syntax passed
+471 tests with one exFAT symlink skip and included the 512 malformed-input
+cases at replay seed `362,20261031`. Frontend Coverlet measured 18,401
+of 23,686 managed lines and 4,900 of 7,898 branches. Native coverage is
+outside that scope. StrictDoc parsed 55 documents with 445 IDs and 410
+resolved parent relations.
+A disposable comparator mutant that omitted the negative terminal voltage
+failed the floating-axis test while the grounded-axis test still passed.
+The replayed changes are in `50e04b1` and `28ca83d`.
