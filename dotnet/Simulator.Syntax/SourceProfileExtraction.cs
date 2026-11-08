@@ -34,7 +34,7 @@ internal static class SourceProfileExtraction
                     return null;
             // Admit only disabled distortion markers on an otherwise valid
             // source; a nonzero coefficient or phase tail stays a refusal.
-            if(distortion.Count>0&&nominal==null&&phasor==null&&waves.Length==0)return null;
+            if(distortion.Count>0&&nominal==null&&phasor==null&&waves.Length+grouped.Length==0)return null;
             SourceWaveformSyntax? waveform=null;
             if(waves.Length==1){
                 var wave=waves[0];var kind=wave.identifier().GetText().ToLowerInvariant() switch{"pulse"=>SourceWaveformKind.Pulse,"sin"=>SourceWaveformKind.Sine,"pwl"=>SourceWaveformKind.Pwl,"sffm"=>SourceWaveformKind.FrequencyModulated,"am"=>SourceWaveformKind.AmplitudeModulated,_=>SourceWaveformKind.Exponential};

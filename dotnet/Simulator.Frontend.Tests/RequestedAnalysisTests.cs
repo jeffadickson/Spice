@@ -152,6 +152,7 @@ public sealed class RequestedAnalysisTests
  [InlineData("DC PWL(0 .9 2m 2)",0)]
  [InlineData("DC PWL((0 .9) (2m 2))",0)]
  [InlineData("PWL((0 .9) (2m 2))",.9)]
+ [InlineData("PWL((0 .9) (2m 2)) DISTOF1 0",.9)]
  public void Grouped_pwl_preserves_pairs_and_bare_dc_preserves_explicit_zero(string tail,double dc)
  {
   var syntax=DeckParser.Parse($"grouped\nV1 in 0 {tail}\nR1 in 0 1k\n.op\n.tran 10u 2m\n.end\n",collectDeclarations:true);
