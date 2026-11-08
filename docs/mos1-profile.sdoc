@@ -6,10 +6,21 @@ UID: SEMI-MOS1-CURRENT-001
 STATUS: Draft
 TITLE: Explicit bounded Shichman-Hodges channel
 STATEMENT: >>>
-The native engine shall evaluate MOS LEVEL=1 cutoff, linear and saturation drain-to-source current with source/drain reversal, NMOS/PMOS polarity, threshold, effective beta, GAMMA/PHI body effect and LAMBDA channel-length modulation. Effective parameters and all terminals shall be validated. With nonzero GAMMA, positive effective body bias shall explicitly refuse until the forward continuation is qualified. The generated model shall require explicit positive L and W, and shall refuse unsupported model levels, parameters, temperature and geometry rather than silently omit their effects.
+The native engine shall evaluate MOS LEVEL=1 cutoff, linear and saturation drain-to-source current with source/drain reversal, NMOS/PMOS polarity, threshold, effective beta, GAMMA/PHI body effect and LAMBDA channel-length modulation. Effective parameters and all terminals shall be validated. With nonzero GAMMA, positive effective body bias shall explicitly refuse until the forward continuation is qualified. The generated model shall require positive effective L and W as resolved by SEMI-MOS1-GEOMETRY-001, and shall refuse unsupported model levels, parameters, temperature and geometry rather than silently omit their effects.
 <<<
 COMMENT: >>>
 Implementation: src/mos1.rs, circuit/compile/Newton, Mos1Preparation. Verification: tests/mos1_channel.rs analytical currents, modes, polarity, malformed values and seeded properties; Mos1Tests and actual typed-client Mos1NativeOracleIntegration. This is a bounded model profile, not general LEVEL=1 compatibility.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-MOS1-GEOMETRY-001
+STATUS: Draft
+TITLE: Independent level-one MOS geometry defaults
+STATEMENT: >>>
+For bounded LEVEL=1 NMOS and PMOS, the frontend shall resolve L and W independently. An explicit instance dimension overrides the model dimension, which overrides the default 100 micrometres. Named values shall evaluate in their declaring scopes. The effective geometry shall feed channel strength and the supported overlap capacitors. Duplicates within one card and nonpositive effective dimensions shall refuse circuit preparation.
+<<<
+COMMENT: >>>
+Implementation: Mos1Preparation. Verification: Mos1Tests.Geometry_defaults_resolve_independently and Invalid_instance_geometry_refuses_atomically. Instrumented ngspice-47+ OP on the original MOS1_out model and instances returns (L,W) of (3,9), (5,10), and (100,100) micrometres respectively. This evidence measures parameter precedence separately from requested nested-DC analysis and waveform comparison.
 <<<
 
 [REQUIREMENT]

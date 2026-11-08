@@ -24,28 +24,32 @@ internal sealed record PreparedMos1(Mos1Model Channel,SpiceDiodeModel DrainBody,
 internal static class Mos1Preparation
 {
     private static readonly HashSet<string> Allowed=new(StringComparer.OrdinalIgnoreCase)
-      {"LEVEL","VTO","KP","GAMMA","PHI","LAMBDA","IS","CBD","CBS","PB","MJ","FC","CGSO","CGDO","CGBO","TNOM","TOX"};
+      {"LEVEL","VTO","KP","GAMMA","PHI","LAMBDA","IS","CBD","CBS","PB","MJ","FC","CGSO","CGDO","CGBO","TNOM","TOX","L","W"};
     internal static bool AssignmentsAreSupported(BoundInstance call)
     {
         if(call.Status!=BindingStatus.Bound||call.Target is not {} model||model.ModelFamily is not ("nmos" or "pmos")||model.HasOpaqueModelTerms||call.Ports.Length!=4)return false;
         var names=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         if(!model.Parameters.All(p=>p.Name!=null&&Allowed.Contains(p.Name)&&names.Add(p.Name)))return false;
         names.Clear();
-        return call.Header.Parameters.Length==2&&call.Header.Parameters.All(p=>p.Name is {} name&&(name.Equals("L",StringComparison.OrdinalIgnoreCase)||name.Equals("W",StringComparison.OrdinalIgnoreCase))&&names.Add(name));
+        return call.Header.Parameters.All(p=>p.Name is {} name&&(name.Equals("L",StringComparison.OrdinalIgnoreCase)||name.Equals("W",StringComparison.OrdinalIgnoreCase))&&names.Add(name));
     }
     internal static bool TryPrepare(DeclarationCatalog catalog,ParameterEvaluation environment,BoundInstance call,out PreparedMos1? profile,out BridgeDiagnostic? diagnostic)
     {
         profile=null;diagnostic=null;
         if(!AssignmentsAreSupported(call)){diagnostic=new("unsupported_mos1_profile",call.Header.Range);return false;}
         var model=call.Target!;var values=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase);
-        foreach(var p in model.Parameters.Concat(call.Header.Parameters))
+        // Dimensions are resolved separately, with instance geometry overriding
+        // model geometry. Each expression is evaluated in its declaring scope.
+        foreach(var (p,scope) in model.Parameters.Select(p=>(p,model.ScopeId))
+            .Concat(call.Header.Parameters.Select(p=>(p,call.Header.ScopeId))))
         {
-            var v=ParameterEvaluator.EvaluateValue(catalog,environment,p.Value,model.Parameters.Contains(p)?model.ScopeId:call.Header.ScopeId);
+            var v=ParameterEvaluator.EvaluateValue(catalog,environment,p.Value,scope);
             if(v.Value is not {} scalar){diagnostic=new(v.Diagnostics[0].Code,v.Diagnostics[0].Range);return false;}
-            values.Add(p.Name!,scalar);
+            values[p.Name!]=scalar;
         }
         var pmos=model.ModelFamily=="pmos";
-        var l=V("L",0);var w=V("W",0);var kp=V("KP",2e-5);var gamma=V("GAMMA",0);var phi=V("PHI",.6);var lambda=V("LAMBDA",0);
+        // ngspice's circuit defaults are 100 micrometres for each dimension.
+        var l=V("L",1e-4);var w=V("W",1e-4);var kp=V("KP",2e-5);var gamma=V("GAMMA",0);var phi=V("PHI",.6);var lambda=V("LAMBDA",0);
         var isat=V("IS",1e-14);var cbd=V("CBD",0);var cbs=V("CBS",0);var pb=V("PB",.8);var mj=V("MJ",.5);var fc=V("FC",.5);
         var cgso=V("CGSO",0);var cgdo=V("CGDO",0);var cgbo=V("CGBO",0);
         var beta=kp*w/l;var cgs=cgso*w;var cgd=cgdo*w;var cgb=cgbo*l;

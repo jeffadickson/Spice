@@ -19,6 +19,26 @@ public sealed class Mos1Tests {
   var sensor=result.Request.Circuit.Elements.OfType<Voltage>().Single(v=>v.Id==result.Origins.Single(o=>o.LocalName=="M1").WireId);
   Assert.Equal(sensor.N,channel.P);Assert.Equal(family=="PMOS"?sensor.N:0,body.P);Assert.Equal(family=="PMOS"?0:sensor.N,body.N);
  }
+ [Theory]
+ [InlineData("", "", 2e-5)]
+ [InlineData("", "L=50u", 4e-5)]
+ [InlineData("", "W=50u", 1e-5)]
+ [InlineData("L=3u W=9u", "", 6e-5)]
+ [InlineData("L=3u W=9u", "L=5u W=10u", 4e-5)]
+ [InlineData("L=3u W=9u", "W=6u", 4e-5)]
+ public void Geometry_defaults_resolve_independently(string modelTerms,string instanceTerms,double beta) {
+  var deck=$"MOS geometry\nVd d 0 1\nVg g 0 1.5\nM1 d g 0 0 mm {instanceTerms}\n.model mm NMOS(LEVEL=1 {modelTerms})\n.end\n";
+  var result=OperatingPointSelection.Select(DeckParser.Parse(deck,collectDeclarations:true)).Prepared;
+  Assert.True(result.Success,string.Join(',',result.Diagnostics.Select(d=>d.Code)));
+  var channel=Assert.Single(result.Request!.Circuit.Elements.OfType<Mos1Channel>());
+  Assert.Equal(beta,channel.Model.BetaAmpsPerVoltSquared,14);
+ }
+ [Theory][InlineData("L=0")][InlineData("W=-1u")][InlineData("L=2u L=3u")][InlineData("M=2")]
+ public void Invalid_instance_geometry_refuses_atomically(string terms) {
+  var deck=$"MOS geometry\nVd d 0 1\nVg g 0 1.5\nM1 d g 0 0 mm {terms}\n.model mm NMOS(LEVEL=1 L=3u W=9u)\n.end\n";
+  var result=OperatingPointSelection.Select(DeckParser.Parse(deck,collectDeclarations:true)).Prepared;
+  Assert.False(result.Success);Assert.Null(result.Request);Assert.Empty(result.Origins);
+ }
  [Theory][InlineData("TOX=10n")][InlineData("LEVEL=2")][InlineData("UO=600")][InlineData("KP=0")][InlineData("VTO=.7 VTO=.8")][InlineData("MJ=1")][InlineData("CBD=-1p")][InlineData("TNOM=28")][InlineData("KP=1e308")]
  public void Unsupported_profile_refuses_atomically(string terms) {
   var result=OperatingPointSelection.Select(DeckParser.Parse("MOS\nVd d 0 1\nVg g 0 1.5\nM1 d g 0 0 mm L=1u W=10u\n.model mm NMOS("+terms+")\n.end\n",collectDeclarations:true)).Prepared;
