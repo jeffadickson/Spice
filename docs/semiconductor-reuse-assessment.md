@@ -186,3 +186,63 @@ open. The resistance array already matched 51/51 rows on an aligned grid.
 The RC deck is an RSpice smoke test and our aligned-grid source-current
 disagreement remains open.
 [RSpice validation runner](https://github.com/JaimeHW/RSpice/tree/29c28a022625fd7cc2c56ead1cce2d3066663074/tools/rspice-conformance/src/suites/ngspice).
+
+### Observed RSpice baseline
+
+A Windows x64 debug build of RSpice at
+`29c28a022625fd7cc2c56ead1cce2d3066663074` ran its ngspice case runner
+on all 113 shared decks. The build used Rust 1.99.1 MSVC and
+`cargo build --locked -j 4 -p rspice-conformance --no-default-features --features circuit-suites --bin rspice-ngspice-case-runner`.
+This differs from the upstream release/nightly configuration. Each case had
+a 30-second soft limit and a 33-second process watchdog, with at most three
+cases active. The shared RSpice run used its checked-in references.
+Our replay used live ngspice-47+ with the existing requested-analysis
+comparator, frontend compiled at `543ed67` and the frozen engine from the
+prior replay. Checkout `d2faf1e` added only the standalone probe and
+documentation after that frontend build. The per-deck join verified all 113
+root input hashes match. Reference observables, tolerances, time grids,
+control effects, and acceptance criteria differ across the two runners.
+
+| Observed result | Count |
+| --- | ---: |
+| RSpice reference contracts passed | 67 |
+| RSpice scripted-control contracts passed | 23 |
+| RSpice smoke contracts passed | 18 |
+| RSpice reference-unsolvable contract satisfied | 1 |
+| RSpice numerical mismatches | 2 |
+| RSpice solver deadline or process watchdog | 2 |
+| Our requested analyses executed | 19 |
+| Our requested analyses agreed | 17 |
+
+Of the 67 RSpice reference passes, our comparator agreed on nine, disagreed
+on one, and refused preparation on 57. The 58 remaining reference gaps
+include 15 BSIM3 SOI decks, seven MESA decks, six pole-zero decks, five
+transmission-line decks and five VBIC decks. Smoke and scripted-control
+results are recorded separately. The four RSpice failures were
+`hfet/inverter.cir` and `transmission/txl2_3_line.cir` (mismatches),
+`bsim3soidd/ring51.cir` (solver deadline), and
+`bsim3soipd/ring51.cir` (watchdog).
+
+The shared inventory contains no bulk BSIM3 3.3.0 deck. A separate,
+246-point ngspice nested DC fixture with an explicit
+`.print dc v(22) i(vds)` passed RSpice's live-reference comparison for those
+observables. The same input bytes on our simulator reached
+`bsim3_kernel_unavailable`. RSpice also passed against a saved two-observable
+table for the original reporting-free variant and failed a negative control
+whose reference drain-source supply current was replaced with 1 A. That
+failure confirms the saved comparison used the current column. The
+live-reference run needed the print directive because a batch run without
+it emitted no comparable table. RSpice's Windows filename check also
+required a copy of the same verified console ngspice binary named
+`ngspice_con.exe`. These runs establish a bulk BSIM3 DC gap. AC and transient
+BSIM3 parity remain unmeasured.
+
+Raw results, `verified-matrix.csv`, `observed-gaps.csv`, both bulk runs,
+and the local replay manifest are under
+`E:/Artifacts/Spice-RSpice-parity-20261108T054942Z`. The matrix SHA-256 is
+`8ffcd24188296f9c2834b0253ed1eef6af3357841001a50d0333c11b713da51a`.
+The 91-row gap file links observed reference, smoke and scripted-control
+gaps to source leads. Its SHA-256 is
+`1aa4b97e0a2bcd29012d0e4a2f64077ad6a8a8907204f4a6c75334b49c812956`.
+A family-level source lead is a starting point for implementation. There
+were no product code changes or new coverage measurements in this baseline.
