@@ -86,7 +86,11 @@ public static class ResistorModelLowering
         var values=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase);
         foreach(var parameter in model.Parameters)
         {
-            if(parameter.Name is not {} name||!new[]{"r","rsh","short","narrow"}.Contains(name,StringComparer.OrdinalIgnoreCase)||values.ContainsKey(name))return Fail("unsupported_resistor_model_parameter",parameter.Range);
+            var name=parameter.Name?.ToLowerInvariant();
+            // ngspice can apply the settable resistance instance parameter from
+            // a model card. The constant-only profile uses the same scalar slot.
+            if(name=="resistance")name="r";
+            if(name is not ("r" or "rsh" or "short" or "narrow")||values.ContainsKey(name))return Fail("unsupported_resistor_model_parameter",parameter.Range);
             var value=ParameterEvaluator.EvaluateValue(catalog,environment,parameter.Value,model.ScopeId);
             if(value.Value is not {} number)return Fail(value.Diagnostics[0].Code,value.Diagnostics[0].Range);
             values.Add(name,number);

@@ -13,6 +13,7 @@ public sealed class ResistorModelTests
     }
     [Theory]
     [InlineData("R1 a 0 rm",".model rm R(R=500)",500)]
+    [InlineData("R1 a 0 rm",".model rm R(RESISTANCE=2k)",2000)]
     [InlineData("R1 a 0 rm L=12u W=2u",".model rm R(RSH=100)",600)]
     [InlineData("R1 a 0 rm L=14u W=2u",".model rm R(RSH=100 SHORT=1u NARROW=.5u)",1200)]
     [InlineData("R1 a 0 rm L=10u W=2u",".model rm R(RSH=100 SHORT=-1u NARROW=-1u)",300)]
@@ -32,6 +33,8 @@ public sealed class ResistorModelTests
     [InlineData("R1 a 0 rm",".model rm R(R=500 TC1=0)")]
     [InlineData("R1 a 0 rm",".model rm R(R=500 RSH=100)")]
     [InlineData("R1 a 0 rm",".model rm R(R=500 R=600)")]
+    [InlineData("R1 a 0 rm",".model rm R(R=500 RESISTANCE=2k)")]
+    [InlineData("R1 a 0 rm",".model rm R(RESISTANCE=-2k)")]
     [InlineData("R1 a 0 rm",".model rm R(R={missing})")]
     [InlineData("R1 a 0 rm",".model rm R(R=500)\n.model rm R(R=600)")]
     [InlineData("R1 a 0 rm L=1u W=1u",".model rm R(R=500)")]
@@ -72,6 +75,17 @@ public sealed class ResistorModelTests
         var primitive=Assert.Single(catalog.Primitives);var geometry=primitive.ResistorModel!.Parameters;
         Assert.Equal(3,geometry[0].Range.Line);Assert.Equal("12u",geometry[0].Value.Text);Assert.Equal(5,geometry[0].Value.Range.Column);
         Assert.True(ResistorModelLowering.Prepare(catalog,primitive,ParameterEvaluator.Evaluate(catalog)).Success);
+    }
+    [Fact]
+    public void Resistance_instance_defaults_match_constant_models()
+    {
+        var config=Config.QuickThrowOnFailure.WithMaxTest(128).WithReplay(FSharpOption<Replay>.Some(new(new Rnd(20261107UL),null)));
+        Check.One(config,Prop.ForAll<byte>(value=>
+        {
+            var ohms=value+1;
+            var result=Prepare(model:$".model rm R(RESISTANCE={ohms})");
+            return result.Success&&result.Resistor is {Profile:ResistorProfile.ConstantModel} resistor&&resistor.Ohms==ohms;
+        }));
     }
     [Fact]
     public void Sheet_geometry_property_campaign()
