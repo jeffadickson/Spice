@@ -246,3 +246,54 @@ gaps to source leads. Its SHA-256 is
 `1aa4b97e0a2bcd29012d0e4a2f64077ad6a8a8907204f4a6c75334b49c812956`.
 A family-level source lead is a starting point for implementation. There
 were no product code changes or new coverage measurements in this baseline.
+
+### Opt-in bulk BSIM3 3.3.0 DC execution
+
+The Windows x64 reference engine accepts the bounded bulk model on its
+normal operating-point and DC sweep paths. The frontend binds level 8 or
+49 with explicit version 3.3.0, TOX, NCH, NSUB, VTH0, W and L. The optional
+PD, PS, AD and AS default to zero. Geometry uses SI units, and NCH/NSUB
+use the SPICE card convention of inverse cubic centimetres. The provider
+evaluates at 27 Celsius with the generated module's model defaults and
+1 pS junction Gmin. The D/G/S/B currents and centered numerical current
+derivatives are stamped directly into the Rust Newton system. Four-terminal
+DC KCL and power checks include the device currents. Other model terms,
+uncollapsed internal unknowns, AC, and transient are outside this slice.
+
+For the existing development fixture, verify the OSDI module's SHA-256
+recorded above. Using a Visual Studio developer shell from a checked
+artifact directory, compile the tracked adapter with
+`cl /nologo /W4 /O2 /LD /I <pinned-ngspice-osdi-headers> <checkout>/scripts/Bsim330Host.c /Fe:host.dll`.
+Set `SPICE_BSIM330_HOST` to the absolute adapter DLL path and
+`SPICE_BSIM330_MODEL` to the absolute verified OSDI module path before starting
+the normal frontend or engine. Both files are executable native code and
+must come from trusted local builds. Deck input cannot choose either path.
+The generated external module and the ngspice OSDI headers are governed by
+their respective licenses. The repository tracks the adapter and ships
+neither external file. This remains an opt-in provider with an external
+model dependency. Non-Windows systems and installations without the native
+files cannot evaluate this model.
+
+Verification artifacts are under
+`E:/Artifacts/Spice-bsim3-20261108T112514Z`. The final
+`final-sweep/summary.json` verified the same 246-point nested fixture used
+in the RSpice live run with SHA-256
+`466b3114ebd4cbf4e4a467ad76df2fe900a6b7b14954a654bc24d666dbcf9869`.
+All 11 mapped observables agreed at every point with ngspice-47+.
+The maximum errors on v(22) and i(vds) were 1.658 microvolts and
+1.658 nanoamperes. A complementary PMOS operating point through the Rust
+CLI matched ngspice drain supply current within 0.705 picoamperes.
+The shared 113-deck replay still had 19 executed and 17 agreed. The bulk
+fixture is additional and outside that inventory.
+
+Run the targeted Rust checks with
+`cargo test --locked --test bsim330 -- --include-ignored` after configuring
+the provider. Both tests passed, including 64 bias cases with Proptest seed
+330. A C adapter mutant that inverted drain current was killed by the
+native stamp test. The public CLI rejected absent host configuration and
+unsupported AC. The frontend suite had 698 passed and 37 opt-in skips.
+Coverlet reported 94.32% line and 83.68% branch coverage for
+Simulator.Frontend. Rust, C, and generated module coverage were not measured.
+StrictDoc 0.30.4 parsed 55 documents, 454 unique IDs and 412 resolved parents.
+The native host used for the replay had SHA-256
+`e2daae9246a498ef3a753e9364356c01cd8721fd5c49d9e6ec4160ef13f23e56`.

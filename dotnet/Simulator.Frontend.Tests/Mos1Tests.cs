@@ -4,8 +4,8 @@ using Xunit;
 namespace Simulator.Frontend.Tests;
 public sealed class Mos1Tests {
  [Theory]
- [InlineData("NMOS", "8", "3.3.0", "bsim3_kernel_unavailable")]
- [InlineData("PMOS", "49", "3.3.0", "bsim3_kernel_unavailable")]
+ [InlineData("NMOS", "8", "3.3.0", "unsupported_bsim330_parameters")]
+ [InlineData("PMOS", "49", "3.3.0", "unsupported_bsim330_parameters")]
  [InlineData("NMOS", "49", "3.2.4", "unsupported_bsim3_version")]
  public void Bsim3_version_is_retained_and_never_lowered_as_mos1(string family,string level,string version,string diagnostic)
  {
@@ -17,6 +17,13 @@ public sealed class Mos1Tests {
   var plan=RequestedAnalysis.Prepare(syntax);
   Assert.Empty(plan.Operations);
   Assert.Contains(plan.Diagnostics,d=>d.Code==diagnostic);
+ }
+ [Fact]
+ public void Exact_bsim330_geometry_and_model_bind_to_separate_wire_type()
+ {
+  const string deck="BSIM card\nVd d 0 .8\nVg g 0 .8\nM1 d g 0 0 mm L=.35u W=1u PD=1.5u PS=1.5u AD=1.5p AS=1.5p\n.model mm NMOS(LEVEL=49 VERSION=3.3.0 TOX=3.5n NCH=2.4e17 NSUB=5e16 VTH0=.15)\n.op\n.end\n";
+  var plan=RequestedAnalysis.Prepare(DeckParser.Parse(deck,collectDeclarations:true));
+  Assert.Single(plan.Operations);
  }
  [Theory]
  [InlineData("3..0")]

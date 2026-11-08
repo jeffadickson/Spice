@@ -254,7 +254,7 @@ public static partial class RequestedAnalysis
  private static Analysis DcSweepAnalysis(SimulationRequest request)
  {
      var elements=request.Circuit.Elements;
-     return elements.Any(e=>e is Diode or DiodeWithCapacitance or SpiceDiode or Mos1Channel)
+     return elements.Any(e=>e is Diode or DiodeWithCapacitance or SpiceDiode or Mos1Channel or Bsim330)
          &&!elements.Any(e=>e is PspiceSwitch)
          ? new OperatingPointNewton(new NewtonOptions(MaxIterations:200,Continuation:new(InitialStep:1)))
          : request.Analysis;

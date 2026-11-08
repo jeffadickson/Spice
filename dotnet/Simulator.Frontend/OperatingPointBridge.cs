@@ -304,6 +304,22 @@ public static class OperatingPointBridge
                     if(!names.Add(call.Header.Name))throw new BridgeFailure("duplicate_element",call.Header.Range);
                     if(selected&&call.Header.Family=="M")
                     {
+                        if(Mos1Preparation.Bsim3Diagnostic(call)=="bsim3_kernel_unavailable")
+                        {
+                            if(!Bsim330Preparation.TryBind(catalog,environment,call,out var nativeModel))
+                                throw new BridgeFailure("unsupported_bsim330_parameters",call.Header.Range);
+                            var drain=Node(call.Ports[0].Actual.Text);
+                            var gate=Node(call.Ports[1].Actual.Text);
+                            var sourceNode=Node(call.Ports[2].Actual.Text);
+                            var bulk=Node(call.Ports[3].Actual.Text);
+                            var nativeId="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            var inner=PrivateNode();
+                            if(elements.Count+2>limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);
+                            elements.Add(new Voltage(nativeId,drain,inner,0));
+                            elements.Add(new Bsim330(nativeId+"_native",inner,sourceNode,gate,bulk,nativeModel!));
+                            origins.Add(new(nativeId,call.Header.Name,path,call.Header.Range));
+                            continue;
+                        }
                         if(!Mos1Preparation.TryPrepare(catalog,environment,call,out var mos,out var error))throw new BridgeFailure(error!.Code,error.Range);
                         var d=Node(call.Ports[0].Actual.Text);var g=Node(call.Ports[1].Actual.Text);var source=Node(call.Ports[2].Actual.Text);var b=Node(call.Ports[3].Actual.Text);
                         var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);

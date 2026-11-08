@@ -27,7 +27,31 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
     for element in &plan.circuit.elements {
         let (p, n) = element.terminals();
         let v = voltage(p) - voltage(n);
+        if let Element::Bsim330 {
+            p,
+            n,
+            gate,
+            bulk,
+            model,
+            ..
+        } = element
+        {
+            let bias = [*p, *gate, *n, *bulk].map(voltage);
+            let absorbed_w: f64 = bias
+                .into_iter()
+                .zip(model.evaluate(bias)?)
+                .map(|(v, i)| v * i)
+                .sum();
+            sum += absorbed_w;
+            absolute += absorbed_w.abs();
+            devices.push(DevicePower {
+                id: element.id().into(),
+                absorbed_w,
+            });
+            continue;
+        }
         let current = match element {
+            Element::Bsim330 { .. } => unreachable!("four-terminal power handled above"),
             Element::Mos1Channel {
                 p,
                 n,

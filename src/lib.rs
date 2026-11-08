@@ -8,6 +8,7 @@ pub mod assertion;
 pub mod audit;
 pub mod backend;
 pub mod backend_faer;
+pub mod bsim330;
 pub mod campaign;
 pub mod charge;
 pub mod circuit;

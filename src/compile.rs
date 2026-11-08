@@ -61,6 +61,7 @@ pub struct CompiledCircuit {
     pub(crate) diodes: Vec<CompiledDiode>,
     pub(crate) switches: Vec<CompiledSwitch>,
     pub(crate) mos1: Vec<CompiledMos1>,
+    pub(crate) bsim330: Vec<([NodeId; 4], crate::bsim330::Model)>,
 }
 impl CompiledCircuit {
     pub fn circuit(&self) -> &Circuit {
@@ -87,7 +88,20 @@ impl CompiledCircuit {
     }
     /// Nonlinear device presence selects Newton operating-point solving.
     pub fn has_nonlinear_devices(&self) -> bool {
-        !self.diodes.is_empty() || !self.switches.is_empty() || !self.mos1.is_empty()
+        !self.diodes.is_empty()
+            || !self.switches.is_empty()
+            || !self.mos1.is_empty()
+            || !self.bsim330.is_empty()
+    }
+    /// The current native BSIM3 provider supports DC trials only.
+    pub(crate) fn require_dynamic_models(&self) -> SimResult<()> {
+        if !self.bsim330.is_empty() {
+            return Err(SimError::new(
+                crate::error::ErrorCode::Unsupported,
+                "BSIM3 3.3.0 AC/transient stamps are not qualified",
+            ));
+        }
+        Ok(())
     }
     pub fn branch_index(&self, id: &str) -> Option<usize> {
         self.branch_ids
@@ -129,8 +143,19 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     let mut diodes = Vec::new();
     let mut switches = Vec::new();
     let mut mos1 = Vec::new();
+    let mut bsim330 = Vec::new();
     for e in &circuit.elements {
         match e {
+            Element::Bsim330 {
+                p,
+                n,
+                gate,
+                bulk,
+                model,
+                ..
+            } => {
+                bsim330.push(([*p, *gate, *n, *bulk], *model));
+            }
             Element::Mos1Channel {
                 id,
                 p,
@@ -344,5 +369,6 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
         diodes,
         switches,
         mos1,
+        bsim330,
     })
 }

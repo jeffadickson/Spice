@@ -191,6 +191,8 @@ fn dc_currents(circuit: &Circuit, state: &[f64]) -> SimResult<Vec<f64>> {
                     *model,
                     [*p, *gate, *n, *bulk].map(|node| voltage(state, node)),
                 )?,
+                // This scalar path is supplemented by four terminal currents below.
+                Element::Bsim330 { .. } => 0.,
                 Element::Resistor { ohms, .. } => v / ohms,
                 Element::JunctionStorage { .. } => 0.,
                 Element::SpiceDiode { model, .. } => {
@@ -232,10 +234,27 @@ fn kcl_checks(
     currents: &[f64],
     options: AuditOptions,
     gmin: Option<f64>,
-) -> Vec<Check> {
+) -> SimResult<Vec<Check>> {
     let mut sums = vec![0.; circuit.nodes.len()];
     let mut scales = sums.clone();
     for (element, current) in circuit.elements.iter().zip(currents) {
+        if let Element::Bsim330 {
+            p,
+            n,
+            gate,
+            bulk,
+            model,
+            ..
+        } = element
+        {
+            let nodes = [*p, *gate, *n, *bulk];
+            let values = model.evaluate(crate::bsim330::voltages(nodes, state))?;
+            for (node, current) in nodes.into_iter().zip(values) {
+                sums[node.0] += current;
+                scales[node.0] += current.abs();
+            }
+            continue;
+        }
         let (p, n) = element.terminals();
         sums[p.0] += current;
         sums[n.0] -= current;
@@ -250,7 +269,8 @@ fn kcl_checks(
         scales[node] += shunt.abs();
         scales[0] += shunt.abs();
     }
-    sums.iter()
+    Ok(sums
+        .iter()
         .enumerate()
         .map(|(i, value)| {
             Check::measured(
@@ -260,7 +280,7 @@ fn kcl_checks(
                 "A",
             )
         })
-        .collect()
+        .collect())
 }
 
 /// Audit a DC state independently of assembly and solver convergence. Explicit
@@ -277,9 +297,9 @@ pub fn dc(
         return Err(SimError::invalid("invalid audit Gmin"));
     }
     let currents = dc_currents(circuit, state)?;
-    let mut checks = kcl_checks(circuit, state, &currents, options, gmin);
+    let mut checks = kcl_checks(circuit, state, &currents, options, gmin)?;
     checks.extend(constraint_checks(circuit, state, options)?);
-    checks.push(power_check(circuit, state, &currents, options, gmin));
+    checks.push(power_check(circuit, state, &currents, options, gmin)?);
     if gmin.is_some() {
         checks.push(Check::not_checked(
             "unregularized_physics",
@@ -328,12 +348,28 @@ fn power_check(
     currents: &[f64],
     options: AuditOptions,
     gmin: Option<f64>,
-) -> Check {
+) -> SimResult<Check> {
     let mut sum = 0.;
     let mut scale = 0.;
     for (element, current) in circuit.elements.iter().zip(currents) {
         let (p, n) = element.terminals();
-        let power = (voltage(state, p) - voltage(state, n)) * current;
+        let power = if let Element::Bsim330 {
+            p,
+            n,
+            gate,
+            bulk,
+            model,
+            ..
+        } = element
+        {
+            let bias = crate::bsim330::voltages([*p, *gate, *n, *bulk], state);
+            bias.into_iter()
+                .zip(model.evaluate(bias)?)
+                .map(|(v, i)| v * i)
+                .sum()
+        } else {
+            (voltage(state, p) - voltage(state, n)) * current
+        };
         sum += power;
         scale += power.abs();
     }
@@ -342,12 +378,12 @@ fn power_check(
         sum += power;
         scale += power.abs();
     }
-    Check::measured(
+    Ok(Check::measured(
         "power_balance",
         sum,
         options.power_absolute_w + options.relative * scale,
         "W",
-    )
+    ))
 }
 
 /// Audit one accepted backward-Euler step with constant nominal sources. The
@@ -410,7 +446,7 @@ pub fn backward_euler_step(
         energy += term;
         energy_scale += term.abs();
     }
-    checks.extend(kcl_checks(circuit, state, &currents, options, None));
+    checks.extend(kcl_checks(circuit, state, &currents, options, None)?);
     if nonlinear_storage {
         checks.push(Check::not_checked("be_energy_balance","J","nonlinear depletion/transport stored-energy and BE dissipation audit is not implemented"));
     } else {
@@ -545,7 +581,9 @@ fn independent_mos1_current(m: crate::mos1::Mos1Model, v: [f64; 4]) -> SimResult
         return Err(SimError::invalid("nonfinite MOS1 audit voltage difference"));
     }
     if m.body_effect_sqrt_volts > 0. && body > 0. {
-        return Err(SimError::invalid("MOS1 audit state exceeds the qualified body-bias domain"));
+        return Err(SimError::invalid(
+            "MOS1 audit state exceeds the qualified body-bias domain",
+        ));
     }
     let threshold = polarity * m.threshold_volts
         + m.body_effect_sqrt_volts
@@ -553,7 +591,9 @@ fn independent_mos1_current(m: crate::mos1::Mos1Model, v: [f64; 4]) -> SimResult
                 - m.surface_potential_volts.sqrt());
     let overdrive = polarity * v[1] - low - threshold;
     if !threshold.is_finite() || !overdrive.is_finite() {
-        return Err(SimError::invalid("nonfinite MOS1 audit threshold or overdrive"));
+        return Err(SimError::invalid(
+            "nonfinite MOS1 audit threshold or overdrive",
+        ));
     }
     let over = overdrive.max(0.);
     let active = span.min(over);
@@ -561,5 +601,10 @@ fn independent_mos1_current(m: crate::mos1::Mos1Model, v: [f64; 4]) -> SimResult
         * (1. + m.channel_length_modulation_per_volt * span)
         * active
         * (over - 0.5 * active);
-    Ok(polarity * if drain >= source { magnitude } else { -magnitude })
+    Ok(polarity
+        * if drain >= source {
+            magnitude
+        } else {
+            -magnitude
+        })
 }

@@ -35,6 +35,7 @@ pub fn ac_with_source_phasors(
     source_phasors: &[AcSourcePhasor],
     solver: &dyn LinearSolver,
 ) -> SimResult<Vec<AcSample>> {
+    plan.require_dynamic_models()?;
     if frequencies.is_empty() || frequencies.len() > 10_000 {
         return Err(SimError::invalid("AC grid must contain 1..10000 points"));
     }

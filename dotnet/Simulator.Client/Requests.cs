@@ -29,6 +29,7 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(DiodeWithCapacitance), "diode_with_capacitance")]
 [JsonDerivedType(typeof(SpiceDiode), "spice_diode")]
 [JsonDerivedType(typeof(JunctionStorage), "junction_storage")]
+[JsonDerivedType(typeof(Bsim330), "bsim330")]
 [JsonDerivedType(typeof(Mos1Channel), "mos1_channel")]
 public abstract record Element(string Id, int P, int N);
 /// <summary>Positive resistance in ohms; validated by the engine before assembly.</summary>
@@ -192,3 +193,10 @@ public sealed record Mos1Model(bool PChannel,double ThresholdVolts,double BetaAm
     double BodyEffectSqrtVolts,double SurfacePotentialVolts,double ChannelLengthModulationPerVolt);
 /// <summary>Drain P to source N channel only. Gate and Bulk are controls; charge is explicit topology.</summary>
 public sealed record Mos1Channel(string Id,int P,int N,int Gate,int Bulk,Mos1Model Model):Element(Id,P,N);
+
+/// <summary>Explicit bulk BSIM3 3.3.0 model and instance parameters.</summary>
+public sealed record Bsim330Model(int Polarity,double Tox,double Nch,double Nsub,double Vth0,double W,double L,
+    double Pd,double Ps,double Ad,[property: System.Text.Json.Serialization.JsonPropertyName("as")] double SourceArea);
+
+/// <summary>Four-terminal device backed by the opt-in native DC provider.</summary>
+public sealed record Bsim330(string Id,int P,int N,int Gate,int Bulk,Bsim330Model Model):Element(Id,P,N);

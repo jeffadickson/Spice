@@ -142,7 +142,7 @@ pub fn configured_step(
         energy += term;
         scale += term.abs();
     }
-    checks.extend(kcl_checks(&effective, &mid, &currents, options, None));
+    checks.extend(kcl_checks(&effective, &mid, &currents, options, None)?);
     checks.push(Check::measured(
         "trap_energy_balance",
         energy,

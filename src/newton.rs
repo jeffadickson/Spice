@@ -79,6 +79,7 @@ pub fn charge_at_bias_csc(
     plan: &CompiledCircuit,
     values: &[f64],
 ) -> SimResult<crate::sparse::CscMatrix> {
+    plan.require_dynamic_models()?;
     if values.len() != plan.unknown_count() || values.iter().any(|v| !v.is_finite()) {
         return Err(SimError::invalid("invalid charge bias vector"));
     }
@@ -170,6 +171,20 @@ fn linearize_with_rhs_gmin(
         stamp_vector(&mut residual, channel.p, channel.n, c.current_amps);
         stamp_mos1(&mut jacobian, channel, c.partials_siemens);
     }
+    for &(nodes, model) in &plan.bsim330 {
+        let (output, derivative) =
+            crate::bsim330::linearize(model, crate::bsim330::voltages(nodes, values))?;
+        for (row, terminal) in nodes.iter().enumerate() {
+            if let Some(i) = terminal.unknown() {
+                residual[i] += output[row];
+                for (col, terminal) in nodes.iter().enumerate() {
+                    if let Some(j) = terminal.unknown() {
+                        jacobian.add(i, j, derivative[row][col]);
+                    }
+                }
+            }
+        }
+    }
     if let Some(gmin) = gmin_siemens {
         for node in 0..plan.circuit.nodes.len() - 1 {
             residual[node] += gmin * values[node];
@@ -192,6 +207,7 @@ pub fn linearize_backward_euler(
     step_s: f64,
     rhs: &[f64],
 ) -> SimResult<LinearizedSystem> {
+    plan.require_dynamic_models()?;
     if previous.len() != plan.unknown_count()
         || rhs.len() != plan.unknown_count()
         || previous.iter().any(|value| !value.is_finite())

@@ -88,3 +88,17 @@ A supported four-terminal bulk BSIM3 VERSION=3.3.0 device shall evaluate signed 
 COMMENT: >>>
 Draft inferred from the accepted model implementation request. The standalone OSDI evaluator in semiconductor-reuse-assessment.md exercises only terminal current and charge. Frontend admission and Rust assembly remain open. The standalone experiment does not close this requirement.
 <<<
+
+[REQUIREMENT]
+UID: SEMI-BSIM330-DC-001
+STATUS: Draft
+TITLE: Bulk BSIM3 3.3.0 DC model binding and Newton stamping
+STATEMENT: >>>
+The requested DC path shall bind explicit bulk LEVEL 8 or 49 VERSION 3.3.0 cards with supported model terms and SI geometry into a distinct four-terminal device. For each DC trial it shall evaluate signed D/G/S/B terminal currents in process and stamp their incremental voltage derivatives. Missing or invalid native providers and unsupported card terms shall fail explicitly. Until dynamic model verification is available, AC and transient shall refuse.
+<<<
+COMMENT: >>>
+Verification uses tests/bsim330.rs, the frontend MOS tests, and the independently run ngspice nested sweep. Initial provider scope is Windows x64, explicit TOX, NCH, NSUB, VTH0, W and L, optional nonnegative junction areas and perimeters, 27 Celsius, and no internal uncollapsed nodes. The native OSDI module is an opt-in external input.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEMI-BSIM330-NATIVE-001

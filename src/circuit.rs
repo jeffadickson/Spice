@@ -17,6 +17,15 @@ pub enum Element {
         bulk: NodeId,
         model: crate::mos1::Mos1Model,
     },
+    /// Four terminal bulk BSIM3 3.3.0 device; D/G/S/B currents enter the model.
+    Bsim330 {
+        id: String,
+        p: NodeId,
+        n: NodeId,
+        gate: NodeId,
+        bulk: NodeId,
+        model: crate::bsim330::Model,
+    },
     /// Charge-only junction companion. Transport IS is a Q scale and contributes
     /// no conduction F; sense branches can therefore exclude displacement.
     JunctionStorage {
@@ -129,7 +138,8 @@ pub enum Element {
 impl Element {
     pub fn id(&self) -> &str {
         match self {
-            Self::Mos1Channel { id, .. }
+            Self::Bsim330 { id, .. }
+            | Self::Mos1Channel { id, .. }
             | Self::Resistor { id, .. }
             | Self::JunctionStorage { id, .. }
             | Self::SpiceDiode { id, .. }
@@ -148,7 +158,8 @@ impl Element {
     }
     pub fn terminals(&self) -> (NodeId, NodeId) {
         match self {
-            Self::Mos1Channel { p, n, .. }
+            Self::Bsim330 { p, n, .. }
+            | Self::Mos1Channel { p, n, .. }
             | Self::Resistor { p, n, .. }
             | Self::JunctionStorage { p, n, .. }
             | Self::SpiceDiode { p, n, .. }
@@ -228,6 +239,14 @@ impl Circuit {
                 .validate()?;
             }
             match e {
+                Element::Bsim330 {
+                    gate, bulk, model, ..
+                } => {
+                    if gate.0 >= self.nodes.len() || bulk.0 >= self.nodes.len() {
+                        return Err(SimError::invalid("invalid BSIM3 gate/bulk terminal"));
+                    }
+                    model.validate()?;
+                }
                 Element::Mos1Channel {
                     gate, bulk, model, ..
                 } => {
