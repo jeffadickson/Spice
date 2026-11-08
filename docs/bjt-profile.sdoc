@@ -20,7 +20,18 @@ STATEMENT: >>>
 The generated frontend shall lower qualified three-terminal NPN/PNP profiles to native conduction-only IS/BF and IS/BR junction paths with separate zero-voltage current senses, BF/BR transport CCCS contributions, and parallel BE/BC charge-only companions using effective IS and TF/TR. Charge shall not flow through or be amplified by the conduction senses. An outer zero-voltage collector sense shall expose signed total collector current. Private nodes shall not become source-name mappings.
 <<<
 COMMENT: >>>
-Qualified first terms: IS,BF,BR,NF,NR,CJE,VJE,MJE,CJC,VJC,MJC,FC,TF,TR, TNOM27 and LEVEL1. Unsupported terms, four-terminal/substrate profiles and instance parameters refuse atomically. Early/high-injection/leakage/base-resistance/temperature/excess-phase coupling remains open. These absent-coupling defaults reduce to Ebers-Moll; this is not general GP qualification. Implementation: BjtPreparation.cs plus additive Q bridge/readiness. Verification: BjtTests and BjtNativeOracleIntegration; separate provider outcomes retained.
+Qualified first terms: IS,BF,BR,NF,NR,CJE,VJE,MJE,CJC,VJC,MJC,FC,TF,TR, TNOM27 and LEVEL1. Unsupported terms and instance parameters refuse atomically. The bounded explicit substrate terminal follows SEMI-BJT-SUBSTRATE-001. Early/high-injection/leakage/base-resistance/temperature/excess-phase coupling remains open. These absent-coupling defaults reduce to Ebers-Moll; this is not general GP qualification. Implementation: BjtPreparation.cs plus additive Q bridge/readiness. Verification: BjtTests and BjtNativeOracleIntegration; separate provider outcomes retained.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-BJT-SUBSTRATE-001
+STATUS: Draft
+TITLE: Explicit default BJT substrate terminal
+STATEMENT: >>>
+With an explicit fourth terminal on the bounded NPN or PNP profile, the frontend shall retain the default 1 pS substrate path to the intrinsic collector for NPN and base for PNP. Unsupported substrate storage and saturation terms shall refuse preparation. The three-terminal composition remains the separately qualified contract of SEMI-BJT-001.
+<<<
+COMMENT: >>>
+Implementation: BjtPreparation and OperatingPointBridge. Verification: BjtTests.Explicit_substrate_uses_default_native_leakage_reference. Native ngspice-47+ reference: BJTsetup defaults vertical NPN and lateral PNP with zero substrate capacitance and saturation current, and BJTload applies the circuit default Gmin across that junction.
 <<<
 
 [TEXT]

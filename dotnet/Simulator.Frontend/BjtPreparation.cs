@@ -7,7 +7,7 @@ namespace Simulator.Frontend;
 internal sealed record PreparedBjt(bool Pnp,double BetaForward,double BetaReverse,
     SpiceDiodeModel ForwardStorage,SpiceDiodeModel ReverseStorage)
 {
-    internal void Append(string id,int collector,int baseNode,int emitter,Func<int> privateNode,Action<Element> add)
+    internal void Append(string id,int collector,int baseNode,int emitter,int? substrate,Func<int> privateNode,Action<Element> add)
     {
         var c=privateNode();var be=privateNode();var bc=privateNode();
         // The outer sensor measures total collector current. The BE/BC sensors
@@ -19,6 +19,12 @@ internal sealed record PreparedBjt(bool Pnp,double BetaForward,double BetaRevers
         add(new Diode(id+"_bc",bc,Pnp?baseNode:c,ReverseStorage.SaturationAmps/BetaReverse,ReverseStorage.ThermalVolts));
         add(new Cccs(id+"_forward",Pnp?emitter:c,Pnp?c:emitter,id+"_be_sense",BetaForward));
         add(new Cccs(id+"_reverse",Pnp?c:emitter,Pnp?emitter:c,id+"_bc_sense",BetaReverse));
+        // Native Level-1 defaults have no substrate saturation current or
+        // capacitance. The explicit terminal retains the default 1 pS shunt
+        // to the intrinsic collector (vertical NPN) or base (lateral PNP).
+        var substrateReference=Pnp?baseNode:c;
+        if(substrate is {} s&&s!=substrateReference)
+            add(new Resistor(id+"_substrate",s,substrateReference,1e12));
         if(ForwardStorage.JunctionFarads>0||ForwardStorage.TransitSeconds>0)
             add(new JunctionStorage(id+"_qbe",Pnp?emitter:baseNode,Pnp?baseNode:emitter,ForwardStorage));
         if(ReverseStorage.JunctionFarads>0||ReverseStorage.TransitSeconds>0)
@@ -35,7 +41,7 @@ internal static class BjtPreparation
     internal static bool AssignmentsAreSupported(BoundInstance call)
     {
         if(call.Status!=BindingStatus.Bound||call.Target is not {} model||model.ModelFamily is not ("npn" or "pnp")
-            ||model.HasOpaqueModelTerms||!call.Header.Parameters.IsEmpty||call.Ports.Length!=3)return false;
+            ||model.HasOpaqueModelTerms||!call.Header.Parameters.IsEmpty||call.Ports.Length is not (3 or 4))return false;
         var names=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         return model.Parameters.All(p=>p.Name!=null&&Allowed.Contains(p.Name)&&names.Add(p.Name));
     }

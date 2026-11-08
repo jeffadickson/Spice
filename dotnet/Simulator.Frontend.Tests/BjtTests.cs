@@ -38,5 +38,19 @@ public sealed class BjtTests
  }
  [Theory][InlineData("NPN(VAF=100)")][InlineData("NPN(IKF=1m)")][InlineData("NPN(RB=10)")][InlineData("NPN(BF=0)")][InlineData("NPN(IS=1 BF=5e-324)")][InlineData("NPN(IS=0)")][InlineData("NPN(CJE=-1p)")][InlineData("NPN(MJE=1)")][InlineData("NPN(TF=-1n)")][InlineData("NPN(TNOM=30)")][InlineData("NPN(LEVEL=4)")][InlineData("NPN(BF=100 BF=200)")]
  public void Unsupported_or_invalid_BJT_terms_refuse_atomically(string model){var r=Select(model);Assert.False(r.Success);Assert.Null(r.Request);Assert.Empty(r.Origins);}
+ [Theory][InlineData("NPN","c")][InlineData("PNP","b")]
+ public void Explicit_substrate_uses_default_native_leakage_reference(string family,string reference)
+ {
+  var result=OperatingPointSelection.Select(DeckParser.Parse("BJT substrate\nVc c 0 1\nVb b 0 .6\nVe e 0 0\nVs s 0 0\nQ1 c b e s qm\n.model qm "+family+"\n.end\n",collectDeclarations:true)).Prepared;
+  Assert.True(result.Success,string.Join(',',result.Diagnostics.Select(d=>d.Code)));
+  var request=result.Request!;
+  var origin=Assert.Single(result.Origins,o=>o.LocalName=="Q1");
+  var collector=Assert.Single(request.Circuit.Elements.OfType<Voltage>(),e=>e.Id==origin.WireId);
+  var shunt=Assert.Single(request.Circuit.Elements.OfType<Resistor>());
+  Assert.Equal(1e12,shunt.Ohms);
+  Assert.Equal(Array.IndexOf(request.Circuit.Nodes,result.RootNodes["s"]),shunt.P);
+  Assert.Equal(reference=="c"?collector.N:Array.IndexOf(request.Circuit.Nodes,result.RootNodes["b"]),shunt.N);
+ }
+
  private static BridgeResult Select(string model)=>OperatingPointSelection.Select(DeckParser.Parse("BJT\nVc c 0 1\nVb b 0 .6\nVe e 0 0\nQ1 c b e qm\n.model qm "+model+"\n.end\n",collectDeclarations:true)).Prepared;
 }

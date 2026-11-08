@@ -315,7 +315,7 @@ public static class OperatingPointBridge
                         if(!BjtPreparation.TryPrepare(catalog,environment,call,out var bjt,out var error))throw new BridgeFailure(error!.Code,error.Range);
                         var c=Node(call.Ports[0].Actual.Text);var b=Node(call.Ports[1].Actual.Text);var e=Node(call.Ports[2].Actual.Text);
                         var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                        bjt!.Append(id,c,b,e,PrivateNode,element=>{if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);elements.Add(element);});
+                        bjt!.Append(id,c,b,e,call.Ports.Length==4?Node(call.Ports[3].Actual.Text):null,PrivateNode,element=>{if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);elements.Add(element);});
                         origins.Add(new(id,call.Header.Name,path,call.Header.Range));continue;
                     }
                     if(selected&&call.Header.Family=="D")
