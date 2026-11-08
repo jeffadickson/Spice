@@ -86,7 +86,7 @@ STATEMENT: >>>
 A supported four-terminal bulk BSIM3 VERSION=3.3.0 device shall evaluate signed NMOS and PMOS terminal currents and charges in the solver process. DC shall use consistent current derivatives, AC shall linearize current and charge at the operating point, and transient shall preserve accepted charge history across rejected steps. Unsupported versions, SOI model families, or unqualified parameters shall receive explicit diagnostics. The verification shall compare like model cards, geometry, temperatures and biases with ngspice and check current and charge conservation independently.
 <<<
 COMMENT: >>>
-Draft inferred from the accepted model implementation request. The standalone OSDI evaluator in semiconductor-reuse-assessment.md exercises only terminal current and charge. Frontend admission and Rust assembly remain open. The standalone experiment does not close this requirement.
+Draft inferred from the accepted model implementation request. The standalone OSDI evaluator in semiconductor-reuse-assessment.md exercises only terminal current and charge. The DC sweep and dynamic fixtures exercise the normal Rust assembly path. See the bounded provider scope and verification in semiconductor-reuse-assessment.md.
 <<<
 
 [REQUIREMENT]
@@ -94,10 +94,24 @@ UID: SEMI-BSIM330-DC-001
 STATUS: Draft
 TITLE: Bulk BSIM3 3.3.0 DC model binding and Newton stamping
 STATEMENT: >>>
-The requested DC path shall bind explicit bulk LEVEL 8 or 49 VERSION 3.3.0 cards with supported model terms and SI geometry into a distinct four-terminal device. For each DC trial it shall evaluate signed D/G/S/B terminal currents in process and stamp their incremental voltage derivatives. Missing or invalid native providers and unsupported card terms shall fail explicitly. Until dynamic model verification is available, AC and transient shall refuse.
+The requested DC path shall bind explicit bulk LEVEL 8 or 49 VERSION 3.3.0 cards with supported model terms and SI geometry into a distinct four-terminal device. For each DC trial it shall evaluate signed D/G/S/B terminal currents in process and stamp their incremental voltage derivatives. Missing or invalid native providers and unsupported card terms shall fail explicitly.
 <<<
 COMMENT: >>>
 Verification uses tests/bsim330.rs, the frontend MOS tests, and the independently run ngspice nested sweep. Initial provider scope is Windows x64, explicit TOX, NCH, NSUB, VTH0, W and L, optional nonnegative junction areas and perimeters, 27 Celsius, and no internal uncollapsed nodes. The native OSDI module is an opt-in external input.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEMI-BSIM330-NATIVE-001
+
+[REQUIREMENT]
+UID: SEMI-BSIM330-DYNAMIC-001
+STATUS: Draft
+TITLE: Bulk BSIM3 3.3.0 AC and backward-Euler terminal charge
+STATEMENT: >>>
+At the converged bias, the AC solver shall stamp the four-terminal current Jacobian and j omega times the charge Jacobian. A backward-Euler trial shall add the difference of trial and previously accepted terminal charge divided by the step to each terminal residual, with its consistent trial derivative. Rejected trials shall leave accepted charge history unchanged. Fixed-step KCL shall include displacement current; unavailable nonlinear energy and AC physical audits shall be identified explicitly.
+<<<
+COMMENT: >>>
+Verification: tests/bsim330.rs compares ngspice gate charge, its derivative, and repeatability after a discarded trial. The BSIM3 AC, gate-ramp transient, and loaded transient fixtures in compat/ngspice are the native simulator comparisons. The model provider and parameter slice remain those of SEMI-BSIM330-DC-001.
 <<<
 RELATIONS:
 - TYPE: Parent

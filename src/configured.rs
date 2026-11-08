@@ -150,7 +150,6 @@ pub fn run_observed(
     cancel: &std::sync::atomic::AtomicBool,
     mut observer: impl FnMut(&Sample) -> SimResult<()>,
 ) -> SimResult<ConfiguredResult> {
-    plan.require_dynamic_models()?;
     options.validate()?;
     if !plan.has_nonlinear_devices() && options.initial_newton.is_some() {
         return Err(SimError::new(

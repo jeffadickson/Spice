@@ -93,16 +93,7 @@ impl CompiledCircuit {
             || !self.mos1.is_empty()
             || !self.bsim330.is_empty()
     }
-    /// The current native BSIM3 provider supports DC trials only.
-    pub(crate) fn require_dynamic_models(&self) -> SimResult<()> {
-        if !self.bsim330.is_empty() {
-            return Err(SimError::new(
-                crate::error::ErrorCode::Unsupported,
-                "BSIM3 3.3.0 AC/transient stamps are not qualified",
-            ));
-        }
-        Ok(())
-    }
+
     pub fn branch_index(&self, id: &str) -> Option<usize> {
         self.branch_ids
             .iter()

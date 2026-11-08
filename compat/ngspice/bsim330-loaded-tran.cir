@@ -1,0 +1,10 @@
+Bulk BSIM3 3.3.0 common source with a dynamic drain
+Vg g 0 DC .8 PWL(0 .8 1n .9)
+Vd supply 0 .9
+Rd supply d 1k
+Cd d 0 20f
+M1 d g 0 0 n W=1u L=.35u PD=1.5u PS=1.5u AD=1.5p AS=1.5p
+.model n nmos level=49 version=3.3.0 tox=3.5n nch=2.4e17 nsub=5e16 vth0=.15
+.options method=gear maxord=1
+.tran 1p 1n 0 1p
+.end

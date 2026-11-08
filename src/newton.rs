@@ -71,6 +71,7 @@ pub fn conductance_at_bias_csc(
         let c = mos1_contribution(channel, values)?;
         stamp_mos1(&mut stamps, channel, c.partials_siemens);
     }
+    stamp_bsim_bias(plan, values, &mut stamps, 0)?;
     stamps.to_csc()
 }
 
@@ -79,7 +80,6 @@ pub fn charge_at_bias_csc(
     plan: &CompiledCircuit,
     values: &[f64],
 ) -> SimResult<crate::sparse::CscMatrix> {
-    plan.require_dynamic_models()?;
     if values.len() != plan.unknown_count() || values.iter().any(|v| !v.is_finite()) {
         return Err(SimError::invalid("invalid charge bias vector"));
     }
@@ -95,7 +95,29 @@ pub fn charge_at_bias_csc(
             crate::compile::stamp_pair(&mut stamps, diode.p, diode.n, q.capacitance_farads);
         }
     }
+    stamp_bsim_bias(plan, values, &mut stamps, 4)?;
     stamps.to_csc()
+}
+
+fn stamp_bsim_bias(
+    plan: &CompiledCircuit,
+    values: &[f64],
+    matrix: &mut impl crate::compile::StampMatrix,
+    offset: usize,
+) -> SimResult<()> {
+    for &(nodes, model) in &plan.bsim330 {
+        let trial = crate::bsim330::linearize(model, crate::bsim330::voltages(nodes, values))?;
+        for (row, terminal) in nodes.iter().enumerate() {
+            if let Some(i) = terminal.unknown() {
+                for (col, terminal) in nodes.iter().enumerate() {
+                    if let Some(j) = terminal.unknown() {
+                        matrix.add_stamp(i, j, trial.derivative[row + offset][col]);
+                    }
+                }
+            }
+        }
+    }
+    Ok(())
 }
 
 // Output current enters p and leaves n. The AC matrix uses exactly these DC
@@ -124,7 +146,7 @@ pub fn linearize_with_rhs(
     values: &[f64],
     rhs: &[f64],
 ) -> SimResult<LinearizedSystem> {
-    linearize_with_rhs_gmin(plan, values, rhs, None)
+    linearize_with_rhs_gmin(plan, values, rhs, None, None)
 }
 
 /// Adds only explicitly requested DC Gmin shunts; it never changes a nominal solve silently.
@@ -133,6 +155,7 @@ fn linearize_with_rhs_gmin(
     values: &[f64],
     rhs: &[f64],
     gmin_siemens: Option<f64>,
+    charge_history: Option<(&[f64], f64)>,
 ) -> SimResult<LinearizedSystem> {
     if values.len() != plan.unknown_count() || values.iter().any(|value| !value.is_finite()) {
         return Err(SimError::invalid("invalid Newton trial vector"));
@@ -172,14 +195,26 @@ fn linearize_with_rhs_gmin(
         stamp_mos1(&mut jacobian, channel, c.partials_siemens);
     }
     for &(nodes, model) in &plan.bsim330 {
-        let (output, derivative) =
-            crate::bsim330::linearize(model, crate::bsim330::voltages(nodes, values))?;
+        let trial = crate::bsim330::linearize(model, crate::bsim330::voltages(nodes, values))?;
+        let history = charge_history
+            .map(|(previous, h)| {
+                model
+                    .evaluate(crate::bsim330::voltages(nodes, previous))
+                    .map(|old| (old, h))
+            })
+            .transpose()?;
         for (row, terminal) in nodes.iter().enumerate() {
             if let Some(i) = terminal.unknown() {
-                residual[i] += output[row];
+                residual[i] += trial.output[row];
+                if let Some((old, h)) = &history {
+                    residual[i] += (trial.output[row + 4] - old[row + 4]) / h;
+                }
                 for (col, terminal) in nodes.iter().enumerate() {
                     if let Some(j) = terminal.unknown() {
-                        jacobian.add(i, j, derivative[row][col]);
+                        let dynamic = history
+                            .as_ref()
+                            .map_or(0.0, |(_, h)| trial.derivative[row + 4][col] / h);
+                        jacobian.add(i, j, trial.derivative[row][col] + dynamic);
                     }
                 }
             }
@@ -207,7 +242,6 @@ pub fn linearize_backward_euler(
     step_s: f64,
     rhs: &[f64],
 ) -> SimResult<LinearizedSystem> {
-    plan.require_dynamic_models()?;
     if previous.len() != plan.unknown_count()
         || rhs.len() != plan.unknown_count()
         || previous.iter().any(|value| !value.is_finite())
@@ -226,7 +260,7 @@ pub fn linearize_backward_euler(
     }
     // Assemble the requested excitation directly. Cancelling the nominal RHS
     // afterwards can overflow even when the requested residual is finite.
-    let mut system = linearize_with_rhs(plan, values, rhs)?;
+    let mut system = linearize_with_rhs_gmin(plan, values, rhs, None, Some((previous, step_s)))?;
     for diode in &plan.diodes {
         if let Some(q) = diode
             .model
@@ -782,7 +816,7 @@ fn solve_from_rhs(
     let mut damped_steps = 0;
     let mut last_update = f64::INFINITY;
     for iteration in 0..=options.max_iterations {
-        let system = linearize_with_rhs_gmin(plan, &values, rhs, options.gmin_siemens)?;
+        let system = linearize_with_rhs_gmin(plan, &values, rhs, options.gmin_siemens, None)?;
         let residual = norm_inf(&system.residual)?;
         tracing::trace!(iteration, residual_inf = residual, "newton_iteration");
         let scaled_residual = scaled_residual_norm(plan, &system.residual, rhs, options)?;
@@ -830,7 +864,7 @@ fn solve_from_rhs(
         for attempt in 0..12 {
             let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-attempt));
             let Ok(candidate_system) =
-                linearize_with_rhs_gmin(plan, &candidate, rhs, options.gmin_siemens)
+                linearize_with_rhs_gmin(plan, &candidate, rhs, options.gmin_siemens, None)
             else {
                 // A trial can overflow even with finite provider components.
                 // Smaller steps may remain inside the already-validated model.

@@ -1,0 +1,11 @@
+Bulk BSIM3 3.3.0 complementary AC
+Vgn gn 0 DC .8 AC 1
+Vgp gp 0 DC -.8 AC .7 40
+Vdn dn 0 .8
+Vdp dp 0 -.8
+Mn dn gn 0 0 n W=1u L=.35u PD=1.5u PS=1.5u AD=1.5p AS=1.5p
+Mp dp gp 0 0 p W=1u L=.35u PD=1.5u PS=1.5u AD=1.5p AS=1.5p
+.model n nmos level=49 version=3.3.0 tox=3.5n nch=2.4e17 nsub=5e16 vth0=.15
+.model p pmos level=49 version=3.3.0 tox=3.5n nch=2.5e17 nsub=5e16 vth0=-.15
+.ac dec 8 10k 10g
+.end

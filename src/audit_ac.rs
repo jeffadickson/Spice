@@ -58,7 +58,9 @@ pub fn ac(
     if circuit.elements.iter().any(|e| {
         matches!(
             e,
-            Element::Mos1Channel { .. } | Element::Diode { .. }
+            Element::Bsim330 { .. }
+                | Element::Mos1Channel { .. }
+                | Element::Diode { .. }
                 | Element::SpiceDiode { .. }
                 | Element::JunctionStorage { .. }
                 | Element::DiodeWithCapacitance { .. }

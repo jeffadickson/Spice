@@ -234,6 +234,7 @@ fn kcl_checks(
     currents: &[f64],
     options: AuditOptions,
     gmin: Option<f64>,
+    charge_history: Option<(&[f64], f64)>,
 ) -> SimResult<Vec<Check>> {
     let mut sums = vec![0.; circuit.nodes.len()];
     let mut scales = sums.clone();
@@ -249,7 +250,18 @@ fn kcl_checks(
         {
             let nodes = [*p, *gate, *n, *bulk];
             let values = model.evaluate(crate::bsim330::voltages(nodes, state))?;
-            for (node, current) in nodes.into_iter().zip(values) {
+            let history = charge_history
+                .map(|(previous, h)| {
+                    model
+                        .evaluate(crate::bsim330::voltages(nodes, previous))
+                        .map(|old| (old, h))
+                })
+                .transpose()?;
+            for (index, node) in nodes.into_iter().enumerate() {
+                let current = values[index]
+                    + history
+                        .as_ref()
+                        .map_or(0.0, |(old, h)| (values[index + 4] - old[index + 4]) / h);
                 sums[node.0] += current;
                 scales[node.0] += current.abs();
             }
@@ -297,7 +309,7 @@ pub fn dc(
         return Err(SimError::invalid("invalid audit Gmin"));
     }
     let currents = dc_currents(circuit, state)?;
-    let mut checks = kcl_checks(circuit, state, &currents, options, gmin)?;
+    let mut checks = kcl_checks(circuit, state, &currents, options, gmin, None)?;
     checks.extend(constraint_checks(circuit, state, options)?);
     checks.push(power_check(circuit, state, &currents, options, gmin)?);
     if gmin.is_some() {
@@ -412,6 +424,10 @@ pub fn backward_euler_step(
         let v = voltage(state, p) - voltage(state, n);
         let old_v = voltage(previous, p) - voltage(previous, n);
         let term = match element {
+            Element::Bsim330 { .. } => {
+                nonlinear_storage = true;
+                0.
+            }
             Element::SpiceDiode { model, .. } | Element::JunctionStorage { model, .. } => {
                 let q = independent_junction_charge(*model, v);
                 let old = independent_junction_charge(*model, old_v);
@@ -446,9 +462,20 @@ pub fn backward_euler_step(
         energy += term;
         energy_scale += term.abs();
     }
-    checks.extend(kcl_checks(circuit, state, &currents, options, None)?);
+    checks.extend(kcl_checks(
+        circuit,
+        state,
+        &currents,
+        options,
+        None,
+        Some((previous, step_s)),
+    )?);
     if nonlinear_storage {
-        checks.push(Check::not_checked("be_energy_balance","J","nonlinear depletion/transport stored-energy and BE dissipation audit is not implemented"));
+        checks.push(Check::not_checked(
+            "be_energy_balance",
+            "J",
+            "nonlinear device stored-energy and BE dissipation audit is not implemented",
+        ));
     } else {
         checks.push(Check::measured(
             "be_energy_balance",

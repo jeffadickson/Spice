@@ -90,7 +90,9 @@ pub fn configured_step(
     if circuit.elements.iter().any(|e| {
         matches!(
             e,
-            Element::Mos1Channel { .. } | Element::Diode { .. }
+            Element::Bsim330 { .. }
+                | Element::Mos1Channel { .. }
+                | Element::Diode { .. }
                 | Element::DiodeWithCapacitance { .. }
                 | Element::SpiceDiode { .. }
                 | Element::JunctionStorage { .. }
@@ -142,7 +144,9 @@ pub fn configured_step(
         energy += term;
         scale += term.abs();
     }
-    checks.extend(kcl_checks(&effective, &mid, &currents, options, None)?);
+    checks.extend(kcl_checks(
+        &effective, &mid, &currents, options, None, None,
+    )?);
     checks.push(Check::measured(
         "trap_energy_balance",
         energy,

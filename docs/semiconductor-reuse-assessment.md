@@ -247,7 +247,7 @@ gaps to source leads. Its SHA-256 is
 A family-level source lead is a starting point for implementation. There
 were no product code changes or new coverage measurements in this baseline.
 
-### Opt-in bulk BSIM3 3.3.0 DC execution
+### Opt-in bulk BSIM3 3.3.0 execution
 
 The Windows x64 reference engine accepts the bounded bulk model on its
 normal operating-point and DC sweep paths. The frontend binds level 8 or
@@ -257,8 +257,8 @@ use the SPICE card convention of inverse cubic centimetres. The provider
 evaluates at 27 Celsius with the generated module's model defaults and
 1 pS junction Gmin. The D/G/S/B currents and centered numerical current
 derivatives are stamped directly into the Rust Newton system. Four-terminal
-DC KCL and power checks include the device currents. Other model terms,
-uncollapsed internal unknowns, AC, and transient are outside this slice.
+DC KCL and power checks include the device currents. Other model terms
+and uncollapsed internal unknowns are outside this provider slice.
 
 For the existing development fixture, verify the OSDI module's SHA-256
 recorded above. Using a Visual Studio developer shell from a checked
@@ -291,9 +291,62 @@ Run the targeted Rust checks with
 the provider. Both tests passed, including 64 bias cases with Proptest seed
 330. A C adapter mutant that inverted drain current was killed by the
 native stamp test. The public CLI rejected absent host configuration and
-unsupported AC. The frontend suite had 698 passed and 37 opt-in skips.
+unsupported AC on the DC-only checkpoint. The frontend suite had 698 passed and 37 opt-in skips.
 Coverlet reported 94.32% line and 83.68% branch coverage for
 Simulator.Frontend. Rust, C, and generated module coverage were not measured.
 StrictDoc 0.30.4 parsed 55 documents, 454 unique IDs and 412 resolved parents.
 The native host used for the replay had SHA-256
 `e2daae9246a498ef3a753e9364356c01cd8721fd5c49d9e6ec4160ef13f23e56`.
+
+### BSIM3 AC and backward Euler
+
+AC uses the converged DC bias and stamps the current and charge Jacobians
+as G + jωC. Backward Euler evaluates the signed terminal charges from the
+trial and accepted voltage states, divides their difference by the
+timestep, and includes the trial charge derivative in Newton. The model
+host has no mutable per-step history. A rejected adaptive candidate leaves
+the prior state intact. Fixed-step KCL includes the reconstructed model
+current and displacement current. Independent nonlinear energy and
+incremental AC physical audits are unavailable. Nonlinear trapezoidal
+integration is outside this profile.
+
+The three ngspice fixtures in compat/ngspice are reproducible through the
+existing Run-RequestedCorpus driver. Build the Rust engine with
+the provider configuration above, prepare a hash-pinned inventory of
+these decks, and compare against ngspice-47+ using the normal requested
+analysis path. Both original dynamic fixtures refused on the DC-only
+checkpoint. On the updated engine:
+
+| Fixture | Compared points | Observables | Failures |
+| --- | ---: | ---: | ---: |
+| bsim330-ac.cir | 49 | 8 | 0 |
+| bsim330-tran.cir | 201 | 4 | 0 |
+| bsim330-loaded-tran.cir | 1001 | 5 | 0 |
+
+The AC case includes NMOS and PMOS with different gate phasors. Its
+maximum gate-current error was 37.8 fA. The fixed drain gate ramp had
+a maximum gate-current error of 2.91 pA. In the loaded transient, the
+drain voltage is an unknown with resistive loading and external storage.
+Its maximum drain voltage and gate current errors were 0.382 µV and
+17.8 pA. The adaptive loaded request finished with 76 accepted and four
+rejected steps. This was a separate execution check, without a full
+adaptive waveform comparison to ngspice.
+
+The three targeted native tests passed, including 64 seeded Proptest
+bias checks (seed 330). The zero-terminal-charge adapter mutation was
+killed by the dynamic stamp test. The related audit, nonlinear, and
+sparse AC suites passed 49 tests. Instrumented targeted tests measured
+95.59% line coverage for src/bsim330.rs and 15.04% for the entire
+src/newton.rs. The measured scope excludes branch coverage and the
+external C host and OSDI model. StrictDoc 0.30.4 parsed 55 documents,
+455 unique IDs and 413 resolved parents. Raw results, coverage and
+mutation evidence are under E:/Artifacts/Spice-bsim3-dynamic-20261108.
+
+The 113-deck shared corpus replay retained 19 executed and 17 agreed.
+All three new dynamic fixtures are outside that inventory. The debug
+engine SHA-256 was
+96ca8b0ff7f4091f32867eadde25d6e34583351cdda220d26f36c1778a439b65.
+The targeted Rust command was cargo test --offline --locked --test
+bsim330 -- --include-ignored. The two native replay manifests are
+dynamic-replay/summary.json and loaded-replay/summary.json. They record
+source hashes, reference tool version, tolerances and per-signal counts.

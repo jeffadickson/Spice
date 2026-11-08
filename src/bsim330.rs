@@ -68,11 +68,17 @@ pub(crate) fn voltages(nodes: [NodeId; 4], x: &[f64]) -> [f64; 4] {
     nodes.map(|node| node.unknown().map_or(0.0, |i| x[i]))
 }
 
-/// Centered differences of actual signed terminal currents and charges. This
-/// initial provider qualifies DC only, so charge derivatives are deferred.
-pub(crate) fn linearize(model: Model, bias: [f64; 4]) -> SimResult<([f64; 8], [[f64; 4]; 4])> {
+/// Signed terminal currents and charges, followed by their bias derivatives.
+/// Rows 0–3 are current and rows 4–7 are charge, both in D/G/S/B order.
+pub(crate) struct Linearization {
+    pub(crate) output: [f64; 8],
+    pub(crate) derivative: [[f64; 4]; 8],
+}
+
+/// Centered differences share the same native evaluations for current and charge.
+pub(crate) fn linearize(model: Model, bias: [f64; 4]) -> SimResult<Linearization> {
     let output = model.evaluate(bias)?;
-    let mut jacobian = [[0.0; 4]; 4];
+    let mut jacobian = [[0.0; 4]; 8];
     for col in 0..4 {
         let step = 1e-6 * bias[col].abs().max(1.0);
         let mut high = bias;
@@ -81,9 +87,15 @@ pub(crate) fn linearize(model: Model, bias: [f64; 4]) -> SimResult<([f64; 8], [[
         low[col] -= step;
         let high = model.evaluate(high)?;
         let low = model.evaluate(low)?;
-        for row in 0..4 {
+        for row in 0..8 {
             jacobian[row][col] = (high[row] - low[row]) / (2.0 * step);
         }
     }
-    Ok((output, jacobian))
+    if jacobian.iter().flatten().any(|v| !v.is_finite()) {
+        return Err(SimError::invalid("nonfinite BSIM3 derivative"));
+    }
+    Ok(Linearization {
+        output,
+        derivative: jacobian,
+    })
 }
