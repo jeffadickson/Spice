@@ -91,6 +91,7 @@ pub fn configured_step(
         matches!(
             e,
             Element::Bsim330 { .. }
+                | Element::BsimSoiFdReference { .. }
                 | Element::Mos1Channel { .. }
                 | Element::Diode { .. }
                 | Element::DiodeWithCapacitance { .. }

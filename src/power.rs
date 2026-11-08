@@ -27,19 +27,11 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
     for element in &plan.circuit.elements {
         let (p, n) = element.terminals();
         let v = voltage(p) - voltage(n);
-        if let Element::Bsim330 {
-            p,
-            n,
-            gate,
-            bulk,
-            model,
-            ..
-        } = element
-        {
-            let bias = [*p, *gate, *n, *bulk].map(voltage);
+        if let Some((nodes, model)) = element.native_mos() {
+            let bias = nodes.map(voltage);
             let absorbed_w: f64 = bias
                 .into_iter()
-                .zip(model.evaluate(bias)?)
+                .zip(model.evaluate(bias)?.current)
                 .map(|(v, i)| v * i)
                 .sum();
             sum += absorbed_w;
@@ -51,7 +43,9 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
             continue;
         }
         let current = match element {
-            Element::Bsim330 { .. } => unreachable!("four-terminal power handled above"),
+            Element::Bsim330 { .. } | Element::BsimSoiFdReference { .. } => {
+                unreachable!("four-terminal power handled above")
+            }
             Element::Mos1Channel {
                 p,
                 n,

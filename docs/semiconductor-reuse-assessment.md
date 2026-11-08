@@ -399,3 +399,52 @@ model field was rejected in a separate compile-and-run negative check.
 No line or branch coverage or randomized campaign was collected for
 this standalone harness. Artifacts are under
 E:/Artifacts/Spice-soi-20261108T115024Z.
+
+### Linux bulk provider and typed FD operating point
+
+The bulk BSIM3 3.3.0 adapter now builds on Windows x64 and Linux x86-64.
+Linux uses an ELF adapter and ELF OSDI module. The Windows DLL and
+PE OSDI module cannot be loaded there. In a checked Linux build directory,
+compile scripts/Bsim330Host.c as a position-independent shared library
+with the pinned OSDI include directory and libdl. Set SPICE_BSIM330_HOST
+and SPICE_BSIM330_MODEL to its absolute path and that of the trusted ELF
+model. The tested module used the same Verilog-A source and OpenVAF
+Reloaded 0.4 release as the Windows experiment. The Windows OpenVAF
+executable generated ELF objects using target x86_64-unknown-linux. They
+were linked with the Linux C toolchain into the tested shared module.
+
+The separate SPICE_BSIM_SOI_FD_HOST setting points to an FD native
+library. Build scripts/Bsim3SoiFdProbe.c and the same six Berkeley model
+objects described above as a shared library, defining SPICE_SOI_FD_HOST
+for the adapter. Keep the pinned fd-card.inc in the include path. On Linux, compile upstream objects as position-independent code and
+force-include scripts/Bsim3SoiFdStdio.h in the six device objects so
+model diagnostics cannot enter the request protocol stream. Link with libm and
+bind the shared library's internal symbols locally.
+
+The typed request selector bsim_soi_fd_reference accepts id, p, n, gate
+and back_gate. It uses the pinned FD NMOS card, 10 µm width, 0.25 µm
+length, 27 °C and 1e-25 S model Gmin. It does not represent arbitrary
+model cards. The Rust solver stamps D/G/S/E currents and their
+derivatives and audits all four terminals. The legacy device workspace
+is serialized per process, and unavailable charge is represented
+explicitly. AC and transient refuse this profile. Original SOI netlist
+binding and options, DD and PD, and all 15 corpus acceptance gates
+remain open.
+
+On Ubuntu 24.04 in WSL, the four opt-in Rust checks passed, including
+the existing 64 seeded bulk bias cases, AC charge and backward-Euler
+history, the typed FD operating point and the unavailable FD charge
+check. A CLI test verified a single JSON response with model diagnostics
+on stderr. The FD drain supply current at VD=VG=0.8 V, VS=0 V and VE=-1 V
+matched live ngspice within 1 pA. The missing-host request refused and
+the FD current-sign mutant was killed. The .NET client built without
+warnings. Targeted Rust line coverage was 90.83% in src/bsim330.rs
+and 46.78% in the whole src/newton.rs. Branch and native C coverage were
+unmeasured. StrictDoc parsed 55 documents and 457 unique requirement
+IDs. Artifacts and provider hashes are under
+E:/Artifacts/Spice-bsim-linux-20261108.
+
+The same four tests and single-response back-gate CLI check passed on
+Windows x64. Both CLI comparisons differed from ngspice by 1.63e-19 A
+at the reported bias. Raw OSDI modules, native libraries and model
+fixtures remain external build inputs.

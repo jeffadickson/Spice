@@ -59,6 +59,7 @@ pub fn ac(
         matches!(
             e,
             Element::Bsim330 { .. }
+                | Element::BsimSoiFdReference { .. }
                 | Element::Mos1Channel { .. }
                 | Element::Diode { .. }
                 | Element::SpiceDiode { .. }

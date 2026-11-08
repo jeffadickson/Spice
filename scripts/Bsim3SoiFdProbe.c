@@ -34,14 +34,46 @@ static IFfrontEnd frontend = {.IFerrorf = error_message};
 IFfrontEnd *SPfrontEnd = &frontend;
 void *tmalloc(size_t size) { return calloc(1, size); }
 void txfree(const void *value) { free((void *)value); }
+#ifdef SPICE_SOI_FD_HOST
+#include <setjmp.h>
+static jmp_buf trial_abort;
+static bool reported_geometry_warnings;
+void controlled_exit(int status) { longjmp(trial_abort, status == 0 ? 99 : status); }
+#else
 void controlled_exit(int status) { exit(status == 0 ? 99 : status); }
-FILE *newfopen(const char *name, const char *mode) { return fopen(name, mode); }
+#endif
+FILE *newfopen(const char *name, const char *mode) {
+#ifdef SPICE_SOI_FD_HOST
+    /* The legacy parameter checker writes a diagnostic stream. A host
+     * trial must not overwrite a named file in the simulator workspace. */
+    if (!strcmp(name, "b3soifdv2check.log")) return tmpfile();
+    return NULL;
+#else
+    return fopen(name, mode);
+#endif
+}
 int win_x_fclose(FILE *stream) { return fclose(stream); }
 int win_x_fprintf(FILE *stream, const char *format, ...) {
+#ifdef SPICE_SOI_FD_HOST
+    if (stream == stdout) stream = stderr;
+#endif
     va_list args; va_start(args, format); int rc = vfprintf(stream, format, args); va_end(args); return rc;
 }
 int win_x_printf(const char *format, ...) {
-    va_list args; va_start(args, format); int rc = vprintf(format, args); va_end(args); return rc;
+#ifdef SPICE_SOI_FD_HOST
+    /* Geometry is pinned, so repeat checks would only repeat these warnings. */
+    if (reported_geometry_warnings &&
+        (!strncmp(format, "Warning: Pd", 11) || !strncmp(format, "Warning: Ps", 11))) return 0;
+#endif
+    va_list args;
+    va_start(args, format);
+#ifdef SPICE_SOI_FD_HOST
+    int rc = vfprintf(stderr, format, args);
+#else
+    int rc = vprintf(format, args);
+#endif
+    va_end(args);
+    return rc;
 }
 int CKTmkVolt(CKTcircuit *ckt, CKTnode **node, IFuid name, char *suffix) {
     (void)ckt; (void)name; (void)suffix;
@@ -79,7 +111,21 @@ static int stamp(B3SOIFDmodel *model, B3SOIFDinstance *device, CKTcircuit *ckt,
     state[device->B3SOIFDve] = voltage[4];
     return B3SOIFDload((GENmodel *)model, ckt);
 }
+#ifdef SPICE_SOI_FD_HOST
+#include <setjmp.h>
+#ifdef _WIN32
+#define SOI_EXPORT __declspec(dllexport)
+#else
+#define SOI_EXPORT __attribute__((visibility("default")))
+#endif
+/* The caller serializes the legacy model services. Only this fixed model
+ * and static evaluation mode are admitted by this adapter. */
+SOI_EXPORT int spice_soi_fd_trial(const double bias[4], double current[4]) {
+    if (setjmp(trial_abort)) return 11;
+    next_node = 5;
+#else
 int main(void) {
+#endif
     char device_name[] = "m1", model_name[] = "n1";
     B3SOIFDmodel model = {0};
     B3SOIFDinstance device = {
@@ -124,6 +170,21 @@ int main(void) {
     if (B3SOIFDsetup(NULL, (GENmodel *)&model, &ckt, &state_count)) return 4;
     if (state_count > STATES || next_node != 5) return 5;
     if (B3SOIFDtemp((GENmodel *)&model, &ckt)) return 6;
+#ifdef SPICE_SOI_FD_HOST
+    reported_geometry_warnings = true;
+    for (int k = 0; k < 4; ++k) voltage[k + 1] = bias[k];
+    int status = stamp(&model, &device, &ckt, voltage, rhs, state);
+    /* One instance and one geometry knot were allocated by temperature setup. */
+    txfree(model.pSizeDependParamKnot);
+    if (status) return 7;
+    for (int row = 1; row <= 4; ++row) {
+        double residual = -rhs[row];
+        for (int col = 1; col <= 4; ++col)
+            residual += conductance[row][col] * voltage[col];
+        if (!isfinite(residual)) return 8;
+        current[row - 1] = residual;
+    }
+#else
     puts("vg,vd,id,ig,is,ie");
     for (int g = 1; g <= 6; g++) {
         voltage[2] = 0.5 * g;
@@ -141,5 +202,6 @@ int main(void) {
             putchar('\n');
         }
     }
+#endif
     return 0;
 }

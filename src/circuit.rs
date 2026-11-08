@@ -26,6 +26,14 @@ pub enum Element {
         bulk: NodeId,
         model: crate::bsim330::Model,
     },
+    /// Pinned static FD SOI NMOS profile with independent back gate E.
+    BsimSoiFdReference {
+        id: String,
+        p: NodeId,
+        n: NodeId,
+        gate: NodeId,
+        back_gate: NodeId,
+    },
     /// Charge-only junction companion. Transport IS is a Q scale and contributes
     /// no conduction F; sense branches can therefore exclude displacement.
     JunctionStorage {
@@ -138,7 +146,8 @@ pub enum Element {
 impl Element {
     pub fn id(&self) -> &str {
         match self {
-            Self::Bsim330 { id, .. }
+            Self::BsimSoiFdReference { id, .. }
+            | Self::Bsim330 { id, .. }
             | Self::Mos1Channel { id, .. }
             | Self::Resistor { id, .. }
             | Self::JunctionStorage { id, .. }
@@ -156,9 +165,32 @@ impl Element {
             | Self::DiodeWithCapacitance { id, .. } => id,
         }
     }
+    pub(crate) fn native_mos(&self) -> Option<([NodeId; 4], crate::bsim330::NativeModel)> {
+        use crate::bsim330::NativeModel;
+        match self {
+            Self::Bsim330 {
+                p,
+                n,
+                gate,
+                bulk,
+                model,
+                ..
+            } => Some(([*p, *gate, *n, *bulk], NativeModel::Bulk(*model))),
+            Self::BsimSoiFdReference {
+                p,
+                n,
+                gate,
+                back_gate,
+                ..
+            } => Some(([*p, *gate, *n, *back_gate], NativeModel::SoiFd)),
+            _ => None,
+        }
+    }
+
     pub fn terminals(&self) -> (NodeId, NodeId) {
         match self {
-            Self::Bsim330 { p, n, .. }
+            Self::BsimSoiFdReference { p, n, .. }
+            | Self::Bsim330 { p, n, .. }
             | Self::Mos1Channel { p, n, .. }
             | Self::Resistor { p, n, .. }
             | Self::JunctionStorage { p, n, .. }
@@ -239,6 +271,11 @@ impl Circuit {
                 .validate()?;
             }
             match e {
+                Element::BsimSoiFdReference {
+                    gate, back_gate, ..
+                } if gate.0 >= self.nodes.len() || back_gate.0 >= self.nodes.len() => {
+                    return Err(SimError::invalid("invalid SOI FD gate/back-gate terminal"));
+                }
                 Element::Bsim330 {
                     gate, bulk, model, ..
                 } => {

@@ -192,7 +192,7 @@ fn dc_currents(circuit: &Circuit, state: &[f64]) -> SimResult<Vec<f64>> {
                     [*p, *gate, *n, *bulk].map(|node| voltage(state, node)),
                 )?,
                 // This scalar path is supplemented by four terminal currents below.
-                Element::Bsim330 { .. } => 0.,
+                Element::Bsim330 { .. } | Element::BsimSoiFdReference { .. } => 0.,
                 Element::Resistor { ohms, .. } => v / ohms,
                 Element::JunctionStorage { .. } => 0.,
                 Element::SpiceDiode { model, .. } => {
@@ -239,29 +239,20 @@ fn kcl_checks(
     let mut sums = vec![0.; circuit.nodes.len()];
     let mut scales = sums.clone();
     for (element, current) in circuit.elements.iter().zip(currents) {
-        if let Element::Bsim330 {
-            p,
-            n,
-            gate,
-            bulk,
-            model,
-            ..
-        } = element
-        {
-            let nodes = [*p, *gate, *n, *bulk];
+        if let Some((nodes, model)) = element.native_mos() {
             let values = model.evaluate(crate::bsim330::voltages(nodes, state))?;
             let history = charge_history
                 .map(|(previous, h)| {
                     model
                         .evaluate(crate::bsim330::voltages(nodes, previous))
-                        .map(|old| (old, h))
+                        .and_then(|old| Ok((old.require_charge()?, values.require_charge()?, h)))
                 })
                 .transpose()?;
             for (index, node) in nodes.into_iter().enumerate() {
-                let current = values[index]
+                let current = values.current[index]
                     + history
                         .as_ref()
-                        .map_or(0.0, |(old, h)| (values[index + 4] - old[index + 4]) / h);
+                        .map_or(0.0, |(old, new, h)| (new[index] - old[index]) / h);
                 sums[node.0] += current;
                 scales[node.0] += current.abs();
             }
@@ -365,18 +356,10 @@ fn power_check(
     let mut scale = 0.;
     for (element, current) in circuit.elements.iter().zip(currents) {
         let (p, n) = element.terminals();
-        let power = if let Element::Bsim330 {
-            p,
-            n,
-            gate,
-            bulk,
-            model,
-            ..
-        } = element
-        {
-            let bias = crate::bsim330::voltages([*p, *gate, *n, *bulk], state);
+        let power = if let Some((nodes, model)) = element.native_mos() {
+            let bias = crate::bsim330::voltages(nodes, state);
             bias.into_iter()
-                .zip(model.evaluate(bias)?)
+                .zip(model.evaluate(bias)?.current)
                 .map(|(v, i)| v * i)
                 .sum()
         } else {
@@ -413,6 +396,16 @@ pub fn backward_euler_step(
     validate_state(circuit, state)?;
     if !step_s.is_finite() || step_s <= 0. {
         return Err(SimError::invalid("invalid audit timestep"));
+    }
+    if circuit
+        .elements
+        .iter()
+        .any(|e| matches!(e, Element::BsimSoiFdReference { .. }))
+    {
+        return Err(SimError::new(
+            crate::error::ErrorCode::Unsupported,
+            "SOI FD charge audit is unavailable",
+        ));
     }
     let mut currents = dc_currents(circuit, state)?;
     let mut energy = 0.;

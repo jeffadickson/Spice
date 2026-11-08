@@ -26,6 +26,7 @@ pub fn inspect(circuit: &Circuit) -> SimResult<Vec<Diagnostic>> {
         if !matches!(
             element,
             Element::Bsim330 { .. }
+                | Element::BsimSoiFdReference { .. }
                 | Element::Mos1Channel { .. }
                 | Element::Capacitor { .. }
                 | Element::JunctionStorage { .. }

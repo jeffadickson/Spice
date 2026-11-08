@@ -38,6 +38,7 @@ pub fn transient_controlled(
     options: &TransientOptions,
     cancel: &std::sync::atomic::AtomicBool,
 ) -> SimResult<Vec<Sample>> {
+    plan.require_dynamic_native_models()?;
     positive(options.stop_s, "stop_s")?;
     positive(options.step_s, "step_s")?;
     let count = (options.stop_s / options.step_s).ceil().max(1.0);

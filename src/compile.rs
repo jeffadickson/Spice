@@ -61,7 +61,7 @@ pub struct CompiledCircuit {
     pub(crate) diodes: Vec<CompiledDiode>,
     pub(crate) switches: Vec<CompiledSwitch>,
     pub(crate) mos1: Vec<CompiledMos1>,
-    pub(crate) bsim330: Vec<([NodeId; 4], crate::bsim330::Model)>,
+    pub(crate) bsim330: Vec<([NodeId; 4], crate::bsim330::NativeModel)>,
 }
 impl CompiledCircuit {
     pub fn circuit(&self) -> &Circuit {
@@ -92,6 +92,20 @@ impl CompiledCircuit {
             || !self.switches.is_empty()
             || !self.mos1.is_empty()
             || !self.bsim330.is_empty()
+    }
+
+    pub(crate) fn require_dynamic_native_models(&self) -> SimResult<()> {
+        if self
+            .bsim330
+            .iter()
+            .any(|(_, model)| matches!(model, crate::bsim330::NativeModel::SoiFd))
+        {
+            return Err(SimError::new(
+                crate::error::ErrorCode::Unsupported,
+                "BSIM3 SOI FD provider is static DC only",
+            ));
+        }
+        Ok(())
     }
 
     pub fn branch_index(&self, id: &str) -> Option<usize> {
@@ -136,16 +150,13 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     let mut mos1 = Vec::new();
     let mut bsim330 = Vec::new();
     for e in &circuit.elements {
+        if let Some(device) = e.native_mos() {
+            bsim330.push(device);
+            continue;
+        }
         match e {
-            Element::Bsim330 {
-                p,
-                n,
-                gate,
-                bulk,
-                model,
-                ..
-            } => {
-                bsim330.push(([*p, *gate, *n, *bulk], *model));
+            Element::Bsim330 { .. } | Element::BsimSoiFdReference { .. } => {
+                unreachable!("native MOS handled above")
             }
             Element::Mos1Channel {
                 id,

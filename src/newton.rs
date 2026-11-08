@@ -71,7 +71,7 @@ pub fn conductance_at_bias_csc(
         let c = mos1_contribution(channel, values)?;
         stamp_mos1(&mut stamps, channel, c.partials_siemens);
     }
-    stamp_bsim_bias(plan, values, &mut stamps, 0)?;
+    stamp_bsim_bias(plan, values, &mut stamps, false)?;
     stamps.to_csc()
 }
 
@@ -80,6 +80,7 @@ pub fn charge_at_bias_csc(
     plan: &CompiledCircuit,
     values: &[f64],
 ) -> SimResult<crate::sparse::CscMatrix> {
+    plan.require_dynamic_native_models()?;
     if values.len() != plan.unknown_count() || values.iter().any(|v| !v.is_finite()) {
         return Err(SimError::invalid("invalid charge bias vector"));
     }
@@ -95,7 +96,7 @@ pub fn charge_at_bias_csc(
             crate::compile::stamp_pair(&mut stamps, diode.p, diode.n, q.capacitance_farads);
         }
     }
-    stamp_bsim_bias(plan, values, &mut stamps, 4)?;
+    stamp_bsim_bias(plan, values, &mut stamps, true)?;
     stamps.to_csc()
 }
 
@@ -103,7 +104,7 @@ fn stamp_bsim_bias(
     plan: &CompiledCircuit,
     values: &[f64],
     matrix: &mut impl crate::compile::StampMatrix,
-    offset: usize,
+    charge: bool,
 ) -> SimResult<()> {
     for &(nodes, model) in &plan.bsim330 {
         let trial = crate::bsim330::linearize(model, crate::bsim330::voltages(nodes, values))?;
@@ -111,7 +112,17 @@ fn stamp_bsim_bias(
             if let Some(i) = terminal.unknown() {
                 for (col, terminal) in nodes.iter().enumerate() {
                     if let Some(j) = terminal.unknown() {
-                        matrix.add_stamp(i, j, trial.derivative[row + offset][col]);
+                        let value = if charge {
+                            trial.charge_derivative.ok_or_else(|| {
+                                SimError::new(
+                                    ErrorCode::Unsupported,
+                                    "native charge derivative unavailable",
+                                )
+                            })?[row][col]
+                        } else {
+                            trial.derivative[row][col]
+                        };
+                        matrix.add_stamp(i, j, value);
                     }
                 }
             }
@@ -200,20 +211,32 @@ fn linearize_with_rhs_gmin(
             .map(|(previous, h)| {
                 model
                     .evaluate(crate::bsim330::voltages(nodes, previous))
-                    .map(|old| (old, h))
+                    .and_then(|old| {
+                        Ok((
+                            old.require_charge()?,
+                            trial.output.require_charge()?,
+                            trial.charge_derivative.ok_or_else(|| {
+                                SimError::new(
+                                    ErrorCode::Unsupported,
+                                    "native charge derivative unavailable",
+                                )
+                            })?,
+                            h,
+                        ))
+                    })
             })
             .transpose()?;
         for (row, terminal) in nodes.iter().enumerate() {
             if let Some(i) = terminal.unknown() {
-                residual[i] += trial.output[row];
-                if let Some((old, h)) = &history {
-                    residual[i] += (trial.output[row + 4] - old[row + 4]) / h;
+                residual[i] += trial.output.current[row];
+                if let Some((old, new, _, h)) = &history {
+                    residual[i] += (new[row] - old[row]) / h;
                 }
                 for (col, terminal) in nodes.iter().enumerate() {
                     if let Some(j) = terminal.unknown() {
                         let dynamic = history
                             .as_ref()
-                            .map_or(0.0, |(_, h)| trial.derivative[row + 4][col] / h);
+                            .map_or(0.0, |(_, _, derivative, h)| derivative[row][col] / h);
                         jacobian.add(i, j, trial.derivative[row][col] + dynamic);
                     }
                 }
@@ -242,6 +265,7 @@ pub fn linearize_backward_euler(
     step_s: f64,
     rhs: &[f64],
 ) -> SimResult<LinearizedSystem> {
+    plan.require_dynamic_native_models()?;
     if previous.len() != plan.unknown_count()
         || rhs.len() != plan.unknown_count()
         || previous.iter().any(|value| !value.is_finite())

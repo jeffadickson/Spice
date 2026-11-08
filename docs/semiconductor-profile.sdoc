@@ -127,3 +127,17 @@ The simulator shall distinguish FD level 55, DD level 56, and PD level 57. It sh
 COMMENT: >>>
 Acceptance is the 15 RSpice reference-pass decks in the pinned shared corpus. The standalone FD DC probe in scripts/Bsim3SoiFdProbe.c verifies one device sweep only. Frontend binding, Rust assembly, coupled solves, transient verification and per-deck acceptance remain open. See semiconductor-reuse-assessment.md.
 <<<
+
+[REQUIREMENT]
+UID: SEMI-BSIM3SOI-FD-STATIC-001
+STATUS: Draft
+TITLE: Pinned FD SOI static operating-point interface
+STATEMENT: >>>
+The typed operating-point interface shall accept the pinned Berkeley FD NMOS reference model with D/G/S/E terminal order and stamp its four signed currents and voltage derivatives. E is the back-gate terminal. An absent or invalid host shall fail explicitly. The static provider shall refuse charge-dependent analyses until terminal charge is qualified.
+<<<
+COMMENT: >>>
+Verification: tests/bsim330.rs exercises the native stamp, the normal request dispatch and the unsupported charge path. This profile is the t3 FD reference card with fixed geometry, temperature and Gmin. It does not satisfy the original deck admission or the DD/PD model requirements.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEMI-BSIM3SOI-001

@@ -90,3 +90,44 @@ fn bsim330_ac_charge_and_backward_euler_history() {
     let repeat = linearize_backward_euler(&plan, &bias, &old, h, &[0.; 4]).unwrap();
     assert_eq!(step.residual, repeat.residual);
 }
+
+#[test]
+#[ignore = "requires the pinned SOI FD host"]
+fn soi_fd_static_stamps_match_berkeley_t3() {
+    let circuit: Circuit = serde_json::from_str(
+        r#"{
+        "nodes":["0","d","g","s","e"],
+        "elements":[{"kind":"bsim_soi_fd_reference","id":"m1","p":1,"gate":2,"n":3,"back_gate":4}]
+    }"#,
+    )
+    .unwrap();
+    let plan = compile(&circuit).unwrap();
+    let result = linearize(&plan, &[0.01, 0.5, 0.0, 0.0]).unwrap();
+    assert!((result.residual[0] - 3.4034476219864e-6).abs() < 1e-12);
+    assert!((result.residual[2] + 3.4034476219864e-6).abs() < 1e-12);
+    assert!(result.residual.iter().sum::<f64>().abs() < 1e-14);
+
+    // The static reference device cannot supply an incremental charge stamp.
+    assert!(circuit_simulator::newton::charge_at_bias_csc(&plan, &[0.01, 0.5, 0.0, 0.0]).is_err());
+    let mut wire = serde_json::json!({
+        "schema_version":"1", "case_id":"fd_t3_point", "backend":"lu",
+        "analysis":{"kind":"operating_point"}, "circuit":circuit
+    });
+    let elements = wire["circuit"]["elements"].as_array_mut().unwrap();
+    for (id, node, value) in [
+        ("vd", 1, 0.01),
+        ("vg", 2, 0.5),
+        ("vs", 3, 0.0),
+        ("ve", 4, 0.0),
+    ] {
+        elements.push(serde_json::json!({"kind":"voltage","id":id,"p":node,"n":0,"volts":value}));
+    }
+    let request = serde_json::from_value(wire).unwrap();
+    let response = circuit_simulator::api::run(&request).unwrap();
+    let index = response
+        .signals
+        .iter()
+        .position(|s| s.id == "i(vd)")
+        .unwrap();
+    assert!((response.samples[0].values[index] + 3.4034476219864e-6).abs() < 1e-12);
+}

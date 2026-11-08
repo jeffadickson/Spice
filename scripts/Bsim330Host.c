@@ -1,4 +1,24 @@
+/* The model is an explicitly trusted platform-native OSDI module. */
+#ifdef _WIN32
 #include <windows.h>
+#define HOST_EXPORT __declspec(dllexport)
+#define HOST_PATH wchar_t
+#define module_handle HMODULE
+#define open_module(path) LoadLibraryExW(path, NULL, LOAD_LIBRARY_SEARCH_SYSTEM32)
+#define symbol(module, name) GetProcAddress(module, name)
+#define close_module(module) FreeLibrary(module)
+#define case_compare _stricmp
+#else
+#include <dlfcn.h>
+#include <strings.h>
+#define HOST_EXPORT __attribute__((visibility("default")))
+#define HOST_PATH char
+#define module_handle void *
+#define open_module(path) dlopen(path, RTLD_NOW | RTLD_LOCAL)
+#define symbol(module, name) dlsym(module, name)
+#define close_module(module) dlclose(module)
+#define case_compare strcasecmp
+#endif
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +29,7 @@ static bool set_param(const OsdiDescriptor04 *d, void *inst, void *model,
     for (uint32_t i = 0; i < d->num_params; i++) {
         OsdiParamOpvar p = d->param_opvar[i];
         for (uint32_t j = 0; j <= p.num_alias; j++) {
-            if (_stricmp(p.name[j], name)) continue;
+            if (case_compare(p.name[j], name)) continue;
             void *slot = d->access(inst, model, i,
                 ACCESS_FLAG_SET | (instance ? ACCESS_FLAG_INSTANCE : 0));
             if (!slot) return false;
@@ -24,25 +44,25 @@ static bool set_param(const OsdiDescriptor04 *d, void *inst, void *model,
 
 static const OsdiDescriptor04 *descriptor;
 
-__declspec(dllexport) int bsim330_open(const wchar_t *path) {
-    HMODULE lib = LoadLibraryExW(path, NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+HOST_EXPORT int bsim330_open(const HOST_PATH *path) {
+    module_handle lib = open_module(path);
     if (!lib) return 1;
-    const uint32_t *major = (void *)GetProcAddress(lib, "OSDI_VERSION_MAJOR");
-    const uint32_t *minor = (void *)GetProcAddress(lib, "OSDI_VERSION_MINOR");
-    const uint32_t *size = (void *)GetProcAddress(lib, "OSDI_DESCRIPTOR_SIZE");
-    const uint32_t *count = (void *)GetProcAddress(lib, "OSDI_NUM_DESCRIPTORS");
-    const OsdiDescriptor04 *d = (void *)GetProcAddress(lib, "OSDI_DESCRIPTORS");
+    const uint32_t *major = (void *)symbol(lib, "OSDI_VERSION_MAJOR");
+    const uint32_t *minor = (void *)symbol(lib, "OSDI_VERSION_MINOR");
+    const uint32_t *size = (void *)symbol(lib, "OSDI_DESCRIPTOR_SIZE");
+    const uint32_t *count = (void *)symbol(lib, "OSDI_NUM_DESCRIPTORS");
+    const OsdiDescriptor04 *d = (void *)symbol(lib, "OSDI_DESCRIPTORS");
     if (!major || !minor || !size || !count || !d || *major != 0 || *minor != 4 ||
-        *size != 352 || *count != 1 || strcmp(d->name, "sp_bsim3v3") ||
+        *size != 352 || *count != 1 || !d->name || strcmp(d->name, "sp_bsim3v3") ||
         d->num_terminals != 4 || d->num_states >= 32) {
-        FreeLibrary(lib);
+        close_module(lib);
         return 2;
     }
     descriptor = d;
     return 0;
 }
 
-__declspec(dllexport) int bsim330_trial(const double p[11], const double v[4],
+HOST_EXPORT int bsim330_trial(const double p[11], const double v[4],
                                        double output[8]) {
     const OsdiDescriptor04 *d = descriptor;
     if (!d) return 3;

@@ -30,6 +30,7 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(SpiceDiode), "spice_diode")]
 [JsonDerivedType(typeof(JunctionStorage), "junction_storage")]
 [JsonDerivedType(typeof(Bsim330), "bsim330")]
+[JsonDerivedType(typeof(BsimSoiFdReference), "bsim_soi_fd_reference")]
 [JsonDerivedType(typeof(Mos1Channel), "mos1_channel")]
 public abstract record Element(string Id, int P, int N);
 /// <summary>Positive resistance in ohms; validated by the engine before assembly.</summary>
@@ -200,3 +201,6 @@ public sealed record Bsim330Model(int Polarity,double Tox,double Nch,double Nsub
 
 /// <summary>Four-terminal device backed by the opt-in native DC provider.</summary>
 public sealed record Bsim330(string Id,int P,int N,int Gate,int Bulk,Bsim330Model Model):Element(Id,P,N);
+
+/// <summary>Pinned Berkeley FD SOI static reference device with an independent back gate.</summary>
+public sealed record BsimSoiFdReference(string Id,int P,int N,int Gate,int BackGate):Element(Id,P,N);
