@@ -65,6 +65,22 @@ public sealed class Mos1Tests {
   var channel=Assert.Single(result.Request!.Circuit.Elements.OfType<Mos1Channel>());
   Assert.Equal(beta,channel.Model.BetaAmpsPerVoltSquared,14);
  }
+ [Theory]
+ [InlineData("", "", 0, 2e-5)]
+ [InlineData("TOX=0", "", 0, 2e-5)]
+ [InlineData("TOX=10n", "", 3.45314379969e-11, .0002071886279814)]
+ [InlineData("TOX=10n L=3u W=9u KP=20u", "W=6u", 6.215658839442e-14, .00004)]
+ public void Oxide_geometry_uses_model_defaults_and_instance_overrides(string model, string instance,
+     double expectedFarads, double expectedBeta)
+ {
+  var deck=$"MOS oxide\nVd d 0 1\nVg g 0 1.5\nM1 d g 0 0 mm {instance}\n.model mm NMOS(LEVEL=1 {model})\n.end\n";
+  var result=OperatingPointSelection.Select(DeckParser.Parse(deck,collectDeclarations:true)).Prepared;
+  Assert.True(result.Success,string.Join(',',result.Diagnostics.Select(d=>d.Code)));
+  var channel=Assert.Single(result.Request!.Circuit.Elements.OfType<Mos1Channel>());
+  Assert.InRange(Math.Abs(channel.Model.OxideFarads-expectedFarads),0,Math.Max(1e-26,expectedFarads*1e-12));
+  Assert.InRange(Math.Abs(channel.Model.BetaAmpsPerVoltSquared-expectedBeta),0,1e-14);
+ }
+
  [Theory][InlineData("L=0")][InlineData("W=-1u")][InlineData("L=2u L=3u")][InlineData("M=2")]
  public void Invalid_instance_geometry_refuses_atomically(string terms) {
   var deck=$"MOS geometry\nVd d 0 1\nVg g 0 1.5\nM1 d g 0 0 mm {terms}\n.model mm NMOS(LEVEL=1 L=3u W=9u)\n.end\n";
@@ -83,7 +99,7 @@ public sealed class Mos1Tests {
   Assert.Contains(elements.OfType<Resistor>(),r=>r.Ohms==10&&r.P==0&&r.N==channel.N);
   Assert.Contains(elements.OfType<SpiceDiode>(),v=>v.N==channel.N&&v.Model.JunctionFarads==1e-12);
  }
- [Theory][InlineData("TOX=10n")][InlineData("RD=-1")][InlineData("RS=-1")][InlineData("LEVEL=2")][InlineData("UO=600")][InlineData("KP=0")][InlineData("VTO=.7 VTO=.8")][InlineData("MJ=1")][InlineData("CBD=-1p")][InlineData("TNOM=28")][InlineData("KP=1e308")]
+ [Theory][InlineData("TOX=-10n")][InlineData("TOX=1e-322")][InlineData("RD=-1")][InlineData("RS=-1")][InlineData("LEVEL=2")][InlineData("UO=600")][InlineData("KP=0")][InlineData("VTO=.7 VTO=.8")][InlineData("MJ=1")][InlineData("CBD=-1p")][InlineData("TNOM=28")][InlineData("KP=1e308")]
  public void Unsupported_profile_refuses_atomically(string terms) {
   var result=OperatingPointSelection.Select(DeckParser.Parse("MOS\nVd d 0 1\nVg g 0 1.5\nM1 d g 0 0 mm L=1u W=10u\n.model mm NMOS("+terms+")\n.end\n",collectDeclarations:true)).Prepared;
   Assert.False(result.Success);Assert.Null(result.Request);Assert.Empty(result.Origins);

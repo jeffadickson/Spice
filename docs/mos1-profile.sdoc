@@ -50,10 +50,10 @@ UID: SEMI-MOS1-OVERLAP-Q-001
 STATUS: Draft
 TITLE: Gate overlap storage without false intrinsic parity
 STATEMENT: >>>
-The generated bounded MOS1 model shall stamp gate-source CGSO times W, gate-drain CGDO times W and gate-bulk CGBO times L as explicit overlap capacitances. Derived capacitances shall be finite and preserve nonzero input terms. Absent or zero TOX is supported; nonzero TOX shall explicitly refuse because the generated card binder does not derive effective oxide capacitance. Overlap capacitance shall never be described as intrinsic or complete MOS gate-charge parity.
+The generated bounded MOS1 model shall stamp gate-source CGSO times W, gate-drain CGDO times W and gate-bulk CGBO times L as explicit overlap capacitances. Derived capacitances shall be finite and preserve nonzero input terms. The separate intrinsic TOX mapping is specified in SEMI-MOS1-TOX-001. Overlap capacitance shall never be described as intrinsic or complete MOS gate-charge parity.
 <<<
 COMMENT: >>>
-Source evidence: exact SpiceSharp 3.2.3 model/common parameters and dynamic behavior, and ngspice mos1temp.c disabling oxideCapFactor when TOX absent or zero. Verification: typed binder and nonzero-overlap complex AC/BE native oracle. General intrinsic charge, area/sidewall junction terms, mobility-derived KP and higher MOS levels remain open.
+Source evidence: exact SpiceSharp 3.2.3 model/common parameters and dynamic behavior, and ngspice mos1temp.c disabling oxideCapFactor when TOX absent or zero. Verification: typed binder and nonzero-overlap complex AC/BE native oracle. Area/sidewall junction terms and higher MOS levels remain outside this profile.
 <<<
 
 [REQUIREMENT]
@@ -85,5 +85,15 @@ STATEMENT: >>>
 The native MOS1 channel primitive shall accept a finite nonnegative effective oxide capacitance in farads, defaulting to zero. AC shall stamp the three incremental Meyer gate branches at the solved bias. Backward Euler shall use the mean of trial and previously accepted branch capacitances times the branch voltage increment divided by the step, with equal and opposite terminal currents.
 <<<
 COMMENT: >>>
-The classic Meyer partition follows the Berkeley/ngspice convention, cross-checked against the local pinned RSpice source in classic/capacitance.rs. It is a branch displacement law, not a globally integrable terminal charge or energy model. Verification uses mos1_channel and the SchematicLab mos1-meyer ngspice fixture. Generated TOX binding is separate.
+The classic Meyer partition follows the Berkeley/ngspice convention, cross-checked against the local pinned RSpice source in classic/capacitance.rs. It is a branch displacement law, not a globally integrable terminal charge or energy model. Verification uses mos1_channel and the SchematicLab mos1-meyer ngspice fixture. Generated TOX binding is specified in SEMI-MOS1-TOX-001.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-MOS1-TOX-001
+TITLE: Derive intrinsic MOS1 capacitance from TOX
+STATEMENT: >>>
+For a positive TOX in metres, the generated LEVEL=1 profile shall set the native effective oxide capacitance to (3.9 × 8.854214871e-12 / TOX) × W × L in farads, using the resolved instance and model geometry. Where KP is omitted it shall use the ngspice default mobility of 600 cm²/V/s with that oxide capacitance per area. Explicit KP shall take precedence. Absent or zero TOX shall omit intrinsic oxide capacitance and preserve the previous KP default. Negative TOX or a nonrepresentable derived capacitance shall refuse before producing a native request.
+<<<
+COMMENT: >>>
+Implementation: Mos1Preparation and the native oxide_farads wire field. Effective geometry follows SEMI-MOS1-GEOMETRY-001. Geometry corrections such as LD and user-supplied UO remain outside the profile. Verification: Mos1Tests and Mos1NativeOracleIntegration on both CPU providers.
 <<<

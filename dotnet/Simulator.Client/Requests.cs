@@ -191,8 +191,9 @@ public static class WireFormat
 
 /// <summary>Effective MOS1 SI channel parameters at the nominal temperature; beta includes W/L.</summary>
 public sealed record Mos1Model(bool PChannel,double ThresholdVolts,double BetaAmpsPerVoltSquared,
-    double BodyEffectSqrtVolts,double SurfacePotentialVolts,double ChannelLengthModulationPerVolt);
-/// <summary>Drain P to source N channel only. Gate and Bulk are controls; charge is explicit topology.</summary>
+    double BodyEffectSqrtVolts,double SurfacePotentialVolts,double ChannelLengthModulationPerVolt,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] double OxideFarads = 0);
+/// <summary>Drain P to source N channel only. Gate and Bulk participate in optional intrinsic Meyer displacement.</summary>
 public sealed record Mos1Channel(string Id,int P,int N,int Gate,int Bulk,Mos1Model Model):Element(Id,P,N);
 
 /// <summary>Explicit bulk BSIM3 3.3.0 model and instance parameters.</summary>

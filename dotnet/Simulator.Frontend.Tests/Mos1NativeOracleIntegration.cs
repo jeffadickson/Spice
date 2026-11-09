@@ -8,8 +8,8 @@ namespace Simulator.Frontend.Tests;
 /// <summary>Bounded MOS1 reference decks with explicit nonzero body and overlap storage.</summary>
 public sealed class Mos1NativeOracleIntegration
 {
- [BjtOracleTheory][InlineData("lu")][InlineData("faer")]
- public async Task Generated_bounded_MOS1_matches_independent_native_reference(string backend)
+ [BjtOracleTheory][InlineData("lu", false)][InlineData("faer", false)][InlineData("lu", true)][InlineData("faer", true)]
+ public async Task Generated_bounded_MOS1_matches_independent_native_reference(string backend, bool intrinsic)
  {
   var engine=Environment.GetEnvironmentVariable("SPICE_SEMICONDUCTOR_ENGINE")!;var ng=Environment.GetEnvironmentVariable("SPICE_NGSPICE")!;
   var parent=Environment.GetEnvironmentVariable("SPICE_SEMICONDUCTOR_ARTIFACT_ROOT")!;Assert.True(Directory.Exists(parent));
@@ -17,7 +17,7 @@ public sealed class Mos1NativeOracleIntegration
   foreach(var family in new[]{"NMOS","PMOS"})
   {
    var sign=family=="NMOS"?1:-1;var phase=sign==1?0:180;var prefix=Path.Combine(folder,family).Replace('\\','/');
-   var deck=$"MOS1 reference\nVDRV input 0 DC {(sign*1.5).ToString("R",CultureInfo.InvariantCulture)} AC 1 {phase}\nVCC supply 0 DC {sign} AC 0\nRG input g 1k\nRD supply d 1k\nRS s 0 100\nM1 d g s 0 mm L=1u W=10u\n.model mm {family}(LEVEL=1 VTO={(sign*.7).ToString("R",CultureInfo.InvariantCulture)} KP=20u GAMMA=.4 PHI=.6 LAMBDA=.03 IS=1e-14 CBD=2p CBS=3p PB=.8 MJ=.5 FC=.5 CGSO=2e-7 CGDO=3e-7 CGBO=1e-6 TNOM=27)\n";
+   var deck=$"MOS1 reference\nVDRV input 0 DC {(sign*1.5).ToString("R",CultureInfo.InvariantCulture)} AC 1 {phase}\nVCC supply 0 DC {sign} AC 0\nRG input g 1k\nRD supply d 1k\nRS s 0 100\nM1 d g s 0 mm L=1u W=10u\n.model mm {family}(LEVEL=1 VTO={(sign*.7).ToString("R",CultureInfo.InvariantCulture)} KP=20u GAMMA=.4 PHI=.6 LAMBDA=.03 IS=1e-14 CBD=2p CBS=3p PB=.8 MJ=.5 FC=.5 CGSO=2e-7 CGDO=3e-7 CGBO=1e-6 TNOM=27{(intrinsic?" TOX=10n":"")})\n";
    var reference=deck+$".options gmin=0 method=gear maxord=1 reltol=1e-9 abstol=1e-15 vntol=1e-12\n.ic v(g)=0 v(d)=0 v(s)=0\n.control\nset wr_singlescale\nset wr_vecnames\nop\nwrdata {prefix}-op.txt v(g) v(d) i(VCC)\nac lin 1 10000000 10000000\nwrdata {prefix}-ac.txt v(g) v(d) i(VCC)\nreset\ntran 10p 20n 0 10p uic\nwrdata {prefix}-tran.txt v(g) v(d) i(VCC)\nquit\n.endc\n.end\n";
    var file=prefix+".cir";File.WriteAllText(file,reference);await Oracle(file,prefix+".log");
    var op=Read(prefix+"-op.txt");var ac=Read(prefix+"-ac.txt");var tr=Read(prefix+"-tran.txt");Assert.True(tr.Length>1000);
@@ -25,6 +25,8 @@ public sealed class Mos1NativeOracleIntegration
    {
     var prepared=OperatingPointSelection.Select(DeckParser.Parse(deck+".end\n",collectDeclarations:true),backend:backend).Prepared;
     Assert.True(prepared.Success,string.Join(',',prepared.Diagnostics.Select(d=>d.Code)));
+    var model=Assert.Single(prepared.Request!.Circuit.Elements.OfType<Mos1Channel>()).Model;
+    Assert.Equal(intrinsic,model.OxideFarads>0);
     var q=prepared.Origins.Single(o=>o.LocalName=="M1").WireId;
     foreach(var analysis in new Analysis[]{new OperatingPoint(),new Ac([1e7],prepared.AcSources.ToArray()),new Transient(new(2e-8,1e-11,2001))})
     {
