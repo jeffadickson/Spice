@@ -72,6 +72,7 @@ public static class OperatingPointBridge
         var roots=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var internalNodes=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var bound=InstanceBinder.Bind(catalog).Instances.ToLookup(i=>i.Header.ScopeId);
+        var hasJfet = false;
         GroundBinding? groundBinding=null;
         var primitives=catalog.Primitives.ToLookup(p=>p.ScopeId);var cards=catalog.Cards.ToLookup(c=>c.ScopeId);
         var globalNames=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var globalNodes=new Dictionary<string,int>(StringComparer.OrdinalIgnoreCase);
@@ -94,6 +95,7 @@ public static class OperatingPointBridge
                 throw new BridgeFailure("unsupported_bsim_soi_fd_option_context",fdOptions[0].Range);
             Analysis analysis=hasFd
                 ? new OperatingPointNewton(new NewtonOptions(MaxIterations:500,Continuation:new(InitialStep:1)))
+                : hasJfet ? new OperatingPointNewton(new NewtonOptions(MaxIterations:200,Continuation:new(InitialStep:1)))
                 : new OperatingPoint();
             return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),analysis,backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
             {InternalNodes=internalNodes.ToImmutable(),AcSources=acSources.ToImmutableArray(),AcResistances=acResistances.ToImmutable(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
@@ -130,7 +132,7 @@ public static class OperatingPointBridge
                 {
                     if(omittedStarts?.Contains(card.Range.Start)==true)continue;
                     if(selected&&card.GlobalNodes!=null)continue;
-                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice" or "diode" or "behavior" or "bjt" or "mos")))
+                    if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice" or "diode" or "behavior" or "bjt" or "mos" or "jfet")))
                         throw new BridgeFailure("unsupported_active_card",card.Range);
                 }
                 var frameIds=new Dictionary<string,(string Id,string Family)>(StringComparer.OrdinalIgnoreCase);
@@ -346,6 +348,16 @@ public static class OperatingPointBridge
                         var d=Node(call.Ports[0].Actual.Text);var g=Node(call.Ports[1].Actual.Text);var source=Node(call.Ports[2].Actual.Text);var b=Node(call.Ports[3].Actual.Text);
                         var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
                         mos!.Append(id,d,g,source,b,PrivateNode,element=>{if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);elements.Add(element);});
+                        origins.Add(new(id,call.Header.Name,path,call.Header.Range));continue;
+                    }
+                    if(selected&&call.Header.Family=="J")
+                    {
+                        if(!JfetPreparation.TryPrepare(catalog,environment,call,out var jfet,out var error))
+                            throw new BridgeFailure(error.Code,error.Range);
+                        var d=Node(call.Ports[0].Actual.Text);var g=Node(call.Ports[1].Actual.Text);var source=Node(call.Ports[2].Actual.Text);
+                        var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        hasJfet = true;
+                        jfet!.Append(id,d,g,source,g,PrivateNode,element=>{if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);elements.Add(element);});
                         origins.Add(new(id,call.Header.Name,path,call.Header.Range));continue;
                     }
                     if(selected&&call.Header.Family=="Q")

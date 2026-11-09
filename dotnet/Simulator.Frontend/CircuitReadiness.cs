@@ -79,6 +79,13 @@ public static class CircuitReadiness
                         if(mos!=null&&!Mos1Preparation.AssignmentsAreSupported(mos)&&Mos1Preparation.Bsim3Diagnostic(mos)!="bsim3_kernel_unavailable")AddIssue(new("model_contract",Mos1Preparation.Bsim3Diagnostic(mos)??"unsupported_mos1_profile",card.Kind,scope,path,card.Range));
                         continue;
                     }
+                    if(card.Kind=="jfet")
+                    {
+                        var jfet=bound[scope].FirstOrDefault(i=>i.Header.Range==card.Range);
+                        if(jfet!=null&&!JfetPreparation.Supports(jfet))
+                            AddIssue(new("model_contract","unsupported_jfet1_profile",card.Kind,scope,path,card.Range));
+                        continue;
+                    }
                     if(card.Kind=="bjt")
                     {
                         var bjt=bound[scope].FirstOrDefault(i=>i.Header.Range==card.Range);

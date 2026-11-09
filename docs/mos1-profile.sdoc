@@ -97,3 +97,13 @@ For a positive TOX in metres, the generated LEVEL=1 profile shall set the native
 COMMENT: >>>
 Implementation: Mos1Preparation and the native oxide_farads wire field. Effective geometry follows SEMI-MOS1-GEOMETRY-001. Geometry corrections such as LD and user-supplied UO remain outside the profile. Verification: Mos1Tests and Mos1NativeOracleIntegration on both CPU providers.
 <<<
+
+[REQUIREMENT]
+UID: SEMI-JFET1-SQUARE-LAW-001
+TITLE: Lower the bounded level-1 JFET channel
+STATEMENT: >>>
+The generated frontend shall lower three-terminal NJF and PJF level-1 cards with the default B=1 law. It shall convert JFET BETA to the shared square-law convention, orient both gate junctions by polarity, and stamp RD and RS outside the intrinsic terminals. The drain sensor shall retain the external drain current. Invalid values and unsupported model or instance parameters shall refuse preparation.
+<<<
+COMMENT: >>>
+Verification uses JfetTests and the original jfet/jfet_vds-vgs.cir operating point and nested DC sweep. This profile covers LEVEL, VTO, BETA, LAMBDA, RD, RS and IS at nominal temperature. Charge, alternative B, and temperature laws are separate.
+<<<

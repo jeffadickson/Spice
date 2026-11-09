@@ -108,3 +108,9 @@ An event-driven native-backed test observed positive running values and a nondec
 final value; exact samples and scoped coverage are in evidence/requested-progress-clock.json.
 The already frozen62ae97d campaign source was not changed retroactively.
 
+
+The level-1 JFET checkpoint used the RSpice corpus at 29c28a02 and the original jfet/jfet_vds-vgs.cir, SHA-256 1b091823aefe52c8b3b2ee7f57974847c57a909e255d08fac3d62f562f2da739. RSpice passed its suite reference. The generated frontend executed the original operating point and all 104 nested DC points through the native solver. The operating point agreed with ngspice 47+, with drain-current error below 27 pA. The original sweep remains classified as numerical disagreement because four drain-current samples exceeded the campaign tolerance, with a maximum difference of 3.10 µA.
+
+A separate diagnostic copy set ngspice RELTOL=1e-9, ABSTOL=1e-15 and VNTOL=1e-12. On that copy all 104 drain-current values met the same comparison tolerance, with a maximum difference of 28 pA. This isolates sensitivity to the reference solve tolerances without changing the original corpus classification. Bounded source continuation recovered the original operating point, which hit the Newton iteration limit with the default startup.
+
+Six focused tests passed. JfetPreparation had 90.9% line and 81.81% branch coverage. The original deck qualifies only the NJF DC profile. PJF polarity was tested at the lowering boundary. Separate mutation and fuzz campaigns and native line/branch coverage were outside this run. Raw evidence is under E:/Artifacts/Spice-rspice-jfet-4661368.
