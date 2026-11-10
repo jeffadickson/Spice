@@ -170,3 +170,21 @@ Windows verification from deab565 with REQ-CORPUS-AC-ZERO-001. Replayed the same
 
 cargo test --locked -j 1 --test sparse_ac --test sparse_ac_circuits --test analysis_audits passed 27 tests, including the existing 32-case RC property with seed 2026103006. The Windows process-tree watchdog used an aggregate and per-tree limit of 850 MiB. Managed filters ZeroFrequencyAcTests, RequestedQualificationTests, SourceProfileTests and RequestedControl matched 90 passes and three environment-gated skips. Coverlet line/branch percentages were 90.24/55.88 for RequestedControlReporting.cs and 81.08/46.90 for RequestedComparison. A deliberate removal of the imaginary-component rejection failed its regression. Native coverage and a dedicated fuzz run were outside this checkpoint. Evidence is under E:/Artifacts/Spice-ac-zero-deab565.
 <<<
+
+[REQUIREMENT]
+UID: REQ-CORPUS-TEMPERATURE-001
+STATUS: Draft
+TITLE: Celsius model expressions and bounded temperature sweeps
+STATEMENT: >>>
+The selected frontend shall bind temper to the analysis temperature in degrees Celsius, defaulting to 27 C. A single-axis DC temperature sweep shall independently re-elaborate the circuit at each coordinate and publish no partial request plan if any point fails. It shall admit bounded passive circuits and default-thermal Shockley diodes without charge storage or series resistance at nonnominal temperatures. Diodes shall use the default TLEV=0 thermal-voltage and saturation-current transforms relative to TNOM=27 C after reevaluating the original nominal IS expression. Unsupported temperature-dependent physics, nested temperature axes and points at or below absolute zero shall refuse.
+<<<
+COMMENT: >>>
+Implementation: ParameterEvaluator, OperatingPointBridge, SemiconductorPreparation and RequestedAnalysis. The corpus comparison validates ngspice's temp-sweep axis in Celsius. The qualified reporting profile admits bounded scalar let initialization before one analysis, followed by real-vector arithmetic, vecmax, ne and terminal assertions. It exports the temperature axis and nominal IS of bound root diode models through typed preparation data. TemperatureSweepTests verifies per-point elaboration and refusal. The exact ngspice diode default equations were checked against diotemp.c and diosetup.c from e8285746c73a8229cf922487c8ccfcf6bea61bce.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Windows ten-deck replay from 88844f9 plus this change used Run-RequestedCorpus.cs, the existing pinned inventory, the 88844f9 native engine and ngspice 47+, with a 30-second admission budget. temper-1.cir and temper-3.cir ran unchanged and agreed. temper-2.cir completed all ten original DC temperature points. All three original reporting assertions returned exit code 0. Against default ngspice, temper-2 had one voltage mismatch at 40 C, 9.172574381521859e-5 V, and all mapped currents were within tolerance. A separate diagnostic reference used RELTOL=1e-10, ABSTOL=1e-15, VNTOL=1e-12 and GMIN=0. The largest v(2) difference on that ten-point reference was 2.774119822746e-11 V, and the 40 C difference was 4.50417481090426e-13 V. The default comparison remains classified as numerical disagreement. Cohort totals are four agreed, one executed with a numerical disagreement and five refused. Raw records are in E:/Artifacts/Spice-temper-88844f9.
+
+Managed filters TemperatureSweepTests, RequestedControl, ZeroFrequencyAcTests, Resistor and Semiconductor recorded 120 passes and four environment-gated skips. Coverlet line/branch percentages were 93.75/66.21 for ParameterEvaluator and 93.87/86.36 for SemiconductorPreparation. A deliberate removal of the diode activation-energy term failed the thermal model regression. Native coverage, fuzzing and dedicated randomized testing were outside this checkpoint. No native engine code changed.
+<<<

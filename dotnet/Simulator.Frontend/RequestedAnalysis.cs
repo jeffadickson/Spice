@@ -77,8 +77,9 @@ public static partial class RequestedAnalysis
   var methodCards=catalog.Cards.Where(c=>hasTransient&&c.ScopeId==0&&c.TransientMethodOption!=null).ToArray();
   if(methodCards.Length>1)return Fail("ambiguous_transient_method",methodCards[1].Range);
   var requestedMethod=methodCards.SingleOrDefault()?.TransientMethodOption;
-  var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,
-      catalog.InitialConditions.Select(ic=>ic.Range.Start).Concat(methodCards.Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet());
+  var handledPhysicalStarts=
+      catalog.InitialConditions.Select(ic=>ic.Range.Start).Concat(methodCards.Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet();
+  var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,handledPhysicalStarts);
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
   if(baseRequest.Circuit.Elements.Any(e=>e is BsimSoiFdReference) &&
@@ -90,7 +91,7 @@ public static partial class RequestedAnalysis
   var clobber=catalog.ControlBlocks.SelectMany(b=>b.Commands).FirstOrDefault(c=>
       c.Postprocessing is {Kind:ControlPostprocessingKind.Let} local&&rootNames.Contains(local.Names[0]));
   if(clobber!=null)return Fail("unsupported_control_observable_assignment",clobber.Range);
-  var environment=ParameterEvaluator.Evaluate(catalog);
+  var environment=ParameterEvaluator.EvaluateAtTemperature(catalog,27);
   var operations=ImmutableArray.CreateBuilder<RequestedOperation>();
   try{
    var biasedConditions=control.Directives.Any(a=>a.Analysis.Kind=="tran"&&a.Analysis.Names.IsEmpty)
@@ -111,6 +112,22 @@ public static partial class RequestedAnalysis
      case "op":requests.Add(baseRequest with{CaseId=id});break;
      case "dc":
       if(card.Names.Length is <1 or >2)throw new PreparationFailure("unsupported_nested_dc_sweep",card.Range);
+      if(card.Names.Any(name=>name.Equals("temp",StringComparison.OrdinalIgnoreCase)))
+      {
+       if(card.Names.Length!=1||baseRequest.Circuit.Elements.Any(e=>e is not (Resistor or Voltage or Current or Capacitor or Inductor or SpiceDiode {Model.JunctionFarads:0,Model.TransitSeconds:0})))
+        throw new PreparationFailure("unsupported_temperature_sweep_profile",card.Range);
+       unit="degC";
+       coordinates=Linear(values[0],values[1],values[2],Math.Min(maxPoints,128),card.Range);
+       foreach(var celsius in coordinates)
+       {
+        if(celsius<=-273.15)throw new PreparationFailure("invalid_sweep_temperature",card.Range);
+        var atTemperature=(limits??new BridgeLimits()) with{TemperatureCelsius=celsius};
+        var point=OperatingPointSelection.SelectRequested(syntax,atTemperature,backend,handledPhysicalStarts).Prepared;
+        if(!point.Success)throw new PreparationFailure(point.Diagnostics[0].Code,point.Diagnostics[0].Range);
+        requests.Add(point.Request! with{CaseId=id+"_"+requests.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),Analysis=DcSweepAnalysis(point.Request!)});
+       }
+       break;
+      }
       var resolvedSource=RequestedDcSourceBinding.Resolve(catalog,prepared,card.Names[0]);
       if(resolvedSource.Source is not {} source)throw new PreparationFailure(resolvedSource.Error!,card.Range);
       unit=source is Voltage?"V":"A";

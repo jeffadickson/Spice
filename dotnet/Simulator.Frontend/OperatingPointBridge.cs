@@ -8,6 +8,7 @@ public sealed record BridgeLimits(int MaxDepth=32,int MaxInstances=128,int MaxEl
     /// <summary>Selected frontend dialect policy. Strict Lower retains its legacy literal-node contract.</summary>
     public GroundAliasPolicy GroundAliases {get;init;}=GroundAliasPolicy.Automatic;
     internal bool AllowForwardEarlyEffect { get; init; }
+    internal double TemperatureCelsius { get; init; } = 27;
 }
 /// <summary>Capability/validation failure; ranges refer to the supplied syntax text.</summary>
 public sealed record BridgeDiagnostic(string Code,SourceRange? Range);
@@ -26,6 +27,7 @@ public sealed record BridgeResult(SimulationRequest? Request,ImmutableDictionary
     public GroundAliasPolicy GroundAliases {get;init;}=GroundAliasPolicy.Disabled;
     /// <summary>Explicit complex AC replacements for every active independent source, including zero for DC-only sources. DC bias remains in Request.Circuit.</summary>
     public ImmutableArray<AcSourcePhasor> AcSources { get; init; } = [];
+    internal ImmutableDictionary<string,double> ModelScalars { get; init; } = ImmutableDictionary<string,double>.Empty;
     internal ImmutableArray<ForwardEarlyEffect> EarlyEffects { get; init; } = [];
     // Requested AC can replace resistance by wire ID after checking linearity.
     internal ImmutableDictionary<string,double> AcResistances {get;init;}=ImmutableDictionary<string,double>.Empty;
@@ -74,13 +76,14 @@ public static class OperatingPointBridge
         var roots=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var internalNodes=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var bound=InstanceBinder.Bind(catalog).Instances.ToLookup(i=>i.Header.ScopeId);
+        var modelScalars=ImmutableDictionary.CreateBuilder<string,double>(StringComparer.OrdinalIgnoreCase);
         var hasJfet = false;
         var earlyEffects=ImmutableArray.CreateBuilder<ForwardEarlyEffect>();
         GroundBinding? groundBinding=null;
         var primitives=catalog.Primitives.ToLookup(p=>p.ScopeId);var cards=catalog.Cards.ToLookup(c=>c.ScopeId);
         var globalNames=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var globalNodes=new Dictionary<string,int>(StringComparer.OrdinalIgnoreCase);
         var localNodes=new Dictionary<int,Dictionary<string,int>>();var active=new HashSet<int>();var frames=0;
-        var rootParameters=ParameterEvaluator.Evaluate(catalog);
+        var rootParameters=selected?ParameterEvaluator.EvaluateAtTemperature(catalog,limits.TemperatureCelsius):ParameterEvaluator.Evaluate(catalog);
         if(!rootParameters.Success)return Failure(rootParameters.Diagnostics[0].Code,rootParameters.Diagnostics[0].Range);
         try
         {
@@ -101,7 +104,7 @@ public static class OperatingPointBridge
                 : hasJfet ? new OperatingPointNewton(new NewtonOptions(MaxIterations:200,Continuation:new(InitialStep:1)))
                 : new OperatingPoint();
             return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),analysis,backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
-            {EarlyEffects=earlyEffects.ToImmutable(),InternalNodes=internalNodes.ToImmutable(),AcSources=acSources.ToImmutableArray(),AcResistances=acResistances.ToImmutable(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
+            {ModelScalars=modelScalars.ToImmutable(),EarlyEffects=earlyEffects.ToImmutable(),InternalNodes=internalNodes.ToImmutable(),AcSources=acSources.ToImmutableArray(),AcResistances=acResistances.ToImmutable(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
         }
         catch(BridgeFailure e){return Failure(e.Code,e.Range);}
         void CollectGlobals(int scope,HashSet<int> seen,int depth)
@@ -373,7 +376,7 @@ public static class OperatingPointBridge
                     }
                     if(selected&&call.Header.Family=="D")
                     {
-                        if(!SemiconductorPreparation.TryDiode(catalog,environment,call,out var diode,out var seriesOhms,out var error))
+                        if(!SemiconductorPreparation.TryDiode(catalog,environment,call,out var diode,out var seriesOhms,out var error,limits.TemperatureCelsius))
                             throw new BridgeFailure(error!.Code,error.Range);
                         var p=Node(call.Ports[0].Actual.Text);var n=Node(call.Ports[1].Actual.Text);
                         if(p==n)throw new BridgeFailure("shorted_primitive",call.Header.Range);
@@ -387,6 +390,8 @@ public static class OperatingPointBridge
                             elements.Add(new Resistor(id+"_rs",p,intrinsic,seriesOhms));
                             p=intrinsic;
                         }
+                        if(limits.TemperatureCelsius==27&&call.Target is {ScopeId:0} model)
+                            modelScalars.TryAdd("@"+model.Name+"[is]",diode!.SaturationAmps);
                         elements.Add(new SpiceDiode(id,p,n,diode!));origins.Add(new(id,call.Header.Name,path,call.Header.Range));
                         continue;
                     }

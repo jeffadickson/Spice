@@ -45,6 +45,8 @@ public static partial class RequestedAnalysis
             if(circuit.Request!.Circuit.Elements.Single(e=>e.Id==element.WireId) is Voltage source)
                 inputs.TryAdd("@"+element.NativeBranchName+"[dc]",[source.Volts]);
         }
+        if(operation.Kind=="op")foreach(var (name,value) in circuit.ModelScalars)inputs.TryAdd(name,[value]);
+        if(operation.Kind=="dc"&&operation.CoordinateUnit=="degC")inputs.Add("temp-sweep",operation.Coordinates.ToArray());
         if(operation.Kind=="tran")inputs.Add("time",samples.Select(s=>s.TimeS).ToArray());
         var prefix=plan.ProgramOmissions.Any(o=>o.Kind=="control_prefix_reporting");
         return ControlVectorExecution.Execute(prefix?blocks[0].Commands:

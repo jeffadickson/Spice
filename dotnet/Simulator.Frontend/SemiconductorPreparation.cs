@@ -21,7 +21,7 @@ internal static class SemiconductorPreparation
         name is "IS" or "N" or "CJO" or "VJ" or "M" or "FC" or "TT" or "TNOM" or "RS";
 
     internal static bool TryDiode(DeclarationCatalog catalog,ParameterEvaluation environment,
-        BoundInstance call,out SpiceDiodeModel? result,out double seriesOhms,out BridgeDiagnostic? diagnostic)
+        BoundInstance call,out SpiceDiodeModel? result,out double seriesOhms,out BridgeDiagnostic? diagnostic,double celsius=27)
     {
         result=null;seriesOhms=0;diagnostic=null;
         if(call.Status!=BindingStatus.Bound||call.Target is not {} model)
@@ -48,7 +48,19 @@ internal static class SemiconductorPreparation
         if(rs<0||rs>0&&!double.IsFinite(1/rs)||isat<=0||n<=0||c<0||vj<=0||m<0||m>=1||fc<0||fc>=1||tt<0||Value("TNOM",27)!=27)
         {diagnostic=new("invalid_or_unqualified_diode_parameter",model.Range);return false;}
         const double kOverQ=1.38064852e-23/1.6021766208e-19;
-        var vt=n*kOverQ*300.15;
+        var kelvin=celsius+273.15;
+        var vt=n*kOverQ*kelvin;
+        if(celsius!=27)
+        {
+            if(c!=0||tt!=0||rs!=0)
+            {diagnostic=new("unsupported_diode_temperature_profile",model.Range);return false;}
+            // Default TLEV=0, EG=1.11 eV and XTI=3, relative to TNOM=27 C.
+            // Evaluate the card's IS at the requested temperature before scaling.
+            var ratio=kelvin/300.15;
+            isat*=Math.Exp((ratio-1)*1.11/vt+(3/n)*Math.Log(ratio));
+            if(!double.IsFinite(isat)||isat<=0)
+            {diagnostic=new("invalid_diode_temperature_scaling",model.Range);return false;}
+        }
         if(!double.IsFinite(vt)||vt<=0)
         {diagnostic=new("invalid_diode_thermal_voltage",model.Range);return false;}
         result=new(isat,vt,c,vj,m,fc,tt);seriesOhms=rs;return true;

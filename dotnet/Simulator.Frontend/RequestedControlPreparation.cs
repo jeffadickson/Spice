@@ -44,8 +44,10 @@ internal static class RequestedControlPreparation
   var lastAnalysisStart=block.Commands.Where(c=>c.Kind is "analysis" or "run").Select(c=>c.Range.Start).DefaultIfEmpty(-1).Max();
   var prefix=block.Commands.Where(c=>c.Range.Start<lastAnalysisStart).ToArray();
   var hasLocalSettings=prefix.Any(c=>c.Kind=="local_set");
+  var scalarPrefix=prefix.Any(c=>c.Postprocessing?.Kind==ControlPostprocessingKind.Let)&&
+      prefix.All(c=>c.Kind=="comment"||c is {Diagnostic:null,Postprocessing.Kind:ControlPostprocessingKind.Let});
   var prefixReporting=hasDirect&&!hasRun&&block.Commands.Count(c=>c.Kind=="analysis")==1&&
-      (hasLocalSettings||prefix.Any(c=>c.Postprocessing?.Kind==ControlPostprocessingKind.Define));
+      (scalarPrefix||hasLocalSettings||prefix.Any(c=>c.Postprocessing?.Kind==ControlPostprocessingKind.Define));
   if(prefixReporting){
    foreach(var command in prefix){
     if(command.Postprocessing?.Kind==ControlPostprocessingKind.Define){
@@ -54,11 +56,19 @@ internal static class RequestedControlPreparation
      continue;
     }
     if(command.Kind=="comment")continue;
+    if(scalarPrefix){
+     if(ControlSuffixAdmission.Admit(command,lastAnalysisStart,new(StringComparer.OrdinalIgnoreCase),allowPrefixScalar:true) is {} invalid)
+      return Fail(invalid,command.Range);
+     continue;
+    }
     if(!hasLocalSettings||command.Kind is not ("if" or "else" or "end" or "local_set" or "report_substitution")&&
        !(command.Kind=="report"&&command.Name=="echo")&&command.Postprocessing?.Kind!=ControlPostprocessingKind.Let)
      return Fail("unsupported_control_prefix_effect",command.Range);
    }
-   try{ControlVectorExecution.Execute(prefix,new Dictionary<string,double[]>(),constants:constants);}
+   try{
+    var validation=ControlVectorExecution.Execute(prefix,new Dictionary<string,double[]>(),constants:constants);
+    if(scalarPrefix&&(!validation.Diagnostics.IsEmpty||validation.Locals.Values.Any(v=>v.Length!=1)))return Fail("unsupported_control_prefix_effect",block.Range);
+   }
    catch(InvalidDataException error){return Fail(error.Message,block.Range);}
   }
   var locals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var quit=false;var inLoop=false;var branches=new Stack<bool>();

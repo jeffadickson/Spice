@@ -147,7 +147,7 @@ public static class RequestedComparison
    if(operation.Kind=="op"){
     if(native.Points.Length!=1||manifests.Length!=1||manifests[0].Samples.Length!=1||manifests[0].AcSamples.Length!=0)throw new InvalidDataException("op_shape_gap");actualAxis=[0];
    }else if(operation.Kind=="dc"){
-    if(native.Variables[0].Dimension!=(operation.CoordinateUnit=="V"?"voltage":"current")||manifests.Any(m=>m.Samples.Length!=1||m.AcSamples.Length!=0))throw new InvalidDataException("dc_shape_or_unit_gap");actualAxis=operation.Coordinates.ToArray();Grid(actualAxis,axis);
+    if(native.Variables[0].Dimension!=(operation.CoordinateUnit switch{"V"=>"voltage","degC"=>"temp-sweep",_=>"current"})||manifests.Any(m=>m.Samples.Length!=1||m.AcSamples.Length!=0))throw new InvalidDataException("dc_shape_or_unit_gap");actualAxis=operation.Coordinates.ToArray();Grid(actualAxis,axis);
     if(operation.NestedDc is {} secondary){
      int Terminal(string? signal){
       if(signal==null)return -1;

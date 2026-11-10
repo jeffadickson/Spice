@@ -49,7 +49,7 @@ CONTROL_SEPARATOR: {ControlSemantic}? ';' ~[\r\n]*;
 DOLLAR_COMMENT: {!ControlSemantic || InputStream.LA(2) == ' ' || InputStream.LA(2) == '\t'}? DOLLAR_MARKER ~[\r\n]* -> channel(HIDDEN);
 // Native cp_variablesubst searches anywhere in a word, including source names.
 // This semantic-only rule wins a whole-name tie without changing deck names.
-CONTROL_NE: {ControlSemantic}? '><';
+CONTROL_NE: {ControlSemantic}? ('><' | 'ne');
 CONTROL_EQ: {ControlSemantic}? 'eq';
 CONTROL_VARIABLE: {ControlSemantic}? ('$&' NAMECHAR+ | NAMECHAR* '$' NAMECHAR*);
 SLASH_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
@@ -97,7 +97,7 @@ URC_DIGITAL_HEADER: {Column == 0 || InputStream.LA(-1) == '\r'}? HSPACE* 'u' NAM
 URC_NAME: 'u' NAMECHAR*;
 WORD: [a-z_@$#\u0080-\uffff] NAMECHAR*;
 PATH_NAME: {!ControlSemantic}? ('/' | '\\') [a-z_] NAMECHAR*;
-fragment NAMECHAR: [a-z_0-9.!@$#%:+/\\?\u0080-\uffff-];
+fragment NAMECHAR: [a-z_0-9.!@$#%:+\\?\u0080-\uffff-] | {!ControlSemantic}? '/';
 fragment NUM: ([0-9]+ ('.' [0-9]*)? | '.' [0-9]+) ('e' [+-]? [0-9]+)? [a-z]*;
 fragment HSPACE: [ \t];
 fragment LOGICAL_SPACE: HSPACE | ('\r\n' | '\r' | '\n') ([ \t]* (('*' | DOLLAR_MARKER) ~[\r\n]*)? ('\r\n' | '\r' | '\n'))* [ \t]* '+';

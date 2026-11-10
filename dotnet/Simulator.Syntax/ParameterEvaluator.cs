@@ -28,6 +28,13 @@ public static class ParameterEvaluator
     /// <remarks>Each scope's dependency graph is simultaneous; self-reference is a cycle, not an implicit prior-value update.</remarks>
     public static ParameterEvaluation Evaluate(DeclarationCatalog catalog,int scopeId=0)=>EvaluateScope(catalog,scopeId,null);
 
+    /// <summary>Evaluates a root parameter environment with the analysis temperature in degrees Celsius.</summary>
+    public static ParameterEvaluation EvaluateAtTemperature(DeclarationCatalog catalog,double celsius)
+    {
+        if(!double.IsFinite(celsius)||celsius<=-273.15)throw new ArgumentOutOfRangeException(nameof(celsius));
+        return EvaluateScope(catalog,0,null,temperature:celsius);
+    }
+
     /// <summary>Evaluates named call overrides in the caller, then defaults/dependencies in the callee.</summary>
     /// <remarks>Overrides must name header defaults. Collision with a local .param is explicitly unsupported. Caller must be an unmodified evaluation from this catalog and the call scope; evaluated lexical ancestors preserve enclosing-instance overrides.</remarks>
     public static ParameterEvaluation ForInstance(DeclarationCatalog catalog,BoundInstance call,ParameterEvaluation caller)
@@ -60,14 +67,14 @@ public static class ParameterEvaluator
         try{return new(Expression(syntax.Text,name=>values.TryGetValue(name,out var value)?value:throw new EvaluationFailure("missing_parameter",name)),[]);}
         catch(EvaluationFailure e){return new(null,[new(e.Code,e.Name??"",syntax.Range)]);}
     }
-    private static ParameterEvaluation EvaluateScope(DeclarationCatalog catalog,int scopeId,IReadOnlyDictionary<string,double>? overrides,ParameterEvaluation? enclosing=null)
+    private static ParameterEvaluation EvaluateScope(DeclarationCatalog catalog,int scopeId,IReadOnlyDictionary<string,double>? overrides,ParameterEvaluation? enclosing=null,double? temperature=null)
     {
         ArgumentNullException.ThrowIfNull(catalog);
         if(scopeId<0||scopeId>=catalog.Scopes.Length)throw new ArgumentOutOfRangeException(nameof(scopeId));
         if(!catalog.Resources.IsEmpty||!catalog.DeferredContexts.IsEmpty)return Failure("deferred_parameters","",catalog.Scopes[scopeId].Range);
         var scopes=new Stack<int>();
         var environments=ImmutableDictionary<int,ImmutableDictionary<string,double>>.Empty;
-        var result=Empty;var count=0;
+        var result=temperature is {} celsius?Empty.Add("temper",celsius):Empty;var count=0;
         if(enclosing==null)
         {
             for(int? s=scopeId;s!=null;s=catalog.Scopes[s.Value].ParentId)scopes.Push(s.Value);

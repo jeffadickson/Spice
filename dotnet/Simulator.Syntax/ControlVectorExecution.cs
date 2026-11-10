@@ -301,6 +301,7 @@ public static partial class ControlVectorExecution
                 else result=(name,args.Length) switch
                 {
                     ("length",1)=>[args[0].Length],
+                    ("vecmax",1)=>[args[0].Max()],
                     ("abs",1)=>args[0].Select(Math.Abs).ToArray(),
                     ("unitvec",1)=>Ones(Scalar(args[0])),
                     ("vector",1)=>IndexVector(Scalar(args[0])),
@@ -354,7 +355,7 @@ public static partial class ControlVectorExecution
             result[i]=op switch
             {
                 "+"=>x+y, "-"=>x-y, "*"=>x*y, "/"=>x/y,
-                "eq" or "=" or "=="=>x==y?1:0, "!=" or "<>" or "><"=>x!=y?1:0,
+                "eq" or "=" or "=="=>x==y?1:0, "ne" or "!=" or "<>" or "><"=>x!=y?1:0,
                 "<"=>x<y?1:0, ">"=>x>y?1:0, "<="=>x<=y?1:0, ">="=>x>=y?1:0,
                 "&" or "&&"=>x!=0&&y!=0?1:0, "|" or "||"=>x!=0||y!=0?1:0,
                 _=>throw new InvalidDataException("unsupported_control_operator:"+op)

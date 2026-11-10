@@ -6,9 +6,11 @@ namespace Simulator.Frontend;
 // evaluator. A declaration cannot influence a later dispatched analysis.
 internal static class ControlSuffixAdmission
 {
-    internal static string? Admit(ControlCommandSyntax command,int lastAnalysisStart,HashSet<string> locals,bool allowPrefixDefinition=false)
+    internal static string? Admit(ControlCommandSyntax command,int lastAnalysisStart,HashSet<string> locals,bool allowPrefixDefinition=false,bool allowPrefixScalar=false)
     {
-        if((!allowPrefixDefinition||command.Postprocessing?.Kind!=ControlPostprocessingKind.Define)&&(lastAnalysisStart<0||command.Range.Start<=lastAnalysisStart))
+        var allowedPrefix=allowPrefixDefinition&&command.Postprocessing?.Kind==ControlPostprocessingKind.Define||
+            allowPrefixScalar&&command.Postprocessing?.Kind==ControlPostprocessingKind.Let;
+        if(!allowedPrefix&&(lastAnalysisStart<0||command.Range.Start<=lastAnalysisStart))
             return "unsupported_control_postprocessing_before_analysis";
         if(command.Postprocessing is not {} candidate||candidate.Names.IsEmpty||
            candidate.Names.Any(n=>!SimpleName(n)))return "unsupported_control_local_name";
