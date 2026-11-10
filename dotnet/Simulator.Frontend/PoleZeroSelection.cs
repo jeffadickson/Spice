@@ -30,7 +30,6 @@ public static class PoleZeroSelection
         var tokens = statement?.Text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
         if (tokens is not { Length: 7 } ||
             tokens[5].ToLowerInvariant() is not ("vol" or "cur") ||
-            (tokens[5].Equals("cur", StringComparison.OrdinalIgnoreCase) && !tokens[6].Equals("pol", StringComparison.OrdinalIgnoreCase)) ||
             tokens[6].ToLowerInvariant() is not ("pol" or "zer" or "pz"))
             return Fail("unsupported_pz_directive", card.Range);
         if (catalog.Cards.Any(c => c.Kind is "control" or "ac" or "dc" or "tran" ||
@@ -51,9 +50,25 @@ public static class PoleZeroSelection
 
         var elements = request.Circuit.Elements;
         var currentDriven = tokens[5].Equals("cur", StringComparison.OrdinalIgnoreCase);
-        if (TryCascade(elements, input, output, currentDriven) is { IsDefault: false } cascade)
+        var requested = tokens[6].ToLowerInvariant();
+        if ((!currentDriven || requested == "pol") &&
+            TryCascade(elements, input, output, currentDriven) is { IsDefault: false } cascade)
             return new(tokens[6].Equals("zer", StringComparison.OrdinalIgnoreCase) ? [] : cascade, [], null);
-        if (currentDriven) return Fail("unsupported_pz_topology", card.Range);
+        if (currentDriven)
+        {
+            // With current injected into the first shunt and no output load
+            // beyond the second shunt, Z21 = s*C*Rin*Rout/(1+s*C*(Rin+Rout)).
+            if (nodes.Length != 3 || elements.Length != 3 ||
+                elements.OfType<Resistor>().FirstOrDefault(e => Between(e, input, 0)) is not { } inputShunt ||
+                elements.OfType<Resistor>().FirstOrDefault(e => Between(e, output, 0)) is not { } outputShunt ||
+                elements.OfType<Capacitor>().FirstOrDefault(e => Between(e, input, output)) is not { } coupling)
+                return Fail("unsupported_pz_topology", card.Range);
+            var timeConstant = inputShunt.Ohms * coupling.Farads + outputShunt.Ohms * coupling.Farads;
+            var highPassPole = -1 / timeConstant;
+            if (!double.IsFinite(highPassPole) || highPassPole >= 0)
+                return Fail("invalid_pz_time_constant", card.Range);
+            return new(requested == "zer" ? [] : [highPassPole], requested == "pol" ? [] : [0], null);
+        }
 
         var resistors = elements.OfType<Resistor>().ToArray();
         var capacitors = elements.OfType<Capacitor>().ToArray();

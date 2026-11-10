@@ -123,3 +123,32 @@ Windows verification from 8ab09ee with this change, using RSpice corpus commit 2
 
 The Frontend.Tests filter FullyQualifiedName~PoleZero|FullyQualifiedName~Source|FullyQualifiedName~RequestedQualification passed 113 cases with four environment-gated skips. Coverlet line/branch coverage was 97.45/80.69 percent for PoleZeroSelection, 73.07/67.24 percent for PoleZeroQualification, and 81.81/74.54 percent for SourceProfileExtraction. Native coverage and a dedicated fuzz campaign were outside this run. Artifacts, frozen inventory, and per-deck comparisons are under E:/Artifacts/Spice-pz-three-8ab09ee.
 <<<
+
+[REQUIREMENT]
+UID: REQ-CORPUS-PZ-HIGHPASS-001
+STATUS: Draft
+TITLE: Passive two-port high-pass transimpedance roots
+STATEMENT: >>>
+The bounded pole-zero profile shall accept a grounded current-driven transfer across two resistive shunts coupled only by one capacitor. It shall report the real pole at -1/(C*(Rin+Rout)) and the zero at the origin according to the requested pol, zer or pz mode. Both resistors and the coupling capacitor shall match the requested ports. Extra branches and nonrepresentable time constants shall refuse.
+<<<
+COMMENT: >>>
+Implementation: PoleZeroSelection. Verification: PoleZeroTests uses unequal shunts and tests all three modes. A mutant omitting the output shunt failed both pole-bearing tests. The original RSpice polezero/simplepz.cir compared one pole and one zero with the unchanged ngspice circuit.
+<<<
+
+[REQUIREMENT]
+UID: REQ-SOURCE-AC-ASSIGNMENT-001
+STATUS: Draft
+TITLE: Explicit AC magnitude assignment
+STATEMENT: >>>
+The generated source profile shall accept AC=<magnitude> with the same phase and DC-bias semantics as AC <magnitude>. An equals sign without a magnitude shall refuse rather than select the bare AC default.
+<<<
+COMMENT: >>>
+Implementation: SpiceParser.g4. Verification: SourceProfileTests and the original ac-zero.cir preparation comparison. Zero-frequency AC and that deck's control program remain separate requirements.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Windows baseline 4b20e13 and final replay used ten unchanged RSpice inputs from corpus commit 29c28a022625fd7cc2c56ead1cce2d3066663074. Inventory SHA-256 657B99CB6A61CB4ADC13A45FBEFF762D56B8A2FE051186532C506B5654854B05. Run scripts/Run-RequestedCorpus.cs with the checkout, corpus root, engine, ngspice 47+, frozen inventory, fresh output and 30-second admission budget. All ten originally refused preparation. The final run qualified simplepz.cir, SHA-256 cd6ccd81115df42624729b9842e8ff8363c56709cb8df813e3cd8afb0dd857dd, with pole -5e8 per second and zero at the origin. Native pole error was 1.79e-7 per second, within the 1e-7 absolute plus 1e-9 relative tolerance. The source profile of ac-zero.cir now binds. Its let expression and zero-frequency AC remain unqualified. The remaining eight decks still refused preparation. The final and baseline summaries and per-case diagnostics are under E:/Artifacts/Spice-ten-4b20e13.
+
+The Frontend.Tests filter FullyQualifiedName~PoleZero|FullyQualifiedName~SourceProfileTests passed 41 cases without skips. Coverlet line/branch coverage was 96.15/80.90 percent for PoleZeroSelection and 76.36/62.72 percent for SourceProfileExtraction. Native coverage and dedicated fuzz and randomized campaigns were outside this replay.
+<<<

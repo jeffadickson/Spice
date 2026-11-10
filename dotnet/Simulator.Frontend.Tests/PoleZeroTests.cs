@@ -19,7 +19,7 @@ public sealed class PoleZeroTests
     }
 
     [Theory]
-    [InlineData("1 0 2 0 cur pz", "unsupported_pz_directive")]
+    [InlineData("1 0 2 0 cur pz", "unsupported_pz_topology")]
     [InlineData("1 2 2 0 vol pz", "unsupported_pz_ports")]
     [InlineData("2 0 1 0 vol pz", "unsupported_pz_topology")]
     public void UnsupportedContractsRefuseWithoutRoots(string directive, string code)
@@ -96,6 +96,23 @@ public sealed class PoleZeroTests
         Assert.Equal(source.Id, phasor.Id);
         Assert.Equal(1, phasor.Real);
         Assert.Equal(0, phasor.Imag);
+    }
+
+    [Theory]
+    [InlineData("pz", true, true)]
+    [InlineData("pol", true, false)]
+    [InlineData("zer", false, true)]
+    public void CurrentDrivenHighPassUsesBothGroundedResistances(string mode, bool pole, bool zero)
+    {
+        var syntax = DeckParser.Parse(
+            $"High pass\nR1 1 0 1k\nR2 2 0 3k\nC1 1 2 1n\n.pz 1 0 2 0 cur {mode}\n.end\n",
+            collectDeclarations: true);
+        var result = PoleZeroSelection.Analyze(syntax);
+        Assert.True(result.Success, result.Diagnostic?.Code);
+        if (pole) Assert.Equal(-250000, Assert.Single(result.Poles), 6);
+        else Assert.Empty(result.Poles);
+        if (zero) Assert.Equal(0, Assert.Single(result.Zeros));
+        else Assert.Empty(result.Zeros);
     }
 
     private static PoleZeroResult Analyze(string directive) => PoleZeroSelection.Analyze(DeckParser.Parse(

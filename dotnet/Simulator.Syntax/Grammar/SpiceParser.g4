@@ -27,7 +27,7 @@ waveformExcitation: {TokenStream.LT(1).Text.ToLowerInvariant() is "pulse" or "si
 waveformValues: waveformScalar (COMMA? waveformScalar)*;
 waveformScalar: {TokenStream.LT(1).Text.ToLowerInvariant() is not ("dc" or "ac" or "distof1" or "distof2")}? value;
 dcExcitation: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase) && !string.Equals(TokenStream.LT(2)?.Text,"pwl",StringComparison.OrdinalIgnoreCase)}? identifier EQUAL? value;
-acExcitation: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier (acScalar acScalar?)?;
+acExcitation: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier (EQUAL acScalar acScalar? | acScalar acScalar?)?;
 acScalar: {TokenStream.LT(1).Text.ToLowerInvariant() is not ("dc" or "ac" or "pulse" or "sin" or "pwl" or "exp" or "sffm" or "am" or "distof1" or "distof2")}? value;
 // Distortion-only source coefficients are separate from ordinary waveforms.
 distortionExcitation: {TokenStream.LT(1).Text.ToLowerInvariant() is "distof1" or "distof2"}? identifier NUMBER;

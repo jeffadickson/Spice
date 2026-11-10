@@ -27,6 +27,7 @@ public sealed class SourceProfileTests
     }
     [Theory]
     [InlineData("DC=2",2)]
+    [InlineData("DC=2 AC=1",2)]
     [InlineData("DC 2 AC 1",2)]
     [InlineData("AC 1 DC -2",-2)]
     [InlineData("DC -2 AC 1 -90",-2)]
@@ -42,6 +43,7 @@ public sealed class SourceProfileTests
     [InlineData("DC 1 AC 2 AC 3")]
     [InlineData("AC 1 DC 2 DC 3")]
     [InlineData("DC 1 AC missing")]
+    [InlineData("DC 1 AC=")]
     [InlineData("DC 1 TRNOISE(0 1 1k 1 10k)")]
     public void Unsupported_or_invalid_source_profiles_are_atomic(string header)
     {
