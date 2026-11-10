@@ -12,10 +12,10 @@ public sealed record PoleZeroResult(ImmutableArray<double> Poles, ImmutableArray
     public bool Success => Diagnostic is null;
 }
 
-/// <summary>Exact transfer roots for voltage-driven RC low-pass and bridge-T sections.</summary>
+/// <summary>Exact real transfer roots for bounded RC and RL sections.</summary>
 public static class PoleZeroSelection
 {
-    /// <summary>Evaluate one root .pz voltage-transfer request in poles, zeros, or both mode.</summary>
+    /// <summary>Evaluate one root .pz request for a supported grounded transfer topology.</summary>
     public static PoleZeroResult Analyze(DeckSyntax syntax)
     {
         ArgumentNullException.ThrowIfNull(syntax);
@@ -29,7 +29,8 @@ public static class PoleZeroSelection
         var statement = syntax.Statements.FirstOrDefault(s => s.Range.Start == card.Range.Start);
         var tokens = statement?.Text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
         if (tokens is not { Length: 7 } ||
-            !tokens[5].Equals("vol", StringComparison.OrdinalIgnoreCase) ||
+            tokens[5].ToLowerInvariant() is not ("vol" or "cur") ||
+            (tokens[5].Equals("cur", StringComparison.OrdinalIgnoreCase) && !tokens[6].Equals("pol", StringComparison.OrdinalIgnoreCase)) ||
             tokens[6].ToLowerInvariant() is not ("pol" or "zer" or "pz"))
             return Fail("unsupported_pz_directive", card.Range);
         if (catalog.Cards.Any(c => c.Kind is "control" or "ac" or "dc" or "tran" ||
@@ -49,6 +50,11 @@ public static class PoleZeroSelection
             return Fail("unsupported_pz_ports", card.Range);
 
         var elements = request.Circuit.Elements;
+        var currentDriven = tokens[5].Equals("cur", StringComparison.OrdinalIgnoreCase);
+        if (TryCascade(elements, input, output, currentDriven) is { IsDefault: false } cascade)
+            return new(tokens[6].Equals("zer", StringComparison.OrdinalIgnoreCase) ? [] : cascade, [], null);
+        if (currentDriven) return Fail("unsupported_pz_topology", card.Range);
+
         var resistors = elements.OfType<Resistor>().ToArray();
         var capacitors = elements.OfType<Capacitor>().ToArray();
         var sources = elements.OfType<Voltage>().ToArray();
@@ -89,6 +95,61 @@ public static class PoleZeroSelection
         var pole = -1 / (resistors[0].Ohms * capacitors[0].Farads);
         if (!double.IsFinite(pole) || pole >= 0) return Fail("invalid_pz_time_constant", card.Range);
         return new(tokens[6].Equals("zer", StringComparison.OrdinalIgnoreCase) ? [] : [pole], [], null);
+    }
+
+    // Consume every element of an isolated cascade. Any extra load, feedback
+    // path, reused signal node or ambiguous parallel part invalidates the factorization.
+    private static ImmutableArray<double> TryCascade(Element[] elements, int input, int output, bool currentDriven)
+    {
+        var remaining = elements.ToList();
+        var visited = new HashSet<int> { input };
+        var poles = ImmutableArray.CreateBuilder<double>();
+        if (currentDriven ? Take<Current>(e => Between(e, input, 0)) is null :
+            Take<Voltage>(e => Between(e, input, 0)) is null)
+            return default;
+        var node = input;
+        while (poles.Count < 4)
+        {
+            double pole;
+            if (currentDriven)
+            {
+                var resistor = Take<Resistor>(e => Between(e, node, 0));
+                var inductor = Take<Inductor>(e => Between(e, node, 0));
+                if (resistor is null || inductor is null) return default;
+                // Z(R || L) = sL / (1 + sL/R).
+                pole = -resistor.Ohms / inductor.Henries;
+            }
+            else
+            {
+                var resistor = Take<Resistor>(e => e.P == node || e.N == node);
+                if (resistor is null) return default;
+                node = resistor.P == node ? resistor.N : resistor.P;
+                if (node == 0 || !visited.Add(node)) return default;
+                var capacitor = Take<Capacitor>(e => Between(e, node, 0));
+                if (capacitor is null) return default;
+                // An ideal voltage buffer presents no load to the preceding RC.
+                pole = -1 / (resistor.Ohms * capacitor.Farads);
+            }
+            if (!double.IsFinite(pole) || pole >= 0) return default;
+            poles.Add(pole);
+            if (node == output)
+                return remaining.Count == 0 && poles.Count >= 2 ? poles.ToImmutable() : default;
+
+            Element? coupling = currentDriven
+                ? Take<Vccs>(e => e.Cp == node && e.Cn == 0 && e.N == 0 && e.Siemens != 0)
+                : Take<Vcvs>(e => e.Cp == node && e.Cn == 0 && e.N == 0 && e.Gain != 0);
+            if (coupling is null || coupling.P == 0 || !visited.Add(coupling.P)) return default;
+            node = coupling.P;
+        }
+        return default;
+
+        T? Take<T>(Func<T, bool> matches) where T : Element
+        {
+            var found = remaining.OfType<T>().Where(matches).Take(2).ToArray();
+            if (found.Length != 1) return null;
+            remaining.Remove(found[0]);
+            return found[0];
+        }
     }
 
     // Scale before squaring and recover the smaller root from the product

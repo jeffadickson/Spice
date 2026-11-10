@@ -57,6 +57,47 @@ public sealed class PoleZeroTests
         Assert.Empty(result.Zeros);
     }
 
+    [Fact]
+    public void BufferedRcCascadeProducesAllThreePoles()
+    {
+        var result = PoleZeroSelection.Analyze(DeckParser.Parse(
+            "Cascade\nV1 1 0 0 AC 1\nR1 1 2 1k\nC1 2 0 10p\nE2 3 0 2 0 10\nR2 3 4 1k\nC2 4 0 1.25p\nE3 5 0 4 0 10\nR3 5 6 1k\nC3 6 0 .02p\n.pz 1 0 6 0 vol pz\n.end\n",
+            collectDeclarations: true));
+        Assert.True(result.Success, result.Diagnostic?.Code);
+        Assert.Equal(new[] { -5e10, -8e8, -1e8 }, result.Poles.Order().Select(p => Math.Round(p, 3)));
+        Assert.Empty(result.Zeros);
+    }
+
+    [Theory]
+    [InlineData("", true)]
+    [InlineData("Rload 1 2 1k\n", false)]
+    [InlineData("Gfeedback 1 0 3 0 1\n", false)]
+    public void CurrentDrivenRlCascadePreservesMultiplicityAndRejectsLoading(string extra, bool success)
+    {
+        var deck = $"Cascade\nIin 1 0 AC\nR1 1 0 1\nL1 1 0 .05\nG2 2 0 1 0 1\nR2 2 0 1\nL2 2 0 .05\nG3 3 0 2 0 1\nR3 3 0 1\nL3 3 0 .05\n{extra}.pz 1 0 3 0 cur pol\n.end\n";
+        var result = PoleZeroSelection.Analyze(DeckParser.Parse(deck, collectDeclarations: true));
+        Assert.Equal(success, result.Success);
+        if (success) Assert.Equal(new[] { -20d, -20d, -20d }, result.Poles.ToArray());
+        else Assert.Empty(result.Poles);
+    }
+
+    [Theory]
+    [InlineData("AC", 0)]
+    [InlineData("AC DC 2", 2)]
+    [InlineData("DC 2 AC", 2)]
+    public void BareAcUsesUnitMagnitudeAndPreservesExplicitDc(string clauses, double dc)
+    {
+        var deck = DeckParser.Parse($"Source\n.param ac=3\nIin in 0 {clauses}\nR1 in 0 1k\n.end\n", collectDeclarations: true);
+        var circuit = OperatingPointSelection.Select(deck).Prepared;
+        Assert.True(circuit.Success, string.Join(",", circuit.Diagnostics.Select(d => d.Code)));
+        var source = Assert.Single(circuit.Request!.Circuit.Elements.OfType<Simulator.Client.Current>());
+        Assert.Equal(dc, source.Amps);
+        var phasor = Assert.Single(circuit.AcSources);
+        Assert.Equal(source.Id, phasor.Id);
+        Assert.Equal(1, phasor.Real);
+        Assert.Equal(0, phasor.Imag);
+    }
+
     private static PoleZeroResult Analyze(string directive) => PoleZeroSelection.Analyze(DeckParser.Parse(
         $"RC filter\nV1 1 0 0 AC 1\nR1 1 2 1k\nC1 2 0 10p\n.pz {directive}\n.print pz all\n.end\n",
         collectDeclarations: true));

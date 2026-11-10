@@ -5,7 +5,6 @@ namespace Simulator.Frontend.Tests;
 public sealed class SourceProfileTests
 {
     [Theory]
-    [InlineData("ac")]
     [InlineData("dc")]
     [InlineData("pulse")]
     [InlineData("sin")]

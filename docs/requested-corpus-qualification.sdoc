@@ -105,3 +105,21 @@ The corpus runner shall report the bounded root .pz and any accompanying .op as 
 COMMENT: >>>
 Implementation: RequestedCorpus and PoleZeroQualification. Verification: PoleZeroQualificationTests and the original RSpice filt_rc.cir and filt_bridge_t.cir requested-analysis replay.
 <<<
+
+[REQUIREMENT]
+UID: REQ-CORPUS-PZ-CASCADE-001
+STATUS: Draft
+TITLE: Exact real poles of isolated RC and RL cascades
+STATEMENT: >>>
+The bounded requested pole-zero profile shall evaluate grounded voltage-driven series-R shunt-C stages separated by unloaded ideal voltage-controlled voltage buffers, and grounded current-driven parallel-RL stages coupled by unilateral voltage-controlled current sources. Each cascade shall contain two to four stages. RC poles are -1/(RC) with no finite zeros, and the RL profile shall report poles only, at -R/L. Repeated roots shall retain multiplicity. Extra circuit elements, feedback, ambiguous stages, reused nodes and non-finite or nonnegative roots shall refuse the cascade factorization. An independent source with a bare AC clause shall use unit AC magnitude and zero phase, preserving any explicit DC bias.
+<<<
+COMMENT: >>>
+Implementation: PoleZeroSelection, PoleZeroQualification and generated source-profile grammar. Verification: PoleZeroTests and SourceProfileTests, including repeated poles, loading and feedback refusal, bare AC with explicit DC before or after it, and malformed source tails. A reciprocal RL-pole mutant was detected. Qualification compares independently sorted ngspice real roots while retaining their counts and multiplicities.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Windows verification from 8ab09ee with this change, using RSpice corpus commit 29c28a022625fd7cc2c56ead1cce2d3066663074. Run scripts/Run-RequestedCorpus.cs with the checkout, RSpice tests/ngspice directory, native engine, ngspice console, inventory-final.json, fresh output directory and a 30-second admission budget. Original deck SHA-256 values: filt_multistage.cir 524cb091e3438801cec51b105dc16f3db6e07f9e973e9e4ace1e05d29aeeabb0; pz2.cir 603fb0764c82f15d3413cae549fadd883c317f0d24cc0639f310723259627a14; pzt.cir e8f9363c3cf02ee0637cb5525ae67f7edcab7256e1f9b1cac485633f92ddc71e. All three executed their original .pz and agreed with ngspice 47+ across all ten poles. The largest absolute discrepancy was 7.63e-6 per second on the 5e10 per second RC pole. Existing filt_rc.cir and filt_bridge_t.cir also retained full requested-analysis agreement. The managed factorization owns this selected analysis, so these results do not qualify a general native pole-zero solver.
+
+The Frontend.Tests filter FullyQualifiedName~PoleZero|FullyQualifiedName~Source|FullyQualifiedName~RequestedQualification passed 113 cases with four environment-gated skips. Coverlet line/branch coverage was 97.45/80.69 percent for PoleZeroSelection, 73.07/67.24 percent for PoleZeroQualification, and 81.81/74.54 percent for SourceProfileExtraction. Native coverage and a dedicated fuzz campaign were outside this run. Artifacts, frozen inventory, and per-deck comparisons are under E:/Artifacts/Spice-pz-three-8ab09ee.
+<<<

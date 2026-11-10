@@ -41,7 +41,7 @@ internal static class PoleZeroQualification
                 name.StartsWith("v(zero(", StringComparison.OrdinalIgnoreCase) ? zeros : null;
             if (target is null || !name.EndsWith("))", StringComparison.Ordinal) ||
                 !int.TryParse(name.AsSpan(7, name.Length - 9), NumberStyles.None, CultureInfo.InvariantCulture, out var index) ||
-                index < 1 || index > 2 || !double.IsFinite(point[i].Real) || Math.Abs(point[i].Imag) > 1e-7 ||
+                index < 1 || index > 4 || !double.IsFinite(point[i].Real) || Math.Abs(point[i].Imag) > 1e-7 ||
                 !target.TryAdd(index, point[i].Real))
                 return Refuse("invalid_pz_native_root");
         }

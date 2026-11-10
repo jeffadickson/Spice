@@ -26,7 +26,7 @@ internal static class SourceProfileExtraction
             var grouped=clauses.Select(c=>c.groupedPwlExcitation()).Where(c=>c!=null).ToArray();
             var dcCount=dc.Length+bareDc.Length;
             if(dcCount>1||ac.Length>1||waves.Length+grouped.Length>1||(dcCount>0&&profile.value()!=null))return null;
-            var nominal=dc.Length==1?dc[0].value():profile.value();var phasor=ac.Length==1?ac[0].value():null;
+            var nominal=dc.Length==1?dc[0].value():profile.value();var phasor=ac.Length==1?ac[0].acScalar().Select(field=>field.value()).ToArray():null;
             var distortion=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach(var clause in clauses)
                 if(clause.distortionExcitation() is {} marker &&
@@ -43,7 +43,7 @@ internal static class SourceProfileExtraction
             if(grouped.Length==1)
                 waveform=new(SourceWaveformKind.Pwl,grouped[0].pwlPair().SelectMany(p=>p.waveformScalar()).Select(v=>capture(v.value())).ToImmutableArray());
             var dcValue=bareDc.Length==1?new SourceSyntax("0",capture(bareDc[0]).Range):nominal==null?null:capture(nominal);
-            return new(dcValue,phasor==null?null:capture(phasor[0]),phasor?.Length==2?capture(phasor[1]):null){Waveform=waveform};
+            return new(dcValue,phasor switch { null=>null, []=>new SourceSyntax("1",capture(ac[0]).Range), _=>capture(phasor[0]) },phasor?.Length==2?capture(phasor[1]):null){Waveform=waveform};
         }
         catch(ParseCanceledException){return null;}
     }
@@ -67,7 +67,8 @@ internal static class SourceProfileExtraction
         var tokens=new List<IToken>();
         foreach(var parameter in parameters)Visit(parameter);
         if(tokens.Count==0||tokens.Count>256)return null;
-        tokens.Add(new CommonToken(TokenConstants.EOF));
+        // Semantic predicates inspect token text during end-of-input prediction.
+        tokens.Add(new CommonToken(TokenConstants.EOF) { Text = "<EOF>" });
         var parser=new SpiceParser(new CommonTokenStream(new ListTokenSource(tokens))){ErrorHandler=new BailErrorStrategy()};
         parser.RemoveErrorListeners();
         return parser;
