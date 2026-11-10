@@ -54,10 +54,25 @@ public static class RequestedCorpus
     var expanded=resources.Text!;await File.WriteAllTextAsync(Path.Combine(folder,"expanded.cir"),expanded);row.ExpandedSha256=Hash(Path.Combine(folder,"expanded.cir"));
     var syntax=DeckParser.Parse(expanded,limits,collectDeclarations:true);row.ExpandedSyntaxStatus=syntax.Status;
     if(syntax.Status!="accepted_structure"){row.Status="expanded_syntax_refused";continue;}
-    var plan=RequestedAnalysis.Prepare(syntax);var circuit=plan.CircuitPreparation??OperatingPointSelection.Select(syntax).Prepared;row.CircuitPrepared=circuit.Success;
+    var pzCard=syntax.Declarations?.Cards.FirstOrDefault(c=>c.Name.Equals(".pz",StringComparison.OrdinalIgnoreCase));
+    var pz=pzCard is null?null:PoleZeroSelection.Analyze(syntax);
+    if(pz is { Success:false }){
+     row.Status="requested_preparation_refused";row.RequestedPrepared=false;row.RequestedExecuted=false;row.Diagnostics=[pz.Diagnostic!.Code];continue;
+    }
+    var ordinaryText=expanded;
+    var ordinarySyntax=syntax;
+    ProjectionOmission? omitPz=null;
+    if(pzCard is not null){
+     omitPz=new("pz","other_requested_analysis_not_in_this_oracle_job",pzCard.Range);
+     ordinaryText=PoleZeroQualification.Mask(expanded,[omitPz]);
+     ordinarySyntax=DeckParser.Parse(ordinaryText,limits,collectDeclarations:true);
+    }
+    var pzOnly=pz is not null&&ordinarySyntax.Declarations?.Analyses.IsEmpty==true;
+    var plan=pzOnly?new RequestedAnalysisPlan([],[]):RequestedAnalysis.Prepare(ordinarySyntax);
+    var circuit=plan.CircuitPreparation??OperatingPointSelection.Select(ordinarySyntax).Prepared;row.CircuitPrepared=circuit.Success;
     if(!circuit.Success)row.Diagnostics=circuit.Diagnostics.Select(d=>d.Code).ToArray();
-    row.RequestedPrepared=plan.Success;row.ControlProfile=plan.ControlProfile;row.ProgramOmissions=plan.ProgramOmissions.ToArray();
-    if(!plan.Success){row.Status="requested_preparation_refused";row.RequestedExecuted=false;row.Diagnostics=row.Diagnostics.Concat(plan.Diagnostics.Select(d=>d.Code)).Distinct().ToArray();continue;}
+    row.RequestedPrepared=plan.Success||pzOnly;row.ControlProfile=plan.ControlProfile;row.ProgramOmissions=plan.ProgramOmissions.ToArray();
+    if(!plan.Success&&!pzOnly){row.Status="requested_preparation_refused";row.RequestedExecuted=false;row.Diagnostics=row.Diagnostics.Concat(plan.Diagnostics.Select(d=>d.Code)).Distinct().ToArray();continue;}
     if(!circuit.Success){row.Status="circuit_preparation_inconsistent";row.RequestedExecuted=false;continue;}
     row.Status="prepared";
     foreach(var operation in plan.Operations){
@@ -89,7 +104,7 @@ public static class RequestedCorpus
      }
      if(row.Validation?.Mode=="execution_only"){result.Status="native_not_requested_by_contract";continue;}
      if(watch.Elapsed.TotalSeconds>=seconds){result.Status="native_unattempted_budget";continue;}
-     var projection=OriginalProjection.Create(expanded,syntax,operation,plan);result.Omissions=projection.Omissions.ToArray();result.NativeInstrumentation=projection.Instrumentation.ToArray();var nativePath=Path.Combine(operationFolder,"original-analysis.cir");await File.WriteAllTextAsync(nativePath,projection.Text);result.NativeProjectionSha256=Hash(nativePath);
+     var projection=OriginalProjection.Create(ordinaryText,ordinarySyntax,operation,plan);result.Omissions=omitPz is null?projection.Omissions.ToArray():projection.Omissions.Add(omitPz).OrderBy(x=>x.Range.Start).ToArray();result.NativeInstrumentation=projection.Instrumentation.ToArray();var nativePath=Path.Combine(operationFolder,"original-analysis.cir");await File.WriteAllTextAsync(nativePath,projection.Text);result.NativeProjectionSha256=Hash(nativePath);
      var rawPath=Path.Combine(operationFolder,"native.raw");var nativeArgs=new List<string>{"-n","-D","filetype=ascii"};
      if(circuit.GroundAliases==GroundAliasPolicy.Pspice||circuit.Request!.Circuit.Elements.Any(e=>e is PspiceSwitch)){nativeArgs.AddRange(["-D","ngbehavior=psa"]);result.NativeDialect="psa";}
      if(circuit.GroundAliases==GroundAliasPolicy.Disabled){nativeArgs.AddRange(["-D","no_auto_gnd"]);result.NativeDialect+=";no_auto_gnd";}
@@ -101,6 +116,38 @@ public static class RequestedCorpus
       result.NativeRawSha256=Hash(rawPath);var raw=AsciiRaw.Read(await File.ReadAllTextAsync(rawPath));result.NativePoints=raw.Points.Length;
       result.Comparison=RequestedComparison.Compare(operation,circuit,responses,raw,row.ExpandedSha256);result.Agreed=result.Comparison.Agreed;result.Status=result.Comparison.Status;
      }catch(Exception e)when(e is IOException or InvalidDataException or TimeoutException){result.Status=e is TimeoutException?"native_timeout":"native_result_refused";result.Detail=e.Message;}
+    }
+    if(pz is not null&&pzCard is not null){
+     var result=new OperationRow{Id=row.Id+"/requested_pz",Kind="pz",Range=pzCard.Range,CoordinateUnit="1/s"};
+     row.Operations.Add(result);
+     var pzFolder=Path.Combine(folder,"requested_pz");Directory.CreateDirectory(pzFolder);
+     await File.WriteAllTextAsync(Path.Combine(pzFolder,"roots.json"),JsonSerializer.Serialize(pz,Json));
+     result.Executed=true;result.Points.Add(new(0,"completed",null));
+     if(row.Validation?.Mode=="execution_only")result.Status="native_not_requested_by_contract";
+     else if(watch.Elapsed.TotalSeconds>=seconds)result.Status="native_unattempted_budget";
+     else {
+      result.Omissions=OperatingPointSelection.Select(syntax).Omissions
+       .Where(x=>x.Range!=pzCard.Range&&(x.Kind=="op"||x.Reason=="observation_not_selected"))
+       .Select(x=>new ProjectionOmission(x.Kind,"not_in_this_pz_oracle_job",x.Range)).ToArray();
+      var path=Path.Combine(pzFolder,"original-analysis.cir");
+      await File.WriteAllTextAsync(path,PoleZeroQualification.Mask(expanded,result.Omissions));
+      result.NativeProjectionSha256=Hash(path);
+      var rawPath=Path.Combine(pzFolder,"native.raw");
+      try{
+       var native=await Child(ngspice,["-n","-D","filetype=ascii","-b","-r",rawPath,"-o",Path.Combine(pzFolder,"native.log"),path],pzFolder,null,"native");
+       result.NativeExit=native.Exit;
+       if(native.Exit!=0)result.Status="native_failed";
+       else if(!File.Exists(rawPath)||new FileInfo(rawPath).Length>65536)result.Status="native_raw_missing_or_oversized";
+       else {
+        result.NativeRawSha256=Hash(rawPath);
+        var raw=AsciiRaw.Read(await File.ReadAllTextAsync(rawPath));result.NativePoints=raw.Points.Length;
+        result.Comparison=PoleZeroQualification.Compare(pz,raw);
+        result.Agreed=result.Comparison.Agreed;result.Status=result.Comparison.Status;
+       }
+      }catch(Exception e)when(e is IOException or InvalidDataException or TimeoutException){result.Status=e is TimeoutException?"native_timeout":"native_result_refused";result.Detail=e.Message;}
+     }
+     row.Operations.Sort((a,b)=>a.Range!.Start.CompareTo(b.Range!.Start));
+     for(var i=0;i<row.Operations.Count;i++)row.Operations[i].Ordinal=i;
     }
     row.RequestedExecuted=row.Operations.Any(o=>o.Executed==false)?false:row.Operations.All(o=>o.Executed==true)?true:null;
     row.NativeAgreed=row.Operations.Any(o=>o.Agreed==false)?false:row.Operations.All(o=>o.Agreed==true)?true:null;

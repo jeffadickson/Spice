@@ -95,3 +95,13 @@ The standalone pole-zero frontend shall admit a grounded voltage transfer with t
 COMMENT: >>>
 Implementation: PoleZeroSelection. Verification: PoleZeroTests and the original RSpice polezero/filt_bridge_t.cir compared with an ngspice report projection retaining the original .pz and devices.
 <<<
+
+[REQUIREMENT]
+UID: REQ-PZ-CORPUS-DISPATCH-001
+TITLE: Qualify bounded pole-zero analyses in the original corpus
+STATEMENT: >>>
+The corpus runner shall report the bounded root .pz and any accompanying .op as distinct operations. The native comparison shall preserve the original circuit and requested directive, isolate the selected analysis, validate plot identity and root multiplicity, and compare real roots in inverse seconds. Missing or unsupported roots shall not count as agreement.
+<<<
+COMMENT: >>>
+Implementation: RequestedCorpus and PoleZeroQualification. Verification: PoleZeroQualificationTests and the original RSpice filt_rc.cir and filt_bridge_t.cir requested-analysis replay.
+<<<
