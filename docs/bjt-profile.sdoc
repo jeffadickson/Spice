@@ -28,7 +28,7 @@ UID: SEMI-BJT-SUBSTRATE-001
 STATUS: Draft
 TITLE: Explicit default BJT substrate terminal
 STATEMENT: >>>
-With an explicit fourth terminal on the bounded NPN or PNP profile, the frontend shall retain the default 1 pS substrate path to the intrinsic collector for NPN and base for PNP. Unsupported substrate storage and saturation terms shall refuse preparation. The three-terminal composition remains the separately qualified contract of SEMI-BJT-001.
+With an explicit fourth terminal on the bounded NPN or PNP profile, the frontend shall retain the default 1 pS substrate path to the intrinsic collector for NPN and base for PNP. Unsupported substrate conduction terms shall refuse preparation. Storage follows SEMI-BJT-SUBSTRATE-002. The three-terminal composition remains the separately qualified contract of SEMI-BJT-001.
 <<<
 COMMENT: >>>
 Implementation: BjtPreparation and OperatingPointBridge. Verification: BjtTests.Explicit_substrate_uses_default_native_leakage_reference. Native ngspice-47+ reference: BJTsetup defaults vertical NPN and lateral PNP with zero substrate capacitance and saturation current, and BJTload applies the circuit default Gmin across that junction.
@@ -48,4 +48,20 @@ The bounded unit-area level-1 profile shall stamp nonnegative model RB, RC and R
 <<<
 COMMENT: >>>
 Verification uses BjtTests and compat/ngspice/bjt-ohmic-resistance.cir. Ngspice bjttemp.c assigns RBM=RB when RBM is omitted. The retained default and tight reference sweep results are separate.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-BJT-SUBSTRATE-002
+STATUS: Draft
+TITLE: Nominal level-1 BJT substrate depletion charge
+STATEMENT: >>>
+For the bounded unit-area 27 C NPN and PNP profiles, the frontend shall map CJS, VJS and MJS and their CCS/CSUB, PS and MS aliases to a charge-only substrate junction. Aliases shall share duplicate detection. The junction voltage is the substrate potential minus the intrinsic collector potential for NPN or the intrinsic base potential for PNP. An omitted substrate terminal uses ground for charge. A zero capacitance or coincident terminals shall require no charge element. The depletion law shall transition at zero junction voltage with continuous charge and capacitance. Invalid parameter domains and unsupported substrate conduction shall refuse preparation.
+<<<
+COMMENT: >>>
+Implementation: BjtPreparation.cs reuses native JunctionStorage with zero forward coefficient and transport time. Verification: BjtTests checks explicit and omitted ports, intrinsic nodes with terminal resistance, aliases and malformed model cards. BjtNativeOracleIntegration compares nominal grounded-substrate NPN/PNP DC, complex AC and transient at both LU and Faer entry points. Scope excludes substrate conduction, nonnominal temperature, nondefault area, full Gummel-Poon and sensitivity.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Substrate qualification on Windows at baseline e9c3936 with the SEMI-BJT-SUBSTRATE-002 changes: dotnet test dotnet/Simulator.Frontend.Tests --filter FullyQualifiedName~Bjt --collect "XPlat Code Coverage" ran 46 tests, zero failures and zero skips on SDK 10.0.403. Artifacts, grammar and test output were isolated under E:/Artifacts/Spice-bjt-substrate-e9c3936. The grounded-substrate oracle exercises both polarities on LU and Faer, at DC, 10 MHz complex AC and four transient checkpoints through 100 ns. The fine BE grid is 10 ps. Bounds are 0.2 uV and 0.2 nA for DC, 20 uV and 20 nA per AC component, and 3 mV and 2 uA for transient checkpoints. The reference is ngspice 47+ (SHA-256 12BC57018AA5142D28065704D09BC6B06DA2A3886F7864CA042ED4824CCF910F), driven with first-order Gear for transient. Native binary SHA-256 4F915B77C4CD28ADF76D6EAC8B7845168C0A27723FC4A8385E1865041A82F582. Frontend Coverlet class line/branch percentages were PreparedBjt 100/97.61 and BjtPreparation 97.72/88.79. All four topology cases caught an intentional substrate polarity reversal. After restoration nine focused tests passed. This run did not measure native coverage or run a fuzz/property campaign. The original RSpice diffpair deck also needs Early effect and its requested transfer-function and sensitivity analyses.
 <<<

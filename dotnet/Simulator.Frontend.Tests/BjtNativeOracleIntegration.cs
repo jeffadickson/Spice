@@ -8,8 +8,8 @@ namespace Simulator.Frontend.Tests;
 /// <summary>Owned BJT reference decks, preserving all nonzero junction and transport storage.</summary>
 public sealed class BjtNativeOracleIntegration
 {
- [BjtOracleTheory][InlineData("lu")][InlineData("faer")]
- public async Task Generated_Ebers_Moll_NPN_and_PNP_match_independent_native_reference(string backend)
+ [BjtOracleTheory][InlineData("lu",false)][InlineData("faer",false)][InlineData("lu",true)][InlineData("faer",true)]
+ public async Task Generated_Ebers_Moll_NPN_and_PNP_match_independent_native_reference(string backend,bool substrateCharge)
  {
   var engine=Environment.GetEnvironmentVariable("SPICE_SEMICONDUCTOR_ENGINE")!;var ng=Environment.GetEnvironmentVariable("SPICE_NGSPICE")!;
   var parent=Environment.GetEnvironmentVariable("SPICE_SEMICONDUCTOR_ARTIFACT_ROOT")!;Assert.True(Directory.Exists(parent));
@@ -17,7 +17,8 @@ public sealed class BjtNativeOracleIntegration
   foreach(var family in new[]{"NPN","PNP"})
   {
    var sign=family=="NPN"?1:-1;var phase=sign==1?0:180;var prefix=Path.Combine(folder,family).Replace('\\','/');
-   var deck=$"BJT reference\nVDRV input 0 DC {(sign*.6).ToString("R",CultureInfo.InvariantCulture)} AC 1 {phase}\nVCC supply 0 DC {sign} AC 0\nRB input b 1k\nRC supply c 1k\nQ1 c b 0 qm\n.model qm {family}(IS=1f BF=100 BR=2 NF=1 NR=1 CJE=2p VJE=.75 MJE=.33 CJC=3p VJC=.75 MJC=.33 FC=.5 TF=50n TR=200n TNOM=27 LEVEL=1)\n";
+   var substrateTerms=substrateCharge?" CCS=20p VJS=.8 MJS=.4":"";
+   var deck=$"BJT reference\nVDRV input 0 DC {(sign*.6).ToString("R",CultureInfo.InvariantCulture)} AC 1 {phase}\nVCC supply 0 DC {sign} AC 0\nRB input b 1k\nRC supply c 1k\nQ1 c b 0 qm\n.model qm {family}(IS=1f BF=100 BR=2 NF=1 NR=1 CJE=2p VJE=.75 MJE=.33 CJC=3p VJC=.75 MJC=.33 FC=.5 TF=50n TR=200n TNOM=27 LEVEL=1{substrateTerms})\n";
    var reference=deck+$".options gmin=0 method=gear maxord=1 reltol=1e-9 abstol=1e-15 vntol=1e-12\n.ic v(b)=0 v(c)=0\n.control\nset wr_singlescale\nset wr_vecnames\nop\nwrdata {prefix}-op.txt v(b) v(c) i(VCC)\nac lin 1 10000000 10000000\nwrdata {prefix}-ac.txt v(b) v(c) i(VCC)\nreset\ntran 10p 100n 0 10p uic\nwrdata {prefix}-tran.txt v(b) v(c) i(VCC)\nquit\n.endc\n.end\n";
    var file=prefix+".cir";File.WriteAllText(file,reference);await Oracle(file,prefix+".log");
    var op=Read(prefix+"-op.txt");var ac=Read(prefix+"-ac.txt");var tr=Read(prefix+"-tran.txt");Assert.True(tr.Length>1000);

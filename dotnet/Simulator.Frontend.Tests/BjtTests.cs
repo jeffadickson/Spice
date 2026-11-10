@@ -68,5 +68,42 @@ public sealed class BjtTests
   Assert.Equal(reference=="c"?collector.N:Array.IndexOf(request.Circuit.Nodes,result.RootNodes["b"]),shunt.N);
  }
 
+ [Theory]
+ [InlineData("NPN","CCS",true)]
+ [InlineData("PNP","CJS",true)]
+ [InlineData("NPN","CSUB",false)]
+ [InlineData("PNP","CCS",false)]
+ public void Substrate_charge_uses_intrinsic_reference_and_zero_forward_knee(string family,string alias,bool explicitPort)
+ {
+  var ports=explicitPort?" s":"";
+  var deck=$"BJT substrate\nVc c 0 1\nVb b 0 .6\nVe e 0 0\nVs s 0 0\nQ1 c b e{ports} qm\n.model qm {family}({alias}=2p PS=.8 MS=.4 FC=.5 RB=10 RC=20)\n.end\n";
+  var result=OperatingPointSelection.Select(DeckParser.Parse(deck,collectDeclarations:true)).Prepared;
+  Assert.True(result.Success,string.Join(',',result.Diagnostics.Select(d=>d.Code)));
+  var circuit=result.Request!.Circuit;
+  var intrinsic=Assert.Single(circuit.Elements.OfType<Resistor>(),r=>r.Ohms==(family=="NPN"?20:10)).N;
+  var storage=Assert.Single(circuit.Elements.OfType<JunctionStorage>());
+  Assert.Equal(explicitPort?Array.IndexOf(circuit.Nodes,result.RootNodes["s"]):Array.IndexOf(circuit.Nodes,"0"),storage.P);
+  Assert.Equal(intrinsic,storage.N);
+  Assert.Equal(2e-12,storage.Model.JunctionFarads);
+  Assert.Equal(.8,storage.Model.JunctionVolts);
+  Assert.Equal(.4,storage.Model.Grading);
+  Assert.Equal(0,storage.Model.ForwardCoefficient);
+  Assert.Equal(0,storage.Model.TransitSeconds);
+ }
+
+ [Theory]
+ [InlineData("CCS=-1p")]
+ [InlineData("CJS=1p CCS=2p")]
+ [InlineData("VJS=0")]
+ [InlineData("MJS=1")]
+ [InlineData("ISS=1f")]
+ public void Invalid_or_unsupported_substrate_terms_refuse_atomically(string terms)
+ {
+  var result=Select($"NPN({terms})");
+  Assert.False(result.Success);
+  Assert.Null(result.Request);
+  Assert.Empty(result.Origins);
+ }
+
  private static BridgeResult Select(string model)=>OperatingPointSelection.Select(DeckParser.Parse("BJT\nVc c 0 1\nVb b 0 .6\nVe e 0 0\nQ1 c b e qm\n.model qm "+model+"\n.end\n",collectDeclarations:true)).Prepared;
 }
