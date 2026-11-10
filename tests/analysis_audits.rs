@@ -67,6 +67,7 @@ fn configured_rlc_checks_signed_flux_and_midpoint_stored_energy() {
             max_step_s: 1e-5,
             max_steps: 200,
             method,
+            current_absolute_tolerance: None,
             initial_newton:None, initial_state: Some(vec![1., 1., 0., 0., 0.]),
             sources: vec![],
             adaptive: None,
@@ -149,6 +150,7 @@ fn config(method: Method) -> TransientConfig {
         stop_s: 0.004,
         max_step_s: 0.0001,
         max_steps: 100,
+        current_absolute_tolerance: None,
         initial_newton:None, initial_state: Some(vec![1., 0., -0.001]),
         sources: vec![SourceOverride {
             id: "V1".into(),
@@ -327,6 +329,7 @@ fn configured_nonlinear_be_constant_charge_matches_independent_energy() {
         max_step_s: 0.0001,
         max_steps: 100,
         method: Method::BackwardEuler,
+        current_absolute_tolerance: None,
         initial_newton:None, initial_state: Some(vec![0., 0.]),
         adaptive: None,
         sources: vec![SourceOverride {
@@ -452,6 +455,7 @@ proptest::proptest! {
         for method in [Method::BackwardEuler,Method::Trapezoidal] {
             let h=ohms*farads/16.;
             let config=TransientConfig{stop_s:4.*h,max_step_s:h,max_steps:10,method,
+                current_absolute_tolerance: None,
                 initial_newton:None, initial_state:Some(vec![1.,0.,-1./ohms]),sources:vec![],adaptive:None};
             let result=run(&plan,&FaerSparseLu,&config,&false.into()).unwrap();
             for pair in result.samples.windows(2) {
@@ -459,4 +463,20 @@ proptest::proptest! {
             }
         }
     }
+}
+
+#[test]
+fn configured_abstol_requires_finite_positive_amperes() {
+    for bad in [0., -1e-6, f64::INFINITY, f64::NAN] {
+        let config = TransientConfig {
+            current_absolute_tolerance: Some(bad),
+            ..TransientConfig::default()
+        };
+        assert!(config.validate().is_err());
+    }
+    let config = TransientConfig {
+        current_absolute_tolerance: Some(1e-6),
+        ..TransientConfig::default()
+    };
+    assert!(config.validate().is_ok());
 }

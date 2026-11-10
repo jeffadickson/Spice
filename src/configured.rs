@@ -29,6 +29,9 @@ pub struct TransientConfig {
     /// step Newton options or silently select another linear provider.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub initial_newton: Option<crate::newton::NewtonOptions>,
+    /// Absolute current convergence tolerance in amperes, for nonlinear bias and steps.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub current_absolute_tolerance: Option<f64>,
     #[serde(default)]
     pub sources: Vec<SourceOverride>,
     #[serde(default)]
@@ -43,6 +46,7 @@ impl Default for TransientConfig {
             method: Method::BackwardEuler,
             initial_state: None,
             initial_newton: None,
+            current_absolute_tolerance: None,
             sources: Vec::new(),
             adaptive: None,
         }
@@ -52,6 +56,9 @@ impl TransientConfig {
     pub fn validate(&self) -> SimResult<()> {
         positive(self.stop_s, "stop_s")?;
         positive(self.max_step_s, "max_step_s")?;
+        if let Some(tolerance) = self.current_absolute_tolerance {
+            positive(tolerance, "current_absolute_tolerance")?;
+        }
         if let Some(policy) = self.initial_newton {
             policy.validate()?;
             if self.initial_state.is_some() {
@@ -166,9 +173,16 @@ pub fn run_observed(
     }
     let sources = BoundSources::new(plan, &options.sources)?;
     let mut old_rhs = sources.rhs(0.)?;
+    let with_current_tolerance = |mut policy: crate::newton::NewtonOptions| {
+        if let Some(tolerance) = options.current_absolute_tolerance {
+            policy.current_absolute_tolerance = tolerance;
+        }
+        policy
+    };
+    let step_policy = with_current_tolerance(crate::newton::NewtonOptions::default());
     let (mut state, initialization_solves, initial_newton) =
         if plan.has_nonlinear_devices() && options.initial_state.is_none() {
-            let policy = options.initial_newton.unwrap_or_default();
+            let policy = with_current_tolerance(options.initial_newton.unwrap_or_default());
             let (state, report) =
                 if policy.continuation.is_some() || policy.gmin_continuation.is_some() {
                     // Existing continuation scales the compiled nominal sources.
@@ -265,7 +279,7 @@ pub fn run_observed(
             let (values, report) = crate::newton::solve_backward_euler_step(
                 plan,
                 solver,
-                crate::newton::NewtonOptions::default(),
+                step_policy,
                 &state,
                 h,
                 &new_rhs,
@@ -298,7 +312,7 @@ pub fn run_observed(
                 let (values, report) = crate::newton::solve_backward_euler_step(
                     plan,
                     solver,
-                    crate::newton::NewtonOptions::default(),
+                    step_policy,
                     &state,
                     h / 2.,
                     &mid_rhs,
@@ -321,7 +335,7 @@ pub fn run_observed(
                 let (values, report) = crate::newton::solve_backward_euler_step(
                     plan,
                     solver,
-                    crate::newton::NewtonOptions::default(),
+                    step_policy,
                     &half,
                     next - mid,
                     &new_rhs,

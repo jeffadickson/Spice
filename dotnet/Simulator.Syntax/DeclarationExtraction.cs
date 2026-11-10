@@ -131,8 +131,15 @@ internal sealed class DeclarationExtraction
         var directive = card as SpiceParser.ExtensionContext;
         var directiveName = directive?.Start.Text.ToLowerInvariant();
         var directiveParameters = directive?.parameter() ?? [];
-        var optionCard = directiveName is ".option" or ".options" && directiveParameters.Length > 0;
+        var optionCard = directiveName is ".opt" or ".option" or ".options" && directiveParameters.Length > 0;
         var reportingOnly = optionCard && directiveParameters.All(IsReportingOption);
+        // Admit the whole option card only when every companion has defined semantics.
+        var abstolTerms = optionCard ? directiveParameters.Where(p =>
+            string.Equals(p.assignment()?.referenceName()?.GetText(),"abstol",StringComparison.OrdinalIgnoreCase)).ToArray() : [];
+        var methodTerms = directiveParameters.Except(abstolTerms).ToArray();
+        var method = optionCard ? IntegrationMethod(methodTerms) : null;
+        var abstol = abstolTerms is [var term] && (method != null || methodTerms.All(IsReportingOption))
+            ? term.assignment()?.value() : null;
         var exports = directiveName==".csparam" && owner==0 && directiveParameters.Length>0
             && directiveParameters.All(p=>p.assignment()?.referenceName()?.identifier()!=null)
             ? directiveParameters.Select(p=>Parameter(p.assignment())).ToImmutableArray()
@@ -143,7 +150,8 @@ internal sealed class DeclarationExtraction
             GlobalNodes = GlobalNodeExtraction.Extract(card,Capture),
             ReportingOptionsOnly = reportingOnly,
             BsimSoiFdStaticOptions = optionCard && owner == 0 && IsBsimSoiFdStaticOptions(directiveParameters),
-            TransientMethodOption = optionCard ? IntegrationMethod(directiveParameters) : null,
+            TransientMethodOption = abstolTerms.Length==0 || abstol!=null ? method : null,
+            TransientAbstolOption = abstol==null ? null : Capture(abstol),
             ControlConstants = exports,
             DefaultTemperature = (optionCard && !reportingOnly
                 && directiveParameters.All(p => IsReportingOption(p) || IsDefaultTemperatureOption(p)))

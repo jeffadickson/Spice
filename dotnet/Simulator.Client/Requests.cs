@@ -119,7 +119,11 @@ public sealed record TransientConfigured(TransientConfiguration Options) : Analy
     Justification = "Retain existing named-argument/wire compatibility: MaxStepS is seconds and MaxSteps is a count.")]
 public sealed record TransientConfiguration(double StopS, double MaxStepS, int MaxSteps = 10000,
     string Method = "backward_euler", double[]? InitialState = null, SourceOverride[]? Sources = null, AdaptiveOptions? Adaptive = null,
-    NewtonOptions? InitialNewton = null);
+    NewtonOptions? InitialNewton = null)
+{
+    /// <summary>Optional absolute current tolerance in amperes for nonlinear bias and transient Newton solves.</summary>
+    public double? CurrentAbsoluteTolerance { get; init; }
+}
 /// <summary>Step-doubling tolerances in relative, volts and amperes, with minimum seconds and attempt budget.</summary>
 public sealed record AdaptiveOptions(double Relative, double VoltageAbsolute, double CurrentAbsolute, double MinStepS, int MaxAttempts);
 /// <summary>Bind a time waveform to an existing independent source by its identity.</summary>

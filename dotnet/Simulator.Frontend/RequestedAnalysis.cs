@@ -77,8 +77,12 @@ public static partial class RequestedAnalysis
   var methodCards=catalog.Cards.Where(c=>hasTransient&&c.ScopeId==0&&c.TransientMethodOption!=null).ToArray();
   if(methodCards.Length>1)return Fail("ambiguous_transient_method",methodCards[1].Range);
   var requestedMethod=methodCards.SingleOrDefault()?.TransientMethodOption;
+  var abstolCards=catalog.Cards.Where(c=>hasTransient&&c.ScopeId==0&&c.TransientAbstolOption!=null).ToArray();
+  if(abstolCards.Length>1)return Fail("ambiguous_transient_abstol",abstolCards[1].Range);
+  if(abstolCards.Length!=0&&control.Directives.Any(d=>d.Analysis.Kind!="tran"))
+   return Fail("unsupported_mixed_abstol_analyses",abstolCards[0].Range);
   var handledPhysicalStarts=
-      catalog.InitialConditions.Select(ic=>ic.Range.Start).Concat(methodCards.Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet();
+      catalog.InitialConditions.Select(ic=>ic.Range.Start).Concat(methodCards.Concat(abstolCards).Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet();
   var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,handledPhysicalStarts);
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
@@ -92,6 +96,13 @@ public static partial class RequestedAnalysis
       c.Postprocessing is {Kind:ControlPostprocessingKind.Let} local&&rootNames.Contains(local.Names[0]));
   if(clobber!=null)return Fail("unsupported_control_observable_assignment",clobber.Range);
   var environment=ParameterEvaluator.EvaluateAtTemperature(catalog,27);
+  double? abstol=null;
+  if(abstolCards.SingleOrDefault()?.TransientAbstolOption is {} tolerance)
+  {
+   var value=ParameterEvaluator.EvaluateValue(catalog,environment,tolerance);
+   if(value.Value is not >0)return Fail("invalid_transient_abstol",tolerance.Range);
+   abstol=value.Value;
+  }
   var operations=ImmutableArray.CreateBuilder<RequestedOperation>();
   try{
    var biasedConditions=control.Directives.Any(a=>a.Analysis.Kind=="tran"&&a.Analysis.Names.IsEmpty)
@@ -225,6 +236,9 @@ public static partial class RequestedAnalysis
             Math.Max(double.Epsilon,options.MaxStepS/1e6),4*options.MaxSteps)
        };
       }
+      options=options with{CurrentAbsoluteTolerance=abstol};
+      if(abstol is {} amps&&!usesUic&&initialization!=null&&options.InitialNewton!=null)
+       initialization=initialization with{Analysis=new OperatingPointNewton(new NewtonOptions(CurrentAbsoluteTolerance:amps))};
       requests.Add(transientRequest with{Analysis=new TransientConfigured(options)});break;
     }
     operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { CoordinateUnit=unit,NestedDc=nestedDc,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=initialConditions,UsesUic=usesUic,ControlOrigin=directive.Origin });

@@ -56,3 +56,14 @@ Implementation: DeclarationExtraction, RequestedControlConstants, and ControlVec
 RELATIONS:
 - TYPE: Parent
   VALUE: FRONTEND-REQUESTED-001
+
+[REQUIREMENT]
+UID: REQ-TRAN-ABSTOL-001
+STATUS: Draft
+TITLE: Absolute current convergence tolerance for requested transient
+STATEMENT: >>>
+A transient-only requested program may specify one root .opt, .option or .options ABSTOL assignment. The frontend shall evaluate it to a finite positive tolerance in amperes and carry it to nonlinear time-zero bias and transient Newton solves, including adaptive trial solves. Linear solves and timestep error control shall retain their existing policies. Unrecognized companion options, duplicate ABSTOL assignments and mixed-analysis programs shall refuse. A missing assignment shall retain the existing default.
+<<<
+COMMENT: >>>
+Implementation: DeclarationExtraction, RequestedAnalysis, the typed client transient configuration and configured.rs. TransientAbstolTests verifies the serialized value and refuses invalid or unsupported options. Managed verification recorded 21 passes and four environment-gated skips. Removing the frontend assignment failed the targeted regression, which passed after restoration. Scoped Coverlet line/branch results were 74.24/55.06 percent for DeclarationExtraction and 53.55/35.29 percent for RequestedAnalysis.cs. Native execution and coverage remain pending because available RAM was below the guarded native build admission threshold. The original mosmem.cir requested path advances to unsupported_pulse_overlap. Artifacts: E:/Artifacts/Spice-abstol-52caf35.
+<<<

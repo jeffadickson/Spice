@@ -176,6 +176,7 @@ fn transient_config(method: Method, breakpoint: bool) -> TransientConfig {
         stop_s: 16. * h,
         max_step_s: h,
         max_steps: 32,
+        current_absolute_tolerance: None,
         initial_newton:None, initial_state: Some(vec![1., 0., -0.001]),
         sources: if breakpoint {
             vec![SourceOverride {

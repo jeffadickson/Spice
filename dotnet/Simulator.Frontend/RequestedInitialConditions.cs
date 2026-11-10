@@ -40,7 +40,7 @@ public static partial class RequestedAnalysis
  public static async Task<RequestedExecutionPreparation> PrepareExecutionAsync(RequestedOperation operation,int point,SimulationClient client,CancellationToken cancellation=default){
   ArgumentNullException.ThrowIfNull(operation);ArgumentNullException.ThrowIfNull(client);if(point<0||point>=operation.Requests.Length)throw new ArgumentOutOfRangeException(nameof(point));cancellation.ThrowIfCancellationRequested();
   var request=operation.Requests[point];if(operation.InitializationRequest is not {} bias)return new(request,null,null);
-  if(request.Analysis is not TransientConfigured||bias.Analysis is not OperatingPoint||(!operation.UsesUic&&operation.InitialConditions.IsEmpty)||operation.InitialConditions.Any(c=>c.NodeIndex<1||c.NodeIndex>=request.Circuit.Nodes.Length||request.Circuit.Nodes[c.NodeIndex]!=c.WireNode||!double.IsFinite(c.Volts))||operation.InitialConditions.Select(c=>c.NodeIndex).Distinct().Count()!=operation.InitialConditions.Length)return new(null,null,"invalid_initial_condition_plan");
+  if(request.Analysis is not TransientConfigured||bias.Analysis is not (OperatingPoint or OperatingPointNewton)||(!operation.UsesUic&&operation.InitialConditions.IsEmpty)||operation.InitialConditions.Any(c=>c.NodeIndex<1||c.NodeIndex>=request.Circuit.Nodes.Length||request.Circuit.Nodes[c.NodeIndex]!=c.WireNode||!double.IsFinite(c.Volts))||operation.InitialConditions.Select(c=>c.NodeIndex).Distinct().Count()!=operation.InitialConditions.Length)return new(null,null,"invalid_initial_condition_plan");
   var response=await client.RunAsync(bias,cancellation);if(!response.Succeeded)return new(null,response,"initial_condition_bias_failed");
   try{
    var manifest=response.ReadManifest();if(manifest.CaseId!=bias.CaseId||manifest.Backend.Id!=(bias.Backend switch{"lu"=>"nalgebra_dense_lu_reference","faer"=>"faer_sparse_lu","qr"=>"nalgebra_dense_qr_reference",_=>"unsupported"})||manifest.Backend.Gpu||manifest.Backend.Placement!="cpu"||manifest.Samples.Length!=1||manifest.Samples[0].TimeS!=0||manifest.AcSamples.Length!=0||manifest.Signals.Select(s=>s.Id).Distinct(StringComparer.Ordinal).Count()!=manifest.Signals.Length)throw new InvalidDataException("initial_condition_bias_identity_or_shape");
@@ -48,7 +48,7 @@ public static partial class RequestedAnalysis
    var state=request.Circuit.Nodes.Skip(1).Select(n=>Read("v("+n+")","V","voltage")).Concat(request.Circuit.Elements.Where(Branch).Select(e=>operation.UsesUic&&e is Inductor?0:Read("i("+e.Id+")","A","current"))).ToArray();
    foreach(var condition in operation.InitialConditions){var actual=state[condition.NodeIndex-1];var tolerance=1e-10*(1+Math.Abs(condition.Volts));if(!double.IsFinite(tolerance)||Math.Abs(actual-condition.Volts)>tolerance)throw new InvalidDataException("initial_condition_clamp_not_satisfied");}
    if(request.Analysis is not TransientConfigured transient)throw new InvalidDataException("initial_condition_nontransient_request");
-   return new(request with{Analysis=new TransientConfigured(transient.Options with{InitialState=state})},response,null);
+   return new(request with{Analysis=new TransientConfigured(transient.Options with{InitialState=state,InitialNewton=null})},response,null);
   }catch(InvalidDataException e){return new(null,response,e.Message);}
  }
  /// <summary>Returns an explicit reporting-window view, while the response retains every raw engine sample from zero. No resampling or synthetic TSTART point is introduced.</summary>
