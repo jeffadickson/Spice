@@ -59,6 +59,25 @@ public sealed class TransientSelectionTests
   Assert.Equal(1,ramp.Points[^1].Value);
  }
  [Theory]
+ [InlineData("PULSE(2 0 2 2 3 2 6)", 8, 7, 2d / 3d)]
+ [InlineData("PULSE(2 0 2 2 3 2 6)", 8, 8, 4d / 3d)]
+ [InlineData("PULSE(2 0 0 2 6 0 6)", 6, 3, 1d / 3d)]
+ [InlineData("PULSE(2 0 2 8 1 0 6)", 8, 6, 1d)]
+ public void Overlapping_pulse_preserves_first_cycle_through_the_stop(
+     string profile, double stop, double time, double expected)
+ {
+  var selected = TransientSelection.Prepare(Deck(profile), stop, 1);
+  Assert.True(selected.Success, string.Join(",", selected.Prepared.Diagnostics.Select(d => d.Code)));
+  var options = Assert.IsType<TransientConfigured>(selected.Prepared.Request!.Analysis).Options;
+  var points = Assert.IsType<Pwl>(Assert.Single(options.Sources!).Waveform).Points;
+  var right = Array.FindIndex(points, point => point.TimeS >= time);
+  Assert.True(right > 0);
+  var a = points[right - 1];
+  var b = points[right];
+  Assert.Equal(expected, a.Value + (b.Value - a.Value) * (time - a.TimeS) / (b.TimeS - a.TimeS), 12);
+ }
+
+ [Theory]
  [InlineData("DC 1 PWL(0 0 1u 1)","unsupported_transient_dc_bias")]
  [InlineData("DC 1 SFFM(0 1 1k 1 10k)","unsupported_transient_dc_bias")]
  [InlineData("PULSE(0 1 0 1u 1u 2u 3u)","unsupported_pulse_overlap")]

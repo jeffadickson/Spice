@@ -194,7 +194,7 @@ public sealed class RequestedAnalysisTests
  [Theory]
  [InlineData(".ac weird 3 1 10")]
  [InlineData(".ac lin 3 10 1")]
- [InlineData(".ac lin 3 0 10")]
+ [InlineData(".ac lin 3 -1 10")]
  [InlineData(".ac dec 10000 1 1meg")]
  [InlineData(".dc V1 0 1 1p")]
  [InlineData(".dc R1 0 1 1")]

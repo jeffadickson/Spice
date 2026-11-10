@@ -12,7 +12,7 @@ public sealed record SelectedTransient(BridgeResult Prepared,ImmutableArray<Oper
 public static class TransientSelection
 {
  /// <summary>Selects backward Euler with explicit seconds and accepted-step budget. No UIC or original control program is executed.</summary>
- /// <remarks>Source DC bias differing from its transient initial value, overlapping pulse edges, negative delays/damping and extra waveform fields are explicit refusals.</remarks>
+ /// <remarks>Source DC bias differing from its transient initial value, overlapping pulses that reach a repeat, negative delays/damping and extra waveform fields are explicit refusals.</remarks>
  public static SelectedTransient Prepare(DeckSyntax syntax,double stopS,double maxStepS,int maxSteps=10000,BridgeLimits? limits=null,string backend="lu")
   =>PrepareCore(syntax,stopS,maxStepS,maxStepS,maxSteps,limits,backend);
  // Requested TSTEP controls source defaults independently from the integration ceiling.
@@ -56,12 +56,32 @@ public static class TransientSelection
      var fall=Field(4,defaultStepS);if(fall<=0)fall=defaultStepS;
      var width=p.Length==5?0:Field(5,stopS);if(width<0)width=stopS;
      var period=Field(6,stopS);if(period<=0)period=stopS;
-     if(rise+width+fall>period||!double.IsFinite(rise+width+fall))return Fail("unsupported_pulse_overlap",source.Range);
+
      var delayS=Field(2,0);
      // In native default mode the eighth field limits repetition only when
      // positive. The cutoff uses a strict inequality, including at TSTOP.
      if(p.Length==8&&p[7]>0&&stopS-delayS>p[7]*period)
       return Fail("unsupported_pulse_count_cutoff",source.Range);
+     var pulseLength=rise+width+fall;
+     if(!double.IsFinite(pulseLength))return Fail("unsupported_pulse_overlap",source.Range);
+     if(pulseLength>period)
+     {
+      // ngspice wraps phase only after the first period boundary. A
+      // simulation ending at or before that boundary needs only cycle one.
+      if(stopS-delayS>period)return Fail("unsupported_pulse_overlap",source.Range);
+      var riseEnd=delayS+rise;
+      var fallStart=riseEnd+width;
+      var fallEnd=fallStart+fall;
+      if(delayS<0||riseEnd<=delayS||width>0&&fallStart<=riseEnd||fallEnd<=fallStart||!double.IsFinite(fallEnd))
+       return Fail("invalid_overlapping_pulse_timing",source.Range);
+      var points=new List<Point>{new(0,p[0])};
+      if(delayS>0)points.Add(new(delayS,p[0]));
+      points.Add(new(riseEnd,p[1]));
+      if(width>0)points.Add(new(fallStart,p[1]));
+      points.Add(new(fallEnd,p[0]));
+      waveform=new Pwl(points.ToArray());
+      break;
+     }
      waveform=new Pulse(p[0],p[1],delayS,rise,fall,width,period);break;
     case SourceWaveformKind.Sine:
      var frequency=Field(2,1/stopS);if(frequency==0)frequency=1/stopS;

@@ -67,3 +67,21 @@ A transient-only requested program may specify one root .opt, .option or .option
 COMMENT: >>>
 Implementation: DeclarationExtraction, RequestedAnalysis, the typed client transient configuration and configured.rs. TransientAbstolTests verifies the serialized value and refuses invalid or unsupported options. Managed verification recorded 21 passes and four environment-gated skips. Removing the frontend assignment failed the targeted regression, which passed after restoration. Scoped Coverlet line/branch results were 74.24/55.06 percent for DeclarationExtraction and 53.55/35.29 percent for RequestedAnalysis.cs. Native execution and coverage remain pending because available RAM was below the guarded native build admission threshold. The original mosmem.cir requested path advances to unsupported_pulse_overlap. Artifacts: E:/Artifacts/Spice-abstol-52caf35.
 <<<
+
+[REQUIREMENT]
+UID: REQ-TRAN-PULSE-OVERLAP-001
+STATUS: Draft
+TITLE: Overlapping pulse timing through the first cycle
+STATEMENT: >>>
+A selected transient with pulse rise, hold and fall durations whose sum exceeds the period shall preserve the first pulse cycle when the simulation stop is at or before delay plus period. The source shall retain the original delay, rise, hold and fall slopes in the simulation window, including the first period boundary. A requested window extending past that boundary shall report unsupported overlap. Invalid or unrepresentable timing shall refuse preparation.
+<<<
+COMMENT: >>>
+TransientSelection lowers the first cycle to existing PWL breakpoints. TransientSelectionTests exercises overlap in the rise and fall segments, zero hold, delayed and immediate pulses, and refusal after a repeat. A local ngspice oracle independently checked the first fall and exact period boundary.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Windows verification from e963c39 plus this change recorded 88 managed passes with no skips across TransientSelectionTests, TransientAbstolTests and RequestedAnalysisTests. TransientSelection measured 97.43 percent line and 82.16 percent branch coverage. Changing the first period boundary from inclusive to exclusive failed all four overlap regressions. The guarded native build ran cargo test --locked -j 1 --test sparse_ac --test sparse_ac_circuits --test analysis_audits with 28 passes, including ABSTOL validation and the existing seeded RC property. The observed peak was 706236416 bytes under an 850 MiB cap. Native coverage and a dedicated fuzz run were outside this checkpoint.
+
+The original mosmem.cir, SHA-256 6d5bd5a8e00f1f51f1c1c465bf8f80851cbc7c731623f11a4db1052389c39667, reached native execution with a PWL for VWB and an absolute current tolerance of 1e-6 A. Its time-zero source continuation failed at scale 0.4188232421875 after reaching the Newton iteration limit. The original ngspice run produced 150 rows. Waveform comparison remains unavailable because the requested engine operation failed. Evidence is under E:/Artifacts/Spice-pulse-e963c39 and native build logs under E:/Artifacts/Spice-abstol-52caf35.
+<<<
