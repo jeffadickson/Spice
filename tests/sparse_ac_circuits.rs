@@ -177,3 +177,30 @@ fn all_four_controlled_source_families_preserve_complex_gain_and_polarity() {
         }
     }
 }
+
+#[test]
+fn zero_frequency_keeps_phasor_and_dc_limits_of_storage() {
+    let plan = compile(
+        &parse("title\nV1 in 0 0\nR1 in mid 1k\nL1 mid out 1u\nR2 out 0 1k\nC1 out 0 1u\n.end")
+            .unwrap(),
+    )
+    .unwrap();
+    let source = AcSourcePhasor {
+        id: "V1".into(),
+        real: 1.,
+        imag: 2.,
+    };
+    for provider in [&DenseLu as &dyn LinearSolver, &FaerSparseLu] {
+        let response =
+            ac_with_source_phasors(&plan, &[0.], std::slice::from_ref(&source), provider).unwrap();
+        let sample = &response[0];
+        assert_eq!(sample.frequency_hz, 0.);
+        assert!((complex(&sample.values[2]) - Complex64::new(0.5, 1.)).norm() < 1e-12);
+        assert!(
+            (complex(&sample.values[plan.branch_index("L1").unwrap()])
+                - Complex64::new(0.0005, 0.001))
+            .norm()
+                < 1e-12
+        );
+    }
+}

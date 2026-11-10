@@ -56,7 +56,7 @@ RELATIONS:
 UID: REF-004
 TITLE: Complex linear AC profile
 STATEMENT: >>>
-The reference AC engine shall assemble G+j*omega*C for positive bounded frequency arrays and expose real/imaginary binary64 values with frequency units, checking the backend solution residual.
+The reference AC engine shall assemble G+j*omega*C for finite nonnegative bounded frequency arrays and expose real/imaginary binary64 values with frequency units, checking the backend solution residual.
 <<<
 COMMENT: >>>
 Implementation: src/ac.rs, src/api.rs.

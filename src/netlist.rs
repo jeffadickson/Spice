@@ -701,10 +701,16 @@ pub fn import_ngspice_request(text: &str, case_id: impl Into<String>) -> SimResu
             }
             let start = spice_scalar(tokens[3])?;
             let stop = spice_scalar(tokens[4])?;
-            if !start.is_finite() || !stop.is_finite() || start <= 0. || stop < start {
+            let linear = tokens[1].eq_ignore_ascii_case("lin");
+            if !start.is_finite()
+                || !stop.is_finite()
+                || start < 0.
+                || !linear && start == 0.
+                || stop < start
+            {
                 return Err(SimError::invalid("invalid AC linear frequency range"));
             }
-            let frequencies_hz = if tokens[1].eq_ignore_ascii_case("lin") {
+            let frequencies_hz = if linear {
                 (0..count)
                     .map(|i| start + (stop - start) * i as f64 / (count - 1).max(1) as f64)
                     .collect()

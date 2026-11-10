@@ -160,9 +160,9 @@ public static class RequestedComparison
      Grid(secondary.Coordinates.ToArray(),native.Points.Select(p=>(positive<0?0:p[positive].Real)-(negative<0?0:p[negative].Real)).ToArray());
     }
    }else if(isAc){
-    if(native.Variables[0].Dimension!="frequency"||manifests.Length!=1||manifests[0].Samples.Length!=0)throw new InvalidDataException("ac_shape_or_unit_gap");actualAxis=manifests[0].AcSamples.Select(s=>s.FrequencyHz).ToArray();Grid(operation.Coordinates.ToArray(),actualAxis);Grid(actualAxis,axis);StrictAxis(axis,true);
+    if(native.Variables[0].Dimension!="frequency"||manifests.Length!=1||manifests[0].Samples.Length!=0)throw new InvalidDataException("ac_shape_or_unit_gap");actualAxis=manifests[0].AcSamples.Select(s=>s.FrequencyHz).ToArray();Grid(operation.Coordinates.ToArray(),actualAxis);Grid(actualAxis,axis);StrictAxis(axis);
    }else if(operation.Kind=="tran"){
-    if(native.Variables[0].Dimension!="time"||manifests.Length!=1||manifests[0].AcSamples.Length!=0)throw new InvalidDataException("transient_shape_or_unit_gap");actualAxis=manifests[0].Samples.Select(s=>s.TimeS).ToArray();StrictAxis(axis,false);StrictAxis(actualAxis,false);
+    if(native.Variables[0].Dimension!="time"||manifests.Length!=1||manifests[0].AcSamples.Length!=0)throw new InvalidDataException("transient_shape_or_unit_gap");actualAxis=manifests[0].Samples.Select(s=>s.TimeS).ToArray();StrictAxis(axis);StrictAxis(actualAxis);
     var stop=operation.Arguments[1];var start=operation.OutputStartS;
     // ngspice UIC starts saving at its first accepted positive step.
     // Keep the engine's zero sample in its manifest and never extrapolate.
@@ -207,7 +207,7 @@ public static class RequestedComparison
  }
  private static void Grid(double[] requested,double[] actual){if(requested.Length==0||requested.Length!=actual.Length||requested.Where((v,i)=>!Near(v,actual[i])).Any())throw new InvalidDataException("original_grid_discrepancy");}
  private static bool Near(double a,double b)=>double.IsFinite(a)&&double.IsFinite(b)&&Math.Abs(a-b)<=Math.Max(double.Epsilon*16,Math.Max(Math.Abs(a),Math.Abs(b))*1e-12);
- private static void StrictAxis(double[] values,bool positive){if(values.Length==0||values.Any(v=>!double.IsFinite(v)||positive&&v<=0||!positive&&v<0)||values.Zip(values.Skip(1)).Any(p=>p.First>=p.Second))throw new InvalidDataException("invalid_axis");}
+ private static void StrictAxis(double[] values){if(values.Length==0||values.Any(v=>!double.IsFinite(v)||v<0)||values.Zip(values.Skip(1)).Any(p=>p.First>=p.Second))throw new InvalidDataException("invalid_axis");}
  private static ComplexValue Interpolate(NativeRaw raw,double[] axis,int column,double coordinate){
   if(coordinate<axis[0]&&!Near(coordinate,axis[0])||coordinate>axis[^1]&&!Near(coordinate,axis[^1]))throw new InvalidDataException("transient_extrapolation");
   if(coordinate<=axis[0])return raw.Points[0][column];if(coordinate>=axis[^1])return raw.Points[^1][column];var index=Array.BinarySearch(axis,coordinate);if(index>=0)return raw.Points[index][column];var right=~index;var left=right-1;var fraction=(coordinate-axis[left])/(axis[right]-axis[left]);var a=raw.Points[left][column];var b=raw.Points[right][column];return new(a.Real+fraction*(b.Real-a.Real),a.Imag+fraction*(b.Imag-a.Imag));

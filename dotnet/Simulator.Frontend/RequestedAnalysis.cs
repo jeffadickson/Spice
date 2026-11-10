@@ -141,8 +141,9 @@ public static partial class RequestedAnalysis
       break;
      case "ac":
       unit="Hz";
-      var count=values[0];if(count<1||count!=Math.Truncate(count)||count>maxPoints||values[1]<=0||values[2]<values[1])throw new PreparationFailure("invalid_requested_ac",card.Range);
+      var count=values[0];
       var mode=card.Names[0].ToLowerInvariant();
+      if(count<1||count!=Math.Truncate(count)||count>maxPoints||values[1]<0||mode!="lin"&&values[1]==0||values[2]<values[1])throw new PreparationFailure("invalid_requested_ac",card.Range);
       if(mode=="lin")coordinates=count==1?[values[1]]:Enumerable.Range(0,(int)count).Select(i=>values[1]+(values[2]-values[1])*i/(count-1)).ToImmutableArray();
       else if(mode is "dec" or "oct"){
        var ratio=mode=="dec"?10d:2d;var span=Math.Log(values[2]/values[1],ratio)*count;

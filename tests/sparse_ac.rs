@@ -237,7 +237,7 @@ fn invalid_grid_is_rejected_before_nonlinear_bias_work() {
     let plan = compile(&parse("title\nV1 in 0 1\nR1 in out 1k\nD1 out 0 1p 25.85m\n.end").unwrap())
         .unwrap();
     let provider = DirectOnly(AtomicUsize::new(0));
-    for bad in [0., -1., f64::NAN, f64::INFINITY, f64::MAX] {
+    for bad in [-1., f64::NAN, f64::INFINITY, f64::MAX] {
         assert!(ac(&plan, &[1., bad], &provider).is_err());
     }
     assert_eq!(provider.0.load(Ordering::Relaxed), 0);

@@ -4,7 +4,6 @@ use crate::{
     compile::CompiledCircuit,
     error::{ErrorCode, SimError, SimResult},
     linalg::LinearSolver,
-    quantity::positive,
     solver_contract::SparseComplexSystem,
 };
 use num_complex::Complex64;
@@ -51,7 +50,11 @@ pub fn ac_with_source_phasors(
         ));
     }
     for &frequency in frequencies {
-        positive(frequency, "frequency_hz")?;
+        if !frequency.is_finite() || frequency < 0. {
+            return Err(SimError::invalid(
+                "AC frequency must be finite and nonnegative",
+            ));
+        }
         if !(std::f64::consts::TAU * frequency).is_finite() {
             return Err(SimError::invalid("AC angular frequency overflow"));
         }
@@ -128,7 +131,6 @@ pub fn ac_with_source_phasors(
     };
     let mut output = Vec::with_capacity(frequencies.len());
     for &frequency in frequencies {
-        positive(frequency, "frequency_hz")?;
         let omega = std::f64::consts::TAU * frequency;
         let system =
             SparseComplexSystem::from_real_parts(&conductance_sparse, &charge_sparse, omega)?;

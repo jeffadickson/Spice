@@ -28,7 +28,7 @@ pub fn ac(
     circuit.validate()?;
     let omega = std::f64::consts::TAU * sample.frequency_hz;
     if !sample.frequency_hz.is_finite()
-        || sample.frequency_hz <= 0.
+        || sample.frequency_hz < 0.
         || !omega.is_finite()
         || sample.values.len() != circuit.nodes.len() - 1 + branch_ids(circuit).len()
         || sample

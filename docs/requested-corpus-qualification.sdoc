@@ -152,3 +152,21 @@ Windows baseline 4b20e13 and final replay used ten unchanged RSpice inputs from 
 
 The Frontend.Tests filter FullyQualifiedName~PoleZero|FullyQualifiedName~SourceProfileTests passed 41 cases without skips. Coverlet line/branch coverage was 96.15/80.90 percent for PoleZeroSelection and 76.36/62.72 percent for SourceProfileExtraction. Native coverage and dedicated fuzz and randomized campaigns were outside this replay.
 <<<
+
+[REQUIREMENT]
+UID: REQ-CORPUS-AC-ZERO-001
+STATUS: Draft
+TITLE: Zero-frequency incremental AC and bounded real reporting
+STATEMENT: >>>
+A requested linear AC sweep may begin at zero hertz. Decade and octave sweeps shall retain positive frequency bounds. The engine shall use the same incremental conductance and excitation phasors as at positive frequencies, with zero reactive stamps and verified residuals. Terminal real-vector reporting may consume a single zero-hertz result only when the result identity and axis match and all imaginary components are zero. Unspaced division immediately after a parenthesized expression shall remain an arithmetic operator in the bounded control lexer.
+<<<
+COMMENT: >>>
+Implementation: native AC assembly, complex audit, legacy linear-grid importer, RequestedAnalysis and RequestedControlReporting, corpus axis checks and semantic control lexer. Tests: ZeroFrequencyAcTests covers generated control preparation, negative/logarithmic grids and refusal of a synthetic nonreal result. sparse_ac_circuits checks a complex input phasor through ideal L and C DC limits on LU and Faer.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Windows verification from deab565 with REQ-CORPUS-AC-ZERO-001. Replayed the same ten original inputs using Run-RequestedCorpus.cs and the previous pinned inventory, with a 30-second admission budget. Original ac-zero.cir SHA-256 0bf37dea1b53f5f79bb042038599fb6c19bd5dc50c18657e8bdc98fd43d194ef. New native engine SHA-256 4B283A871347AB56790E089E204F3D56D2F80F25281A664C3628DE2BD06DA81E. ngspice 47+ SHA-256 12BC57018AA5142D28065704D09BC6B06DA2A3886F7864CA042ED4824CCF910F. Its unchanged control program exited successfully. Our replay compared all five mapped observables at 0 Hz with maximum difference 1.09e-19 A and exact node-voltage agreement. Our terminal program reported INFO: success, err=0 and exit code 0. simplepz.cir retained agreement. Eight decks still refused preparation.
+
+cargo test --locked -j 1 --test sparse_ac --test sparse_ac_circuits --test analysis_audits passed 27 tests, including the existing 32-case RC property with seed 2026103006. The Windows process-tree watchdog used an aggregate and per-tree limit of 850 MiB. Managed filters ZeroFrequencyAcTests, RequestedQualificationTests, SourceProfileTests and RequestedControl matched 90 passes and three environment-gated skips. Coverlet line/branch percentages were 90.24/55.88 for RequestedControlReporting.cs and 81.08/46.90 for RequestedComparison. A deliberate removal of the imaginary-component rejection failed its regression. Native coverage and a dedicated fuzz run were outside this checkpoint. Evidence is under E:/Artifacts/Spice-ac-zero-deab565.
+<<<

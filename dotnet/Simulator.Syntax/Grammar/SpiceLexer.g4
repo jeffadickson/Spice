@@ -96,7 +96,7 @@ TXL_NAME: 'y' NAMECHAR*;
 URC_DIGITAL_HEADER: {Column == 0 || InputStream.LA(-1) == '\r'}? HSPACE* 'u' NAMECHAR* LOGICAL_SPACE+ CONNECT_UID LOGICAL_SPACE* '(' LOGICAL_SPACE* NUM (LOGICAL_SPACE* ',' LOGICAL_SPACE* NUM)* LOGICAL_SPACE* ')' {digitalCard=true;};
 URC_NAME: 'u' NAMECHAR*;
 WORD: [a-z_@$#\u0080-\uffff] NAMECHAR*;
-PATH_NAME: ('/' | '\\') [a-z_] NAMECHAR*;
+PATH_NAME: {!ControlSemantic}? ('/' | '\\') [a-z_] NAMECHAR*;
 fragment NAMECHAR: [a-z_0-9.!@$#%:+/\\?\u0080-\uffff-];
 fragment NUM: ([0-9]+ ('.' [0-9]*)? | '.' [0-9]+) ('e' [+-]? [0-9]+)? [a-z]*;
 fragment HSPACE: [ \t];

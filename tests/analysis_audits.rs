@@ -129,7 +129,7 @@ fn malformed_ac_audit_inputs_are_rejected_and_nonlinear_bias_is_unavailable() {
         imag: 0.,
     }];
     assert!(audit::ac(&circuit, &sample, &bad, AuditOptions::default()).is_err());
-    sample.frequency_hz = 0.;
+    sample.frequency_hz = -1.;
     assert!(audit::ac(&circuit, &sample, &[], AuditOptions::default()).is_err());
     sample.frequency_hz = 1.;
     sample.values.pop();

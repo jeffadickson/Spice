@@ -5,7 +5,7 @@ namespace Simulator.Frontend;
 
 public static partial class RequestedAnalysis
 {
-    /// <summary>Runs the terminal reporting program over the last completed real analysis.</summary>
+    /// <summary>Runs terminal reporting over the last completed real analysis or a strictly real zero-hertz AC sample.</summary>
     public static ControlVectorReport ExecuteTerminalReporting(DeckSyntax syntax,RequestedAnalysisPlan plan,
         IReadOnlyList<SimulationResponse> responses)
     {
@@ -13,8 +13,9 @@ public static partial class RequestedAnalysis
             syntax.Declarations?.ControlBlocks is not { Length: 1 } blocks)
             throw new InvalidDataException("control_reporting_not_prepared");
         var operation=plan.Operations[^1];
+        var zeroAc=operation.Kind=="ac"&&operation.Coordinates is [0];
         if(operation.ControlOrigin is not {} origin || origin.BlockRange!=blocks[0].Range ||
-           operation.Kind=="ac" || responses.Count!=operation.Requests.Length || responses.Any(r=>!r.Succeeded))
+           operation.Kind=="ac"&&!zeroAc || responses.Count!=operation.Requests.Length || responses.Any(r=>!r.Succeeded))
             throw new InvalidDataException("control_reporting_requires_complete_real_analysis");
         var manifests=responses.Select((response,index)=>
         {
@@ -22,7 +23,11 @@ public static partial class RequestedAnalysis
             if(manifest.CaseId!=operation.Requests[index].CaseId ||
                manifest.Samples.Any(s=>s.Values.Length!=manifest.Signals.Length))
                 throw new InvalidDataException("control_reporting_result_identity");
-            return manifest;
+            if(!zeroAc)return manifest;
+            if(manifest.Samples.Length!=0 || manifest.AcSamples is not [{FrequencyHz:0} sample] ||
+               sample.Values.Length!=manifest.Signals.Length || sample.Values.Any(v=>!double.IsFinite(v.Real)||v.Imag!=0))
+                throw new InvalidDataException("control_reporting_requires_real_zero_frequency_sample");
+            return manifest with{Samples=[new RealSample(0,sample.Values.Select(v=>v.Real).ToArray())]};
         }).ToArray();
         if(manifests.Skip(1).Any(m=>!m.Signals.SequenceEqual(manifests[0].Signals)))
             throw new InvalidDataException("control_reporting_result_identity");
