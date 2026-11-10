@@ -105,5 +105,15 @@ STATEMENT: >>>
 The generated frontend shall lower three-terminal NJF and PJF level-1 cards with the default B=1 law. It shall convert JFET BETA to the shared square-law convention, orient both gate junctions by polarity, and stamp RD and RS outside the intrinsic terminals. The drain sensor shall retain the external drain current. Invalid values and unsupported model or instance parameters shall refuse preparation.
 <<<
 COMMENT: >>>
-Verification uses JfetTests and the original jfet/jfet_vds-vgs.cir operating point and nested DC sweep. This profile covers LEVEL, VTO, BETA, LAMBDA, RD, RS and IS at nominal temperature. Charge, alternative B, and temperature laws are separate.
+Verification uses JfetTests and the original jfet/jfet_vds-vgs.cir operating point and nested DC sweep. This profile covers LEVEL, VTO, BETA, LAMBDA, RD, RS and IS at nominal temperature. Gate depletion is specified in SEMI-JFET1-GATE-Q-001. Alternative B and temperature laws are separate.
+<<<
+
+[REQUIREMENT]
+UID: SEMI-JFET1-GATE-Q-001
+TITLE: Map JFET level-1 gate depletion charge
+STATEMENT: >>>
+The generated JFET profile shall use CGS and CGD as separate zero-bias junction capacitances with shared PB and FC, grading exponent 0.5 and zero transport time. The junction orientation and series-resistance topology shall match the conduction profile. Absent capacitances default to zero. Negative capacitance, nonpositive PB and FC outside zero to 0.95 shall refuse preparation.
+<<<
+COMMENT: >>>
+Verification uses JfetTests and compat/ngspice/jfet-gate-charge.cir. This profile uses the native junction derivative in AC and accepted charge differences in backward Euler.
 <<<

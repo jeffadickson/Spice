@@ -27,12 +27,31 @@ public sealed class JfetTests
     [InlineData("LEVEL=2")]
     [InlineData("BETA=0")]
     [InlineData("RD=-1")]
-    [InlineData("CGS=1p")]
+    [InlineData("CGS=-1p")]
+    [InlineData("CGD=-1p")]
+    [InlineData("PB=0")]
+    [InlineData("FC=1")]
     public void OutsideProfileRefusesWithoutPublishing(string model)
     {
         var prepared = Prepare("NJF", model);
         Assert.False(prepared.Success);
         Assert.Null(prepared.Request);
+    }
+
+    [Fact]
+    public void GateJunctionsBindTheirOwnDepletionCapacitance()
+    {
+        var prepared = Prepare("NJF", "CGD=2p CGS=3p PB=.9 FC=.4");
+        Assert.True(prepared.Success);
+        var elements = prepared.Request!.Circuit.Elements;
+        var channel = Assert.Single(elements.OfType<Mos1Channel>());
+        var drain = Assert.Single(elements.OfType<SpiceDiode>(), d => d.N == channel.P);
+        var source = Assert.Single(elements.OfType<SpiceDiode>(), d => d.N == channel.N);
+        Assert.InRange(drain.Model.JunctionFarads, 2e-12 - 1e-25, 2e-12 + 1e-25);
+        Assert.InRange(source.Model.JunctionFarads, 3e-12 - 1e-25, 3e-12 + 1e-25);
+        Assert.Equal(.9, drain.Model.JunctionVolts);
+        Assert.Equal(.4, source.Model.ForwardCoefficient);
+        Assert.Equal(.5, source.Model.Grading);
     }
 
     private static BridgeResult Prepare(string family, string model) =>

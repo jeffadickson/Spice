@@ -7,7 +7,7 @@ namespace Simulator.Frontend;
 internal static class JfetPreparation
 {
     private static readonly HashSet<string> Allowed = new(StringComparer.OrdinalIgnoreCase)
-        { "LEVEL", "VTO", "BETA", "LAMBDA", "RD", "RS", "IS" };
+        { "LEVEL", "VTO", "BETA", "LAMBDA", "RD", "RS", "IS", "CGS", "CGD", "PB", "FC" };
 
     internal static bool Supports(BoundInstance call)
     {
@@ -45,7 +45,12 @@ internal static class JfetPreparation
         var rd = Get("RD", 0);
         var rs = Get("RS", 0);
         var saturation = Get("IS", 1e-14);
-        if (Get("LEVEL", 1) != 1 || beta <= 0 || !double.IsFinite(beta) || lambda < 0 ||
+        var cgs = Get("CGS", 0);
+        var cgd = Get("CGD", 0);
+        var pb = Get("PB", 1);
+        var fc = Get("FC", .5);
+        if (cgs < 0 || cgd < 0 || pb <= 0 || fc is < 0 or > .95 ||
+            Get("LEVEL", 1) != 1 || beta <= 0 || !double.IsFinite(beta) || lambda < 0 ||
             saturation <= 0 || !Resistance(rd) || !Resistance(rs))
         {
             diagnostic = new("invalid_jfet1_parameter", model.Range);
@@ -56,9 +61,10 @@ internal static class JfetPreparation
         // beta/2, and its junction reference terminal is wired to the gate.
         var p = model.ModelFamily == "pjf";
         const double thermalVolts = 1.38064852e-23 / 1.6021766208e-19 * 300.15;
-        var junction = new SpiceDiodeModel(saturation, thermalVolts, 0, 1, .5, .5, 0);
+        // Berkeley JFET depletion uses a fixed grading exponent of one half.
+        var junction = new SpiceDiodeModel(saturation, thermalVolts, cgd, pb, .5, fc, 0);
         profile = new(new(p, p ? -threshold : threshold, beta, 0, 1, lambda),
-            junction, junction, 0, 0, 0, rd, rs);
+            junction, junction with { JunctionFarads = cgs }, 0, 0, 0, rd, rs);
         return true;
 
         double Get(string name, double fallback) => values.GetValueOrDefault(name, fallback);
