@@ -47,3 +47,21 @@ Existing backward-Euler runtime emits its accepted computational samples. Native
 RELATIONS:
 - TYPE: Parent
   VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: REQ-ANALYSIS-TF-001
+STATUS: Draft
+TITLE: Selected DC voltage transfer and port impedances
+STATEMENT: >>>
+A selected transfer shall bind up to sixteen root .tf V(output[,reference]) voltage-source directives in source order against the same prepared circuit. The selected input source shall be independently perturbed about its original DC bias with all other sources held fixed. The result shall report incremental voltage gain, input impedance from current drawn from the input source, and output impedance from a separate differential test-current injection. The result shall require finite derivatives and agreement at two perturbation scales. It shall represent zero incremental input current explicitly and refuse invalid ports, unsupported circuit contracts, failed probes and unstable derivatives.
+<<<
+COMMENT: >>>
+Implementation: TransferFunctionSelection and scripts/Run-TransferFunction.cs. The derivative is a central finite difference with 100/50 uV input and 100/50 nA output perturbations. Stability compares derivatives with 0.1 percent relative tolerance plus floors of 1e-6 V/V, 1e-13 S and 1e-4 ohm. The check measures numerical consistency across scales. Nonlinear accuracy requires circuit-specific evidence. Root control blocks and hysteretic switches refuse this profile. Other analyses are outside the standalone selection. Requested-corpus dispatch and sensitivity remain separate.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Windows verification on cbc2ac7 plus this change used dotnet test dotnet/Simulator.Frontend.Tests --filter FullyQualifiedName~TransferFunctionTests --collect "XPlat Code Coverage". Three tests passed with zero skips. The divider gain 2/3 and impedances 3000 and 666.6666667 ohms matched the analytical result and ngspice 47+ ASCII RAW on LU and Faer. An intentional reversal of input-current polarity failed both provider tests with negative 3000 ohms. Coverlet reported 86.04 percent lines and 59.61 percent branches for the handwritten selection class, and 84.21/54.54 percent for the main async state machine. Native coverage, fuzz and randomized properties were outside this run.
+
+The unchanged RSpice general/diffpair.cir input SHA-256 is 7B8130123CB74140AC247CA8B9B0F50AEE0389B397AC9A4505493CDA225BB76B. The ngspice batch oracle recorded gains -0.11034131937 for VCM and -87.8473846657 for VDM, plus a 576-column sensitivity result. The standalone selector refused Q1 at line 10 with unsupported_bjt_profile due to VA=50. This run therefore establishes no diffpair agreement. Artifacts: E:/Artifacts/Spice-diffpair-20261109T172338.
+<<<
