@@ -65,3 +65,36 @@ Windows verification on cbc2ac7 plus this change used dotnet test dotnet/Simulat
 
 The unchanged RSpice general/diffpair.cir input SHA-256 is 7B8130123CB74140AC247CA8B9B0F50AEE0389B397AC9A4505493CDA225BB76B. The ngspice batch oracle recorded gains -0.11034131937 for VCM and -87.8473846657 for VDM, plus a 576-column sensitivity result. The standalone selector refused Q1 at line 10 with unsupported_bjt_profile due to VA=50. This run therefore establishes no diffpair agreement. Artifacts: E:/Artifacts/Spice-diffpair-20261109T172338.
 <<<
+
+[REQUIREMENT]
+UID: REQ-ANALYSIS-SENS-001
+STATUS: Draft
+TITLE: Selected DC voltage sensitivity to root primitive values
+STATEMENT: >>>
+A selected root .sens V(output[,reference]) shall measure the differential voltage derivative for each original root resistor value and independent DC voltage or current source value. It shall preserve parameter identity and units, use symmetric DC perturbations at two scales, and publish results only if all supported parameters converge and agree across scales. The reported profile shall identify the parameter population. Model-card parameters, secondary instance parameters, AC sensitivity and hierarchical parameters are outside this selected profile.
+<<<
+COMMENT: >>>
+Implementation: SensitivitySelection, exposed by scripts/Run-TransferFunction.cs --sensitivity. The selected profile admits up to sixteen root parameters. Verification: SensitivityTests exercises the signed analytic differential divider on LU and Faer and unsupported current observation refusal.
+<<<
+
+[REQUIREMENT]
+UID: REQ-ANALYSIS-EARLY-001
+STATUS: Draft
+TITLE: Forward Early effect in selected DC probes
+STATEMENT: >>>
+The selected DC transfer and sensitivity profiles shall accept VA and VAF as equivalent model keys on the bounded nominal level-1 BJT profile. The signed intrinsic base-to-collector voltage shall determine the multiplier 1 - Vbc/VAF for forward and reverse collector-emitter transport. The base junction currents shall retain their independent conduction equations. The selected bias shall require a finite positive multiplier and convergence of both the inner DC solve and outer transport factors before reporting a derivative. Unsupported BJT profiles and ordinary analysis paths outside this selected contract shall refuse.
+<<<
+COMMENT: >>>
+Implementation: BjtPreparation and SelectedDcBias reuse native conduction junctions and controlled transport branches. Each outer iteration freezes the factors for a public Rust operating-point solve and rejects a failure or exhaustion of the 32-iteration budget. A subsequent probe in the same operation may reuse the last converged factors as its initial estimate. Evidence scope excludes full Gummel-Poon, AC/transient Early-effect coupling, native Jacobian integration and full ngspice sensitivity column parity.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Follow-up verification on Windows, baseline 7b1f020 plus REQ-ANALYSIS-EARLY-001 and REQ-ANALYSIS-SENS-001. Run the unchanged deck with dotnet run --file scripts/Run-TransferFunction.cs -- <deck> <engine> lu and again with --sensitivity before the deck path. Pass the repository's pinned AntlrJar, GrammarOutput and artifacts-path settings before the argument separator. The native oracle command is ngspice_con.exe -n -D filetype=ascii -b -r <native.raw> -o <native.log> <deck>. Original input SHA-256 7B8130123CB74140AC247CA8B9B0F50AEE0389B397AC9A4505493CDA225BB76B. ngspice 47+ SHA-256 12BC57018AA5142D28065704D09BC6B06DA2A3886F7864CA042ED4824CCF910F. Rust engine SHA-256 4F915B77C4CD28ADF76D6EAC8B7845168C0A27723FC4A8385E1865041A82F582.
+
+LU completed both original .tf operations and the supported .sens profile. VCM gain -0.11034125794395777 versus -0.1103413193699604. VDM gain -87.84736895259826 versus -87.84738466572739. All six transfer quantities agreed within 1e-5 relative plus 1e-7 V/V or 1e-3 ohm absolute. All nine root resistance and DC source derivatives agreed within 0.002 relative plus 1e-8 in each derivative's unit. The VDM differential sensitivity was -175.80507927676513 versus -175.8051106508246 V/V. This accounts for nine of the native sensitivity plot's 576 columns. Selected analysis agreement does not establish full native column parity or requested-corpus dispatch.
+
+The first 30-second transfer attempt expired before completion. Subsequent sequential runs used a process-tree and aggregate 768 MiB watchdog, with observed peaks of 219893760 and 238784512 bytes. Logs and comparison JSON are in E:/Artifacts/Spice-early-7b1f020. Comparison SHA-256 C76F351944CEF2260C6F7907D95DEE75CC4D1646AA5A57F10D81BF6CF6196975.
+
+SDK 10.0.403 focused filter FullyQualifiedName~TransferFunctionTests|FullyQualifiedName~SensitivityTests ran nine cases with zero failures or skips under XPlat Code Coverage. Coverlet async state-machine line/branch coverage was 97.50/75.00 percent for selected DC bias and 83.33/53.70 percent for sensitivity. Both polarities killed a forward Early-sign mutation. The restored filter including Simulator.Frontend.Tests.BjtTests ran 46 cases with zero failures or skips. Faer ran the divider checks, while the original deck was compared using LU. Native coverage, fuzz and randomized-property campaigns were outside this run.
+<<<

@@ -9,6 +9,7 @@ namespace Simulator.Frontend;
 public sealed record VoltageTransfer(string InputSource, SourceRange Range)
 {
     internal SimulationRequest Request { get; init; } = null!;
+    internal ImmutableArray<ForwardEarlyEffect> EarlyEffects { get; init; } = [];
     internal Voltage Input { get; init; } = null!;
     internal int Positive { get; init; }
     internal int Negative { get; init; }
@@ -44,7 +45,7 @@ public static partial class TransferFunctionSelection
         var cards = catalog.Cards.Where(c => c.Name.Equals(".tf", StringComparison.OrdinalIgnoreCase)).ToArray();
         if (cards.Length is < 1 or > 16 || cards.Any(c => c.ScopeId != 0) || catalog.Cards.Any(c => c.Kind == "control"))
             return new([], new("unsupported_tf_program", null));
-        var prepared = OperatingPointSelection.Select(syntax, backend: backend).Prepared;
+        var prepared = SelectedDcBias.Prepare(syntax, backend);
         if (!prepared.Success)
             return new([], prepared.Diagnostics[0]);
         var request = prepared.Request!;
@@ -68,7 +69,7 @@ public static partial class TransferFunctionSelection
                 return new([], new("unsupported_tf_voltage_input", card.Range));
             operations.Add(new(name, card.Range)
             {
-                Request = request, Input = input, Positive = positive, Negative = negative
+                Request = request, EarlyEffects = prepared.EarlyEffects, Input = input, Positive = positive, Negative = negative
             });
         }
         return new(operations.ToImmutable(), null);
@@ -89,6 +90,7 @@ public static partial class TransferFunctionSelection
         var nodes = request.Circuit.Nodes;
         var elements = request.Circuit.Elements;
         const string probeId = "tf_output_current";
+        var bias = new SelectedDcBias(operation.EarlyEffects);
         var coarse = await Estimate(1e-4, 1e-7);
         var fine = await Estimate(5e-5, 5e-8);
         if (coarse is not { } a || fine is not { } b)
@@ -123,9 +125,9 @@ public static partial class TransferFunctionSelection
 
         async Task<(double Output, double InputCurrent)?> Solve(Element[] perturbed)
         {
-            var response = await client.RunAsync(request with { Circuit = request.Circuit with { Elements = perturbed } },
+            var response = await bias.SolveAsync(client, request with { Circuit = request.Circuit with { Elements = perturbed } },
                 cancellationToken);
-            if (!response.Succeeded) return null;
+            if (response is not { Succeeded: true }) return null;
             var manifest = response.ReadManifest();
             if (!manifest.Complete || manifest.Samples.Length != 1) return null;
             var values = manifest.Samples[0].Values;

@@ -5,9 +5,9 @@ namespace Simulator.Frontend;
 /// <summary>Qualified Ebers–Moll subset of the default BJT parameter model.
 /// The numerical engine still evaluates ordinary native junctions and sources.</summary>
 internal sealed record PreparedBjt(bool Pnp,double BetaForward,double BetaReverse,
-    SpiceDiodeModel ForwardStorage,SpiceDiodeModel ReverseStorage,SpiceDiodeModel SubstrateStorage,double BaseOhms,double CollectorOhms,double EmitterOhms)
+    SpiceDiodeModel ForwardStorage,SpiceDiodeModel ReverseStorage,SpiceDiodeModel SubstrateStorage,double BaseOhms,double CollectorOhms,double EmitterOhms,double EarlyVolts)
 {
-    internal void Append(string id,int collector,int baseNode,int emitter,int? substrate,Func<int> privateNode,Action<Element> add)
+    internal void Append(string id,int collector,int baseNode,int emitter,int? substrate,Func<int> privateNode,Action<Element> add,Action<ForwardEarlyEffect> register)
     {
         var c=privateNode();var be=privateNode();var bc=privateNode();
         // The outer sensor measures total collector current. The BE/BC sensors
@@ -23,6 +23,7 @@ internal sealed record PreparedBjt(bool Pnp,double BetaForward,double BetaRevers
         add(new Diode(id+"_bc",bc,Pnp?baseNode:c,ReverseStorage.SaturationAmps/BetaReverse,ReverseStorage.ThermalVolts));
         add(new Cccs(id+"_forward",Pnp?emitter:c,Pnp?c:emitter,id+"_be_sense",BetaForward));
         add(new Cccs(id+"_reverse",Pnp?c:emitter,Pnp?emitter:c,id+"_bc_sense",BetaReverse));
+        if(EarlyVolts>0)register(new(id+"_forward",id+"_reverse",baseNode,c,Pnp,EarlyVolts));
         // Vertical NPN and lateral PNP both use V(substrate) minus V(reference).
         var substrateReference=Pnp?baseNode:c;
         var substrateNode=substrate??0; // Omitted substrate terminal is ground.
@@ -55,18 +56,24 @@ internal static class BjtPreparation
 {
     private static readonly HashSet<string> Allowed=new(StringComparer.OrdinalIgnoreCase)
         {"IS","BF","BR","NF","NR","CJE","VJE","MJE","CJC","VJC","MJC","FC","TF","TR","TNOM","LEVEL","RB","RC","RE","CJS","VJS","MJS"};
-    internal static bool AssignmentsAreSupported(BoundInstance call)
+    internal static bool AssignmentsAreSupported(BoundInstance call,bool allowEarly=false)
     {
         if(call.Status!=BindingStatus.Bound||call.Target is not {} model||model.ModelFamily is not ("npn" or "pnp")
             ||model.HasOpaqueModelTerms||!call.Header.Parameters.IsEmpty||call.Ports.Length is not (3 or 4))return false;
         var names=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        return model.Parameters.All(p=>p.Name!=null&&Allowed.Contains(CanonicalName(p.Name))&&names.Add(CanonicalName(p.Name)));
+        foreach(var parameter in model.Parameters)
+        {
+            if(parameter.Name is not {} name)return false;
+            var key=CanonicalName(name);
+            if(!(Allowed.Contains(key)||allowEarly&&key=="VAF")||!names.Add(key))return false;
+        }
+        return true;
     }
     internal static bool TryPrepare(DeclarationCatalog catalog,ParameterEvaluation environment,BoundInstance call,
-        out PreparedBjt? profile,out BridgeDiagnostic? diagnostic)
+        out PreparedBjt? profile,out BridgeDiagnostic? diagnostic,bool allowEarly=false)
     {
         profile=null;diagnostic=null;
-        if(!AssignmentsAreSupported(call)){diagnostic=new("unsupported_bjt_profile",call.Header.Range);return false;}
+        if(!AssignmentsAreSupported(call,allowEarly)){diagnostic=new("unsupported_bjt_profile",call.Header.Range);return false;}
         var model=call.Target!;var values=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase);
         foreach(var p in model.Parameters)
         {
@@ -82,7 +89,8 @@ internal static class BjtPreparation
         var cjs=Value(values,"CJS",0);var vjs=Value(values,"VJS",.75);var mjs=Value(values,"MJS",0);
         var tf=Value(values,"TF",0);var tr=Value(values,"TR",0);
         var rb=Value(values,"RB",0);var rc=Value(values,"RC",0);var re=Value(values,"RE",0);
-        if(rb<0||rc<0||re<0||rb>0&&!double.IsFinite(1/rb)||rc>0&&!double.IsFinite(1/rc)||re>0&&!double.IsFinite(1/re)||isat<=0||bf<=0||br<=0||nf<=0||nr<=0||cje<0||cjc<0||vje<=0||vjc<=0||mje<0||mje>=1||mjc<0||mjc>=1||fc<0||fc>=1||tf<0||tr<0
+        var early=Value(values,"VAF",0);
+        if(early<0||early>0&&!double.IsFinite(1/early)||rb<0||rc<0||re<0||rb>0&&!double.IsFinite(1/rb)||rc>0&&!double.IsFinite(1/rc)||re>0&&!double.IsFinite(1/re)||isat<=0||bf<=0||br<=0||nf<=0||nr<=0||cje<0||cjc<0||vje<=0||vjc<=0||mje<0||mje>=1||mjc<0||mjc>=1||fc<0||fc>=1||tf<0||tr<0
             ||cjs<0||vjs<=0||mjs<0||mjs>=1
             ||Value(values,"TNOM",27)!=27||Value(values,"LEVEL",1)!=1||!double.IsFinite(isat/bf)||!double.IsFinite(isat/br)||isat/bf<=0||isat/br<=0)
         {diagnostic=new("invalid_or_unqualified_bjt_parameter",model.Range);return false;}
@@ -92,13 +100,14 @@ internal static class BjtPreparation
         {diagnostic=new("invalid_bjt_thermal_voltage",model.Range);return false;}
         // Substrate depletion rolls into its forward continuation at zero bias.
         var substrateStorage=new SpiceDiodeModel(isat,vt,cjs,vjs,mjs,0,0);
-        profile=new(model.ModelFamily=="pnp",bf,br,new(isat,vf,cje,vje,mje,fc,tf),new(isat,vr,cjc,vjc,mjc,fc,tr),substrateStorage,rb,rc,re);return true;
+        profile=new(model.ModelFamily=="pnp",bf,br,new(isat,vf,cje,vje,mje,fc,tf),new(isat,vr,cjc,vjc,mjc,fc,tr),substrateStorage,rb,rc,re,early);return true;
     }
     // Aliases represent the same parameter and must share duplicate detection.
     private static string CanonicalName(string name)=>name.ToUpperInvariant() switch
     {
         "CCS" or "CSUB"=>"CJS",
         "PS"=>"VJS",
+        "VA"=>"VAF",
         "MS"=>"MJS",
         var canonical=>canonical
     };

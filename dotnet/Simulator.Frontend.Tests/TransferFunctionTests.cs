@@ -64,6 +64,44 @@ public sealed class TransferFunctionTests
         Assert.Equal(values[2].Real, result.OutputOhms.Value, 5);
     }
 
+    [Fact]
+    public void SelectedDcTransferAdmitsForwardEarlyVoltageWithoutEnablingOtherAnalyses()
+    {
+        var syntax = DeckParser.Parse(
+            "Early effect\nVin b 0 .6\nVcc s 0 5\nR1 s c 1k\nQ1 c b 0 qm\n.model qm NPN(VA=50)\n.tf v(c) Vin\n.end\n",
+            collectDeclarations: true);
+        Assert.True(TransferFunctionSelection.Prepare(syntax).Success);
+        Assert.False(OperatingPointSelection.Select(syntax).Success);
+    }
+
+    [BjtOracleTheory]
+    [InlineData("NPN", 1)]
+    [InlineData("PNP", -1)]
+    public async Task ForwardEarlyEffectScalesOnlyTransport(string family, int polarity)
+    {
+        var biasVolts = polarity == 1 ? ".6" : "-.6";
+        var syntax = DeckParser.Parse(
+            $"Early effect\nVin b 0 {biasVolts}\nVcc c 0 {polarity * 5}\nQ1 c b 0 qm\n.model qm {family}(VA=50)\n.end\n",
+            collectDeclarations: true);
+        var prepared = SelectedDcBias.Prepare(syntax, "lu");
+        Assert.True(prepared.Success, string.Join(",", prepared.Diagnostics.Select(d => d.Code)));
+        var client = new SimulationClient(Environment.GetEnvironmentVariable("SPICE_SEMICONDUCTOR_ENGINE")!);
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        var bias = new SelectedDcBias(prepared.EarlyEffects);
+        var response = await bias.SolveAsync(client, prepared.Request!, deadline.Token);
+        Assert.True(response is { Succeeded: true });
+        var manifest = response.ReadManifest();
+        double Current(string name)
+        {
+            var id = prepared.Origins.Single(o => o.LocalName == name).WireId;
+            return Assert.Single(manifest.Samples).Values[Array.FindIndex(manifest.Signals, s => s.Id == $"i({id})")];
+        }
+        const double vt = 1.38064852e-23 / 1.6021766208e-19 * 300.15;
+        var transport = 1e-16 * Math.Exp(.6 / vt);
+        Assert.InRange(-polarity * Current("Vcc") / transport, 1.0879, 1.0881);
+        Assert.InRange(-polarity * Current("Vin") / transport, .00999, .01001);
+    }
+
     private static DeckSyntax Parse(string directives) => DeckParser.Parse(Deck(directives), collectDeclarations: true);
 
     private static string Deck(string directives) =>

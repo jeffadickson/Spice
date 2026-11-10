@@ -7,6 +7,7 @@ public sealed record BridgeLimits(int MaxDepth=32,int MaxInstances=128,int MaxEl
 {
     /// <summary>Selected frontend dialect policy. Strict Lower retains its legacy literal-node contract.</summary>
     public GroundAliasPolicy GroundAliases {get;init;}=GroundAliasPolicy.Automatic;
+    internal bool AllowForwardEarlyEffect { get; init; }
 }
 /// <summary>Capability/validation failure; ranges refer to the supplied syntax text.</summary>
 public sealed record BridgeDiagnostic(string Code,SourceRange? Range);
@@ -25,6 +26,7 @@ public sealed record BridgeResult(SimulationRequest? Request,ImmutableDictionary
     public GroundAliasPolicy GroundAliases {get;init;}=GroundAliasPolicy.Disabled;
     /// <summary>Explicit complex AC replacements for every active independent source, including zero for DC-only sources. DC bias remains in Request.Circuit.</summary>
     public ImmutableArray<AcSourcePhasor> AcSources { get; init; } = [];
+    internal ImmutableArray<ForwardEarlyEffect> EarlyEffects { get; init; } = [];
     // Requested AC can replace resistance by wire ID after checking linearity.
     internal ImmutableDictionary<string,double> AcResistances {get;init;}=ImmutableDictionary<string,double>.Empty;
     /// <summary>Number of active source headers with an explicitly declared AC amplitude.</summary>
@@ -73,6 +75,7 @@ public static class OperatingPointBridge
         var internalNodes=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var bound=InstanceBinder.Bind(catalog).Instances.ToLookup(i=>i.Header.ScopeId);
         var hasJfet = false;
+        var earlyEffects=ImmutableArray.CreateBuilder<ForwardEarlyEffect>();
         GroundBinding? groundBinding=null;
         var primitives=catalog.Primitives.ToLookup(p=>p.ScopeId);var cards=catalog.Cards.ToLookup(c=>c.ScopeId);
         var globalNames=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var globalNodes=new Dictionary<string,int>(StringComparer.OrdinalIgnoreCase);
@@ -98,7 +101,7 @@ public static class OperatingPointBridge
                 : hasJfet ? new OperatingPointNewton(new NewtonOptions(MaxIterations:200,Continuation:new(InitialStep:1)))
                 : new OperatingPoint();
             return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),analysis,backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
-            {InternalNodes=internalNodes.ToImmutable(),AcSources=acSources.ToImmutableArray(),AcResistances=acResistances.ToImmutable(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
+            {EarlyEffects=earlyEffects.ToImmutable(),InternalNodes=internalNodes.ToImmutable(),AcSources=acSources.ToImmutableArray(),AcResistances=acResistances.ToImmutable(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
         }
         catch(BridgeFailure e){return Failure(e.Code,e.Range);}
         void CollectGlobals(int scope,HashSet<int> seen,int depth)
@@ -362,10 +365,10 @@ public static class OperatingPointBridge
                     }
                     if(selected&&call.Header.Family=="Q")
                     {
-                        if(!BjtPreparation.TryPrepare(catalog,environment,call,out var bjt,out var error))throw new BridgeFailure(error!.Code,error.Range);
+                        if(!BjtPreparation.TryPrepare(catalog,environment,call,out var bjt,out var error,limits.AllowForwardEarlyEffect))throw new BridgeFailure(error!.Code,error.Range);
                         var c=Node(call.Ports[0].Actual.Text);var b=Node(call.Ports[1].Actual.Text);var e=Node(call.Ports[2].Actual.Text);
                         var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                        bjt!.Append(id,c,b,e,call.Ports.Length==4?Node(call.Ports[3].Actual.Text):null,PrivateNode,element=>{if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);elements.Add(element);});
+                        bjt!.Append(id,c,b,e,call.Ports.Length==4?Node(call.Ports[3].Actual.Text):null,PrivateNode,element=>{if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);elements.Add(element);},earlyEffects.Add);
                         origins.Add(new(id,call.Header.Name,path,call.Header.Range));continue;
                     }
                     if(selected&&call.Header.Family=="D")
