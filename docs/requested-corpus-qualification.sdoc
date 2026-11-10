@@ -75,3 +75,13 @@ Implementation: CorpusBlockerRanking.cs and scripts/Rank-RequestedCorpus.cs reus
 RELATIONS:
 - TYPE: Parent
   VALUE: CAP-002
+
+[REQUIREMENT]
+UID: REQ-PZ-GROUNDED-RC-001
+TITLE: Evaluate a first-order grounded RC voltage-transfer request
+STATEMENT: >>>
+The pole-zero frontend shall accept a single root .pz voltage-transfer directive for one ideal input voltage source, one series resistor and one grounded output capacitor. It shall publish the finite pole in inverse seconds for POL and PZ and an empty finite zero set. ZER shall return only the empty zero set. Unsupported ports, topologies, transfer modes, or additional analysis and control directives shall refuse without publishing roots.
+<<<
+COMMENT: >>>
+Implementation: PoleZeroSelection and Run-PoleZero.cs. Verification: PoleZeroTests and the unmodified RSpice polezero/filt_rc.cir against ngspice. This entry point is separate from the general requested-analysis corpus coordinator.
+<<<

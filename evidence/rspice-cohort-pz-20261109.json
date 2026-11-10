@@ -1,0 +1,40 @@
+{
+  "corpus_commit": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "rows": [
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "7b8130123cb74140ac247ca8b9b0f50aee0389b397ac9a4505493cda225bb76b"
+      },
+      "path": "general/diffpair.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "f26d811bb675fe56674e16c5c63a7ddbd48b7f5a6399285940ead9f3295c63b1"
+      },
+      "path": "general/mosamp.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "6d5bd5a8e00f1f51f1c1c465bf8f80851cbc7c731623f11a4db1052389c39667"
+      },
+      "path": "general/mosmem.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "f9e776fb9f9f4597b4f7fd2c9fb8dd0263262621b1692968f78b22d95fc012f4"
+      },
+      "path": "polezero/filt_bridge_t.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "ca230cce539d63fdcf9fb7019c533d9e0ea4797d5478acf6d7f44c09e90bd61e"
+      },
+      "path": "transmission/ltra1_1_line.cir"
+    }
+  ]
+}
