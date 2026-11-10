@@ -85,3 +85,13 @@ The pole-zero frontend shall accept a single root .pz voltage-transfer directive
 COMMENT: >>>
 Implementation: PoleZeroSelection and Run-PoleZero.cs. Verification: PoleZeroTests and the unmodified RSpice polezero/filt_rc.cir against ngspice. This entry point is separate from the general requested-analysis corpus coordinator.
 <<<
+
+[REQUIREMENT]
+UID: REQ-PZ-BRIDGE-T-001
+TITLE: Evaluate the real roots of a passive RC bridge-T
+STATEMENT: >>>
+The standalone pole-zero frontend shall admit a grounded voltage transfer with two capacitors in series from input to output, one grounded resistor at their common node, one bridging resistor from input to output, and one ideal input voltage source. It shall preserve repeated finite real roots in inverse seconds, honor POL, ZER and PZ selection, and refuse unsupported topology or root domain without publishing partial roots. It may select the requested .pz independently of an accompanying .op card.
+<<<
+COMMENT: >>>
+Implementation: PoleZeroSelection. Verification: PoleZeroTests and the original RSpice polezero/filt_bridge_t.cir compared with an ngspice report projection retaining the original .pz and devices.
+<<<
