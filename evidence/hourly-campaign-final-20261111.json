@@ -1,0 +1,312 @@
+{
+  "scope": "Final bounded replay of four original campaign targets; not full-corpus or continuous20-hour qualification",
+  "campaign_start_utc": "2026-11-11T03:53:39Z",
+  "hard_stop_utc": "2026-11-11T23:53:39Z",
+  "reviewed_utc": "2026-11-11T23:07:09.6962320+00:00",
+  "tested_source": "e1cf1936ed71e6fa3fdb54c44ea518fb332d2f02",
+  "corpus_commit": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "git_worktree_was_clean": true,
+  "provenance_valid": true,
+  "elapsed_seconds": 6.1154024,
+  "guard": {
+    "log": "replay-guard/guard.log",
+    "observed_peak_bytes": 143687680,
+    "absolute_job_finish_by_utc": "2026-11-11T23:45:00Z",
+    "job_limit_minutes": 8,
+    "per_tree_bytes": 201326592,
+    "os_reserve_bytes": 471859200,
+    "aggregate_bytes": 201326592
+  },
+  "rows": [
+    {
+      "requested_executed": false,
+      "control_diagnostics": null,
+      "path": "general/mosmem.cir",
+      "input_sha256": "6d5bd5a8e00f1f51f1c1c465bf8f80851cbc7c731623f11a4db1052389c39667",
+      "control_exit": null,
+      "status": "requested_execution_failed",
+      "native_agreed": null,
+      "operations": [
+        {
+          "executed": false,
+          "comparison": null,
+          "status": "engine_operation_failed_atomically",
+          "kind": "tran"
+        }
+      ],
+      "diagnostics": [],
+      "control_output": null
+    },
+    {
+      "requested_executed": false,
+      "control_diagnostics": null,
+      "path": "regression/pz/ac-resistance.cir",
+      "input_sha256": "67eaee3f9dc985eea530f84e386ba675a6e95494434fe8ba4e2cc7d1977c47a1",
+      "control_exit": null,
+      "status": "requested_preparation_refused",
+      "native_agreed": null,
+      "operations": [],
+      "diagnostics": [
+        "unsupported_resistor_instance_parameter",
+        "unsupported_control_postprocessing_before_analysis"
+      ],
+      "control_output": null
+    },
+    {
+      "requested_executed": true,
+      "control_diagnostics": null,
+      "path": "regression/misc/if-elseif.cir",
+      "input_sha256": "8eba794f06be8f795c8344c184569c3dc57b04a643a8303253ddbe32ef02541c",
+      "control_exit": 0,
+      "status": "all_individual_requested_analyses_agreed",
+      "native_agreed": true,
+      "operations": [
+        {
+          "executed": true,
+          "comparison": {
+            "status": "agreed",
+            "observables": [
+              {
+                "engine_signal": "v(n1)",
+                "native_signal": "v(1)",
+                "unit": "V",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 0,
+                "absolute_tolerance": 1E-06,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "i(e0)",
+                "native_signal": "i(V1)",
+                "unit": "A",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 4.336808689942018E-19,
+                "absolute_tolerance": 1E-09,
+                "relative_tolerance": 0.0001
+              }
+            ],
+            "gaps": [],
+            "excluded_startup_samples": 0,
+            "analytical_reference": null,
+            "agreed": true
+          },
+          "status": "agreed",
+          "kind": "op"
+        }
+      ],
+      "diagnostics": [],
+      "control_output": "INFO: nested .if test o.k."
+    },
+    {
+      "requested_executed": true,
+      "control_diagnostics": null,
+      "path": "regression/misc/log-functions-1.cir",
+      "input_sha256": "4025b75b0fa8f409df690452aa2c69510c9329cf76992960fdb6c11e439ad1c1",
+      "control_exit": 0,
+      "status": "all_individual_requested_analyses_agreed",
+      "native_agreed": true,
+      "operations": [
+        {
+          "executed": true,
+          "comparison": {
+            "status": "agreed",
+            "observables": [
+              {
+                "engine_signal": "v(n1)",
+                "native_signal": "v(1)",
+                "unit": "V",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 0,
+                "absolute_tolerance": 1E-06,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "v(n5)",
+                "native_signal": "v(b1)",
+                "unit": "V",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 0,
+                "absolute_tolerance": 1E-06,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "v(n6)",
+                "native_signal": "v(b2)",
+                "unit": "V",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 0,
+                "absolute_tolerance": 1E-06,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "v(n7)",
+                "native_signal": "v(b3)",
+                "unit": "V",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 1.1102230246251565E-16,
+                "absolute_tolerance": 1E-06,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "v(n2)",
+                "native_signal": "v(n1)",
+                "unit": "V",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 1.1102230246251565E-16,
+                "absolute_tolerance": 1E-06,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "v(n3)",
+                "native_signal": "v(n2)",
+                "unit": "V",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 1.1102230246251565E-16,
+                "absolute_tolerance": 1E-06,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "v(n4)",
+                "native_signal": "v(n3)",
+                "unit": "V",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 5.551115123125783E-17,
+                "absolute_tolerance": 1E-06,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "i(e0)",
+                "native_signal": "i(v1)",
+                "unit": "A",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 0,
+                "absolute_tolerance": 1E-09,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "i(e1)",
+                "native_signal": "i(vn1)",
+                "unit": "A",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 0,
+                "absolute_tolerance": 1E-09,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "i(e2)",
+                "native_signal": "i(vn2)",
+                "unit": "A",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 0,
+                "absolute_tolerance": 1E-09,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "i(e3)",
+                "native_signal": "i(vn3)",
+                "unit": "A",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 0,
+                "absolute_tolerance": 1E-09,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "i(e4)",
+                "native_signal": "i(bb1)",
+                "unit": "A",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 0,
+                "absolute_tolerance": 1E-09,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "i(e5)",
+                "native_signal": "i(bb2)",
+                "unit": "A",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 0,
+                "absolute_tolerance": 1E-09,
+                "relative_tolerance": 0.0001
+              },
+              {
+                "engine_signal": "i(e6)",
+                "native_signal": "i(bb3)",
+                "unit": "A",
+                "points": 1,
+                "failed": 0,
+                "maximum_absolute_error": 0,
+                "absolute_tolerance": 1E-09,
+                "relative_tolerance": 0.0001
+              }
+            ],
+            "gaps": [],
+            "excluded_startup_samples": 0,
+            "analytical_reference": null,
+            "agreed": true
+          },
+          "status": "agreed",
+          "kind": "op"
+        }
+      ],
+      "diagnostics": [],
+      "control_output": [
+        "Note: numparm_err =  0",
+        "Note: asrc_err =  1.1102230246251565E-16",
+        "Note: ctrl_err =  0",
+        "INFO: success"
+      ]
+    }
+  ],
+  "mosmem_failure": {
+    "code": "numerical_failure",
+    "message": "source continuation cannot reduce below minimum step 0.0001 after failure at scale 0.4188232421875: Newton iteration limit exceeded"
+  },
+  "new_original_decks_this_wake": 0,
+  "campaign_new_original_agreeing_decks": 2,
+  "commits": [
+    "e3395dd8dbfb76f5f16816981073cdbab4e3f1c8",
+    "66158d4ce7f43293c8f3e8eef0008634527961f9",
+    "68c67e63ecf7ea685314e6498ff0304c59e24b2d",
+    "cdd45603c62615ee8785fa694ee9ac48167956d6",
+    "a984f11c78bcd9ad8bdd14733699408493a6020d",
+    "e1cf1936ed71e6fa3fdb54c44ea518fb332d2f02"
+  ],
+  "automation": {
+    "verified_from_local_configuration": true,
+    "status": "PAUSED",
+    "id": "spice-hourly-deck-fixes-20-hours"
+  },
+  "rspice_fresh_remaining_replay": "Not started: resource admission refused. Historical mosmem smoke-contract result is not a full numerical oracle.",
+  "historical_verified_scope": {
+    "fresh_measurement_this_wake": false,
+    "strictdoc_documents": 61,
+    "native_coverage": "expression/newton/compile/audit integration-only, branch unavailable",
+    "native_tests": 109,
+    "managed_skips": 40,
+    "managed_coverage": "20719/26408 lines,5935/9468 branches including generated code",
+    "sources": [
+      "evidence/behavioral-voltage.json",
+      "evidence/pole-zero-ac-resistance.json"
+    ],
+    "managed_tests": 828
+  },
+  "raw_artifacts": "E:/Artifacts/Spice-hourly-final-e1cf193",
+  "main_changed": false,
+  "pushed": false,
+  "ci_dispatched": false
+}

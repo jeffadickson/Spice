@@ -1,3 +1,25 @@
+# Hourly campaign closed — November 11 final session
+
+The hourly automation spice-hourly-deck-fixes-20-hours is PAUSED. Do not resume
+it automatically or extend the hard stop 2026-11-11T23:53:39Z. Resume engineering
+work only from a new user instruction. No campaign workers remain running.
+
+Read docs/hourly-campaign-final-20261111.md and
+evidence/hourly-campaign-final-20261111.json. A fresh clean-source replay at
+e1cf193 confirmed exactly two newly agreeing original decks: if-elseif.cir
+(two observables) and log-functions-1.cir (14 observables), with actual reporting
+exit 0 for each. mosmem still fails source-continuation initialization at scale
+0.4188232421875; ac-resistance still refuses its multi-analysis control program.
+The authored loaded-RC PZ example is not counted as a new original deck.
+
+The branch fix/deck-blocker-implementation contains the verified checkpoints
+and final handoff; canonical main is untouched. Nothing was pushed and no CI
+was dispatched. Bulk artifacts stay E:. Final raw replay is under
+E:/Artifacts/Spice-hourly-final-e1cf193. Preserve the pinned E: NuGet packages,
+source/binary hashes, earlier failures, coverage scopes and actual limitations.
+The final replay changed no implementation, so it adds no new coverage or
+mutation claim beyond the checkpoint evidence linked below.
+
 # Latest checkpoint — loaded RC and AC-resistance poles, November 11
 
 Read docs/pole-zero-ac-resistance.sdoc, its results document and
