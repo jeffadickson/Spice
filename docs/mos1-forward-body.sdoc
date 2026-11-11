@@ -1,0 +1,57 @@
+[DOCUMENT]
+TITLE: MOS1 Forward Body Bias Contracts
+
+[REQUIREMENT]
+UID: REQ-MOS1-FORWARD-BODY-001
+STATUS: Draft
+TITLE: Piecewise forward-body threshold with exact Newton derivatives
+STATEMENT: >>>
+The MOS1 channel shall retain sqrt(phi-Vbs) for nonpositive effective body bias. For positive effective body bias it shall use the linear continuation sqrt(phi)-Vbs/(2*sqrt(phi)), clamped at zero. DC and transient Newton derivatives shall differentiate that piecewise current law exactly in normal and inverse mode for either polarity. Invalid parameters, nonfinite terminal differences and nonfinite evaluated results shall refuse explicitly.
+<<<
+COMMENT: >>>
+Implementation: Mos1Model.body_root and linearize. Verification: finite-difference forward-body tests in mos1_channel.rs, including inverse mode, both polarities and the clamped region, plus the retained 128-case randomized reversal/polarity property expanded to positive body bias (seed 2026110202). Independent reference sources: pinned ngspice mos1load.c and RSpice semiconductor.rs::mos1_threshold/classic/current.rs. Finite Windows qualification and remaining limits are recorded in docs/mos1-forward-body-results.md and evidence/mos1-forward-body.json; Draft contract status does not claim universal qualification.
+<<<
+
+[REQUIREMENT]
+UID: REQ-MOS1-FORWARD-AC-001
+STATUS: Draft
+TITLE: Explicit SPICE forward-body AC convention
+STATEMENT: >>>
+MOS1 AC assembly and public channel-current reporting shall use the same SPICE small-signal body transconductance gamma*gm/(2*sarg), or zero when the continued sarg is zero. This convention shall remain separate from the exact derivative used by DC/transient Newton. Mode/polarity transformations shall preserve the same drain-to-source current convention and gauge-invariant terminal slopes.
+<<<
+COMMENT: >>>
+The spice_ac_linearize method is consumed by incremental conductance assembly and API-derived current reporting. The public AC regression checks both source branch and derived channel current. Qualify-Mos1ForwardBody.cs provides explicit channel-isolation references on LU and Faer; their IS=1e-300 setting isolates the channel and is not evidence for a complete packaged transistor.
+<<<
+
+[REQUIREMENT]
+UID: REQ-MOS1-FORWARD-AUDIT-001
+STATUS: Draft
+TITLE: Independent current audit preserves forward-body behavior
+STATEMENT: >>>
+Independent MOS1 current reconstruction shall support the same forward-body threshold law without calling the production current, root or Jacobian helper. A deliberately inconsistent signed branch current shall fail the physical consistency checks. No previously unavailable independent AC or dynamic-charge audit shall be labeled passing merely because the forward-body domain has expanded.
+<<<
+COMMENT: >>>
+audit.rs reconstructs a bounded linear threshold shift independently. The regression independent_audit_accepts_forward_body_and_detects_a_wrong_branch_current exercises actual DC output and an intentionally corrupted branch current. Existing nonfinite-intermediate refusals remain in force.
+<<<
+
+[REQUIREMENT]
+UID: REQ-MOS1-FORWARD-MEYER-001
+STATUS: Draft
+TITLE: Consistent Meyer threshold under forward body bias
+STATEMENT: >>>
+The bounded intrinsic Meyer capacitance profile shall use the same forward-body threshold continuation as the channel current, with source/drain mode reversal retained. Selected forward-body AC capacitances shall be compared with an independent reference. This does not establish arbitrary forward-body intrinsic-charge transient qualification or a full charge-conserving transistor model.
+<<<
+COMMENT: >>>
+Implementation reuses the body threshold in meyer. Named forward/inverse AC fixtures in Qualify-Mos1ForwardBody.cs exercise gate-current and drain-current responses. Existing transient companion limitations remain explicit.
+<<<
+
+[REQUIREMENT]
+UID: REQ-NEWTON-CUTOFF-TRIALS-001
+STATUS: Draft
+TITLE: Bounded smaller trials through channel cutoff
+STATEMENT: >>>
+Each DC or nonlinear transient Newton correction shall attempt at most 24 backtracking candidates. Increasing this model-evaluation budget shall not relax residual/update tolerances, expand the declared maximum correction/provider-call budget or skip final physical consistency checks. Failure shall remain explicit when no admissible candidate reduces merit. Optional trace diagnostics shall identify rejected transient model trials and their timestep.
+<<<
+COMMENT: >>>
+The previous 12-trial controller failed cold inverse/clamped channel fixtures at cutoff while their scalar derivatives were correct. cold_start_crosses_cutoff_for_inverse_and_clamped_forward_body and the independent reference campaign challenge the complete solver entry point. The 24-trial bound passed the named native and independent reference checks; it is not a universal convergence guarantee.
+<<<

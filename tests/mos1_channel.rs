@@ -21,6 +21,57 @@ fn model() -> circuit_simulator::mos1::Mos1Model {
         channel_length_modulation_per_volt: 0.03,
     }
 }
+
+#[test]
+fn forward_body_continuation_has_finite_exact_newton_partials_in_both_polarities_and_modes() {
+    for volts in [[0.5,1.5,0.,0.2],[2.,1.5,0.,0.2],[0.,1.5,0.5,0.2],[0.5,1.5,0.,1.3]] {
+        for p_channel in [false,true] {
+            let mut m=model();m.p_channel=p_channel;
+            if p_channel {m.threshold_volts = -m.threshold_volts;}
+            let v=volts.map(|x|if p_channel {-x}else{x});
+            let c=m.linearize(v).unwrap();
+            assert!(c.partials_siemens.iter().sum::<f64>().abs()<1e-18);
+            for terminal in 0..4 {
+                let mut plus=v;let mut minus=v;plus[terminal]+=1e-6;minus[terminal]-=1e-6;
+                let fd=(m.linearize(plus).unwrap().current_amps-m.linearize(minus).unwrap().current_amps)/2e-6;
+                assert!((fd-c.partials_siemens[terminal]).abs()<1e-10);
+            }
+        }
+    }
+}
+
+#[test]
+fn cold_start_crosses_cutoff_for_inverse_and_clamped_forward_body() {
+    for (drain,body) in [(-0.5,0.1),(0.5,1.3)] {
+        let mut request=fixture();
+        for element in &mut request.circuit.elements {
+            if let circuit_simulator::circuit::Element::Voltage {id,volts,..}=element {
+                if id=="VD" {*volts=drain;} else if id=="VB" {*volts=body;}
+            }
+        }
+        let result=run(&request).unwrap();
+        assert!((result.samples[0].values[0]-drain).abs()<1e-12);
+        assert!((result.samples[0].values[2]-body).abs()<1e-12);
+    }
+}
+
+#[test]
+fn forward_body_ac_uses_the_spice_small_signal_slope_for_both_matrix_and_public_current() {
+    let mut request=fixture();
+    for element in &mut request.circuit.elements {
+        if let circuit_simulator::circuit::Element::Voltage {id,volts,..}=element {
+            if id=="VB" {*volts=0.1;}
+        }
+    }
+    request.analysis=serde_json::from_value(serde_json::json!({"kind":"ac","frequencies_hz":[1.],"source_phasors":[{"id":"VG","real":0.,"imag":0.},{"id":"VD","real":0.,"imag":0.},{"id":"VB","real":1.,"imag":0.}]})).unwrap();
+    let result=run(&request).unwrap();
+    let root=0.6f64.sqrt()-0.1/(2.*0.6f64.sqrt());
+    let expected=0.0002*(1.+0.03*0.5)*0.5*0.4/(2.*root);
+    let channel=result.signals.iter().position(|s|s.id=="i_channel(M1)").unwrap();
+    let branch=result.signals.iter().position(|s|s.id=="i(VD)").unwrap();
+    assert!((result.ac_samples[0].values[channel].real-expected).abs()<1e-12);
+    assert!((result.ac_samples[0].values[branch].real+expected).abs()<1e-12);
+}
 #[test]
 fn analytic_partials_match_independent_finite_differences_in_all_regions_and_modes() {
     for volts in [
@@ -56,7 +107,7 @@ fn analytic_partials_match_independent_finite_differences_in_all_regions_and_mod
     }
 }
 #[test]
-fn explicit_domains_reject_bad_parameters_trials_and_forward_body_with_gamma() {
+fn explicit_domains_reject_bad_parameters_and_nonfinite_trials() {
     let m = model();
     for bad in [f64::NAN, f64::INFINITY, 0., -1.] {
         let mut p = m;
@@ -66,7 +117,7 @@ fn explicit_domains_reject_bad_parameters_trials_and_forward_body_with_gamma() {
         p.surface_potential_volts = bad;
         assert!(p.validate().is_err());
     }
-    assert!(m.linearize([0.5, 1.5, 0., 0.1]).is_err());
+    assert!(m.linearize([0.5, 1.5, 0., 0.1]).is_ok());
     assert!(m.linearize([0.5, f64::NAN, 0., -0.2]).is_err());
     let mut no_body = m;
     no_body.body_effect_sqrt_volts = 0.;
@@ -76,7 +127,7 @@ fn explicit_domains_reject_bad_parameters_trials_and_forward_body_with_gamma() {
 proptest::proptest! {
  #![proptest_config(proptest::test_runner::Config { cases:128,rng_seed:proptest::test_runner::RngSeed::Fixed(2026110202),..Default::default() })]
  #[test]
- fn random_reverse_mode_and_polarity_preserve_current_and_terminal_derivatives(d in 0.02f64..3.,g in -0.5f64..4.,body in -2f64..-0.02) {
+ fn random_reverse_mode_and_polarity_preserve_current_and_terminal_derivatives(d in 0.02f64..3.,g in -0.5f64..4.,body in -2f64..0.5) {
     let m=model();let v=[d,g,0.,body];let c=m.linearize(v).unwrap();
     let reversed=m.linearize([0.,g,d,body]).unwrap();
     proptest::prop_assert!((reversed.current_amps+c.current_amps).abs()<1e-15);
@@ -104,10 +155,19 @@ fn pure_channel_ac_has_correct_partials_and_explicit_unavailable_bias_audit() {
     assert!(result.ac_samples[0].values[index].imag.abs()<1e-12);
     assert!(result.consistency.checks.iter().any(|c|c.id=="independent_physical_audit"&&matches!(c.status,circuit_simulator::audit::CheckStatus::NotChecked)));
 }#[test]
-fn direct_audit_refuses_channel_states_outside_the_declared_body_domain() {
-    let request=fixture();
-    let state=[0.5,1.5,0.1,0.,0.,0.];
-    assert!(circuit_simulator::audit::dc(&request.circuit,&state,Default::default(),None).is_err());
+fn independent_audit_accepts_forward_body_and_detects_a_wrong_branch_current() {
+    let mut request=fixture();
+    for element in &mut request.circuit.elements {
+        if let circuit_simulator::circuit::Element::Voltage {id,volts,..}=element {
+            if id=="VB" {*volts=0.1;}
+        }
+    }
+    let result=run(&request).unwrap();
+    assert!(!result.consistency.checks.iter().any(|c|matches!(c.status,circuit_simulator::audit::CheckStatus::Failed)));
+    let mut state=result.samples[0].values[..6].to_vec();
+    state[3]+=1e-4;
+    let audit=circuit_simulator::audit::dc(&request.circuit,&state,Default::default(),None).unwrap();
+    assert!(audit.checks.iter().any(|c|matches!(c.status,circuit_simulator::audit::CheckStatus::Failed)));
 }
 #[test]
 fn direct_audit_never_masks_nonfinite_mos_intermediates_as_cutoff() {

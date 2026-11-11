@@ -17,13 +17,31 @@ pub struct Mos1Model {
     pub surface_potential_volts: f64,
     pub channel_length_modulation_per_volt: f64,
 }
-/// Drain-to-source current and exact partials ordered drain, gate, source, bulk.
+/// Drain-to-source current and terminal slopes ordered drain, gate, source, bulk.
+/// Linearize returns exact piecewise slopes; spice_ac_linearize returns the
+/// separate published small-signal body convention.
 #[derive(Debug, Clone, Copy)]
 pub struct Mos1Linearization {
     pub current_amps: f64,
     pub partials_siemens: [f64; 4],
 }
 impl Mos1Model {
+    // SPICE continues sqrt(phi-Vbs) linearly for forward body bias, clamping
+    // the continuation at zero. Return the exact negative slope with respect
+    // to Vbs for Newton; the historical AC convention is handled separately.
+    fn body_root(self, vbs: f64) -> SimResult<(f64, f64)> {
+        if !vbs.is_finite() { return Err(SimError::invalid("nonfinite MOS1 body bias")); }
+        let nominal=self.surface_potential_volts.sqrt();
+        let root=if vbs<=0. { (self.surface_potential_volts-vbs).sqrt() }
+            else if vbs>=2.*self.surface_potential_volts {0.}
+            else { (nominal-vbs/(2.*nominal)).max(0.) };
+        let slope=if root==0. {0.} else if vbs>0. {1./(2.*nominal)} else {1./(2.*root)};
+        if !root.is_finite() || !slope.is_finite() {
+            return Err(SimError::invalid("nonfinite MOS1 body continuation"));
+        }
+        Ok((root,slope))
+    }
+
     /// Reject invalid physical parameters before evaluating any trial.
     pub fn validate(self) -> SimResult<()> {
         if !self.oxide_farads.is_finite()
@@ -56,7 +74,7 @@ impl Mos1Model {
         let phi = self.surface_potential_volts;
         let vbs = polarity * (b - source);
         let threshold = polarity * self.threshold_volts
-            + self.body_effect_sqrt_volts * ((phi - vbs.min(0.)).sqrt() - phi.sqrt());
+            + self.body_effect_sqrt_volts * (self.body_root(vbs)?.0 - phi.sqrt());
         let overdrive = polarity * (g - source) - threshold;
         let vds = (d - s).abs();
         if !overdrive.is_finite() || !vds.is_finite() {
@@ -84,8 +102,9 @@ impl Mos1Model {
     }
 
     /// Evaluate cutoff, linear or saturation region with source/drain reversal.
-    /// With nonzero GAMMA, forward effective body bias is outside this profile:
-    /// SPICE's forward continuation and its AC approximation are not the same derivative.
+    /// Forward body bias uses the clamped linear continuation of sqrt(phi-Vbs).
+    /// These are exact piecewise DC/transient derivatives; use spice_ac_linearize
+    /// for the distinct historical forward-body small-signal convention.
     pub fn linearize(self, volts: [f64; 4]) -> SimResult<Mos1Linearization> {
         self.validate()?;
         if volts.iter().any(|v| !v.is_finite()) {
@@ -97,15 +116,13 @@ impl Mos1Model {
         let source = if reverse { d } else { s };
         let vds = (polarity * (d - s)).abs();
         let vbs = polarity * (b - source);
-        if self.body_effect_sqrt_volts > 0. && vbs > 0. {
-            return Err(SimError::invalid(
-                "bounded MOS1 requires nonpositive effective body bias when GAMMA is nonzero",
-            ));
-        }
-        let root = (self.surface_potential_volts - vbs.min(0.)).sqrt();
+        let (root,body_slope) = self.body_root(vbs)?;
         let threshold = polarity * self.threshold_volts
             + self.body_effect_sqrt_volts * (root - self.surface_potential_volts.sqrt());
         let overdrive = polarity * (g - source) - threshold;
+        if !vds.is_finite() || !overdrive.is_finite() {
+            return Err(SimError::invalid("nonfinite MOS1 channel bias"));
+        }
         let (current, gm, gd) = if overdrive <= 0. {
             (0., 0., 0.)
         } else {
@@ -126,7 +143,7 @@ impl Mos1Model {
                 )
             }
         };
-        let gb = gm * self.body_effect_sqrt_volts / (2. * root);
+        let gb = gm * self.body_effect_sqrt_volts * body_slope;
         let result = if reverse {
             Mos1Linearization {
                 current_amps: -polarity * current,
@@ -142,6 +159,33 @@ impl Mos1Model {
             || result.partials_siemens.iter().any(|v| !v.is_finite())
         {
             return Err(SimError::invalid("nonfinite MOS1 channel contribution"));
+        }
+        Ok(result)
+    }
+
+    /// ngspice-compatible AC channel slopes. Under forward body bias SPICE uses
+    /// gamma/(2*sarg), rather than the exact derivative of its linear threshold
+    /// continuation. Keep that convention out of Newton's residual Jacobian.
+    pub fn spice_ac_linearize(self, volts: [f64;4]) -> SimResult<Mos1Linearization> {
+        let mut result=self.linearize(volts)?;
+        let [d,_,s,b]=volts;
+        let polarity=if self.p_channel {-1.} else {1.};
+        let reverse=polarity*(d-s)<0.;
+        let vbs=polarity*(b-if reverse {d}else{s});
+        let gm=result.partials_siemens[1].abs();
+        if vbs<=0. || self.body_effect_sqrt_volts==0. || gm==0. { return Ok(result); }
+        let (root,exact_slope)=self.body_root(vbs)?;
+        let ac_slope=if root>0. {1./(2.*root)} else {0.};
+        let difference=gm*self.body_effect_sqrt_volts*(ac_slope-exact_slope);
+        if reverse {
+            result.partials_siemens[0]+=difference;
+            result.partials_siemens[3]-=difference;
+        } else {
+            result.partials_siemens[2]-=difference;
+            result.partials_siemens[3]+=difference;
+        }
+        if result.partials_siemens.iter().any(|v|!v.is_finite()) {
+            return Err(SimError::invalid("nonfinite MOS1 AC body slope"));
         }
         Ok(result)
     }

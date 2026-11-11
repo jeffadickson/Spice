@@ -68,7 +68,9 @@ pub fn conductance_at_bias_csc(
         stamp_switch(&mut stamps, switch, c.output_siemens, c.control_siemens);
     }
     for channel in &plan.mos1 {
-        let c = mos1_contribution(channel, values)?;
+        let c = channel.model.spice_ac_linearize(
+            [channel.p,channel.gate,channel.n,channel.bulk]
+                .map(|node|node.unknown().map(|i|values[i]).unwrap_or(0.)))?;
         stamp_mos1(&mut stamps, channel, c.partials_siemens);
     }
     stamp_bsim_bias(plan, values, &mut stamps, false)?;
@@ -817,6 +819,12 @@ fn limited_candidate(
     )
 }
 
+// Near MOS cutoff the current-row scale can still be the absolute tolerance
+// while a trial activates a new channel. Permit a smaller bounded trial before
+// declaring failure; this changes model evaluations, never acceptance tolerances
+// or the maximum number of Newton corrections/provider calls.
+const MAX_BACKTRACK_TRIALS: usize = 24;
+
 /// Solve F(x)=0 using analytic diode Jacobians, bounded damping and a supplied
 /// independently replaceable linear solver.
 pub fn solve(
@@ -917,8 +925,8 @@ fn solve_from_rhs(
             scaled_residual
         };
         let mut accepted = None;
-        for attempt in 0..12 {
-            let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-attempt), references.is_some());
+        for attempt in 0..MAX_BACKTRACK_TRIALS {
+            let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-(attempt as i32)), references.is_some());
             let candidate_system = match
                 linearize_with_rhs_gmin(plan, &candidate, rhs, options.gmin_siemens, None)
             {
@@ -1223,13 +1231,18 @@ pub fn solve_backward_euler_step(
             scaled_residual
         };
         let mut accepted = None;
-        for attempt in 0..12 {
+        for attempt in 0..MAX_BACKTRACK_TRIALS {
             let (candidate, damped) =
-                limited_candidate(plan, &values, &update, 2f64.powi(-attempt), references.is_some());
-            let Ok(candidate_system) =
+                limited_candidate(plan, &values, &update, 2f64.powi(-(attempt as i32)), references.is_some());
+            let candidate_system = match
                 linearize_backward_euler(plan, &candidate, previous, step_s, rhs)
-            else {
-                continue;
+            {
+                Ok(system) => system,
+                Err(error) => {
+                    tracing::trace!(iteration, attempt, step_s, reason = %error,
+                        "newton_transient_trial_rejected");
+                    continue;
+                }
             };
             let candidate_residual =
                 scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;

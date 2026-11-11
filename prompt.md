@@ -1,4 +1,31 @@
-# Latest checkpoint — MOS startup convergence, November 11
+# Latest checkpoint — MOS1 forward body behavior, November 11
+
+Read docs/mos1-forward-body-results.md, docs/mos1-forward-body.sdoc and
+evidence/mos1-forward-body.json. MOS1 now supports positive effective body bias:
+exact piecewise Newton slopes, a separately named ngspice-compatible AC body
+convention in both assembly and reporting, matching Meyer threshold and
+independent current audit. The bounded backtracking candidate limit is24;
+correction/provider budgets and acceptance tolerances are unchanged.
+
+Actual Windows checks:102 named native tests pass;22 independent ngspice
+channel-isolation references yield52 passing signal comparisons on LU/Faer.
+The128-case MOS property seed2026110202 includes positive body bias. One manual
+public-AC-reporting mutant is detected. Scoped mos1.rs coverage134/141lines;
+stable Rust branch coverage unavailable. All58StrictDoc documents parse.
+Raw files and final engine stay E:/Artifacts/Spice-mos1-forward-66158d4.
+
+The memory circuit now completes101 samples through2us with an explicitly
+selected strict Faer/Gmin profile, but its default original request still fails
+source continuation near0.4188232421875. Default-current Gmin initialization
+also leaves residuals that independent auditing refuses. The selected full
+waveform does not agree on all13 available default-ngspice signals: maximum
+voltage difference3.40mV and source-current difference0.586mA. Do not count this
+as another fully agreeing original deck. Next investigate bounded initialization
+recovery and residual/update tolerance consistency, then integration/default
+charge differences with explicit reference uncertainty. Completed-original count
+remains1; preserve main, no push/CI, hard stop2026-11-11T23:53:39Z.
+
+# Previous checkpoint — MOS startup convergence, November 11
 
 The phase-specific reverse-junction limiter is qualified in
 docs/newton-reverse-limiter-results.md and evidence/hourly-mosmem-startup.json.

@@ -408,7 +408,7 @@ pub fn run_with_registry(
             let bias = crate::dc::operating_point(&plan, solver)?;
             let partials = channel
                 .model
-                .linearize(nodes.map(|node| node.unknown().map(|i| bias[i]).unwrap_or(0.)))?
+                .spice_ac_linearize(nodes.map(|node| node.unknown().map(|i| bias[i]).unwrap_or(0.)))?
                 .partials_siemens;
             for sample in &mut ac_samples {
                 let mut real = 0.;

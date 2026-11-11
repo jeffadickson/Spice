@@ -632,15 +632,17 @@ fn independent_mos1_current(m: crate::mos1::Mos1Model, v: [f64; 4]) -> SimResult
     if !span.is_finite() || !body.is_finite() {
         return Err(SimError::invalid("nonfinite MOS1 audit voltage difference"));
     }
-    if m.body_effect_sqrt_volts > 0. && body > 0. {
-        return Err(SimError::invalid(
-            "MOS1 audit state exceeds the qualified body-bias domain",
-        ));
-    }
+    // Independently reconstruct the forward-body threshold shift. This is
+    // algebraically reduced to a bounded linear shift, rather than calling
+    // the production model's root/derivative helper.
+    let nominal=m.surface_potential_volts.sqrt();
+    let body_shift=if body>0. {
+        -0.5*body.min(2.*m.surface_potential_volts)/nominal
+    } else {
+        (m.surface_potential_volts-body).sqrt()-nominal
+    };
     let threshold = polarity * m.threshold_volts
-        + m.body_effect_sqrt_volts
-            * ((m.surface_potential_volts - body.min(0.)).sqrt()
-                - m.surface_potential_volts.sqrt());
+        + m.body_effect_sqrt_volts * body_shift;
     let overdrive = polarity * v[1] - low - threshold;
     if !threshold.is_finite() || !overdrive.is_finite() {
         return Err(SimError::invalid(

@@ -1,0 +1,632 @@
+{
+  "base_commit": "66158d4ce7f43293c8f3e8eef0008634527961f9",
+  "working_tree_modified": true,
+  "platform": "windows-x64",
+  "artifact_directory": "E:/Artifacts/Spice-mos1-forward-66158d4",
+  "engine_sha256": "3da26eea4d07fbb90e5cdf4420cebe9e2beb522c66cffde53690bb4be8c92950",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "reference_scope": "22 channel-isolation references; IS=1e-300; both polarities and orientations; not complete packaged MOS or full corpus",
+  "source_and_binary_sha256": {
+    "C:\\dev\\spice-deck-next\\src/mos1.rs": "4dc1dc86f02e83a30e173cbd95bb31c52725e6aad16d7f9bb115be473e1ed9d3",
+    "C:\\dev\\spice-deck-next\\src/newton.rs": "e28c2df4b190b2d09d0f9f40b5e88b3b9a112b5118f09b57911d5d680fa1c193",
+    "C:\\dev\\spice-deck-next\\src/api.rs": "6d3258ad98398baf5f22a058e00cba6a6345df2cb6c358daa645061ff499c59c",
+    "C:\\dev\\spice-deck-next\\src/audit.rs": "33229002fbca303ee7f31579f8db7675ccd5ca6bff0cf4903e37a9422d383132",
+    "C:\\dev\\spice-deck-next\\src/main.rs": "40c15676d0c841bbf3feb2f896e097170a10635a5f9836f811e5338a25802452",
+    "C:\\dev\\spice-deck-next\\tests/mos1_channel.rs": "fec1f5c1e0790f308406ecf0cb61ff576c94d5219b08f4e7286f365c760971f6",
+    "C:\\dev\\spice-deck-next\\scripts/Qualify-Mos1ForwardBody.cs": "5fce9303d0ca2b1bda125c4b172657db62d4dc1235a5aec00f93e6df729efc8f",
+    "E:\\Artifacts\\Spice-mos1-forward-66158d4\\engine-final.exe": "3da26eea4d07fbb90e5cdf4420cebe9e2beb522c66cffde53690bb4be8c92950",
+    "E:\\Artifacts\\Spice-RSpice-parity-20261108T054942Z\\console-oracle\\ngspice_con.exe": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f"
+  },
+  "oracle_references": 22,
+  "oracle_comparisons": 52,
+  "oracle_passed": 52,
+  "oracle_failed": 0,
+  "oracle_provenance_valid": true,
+  "oracle_comparison_scope": {
+    "dc": 16,
+    "transient_maximum_error_a": 3.466171809616376E-11,
+    "ac": 32,
+    "ac_maximum_error_a": 6.535310652491911E-15,
+    "transient": 4,
+    "dc_maximum_error_a": 5.421010862427522E-20
+  },
+  "native_tests": {
+    "initial_newton": 11,
+    "lib": 25,
+    "passed_total": 102,
+    "nonlinear": 35,
+    "sparse_dynamic": 7,
+    "mos1_channel": 11,
+    "failed": 0,
+    "sparse_ac_circuits": 5,
+    "skipped": 0,
+    "switch_and_pnp": 2,
+    "pspice_switch": 6
+  },
+  "property": {
+    "cases": 128,
+    "body_range": "-2..0.5 V",
+    "fixed_seed": "2026110202",
+    "name": "random_reverse_mode_and_polarity_preserve_current_and_terminal_derivatives",
+    "other_native_property_environment_seed": "2026111108"
+  },
+  "mutation": {
+    "detected_by": "forward_body_ac_uses_the_spice_small_signal_slope_for_both_matrix_and_public_current",
+    "change": "AC current reporting incorrectly calls exact Newton slopes",
+    "killed": 1,
+    "kind": "one manual mutant, not complete cargo-mutants",
+    "source_restored_sha256": "6d3258ad98398baf5f22a058e00cba6a6345df2cb6c358daa645061ff499c59c"
+  },
+  "coverage": {
+    "tool": "cargo rustc + rustc instrument-coverage + matching LLVM",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "test": "mos1_channel",
+    "environment_seed": "88320261103",
+    "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+    "files": [
+      {
+        "sha256": "429cd934140670d411cd8f5d7774c8d180bc4057de5eb4ced09b5d6024b34658",
+        "file": "src/ac.rs",
+        "lines": {
+          "count": 129,
+          "covered": 89,
+          "percent": 68.9922480620155
+        }
+      },
+      {
+        "sha256": "557919a6c31070dc63e084506443bb280a5e8ce635cb0b22616640ccd5f04781",
+        "file": "src/adaptive.rs",
+        "lines": {
+          "count": 34,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "6d3258ad98398baf5f22a058e00cba6a6345df2cb6c358daa645061ff499c59c",
+        "file": "src/api.rs",
+        "lines": {
+          "count": 340,
+          "covered": 142,
+          "percent": 41.76470588235294
+        }
+      },
+      {
+        "sha256": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
+        "file": "src/artifact.rs",
+        "lines": {
+          "count": 99,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+        "file": "src/assertion.rs",
+        "lines": {
+          "count": 11,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "33229002fbca303ee7f31579f8db7675ccd5ca6bff0cf4903e37a9422d383132",
+        "file": "src/audit.rs",
+        "lines": {
+          "count": 526,
+          "covered": 246,
+          "percent": 46.7680608365019
+        }
+      },
+      {
+        "sha256": "7aeb87b7fbccafd1bbd837b3b4a0c2d03aa4aa78a69e9afeda2e51b47b9a7919",
+        "file": "src/audit_ac.rs",
+        "lines": {
+          "count": 129,
+          "covered": 45,
+          "percent": 34.883720930232556
+        }
+      },
+      {
+        "sha256": "e65ed70fa3e6f0db933b34a51f9e93789bd0a0755cc12de40b0bfac7137ad736",
+        "file": "src/audit_configured.rs",
+        "lines": {
+          "count": 127,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "c371dbe58224c15d556fdf9fdd9ec52dc64abed66e9199b1ac8f34764307f42a",
+        "file": "src/backend.rs",
+        "lines": {
+          "count": 278,
+          "covered": 101,
+          "percent": 36.330935251798564
+        }
+      },
+      {
+        "sha256": "28620a5cb47deef1a35a6af6046fcf361e9727f7bbbd34c70f8a71097406efc5",
+        "file": "src/backend_faer.rs",
+        "lines": {
+          "count": 263,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "7a00f300a96790a7c6e204ac50a39ef310ec4fb805ff330a9e06f5d05a8fa3e0",
+        "file": "src/bsim330.rs",
+        "lines": {
+          "count": 109,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+        "file": "src/campaign.rs",
+        "lines": {
+          "count": 37,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+        "file": "src/charge.rs",
+        "lines": {
+          "count": 16,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "16b283c982663874abba1339d987810c5e1db0aea381ec3af79655fb2136fc23",
+        "file": "src/circuit.rs",
+        "lines": {
+          "count": 169,
+          "covered": 42,
+          "percent": 24.85207100591716
+        }
+      },
+      {
+        "sha256": "a9c822e749c4739fcd1078fa1c22c391e539f1a32bac71d80f9c17ff5625a4a4",
+        "file": "src/compile.rs",
+        "lines": {
+          "count": 275,
+          "covered": 118,
+          "percent": 42.90909090909091
+        }
+      },
+      {
+        "sha256": "09e68129015fd5eb566fcee19861de2d35df47123736a4b47309d8b99a1c35da",
+        "file": "src/configured.rs",
+        "lines": {
+          "count": 303,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+        "file": "src/dc.rs",
+        "lines": {
+          "count": 101,
+          "covered": 18,
+          "percent": 17.82178217821782
+        }
+      },
+      {
+        "sha256": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+        "file": "src/error.rs",
+        "lines": {
+          "count": 12,
+          "covered": 9,
+          "percent": 75
+        }
+      },
+      {
+        "sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+        "file": "src/experiment.rs",
+        "lines": {
+          "count": 123,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "9fe9977beb16e186f5a0571bb527a1d6177eafdbccb5aae520bcf2ebd5d726e3",
+        "file": "src/expression.rs",
+        "lines": {
+          "count": 45,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+        "file": "src/grid.rs",
+        "lines": {
+          "count": 15,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+        "file": "src/ids.rs",
+        "lines": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        }
+      },
+      {
+        "sha256": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+        "file": "src/integrator.rs",
+        "lines": {
+          "count": 81,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+        "file": "src/linalg.rs",
+        "lines": {
+          "count": 173,
+          "covered": 47,
+          "percent": 27.167630057803464
+        }
+      },
+      {
+        "sha256": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+        "file": "src/linear_dynamic.rs",
+        "lines": {
+          "count": 52,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+        "file": "src/measurement.rs",
+        "lines": {
+          "count": 28,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "500da23f436a9c916a0e264fb95a201a90189bae645d24858f8bdf17d9ec4d01",
+        "file": "src/model.rs",
+        "lines": {
+          "count": 97,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "4dc1dc86f02e83a30e173cbd95bb31c52725e6aad16d7f9bb115be473e1ed9d3",
+        "file": "src/mos1.rs",
+        "lines": {
+          "count": 141,
+          "covered": 134,
+          "percent": 95.0354609929078
+        }
+      },
+      {
+        "sha256": "759d4d1808ea4431ef20e25723687c51fe4d9344374071e81955f894dcfdf0a5",
+        "file": "src/netlist.rs",
+        "lines": {
+          "count": 1055,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "e28c2df4b190b2d09d0f9f40b5e88b3b9a112b5118f09b57911d5d680fa1c193",
+        "file": "src/newton.rs",
+        "lines": {
+          "count": 1007,
+          "covered": 434,
+          "percent": 43.09831181727905
+        }
+      },
+      {
+        "sha256": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3",
+        "file": "src/ngspice_resistor.rs",
+        "lines": {
+          "count": 58,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "9f15680a1191e638403d095878148e89eb10964d310a2d92096ddeb2c49182d7",
+        "file": "src/power.rs",
+        "lines": {
+          "count": 100,
+          "covered": 44,
+          "percent": 44
+        }
+      },
+      {
+        "sha256": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+        "file": "src/provenance.rs",
+        "lines": {
+          "count": 22,
+          "covered": 4,
+          "percent": 18.181818181818183
+        }
+      },
+      {
+        "sha256": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9",
+        "file": "src/pspice_switch.rs",
+        "lines": {
+          "count": 42,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397",
+        "file": "src/quantity.rs",
+        "lines": {
+          "count": 43,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "96cf652f5829e985b49f2b5ca536478accfbd39134ca6368ce1ab3c96dd995e7",
+        "file": "src/registry.rs",
+        "lines": {
+          "count": 30,
+          "covered": 17,
+          "percent": 56.666666666666664
+        }
+      },
+      {
+        "sha256": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+        "file": "src/sampling.rs",
+        "lines": {
+          "count": 77,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "c8b1e09a3425bb16881ae3b414c880820cfb3546aa5f6b540273106be357d098",
+        "file": "src/solver_contract.rs",
+        "lines": {
+          "count": 162,
+          "covered": 73,
+          "percent": 45.06172839506173
+        }
+      },
+      {
+        "sha256": "a775c418c1b2bf3f24691ce5a865698043c7ebb9b2fe93838487ba1db6c0ed1a",
+        "file": "src/sources.rs",
+        "lines": {
+          "count": 106,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+        "file": "src/sparse.rs",
+        "lines": {
+          "count": 188,
+          "covered": 134,
+          "percent": 71.27659574468085
+        }
+      },
+      {
+        "sha256": "f15abe8bd656df14abdbd9c6b3939fb706f0086b5d1193a4cf6a59f7fe638504",
+        "file": "src/spice_diode.rs",
+        "lines": {
+          "count": 64,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+        "file": "src/sweep.rs",
+        "lines": {
+          "count": 250,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "b92db8716c66525fd9774001d42d4b8e7ac7539990ab334838115990e2b28cb0",
+        "file": "src/topology.rs",
+        "lines": {
+          "count": 45,
+          "covered": 33,
+          "percent": 73.33333333333333
+        }
+      },
+      {
+        "sha256": "7e3704f19e69e33263018b85af3686135a87551e9950080c58e3555cfee50135",
+        "file": "src/transient.rs",
+        "lines": {
+          "count": 76,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "743e7376af6befc45247481df65b5fae43f645f3498815f1c1706e71a8335f22",
+        "file": "src/variation.rs",
+        "lines": {
+          "count": 192,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "sha256": "50a98ec68a4c13786c7324e912e5e59b0ca94715379092b9707e8584b09eaeb3",
+        "file": "src/waveform.rs",
+        "lines": {
+          "count": 261,
+          "covered": 0,
+          "percent": 0
+        }
+      }
+    ],
+    "branches": null,
+    "limitations": [
+      "Stable Rust instrumentation provides no measured branch coverage.",
+      "Other tests and executable main are outside this run.",
+      "A named test can pin its own seed, overriding the environment seed; retain actual test replay configuration alongside this report."
+    ]
+  },
+  "strictdoc_documents": 58,
+  "strictdoc_version": "0.30.4",
+  "selected_full_window": {
+    "profile": "strict-current Faer/Gmin, not original defaults",
+    "comparison": {
+      "agreed": false,
+      "engine_points": 101,
+      "native_points": 150,
+      "rows": [
+        {
+          "engine": "v(n1)",
+          "failed": 0,
+          "max_absolute_error": 0,
+          "native": "v(9)",
+          "points": 101,
+          "unit": "V"
+        },
+        {
+          "engine": "v(n2)",
+          "failed": 0,
+          "max_absolute_error": 1.058791184067875E-14,
+          "native": "v(7)",
+          "points": 101,
+          "unit": "V"
+        },
+        {
+          "engine": "v(n3)",
+          "failed": 0,
+          "max_absolute_error": 6.661338147750939E-16,
+          "native": "v(1)",
+          "points": 101,
+          "unit": "V"
+        },
+        {
+          "engine": "v(n4)",
+          "failed": 0,
+          "max_absolute_error": 0,
+          "native": "v(2)",
+          "points": 101,
+          "unit": "V"
+        },
+        {
+          "engine": "v(n5)",
+          "failed": 97,
+          "max_absolute_error": 0.002340002454498613,
+          "native": "v(3)",
+          "points": 101,
+          "unit": "V"
+        },
+        {
+          "engine": "v(n7)",
+          "failed": 99,
+          "max_absolute_error": 0.001638372957052825,
+          "native": "v(4)",
+          "points": 101,
+          "unit": "V"
+        },
+        {
+          "engine": "v(n11)",
+          "failed": 101,
+          "max_absolute_error": 0.0026758223244303103,
+          "native": "v(5)",
+          "points": 101,
+          "unit": "V"
+        },
+        {
+          "engine": "v(n13)",
+          "failed": 101,
+          "max_absolute_error": 0.000381173824096942,
+          "native": "v(6)",
+          "points": 101,
+          "unit": "V"
+        },
+        {
+          "engine": "v(n19)",
+          "failed": 101,
+          "max_absolute_error": 0.0034026492903471706,
+          "native": "v(8)",
+          "points": 101,
+          "unit": "V"
+        },
+        {
+          "engine": "i(e0)",
+          "failed": 29,
+          "max_absolute_error": 2.6846132953398396E-05,
+          "native": "i(vdd)",
+          "points": 101,
+          "unit": "A"
+        },
+        {
+          "engine": "i(e1)",
+          "failed": 89,
+          "max_absolute_error": 0.00016319919539649471,
+          "native": "i(vs)",
+          "points": 101,
+          "unit": "A"
+        },
+        {
+          "engine": "i(e2)",
+          "failed": 27,
+          "max_absolute_error": 0.00023043995181579874,
+          "native": "i(vw)",
+          "points": 101,
+          "unit": "A"
+        },
+        {
+          "engine": "i(e3)",
+          "failed": 99,
+          "max_absolute_error": 0.0005855648914196709,
+          "native": "i(vwb)",
+          "points": 101,
+          "unit": "A"
+        }
+      ],
+      "scope": "Explicit strict Faer/Gmin selected profile vs original default ngspice RAW; not original default execution parity"
+    },
+    "stop_s": 2E-06,
+    "samples": 101,
+    "succeeded": true
+  },
+  "original_default": {
+    "error": {
+      "code": "numerical_failure",
+      "message": "source continuation cannot reduce below minimum step 0.0001 after failure at scale 0.4188232421875: Newton iteration limit exceeded"
+    },
+    "deck": "general/mosmem.cir",
+    "agreed": null,
+    "requested_executed": false,
+    "sha256": "6d5bd5a8e00f1f51f1c1c465bf8f80851cbc7c731623f11a4db1052389c39667",
+    "status": "failed"
+  },
+  "new_agreeing_original_decks": 0,
+  "campaign_completed_original_decks": 1,
+  "limits": [
+    "Original default source continuation remains failed",
+    "Selected full waveform still has default-reference discrepancies",
+    "Body-ramp transient reference is channel isolation with zero intrinsic charge",
+    "Intrinsic Meyer forward/inverse AC qualified; general forward-body intrinsic-charge transient remains unqualified",
+    "Stable Rust branch coverage unavailable",
+    "Executable main and C# file-based verification helper uninstrumented",
+    "No long fuzz or full mutation campaign",
+    "No Linux CUDA GPU or production qualification"
+  ]
+}
