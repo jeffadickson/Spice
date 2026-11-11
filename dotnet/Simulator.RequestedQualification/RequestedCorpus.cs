@@ -69,7 +69,7 @@ public static class RequestedCorpus
     }
     var pzOnly=pz is not null&&ordinarySyntax.Declarations?.Analyses.IsEmpty==true;
     var plan=pzOnly?new RequestedAnalysisPlan([],[]):RequestedAnalysis.Prepare(ordinarySyntax);
-    var circuit=plan.CircuitPreparation??OperatingPointSelection.Select(ordinarySyntax).Prepared;row.CircuitPrepared=circuit.Success;
+    var circuit=plan.CircuitPreparation??pz?.CircuitPreparation??OperatingPointSelection.Select(ordinarySyntax).Prepared;row.CircuitPrepared=circuit.Success;
     if(!circuit.Success)row.Diagnostics=circuit.Diagnostics.Select(d=>d.Code).ToArray();
     row.RequestedPrepared=plan.Success||pzOnly;row.ControlProfile=plan.ControlProfile;row.ProgramOmissions=plan.ProgramOmissions.ToArray();
     if(!plan.Success&&!pzOnly){row.Status="requested_preparation_refused";row.RequestedExecuted=false;row.Diagnostics=row.Diagnostics.Concat(plan.Diagnostics.Select(d=>d.Code)).Distinct().ToArray();continue;}

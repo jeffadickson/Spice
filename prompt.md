@@ -1,3 +1,30 @@
+# Latest checkpoint — loaded RC and AC-resistance poles, November 11
+
+Read docs/pole-zero-ac-resistance.sdoc, its results document and
+evidence/pole-zero-ac-resistance.json. The bounded analytical PZ helper now
+uses validated requested passive preparation, retains the DC circuit and
+substitutes AC resistances only in its local root calculation. A grounded
+loaded RC section has pole -(Gseries+Gshunt)/C and no finite zeros. The corpus
+coordinator preserves this preparation instead of strict OP fallback.
+
+All 33 focused PZ cases and 828 full frontend tests pass, with 40 prerequisite
+skips. The FsCheck property runs 64 cases (5001,20261111), one wrong AC-factor
+mutant is killed, the restored suite is rerun, and 61 StrictDoc files parse.
+The authored examples/loaded-rc-pz.cir passes through the normal coordinator
+and agrees exactly with ngspice at -500000 inverse seconds. This is NOT a new
+agreeing original RSpice deck. The unchanged original ac-resistance.cir still
+refuses control preparation: ordered analysis phases, complex reporting and
+control PZ dispatch remain open. Campaign new-original total stays two.
+
+Former pinned NuGet runtime/analyzer files were absent from C:. A locked restore
+now lives under E:/Artifacts/Spice-ac-resistance-a984f11/packages, with HTTP
+cache and scratch also E:. Build assets use that path; do not silently switch
+back to the missing former cache. Keep the serial watchdog and OS headroom.
+The hard campaign deadline is 2026-11-11T23:53:39Z. The next hourly wake is the
+last expected before it: disable the hourly automation before returning from
+that final bounded session, and leave no workload running at the deadline.
+No pushes or CI; preserve canonical main and unknown work.
+
 # Latest checkpoint — bounded behavioral voltage DC, November 11
 
 Read docs/behavioral-voltage-op.sdoc, docs/behavioral-voltage-results.md and

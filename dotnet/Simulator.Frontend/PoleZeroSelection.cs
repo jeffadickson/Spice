@@ -10,6 +10,8 @@ public sealed record PoleZeroResult(ImmutableArray<double> Poles, ImmutableArray
 {
     /// <summary>Whether the whole circuit fits the supported transfer function.</summary>
     public bool Success => Diagnostic is null;
+    /// <summary>Validated DC circuit and original observable mapping used by this PZ analysis; AC overrides remain separate.</summary>
+    public BridgeResult? CircuitPreparation { get; init; }
 }
 
 /// <summary>Exact real transfer roots for bounded RC and RL sections.</summary>
@@ -18,6 +20,13 @@ public static class PoleZeroSelection
     /// <summary>Evaluate one root .pz request for a supported grounded transfer topology.</summary>
     public static PoleZeroResult Analyze(DeckSyntax syntax)
     {
+        var result=AnalyzeCore(syntax,out var circuit);
+        return result.Success ? result with { CircuitPreparation=circuit } : result;
+    }
+
+    private static PoleZeroResult AnalyzeCore(DeckSyntax syntax,out BridgeResult? preparation)
+    {
+        preparation=null;
         ArgumentNullException.ThrowIfNull(syntax);
         PoleZeroResult Fail(string code, SourceRange? range = null) => new([], [], new(code, range));
         if (syntax is not { Status: "accepted_structure", Declarations: { } catalog })
@@ -36,9 +45,12 @@ public static class PoleZeroSelection
             c.Range.Start != card.Range.Start && OperatingPointSelection.OmissionReason(c) == "analysis_not_selected"))
             return Fail("unsupported_pz_program", card.Range);
 
-        var circuit = OperatingPointSelection.Select(syntax).Prepared;
+        // PZ is an explicitly requested small-signal analysis. Admit the same
+        // validated passive variants as requested AC, retaining the DC values
+        // in preparation and replacing them only in this local transfer view.
+        var circuit = OperatingPointSelection.SelectRequested(syntax,null,"lu",[]).Prepared;
         if (!circuit.Success) return new([], [], circuit.Diagnostics[0]);
-        if (!circuit.AcResistances.IsEmpty) return Fail("unsupported_pz_ac_resistance", card.Range);
+        preparation=circuit;
         var request = circuit.Request!;
         var nodes = request.Circuit.Nodes;
         int Node(string name) => name == "0" ? 0 :
@@ -48,7 +60,9 @@ public static class PoleZeroSelection
         if (input <= 0 || output <= 0 || input == output || Node(tokens[2]) != 0 || Node(tokens[4]) != 0)
             return Fail("unsupported_pz_ports", card.Range);
 
-        var elements = request.Circuit.Elements;
+        var elements = request.Circuit.Elements.Select(e =>
+            circuit.AcResistances.TryGetValue(e.Id,out var ohms)
+                ? new Resistor(e.Id,e.P,e.N,ohms) : e).ToArray();
         var currentDriven = tokens[5].Equals("cur", StringComparison.OrdinalIgnoreCase);
         var requested = tokens[6].ToLowerInvariant();
         if ((!currentDriven || requested == "pol") &&
@@ -100,14 +114,21 @@ public static class PoleZeroSelection
                 ? Fail("unsupported_pz_root_domain", card.Range)
                 : new(poles, zeros, null);
         }
-        if (nodes.Length != 3 || elements.Length != 3 || resistors.Length != 1 ||
+        var series = resistors.Where(r => Between(r,input,output)).ToArray();
+        var shunts = resistors.Where(r => Between(r,output,0)).ToArray();
+        if (nodes.Length != 3 || elements.Length is not (3 or 4) ||
+            elements.Length != resistors.Length+capacitors.Length+sources.Length ||
+            resistors.Length is not (1 or 2) || series.Length != 1 ||
+            shunts.Length != resistors.Length-1 ||
             capacitors.Length != 1 || sources.Length != 1 ||
-            !Between(resistors[0], input, output) || !Between(capacitors[0], output, 0) ||
+            !Between(capacitors[0], output, 0) ||
             !Between(sources[0], input, 0))
             return Fail("unsupported_pz_topology", card.Range);
 
-        // H(s) = 1/(1+sRC). Its finite zero set is empty.
-        var pole = -1 / (resistors[0].Ohms * capacitors[0].Farads);
+        // KCL gives H(s)=Gseries/(Gseries+Gshunt+sC). The shunt
+        // changes the DC gain and pole, but introduces no finite zero.
+        var conductance = 1/series[0].Ohms + (shunts.Length==0 ? 0 : 1/shunts[0].Ohms);
+        var pole = -conductance/capacitors[0].Farads;
         if (!double.IsFinite(pole) || pole >= 0) return Fail("invalid_pz_time_constant", card.Range);
         return new(tokens[6].Equals("zer", StringComparison.OrdinalIgnoreCase) ? [] : [pole], [], null);
     }

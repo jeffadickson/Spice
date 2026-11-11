@@ -1,0 +1,8 @@
+Loaded RC small-signal pole
+* The DC series resistance is 1k; the PZ small-signal value is 4k.
+Vin input 0 DC 5 AC 3
+Rseries input output 1k ac=4k
+Rload output 0 4k
+Cload output 0 1n
+.pz input 0 output 0 vol pz
+.end

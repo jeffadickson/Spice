@@ -1,0 +1,146 @@
+{
+  "scope": "Bounded analytical PZ, loaded RC and separate small-signal resistor values; not full original multi-analysis script completion",
+  "base_commit": "a984f11c78bcd9ad8bdd14733699408493a6020d",
+  "source_dirty_during_verification": true,
+  "source_sha256": {
+    "dotnet/Simulator.Frontend/PoleZeroSelection.cs": "ebd90014715b2eb6bfb5bf67429d20122611040ce669fe89cb4f3e0a03917e6e",
+    "dotnet/Simulator.RequestedQualification/RequestedCorpus.cs": "6b163f7d6c0779de46c14e1917d0913862f58644356e68b9650ae9e9a4e91585",
+    "dotnet/Simulator.Frontend.Tests/PoleZeroAcResistanceTests.cs": "23688dd37a31d172ba4b8bb6c2f826050cf532c92f7d0f3adf6a1a6921cd044e",
+    "examples/loaded-rc-pz.cir": "d232b2941e1f74a0233bb519127da0805ee089bdd22ddb3669c0f7e7331889a9"
+  },
+  "assemblies_sha256": {
+    "Simulator.Frontend": "8826028204e2e637eacbec7730cdb0b4b377db97526126c96343a785338ff586",
+    "Simulator.RequestedQualification": "e4bab90e18a1de25597ba6ac6d991f2efaad7d7d3ede2af237f842bb25a87780",
+    "Simulator.Frontend.Tests": "8037d4e326909570254740bec3e7be8d4a06f088a4c2da550d8f04277fde755a"
+  },
+  "tools": {
+    "coverlet": "10.1.0",
+    "ngspice": "47+",
+    "antlr": "4.13.1",
+    "dotnet_sdk": "10.0.403",
+    "vstest": "18.7.0",
+    "strictdoc": "0.30.4",
+    "fscheck": "3.5.0"
+  },
+  "reuse": {
+    "file": "crates/rspice-core/src/circuit/storage/passive.rs",
+    "sha256": "9f0190b58972e18c7f3a15c5fe551d6ab895874af98b034977beeda756c8f46e",
+    "rspice_pin": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+    "observation": "Separate conductances and small_signal_conductances used by AC/PZ/noise",
+    "execution": "Source inspection only"
+  },
+  "verification": {
+    "property": {
+      "cases": 64,
+      "framework": "FsCheck.Xunit",
+      "replay": "5001,20261111"
+    },
+    "mutation": {
+      "passed": 29,
+      "mode": "One manual targeted mutation, not full Stryker",
+      "change": "Multiply the AC-only resistance override by two",
+      "killed": 1,
+      "failed": 2,
+      "restored_suite_passed": 828,
+      "log": "mutation-ac-factor/stdout.log",
+      "restored_sha256": "ebd90014715b2eb6bfb5bf67429d20122611040ce669fe89cb4f3e0a03917e6e"
+    },
+    "strictdoc": {
+      "log": "docs-reviewed-streaming-v2/stdout.log",
+      "parsed": 61
+    },
+    "focused": {
+      "passed": 31,
+      "log": "pz-focused/stdout.log",
+      "skipped": 0,
+      "failed": 0,
+      "scope": "Earlier filtered run; final 828-test run includes the two added review cases (33 PZ cases). A redundant final filtered retry was admission-blocked."
+    },
+    "red": "pz-red-probe-v3/stdout.log: unsupported_resistor_instance_parameter; v2 probe was invalid because collectDeclarations omitted",
+    "final": {
+      "passed": 828,
+      "build_errors": 0,
+      "failed": 0,
+      "build_warnings": 0,
+      "skipped": 40,
+      "log": "review-final-suite-v3/stdout.log"
+    },
+    "fuzz": "Negative topology tests and deterministic suite properties; no new long fuzz campaign",
+    "review": {
+      "final_suite_passed": 828,
+      "red": "review-unloaded-red/stderr.log",
+      "finding": "Unloaded RC could ignore one additional controlled source",
+      "fix": "Require every element to belong to resistor/capacitor/voltage-source sets"
+    }
+  },
+  "authored_fixture": {
+    "native_agreed": true,
+    "original_deck_progress": false,
+    "path": "examples/loaded-rc-pz.cir",
+    "requested_executed": true,
+    "native_raw_sha256": "c27c7caba95498ec54e5f7bd364b9ca83c5cb43255c3e7acaa8e485428ca171c",
+    "comparison": {
+      "status": "agreed",
+      "observables": [
+        {
+          "engine_signal": "pole(1)",
+          "native_signal": "pole(1)",
+          "unit": "1/s",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-07,
+          "relative_tolerance": 1E-09
+        }
+      ],
+      "gaps": [],
+      "excluded_startup_samples": 0,
+      "analytical_reference": null,
+      "agreed": true
+    },
+    "sha256": "d232b2941e1f74a0233bb519127da0805ee089bdd22ddb3669c0f7e7331889a9"
+  },
+  "original_target": {
+    "diagnostics": [
+      "unsupported_resistor_instance_parameter",
+      "unsupported_control_postprocessing_before_analysis"
+    ],
+    "native_full_program_exit": 0,
+    "path": "regression/pz/ac-resistance.cir",
+    "requested_executed": false,
+    "status": "requested_preparation_refused",
+    "remaining": "Ordered analysis-phase control execution, complex reporting and control PZ dispatch",
+    "sha256": "67eaee3f9dc985eea530f84e386ba675a6e95494434fe8ba4e2cc7d1977c47a1"
+  },
+  "coverage": {
+    "managed_branches_total": 9468,
+    "managed_lines_total": 26408,
+    "includes_generated": true,
+    "pz_class_line_percent": 96.5,
+    "managed_lines_covered": 20719,
+    "pz_class_branch_percent": 81.46,
+    "rust": "Unchanged; no new measurement",
+    "managed_branches_covered": 5935
+  },
+  "restore": {
+    "http_cache": "E:/Artifacts/Spice-ac-resistance-a984f11/nuget-http",
+    "reason": "Former C: NuGet runtime/analyzer files absent",
+    "packages": "E:/Artifacts/Spice-ac-resistance-a984f11/packages",
+    "new_versions": false,
+    "log": "restore-guard/stdout.log",
+    "locked_mode": true
+  },
+  "requirements": [
+    "REQ-PZ-AC-RESISTANCE-001",
+    "REQ-PZ-LOADED-RC-001"
+  ],
+  "raw_artifacts": "E:/Artifacts/Spice-ac-resistance-a984f11",
+  "qualification_limits": [
+    "Bounded analytical frontend PZ, not a generalized Rust pole solver",
+    "Original control deck remains refused",
+    "40 prerequisite skips remain unavailable coverage",
+    "No RSpice execution, Linux, GPU or production qualification"
+  ],
+  "new_original_agreeing_decks": 0,
+  "campaign_new_original_agreeing_decks": 2
+}

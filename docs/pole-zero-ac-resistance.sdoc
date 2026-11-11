@@ -1,0 +1,72 @@
+[DOCUMENT]
+TITLE: Loaded RC pole-zero and AC resistance
+
+[TEXT]
+STATEMENT: >>>
+Verified bounded evidence is in docs/pole-zero-ac-resistance-results.md and
+evidence/pole-zero-ac-resistance.json. This is an increment toward the unchanged original
+regression/pz/ac-resistance.cir. Its full control program remains unqualified
+until OP, AC and PZ execute in order with their original complex assertions.
+Reuse the existing generated declaration parser, typed requested resistor
+preparation and bounded analytical PZ implementation. No new parser or solver
+library is required. The independent original ngspice program confirms a
+pole of -500000 inverse seconds for Rseries AC=4k, Rload=4k and C=1n.
+
+Implementation plan: first demonstrate failing loaded-RC and AC-variant tests;
+then prepare explicitly requested passive variants without broadening the
+legacy selected OP API, substitute AC resistances only in the local PZ view,
+and recognize exactly one series R, optional grounded shunt R, grounded C and
+voltage input. Run existing PZ regressions, deterministic properties, negative
+topology checks, coverage and a targeted mutation. Keep source/main unchanged
+and do not count this increment as a newly agreeing original deck.
+
+Proof consideration: exact positive rational conductance addition has a simple
+algebraic proof, but the implemented boundary uses IEEE floating-point resistor
+and capacitor parameters. Analytical identities, finite-value validation and
+randomized public-entry tests are the useful bounded checks here; no Dafny
+verification or global numerical proof is claimed.
+<<<
+
+[REQUIREMENT]
+UID: REQ-PZ-AC-RESISTANCE-001
+STATUS: Draft
+TITLE: AC resistor values in bounded passive transfer roots
+STATEMENT: >>>
+The bounded PZ analyzer shall consume validated AC-only resistance overrides
+from requested passive preparation without changing stored DC resistance or
+the legacy selected-OP admission contract. PZ roots shall use AC conductance.
+Unsupported topology and invalid model values shall publish no partial roots.
+<<<
+
+[REQUIREMENT]
+UID: REQ-PZ-LOADED-RC-001
+STATUS: Draft
+TITLE: Loaded single-pole RC transfer
+STATEMENT: >>>
+For a grounded ideal voltage input, one series resistor to the output, one
+grounded output capacitor and an optional grounded output resistor, the
+voltage-transfer analyzer shall return the finite pole
+-(1/Rseries+1/Rshunt)/C, omitting the shunt term when absent, and no finite
+zeros. The selected POL, ZER or PZ mode shall be honored. Extra loading,
+ambiguous branches, nonfinite time constants and unmodeled devices shall be
+refused explicitly rather than ignored.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Verification: PoleZeroAcResistanceTests and the existing PZ tests pass 33
+cases. The deterministic property runs 64 cases with replay 5001,20261111.
+The full frontend suite passes 828 tests with 40 explicit prerequisite skips.
+A wrong AC-resistance factor mutation is killed, restored source is
+hash-verified, and the full suite is rebuilt and rerun. The authored
+examples/loaded-rc-pz.cir executes through the qualification coordinator and
+its pole agrees exactly with the independent ngspice result. The original
+multi-analysis control deck remains refused; no new original-deck completion
+is inferred from the authored fixture or these unit tests.
+
+RSpice source pin 29c28a022625fd7cc2c56ead1cce2d3066663074, file
+crates/rspice-core/src/circuit/storage/passive.rs, independently separates DC
+conductances from small_signal_conductances used by AC/PZ/noise. This is
+source inspection, not a claim of executing RSpice for this increment.
+<<<
+
