@@ -1,0 +1,129 @@
+{
+  "scope": "Bounded real compose-values, logarithms, scalar indexing and bound-name subtraction; Windows CPU OP/reporting fixture. Not original log-deck completion.",
+  "base_commit": "68c67e63ecf7ea685314e6498ff0304c59e24b2d",
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "5614cba07d19e9760322e6cf68c367e2465df3a29bd9473bf338115064839f56",
+    "dotnet/Simulator.Syntax/ControlSyntax.cs": "667743f36b58d6d84dcb1b4353bebcce103606499c96a267d1f949e69d90b6e4",
+    "dotnet/Simulator.Syntax/ControlExtraction.cs": "064b38112f4b871e8cc5e128cc0f1baee05242b6d50456d3ef82c40e792c2cfa",
+    "dotnet/Simulator.Syntax/ControlVectorExecution.cs": "068bbfe1d0527c6aba22d56155b3e181576d4e6aabbeeb7e9d7907deeadb9ad3",
+    "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs": "5a39fa512e17ff2c5be574795cf5b0894f2306971bf211699ce0a343c3e80a2e",
+    "dotnet/Simulator.Syntax.Tests/ComposeControlTests.cs": "ff5248ba5ac7e4b69b68aaed086d0a9302d655ce0763c4f65722d86014eb631c",
+    "dotnet/Simulator.Frontend.Tests/ComposeControlTests.cs": "7f143736e96f2be172ad7474e468ba48a1b197e2d4e111cf3d91bb6ffed52216",
+    "dotnet/qualification-serial.runsettings": "4203634dab8fa85cf39d9076dfb8860ca334219759e4ab4a253b35a4182c0f07",
+    "examples/compose-values.cir": "7c6521bc21fe8406af911daf02ced87ba00312e736a3fc81782f5a780d1382af"
+  },
+  "tools": {
+    "dotnet_sdk": "10.0.403",
+    "antlr": "4.13.1",
+    "runner": "3.1.5",
+    "xunit": "2.9.3",
+    "ngspice": "47+",
+    "fscheck": "3.5.0",
+    "coverlet_collector": "10.1.0",
+    "strictdoc": "0.30.4",
+    "vstest_direct": "18.7.0"
+  },
+  "verification": {
+    "property": {
+      "framework": "FsCheck.Xunit",
+      "replay": "385,20261111",
+      "cases": 128
+    },
+    "fuzz": "Existing suite properties and explicit malformed/negative cases; no new long fuzz campaign.",
+    "syntax": {
+      "log": "final-certified/stdout.log",
+      "failed": 0,
+      "skipped": 1,
+      "passed": 495
+    },
+    "strictdoc": {
+      "log": "docs-final/stdout.log",
+      "failed": 0,
+      "parsed": 59
+    },
+    "mutation": {
+      "focused_passed": 13,
+      "source_restoration_record": "mutation-log-base/restoration.txt",
+      "kind": "one manual targeted mutation; no full Stryker run",
+      "focused_failed": 1,
+      "killed": 1,
+      "change": "log10 replaced by natural logarithm"
+    },
+    "frontend": {
+      "log": "final-certified/stdout.log",
+      "failed": 0,
+      "skipped": 40,
+      "passed": 806
+    }
+  },
+  "coverage": [
+    {
+      "branches_covered": 2563,
+      "report_sha256": "d0c5084f9b33ecb34ec605f01acab3409cfff510eddb1b848418119006964101",
+      "branches_valid": 4421,
+      "lines_valid": 10656,
+      "scope": "final-certified-syntax",
+      "lines_covered": 6927,
+      "report": "E:\\Artifacts\\Spice-compose-68c67e6\\coverage\\final-certified-syntax\\2a5ba82e-d5db-4f5c-ad83-6997d4624e9a\\coverage.cobertura.xml"
+    },
+    {
+      "branches_covered": 5813,
+      "report_sha256": "c8e6c88a82868135bd6abbcdb7401c6fed017913d0a6073b0335d1534b9f8543",
+      "branches_valid": 9262,
+      "lines_valid": 25578,
+      "scope": "final-certified-frontend",
+      "lines_covered": 19967,
+      "report": "E:\\Artifacts\\Spice-compose-68c67e6\\coverage\\final-certified-frontend\\f67e9c07-ef91-4ad0-b806-cf7226e3c4c0\\coverage.cobertura.xml"
+    }
+  ],
+  "coverage_limits": "Generated code included; assembly scopes differ. No Rust/native-engine, file-app-host, Linux or GPU coverage measurement for this managed-only change.",
+  "oracle": {
+    "relative_tolerance": 0.0001,
+    "replay": "replay-certified/summary.json",
+    "native_full_program_exit": 0,
+    "voltage_absolute_tolerance": 1E-06,
+    "fixture": "examples/compose-values.cir",
+    "reporting_errors": {
+      "log_relative": 0,
+      "signed_relative": 0
+    },
+    "fixture_sha256": "7c6521bc21fe8406af911daf02ced87ba00312e736a3fc81782f5a780d1382af",
+    "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "numerical_disagreements": 0,
+    "native_full_log": "native-final/stdout.log",
+    "provenance_valid": true,
+    "engine_reporting_diagnostics": [],
+    "assertion_relative_tolerance": 1E-15,
+    "engine_reporting_exit": 0,
+    "current_absolute_tolerance": 1E-09,
+    "native_engine_sha256": "3da26eea4d07fbb90e5cdf4420cebe9e2beb522c66cffde53690bb4be8c92950",
+    "numerical_observables": 2
+  },
+  "original_deck": {
+    "remaining_diagnostics": [
+      "non_affine_behavior"
+    ],
+    "input_sha256": "4025b75b0fa8f409df690452aa2c69510c9329cf76992960fdb6c11e439ad1c1",
+    "path": "regression/misc/log-functions-1.cir",
+    "new_agreeing_original_decks": 0,
+    "status": "requested_preparation_refused",
+    "campaign_total_new_agreeing_original_decks": 1
+  },
+  "resources": {
+    "final_oracle_observed_peak_bytes": 294461440,
+    "bulk_root": "E:/Artifacts/Spice-compose-68c67e6",
+    "policy": "Serialized MSBuild and xUnit; direct VSTest with explicit collector; 500ms whole-tree memory watchdog. Sampling is not a continuous OS-enforced bound.",
+    "startup_os_reserve_bytes": 471859200,
+    "final_test_tree_budget_bytes": 536870912,
+    "final_oracle_tree_budget_bytes": 402653184,
+    "final_test_observed_peak_bytes": 479547392
+  },
+  "incomplete_attempts": [
+    "Initial admission refusals below1300MiB",
+    "final and final-serial memory watchdog terminations",
+    "frontend-direct passed tests but collector unavailable: no coverage claim",
+    "replay-final unknown_control_vector:gold-1",
+    "replay-unspaced reporting exit1 due rejected precedence prototype"
+  ],
+  "raw_artifacts": "E:/Artifacts/Spice-compose-68c67e6"
+}

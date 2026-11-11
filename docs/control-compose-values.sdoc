@@ -1,0 +1,90 @@
+[DOCUMENT]
+TITLE: Bounded scalar compose-values reporting
+
+[REQUIREMENT]
+UID: REQ-CTRL-COMPOSE-VALUES-001
+STATUS: Draft
+TITLE: Generated syntax and ordered scalar values
+STATEMENT: >>>
+The reporting interpreter shall recognize compose NAME values EXPR... through
+the generated grammar and create a real local vector from one finite scalar
+per expression, in physical expression order. Binary operators remain part of
+an expression; optional separating commas shall preserve expression boundaries.
+It shall not silently concatenate nonscalar vectors or implement sweep forms
+through an unrelated approximation.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CTRL-BOUND-DIFFERENCE-001
+STATUS: Draft
+TITLE: Bound-name subtraction preserves arithmetic precedence
+STATEMENT: >>>
+When a reporting expression contains an otherwise unresolved hyphenated token
+composed solely of bound real names, numeric constants and subtraction, the
+interpreter shall reuse generated arithmetic tokens before expression parsing
+so division and power retain their declared precedence. Exact bound vector
+names shall take priority over this fallback. Voltage and current probe terminal
+spellings shall not be split into arithmetic operands. Unknown operands and
+over-budget token sequences shall remain refused.
+<<<
+COMMENT: >>>
+The unchanged qualification fixture first failed unknown_control_vector:gold-1.
+An atom-level fallback was rejected because it changed vals/gold-1 into
+vals/(gold-1). The replacement splices tokens from the existing ANTLR arithmetic
+lexer before parsing. Tests retain this precedence counterexample and a
+hyphenated voltage node whose component names are also bound vectors. No new
+handwritten lexer or broad claim of Nutmeg lexical compatibility is introduced.
+<<<
+COMMENT: >>>
+Implementation candidate: ControlExtraction.cs, SpiceParser.g4 and
+ControlVectorExecution.cs. Verification candidate: ComposeControlTests in the
+syntax and frontend test projects. Initial tests failed before implementation.
+Initial verification was refused by the memory guard; subsequent incremental
+syntax/frontend regression and a public-client OP/reporting oracle fixture
+passed under an explicit 512 MiB process-tree watchdog. See
+evidence/control-compose-values.json for scope and measured coverage.
+Independent ngspice-47+ experiment produced [-1,3] for values
+1 -2 3 and natural/natural/base-ten logarithms for ln/log/log10 respectively.
+Raw evidence: E:/Artifacts/Spice-compose-68c67e6. No requirement closure claimed.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CTRL-COMPOSE-ATOMIC-001
+STATUS: Draft
+TITLE: Branch ownership and bounded atomic publication
+STATEMENT: >>>
+Composition shall run only in an active admitted reporting branch, preserve
+caller inputs and constants, and replace a local only after every scalar value
+has been evaluated successfully. Missing, nonfinite, nonscalar or over-budget
+values shall not publish a partial result. The existing 4096-element vector
+limit and terminal-reporting analysis boundary shall remain enforced. Reserved
+time, frequency and all targets shall be refused by requested preparation.
+<<<
+COMMENT: >>>
+The existing interpreter publishes owned immutable reporting results and never
+accesses the filesystem. This addition does not enable inter-analysis control,
+complex vectors, compose sweeps or nonlinear behavioral sources. The original
+log-functions-1 deck remains unqualified until its physical circuit and all
+original assertions execute and agree with ngspice. A targeted wrong-log-base
+mutation was detected; full Stryker and long fuzz campaigns are not claimed.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CTRL-REAL-LOG-INDEX-001
+STATUS: Draft
+TITLE: Finite real logarithms and bounded scalar indexing
+STATEMENT: >>>
+Within admitted real reporting expressions, ln and log shall compute the
+natural logarithm and log10 shall compute the base-ten logarithm elementwise.
+Nonpositive arguments requiring complex or nonfinite results shall be refused
+in this real-only profile. A scalar vector index shall be a finite zero-based
+integer inside the vector bounds; fractional, negative and out-of-range indices
+shall be refused without truncation or wrapping.
+<<<
+COMMENT: >>>
+ComposeControlTests retain the original logarithm regression's independent
+gold constants. The OP/reporting qualification fixture exercises the native
+assertion exit and the complete admitted operation against ngspice. The
+128-case composition property replay is 385,20261111. These reporting semantics
+do not implement nonlinear B-source physics, complex logs or index slices.
+<<<

@@ -20,6 +20,10 @@ internal static class ControlSuffixAdmission
                 if(candidate.Names.Length!=1||candidate.Expression==null||Reserved(candidate.Names[0]))
                     return "unsupported_control_result_assignment";
                 locals.Add(candidate.Names[0]);break;
+            case ControlPostprocessingKind.Compose:
+                if(candidate.Names.Length!=1||candidate.Values.IsEmpty||candidate.Values.Length>4096||Reserved(candidate.Names[0]))
+                    return "unsupported_control_compose_values";
+                locals.Add(candidate.Names[0]);break;
             case ControlPostprocessingKind.Define:
                 if(candidate.Expression==null||candidate.Names.Skip(1).Distinct(StringComparer.OrdinalIgnoreCase).Count()!=candidate.Names.Length-1)
                     return "unsupported_control_function_formals";

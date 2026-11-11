@@ -151,7 +151,20 @@ public static partial class ControlVectorExecution
                         var name = declaration.Names[0];
                         if (constantNames.Contains(name) || inputs.Keys.Contains(name,StringComparer.OrdinalIgnoreCase))
                             throw new InvalidDataException("control_input_assignment");
-                        try { values[name] = Evaluate(declaration.Expression!.Text); }
+                        try
+                        {
+                            if(declaration.Kind==ControlPostprocessingKind.Compose&&
+                                (declaration.Values.IsEmpty||declaration.Values.Length>VectorLimit))
+                                throw new InvalidDataException("control_compose_value_budget");
+                            // Evaluate every scalar before replacing the local. The
+                            // borrowed input arrays and any previous local stay intact
+                            // when a value is missing, nonfinite or nonscalar.
+                            var replacement=declaration.Kind==ControlPostprocessingKind.Compose
+                                ? declaration.Values.Select(item=>Scalar(Evaluate(item.Text))).ToArray()
+                                : Evaluate(declaration.Expression!.Text);
+                            Validate(replacement);
+                            values[name]=replacement;
+                        }
                         catch (InvalidDataException error) when(error.Message.StartsWith("invalid_control_assignment_rhs:",StringComparison.Ordinal))
                         { diagnostics.Add(error.Message); }
                     }
@@ -220,14 +233,14 @@ public static partial class ControlVectorExecution
                 if(!constantNames.Contains(bare)&&!inputs.Keys.Contains(bare,StringComparer.OrdinalIgnoreCase)
                     &&values.TryGetValue(bare,out value))return value;
             }
-            if(locals!=null&&name.Contains('-')&&TryFormalDifference(name,locals) is {} difference)
-                return difference;
             throw new InvalidDataException("unknown_control_vector:"+name);
         }
 
         // BODY lexing preserves hyphenated names. Reuse the arithmetic lexer
-        // for an otherwise unresolved token composed only of bound formals.
-        double[]? TryFormalDifference(string name,IReadOnlyDictionary<string,double[]> formals)
+        // for an otherwise unresolved token composed only of bound names and
+        // numeric constants. Splice tokens before parsing, rather than evaluating
+        // a difference as an atom, which would change division/power precedence.
+        IToken[]? DifferenceTokens(string name,IReadOnlyDictionary<string,double[]>? locals)
         {
             var lexer=new SpiceLexer(new AntlrInputStream(name));
             lexer.Mode(SpiceLexer.EXPRESSION);
@@ -237,11 +250,13 @@ public static partial class ControlVectorExecution
             var parts=tokens.GetTokens().Where(t=>t.Channel==TokenConstants.DefaultChannel&&t.Type!=TokenConstants.EOF).ToArray();
             if(parts.Length is <3 or >17||parts.Length%2==0||parts[^1].StopIndex!=name.Length-1)return null;
             for(var index=0;index<parts.Length;index++)
-                if(index%2==0?(parts[index].Type!=SpiceLexer.WORD||!formals.ContainsKey(parts[index].Text)):
-                    parts[index].Type!=SpiceLexer.MINUS)return null;
-            var value=formals[parts[0].Text];
-            for(var index=2;index<parts.Length;index+=2)value=Binary("-",value,formals[parts[index].Text]);
-            return value;
+            {
+                if(index%2!=0){if(parts[index].Type!=SpiceLexer.MINUS)return null;continue;}
+                if(parts[index].Type!=SpiceLexer.NUMBER&&
+                    (parts[index].Type!=SpiceLexer.WORD||
+                     !(locals?.ContainsKey(parts[index].Text)==true||values.ContainsKey(parts[index].Text))))return null;
+            }
+            return parts;
         }
 
         double[] Evaluate(string expression,IReadOnlyDictionary<string,double[]>? locals=null,int depth=0,bool condition=false)
@@ -254,6 +269,32 @@ public static partial class ControlVectorExecution
             lexer.Mode(SpiceLexer.BODY);
             lexer.RemoveErrorListeners();
             var tokens = new CommonTokenStream(lexer);
+            tokens.Fill();
+            var expanded=new List<IToken>();
+            var probeParents=new Stack<bool>();
+            var inProbe=false;
+            IToken? previous=null;
+            foreach(var token in tokens.GetTokens())
+            {
+                if(token.Channel!=TokenConstants.DefaultChannel){expanded.Add(token);continue;}
+                if(token.Type==SpiceLexer.LPAREN)
+                {
+                    probeParents.Push(inProbe);
+                    inProbe|=previous?.Text.Equals("v",StringComparison.OrdinalIgnoreCase)==true||
+                        previous?.Text.Equals("i",StringComparison.OrdinalIgnoreCase)==true;
+                }
+                else if(token.Type==SpiceLexer.RPAREN&&probeParents.TryPop(out var parentProbe))inProbe=parentProbe;
+                // Circuit terminal names are not arithmetic, and exact local or
+                // input names must win even when their spelling contains '-'.
+                // BODY identifiers include device-family token kinds (for
+                // example a name beginning with 'g'), not just WORD.
+                if(!inProbe&&token.Type!=SpiceLexer.STRING&&token.Type!=SpiceLexer.QUOTED&&token.Text.Contains('-')&&
+                    locals?.ContainsKey(token.Text)!=true&&!values.ContainsKey(token.Text)&&
+                    DifferenceTokens(token.Text,locals) is {} difference)expanded.AddRange(difference);
+                else expanded.Add(token);
+                previous=token;
+            }
+            tokens=new CommonTokenStream(new ListTokenSource(expanded));
             tokens.Fill();
             // In ngspice these standalone tokens can redirect let/define
             // commands. Only the conditional grammar gives them a safe meaning.
@@ -303,10 +344,22 @@ public static partial class ControlVectorExecution
                     ("length",1)=>[args[0].Length],
                     ("vecmax",1)=>[args[0].Max()],
                     ("abs",1)=>args[0].Select(Math.Abs).ToArray(),
+                    ("ln" or "log",1)=>args[0].Select(value=>Math.Log(value)).ToArray(),
+                    ("log10",1)=>args[0].Select(Math.Log10).ToArray(),
                     ("unitvec",1)=>Ones(Scalar(args[0])),
                     ("vector",1)=>IndexVector(Scalar(args[0])),
                     _=>throw new InvalidDataException("unsupported_control_function:"+name)
                 };
+            }
+            else if (node.LBRACKET()!=null)
+            {
+                var vector=Child(0);
+                var index=Scalar(Child(1));
+                // Reporting vectors use zero-based integer indexing. Refuse
+                // truncation, wrapping and scalar broadcasting at this boundary.
+                if(index<0||index>=vector.Length||index!=Math.Truncate(index))
+                    throw new InvalidDataException("invalid_control_vector_index");
+                result=[vector[(int)index]];
             }
             else if (node.QUESTION()!=null)
                 result=Scalar(Child(0))!=0?Child(1):Child(2);

@@ -1,4 +1,46 @@
-# Latest checkpoint — MOS1 forward body behavior, November 11
+# Latest checkpoint — bounded compose-values reporting, November 11
+
+Read docs/control-compose-values.sdoc, docs/control-compose-values-results.md
+and evidence/control-compose-values.json. Generated control syntax and the real
+reporting evaluator now support ordered scalar compose-values, ln/log/log10 and
+integer vector indexing. Unresolved bound-name subtraction uses the existing
+arithmetic lexer before expression parsing; exact vectors and probe terminal
+names retain priority. A rejected atom-level prototype changed division
+precedence; its failed qualification output is preserved on E:.
+
+Final verification: 495 syntax tests pass with one explicit platform skip;
+806 frontend tests pass with 40 external-prerequisite skips. The composition
+property runs 128 cases, replay 385,20261111. One wrong-log-base manual mutant
+was killed and source restored. All 59 StrictDoc files parse. Coverlet measured
+syntax 6927/10656 lines and 2563/4421 branches; the broader frontend run measured
+19967/25578 lines and 5813/9262 branches. Generated code is included and these
+different scopes are not comparable project-wide coverage scores.
+
+The unchanged examples/compose-values.cir qualification fixture has two OP
+observables agreeing with ngspice and both complete reporting programs exit
+zero. Its explicit relative assertions remain 1e-15. Check the actual
+control-report.json exit and diagnostics: row-level individual-analysis
+agreement alone does not establish reporting/assertion success. The final raw
+report is E:/Artifacts/Spice-compose-68c67e6/replay-certified. Earlier numeric
+agreement with failed reporting is retained as failed program evidence.
+
+The unchanged original regression/misc/log-functions-1.cir is still refused at
+non_affine_behavior; compose is no longer a blocker. No additional original
+deck is counted. Campaign cumulative completed-and-agreeing originals remains
+one. Native src/expression.rs already has a bounded single-input AD experiment
+including logarithm but is explicitly not integrated as a nonlinear device.
+Trace and reuse its contracts before implementing behavioral source physics;
+do not silently fold arbitrary node-dependent expressions to constants.
+
+All raw artifacts are E:/Artifacts/Spice-compose-68c67e6. Shared-host memory
+remains scarce. Use measured budgets and OS headroom, serialized builds and
+optional dotnet/qualification-serial.runsettings. Direct VSTest needs the
+existing Coverlet collector's explicit TestAdapterPath for coverage. Initial
+admission refusals, watchdog terminations and collector-discovery failures are
+not passing campaigns. Canonical main and unknown changes remain untouched.
+Do not push or dispatch CI. Hard stop remains 2026-11-11T23:53:39Z.
+
+# Previous checkpoint — MOS1 forward body behavior, November 11
 
 Read docs/mos1-forward-body-results.md, docs/mos1-forward-body.sdoc and
 evidence/mos1-forward-body.json. MOS1 now supports positive effective body bias:

@@ -71,6 +71,8 @@ internal static class ControlExtraction
      case SpiceParser.ControlReportContext:kind=print&&tokens.GetTokens().Any(t=>t.Text==">")?"unsupported":"report";break;
      case SpiceParser.ControlLetContext let:
       kind="postprocessing";postprocessing=new(ControlPostprocessingKind.Let,[let.identifier(1).GetText()],Capture(let.expression()));break;
+     case SpiceParser.ControlComposeContext compose:
+      kind="postprocessing";postprocessing=new(ControlPostprocessingKind.Compose,[compose.identifier(1).GetText()],null){Values=compose.expression().Select(Capture).ToImmutableArray()};break;
      case SpiceParser.ControlDefineContext define:
       kind="postprocessing";postprocessing=new(ControlPostprocessingKind.Define,define.identifier().Skip(1).Select(i=>i.GetText()).ToImmutableArray(),Capture(define.expression()));break;
      case SpiceParser.ControlUnletContext unlet:

@@ -26,10 +26,17 @@ public enum ControlPostprocessingKind
     /// <summary>Declare a named function with simple formal arguments.</summary>
     Define,
     /// <summary>Remove explicitly named local result vectors.</summary>
-    Unlet
+    Unlet,
+    /// <summary>Build a real vector from ordered scalar value expressions.</summary>
+    Compose
 }
 /// <summary>Names contains the let target, the function name followed by formals,
-/// or unlet targets. Expression preserves physical spelling; it is not evaluated.</summary>
-public sealed record ControlPostprocessingSyntax(ControlPostprocessingKind Kind,ImmutableArray<string> Names,SourceSyntax? Expression);
+/// unlet targets, or the compose target. Expression/Values preserve physical
+/// spelling; syntax extraction does not evaluate them.</summary>
+public sealed record ControlPostprocessingSyntax(ControlPostprocessingKind Kind,ImmutableArray<string> Names,SourceSyntax? Expression)
+{
+    /// <summary>Ordered physical expressions for compose-values; never an implicit vector concatenation.</summary>
+    public ImmutableArray<SourceSyntax> Values { get; init; } = [];
+}
 /// <summary>One original control envelope and ordered physical command records.</summary>
 public sealed record ControlBlockSyntax(int ScopeId,SourceRange Range,SourceRange OpenRange,SourceRange CloseRange,ImmutableArray<ControlCommandSyntax> Commands,string? Diagnostic=null);
