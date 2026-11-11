@@ -123,6 +123,9 @@ pub fn run_with_registry(
             "charged junction total current requires nonadaptive backward Euler initialized from operating point",
         ));
     }
+    if !plan.behaviors.is_empty() && !matches!(request.analysis,Analysis::OperatingPoint|Analysis::OperatingPointNewton{..}) {
+        return Err(SimError::new(crate::error::ErrorCode::Unsupported,"behavioral voltage expressions are currently qualified for DC operating points only"));
+    }
     tracing::debug!(unknowns = plan.unknown_count(), "circuit_compiled");
     let mut integration = None;
     let mut newton = None;

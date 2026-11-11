@@ -21,6 +21,7 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(Voltage), "voltage")]
 [JsonDerivedType(typeof(Current), "current")]
 [JsonDerivedType(typeof(Vcvs), "vcvs")]
+[JsonDerivedType(typeof(BehavioralVoltage), "behavioral_voltage")]
 [JsonDerivedType(typeof(PspiceSwitch), "pspice_switch")]
 [JsonDerivedType(typeof(Vccs), "vccs")]
 [JsonDerivedType(typeof(Cccs), "cccs")]
@@ -187,6 +188,8 @@ public static class WireFormat
 {
     /// <summary>Source-generated snake-case JSON metadata with absent optional fields omitted.</summary>
     public static JsonSerializerOptions Options { get; } = new() {
+        // A validated expression permits 64 levels; allow the enclosing request and circuit objects too.
+        MaxDepth = 128,
         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         TypeInfoResolver=WireContext.Default

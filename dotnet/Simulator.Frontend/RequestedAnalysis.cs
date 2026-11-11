@@ -112,6 +112,8 @@ public static partial class RequestedAnalysis
        ? BindInitialConditions(catalog,environment,prepared) : [];
    foreach(var directive in control.Directives){
     var card=directive.Analysis;
+    if(card.Kind is not ("op" or "dc")&&baseRequest.Circuit.Elements.Any(e=>e is BehavioralVoltage))
+     throw new PreparationFailure("unsupported_behavioral_analysis",card.Range);
     var id="requested_"+operations.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
     var usesUic=card.Kind=="tran"&&card.Names.Length==1
         &&card.Names[0].Equals("uic",StringComparison.OrdinalIgnoreCase);

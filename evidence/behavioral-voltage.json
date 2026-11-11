@@ -1,0 +1,326 @@
+{
+  "scope": "Bounded single-control DC voltage expressions and one unchanged original requested OP plus separately executed original control assertions",
+  "base_commit": "cdd45603c62615ee8785fa694ee9ac48167956d6",
+  "source_dirty_during_verification": true,
+  "source_sha256": {
+    "dotnet/Simulator.Client/Requests.cs": "98350460e266ea75c9d7085cebcd6d50f718ea68f0fc832151822cb4ace8765a",
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "daf3979695a5f1c838ca33873c01abcfc85475e20dad40867dbf1a4ac5bd7b31",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "d289d9cb859d519a6a8bff72e22588cc91a673342e567089285fc281a819454a",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "5fc1a9f0372b8637a85d51ba453f4c7f22b06a53a505c57fc335872a5e579eb6",
+    "dotnet/Simulator.RequestedQualification/QualificationSupport.cs": "65a36f26f2971f926d59df73555353c0a7a0b6f5472635c98f7a98ed67b335b1",
+    "src/api.rs": "b7933850362686166b438dd2e7f6f246a0009a1b3984349828115dc03d5c1d62",
+    "src/audit.rs": "af7d8b19ac56ef5851da3389af74242da99e6911e7ffaf71628b6119fff43277",
+    "src/circuit.rs": "4dc07c123219b21a83db539ac129c2748affbd5a46628ad0b21682eaf838ac24",
+    "src/compile.rs": "386841097f2058352f98db7ac978102845cf6dec23e74c9528f3817e561ec269",
+    "src/expression.rs": "35dfb04c4a96664f8f3d988f5f3941c8ba68999dac65d8f2cb750e8ff838c5d4",
+    "src/main.rs": "672959edb83b3b9a4b8d98aeb35ba1dd161fe5f2dbe6ad8db187eff9a604ff3b",
+    "src/newton.rs": "4a35028ae3abac9fff95ab3448e3f8b14dab557717065c6b3f4ab38793151062",
+    "src/power.rs": "1d8023dc0b6f95e5807637243e63e00edea69405417860dca6fe52eb47d64414",
+    "src/variation.rs": "f1ce34dbdf542a83151a76572f97e19f55272c6cebd7888c18f9e7d61b0bffe7",
+    "dotnet/Simulator.Client/BehavioralExpression.cs": "9cfe10d6f1a05c06976fc6e6b26fb294e82abf3b6ed07bd2e91f0527232c9e87",
+    "dotnet/Simulator.Frontend.Tests/BehavioralVoltageTests.cs": "999a9b9961ee3cb4ab12a42c50c1d783dbdcda2a3427123007bb4a1fe38cdff1",
+    "dotnet/Simulator.Syntax/SingleControlVoltageCompiler.cs": "4dcb5b49883e5b3048ce6c15b025cbf216929e4b08f6ba01d7363155606b110e",
+    "tests/behavioral_voltage.rs": "edb357b334c4f704fc76862b6f5129d10bf1ff3ddfda2ce1329a22957d361d00"
+  },
+  "tools": {
+    "dotnet": "10.0.403",
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)",
+    "antlr": "4.13.1",
+    "strictdoc": "0.30.4",
+    "coverlet": "10.1.0",
+    "vstest": "18.7.0",
+    "ngspice": "47+"
+  },
+  "verification": {
+    "native": {
+      "passed": 109,
+      "failed": 0,
+      "ignored": 0,
+      "log": "native-regression-v4/stdout.log",
+      "guard": "native-regression-v4/guard.log"
+    },
+    "managed": {
+      "passed": 819,
+      "failed": 0,
+      "skipped": 40,
+      "focused_passed": 13,
+      "log": "frontend-full-v1/stdout.log",
+      "build": "frontend-build-v4/stdout.log"
+    },
+    "property": {
+      "framework": "Proptest",
+      "cases": 64,
+      "seed": 2026111101
+    },
+    "mutation": {
+      "mode": "One targeted manual mutation, not cargo-mutants or Stryker campaign",
+      "change": "Replace negative control-voltage Jacobian slope with zero",
+      "killed": 1,
+      "passed": 6,
+      "failed": 1,
+      "restored_source_sha256": "4a35028ae3abac9fff95ab3448e3f8b14dab557717065c6b3f4ab38793151062",
+      "restored_regression_passed": 109
+    },
+    "strictdoc": {
+      "parsed": 60,
+      "tool": "SDReader",
+      "log": "docs-final-v6/stdout.log"
+    },
+    "fuzz": "Malformed/negative cases and retained suite properties; no new long fuzz campaign"
+  },
+  "original_deck": {
+    "path": "regression/misc/log-functions-1.cir",
+    "corpus_commit": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+    "sha256": "4025b75b0fa8f409df690452aa2c69510c9329cf76992960fdb6c11e439ad1c1",
+    "requested_executed": true,
+    "native_agreed": true,
+    "operations": 1,
+    "comparison": {
+      "status": "agreed",
+      "observables": [
+        {
+          "engine_signal": "v(n1)",
+          "native_signal": "v(1)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n5)",
+          "native_signal": "v(b1)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n6)",
+          "native_signal": "v(b2)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n7)",
+          "native_signal": "v(b3)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 1.1102230246251565E-16,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n2)",
+          "native_signal": "v(n1)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 1.1102230246251565E-16,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n3)",
+          "native_signal": "v(n2)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 1.1102230246251565E-16,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n4)",
+          "native_signal": "v(n3)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 5.551115123125783E-17,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e0)",
+          "native_signal": "i(v1)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e1)",
+          "native_signal": "i(vn1)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e2)",
+          "native_signal": "i(vn2)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e3)",
+          "native_signal": "i(vn3)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e4)",
+          "native_signal": "i(bb1)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e5)",
+          "native_signal": "i(bb2)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e6)",
+          "native_signal": "i(bb3)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        }
+      ],
+      "gaps": [],
+      "excluded_startup_samples": 0,
+      "analytical_reference": null,
+      "agreed": true
+    },
+    "control_exit": 0,
+    "control_diagnostics": [],
+    "control_output": [
+      "Note: numparm_err =  0",
+      "Note: asrc_err =  1.1102230246251565E-16",
+      "Note: ctrl_err =  0",
+      "INFO: success"
+    ],
+    "native_full_program_exit": 0,
+    "native_full_program_log": "original-log-final-guard/stdout.log",
+    "omission_scope": "Individual numerical oracle projections omit control instructions; separate real reporting and whole native-file execution verify original assertions."
+  },
+  "binaries": {
+    "engine_sha256": "9e32eeef6a23690f65eacf6d62ef2d983ab81be9e5d4721bbc22ff4a6f62b98c",
+    "engine_path": "E:/Artifacts/Spice-behavioral-cdd4560/verified-engine/circuit-simulator.exe",
+    "oracle_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f"
+  },
+  "coverage": {
+    "managed": {
+      "lines_covered": 20705,
+      "lines_total": 26394,
+      "branches_covered": 5924,
+      "branches_total": 9452,
+      "includes_generated": true,
+      "compiler_class_line_percent": 79.45,
+      "compiler_class_branch_percent": 46.66
+    },
+    "native": {
+      "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+      "files": [
+        {
+          "lines": {
+            "count": 545,
+            "covered": 215,
+            "percent": 39.44954128440367
+          },
+          "file": "src/audit.rs",
+          "sha256": "af7d8b19ac56ef5851da3389af74242da99e6911e7ffaf71628b6119fff43277"
+        },
+        {
+          "lines": {
+            "count": 176,
+            "covered": 45,
+            "percent": 25.568181818181817
+          },
+          "file": "src/circuit.rs",
+          "sha256": "4dc07c123219b21a83db539ac129c2748affbd5a46628ad0b21682eaf838ac24"
+        },
+        {
+          "lines": {
+            "count": 287,
+            "covered": 101,
+            "percent": 35.19163763066202
+          },
+          "file": "src/compile.rs",
+          "sha256": "386841097f2058352f98db7ac978102845cf6dec23e74c9528f3817e561ec269"
+        },
+        {
+          "lines": {
+            "count": 75,
+            "covered": 43,
+            "percent": 57.333333333333336
+          },
+          "file": "src/expression.rs",
+          "sha256": "35dfb04c4a96664f8f3d988f5f3941c8ba68999dac65d8f2cb750e8ff838c5d4"
+        },
+        {
+          "lines": {
+            "count": 1021,
+            "covered": 304,
+            "percent": 29.774730656219393
+          },
+          "file": "src/newton.rs",
+          "sha256": "4a35028ae3abac9fff95ab3448e3f8b14dab557717065c6b3f4ab38793151062"
+        }
+      ],
+      "branches": null,
+      "limitations": [
+        "Stable Rust instrumentation provides no measured branch coverage.",
+        "Other tests and executable main are outside this run.",
+        "A named test can pin its own seed, overriding the environment seed; retain actual test replay configuration alongside this report."
+      ]
+    }
+  },
+  "requirements": [
+    "REQ-BEHAVIOR-VOLTAGE-DC-001",
+    "REQ-BEHAVIOR-VOLTAGE-SEED-001",
+    "REQ-BEHAVIOR-VOLTAGE-AUDIT-001"
+  ],
+  "raw_artifacts": "E:/Artifacts/Spice-behavioral-cdd4560",
+  "qualification_limits": [
+    "Windows CPU only; no Linux/GPU qualification",
+    "One differential voltage input; DC only; no arbitrary behavior or current expression support",
+    "Linear seed can fail explicitly; no universal convergence guarantee",
+    "Native branch coverage unavailable; integration-only coverage is not project-wide",
+    "External-prerequisite skips remain unavailable coverage"
+  ],
+  "new_original_agreeing_decks": 1,
+  "campaign_new_original_agreeing_decks": 2
+}

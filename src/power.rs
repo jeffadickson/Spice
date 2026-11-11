@@ -111,6 +111,7 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
             Element::Voltage { id, .. }
             | Element::Inductor { id, .. }
             | Element::Vcvs { id, .. }
+            | Element::BehavioralVoltage { id, .. }
             | Element::Ccvs { id, .. } => {
                 x[plan
                     .branch_index(id)

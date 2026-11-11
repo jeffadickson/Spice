@@ -127,6 +127,7 @@ fn branch_ids(circuit: &Circuit) -> Vec<&str> {
             Element::Voltage { id, .. }
             | Element::Inductor { id, .. }
             | Element::Vcvs { id, .. }
+            | Element::BehavioralVoltage { id, .. }
             | Element::Ccvs { id, .. } => Some(id.as_str()),
             _ => None,
         })
@@ -340,6 +341,27 @@ pub fn dc(
     Ok(AuditReport { checks })
 }
 
+// Independent value-only reconstruction: do not call the production AD
+// evaluator or read its Jacobian while checking the constitutive relation.
+fn reference_expression(expr:&crate::expression::Expr,input:f64)->SimResult<f64> {
+    use crate::expression::Expr;
+    fn value(expr:&Expr,input:f64,depth:usize,left:&mut usize)->SimResult<f64> {
+        if depth>64||*left==0{return Err(SimError::invalid("audit expression budget exceeded"));}
+        *left-=1;
+        let result=match expr {
+            Expr::Input=>input, Expr::Constant(v)=>*v,
+            Expr::Add(a,b)=>value(a,input,depth+1,left)?+value(b,input,depth+1,left)?,
+            Expr::Multiply(a,b)=>value(a,input,depth+1,left)?*value(b,input,depth+1,left)?,
+            Expr::Divide(a,b)=>value(a,input,depth+1,left)?/value(b,input,depth+1,left)?,
+            Expr::Exp(a)=>value(a,input,depth+1,left)?.exp(),
+            Expr::Log(a)=>value(a,input,depth+1,left)?.ln(),
+        };
+        if !result.is_finite(){return Err(SimError::invalid("audit expression domain/overflow"));}
+        Ok(result)
+    }
+    value(expr,input,0,&mut 1024)
+}
+
 /// Check voltage-defined source equations separately from node conservation.
 fn constraint_checks(
     circuit: &Circuit,
@@ -355,6 +377,9 @@ fn constraint_checks(
             Element::Inductor { .. } => 0.,
             Element::Vcvs { cp, cn, gain, .. } => {
                 gain * (voltage(state, *cp) - voltage(state, *cn))
+            }
+            Element::BehavioralVoltage {cp,cn,expression,..} => {
+                reference_expression(expression,voltage(state,*cp)-voltage(state,*cn))?
             }
             Element::Ccvs {
                 control_id, ohms, ..

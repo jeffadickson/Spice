@@ -55,6 +55,7 @@ pub fn scalar_kind(circuit: &Circuit, element_id: &str) -> SimResult<ScalarKind>
         .ok_or_else(|| SimError::invalid("variation element ID is unknown"))?;
     Ok(match element {
         Element::PspiceSwitch { .. }
+        | Element::BehavioralVoltage { .. }
         | Element::Mos1Channel { .. }
         | Element::Bsim330 { .. }
         | Element::BsimSoiFdReference { .. } => {
@@ -98,6 +99,7 @@ pub fn replace_scalar(circuit: &Circuit, element_id: &str, value: f64) -> SimRes
             model.saturation_amps = value
         }
         Element::PspiceSwitch { .. }
+        | Element::BehavioralVoltage { .. }
         | Element::Mos1Channel { .. }
         | Element::Bsim330 { .. }
         | Element::BsimSoiFdReference { .. } => {

@@ -282,10 +282,18 @@ public static class OperatingPointBridge
                 {
                     if(!selected)throw new BridgeFailure("unsupported_active_card",instance.Range);
                     if(!names.Add(instance.Name))throw new BridgeFailure("duplicate_element",instance.Range);
-                    var lowered=BehavioralSourceLowering.Prepare(catalog,instance,environment);
+                    var lowered=requested?BehavioralSourceLowering.PrepareRequested(catalog,instance,environment):BehavioralSourceLowering.Prepare(catalog,instance,environment);
                     if(!lowered.Success)throw new BridgeFailure(lowered.Diagnostics[0].Code,lowered.Diagnostics[0].Range);
                     var source=lowered.Source!;var p=Node(source.P.Text);var n=Node(source.N.Text);
                     if(p==n)throw new BridgeFailure("shorted_behavior_output",source.Range);
+                    if(source.Runtime is {} runtime)
+                    {
+                        if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
+                        var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        elements.Add(new BehavioralVoltage(id,p,n,Node(runtime.Cp.Text),Node(runtime.Cn.Text),runtime.Expression));
+                        origins.Add(new(id,source.Name,path,source.Range){NativeBranchName=source.Name});
+                        continue;
+                    }
                     // Ground substitution can make a named voltage term
                     // identically zero. Remove it before allocating auxiliaries
                     // or checking element budgets; retain the offset source.

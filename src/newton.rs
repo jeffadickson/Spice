@@ -189,6 +189,12 @@ fn linearize_with_rhs_gmin(
             - rhs[row];
     }
     let mut jacobian = plan.conductance.clone();
+    for source in &plan.behaviors {
+        let (value,slope)=source.expression.evaluate(voltage(values,source.cp,source.cn))?;
+        residual[source.branch]-=value;
+        if let Some(column)=source.cp.unknown(){jacobian.add(source.branch,column,-slope);}
+        if let Some(column)=source.cn.unknown(){jacobian.add(source.branch,column,slope);}
+    }
     for diode in &plan.diodes {
         let contribution = diode.model.linearize(voltage(values, diode.p, diode.n))?;
         stamp_vector(&mut residual, diode.p, diode.n, contribution.current_amps);
@@ -459,6 +465,9 @@ fn voltage_constraints_infeasible(
         ));
     }
     for row in plan.circuit.nodes.len() - 1..residual.len() {
+        // A behavioral branch is a nonlinear constitutive row, not one of
+        // the linear voltage constraints whose feasibility this phase tracks.
+        if plan.behaviors.iter().any(|source|source.branch==row){continue;}
         if scaled_component(
             residual[row],
             rhs[row],
@@ -832,7 +841,18 @@ pub fn solve(
     solver: &dyn LinearSolver,
     options: NewtonOptions,
 ) -> SimResult<(Vec<f64>, NewtonReport)> {
-    solve_from(plan, solver, options, vec![0.; plan.unknown_count()])
+    if plan.behaviors.is_empty() {
+        return solve_from(plan, solver, options, vec![0.; plan.unknown_count()]);
+    }
+    options.validate()?;
+    // The base MNA system temporarily sets each behavioral output to zero.
+    // This is a seed only: it establishes actual independent-source voltages
+    // before domain-sensitive model evaluation. The final solve/audit always
+    // uses the unmodified nonlinear equations; count this provider call too.
+    let (initial,_)=crate::dc::solve_compiled_verified(plan,solver)?;
+    let (values,mut report)=solve_from(plan,solver,options,initial)?;
+    report.linear_solves+=1;
+    Ok((values,report))
 }
 
 /// Solve from an explicit finite MNA state. This is useful for continuation and

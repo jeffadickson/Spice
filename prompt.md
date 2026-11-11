@@ -1,3 +1,30 @@
+# Latest checkpoint — bounded behavioral voltage DC, November 11
+
+Read docs/behavioral-voltage-op.sdoc, docs/behavioral-voltage-results.md and
+evidence/behavioral-voltage.json. The generated requested-analysis compiler
+now preserves one differential control voltage in a typed expression tree;
+the Rust engine stamps its real constitutive residual and analytic Jacobian.
+A linear-constraint seed establishes source voltages before domain-sensitive
+logarithms, followed by full physical convergence and independent auditing.
+
+The unchanged original regression/misc/log-functions-1.cir now agrees with
+ngspice on all 14 mapped observables. Its complete control assertions exit zero
+on our reporting evaluator and on the separate full ngspice execution. This
+adds one original agreeing deck; campaign total is two. Verified restored-source
+checks: 109 native tests; 819 managed tests with 40 prerequisite skips; 13 focused
+cases; 64 Proptest cases seed 2026111101; one killed slope mutant; 60 StrictDoc files.
+Measured coverage, exact source/binary hashes, tolerances and raw E: paths are
+in the evidence. This is DC-only single-control voltage behavior; dynamic,
+current-valued and arbitrary multi-control behavioral sources remain open.
+
+The final restored engine snapshot is under
+E:/Artifacts/Spice-behavioral-cdd4560/verified-engine. Earlier mutation-built
+executables and guard-killed runs are not final verification. Preserve the
+hourly campaign deadline 2026-11-11T23:53:39Z; no pushes or CI. Next revalidate
+regression/pz/ac-resistance.cir against this checkpoint, then continue shared
+circuit behavior and the unresolved mosmem convergence mismatch. Keep all bulk
+outputs and scratch on E:, with admitted process-tree/aggregate memory guards.
+
 # Latest checkpoint — bounded compose-values reporting, November 11
 
 Read docs/control-compose-values.sdoc, docs/control-compose-values-results.md

@@ -176,7 +176,7 @@ public static class RequestedComparison
    foreach(var node in observableNodes.OrderBy(n=>n.Key,StringComparer.OrdinalIgnoreCase))mappings.Add(("v("+node.Value+")","v("+node.Key+")","V"));
    foreach(var origin in circuit.Origins.Where(o=>(o.InstancePath.IsEmpty||internalFallback)&&o.NativeBranchName!=null)){
     var element=circuit.Request!.Circuit.Elements.Single(e=>e.Id==origin.WireId);
-    if(element is Voltage or Inductor or Vcvs or Ccvs){
+    if(element is Voltage or Inductor or Vcvs or Ccvs or BehavioralVoltage){
      var branch=origin.InstancePath.IsEmpty?origin.NativeBranchName:
         origin.NativeBranchName![0]+"."+string.Join('.',origin.InstancePath)+"."+origin.NativeBranchName;
      var name="i("+branch+")";var alternate=branch+"#branch";

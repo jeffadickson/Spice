@@ -8,6 +8,11 @@ use std::collections::BTreeSet;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Element {
+    /// DC-only voltage relation Vp-Vn=expression(Vcp-Vcn), with P-to-N branch current.
+    BehavioralVoltage {
+        id: String, p: NodeId, n: NodeId, cp: NodeId, cn: NodeId,
+        expression: crate::expression::Expr,
+    },
     /// Current-only four-terminal MOS1 channel; body and overlap storage are explicit companions.
     Mos1Channel {
         id: String,
@@ -158,6 +163,7 @@ impl Element {
             | Self::Current { id, .. }
             | Self::Vccs { id, .. }
             | Self::Vcvs { id, .. }
+            | Self::BehavioralVoltage { id, .. }
             | Self::PspiceSwitch { id, .. }
             | Self::Cccs { id, .. }
             | Self::Ccvs { id, .. }
@@ -201,6 +207,7 @@ impl Element {
             | Self::Current { p, n, .. }
             | Self::Vccs { p, n, .. }
             | Self::Vcvs { p, n, .. }
+            | Self::BehavioralVoltage { p, n, .. }
             | Self::PspiceSwitch { p, n, .. }
             | Self::Cccs { p, n, .. }
             | Self::Ccvs { p, n, .. }
@@ -271,6 +278,12 @@ impl Circuit {
                 .validate()?;
             }
             match e {
+                Element::BehavioralVoltage {cp,cn,expression,..} => {
+                    if cp.0>=self.nodes.len() || cn.0>=self.nodes.len() {
+                        return Err(SimError::invalid("invalid behavioral control terminals"));
+                    }
+                    expression.validate()?;
+                }
                 Element::BsimSoiFdReference {
                     gate, back_gate, ..
                 } if gate.0 >= self.nodes.len() || back_gate.0 >= self.nodes.len() => {

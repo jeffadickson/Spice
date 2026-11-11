@@ -1,0 +1,8 @@
+Bounded DC logarithmic voltage source
+* The input is positive; ln uses its SI numeric voltage value.
+* This runtime expression is intentionally limited to DC operating points.
+Vinput input 0 2.7
+Blog output 0 V=ln(v(input))
+Rload output 0 1k
+.op
+.end

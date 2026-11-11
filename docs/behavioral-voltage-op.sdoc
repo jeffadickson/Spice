@@ -1,0 +1,86 @@
+[DOCUMENT]
+TITLE: Bounded single-control behavioral voltage operating points
+
+[TEXT]
+STATEMENT: >>>
+Bounded implementation and verification are recorded in
+docs/behavioral-voltage-results.md and evidence/behavioral-voltage.json. The target is
+the unchanged original regression/misc/log-functions-1.cir requested OP and its
+complete original assertions. Runtime preparation must not replace an arbitrary
+voltage-dependent expression by a constant or weaken the native comparison.
+
+Reuse assessment: retain the previously evaluated independent-core decision.
+Reuse the existing bounded Rust Expr value/derivative evaluator, native MNA
+branch contract and C# generated grammar. Do not introduce another parser or a
+legacy runtime dependency. RSpice source pin 29c28a022625fd7cc2c56ead1cce2d3066663074
+provides behavioral stamping and expression-domain reference patterns. This is
+source inspection; no new RSpice execution is claimed. Its denominator-floor
+helper is not evidence that it uses our proposed initialization seed.
+
+Affected path: generated expression lowering -> typed .NET expression
+DTO -> Rust request validation -> immutable compiled behavioral branch ->
+constitutive residual/Jacobian -> selected CPU provider -> independent value
+and conservation audit -> voltage/current reporting. The frontend and typed DTO adapters are implemented. Native and managed builds
+and the retained bounded tests pass; this is not general behavioral compatibility.
+<<<
+
+[REQUIREMENT]
+UID: REQ-BEHAVIOR-VOLTAGE-DC-001
+STATUS: Draft
+TITLE: Bounded single-control constitutive voltage relation
+STATEMENT: >>>
+The DC engine shall support an explicit behavioral voltage relation
+Vp-Vn=F(Vcp-Vcn), with branch current oriented P to N. Its typed bounded
+expression shall support finite constants, one differential input, addition,
+multiplication, division, exponential and natural logarithm, with analytic first
+derivatives and explicit source identity. Domain errors, overflow, unknown wire
+fields or operations, excessive expression structure and invalid terminals
+shall be refused without publishing a partial physical result.
+<<<
+COMMENT: >>>
+Structural limits: 1024 nodes and depth 64. The wire adapter preserves
+the pre-existing Rust tuple-variant Expr API. Seven public runtime tests pass, including 64 Proptest cases with seed
+2026111101. The initial two tests failed on the old missing wire variant.
+<<<
+
+[REQUIREMENT]
+UID: REQ-BEHAVIOR-VOLTAGE-SEED-001
+STATUS: Draft
+TITLE: Linear-constraint seed and unchanged physical equations
+STATEMENT: >>>
+For default behavioral DC initialization, the engine shall obtain a bounded
+linear-constraint seed before domain-sensitive expression evaluation. A seed
+may temporarily set behavioral output values to zero solely while establishing
+the linear constraints. It shall not be returned as a physical solution.
+The actual provider call shall be counted, and final convergence and audit
+shall use the full unregularized constitutive equations. A singular seed or
+invalid final domain shall be an explicit failure; missing physical data shall
+not be replaced by zero to obtain a passing result.
+<<<
+COMMENT: >>>
+The implementation uses the compiled base MNA matrix through the supplied provider.
+Behavioral voltage rows must be excluded from the Newton controller's separate
+linear voltage-feasibility classification. Existing nonbehavioral zero-start
+behavior is retained. Initialization generally remains a numerical strategy,
+not a guarantee of convergence. No positive-floor logarithm is introduced.
+<<<
+
+[REQUIREMENT]
+UID: REQ-BEHAVIOR-VOLTAGE-AUDIT-001
+STATUS: Draft
+TITLE: Independent physical audit and explicit qualification boundary
+STATEMENT: >>>
+Accepted behavioral DC results shall satisfy independent output-constraint,
+KCL and power checks. Value reconstruction shall not call the production
+derivative evaluator or reuse assembled matrices. AC and transient execution
+shall remain explicit unsupported outcomes until independently implemented
+and qualified through their public entry points.
+<<<
+COMMENT: >>>
+Verified checks include centered-difference Jacobians, corrupted-state audit
+rejection, malformed structures, explicit dynamic refusals and a killed
+zero-control-slope mutant. The unchanged logarithm deck agrees on all 14
+observables and executes its control assertions. See the behavioral-voltage
+checkpoint evidence for measured coverage and remaining qualification limits.
+Draft status does not claim general behavioral-source compatibility.
+<<<

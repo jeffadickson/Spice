@@ -33,6 +33,14 @@ pub(crate) struct CompiledMos1 {
     pub(crate) bulk: NodeId,
     pub(crate) model: crate::mos1::Mos1Model,
 }
+/// One immutable DC constitutive relation; its output branch is an MNA voltage row.
+#[derive(Debug, Clone)]
+pub(crate) struct CompiledBehavior {
+    pub(crate) branch: usize,
+    pub(crate) cp: NodeId,
+    pub(crate) cn: NodeId,
+    pub(crate) expression: crate::expression::Expr,
+}
 /// Shared bounded stamping surface used by compile-time sparse accumulation and trial Jacobians.
 pub(crate) trait StampMatrix {
     fn add_stamp(&mut self, row: usize, column: usize, value: f64);
@@ -61,6 +69,7 @@ pub struct CompiledCircuit {
     pub(crate) diodes: Vec<CompiledDiode>,
     pub(crate) switches: Vec<CompiledSwitch>,
     pub(crate) mos1: Vec<CompiledMos1>,
+    pub(crate) behaviors: Vec<CompiledBehavior>,
     pub(crate) bsim330: Vec<([NodeId; 4], crate::bsim330::NativeModel)>,
 }
 impl CompiledCircuit {
@@ -89,12 +98,17 @@ impl CompiledCircuit {
     /// Nonlinear device presence selects Newton operating-point solving.
     pub fn has_nonlinear_devices(&self) -> bool {
         !self.diodes.is_empty()
+            || !self.behaviors.is_empty()
             || !self.switches.is_empty()
             || !self.mos1.is_empty()
             || !self.bsim330.is_empty()
     }
 
     pub(crate) fn require_dynamic_native_models(&self) -> SimResult<()> {
+        if !self.behaviors.is_empty() {
+            return Err(SimError::new(crate::error::ErrorCode::Unsupported,
+                "behavioral voltage expressions are currently DC only"));
+        }
         if self
             .bsim330
             .iter()
@@ -136,6 +150,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
             Element::Voltage { id, .. }
             | Element::Inductor { id, .. }
             | Element::Vcvs { id, .. }
+            | Element::BehavioralVoltage { id, .. }
             | Element::Ccvs { id, .. } => Some(id.clone()),
             _ => None,
         })
@@ -148,6 +163,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     let mut diodes = Vec::new();
     let mut switches = Vec::new();
     let mut mos1 = Vec::new();
+    let mut behaviors = Vec::new();
     let mut bsim330 = Vec::new();
     for e in &circuit.elements {
         if let Some(device) = e.native_mos() {
@@ -312,6 +328,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
             Element::Voltage { p, n, .. }
             | Element::Inductor { p, n, .. }
             | Element::Vcvs { p, n, .. }
+            | Element::BehavioralVoltage { p, n, .. }
             | Element::Ccvs { p, n, .. } => {
                 for (node, sign) in [(*p, 1.), (*n, -1.)] {
                     if let Some(i) = node.unknown() {
@@ -320,6 +337,9 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     }
                 }
                 match e {
+                    Element::BehavioralVoltage {cp,cn,expression,..} => {
+                        behaviors.push(CompiledBehavior{branch,cp:*cp,cn:*cn,expression:expression.clone()});
+                    }
                     Element::Voltage { volts, .. } => rhs[branch] = *volts,
                     Element::Inductor { henries, .. } => charge.add(branch, branch, -henries),
                     Element::Vcvs { cp, cn, gain, .. } => {
@@ -371,6 +391,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
         diodes,
         switches,
         mos1,
+        behaviors,
         bsim330,
     })
 }
