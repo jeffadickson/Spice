@@ -172,7 +172,7 @@ public static partial class ControlVectorExecution
                     if(active && exit is null)
                     {
                         var target=command.RedirectTarget!;
-                        if(target.Length is <1 or >64 || target.Any(c=>!char.IsAsciiLetterOrDigit(c)&&c!='_'))
+                        if(!ControlReportTarget.IsSafe(target))
                             throw new InvalidDataException("invalid_control_redirect_target");
                         var value=Scalar(Evaluate(argument));
                         redirected[target]=argument+" = "+value.ToString("0.000000e+00",CultureInfo.InvariantCulture);

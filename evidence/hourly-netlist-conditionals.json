@@ -1,0 +1,71 @@
+{
+  "base_commit": "36dd27702ced86ad4189acad65a67d98a0300b62",
+  "working_tree_modified": true,
+  "platform": "windows-x64",
+  "deck": "regression/misc/if-elseif.cir",
+  "corpus_commit": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "deck_sha256": "8eba794f06be8f795c8344c184569c3dc57b04a643a8303253ddbe32ef02541c",
+  "engine_sha256": "e36575524752b77035b206483a6fd8e2d11d62beff700b91414d5c8db169d5be",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "new_agreeing_decks": 1,
+  "voltage_error_v": 0,
+  "source_current_error_a": 4.336808689942018E-19,
+  "original_assertion_exit": 0,
+  "report_value": 300,
+  "source_hashes": {
+    "dotnet/Simulator.Syntax/NetlistConditionalSelection.cs": "2dad3d3e6eda5ee743d7fc609f68b1e5f5a3d1269d8693844c5d2811e5e969f2",
+    "dotnet/Simulator.Syntax/ControlReportTarget.cs": "dce85b0f3d19396f3eac6d7576113aaeeb59fe5c1928afb4703b34cfecfa4574",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "5b2ad263cae5fd6e2ec6d493b6e9024f66fce7cf135134af9f7c94d13ceb01c0",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "25e71172d3e660bebe768c3837f0554512d2095a79e7c61f8ce822675ba9e50c",
+    "dotnet/Simulator.Frontend/RequestedControlReporting.cs": "f36f800f9a0e1e9e20fb91064e84d4f25fcbfcf85344666b7fe1c323ef37c35d"
+  },
+  "artifacts": "E:/Artifacts/Spice-hourly-if-36dd277",
+  "syntax_tests": {
+    "passed": 477,
+    "failed": 0,
+    "skipped": 1
+  },
+  "frontend_tests": {
+    "passed": 802,
+    "failed": 0,
+    "skipped": 40
+  },
+  "property": {
+    "framework": "FsCheck.Xunit 3.5.0",
+    "cases": 80,
+    "replay": "883,20261111"
+  },
+  "mutation": {
+    "test_failures": 7,
+    "killed": 1,
+    "method": "one targeted manual truth inversion; not a full Stryker campaign",
+    "source_restored_sha256": "2dad3d3e6eda5ee743d7fc609f68b1e5f5a3d1269d8693844c5d2811e5e969f2",
+    "other_tests_passed": 16
+  },
+  "coverage": {
+    "NetlistConditionalSelection": {
+      "branch_percent": 98.33,
+      "line_percent": 90.16,
+      "scope": "full frontend class"
+    },
+    "ControlReportTarget": {
+      "branch_percent": 90,
+      "line_percent": 100,
+      "scope": "syntax class"
+    }
+  },
+  "limits": [
+    "40 frontend external-prerequisite skips",
+    "one exFAT symlink syntax skip",
+    "root unconditional parameter profile only",
+    "no new Rust coverage",
+    "no full Stryker or separate long fuzz campaign",
+    "PZ/TF/sensitivity conditional routes unqualified",
+    "no Linux GPU or production qualification"
+  ],
+  "commands": [
+    "& 'E:/Artifacts/Spice-hourly-if-36dd277/Guard.ps1' -Job 'E:/Artifacts/Spice-hourly-if-36dd277/FrontendRegression.ps1' -Folder 'E:/Artifacts/Spice-hourly-if-36dd277/frontend-regression-final'",
+    "& 'E:/Artifacts/Spice-hourly-if-36dd277/Guard.ps1' -Job 'E:/Artifacts/Spice-hourly-if-36dd277/SyntaxRegression.ps1' -Folder 'E:/Artifacts/Spice-hourly-if-36dd277/syntax-regression-850'",
+    "& 'E:/Artifacts/Spice-hourly-if-36dd277/GuardSmall.ps1' -Job 'E:/Artifacts/Spice-hourly-if-36dd277/CorpusFinal.ps1' -Folder 'E:/Artifacts/Spice-hourly-if-36dd277/corpus-final-guard'"
+  ]
+}

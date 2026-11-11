@@ -1,0 +1,46 @@
+[DOCUMENT]
+TITLE: Bounded Netlist Branch Execution
+
+[REQUIREMENT]
+UID: REQ-NETLIST-CONDITIONAL-001
+STATUS: Draft
+TITLE: Root conditional branch selection before circuit preparation
+STATEMENT: >>>
+Requested OP, DC, AC and transient preparation shall select exactly one reachable branch of balanced root .if/.elseif/.else/.endif blocks using finite scalar expressions and unconditional root parameters. Zero is false; any finite nonzero value is true. A taken branch shall suppress later alternatives, and an inactive parent shall suppress nested condition evaluation. Inactive devices, model definitions, analyses, control blocks and initial conditions shall be removed together before binding or numerical preparation. Source syntax, original ranges and stable declaration identities shall be retained independently of execution selection.
+<<<
+COMMENT: >>>
+Implementation: DeclarationExtraction retains generated conditional arguments; NetlistConditionalSelection uses ParameterEvaluator without introducing a lexer or expression interpreter. RequestedAnalysis.Prepare invokes selection; terminal reporting repeats the same deterministic selection. NetlistConditionalTests covers nested branches, equality spellings, negative/nonzero conditions, inactive analyses, malformed structures, atomic refusal and an 80-case FsCheck property with replay 883,20261111. See docs/netlist-conditionals-results.md and evidence/hourly-netlist-conditionals.json. This is a bounded executed profile, not full netlist conditional compatibility.
+<<<
+
+[REQUIREMENT]
+UID: REQ-NETLIST-CONDITIONAL-002
+STATUS: Draft
+TITLE: Atomic bounded conditional preparation
+STATEMENT: >>>
+Conditional preparation shall refuse malformed or unmatched delimiters, duplicate .else, .elseif after .else, missing or nonfinite evaluated conditions, more than 256 conditional markers and more than 64 nested blocks without publishing a partial request plan. This profile shall explicitly refuse scoped conditions, conditional parameter declarations, unresolved resources and other unresolved declaration contexts. Unreachable condition expressions shall not be evaluated.
+<<<
+COMMENT: >>>
+Verification: NetlistConditionalTests exercises these boundaries, including 64 accepted blocks, 65 refused blocks, a 258-marker refusal, missing symbols, division by zero, unresolved includes and scoped declarations. No instance-dependent or temperature-dependent branch elaboration, conditional include loading, PZ/TF/sensitivity-path coverage, or formal verification is claimed.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-REPORT-TARGET-001
+STATUS: Draft
+TITLE: Owned reports with safe leaf filenames
+STATEMENT: >>>
+For generated scalar print-redirection commands, the leaf-name validation policy shall permit one to 64 ASCII letters, digits, underscores, hyphens or periods, starting with a letter, digit or underscore. Consecutive periods and a trailing period shall refuse. Paths, drive prefixes, append operators and shell separators shall refuse. Recognition and execution shall enforce the same validation. Accepted redirection shall return caller-owned report data without writing a file or invoking a shell. Generated command grammar recognition remains a separate prerequisite.
+<<<
+COMMENT: >>>
+ControlReportTarget supplies the shared check in ControlExtraction and ControlVectorExecution. ControlVectorExecutionTests independently exercises safe test.log and analysis-results.txt names and negative path/append/separator cases. File publication remains the caller's responsibility.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-BRANCH-ALIAS-001
+STATUS: Draft
+TITLE: Original signed branch-current vector aliases
+STATEMENT: >>>
+Terminal reporting shall expose each mapped original native branch current through both i(name) and name#branch, preserving the same signed numerical samples and requiring complete successful analysis responses. It shall not calculate a substitute current from an unrelated signal or return zero for an unavailable branch.
+<<<
+COMMENT: >>>
+RequestedControlReporting maps both names to the same real native branch unknown. NetlistConditionalTests exercises a synthetic signed source current and original-style assertions; unchanged regression/misc/if-elseif.cir verifies the complete path with the Rust engine and ngspice. The original deck returns out=300, INFO: nested .if test o.k., exit zero and captured test.log data. Synthetic test fixtures alone are not numerical evidence.
+<<<

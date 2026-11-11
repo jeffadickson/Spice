@@ -1,4 +1,32 @@
-# Latest work — shared controls and grammar implementation map
+# Latest checkpoint — hourly original-deck campaign, November 10
+
+Use C:/dev/spice-deck-next, branch fix/deck-blocker-implementation. Preserve
+canonical main and unknown changes; this campaign authorizes local verified
+commits, no pushes or CI. It has a hard stop 2026-11-11T23:53:39Z.
+
+Read docs/netlist-conditionals-results.md, docs/netlist-conditionals.sdoc and
+evidence/hourly-netlist-conditionals.json. Original RSpice
+regression/misc/if-elseif.cir now selects its nested 300-ohm branch, executes OP,
+agrees on voltage/current with ngspice, and executes its original assertions with
+out=300, INFO success and exit zero. Captured test.log is owned data, not a file
+write. Root branch selection reuses generated arguments and ParameterEvaluator;
+name#branch aliases reuse the signed numerical source-current signal.
+
+One newly executing/agreeing deck in this campaign. Syntax 477 passed/1 platform
+skip; frontend 802 passed/40 external-prerequisite skips; 80 FsCheck cases replay
+883,20261111; one deliberate truth-inversion mutant killed by seven regressions.
+Scoped class coverage and resource-killed/stale-expectation attempts are retained
+honestly in the results. Artifacts remain E:/Artifacts/Spice-hourly-if-36dd277.
+
+Next select another genuinely failing original deck. mosmem source-continuation
+failure, ac-resistance mixed control/PZ dispatch and log-functions behavioral
+evaluation remain open. Conditional parameters, instance-scoped decisions,
+conditional includes and temperature-dependent netlist branches are outside the
+new bounded profile. Do not count syntax acceptance as numerical progress or
+rerun prior passing decks as newly unlocked. See ignored
+work/hourly-deck-progress.json and recheck resources/active jobs before dispatch.
+
+# Previous work — shared controls and grammar implementation map
 
 This section supersedes older next-step directions below. Execute issue34 using
  docs/shared-control-plan.md. Branch feature/issue34-shared-controls in

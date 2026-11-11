@@ -64,6 +64,9 @@ public static partial class RequestedAnalysis
   ArgumentNullException.ThrowIfNull(syntax);
   if(maxPoints is <1 or >100000)throw new ArgumentOutOfRangeException(nameof(maxPoints));
   RequestedAnalysisPlan Fail(string code,SourceRange? range)=>new([],[new(code,range)]);
+  var branches=NetlistConditionalSelection.Select(syntax);
+  if(branches.Diagnostic is {} branchFailure)return Fail(branchFailure.Code,branchFailure.Range);
+  syntax=branches.Syntax;
   if(syntax.Status!="accepted_structure"||syntax.Declarations is not {} catalog)return Fail("syntax_not_accepted",null);
   var forbidden=catalog.Cards.FirstOrDefault(c=>c.Kind=="extension"&&OperatingPointSelection.OmissionReason(c)=="analysis_not_selected"||c.ScopeId!=0&&c.Kind is "op" or "dc" or "ac" or "tran");
   if(forbidden!=null)return Fail("unsupported_requested_program",forbidden.Range);

@@ -60,7 +60,7 @@ internal static class ControlExtraction
       kind=exit.NUMBER()?.GetText() switch {null=>"quit","0" or "1"=>"quit_status",_=>"unsupported"};break;
      case SpiceParser.ControlRedirectContext capturePrint:
       redirect=capturePrint.identifier(2).GetText();argument=capturePrint.identifier(1).GetText();
-      kind=redirect.Length is >0 and <=64&&redirect.All(c=>char.IsAsciiLetterOrDigit(c)||c=='_')?"report_redirect":"unsupported";break;
+      kind=ControlReportTarget.IsSafe(redirect)?"report_redirect":"unsupported";break;
      case SpiceParser.ControlPowerVectorTypeContext vectorType:
       const string powerSuffix=":power";
       var vectorName=vectorType.identifier(2).GetText();

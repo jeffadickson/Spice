@@ -9,6 +9,9 @@ public static partial class RequestedAnalysis
     public static ControlVectorReport ExecuteTerminalReporting(DeckSyntax syntax,RequestedAnalysisPlan plan,
         IReadOnlyList<SimulationResponse> responses)
     {
+        var selected=NetlistConditionalSelection.Select(syntax);
+        if(selected.Diagnostic is not null)throw new InvalidDataException("control_reporting_conditional_selection_failed");
+        syntax=selected.Syntax;
         if(!plan.Success || plan.CircuitPreparation is not {} circuit ||
             syntax.Declarations?.ControlBlocks is not { Length: 1 } blocks)
             throw new InvalidDataException("control_reporting_not_prepared");
@@ -41,6 +44,9 @@ public static partial class RequestedAnalysis
         foreach(var element in circuit.Origins.Where(e=>e.InstancePath.IsEmpty&&e.NativeBranchName!=null))
         {
             Add("i("+element.NativeBranchName+")","i("+element.WireId+")");
+            // Nutmeg exposes the same signed MNA branch unknown through both
+            // i(source) and source#branch. Do not synthesize a second current.
+            Add(element.NativeBranchName+"#branch","i("+element.WireId+")");
             // This is the original source card's DC setting, not the DC sweep axis.
             if(circuit.Request!.Circuit.Elements.Single(e=>e.Id==element.WireId) is Voltage source)
                 inputs.TryAdd("@"+element.NativeBranchName+"[dc]",[source.Volts]);

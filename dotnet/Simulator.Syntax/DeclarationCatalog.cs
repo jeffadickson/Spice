@@ -58,7 +58,15 @@ public sealed record LibrarySectionEnd(SourceSyntax? Name,bool Supported,SourceR
     public int ScopeId { get; init; }
 }
 /// <summary>A conditional or alternate parameter declaration whose semantics remain unresolved.</summary>
-public sealed record DeferredDeclarationContext(string Kind,SourceRange Range);
+public sealed record DeferredDeclarationContext(string Kind,SourceRange Range)
+{
+    /// <summary>Lexical owner retained for bounded netlist branch preparation.</summary>
+    public int ScopeId { get; init; }
+    /// <summary>Generated conditional argument, absent on .else/.endif or malformed headers.</summary>
+    public SourceSyntax? Condition { get; init; }
+    /// <summary>True only for one condition argument or an argument-free closing delimiter.</summary>
+    public bool ConditionalSyntaxValid { get; init; }
+}
 /// <summary>Catalog ambiguity with both physical declaration locations; not a ngspice syntax verdict.</summary>
 public sealed record DeclarationDiagnostic(string Code,string Name,SourceRange Range,SourceRange Related);
 /// <summary>Observed lookup candidates. Provisional means unresolved inputs may still affect the catalog.</summary>

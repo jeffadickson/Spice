@@ -187,7 +187,16 @@ internal sealed class DeclarationExtraction
         if(primitive!=null){primitives.Add(primitive);return;}
         if(!exports.IsEmpty)return;
         if(card is SpiceParser.ExtensionContext extension && extension.Start.Text.ToLowerInvariant() is ".if" or ".elseif" or ".else" or ".endif" or ".csparam" or ".sndparam")
-        {deferredContexts.Add(new(extension.Start.Text.ToLowerInvariant(),Range(extension)));return;}
+        {
+            var conditional=extension.Start.Text.ToLowerInvariant();
+            var arguments=extension.parameter();
+            deferredContexts.Add(new(conditional,Range(extension))
+            {
+                ScopeId=owner,
+                Condition=conditional is ".if" or ".elseif" && arguments.Length==1 ? Capture(arguments[0]) : null,
+                ConditionalSyntaxValid=conditional is ".if" or ".elseif" ? arguments.Length==1 : arguments.Length==0
+            });return;
+        }
         if(card is SpiceParser.ExtensionContext ending&&ending.Start.Text.Equals(".endl",StringComparison.OrdinalIgnoreCase))
         {
             var tail=InstanceExtraction.Tail(ending.parameter(),Capture,Parameter);

@@ -70,9 +70,25 @@ public sealed class ControlVectorExecutionTests
     }
 
     [Theory]
+    [InlineData("test.log")]
+    [InlineData("analysis-results.txt")]
+    public void Redirect_accepts_a_safe_leaf_filename_as_owned_data(string target)
+    {
+        var syntax=DeckParser.Parse("report\nV1 out 0 1\n.control\nlet zero=0\nprint zero > "+target+
+            "\n.endc\n.end\n",collectDeclarations:true);
+        var report=ControlVectorExecution.Execute(Assert.Single(syntax.Declarations!.ControlBlocks).Commands,
+            new Dictionary<string,double[]>());
+        Assert.Equal("zero = 0.000000e+00",report.Redirected[target]);
+    }
+
+    [Theory]
     [InlineData("print zero > ../escape")]
     [InlineData("print zero >> capture")]
     [InlineData("print zero > capture; shell")]
+    [InlineData("print zero > a..log")]
+    [InlineData("print zero > .hidden")]
+    [InlineData("print zero > a.")]
+    [InlineData("print zero > C:escape")]
     public void Redirect_rejects_paths_append_and_separators(string command)
     {
         var syntax=DeckParser.Parse("report\nV1 out 0 1\n.control\nlet zero=0\n"+
