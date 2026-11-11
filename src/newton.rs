@@ -775,16 +775,29 @@ fn limited_candidate(
     current: &[f64],
     delta: &[f64],
     alpha: f64,
+    establishing_voltage_constraints: bool,
 ) -> (Vec<f64>, bool) {
     let mut limit = 1_f64;
     for diode in &plan.diodes {
         let old = voltage(current, diode.p, diode.n);
         let change = voltage(delta, diode.p, diode.n);
-        // Thermal-voltage scaling keeps the same exponent increment across
-        // valid diode parameter ranges. The full MNA vector shares one scale.
+        // Forward growth needs thermal-voltage scaling to bound the exponential.
+        // While establishing independent voltage constraints, reverse bias has
+        // no exponential growth: use the classic SPICE reverse
+        // floor (-old-1 V from a positive bias, otherwise 2*old-1 V). Applying
+        // the forward 2-Vt ceiling in both directions can exhaust the default
+        // iteration budget on an ordinary five-volt reverse-biased junction.
+        // Once voltage constraints are feasible, retain the conservative thermal
+        // limiter: a larger step can change the basin of a bistable MOS circuit
+        // during Gmin reduction. The full MNA vector shares one scale throughout.
         let maximum_change = (2. * diode.model.thermal_volts()).min(0.5);
-        if change.abs() > maximum_change {
+        if change > maximum_change || (!establishing_voltage_constraints && -change > maximum_change) {
             limit = limit.min(maximum_change / change.abs());
+        } else if change < 0. {
+            let reverse_headroom = if old > 0. { 2. * old + 1. } else { 1. - old };
+            if -change > reverse_headroom {
+                limit = limit.min(reverse_headroom / -change);
+            }
         }
         if change > 0. {
             let ceiling = (700. * diode.model.thermal_volts()).min(f64::MAX);
@@ -905,13 +918,17 @@ fn solve_from_rhs(
         };
         let mut accepted = None;
         for attempt in 0..12 {
-            let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-attempt));
-            let Ok(candidate_system) =
+            let (candidate, damped) = limited_candidate(plan, &values, &delta, 2f64.powi(-attempt), references.is_some());
+            let candidate_system = match
                 linearize_with_rhs_gmin(plan, &candidate, rhs, options.gmin_siemens, None)
-            else {
+            {
+                Ok(system) => system,
+                Err(error) => {
                 // A trial can overflow even with finite provider components.
                 // Smaller steps may remain inside the already-validated model.
+                tracing::trace!(iteration, attempt, reason = %error, "newton_trial_rejected");
                 continue;
+                }
             };
             let candidate_residual =
                 scaled_residual_norm(plan, &candidate_system.residual, rhs, options)?;
@@ -1208,7 +1225,7 @@ pub fn solve_backward_euler_step(
         let mut accepted = None;
         for attempt in 0..12 {
             let (candidate, damped) =
-                limited_candidate(plan, &values, &update, 2f64.powi(-attempt));
+                limited_candidate(plan, &values, &update, 2f64.powi(-attempt), references.is_some());
             let Ok(candidate_system) =
                 linearize_backward_euler(plan, &candidate, previous, step_s, rhs)
             else {
@@ -1260,6 +1277,50 @@ mod trial_contracts {
     };
 
     #[test]
+    fn reverse_junction_steps_use_a_voltage_bound_not_forward_exponential_scaling() {
+        let plan = compile(&Circuit {
+            nodes: vec!["0".into(), "x".into()],
+            elements: vec![Element::Diode {
+                id: "D".into(), p: NodeId(1), n: NodeId(0),
+                saturation_amps: 1e-12, thermal_volts: 0.025,
+            }],
+        }).unwrap();
+        // The bounded reverse floor starts at -1 V and doubles the already
+        // negative bias plus one volt. It is independent of the forward Vt.
+        for (old, delta, expected) in [(0., -5., -1.), (-1., -5., -3.), (-3., -1., -4.), (0.5, -5., -1.5)] {
+            let (candidate, _) = limited_candidate(&plan, &[old], &[delta], 1., true);
+            assert!((candidate[0] - expected).abs() < 1e-14);
+            let (half, damped) = limited_candidate(&plan, &[old], &[delta], 0.5, true);
+            assert!((half[0] - (old + (expected-old)*0.5)).abs() < 1e-14);
+            assert!(damped);
+        }
+        let (conservative, _) = limited_candidate(&plan, &[0.], &[-5.], 1., false);
+        assert!((conservative[0] + 0.05).abs() < 1e-14);
+    }
+
+    proptest::proptest! {
+        #[test]
+        fn reverse_trials_stay_between_the_old_bias_and_the_reverse_floor(
+            old in -20f64..1., change in -1000f64..-0.01, alpha in 0.01f64..1.
+        ) {
+            let plan = compile(&Circuit {
+                nodes: vec!["0".into(), "x".into()],
+                elements: vec![Element::Diode {
+                    id: "D".into(), p: NodeId(1), n: NodeId(0),
+                    saturation_amps: 1e-12, thermal_volts: 0.025,
+                }],
+            }).unwrap();
+            let (candidate, _) = limited_candidate(&plan, &[old], &[change], alpha, true);
+            let floor = if old > 0. { -old-1. } else { 2.*old-1. };
+            proptest::prop_assert!(candidate[0].is_finite());
+            proptest::prop_assert!(candidate[0] <= old);
+            proptest::prop_assert!(candidate[0] >= floor-1e-12);
+            // The exponential current cannot increase on this negative step.
+            proptest::prop_assert!(candidate[0].exp() <= old.exp());
+        }
+    }
+
+    #[test]
     fn trial_ceiling_and_damping_evidence_have_exact_boundary_semantics() {
         let vt = 0.025;
         let plan = compile(&Circuit {
@@ -1277,22 +1338,22 @@ mod trial_contracts {
         // than the two-Vt increment. Backtracking must contract that bound.
         let old = 699.5 * vt;
         let ceiling = 700. * vt;
-        let (full, damped) = limited_candidate(&plan, &[old], &[2. * vt], 1.);
+        let (full, damped) = limited_candidate(&plan, &[old], &[2. * vt], 1., false);
         assert!((full[0] - ceiling).abs() < 1e-14);
         assert!(damped);
-        let (half, damped) = limited_candidate(&plan, &[old], &[2. * vt], 0.5);
+        let (half, damped) = limited_candidate(&plan, &[old], &[2. * vt], 0.5, false);
         assert!((half[0] - (old + (ceiling - old) * 0.5)).abs() < 1e-14);
         assert!(damped);
         // A safe negative correction is not limited. Its evidence flag must
         // distinguish a full step from an explicitly backtracked step.
-        let (reverse, damped) = limited_candidate(&plan, &[old], &[-vt], 1.);
+        let (reverse, damped) = limited_candidate(&plan, &[old], &[-vt], 1., false);
         assert_eq!(reverse[0], old - vt);
         assert!(!damped);
-        assert!(limited_candidate(&plan, &[old], &[-vt], 0.5).1);
+        assert!(limited_candidate(&plan, &[old], &[-vt], 0.5, false).1);
         // Signed zero is a valid provider correction. A >=0 ceiling predicate
         // would divide by -0 and introduce an infinite limiter/NaN candidate.
         for zero in [0., -0.] {
-            let (unchanged, damped) = limited_candidate(&plan, &[old], &[zero], 1.);
+            let (unchanged, damped) = limited_candidate(&plan, &[old], &[zero], 1., false);
             assert_eq!(unchanged, vec![old]);
             assert!(!damped);
         }
@@ -1318,11 +1379,11 @@ mod survivor_norm_contracts {
         )
         .unwrap();
         let delta = [0.05, 0.125];
-        let (candidate, damped) = limited_candidate(&plan, &[0., 0.], &delta, 1.);
+        let (candidate, damped) = limited_candidate(&plan, &[0., 0.], &delta, 1., false);
         assert_eq!(candidate, delta);
         assert!(!damped);
         for alpha in [0.5, 0.25, 0.125] {
-            let (_, damped) = limited_candidate(&plan, &[0., 0.], &delta, alpha);
+            let (_, damped) = limited_candidate(&plan, &[0., 0.], &delta, alpha, false);
             assert!(damped);
         }
     }
@@ -1500,7 +1561,7 @@ mod november3_feasibility_contracts {
         let values = [2. + 0.5e-9, -0.02];
         let delta = [2. - values[0], 10.];
         for alpha in [1., 0.5, 0.125] {
-            let (candidate, _) = limited_candidate(&p, &values, &delta, alpha);
+            let (candidate, _) = limited_candidate(&p, &values, &delta, alpha, false);
             assert!(
                 !voltage_constraints_infeasible(&p, &[0., candidate[0] - 2.], &p.rhs, o).unwrap()
             );

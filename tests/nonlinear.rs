@@ -21,6 +21,17 @@ use circuit_simulator::{
 };
 
 #[test]
+fn reverse_biased_five_volt_junction_converges_with_the_default_budget() {
+    let plan = compile(&parse("* Reverse diode\nV1 out 0 5\nR1 out 0 100\nD1 0 out 1p 25m").unwrap()).unwrap();
+    for solver in [&DenseLu as &dyn circuit_simulator::linalg::LinearSolver, &DenseQr] {
+        let (state, report) = solve(&plan, solver, NewtonOptions::default()).unwrap();
+        assert!((state[0] - 5.).abs() < 1e-12);
+        assert!((state[1] + 0.05 + 1e-12).abs() < 1e-12);
+        assert!(report.iterations < 10, "reverse bias should not require one step per 2 Vt");
+    }
+}
+
+#[test]
 fn configured_backward_euler_accepts_nonlinear_diode_steps() {
     let circuit = Circuit {
         nodes: vec!["0".into(), "s".into(), "a".into()],

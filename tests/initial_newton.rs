@@ -10,6 +10,25 @@ use circuit_simulator::{
 };
 use std::sync::atomic::{AtomicUsize, Ordering};
 
+#[test]
+fn mos_memory_initial_bias_finishes_with_fifty_corrections_per_gmin_stage() {
+    // Original mosmem topology lowered through the public frontend. This is a
+    // strict DC startup probe, not a claim that its requested transient runs.
+    // A 500-correction baseline required 101 corrections in the first stage;
+    // final physical state and tolerances must survive the faster feasibility path.
+    let request: circuit_simulator::api::Request = serde_json::from_str(
+        include_str!("fixtures/mosmem_initial_gmin.json")
+    ).unwrap();
+    let result = circuit_simulator::api::run(&request).unwrap();
+    let report = result.newton.unwrap();
+    let stages = report.gmin_continuation.unwrap();
+    assert!(stages.final_unregularized);
+    assert!(stages.stages[0].iterations <= 12);
+    assert!(report.linear_solves < 150);
+    assert!(report.residual_inf < 1e-12);
+    assert!((result.samples[0].values[0] - 5.).abs() < 1e-12);
+}
+
 // Count the actual supplied provider, including initialization. No alternative
 // numerical provider can satisfy these accounting assertions unnoticed.
 struct RecordingLu(AtomicUsize);

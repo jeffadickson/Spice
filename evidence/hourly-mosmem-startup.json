@@ -1,0 +1,361 @@
+{
+  "state": "verified_startup_checkpoint_full_transient_open",
+  "base_commit": "e3395dd8dbfb76f5f16816981073cdbab4e3f1c8",
+  "source_hash": "352637662ed7c3bca41a2c01c223244897c05bab68178128a798c5d2cc27f883",
+  "original_deck": "general/mosmem.cir",
+  "original_deck_sha256": "6d5bd5a8e00f1f51f1c1c465bf8f80851cbc7c731623f11a4db1052389c39667",
+  "corpus_commit": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "requested_transient_completed": false,
+  "new_agreeing_original_decks": 0,
+  "campaign_completed_decks": 1,
+  "startup_scope": "explicit strict Faer Gmin DC, not original transient execution",
+  "startup_old_linear_solves": 201,
+  "startup_new_linear_solves": 109,
+  "old_first_gmin_iterations": 101,
+  "new_first_gmin_iterations": 9,
+  "final_gmin_removed": true,
+  "final_state_difference": 0,
+  "default_reference_comparison": {
+    "agreed": false,
+    "native_points": 150,
+    "observables": [
+      {
+        "absolute_error": 0,
+        "actual": 5,
+        "agreed": true,
+        "engine": "v(n1)",
+        "expected": 5,
+        "native": "v(9)",
+        "tolerance": 0.000501,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 2,
+        "agreed": true,
+        "engine": "v(n2)",
+        "expected": 2,
+        "native": "v(7)",
+        "tolerance": 0.000201,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 0,
+        "agreed": true,
+        "engine": "v(n3)",
+        "expected": 0,
+        "native": "v(1)",
+        "tolerance": 1E-06,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 2,
+        "agreed": true,
+        "engine": "v(n4)",
+        "expected": 2,
+        "native": "v(2)",
+        "tolerance": 0.000201,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0.002340002454498613,
+        "actual": 2.6709589395869244,
+        "agreed": false,
+        "engine": "v(n5)",
+        "expected": 2.668618937132426,
+        "native": "v(3)",
+        "tolerance": 0.0002680958939586925,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 1.741898634144423E-05,
+        "actual": 0.17776459196577216,
+        "agreed": true,
+        "engine": "v(n7)",
+        "expected": 0.1777820109521136,
+        "native": "v(4)",
+        "tolerance": 1.877820109521136E-05,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0.0024476710625420672,
+        "actual": 2.670958939586924,
+        "agreed": false,
+        "engine": "v(n11)",
+        "expected": 2.668511268524382,
+        "native": "v(5)",
+        "tolerance": 0.00026809589395869243,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0.00012884817625402611,
+        "actual": 0.13507051459658329,
+        "agreed": false,
+        "engine": "v(n13)",
+        "expected": 0.1351993627728373,
+        "native": "v(6)",
+        "tolerance": 1.4519936277283733E-05,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0.0020713079358509745,
+        "actual": 2.670985581720051,
+        "agreed": false,
+        "engine": "v(n19)",
+        "expected": 2.6689142737842,
+        "native": "v(8)",
+        "tolerance": 0.0002680985581720052,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 2.0229017765082454E-09,
+        "actual": -2.7224922394624598E-05,
+        "agreed": true,
+        "engine": "i(e0)",
+        "expected": -2.722289949284809E-05,
+        "native": "i(vdd)",
+        "tolerance": 3.72249223946246E-09,
+        "unit": "A"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 0,
+        "agreed": true,
+        "engine": "i(e1)",
+        "expected": 0,
+        "native": "i(vs)",
+        "tolerance": 1E-09,
+        "unit": "A"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 0,
+        "agreed": true,
+        "engine": "i(e2)",
+        "expected": 0,
+        "native": "i(vw)",
+        "tolerance": 1E-09,
+        "unit": "A"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 0,
+        "agreed": true,
+        "engine": "i(e3)",
+        "expected": 0,
+        "native": "i(vwb)",
+        "tolerance": 1E-09,
+        "unit": "A"
+      }
+    ],
+    "points_compared": 1,
+    "scope": "Original transient time-zero only, compared with explicitly selected strict Faer/Gmin DC startup; NOT full transient agreement"
+  },
+  "new_fixture_test_pending": false,
+  "final_postmutation_tests_pending": false,
+  "current_source_coverage_pending": false,
+  "strictdoc_parse_pending": false,
+  "artifacts": "E:/Artifacts/Spice-hourly-mosmem-e3395dd",
+  "unscoped_prototype_rejected": true,
+  "native_tests_before_fixture": {
+    "initial_newton": 11,
+    "failed": 0,
+    "skipped": 0,
+    "lib": 25,
+    "scope": "final post-mutation run including retained startup fixture",
+    "mos1_channel": 8,
+    "nonlinear": 35
+  },
+  "property": {
+    "cases": 256,
+    "seed": "2026111107"
+  },
+  "mutation": {
+    "method": "manual production feasibility gates disabled; not full cargo-mutants",
+    "restored_sha256": "352637662ed7c3bca41a2c01c223244897c05bab68178128a798c5d2cc27f883",
+    "failing_tests": 2,
+    "passing_tests": 44,
+    "killed": 1
+  },
+  "limits": [
+    "four original default-reference startup voltage discrepancies remain",
+    "full transient Newton failure remains",
+    "secondary tight OP agreement does not replace default reference or waveform comparison",
+    "no stable Rust branch coverage",
+    "one manual mutant only, no complete cargo-mutants campaign",
+    "no source/main changes or push"
+  ],
+  "tight_secondary_reference": {
+    "agreed": true,
+    "native_points": 1,
+    "observables": [
+      {
+        "absolute_error": 0,
+        "actual": 5,
+        "agreed": true,
+        "engine": "v(n1)",
+        "expected": 5,
+        "native": "v(9)",
+        "tolerance": 0.000501,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 2,
+        "agreed": true,
+        "engine": "v(n2)",
+        "expected": 2,
+        "native": "v(7)",
+        "tolerance": 0.000201,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 0,
+        "agreed": true,
+        "engine": "v(n3)",
+        "expected": 0,
+        "native": "v(1)",
+        "tolerance": 1E-06,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 2,
+        "agreed": true,
+        "engine": "v(n4)",
+        "expected": 2,
+        "native": "v(2)",
+        "tolerance": 0.000201,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 4.440892098500626E-16,
+        "actual": 2.6709589395869244,
+        "agreed": true,
+        "engine": "v(n5)",
+        "expected": 2.670958939586924,
+        "native": "v(3)",
+        "tolerance": 0.0002680958939586925,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 5.006550729547143E-13,
+        "actual": 0.17776459196577216,
+        "agreed": true,
+        "engine": "v(n7)",
+        "expected": 0.1777645919652715,
+        "native": "v(4)",
+        "tolerance": 1.8776459196577218E-05,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 2.670958939586924,
+        "agreed": true,
+        "engine": "v(n11)",
+        "expected": 2.670958939586924,
+        "native": "v(5)",
+        "tolerance": 0.00026809589395869243,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 1.271593941254423E-12,
+        "actual": 0.13507051459658329,
+        "agreed": true,
+        "engine": "v(n13)",
+        "expected": 0.1350705145953117,
+        "native": "v(6)",
+        "tolerance": 1.4507051459658329E-05,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 2.670985581720051,
+        "agreed": true,
+        "engine": "v(n19)",
+        "expected": 2.670985581720051,
+        "native": "v(8)",
+        "tolerance": 0.0002680985581720052,
+        "unit": "V"
+      },
+      {
+        "absolute_error": 2.4923097440010533E-17,
+        "actual": -2.7224922394624598E-05,
+        "agreed": true,
+        "engine": "i(e0)",
+        "expected": -2.722492239464952E-05,
+        "native": "i(vdd)",
+        "tolerance": 3.7224922394649524E-09,
+        "unit": "A"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 0,
+        "agreed": true,
+        "engine": "i(e1)",
+        "expected": 0,
+        "native": "i(vs)",
+        "tolerance": 1E-09,
+        "unit": "A"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 0,
+        "agreed": true,
+        "engine": "i(e2)",
+        "expected": 0,
+        "native": "i(vw)",
+        "tolerance": 1E-09,
+        "unit": "A"
+      },
+      {
+        "absolute_error": 0,
+        "actual": 0,
+        "agreed": true,
+        "engine": "i(e3)",
+        "expected": 0,
+        "native": "i(vwb)",
+        "tolerance": 1E-09,
+        "unit": "A"
+      }
+    ],
+    "points_compared": 1,
+    "scope": "Secondary tight ngspice OP compared with strict Faer/Gmin startup; original default reference discrepancies remain; NOT full transient agreement"
+  },
+  "current_source_coverage": {
+    "branch_percent": null,
+    "limitations": [
+      "Stable Rust branch coverage unavailable",
+      "Other test suites, main and whole-project coverage excluded"
+    ],
+    "total_lines": 1000,
+    "file": "src/newton.rs",
+    "covered_lines": 740,
+    "source_sha256": "352637662ed7c3bca41a2c01c223244897c05bab68178128a798c5d2cc27f883",
+    "line_percent": 74,
+    "scope": "35 nonlinear integration tests, owned library instrumented by existing direct LLVM helper",
+    "seed": "88320261103"
+  },
+  "strictdoc_documents": 57,
+  "tools": {
+    "coverage": "matching LLVM via existing direct rustc integration helper",
+    "cargo": "1.99.1 (5f94df478 2026-08-27)",
+    "strictdoc": "0.30.4",
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)"
+  },
+  "broader_tests": {
+    "peak_tree_bytes": 835121152,
+    "switch_stagnation_and_pnp": 2,
+    "seed": "2026111108",
+    "sparse_ac_circuits": 5,
+    "pspice_switch": 6,
+    "sparse_dynamic": 7,
+    "failed": 0,
+    "skipped": 0
+  },
+  "native_passes_total": 99,
+  "fixture_sha256": "de26abe1d2ceaa10341102455ab426fe0d8806a958d1377e9c8005a222f53a23"
+}

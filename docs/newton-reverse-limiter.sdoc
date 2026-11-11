@@ -1,0 +1,24 @@
+[DOCUMENT]
+TITLE: Directional Junction Limiting During Voltage Feasibility
+
+[REQUIREMENT]
+UID: REQ-NEWTON-REVERSE-LIMIT-001
+STATUS: Draft
+TITLE: Bounded reverse-junction progress while establishing voltage constraints
+STATEMENT: >>>
+While independent linear voltage constraints are infeasible, Newton trial generation shall limit a decreasing diode voltage to a reverse floor of minus the old voltage minus one volt when the old voltage is positive, or twice the old voltage minus one volt otherwise. Increasing diode voltage shall retain the existing thermal-voltage growth and exponential-domain limits. All MNA unknowns shall share the same limiting and backtracking factor. Once linear voltage constraints are feasible, the conservative thermal-voltage limiter shall remain active in both directions. Model equations, residual tolerances, correction budgets and mandatory final Gmin removal shall remain unchanged.
+<<<
+COMMENT: >>>
+Implementation: limited_candidate and the DC/transient Newton call sites in src/newton.rs use the already evaluated voltage-feasibility phase. Tests: reverse_junction_steps_use_a_voltage_bound_not_forward_exponential_scaling; reverse_trials_stay_between_the_old_bias_and_the_reverse_floor; reverse_biased_five_volt_junction_converges_with_the_default_budget. The reverse-floor behavior was checked against pinned ngspice DEVpnjlim and RSpice semiconductor/limiting.rs. This is a shared MNA direction limiter, not a claim to implement either complete device-local limiter.
+<<<
+
+[REQUIREMENT]
+UID: REQ-NEWTON-MOSMEM-STARTUP-001
+STATUS: Draft
+TITLE: Strict MOS memory startup evidence remains separate from transient execution
+STATEMENT: >>>
+The retained original MOS memory topology shall complete the explicitly selected strict Faer/Gmin operating-point startup fixture with at most 50 corrections per stage, finite physical states, residual below 1e-12, and final unregularized Gmin removal. Qualification shall compare original root voltages and independent-source currents with the original ngspice transient time-zero sample. This startup result shall not be counted as completed execution or agreement of the original requested transient.
+<<<
+COMMENT: >>>
+Fixture: tests/fixtures/mosmem_initial_gmin.json, derived from unchanged RSpice general/mosmem.cir at 29c28a022625fd7cc2c56ead1cce2d3066663074, original SHA-256 6d5bd5a8e00f1f51f1c1c465bf8f80851cbc7c731623f11a4db1052389c39667. Test: mos_memory_initial_bias_finishes_with_fifty_corrections_per_gmin_stage in tests/initial_newton.rs. The initial unconstrained reverse-limiter experiment regressed this startup and was rejected; phase-specific limiting preserves the physical state. See docs/newton-reverse-limiter-results.md and evidence/hourly-mosmem-startup.json for measured scope and open failures.
+<<<

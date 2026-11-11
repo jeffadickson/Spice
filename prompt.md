@@ -1,4 +1,25 @@
-# Latest checkpoint — hourly original-deck campaign, November 10
+# Latest checkpoint — MOS startup convergence, November 11
+
+The phase-specific reverse-junction limiter is qualified in
+docs/newton-reverse-limiter-results.md and evidence/hourly-mosmem-startup.json.
+Strict Faer/Gmin startup of the original mosmem topology now finishes with a
+50-correction stage ceiling: first stage9 instead of101, total109 instead of201
+linear solves, identical physical state and final Gmin removal.99 named native
+checks pass, including the retained startup fixture and switch/PNP/sparse
+regressions. One manual gate mutant is detected by two integration regressions.
+Current newton.rs LLVM scope is740/1000lines; stable branch maps are unavailable.
+All57StrictDoc documents parse. Raw data stays E:/Artifacts/Spice-hourly-mosmem-e3395dd.
+
+This does not unlock the full original mosmem transient. Its source continuation
+still fails near scale0.4188232421875; diagnostic Gmin startup reaches a later
+transient line-search failure. Locate the failing time/step next. Default-ngspice
+time-zero comparison agrees9/13, with four voltage discrepancies up to2.45mV.
+The separate tight OP reference agrees13/13 within1.28pV and0.025fA; retain both
+results and do not substitute the secondary reference for default conformance.
+Campaign completed-original-deck count remains1. Preserve canonical main and
+the20-hour hard deadline2026-11-11T23:53:39Z; local verified commits only, no CI/push.
+
+# Previous checkpoint — hourly original-deck campaign, November 10
 
 Use C:/dev/spice-deck-next, branch fix/deck-blocker-implementation. Preserve
 canonical main and unknown changes; this campaign authorizes local verified
