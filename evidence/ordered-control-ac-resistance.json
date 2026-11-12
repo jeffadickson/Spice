@@ -1,0 +1,77 @@
+{
+  "base_commit": "9eb218000b14b3cd4b76aae5371564dd2a969433",
+  "source_dirty": true,
+  "artifact_root": "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322",
+  "original": "regression/pz/ac-resistance.cir",
+  "input_sha256": "67eaee3f9dc985eea530f84e386ba675a6e95494434fe8ba4e2cc7d1977c47a1",
+  "original_analyses": [
+    "op",
+    "ac",
+    "pz"
+  ],
+  "original_assertions_success": 3,
+  "new_agreeing_original_decks": 1,
+  "dense_and_faer_agree": true,
+  "frontend_tests": {
+    "skipped": 40,
+    "passed": 847
+  },
+  "syntax_tests": {
+    "skipped": 1,
+    "passed": 496
+  },
+  "strictdoc_documents": 62,
+  "frontend_run_coverage": {
+    "branches_valid": 9860,
+    "branches_covered": 6178,
+    "lines_covered": 20989,
+    "lines_valid": 26779
+  },
+  "syntax_run_coverage": {
+    "branches_valid": 4617,
+    "branches_covered": 2612,
+    "lines_covered": 7043,
+    "lines_valid": 10908
+  },
+  "mutations": {
+    "maintained_framework_campaign": "not run in this checkpoint",
+    "manual_attempted": 2,
+    "killed": 2
+  },
+  "properties": {
+    "complex_replay": "5002,2026111201",
+    "ordered_cases": 100,
+    "ordered_replay": "3404,20261105",
+    "complex_cases": 128
+  },
+  "source_hashes": {
+    "compat/ngspice/grammar-implementation.json": "57ab6e1dab4e8ea2b990839b76b602181b5185c63c06b55f89855395507c7c60",
+    "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs": "8f551653c7d3ed021ac813e7c1d02acfbe68df5309495f2cf8bb82d562deb6a7",
+    "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs": "acc4081989f36860bca77757f15c725179625b2215f152efecd51894d994809c",
+    "dotnet/Simulator.Frontend/PoleZeroSelection.cs": "ea14920d38198ce01ecee2b254fe105542e33736a7f60fc8b44db9f8f57acdcd",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "114bf3776e50d1fd5dfa335612fb0493a2b7d75c1664b7bdcf46f2054171b26e",
+    "dotnet/Simulator.Frontend/RequestedControlPreparation.cs": "b09aa287d47bf38d109266441fb548b80d026e2821a4c26363b83690bc8dce04",
+    "dotnet/Simulator.RequestedQualification/QualificationSupport.cs": "5d6f115dd85b201f65f4bdc2a56e41904f710f9202a06e12a651f79c68d7b9d5",
+    "dotnet/Simulator.RequestedQualification/RequestedCorpus.cs": "001de31323481342258a6dd3fb4cb6c38b157bffe7c70b2531d933522bbe0cce",
+    "dotnet/Simulator.Syntax.Tests/BoundaryTests.cs": "8de5324ab41731110ad6b9b9827a4831c02f413c91253e375afd00227eeea3a2",
+    "dotnet/Simulator.Syntax.Tests/GrammarImplementationTests.cs": "108b6742e509ce5c5e0bfa765dcc95d2ebc34d1934d3c121e22df5f6947f989d",
+    "dotnet/Simulator.Syntax/ControlExtraction.cs": "45b14edeeea4f6aaa2798e75282e96dc04167a30e7a2dbcc4f800b379e126607",
+    "dotnet/Simulator.Syntax/ControlVectorExecution.cs": "ceb87dac4261867e3f74194409af574a1a033a25cf48237d8e90312a4b8d941b",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "6f0b96e8c791e10dbcabeda1299a3484c2060a47c10da630d4bf9d528b2ef9e9",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "5790b5adae983861f8522de4071d235434830fcd1b8db5c0fd619c300c075988",
+    "docs/ordered-control-analyses.sdoc": "98713132adc5f573e5b7f4fb46e209d0f91606b5b89a27ef7c8ff7bb7acf0df6",
+    "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs": "04b4648b32acf6d9110a869f94c54d634f17c941f50725f3e6c65a6443c2d7a5",
+    "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs": "c0517ed257c365d222bfc89086daceecc6fb27a66d0b649070c1c9589be28471",
+    "dotnet/Simulator.Frontend/OrderedControlPreparation.cs": "5f2f247ea8c9627879ff76cb66587c7a4a6df22650ca483157783f7563103c86",
+    "dotnet/Simulator.Frontend/OrderedControlReporting.cs": "d8d35fb7893a25cca253d62088feaf0731e372ef120b404570546ef1e7bb7420",
+    "examples/ordered-rc-control.cir": "b69e9b47284b06d7ef75eb7620c9a1b577f3c9231540edfb8dea2479c41a9ba8",
+    "tests/fixtures/ordered-rc-wrong-assertion.cir": "b1905fce5da5e52c804b8b981bb991b1aeb577dd6f1d0429961336b8440661db"
+  },
+  "limits": [
+    "Bounded finite direct control dispatch only",
+    "Analytical bounded PZ topology, not general pole-zero solver",
+    "Rust unchanged; coverage includes generated and referenced managed assemblies",
+    "No complete Stryker/cargo-mutants or long fuzz campaign",
+    "Mosmem remains unresolved"
+  ]
+}

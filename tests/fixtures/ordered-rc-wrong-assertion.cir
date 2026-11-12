@@ -1,0 +1,16 @@
+Deliberately failing ordered control assertion
+Vin in 0 DC 5 AC 3
+R1 in out 1k ac=4k
+R2 out 0 4k
+C1 out 0 1n
+.control
+op
+ac lin 3 100k 200k
+let magnitude=abs(v(out))
+if vecmax(magnitude) < 0
+  quit 0
+else
+  quit 1
+end
+.endc
+.end

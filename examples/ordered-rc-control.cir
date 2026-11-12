@@ -1,0 +1,30 @@
+Ordered RC operating point, AC and pole
+Vin in 0 DC 5 AC 3
+R1 in out 1k ac=4k
+R2 out 0 4k
+C1 out 0 1n
+.control
+let passed=0
+op
+if abs(v(out)/4-1) < 1e-12
+  let passed=passed+1
+end
+ac lin 3 100k 200k
+let s=2*pi*i*frequency
+let gold=1.5/(1+s*2u)
+let error=abs(v(out)/gold-1)
+echo AC relative errors: $&error
+if vecmax(error) < 1e-12
+  let passed=passed+1
+end
+pz in 0 out 0 vol pz
+if abs(pole(1)/-500000-1) < 1e-12
+  let passed=passed+1
+end
+if passed ne 3
+  quit 1
+else
+  quit 0
+end
+.endc
+.end

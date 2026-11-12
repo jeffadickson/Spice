@@ -1,0 +1,78 @@
+[DOCUMENT]
+TITLE: Ordered finite control analyses and complex reporting
+
+[TEXT]
+STATEMENT: >>>
+User-authorized work resumes after the completed hourly window; that schedule
+remains paused. The target is the unchanged original ac-resistance.cir, with
+all OP, AC and PZ operations and original assertions executed and compared.
+Reuse the generated ANTLR grammar, existing typed requested analyses, bounded
+PZ helper and bounded reporting evaluator. System.Numerics.Complex is the
+standard-library numeric representation at this reporting boundary; no legacy
+runtime or new expression parser enters the Rust engine. Existing independent
+core/reuse decisions remain in force. RSpice's phase/plot semantics guide the
+integration; its conformance smoke labels alone are not numerical evidence.
+
+Plan: reproduce refusal in a public preparation test; add typed control PZ;
+extend the one reporting evaluator with complex vectors and immutable
+per-analysis input snapshots; admit only structurally unconditional finite
+dispatch with reporting-only branches; connect all original analyses and
+comparisons through the normal coordinator; verify full original assertions,
+negative boundaries, reproducible properties, mutation and measured coverage.
+Then independently diagnose and fix the original MOS memory startup and
+waveforms, preserving original inputs and numerical comparison tolerances.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-ORDERED-PLOTS-001
+STATUS: Draft
+TITLE: Ordered finite dispatch with analysis-local vectors
+STATEMENT: >>>
+An admitted finite direct control program shall retain analysis order and
+original source identities. Reporting after each analysis shall consume that
+analysis's complete immutable voltage, branch-current and coordinate vectors,
+never substitute another analysis plot or a selected probe. Unsupported
+conditional dispatch, early exits affecting later analyses, loops around
+analysis dispatch and unmodeled external effects shall be refused before
+publishing a partial supported operation plan.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-COMPLEX-VECTORS-001
+STATUS: Draft
+TITLE: Bounded complex reporting and scalar broadcasting
+STATEMENT: >>>
+The ordered reporting profile shall support finite complex AC vectors,
+imaginary unit i, pi, arithmetic with scalar broadcasting, absolute magnitude,
+real-vector maximum and bounded vector substitution. Shape mismatch,
+nonfinite results, missing analysis snapshots and nonreal ordered comparisons
+shall be explicit failures. Borrowed results shall not be mutated. The
+existing real-only reporting API shall preserve its prior admission contract.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-PZ-DISPATCH-001
+STATUS: Draft
+TITLE: Typed control pole-zero request
+STATEMENT: >>>
+The generated control grammar shall retain PZ port spellings, voltage/current
+transfer mode, pole/zero selection and original source range. Execution shall
+reuse the qualified bounded PZ analysis and publish typed pole/zero vectors
+for subsequent reporting, with explicit refusal outside its supported topology.
+Independent ngspice comparison shall verify every requested root identity,
+count and value without omitting original ordinary analyses or assertions.
+<<<
+
+[REQUIREMENT]
+UID: REQ-PARSER-EXECUTION-STACK-001
+STATUS: Draft
+TITLE: Generated parser execution-stack resource boundary
+STATEMENT: >>>
+Generated recognition shall check runtime execution-stack headroom as well as
+the fixed rule-depth bound. Insufficient headroom shall produce a structured
+resource refusal without publishing partial syntax metadata or terminating
+the process. Bounded control-expression recognition shall use the same guard.
+Supported ordinary nesting shall remain covered by positive boundary tests;
+the resource refusal is not a claim that arbitrarily deep valid syntax is
+executable on every host stack.
+<<<

@@ -34,8 +34,8 @@ public sealed class ControlSuffixTests
     // Pure scalar prefixes are supported by the later pre-analysis contract;
     // a circuit result cannot be read before the first analysis has run.
     [InlineData("let scratch=v(out)\nop")]
-    [InlineData("op\nlet scratch=1\nop")]
-    [InlineData("op\ndefine scale(x) 2*x\nop")]
+    [InlineData("op\nif 1\nop\nend")]
+    [InlineData("op\ndefine scale(x) 2*x\nalter R1=5\nop")]
     [InlineData("op\nlet scratch=1\nrun")]
     [InlineData("op\nlet out=7")]
     [InlineData("op\nlet SUPPLY=7")]
@@ -88,8 +88,13 @@ public sealed class ControlSuffixTests
     [Property(MaxTest=100,Replay="3404,20261105")]
     public bool Postprocessing_before_a_later_analysis_is_never_silently_ignored(PositiveInt value)
     {
-        var plan=RequestedAnalysis.Prepare(Deck("op\nlet scratch="+(value.Get%1000)+"\nop"));
-        return !plan.Success&&plan.Operations.IsEmpty;
+        var syntax=Deck("op\nlet scratch="+(value.Get%1000)+"\nop");
+        var plan=RequestedAnalysis.Prepare(syntax);
+        if(!plan.Success||plan.Operations.Length!=2)return false;
+        var plots=plan.Operations.ToDictionary(o=>o.ControlOrigin!.CommandRange.Start,
+            _=>(IReadOnlyDictionary<string,System.Numerics.Complex[]>)new Dictionary<string,System.Numerics.Complex[]>());
+        var reporting=ControlVectorExecution.ExecutePlots(syntax.Declarations!.ControlBlocks.Single().Commands,plots);
+        return reporting.Diagnostics.IsEmpty&&reporting.Locals["scratch"].Single().Real==value.Get%1000;
     }
 
     [Theory][InlineData(64,true)][InlineData(65,false)]

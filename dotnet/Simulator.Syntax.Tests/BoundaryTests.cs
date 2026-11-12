@@ -118,6 +118,17 @@ public sealed class BoundaryTests
         Assert.Contains("rule depth",Assert.Single(mixed.Diagnostics).Message);
     }
 
+    [Fact]
+    public void Constrained_host_stack_returns_a_resource_result_instead_of_terminating_the_process()
+    {
+        DeckSyntax? result=null;Exception? failure=null;
+        var input="Title\nB1 1 0 v={"+string.Concat(Enumerable.Repeat(new string('!',100)+"(",8))+"1"+new string(')',8)+"}\n";
+        var thread=new Thread(()=>{try{result=DeckParser.Parse(input);}catch(Exception error){failure=error;}},256*1024){IsBackground=true};
+        thread.Start();Assert.True(thread.Join(TimeSpan.FromSeconds(10)));
+        Assert.Null(failure);Assert.NotNull(result);Assert.Equal("resource_rejected",result.Status);
+        Assert.Contains("rule depth",Assert.Single(result.Diagnostics).Message);
+    }
+
     [Property(MaxTest=512,Replay="362,20261031")]
     public bool Malformed_text_never_escapes_the_syntax_result(NonNull<string> value)
     {

@@ -80,9 +80,9 @@ public static class DeckParser
             // input. A failed attempt is discarded; LL owns final diagnostics.
             errors.Clear();tokens.Seek(0);parser=Recognizer(false);
             try { tree=parser.deck(); }
-            catch(SyntaxDepthException) { return Resource("Generated parser rule depth exceeds 512"); }
+            catch(SyntaxDepthException) { return Resource("Generated parser rule depth or execution-stack budget exceeded"); }
         }
-        catch(SyntaxDepthException) { return Resource("Generated parser rule depth exceeds 512"); }
+        catch(SyntaxDepthException) { return Resource("Generated parser rule depth or execution-stack budget exceeded"); }
         var statements = ImmutableArray.CreateBuilder<SyntaxStatement>();
         var features = ImmutableArray.CreateBuilder<SyntaxFeature>();
         // Recovered trees can contain incomplete rule contexts. Metadata is
@@ -162,18 +162,21 @@ public static class DeckParser
     // Grammar recursion is broader than delimiters (unary operators and nested
     // subcircuits also recurse). ANTLR's rule-entry hook bounds every production,
     // so new recursive grammar rules inherit the safeguard automatically.
-    private sealed class RuleDepthGuard : IParseTreeListener
+    internal sealed class RuleDepthGuard : IParseTreeListener
     {
         private int depth;
         public void EnterEveryRule(ParserRuleContext context)
         {
-            if(++depth>512)throw new SyntaxDepthException();
+            // A fixed grammar depth is not a promise of host stack capacity:
+            // thread-pool and caller stacks differ between execution hosts.
+            if(++depth>512||!System.Runtime.CompilerServices.RuntimeHelpers.TryEnsureSufficientExecutionStack())
+                throw new SyntaxDepthException();
         }
         public void ExitEveryRule(ParserRuleContext context)=>depth--;
         public void VisitTerminal(ITerminalNode node) { }
         public void VisitErrorNode(IErrorNode node) { }
     }
-    private sealed class SyntaxDepthException : Exception { }
+    internal sealed class SyntaxDepthException : Exception { }
 
     // ANTLR counts LF lines. SPICE also permits bare CR: map generated offsets
     // to physical source locations independently of newline normalization.

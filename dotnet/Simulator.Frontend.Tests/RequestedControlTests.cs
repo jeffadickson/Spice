@@ -18,7 +18,7 @@ public sealed class RequestedControlTests
  }
  [Fact] public void Outside_declarations_do_not_execute_implicitly_with_direct_control(){var plan=RequestedAnalysis.Prepare(Deck(".tran 1u 1m\n.control\nop\n.endc"));Assert.True(plan.Success);Assert.Equal("op",Assert.Single(plan.Operations).Kind);Assert.Contains(plan.ProgramOmissions,o=>o.Kind=="tran"&&o.Name==".tran"&&o.Reason=="deck_analysis_not_dispatched_by_control");}
  [Theory]
- [InlineData("let x=1\nop")][InlineData("alter R1=2")][InlineData("reset")][InlineData("load another.raw")][InlineData("shell echo bad")][InlineData("write external.raw all")][InlineData("noise v(out) V1 dec 10 1 1k")][InlineData("set reltol=1m")][InlineData("setplot tran1")][InlineData("op; alter R1=2")][InlineData("ac dec 1 10 $&upper")][InlineData("ac dec 1 10 {upper}")][InlineData("quit\nop")]
+ [InlineData("let x=1\nif x\nop\nend")][InlineData("alter R1=2")][InlineData("reset")][InlineData("load another.raw")][InlineData("shell echo bad")][InlineData("write external.raw all")][InlineData("noise v(out) V1 dec 10 1 1k")][InlineData("set reltol=1m")][InlineData("setplot tran1")][InlineData("op; alter R1=2")][InlineData("ac dec 1 10 $&upper")][InlineData("ac dec 1 10 {upper}")][InlineData("quit\nop")]
  public void Unmodeled_effects_variables_and_separators_refuse_the_whole_program(string command){var plan=RequestedAnalysis.Prepare(Deck(".control\nop\n"+command+"\n.endc"));Assert.False(plan.Success);Assert.Empty(plan.Operations);}
  [Theory]
  [InlineData(".ac lin 3 10 30\n.ac lin 5 10 50\n.control\nrun\n.endc","unsupported_control_run_duplicate_analysis_kind")]

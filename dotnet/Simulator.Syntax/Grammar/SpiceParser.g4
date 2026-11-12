@@ -163,11 +163,13 @@ expression: expression (POWER | CARET) expression
 
 // A bounded semantic entry over generated BODY tokens of one COMMAND_LINE.
 // Numeric command arguments deliberately exclude vectors, substitution and state.
-controlCommandProfile: (controlOp | controlAc | controlDc | controlTran | controlRun | controlSet | controlLet | controlCompose | controlDefine | controlUnlet | controlIf | controlForeach | controlBoundary | controlEcho | controlRedirect | controlPowerVectorType | controlReport | controlQuit | controlUnknown)? EOF;
+controlCommandProfile: (controlOp | controlAc | controlDc | controlTran | controlPz | controlRun | controlSet | controlLet | controlCompose | controlDefine | controlUnlet | controlIf | controlForeach | controlBoundary | controlEcho | controlRedirect | controlPowerVectorType | controlReport | controlQuit | controlUnknown)? EOF;
 controlOp: {TokenStream.LT(1).Text.Equals("op",StringComparison.OrdinalIgnoreCase)}? identifier;
 controlAc: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier identifier controlNumber controlNumber controlNumber;
 controlDc: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase)}? identifier identifier controlNumber controlNumber controlNumber (identifier controlNumber controlNumber controlNumber)?;
 controlTran: {TokenStream.LT(1).Text.Equals("tran",StringComparison.OrdinalIgnoreCase)}? identifier controlNumber controlNumber controlNumber? controlNumber? identifier?;
+controlPz: {TokenStream.LT(1).Text.Equals("pz",StringComparison.OrdinalIgnoreCase)}? identifier controlNode controlNode controlNode controlNode identifier identifier;
+controlNode: identifier | NUMBER;
 controlRun: {TokenStream.LT(1).Text.Equals("run",StringComparison.OrdinalIgnoreCase)}? identifier;
 controlSet: {TokenStream.LT(1).Text.Equals("set",StringComparison.OrdinalIgnoreCase)}? identifier parameter+;
 // These productions preserve declarations; they do not evaluate result vectors

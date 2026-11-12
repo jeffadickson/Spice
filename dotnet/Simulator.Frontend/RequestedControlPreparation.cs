@@ -7,7 +7,7 @@ internal sealed record ControlDirective(AnalysisSyntax Analysis,RequestedControl
 internal sealed record CompiledControlProfile(ImmutableArray<ControlDirective> Directives,ImmutableArray<OperatingPointOmission> Omissions,string Profile,BridgeDiagnostic? Diagnostic);
 // Finite analysis dispatch only. Unmodeled effects refuse the complete input;
 // no command interpreter or opaque command text is forwarded to the engine.
-internal static class RequestedControlPreparation
+internal static partial class RequestedControlPreparation
 {
  // Qualification uses ngspice -b. In this shape the true branch only
  // reports, so the native batch driver dispatches the sole root analysis.
@@ -37,6 +37,9 @@ internal static class RequestedControlPreparation
   if(BatchModeRoot(catalog,block) is {} batch)return batch;
   var result=ImmutableArray.CreateBuilder<ControlDirective>();var omissions=ImmutableArray.CreateBuilder<OperatingPointOmission>();
   var hasRun=block.Commands.Any(c=>c.Kind=="run");var hasDirect=block.Commands.Any(c=>c.Kind=="analysis");
+  var phaseReporting=block.Commands.Any(c=>c.Kind is "postprocessing" or "if" or "report_substitution" or "report_redirect"||c is {Kind:"report",Name:"print"});
+  if(!hasRun&&(block.Commands.Count(c=>c.Kind=="analysis")>1&&phaseReporting||block.Commands.Any(c=>c.Analysis?.Kind=="pz")))
+   return CompileOrdered(catalog,block,constants);
   if(hasRun&&hasDirect)return Fail("unsupported_control_mixed_run_and_direct",block.Range);
   if(hasRun&&catalog.Analyses.GroupBy(a=>a.Kind).Any(g=>g.Count()!=1))return Fail("unsupported_control_run_duplicate_analysis_kind",block.Range);
   if(hasRun&&catalog.Analyses.IsEmpty)return Fail("control_run_without_declared_analysis",block.Range);

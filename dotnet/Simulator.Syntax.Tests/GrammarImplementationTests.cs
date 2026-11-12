@@ -107,7 +107,7 @@ public sealed class GrammarImplementationTests
         options.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter(System.Text.Json.JsonNamingPolicy.SnakeCaseLower));
         var assessments=System.Text.Json.JsonSerializer.Deserialize<GrammarRuleAssessment[]>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory,"grammar-implementation.json")),options)!;
         var witnesses=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase) {
-            ["op"]="op",["ac"]="ac lin 2 10 20",["dc"]="dc V1 0 1 1",["tran"]="tran 1u 2u",["run"]="run",
+            ["op"]="op",["ac"]="ac lin 2 10 20",["dc"]="dc V1 0 1 1",["tran"]="tran 1u 2u",["run"]="run",["pz"]="pz input 0 output 0 vol pz",
             ["set"]="set numdgt=7",["settype"]="settype power q1:power",["let"]="let scratch=2*v(out)",["define"]="define scale(x) 2*x",["unlet"]="unlet scratch",
             ["print"]="print v(out)",["plot"]="plot v(out)",["meas"]="meas tran sample max v(out)",["measure"]="measure tran sample max v(out)",
             ["save"]="save v(out)",["gnuplot"]="gnuplot output v(out)",["echo"]="echo result",["if"]="if v(out) < 1",["foreach"]="foreach n $&tests",["else"]="else",["end"]="end",["rusage"]="rusage",["display"]="display",["listing"]="listing",["quit"]="quit"

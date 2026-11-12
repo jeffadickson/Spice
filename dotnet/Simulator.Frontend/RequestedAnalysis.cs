@@ -5,6 +5,8 @@ namespace Simulator.Frontend;
 /// <summary>One original directive, with source identity, ordered requests and SI coordinate values (DC source units, Hz, or seconds).</summary>
 public sealed record RequestedOperation(string Id,string Kind,SourceRange Range,ImmutableArray<SimulationRequest> Requests,ImmutableArray<double> Coordinates)
 {
+ /// <summary>Validated bounded PZ dispatch; its result is computed at execution and is not a Rust transport request.</summary>
+ public PreparedPoleZeroAnalysis? PoleZero { get; init; }
  /// <summary>SI coordinate unit: V/A for DC source sweeps, Hz for AC, s for transient, absent for OP.</summary>
  public string? CoordinateUnit { get; init; }
  /// <summary>Outer DC coordinates in request order, independently identified by the source terminal voltage difference.</summary>
@@ -54,7 +56,18 @@ public sealed record RequestedPointResult(int Index,SimulationResponse? Response
  public ResultManifest? ReportedManifest { get; init; }
 }
 /// <summary>All points of one original directive; a failed operation publishes no partial successful responses.</summary>
-public sealed record RequestedOperationResult(string Id,bool Success,ImmutableArray<RequestedPointResult> Points);
+public sealed record RequestedOperationResult(string Id,bool Success,ImmutableArray<RequestedPointResult> Points)
+{
+ /// <summary>Finite analytical root result for a requested PZ operation, absent for ordinary transport analyses.</summary>
+ public PoleZeroResult? PoleZero { get; init; }
+}
+
+/// <summary>Immutable, source-identified bounded PZ request sharing the root analysis implementation.</summary>
+public sealed record PreparedPoleZeroAnalysis(BridgeResult Circuit,AnalysisSyntax Directive)
+{
+ /// <summary>Evaluates every requested root or returns one explicit unsupported outcome.</summary>
+ public PoleZeroResult Execute()=>PoleZeroSelection.AnalyzeRequested(Circuit,Directive);
+}
 /// <summary>Prepares ordinary root .op/.dc/.ac/.tran cards using generated syntax and the public client contract.</summary>
 public static partial class RequestedAnalysis
 {
@@ -123,9 +136,14 @@ public static partial class RequestedAnalysis
      if(result.Value is not {} value)throw new PreparationFailure(result.Diagnostics[0].Code,v.Range);
      return value;
     }).ToArray();
-    var requests=ImmutableArray.CreateBuilder<SimulationRequest>();ImmutableArray<double> coordinates=[];string? unit=null;var outputStart=0d;SimulationRequest? initialization=null;NestedDcSweep? nestedDc=null;
+    var requests=ImmutableArray.CreateBuilder<SimulationRequest>();ImmutableArray<double> coordinates=[];string? unit=null;var outputStart=0d;SimulationRequest? initialization=null;NestedDcSweep? nestedDc=null;PreparedPoleZeroAnalysis? poleZero=null;
     switch(card.Kind){
      case "op":requests.Add(baseRequest with{CaseId=id});break;
+     case "pz":
+      poleZero=new(prepared,card);
+      var checkedRoots=poleZero.Execute();
+      if(!checkedRoots.Success)throw new PreparationFailure(checkedRoots.Diagnostic!.Code,card.Range);
+      unit="1/s";break;
      case "dc":
       if(card.Names.Length is <1 or >2)throw new PreparationFailure("unsupported_nested_dc_sweep",card.Range);
       if(card.Names.Any(name=>name.Equals("temp",StringComparison.OrdinalIgnoreCase)))
@@ -245,8 +263,9 @@ public static partial class RequestedAnalysis
       if(abstol is {} amps&&!usesUic&&initialization!=null&&options.InitialNewton!=null)
        initialization=initialization with{Analysis=new OperatingPointNewton(new NewtonOptions(CurrentAbsoluteTolerance:amps))};
       requests.Add(transientRequest with{Analysis=new TransientConfigured(options)});break;
+     default:throw new PreparationFailure("unsupported_requested_analysis:"+card.Kind,card.Range);
     }
-    operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { CoordinateUnit=unit,NestedDc=nestedDc,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=initialConditions,UsesUic=usesUic,ControlOrigin=directive.Origin });
+    operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { PoleZero=poleZero,CoordinateUnit=unit,NestedDc=nestedDc,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=initialConditions,UsesUic=usesUic,ControlOrigin=directive.Origin });
    }
   }catch(PreparationFailure e){return Fail(e.Code,e.Range);}
   var observations=selected.Omissions.Where(o=>o.Kind=="extension").ToImmutableArray();
@@ -271,6 +290,11 @@ public static partial class RequestedAnalysis
   if(!plan.Success)throw new ArgumentException("A complete prepared plan is required.",nameof(plan));
   var results=ImmutableArray.CreateBuilder<RequestedOperationResult>();
   foreach(var operation in plan.Operations){
+   if(operation.PoleZero is {} requestedRoots){
+    cancellation.ThrowIfCancellationRequested();
+    var roots=requestedRoots.Execute();
+    results.Add(new(operation.Id,roots.Success,[]){PoleZero=roots});continue;
+   }
    var points=ImmutableArray.CreateBuilder<RequestedPointResult>();var success=true;
    foreach(var request in operation.Requests){
     cancellation.ThrowIfCancellationRequested();

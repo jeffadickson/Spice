@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
@@ -75,9 +76,16 @@ public static class RequestedCorpus
     if(!plan.Success&&!pzOnly){row.Status="requested_preparation_refused";row.RequestedExecuted=false;row.Diagnostics=row.Diagnostics.Concat(plan.Diagnostics.Select(d=>d.Code)).Distinct().ToArray();continue;}
     if(!circuit.Success){row.Status="circuit_preparation_inconsistent";row.RequestedExecuted=false;continue;}
     row.Status="prepared";
+    var controlResults=new List<RequestedOperationResult>();
     foreach(var operation in plan.Operations){
      var result=new OperationRow{Id=row.Id+"/"+operation.Id,Ordinal=row.Operations.Count,Kind=operation.Kind,Range=operation.Range,CoordinateUnit=operation.CoordinateUnit,Arguments=operation.Arguments.ToArray(),RequestedCoordinates=operation.Coordinates.ToArray(),NestedDc=operation.NestedDc,OutputStartS=operation.OutputStartS,UsesUic=operation.UsesUic,InitialConditions=operation.InitialConditions.ToArray(),ControlOrigin=operation.ControlOrigin};row.Operations.Add(result);
      var operationFolder=Path.Combine(folder,operation.Id);Directory.CreateDirectory(operationFolder);var responses=new List<SimulationResponse>();var allExecuted=true;var failed=false;
+     PoleZeroResult? controlRoots=null;
+     if(operation.PoleZero is {} requestedRoots){
+      controlRoots=requestedRoots.Execute();failed=!controlRoots.Success;
+      result.Points.Add(new(0,failed?"analysis_failed":"completed",controlRoots.Diagnostic?.Code));
+      await File.WriteAllTextAsync(Path.Combine(operationFolder,"roots.json"),JsonSerializer.Serialize(controlRoots,Json));
+     }
      for(var point=0;point<operation.Requests.Length;point++){
       if(watch.Elapsed.TotalSeconds>=seconds){result.Points.Add(new(point,"unattempted_budget",null));allExecuted=false;continue;}
       var request=operation.Requests[point];var requestPath=Path.Combine(operationFolder,point.ToString("D5",CultureInfo.InvariantCulture)+".request.json");await File.WriteAllTextAsync(requestPath,JsonSerializer.Serialize(request,WireFormat.Options));
@@ -95,6 +103,7 @@ public static class RequestedCorpus
      }
      result.Executed=failed?false:allExecuted?true:null;
      if(result.Executed!=true){result.Status=failed?"engine_operation_failed_atomically":"unattempted_budget";continue;}
+     controlResults.Add(new(operation.Id,true,responses.Select((response,i)=>new RequestedPointResult(i,response,null)).ToImmutableArray()){PoleZero=controlRoots});
      if(operation==plan.Operations[^1]&&row.ProgramOmissions.Any(o=>o.Reason is "conditional_reporting_not_executed" or "prefix_reporting_executed_separately" or "redirect_captured_separately")){
       try{
        var reporting=RequestedAnalysis.ExecuteTerminalReporting(syntax,plan,responses);
@@ -114,8 +123,15 @@ public static class RequestedCorpus
       if(native.Exit!=0){result.Status="native_failed";continue;}
       if(!File.Exists(rawPath)||new FileInfo(rawPath).Length>64*1024*1024){result.Status="native_raw_missing_or_oversized";continue;}
       result.NativeRawSha256=Hash(rawPath);var raw=AsciiRaw.Read(await File.ReadAllTextAsync(rawPath));result.NativePoints=raw.Points.Length;
-      result.Comparison=RequestedComparison.Compare(operation,circuit,responses,raw,row.ExpandedSha256);result.Agreed=result.Comparison.Agreed;result.Status=result.Comparison.Status;
+      result.Comparison=controlRoots==null?RequestedComparison.Compare(operation,circuit,responses,raw,row.ExpandedSha256):PoleZeroQualification.Compare(controlRoots,raw);result.Agreed=result.Comparison.Agreed;result.Status=result.Comparison.Status;
      }catch(Exception e)when(e is IOException or InvalidDataException or TimeoutException){result.Status=e is TimeoutException?"native_timeout":"native_result_refused";result.Detail=e.Message;}
+    }
+    if(plan.ControlProfile=="ordered_direct_commands"){
+     try{
+      var reporting=RequestedAnalysis.ExecuteOrderedReporting(syntax,plan,controlResults);
+      await File.WriteAllTextAsync(Path.Combine(folder,"control-report.json"),JsonSerializer.Serialize(reporting,Json));
+      row.ControlReportingStatus=reporting.Diagnostics.IsEmpty&&reporting.ExitCode is null or 0?"executed":"failed_assertions";
+     }catch(InvalidDataException error){row.ControlReportingStatus=error.Message;}
     }
     if(pz is not null&&pzCard is not null){
      var result=new OperationRow{Id=row.Id+"/requested_pz",Kind="pz",Range=pzCard.Range,CoordinateUnit="1/s"};
@@ -152,6 +168,9 @@ public static class RequestedCorpus
     row.RequestedExecuted=row.Operations.Any(o=>o.Executed==false)?false:row.Operations.All(o=>o.Executed==true)?true:null;
     row.NativeAgreed=row.Operations.Any(o=>o.Agreed==false)?false:row.Operations.All(o=>o.Agreed==true)?true:null;
     row.Status=row.NativeAgreed==true?"all_individual_requested_analyses_agreed":row.RequestedExecuted==true?"requested_executed_not_fully_qualified":row.RequestedExecuted==false?"requested_execution_failed":"partially_unattempted_budget";
+    if(plan.ControlProfile=="ordered_direct_commands"&&row.ControlReportingStatus!="executed"){
+     row.Status="requested_control_execution_failed";row.RequestedExecuted=false;row.NativeAgreed=false;
+    }
    }catch(Exception e)when(e is IOException or InvalidDataException or DecoderFallbackException or UnauthorizedAccessException or JsonException or ArgumentException){row.Status="input_or_qualification_failure";row.Diagnostics=[e.GetType().Name+":"+e.Message];}
    finally{WriteProgress(report,output);}
   }

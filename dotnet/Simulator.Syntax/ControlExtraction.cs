@@ -45,6 +45,7 @@ internal static class ControlExtraction
      case SpiceParser.ControlAcContext ac:kind="analysis";analysis=new(scope,"ac",[ac.identifier(1).GetText()],ac.controlNumber().Select(Capture).ToImmutableArray(),physical);break;
      case SpiceParser.ControlDcContext dc:kind="analysis";analysis=new(scope,"dc",dc.identifier().Skip(1).Select(i=>i.GetText()).ToImmutableArray(),dc.controlNumber().Select(Capture).ToImmutableArray(),physical);break;
      case SpiceParser.ControlTranContext tran:kind="analysis";analysis=new(scope,"tran",tran.identifier().Skip(1).Select(i=>i.GetText()).ToImmutableArray(),tran.controlNumber().Select(Capture).ToImmutableArray(),physical);break;
+     case SpiceParser.ControlPzContext pz:kind="analysis";analysis=new(scope,"pz",pz.controlNode().Select(n=>n.GetText()).Concat(pz.identifier().Skip(1).Select(i=>i.GetText())).ToImmutableArray(),[],physical);break;
      case SpiceParser.ControlRunContext:kind="run";break;
      case SpiceParser.ControlIfContext:kind="if";break;
      case SpiceParser.ControlForeachContext each:

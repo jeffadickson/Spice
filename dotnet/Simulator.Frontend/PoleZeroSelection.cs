@@ -51,6 +51,22 @@ public static class PoleZeroSelection
         var circuit = OperatingPointSelection.SelectRequested(syntax,null,"lu",[]).Prepared;
         if (!circuit.Success) return new([], [], circuit.Diagnostics[0]);
         preparation=circuit;
+        return AnalyzePrepared(circuit,tokens,card.Range);
+    }
+
+    internal static PoleZeroResult AnalyzeRequested(BridgeResult circuit,AnalysisSyntax directive)
+    {
+        if(directive.Kind!="pz"||directive.Names.Length!=6||
+            directive.Names[4].ToLowerInvariant() is not ("vol" or "cur")||
+            directive.Names[5].ToLowerInvariant() is not ("pol" or "zer" or "pz"))
+            return new([],[],new("unsupported_pz_directive",directive.Range));
+        var result=AnalyzePrepared(circuit,new[]{"pz"}.Concat(directive.Names).ToArray(),directive.Range);
+        return result.Success?result with{CircuitPreparation=circuit}:result;
+    }
+
+    private static PoleZeroResult AnalyzePrepared(BridgeResult circuit,string[] tokens,SourceRange range)
+    {
+        PoleZeroResult Fail(string code,SourceRange? location=null)=>new([],[],new(code,location??range));
         var request = circuit.Request!;
         var nodes = request.Circuit.Nodes;
         int Node(string name) => name == "0" ? 0 :
@@ -58,7 +74,7 @@ public static class PoleZeroSelection
         var input = Node(tokens[1]);
         var output = Node(tokens[3]);
         if (input <= 0 || output <= 0 || input == output || Node(tokens[2]) != 0 || Node(tokens[4]) != 0)
-            return Fail("unsupported_pz_ports", card.Range);
+            return Fail("unsupported_pz_ports", range);
 
         var elements = request.Circuit.Elements.Select(e =>
             circuit.AcResistances.TryGetValue(e.Id,out var ohms)
@@ -76,11 +92,11 @@ public static class PoleZeroSelection
                 elements.OfType<Resistor>().FirstOrDefault(e => Between(e, input, 0)) is not { } inputShunt ||
                 elements.OfType<Resistor>().FirstOrDefault(e => Between(e, output, 0)) is not { } outputShunt ||
                 elements.OfType<Capacitor>().FirstOrDefault(e => Between(e, input, output)) is not { } coupling)
-                return Fail("unsupported_pz_topology", card.Range);
+                return Fail("unsupported_pz_topology", range);
             var timeConstant = inputShunt.Ohms * coupling.Farads + outputShunt.Ohms * coupling.Farads;
             var highPassPole = -1 / timeConstant;
             if (!double.IsFinite(highPassPole) || highPassPole >= 0)
-                return Fail("invalid_pz_time_constant", card.Range);
+                return Fail("invalid_pz_time_constant", range);
             return new(requested == "zer" ? [] : [highPassPole], requested == "pol" ? [] : [0], null);
         }
 
@@ -96,7 +112,7 @@ public static class PoleZeroSelection
             var cInput = capacitors.FirstOrDefault(c => Between(c, input, mid));
             var cOutput = capacitors.FirstOrDefault(c => Between(c, mid, output));
             if (rGround is null || rBridge is null || cInput is null || cOutput is null)
-                return Fail("unsupported_pz_topology", card.Range);
+                return Fail("unsupported_pz_topology", range);
 
             // The two-node determinant and Cramer's numerator have the same
             // constant and quadratic terms. The extra denominator term is
@@ -111,7 +127,7 @@ public static class PoleZeroSelection
             var poles = mode == "zer" ? [] : RealRoots(poleLinear, groundRate, bridgeRate);
             var zeros = mode == "pol" ? [] : RealRoots(zeroLinear, groundRate, bridgeRate);
             return poles.IsDefault || zeros.IsDefault
-                ? Fail("unsupported_pz_root_domain", card.Range)
+                ? Fail("unsupported_pz_root_domain", range)
                 : new(poles, zeros, null);
         }
         var series = resistors.Where(r => Between(r,input,output)).ToArray();
@@ -123,13 +139,13 @@ public static class PoleZeroSelection
             capacitors.Length != 1 || sources.Length != 1 ||
             !Between(capacitors[0], output, 0) ||
             !Between(sources[0], input, 0))
-            return Fail("unsupported_pz_topology", card.Range);
+            return Fail("unsupported_pz_topology", range);
 
         // KCL gives H(s)=Gseries/(Gseries+Gshunt+sC). The shunt
         // changes the DC gain and pole, but introduces no finite zero.
         var conductance = 1/series[0].Ohms + (shunts.Length==0 ? 0 : 1/shunts[0].Ohms);
         var pole = -conductance/capacitors[0].Farads;
-        if (!double.IsFinite(pole) || pole >= 0) return Fail("invalid_pz_time_constant", card.Range);
+        if (!double.IsFinite(pole) || pole >= 0) return Fail("invalid_pz_time_constant", range);
         return new(tokens[6].Equals("zer", StringComparison.OrdinalIgnoreCase) ? [] : [pole], [], null);
     }
 

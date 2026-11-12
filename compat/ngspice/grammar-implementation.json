@@ -1086,8 +1086,12 @@
       "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
       "dotnet/Simulator.Frontend/Mos1Preparation.cs"
     ],
-    "requirements": ["SEMI-BSIM330-SELECT-001"],
-    "evidence": ["dotnet/Simulator.Frontend.Tests/Mos1Tests.cs"],
+    "requirements": [
+      "SEMI-BSIM330-SELECT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/Mos1Tests.cs"
+    ],
     "limitation": "Preserves a contiguous dotted VERSION selector and reports the unimplemented exact BSIM3 kernel."
   },
   {
@@ -1207,17 +1211,23 @@
     "execution": "bounded",
     "implementation": [
       "dotnet/Simulator.Syntax/ControlExtraction.cs",
-      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
     ],
     "requirements": [
       "FRONTEND-CONTROL-001",
       "FRONTEND-CONTROL-002",
-      "FRONTEND-CONTROL-005"
+      "FRONTEND-CONTROL-005",
+      "REQ-CONTROL-ORDERED-PLOTS-001",
+      "REQ-CONTROL-COMPLEX-VECTORS-001"
     ],
     "evidence": [
-      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
     ],
-    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+    "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported."
   },
   {
     "rule": "controlOp",
@@ -1226,17 +1236,23 @@
     "execution": "bounded",
     "implementation": [
       "dotnet/Simulator.Syntax/ControlExtraction.cs",
-      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
     ],
     "requirements": [
       "FRONTEND-CONTROL-001",
       "FRONTEND-CONTROL-002",
-      "FRONTEND-CONTROL-005"
+      "FRONTEND-CONTROL-005",
+      "REQ-CONTROL-ORDERED-PLOTS-001",
+      "REQ-CONTROL-COMPLEX-VECTORS-001"
     ],
     "evidence": [
-      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
     ],
-    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+    "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
     "commands": [
       "op"
     ]
@@ -1248,17 +1264,23 @@
     "execution": "bounded",
     "implementation": [
       "dotnet/Simulator.Syntax/ControlExtraction.cs",
-      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
     ],
     "requirements": [
       "FRONTEND-CONTROL-001",
       "FRONTEND-CONTROL-002",
-      "FRONTEND-CONTROL-005"
+      "FRONTEND-CONTROL-005",
+      "REQ-CONTROL-ORDERED-PLOTS-001",
+      "REQ-CONTROL-COMPLEX-VECTORS-001"
     ],
     "evidence": [
-      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
     ],
-    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+    "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
     "commands": [
       "dc"
     ]
@@ -1270,17 +1292,23 @@
     "execution": "bounded",
     "implementation": [
       "dotnet/Simulator.Syntax/ControlExtraction.cs",
-      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
     ],
     "requirements": [
       "FRONTEND-CONTROL-001",
       "FRONTEND-CONTROL-002",
-      "FRONTEND-CONTROL-005"
+      "FRONTEND-CONTROL-005",
+      "REQ-CONTROL-ORDERED-PLOTS-001",
+      "REQ-CONTROL-COMPLEX-VECTORS-001"
     ],
     "evidence": [
-      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
     ],
-    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+    "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
     "commands": [
       "ac"
     ]
@@ -1292,17 +1320,23 @@
     "execution": "bounded",
     "implementation": [
       "dotnet/Simulator.Syntax/ControlExtraction.cs",
-      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
     ],
     "requirements": [
       "FRONTEND-CONTROL-001",
       "FRONTEND-CONTROL-002",
-      "FRONTEND-CONTROL-005"
+      "FRONTEND-CONTROL-005",
+      "REQ-CONTROL-ORDERED-PLOTS-001",
+      "REQ-CONTROL-COMPLEX-VECTORS-001"
     ],
     "evidence": [
-      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+      "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
     ],
-    "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+    "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
     "commands": [
       "tran"
     ]
@@ -1357,18 +1391,24 @@
       "dotnet/Simulator.Syntax/ControlExtraction.cs",
       "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs",
       "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
-      "dotnet/Simulator.Syntax/ControlVectorExecution.cs"
+      "dotnet/Simulator.Syntax/ControlVectorExecution.cs",
+      "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
     ],
     "requirements": [
       "FRONTEND-CONTROL-006",
-      "FRONTEND-CONTROL-007"
+      "FRONTEND-CONTROL-007",
+      "REQ-CONTROL-ORDERED-PLOTS-001",
+      "REQ-CONTROL-COMPLEX-VECTORS-001"
     ],
     "evidence": [
       "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
       "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs",
-      "dotnet/Simulator.Frontend.Tests/RequestedPrefixFunctionTests.cs"
+      "dotnet/Simulator.Frontend.Tests/RequestedPrefixFunctionTests.cs",
+      "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
     ],
-    "limitation": "Bounded local vector assignments execute in admitted reporting programs. Other suffix declarations may be retained as explicit omissions.",
+    "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
     "commands": [
       "let"
     ]
@@ -1448,11 +1488,26 @@
     "extraction": "bounded",
     "preparation": "bounded",
     "execution": "bounded",
-    "implementation": ["dotnet/Simulator.Syntax/ControlExtraction.cs", "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"],
-    "requirements": ["QUAL-CONTROL-TERMINAL-IF-001"],
-    "evidence": ["dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"],
-    "commands": ["if"],
-    "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections."
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
+    ],
+    "requirements": [
+      "QUAL-CONTROL-TERMINAL-IF-001",
+      "REQ-CONTROL-ORDERED-PLOTS-001",
+      "REQ-CONTROL-COMPLEX-VECTORS-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
+      "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+      "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
+    ],
+    "commands": [
+      "if"
+    ],
+    "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported."
   },
   {
     "rule": "controlForeach",
@@ -1480,10 +1535,20 @@
     "extraction": "bounded",
     "preparation": "bounded",
     "execution": "bounded",
-    "implementation": ["dotnet/Simulator.Syntax/ControlExtraction.cs", "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"],
-    "requirements": ["QUAL-CONTROL-TERMINAL-IF-001"],
-    "evidence": ["dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"],
-    "commands": ["else", "end"],
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "QUAL-CONTROL-TERMINAL-IF-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"
+    ],
+    "commands": [
+      "else",
+      "end"
+    ],
     "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections."
   },
   {
@@ -1491,10 +1556,19 @@
     "extraction": "bounded",
     "preparation": "bounded",
     "execution": "bounded",
-    "implementation": ["dotnet/Simulator.Syntax/ControlExtraction.cs", "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"],
-    "requirements": ["QUAL-CONTROL-TERMINAL-IF-001"],
-    "evidence": ["dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"],
-    "commands": ["echo"],
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "QUAL-CONTROL-TERMINAL-IF-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"
+    ],
+    "commands": [
+      "echo"
+    ],
     "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections."
   },
   {
@@ -1502,9 +1576,16 @@
     "extraction": "bounded",
     "preparation": "bounded",
     "execution": "bounded",
-    "implementation": ["dotnet/Simulator.Syntax/ControlExtraction.cs", "dotnet/Simulator.Syntax/ControlVectorExecution.cs"],
-    "requirements": ["QUAL-CONTROL-PREFIX-REDIRECT-001"],
-    "evidence": ["dotnet/Simulator.Syntax.Tests/ControlVectorExecutionTests.cs"],
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Syntax/ControlVectorExecution.cs"
+    ],
+    "requirements": [
+      "QUAL-CONTROL-PREFIX-REDIRECT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/ControlVectorExecutionTests.cs"
+    ],
     "limitation": "Terminal scalar identifier capture under an ASCII logical name. No host path is opened."
   },
   {
@@ -1516,10 +1597,16 @@
       "dotnet/Simulator.Syntax/ControlExtraction.cs",
       "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
     ],
-    "requirements": ["FRONTEND-CONTROL-VECTORTYPE-001"],
-    "evidence": ["dotnet/Simulator.Frontend.Tests/RequestedPowerVectorTypeTests.cs"],
+    "requirements": [
+      "FRONTEND-CONTROL-VECTORTYPE-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedPowerVectorTypeTests.cs"
+    ],
     "limitation": "Terminal settype power on a simple device power vector is recorded as a reporting omission.",
-    "commands": ["settype"]
+    "commands": [
+      "settype"
+    ]
   },
   {
     "rule": "controlReport",
@@ -1812,5 +1899,44 @@
       "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
     ],
     "limitation": "TABLE syntax is recognized; the generated affine behavioral execution path does not implement arbitrary TABLE interpolation."
+  },
+  {
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+      "dotnet/Simulator.Frontend/PoleZeroSelection.cs"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs"
+    ],
+    "extraction": "bounded",
+    "commands": [
+      "pz"
+    ],
+    "requirements": [
+      "REQ-CONTROL-PZ-DISPATCH-001",
+      "REQ-CONTROL-ORDERED-PLOTS-001"
+    ],
+    "execution": "bounded",
+    "rule": "controlPz",
+    "limitation": "Unconditional typed PZ dispatch into the bounded passive transfer analyzer. Generalized roots, conditional analysis dispatch and arbitrary plot selection remain unsupported.",
+    "preparation": "bounded"
+  },
+  {
+    "execution": "not_applicable",
+    "preparation": "not_applicable",
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs"
+    ],
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Syntax/ControlExtraction.cs"
+    ],
+    "rule": "controlNode",
+    "requirements": [
+      "REQ-CONTROL-PZ-DISPATCH-001"
+    ],
+    "extraction": "structural",
+    "limitation": "Retains control port spelling; node binding and transfer validation occur in the requested preparation layer."
   }
 ]

@@ -931,3 +931,6 @@ comparison and the LU failure, then bounded shared controls (prepared refusal
 observations let16/define8/unsafe9), named model/XSPICE subsets and resource triage.
 Artifacts: E:/Artifacts/Spice-issue34-20261103T195804Z. Preserve canonical main's
 seven unrelated sheet-resistor/WIP files and all historical/raw evidence. CI off.
+
+Manual two-deck checkpoint (hourly automation remains paused): original ac-resistance now agrees for OP/AC/PZ and original assertions. Read docs/ordered-control-results.md and evidence/ordered-control-ac-resistance.json. Next finish original general/mosmem.cir startup and full transient comparison, without altered inputs or weaker tolerances. Preserve canonical main; local commits only; E: artifacts.
+
