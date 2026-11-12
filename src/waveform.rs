@@ -395,4 +395,27 @@ impl Waveform {
             _ => Vec::new(),
         }
     }
+
+    /// Next PULSE corner in a finite open/closed interval. Periodic corners
+    /// cannot be stored in the finite static breakpoint list. Inspect only
+    /// the current and following cycle, keeping work and allocation bounded.
+    /// A corner equal to `after` belongs to committed history, not a zero step.
+    pub(crate) fn next_periodic_breakpoint(&self, after: f64, until: f64) -> Option<f64> {
+        let Self::Pulse{delay_s,rise_s,width_s,fall_s,period_s,..}=self else{return None};
+        let cycle = ((after-delay_s)/period_s).floor().max(0.);
+        let mut next: Option<f64> = None;
+        for index in [cycle,cycle+1.] {
+            let base = delay_s+index*period_s;
+            for offset in [0.,*rise_s,rise_s+width_s,rise_s+width_s+fall_s] {
+                // The following cycle's zero offset already represents this
+                // boundary. Reassociating base+period can differ by one ULP.
+                if offset == *period_s { continue; }
+                let corner = base+offset;
+                if corner.is_finite() && corner>after && corner<=until && next.is_none_or(|n|corner<n) {
+                    next=Some(corner);
+                }
+            }
+        }
+        next
+    }
 }

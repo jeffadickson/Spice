@@ -377,7 +377,7 @@ fn sparse_adaptive_rejections_preserve_decay_and_only_observe_accepted_history()
         max_steps: 10000,
         method: Method::Trapezoidal,
         initial_state: Some(vec![1.]),
-        adaptive: Some(AdaptiveOptions {
+        adaptive: Some(AdaptiveOptions { current_relative: None,
             relative: 1e-7,
             voltage_absolute: 1e-12,
             current_absolute: 1e-12,

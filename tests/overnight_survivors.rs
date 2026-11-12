@@ -48,7 +48,7 @@ fn nonlinear_work_accounting_matches_actual_provider_calls_including_initializat
             stop_s: 0.0002,
             max_step_s: 0.0001,
             initial_state,
-            adaptive: Some(circuit_simulator::adaptive::AdaptiveOptions {
+            adaptive: Some(circuit_simulator::adaptive::AdaptiveOptions { current_relative: None,
                 relative: 0.05,
                 voltage_absolute: 1e-4,
                 current_absolute: 1e-12,
@@ -353,7 +353,7 @@ fn adaptive_step_growth_matches_independent_richardson_policy() {
         stop_s: 1.,
         max_step_s: 0.5,
         initial_state: Some(vec![1.]),
-        adaptive: Some(circuit_simulator::adaptive::AdaptiveOptions {
+        adaptive: Some(circuit_simulator::adaptive::AdaptiveOptions { current_relative: None,
             relative: 0.02,
             voltage_absolute: 0.001,
             current_absolute: 0.001,

@@ -134,9 +134,11 @@ impl BoundSources {
         Ok(rhs)
     }
     pub fn next_breakpoint(&self, after: f64, until: f64) -> Option<f64> {
-        self.breakpoints
+        let finite = self.breakpoints
             .get(self.breakpoints.partition_point(|t| *t <= after))
             .copied()
-            .filter(|t| *t <= until)
+            .filter(|t| *t <= until);
+        self.sources.iter().filter_map(|s|s.waveform.next_periodic_breakpoint(after,until))
+            .chain(finite).min_by(f64::total_cmp)
     }
 }

@@ -1,4 +1,24 @@
-# Hourly campaign closed — November 11 final session
+# Manual two-deck checkpoint — November 12
+
+The user explicitly resumed work to finish ac-resistance and mosmem after the
+hourly campaign expired. Do not restart that automation. Branch
+fix/deck-blocker-implementation remains isolated; canonical main is untouched.
+
+Read docs/ordered-control-results.md and evidence/ordered-control-ac-resistance.json
+for verified commit 9427e23: the original ac-resistance OP/AC/PZ program executes,
+its original assertions return success_count=3, and mapped results agree with
+ngspice. Read docs/mos-memory-results.md, docs/mos-memory-execution.sdoc and
+evidence/mos-memory-execution.json for the subsequent MOS execution checkpoint.
+The original memory transient now completes with explicitly selected Faer;
+all 13 signals agree against two separately labelled refined numerical ngspice
+profiles, but its stock/default ngspice comparison remains failed. Do not call
+this two stock-reference closures. Dense LU still fails the later memory ramp.
+
+Keep all bulk artifacts under the recorded E: run root. Preserve failed trials,
+the default-reference mismatch, hashes, refined input identities and coverage
+limitations. No push or CI dispatch is authorized by this manual checkpoint.
+
+# Historical hourly campaign closure — November 11
 
 The hourly automation spice-hourly-deck-fixes-20-hours is PAUSED. Do not resume
 it automatically or extend the hard stop 2026-11-11T23:53:39Z. Resume engineering

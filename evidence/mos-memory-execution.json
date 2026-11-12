@@ -1,0 +1,1128 @@
+{
+  "schema": "spice.mos-memory-execution.v1",
+  "recorded_utc": "2026-11-11T22:18:56.5911964-08:00",
+  "tested_base_commit": "9427e23bba2a2cb2cf76a8d59db4d44258a7b065",
+  "tested_dirty_working_tree": true,
+  "source_hashes": {
+    "dotnet/Simulator.Client/Requests.cs": "efe9af2b90ebd9b88ec84519ee3dba424ccc692be45d51dab03b4403d6862980",
+    "dotnet/Simulator.Client/Results.cs": "542d6eedb64d295e71d1738f09204a7f03302a307e5b0218acd95a431b13d0c4",
+    "dotnet/Simulator.Frontend.Tests/MosMemoryPreparationTests.cs": "dfd47b24f781a02dbce87aef9d9d54b9512d0815ab16e8754eae2918954a5eee",
+    "dotnet/Simulator.Frontend.Tests/RequestedQualificationTests.cs": "ede2392e2fb646c9b599d2d3dbed509ec8466994eab3019e3864731606d382f2",
+    "dotnet/Simulator.Frontend/Mos1Preparation.cs": "4168d719dc4ceae11cf0ee65e4d6bee85a5f1691796ddd09233c78f69b225c9c",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "e39d9b7f5fc34085ae3073fe21684fb98ed4e404f160ac87addce21e04dc579a",
+    "dotnet/Simulator.Frontend/TransientSelection.cs": "66f4df6a9c401934b089f0e34c36fd5c530ae1b40e648e89c3c941bc319bcacf",
+    "dotnet/Simulator.RequestedQualification/RequestedCorpus.cs": "850e71ae12715c630d157a90418cb18a27a99f13d61e5b640ab53e02f3fd0ae1",
+    "src/adaptive.rs": "595ada0a4bd8b8cf3278d6e655f4906df341a1a77433d46ec67f0b9e969818fe",
+    "src/api.rs": "cd29d0e17c24c333eae18d5d27cc7fbe3ab38fb7cf97ca6c3a9fa27fb562e64e",
+    "src/audit_configured.rs": "f193ff4ae6b4154f894d30a24d5832563d37ae7dd44767d6da2f85656a836612",
+    "src/backend.rs": "f08a887529bbcff110e91cfaf26d45e27101cf1357088a7ed3b99c42190decf2",
+    "src/configured.rs": "affadbe5364bbf6f92b51dbee86e7888782b5fc6cc65e4ffdb9c94a83d22d93e",
+    "src/main.rs": "2980104a72bb769df1e375c6c9ea06f500e903670676ae3fe10a9cd30bee2cc8",
+    "src/newton.rs": "d20a1257d032e731265a1564a406d0906022c2edd44e8f192ccf4726dc139219",
+    "src/sources.rs": "76ba60d9855777612e1a0fd0e0d438ea939d79eaadc000f1ca7aeb7f8ba91091",
+    "src/waveform.rs": "e3322998ebe3c4e8e8987809575744f450e9a4e118eddb76f5d703bdb9dc6007",
+    "tests/adaptive.rs": "0a7d9583fe484e4b3a9ccbf1c7a91bedf08dd1e038301d6d3da17999accc2516",
+    "tests/analysis_audits.rs": "f6f983f54d3fa5a8092887c6decd36307940901b45d50484e48b02559a46a4a8",
+    "tests/edge_cases.rs": "446f2610e778c67eb53dfe572a12d087f5e10714ea2b3d7e8004f6fc60ea5811",
+    "tests/fixtures/mosmem_first_ramp_lu.json": "562237c16201974adb869acd37486315742b0c00b11c597b776c3802a648e956",
+    "tests/lu_zero_constraints.rs": "dd1e73abc169e95aa4f042b5dca38eb0a944cd8cc03acce0089a4463bbc478c1",
+    "tests/nonlinear_trapezoidal.rs": "02c14894a62d4b9d5f80fea834cbccd426a0211034142792beb66faf21bd77b0",
+    "tests/nonlinear.rs": "4bd30ff9632ac87d8ba7b43742b551fe706541373e8289ecb73b26171d919f79",
+    "tests/overnight_survivors_20261028.rs": "ea1c1d71b8e890eb6cef4f3fece1f4fa383392d18451d6d7d987dcd98ce7843d",
+    "tests/overnight_survivors_20261102.rs": "a2dc376645b5af95641b2f73aece51cdd063bb8c24f5e1a0b1a19ac8522f6b6a",
+    "tests/overnight_survivors.rs": "a55d72b05113f63eefbf5aa56b31ef1a1f17157a4a5c1d9b98a727d9360a4572",
+    "tests/sparse_transient.rs": "02384b246ab5c0afc1e488c9f432080fe834073c71eacca7d031ae1f79e3a971"
+  },
+  "artifact_root": "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322",
+  "backend": "faer",
+  "source_main_unchanged": true,
+  "pushes": 0,
+  "ci_dispatches": 0,
+  "engine_provenance": {
+    "reused_frozen_binary": true,
+    "original": "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/mos-engine-observer.exe",
+    "sha256": "f5bae25439d3a76f4a84eea93af9b107459a086fd3f819062da9234df43ac85e",
+    "verified_current_runtime_source_hashes": true,
+    "new_build": false,
+    "reason": "Current runtime source hashes match verified frozen run; avoid unnecessary compilation under RAM pressure."
+  },
+  "engine_sha256": "f5bae25439d3a76f4a84eea93af9b107459a086fd3f819062da9234df43ac85e",
+  "oracle_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "oracle_version": "******\r\n** ngspice-47+ : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n",
+  "corpus_commit": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "corpus_inventory_sha256": "e650cde86a9196467a3a3abe5e06563d1840aa887023989e761af09c6d577ab7",
+  "inventory_path": "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/inventory-two.json",
+  "original_input_sha256": "6d5bd5a8e00f1f51f1c1c465bf8f80851cbc7c731623f11a4db1052389c39667",
+  "original_requested_executed": true,
+  "stock_default_ngspice_agreed": false,
+  "stock_status": "requested_executed_not_fully_qualified",
+  "original_requested_program_reporting_limit": "Individual ordinary requested analyses; not input-control-program parity. No hardcoded selected OP counts as requested execution. Full mapped root voltage and supported branch-current grids; declared transient oracle interpolation.",
+  "sample_count": 221,
+  "stop_s": 2E-06,
+  "integration": {
+    "method": "trapezoidal",
+    "backward_euler_restarts": [
+      1E-08,
+      2E-08,
+      2.000030517578125E-08,
+      2.00006103515625E-08,
+      4.04313597130484E-08,
+      4.08627194260968E-08,
+      2.4031250000000003E-07,
+      2.40625E-07,
+      5.200073287888227E-07,
+      5.200146575776456E-07,
+      5.402528888620089E-07,
+      5.405057777240179E-07,
+      7.404534788442284E-07,
+      7.409069576884566E-07,
+      1.0400097656250001E-06,
+      1.04001953125E-06,
+      1.0612667472450533E-06,
+      1.0625334944901065E-06
+    ],
+    "effective_current_absolute_tolerance": 1E-12,
+    "retained_midpoints": 220,
+    "failed_nonlinear_trials": 0,
+    "initialization": "operating_point",
+    "initial_newton": {
+      "iterations": 4,
+      "residual_inf": 3.3881317890172014E-21,
+      "update_inf": 0.9479452857152805,
+      "damped_steps": 0,
+      "linear_solves": 104,
+      "gmin_continuation": {
+        "stages": [
+          {
+            "gmin_siemens": 0.001,
+            "iterations": 9,
+            "residual_inf": 1.734723475976807E-18
+          },
+          {
+            "gmin_siemens": 0.0001,
+            "iterations": 4,
+            "residual_inf": 2.168404344971009E-19
+          },
+          {
+            "gmin_siemens": 1E-05,
+            "iterations": 11,
+            "residual_inf": 1.3552527156068805E-20
+          },
+          {
+            "gmin_siemens": 1.0000000000000002E-06,
+            "iterations": 22,
+            "residual_inf": 5.4527745979495584E-21
+          },
+          {
+            "gmin_siemens": 1.0000000000000002E-07,
+            "iterations": 19,
+            "residual_inf": 5.293955920339377E-21
+          },
+          {
+            "gmin_siemens": 1.0000000000000004E-08,
+            "iterations": 11,
+            "residual_inf": 5.859954254478786E-21
+          },
+          {
+            "gmin_siemens": 1.0000000000000005E-09,
+            "iterations": 7,
+            "residual_inf": 6.4912481582216E-21
+          },
+          {
+            "gmin_siemens": 1.0000000000000006E-10,
+            "iterations": 6,
+            "residual_inf": 5.423871744124219E-21
+          },
+          {
+            "gmin_siemens": 1.0000000000000006E-11,
+            "iterations": 6,
+            "residual_inf": 6.001259563660788E-21
+          },
+          {
+            "gmin_siemens": 1.0000000000000006E-12,
+            "iterations": 5,
+            "residual_inf": 6.060025889323859E-21
+          },
+          {
+            "gmin_siemens": 1E-12,
+            "iterations": 0,
+            "residual_inf": 6.0600258135932125E-21
+          }
+        ],
+        "final_unregularized": true
+      }
+    },
+    "accepted_steps": 220,
+    "rejected_steps": 51,
+    "attempts": 271,
+    "max_accepted_error": 0.9504071877407213,
+    "linear_solves": 2719,
+    "prepared_factors": 0,
+    "prepared_reuses": 0
+  },
+  "independent_checks": [
+    {
+      "status": "not_checked",
+      "count": 3
+    },
+    {
+      "status": "passed",
+      "count": 38
+    }
+  ],
+  "stock_comparison": {
+    "status": "numerical_disagreement",
+    "observables": [
+      {
+        "engine_signal": "v(n3)",
+        "native_signal": "v(1)",
+        "unit": "V",
+        "points": 221,
+        "failed": 0,
+        "maximum_absolute_error": 1.1102230246251565E-15,
+        "absolute_tolerance": 1E-06,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "v(n4)",
+        "native_signal": "v(2)",
+        "unit": "V",
+        "points": 221,
+        "failed": 0,
+        "maximum_absolute_error": 7.771561172376096E-16,
+        "absolute_tolerance": 1E-06,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "v(n5)",
+        "native_signal": "v(3)",
+        "unit": "V",
+        "points": 221,
+        "failed": 36,
+        "maximum_absolute_error": 0.0003679957389861599,
+        "absolute_tolerance": 1E-06,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "v(n7)",
+        "native_signal": "v(4)",
+        "unit": "V",
+        "points": 221,
+        "failed": 37,
+        "maximum_absolute_error": 0.0014793916854880518,
+        "absolute_tolerance": 1E-06,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "v(n11)",
+        "native_signal": "v(5)",
+        "unit": "V",
+        "points": 221,
+        "failed": 0,
+        "maximum_absolute_error": 0.00023672509151495547,
+        "absolute_tolerance": 1E-06,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "v(n13)",
+        "native_signal": "v(6)",
+        "unit": "V",
+        "points": 221,
+        "failed": 111,
+        "maximum_absolute_error": 0.00011660450533960975,
+        "absolute_tolerance": 1E-06,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "v(n2)",
+        "native_signal": "v(7)",
+        "unit": "V",
+        "points": 221,
+        "failed": 0,
+        "maximum_absolute_error": 4.120315200140112E-14,
+        "absolute_tolerance": 1E-06,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "v(n19)",
+        "native_signal": "v(8)",
+        "unit": "V",
+        "points": 221,
+        "failed": 183,
+        "maximum_absolute_error": 0.0010503813271625084,
+        "absolute_tolerance": 1E-06,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "v(n1)",
+        "native_signal": "v(9)",
+        "unit": "V",
+        "points": 221,
+        "failed": 0,
+        "maximum_absolute_error": 0,
+        "absolute_tolerance": 1E-06,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "i(e0)",
+        "native_signal": "i(vdd)",
+        "unit": "A",
+        "points": 221,
+        "failed": 82,
+        "maximum_absolute_error": 0.00024095405259192039,
+        "absolute_tolerance": 1E-09,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "i(e1)",
+        "native_signal": "i(vs)",
+        "unit": "A",
+        "points": 221,
+        "failed": 51,
+        "maximum_absolute_error": 0.017576682846416936,
+        "absolute_tolerance": 1E-09,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "i(e2)",
+        "native_signal": "i(vw)",
+        "unit": "A",
+        "points": 221,
+        "failed": 45,
+        "maximum_absolute_error": 0.03323201435369486,
+        "absolute_tolerance": 1E-09,
+        "relative_tolerance": 0.0001
+      },
+      {
+        "engine_signal": "i(e3)",
+        "native_signal": "i(vwb)",
+        "unit": "A",
+        "points": 221,
+        "failed": 89,
+        "maximum_absolute_error": 0.041252449537118055,
+        "absolute_tolerance": 1E-09,
+        "relative_tolerance": 0.0001
+      }
+    ],
+    "gaps": [],
+    "excluded_startup_samples": 0,
+    "analytical_reference": null,
+    "agreed": false
+  },
+  "refined_inputs": [
+    {
+      "physical_circuit_unchanged": true,
+      "profile": "mid-fine",
+      "input_sha256": "5fdf28200773afa2fbd38d68bab7ffb279e635fb03a1069d1ccbb154f0cfe087",
+      "original_sha256": "6d5bd5a8e00f1f51f1c1c465bf8f80851cbc7c731623f11a4db1052389c39667",
+      "exit_code": 0,
+      "raw_sha256": "c5102ddba4f5aa8c8d12f8c185f9786a37f31797c54af4999828e5d931d85b30",
+      "original_input": false
+    },
+    {
+      "physical_circuit_unchanged": true,
+      "profile": "strict-fine",
+      "input_sha256": "7d98e2809695e53443725ac035cf723e726f05edf3b21575f03810e8a7a043c3",
+      "original_sha256": "6d5bd5a8e00f1f51f1c1c465bf8f80851cbc7c731623f11a4db1052389c39667",
+      "exit_code": 0,
+      "raw_sha256": "6ee3162d0546a589f6e2e62778b20a9d4bf35c107aa6803e048e1a6d06cd045b",
+      "original_input": false
+    }
+  ],
+  "refined_comparisons": [
+    {
+      "agreed": true,
+      "reference_profile": "mid-fine",
+      "reference_original_input": false,
+      "observables": [
+        {
+          "max_error": 6.661338147750939E-16,
+          "signal": "v(1)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 5.551115123125783E-16,
+          "signal": "v(2)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 4.4491737627438965E-06,
+          "signal": "v(3)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 3.8029416504214986E-06,
+          "signal": "v(4)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 1.820177555345026E-07,
+          "signal": "v(5)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 3.127271243630325E-07,
+          "signal": "v(6)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 4.2299497238218464E-14,
+          "signal": "v(7)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 3.2634261590835933E-06,
+          "signal": "v(8)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 0.0,
+          "signal": "v(9)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 2.8691848167291026E-09,
+          "signal": "i(vdd)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 1.8959500511228633E-08,
+          "signal": "i(vs)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 1.1516857975537448E-08,
+          "signal": "i(vw)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 8.470855204778527E-08,
+          "signal": "i(vwb)",
+          "failed": 0,
+          "points": 221
+        }
+      ],
+      "backend": "faer",
+      "native_points": 6470,
+      "status": "agreed"
+    },
+    {
+      "agreed": true,
+      "reference_profile": "strict-fine",
+      "reference_original_input": false,
+      "observables": [
+        {
+          "max_error": 8.881784197001252E-16,
+          "signal": "v(1)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 8.881784197001252E-16,
+          "signal": "v(2)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 4.4486825729883606E-06,
+          "signal": "v(3)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 3.416493584318392E-06,
+          "signal": "v(4)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 1.9844387244560835E-07,
+          "signal": "v(5)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 3.091664496773783E-07,
+          "signal": "v(6)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 4.241051954068098E-14,
+          "signal": "v(7)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 3.0064827716280718E-06,
+          "signal": "v(8)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 0.0,
+          "signal": "v(9)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 3.1793532903605533E-09,
+          "signal": "i(vdd)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 1.7104161688765232E-08,
+          "signal": "i(vs)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 1.1453029219454791E-08,
+          "signal": "i(vw)",
+          "failed": 0,
+          "points": 221
+        },
+        {
+          "max_error": 9.641124975451332E-08,
+          "signal": "i(vwb)",
+          "failed": 0,
+          "points": 221
+        }
+      ],
+      "backend": "faer",
+      "native_points": 6494,
+      "status": "agreed"
+    }
+  ],
+  "native_self_comparison": [
+    {
+      "signals": [
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 0.0,
+          "failed": 0,
+          "signal": "v(9)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 8.355122149694694E-14,
+          "failed": 0,
+          "signal": "v(7)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 1.5543122344752192E-15,
+          "failed": 0,
+          "signal": "v(1)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 1.4432899320127035E-15,
+          "failed": 0,
+          "signal": "v(2)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 0.00036775647578490833,
+          "failed": 39,
+          "signal": "v(3)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 0.0014762033549703957,
+          "failed": 37,
+          "signal": "v(4)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 0.00023674552870822652,
+          "failed": 0,
+          "signal": "v(5)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 0.00011646327931909284,
+          "failed": 111,
+          "signal": "v(6)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 0.001047586920775334,
+          "failed": 183,
+          "signal": "v(8)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001,
+          "max_error": 0.04125245394307422,
+          "failed": 93,
+          "signal": "i(vwb)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001,
+          "max_error": 0.03323200975627443,
+          "failed": 45,
+          "signal": "i(vw)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001,
+          "max_error": 0.017576692347894142,
+          "failed": 51,
+          "signal": "i(vs)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001,
+          "max_error": 0.00024095289445821128,
+          "failed": 82,
+          "signal": "i(vdd)"
+        }
+      ],
+      "right": "strict-fine",
+      "left": "stock",
+      "left_native_points": 150,
+      "all_signals_agree": false,
+      "grid": "exact retained engine output times",
+      "right_native_points": 6494
+    },
+    {
+      "signals": [
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 0.0,
+          "failed": 0,
+          "signal": "v(9)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 6.106226635438361E-14,
+          "failed": 0,
+          "signal": "v(7)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 8.881784197001252E-16,
+          "failed": 0,
+          "signal": "v(1)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 1.1102230246251565E-15,
+          "failed": 0,
+          "signal": "v(2)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 1.1905853027904811E-06,
+          "failed": 0,
+          "signal": "v(3)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 3.1883037478475096E-06,
+          "failed": 0,
+          "signal": "v(4)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 1.6789762691260535E-07,
+          "failed": 0,
+          "signal": "v(5)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 2.670927628650732E-07,
+          "failed": 0,
+          "signal": "v(6)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001,
+          "max_error": 2.730302281150898E-06,
+          "failed": 0,
+          "signal": "v(8)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001,
+          "max_error": 7.116363637954537E-08,
+          "failed": 0,
+          "signal": "i(vwb)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001,
+          "max_error": 1.293886723457982E-08,
+          "failed": 0,
+          "signal": "i(vw)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001,
+          "max_error": 1.5819674956075655E-08,
+          "failed": 0,
+          "signal": "i(vs)"
+        },
+        {
+          "points": 221,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001,
+          "max_error": 2.8035853807573835E-09,
+          "failed": 0,
+          "signal": "i(vdd)"
+        }
+      ],
+      "right": "strict-fine",
+      "left": "mid-fine",
+      "left_native_points": 6470,
+      "all_signals_agree": true,
+      "grid": "exact retained engine output times",
+      "right_native_points": 6494
+    }
+  ],
+  "ac_checkpoint": "9427e23bba2a2cb2cf76a8d59db4d44258a7b065",
+  "ac_recheck_status": "all_individual_requested_analyses_agreed",
+  "ac_recheck_agreed": true,
+  "verification": {
+    "strictdoc": {
+      "tool": "StrictDoc 0.30.4 real SDReader",
+      "log": "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/strictdoc-final.log",
+      "documents": 63
+    },
+    "managed": {
+      "branches_covered": 6234,
+      "branches_valid": 9930,
+      "passed": 853,
+      "coverage_path": "E:\\Artifacts\\Spice-finish-two-9eb2180-20261112T0322\\mos-frontend-coverage\\711b4e7e-4bd4-480c-844f-dae48e448001\\coverage.cobertura.xml",
+      "scope": "Frontend test host and its instrumented managed assemblies, including generated syntax. Skipped native integrations excluded; real deck execution is separate.",
+      "failed": 0,
+      "lines_valid": 26948,
+      "lines_covered": 21146,
+      "skipped": 40
+    },
+    "rust_coverage": {
+      "branches": null,
+      "lines_covered": 2230,
+      "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+      "files": [
+        {
+          "file": "src/adaptive.rs",
+          "lines": {
+            "count": 54,
+            "covered": 49,
+            "percent": 90.74074074074075
+          },
+          "sha256": "595ada0a4bd8b8cf3278d6e655f4906df341a1a77433d46ec67f0b9e969818fe"
+        },
+        {
+          "file": "src/api.rs",
+          "lines": {
+            "count": 380,
+            "covered": 189,
+            "percent": 49.73684210526316
+          },
+          "sha256": "cd29d0e17c24c333eae18d5d27cc7fbe3ab38fb7cf97ca6c3a9fa27fb562e64e"
+        },
+        {
+          "file": "src/audit_configured.rs",
+          "lines": {
+            "count": 166,
+            "covered": 95,
+            "percent": 57.22891566265061
+          },
+          "sha256": "f193ff4ae6b4154f894d30a24d5832563d37ae7dd44767d6da2f85656a836612"
+        },
+        {
+          "file": "src/backend.rs",
+          "lines": {
+            "count": 296,
+            "covered": 86,
+            "percent": 29.054054054054053
+          },
+          "sha256": "f08a887529bbcff110e91cfaf26d45e27101cf1357088a7ed3b99c42190decf2"
+        },
+        {
+          "file": "src/configured.rs",
+          "lines": {
+            "count": 316,
+            "covered": 207,
+            "percent": 65.50632911392405
+          },
+          "sha256": "affadbe5364bbf6f92b51dbee86e7888782b5fc6cc65e4ffdb9c94a83d22d93e"
+        },
+        {
+          "file": "src/newton.rs",
+          "lines": {
+            "count": 1074,
+            "covered": 509,
+            "percent": 47.39292364990689
+          },
+          "sha256": "d20a1257d032e731265a1564a406d0906022c2edd44e8f192ccf4726dc139219"
+        },
+        {
+          "file": "src/sources.rs",
+          "lines": {
+            "count": 109,
+            "covered": 79,
+            "percent": 72.47706422018348
+          },
+          "sha256": "76ba60d9855777612e1a0fd0e0d438ea939d79eaadc000f1ca7aeb7f8ba91091"
+        },
+        {
+          "file": "src/waveform.rs",
+          "lines": {
+            "count": 276,
+            "covered": 88,
+            "percent": 31.88405797101449
+          },
+          "sha256": "e3322998ebe3c4e8e8987809575744f450e9a4e118eddb76f5d703bdb9dc6007"
+        }
+      ],
+      "lines_valid": 7778,
+      "named_test": "nonlinear_trapezoidal",
+      "limitations": [
+        "Stable Rust instrumentation provides no measured branch coverage.",
+        "Other tests and executable main are outside this run.",
+        "A named test can pin its own seed, overriding the environment seed; retain actual test replay configuration alongside this report."
+      ],
+      "summary_path": "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/coverage-trap/summary.json"
+    },
+    "mutation": {
+      "output": "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/mutation-two-final/mutants.out",
+      "tool": "cargo-mutants 27.1.0",
+      "limitations": "Two selected candidates only; not a complete library campaign or Stryker.NET run.",
+      "outcomes": {
+        "outcomes": [
+          {
+            "scenario": "Baseline",
+            "summary": "Success",
+            "log_path": "log/baseline.log",
+            "diff_path": null,
+            "phase_results": [
+              {
+                "phase": "Build",
+                "duration": 104.2019388,
+                "process_status": "Success",
+                "argv": [
+                  "cargo",
+                  "test",
+                  "--no-run",
+                  "--verbose",
+                  "--package=circuit-simulator@0.1.0",
+                  "-j1",
+                  "--locked",
+                  "--lib",
+                  "--test",
+                  "nonlinear_trapezoidal",
+                  "--test",
+                  "lu_zero_constraints"
+                ]
+              },
+              {
+                "phase": "Test",
+                "duration": 19.8989451,
+                "process_status": "Success",
+                "argv": [
+                  "cargo",
+                  "test",
+                  "--verbose",
+                  "--package=circuit-simulator@0.1.0",
+                  "-j1",
+                  "--locked",
+                  "--lib",
+                  "--test",
+                  "nonlinear_trapezoidal",
+                  "--test",
+                  "lu_zero_constraints"
+                ]
+              }
+            ]
+          },
+          {
+            "scenario": {
+              "Mutant": {
+                "name": "src/backend.rs:221:5: replace enforce_homogeneous_constraints with ()",
+                "package": "circuit-simulator",
+                "file": "src/backend.rs",
+                "function": {
+                  "function_name": "enforce_homogeneous_constraints",
+                  "return_type": "",
+                  "span": {
+                    "start": {
+                      "line": 210,
+                      "column": 1
+                    },
+                    "end": {
+                      "line": 253,
+                      "column": 2
+                    }
+                  }
+                },
+                "span": {
+                  "start": {
+                    "line": 221,
+                    "column": 5
+                  },
+                  "end": {
+                    "line": 252,
+                    "column": 6
+                  }
+                },
+                "replacement": "()",
+                "genre": "FnValue"
+              }
+            },
+            "summary": "CaughtMutant",
+            "log_path": "log/src__backend.rs_line_221_col_5.log",
+            "diff_path": "diff/src__backend.rs_line_221_col_5.diff",
+            "phase_results": [
+              {
+                "phase": "Build",
+                "duration": 104.2416976,
+                "process_status": "Success",
+                "argv": [
+                  "cargo",
+                  "test",
+                  "--no-run",
+                  "--verbose",
+                  "--package=circuit-simulator@0.1.0",
+                  "-j1",
+                  "--locked",
+                  "--lib",
+                  "--test",
+                  "nonlinear_trapezoidal",
+                  "--test",
+                  "lu_zero_constraints"
+                ]
+              },
+              {
+                "phase": "Test",
+                "duration": 18.1834153,
+                "process_status": {
+                  "Failure": 101
+                },
+                "argv": [
+                  "cargo",
+                  "test",
+                  "--verbose",
+                  "--package=circuit-simulator@0.1.0",
+                  "-j1",
+                  "--locked",
+                  "--lib",
+                  "--test",
+                  "nonlinear_trapezoidal",
+                  "--test",
+                  "lu_zero_constraints"
+                ]
+              }
+            ]
+          },
+          {
+            "scenario": {
+              "Mutant": {
+                "name": "src/waveform.rs:404:9: replace Waveform::next_periodic_breakpoint -> Option<f64> with None",
+                "package": "circuit-simulator",
+                "file": "src/waveform.rs",
+                "function": {
+                  "function_name": "Waveform::next_periodic_breakpoint",
+                  "return_type": "-> Option<f64>",
+                  "span": {
+                    "start": {
+                      "line": 399,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 420,
+                      "column": 6
+                    }
+                  }
+                },
+                "span": {
+                  "start": {
+                    "line": 404,
+                    "column": 9
+                  },
+                  "end": {
+                    "line": 419,
+                    "column": 13
+                  }
+                },
+                "replacement": "None",
+                "genre": "FnValue"
+              }
+            },
+            "summary": "CaughtMutant",
+            "log_path": "log/src__waveform.rs_line_404_col_9.log",
+            "diff_path": "diff/src__waveform.rs_line_404_col_9.diff",
+            "phase_results": [
+              {
+                "phase": "Build",
+                "duration": 98.6598922,
+                "process_status": "Success",
+                "argv": [
+                  "cargo",
+                  "test",
+                  "--no-run",
+                  "--verbose",
+                  "--package=circuit-simulator@0.1.0",
+                  "-j1",
+                  "--locked",
+                  "--lib",
+                  "--test",
+                  "nonlinear_trapezoidal",
+                  "--test",
+                  "lu_zero_constraints"
+                ]
+              },
+              {
+                "phase": "Test",
+                "duration": 17.0949961,
+                "process_status": {
+                  "Failure": 101
+                },
+                "argv": [
+                  "cargo",
+                  "test",
+                  "--verbose",
+                  "--package=circuit-simulator@0.1.0",
+                  "-j1",
+                  "--locked",
+                  "--lib",
+                  "--test",
+                  "nonlinear_trapezoidal",
+                  "--test",
+                  "lu_zero_constraints"
+                ]
+              }
+            ]
+          }
+        ],
+        "total_mutants": 2,
+        "missed": 0,
+        "caught": 2,
+        "timeout": 0,
+        "unviable": 0,
+        "success": 0,
+        "start_time": "2026-11-12T06:07:28.9819219Z",
+        "end_time": "2026-11-12T06:13:31.5672346Z",
+        "cargo_mutants_version": "27.1.0"
+      }
+    },
+    "review": "Read-only simulated code review; no new concrete defect in final controller/provider changes. Corrected stale charged-junction documentation.",
+    "rust": {
+      "environment_seed": "2026111203",
+      "charge_property_cases": 64,
+      "tool": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+      "command": "cargo test --locked --no-fail-fast -j 1 --lib --test nonlinear_trapezoidal --test lu_zero_constraints --test initial_newton --test mos1_channel --test nonlinear --test pspice_switch --test sparse_ac_circuits --test sparse_dynamic --test switch_stagnation_20261103 --test behavioral_voltage --test analysis_audits --test adaptive --test sparse_transient --test edge_cases -- --test-threads=1",
+      "failed": 0,
+      "passed": 169.0,
+      "log": "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/full-physics-final/stdout.log",
+      "charge_property_seed": "2026111202"
+    }
+  },
+  "execution_command": "dotnet run --file scripts/Run-RequestedCorpus.cs -- <repository> <pinned corpus>/tests/ngspice <final-engine.exe> <ngspice_con.exe> <inventory-two.json> <fresh output> 300 faer",
+  "requirements": [
+    "REQ-MOS1-JUNCTION-GMIN-001",
+    "REQ-TRANSIENT-NONLINEAR-TRAP-001",
+    "REQ-TRANSIENT-CORNER-RESTART-001",
+    "REQ-TRANSIENT-CURRENT-ACCURACY-FLOOR-001",
+    "REQ-TRANSIENT-ACCEPTED-MIDPOINTS-001",
+    "REQ-TRANSIENT-DAE-ERROR-STATES-001",
+    "REQ-TRANSIENT-ADAPTIVE-RETRY-001",
+    "REQ-LU-HOMOGENEOUS-CONSTRAINTS-001",
+    "REQ-TRANSIENT-CURRENT-RELATIVE-001",
+    "REQ-QUALIFICATION-EXPLICIT-CPU-PROVIDER-001"
+  ],
+  "limitations": [
+    "Stock/default mosmem comparison remains failed: zero additional stock-reference closures for this deck.",
+    "Refined numerical inputs are not original-deck default-reference evidence.",
+    "Dense LU still fails the later high-accuracy memory ramp. Faer selected explicitly; no silent provider fallback.",
+    "Nonlinear stored energy, explicit charged initial states, Meyer/native BSIM trapezoidal profiles remain unqualified.",
+    "Full corpus, separate new fuzz/soak, full cargo-mutants and Stryker campaigns not run.",
+    "Stable Rust branch coverage unavailable; native main and other integration tests outside measured native coverage.",
+    "Raw numerical results, mutation/build failures and resource logs remain local on E:."
+  ],
+  "preserved_failed_attempts": {
+    "invalid_cached_baseline": "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/mutation-two-serial/mutants.out/log/baseline.log",
+    "recovery": "Source hashes checked and unchanged restored source timestamps refreshed; final fresh baseline and unmutated regression required.",
+    "memory_breach": "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/mutation-two-guard-v2/guard.log"
+  },
+  "actual_invocation": {
+    "launcher": "pwsh -NoProfile -File E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/FinalReplay.ps1",
+    "memory_guard": "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/Guard512.ps1 -Job E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/FinalReplay.ps1 -Folder E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/final-replay",
+    "coordinator": "Simulator.RequestedQualification.RequestedCorpus.RunAsync, shared public coordinator invoked from compiled assemblies",
+    "arguments": [
+      "C:/dev/spice-deck-next",
+      "E:/Artifacts/RSpice-inspection-20261108T032637Z/source/tests/ngspice",
+      "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/final-engine.exe",
+      "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe",
+      "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/inventory-two.json",
+      "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/two-faer-final",
+      "300",
+      "faer"
+    ],
+    "script_hashes": {
+      "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/FinalReplay.ps1": "88cab20ee330fb5fc9e49d04546751a23724376d2ed55896e0a46172d2434e15",
+      "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/ReplayFinal.ps1": "77027c2992ea29223eed57585ae613022dbb094bbabacb4db94a84b08a037219",
+      "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/CompareFinalRefined.ps1": "68100bad7d44e3dc14b18d90b37ee8d1742a7c3f63bef70ad91e581df9415de8",
+      "E:/Artifacts/Spice-finish-two-9eb2180-20261112T0322/NativeSelfComparison.ps1": "2499255ca41c87b4b14d35f1e3130ed0a230b2630c8490a9d07d7a6f1e566e5c"
+    }
+  }
+}

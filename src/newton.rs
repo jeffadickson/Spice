@@ -386,9 +386,9 @@ fn validate_correction(plan: &CompiledCircuit, correction: &[f64]) -> SimResult<
 
 /// Private accounting adapter for the real correction path used by Newton.
 /// The counter belongs to one invocation, including failed continuation stages.
-struct CorrectionCounter<'a> {
-    inner: &'a dyn LinearSolver,
-    calls: std::sync::atomic::AtomicUsize,
+pub(crate) struct CorrectionCounter<'a> {
+    pub(crate) inner: &'a dyn LinearSolver,
+    pub(crate) calls: std::sync::atomic::AtomicUsize,
 }
 impl LinearSolver for CorrectionCounter<'_> {
     fn name(&self) -> &'static str {
@@ -1188,6 +1188,57 @@ pub fn solve_backward_euler_step(
     step_s: f64,
     rhs: &[f64],
 ) -> SimResult<(Vec<f64>, NewtonReport)> {
+    solve_dynamic_step(plan, solver, options, previous, step_s, rhs, None)
+}
+
+/// Solve Q(x)-Q(old) with the trapezoidal endpoint current balance. The
+/// previous excitation and complete committed MNA state determine the old
+/// conduction residual; trial solves never mutate that history.
+pub fn solve_trapezoidal_step(
+    plan: &CompiledCircuit,
+    solver: &dyn LinearSolver,
+    options: NewtonOptions,
+    previous: &[f64],
+    step_s: f64,
+    rhs: &[f64],
+    previous_rhs: &[f64],
+) -> SimResult<(Vec<f64>, NewtonReport)> {
+    options.validate()?;
+    require_trapezoidal_models(plan)?;
+    let old = linearize_with_rhs(plan, previous, previous_rhs)?.residual;
+    // Endpoint averaging is valid only for a committed state satisfying its
+    // algebraic voltage constraints. Otherwise Fold would change the next
+    // source voltage. KCL may contain displacement current, and an inductor's
+    // constitutive row is dynamic, so neither is an old DC-zero requirement.
+    for row in plan.circuit.nodes.len()-1..plan.unknown_count() {
+        let dynamic = (0..plan.unknown_count()).any(|col|plan.charge.at(row,col)!=0.);
+        if !dynamic && scaled_component(old[row],previous_rhs[row],
+            options.voltage_absolute_tolerance,options.relative_tolerance)? > 1. {
+            return Err(SimError::invalid("trapezoidal history violates an algebraic voltage constraint"));
+        }
+    }
+    solve_dynamic_step(plan, solver, options, previous, step_s, rhs, Some(&old))
+}
+
+// Keep configured and direct public Newton admission identical. Exact native
+// and Meyer charge profiles require separate trapezoidal qualification.
+pub(crate) fn require_trapezoidal_models(plan: &CompiledCircuit) -> SimResult<()> {
+    if !plan.bsim330.is_empty() || plan.mos1.iter().any(|m|m.model.oxide_farads != 0.) {
+        return Err(SimError::new(ErrorCode::Unsupported,
+            "configured nonlinear trapezoidal native/Meyer charge is not yet qualified"));
+    }
+    Ok(())
+}
+
+fn solve_dynamic_step(
+    plan: &CompiledCircuit,
+    solver: &dyn LinearSolver,
+    options: NewtonOptions,
+    previous: &[f64],
+    step_s: f64,
+    rhs: &[f64],
+    old_conduction: Option<&[f64]>,
+) -> SimResult<(Vec<f64>, NewtonReport)> {
     options.validate()?;
     if options.continuation.is_some()
         || options.gmin_continuation.is_some()
@@ -1199,10 +1250,24 @@ pub fn solve_backward_euler_step(
         ));
     }
     let mut values = previous.to_vec();
+    // BE contributes (Q-Qold)/h. Halving h and adding Fold gives the
+    // trapezoidal identity Fnew+Fold+2*(Q-Qold)/h=0, including source/inductor
+    // rows and each nonlinear junction charge derivative.
+    let linearize = |trial: &[f64]| -> SimResult<LinearizedSystem> {
+        let h = if old_conduction.is_some() { step_s / 2. } else { step_s };
+        let mut system = linearize_backward_euler(plan, trial, previous, h, rhs)?;
+        if let Some(old) = old_conduction {
+            for (value, before) in system.residual.iter_mut().zip(old) { *value += before; }
+            if system.residual.iter().any(|v| !v.is_finite()) {
+                return Err(SimError::invalid("nonfinite trapezoidal residual"));
+            }
+        }
+        Ok(system)
+    };
     let mut damped_steps = 0;
     let mut last_update = f64::INFINITY;
     for iteration in 0..=options.max_iterations {
-        let system = linearize_backward_euler(plan, &values, previous, step_s, rhs)?;
+        let system = linearize(&values)?;
         let residual = norm_inf(&system.residual)?;
         tracing::trace!(iteration, residual_inf = residual, "newton_iteration");
         let scaled_residual = scaled_residual_norm(plan, &system.residual, rhs, options)?;
@@ -1255,7 +1320,7 @@ pub fn solve_backward_euler_step(
             let (candidate, damped) =
                 limited_candidate(plan, &values, &update, 2f64.powi(-(attempt as i32)), references.is_some());
             let candidate_system = match
-                linearize_backward_euler(plan, &candidate, previous, step_s, rhs)
+                linearize(&candidate)
             {
                 Ok(system) => system,
                 Err(error) => {

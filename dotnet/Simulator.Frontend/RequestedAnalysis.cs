@@ -224,7 +224,8 @@ public static partial class RequestedAnalysis
       var transientRequest=transient.Prepared.Request! with{CaseId=id};
       var options=((TransientConfigured)transientRequest.Analysis).Options;
       if(requestedMethod!=null){
-       if(requestedMethod=="trapezoidal"&&options.InitialNewton!=null)
+       if(requestedMethod=="trapezoidal"&&options.InitialNewton!=null&&
+           transientRequest.Circuit.Elements.Any(e=>e is Bsim330 or Mos1Channel{Model.OxideFarads:>0}))
         throw new PreparationFailure("unsupported_trapezoidal_device",methodCards[0].Range);
        options=options with{Method=requestedMethod};
       }
@@ -260,6 +261,15 @@ public static partial class RequestedAnalysis
        };
       }
       options=options with{CurrentAbsoluteTolerance=abstol};
+      // Native MOS decks default to trapezoidal. The runtime records source-
+      // corner BE restarts and reconstructs junction current with that method.
+      if(!usesUic && requestedMethod is null && transientRequest.Circuit.Elements.Any(e=>e is Mos1Channel) &&
+          !transientRequest.Circuit.Elements.Any(e=>e is Bsim330 or Mos1Channel{Model.OxideFarads:>0}))
+       options=options with{Method="trapezoidal"};
+      if(!usesUic && options.Method=="trapezoidal" && transientRequest.Circuit.Elements.Any(e=>e is Mos1Channel) &&
+          !transientRequest.Circuit.Elements.Any(e=>e is Bsim330 or Mos1Channel{Model.OxideFarads:>0}))
+       options=options with{Adaptive=new AdaptiveOptions(1e-7,1e-9,1e-9,
+           Math.Max(double.Epsilon,options.MaxStepS/1e6),4*options.MaxSteps,CurrentRelative:1e-4)};
       if(abstol is {} amps&&!usesUic&&initialization!=null&&options.InitialNewton!=null)
        initialization=initialization with{Analysis=new OperatingPointNewton(new NewtonOptions(CurrentAbsoluteTolerance:amps))};
       requests.Add(transientRequest with{Analysis=new TransientConfigured(options)});break;

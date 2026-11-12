@@ -14,7 +14,7 @@ use circuit_simulator::{
 
 #[test]
 fn independent_policy_fields_reject_invalid_values_and_accept_exact_limits() {
-    let valid = circuit_simulator::adaptive::AdaptiveOptions {
+    let valid = circuit_simulator::adaptive::AdaptiveOptions { current_relative: None,
         relative: 0.01,
         voltage_absolute: 1e-6,
         current_absolute: 1e-12,

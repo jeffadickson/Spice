@@ -12,6 +12,11 @@ using FsCheck.Xunit;
 namespace Simulator.Frontend.Tests;
 public sealed class RequestedQualificationTests
 {
+ [Theory][InlineData("gpu")][InlineData("qr")][InlineData("")]
+ public async Task UnknownQualificationBackendFailsBeforeAnyOutput(string backend)
+ {
+  await Assert.ThrowsAsync<ArgumentException>(()=>RequestedCorpus.RunAsync(["missing","missing","missing","missing","missing","missing","1",backend]));
+ }
  private const string OpRaw="Title: test\nPlotname: Operating Point\nFlags: real\nNo. Variables: 2\nNo. Points: 1\nVariables:\n0 v(a) voltage\n1 i(v1) current\nValues:\n0 1\n-.001\n";
  [Fact] public void Native_raw_retains_order_dimensions_and_signed_values(){var raw=AsciiRaw.Read(OpRaw);Assert.False(raw.Complex);Assert.Equal("i(v1)",raw.Variables[1].Name);Assert.Equal(-.001,raw.Points[0][1].Real);}
  [Theory]

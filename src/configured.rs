@@ -29,7 +29,8 @@ pub struct TransientConfig {
     /// step Newton options or silently select another linear provider.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub initial_newton: Option<crate::newton::NewtonOptions>,
-    /// Absolute current convergence tolerance in amperes, for nonlinear bias and steps.
+    /// Requested upper bound on current convergence error in amperes. The
+    /// runtime may solve more tightly to retain its independent audit floor.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub current_absolute_tolerance: Option<f64>,
     #[serde(default)]
@@ -86,6 +87,17 @@ impl TransientConfig {
 #[derive(Debug, Serialize)]
 pub struct IntegrationReport {
     pub method: Method,
+    /// Accepted nonlinear trapezoidal subintervals restarted with BE after
+    /// startup or a source corner, including adaptive half steps. Endpoints permit independent
+    /// audits and junction-current reconstruction to use the actual method.
+    pub backward_euler_restarts: Vec<f64>,
+    /// Actual step-Newton bound after applying the requested upper bound and
+    /// the stricter default physical-consistency floor. Input remains unchanged.
+    pub effective_current_absolute_tolerance: f64,
+    /// Number of accepted fine-step midpoints retained for audits/observers.
+    pub retained_midpoints: usize,
+    /// Failed nonlinear trial intervals rejected before publishing any state.
+    pub failed_nonlinear_trials: usize,
     pub initialization: &'static str,
     /// Actual nonlinear bias work, including continuation and final physical
     /// source scale/Gmin removal. Absent for explicit-state and linear starts.
@@ -102,6 +114,9 @@ pub struct IntegrationReport {
 pub struct ConfiguredResult {
     pub samples: Vec<Sample>,
     pub report: IntegrationReport,
+    /// One entry per accepted output interval. Adaptive entries retain the
+    /// actual first half-step state, never a reconstructed interpolation.
+    pub midpoint_history: Vec<Option<Sample>>,
 }
 fn initial(
     plan: &CompiledCircuit,
@@ -159,24 +174,24 @@ pub fn run_observed(
 ) -> SimResult<ConfiguredResult> {
     plan.require_dynamic_native_models()?;
     options.validate()?;
+    if options.method == Method::Trapezoidal { crate::newton::require_trapezoidal_models(plan)?; }
     if !plan.has_nonlinear_devices() && options.initial_newton.is_some() {
         return Err(SimError::new(
             ErrorCode::Unsupported,
             "initial_newton requires nonlinear transient initialization",
         ));
     }
-    if plan.has_nonlinear_devices() && options.method != Method::BackwardEuler {
-        return Err(crate::error::SimError::new(
-            crate::error::ErrorCode::Unsupported,
-            "nonlinear configured transient currently requires backward_euler",
-        ));
-    }
     let sources = BoundSources::new(plan, &options.sources)?;
     let mut old_rhs = sources.rhs(0.)?;
     let with_current_tolerance = |mut policy: crate::newton::NewtonOptions| {
         if let Some(tolerance) = options.current_absolute_tolerance {
-            policy.current_absolute_tolerance = tolerance;
+            policy.current_absolute_tolerance = policy.current_absolute_tolerance.min(tolerance);
         }
+        // A loose deck ABSTOL must not turn an approximate bias into an output
+        // that fails the independent 100-pA KCL gate. Tighter authored bounds
+        // remain effective; the actual stricter policy is reported explicitly.
+        policy.current_absolute_tolerance = policy.current_absolute_tolerance
+            .min(crate::newton::NewtonOptions::default().current_absolute_tolerance);
         policy
     };
     let step_policy = with_current_tolerance(crate::newton::NewtonOptions::default());
@@ -224,15 +239,20 @@ pub fn run_observed(
     let mut fixed_index = 1usize;
     let (mut steps, mut rejected, mut attempts) = (0, 0, 0);
     let mut max_error = 0_f64;
-    let mut nonlinear_linear_solves = 0usize;
-    while time < options.stop_s {
+    let trial_provider = crate::newton::CorrectionCounter{inner:solver,calls:std::sync::atomic::AtomicUsize::new(0)};
+    let mut failed_nonlinear_trials = 0usize;
+    let mut restart = true;
+    let mut backward_euler_restarts = Vec::new();
+    let mut midpoint_history = Vec::new();
+    let mut midpoint_count = 0usize;
+    'intervals: while time < options.stop_s {
         if cancel.load(std::sync::atomic::Ordering::Relaxed) {
             return Err(SimError::new(
                 ErrorCode::Cancelled,
                 "configured run cancelled",
             ));
         }
-        if steps >= options.max_steps || (samples.len() + 1) * plan.unknown_count() > 2_000_000 {
+        if steps >= options.max_steps || (samples.len() + midpoint_count + 2) * plan.unknown_count() > 2_000_000 {
             return Err(SimError::new(
                 ErrorCode::ResourceExhausted,
                 "configured run budget exhausted",
@@ -251,8 +271,14 @@ pub fn run_observed(
         // Absolute fixed-grid times avoid accumulating n rounded additions.
         // Snap only endpoint roundoff before source clipping, never skip a source corner.
         let candidate = if options.adaptive.is_none() {
-            while fixed_index as f64 * options.max_step_s <= time {
+            // A physical source corner can differ by an ULP from n*h. Do not
+            // create a near-zero interval just to visit that reporting grid.
+            let grid_roundoff=32.*f64::EPSILON*time.abs().max(options.max_step_s);
+            let mut skipped=0;
+            while fixed_index as f64 * options.max_step_s <= time+grid_roundoff {
+                if skipped==2 { return Err(SimError::new(ErrorCode::ResourceExhausted,"fixed grid cannot advance past roundoff")); }
                 fixed_index += 1;
+                skipped += 1;
             }
             fixed_index as f64 * options.max_step_s
         } else {
@@ -263,7 +289,10 @@ pub fn run_observed(
         if options.stop_s - next <= endpoint_roundoff {
             next = options.stop_s;
         }
-        if let Some(event) = sources.next_breakpoint(time, next) {
+        // Prefer the authored corner over a roundoff-adjacent grid point, but
+        // never merge two source corners or advance beyond the requested stop.
+        let breakpoint = sources.next_breakpoint(time, (next+endpoint_roundoff).min(options.stop_s));
+        if let Some(event) = breakpoint {
             next = event;
         }
         if next <= time {
@@ -274,16 +303,33 @@ pub fn run_observed(
         }
         let h = next - time;
         let new_rhs = sources.rhs(next)?;
+        let nonlinear_method = if restart && options.method == Method::Trapezoidal {
+            Method::BackwardEuler
+        } else { options.method };
         attempts += 1;
-        let (coarse, coarse_solves) = if plan.has_nonlinear_devices() {
-            let (values, report) = crate::newton::solve_backward_euler_step(
-                plan,
-                solver,
-                step_policy,
-                &state,
-                h,
-                &new_rhs,
-            )?;
+        // Numerical failure of a trial is recoverable only inside an explicit
+        // adaptive budget. Shrink the whole interval, retaining its committed
+        // state/RHS/restart flag. Invalid inputs and cancellation stay terminal.
+        macro_rules! nonlinear_trial {
+            ($old:expr,$step:expr,$rhs:expr,$before_rhs:expr) => {{
+                match nonlinear_step(plan,&trial_provider,step_policy,$old,$step,$rhs,$before_rhs,nonlinear_method) {
+                    Ok(value)=>value,
+                    Err(error)=>{
+                        if let Some(adaptive)=&options.adaptive {
+                            if matches!(error.code,ErrorCode::NumericalFailure|ErrorCode::SingularMatrix) && h>adaptive.min_step_s {
+                                rejected+=1;failed_nonlinear_trials+=1;
+                                proposed=(h/2.).max(adaptive.min_step_s);
+                                tracing::debug!(time_s=time,step_s=h,next_step_s=proposed,reason=%error,"adaptive_newton_trial_rejected");
+                                continue 'intervals;
+                            }
+                        }
+                        return Err(error);
+                    }
+                }
+            }};
+        }
+        let (coarse, _coarse_solves) = if plan.has_nonlinear_devices() {
+            let (values, report) = nonlinear_trial!(&state,h,&new_rhs,&old_rhs);
             (values, report.linear_solves)
         } else {
             (
@@ -298,7 +344,7 @@ pub fn run_observed(
                 0,
             )
         };
-        nonlinear_linear_solves += coarse_solves;
+        let mut accepted_midpoint = None;
         let accepted = if let Some(adaptive) = &options.adaptive {
             let mid = time + h / 2.;
             if mid <= time || mid >= next {
@@ -308,15 +354,8 @@ pub fn run_observed(
                 ));
             }
             let mid_rhs = sources.rhs(mid)?;
-            let (half, half_solves) = if plan.has_nonlinear_devices() {
-                let (values, report) = crate::newton::solve_backward_euler_step(
-                    plan,
-                    solver,
-                    step_policy,
-                    &state,
-                    h / 2.,
-                    &mid_rhs,
-                )?;
+            let (half, _half_solves) = if plan.has_nonlinear_devices() {
+                let (values, report) = nonlinear_trial!(&state,h/2.,&mid_rhs,&old_rhs);
                 (values, report.linear_solves)
             } else {
                 (
@@ -331,15 +370,8 @@ pub fn run_observed(
                     0,
                 )
             };
-            let (fine, fine_solves) = if plan.has_nonlinear_devices() {
-                let (values, report) = crate::newton::solve_backward_euler_step(
-                    plan,
-                    solver,
-                    step_policy,
-                    &half,
-                    next - mid,
-                    &new_rhs,
-                )?;
+            let (fine, _fine_solves) = if plan.has_nonlinear_devices() {
+                let (values, report) = nonlinear_trial!(&half,next-mid,&new_rhs,&mid_rhs);
                 (values, report.linear_solves)
             } else {
                 (
@@ -354,13 +386,15 @@ pub fn run_observed(
                     0,
                 )
             };
-            nonlinear_linear_solves += half_solves + fine_solves;
-            let order = if options.method == Method::BackwardEuler {
+            let order = if options.method == Method::BackwardEuler ||
+                plan.has_nonlinear_devices() && nonlinear_method == Method::BackwardEuler {
                 1
             } else {
                 2
             };
-            let error = adaptive.error(plan, &coarse, &fine, order)?;
+            let error = if restart && plan.has_nonlinear_devices() && options.method==Method::Trapezoidal {
+                adaptive.restart_error(plan,&coarse,&fine,order)?
+            } else {adaptive.error(plan, &coarse, &fine, order)?};
             if error > 1. {
                 rejected += 1;
                 if h <= adaptive.min_step_s * (1. + 1e-12) {
@@ -379,11 +413,20 @@ pub fn run_observed(
                 (0.9 * error.powf(-1. / (order + 1) as f64)).clamp(0.5, 2.)
             };
             proposed = (h * factor).clamp(adaptive.min_step_s, options.max_step_s);
+            accepted_midpoint = Some(Sample{time_s:mid,values:half});
             fine
         } else {
             coarse
         };
         // Only accepted states, RHS values and times become visible to future steps.
+        if plan.has_nonlinear_devices() && nonlinear_method == Method::BackwardEuler
+            && options.method == Method::Trapezoidal {
+            if let Some(mid) = &accepted_midpoint { backward_euler_restarts.push(mid.time_s); }
+            backward_euler_restarts.push(next);
+        }
+        if accepted_midpoint.is_some() { midpoint_count += 1; }
+        midpoint_history.push(accepted_midpoint);
+        restart = breakpoint == Some(next);
         state = accepted;
         old_rhs = new_rhs;
         time = next;
@@ -396,8 +439,13 @@ pub fn run_observed(
     }
     Ok(ConfiguredResult {
         samples,
+        midpoint_history,
         report: IntegrationReport {
             method: options.method,
+            backward_euler_restarts,
+            effective_current_absolute_tolerance: step_policy.current_absolute_tolerance,
+            retained_midpoints: midpoint_count,
+            failed_nonlinear_trials,
             initialization: if options.initial_state.is_some() {
                 "explicit_state"
             } else {
@@ -408,9 +456,22 @@ pub fn run_observed(
             rejected_steps: rejected,
             attempts,
             max_accepted_error: max_error,
-            linear_solves: stepper.solve_calls + nonlinear_linear_solves + initialization_solves,
+            linear_solves: stepper.solve_calls + trial_provider.calls.load(std::sync::atomic::Ordering::Relaxed) + initialization_solves,
             prepared_factors: stepper.prepared_factors,
             prepared_reuses: stepper.prepared_reuses,
         },
     })
+}
+
+// One method dispatch for coarse and both fine trials keeps rejected adaptive
+// work private and uses the matching previous excitation at every endpoint.
+fn nonlinear_step(
+    plan: &CompiledCircuit, solver: &dyn LinearSolver,
+    policy: crate::newton::NewtonOptions, previous: &[f64], h: f64,
+    rhs: &[f64], old_rhs: &[f64], method: Method,
+) -> SimResult<(Vec<f64>, crate::newton::NewtonReport)> {
+    match method {
+        Method::BackwardEuler => crate::newton::solve_backward_euler_step(plan,solver,policy,previous,h,rhs),
+        Method::Trapezoidal => crate::newton::solve_trapezoidal_step(plan,solver,policy,previous,h,rhs,old_rhs),
+    }
 }

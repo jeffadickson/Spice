@@ -25,7 +25,7 @@ STATEMENT: >>>
 A charged SPICE diode shall expose separate conduction and total terminal current observables. DC total current equals conduction; AC total current includes j*omega*dQ/dV; supported backward-Euler total current includes accepted charge differences over the accepted interval. Unsupported history or initialization semantics shall refuse instead of inventing total current. Independent KCL shall include displacement; unavailable nonlinear stored-energy verification shall report NotChecked with a reason.
 <<<
 COMMENT: >>>
-Implementation: src/api.rs, src/audit.rs. Verification: total-current KCL and explicit unavailable-energy tests in tests/spice_diode.rs. Configured adaptive and explicitly supplied initial states are currently unsupported for this charged profile because endpoint history alone does not establish the required initial derivative or final adaptive substep current. Existing constant-capacitance diode behavior remains separately qualified.
+Implementation: src/api.rs, src/audit.rs. Verification: total-current KCL and explicit unavailable-energy tests in tests/spice_diode.rs. Configured adaptive charged-junction execution retains and audits each accepted midpoint and reconstructs terminal current from the actual final substep and discrete method (REQ-TRANSIENT-ACCEPTED-MIDPOINTS-001). Explicitly supplied charged-profile initial states remain unsupported because they do not establish the initial derivative. Nonlinear energy auditing remains unavailable. Existing constant-capacitance diode behavior remains separately qualified.
 <<<
 
 [REQUIREMENT]

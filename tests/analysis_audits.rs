@@ -220,7 +220,7 @@ fn configured_invalid_interval_and_adaptive_hidden_history_are_explicit() {
         )
         .is_err()
     );
-    config.adaptive = Some(circuit_simulator::adaptive::AdaptiveOptions {
+    config.adaptive = Some(circuit_simulator::adaptive::AdaptiveOptions { current_relative: None,
         relative: 1e-3,
         voltage_absolute: 1e-6,
         current_absolute: 1e-9,
@@ -378,12 +378,9 @@ fn configured_nonlinear_be_constant_charge_matches_independent_energy() {
         AuditOptions::default(),
     )
     .unwrap();
-    assert!(
-        report
-            .checks
-            .iter()
-            .all(|c| c.status == CheckStatus::NotChecked)
-    );
+    // A backward-Euler interval must fail the independent trapezoidal KCL
+    // identity rather than receive unearned trapezoidal audit coverage.
+    assert!(report.has_failures());
 }
 
 #[test]

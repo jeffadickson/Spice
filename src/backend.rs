@@ -168,7 +168,7 @@ fn solve_refined_real_lu(
             "nonfinite LU solution",
         ));
     }
-    enforce_homogeneous_singletons(matrix, rhs, &mut values);
+    enforce_homogeneous_constraints(matrix, rhs, &mut values);
     let mut best_error = real_backward_error(matrix, rhs, &values);
     for _ in 0..3 {
         if best_error <= 1e-10 {
@@ -188,7 +188,7 @@ fn solve_refined_real_lu(
         if candidate.iter().any(|value| !value.is_finite()) {
             break;
         }
-        enforce_homogeneous_singletons(matrix, rhs, &mut candidate);
+        enforce_homogeneous_constraints(matrix, rhs, &mut candidate);
         let error = real_backward_error(matrix, rhs, &candidate);
         // Never replace a better finite solve with a worse/nonfinite correction.
         // Equal errors can still improve an exactly constrained zero component.
@@ -207,25 +207,48 @@ fn solve_refined_real_lu(
         ))
     }
 }
-/// Enforce exact equations a*x[j] = 0 before checking the complete original
-/// system. Such rows occur for grounded zero-voltage sources. Refinement can
-/// leave a nonzero subnormal correction whose relative row error remains one.
-/// This changes the candidate solution, never the equations or acceptance bound.
-fn enforce_homogeneous_singletons(
+/// Project the candidate onto exact homogeneous singleton/equality rows before
+/// checking the COMPLETE original system. Zero-voltage sensors form equality
+/// chains, including chains anchored to ground. Roundoff in a near-zero member
+/// otherwise leaves componentwise error one despite repeated LU corrections.
+/// No equation, coefficient or acceptance bound is changed. Each unanchored
+/// group copies one existing finite representative, avoiding overflow in means.
+fn enforce_homogeneous_constraints(
     matrix: &DMatrix<f64>,
     rhs: &DVector<f64>,
     values: &mut DVector<f64>,
 ) {
+    let n=matrix.ncols();
+    let mut parent: Vec<_>=(0..n).collect();
+    let mut zeros=Vec::new();
+    // Roots always link to a smaller index. This invariant bounds traversal,
+    // prevents cycles and keeps the representative's value stable during copy.
+    fn root(parent:&mut [usize],mut i:usize)->usize {
+        while parent[i]!=i { parent[i]=parent[parent[i]];i=parent[i]; }
+        i
+    }
     for row in 0..matrix.nrows() {
         if rhs[row] != 0. {
             continue;
         }
         let mut nonzero = (0..matrix.ncols()).filter(|&column| matrix[(row, column)] != 0.);
-        if let Some(column) = nonzero.next() {
-            if nonzero.next().is_none() {
-                values[column] = 0.;
+        if let Some(first) = nonzero.next() {
+            if let Some(second)=nonzero.next() {
+                if nonzero.next().is_none() && matrix[(row,first)] == -matrix[(row,second)] {
+                    let a=root(&mut parent,first);let b=root(&mut parent,second);
+                    parent[a.max(b)]=a.min(b);
+                }
+            } else {
+                zeros.push(first);
             }
         }
+    }
+    let mut grounded=vec![false;n];
+    for column in zeros { let r=root(&mut parent,column);grounded[r]=true; }
+    for column in 0..n {
+        let r=root(&mut parent,column);
+        let value=if grounded[r] {0.} else {values[r]};
+        values[column]=value;
     }
 }
 /// Independent algorithm within the same library, not a second qualified provider.
@@ -318,6 +341,32 @@ fn real_backward_error(matrix: &DMatrix<f64>, rhs: &DVector<f64>, values: &DVect
 #[cfg(test)]
 mod october28_contracts {
     use super::*;
+    #[test]
+    fn homogeneous_projection_handles_transitive_ground_and_unanchored_chains() {
+        for reverse in [false,true] {
+            let rows=if reverse {vec![[0.,0.,1.],[0.,1.,-1.],[1.,-1.,0.]]}
+                else {vec![[1.,-1.,0.],[0.,1.,-1.],[0.,0.,1.]]};
+            let a=DMatrix::from_row_slice(3,3,&rows.into_iter().flatten().collect::<Vec<_>>());
+            let mut x=DVector::from_vec(vec![1e-30,-1e-25,1e-20]);
+            enforce_homogeneous_constraints(&a,&DVector::zeros(3),&mut x);
+            assert_eq!(x.as_slice(),&[0.,0.,0.]);
+        }
+        let a=DMatrix::from_row_slice(3,3,&[1.,-1.,0.,0.,1.,-1.,0.,0.,1.]);
+        let mut x=DVector::from_vec(vec![f64::MAX,-f64::MAX,1.]);
+        enforce_homogeneous_constraints(&a,&DVector::from_vec(vec![0.,0.,1.]),&mut x);
+        assert!(x.iter().all(|v|v.is_finite()));
+        assert_eq!(x[0],x[1]);assert_eq!(x[1],x[2]);
+        // Projection alone is not acceptance: the unchanged third equation
+        // rejects this deliberately wrong finite candidate.
+        assert!(real_backward_error(&a,&DVector::from_vec(vec![0.,0.,1.]),&x)>1e-10);
+    }
+    #[test]
+    fn projection_never_admits_unequal_coefficients_or_nonzero_rhs() {
+        let a=DMatrix::from_row_slice(2,2,&[1.,-2.,1.,-1.]);
+        let original=DVector::from_vec(vec![3.,4.]);let mut x=original.clone();
+        enforce_homogeneous_constraints(&a,&DVector::from_vec(vec![0.,1.]),&mut x);
+        assert_eq!(x,original);
+    }
     #[test]
     fn real_backward_error_has_an_independently_known_nonnegative_scale() {
         // 2*x=3 at x=1 has residual 1 and componentwise scale 2+3=5.

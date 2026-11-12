@@ -122,7 +122,7 @@ fn adaptive_minimum_step_rejection_is_relative_at_small_time_scales() {
         stop_s: 1e-9,
         max_step_s: 1e-9,
         initial_state: Some(vec![1.]),
-        adaptive: Some(AdaptiveOptions {
+        adaptive: Some(AdaptiveOptions { current_relative: None,
             relative: 1e-12,
             voltage_absolute: 1e-15,
             current_absolute: 1e-15,

@@ -116,11 +116,11 @@ pub fn run_with_registry(
         .diodes
         .iter()
         .any(|d| matches!(d.model,crate::model::DiodeProfile::Spice(m)|crate::model::DiodeProfile::JunctionStorage(m) if m.has_charge()))
-        && matches!(&request.analysis,Analysis::TransientConfigured { options } if options.adaptive.is_some() || options.initial_state.is_some())
+        && matches!(&request.analysis,Analysis::TransientConfigured { options } if options.initial_state.is_some())
     {
         return Err(crate::error::SimError::new(
             crate::error::ErrorCode::Unsupported,
-            "charged junction total current requires nonadaptive backward Euler initialized from operating point",
+            "charged junction total current requires integration initialized from operating point",
         ));
     }
     if !plan.behaviors.is_empty() && !matches!(request.analysis,Analysis::OperatingPoint|Analysis::OperatingPointNewton{..}) {
@@ -128,6 +128,7 @@ pub fn run_with_registry(
     }
     tracing::debug!(unknowns = plan.unknown_count(), "circuit_compiled");
     let mut integration = None;
+    let mut midpoint_history = Vec::new();
     let mut newton = None;
     let mut samples = match &request.analysis {
         Analysis::OperatingPoint => {
@@ -151,6 +152,7 @@ pub fn run_with_registry(
         Analysis::TransientConfigured { options } => {
             let result = crate::configured::run(&plan, solver, options, &false.into())?;
             integration = Some(result.report);
+            midpoint_history = result.midpoint_history;
             result.samples
         }
     };
@@ -214,12 +216,23 @@ pub fn run_with_registry(
         }
         Analysis::TransientConfigured { options: config } => {
             let mut report = crate::audit::AuditReport { checks: Vec::new() };
-            for pair in samples.windows(2) {
+            for (index,pair) in samples.windows(2).enumerate() {
+                let midpoint = midpoint_history.get(index).and_then(Option::as_ref);
+                let intervals: Vec<_> = if let Some(mid) = midpoint {
+                    vec![(&pair[0],mid),(mid,&pair[1])]
+                } else { vec![(&pair[0],&pair[1])] };
+                for (before,after) in intervals {
+                let mut actual_config = config.clone();
+                if midpoint.is_some() { actual_config.adaptive=None; }
+                if integration.as_ref().is_some_and(|r: &crate::configured::IntegrationReport|
+                    r.backward_euler_restarts.binary_search_by(|t|t.total_cmp(&after.time_s)).is_ok()) {
+                    actual_config.method = crate::configured::Method::BackwardEuler;
+                }
                 let mut step = crate::audit::configured_step(
                     &request.circuit,
-                    &pair[0],
-                    &pair[1],
-                    config,
+                    before,
+                    after,
+                    &actual_config,
                     options,
                 )?;
                 for check in &mut step.checks {
@@ -229,10 +242,11 @@ pub fn run_with_registry(
                             .reason
                             .as_deref()
                             .unwrap_or("independent configured audit"),
-                        pair[1].time_s
+                        after.time_s
                     ));
                 }
                 report.merge_worst(step);
+                }
             }
             report
         }
@@ -325,7 +339,8 @@ pub fn run_with_registry(
             });
             let mut old_q = 0.;
             let mut old_time = 0.;
-            for sample in &mut samples {
+            let mut old_displacement = 0.;
+            for (index,sample) in samples.iter_mut().enumerate() {
                 let v = diode.p.unknown().map(|i| sample.values[i]).unwrap_or(0.)
                     - diode.n.unknown().map(|i| sample.values[i]).unwrap_or(0.);
                 let q = model
@@ -337,17 +352,31 @@ pub fn run_with_registry(
                     request.analysis,
                     Analysis::Transient { .. } | Analysis::TransientConfigured { .. }
                 );
-                let total = if dynamic && sample.time_s > old_time {
-                    conduction + (q - old_q) / (sample.time_s - old_time)
+                let displacement = if dynamic && sample.time_s > old_time {
+                    let at_endpoint = |charge:f64, old_charge:f64, time:f64, before:f64, old_current:f64| {
+                        let average=(charge-old_charge)/(time-before);
+                        if matches!(&request.analysis,Analysis::TransientConfigured{options} if options.method==crate::configured::Method::Trapezoidal)
+                            && !integration.as_ref().is_some_and(|r|r.backward_euler_restarts.binary_search_by(|t|t.total_cmp(&time)).is_ok()) {
+                            2.*average-old_current
+                        } else {average}
+                    };
+                    if let Some(mid) = index.checked_sub(1).and_then(|i|midpoint_history.get(i)).and_then(Option::as_ref) {
+                        let mv=diode.p.unknown().map_or(0.,|i|mid.values[i])-diode.n.unknown().map_or(0.,|i|mid.values[i]);
+                        let mq=model.nonlinear_charge(mv)?.ok_or_else(||SimError::invalid("missing midpoint junction charge"))?.charge_coulombs;
+                        let mi=at_endpoint(mq,old_q,mid.time_s,old_time,old_displacement);
+                        at_endpoint(q,mq,sample.time_s,mid.time_s,mi)
+                    } else {at_endpoint(q,old_q,sample.time_s,old_time,old_displacement)}
                 } else {
-                    conduction
+                    0.
                 };
+                let total = conduction + displacement;
                 if !total.is_finite() {
                     return Err(SimError::invalid("nonfinite total diode current"));
                 }
                 sample.values.push(total);
                 old_q = q;
                 old_time = sample.time_s;
+                old_displacement = displacement;
             }
             if !ac_samples.is_empty() {
                 let bias = crate::dc::operating_point(&plan, solver)?;

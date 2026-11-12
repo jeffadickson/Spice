@@ -18,6 +18,11 @@ internal sealed record PreparedMos1(Mos1Model Channel,SpiceDiodeModel DrainBody,
         // Junction polarity follows the substrate type, independently of channel mode.
         if(d!=bulk)add(new SpiceDiode(id+"_bd",Channel.PChannel?d:bulk,Channel.PChannel?bulk:d,DrainBody));
         if(source!=bulk)add(new SpiceDiode(id+"_bs",Channel.PChannel?source:bulk,Channel.PChannel?bulk:source,SourceBody));
+        // Native MOS1 retains its default 1-pS body-junction floor even after
+        // global continuation shunts are removed. Explicit branches keep this
+        // compatibility convention visible to current sensors and audits.
+        if(d!=bulk)add(new Resistor(id+"_bd_gmin",Channel.PChannel?d:bulk,Channel.PChannel?bulk:d,1e12));
+        if(source!=bulk)add(new Resistor(id+"_bs_gmin",Channel.PChannel?source:bulk,Channel.PChannel?bulk:source,1e12));
         if(GateSourceFarads>0&&gate!=source)add(new Capacitor(id+"_cgs",gate,source,GateSourceFarads));
         if(GateDrainFarads>0&&gate!=d)add(new Capacitor(id+"_cgd",gate,d,GateDrainFarads));
         if(GateBulkFarads>0&&gate!=bulk)add(new Capacitor(id+"_cgb",gate,bulk,GateBulkFarads));

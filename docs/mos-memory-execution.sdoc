@@ -1,0 +1,153 @@
+[DOCUMENT]
+TITLE: MOS memory execution and nonlinear trapezoidal history
+
+[TEXT]
+STATEMENT: >>>
+Implementation and verification trace: MOS1 junction lowering and startup are in
+dotnet/Simulator.Frontend/Mos1Preparation.cs, TransientSelection.cs and
+RequestedAnalysis.cs, verified by MosMemoryPreparationTests.cs and the original
+memory replay. Endpoint equations/history and audits are in src/newton.rs,
+src/configured.rs, src/api.rs and src/audit_configured.rs; independent equations,
+negative histories, retry rollback and observer accounting are exercised by
+tests/nonlinear_trapezoidal.rs. Periodic corners are in src/waveform.rs and
+src/sources.rs. Current-error policies are in src/adaptive.rs with unit and
+integration properties. Homogeneous projection is in src/backend.rs, its unit
+tests and tests/lu_zero_constraints.rs. Explicit provider qualification is in
+RequestedCorpus.cs and RequestedQualificationTests.cs. Bounded evidence and
+coverage limits are in evidence/mos-memory-execution.json and
+docs/mos-memory-results.md. All requirements remain Draft: finite evidence does
+not establish general numerical bounds or stock-default memory-deck parity.
+<<<
+
+[REQUIREMENT]
+UID: REQ-MOS1-JUNCTION-GMIN-001
+STATUS: Draft
+TITLE: Explicit MOS1 junction conductance
+STATEMENT: >>>
+The default ngspice-compatible MOS1 package shall retain 1e-12 S across each
+nondegenerate intrinsic body junction in DC, AC and transient. Lowering shall
+make these branches explicit to independent physical audits and drain sensors.
+This junction compatibility floor shall remain distinct from temporary global
+Gmin continuation, whose final physical solve removes its extra nodal shunts.
+Explicit nondefault Gmin cards remain unsupported until separately qualified.
+<<<
+
+[REQUIREMENT]
+UID: REQ-TRANSIENT-NONLINEAR-TRAP-001
+STATUS: Draft
+TITLE: Endpoint nonlinear trapezoidal equations
+STATEMENT: >>>
+Nonlinear trapezoidal integration shall balance endpoint conduction and the
+signed charge difference, using the complete previous excitation and committed
+state. Each Newton trial shall preserve history. Junction total-current
+reporting shall use the same accepted discrete method. An independent audit
+shall reconstruct endpoint KCL and nonlinear junction charge without production
+residuals or Jacobians, and explicitly identify unavailable energy/model audits.
+<<<
+
+[REQUIREMENT]
+UID: REQ-TRANSIENT-CORNER-RESTART-001
+STATUS: Draft
+TITLE: First-order restart at source corners
+STATEMENT: >>>
+A nonlinear trapezoidal run shall use a first-order interval at startup and
+immediately after source breakpoints to avoid propagating alternating endpoint
+currents from an abrupt slope change. Actual accepted restart endpoints shall
+be retained for independent audits and current reconstruction. Rejected trials
+shall not publish state, restart evidence or source history.
+<<<
+
+[REQUIREMENT]
+UID: REQ-TRANSIENT-CURRENT-ACCURACY-FLOOR-001
+STATUS: Draft
+TITLE: Report a stricter physical-consistency convergence floor
+STATEMENT: >>>
+A requested ABSTOL shall bound permitted current convergence error without
+weakening the runtime's existing physical-consistency accuracy floor. A stricter
+authored current bound shall remain effective. The input shall retain its
+original value and the integration report shall disclose the actual step bound.
+Fixed and removed continuation conductances shall remain distinct. Neither
+independent audit tolerances nor reference-comparison tolerances may be widened
+to make a run pass.
+<<<
+
+[REQUIREMENT]
+UID: REQ-TRANSIENT-ACCEPTED-MIDPOINTS-001
+STATUS: Draft
+TITLE: Retain accepted adaptive history for physical evidence
+STATEMENT: >>>
+An adaptive configured run shall retain its actual accepted first-half-step
+state for each output interval, within the aggregate stored-state budget.
+Independent API audits shall evaluate both accepted half steps; derived
+junction currents shall reconstruct the endpoint using that same retained
+history and actual BE/trapezoidal restart methods. Rejected trials shall never
+enter output or audit history. Reporting shall disclose retained midpoint count;
+standalone endpoint-only audit calls shall continue to identify missing history.
+<<<
+
+[REQUIREMENT]
+UID: REQ-TRANSIENT-DAE-ERROR-STATES-001
+STATUS: Draft
+TITLE: State and derivative-current error budgets
+STATEMENT: >>>
+The adaptive controller shall distinguish the first-order derivative startup
+from subsequent trapezoidal work. A restart shall establish current accuracy
+using one quarter of the ordinary current-error budget, leaving headroom for
+the derivative recurrence. Subsequent error checks shall retain every voltage
+and branch current, including algebraic source/sensor observers and inductor
+flux currents. Shape and finite-value checks shall include every unknown.
+Newton, independent current/KCL and reference bounds shall remain unchanged.
+<<<
+
+[REQUIREMENT]
+UID: REQ-TRANSIENT-ADAPTIVE-RETRY-001
+STATUS: Draft
+TITLE: Bounded recovery from numerical trial failures
+STATEMENT: >>>
+Only a numerical or singular trial failure inside an explicit adaptive budget
+may reject and reduce the attempted interval. Malformed, unsupported, cancelled
+and other terminal failures shall propagate. Minimum step and attempt ceilings
+shall remain enforced; state, midpoint history, source RHS, restart evidence
+and observer output shall publish only after acceptance. Provider-call counts
+shall include failed trials and initialization without double counting.
+<<<
+
+[REQUIREMENT]
+UID: REQ-LU-HOMOGENEOUS-CONSTRAINTS-001
+STATUS: Draft
+TITLE: Exact homogeneous constraint projection with unchanged acceptance
+STATEMENT: >>>
+Dense LU refinement shall preserve exact zero-RHS singleton and equal-coefficient
+opposite-sign two-term constraints, including transitive zero-voltage sensing
+chains. Candidate projection shall remain finite and bounded, and shall never
+change matrix coefficients, RHS values or the full-system 1e-10 componentwise
+backward-error acceptance bound. Nonzero RHS and unequal coefficients shall not
+be admitted as homogeneous equalities. A corrected candidate shall still pass
+verification against the complete original system.
+<<<
+
+[REQUIREMENT]
+UID: REQ-TRANSIENT-CURRENT-RELATIVE-001
+STATUS: Draft
+TITLE: Explicit current-observer relative budget
+STATEMENT: >>>
+Adaptive current relative accuracy may be specified separately from voltage
+relative accuracy. An absent current-relative value shall retain the historical
+shared relative value. A specified value shall be finite, positive and below
+one. Every branch current shall remain controlled; a separate budget shall not
+remove current checks or change independent audit/reference tolerances. The
+normal requested MOS1 profile shall disclose its voltage and current budgets
+on the typed request rather than infer a weaker comparison after execution.
+<<<
+
+[REQUIREMENT]
+UID: REQ-QUALIFICATION-EXPLICIT-CPU-PROVIDER-001
+STATUS: Draft
+TITLE: Explicit CPU provider qualification
+STATEMENT: >>>
+The requested-corpus coordinator shall accept an explicit supported CPU backend,
+retain the existing LU default, place the selected backend on every ordinary
+request and record it in the report. An unsupported provider shall be rejected
+before output creation. A failed provider shall not silently select another;
+provider-specific failures and available comparisons shall remain distinct.
+<<<

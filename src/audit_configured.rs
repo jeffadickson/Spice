@@ -97,15 +97,10 @@ pub fn configured_step(
                 | Element::DiodeWithCapacitance { .. }
                 | Element::SpiceDiode { .. }
                 | Element::JunctionStorage { .. }
+                | Element::PspiceSwitch { .. }
         )
     }) {
-        return Ok(AuditReport {
-            checks: vec![Check::not_checked(
-                "independent_physical_audit",
-                "",
-                "nonlinear trapezoidal is outside the supported integrator profile",
-            )],
-        });
+        return nonlinear_trapezoidal(circuit, previous, state, config, options);
     }
     let mid: Vec<_> = previous
         .values
@@ -155,4 +150,52 @@ pub fn configured_step(
         "J",
     ));
     Ok(AuditReport { checks })
+}
+
+/// Reconstruct the integrated endpoint KCL without the production residual or
+/// Jacobian. Nonlinear conduction is averaged at endpoints (evaluating it at
+/// their midpoint is incorrect); junction charge uses the independent integral.
+fn nonlinear_trapezoidal(
+    circuit: &Circuit, previous: &Sample, state: &Sample,
+    config: &TransientConfig, options: AuditOptions,
+) -> SimResult<AuditReport> {
+    if circuit.elements.iter().any(|e| matches!(e,
+        Element::Bsim330{..}|Element::BsimSoiFdReference{..}) ||
+        matches!(e,Element::Mos1Channel{model,..} if model.oxide_farads != 0.)) {
+        return Ok(AuditReport { checks: vec![Check::not_checked(
+            "independent_physical_audit", "", "native/Meyer nonlinear trapezoidal charge audit is unavailable")] });
+    }
+    let before = effective(circuit,config,previous.time_s,previous.time_s)?;
+    let after = effective(circuit,config,state.time_s,state.time_s)?;
+    let effective = effective(circuit,config,previous.time_s,state.time_s)?;
+    let old_currents = dc_currents(&before,&previous.values)?;
+    let new_currents = dc_currents(&after,&state.values)?;
+    let mut currents: Vec<_> = old_currents.iter().zip(new_currents).map(|(a,b)|0.5*a+0.5*b).collect();
+    let mid: Vec<_> = previous.values.iter().zip(&state.values).map(|(a,b)|0.5*a+0.5*b).collect();
+    let h = state.time_s-previous.time_s;
+    let mut checks = constraint_checks(&effective,&mid,options)?;
+    for (element,current) in circuit.elements.iter().zip(&mut currents) {
+        let (p,n)=element.terminals();
+        let v=voltage(&state.values,p)-voltage(&state.values,n);
+        let old=voltage(&previous.values,p)-voltage(&previous.values,n);
+        match element {
+            Element::Capacitor{farads,..} => *current=farads*(v-old)/h,
+            Element::DiodeWithCapacitance{farads,..} => *current+=farads*(v-old)/h,
+            Element::SpiceDiode{model,..}|Element::JunctionStorage{model,..} =>
+                *current+=(independent_junction_charge(*model,v)-independent_junction_charge(*model,old))/h,
+            Element::Inductor{henries,..} => {
+                let expected=henries*(branch_current(circuit,&state.values,element.id())?-
+                    branch_current(circuit,&previous.values,element.id())?)/h;
+                checks.retain(|c|c.id!=format!("constraint:{}",element.id()));
+                let actual=0.5*v+0.5*old;
+                checks.push(Check::measured(format!("constraint:{}",element.id()),actual-expected,
+                    options.voltage_absolute_v+options.relative*(actual.abs()+expected.abs()),"V"));
+            }
+            _ => {}
+        }
+    }
+    if currents.iter().any(|v|!v.is_finite()) { return Err(SimError::invalid("nonfinite trapezoidal audit current")); }
+    checks.extend(kcl_checks(&effective,&mid,&currents,options,None,None)?);
+    checks.push(Check::not_checked("trap_energy_balance","J","nonlinear stored-energy audit is unavailable; endpoint KCL is checked"));
+    Ok(AuditReport{checks})
 }

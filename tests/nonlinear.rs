@@ -1031,7 +1031,7 @@ fn configured_nonlinear_transient_accepts_source_breakpoints_and_adaptive_trials
                     ],
                 },
             }],
-            adaptive: Some(circuit_simulator::adaptive::AdaptiveOptions {
+            adaptive: Some(circuit_simulator::adaptive::AdaptiveOptions { current_relative: None,
                 relative: 0.1,
                 voltage_absolute: 1e-4,
                 current_absolute: 1e-6,

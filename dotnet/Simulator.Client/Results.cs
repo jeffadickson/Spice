@@ -39,7 +39,9 @@ public sealed record MeasurementValue(string Id, string Signal, string Unit, str
 public sealed record AssertionValue(string Id, string Measurement, string Outcome, string? Reason);
 /// <summary>Accepted/rejected integration work and factor reuse; MaxAcceptedError is the controller's scaled error. Optional InitialNewton retains actual nonlinear time-zero recovery evidence separately from transient step work.</summary>
 public sealed record IntegrationInfo(string Method, string Initialization, int AcceptedSteps, int RejectedSteps,
-    int Attempts, double MaxAcceptedError, int LinearSolves, int PreparedFactors, int PreparedReuses, NewtonInfo? InitialNewton = null);
+    int Attempts, double MaxAcceptedError, int LinearSolves, int PreparedFactors, int PreparedReuses, NewtonInfo? InitialNewton = null,
+    double[]? BackwardEulerRestarts = null, double? EffectiveCurrentAbsoluteTolerance = null,
+    int? RetainedMidpoints = null, int? FailedNonlinearTrials = null);
 /// <summary>Selected provider capabilities and version, without implying full numerical qualification.</summary>
 public sealed record BackendInfo(string Id, string Placement, int MaxUnknowns, bool Sparse, bool Gpu,
     bool Complex, bool PreparedReal, string ProviderVersion);

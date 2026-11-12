@@ -122,11 +122,14 @@ public sealed record TransientConfiguration(double StopS, double MaxStepS, int M
     string Method = "backward_euler", double[]? InitialState = null, SourceOverride[]? Sources = null, AdaptiveOptions? Adaptive = null,
     NewtonOptions? InitialNewton = null)
 {
-    /// <summary>Optional absolute current tolerance in amperes for nonlinear bias and transient Newton solves.</summary>
+    /// <summary>Requested upper bound on nonlinear current convergence error in amperes.
+    /// The engine retains its stricter physical-consistency floor and reports the effective bound.</summary>
     public double? CurrentAbsoluteTolerance { get; init; }
 }
-/// <summary>Step-doubling tolerances in relative, volts and amperes, with minimum seconds and attempt budget.</summary>
-public sealed record AdaptiveOptions(double Relative, double VoltageAbsolute, double CurrentAbsolute, double MinStepS, int MaxAttempts);
+/// <summary>Step-doubling tolerances in relative, volts and amperes, with minimum seconds and attempt budget.
+/// CurrentRelative optionally separates derivative-current accuracy from voltage-state accuracy; null retains Relative.</summary>
+public sealed record AdaptiveOptions(double Relative, double VoltageAbsolute, double CurrentAbsolute, double MinStepS, int MaxAttempts,
+    double? CurrentRelative = null);
 /// <summary>Bind a time waveform to an existing independent source by its identity.</summary>
 public sealed record SourceOverride(string Id, Waveform Waveform);
 /// <summary>One waveform breakpoint in seconds and the bound source's SI quantity.</summary>

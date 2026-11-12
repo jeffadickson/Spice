@@ -13,7 +13,7 @@ fn config(relative: f64) -> TransientConfig {
         max_step_s: 0.001,
         method: Method::Trapezoidal,
         initial_state: Some(vec![1.]),
-        adaptive: Some(AdaptiveOptions {
+        adaptive: Some(AdaptiveOptions { current_relative: None,
             relative,
             voltage_absolute: 1e-10,
             current_absolute: 1e-12,
@@ -86,7 +86,7 @@ fn sine_and_invalid_adaptive_budget() {
     };
     assert!((s.at(0.25).unwrap() - 5.).abs() < 1e-12);
     assert!(
-        AdaptiveOptions {
+        AdaptiveOptions { current_relative: None,
             relative: 0.,
             voltage_absolute: 1e-6,
             current_absolute: 1e-9,
