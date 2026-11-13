@@ -85,6 +85,10 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
             Element::Vccs {
                 cp, cn, siemens, ..
             } => siemens * (voltage(*cp) - voltage(*cn)),
+            Element::VoltageScaledCccs {cp,cn,control_id,gain,voltage_coefficient,..} => {
+                let control=plan.branch_index(control_id).ok_or_else(||SimError::invalid("missing voltage-scaled current control"))?;
+                crate::voltage_scaled_cccs::linearize(*gain,*voltage_coefficient,x[control],voltage(*cp)-voltage(*cn))?.current_amps
+            }
             Element::Cccs {
                 control_id, gain, ..
             } => {

@@ -26,6 +26,7 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(PspiceSwitch), "pspice_switch")]
 [JsonDerivedType(typeof(Vccs), "vccs")]
 [JsonDerivedType(typeof(Cccs), "cccs")]
+[JsonDerivedType(typeof(VoltageScaledCccs), "voltage_scaled_cccs")]
 [JsonDerivedType(typeof(Ccvs), "ccvs")]
 [JsonDerivedType(typeof(Diode), "diode")]
 [JsonDerivedType(typeof(DiodeWithCapacitance), "diode_with_capacitance")]
@@ -51,6 +52,8 @@ public sealed record Vcvs(string Id,int P,int N,int Cp,int Cn,double Gain) : Ele
 public sealed record Vccs(string Id,int P,int N,int Cp,int Cn,double Siemens) : Element(Id,P,N);
 /// <summary>Output current P-to-N equals Gain times the P-to-N branch current of ControlId; gain is dimensionless.</summary>
 public sealed record Cccs(string Id,int P,int N,string ControlId,double Gain):Element(Id,P,N);
+/// <summary>Memoryless P-to-N current Gain*I(ControlId)*(1+VoltageCoefficient*(V(Cp)-V(Cn))). Gain is dimensionless, VoltageCoefficient is inverse volts; controls add no current draw or storage.</summary>
+public sealed record VoltageScaledCccs(string Id,int P,int N,int Cp,int Cn,string ControlId,double Gain,double VoltageCoefficient):Element(Id,P,N);
 /// <summary>Output voltage P-to-N equals Ohms times the P-to-N branch current of ControlId.</summary>
 public sealed record Ccvs(string Id,int P,int N,string ControlId,double Ohms):Element(Id,P,N);
 /// <summary>Smooth PSpice VSWITCH, ohms/volts. Current P-to-N is (Vp-Vn)/R(Vcp-Vcn); control is high impedance.</summary>

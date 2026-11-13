@@ -127,6 +127,12 @@ pub enum Element {
         control_id: String,
         gain: f64,
     },
+    /// High-impedance voltage modulation of a P-to-N branch current control.
+    /// Iout=gain*i(control_id)*(1+voltage_coefficient*(Vcp-Vcn)).
+    VoltageScaledCccs {
+        id: String, p: NodeId, n: NodeId, cp: NodeId, cn: NodeId,
+        control_id: String, gain: f64, voltage_coefficient: f64,
+    },
     /// Current-controlled voltage source; V(p)-V(n) equals ohms*i(control_id).
     Ccvs {
         id: String,
@@ -172,6 +178,7 @@ impl Element {
             | Self::BehavioralResistor { id, .. }
             | Self::PspiceSwitch { id, .. }
             | Self::Cccs { id, .. }
+            | Self::VoltageScaledCccs { id, .. }
             | Self::Ccvs { id, .. }
             | Self::Diode { id, .. }
             | Self::DiodeWithCapacitance { id, .. } => id,
@@ -217,6 +224,7 @@ impl Element {
             | Self::BehavioralResistor { p, n, .. }
             | Self::PspiceSwitch { p, n, .. }
             | Self::Cccs { p, n, .. }
+            | Self::VoltageScaledCccs { p, n, .. }
             | Self::Ccvs { p, n, .. }
             | Self::Diode { p, n, .. }
             | Self::DiodeWithCapacitance { p, n, .. } => (*p, *n),
@@ -329,7 +337,13 @@ impl Circuit {
                 {
                     return Err(SimError::invalid("invalid VCVS control terminals or gain"));
                 }
+                Element::VoltageScaledCccs {cp,cn,voltage_coefficient,..}
+                    if cp.0>=self.nodes.len() || cn.0>=self.nodes.len() || !voltage_coefficient.is_finite() => {
+                    return Err(SimError::invalid("invalid voltage-scaled CCCS voltage control"));
+                }
                 Element::Cccs {
+                    control_id, gain, ..
+                } | Element::VoltageScaledCccs {
                     control_id, gain, ..
                 } if control_id.is_empty() || !gain.is_finite() => {
                     return Err(SimError::invalid("invalid CCCS control ID or gain"));

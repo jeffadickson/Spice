@@ -317,6 +317,62 @@
                   "expression"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "voltage_scaled_cccs"
+                  },
+                  "id": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "control_id": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "gain": {
+                    "type": "number"
+                  },
+                  "voltage_coefficient": {
+                    "type": "number"
+                  },
+                  "p": {
+                    "maximum": 127,
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "n": {
+                    "maximum": 127,
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "cp": {
+                    "maximum": 127,
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "cn": {
+                    "maximum": 127,
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "kind",
+                  "id",
+                  "p",
+                  "n",
+                  "cp",
+                  "cn",
+                  "control_id",
+                  "gain",
+                  "voltage_coefficient"
+                ],
+                "additionalProperties": false
               }
             ],
             "not": {

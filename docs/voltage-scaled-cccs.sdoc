@@ -1,0 +1,87 @@
+[DOCUMENT]
+TITLE: Voltage-scaled current-controlled transport groundwork
+
+[TEXT]
+STATEMENT: >>>
+This is a bounded native/API prerequisite, not an original-deck closure and not
+a complete Gummel-Poon model. Fresh original rtlinv still refuses; its full stock
+program also emits obsolete-option and missing-print-vector diagnostics. Fresh
+temper-1/temper-3 already pass and are not recounted. Temper-2 fails one stock
+voltage bound although its original ratio assertion passes: independent Shockley
+KCL bisection from the effective requested model gives0.4052203046185694V at40C,
+matching our result, while stock gives0.4053120303623846V. No accuracy degradation,
+refined-control result or relaxed bound is accepted as original-default closure.
+
+Pinned RSpice rspice-core-devices/device/semiconductor/bjt/intrinsic/charge.rs
+shows both1/qb transport and TF*IFI/qb stored charge with Vbc derivatives. A
+transport-gain-only BJT VA promotion would therefore drop dynamic physics. Keep
+BJT frontend admission unchanged until charge/base-resistance assumptions are
+traced and independently qualified. This slice supplies one reusable memoryless
+product law, with no implicit BJT approximation or parameter aliases.
+
+Reuse existing current-control branch resolution, four-terminal conductance
+stamping, finite Newton state and converged-bias sparse AC. The previous retained
+Rust/SpiceSharp/ngspice reuse assessment still applies. Existing static CCCS gain
+cannot represent the required voltage partial; the single-voltage expression
+model cannot read an MNA branch current. No new production library or legacy
+runtime is needed for this small typed constitutive law.
+
+Affected producers/consumers: Rust/.NET element wire contract, structural and
+branch validation, immutable compile plan, residual/Jacobian, sparse AC bias,
+independent current/power audits, scalar-variation refusal and capability/schema
+metadata. Control current is the existing voltage-defined P-to-N branch unknown;
+control voltage is Vcp-Vcn. Both controls draw no additional current. Output is
+P-to-N amperes. Gain is dimensionless; voltage coefficient is inverse volts.
+No hidden storage or source branch is created. Native transient support and all
+BJT charge semantics remain separately unqualified.
+<<<
+
+[REQUIREMENT]
+UID: REQ-VOLTAGE-SCALED-CCCS-LAW-001
+STATUS: Draft
+TITLE: Finite owned product current law
+STATEMENT: >>>
+The model shall impose Iout=gain*Icontrol*(1+coefficient*Vcontrol), with exact
+partials gain*(1+coefficient*Vcontrol) and gain*Icontrol*coefficient. Finite signed
+parameters and states shall preserve their physical polarity. Nonfinite data,
+intermediate/result overflow and unresolved branch controls shall fail without
+clamps, zero substitution or successful partial output.
+<<<
+COMMENT: >>>
+Implementation: voltage_scaled_cccs, circuit::Element and immutable
+compiled current model. Verification: analytical derivatives, malformed wire and
+model cases, reproducible proptest and independent native/API DC/AC examples.
+<<<
+
+[REQUIREMENT]
+UID: REQ-VOLTAGE-SCALED-CCCS-STAMPS-001
+STATUS: Draft
+TITLE: Exact coupled-current residual and incremental stamps
+STATEMENT: >>>
+The model shall stamp P/N residual signs and both branch-current and control-
+voltage Jacobian columns. Sparse AC shall use both partials at a converged DC
+bias. Aliased terminals shall accumulate; the model shall add no branch unknown
+or charge. Independent DC current/power audits shall evaluate the physical law.
+Where public bias is unavailable, the nonlinear AC audit shall say not_checked.
+<<<
+COMMENT: >>>
+Verification: LU/Faer analytical DC and both AC gains, full MNA finite differences,
+sparse/dense equality, alias feedback, corruption audits and physical oracle.
+This prerequisite does not authorize BJT frontend admission or original counts.
+<<<
+
+[REQUIREMENT]
+UID: REQ-VOLTAGE-SCALED-CCCS-WIRE-001
+STATUS: Draft
+TITLE: Typed transport wire boundary
+STATEMENT: >>>
+The Rust/.NET element and request schema shall identify output/control nodes,
+branch control identity, finite gain and voltage coefficient. Unknown fields,
+wrong field types, invalid node bounds and missing branch controls shall refuse.
+The model shall not masquerade as an independently variable scalar CCCS gain.
+<<<
+COMMENT: >>>
+Implementation: circuit, Client Requests, compile, variation and request
+schema. Verification: actual serializer/native entry point and maintained
+schema validator. Resource/domain validity remains the runtime's responsibility.
+<<<

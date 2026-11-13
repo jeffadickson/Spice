@@ -1,0 +1,782 @@
+{
+  "base_commit": "a1cd63ed3b2d359a9694a0e872a621de8827a197",
+  "source_dirty": true,
+  "artifact_root": "E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110",
+  "new_original_agreeing_decks": 0,
+  "cumulative_sol_originals": 5,
+  "scope": "Verified native/API voltage-scaled CCCS prerequisite; BJT producer unchanged, no Gummel-Poon or original-deck closure",
+  "law": "I=gain*Icontrol*(1+voltage_coefficient*Vcontrol); exact branch-current and differential-voltage partials; no charge/new branch",
+  "original_still_open": {
+    "new_originals": 0,
+    "original": "general/rtlinv.cir",
+    "sha256": "efb524624f7c96d1f8b05ac8428afd4f0462c65791801f1b5cd8019e5e9471f4",
+    "prepared": false,
+    "diagnostics": [
+      "unsupported_physical_directive"
+    ]
+  },
+  "fresh_candidates": [
+    {
+      "path": "general/rtlinv.cir",
+      "status": "requested_preparation_refused",
+      "native_agreed": null,
+      "diagnostics": [
+        "unsupported_physical_directive"
+      ]
+    },
+    {
+      "path": "regression/temper/temper-1.cir",
+      "status": "all_individual_requested_analyses_agreed",
+      "native_agreed": true,
+      "diagnostics": []
+    },
+    {
+      "path": "regression/temper/temper-2.cir",
+      "status": "requested_executed_not_fully_qualified",
+      "native_agreed": false,
+      "diagnostics": []
+    },
+    {
+      "path": "regression/temper/temper-3.cir",
+      "status": "all_individual_requested_analyses_agreed",
+      "native_agreed": true,
+      "diagnostics": []
+    },
+    {
+      "path": "general/rc.cir",
+      "status": "requested_executed_not_fully_qualified",
+      "native_agreed": false,
+      "diagnostics": []
+    }
+  ],
+  "candidate_dispositions": [
+    "temper-1 andtemper-3 already pass at baseline; not recounted",
+    "temper-2 original reporting passes but one stock voltage observer fails; no tolerance relaxation",
+    "general/rc stock-default mismatch remains open",
+    "rtlinv unsupported physical option remains; native full program emits obsolete lvlcod and missing print-vector diagnostics"
+  ],
+  "guidance": {
+    "pin": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+    "finding": "Early transport inverse base charge also scales forward TF charge and its Vbc derivative; transport-only BJT promotion is unsound",
+    "reuse": "Existing current-control lookup and MNA stamp surfaces reused; static CCCS and single-voltage expression cannot provide the coupled law; no new production dependency",
+    "file": "E:/Artifacts/RSpice-inspection-20261108T032637Z/source/crates/rspice-core-devices/src/device/semiconductor/bjt/intrinsic/charge.rs",
+    "sha256": "5a9d2b543ed999af1ff86ba22601ee147bf529c48cf086f264b821fa755b4ffb",
+    "lines": "6-104 transport,161-186 diffusion charge"
+  },
+  "runtime": {
+    "capabilities": {
+      "analyses": [
+        "operating_point",
+        "operating_point_newton",
+        "ac",
+        "transient",
+        "transient_configured"
+      ],
+      "backends": [
+        [
+          "faer",
+          {
+            "complex": true,
+            "gpu": false,
+            "id": "faer_sparse_lu",
+            "max_unknowns": 256,
+            "placement": "cpu",
+            "prepared_real": true,
+            "provider_version": "faer 0.24.4",
+            "sparse": true
+          }
+        ],
+        [
+          "lu",
+          {
+            "complex": true,
+            "gpu": false,
+            "id": "nalgebra_dense_lu_reference",
+            "max_unknowns": 256,
+            "placement": "cpu",
+            "prepared_real": true,
+            "provider_version": "nalgebra 0.34.1",
+            "sparse": false
+          }
+        ],
+        [
+          "qr",
+          {
+            "complex": false,
+            "gpu": false,
+            "id": "nalgebra_dense_qr_reference",
+            "max_unknowns": 256,
+            "placement": "cpu",
+            "prepared_real": false,
+            "provider_version": "nalgebra 0.34.1",
+            "sparse": false
+          }
+        ]
+      ],
+      "execution": "bounded_reference",
+      "gpu": false,
+      "models": {
+        "behavioral_resistor": {
+          "ac": true,
+          "dc": true,
+          "inputs": 1,
+          "maximum_expression_depth": 64,
+          "maximum_expression_nodes": 1024,
+          "transient_qualified": false
+        },
+        "behavioral_voltage": {
+          "ac": false,
+          "dc": true,
+          "inputs": 1,
+          "maximum_expression_depth": 64,
+          "maximum_expression_nodes": 1024,
+          "transient": false
+        },
+        "diode": {
+          "charge": "none",
+          "conduction": "shockley"
+        },
+        "diode_with_capacitance": {
+          "charge": "constant_q_cv",
+          "conduction": "shockley",
+          "configured_trapezoidal": true,
+          "depletion": false,
+          "transport_charge": false
+        },
+        "junction_storage": {
+          "charge": "spice_depletion_and_diffusion",
+          "conduction": "none",
+          "configured_adaptive": true,
+          "configured_explicit_initial_state": false,
+          "configured_trapezoidal": true,
+          "transport_is_scales_charge_only": true
+        },
+        "mos1_channel": {
+          "charge": "explicit_companions_and_optional_meyer",
+          "conduction": "bounded_shichman_hodges",
+          "forward_body_ac": "ngspice_convention",
+          "forward_body_newton": "exact_piecewise",
+          "generated_levels": [
+            1
+          ],
+          "generated_nonzero_tox": true,
+          "intrinsic_meyer": true,
+          "positive_effective_body_bias_with_gamma": true
+        },
+        "spice_diode": {
+          "avalanche": false,
+          "charge": "spice_depletion_and_diffusion",
+          "conduction": "shockley",
+          "configured_adaptive": true,
+          "configured_explicit_initial_state": false,
+          "configured_trapezoidal": true,
+          "depletion": true,
+          "series_resistance": false,
+          "temperature_scaling": false,
+          "transport_charge": true
+        },
+        "voltage_scaled_cccs": {
+          "ac": true,
+          "charge": "none",
+          "control": "branch_current_and_differential_voltage",
+          "dc": true,
+          "transient_qualified": false
+        }
+      },
+      "nonlinear": {
+        "ac_bias_linearization": true,
+        "adaptive": true,
+        "configured_backward_euler": true,
+        "diode_dc": true,
+        "gmin_dc": true,
+        "source_overrides": true,
+        "transient": true
+      },
+      "schema_version": "1",
+      "transport": "one_shot_json"
+    },
+    "oracle_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "engine_sha256": "ccfa47b6b42ea066f56f3b33404fbf4c72731ded32ad35d45f949934b57c033a",
+    "oracle": "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe",
+    "engine": "E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/target/debug/circuit-simulator.exe",
+    "engine_provenance": "Fresh Rust1.99.1 Windows MSVC debug build of dirty a1cd63e source in unique E target"
+  },
+  "authored_oracle": {
+    "engine_sha256": "ccfa47b6b42ea066f56f3b33404fbf4c72731ded32ad35d45f949934b57c033a",
+    "rows": [
+      {
+        "request_sha256": "d8d92c42081ebe205ee0847abc4dd8ce5baea382417b2c8fda7b0e87e419d6e4",
+        "observables": [
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(sense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(ctrl)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(out)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vcontrol)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vsense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          }
+        ],
+        "mode": "op",
+        "native_agreed": true,
+        "backend": "lu"
+      },
+      {
+        "request_sha256": "1d516d04c5fccceda192dc47ada398f7979a00468000d40ee5c6004913168c64",
+        "observables": [
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(sense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(ctrl)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(out)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vcontrol)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vsense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          }
+        ],
+        "mode": "op",
+        "native_agreed": true,
+        "backend": "faer"
+      },
+      {
+        "request_sha256": "b1d9521b91054179ac125798e14151c826ecddb7d7d94da54dbfa76b457e240f",
+        "observables": [
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(ctrl)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(out)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 3.552713678800501E-15
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(sense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vcontrol)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vsense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          }
+        ],
+        "mode": "ac_sense",
+        "native_agreed": true,
+        "backend": "lu"
+      },
+      {
+        "request_sha256": "33515f03e63089c2e7b762b8d26210f8838568bc05a5a6a1bfa045aff5cb0ab7",
+        "observables": [
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(ctrl)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(out)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(sense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vcontrol)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vsense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 1.734723475976807E-18
+          }
+        ],
+        "mode": "ac_sense",
+        "native_agreed": true,
+        "backend": "faer"
+      },
+      {
+        "request_sha256": "28f8ed03d0caa7cccca6866a4ac0f387e5533cbed34b4ab81fd6cf4c13e0856a",
+        "observables": [
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(ctrl)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(out)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 1.7763568394002505E-15
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(sense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vcontrol)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vsense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          }
+        ],
+        "mode": "ac_control",
+        "native_agreed": true,
+        "backend": "lu"
+      },
+      {
+        "request_sha256": "9f1be8888e6a287467d4ae8134e75c2b71497b77c192a20daa77e177959d61b2",
+        "observables": [
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(ctrl)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(out)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 8.881784197001252E-16
+          },
+          {
+            "absolute_tolerance": 1E-06,
+            "signal": "v(sense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vcontrol)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          },
+          {
+            "absolute_tolerance": 1E-09,
+            "signal": "i(vsense)",
+            "relative_tolerance": 0.0001,
+            "absolute_error": 0.0
+          }
+        ],
+        "mode": "ac_control",
+        "native_agreed": true,
+        "backend": "faer"
+      }
+    ],
+    "valid_after_failure": true,
+    "oracle_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "scope": "Authored native/API prerequisite only, no original-deck count",
+    "semantic_failure": {
+      "complete": false,
+      "error": {
+        "code": "invalid_input",
+        "message": "voltage-scaled CCCS control must name a branch source"
+      },
+      "schema_version": "1",
+      "status": "failed"
+    }
+  },
+  "tests": {
+    "client_focused": {
+      "failed": 0,
+      "passed": 1
+    },
+    "strictdoc_documents": 69,
+    "frontend": {
+      "failed": 0,
+      "passed": 926,
+      "skipped": 40
+    },
+    "native": {
+      "ignored": 0,
+      "nextest": "not resolved; cargo test used",
+      "groups": {
+        "voltage_scaled_cccs": 8,
+        "sparse_ac_circuits": 5,
+        "behavioral_resistor": 8,
+        "contracts": 3,
+        "behavioral_voltage": 7,
+        "pspice_switch": 6,
+        "analysis_audits": 12
+      },
+      "failed": 0,
+      "environment_seed": "202611131103",
+      "passed": 49
+    },
+    "pester": {
+      "failed": 0,
+      "passed": 2,
+      "version": "5.7.1",
+      "skipped": 0
+    },
+    "syntax": "Unchanged syntax; suite not rerun this slice. Prior531/1 is historical.",
+    "managed_build": "0 warnings,0 errors",
+    "schema": {
+      "negative": 4,
+      "failed": 0,
+      "positive": 6,
+      "schema_sha256": "33a88603ad0666ce59e40647f385fef983caf98709268bf43d5d3eb332a8e33a",
+      "tool": "check-jsonschema0.39.0/jsonschema4.26.0"
+    },
+    "properties": {
+      "related_fixed_seeds": {
+        "analysis_audits": "2026103006/32",
+        "behavioral_resistance": "202611131001/128",
+        "behavioral_voltage": "2026111101/64",
+        "switch": "environment202611131103/128"
+      },
+      "persisted_regression": "cc a9a0ab7c158088c495805d7a2dad0c0c0371c1e1a9947ef38ae7f13e8012e2f7",
+      "tool": "proptest1.9.0",
+      "current_derivative_seed": "202611131101",
+      "current_derivative_cases": 128,
+      "minimized": [
+        {
+          "minimized": [
+            "minimal failing input: gain = -74.75044421104471, coefficient = 1.6827466428674585, current = 0.02313572484678969, volts = 0.0"
+          ],
+          "mutation": "drop_voltage_partial"
+        },
+        {
+          "minimized": [
+            "minimal failing input: gain = -74.75044421104471, coefficient = 1.6827466428674585, current = 0.0, volts = 0.3709994438752729"
+          ],
+          "mutation": "freeze_voltage_modulation"
+        }
+      ],
+      "typed_boundary_fuzz_cases": 128,
+      "boundary_scope": "Generated node indices and signed IEEE coefficients exercise structural refusal; no coverage-guided fuzz process",
+      "typed_boundary_fuzz_seed": "202611131102"
+    }
+  },
+  "mutations": {
+    "restored": "native49/client1/frontend926 plus typed client/native oracle/Pester pass",
+    "manual": [
+      {
+        "failed": 5,
+        "detected": true,
+        "mutation": "drop_voltage_partial",
+        "exit": 101,
+        "passed": 3
+      },
+      {
+        "failed": 7,
+        "detected": true,
+        "mutation": "freeze_voltage_modulation",
+        "exit": 101,
+        "passed": 1
+      },
+      {
+        "detected": true,
+        "mutation": "wrong_DTO_discriminator",
+        "exit": 1,
+        "failed": 1
+      }
+    ],
+    "maintained_tool_limit": "No cargo-mutants binary resolved; two native faults injected manually. C# change is DTO registration only; discriminator fault tested manually, no Stryker run claimed."
+  },
+  "coverage": {
+    "native": {
+      "files": 48,
+      "model": {
+        "sha256": "feba120d7b2f6c3194533ae950515cd3e345583fcb74459217ba19beeb87c323",
+        "file": "src/voltage_scaled_cccs.rs",
+        "lines": {
+          "count": 29,
+          "covered": 29,
+          "percent": 100
+        }
+      },
+      "branches": null,
+      "lines_covered": 1755,
+      "lines_valid": 7902,
+      "report": "E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/native-coverage-final/summary.json",
+      "scope": "Owned library exercised by named integration test; vendor/test source excluded"
+    },
+    "managed": {
+      "client-restored-coverage": {
+        "branches_valid": 840,
+        "sha256": "882bfd2154617d28d962fd130e9dba64a0af545770b476c2aacee702360fa372",
+        "branches_covered": 279,
+        "lines_covered": 8463,
+        "report": "E:\\Artifacts\\Spice-sol-earlytransport-a1cd63e-20261113T1110\\client-restored-coverage\\a6fb1fff-f939-4d29-aacf-982442f54556\\coverage.cobertura.xml",
+        "lines_valid": 13909
+      },
+      "frontend-restored-coverage": {
+        "branches_valid": 10287,
+        "sha256": "41afe11bbc6799d6c2a310bf020e3336ca7fff664065caa4c477eb8ea48d19e5",
+        "branches_covered": 6500,
+        "lines_covered": 21845,
+        "report": "E:\\Artifacts\\Spice-sol-earlytransport-a1cd63e-20261113T1110\\frontend-restored-coverage\\31569730-8deb-45f5-a3cb-a1c63b246fbe\\coverage.cobertura.xml",
+        "lines_valid": 27740
+      }
+    },
+    "powershell": {
+      "command_percent": 92.9078014184397,
+      "branches": null,
+      "limitation": "Pester line counters coalesce multiple commands; ten throw commands remain unexecuted. No measured branch coverage.",
+      "report": "E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/pester-coverage.xml",
+      "jacoco_lines_missed": 0,
+      "commands_valid": 141,
+      "commands_covered": 131,
+      "jacoco_lines_covered": 54,
+      "scope": "Test-VoltageScaledCccsOracle.ps1 through2 Pester integration checks"
+    },
+    "limitations": [
+      "Managed scopes include generated metadata/transitive code and differ from one another.",
+      "Native focused8-test coverage is not full49-test regression coverage. Stable Rust branch coverage unavailable.",
+      "No vendor C/C++, Linux, GPU, full native transient or full BJT charge qualification."
+    ]
+  },
+  "static_analysis": {
+    "locations": [
+      "unchanged bsim330.rs139",
+      "unchanged configured.rs468",
+      "unchanged expression.rs96",
+      "unchanged expression.rs108"
+    ],
+    "normal_clippy_exit": 0,
+    "strict": "Not rerun; existing four strict findings remain open. No clean Clippy claim.",
+    "warnings": 4
+  },
+  "temperature_diagnostic": {
+    "refined_controls": "reltol1e-10 abstol1e-15 vntol1e-12; physical cards/grid retained, diagnostic control program only",
+    "method": "64 bisections on[0,5] for (5-v)/5000-Isum*(exp(v/vt)-1), effective input model parameters from actual requests",
+    "refined_source_sha256": "84ca560cff8c9cff567297a56d9c307c539a308faf501aefe6c00eb6547afbde",
+    "scope": "Uncounted independent model/KCL bisection and refined stock diagnostic, never original-default closure",
+    "rows": [
+      {
+        "stock_error": 1.723949116128054E-06,
+        "analytic_root": 0.511641039475278,
+        "engine_error": 0.0,
+        "stock": 0.5116427634243941,
+        "temperature": 10,
+        "stock_physical_residual_A": -6.377089694156735E-08,
+        "engine": 0.511641039475278,
+        "refined_stock_voltage": 0.5116410394476142,
+        "refined_stock_error": -2.7663760171492413E-11
+      },
+      {
+        "stock_error": 8.738722359902251E-06,
+        "analytic_root": 0.4717670194850777,
+        "engine_error": 5.551115123125783E-17,
+        "stock": 0.4717757582074376,
+        "temperature": 20,
+        "stock_physical_residual_A": -3.15090157345212E-07,
+        "engine": 0.47176701948507777,
+        "refined_stock_voltage": 0.4717670194589053,
+        "refined_stock_error": -2.617239758251344E-11
+      },
+      {
+        "stock_error": 7.100001789661636E-06,
+        "analytic_root": 0.4373900851093375,
+        "engine_error": 5.551115123125783E-17,
+        "stock": 0.4373971851111272,
+        "temperature": 30,
+        "stock_physical_residual_A": -2.494650259690298E-07,
+        "engine": 0.4373900851093376,
+        "refined_stock_voltage": 0.4373900850844372,
+        "refined_stock_error": -2.4900304040897936E-11
+      },
+      {
+        "stock_error": 9.172574381521859E-05,
+        "analytic_root": 0.4052203046185694,
+        "engine_error": 0.0,
+        "stock": 0.4053120303623846,
+        "temperature": 40,
+        "stock_physical_residual_A": -3.1472994632200657E-06,
+        "engine": 0.4052203046185694,
+        "refined_stock_voltage": 0.4052203045953601,
+        "refined_stock_error": -2.320926784094013E-11
+      },
+      {
+        "stock_error": 1.7020507360354653E-05,
+        "analytic_root": 0.37419785091505575,
+        "engine_error": 5.551115123125783E-17,
+        "stock": 0.3742148714224161,
+        "temperature": 50,
+        "stock_physical_residual_A": -5.690517860629197E-07,
+        "engine": 0.3741978509150558,
+        "refined_stock_voltage": 0.3741978508926661,
+        "refined_stock_error": -2.2389645693010607E-11
+      },
+      {
+        "stock_error": 9.38611310297155E-06,
+        "analytic_root": 0.34385101142616015,
+        "engine_error": 5.551115123125783E-17,
+        "stock": 0.3438603975392631,
+        "temperature": 60,
+        "stock_physical_residual_A": -3.063888041592716E-07,
+        "engine": 0.3438510114261602,
+        "refined_stock_voltage": 0.3438510114050893,
+        "refined_stock_error": -2.1070867273209615E-11
+      },
+      {
+        "stock_error": 3.0541910976400466E-06,
+        "analytic_root": 0.31393126357369505,
+        "engine_error": -5.551115123125783E-17,
+        "stock": 0.3139343177647927,
+        "temperature": 70,
+        "stock_physical_residual_A": -9.74188243499938E-08,
+        "engine": 0.313931263573695,
+        "refined_stock_voltage": 0.3139312635540097,
+        "refined_stock_error": -1.968536444962865E-11
+      },
+      {
+        "stock_error": 1.3340841676923176E-06,
+        "analytic_root": 0.2842936721671213,
+        "engine_error": 0.0,
+        "stock": 0.284295006251289,
+        "temperature": 80,
+        "stock_physical_residual_A": -4.1616827119433236E-08,
+        "engine": 0.2842936721671213,
+        "refined_stock_voltage": 0.2842936721766352,
+        "refined_stock_error": 9.513889676071585E-12
+      },
+      {
+        "stock_error": 5.958125854355067E-07,
+        "analytic_root": 0.2548492447551385,
+        "engine_error": -5.551115123125783E-17,
+        "stock": 0.2548498405677239,
+        "temperature": 90,
+        "stock_physical_residual_A": -1.81934517463336E-08,
+        "engine": 0.2548492447551384,
+        "refined_stock_voltage": 0.2548492447440365,
+        "refined_stock_error": -1.110200820164664E-11
+      },
+      {
+        "stock_error": 3.071867909487658E-07,
+        "analytic_root": 0.22554560387764955,
+        "engine_error": -2.7755575615628914E-17,
+        "stock": 0.2255459110644405,
+        "temperature": 100,
+        "stock_physical_residual_A": -9.191900046993072E-09,
+        "engine": 0.22554560387764952,
+        "refined_stock_voltage": 0.225545603864026,
+        "refined_stock_error": -1.3623546735175296E-11
+      }
+    ]
+  },
+  "tools": {
+    "cargo": "1.99.1",
+    "schema_validator": "check-jsonschema0.39.0/jsonschema4.26.0, reused isolated prior E installation",
+    "coverlet": "10.1.0",
+    "strictdoc": "0.30.4",
+    "rustc": "1.99.1",
+    "pester": "5.7.1",
+    "sdk": "10.0.403",
+    "vstest": "18.7.0"
+  },
+  "source_hashes": {
+    "dotnet/Simulator.Client/Requests.cs": "4c250a44cb49cfda80e9952a8e4bb02506f6964e9767360540a465bc9a252761",
+    "schemas/request-v1.json": "33a88603ad0666ce59e40647f385fef983caf98709268bf43d5d3eb332a8e33a",
+    "src/audit.rs": "ffac3b6224835b9ab8eef62fa263a0d96e718c8f1436416348865565105b9c58",
+    "src/audit_ac.rs": "c041520be3a367c7e0a170a6efc70b7fef87075893ffd68240c0d08a176b5adb",
+    "src/circuit.rs": "a1ff23a67879da46ba8835ba03078cf4a9f03ce8a0972f52a6a13e84f18a99d8",
+    "src/compile.rs": "ecc3ba69ed62cd4d601cb5df013d33e937d2660899257dda8c35964ed59f9ecd",
+    "src/lib.rs": "d67ab4c23c72320b33073922f8f0ce442b21f90334c51b6599916b41a92ac831",
+    "src/main.rs": "6bee9b1c4a4ac6f3d9af56a8844234491ef4dff39b328945fb5be89f8b4ebaee",
+    "src/newton.rs": "3ce8199087de1147b7a09bd3bf4939a1c6f083ab8d4bfc9555e357ad69569d19",
+    "src/power.rs": "5c23a049e6aba73867994892a1ddcfdca5b3a77f131f8a2993985b60357ba61e",
+    "src/topology.rs": "e08fee8153a6c701de145a0707acb866db960eb06162315a81f6286bdf699932",
+    "src/variation.rs": "b50fcb8bd70f082a06589a4073b09b8b56e6a7999a05cd0bb691f7251e98c9e2",
+    "docs/voltage-scaled-cccs.sdoc": "7b962fa13eb3cbd0a59bc14e6d3e829fa60d3cb325e3009469072bd3160d361a",
+    "dotnet/Simulator.Client.Tests/VoltageScaledCccsWireTests.cs": "286fc6578a6929bf71b9d05551b2c72fc2bf8c417352e94277ce875c77158721",
+    "examples/voltage-scaled-cccs.json": "d8d92c42081ebe205ee0847abc4dd8ce5baea382417b2c8fda7b0e87e419d6e4",
+    "scripts/Test-VoltageScaledCccsOracle.Tests.ps1": "0fbe68406bbb71c0310217008b57411fc238fa80d577d617d58fc39a473edece",
+    "scripts/Test-VoltageScaledCccsOracle.ps1": "45e2c683f532e74e984e5993d2f92992b2e102dcee37f82da51aded7114e241d",
+    "src/voltage_scaled_cccs.rs": "feba120d7b2f6c3194533ae950515cd3e345583fcb74459217ba19beeb87c323",
+    "tests/voltage_scaled_cccs.proptest-regressions": "40744de9d99a91ec81acd6923fbcec8c1adb05b088193c1165d3a1b6883db39c",
+    "tests/voltage_scaled_cccs.rs": "aa8a521d01df55b1efe3561a0ad42e372461d3cb5f99b959a605a2b5523e760d",
+    "Cargo.lock": "c65bb8e3a861315275589be41267f068245d5102782fce0f1fc583666904afdf",
+    "Cargo.toml": "648564cc929dacf6a816a88999f88805c2c9d35bb261011544cecd1bf8fd256e",
+    "rust-toolchain.toml": "c946aab8e3eafd93e58303a52f31fc8b9a0caf4bf7a63328ff00195e6a6ad30b",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779"
+  },
+  "limitations": [
+    "No new original success; cumulative count stays5.",
+    "BJT VA still requires coupled charge/base-resistance/dialect/observer qualification; no producer admission changed.",
+    "Initial authored helper used reserved PowerShell Error variable; corrected before successful current and Pester runs.",
+    "An initial direct Parse probe passed a boolean to ParserLimits; replaced by a verified concrete prepared=false result.",
+    "No refined-deck or control diagnostic is counted as original agreement.",
+    "Existing MOS stock-default mismatch remains open."
+  ],
+  "reproduction": [
+    "cargo test --locked --test voltage_scaled_cccs --test behavioral_resistor --test behavioral_voltage --test pspice_switch --test analysis_audits --test contracts --test sparse_ac_circuits -- --test-threads=1",
+    "& 'C:/dev/spice-deck-next/scripts/Measure-RustIntegrationCoverage.ps1' -Repository 'C:/dev/spice-deck-next' -TargetDirectory 'E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/target' -Output '<fresh E directory>' -Test voltage_scaled_cccs",
+    "& 'C:/dev/spice-deck-next/scripts/Test-VoltageScaledCccsOracle.ps1' -Repository 'C:/dev/spice-deck-next' -Output '<fresh E directory>' -ManagedBin 'E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/build/bin/Simulator.Frontend.Tests/debug' -Engine 'E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/target/debug/circuit-simulator.exe' -Ngspice 'E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe'",
+    "& 'E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/PesterOracle.ps1'",
+    "& 'E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/ClientRestored.ps1'",
+    "& 'E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/FullFrontend.ps1'",
+    "& 'E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/Docs.ps1'"
+  ]
+}

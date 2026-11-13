@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc a9a0ab7c158088c495805d7a2dad0c0c0371c1e1a9947ef38ae7f13e8012e2f7 # shrinks to gain = -74.75044421104471, coefficient = 1.6827466428674585, current = 0.02313572484678969, volts = 0.0

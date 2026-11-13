@@ -33,6 +33,7 @@ pub fn inspect(circuit: &Circuit) -> SimResult<Vec<Diagnostic>> {
                 | Element::Current { .. }
                 | Element::Vccs { .. }
                 | Element::Cccs { .. }
+                | Element::VoltageScaledCccs { .. }
         ) {
             edges[p.0].push(n.0);
             edges[n.0].push(p.0);

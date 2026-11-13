@@ -50,6 +50,17 @@ pub(crate) struct CompiledResistance {
     pub(crate) cn: NodeId,
     pub(crate) expression: crate::expression::Expr,
 }
+/// Resolved current-control column and immutable voltage-modulation parameters.
+#[derive(Debug, Clone)]
+pub(crate) struct CompiledScaledCurrent {
+    pub(crate) p: NodeId,
+    pub(crate) n: NodeId,
+    pub(crate) cp: NodeId,
+    pub(crate) cn: NodeId,
+    pub(crate) control: usize,
+    pub(crate) gain: f64,
+    pub(crate) voltage_coefficient: f64,
+}
 /// Shared bounded stamping surface used by compile-time sparse accumulation and trial Jacobians.
 pub(crate) trait StampMatrix {
     fn add_stamp(&mut self, row: usize, column: usize, value: f64);
@@ -80,6 +91,7 @@ pub struct CompiledCircuit {
     pub(crate) mos1: Vec<CompiledMos1>,
     pub(crate) behaviors: Vec<CompiledBehavior>,
     pub(crate) resistances: Vec<CompiledResistance>,
+    pub(crate) scaled_currents: Vec<CompiledScaledCurrent>,
     pub(crate) bsim330: Vec<([NodeId; 4], crate::bsim330::NativeModel)>,
 }
 impl CompiledCircuit {
@@ -110,6 +122,7 @@ impl CompiledCircuit {
         !self.diodes.is_empty()
             || !self.behaviors.is_empty()
             || !self.resistances.is_empty()
+            || !self.scaled_currents.is_empty()
             || !self.switches.is_empty()
             || !self.mos1.is_empty()
             || !self.bsim330.is_empty()
@@ -176,6 +189,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     let mut mos1 = Vec::new();
     let mut behaviors = Vec::new();
     let mut resistances = Vec::new();
+    let mut scaled_currents = Vec::new();
     let mut bsim330 = Vec::new();
     for e in &circuit.elements {
         if let Some(device) = e.native_mos() {
@@ -183,6 +197,12 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
             continue;
         }
         match e {
+            Element::VoltageScaledCccs {p,n,cp,cn,control_id,gain,voltage_coefficient,..} => {
+                let control=branches.iter().position(|id|id==control_id)
+                    .map(|index|index+circuit.nodes.len()-1)
+                    .ok_or_else(||SimError::invalid("voltage-scaled CCCS control must name a branch source"))?;
+                scaled_currents.push(CompiledScaledCurrent{p:*p,n:*n,cp:*cp,cn:*cn,control,gain:*gain,voltage_coefficient:*voltage_coefficient});
+            }
             Element::BehavioralResistor {p,n,cp,cn,expression,..} => resistances.push(CompiledResistance {
                 p:*p,n:*n,cp:*cp,cn:*cn,expression:expression.clone(),
             }),
@@ -408,6 +428,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
         mos1,
         behaviors,
         resistances,
+        scaled_currents,
         bsim330,
     })
 }

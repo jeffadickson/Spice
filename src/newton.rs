@@ -60,6 +60,11 @@ pub fn conductance_at_bias_csc(
             contribution.conductance_siemens,
         );
     }
+    for source in &plan.scaled_currents {
+        let c=crate::voltage_scaled_cccs::linearize(source.gain,source.voltage_coefficient,
+            values[source.control],voltage(values,source.cp,source.cn))?;
+        stamp_scaled_current(&mut stamps,source,c);
+    }
     for resistance in &plan.resistances {
         let c=crate::behavioral_resistor::linearize(&resistance.expression,
             voltage(values,resistance.p,resistance.n),voltage(values,resistance.cp,resistance.cn))?;
@@ -165,6 +170,14 @@ fn stamp_four_terminal(matrix:&mut impl crate::compile::StampMatrix,
         }
     }
 }
+/// Current-control and voltage-control columns are independent MNA partials;
+/// shared output/control nodes accumulate through the same signed stamp surface.
+fn stamp_scaled_current(matrix:&mut impl crate::compile::StampMatrix,
+    source:&crate::compile::CompiledScaledCurrent,c:crate::voltage_scaled_cccs::ScaledCurrentContribution) {
+    stamp_four_terminal(matrix,source.p,source.n,source.cp,source.cn,0.,c.control_siemens);
+    if let Some(row)=source.p.unknown(){matrix.add_stamp(row,source.control,c.current_gain);}
+    if let Some(row)=source.n.unknown(){matrix.add_stamp(row,source.control,-c.current_gain);}
+}
 /// Assemble against an explicit independent-source right-hand side.
 ///
 /// Source continuation owns scaling this vector; the circuit topology, device
@@ -214,6 +227,12 @@ fn linearize_with_rhs_gmin(
             diode.n,
             contribution.conductance_siemens,
         );
+    }
+    for source in &plan.scaled_currents {
+        let c=crate::voltage_scaled_cccs::linearize(source.gain,source.voltage_coefficient,
+            values[source.control],voltage(values,source.cp,source.cn))?;
+        stamp_vector(&mut residual,source.p,source.n,c.current_amps);
+        stamp_scaled_current(&mut jacobian,source,c);
     }
     for resistance in &plan.resistances {
         let c=crate::behavioral_resistor::linearize(&resistance.expression,

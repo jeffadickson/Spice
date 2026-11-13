@@ -67,6 +67,7 @@ pub fn ac(
                 | Element::DiodeWithCapacitance { .. }
                 | Element::PspiceSwitch { .. }
                 | Element::BehavioralResistor { .. }
+                | Element::VoltageScaledCccs { .. }
         )
     }) {
         return Ok(AuditReport {

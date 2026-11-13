@@ -1,3 +1,18 @@
+# Sol checkpoint — November 13: native transport prerequisite, no new original
+
+Read docs/voltage-scaled-cccs-results.md and evidence/voltage-scaled-cccs.json.
+Sol count stays five. Native voltage-scaled CCCS supplies exact branch-current
+and voltage partials, typed Rust/.NET wire, Newton/AC stamps and physical audits.
+Actual public-client/stock authored OP+two AC drives agree on all5 observers,
+LU/Faer,30 comparisons. This is a prerequisite, NOT complete BJT VA: pinned
+RSpice charge.rs161–186 requires coupled TF/qb charge and Vbc derivatives.
+BJT producer/admission stays unchanged; rtlinv still refuses. Temper-1/3 already
+passed baseline and are uncounted; temper-2 stock-default voltage disagreement
+persists despite ratio assertion success. Refined diagnostics are never counted.
+Final native49, client1, frontend926/40skip, Pester2, StrictDoc69;3 manual mutants
+detected/restored, measured scopes and exact seeds in evidence. Normal Clippy
+still reports4 findings in unchanged files. New native runtime path/hash is in
+ignored progress; preserve campaign hardstop12:49:29Z and no-memory-cap policy.
 # Sol checkpoint — November 13: voltage-controlled behavioral resistance
 
 Read docs/behavioral-resistance-results.md and evidence/behavioral-resistance.json.

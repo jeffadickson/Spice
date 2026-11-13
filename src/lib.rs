@@ -44,4 +44,5 @@ pub mod sweep;
 pub mod topology;
 pub mod transient;
 pub mod variation;
+pub mod voltage_scaled_cccs;
 pub mod waveform;

@@ -224,6 +224,11 @@ fn dc_currents(circuit: &Circuit, state: &[f64]) -> SimResult<Vec<f64>> {
                 Element::Cccs {
                     control_id, gain, ..
                 } => gain * branch_current(circuit, state, control_id)?,
+                // Independent physical reconstruction, not the production
+                // contribution evaluator or its compiled derivative columns.
+                Element::VoltageScaledCccs {cp,cn,control_id,gain,voltage_coefficient,..} =>
+                    gain*branch_current(circuit,state,control_id)?*
+                        (1.+voltage_coefficient*(voltage(state,*cp)-voltage(state,*cn))),
                 _ => branch_current(circuit, state, e.id())?,
             };
             if !current.is_finite() {
