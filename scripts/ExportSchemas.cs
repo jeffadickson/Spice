@@ -25,7 +25,10 @@ void Constrain(JsonNode node)
                 if(key=="unit")field["maxLength"]=64;
                 if(key is "ohms" or "farads" or "henries" or "frequency_hz" or "stop_s" or "step_s" or "max_step_s" or "min_step_s" or "relative" or "voltage_absolute" or "current_absolute")field["exclusiveMinimum"]=0;
                 if(key=="relative")field["exclusiveMaximum"]=1;
-                if(key is "p" or "n"){field["minimum"]=0;field["maximum"]=127;}
+                if(key is "p" or "n" or "cp" or "cn"){field["minimum"]=0;field["maximum"]=127;}
+                // Early charge controls are not independent voltage sources:
+                // their VAF domain is strictly positive, while source volts may be signed.
+                if(key=="volts"&&properties.ContainsKey("cp")&&properties.ContainsKey("cn"))field["exclusiveMinimum"]=0;
                 if(key=="time_s"||key=="start_s")field["minimum"]=0;
                 if(key=="method")field["enum"]=new JsonArray("backward_euler","trapezoidal");
                 if(key=="max_steps"){field["minimum"]=1;field["maximum"]=100000;}

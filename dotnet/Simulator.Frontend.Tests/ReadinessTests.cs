@@ -6,7 +6,7 @@ public sealed class ReadinessTests
     [Fact]
     public void Audit_retains_multiple_structural_layers_instead_of_only_the_first_failure()
     {
-        var deck="Audit\n.options reltol=1m\nV1 a 0 2\nQ1 a a 0 transistor\nD1 a 0 diode\nF1 b 0 V1 2\n.model transistor npn (bf=100 VAF=100)\n.model diode d (is=1p)\n.end\n";
+        var deck="Audit\n.options reltol=1m\nV1 a 0 2\nQ1 a a 0 transistor\nD1 a 0 diode\nF1 b 0 V1 2\n.model transistor npn (bf=100 IKF=1m)\n.model diode d (is=1p)\n.end\n";
         var audit=CircuitReadiness.Audit(DeckParser.Parse(deck,collectDeclarations:true));
         Assert.False(audit.CanPrepare);Assert.True(audit.ActiveGraphComplete);Assert.False(audit.NumericalValidationExhaustive);
         Assert.Contains(audit.Issues,i=>i.Layer=="directive_policy");

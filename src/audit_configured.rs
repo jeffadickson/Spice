@@ -182,7 +182,7 @@ fn nonlinear_trapezoidal(
             Element::Capacitor{farads,..} => *current=farads*(v-old)/h,
             Element::DiodeWithCapacitance{farads,..} => *current+=farads*(v-old)/h,
             Element::SpiceDiode{model,..}|Element::JunctionStorage{model,..} =>
-                *current+=(independent_junction_charge(*model,v)-independent_junction_charge(*model,old))/h,
+                *current+=(independent_element_charge(element,*model,&state.values)-independent_element_charge(element,*model,&previous.values))/h,
             Element::Inductor{henries,..} => {
                 let expected=henries*(branch_current(circuit,&state.values,element.id())?-
                     branch_current(circuit,&previous.values,element.id())?)/h;

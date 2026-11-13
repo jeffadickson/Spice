@@ -28,7 +28,47 @@ pub struct JunctionCharge {
     pub charge_coulombs: f64,
     pub capacitance_farads: f64,
 }
+/// Normalized BC control for a forward Early charge companion. Terminals use
+/// the same polarity as the normalized BE branch; volts is strictly positive.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EarlyChargeControl {
+    pub cp: crate::ids::NodeId,
+    pub cn: crate::ids::NodeId,
+    pub volts: f64,
+}
+/// Complete two-input charge tangent, in coulombs and farads.
+#[derive(Debug, Clone, Copy)]
+pub struct CoupledJunctionCharge {
+    pub charge_coulombs: f64,
+    pub capacitance_farads: f64,
+    pub control_farads: f64,
+}
 impl SpiceDiodeModel {
+    /// VAF-only low-injection GP forward diffusion charge. The positive-bias
+    /// branch follows ngspice's TF*If/qb with qb=1/(1-Vbc/VAF). Depletion is
+    /// unaffected. Reverse BE retains TF*If and no BC coupling. No clipping or
+    /// hidden Gmin enters this constitutive law.
+    pub fn early_charge(self, be: f64, bc: f64, early_volts: f64) -> SimResult<CoupledJunctionCharge> {
+        if !bc.is_finite() || !early_volts.is_finite() || early_volts <= 0.
+            || !early_volts.recip().is_finite() || 1.-bc/early_volts <= 0. {
+            return Err(SimError::invalid("invalid forward Early charge domain"));
+        }
+        let base=self.charge(be)?;
+        let mut q=CoupledJunctionCharge{charge_coulombs:base.charge_coulombs,
+            capacitance_farads:base.capacitance_farads,control_farads:0.};
+        if be>0. && self.transit_seconds>0. {
+            let i=self.linearize(be)?;
+            let modulation=-bc/early_volts;
+            q.charge_coulombs+=self.transit_seconds*i.current_amps*modulation;
+            q.capacitance_farads+=self.transit_seconds*i.conductance_siemens*modulation;
+            q.control_farads=-self.transit_seconds*i.current_amps/early_volts;
+        }
+        if [q.charge_coulombs,q.capacitance_farads,q.control_farads].iter().any(|v|!v.is_finite()) {
+            return Err(SimError::invalid("forward Early charge overflow"));
+        }
+        Ok(q)
+    }
     /// Reject unsupported mathematical domains rather than clipping physical data.
     pub fn validate(self) -> SimResult<()> {
         self.conduction().validate()?;

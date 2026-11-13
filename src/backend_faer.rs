@@ -139,7 +139,8 @@ impl SparseLinearBackend for FaerSparseLu {
     }
 }
 
-/// The sparse factor is reused for at most three same-precision corrections.
+const MAX_COMPLEX_CORRECTIONS: usize = 3;
+/// The sparse factor is reused for a bounded number of same-precision corrections.
 /// Very small branch currents can lose relative accuracy beside large currents;
 /// correct their actual residuals rather than relaxing componentwise acceptance.
 /// These are provider-internal factor solves, not new logical AC point solves.
@@ -151,8 +152,9 @@ fn refine_complex_solution(
         &[num_complex::Complex64],
     ) -> SimResult<Vec<num_complex::Complex64>>,
 ) -> SimResult<Vec<num_complex::Complex64>> {
+    polish_homogeneous_rows(system,rhs,&mut values)?;
     let mut best_error = crate::solver_contract::complex_backward_error(system, rhs, &values)?;
-    for _ in 0..3 {
+    for attempt in 0..MAX_COMPLEX_CORRECTIONS {
         if best_error <= 1e-10 {
             return Ok(values);
         }
@@ -162,15 +164,17 @@ fn refine_complex_solution(
         }
         let correction = solve_correction(&residual)?;
         crate::linalg::validate_complex_solution(system.pattern().dimension(), &correction)?;
-        let candidate: Vec<_> = values
+        let mut candidate: Vec<_> = values
             .iter()
             .zip(correction)
             .map(|(value, delta)| *value + delta)
             .collect();
+        polish_homogeneous_rows(system,rhs,&mut candidate)?;
         let error = match crate::solver_contract::complex_backward_error(system, rhs, &candidate) {
             Ok(error) => error,
             Err(_) => break,
         };
+        tracing::debug!(attempt,error,previous_error=best_error,"complex_factor_refinement");
         if error > best_error {
             break;
         }
@@ -179,6 +183,57 @@ fn refine_complex_solution(
     }
     crate::solver_contract::verify_complex_solution(system, rhs, &values)?;
     Ok(values)
+}
+
+/// Re-evaluate a homogeneous row for its dominant unknown when every other
+/// coefficient is at most one epsilon of that coefficient. Reverse-junction
+/// current sensors can have unit branch coefficients beside 1e-200 conductance;
+/// factor corrections then stagnate above the actual tiny current. ALL other
+/// products are retained, never treated as zero. This is one bounded row sweep,
+/// followed by unchanged independent verification of EVERY equation. For a
+/// true singleton the same algebraic consequence sets its unknown to exact zero.
+fn polish_homogeneous_rows(system:&SparseComplexSystem,rhs:&[num_complex::Complex64],values:&mut [num_complex::Complex64])->SimResult<()> {
+    system.validate_complex_rhs(rhs)?;
+    let n=system.pattern().dimension();
+    crate::linalg::validate_complex_solution(n,values)?;
+    let zero=num_complex::Complex64::new(0.,0.);
+    let magnitude=|c:num_complex::Complex64|c.re.abs().max(c.im.abs());
+    let mut dominant:Vec<Option<(usize,num_complex::Complex64)>>=vec![None;n];
+    for ((row,column),coefficient) in system.pattern().slots().zip(system.values()) {
+        if *coefficient!=zero && dominant[row].is_none_or(|(_,previous)|magnitude(*coefficient)>magnitude(previous)) {
+            dominant[row]=Some((column,*coefficient));
+        }
+    }
+    let mut other_max=vec![0_f64;n];
+    for ((row,column),coefficient) in system.pattern().slots().zip(system.values()) {
+        if dominant[row].is_some_and(|(target,_)|target!=column){other_max[row]=other_max[row].max(magnitude(*coefficient));}
+    }
+    let eligible:Vec<_>=(0..n).map(|row|rhs[row]==zero && dominant[row].is_some_and(|(_,a)|other_max[row]<=magnitude(a)*f64::EPSILON)).collect();
+    let mut rest=vec![zero;n];
+    for ((row,column),coefficient) in system.pattern().slots().zip(system.values()) {
+        if eligible[row] && dominant[row].is_some_and(|(target,_)|target!=column){rest[row]+=*coefficient*values[column];}
+    }
+    for row in 0..n {
+        if eligible[row] {
+            if let Some((column,a))=dominant[row] {
+                // Generic Complex division squares the divisor. Normalize it
+                // first so a finite tiny/huge coefficient cannot create 0/0
+                // or an infinite denominator. A singleton needs no division.
+                let scale=magnitude(a);
+                let corrected=if rest[row]==zero {zero}else{(-rest[row]/scale)/(a/scale)};
+                if !corrected.re.is_finite() || !corrected.im.is_finite(){
+                    tracing::debug!(row,column,"homogeneous_row_polish_unavailable");
+                    continue; // Optional correction; unchanged full verification remains authoritative.
+                }
+                if values[column]!=corrected {
+                    tracing::debug!(row,column,real=values[column].re,imag=values[column].im,
+                        corrected_real=corrected.re,corrected_imag=corrected.im,"complex_homogeneous_row_polished");
+                    values[column]=corrected;
+                }
+            }
+        }
+    }
+    Ok(())
 }
 
 impl LinearSolver for FaerSparseLu {
@@ -290,6 +345,70 @@ mod complex_refinement_contracts {
         .unwrap()
     }
     #[test]
+    fn zero_singleton_roundoff_is_corrected_without_weakening_other_rows() {
+        // [[1,1],[0,1]], with a retained symbolic zero at (1,0).
+        let system=SparseComplexSystem::new(CscPattern::new(2,vec![0,2,4],vec![0,1,0,1]).unwrap(),
+            vec![C::new(1.,0.),C::new(0.,0.),C::new(1.,0.),C::new(1.,0.)]).unwrap();
+        let rhs=[C::new(1.,0.),C::new(0.,0.)];
+        let leaked=vec![C::new(1.,0.),C::new(1e-30,-1e-30)];
+        assert_eq!(complex_backward_error(&system,&rhs,&leaked).unwrap(),1.);
+        let result=refine_complex_solution(&system,&rhs,leaked,|_|panic!("exact zero consequence needs no factor correction")).unwrap();
+        assert_eq!(result,vec![C::new(1.,0.),C::new(0.,0.)]);
+        assert!(refine_complex_solution(&system,&rhs,vec![C::new(0.5,0.),C::new(1e-30,0.)],|_|Ok(vec![C::new(0.,0.);2])).is_err());
+    }
+    #[test]
+    fn nonzero_rhs_and_multiple_numerical_entries_are_not_projected() {
+        // x0=1, x0+x1=0 is not the pair of constraints x0=0,x1=0.
+        let system=SparseComplexSystem::new(CscPattern::new(2,vec![0,2,3],vec![0,1,1]).unwrap(),
+            vec![C::new(1.,0.),C::new(1.,0.),C::new(1.,0.)]).unwrap();
+        let mut values=vec![C::new(1.,0.),C::new(-1.,0.)];
+        polish_homogeneous_rows(&system,&[C::new(1.,0.),C::new(0.,0.)],&mut values).unwrap();
+        assert_eq!(values,vec![C::new(1.,0.),C::new(-1.,0.)]);
+        assert!(polish_homogeneous_rows(&system,&[],&mut values).is_err());
+        assert!(polish_homogeneous_rows(&system,&[C::new(1.,0.),C::new(0.,0.)],&mut []).is_err());
+    }
+    #[test]
+    fn tiny_nonzero_coefficients_remain_in_the_homogeneous_equation() {
+        let system=SparseComplexSystem::new(CscPattern::new(2,vec![0,2,3],vec![0,1,1]).unwrap(),
+            vec![C::new(1.,0.),C::new(1e-200,0.),C::new(1.,0.)]).unwrap();
+        for input in [1.,1e200] {
+            let rhs=[C::new(input,0.),C::new(0.,0.)];
+            let mut values=vec![rhs[0],C::new(1e-35,0.)];
+            polish_homogeneous_rows(&system,&rhs,&mut values).unwrap();
+            assert_eq!(values[1],C::new(-1e-200*input,0.));
+            assert!(crate::solver_contract::verify_complex_solution(&system,&rhs,&values).is_ok());
+        }
+    }
+    #[test]
+    fn homogeneous_polishing_preserves_extreme_coefficient_scales() {
+        for scale in [1e-200,1.,1e200] {
+            let singleton=SparseComplexSystem::new(CscPattern::new(1,vec![0,1],vec![0]).unwrap(),vec![C::new(scale,scale)]).unwrap();
+            let mut values=vec![C::new(1e-30,0.)];
+            polish_homogeneous_rows(&singleton,&[C::new(0.,0.)],&mut values).unwrap();
+            assert_eq!(values[0],C::new(0.,0.));
+            assert!(crate::solver_contract::verify_complex_solution(&singleton,&[C::new(0.,0.)],&values).is_ok());
+            let system=SparseComplexSystem::new(CscPattern::new(2,vec![0,2,3],vec![0,1,1]).unwrap(),
+                vec![C::new(1.,0.),C::new(scale*1e-20,scale*1e-20),C::new(scale,scale)]).unwrap();
+            let rhs=[C::new(1.,0.),C::new(0.,0.)];let mut values=vec![rhs[0],C::new(0.,0.)];
+            polish_homogeneous_rows(&system,&rhs,&mut values).unwrap();
+            assert!((values[1].re+1e-20).abs()<1e-35);
+            assert!(crate::solver_contract::verify_complex_solution(&system,&rhs,&values).is_ok());
+        }
+    }
+    proptest::proptest! {
+        #![proptest_config(proptest::test_runner::Config{cases:64,rng_seed:proptest::test_runner::RngSeed::Fixed(2026111308),..Default::default()})]
+        #[test]
+        fn homogeneous_row_solution_is_preserved_across_decimal_scales(exponent in -250i32..250,gap in 20i32..40,input in 0.01f64..100.) {
+            let scale=10f64.powi(exponent);let ratio=10f64.powi(-gap);
+            let system=SparseComplexSystem::new(CscPattern::new(2,vec![0,2,3],vec![0,1,1]).unwrap(),
+                vec![C::new(1.,0.),C::new(scale*ratio,scale*ratio),C::new(scale,scale)]).unwrap();
+            let rhs=[C::new(input,0.),C::new(0.,0.)];let mut values=vec![rhs[0],C::new(1e-5,1e-5)];
+            polish_homogeneous_rows(&system,&rhs,&mut values).unwrap();
+            proptest::prop_assert!((values[1].re/(-ratio*input)-1.).abs()<1e-12);
+            proptest::prop_assert!(crate::solver_contract::verify_complex_solution(&system,&rhs,&values).is_ok());
+        }
+    }
+    #[test]
     fn wrong_complex_factors_cannot_bypass_independent_acceptance_or_the_budget() {
         let system = identity();
         let rhs = [C::new(1., 2.)];
@@ -300,7 +419,7 @@ mod complex_refinement_contracts {
                 Ok(vec![residual[0] * coefficient])
             });
             assert_eq!(result.unwrap_err().code, ErrorCode::NumericalFailure);
-            assert!((1..=3).contains(&calls.get()));
+            assert!((1..=MAX_COMPLEX_CORRECTIONS).contains(&calls.get()));
         }
         assert_eq!(
             complex_backward_error(&system, &[C::new(0., 0.)], &[C::new(0., f64::EPSILON)])

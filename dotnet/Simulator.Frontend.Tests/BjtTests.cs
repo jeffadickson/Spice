@@ -52,7 +52,7 @@ public sealed class BjtTests
   Assert.Contains(storage,q=>family=="NPN"?q.P==rb.N&&q.N==re.N:q.P==re.N&&q.N==rb.N);
   Assert.Contains(storage,q=>family=="NPN"?q.P==rb.N&&q.N==rc.N:q.P==rc.N&&q.N==rb.N);
  }
- [Theory][InlineData("NPN(VAF=100)")][InlineData("NPN(IKF=1m)")][InlineData("NPN(RB=-1)")][InlineData("NPN(RBM=10)")][InlineData("NPN(IRB=1m)")][InlineData("NPN(RC=-1)")][InlineData("NPN(RE=-1)")][InlineData("NPN(BF=0)")][InlineData("NPN(IS=1 BF=5e-324)")][InlineData("NPN(IS=0)")][InlineData("NPN(CJE=-1p)")][InlineData("NPN(MJE=1)")][InlineData("NPN(TF=-1n)")][InlineData("NPN(TNOM=30)")][InlineData("NPN(LEVEL=4)")][InlineData("NPN(BF=100 BF=200)")]
+ [Theory][InlineData("NPN(VAF=-100)")][InlineData("NPN(IKF=1m)")][InlineData("NPN(RB=-1)")][InlineData("NPN(RBM=10)")][InlineData("NPN(IRB=1m)")][InlineData("NPN(RC=-1)")][InlineData("NPN(RE=-1)")][InlineData("NPN(BF=0)")][InlineData("NPN(IS=1 BF=5e-324)")][InlineData("NPN(IS=0)")][InlineData("NPN(CJE=-1p)")][InlineData("NPN(MJE=1)")][InlineData("NPN(TF=-1n)")][InlineData("NPN(TNOM=30)")][InlineData("NPN(LEVEL=4)")][InlineData("NPN(BF=100 BF=200)")]
  public void Unsupported_or_invalid_BJT_terms_refuse_atomically(string model){var r=Select(model);Assert.False(r.Success);Assert.Null(r.Request);Assert.Empty(r.Origins);}
  [Theory][InlineData("NPN","c")][InlineData("PNP","b")]
  public void Explicit_substrate_uses_default_native_leakage_reference(string family,string reference)

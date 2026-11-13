@@ -373,6 +373,41 @@
                   "voltage_coefficient"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {"const": "junction_storage"},
+                  "id": {"type": "string", "minLength": 1, "maxLength": 256},
+                  "p": {"type": "integer", "minimum": 0, "maximum": 127},
+                  "n": {"type": "integer", "minimum": 0, "maximum": 127},
+                  "model": {
+                    "type": "object",
+                    "properties": {
+                      "saturation_amps": {"type": "number", "exclusiveMinimum": 0},
+                      "thermal_volts": {"type": "number", "exclusiveMinimum": 0},
+                      "junction_farads": {"type": "number", "minimum": 0},
+                      "junction_volts": {"type": "number", "exclusiveMinimum": 0},
+                      "grading": {"type": "number", "minimum": 0, "exclusiveMaximum": 1},
+                      "forward_coefficient": {"type": "number", "minimum": 0, "exclusiveMaximum": 1},
+                      "transit_seconds": {"type": "number", "minimum": 0}
+                    },
+                    "required": ["saturation_amps", "thermal_volts", "junction_farads", "junction_volts", "grading", "forward_coefficient", "transit_seconds"],
+                    "additionalProperties": false
+                  },
+                  "early_effect": {
+                    "type": "object",
+                    "properties": {
+                      "cp": {"type": "integer", "minimum": 0, "maximum": 127},
+                      "cn": {"type": "integer", "minimum": 0, "maximum": 127},
+                      "volts": {"type": "number", "exclusiveMinimum": 0}
+                    },
+                    "required": ["cp", "cn", "volts"],
+                    "additionalProperties": false
+                  }
+                },
+                "required": ["kind", "id", "p", "n", "model"],
+                "additionalProperties": false
               }
             ],
             "not": {

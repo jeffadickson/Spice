@@ -343,8 +343,7 @@ pub fn run_with_registry(
             for (index,sample) in samples.iter_mut().enumerate() {
                 let v = diode.p.unknown().map(|i| sample.values[i]).unwrap_or(0.)
                     - diode.n.unknown().map(|i| sample.values[i]).unwrap_or(0.);
-                let q = model
-                    .nonlinear_charge(v)?
+                let q = diode.charge(&sample.values)?
                     .ok_or_else(|| SimError::invalid("missing SPICE charge"))?
                     .charge_coulombs;
                 let conduction = model.linearize(v)?.current_amps;
@@ -361,8 +360,7 @@ pub fn run_with_registry(
                         } else {average}
                     };
                     if let Some(mid) = index.checked_sub(1).and_then(|i|midpoint_history.get(i)).and_then(Option::as_ref) {
-                        let mv=diode.p.unknown().map_or(0.,|i|mid.values[i])-diode.n.unknown().map_or(0.,|i|mid.values[i]);
-                        let mq=model.nonlinear_charge(mv)?.ok_or_else(||SimError::invalid("missing midpoint junction charge"))?.charge_coulombs;
+                        let mq=diode.charge(&mid.values)?.ok_or_else(||SimError::invalid("missing midpoint junction charge"))?.charge_coulombs;
                         let mi=at_endpoint(mq,old_q,mid.time_s,old_time,old_displacement);
                         at_endpoint(q,mq,sample.time_s,mid.time_s,mi)
                     } else {at_endpoint(q,old_q,sample.time_s,old_time,old_displacement)}
@@ -383,10 +381,8 @@ pub fn run_with_registry(
                 let v = diode.p.unknown().map(|i| bias[i]).unwrap_or(0.)
                     - diode.n.unknown().map(|i| bias[i]).unwrap_or(0.);
                 let g = model.linearize(v)?.conductance_siemens;
-                let c = model
-                    .nonlinear_charge(v)?
-                    .ok_or_else(|| SimError::invalid("missing SPICE charge"))?
-                    .capacitance_farads;
+                let q=diode.charge(&bias)?.ok_or_else(|| SimError::invalid("missing SPICE charge"))?;
+                let c=q.capacitance_farads;
                 for sample in &mut ac_samples {
                     let real = diode
                         .p
@@ -409,9 +405,17 @@ pub fn run_with_registry(
                             .map(|i| sample.values[i].imag)
                             .unwrap_or(0.);
                     let wc = std::f64::consts::TAU * sample.frequency_hz * c;
+                    let (cr,ci)=if let Some(control)=diode.early_effect {
+                        let delta=|p:crate::ids::NodeId,n:crate::ids::NodeId,imag:bool|{
+                            let at=|node:crate::ids::NodeId|node.unknown().map_or(0.,|i|if imag{sample.values[i].imag}else{sample.values[i].real});
+                            at(p)-at(n)
+                        };
+                        let w=std::f64::consts::TAU*sample.frequency_hz*q.control_farads;
+                        (-w*delta(control.cp,control.cn,true),w*delta(control.cp,control.cn,false))
+                    } else {(0.,0.)};
                     sample.values.push(crate::ac::ComplexValue {
-                        real: g * real - wc * imag,
-                        imag: g * imag + wc * real,
+                        real: g * real - wc * imag+cr,
+                        imag: g * imag + wc * real+ci,
                     });
                 }
             }

@@ -101,11 +101,12 @@ pub fn charge_at_bias_csc(
         stamps.add(row, col, value);
     }
     for diode in &plan.diodes {
-        if let Some(q) = diode
-            .model
-            .nonlinear_charge(voltage(values, diode.p, diode.n))?
+        if let Some(q) = diode.charge(values)?
         {
             crate::compile::stamp_pair(&mut stamps, diode.p, diode.n, q.capacitance_farads);
+            if let Some(control)=diode.early_effect {
+                stamp_four_terminal(&mut stamps,diode.p,diode.n,control.cp,control.cn,0.,q.control_farads);
+            }
         }
     }
     for channel in &plan.mos1 {
@@ -219,6 +220,7 @@ fn linearize_with_rhs_gmin(
         if let Some(column)=source.cn.unknown(){jacobian.add(source.branch,column,slope);}
     }
     for diode in &plan.diodes {
+        if diode.early_effect.is_some() { diode.charge(values)?; }
         let contribution = diode.model.linearize(voltage(values, diode.p, diode.n))?;
         stamp_vector(&mut residual, diode.p, diode.n, contribution.current_amps);
         crate::compile::stamp_pair(
@@ -348,13 +350,9 @@ pub fn linearize_backward_euler(
     // afterwards can overflow even when the requested residual is finite.
     let mut system = linearize_with_rhs_gmin(plan, values, rhs, None, Some((previous, step_s)))?;
     for diode in &plan.diodes {
-        if let Some(q) = diode
-            .model
-            .nonlinear_charge(voltage(values, diode.p, diode.n))?
+        if let Some(q) = diode.charge(values)?
         {
-            let old = diode
-                .model
-                .nonlinear_charge(voltage(previous, diode.p, diode.n))?
+            let old = diode.charge(previous)?
                 .ok_or_else(|| SimError::invalid("inconsistent diode charge profile"))?;
             let displacement = (q.charge_coulombs - old.charge_coulombs) / step_s;
             stamp_vector(&mut system.residual, diode.p, diode.n, displacement);
@@ -364,6 +362,9 @@ pub fn linearize_backward_euler(
                 diode.n,
                 q.capacitance_farads / step_s,
             );
+            if let Some(control)=diode.early_effect {
+                stamp_four_terminal(&mut system.jacobian,diode.p,diode.n,control.cp,control.cn,0.,q.control_farads/step_s);
+            }
         }
     }
     for row in 0..values.len() {

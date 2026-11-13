@@ -12,7 +12,7 @@ internal sealed class SelectedDcBias(ImmutableArray<ForwardEarlyEffect> effects)
     private readonly double[] factors = Enumerable.Repeat(1d, effects.Length).ToArray();
 
     internal static BridgeResult Prepare(DeckSyntax syntax, string backend) =>
-        OperatingPointSelection.Select(syntax, new BridgeLimits { AllowForwardEarlyEffect = true }, backend).Prepared;
+        OperatingPointSelection.Select(syntax, new BridgeLimits(), backend).Prepared;
 
     internal async Task<SimulationResponse?> SolveAsync(SimulationClient client, SimulationRequest request,
         CancellationToken cancellationToken)

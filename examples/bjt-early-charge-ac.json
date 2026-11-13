@@ -1,0 +1,185 @@
+{
+  "case_id": "bjt-early-charge-ac",
+  "circuit": {
+    "nodes": [
+      "0",
+      "n1",
+      "n2",
+      "n3",
+      "n4",
+      "n5",
+      "n6",
+      "n7",
+      "n8",
+      "n9",
+      "n10"
+    ],
+    "elements": [
+      {
+        "kind": "voltage",
+        "volts": 0.6,
+        "id": "e0",
+        "p": 1,
+        "n": 0
+      },
+      {
+        "kind": "voltage",
+        "volts": 3,
+        "id": "e1",
+        "p": 2,
+        "n": 0
+      },
+      {
+        "kind": "resistor",
+        "ohms": 1000,
+        "id": "e2",
+        "p": 1,
+        "n": 3
+      },
+      {
+        "kind": "resistor",
+        "ohms": 1000,
+        "id": "e3",
+        "p": 2,
+        "n": 4
+      },
+      {
+        "kind": "voltage",
+        "volts": 0,
+        "id": "e4",
+        "p": 4,
+        "n": 5
+      },
+      {
+        "kind": "resistor",
+        "ohms": 40,
+        "id": "e4_rc",
+        "p": 5,
+        "n": 8
+      },
+      {
+        "kind": "resistor",
+        "ohms": 70,
+        "id": "e4_rb",
+        "p": 3,
+        "n": 9
+      },
+      {
+        "kind": "resistor",
+        "ohms": 5,
+        "id": "e4_re",
+        "p": 0,
+        "n": 10
+      },
+      {
+        "kind": "voltage",
+        "volts": 0,
+        "id": "e4_be_sense",
+        "p": 9,
+        "n": 6
+      },
+      {
+        "kind": "diode",
+        "saturation_amps": 1E-17,
+        "thermal_volts": 0.025864917007157463,
+        "id": "e4_be",
+        "p": 6,
+        "n": 10
+      },
+      {
+        "kind": "voltage",
+        "volts": 0,
+        "id": "e4_bc_sense",
+        "p": 9,
+        "n": 7
+      },
+      {
+        "kind": "diode",
+        "saturation_amps": 5E-16,
+        "thermal_volts": 0.025864917007157463,
+        "id": "e4_bc",
+        "p": 7,
+        "n": 8
+      },
+      {
+        "kind": "voltage_scaled_cccs",
+        "cp": 9,
+        "cn": 8,
+        "control_id": "e4_be_sense",
+        "gain": 100,
+        "voltage_coefficient": -0.02,
+        "id": "e4_forward",
+        "p": 8,
+        "n": 10
+      },
+      {
+        "kind": "voltage_scaled_cccs",
+        "cp": 9,
+        "cn": 8,
+        "control_id": "e4_bc_sense",
+        "gain": 2,
+        "voltage_coefficient": -0.02,
+        "id": "e4_reverse",
+        "p": 10,
+        "n": 8
+      },
+      {
+        "kind": "junction_storage",
+        "model": {
+          "saturation_amps": 1E-15,
+          "thermal_volts": 0.025864917007157463,
+          "junction_farads": 2E-12,
+          "junction_volts": 0.75,
+          "grading": 0.33,
+          "forward_coefficient": 0.5,
+          "transit_seconds": 5.0000000000000004E-08
+        },
+        "early_effect": {
+          "cp": 9,
+          "cn": 8,
+          "volts": 50
+        },
+        "id": "e4_qbe",
+        "p": 9,
+        "n": 10
+      },
+      {
+        "kind": "junction_storage",
+        "model": {
+          "saturation_amps": 1E-15,
+          "thermal_volts": 0.025864917007157463,
+          "junction_farads": 3E-12,
+          "junction_volts": 0.75,
+          "grading": 0.33,
+          "forward_coefficient": 0.5,
+          "transit_seconds": 2.0000000000000002E-07
+        },
+        "id": "e4_qbc",
+        "p": 9,
+        "n": 8
+      }
+    ]
+  },
+  "analysis": {
+    "kind": "ac",
+    "frequencies_hz": [
+      100000,
+      5050000,
+      10000000
+    ],
+    "source_phasors": [
+      {
+        "id": "e0",
+        "real": 1,
+        "imag": 0
+      },
+      {
+        "id": "e1",
+        "real": 0,
+        "imag": 0
+      }
+    ]
+  },
+  "backend": "faer",
+  "schema_version": "1"
+}

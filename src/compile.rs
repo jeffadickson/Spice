@@ -13,6 +13,21 @@ pub(crate) struct CompiledDiode {
     pub(crate) p: NodeId,
     pub(crate) n: NodeId,
     pub(crate) model: DiodeProfile,
+    pub(crate) early_effect: Option<crate::spice_diode::EarlyChargeControl>,
+}
+impl CompiledDiode {
+    /// One charge evaluator for AC, Newton histories and public observables.
+    pub(crate) fn charge(&self, values:&[f64]) -> SimResult<Option<crate::spice_diode::CoupledJunctionCharge>> {
+        let v=|p:NodeId,n:NodeId|p.unknown().map_or(0.,|i|values[i])-n.unknown().map_or(0.,|i|values[i]);
+        if let Some(c)=self.early_effect {
+            if let DiodeProfile::JunctionStorage(m)=self.model {
+                return Ok(Some(m.early_charge(v(self.p,self.n),v(c.cp,c.cn),c.volts)?));
+            }
+            return Err(SimError::invalid("Early charge requires a charge-only junction"));
+        }
+        Ok(self.model.nonlinear_charge(v(self.p,self.n))?.map(|q|crate::spice_diode::CoupledJunctionCharge{
+            charge_coulombs:q.charge_coulombs,capacitance_farads:q.capacitance_farads,control_farads:0.}))
+    }
 }
 /// Immutable smooth resistance and its differential control terminals.
 #[derive(Debug, Clone)]
@@ -225,13 +240,14 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                 bulk: *bulk,
                 model: *model,
             }),
-            Element::JunctionStorage { id, p, n, model } => {
+            Element::JunctionStorage { id, p, n, model, early_effect } => {
                 model.validate()?;
                 diodes.push(CompiledDiode {
                     id: id.clone(),
                     p: *p,
                     n: *n,
                     model: DiodeProfile::JunctionStorage(*model),
+                    early_effect:*early_effect,
                 });
             }
             Element::SpiceDiode { id, p, n, model } => {
@@ -241,6 +257,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     p: *p,
                     n: *n,
                     model: DiodeProfile::Spice(*model),
+                    early_effect:None,
                 });
             }
             Element::PspiceSwitch {
@@ -358,6 +375,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                     p: *p,
                     n: *n,
                     model,
+                    early_effect:None,
                 });
             }
             Element::Voltage { p, n, .. }

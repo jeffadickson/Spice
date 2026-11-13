@@ -1,0 +1,49 @@
+[DOCUMENT]
+TITLE: Coupled BJT Early charge
+
+[REQUIREMENT]
+UID: BJT-EARLY-CHARGE-001
+STATUS: Draft
+TITLE: Forward diffusion charge and cross derivative
+STATEMENT: >>>
+The bounded forward Early BJT profile shall evaluate forward diffusion charge
+and its junction and collector-control derivatives consistently with transport,
+preserving intrinsic-node polarity and rejecting invalid model domains.
+<<<
+COMMENT: >>>
+VAF-only low-injection profile; no claim of full Gummel–Poon qualification.
+Implementation: spice_diode.rs, compile.rs, newton.rs, BjtPreparation.cs.
+Verification: tests/bjt_coupled_charge.rs and independent ngspice comparisons.
+<<<
+
+[REQUIREMENT]
+UID: BJT-EARLY-HISTORY-001
+STATUS: Draft
+TITLE: Shared coupled charge history
+STATEMENT: >>>
+AC, backward Euler, trapezoidal integration and current observables shall use
+the same coupled terminal charge law and accepted history, including midpoint
+states, without mutating history on failed Newton or rejected timestep trials.
+<<<
+COMMENT: >>>
+Implementation: newton.rs, api.rs and independent audit modules.
+Finite tests do not establish universal convergence or global error bounds.
+<<<
+
+[REQUIREMENT]
+UID: BJT-AC-ZERO-CONSTRAINT-001
+STATUS: Draft
+TITLE: Homogeneous row evaluation under unchanged residual policy
+STATEMENT: >>>
+The sparse complex provider shall evaluate a homogeneous row for its dominant
+unknown only when every other numerical coefficient is at most one binary64
+epsilon of that coefficient. It shall retain every remaining coefficient and
+product, preserve exact singleton consequences, and retain independent
+verification of every matrix row under the unchanged componentwise threshold.
+Factor-reuse refinement work shall remain bounded to three corrections.
+<<<
+COMMENT: >>>
+Implementation: backend_faer.rs provider-side row evaluation before initial scoring
+and after each correction. Verification: complex_refinement_contracts and the
+public generated BJT AC request with a grounded zero-phasor supply.
+<<<

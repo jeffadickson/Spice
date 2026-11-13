@@ -1,3 +1,27 @@
+# Current manual checkpoint — coupled forward Early BJT charge
+
+Read docs/bjt-coupled-charge-results.md and evidence/bjt-coupled-charge.json.
+VAF-only low-injection NPN/PNP now use native transport and coupled forward
+charge across DC, AC and BE/trapezoidal histories. No general GP claim.
+The sparse complex provider retains tiny reverse-junction sensor currents using
+bounded homogeneous-row evaluation of every coefficient, with the unchanged
+all-row 1e-10 gate and original three-correction budget. A 24-correction experiment
+failed and was reverted. New authored OP/AC/transient example agrees.
+Original RCA3040 now executes AC/DC/transient and its 101-frequency AC (21 signals,
+2121 complex signal-points) agrees. DC grid and transient still fail; RTL inverter
+and full diffpair requested programs remain blocked. Issue46 tracks the results.
+Historical campaign original count remains five; no new original is counted here.
+Current engine E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target/debug/circuit-simulator.exe
+SHA256 c3caf38a08fa03c4cb375408d96ddbcf984fe4e1ef19f34b2e3c4fedce46888b.
+Evidence retains 77 native integrations, 8 provider unit/property cases,
+929 frontend passes/40 skips and 10 targeted integration checks, actual coverage,
+mutations, seeds and 70 parsed StrictDoc files. No push/merge/CI. Canonical main
+and its unrelated sheet-resistor changes remain untouched. Sol automations ended.
+Separate current schematic/package/book work belongs to C:/dev/VeloSim, not this
+checkout. Author-controlled layout unlocking was selected; readiness/WALLY
+requirements are drafted, and standalone packaging is still being completed.
+
+## Historical campaign checkpoint (not the current BJT admission state)
 # Sol campaign ended — November 13: five originals, final replay verified
 
 Read docs/sol-campaign-final-handoff.md and evidence/sol-campaign-final.json.

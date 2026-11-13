@@ -1,0 +1,288 @@
+{
+  "base_commit": "8c54991d9657b80a3aa93895653bd88791e18324",
+  "source_dirty": true,
+  "recorded_utc": "2026-11-13T15:11:00.3397992+00:00",
+  "platform": "windows-x64",
+  "artifacts": "E:\\Artifacts\\Spice-bjt-coupled-8c54991-20261113",
+  "requirement_ids": [
+    "BJT-EARLY-CHARGE-001",
+    "BJT-EARLY-HISTORY-001",
+    "BJT-AC-ZERO-CONSTRAINT-001"
+  ],
+  "requirement_status": "Draft",
+  "profile": "VAF-only low-injection BJT; normalized NPN/PNP, fixed series resistance, coupled forward diffusion",
+  "native_tests": {
+    "provider_unit_passed": 8,
+    "unit_filtered": 26,
+    "failed": 0,
+    "coverage_integration_passed": 9,
+    "integration_passed": 77
+  },
+  "managed_tests": {
+    "frontend_passed": 929,
+    "analytical_early_cases": 2,
+    "targeted_skips": 0,
+    "targeted_integration_passed": 10,
+    "ngspice_oracle_cases": 8,
+    "prerequisite_skips": 40
+  },
+  "coverage": {
+    "native": {
+      "scope": "Owned library from nine coupled-charge integration cases; provider units separate",
+      "files": [
+        {
+          "sha256": "f03839aa48a4c89bc11e58cb82da6fa7e5cbc1ab30b9292778f036c9efeade72",
+          "lines": {
+            "count": 307,
+            "covered": 165,
+            "percent": 53.74592833876222
+          },
+          "file": "src/backend_faer.rs"
+        },
+        {
+          "sha256": "992636edc3f26009e0af65fd92334161811ca27d901b8c079670875d7b72c64e",
+          "lines": {
+            "count": 85,
+            "covered": 80,
+            "percent": 94.11764705882352
+          },
+          "file": "src/spice_diode.rs"
+        }
+      ],
+      "branches": null,
+      "lines_valid": 7454,
+      "lines_covered": 2863
+    },
+    "managed": {
+      "scope": "Frontend suite including referenced/generated managed code",
+      "branches_covered": 6521,
+      "branches_valid": 10311,
+      "lines_valid": 27886,
+      "lines_covered": 21976
+    }
+  },
+  "properties": {
+    "row_scales": {
+      "cases": 64,
+      "seed": "2026111308"
+    },
+    "charge": {
+      "cases": 128,
+      "seed": "2026111307"
+    },
+    "regressions": [
+      "tests/bjt_coupled_charge.proptest-regressions",
+      "proptest-regressions/backend_faer.txt"
+    ]
+  },
+  "mutation": {
+    "source_restored": true,
+    "cargo_mutants_version": "27.1.0",
+    "scope": "be>0 zero-bias boundary only",
+    "selected_boundary_attempted": 1,
+    "manual_row": {
+      "exit_code": 101,
+      "outcome": "killed_by_tests",
+      "name": "discard_tiny_coefficients"
+    },
+    "selected_boundary_survived": 0,
+    "broad_campaign_not_run": true,
+    "selected_boundary_killed": 1,
+    "manual_charge": [
+      {
+        "exit_code": 101,
+        "name": "missing_control_partial",
+        "outcome": "killed_by_tests"
+      },
+      {
+        "exit_code": 101,
+        "name": "frozen_forward_charge",
+        "outcome": "killed_by_tests"
+      }
+    ]
+  },
+  "schema": {
+    "schema_sha256": "E82308328644B453AD3EC96444EBCBDEB3A322CA955848A5D6CF6B9F0D5FC166",
+    "scope": "Exact coupled companion shape, extracted from typed request; no circuit solvability claim",
+    "negative": 6,
+    "positive": 1,
+    "source_request_sha256": "31330379421DB0E80B12F05ACF405BE9E1BA6E9CF98E7696543F00E258CAF261"
+  },
+  "strictdoc": {
+    "log": "strictdoc-final.log",
+    "version": "0.30.4",
+    "parsed": 70
+  },
+  "runtime_and_assembly_provenance": {
+    "sdk": "10.0.403",
+    "hashes": [
+      {
+        "sha256": "C3CAF38A08FA03C4CB375408D96DDBCF984FE4E1EF19F34B2E3C4FEDCE46888B",
+        "path": "E:\\Artifacts\\Spice-bjt-coupled-8c54991-20261113/target/debug/circuit-simulator.exe"
+      },
+      {
+        "sha256": "12BC57018AA5142D28065704D09BC6B06DA2A3886F7864CA042ED4824CCF910F",
+        "path": "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe"
+      },
+      {
+        "sha256": "DD2FB41118679C79398F76AC49A9FE9ACF463932528D2AFFD21BF307CB702779",
+        "path": "E:\\Artifacts\\Spice-bjt-coupled-8c54991-20261113/build/bin/Simulator.Frontend.Tests/debug/Simulator.Frontend.dll"
+      },
+      {
+        "sha256": "783C869E9F9A3E0577DEE753FBDB935448D0205B44A2C31FAC7E7DA86A3EA43F",
+        "path": "E:\\Artifacts\\Spice-bjt-coupled-8c54991-20261113/build/bin/Simulator.Frontend.Tests/debug/Simulator.Client.dll"
+      }
+    ],
+    "ended_utc": "2026-11-13T07:00:16.0215146-08:00",
+    "exit_code": 0
+  },
+  "original_results": [
+    {
+      "path": "general/rca3040.cir",
+      "operations": [
+        {
+          "status": "agreed",
+          "executed": true,
+          "agreed": true,
+          "kind": "ac"
+        },
+        {
+          "status": "original_grid_discrepancy",
+          "executed": true,
+          "agreed": false,
+          "kind": "dc"
+        },
+        {
+          "status": "numerical_disagreement",
+          "executed": true,
+          "agreed": false,
+          "kind": "tran"
+        }
+      ],
+      "sha256": "afda521a320d08b678add26141315731e6c03ae06df0983020156c703ec31586",
+      "diagnostics": [],
+      "status": "requested_executed_not_fully_qualified"
+    },
+    {
+      "path": "general/rtlinv.cir",
+      "operations": [],
+      "sha256": "efb524624f7c96d1f8b05ac8428afd4f0462c65791801f1b5cd8019e5e9471f4",
+      "diagnostics": [
+        "unsupported_physical_directive"
+      ],
+      "status": "requested_preparation_refused"
+    },
+    {
+      "path": "general/diffpair.cir",
+      "operations": [],
+      "sha256": "7b8130123cb74140ac247ca8b9b0f50aee0389b397ac9a4505493cda225bb76b",
+      "diagnostics": [
+        "unsupported_requested_program"
+      ],
+      "status": "requested_preparation_refused"
+    }
+  ],
+  "rca3040_ac": {
+    "bounds": "1e-6 V / 1e-9 A absolute plus 1e-4 relative; unchanged",
+    "frequencies": 101,
+    "signals": 21,
+    "agreed": true,
+    "signal_points": 2121.0
+  },
+  "authored_example": {
+    "path": "examples/bjt-early-charge.cir",
+    "counted_as_original": false,
+    "agreed": true,
+    "status": "all_individual_requested_analyses_agreed"
+  },
+  "newly_agreeing_original_decks": 0,
+  "historical_sol_campaign_total": 5,
+  "issue": "https://github.com/jeffadickson/Spice/issues/46",
+  "failed_attempts": [
+    "red.log: missing API expected failure",
+    "native-green.log: private matrix helper in test corrected",
+    "native-green2.log: fixture omitted explicit zero phasor under legacy raw AC convention, corrected",
+    "managed.log: C# test literal typo corrected",
+    "cargo-mutants.log: incompatible in-place/jobs flags, corrected",
+    "ac-trace.log: singleton-only correction insufficient",
+    "ac-trace-refined.log: 24 corrections stagnated, budget reverted to three",
+    "coverage-final.log: diagnostic subscriber test dependency missing from standalone coverage harness; diagnostic subscriber removed from permanent test, restored coverage passed"
+  ],
+  "limitations": [
+    "No general VAR/high-injection/XTF/excess-phase/leakage/variable-base-resistance/temperature profile",
+    "Original RCA3040 DC grid and transient still fail; fixed BE versus stock controller attribution remains unproven",
+    "RTL inverter directive/oracle-vector and full diffpair requested program remain open",
+    "Stable Rust branch coverage unavailable; no broad/coverage-guided fuzz or Stryker campaign",
+    "No browser/MCP/Linux/GPU/vendor-provider qualification in this slice",
+    "Adaptive midpoint independent physical audit remains unavailable; probe reconstruction tested",
+    "Exact every-row residual gate remains 1e-10 with three factor corrections; no universal convergence claim"
+  ],
+  "commands": [
+    "Timed.ps1 -Script Native.ps1 -Seconds 600",
+    "Timed.ps1 -Script ComplexUnit.ps1 -Seconds 300",
+    "Timed.ps1 -Script Managed.ps1 -Seconds 600",
+    "Timed.ps1 -Script OracleVerified.ps1 -Seconds 900",
+    "Timed.ps1 -Script ReplayFinal.ps1 -Seconds 600",
+    "Timed.ps1 -Script ExampleFinal.ps1 -Seconds 300",
+    "Timed.ps1 -Script Mutants.ps1 -Seconds 600",
+    "Timed.ps1 -Script ManualMutants.ps1 -Seconds 600",
+    "Timed.ps1 -Script RowMutant.ps1 -Seconds 300",
+    "Timed.ps1 -Script CoverageRestored.ps1 -Seconds 600",
+    "Test-JunctionStorageSchema.ps1 with actual typed request; check-jsonschema0.39.0/jsonschema4.26.0",
+    "python strictdoc-streaming.py (real SDReader0.30.4)"
+  ],
+  "review": {
+    "disposition": "Fixed and tested; no further actionable findings",
+    "finding": "Scaled complex division required to preserve tiny/huge valid coefficients",
+    "not_external_expert": true,
+    "kind": "Fresh read-only automated agent review"
+  },
+  "source_hashes": {
+    "tests/bjt_coupled_charge.rs": "af59a14ffea5d151d73e6918bcc31fbef163cecf6318a38e2e625e562e5a6454",
+    "src/circuit.rs": "868a54484f120fa7ada2e4e3721d1af27be3eb241a7d05f88d8793a38fff61bf",
+    "dotnet/Simulator.Frontend/SelectedDcBias.cs": "2bc8fb277043e5a5189acdf2bc5aa4344f29b95ffe1317546694632d9e14c122",
+    "examples/bjt-early-charge-ac.json": "da7642319f10d0952c78015c8175c387f928362e52f73919b1c2e5c8d6476319",
+    "src/audit.rs": "4b5f054067793c60de748f342b9cb49ce5cb0e1d10ad1d83d2ab0d663886d8f6",
+    "dotnet/Simulator.Frontend.Tests/BjtTests.cs": "896fdcec242044b1f90ccf9562426a784b720664c8a1e8ccd4ece4060ee9e9bd",
+    "src/compile.rs": "5bf2fe7c22a58c55f2f6e9f6576d9f6362d6c5eb58b5f94a3dad9c8153fe4e36",
+    "examples/bjt-early-charge.cir": "7cca1948f7660806430e49aef8df4bfe55453b9af4554cc9149d6761d36fad61",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "6968525c1678a31da3c02c9b49c2a7a504ac6cd1ac5bf5393a7513df7ae32b1a",
+    "src/backend_faer.rs": "f03839aa48a4c89bc11e58cb82da6fa7e5cbc1ab30b9292778f036c9efeade72",
+    "src/solver_contract.rs": "895b8d2800c55ae0c87e3c38f9bb5630df1f4e2c7988679eb1179e1db3f21201",
+    "dotnet/Simulator.Frontend.Tests/BjtNativeOracleIntegration.cs": "be889f2f596934e017753fea283b27d081cb31586d783236c3e357eda48e713d",
+    "src/api.rs": "0be1b5186f65b172e011be276777cc4676a37d1dea2d18158270db01e9d5d904",
+    "docs/bjt-coupled-charge.sdoc": "c37fa17c99dc12554b13368d14af943e9c8cdcbc3567e6b2a4bb9648ea326af4",
+    "docs/bjt-profile.sdoc": "0f524d67c56003c846acc06174ddb2a599f319c1443473abe58afdb7ab5cbb5f",
+    "proptest-regressions/backend_faer.txt": "285180844d09f157d1240bdf0423e969b3d891818d752f29dc4da9c8261b428d",
+    "docs/bjt-coupled-charge-plan.md": "1e288d63edde9d509c604d6c31aae4c0e8c9594a6b3d2869de7830e06dc59fd9",
+    "src/audit_configured.rs": "3f2ac18398f88876dd32b7c1d49cbbd5e997d8f56d73dacb0e4c02a8b2dfb2b7",
+    "prompt.md": "9a069dfe3b1da14be13928c92df9f9d69a0d86fb4929467855c43e54fa268609",
+    "src/main.rs": "851358e51781ec048b44540dffb6ecbd3c38beb1f08545adbea9fd90fb345cf7",
+    "src/newton.rs": "58e590775d6d86a8c91907c22088dee5fb7d2ba91ef5b0e0acf17b09dd5de0b6",
+    "dotnet/Simulator.Frontend.Tests/BjtEarlyChargeTests.cs": "1f172c96e01b49125f202b3e643d465174fe9478e52235fd1448277c102d6357",
+    "docs/bjt-coupled-charge-results.md": "6d4d10ff41a345916314d05e65caebf5e9b6d90ea89f606279116e65a1f7d53b",
+    "dotnet/Simulator.Frontend.Tests/ReadinessTests.cs": "d12cfa7990ecc2272fb120b2da7adac11df4d42d45dcf56df2aac653bacfafc2",
+    "README.md": "3c66ba366184b73d4170999c0ed8605ec883eb44391f8557088a5f6505f0d6bf",
+    "tests/bjt_coupled_charge.proptest-regressions": "1d695df616a366eccba4545e16968ef429cd16b8477ec42eda0482416236522c",
+    "schemas/request-v1.json": "e82308328644b453ad3ec96444ebcbdeb3a322ca955848a5d6cf6b9f0d5fc166",
+    "dotnet/Simulator.Client/Requests.cs": "5762bddc9e10d7ffac461a91bee0d1944af655556fe8b7a2adb22fc0b683f68a",
+    "src/spice_diode.rs": "992636edc3f26009e0af65fd92334161811ca27d901b8c079670875d7b72c64e",
+    "scripts/Test-JunctionStorageSchema.ps1": "e3f2b9546bd0b6f486eb4c8ba15f01e372bcd0fd1d753fac9abe5d674ca0bd8e",
+    "dotnet/Simulator.Frontend/BjtPreparation.cs": "e989d7a59593c018a11844d398126d359d42d0b10fc1689158fc3dc3d8749a60",
+    "dotnet/Simulator.Frontend.Tests/TransferFunctionTests.cs": "525ee508dbacf7fd463488ac470dc1ec23f8842260a2bd950959c37395be8512",
+    "scripts/ExportSchemas.cs": "b3e2e3c927ddab96f90710089c237cd4c56cbe42470a3dc2dc5409bc817c3939"
+  },
+  "raw_reports": [
+    "native-final.log",
+    "complex-unit-restored.log",
+    "managed-final.log",
+    "oracle-verified.log",
+    "bjt-oracle-verified/bjt-oracle.trx",
+    "original-final/summary.json",
+    "example-final/summary.json",
+    "native-coverage-restored/summary.json",
+    "cargo-mutants2.log",
+    "discard_tiny_coefficients.log",
+    "schema-validation/summary.json"
+  ]
+}

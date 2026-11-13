@@ -1,0 +1,13 @@
+Bounded forward Early charge - intrinsic series resistances and NPN storage
+* VAF-only low-injection profile; no VAR, high injection or excess phase.
+VDRV input 0 DC .6 AC 1 SIN(.6 .01 100k)
+VCC supply 0 DC 3 AC 0
+RB input b 1k
+RC supply c 1k
+Q1 c b 0 qm
+.model qm NPN(IS=1f BF=100 BR=2 VA=50 RB=70 RC=40 RE=5
++ CJE=2p VJE=.75 MJE=.33 CJC=3p VJC=.75 MJC=.33 FC=.5 TF=50n TR=200n)
+.op
+.ac lin 3 100k 10meg
+.tran 100p 20n 0 100p
+.end

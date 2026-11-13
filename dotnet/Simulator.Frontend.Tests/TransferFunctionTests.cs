@@ -65,13 +65,13 @@ public sealed class TransferFunctionTests
     }
 
     [Fact]
-    public void SelectedDcTransferAdmitsForwardEarlyVoltageWithoutEnablingOtherAnalyses()
+    public void NativeForwardEarlyVoltageIsAvailableToDcAndTransferPreparation()
     {
         var syntax = DeckParser.Parse(
             "Early effect\nVin b 0 .6\nVcc s 0 5\nR1 s c 1k\nQ1 c b 0 qm\n.model qm NPN(VA=50)\n.tf v(c) Vin\n.end\n",
             collectDeclarations: true);
         Assert.True(TransferFunctionSelection.Prepare(syntax).Success);
-        Assert.False(OperatingPointSelection.Select(syntax).Success);
+        Assert.True(OperatingPointSelection.Select(syntax).Success);
     }
 
     [BjtOracleTheory]

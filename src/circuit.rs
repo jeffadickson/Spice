@@ -51,6 +51,9 @@ pub enum Element {
         p: NodeId,
         n: NodeId,
         model: crate::spice_diode::SpiceDiodeModel,
+        /// Optional normalized BC coupling; absent retains the legacy wire law.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        early_effect: Option<crate::spice_diode::EarlyChargeControl>,
     },
     /// SPICE depletion and diffusion charge evaluated with effective SI parameters.
     SpiceDiode {
@@ -291,6 +294,12 @@ impl Circuit {
                     voff: *voff,
                 }
                 .validate()?;
+            }
+            if let Element::JunctionStorage{early_effect:Some(control),..}=e {
+                if control.cp.0>=self.nodes.len() || control.cn.0>=self.nodes.len()
+                    || !control.volts.is_finite() || control.volts<=0. || !control.volts.recip().is_finite() {
+                    return Err(SimError::invalid("invalid forward Early charge control"));
+                }
             }
             match e {
                 Element::BehavioralVoltage {cp,cn,expression,..} | Element::BehavioralResistor {cp,cn,expression,..} => {

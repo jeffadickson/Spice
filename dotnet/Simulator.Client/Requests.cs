@@ -69,7 +69,14 @@ public sealed record SpiceDiodeModel(double SaturationAmps,double ThermalVolts,d
 public sealed record SpiceDiode(string Id,int P,int N,SpiceDiodeModel Model):Element(Id,P,N);
 /// <summary>Pure depletion/transport junction storage with zero static F. Model
 /// saturation current scales diffusion Q only; current senses remain separate.</summary>
-public sealed record JunctionStorage(string Id,int P,int N,SpiceDiodeModel Model):Element(Id,P,N);
+public sealed record JunctionStorage(string Id,int P,int N,SpiceDiodeModel Model):Element(Id,P,N)
+{
+    /// <summary>Optional normalized collector control for VAF-only forward diffusion charge.</summary>
+    [JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)]
+    public EarlyChargeControl? EarlyEffect { get; init; }
+}
+/// <summary>Normalized BC control nodes and positive forward Early voltage in volts.</summary>
+public sealed record EarlyChargeControl(int Cp,int Cn,double Volts);
 /// <summary>Shockley conduction in parallel with constant Q=C*V; SI amps, volts and
 /// strictly positive farads. This bounded profile has no depletion or transport charge.
 /// Derived i_conduction(id) excludes displacement; total current requires circuit KCL.</summary>

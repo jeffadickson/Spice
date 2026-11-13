@@ -491,8 +491,8 @@ pub fn backward_euler_step(
                 0.
             }
             Element::SpiceDiode { model, .. } | Element::JunctionStorage { model, .. } => {
-                let q = independent_junction_charge(*model, v);
-                let old = independent_junction_charge(*model, old_v);
+                let q = independent_element_charge(element,*model,state);
+                let old = independent_element_charge(element,*model,previous);
                 *current += (q - old) / step_s;
                 nonlinear_storage |= model.has_charge();
                 step_s * v * *current
@@ -547,6 +547,20 @@ pub fn backward_euler_step(
         ));
     }
     Ok(AuditReport { checks })
+}
+
+/// Value-only independent reconstruction of the VAF-only diffusion product.
+/// This deliberately does not call the production coupled charge/Jacobian.
+fn independent_element_charge(element:&crate::circuit::Element,model:crate::spice_diode::SpiceDiodeModel,state:&[f64])->f64 {
+    let (p,n)=element.terminals();let be=voltage(state,p)-voltage(state,n);
+    let mut q=independent_junction_charge(model,be);
+    if let crate::circuit::Element::JunctionStorage{early_effect:Some(control),..}=element {
+        if be>0. {
+            let bc=voltage(state,control.cp)-voltage(state,control.cn);
+            q-=model.transit_seconds*model.saturation_amps*(be/model.thermal_volts).exp_m1()*bc/control.volts;
+        }
+    }
+    q
 }
 
 // Independently reconstruct the SPICE depletion integral and transport charge;

@@ -7,7 +7,6 @@ public sealed record BridgeLimits(int MaxDepth=32,int MaxInstances=128,int MaxEl
 {
     /// <summary>Selected frontend dialect policy. Strict Lower retains its legacy literal-node contract.</summary>
     public GroundAliasPolicy GroundAliases {get;init;}=GroundAliasPolicy.Automatic;
-    internal bool AllowForwardEarlyEffect { get; init; }
     internal double TemperatureCelsius { get; init; } = 27;
 }
 /// <summary>Capability/validation failure; ranges refer to the supplied syntax text.</summary>
@@ -387,10 +386,10 @@ public static class OperatingPointBridge
                     }
                     if(selected&&call.Header.Family=="Q")
                     {
-                        if(!BjtPreparation.TryPrepare(catalog,environment,call,out var bjt,out var error,limits.AllowForwardEarlyEffect))throw new BridgeFailure(error!.Code,error.Range);
+                        if(!BjtPreparation.TryPrepare(catalog,environment,call,out var bjt,out var error))throw new BridgeFailure(error!.Code,error.Range);
                         var c=Node(call.Ports[0].Actual.Text);var b=Node(call.Ports[1].Actual.Text);var e=Node(call.Ports[2].Actual.Text);
                         var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                        bjt!.Append(id,c,b,e,call.Ports.Length==4?Node(call.Ports[3].Actual.Text):null,PrivateNode,element=>{if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);elements.Add(element);},earlyEffects.Add);
+                        bjt!.Append(id,c,b,e,call.Ports.Length==4?Node(call.Ports[3].Actual.Text):null,PrivateNode,element=>{if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",call.Header.Range);elements.Add(element);});
                         origins.Add(new(id,call.Header.Name,path,call.Header.Range));continue;
                     }
                     if(selected&&call.Header.Family=="D")

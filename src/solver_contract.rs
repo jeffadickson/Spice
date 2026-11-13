@@ -202,6 +202,10 @@ pub fn complex_backward_error(
                 "AC residual failed",
             ));
         }
+        if relative>1e-10 {
+            tracing::debug!(row,relative,scale=scales[row],residual_real=(sums[row]-rhs[row]).re,
+                residual_imag=(sums[row]-rhs[row]).im,"complex_componentwise_residual_exceeded");
+        }
         worst = worst.max(relative);
     }
     Ok(worst)
