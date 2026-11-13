@@ -266,8 +266,10 @@ public static partial class ControlVectorExecution
                     break;
                 case "report" or "report_substitution" when command.Name == "echo":
                     if (!active || exit is not null) break;
+                    // Nutmeg $& expands the whole vector in echo, including real OP
+                    // vectors. Numeric scalar requirements belong to arithmetic callers.
                     var expanded = Substitution().Replace(argument, match =>
-                        allowComplex?string.Join(" ",Resolve(match.Groups["name"].Value,null).Select(Format)):Format(ScalarValue(Resolve(match.Groups["name"].Value,null))));
+                        string.Join(" ",Resolve(match.Groups["name"].Value,null).Select(Format)));
                     expanded = ShellVariable().Replace(expanded, match => LookupVariable(match.Groups["name"].Value));
                     if (expanded.Contains('$')) throw new InvalidDataException("unsupported_control_substitution");
                     output.Add(expanded.Replace("\"","",StringComparison.Ordinal));

@@ -1,0 +1,38 @@
+[DOCUMENT]
+TITLE: Real vector echo substitution
+
+[TEXT]
+STATEMENT: >>>
+Bounded repair to the existing reporting evaluator. Reuse decision: retain
+string.Join and the existing finite-vector validator and numeric formatter;
+no parser, interpreter or dependency is added. The pinned RSpice source
+29c28a022625fd7cc2c56ead1cce2d3066663074 documents vector_words in
+crates/rspice-core-netlist/src/control_protocol.rs and expand_vector in
+crates/rspice-core/src/engine/control/presentation/vectors.rs: $& produces
+one word per vector element. Source was consulted as behavioral guidance;
+no RSpice source was copied. The independent stock ngspice executable and
+unchanged regression/model/special-names-1.cir provide execution evidence.
+This repair changes real echo cardinality; existing complex formatting and
+unsupported indexed substitutions retain their established contracts.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-REAL-VECTOR-ECHO-001
+STATUS: Draft
+TITLE: Complete bounded real vector echo substitution
+STATEMENT: >>>
+For an admitted echo command, $&name shall substitute every finite component
+of the named real vector in original order, separated by spaces, using the
+existing invariant numeric formatter. A scalar shall remain one word.
+Evaluation shall not mutate borrowed input vectors. Unknown names, unsupported
+indexed or member substitutions, empty vectors and vectors exceeding 4096
+components shall fail without publishing partial report output.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Syntax/ControlVectorExecution.cs.
+Verification: dotnet/Simulator.Syntax.Tests/VectorEchoTests.cs; unchanged
+original regression/model/special-names-1.cir, complete reporting/assertions
+and all nine mapped OP voltage/current observables against default ngspice.
+Evidence: evidence/real-vector-echo.json and docs/real-vector-echo-results.md.
+Draft status does not claim broad control-language or text-format parity.
+<<<

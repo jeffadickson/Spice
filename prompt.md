@@ -1,3 +1,16 @@
+# Sol checkpoint — November 13: complete real-vector reporting
+
+Read docs/real-vector-echo-results.md and evidence/real-vector-echo.json.
+Original regression/model/special-names-1.cir now executes its full assertions
+and agrees on all nine OP observables with stock ngspice. One new original
+completion in the newly authorized Sol campaign, reporting-only repair;
+physical OP already agreed before this change. Earlier ac-zero and PZ baselines
+already passed and were not counted. Stock mosmem agreement remains open.
+Keep the current campaign authorization/deadline from the user and ignored
+work/hourly-deck-progress.json; old expired campaign instructions below are
+historical. No push or CI. User removed custom memory caps/RAM admission for
+this campaign; keep serialized jobs with timed process-tree cleanup and E: outputs.
+
 # Manual two-deck checkpoint — November 12
 
 The user explicitly resumed work to finish ac-resistance and mosmem after the
@@ -953,4 +966,3 @@ Artifacts: E:/Artifacts/Spice-issue34-20261103T195804Z. Preserve canonical main'
 seven unrelated sheet-resistor/WIP files and all historical/raw evidence. CI off.
 
 Manual two-deck checkpoint (hourly automation remains paused): original ac-resistance now agrees for OP/AC/PZ and original assertions. Read docs/ordered-control-results.md and evidence/ordered-control-ac-resistance.json. Next finish original general/mosmem.cir startup and full transient comparison, without altered inputs or weaker tolerances. Preserve canonical main; local commits only; E: artifacts.
-
