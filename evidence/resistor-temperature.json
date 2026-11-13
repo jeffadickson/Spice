@@ -1,0 +1,229 @@
+{
+  "base_commit": "60574becda726b928b415a597f09881e2d4c332d",
+  "source_dirty": true,
+  "artifact_root": "E:/Artifacts/Spice-sol-temperres-60574be-20261113T0705",
+  "original": "regression/temper/temper-res-1.cir",
+  "input_sha256": "b7986b6133f778378e41f5e09b952dfad615854c17486102057d8e7f00107eb9",
+  "corpus_pin": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "original_analyses": [
+    "dc temp 10 100 10.0"
+  ],
+  "points": 10,
+  "observables": [
+    {
+      "engine_signal": "v(n1)",
+      "native_signal": "v(1)",
+      "unit": "V",
+      "points": 10,
+      "failed": 0,
+      "maximum_absolute_error": 0,
+      "absolute_tolerance": 1E-06,
+      "relative_tolerance": 0.0001
+    },
+    {
+      "engine_signal": "v(n2)",
+      "native_signal": "v(2)",
+      "unit": "V",
+      "points": 10,
+      "failed": 0,
+      "maximum_absolute_error": 0,
+      "absolute_tolerance": 1E-06,
+      "relative_tolerance": 0.0001
+    },
+    {
+      "engine_signal": "v(n3)",
+      "native_signal": "v(3)",
+      "unit": "V",
+      "points": 10,
+      "failed": 0,
+      "maximum_absolute_error": 0,
+      "absolute_tolerance": 1E-06,
+      "relative_tolerance": 0.0001
+    },
+    {
+      "engine_signal": "i(e0)",
+      "native_signal": "i(v1)",
+      "unit": "A",
+      "points": 10,
+      "failed": 0,
+      "maximum_absolute_error": 1.734723475976807E-18,
+      "absolute_tolerance": 1E-09,
+      "relative_tolerance": 0.0001
+    },
+    {
+      "engine_signal": "i(e2)",
+      "native_signal": "i(v2)",
+      "unit": "A",
+      "points": 10,
+      "failed": 0,
+      "maximum_absolute_error": 4.336808689942018E-19,
+      "absolute_tolerance": 1E-09,
+      "relative_tolerance": 0.0001
+    },
+    {
+      "engine_signal": "i(e4)",
+      "native_signal": "i(v3)",
+      "unit": "A",
+      "points": 10,
+      "failed": 0,
+      "maximum_absolute_error": 4.336808689942018E-19,
+      "absolute_tolerance": 1E-09,
+      "relative_tolerance": 0.0001
+    }
+  ],
+  "baseline": {
+    "status": "requested_preparation_refused",
+    "diagnostics": [
+      "unsupported_resistor_instance_parameter",
+      "unsupported_control_command:if"
+    ]
+  },
+  "new_original_agreeing_decks": 1,
+  "sol_campaign_cumulative_originals": 2,
+  "reporting": {
+    "diagnostics": [],
+    "original_error_bound": 1E-14,
+    "exit_code": 0,
+    "err2": [
+      2.220446049250313E-16
+    ],
+    "err3": [
+      2.220446049250313E-16
+    ],
+    "err1": [
+      2.220446049250313E-16
+    ],
+    "success_count": [
+      1
+    ]
+  },
+  "native_original_program_exit": 0,
+  "provenance_valid": true,
+  "example": {
+    "counted_as_original": false,
+    "native_agreed": true,
+    "path": "examples/resistor-temperature.cir",
+    "status": "all_individual_requested_analyses_agreed"
+  },
+  "tests": {
+    "syntax_skipped": 1,
+    "strictdoc_parsed": 65,
+    "focused_reporting_cases": 13,
+    "focused_coefficient_cases": 22,
+    "frontend_skipped": 40,
+    "syntax_passed": 518,
+    "frontend_passed": 875
+  },
+  "coverage": {
+    "frontend-final-coverage": {
+      "branches_covered": 6279,
+      "lines_covered": 21182,
+      "branches_valid": 9992,
+      "lines_valid": 26987
+    },
+    "syntax-restored-coverage": {
+      "branches_covered": 2652,
+      "lines_covered": 7075,
+      "branches_valid": 4633,
+      "lines_valid": 10925
+    }
+  },
+  "lowering_class_coverage": {
+    "branches_covered": 177,
+    "factor_guard_hits": 1556,
+    "lines_covered": 98,
+    "branches_valid": 196,
+    "lines_valid": 98
+  },
+  "properties": {
+    "malformed_text_replay": "362,20261031",
+    "malformed_text_cases": 512,
+    "temperature_replay": "5004,2026111301",
+    "temperature_cases": 128
+  },
+  "mutations": {
+    "native_report_sha256": "ff86b76aa4b0877c2a1803b8f8ca74bd0cb435e5fbe090404148c27315b068e3",
+    "manual_reporting_attempted": 2,
+    "invalid_selected_ids": [
+      4481,
+      4482
+    ],
+    "invalid_selected_reason": "Replacing conditional with true/false removes tce out-variable declaration",
+    "selected_survived": 0,
+    "selected_compile_errors": 2,
+    "whole_instrumentation_compile_errors": 2633,
+    "selected_generated": 20,
+    "selected_timeouts": 0,
+    "manual_failed_cases": {
+      "or_as_and": 3,
+      "power_operand_swap": 5
+    },
+    "manual_reporting_killed": 2,
+    "first_completed_attempt": {
+      "killed": 15,
+      "survived": 3,
+      "disposition": "Added actionable temperature-factor error provenance assertions; final replay killed all three"
+    },
+    "production_hashes_preserved": true,
+    "selected_killed": 18,
+    "stryker_version": "5.0.0",
+    "whole_instrumentation_ignored": 3033,
+    "span": "ResistorModelLowering.cs UTF-16 indexes3801..4421"
+  },
+  "tools": {
+    "sdk": "10.0.403",
+    "strictdoc": "0.30.4",
+    "fscheck": "3.5.0",
+    "native_version": "******\r\n** ngspice-47+ : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n",
+    "coverlet": "10.1.0"
+  },
+  "source_hashes": {
+    "dotnet/Simulator.Frontend/ResistorModelLowering.cs": "eb23fd1608ec8bba7cc9eb397f79fb6a45692a67d3eea3b113cabc8931704f13",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "6e470197627ebeaccf95e7d8a050b96903321f9edcfbb95b469aeb500a723bd4",
+    "docs/resistor-temperature.sdoc": "0f85ab51ea2ab9d512c46e041372e93d96fa6c9d4d07cd95cb73449b9a524778",
+    "dotnet/Simulator.Syntax/ControlVectorExecution.cs": "1295691340e344ba721d9fcd17ad7d0929677cb8a8ef80a18f929303ca368860",
+    "dotnet/Simulator.Syntax.Tests/WordBooleanTests.cs": "d0d2299256da82958c063c930e8f825bdc1e9a4bb99381d6acc0434f35ad8cca",
+    "examples/resistor-temperature.cir": "643fd364695f764bd28b70eb8dd9fa1f1d050253ce70e7bb48d7279abf128f45",
+    "dotnet/Simulator.Frontend.Tests/ResistorTemperatureTests.cs": "37ab2eb777f6b9f8bb205899a1136e10dc8dcf46c8d5b70f3468db4e5b3ddd93",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "a67165dcaf8f7f7cd5833c60af4411c1b0912e6e818ced3bf999c8f210f4da92"
+  },
+  "runtime_hashes": {
+    "engine": "9e32eeef6a23690f65eacf6d62ef2d983ab81be9e5d4721bbc22ff4a6f62b98c",
+    "oracle": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f"
+  },
+  "guidance": {
+    "rspice_sha256": "77e430a7b0c485e34630ded52c6a1ac5c169918c2cf99aaa22ea549215dcba81",
+    "ngspice_temperature_source": "https://raw.githubusercontent.com/imr/ngspice/master/src/spicelib/devices/res/restemp.c",
+    "rspice_file": "crates/rspice-core/src/engine/builder/model_resolution/resistors.rs",
+    "notes": "RSpice guidance is pinned; current upstream ngspice source is supplementary guidance. No source copied."
+  },
+  "limitations": [
+    "Windows managed-only change; no new Rust build or native coverage",
+    "Engine is certified behavioral cdd4560 snapshot, hashed separately from current source",
+    "Coverage includes generated/referenced managed code; syntax/frontend scopes differ",
+    "No instance TEMP/DTEMP, higher TC orders, arbitrary physical temperature directives or general complex power",
+    "512 FsCheck malformed-text cases are bounded generative fuzzing, not a coverage-guided campaign",
+    "Stryker tests only the selected coefficient span, not all project mutations",
+    "One initial Stryker build failure missing snapshot ANTLR configuration retained",
+    "One intermediate reporting replay failed on unsupported ^ before repair; not counted",
+    "MOS memory stock-default mismatch remains open"
+  ],
+  "raw_reports": [
+    "baseline/summary.json",
+    "original-green/summary.json",
+    "original-v2/summary.json",
+    "final-replay/summary.json",
+    "final-replay/cases/0000/control-report.json",
+    "final-verification.log",
+    "stryker.log",
+    "stryker-v2/reports/mutation-report.json",
+    "stryker-v3/reports/mutation-report.json",
+    "reporting-mutations.log"
+  ],
+  "commands": [
+    "Timed.ps1 -Script FinalVerify.ps1 -Seconds 600",
+    "Timed.ps1 -Script StrykerV3.ps1 -Seconds 600",
+    "Timed.ps1 -Script ReportingMutations.ps1 -Seconds 300"
+  ],
+  "original_program_validation": "Complete terminal reporting and separate full original ngspice program; numerical export projections are individually labelled"
+}

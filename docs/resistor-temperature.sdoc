@@ -1,0 +1,84 @@
+[DOCUMENT]
+TITLE: Bounded resistor temperature coefficients
+
+[TEXT]
+STATEMENT: >>>
+Acceptance target: unchanged original regression/temper/temper-res-1.cir,
+all ten requested Celsius points, six root voltage/current observables,
+original three errors and success assertion against stock ngspice, without
+weaker tolerances. Reuse the existing generated resistor metadata,
+ParameterEvaluator, requested per-temperature circuit compilation, and bounded
+reporting expression evaluator. This is a small extension of the adopted
+resistor lowering, not a new numerical subsystem or replacement interpreter.
+The retained reuse assessment docs/spicesharp-evaluation.md records the user's
+Rust/public-API decision and candidate limitations. No dependency is added.
+Pinned RSpice model_resolution/resistors.rs defines instance-over-model TC1,
+TC2 and TCE, and TCE precedence. Its implementation is behavioral guidance;
+no source is copied. Complete independent stock-ngspice execution is required.
+
+Plan: reproduce original refusal; add failing per-point effective-resistance,
+coefficient precedence/domain and textual condition regressions; implement
+finite positive multiplier preparation and generated control-only word aliases;
+replay unchanged original; collect full managed regression/coverage, reproducible
+properties, malformed-input tests, mutation and real StrictDoc evidence.
+Temperature increments are Celsius differences, numerically equal to kelvin
+differences. The default nominal temperature is 27 C; only explicit model TNOM
+is admitted additionally. Instance TEMP/DTEMP, higher coefficients and arbitrary
+physical directive settings remain outside this bounded profile.
+<<<
+
+[REQUIREMENT]
+UID: REQ-RESISTOR-TEMPERATURE-001
+STATUS: Draft
+TITLE: Requested resistor temperature coefficients
+STATEMENT: >>>
+Requested resistor preparation shall apply TC1 and TC2 as a polynomial in
+simulation temperature minus model nominal temperature, using a default nominal
+temperature of 27 C. Explicit TCE shall override that polynomial and use
+1.01 raised to TCE times the temperature difference. Instance coefficients
+shall independently override model coefficients. A nonfinite or nonpositive
+multiplier or effective resistance shall refuse atomically. Invalid multipliers
+shall identify invalid_resistor_temperature_factor, preserving failure provenance
+separately from invalid nominal or effective resistance. The original
+resistor source ranges, geometry, scalar precedence, scaling and multiplicity
+contracts shall be retained. Strict non-requested profiles shall not silently
+admit these additional physical settings.
+<<<
+COMMENT: >>>
+Implementation: ResistorModelLowering.PrepareRequested and OperatingPointBridge.
+Verification: ResistorTemperatureTests; unchanged original temper-res-1.cir.
+Evidence: evidence/resistor-temperature.json and docs/resistor-temperature-results.md.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-WORD-BOOLEAN-001
+STATUS: Draft
+TITLE: Generated textual boolean aliases
+STATEMENT: >>>
+The control-only generated expression lexer shall recognize case-insensitive
+AND and OR as the existing conjunction and disjunction operators, with existing
+precedence and finite real vector rules. Ordinary deck identifiers shall remain
+available with those spellings. Reporting shall evaluate the complete original
+assertions and preserve failures rather than interpreting them as agreement.
+<<<
+COMMENT: >>>
+Implementation: Grammar/SpiceLexer.g4 and ControlVectorExecution.Binary.
+Verification: WordBooleanTests and complete original temper-res reporting.
+Evidence: evidence/resistor-temperature.json.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-REAL-POWER-001
+STATUS: Draft
+TITLE: Finite real reporting exponentiation
+STATEMENT: >>>
+The existing reporting expression tree shall evaluate ^ and ** for finite real
+operands, retaining scalar broadcasting and vector shape rules. Nonreal inputs
+and nonfinite power results shall refuse explicitly. This shall use the standard
+Math.Pow implementation and existing finite result validation, without a second
+expression parser or a new numerical dependency.
+<<<
+COMMENT: >>>
+Implementation: ControlVectorExecution.Binary; verification: WordBooleanTests.
+Evidence: evidence/resistor-temperature.json; no complex-power claim.
+<<<

@@ -64,7 +64,8 @@ COMMA: ','; EQUAL: '=';
 PLUS: '+'; MINUS: '-'; STAR: '*'; SLASH: '/'; POWER: '**'; CARET: '^';
 COMPARE: '<=' | '>=' | '==' | '!=' | '<>';
 COMPLEX_OPEN: '<'; COMPLEX_CLOSE: '>';
-AND: '&&' | '&'; OR: '||' | '|'; BANG: '!'; QUESTION: '?'; COLON: ':';
+// Word operators are reserved only in the generated control semantic entry.
+AND: '&&' | '&' | {ControlSemantic}? 'and'; OR: '||' | '|' | {ControlSemantic}? 'or'; BANG: '!'; QUESTION: '?'; COLON: ':';
 TILDE: '~';
 XDIFF: '%vd' | '%id' | '%gd' | '%hd';
 XSINGLE: '%vnam' | '%v' | '%i' | '%g' | '%h' | '%d';

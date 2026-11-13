@@ -1,3 +1,17 @@
+# Sol checkpoint — November 13: resistor temperature sweep
+
+Read docs/resistor-temperature-results.md and evidence/resistor-temperature.json.
+The unchanged original regression/temper/temper-res-1.cir now agrees on all six
+signals at all ten DC temperature points, with original 1e-14 assertions and full
+stock-ngspice program both passing. One additional original; Sol total is two.
+Requested TC1/TC2/TCE and model TNOM use existing per-point preparation; bounded
+real power and control-only AND/OR aliases complete its original reporting.
+Final syntax 518/1 skipped, frontend 875/40 skipped, 65 real StrictDoc documents.
+Stryker selected span: 18 killed, 2 invalid, zero survivors; two reporting mutants
+killed. See exact coverage, hashes, raw evidence and bounded limitations there.
+No new native build or MOS memory stock-default closure. Keep current user campaign
+deadline and no-memory-cap policy from ignored work/hourly-deck-progress.json.
+No push or CI; canonical main remains untouched.
 # Sol checkpoint — November 13: complete real-vector reporting
 
 Read docs/real-vector-echo-results.md and evidence/real-vector-echo.json.

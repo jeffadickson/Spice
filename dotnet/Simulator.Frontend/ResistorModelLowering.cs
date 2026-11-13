@@ -26,27 +26,46 @@ public sealed record ResistorPreparation(PreparedResistor? Resistor,ImmutableArr
     /// <summary>True only for a fully evaluated resistance.</summary>
     public bool Success=>Resistor!=null&&Diagnostics.IsEmpty;
 }
-/// <summary>Bounded scalar, constant-model and sheet-model preparation using generated syntax and retained lexical environments.</summary>
+/// <summary>Bounded scalar, constant and sheet model preparation; requested analyses also resolve temperature coefficients before freezing conductance.</summary>
 public static class ResistorModelLowering
 {
     /// <summary>Preserves scalar precedence; evaluates model parameters in declaration scope and geometry in the actual instance environment. Dimensions are SI metres, sheet resistance is ohms per square.</summary>
     public static ResistorPreparation Prepare(DeclarationCatalog catalog,PrimitiveSyntax primitive,ParameterEvaluation environment)
         =>PrepareCore(catalog,primitive,environment,requested:false);
 
-    internal static ResistorPreparation PrepareRequested(DeclarationCatalog catalog,PrimitiveSyntax primitive,ParameterEvaluation environment)
-        =>PrepareCore(catalog,primitive,environment,requested:true);
+    internal static ResistorPreparation PrepareRequested(DeclarationCatalog catalog,PrimitiveSyntax primitive,ParameterEvaluation environment,double temperatureCelsius=27)
+        =>PrepareCore(catalog,primitive,environment,requested:true,temperatureCelsius);
 
-    private static ResistorPreparation PrepareCore(DeclarationCatalog catalog,PrimitiveSyntax primitive,ParameterEvaluation environment,bool requested)
+    private static ResistorPreparation PrepareCore(DeclarationCatalog catalog,PrimitiveSyntax primitive,ParameterEvaluation environment,bool requested,double temperatureCelsius=27)
     {
         ArgumentNullException.ThrowIfNull(catalog);ArgumentNullException.ThrowIfNull(primitive);ArgumentNullException.ThrowIfNull(environment);
         ResistorPreparation Fail(string code,SourceRange? range=null)=>new(null,[new(code,range??primitive.Range)]);
         double multiplicity=1,scale=1;
         double? ac=null;
+        var instanceTemperature=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase);
+        var modelTemperature=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase);
         ResistorPreparation Finish(double ohms,ResistorProfile profile,bool dcOpen=false)
         {
-            // Native conductance is M / (R * SCALE), separately for DC and AC.
-            var effective=ohms*scale/multiplicity;
-            var effectiveAc=ac*scale/multiplicity;
+            // Temperature coefficients belong to preparation, before both DC
+            // and explicit AC conductances are frozen for this analysis point.
+            // Celsius differences have the same numerical value as kelvin differences.
+            var factor=1d;
+            if(requested)
+            {
+                var nominal=modelTemperature.GetValueOrDefault("tnom",27);
+                if(!double.IsFinite(temperatureCelsius)||temperatureCelsius<=-273.15||nominal<=-273.15)
+                    return Fail("invalid_resistor_temperature");
+                var difference=temperatureCelsius-nominal;
+                var tc1=instanceTemperature.GetValueOrDefault("tc1",modelTemperature.GetValueOrDefault("tc1"));
+                var tc2=instanceTemperature.GetValueOrDefault("tc2",modelTemperature.GetValueOrDefault("tc2"));
+                // Presence matters: explicit TCE=0 overrides a nonzero polynomial.
+                factor=instanceTemperature.TryGetValue("tce",out var tce)||modelTemperature.TryGetValue("tce",out tce)
+                    ?Math.Pow(1.01,tce*difference):((tc2*difference+tc1)*difference)+1;
+                if(!double.IsFinite(factor)||factor<=0)return Fail("invalid_resistor_temperature_factor");
+            }
+            // Native conductance is M / (R * FACTOR * SCALE), for both DC and AC.
+            var effective=ohms*factor*scale/multiplicity;
+            var effectiveAc=ac*factor*scale/multiplicity;
             if(!dcOpen&&(!double.IsFinite(effective)||effective<=0))return Fail("invalid_resistance");
             if(effectiveAc is {} a&&(!double.IsFinite(a)||a<=0))return Fail("invalid_ac_resistance");
             return new(new(primitive.Name,primitive.P,primitive.N,effective,profile,primitive.Range){AcOhms=effectiveAc,DcOpen=dcOpen},[]);
@@ -67,12 +86,12 @@ public static class ResistorModelLowering
         foreach(var term in syntax.Parameters)
         {
             var key=term.Name?.ToLowerInvariant();
-            if(!requested||key is not ("ac" or "m" or "scale")){geometryTerms.Add(term);continue;}
+            if(!requested||key is not ("ac" or "m" or "scale" or "tc1" or "tc2" or "tce")){geometryTerms.Add(term);continue;}
             if(!seen.Add(key))return Fail("unsupported_resistor_instance_parameter",term.Range);
             var value=ParameterEvaluator.EvaluateValue(catalog,environment,term.Value);
             if(value.Value is not {} number)return Fail(value.Diagnostics[0].Code,value.Diagnostics[0].Range);
-            if(!double.IsFinite(number)||number<=0)return Fail(key=="ac"?"invalid_ac_resistance":"invalid_resistor_instance_parameter",term.Range);
-            switch(key){case "ac":ac=number;break;case "m":multiplicity=number;break;case "scale":scale=number;break;}
+            if(!double.IsFinite(number)||key is ("ac" or "m" or "scale")&&number<=0)return Fail(key=="ac"?"invalid_ac_resistance":"invalid_resistor_instance_parameter",term.Range);
+            switch(key){case "ac":ac=number;break;case "m":multiplicity=number;break;case "scale":scale=number;break;default:instanceTemperature.Add(key,number);break;}
         }
         var reference=ParameterEvaluator.EvaluateValue(catalog,environment,syntax.Reference);
         if(reference.Value is {} scalarOhms)
@@ -90,6 +109,14 @@ public static class ResistorModelLowering
             // ngspice can apply the settable resistance instance parameter from
             // a model card. The constant-only profile uses the same scalar slot.
             if(name=="resistance")name="r";
+            if(requested&&name is ("tc1" or "tc2" or "tce" or "tnom"))
+            {
+                if(modelTemperature.ContainsKey(name))return Fail("unsupported_resistor_model_parameter",parameter.Range);
+                var coefficient=ParameterEvaluator.EvaluateValue(catalog,environment,parameter.Value,model.ScopeId);
+                if(coefficient.Value is not {} temperatureCoefficient)return Fail(coefficient.Diagnostics[0].Code,coefficient.Diagnostics[0].Range);
+                modelTemperature.Add(name,temperatureCoefficient);
+                continue;
+            }
             if(name is not ("r" or "rsh" or "short" or "narrow")||values.ContainsKey(name))return Fail("unsupported_resistor_model_parameter",parameter.Range);
             var value=ParameterEvaluator.EvaluateValue(catalog,environment,parameter.Value,model.ScopeId);
             if(value.Value is not {} number)return Fail(value.Diagnostics[0].Code,value.Diagnostics[0].Range);

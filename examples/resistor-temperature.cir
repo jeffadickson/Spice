@@ -1,0 +1,8 @@
+Resistor temperature coefficient sweep
+* Effective R is 1k * (1 + 2m*dT + 30u*dT*dT), dT in Celsius differences.
+Vbias load 0 DC 5
+Rload load 0 thermal
+.model thermal R(R=1k TC1=2m TC2=30u TNOM=27)
+.dc temp 10 100 10
+.print dc v(load) i(Vbias)
+.end

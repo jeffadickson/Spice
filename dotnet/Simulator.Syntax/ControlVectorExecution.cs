@@ -513,9 +513,11 @@ public static partial class ControlVectorExecution
             result[i]=op switch
             {
                 "+"=>x+y, "-"=>x-y, "*"=>x*y, "/"=>x/y,
+                // The bounded power profile is real; Validate rejects domain/overflow results.
+                "^" or "**"=>new Complex(Math.Pow(Real(x),Real(y)),0),
                 "eq" or "=" or "=="=>x==y?1:0, "ne" or "!=" or "<>" or "><"=>x!=y?1:0,
                 "<"=>Real(x)<Real(y)?1:0, ">"=>Real(x)>Real(y)?1:0, "<="=>Real(x)<=Real(y)?1:0, ">="=>Real(x)>=Real(y)?1:0,
-                "&" or "&&"=>Real(x)!=0&&Real(y)!=0?1:0, "|" or "||"=>Real(x)!=0||Real(y)!=0?1:0,
+                "&" or "&&" or "and"=>Real(x)!=0&&Real(y)!=0?1:0, "|" or "||" or "or"=>Real(x)!=0||Real(y)!=0?1:0,
                 _=>throw new InvalidDataException("unsupported_control_operator:"+op)
             };
         }

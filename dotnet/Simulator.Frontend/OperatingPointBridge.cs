@@ -168,7 +168,7 @@ public static class OperatingPointBridge
 
                     else if(selected&&primitive.Family=="R")
                     {
-                        var preparedResistor=requested?ResistorModelLowering.PrepareRequested(catalog,primitive,environment):ResistorModelLowering.Prepare(catalog,primitive,environment);
+                        var preparedResistor=requested?ResistorModelLowering.PrepareRequested(catalog,primitive,environment,limits.TemperatureCelsius):ResistorModelLowering.Prepare(catalog,primitive,environment);
                         if(!preparedResistor.Success)throw new BridgeFailure(preparedResistor.Diagnostics[0].Code,preparedResistor.Diagnostics[0].Range);
                         value=preparedResistor.Resistor!.Ohms;acOhms=preparedResistor.Resistor.AcOhms;dcOpen=preparedResistor.Resistor.DcOpen;
                     }
