@@ -1,0 +1,78 @@
+[DOCUMENT]
+TITLE: Affine behavioral source temperature slice
+
+[TEXT]
+STATEMENT: >>>
+Acceptance target is unchanged original regression/misc/asrc-tc-1.cir:
+complete original OP and AC requests, every mapped physical signal, original
+assertions and stock-ngspice full program, without weaker bounds. Reuse the
+adopted generated metadata, affine source preparation, typed VCCS/VCVS/source
+emission, per-point compiler and ordered reporting. No numerical kernel,
+expression parser, dependency or production legacy runtime is added. Retained
+reuse decisions are in docs/spicesharp-evaluation.md. Pinned RSpice builder/
+behavioral.rs guides finite TC1/TC2 scaling; no source is copied.
+
+Plan: reproduce baseline refusal; add positive/negative root temperature,
+affine coefficient and failure-only early-exit regressions; preserve generated
+metadata and strict profile refusals; compile one finite literal root .temp
+only for qualified linear circuits; scale affine offsets and all coefficients;
+retain existing OP/AC result identity checks; verify original assertions,
+negative assertions, coverage, properties, mutation and real StrictDoc parsing.
+<<<
+
+[REQUIREMENT]
+UID: REQ-BEHAVIOR-TEMPERATURE-001
+STATUS: Draft
+TITLE: Finite requested affine behavioral temperature scaling
+STATEMENT: >>>
+Requested affine B voltage and current preparation shall preserve generated
+TC1/TC2 parameter ranges, evaluate coefficients in the retained instance
+environment and multiply the whole affine relation by 1+TC1*dT+TC2*dT*dT,
+where dT is Celsius minus the qualified nominal temperature of 27 C. Finite
+zero and negative factors shall preserve their mathematical sign. Nonfinite
+factors or any scaled coefficient shall fail atomically with
+invalid_behavior_temperature_factor; duplicate or unknown
+attributes shall refuse. The strict public affine profile shall retain its
+prior refusal of additional physical attributes.
+<<<
+COMMENT: >>>
+Implementation: BehavioralSourceSyntax and BehavioralSourceLowering.
+Verification: BehavioralTemperatureTests; evidence/behavioral-temperature.json.
+<<<
+
+[REQUIREMENT]
+UID: REQ-REQUESTED-ROOT-TEMPERATURE-001
+STATUS: Draft
+TITLE: Bounded literal root operating temperature
+STATEMENT: >>>
+Requested preparation shall admit at most one source-located literal root
+.temp above absolute zero and publish the selected Celsius temperature. It
+shall apply that value to parameter evaluation, passive and affine behavioral
+preparation. Nondefault temperatures shall refuse unqualified nonlinear or
+semiconductor circuits, conflicting default-temperature options and control
+constant exports. A DC temperature sweep shall explicitly override the root
+operating temperature at each sweep point. Multiple, nested, nonliteral or
+invalid temperature directives shall not be silently omitted.
+<<<
+COMMENT: >>>
+Implementation: DeclarationExtraction and RequestedAnalysis.Prepare.
+Verification: BehavioralTemperatureTests; evidence/behavioral-temperature.json.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-EARLY-FAILURE-001
+STATUS: Draft
+TITLE: Conditional reporting failure before a later analysis
+STATEMENT: >>>
+Ordered reporting preparation may admit conditional quit 1 before a later
+unconditional analysis. An active failure shall return status 1 before binding
+later reporting plots and shall prevent original-program agreement. Early
+successful exits and unconditional early exits shall remain refused. Required
+physical results shall still be complete and validated before ordered reporting;
+this bounded postprocessing contract does not promise lazy physical dispatch.
+<<<
+COMMENT: >>>
+Implementation: OrderedControlPreparation and ControlVectorExecution.
+Verification: BehavioralTemperatureTests and authored negative original-program
+fixture; evidence/behavioral-temperature.json.
+<<<

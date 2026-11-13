@@ -156,6 +156,7 @@ internal sealed class DeclarationExtraction
             DefaultTemperature = (optionCard && !reportingOnly
                 && directiveParameters.All(p => IsReportingOption(p) || IsDefaultTemperatureOption(p)))
                 || (directiveName == ".temp" && directiveParameters.Length == 1 && IsDefaultTemperature(directiveParameters[0].value())),
+            OperatingTemperature = directiveName == ".temp" && directiveParameters.Length == 1 && directiveParameters[0].value() is { } temperature && temperature.NUMBER()!=null ? Capture(temperature) : null,
             ReportingWidth = directiveName == ".width" && IsReportingWidth(directiveParameters)
         });
         if(card is SpiceParser.XspiceContext codeModel)

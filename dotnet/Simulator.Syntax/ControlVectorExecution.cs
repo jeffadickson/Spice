@@ -167,6 +167,9 @@ public static partial class ControlVectorExecution
             {
                 case "comment": break;
                 case "analysis" when plots!=null:
+                    // A conditional failure terminates reporting before the next plot.
+                    // Complete physical-result validation belongs to the caller.
+                    if(exit==1){cursor=program.Length;break;}
                     if(stack.Count!=0||loop!=null||!active||exit!=null)
                         throw new InvalidDataException("unsupported_conditional_analysis");
                     if(!plots.TryGetValue(command.Range.Start,out var plot))

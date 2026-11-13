@@ -54,6 +54,8 @@ public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range)
     public bool ReportingOptionsOnly { get; init; }
     /// <summary>Generated directive whose only physical setting explicitly selects the fixed 27 Celsius model temperature.</summary>
     public bool DefaultTemperature { get; init; }
+    /// <summary>One generated literal .temp argument in Celsius, without evaluating physical admission.</summary>
+    public SourceSyntax? OperatingTemperature { get; init; }
     /// <summary>Generated legacy reporting width with bounded literal IN and OUT settings.</summary>
     public bool ReportingWidth { get; init; }
     /// <summary>Exact numerical settings of the pinned Berkeley FD static profile.</summary>

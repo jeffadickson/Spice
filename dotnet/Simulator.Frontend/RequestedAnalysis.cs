@@ -42,6 +42,8 @@ public sealed record RequestedAnalysisPlan(ImmutableArray<RequestedOperation> Op
  public BridgeResult? CircuitPreparation { get; init; }
  /// <summary>Qualified dispatch profile: deck cards, batch-selected root transient, direct control commands or finite retained-deck run.</summary>
  public string ControlProfile { get; init; } = "deck";
+ /// <summary>Base operating temperature in Celsius; an explicit DC temperature sweep publishes its own per-point coordinates.</summary>
+ public double OperatingTemperatureCelsius { get; init; } = 27;
  /// <summary>Bounded root scalar exports, available before any control analysis.</summary>
  public ImmutableDictionary<string,double> ControlConstants { get; init; } = ImmutableDictionary<string,double>.Empty;
  /// <summary>Explicit unexecuted control reporting, deferred suffix declarations, exit and uninvoked deck instructions.</summary>
@@ -83,6 +85,9 @@ public static partial class RequestedAnalysis
   if(syntax.Status!="accepted_structure"||syntax.Declarations is not {} catalog)return Fail("syntax_not_accepted",null);
   var forbidden=catalog.Cards.FirstOrDefault(c=>c.Kind=="extension"&&OperatingPointSelection.OmissionReason(c)=="analysis_not_selected"||c.ScopeId!=0&&c.Kind is "op" or "dc" or "ac" or "tran");
   if(forbidden!=null)return Fail("unsupported_requested_program",forbidden.Range);
+  var temperature=RequestedTemperaturePreparation.Prepare(catalog,limits);
+  if(temperature.Diagnostic is {} temperatureError)return Fail(temperatureError.Code,temperatureError.Range);
+  limits=temperature.Limits;
   var constants=BindControlConstants(catalog,out var constantError);
   if(constantError!=null)return Fail(constantError.Code,constantError.Range);
   var control=RequestedControlPreparation.Compile(catalog,constants);if(control.Diagnostic is {} controlFailure)return Fail(controlFailure.Code,controlFailure.Range);
@@ -98,10 +103,12 @@ public static partial class RequestedAnalysis
   if(abstolCards.Length!=0&&control.Directives.Any(d=>d.Analysis.Kind!="tran"))
    return Fail("unsupported_mixed_abstol_analyses",abstolCards[0].Range);
   var handledPhysicalStarts=
-      catalog.InitialConditions.Select(ic=>ic.Range.Start).Concat(methodCards.Concat(abstolCards).Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet();
+      temperature.Handled.Union(catalog.InitialConditions.Select(ic=>ic.Range.Start)).Concat(methodCards.Concat(abstolCards).Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet();
   var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,handledPhysicalStarts);
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
+  if(limits.TemperatureCelsius!=27&&!RequestedTemperaturePreparation.Supports(prepared))
+    return Fail("unsupported_operating_temperature_profile",catalog.Cards.FirstOrDefault(c=>c.OperatingTemperature!=null)?.Range);
   if(baseRequest.Circuit.Elements.Any(e=>e is BsimSoiFdReference) &&
       control.Directives.FirstOrDefault(d=>d.Analysis.Kind is not ("op" or "dc")) is {} dynamicFd)
     return Fail("unsupported_bsim_soi_fd_dynamic",dynamicFd.Analysis.Range);
@@ -111,7 +118,7 @@ public static partial class RequestedAnalysis
   var clobber=catalog.ControlBlocks.SelectMany(b=>b.Commands).FirstOrDefault(c=>
       c.Postprocessing is {Kind:ControlPostprocessingKind.Let} local&&rootNames.Contains(local.Names[0]));
   if(clobber!=null)return Fail("unsupported_control_observable_assignment",clobber.Range);
-  var environment=ParameterEvaluator.EvaluateAtTemperature(catalog,27);
+  var environment=ParameterEvaluator.EvaluateAtTemperature(catalog,limits.TemperatureCelsius);
   double? abstol=null;
   if(abstolCards.SingleOrDefault()?.TransientAbstolOption is {} tolerance)
   {
@@ -148,7 +155,7 @@ public static partial class RequestedAnalysis
       if(card.Names.Length is <1 or >2)throw new PreparationFailure("unsupported_nested_dc_sweep",card.Range);
       if(card.Names.Any(name=>name.Equals("temp",StringComparison.OrdinalIgnoreCase)))
       {
-       if(card.Names.Length!=1||baseRequest.Circuit.Elements.Any(e=>e is not (Resistor or Voltage or Current or Capacitor or Inductor or SpiceDiode {Model.JunctionFarads:0,Model.TransitSeconds:0})))
+       if(card.Names.Length!=1||baseRequest.Circuit.Elements.Any(e=>e is not (Resistor or Voltage or Current or Capacitor or Inductor or Vcvs or Vccs or Cccs or Ccvs or SpiceDiode {Model.JunctionFarads:0,Model.TransitSeconds:0})))
         throw new PreparationFailure("unsupported_temperature_sweep_profile",card.Range);
        unit="degC";
        coordinates=Linear(values[0],values[1],values[2],Math.Min(maxPoints,128),card.Range);
@@ -281,7 +288,7 @@ public static partial class RequestedAnalysis
   var observations=selected.Omissions.Where(o=>o.Kind=="extension").ToImmutableArray();
   if(!hasTransient)observations=observations.AddRange(catalog.InitialConditions.Select(ic=>
       new OperatingPointOmission(ic.ScopeId,"extension",".ic","initial_conditions_not_used_by_requested_analyses",ic.Range)));
-  return new(operations.ToImmutable(),[]) { Observations=observations,CircuitPreparation=prepared,ControlProfile=control.Profile,ControlConstants=constants,ProgramOmissions=control.Omissions };
+  return new(operations.ToImmutable(),[]) { Observations=observations,CircuitPreparation=prepared,OperatingTemperatureCelsius=temperature.Limits.TemperatureCelsius,ControlProfile=control.Profile,ControlConstants=constants,ProgramOmissions=control.Omissions };
  }
  private static ImmutableArray<double> Linear(double start,double stop,double step,int maximum,SourceRange range)
  {

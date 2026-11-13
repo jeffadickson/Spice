@@ -22,20 +22,20 @@ public static class BehavioralSourceLowering
     public static BehavioralSourcePreparation Prepare(DeclarationCatalog catalog,BehavioralSourceSyntax source,ParameterEvaluation environment)
         =>PrepareCore(catalog,source,environment,false);
 
-    internal static BehavioralSourcePreparation PrepareRequested(DeclarationCatalog catalog,BehavioralSourceSyntax source,ParameterEvaluation environment)
-        =>PrepareCore(catalog,source,environment,true);
+    internal static BehavioralSourcePreparation PrepareRequested(DeclarationCatalog catalog,BehavioralSourceSyntax source,ParameterEvaluation environment,double temperatureCelsius=27)
+        =>PrepareCore(catalog,source,environment,true,temperatureCelsius);
 
-    private static BehavioralSourcePreparation PrepareCore(DeclarationCatalog catalog,BehavioralSourceSyntax source,ParameterEvaluation environment,bool requested)
+    private static BehavioralSourcePreparation PrepareCore(DeclarationCatalog catalog,BehavioralSourceSyntax source,ParameterEvaluation environment,bool requested,double temperatureCelsius=27)
     {
         ArgumentNullException.ThrowIfNull(catalog);ArgumentNullException.ThrowIfNull(source);ArgumentNullException.ThrowIfNull(environment);
         if(!catalog.BehavioralSources.Contains(source))return new(null,[new("foreign_behavior_source",source.Range)]);
-        if(!source.Supported||source.P==null||source.N==null||source.Expression==null)return new(null,[new("unsupported_behavior_header",source.Range)]);
+        if(!(source.Supported||requested&&source.HeaderSupported)||source.P==null||source.N==null||source.Expression==null)return new(null,[new("unsupported_behavior_header",source.Range)]);
         var affine=AffineVoltageExpressionEvaluator.Evaluate(catalog,environment,source.Expression);
         if(affine.Form is not {} form)
         {
             // Preserve the strict public affine API. The requested compiler
             // explicitly opts into the separately bounded DC model contract.
-            if(requested&&source.Quantity==BehavioralQuantity.Voltage&&affine.Diagnostics.Any(d=>d.Code=="non_affine_behavior"))
+            if(requested&&source.Parameters.IsEmpty&&source.Quantity==BehavioralQuantity.Voltage&&affine.Diagnostics.Any(d=>d.Code=="non_affine_behavior"))
             {
                 var runtime=SingleControlVoltageCompiler.Compile(catalog,environment,source.Expression,new NativeExpressionFactory());
                 if(runtime.Success)
@@ -50,7 +50,24 @@ public static class BehavioralSourceLowering
             }
             return new(null,affine.Diagnostics.Select(d=>new BridgeDiagnostic(d.Code,d.Range)).ToImmutableArray());
         }
-        return new(new(source.Name,source.P,source.N,source.Quantity,form.Terms,form.Offset,source.Range),[]);
+        var coefficients=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase);
+        foreach(var parameter in source.Parameters)
+        {
+            if(parameter.Name is not {} name||name.ToLowerInvariant() is not ("tc1" or "tc2")||coefficients.ContainsKey(name))
+                return new(null,[new("unsupported_behavior_parameter",parameter.Range)]);
+            var evaluated=ParameterEvaluator.EvaluateValue(catalog,environment,parameter.Value);
+            if(evaluated.Value is not {} value)return new(null,evaluated.Diagnostics.Select(d=>new BridgeDiagnostic(d.Code,d.Range)).ToImmutableArray());
+            coefficients.Add(name,value);
+        }
+        // Scale the complete affine law, including its DC offset. The same
+        // finite coefficients then drive the existing DC and AC typed stamps.
+        var delta=temperatureCelsius-27;
+        var factor=1+coefficients.GetValueOrDefault("tc1")*delta+coefficients.GetValueOrDefault("tc2")*delta*delta;
+        var terms=form.Terms.Select(term=>term with{Coefficient=term.Coefficient*factor}).ToImmutableArray();
+        var offset=form.Offset*factor;
+        if(!double.IsFinite(factor)||!double.IsFinite(offset)||terms.Any(term=>!double.IsFinite(term.Coefficient)))
+            return new(null,[new("invalid_behavior_temperature_factor",source.Range)]);
+        return new(new(source.Name,source.P,source.N,source.Quantity,terms,offset,source.Range),[]);
     }
     private static bool FitsNativeBudget(BoundedExpression expression)
     {

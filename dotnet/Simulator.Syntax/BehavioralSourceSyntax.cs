@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using Simulator.Syntax.Generated;
@@ -12,7 +13,13 @@ public enum BehavioralQuantity
     Current
 }
 /// <summary>Generated B-card metadata, retaining physical ranges and lexical ownership. Unsupported tails remain explicitly unsupported.</summary>
-public sealed record BehavioralSourceSyntax(string Name,int ScopeId,SourceSyntax? P,SourceSyntax? N,BehavioralQuantity Quantity,SourceSyntax? Expression,bool Supported,SourceRange Range);
+public sealed record BehavioralSourceSyntax(string Name,int ScopeId,SourceSyntax? P,SourceSyntax? N,BehavioralQuantity Quantity,SourceSyntax? Expression,bool Supported,SourceRange Range)
+{
+    /// <summary>True when the generated V/I header is complete and every tail is an explicit assignment; physical admission remains separate.</summary>
+    public bool HeaderSupported { get; init; }
+    /// <summary>Generated additional attributes with original source ranges; strict affine preparation does not admit them.</summary>
+    public ImmutableArray<ParameterSyntax> Parameters { get; init; } = [];
+}
 
 internal static class BehavioralSourceExtraction
 {
@@ -40,6 +47,16 @@ internal static class BehavioralSourceExtraction
         else if(card.twoNodes() is {} nodes){p=capture(nodes.node(0));n=capture(nodes.node(1));}
         var recognized=quantity?.ToLowerInvariant() is "v" or "i";
         return new(name,scope,p,n,quantity?.Equals("i",StringComparison.OrdinalIgnoreCase)==true?BehavioralQuantity.Current:BehavioralQuantity.Voltage,
-            expression==null?null:capture(expression),recognized&&p!=null&&n!=null&&expression!=null&&card.parameter().Length==0,range);
+            expression==null?null:capture(expression),recognized&&p!=null&&n!=null&&expression!=null&&card.parameter().Length==0,range)
+        {
+            HeaderSupported=recognized&&p!=null&&n!=null&&expression!=null&&card.parameter().All(item=>item.assignment()!=null),
+            Parameters=card.parameter().Where(item=>item.assignment()!=null).Select(item=>
+            {
+                var assignment=item.assignment();
+                var target=(ParserRuleContext)assignment.GetChild(0);
+                var value=(ParserRuleContext)assignment.GetChild(2);
+                return new ParameterSyntax(assignment.referenceName()?.GetText(),capture(target),capture(value),capture(assignment).Range);
+            }).ToImmutableArray()
+        };
     }
 }

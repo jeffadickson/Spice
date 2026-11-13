@@ -1,0 +1,333 @@
+{
+  "base_commit": "e3fb8bf7ce9d8c66e1633ca54900d53b378c3ff4",
+  "source_dirty": true,
+  "artifact_root": "E:/Artifacts/Spice-sol-asrctemp-e3fb8bf-20261113T0805",
+  "original": "regression/misc/asrc-tc-1.cir",
+  "input_sha256": "bceae1905e3521ce062ea6bca2d520fd434603a27275f83d96f28a1de9ca71a8",
+  "corpus_pin": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "original_analyses": [
+    {
+      "kind": "op",
+      "observables": [
+        {
+          "engine_signal": "v(n1)",
+          "native_signal": "v(1)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 1.4210854715202004E-14,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n2)",
+          "native_signal": "v(2)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n3)",
+          "native_signal": "v(3)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e0)",
+          "native_signal": "i(v1)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e1)",
+          "native_signal": "i(v2)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e4)",
+          "native_signal": "i(b3)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        }
+      ]
+    },
+    {
+      "kind": "ac",
+      "observables": [
+        {
+          "engine_signal": "v(n1)",
+          "native_signal": "v(1)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n2)",
+          "native_signal": "v(2)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n3)",
+          "native_signal": "v(3)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e0)",
+          "native_signal": "i(v1)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e1)",
+          "native_signal": "i(v2)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e4)",
+          "native_signal": "i(b3)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        }
+      ]
+    }
+  ],
+  "new_original_agreeing_decks": 1,
+  "sol_campaign_cumulative_originals": 3,
+  "baseline": {
+    "status": "requested_preparation_refused",
+    "diagnostics": [
+      "unsupported_physical_directive",
+      "exit_before_last_analysis"
+    ]
+  },
+  "reporting": {
+    "exit_code": 0,
+    "err3": [
+      {
+        "real": 0,
+        "imag": 0
+      }
+    ],
+    "err4": [
+      {
+        "real": 0,
+        "imag": 0
+      }
+    ],
+    "diagnostics": [],
+    "err2": [
+      {
+        "real": -1.1102230246251565E-16,
+        "imag": 0
+      }
+    ],
+    "err1": [
+      {
+        "real": -1.1102230246251565E-16,
+        "imag": 0
+      }
+    ],
+    "original_error_bound": 1E-09
+  },
+  "native_original_program_exit": 0,
+  "provenance_valid": true,
+  "original_program_validation": "Complete original ordered reporting plus separate unchanged full ngspice program. Numerical oracle projections retain all original requested analyses and physical cards.",
+  "positive_example": {
+    "nonzero_tc2_verified": true,
+    "path": "examples/behavioral-temperature.cir",
+    "status": "all_individual_requested_analyses_agreed",
+    "native_agreed": true,
+    "counted_as_original": false
+  },
+  "negative_example": {
+    "reporting_output": [
+      "expected failure"
+    ],
+    "path": "tests/fixtures/behavioral-temperature-failed-assertion.cir",
+    "native_agreed": false,
+    "status": "requested_control_execution_failed",
+    "stock_full_program_exit": 1,
+    "reporting_exit": 1,
+    "counted_as_original": false
+  },
+  "tests": {
+    "syntax_metadata_cases": 2,
+    "focused_cases": 29,
+    "syntax_passed": 520,
+    "syntax_skipped": 1,
+    "frontend_passed": 905,
+    "frontend_skipped": 40,
+    "strictdoc_parsed": 66
+  },
+  "coverage": {
+    "syntax-restored-coverage": {
+      "branches_valid": 4653,
+      "lines_valid": 10939,
+      "lines_covered": 7158,
+      "branches_covered": 2683
+    },
+    "frontend-final-coverage": {
+      "branches_valid": 10102,
+      "lines_valid": 27041,
+      "lines_covered": 21239,
+      "branches_covered": 6383
+    }
+  },
+  "class_coverage": {
+    "requested_temperature": {
+      "branches_valid": 42,
+      "lines_valid": 17,
+      "lines_covered": 17,
+      "branches_covered": 38
+    },
+    "behavioral_lowering": {
+      "branches_valid": 70,
+      "lines_valid": 54,
+      "lines_covered": 51,
+      "branches_covered": 62
+    }
+  },
+  "properties": {
+    "malformed_text_replay": "362,20261031",
+    "malformed_text_cases": 512,
+    "preparation_cases": 128,
+    "preparation_replay": "5005,2026111301"
+  },
+  "mutations": {
+    "native_report_sha256": "9fe181823ac77e46ae065f908c611435060e1d9ece8343514781178dc0497162",
+    "survivor_review": "First raw report also exposed Any-to-All mixed-term overflow gap. Added one-overflow/one-finite coefficient regression; final clean-baseline replay kills it.",
+    "first_attempt": "Invalid baseline: new DC temperature test initially failed old linear-stamp allowlist. First Stryker and boundary attempts are retained and not counted as verified kills.",
+    "whole_instrumentation_ignored": 3093,
+    "production_hashes_restored": true,
+    "compile_errors_selected": 0,
+    "whole_instrumentation_compile_errors": 2667,
+    "manual_failed_cases": {
+      "nonlinear_temperature_admitted": 1,
+      "root_temperature_not_applied": 15,
+      "early_failure_not_returned": 1
+    },
+    "stryker_version": "5.0.0",
+    "manual_boundary_killed": 3,
+    "generated_selected": 18,
+    "survived_selected": 0,
+    "killed_selected": 18,
+    "span": "BehavioralSourceLowering.cs UTF-16 indexes4832..5334",
+    "manual_boundary_attempted": 3,
+    "break_on_initial_test_failure": true,
+    "timeouts_selected": 0
+  },
+  "tools": {
+    "fscheck": "3.5.0",
+    "coverlet": "10.1.0",
+    "strictdoc": "0.30.4",
+    "native_version": "******\r\n** ngspice-47+ : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n",
+    "sdk": "10.0.403"
+  },
+  "source_hashes": {
+    "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs": "613c05e408fa1b2439f8cd47c618ef6157633c8c130715242936d078762285c9",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "aec4509234db8e9d100eb49a80ae31f58522fbe0236a609ad5011cd350482e9e",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "6a817d32deac788745f5a2f238f5b0fb2480fb4a2fc55fdd223b5bfb492fcaec",
+    "dotnet/Simulator.Frontend.Tests/BehavioralTemperatureTests.cs": "78a3f9db4d37dfab08be59b2cfbd1bf031f627649f43a1307fb6ad8846868a98",
+    "docs/requested-corpus-qualification.sdoc": "e0649152236f425580522dae828f6a7e7e4a2698c5d7340836c048e63ee33b60",
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "d39d75815d2b190ec2456fbc7dd671458a0c6d5328c4da6ac1f2b740201770da",
+    "dotnet/Simulator.Frontend/OrderedControlPreparation.cs": "90c54e685f1a3b7ddd69657c06b4b7683395ddb2ce953af55eb13aac37806efc",
+    "dotnet/Simulator.Frontend/RequestedTemperaturePreparation.cs": "b488c2965554a1237b1242cef51b66ef6948402dd0c50d19f7d7bda71c150508",
+    "docs/behavioral-temperature.sdoc": "4322a78b3b2bda886285f291c0aa8cd1fc07a78e5f241db2f42febb695ab634e",
+    "tests/fixtures/behavioral-temperature-failed-assertion.cir": "7ef27c0084f5edf873c23f83932d838589324e66c7d23c6d348e1a1d8e360125",
+    "examples/behavioral-temperature.cir": "ff5c8831074259104fcf3afa0994d8dab9ab71d7a7ea7861a748e7335d7579cf",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "cdb1ce5685a303adde69f9bfb75c5a303272447e9ac39cd82e49ecb24953b27d",
+    "dotnet/Simulator.Frontend.Tests/AccountingOptionTests.cs": "4aeb45cf38c34502f36be0a0478a1fc580189f3e85d50f730a89b132794a511b",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "432936c8a2ba1c333d8ee3cb025503f39b946af45bf4756df02119dd26309cd6",
+    "dotnet/Simulator.Syntax/ControlVectorExecution.cs": "b024ec38acb56bb112e809bf677f080e0b35daf839a6e0eea8004aac34b003f0",
+    "dotnet/Simulator.Syntax.Tests/BehavioralTemperatureSyntaxTests.cs": "505128a01a42a2ea94bfe511e32ef3d2556fd2234d7161aa0fd41790cb11d2da"
+  },
+  "runtime_hashes": {
+    "oracle": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "engine": "9e32eeef6a23690f65eacf6d62ef2d983ab81be9e5d4721bbc22ff4a6f62b98c"
+  },
+  "guidance": {
+    "rspice_file": "crates/rspice-core/src/engine/builder/behavioral.rs",
+    "notes": "Pinned source inspected as behavioral guidance; no source copied.",
+    "rspice_sha256": "e53f3061b41e2ec7eceb0cc7a2b73208899343430e2b2335e023120013b627da"
+  },
+  "limitations": [
+    "Managed Windows compiler/reporting change; no new Rust build or native coverage",
+    "Certified behavioral cdd4560 engine snapshot hashed separately from current source",
+    "Only affine B relations with TC attributes; nonlinear TC expressions remain refused",
+    "Nondefault literal root .temp only for qualified linear stamps; semiconductor/nonlinear root profiles refused",
+    "No arbitrary .options temperature precedence, control constant exports at nondefault root, instance DTEMP, or nonliteral/multiple .temp",
+    "Conditional early quit 1 is bounded reporting over complete precomputed physical results, not lazy dispatch",
+    "Coverage includes generated/referenced managed code; syntax and frontend scopes differ",
+    "512 malformed-text cases are bounded generative fuzzing, not a coverage-guided campaign",
+    "Only selected affine-scaling mutation span executed; whole instrumentation compile errors/exclusions are not killed mutants",
+    "MOS memory stock-default mismatch remains open; not counted"
+  ],
+  "raw_reports": [
+    "baseline/summary.json",
+    "original-green/summary.json",
+    "final-replay/summary.json",
+    "final-qualified/summary.json",
+    "final-qualified/cases/0000/control-report.json",
+    "final-qualified/cases/0002/control-report.json",
+    "native-original-program.json",
+    "native-negative-program.json",
+    "final-verification.log",
+    "final-qualified.log",
+    "stryker.log",
+    "stryker-final/reports/mutation-report.json",
+    "boundary-first-base-failure",
+    "boundary-mutations-final.log"
+  ],
+  "commands": [
+    "Timed.ps1 -Script FinalVerify.ps1 -Seconds 600",
+    "Timed.ps1 -Script QualifiedReplay.ps1 -Seconds 180",
+    "Timed.ps1 -Script StrykerFinal.ps1 -Seconds 600",
+    "Timed.ps1 -Script BoundaryMutations.ps1 -Seconds 300"
+  ]
+}

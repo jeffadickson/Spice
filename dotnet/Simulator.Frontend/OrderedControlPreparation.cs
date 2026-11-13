@@ -58,7 +58,8 @@ internal static partial class RequestedControlPreparation
                 case "report_substitution":
                 case "report_redirect":break;
                 case "quit":case "quit_status":
-                    if(command.Range.Start<last)return Fail("exit_before_last_analysis",command.Range);
+                    if(command.Range.Start<last&&(branches.Count==0||command.Kind!="quit_status"||command.Argument!="1"))
+                        return Fail("exit_before_last_analysis",command.Range);
                     quit=branches.Count==0;break;
                 default:return Fail("unsupported_ordered_control_effect:"+command.Name,command.Range);
             }

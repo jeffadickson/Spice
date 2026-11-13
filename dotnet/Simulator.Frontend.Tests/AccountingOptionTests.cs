@@ -52,7 +52,7 @@ public sealed class AccountingOptionTests
     [Theory]
     [InlineData(".temp 27.0",true)]
     [InlineData(".temp 27 50",false)]
-    [InlineData(".temp 26",false)]
+    [InlineData(".temp 26",true)]
     [InlineData(".width in=72",true)]
     [InlineData(".width in=72 out=120",true)]
     [InlineData(".width in=-1",false)]
@@ -69,6 +69,12 @@ public sealed class AccountingOptionTests
             var projected=Simulator.RequestedQualification.OriginalProjection.Create(text,syntax,Assert.Single(result.Operations),result);
             Assert.Equal(card.StartsWith(".temp",StringComparison.Ordinal),projected.Text.Contains(card,StringComparison.Ordinal));
         }
+    }
+    [Fact]
+    public void Nonrequested_selection_keeps_nondefault_temperature_refusal()
+    {
+        var syntax=DeckParser.Parse("Strict temperature\nV1 a 0 2\nR1 a 0 1k\n.temp 26\n.end\n",collectDeclarations:true);
+        Assert.False(OperatingPointSelection.Select(syntax).Success);
     }
     [FsCheck.Xunit.Property(MaxTest=120,Replay="2381,20261107")]
     public bool Unknown_or_nondefault_options_never_disappear(FsCheck.NonNegativeInt input)

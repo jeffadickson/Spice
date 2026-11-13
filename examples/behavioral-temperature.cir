@@ -1,0 +1,11 @@
+Affine behavioral source at fixed temperature
+* TC1 and TC2 scale the whole law by 1.075 at 77 C, for DC and small-signal AC.
+Vin input 0 DC 100 AC 1
+Bscaled output 0 V=v(input) tc1=.001 tc2=.00001
+Rload output 0 1k
+.temp 77
+.op
+.ac lin 1 1000 1000
+.print op v(output)
+.print ac v(output)
+.end

@@ -1,0 +1,16 @@
+Authored early thermal assertion failure
+Vin input 0 DC 100 AC 1
+Bv output 0 V=v(input) tc1=.001
+Rload output 0 1k
+.temp 127
+.control
+op
+if v(output) < 1000
+  echo expected failure
+  quit 1
+end
+ac lin 1 1000 1000
+echo SHOULD_NOT_EXECUTE
+quit 0
+.endc
+.end

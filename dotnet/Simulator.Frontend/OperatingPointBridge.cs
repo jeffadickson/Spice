@@ -282,7 +282,7 @@ public static class OperatingPointBridge
                 {
                     if(!selected)throw new BridgeFailure("unsupported_active_card",instance.Range);
                     if(!names.Add(instance.Name))throw new BridgeFailure("duplicate_element",instance.Range);
-                    var lowered=requested?BehavioralSourceLowering.PrepareRequested(catalog,instance,environment):BehavioralSourceLowering.Prepare(catalog,instance,environment);
+                    var lowered=requested?BehavioralSourceLowering.PrepareRequested(catalog,instance,environment,limits.TemperatureCelsius):BehavioralSourceLowering.Prepare(catalog,instance,environment);
                     if(!lowered.Success)throw new BridgeFailure(lowered.Diagnostics[0].Code,lowered.Diagnostics[0].Range);
                     var source=lowered.Source!;var p=Node(source.P.Text);var n=Node(source.N.Text);
                     if(p==n)throw new BridgeFailure("shorted_behavior_output",source.Range);

@@ -1,3 +1,17 @@
+# Sol checkpoint — November 13: affine behavioral temperature
+
+Read docs/behavioral-temperature-results.md and evidence/behavioral-temperature.json.
+Original regression/misc/asrc-tc-1.cir now completes OP+AC, all six observables per
+analysis, and original 1e-9 assertions against full stock ngspice. Sol total three.
+Requested affine TC1/TC2 and one qualified literal root .temp reuse existing
+linear stamps; conditional early quit 1 now preserves assertion failure before
+later reporting. Successful/unconditional early exits remain unsupported.
+The authored false assertion is correctly refused as program agreement; the TC2
+example agrees separately. Final syntax 520/1 skipped, frontend 905/40 skipped,
+66 real StrictDoc docs; clean-baseline Stryker span 18 killed, 0 survivors, plus
+3 killed boundary mutants. Initial failed-baseline attempts remain failed evidence.
+No native rebuild, MOS stock closure, pushes or CI. Preserve current campaign
+hard stop and no-memory-cap policy from ignored work/hourly-deck-progress.json.
 # Sol checkpoint — November 13: resistor temperature sweep
 
 Read docs/resistor-temperature-results.md and evidence/resistor-temperature.json.
