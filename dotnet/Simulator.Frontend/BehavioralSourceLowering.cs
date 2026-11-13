@@ -69,7 +69,7 @@ public static class BehavioralSourceLowering
             return new(null,[new("invalid_behavior_temperature_factor",source.Range)]);
         return new(new(source.Name,source.P,source.N,source.Quantity,terms,offset,source.Range),[]);
     }
-    private static bool FitsNativeBudget(BoundedExpression expression)
+    internal static bool FitsNativeBudget(BoundedExpression expression)
     {
         var pending=new Stack<(BoundedExpression Node,int Depth)>();pending.Push((expression,0));
         var visited=0;
@@ -90,7 +90,7 @@ public static class BehavioralSourceLowering
         }
         return true;
     }
-    private sealed class NativeExpressionFactory:IBoundedScalarExpressionFactory<BoundedExpression>
+    internal sealed class NativeExpressionFactory:IBoundedScalarExpressionFactory<BoundedExpression>
     {
         public BoundedExpression Constant(double value)=>new ExpressionConstant(value);
         public BoundedExpression Input()=>new ExpressionInput();

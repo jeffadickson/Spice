@@ -60,6 +60,11 @@ pub fn conductance_at_bias_csc(
             contribution.conductance_siemens,
         );
     }
+    for resistance in &plan.resistances {
+        let c=crate::behavioral_resistor::linearize(&resistance.expression,
+            voltage(values,resistance.p,resistance.n),voltage(values,resistance.cp,resistance.cn))?;
+        stamp_four_terminal(&mut stamps,resistance.p,resistance.n,resistance.cp,resistance.cn,c.output_siemens,c.control_siemens);
+    }
     for switch in &plan.switches {
         let c = switch.model.linearize(
             voltage(values, switch.p, switch.n),
@@ -146,9 +151,14 @@ fn stamp_switch(
     g: f64,
     gm: f64,
 ) {
-    crate::compile::stamp_pair(matrix, s.p, s.n, g);
-    for (row, sign) in [(s.p, 1.), (s.n, -1.)] {
-        for (col, polarity) in [(s.cp, 1.), (s.cn, -1.)] {
+    stamp_four_terminal(matrix,s.p,s.n,s.cp,s.cn,g,gm);
+}
+/// Add, never overwrite: output and control nodes may alias each other.
+fn stamp_four_terminal(matrix:&mut impl crate::compile::StampMatrix,
+    p:crate::ids::NodeId,n:crate::ids::NodeId,cp:crate::ids::NodeId,cn:crate::ids::NodeId,g:f64,gm:f64) {
+    crate::compile::stamp_pair(matrix, p, n, g);
+    for (row, sign) in [(p, 1.), (n, -1.)] {
+        for (col, polarity) in [(cp, 1.), (cn, -1.)] {
             if let (Some(r), Some(c)) = (row.unknown(), col.unknown()) {
                 matrix.add_stamp(r, c, sign * polarity * gm);
             }
@@ -204,6 +214,12 @@ fn linearize_with_rhs_gmin(
             diode.n,
             contribution.conductance_siemens,
         );
+    }
+    for resistance in &plan.resistances {
+        let c=crate::behavioral_resistor::linearize(&resistance.expression,
+            voltage(values,resistance.p,resistance.n),voltage(values,resistance.cp,resistance.cn))?;
+        stamp_vector(&mut residual,resistance.p,resistance.n,c.current);
+        stamp_four_terminal(&mut jacobian,resistance.p,resistance.n,resistance.cp,resistance.cn,c.output_siemens,c.control_siemens);
     }
     for switch in &plan.switches {
         let c = switch.model.linearize(

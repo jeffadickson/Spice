@@ -8,6 +8,11 @@ use std::collections::BTreeSet;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Element {
+    /// Memoryless I(P->N)=(Vp-Vn)/R(Vcp-Vcn), high-impedance control.
+    BehavioralResistor {
+        id: String, p: NodeId, n: NodeId, cp: NodeId, cn: NodeId,
+        expression: crate::expression::Expr,
+    },
     /// DC-only voltage relation Vp-Vn=expression(Vcp-Vcn), with P-to-N branch current.
     BehavioralVoltage {
         id: String, p: NodeId, n: NodeId, cp: NodeId, cn: NodeId,
@@ -164,6 +169,7 @@ impl Element {
             | Self::Vccs { id, .. }
             | Self::Vcvs { id, .. }
             | Self::BehavioralVoltage { id, .. }
+            | Self::BehavioralResistor { id, .. }
             | Self::PspiceSwitch { id, .. }
             | Self::Cccs { id, .. }
             | Self::Ccvs { id, .. }
@@ -208,6 +214,7 @@ impl Element {
             | Self::Vccs { p, n, .. }
             | Self::Vcvs { p, n, .. }
             | Self::BehavioralVoltage { p, n, .. }
+            | Self::BehavioralResistor { p, n, .. }
             | Self::PspiceSwitch { p, n, .. }
             | Self::Cccs { p, n, .. }
             | Self::Ccvs { p, n, .. }
@@ -278,7 +285,7 @@ impl Circuit {
                 .validate()?;
             }
             match e {
-                Element::BehavioralVoltage {cp,cn,expression,..} => {
+                Element::BehavioralVoltage {cp,cn,expression,..} | Element::BehavioralResistor {cp,cn,expression,..} => {
                     if cp.0>=self.nodes.len() || cn.0>=self.nodes.len() {
                         return Err(SimError::invalid("invalid behavioral control terminals"));
                     }

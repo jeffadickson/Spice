@@ -1,0 +1,23 @@
+Memoryless voltage-controlled resistance with nonzero AC control
+Vdrive supply 0 dc=100 ac=10
+Vcontrol ctrl 0 dc=2 ac=1
+Rlaw supply sense r={1k+100*v(ctrl)} tc1=.001 tc2=.000001
+Vsense sense 0 dc=0 ac=0
+.temp 77
+.control
+op
+let gold=100/(1200*1.0525)
+let dcerror=i(Vsense)/gold-1
+if abs(dcerror) > 1e-9
+ quit 1
+end
+ac lin 1 1k 1k
+let gold=(10/1200-100*100/(1200*1200))/1.0525
+let acerror=i(Vsense)/gold-1
+if abs(acerror) > 1e-9
+ quit 1
+end
+echo resistance control gain agrees
+quit 0
+.endc
+.end

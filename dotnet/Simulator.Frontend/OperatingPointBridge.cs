@@ -151,6 +151,17 @@ public static class OperatingPointBridge
                     if(selected&&primitive.RequiresExcitationProfile&&primitive.Excitation==null)throw new BridgeFailure("unsupported_source_profile",primitive.Range);
                     if(primitive.Family is not ("R" or "V" or "I") && !(selected && primitive.Family is ("C" or "L" or "E" or "G" or "F" or "H")))throw new BridgeFailure("unsupported_active_card",primitive.Range);
                     if(!names.Add(primitive.Name))throw new BridgeFailure("duplicate_element",primitive.Range);
+                    if(requested&&primitive.BehavioralResistance!=null)
+                    {
+                        var lowered=BehavioralResistanceLowering.Prepare(catalog,primitive,environment,limits.TemperatureCelsius);
+                        if(lowered.Resistance is not {} resistance)throw new BridgeFailure(lowered.Diagnostics[0].Code,lowered.Diagnostics[0].Range);
+                        var rp=Node(primitive.P.Text);var rn=Node(primitive.N.Text);
+                        if(rp==rn)throw new BridgeFailure("shorted_primitive",primitive.Range);
+                        if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",primitive.Range);
+                        var wire="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        elements.Add(new BehavioralResistor(wire,rp,rn,Node(resistance.Cp.Text),Node(resistance.Cn.Text),resistance.Expression));
+                        origins.Add(new(wire,primitive.Name,path,primitive.Range));continue;
+                    }
                     double value;double? acOhms=null;var dcOpen=false;double magnitude=0,phase=0;SourceWaveformSyntax? waveformSyntax=null;ImmutableArray<double> waveformValues=[];
                     if(selected&&primitive.Family is ("V" or "I")&&primitive.Excitation is {} excitation)
                     {

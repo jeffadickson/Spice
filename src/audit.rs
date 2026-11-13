@@ -194,6 +194,13 @@ fn dc_currents(circuit: &Circuit, state: &[f64]) -> SimResult<Vec<f64>> {
                 )?,
                 // This scalar path is supplemented by four terminal currents below.
                 Element::Bsim330 { .. } | Element::BsimSoiFdReference { .. } => 0.,
+                Element::BehavioralResistor {cp,cn,expression,..} => {
+                    // Independent value-only expression reconstruction, not the
+                    // production AD model or its compiled Jacobian.
+                    let resistance=reference_expression(expression,voltage(state,*cp)-voltage(state,*cn))?;
+                    if resistance==0. {return Err(SimError::invalid("audit zero behavioral resistance"));}
+                    v/resistance
+                },
                 Element::Resistor { ohms, .. } => v / ohms,
                 Element::JunctionStorage { .. } => 0.,
                 Element::SpiceDiode { model, .. } => {

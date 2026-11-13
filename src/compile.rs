@@ -41,6 +41,15 @@ pub(crate) struct CompiledBehavior {
     pub(crate) cn: NodeId,
     pub(crate) expression: crate::expression::Expr,
 }
+/// Immutable resistance expression, evaluated at the actual differential bias.
+#[derive(Debug, Clone)]
+pub(crate) struct CompiledResistance {
+    pub(crate) p: NodeId,
+    pub(crate) n: NodeId,
+    pub(crate) cp: NodeId,
+    pub(crate) cn: NodeId,
+    pub(crate) expression: crate::expression::Expr,
+}
 /// Shared bounded stamping surface used by compile-time sparse accumulation and trial Jacobians.
 pub(crate) trait StampMatrix {
     fn add_stamp(&mut self, row: usize, column: usize, value: f64);
@@ -70,6 +79,7 @@ pub struct CompiledCircuit {
     pub(crate) switches: Vec<CompiledSwitch>,
     pub(crate) mos1: Vec<CompiledMos1>,
     pub(crate) behaviors: Vec<CompiledBehavior>,
+    pub(crate) resistances: Vec<CompiledResistance>,
     pub(crate) bsim330: Vec<([NodeId; 4], crate::bsim330::NativeModel)>,
 }
 impl CompiledCircuit {
@@ -99,6 +109,7 @@ impl CompiledCircuit {
     pub fn has_nonlinear_devices(&self) -> bool {
         !self.diodes.is_empty()
             || !self.behaviors.is_empty()
+            || !self.resistances.is_empty()
             || !self.switches.is_empty()
             || !self.mos1.is_empty()
             || !self.bsim330.is_empty()
@@ -164,6 +175,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
     let mut switches = Vec::new();
     let mut mos1 = Vec::new();
     let mut behaviors = Vec::new();
+    let mut resistances = Vec::new();
     let mut bsim330 = Vec::new();
     for e in &circuit.elements {
         if let Some(device) = e.native_mos() {
@@ -171,6 +183,9 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
             continue;
         }
         match e {
+            Element::BehavioralResistor {p,n,cp,cn,expression,..} => resistances.push(CompiledResistance {
+                p:*p,n:*n,cp:*cp,cn:*cn,expression:expression.clone(),
+            }),
             Element::Bsim330 { .. } | Element::BsimSoiFdReference { .. } => {
                 unreachable!("native MOS handled above")
             }
@@ -392,6 +407,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
         switches,
         mos1,
         behaviors,
+        resistances,
         bsim330,
     })
 }

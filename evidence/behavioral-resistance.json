@@ -1,0 +1,976 @@
+{
+  "base_commit": "a888d81f6a45bd06ea966ded2ddda6fc2f8f78b7",
+  "source_dirty": true,
+  "artifact_root": "E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015",
+  "original": "regression/misc/asrc-tc-2.cir",
+  "input_sha256": "5bc2c5d2a9d0c2b88e5a08e6e70db2700008431b436b9b2f279adb7dae702920",
+  "corpus_pin": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "scope": "Native memoryless R(Vcontrol) current law, exact DC Jacobian and converged-bias AC, requested TC1/TC2 lowering; no frozen-control approximation",
+  "baseline": {
+    "assembly_provenance": "a888d81 pre-feature assemblies in previous sourcealter artifact, fresh original execution",
+    "old_engine": "Previously certified cdd4560 engine, baseline only",
+    "diagnostics": [
+      "unsupported_physical_directive",
+      "unsupported_resistor_profile"
+    ],
+    "status": "requested_preparation_refused"
+  },
+  "original_analyses_lu": [
+    {
+      "kind": "op",
+      "gaps": [],
+      "observables": [
+        {
+          "engine_signal": "v(n2)",
+          "native_signal": "v(1)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n3)",
+          "native_signal": "v(2)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n4)",
+          "native_signal": "v(3)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n1)",
+          "native_signal": "v(9)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e0)",
+          "native_signal": "i(v0)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e1)",
+          "native_signal": "i(v1)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 2.7755575615628914E-17,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e3)",
+          "native_signal": "i(v2)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e5)",
+          "native_signal": "i(v3)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        }
+      ]
+    },
+    {
+      "kind": "ac",
+      "gaps": [],
+      "observables": [
+        {
+          "engine_signal": "v(n2)",
+          "native_signal": "v(1)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n3)",
+          "native_signal": "v(2)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n4)",
+          "native_signal": "v(3)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n1)",
+          "native_signal": "v(9)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e0)",
+          "native_signal": "i(v0)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e1)",
+          "native_signal": "i(v1)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e3)",
+          "native_signal": "i(v2)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e5)",
+          "native_signal": "i(v3)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        }
+      ]
+    }
+  ],
+  "original_analyses_faer": [
+    {
+      "kind": "op",
+      "gaps": [],
+      "observables": [
+        {
+          "engine_signal": "v(n2)",
+          "native_signal": "v(1)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n3)",
+          "native_signal": "v(2)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n4)",
+          "native_signal": "v(3)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n1)",
+          "native_signal": "v(9)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e0)",
+          "native_signal": "i(v0)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e1)",
+          "native_signal": "i(v1)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 2.7755575615628914E-17,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e3)",
+          "native_signal": "i(v2)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e5)",
+          "native_signal": "i(v3)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        }
+      ]
+    },
+    {
+      "kind": "ac",
+      "gaps": [],
+      "observables": [
+        {
+          "engine_signal": "v(n2)",
+          "native_signal": "v(1)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n3)",
+          "native_signal": "v(2)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n4)",
+          "native_signal": "v(3)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "v(n1)",
+          "native_signal": "v(9)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e0)",
+          "native_signal": "i(v0)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e1)",
+          "native_signal": "i(v1)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e3)",
+          "native_signal": "i(v2)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e5)",
+          "native_signal": "i(v3)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        }
+      ]
+    }
+  ],
+  "original_reporting": {
+    "final-replay": {
+      "output": [
+        "INFO: success"
+      ],
+      "locals": {
+        "iac2": [
+          {
+            "real": 0.00909090909090909,
+            "imag": 0
+          }
+        ],
+        "idc_gold": [
+          {
+            "real": 0.09090909090909091,
+            "imag": 0
+          }
+        ],
+        "err1": [
+          {
+            "real": 0,
+            "imag": 0
+          }
+        ],
+        "err4": [
+          {
+            "real": 0,
+            "imag": 0
+          }
+        ],
+        "err3": [
+          {
+            "real": 0,
+            "imag": 0
+          }
+        ],
+        "iac3": [
+          {
+            "real": 0.00909090909090909,
+            "imag": 0
+          }
+        ],
+        "iac_gold": [
+          {
+            "real": 0.00909090909090909,
+            "imag": 0
+          }
+        ],
+        "err2": [
+          {
+            "real": 0,
+            "imag": 0
+          }
+        ],
+        "idc3": [
+          {
+            "real": 0.09090909090909091,
+            "imag": 0
+          }
+        ],
+        "idc2": [
+          {
+            "real": 0.09090909090909091,
+            "imag": 0
+          }
+        ]
+      },
+      "exit_code": 0,
+      "diagnostics": [],
+      "redirected": {},
+      "source_parameters": {}
+    },
+    "final-faer": {
+      "output": [
+        "INFO: success"
+      ],
+      "locals": {
+        "err1": [
+          {
+            "real": 0,
+            "imag": 0
+          }
+        ],
+        "iac_gold": [
+          {
+            "real": 0.00909090909090909,
+            "imag": 0
+          }
+        ],
+        "idc_gold": [
+          {
+            "real": 0.09090909090909091,
+            "imag": 0
+          }
+        ],
+        "iac2": [
+          {
+            "real": 0.00909090909090909,
+            "imag": 0
+          }
+        ],
+        "err2": [
+          {
+            "real": 0,
+            "imag": 0
+          }
+        ],
+        "idc3": [
+          {
+            "real": 0.09090909090909091,
+            "imag": 0
+          }
+        ],
+        "idc2": [
+          {
+            "real": 0.09090909090909091,
+            "imag": 0
+          }
+        ],
+        "err4": [
+          {
+            "real": 0,
+            "imag": 0
+          }
+        ],
+        "err3": [
+          {
+            "real": 0,
+            "imag": 0
+          }
+        ],
+        "iac3": [
+          {
+            "real": 0.00909090909090909,
+            "imag": 0
+          }
+        ]
+      },
+      "exit_code": 0,
+      "diagnostics": [],
+      "redirected": {},
+      "source_parameters": {}
+    }
+  },
+  "original_assertion_bound": 1E-09,
+  "full_stock_original_exit": 0,
+  "authored_full_stock": {
+    "native_full_example_exit": 0,
+    "sha256": "b857e7a29cfc7047917046b62db16c656f040217d1fe693a88dcb9eec6032e3b"
+  },
+  "authored_scope": "Nonzero DC and AC control with TC1+TC2; independently asserted quotient derivative, not counted as an original",
+  "runtime": {
+    "oracle_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "engine_sha256": "d4a8509456973d096bbbfc6a478055c0730246cdcaedf13e51d466aeb327b0ca",
+    "oracle": "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe",
+    "engine_provenance": "Fresh Rust1.99.1 Windows MSVC debug build from this dirty a888d81 source in unique target; old cdd runtime is not used for new claims",
+    "engine": "E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/target/debug/circuit-simulator.exe",
+    "capabilities": {
+      "analyses": [
+        "operating_point",
+        "operating_point_newton",
+        "ac",
+        "transient",
+        "transient_configured"
+      ],
+      "backends": [
+        [
+          "faer",
+          {
+            "complex": true,
+            "gpu": false,
+            "id": "faer_sparse_lu",
+            "max_unknowns": 256,
+            "placement": "cpu",
+            "prepared_real": true,
+            "provider_version": "faer 0.24.4",
+            "sparse": true
+          }
+        ],
+        [
+          "lu",
+          {
+            "complex": true,
+            "gpu": false,
+            "id": "nalgebra_dense_lu_reference",
+            "max_unknowns": 256,
+            "placement": "cpu",
+            "prepared_real": true,
+            "provider_version": "nalgebra 0.34.1",
+            "sparse": false
+          }
+        ],
+        [
+          "qr",
+          {
+            "complex": false,
+            "gpu": false,
+            "id": "nalgebra_dense_qr_reference",
+            "max_unknowns": 256,
+            "placement": "cpu",
+            "prepared_real": false,
+            "provider_version": "nalgebra 0.34.1",
+            "sparse": false
+          }
+        ]
+      ],
+      "execution": "bounded_reference",
+      "gpu": false,
+      "models": {
+        "behavioral_resistor": {
+          "ac": true,
+          "dc": true,
+          "inputs": 1,
+          "maximum_expression_depth": 64,
+          "maximum_expression_nodes": 1024,
+          "transient_qualified": false
+        },
+        "behavioral_voltage": {
+          "ac": false,
+          "dc": true,
+          "inputs": 1,
+          "maximum_expression_depth": 64,
+          "maximum_expression_nodes": 1024,
+          "transient": false
+        },
+        "diode": {
+          "charge": "none",
+          "conduction": "shockley"
+        },
+        "diode_with_capacitance": {
+          "charge": "constant_q_cv",
+          "conduction": "shockley",
+          "configured_trapezoidal": true,
+          "depletion": false,
+          "transport_charge": false
+        },
+        "junction_storage": {
+          "charge": "spice_depletion_and_diffusion",
+          "conduction": "none",
+          "configured_adaptive": true,
+          "configured_explicit_initial_state": false,
+          "configured_trapezoidal": true,
+          "transport_is_scales_charge_only": true
+        },
+        "mos1_channel": {
+          "charge": "explicit_companions_and_optional_meyer",
+          "conduction": "bounded_shichman_hodges",
+          "forward_body_ac": "ngspice_convention",
+          "forward_body_newton": "exact_piecewise",
+          "generated_levels": [
+            1
+          ],
+          "generated_nonzero_tox": true,
+          "intrinsic_meyer": true,
+          "positive_effective_body_bias_with_gamma": true
+        },
+        "spice_diode": {
+          "avalanche": false,
+          "charge": "spice_depletion_and_diffusion",
+          "conduction": "shockley",
+          "configured_adaptive": true,
+          "configured_explicit_initial_state": false,
+          "configured_trapezoidal": true,
+          "depletion": true,
+          "series_resistance": false,
+          "temperature_scaling": false,
+          "transport_charge": true
+        }
+      },
+      "nonlinear": {
+        "ac_bias_linearization": true,
+        "adaptive": true,
+        "configured_backward_euler": true,
+        "diode_dc": true,
+        "gmin_dc": true,
+        "source_overrides": true,
+        "transient": true
+      },
+      "schema_version": "1",
+      "transport": "one_shot_json"
+    },
+    "oracle_version": "******\r\n** ngspice-47+ : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n"
+  },
+  "guidance": {
+    "reuse": "Retained Rust decision and prior SpiceSharp/ngspice evaluation remain applicable; no new production dependency",
+    "scope": "Pinned builder composes Vout/(Rexpression*scale); reused existing expression evaluator/four-terminal stamping, no imported legacy runtime",
+    "sha256": "e53f3061b41e2ec7eceb0cc7a2b73208899343430e2b2335e023120013b627da",
+    "lines": "69-160",
+    "file": "E:/Artifacts/RSpice-inspection-20261108T032637Z/source/crates/rspice-core/src/engine/builder/behavioral.rs"
+  },
+  "tests": {
+    "standalone_fuzz": "Not run this hour; seeded proptest and malformed-input campaigns executed",
+    "properties": {
+      "actual_fixed_seed": "202611131001",
+      "tool": "proptest1.9.0",
+      "scope": "Independent centered derivative/current relation and finite bounded resistance laws",
+      "minimized_counterexample": "output=-44.02015118062074, control=0, base=500, slope=-1.8269306128575975; 0 prior successes",
+      "persisted_mutant_regression": "cc 52f6d9ab624c7d934f53fb7abc2265a8fdcab58d1b9757b597c09815a45f854f",
+      "cases": 128,
+      "coverage_script_environment_seed": "88320261103, overridden by the fixed property seed",
+      "related_regression_properties": {
+        "behavioral_voltage": {
+          "cases": 64,
+          "fixed_seed": "2026111101"
+        },
+        "switch": {
+          "cases": 128,
+          "environment_seed": "202611131003"
+        },
+        "analysis_audits": {
+          "cases": 32,
+          "fixed_seed": "2026103006"
+        }
+      }
+    },
+    "syntax": {
+      "passed": 531,
+      "failed": 0,
+      "skipped": 1
+    },
+    "malformed": "Unknown JSON fields/operations, invalid control node, singular/nonfinite/overflow model data, unknown/duplicate attributes, multiple controls, current references and unsupported transient",
+    "frontend": {
+      "passed": 926,
+      "failed": 0,
+      "skipped": 40
+    },
+    "strictdoc_documents": 68,
+    "native": {
+      "passed": 41,
+      "groups": {
+        "pspice_switch": 6,
+        "contracts": 3,
+        "behavioral_voltage": 7,
+        "analysis_audits": 12,
+        "behavioral_resistor": 8,
+        "sparse_ac_circuits": 5
+      },
+      "nextest": "cargo-nextest not resolved; cargo test used",
+      "failed": 0,
+      "command": "cargo test --locked --test behavioral_resistor --test behavioral_voltage --test pspice_switch --test analysis_audits --test sparse_ac_circuits --test contracts -- --test-threads=1",
+      "ignored": 0,
+      "seeded_final_replay": {
+        "environment_seed": "202611131003",
+        "results": [
+          {
+            "binary": "E:\\Artifacts\\Spice-sol-behavioralresistor-a888d81-20261113T1015\\target\\debug\\deps\\behavioral_resistor-e84509871f5b3c50.exe",
+            "test": "behavioral_resistor",
+            "sha256": "6ed9ca675bb7d61c55e67f1a07b4123df448380d4e19cde6ab8f4f7143e28829"
+          },
+          {
+            "binary": "E:\\Artifacts\\Spice-sol-behavioralresistor-a888d81-20261113T1015\\target\\debug\\deps\\behavioral_voltage-7b20bb43407e7634.exe",
+            "test": "behavioral_voltage",
+            "sha256": "b59a6087e71a46b526580c918c96e82df9bb83210ffe8f033c3322481f4ff3e2"
+          },
+          {
+            "binary": "E:\\Artifacts\\Spice-sol-behavioralresistor-a888d81-20261113T1015\\target\\debug\\deps\\pspice_switch-321aa67e9098b700.exe",
+            "test": "pspice_switch",
+            "sha256": "d2da18b7af31273bcbf7400208213f0ba20bf3bc824126495d6c2e7fcdca8fbe"
+          },
+          {
+            "binary": "E:\\Artifacts\\Spice-sol-behavioralresistor-a888d81-20261113T1015\\target\\debug\\deps\\analysis_audits-031716fc6d302b70.exe",
+            "test": "analysis_audits",
+            "sha256": "29e49052f5f70c5f86de1fe85d9f9d4cb9f0803bfc4a522ec5e721cf233e4bda"
+          },
+          {
+            "binary": "E:\\Artifacts\\Spice-sol-behavioralresistor-a888d81-20261113T1015\\target\\debug\\deps\\contracts-f9976d5f07df36d4.exe",
+            "test": "contracts",
+            "sha256": "f27f482b8a331df414cfeecee641dd5d905b3da8b979e941a680a88aef294803"
+          },
+          {
+            "binary": "E:\\Artifacts\\Spice-sol-behavioralresistor-a888d81-20261113T1015\\target\\debug\\deps\\sparse_ac_circuits-67719579828cf769.exe",
+            "test": "sparse_ac_circuits",
+            "sha256": "9b7c6050c0e7143ed7a401788634135b851919e6740bd2b0facc98cf16199f67"
+          }
+        ]
+      }
+    }
+  },
+  "mutation": {
+    "final": {
+      "tested": 13,
+      "timeouts": 0,
+      "killed": 13,
+      "survived": 0
+    },
+    "initial": {
+      "survived": 3,
+      "killed": 10
+    },
+    "whole_instrumentation_compile_errors": 2746,
+    "manual": {
+      "change": "reverse control derivative sign",
+      "passed_tests": 2,
+      "restored_native_passed": 41,
+      "failed_tests": 6,
+      "detected": true
+    },
+    "survivor_disposition": "Added independent TC2=1.2 expectation and stable zero-factor diagnostic test, then reran",
+    "scope": "Selected temperature expression/factor validation span in BehavioralResistanceLowering",
+    "tool": "Stryker.NET5.0.0",
+    "whole_instrumentation_ignored": 3136,
+    "report": "E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/stryker-v2/reports/mutation-report.json"
+  },
+  "coverage": {
+    "native": {
+      "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+      "lines_covered": 1805,
+      "files": 47,
+      "new_law": {
+        "sha256": "be5cc6436bd19adf3882850cc611b3897a02bde2ca21f787d58622d838f4ad20",
+        "lines": {
+          "count": 29,
+          "covered": 29,
+          "percent": 100
+        },
+        "file": "src/behavioral_resistor.rs"
+      },
+      "report": "E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/native-coverage-final/summary.json",
+      "lines_valid": 7834,
+      "branches": null
+    },
+    "limitations": [
+      "Managed scopes differ and include generated grammar/transitive assemblies.",
+      "Stable Rust instrumentation gives line coverage, no measured branches; focused 8-test coverage is not full-regression coverage.",
+      "PowerShell orchestration helper and JSON schema have no line/branch instrumentation; actual8positive/6negative validator checks and output-preservation check ran.",
+      "No native vendor C/C++ coverage, Linux or GPU verification this hour."
+    ],
+    "managed": {
+      "syntax-final-coverage": {
+        "lines_valid": 11130,
+        "lines_covered": 7305,
+        "branches_valid": 4746,
+        "branches_covered": 2748,
+        "report": "E:\\Artifacts\\Spice-sol-behavioralresistor-a888d81-20261113T1015\\syntax-final-coverage\\ff43fd29-800f-4901-b3b2-72352d503a92\\coverage.cobertura.xml",
+        "sha256": "34bec53cea733601e2adbd740d4e5ab6ee645f732d699aa3c7ed1bb3e845aa00"
+      },
+      "frontend-restored-coverage": {
+        "lines_valid": 27483,
+        "lines_covered": 21616,
+        "branches_valid": 10281,
+        "branches_covered": 6497,
+        "report": "E:\\Artifacts\\Spice-sol-behavioralresistor-a888d81-20261113T1015\\frontend-restored-coverage\\1c874a45-1d3d-485e-8090-164a8cf31abb\\coverage.cobertura.xml",
+        "sha256": "6352aee04bb75e05e5eeeb3bd3ec778f278adb117f97a715bb07b3a46ebcdf2c"
+      }
+    }
+  },
+  "static_analysis": {
+    "managed_build": "0 warnings,0 errors",
+    "claim": "No clean strict-Clippy claim; normal run completed with these same four existing warnings",
+    "remaining": [
+      "unchanged src/bsim330.rs:139 needless_range_loop",
+      "unchanged src/configured.rs:468 too_many_arguments",
+      "unchanged src/expression.rs:96 boxed_local",
+      "unchanged src/expression.rs:108 boxed_local"
+    ],
+    "normal_clippy_exit": 0,
+    "strict_clippy": "cargo clippy --locked --lib --test behavioral_resistor -- -D warnings",
+    "strict_driver_exit": 1
+  },
+  "schema": {
+    "scope": "New resistance tree and existing required AC phasor fields; other historical advanced-model schema gaps are not silently qualified",
+    "results": {
+      "positive": 8,
+      "negative": 6,
+      "failed": 0,
+      "schema_sha256": "c3a04c5bd5c1322d3fe864f27e96352f5dec86515237d2b23a9ef7f49186753c",
+      "limitations": "Schema does not establish expression budgets, model domains or convergence."
+    },
+    "install_report": "E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/schema-install.json",
+    "tool_policy": "Maintained validator CLI uses required Python runtime; isolated tooling-only E installation, no production dependency",
+    "tool_primary_sources": [
+      "https://pypi.org/project/check-jsonschema/",
+      "https://pypi.org/project/jsonschema/"
+    ],
+    "preservation": "Reusing output refuses before changes; prior result hash unchanged",
+    "packages": [
+      {
+        "version": "0.39.0",
+        "name": "check-jsonschema",
+        "sha256": "14ce5c94871c551268ea948ffe21e9f1464dc48fb20bf9a4c13deeaaf756cf9b"
+      },
+      {
+        "version": "4.26.0",
+        "name": "jsonschema",
+        "sha256": "d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce"
+      },
+      {
+        "version": "8.5.1",
+        "name": "click",
+        "sha256": "8bb5376d2006950386f8c6427613334a2acadc5f559cb80e638d00b4df957e37"
+      },
+      {
+        "version": "2.34.2",
+        "name": "requests",
+        "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0"
+      },
+      {
+        "version": "3.5.2",
+        "name": "charset-normalizer",
+        "sha256": "78456a747de8dc58360ffa581f30a002baf5aa28cb262536545e91f113ed7639"
+      },
+      {
+        "version": "3.20",
+        "name": "idna",
+        "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c"
+      },
+      {
+        "version": "0.19.1",
+        "name": "ruamel.yaml",
+        "sha256": "27592957fedf6e0b62f281e96effd28043345e0e66001f97683aa9a40c667c93"
+      },
+      {
+        "version": "2.8.0",
+        "name": "urllib3",
+        "sha256": "0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3"
+      },
+      {
+        "version": "26.1.0",
+        "name": "attrs",
+        "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309"
+      },
+      {
+        "version": "2026.10.23",
+        "name": "certifi",
+        "sha256": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1"
+      },
+      {
+        "version": "2025.9.1",
+        "name": "jsonschema-specifications",
+        "sha256": "98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe"
+      },
+      {
+        "version": "0.37.0",
+        "name": "referencing",
+        "sha256": "381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231"
+      },
+      {
+        "version": "2026.9.1",
+        "name": "regress",
+        "sha256": "ed1d8dff8269590a23538d73c9b8def4e24330a2bcfc079af93e70db21696fdb"
+      },
+      {
+        "version": "2026.9.1",
+        "name": "rpds-py",
+        "sha256": "3e93b2cd69a9830be33e03945cd7cda940a0a8bfcfbff41d6144f0cb0d3d8bd9"
+      }
+    ]
+  },
+  "limitations": [
+    "Requested transient and pole-zero resistance analyses explicitly refuse; native shared-history behavior remains unqualified.",
+    "Independent nonlinear AC audit is explicitly not_checked because DC bias is not retained in public result; analytical two-provider/native-oracle checks supply scoped independent evidence.",
+    "No global convergence, arbitrary multivariate expressions or broad semiconductor temperature qualification.",
+    "StrictDoc first parse found missing blank requirement separator; corrected before final68-document parse.",
+    "Initial schema validator run found pre-existing omitted AC source_phasors; added affected contract, then validated8 actual requests and6 negative cases.",
+    "MOS memory stock-default mismatch and general BJT VA dynamics remain open and uncounted."
+  ],
+  "source_hashes": {
+    "dotnet/Simulator.Client/BehavioralExpression.cs": "ce3f5074ca2924739d05ec559b7c9942fb2da736db7f6f20f10b9cb66727edec",
+    "dotnet/Simulator.Client/Requests.cs": "6545ceebd4d14dd6d4f6bd5f497193e1b928bdf08d7e89c2e134d6fb10f4147c",
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "88a3544cf9ddec8778112e1aca0b89ff967b6e0ae2e315432d2a96e49cf9855a",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "013cf37dcca673524d7a4aecf7d4ec62cd8b4a9d38542d2094febc30a2479424",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "8dc09a9ce9b009a205f021dd59a031602b654fb544b61d99020427d5ec528fd4",
+    "dotnet/Simulator.Frontend/RequestedTemperaturePreparation.cs": "62f0d3bf4c9bb1b892b86f0b05631869cd9aa13d684e0f7ced99621dbd8c74cc",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "070f23648b90fa976a5feb25bde8d057884e3fe3bc69a22558780ea684c9cfbf",
+    "dotnet/Simulator.Syntax/ResistorModelSyntax.cs": "e29a12bc3c4dc64aee76ee19e3cd9bf5ece744363cf248e5eb9afecbb2a56ed6",
+    "schemas/request-v1.json": "c3a04c5bd5c1322d3fe864f27e96352f5dec86515237d2b23a9ef7f49186753c",
+    "src/audit.rs": "abd3266298ba1eda9230e602fc979b9e0282c1247f7d6ea3c97ceb19be6cbe63",
+    "src/audit_ac.rs": "200c9c520c7ccaa3f9c92f245ad8af8467db01816587ddeb6d8da3568e1195b0",
+    "src/circuit.rs": "0897a94be0dd7fac0d03d28a5bf9013b330fa5361946336a9bcaa71d2d6036a4",
+    "src/compile.rs": "fc2f655b72c13532a5e73e65e2a7e3f29a3ee82e21cde0e923f5e2dffe4ac448",
+    "src/lib.rs": "fbd153dc818692feb9924b987cbd6c79653d8c8a83cf100bb84f1f87eeccbbe8",
+    "src/main.rs": "d48187dfbd953722aa30e8d7ca6900b130e59b383a2892ca920e2241b6a270c4",
+    "src/newton.rs": "77f7caca2bc01074f40112405d282ba44c082ef157d3c31950a2dfc07882c837",
+    "src/power.rs": "559970b5e270ac7e818f4ca248dfdd339cc2b28e086f14ed3c80f18a4ea7d6de",
+    "src/variation.rs": "c39771e8e6be9e63d2336ccc671555a5a0584815795e28bbd3c34bd335993f33",
+    "docs/behavioral-resistance.sdoc": "e2079a4dbdf7495a88700b615e934a9896900da90e06323205ab44106d1c0755",
+    "dotnet/Simulator.Frontend.Tests/BehavioralResistanceTests.cs": "34fd868fad81bc5d65225a66ede636394bcfffa4367b79ddaa5ed4105be33954",
+    "dotnet/Simulator.Frontend/BehavioralResistanceLowering.cs": "14a33dcff86fae060e29901ff2403d6998df8a6d44f00897af25ac6099f6b9d1",
+    "examples/behavioral-resistance.cir": "b857e7a29cfc7047917046b62db16c656f040217d1fe693a88dcb9eec6032e3b",
+    "scripts/Test-BehavioralResistanceSchema.ps1": "7f2982cfff6e771b446225774928bed91c78f9834d9cf7c54bd80b0d078ab163",
+    "src/behavioral_resistor.rs": "be5cc6436bd19adf3882850cc611b3897a02bde2ca21f787d58622d838f4ad20",
+    "tests/behavioral_resistor.proptest-regressions": "fdc04f810a34aebb0663733453e2922fd4fec9aaba9662150d248607e20aba3c",
+    "tests/behavioral_resistor.rs": "7ab8646aca989beefafacb2a45b198096ff21bd1c1b67453c142d6b98d3dbd84",
+    "Cargo.lock": "c65bb8e3a861315275589be41267f068245d5102782fce0f1fc583666904afdf",
+    "Cargo.toml": "648564cc929dacf6a816a88999f88805c2c9d35bb261011544cecd1bf8fd256e",
+    "rust-toolchain.toml": "c946aab8e3eafd93e58303a52f31fc8b9a0caf4bf7a63328ff00195e6a6ad30b",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779"
+  },
+  "reproduction": [
+    "& 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/NativeRegression.ps1' -Seconds 360",
+    "& 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/NativeCoverageFinal.ps1' -Seconds 300",
+    "& 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/FullFrontendFinal.ps1' -Seconds 240",
+    "& 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/FullSyntax.ps1' -Seconds 240",
+    "& 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/FinalReplay.ps1' -Seconds 180",
+    "& 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/FinalFaer.ps1' -Seconds 180",
+    "& 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/StrykerV2.ps1' -Seconds 420",
+    "& 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/SchemaAndExample.ps1' -Seconds 180",
+    "& 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/Docs.ps1' -Seconds 120",
+    "& 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-behavioralresistor-a888d81-20261113T1015/NativeSeededReplay.ps1' -Seconds 120"
+  ],
+  "tools": {
+    "sdk": "10.0.403",
+    "vstest": "18.7.0",
+    "strictdoc": "0.30.4",
+    "antlr": "4.13.1",
+    "coverlet": "10.1.0",
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo": "1.99.1 (5f94df478 2026-08-27)",
+    "stryker": "5.0.0"
+  }
+}

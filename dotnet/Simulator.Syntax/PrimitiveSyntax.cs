@@ -9,6 +9,8 @@ public sealed record PrimitiveSyntax(string Name,string Family,int ScopeId,Sourc
     public SourceExcitationSyntax? Excitation { get; init; }
     /// <summary>Generated resistor scalar or model candidate and assignment tail; scalar/parameter evaluation still has precedence.</summary>
     public ResistorModelSyntax? ResistorModel {get;init;}
+    /// <summary>Explicit R={expression} and all original assignment tails; admission remains separate.</summary>
+    public BehavioralResistanceSyntax? BehavioralResistance {get;init;}
     /// <summary>Unevaluated AC-only resistance in ohms for the single-assignment scalar profile.</summary>
     public SourceSyntax? AcResistance {get;init;}
     /// <summary>A leading reserved DC/AC token must satisfy the bounded clause grammar rather than become a same-named scalar parameter.</summary>
@@ -128,7 +130,7 @@ internal static class PrimitiveExtraction
             ?resistor.Parameters[0].Value:null;
         var value=supported?capture(parameters[valueIndex]):ac!=null?resistor!.Reference:null;
         return new(card.Start.Text,family,scope,capture(nodes.node(0)),capture(nodes.node(1)),value,supported,capture(card).Range)
-        {ResistorModel=resistor,AcResistance=ac,
+        {ResistorModel=resistor,AcResistance=ac,BehavioralResistance=family=="R"?ResistorModelExtraction.Behavioral(parameters,capture):null,
          RequiresExcitationProfile=card is SpiceParser.SourceContext&&parameters.Length>0&&SourceProfileExtraction.IsReserved(parameters[0].Start.Text),
          Excitation=card is SpiceParser.SourceContext sourceCard
             ?supported&&value!=null&&!parameters[0].Start.Text.Equals("ac",StringComparison.OrdinalIgnoreCase)

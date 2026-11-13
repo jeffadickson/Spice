@@ -78,6 +78,8 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
                 .linearize(v, voltage(*cp) - voltage(*cn))?
                 .current
             }
+            Element::BehavioralResistor {cp,cn,expression,..} =>
+                crate::behavioral_resistor::linearize(expression,v,voltage(*cp)-voltage(*cn))?.current,
             Element::Resistor { ohms, .. } => v / ohms,
             Element::Current { amps, .. } => *amps,
             Element::Vccs {

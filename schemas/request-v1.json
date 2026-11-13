@@ -271,6 +271,52 @@
                   "n"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "behavioral_resistor"
+                  },
+                  "id": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "p": {
+                    "minimum": 0,
+                    "maximum": 127,
+                    "type": "integer"
+                  },
+                  "n": {
+                    "minimum": 0,
+                    "maximum": 127,
+                    "type": "integer"
+                  },
+                  "cp": {
+                    "minimum": 0,
+                    "maximum": 127,
+                    "type": "integer"
+                  },
+                  "cn": {
+                    "minimum": 0,
+                    "maximum": 127,
+                    "type": "integer"
+                  },
+                  "expression": {
+                    "$ref": "#/$defs/boundedResistanceExpression"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "id",
+                  "p",
+                  "n",
+                  "cp",
+                  "cn",
+                  "expression"
+                ],
+                "additionalProperties": false
               }
             ],
             "not": {
@@ -381,6 +427,32 @@
               },
               "maxItems": 10000,
               "minItems": 1
+            },
+            "source_phasors": {
+              "type": "array",
+              "maxItems": 128,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "maxLength": 256,
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "real": {
+                    "type": "number"
+                  },
+                  "imag": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "id",
+                  "real",
+                  "imag"
+                ],
+                "additionalProperties": false
+              }
             }
           },
           "required": [
@@ -956,5 +1028,131 @@
   "additionalProperties": false,
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Experimental simulator request v1",
-  "$comment": "Exported from managed DTOs; Rust additionally validates finite values, UTF-8 byte lengths, dimensions, IDs, source references, initial states, solver capabilities and budgets. Export is not independent schema qualification."
+  "$comment": "Exported from managed DTOs; Rust additionally validates finite values, UTF-8 byte lengths, dimensions, IDs, source references, initial states, solver capabilities and budgets. Export is not independent schema qualification.",
+  "$defs": {
+    "boundedResistanceExpression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "constant"
+            },
+            "value": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "input"
+            }
+          },
+          "required": [
+            "op"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "add"
+            },
+            "left": {
+              "$ref": "#/$defs/boundedResistanceExpression"
+            },
+            "right": {
+              "$ref": "#/$defs/boundedResistanceExpression"
+            }
+          },
+          "required": [
+            "op",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "multiply"
+            },
+            "left": {
+              "$ref": "#/$defs/boundedResistanceExpression"
+            },
+            "right": {
+              "$ref": "#/$defs/boundedResistanceExpression"
+            }
+          },
+          "required": [
+            "op",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "divide"
+            },
+            "left": {
+              "$ref": "#/$defs/boundedResistanceExpression"
+            },
+            "right": {
+              "$ref": "#/$defs/boundedResistanceExpression"
+            }
+          },
+          "required": [
+            "op",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "exp"
+            },
+            "argument": {
+              "$ref": "#/$defs/boundedResistanceExpression"
+            }
+          },
+          "required": [
+            "op",
+            "argument"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "log"
+            },
+            "argument": {
+              "$ref": "#/$defs/boundedResistanceExpression"
+            }
+          },
+          "required": [
+            "op",
+            "argument"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
 }

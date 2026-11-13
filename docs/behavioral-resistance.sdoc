@@ -1,0 +1,102 @@
+[DOCUMENT]
+TITLE: Bounded voltage-controlled behavioral resistance
+
+[TEXT]
+STATEMENT: >>>
+Acceptance target is unchanged original regression/misc/asrc-tc-2.cir, complete
+OP and AC observables and original 1e-9 assertions against stock ngspice.
+No closure is claimed until the full original executes. Requested frontend stays
+OP/DC/AC only; transient and pole-zero refuse. Native device first,
+then generated-metadata frontend expression/temperature lowering. Reuse the
+existing bounded single-input expression evaluator and four-terminal stamping;
+no multivariate language or legacy runtime dependency is introduced. Existing
+SpiceSharp/ngspice reuse assessment and retained Rust decision remain applicable.
+Pinned RSpice engine/builder/behavioral.rs constructs I=Vout/(Rexpression*scale).
+The independent reference is stock ngspice, not copied RSpice runtime behavior.
+
+Affected path: typed Rust/.NET element -> immutable compiled four-terminal model
+-> Newton residual and analytic Jacobian -> converged-bias sparse AC matrix ->
+physical audit/power -> requested circuit lowering -> native comparator/reporting.
+Control is high impedance; output current flows P to N. All voltages are volts,
+resistance ohms, current amperes, derivatives siemens. The same derivative must
+serve DC and AC, including when control terminals alias output terminals. No
+sample-hold, outer iteration, frozen control or discarded AC coupling is allowed.
+Pure memoryless resistance adds no charge/history. Native transient capability
+must be verified separately; frontend admission stays bounded by actual evidence.
+<<<
+
+[REQUIREMENT]
+UID: REQ-BEHAVIORAL-RESISTANCE-LAW-001
+STATUS: Draft
+TITLE: Owned memoryless resistance expression
+STATEMENT: >>>
+A bounded behavioral resistor shall impose I=(Vp-Vn)/R(Vcp-Vcn) with a finite
+bounded single-input expression, high-impedance control, and exact output and
+control partials. It shall refuse zero resistance, nonfinite values, expression
+domain failures and overflow without clamping, substituting zero or publishing
+a successful partial result. Finite negative resistance remains an explicit
+active law. Structural validation shall not invent a control bias.
+<<<
+COMMENT: >>>
+Implementation: behavioral_resistor, typed circuit variant, compiled
+four-terminal stamps. Verification: behavioral_resistor integration tests,
+independent analytical derivatives, finite differences and seeded properties.
+<<<
+
+[REQUIREMENT]
+UID: REQ-BEHAVIORAL-RESISTANCE-AC-001
+STATUS: Draft
+TITLE: Converged-bias incremental resistance law
+STATEMENT: >>>
+DC residuals and sparse AC conductance shall use the same
+signed analytic partials. AC shall evaluate at the converged DC operating point,
+including nonzero control excitation and terminal aliasing. Independent DC audits
+shall evaluate the physical current and power from terminal voltages and the
+resistance expression. Result failure shall remain explicit.
+<<<
+COMMENT: >>>
+Verification: independent dense/Faer DC and AC analytical fixtures, full MNA finite
+differences, audit/power checks and unchanged asrc-tc-2 OP/AC. See
+evidence/behavioral-resistance.json and docs/behavioral-resistance-results.md.
+No campaign deck count or original-program agreement is implied by native tests.
+<<<
+
+[REQUIREMENT]
+UID: REQ-BEHAVIORAL-RESISTANCE-TEMP-001
+STATUS: Draft
+TITLE: Preserve resistance temperature scaling in the runtime law
+STATEMENT: >>>
+Requested explicit R={expression} metadata shall retain every assignment and
+physical source range. Qualified TC1/TC2 values shall multiply the full resistance
+expression by 1+TC1*dT+TC2*dT^2 with dT=T-27 Celsius before dispatch. Both output
+and control partials shall therefore scale inversely through the same native
+law. Unknown/duplicate attributes, other runtime variables, multiple independent
+control pairs, zero/nonfinite factors and unqualified analyses shall refuse
+atomically. Strict non-requested preparation shall retain its existing policy.
+<<<
+COMMENT: >>>
+Implementation: generated PrimitiveSyntax/ResistorModelExtraction,
+BehavioralResistanceLowering, OperatingPointBridge, RequestedTemperaturePreparation
+and RequestedAnalysis. Tests: BehavioralResistanceTests, unchanged asrc-tc-2.cir,
+examples/behavioral-resistance.cir. Evidence: behavioral-resistance.json.
+<<<
+
+[REQUIREMENT]
+UID: REQ-BEHAVIORAL-RESISTANCE-WIRE-001
+STATUS: Draft
+TITLE: Typed bounded resistance wire contract
+STATEMENT: >>>
+The Rust/.NET element contract and checked request schema shall describe one
+behavioral_resistor identity, output/control nodes and bounded expression tree.
+Unknown fields/operations and malformed node/expression data shall reject.
+AC source phasors required for independent control gain shall be represented in
+the schema; absence of a phasor retains existing API defaults. Schema acceptance
+alone shall not imply domain validity, bounded tree resources or convergence.
+<<<
+COMMENT: >>>
+Implementation: circuit::Element, Client BehavioralExpression/Requests, request-v1
+schema. Verification: actual typed OP/AC requests validated by the maintained
+check-jsonschema CLI, negative schema cases, native wire/API tests and full
+LU/Faer original replay. Other historical advanced-model schema gaps remain
+outside this slice; no full schema/API conformance is inferred.
+<<<

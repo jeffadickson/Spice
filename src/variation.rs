@@ -54,7 +54,7 @@ pub fn scalar_kind(circuit: &Circuit, element_id: &str) -> SimResult<ScalarKind>
         .find(|element| element.id() == element_id)
         .ok_or_else(|| SimError::invalid("variation element ID is unknown"))?;
     Ok(match element {
-        Element::PspiceSwitch { .. }
+        Element::PspiceSwitch { .. } | Element::BehavioralResistor { .. }
         | Element::BehavioralVoltage { .. }
         | Element::Mos1Channel { .. }
         | Element::Bsim330 { .. }
@@ -98,7 +98,7 @@ pub fn replace_scalar(circuit: &Circuit, element_id: &str, value: f64) -> SimRes
         Element::SpiceDiode { model, .. } | Element::JunctionStorage { model, .. } => {
             model.saturation_amps = value
         }
-        Element::PspiceSwitch { .. }
+        Element::PspiceSwitch { .. } | Element::BehavioralResistor { .. }
         | Element::BehavioralVoltage { .. }
         | Element::Mos1Channel { .. }
         | Element::Bsim330 { .. }

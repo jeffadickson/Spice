@@ -1,3 +1,20 @@
+# Sol checkpoint — November 13: voltage-controlled behavioral resistance
+
+Read docs/behavioral-resistance-results.md and evidence/behavioral-resistance.json.
+Original regression/misc/asrc-tc-2.cir now completes OP+AC, eight observers each,
+all four original1e-9 assertions (errors0) and full stock ngspice on LU and Faer.
+Sol total five. Native I=Vout/R(Vcontrol) uses exact DC/AC partials, high-impedance
+control, owned expression metadata and requested TC1/TC2 scaling. The nonzero-AC
+control/TC2 authored example also agrees, but is uncounted. Requested transient
+and pole-zero remain refused; native nonlinear AC audit is explicitly unavailable.
+Fresh Rust runtime built from current source is in the new unique E artifact target;
+do not substitute the old cdd engine for this slice's new claims.
+Final native41, syntax531/1skip, frontend926/40skip, StrictDoc68. Stryker selected13
+killed after survivor-driven test additions; native sign mutant detected/restored.
+Measured coverage and exact hashes/seeds are in evidence. Strict Clippy still
+fails4 findings in unchanged files; normal Clippy reports the same4 warnings.
+No MOS stock closure, pushes or CI. Preserve campaign hardstop and no-memory-cap
+policy in ignored work/hourly-deck-progress.json.
 # Sol checkpoint — November 13: post-OP pulse parameter state
 
 Read docs/source-pulse-alter-results.md and evidence/source-pulse-alter.json.

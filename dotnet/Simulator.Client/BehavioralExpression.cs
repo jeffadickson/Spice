@@ -3,6 +3,8 @@ namespace Simulator.Client;
 
 /// <summary>DC-only ideal voltage relation V(P)-V(N)=Expression(V(Cp)-V(Cn)); branch current is P to N.</summary>
 public sealed record BehavioralVoltage(string Id,int P,int N,int Cp,int Cn,BoundedExpression Expression):Element(Id,P,N);
+/// <summary>Memoryless I(P to N)=(V(P)-V(N))/Expression(V(Cp)-V(Cn)); resistance is in ohms, control is high impedance.</summary>
+public sealed record BehavioralResistor(string Id,int P,int N,int Cp,int Cn,BoundedExpression Expression):Element(Id,P,N);
 
 /// <summary>Finite bounded scalar model tree. Input is the SI numeric differential control voltage; this is not executable script text.</summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName="op")]

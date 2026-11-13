@@ -27,8 +27,9 @@ internal static class RequestedTemperaturePreparation
         return new(limits with{TemperatureCelsius=celsius},[card.Range.Start],null);
     }
 
-    // Every admitted element is a temperature-independent typed linear stamp;
-    // its already qualified producer resolved any temperature dependence first.
+    // Admitted producers resolve temperature dependence before dispatch, including
+    // the complete runtime resistance expression. No intrinsic semiconductor
+    // thermal model is inferred by this preparation check.
     internal static bool Supports(BridgeResult circuit)=>circuit.Request!.Circuit.Elements.All(e=>
-        e is Resistor or Voltage or Current or Capacitor or Inductor or Vcvs or Vccs or Cccs or Ccvs);
+        e is Resistor or Voltage or Current or Capacitor or Inductor or Vcvs or Vccs or Cccs or Ccvs or BehavioralResistor);
 }

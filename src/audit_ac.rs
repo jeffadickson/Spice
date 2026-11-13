@@ -66,6 +66,7 @@ pub fn ac(
                 | Element::JunctionStorage { .. }
                 | Element::DiodeWithCapacitance { .. }
                 | Element::PspiceSwitch { .. }
+                | Element::BehavioralResistor { .. }
         )
     }) {
         return Ok(AuditReport {

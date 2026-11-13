@@ -22,6 +22,7 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(Current), "current")]
 [JsonDerivedType(typeof(Vcvs), "vcvs")]
 [JsonDerivedType(typeof(BehavioralVoltage), "behavioral_voltage")]
+[JsonDerivedType(typeof(BehavioralResistor), "behavioral_resistor")]
 [JsonDerivedType(typeof(PspiceSwitch), "pspice_switch")]
 [JsonDerivedType(typeof(Vccs), "vccs")]
 [JsonDerivedType(typeof(Cccs), "cccs")]
