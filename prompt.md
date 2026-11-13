@@ -1,3 +1,16 @@
+# Sol campaign ended — November 13: five originals, final replay verified
+
+Read docs/sol-campaign-final-handoff.md and evidence/sol-campaign-final.json.
+Cumulative Sol count is five; final wake adds zero. Current native source 697bfea
+passes all five unchanged originals on LU/Faer, ten complete reporting programs,
+198 observer signal-points and five full stock-original programs. Final StrictDoc
+parses 69 documents. BJT voltage-scaled CCCS is a prerequisite only; coupled charge
+and admission stay open. MOS/RC/temper2 stock-default mismatches remain open.
+Runtime/corpus/assembly hashes, exact scope, historical coverage/test distinctions
+and original implementation commits are in the handoff. No push/CI/merge.
+The ignored progress records actual campaign shutdown; completion means the
+bounded authorized campaign ended, not full simulator compatibility. Do not
+restart the hourly campaign or work past its hard stop 2026-11-13T12:49:29Z.
 # Sol checkpoint — November 13: native transport prerequisite, no new original
 
 Read docs/voltage-scaled-cccs-results.md and evidence/voltage-scaled-cccs.json.

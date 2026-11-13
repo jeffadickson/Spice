@@ -1,0 +1,770 @@
+{
+  "scope": "Final regression and handoff of five already-counted originals; zero new original closures",
+  "tested_source_commit": "697bfea6f6a03c83589843215e4b77941403e5a3",
+  "artifact_root": "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210",
+  "checked_utc": "2026-11-13T12:09:41.8099566Z",
+  "campaign_start_utc": "2026-11-13T02:49:29Z",
+  "campaign_hardstop_utc": "2026-11-13T12:49:29Z",
+  "new_originals_this_final_wake": 0,
+  "cumulative_originals": 5,
+  "checkpoints": [
+    {
+      "new_originals": 1,
+      "scope": "Reporting vector echo; numerical OP already agreed",
+      "evidence": "evidence/real-vector-echo.json",
+      "commit": "60574becda726b928b415a597f09881e2d4c332d",
+      "deck": "regression/model/special-names-1.cir"
+    },
+    {
+      "new_originals": 1,
+      "scope": "TC1/TC2/TCE physical per-point resistance and complete original reporting",
+      "evidence": "evidence/resistor-temperature.json",
+      "commit": "e3fb8bf7ce9d8c66e1633ca54900d53b378c3ff4",
+      "deck": "regression/temper/temper-res-1.cir"
+    },
+    {
+      "commit": "bd3bfb4bea057a3a1db2bb82accba970ee4723ea",
+      "new_originals": 1,
+      "deck": "regression/misc/asrc-tc-1.cir",
+      "evidence": "evidence/behavioral-temperature.json",
+      "scope": "Qualified root Celsius and affine TC1/TC2 preparation; complete OP/AC reporting with failure-only early exits"
+    },
+    {
+      "commit": "a888d81f6a45bd06ea966ded2ddda6fc2f8f78b7",
+      "new_originals": 1,
+      "deck": "regression/misc/alter-vec.cir",
+      "evidence": "evidence/source-pulse-alter.json",
+      "scope": "Post-OP pulse parameter metadata/reporting only; original OP physics already agreed; no future-analysis alteration"
+    },
+    {
+      "commit": "a1cd63ed3b2d359a9694a0e872a621de8827a197",
+      "new_originals": 1,
+      "deck": "regression/misc/asrc-tc-2.cir",
+      "evidence": "evidence/behavioral-resistance.json",
+      "scope": "Native I=Vout/R(Vcontrol), exact DC/AC derivatives and TC1/TC2 resistance scaling; all original OP/AC/assertions on LU/Faer"
+    },
+    {
+      "commit": "697bfea6f6a03c83589843215e4b77941403e5a3",
+      "new_originals": 0,
+      "deck": "general/rtlinv.cir",
+      "evidence": "evidence/voltage-scaled-cccs.json",
+      "scope": "Exact native/API voltage-scaled current prerequisite; BJT charge and admission remain open"
+    }
+  ],
+  "runtime": {
+    "capabilities": {
+      "analyses": [
+        "operating_point",
+        "operating_point_newton",
+        "ac",
+        "transient",
+        "transient_configured"
+      ],
+      "backends": [
+        [
+          "faer",
+          {
+            "complex": true,
+            "gpu": false,
+            "id": "faer_sparse_lu",
+            "max_unknowns": 256,
+            "placement": "cpu",
+            "prepared_real": true,
+            "provider_version": "faer 0.24.4",
+            "sparse": true
+          }
+        ],
+        [
+          "lu",
+          {
+            "complex": true,
+            "gpu": false,
+            "id": "nalgebra_dense_lu_reference",
+            "max_unknowns": 256,
+            "placement": "cpu",
+            "prepared_real": true,
+            "provider_version": "nalgebra 0.34.1",
+            "sparse": false
+          }
+        ],
+        [
+          "qr",
+          {
+            "complex": false,
+            "gpu": false,
+            "id": "nalgebra_dense_qr_reference",
+            "max_unknowns": 256,
+            "placement": "cpu",
+            "prepared_real": false,
+            "provider_version": "nalgebra 0.34.1",
+            "sparse": false
+          }
+        ]
+      ],
+      "execution": "bounded_reference",
+      "gpu": false,
+      "models": {
+        "behavioral_resistor": {
+          "ac": true,
+          "dc": true,
+          "inputs": 1,
+          "maximum_expression_depth": 64,
+          "maximum_expression_nodes": 1024,
+          "transient_qualified": false
+        },
+        "behavioral_voltage": {
+          "ac": false,
+          "dc": true,
+          "inputs": 1,
+          "maximum_expression_depth": 64,
+          "maximum_expression_nodes": 1024,
+          "transient": false
+        },
+        "diode": {
+          "charge": "none",
+          "conduction": "shockley"
+        },
+        "diode_with_capacitance": {
+          "charge": "constant_q_cv",
+          "conduction": "shockley",
+          "configured_trapezoidal": true,
+          "depletion": false,
+          "transport_charge": false
+        },
+        "junction_storage": {
+          "charge": "spice_depletion_and_diffusion",
+          "conduction": "none",
+          "configured_adaptive": true,
+          "configured_explicit_initial_state": false,
+          "configured_trapezoidal": true,
+          "transport_is_scales_charge_only": true
+        },
+        "mos1_channel": {
+          "charge": "explicit_companions_and_optional_meyer",
+          "conduction": "bounded_shichman_hodges",
+          "forward_body_ac": "ngspice_convention",
+          "forward_body_newton": "exact_piecewise",
+          "generated_levels": [
+            1
+          ],
+          "generated_nonzero_tox": true,
+          "intrinsic_meyer": true,
+          "positive_effective_body_bias_with_gamma": true
+        },
+        "spice_diode": {
+          "avalanche": false,
+          "charge": "spice_depletion_and_diffusion",
+          "conduction": "shockley",
+          "configured_adaptive": true,
+          "configured_explicit_initial_state": false,
+          "configured_trapezoidal": true,
+          "depletion": true,
+          "series_resistance": false,
+          "temperature_scaling": false,
+          "transport_charge": true
+        },
+        "voltage_scaled_cccs": {
+          "ac": true,
+          "charge": "none",
+          "control": "branch_current_and_differential_voltage",
+          "dc": true,
+          "transient_qualified": false
+        }
+      },
+      "nonlinear": {
+        "ac_bias_linearization": true,
+        "adaptive": true,
+        "configured_backward_euler": true,
+        "diode_dc": true,
+        "gmin_dc": true,
+        "source_overrides": true,
+        "transient": true
+      },
+      "schema_version": "1",
+      "transport": "one_shot_json"
+    },
+    "oracle_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "engine_sha256": "ccfa47b6b42ea066f56f3b33404fbf4c72731ded32ad35d45f949934b57c033a",
+    "oracle": "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe",
+    "engine": "E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/target/debug/circuit-simulator.exe",
+    "engine_provenance": "Fresh Rust1.99.1 Windows MSVC debug build of dirty a1cd63e source in unique E target"
+  },
+  "source_pin": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "replays": [
+    {
+      "backend": "lu",
+      "state": "completed_with_results",
+      "provenance_valid": true,
+      "elapsed_seconds": 5.6877123,
+      "row_count": 5,
+      "omission_accounting": "Individual raw-oracle projections separate other control/reporting instructions; complete original control report and full unmodified stock program each executed independently.",
+      "projection_omission_reasons": [
+        "other_control_instruction_not_in_this_individual_oracle"
+      ],
+      "program_omission_reasons": [
+        "conditional_reporting_not_executed",
+        "control_substitution_not_executed",
+        "ordered_reporting_executed_separately",
+        "postprocessing_not_executed",
+        "prefix_reporting_executed_separately",
+        "source_parameter_alter_executed_separately"
+      ]
+    },
+    {
+      "backend": "faer",
+      "state": "completed_with_results",
+      "provenance_valid": true,
+      "elapsed_seconds": 4.6548567,
+      "row_count": 5,
+      "omission_accounting": "Individual raw-oracle projections separate other control/reporting instructions; complete original control report and full unmodified stock program each executed independently.",
+      "projection_omission_reasons": [
+        "other_control_instruction_not_in_this_individual_oracle"
+      ],
+      "program_omission_reasons": [
+        "conditional_reporting_not_executed",
+        "control_substitution_not_executed",
+        "ordered_reporting_executed_separately",
+        "postprocessing_not_executed",
+        "prefix_reporting_executed_separately",
+        "source_parameter_alter_executed_separately"
+      ]
+    }
+  ],
+  "matrix": [
+    {
+      "backend": "lu",
+      "deck": "regression/model/special-names-1.cir",
+      "operations": [
+        "op"
+      ],
+      "observers": 9,
+      "compared_signal_points": 9.0,
+      "max_absolute_error": 1.0235041814077306E-08,
+      "report_output": [
+        "Note: err = 0 -1.1102230246251565E-16 0",
+        "Note: allowed_err = 1E-07",
+        "INFO: success"
+      ],
+      "report_diagnostics": [],
+      "report_exit_code": 0
+    },
+    {
+      "backend": "lu",
+      "deck": "regression/temper/temper-res-1.cir",
+      "operations": [
+        "dc"
+      ],
+      "observers": 6,
+      "compared_signal_points": 60.0,
+      "max_absolute_error": 1.734723475976807E-18,
+      "report_output": [
+        "Note: err1 = 2.220446049250313E-16",
+        "Note: err2 = 2.220446049250313E-16",
+        "Note: err3 = 2.220446049250313E-16",
+        "INFO: success"
+      ],
+      "report_diagnostics": [],
+      "report_exit_code": 0
+    },
+    {
+      "backend": "lu",
+      "deck": "regression/misc/asrc-tc-1.cir",
+      "operations": [
+        "op",
+        "ac"
+      ],
+      "observers": 12,
+      "compared_signal_points": 12.0,
+      "max_absolute_error": 1.4210854715202004E-14,
+      "report_output": [
+        "INFO: success"
+      ],
+      "report_diagnostics": [],
+      "report_exit_code": 0
+    },
+    {
+      "backend": "lu",
+      "deck": "regression/misc/alter-vec.cir",
+      "operations": [
+        "op"
+      ],
+      "observers": 2,
+      "compared_signal_points": 2.0,
+      "max_absolute_error": 0.0,
+      "report_output": [
+        "Note: err1 =  0",
+        "Note: err2 =  0",
+        "INFO: success"
+      ],
+      "report_diagnostics": [],
+      "report_exit_code": 0
+    },
+    {
+      "backend": "lu",
+      "deck": "regression/misc/asrc-tc-2.cir",
+      "operations": [
+        "op",
+        "ac"
+      ],
+      "observers": 16,
+      "compared_signal_points": 16.0,
+      "max_absolute_error": 2.7755575615628914E-17,
+      "report_output": [
+        "INFO: success"
+      ],
+      "report_diagnostics": [],
+      "report_exit_code": 0
+    },
+    {
+      "backend": "faer",
+      "deck": "regression/model/special-names-1.cir",
+      "operations": [
+        "op"
+      ],
+      "observers": 9,
+      "compared_signal_points": 9.0,
+      "max_absolute_error": 1.0235041814077306E-08,
+      "report_output": [
+        "Note: err = 0 -1.1102230246251565E-16 0",
+        "Note: allowed_err = 1E-07",
+        "INFO: success"
+      ],
+      "report_diagnostics": [],
+      "report_exit_code": 0
+    },
+    {
+      "backend": "faer",
+      "deck": "regression/temper/temper-res-1.cir",
+      "operations": [
+        "dc"
+      ],
+      "observers": 6,
+      "compared_signal_points": 60.0,
+      "max_absolute_error": 1.734723475976807E-18,
+      "report_output": [
+        "Note: err1 = 2.220446049250313E-16",
+        "Note: err2 = 2.220446049250313E-16",
+        "Note: err3 = 2.220446049250313E-16",
+        "INFO: success"
+      ],
+      "report_diagnostics": [],
+      "report_exit_code": 0
+    },
+    {
+      "backend": "faer",
+      "deck": "regression/misc/asrc-tc-1.cir",
+      "operations": [
+        "op",
+        "ac"
+      ],
+      "observers": 12,
+      "compared_signal_points": 12.0,
+      "max_absolute_error": 2.842170943040401E-14,
+      "report_output": [
+        "INFO: success"
+      ],
+      "report_diagnostics": [],
+      "report_exit_code": 0
+    },
+    {
+      "backend": "faer",
+      "deck": "regression/misc/alter-vec.cir",
+      "operations": [
+        "op"
+      ],
+      "observers": 2,
+      "compared_signal_points": 2.0,
+      "max_absolute_error": 0.0,
+      "report_output": [
+        "Note: err1 =  0",
+        "Note: err2 =  0",
+        "INFO: success"
+      ],
+      "report_diagnostics": [],
+      "report_exit_code": 0
+    },
+    {
+      "backend": "faer",
+      "deck": "regression/misc/asrc-tc-2.cir",
+      "operations": [
+        "op",
+        "ac"
+      ],
+      "observers": 16,
+      "compared_signal_points": 16.0,
+      "max_absolute_error": 2.7755575615628914E-17,
+      "report_output": [
+        "INFO: success"
+      ],
+      "report_diagnostics": [],
+      "report_exit_code": 0
+    }
+  ],
+  "compared_signal_points": 198.0,
+  "comparison_bounds": "Established per-observer absolute1e-6 V/1e-9 A plus relative1e-4, AC complex components as established comparator; no exclusions/startup removals/new tolerances",
+  "full_original_stock": [
+    {
+      "path": "regression/model/special-names-1.cir",
+      "exit": 0,
+      "sha256": "99d01423f6b1621725862b7a518f70b84adc0519c9f064d242cded5efa4c9eed",
+      "stdout_sha256": "dd1bd255c5c12d24f3fd552074198cc557f3a2d7b1da84bc0719547b5a7f8093",
+      "stderr_sha256": "e6e62694413e011c61b20bf8d86e2fcbe55110a05829403d79b7ca1486331c46",
+      "stdout": "\r\nNote: No compatibility mode selected!\r\n\r\n\r\nCircuit: * check whether we can swallow special modelnames starting with a digit\r\n\r\nDoing analysis at TEMP = 27.000000 and TNOM = 27.000000\r\n\r\nUsing SPARSE 1.3 as Direct Linear Solver\r\n\r\nNo. of Data Rows : 1\r\nNote: err = -7.75531E-09 -1.12021E-08 -1.38379E-08\r\nNote: allowed_err = 1E-07\r\nINFO: success\r\nngspice-47+ done\r\n",
+      "stderr": "Warning: can't find the initialization file spinit.\r\n"
+    },
+    {
+      "path": "regression/temper/temper-res-1.cir",
+      "exit": 0,
+      "sha256": "b7986b6133f778378e41f5e09b952dfad615854c17486102057d8e7f00107eb9",
+      "stdout_sha256": "e0b3a43416fb0f0b664a35e5219fb3e30f255ec5589f8da4650876632cac8a58",
+      "stderr_sha256": "e6e62694413e011c61b20bf8d86e2fcbe55110a05829403d79b7ca1486331c46",
+      "stdout": "\r\nNote: No compatibility mode selected!\r\n\r\n\r\nCircuit: regression test temper-res-1.cir, tc1 tc2 and tce\r\n\r\nDoing analysis at TEMP = 27.000000 and TNOM = 27.000000\r\n\r\nUsing SPARSE 1.3 as Direct Linear Solver\r\n\r\nNo. of Data Rows : 10\r\nNote: err1 = 2.22045E-16\r\nNote: err2 = 2.22045E-16\r\nNote: err3 = 2.22045E-16\r\nINFO: success\r\nngspice-47+ done\r\n",
+      "stderr": "Warning: can't find the initialization file spinit.\r\n"
+    },
+    {
+      "path": "regression/misc/asrc-tc-1.cir",
+      "exit": 0,
+      "sha256": "bceae1905e3521ce062ea6bca2d520fd434603a27275f83d96f28a1de9ca71a8",
+      "stdout_sha256": "de94c9834ea612f7a2968be6c1e8ff36cca41f0e2fc91e20f19a5af134f6765d",
+      "stderr_sha256": "e6e62694413e011c61b20bf8d86e2fcbe55110a05829403d79b7ca1486331c46",
+      "stdout": "\r\nNote: No compatibility mode selected!\r\n\r\n\r\nCircuit: * test asrc temperature coeff\r\n\r\nDoing analysis at TEMP = 127.000000 and TNOM = 27.000000\r\n\r\nUsing SPARSE 1.3 as Direct Linear Solver\r\n\r\nNo. of Data Rows : 1\r\nDoing analysis at TEMP = 127.000000 and TNOM = 27.000000\r\n\r\nUsing SPARSE 1.3 as Direct Linear Solver\r\n\r\nNo. of Data Rows : 1\r\nINFO: success\r\nngspice-47+ done\r\n",
+      "stderr": "Warning: can't find the initialization file spinit.\r\n"
+    },
+    {
+      "path": "regression/misc/alter-vec.cir",
+      "exit": 0,
+      "sha256": "7946f33023d63798e96162414867196ce064103606ef0fdb333ef649d56eeb40",
+      "stdout_sha256": "d5b390f046fe22992e531e4c99067b1d0698ab27eb3b14ea2a712a32965cd3cb",
+      "stderr_sha256": "0badd7b23001fd5b6d895618e1be3fe7fad82cb49bf795e77e98e7414847f8cb",
+      "stdout": "\r\nNote: No compatibility mode selected!\r\n\r\n\r\nCircuit: * check alter @v1[pulse] = [ 1 2 3 4 5 6 ]\r\n\r\nDoing analysis at TEMP = 27.000000 and TNOM = 27.000000\r\n\r\nUsing SPARSE 1.3 as Direct Linear Solver\r\n\r\nNo. of Data Rows : 1\r\nNote: err1 =  0\r\nNote: err2 =  0\r\nINFO: success\r\nngspice-47+ done\r\n",
+      "stderr": "Warning: can't find the initialization file spinit.\r\nNote: v1: dc value used for op instead of transient time=0 value.\r\n"
+    },
+    {
+      "path": "regression/misc/asrc-tc-2.cir",
+      "exit": 0,
+      "sha256": "5bc2c5d2a9d0c2b88e5a08e6e70db2700008431b436b9b2f279adb7dae702920",
+      "stdout_sha256": "de94c9834ea612f7a2968be6c1e8ff36cca41f0e2fc91e20f19a5af134f6765d",
+      "stderr_sha256": "e6e62694413e011c61b20bf8d86e2fcbe55110a05829403d79b7ca1486331c46",
+      "stdout": "\r\nNote: No compatibility mode selected!\r\n\r\n\r\nCircuit: * test asrc temperature coeff\r\n\r\nDoing analysis at TEMP = 127.000000 and TNOM = 27.000000\r\n\r\nUsing SPARSE 1.3 as Direct Linear Solver\r\n\r\nNo. of Data Rows : 1\r\nDoing analysis at TEMP = 127.000000 and TNOM = 27.000000\r\n\r\nUsing SPARSE 1.3 as Direct Linear Solver\r\n\r\nNo. of Data Rows : 1\r\nINFO: success\r\nngspice-47+ done\r\n",
+      "stderr": "Warning: can't find the initialization file spinit.\r\n"
+    }
+  ],
+  "requirements": [
+    {
+      "uid": "REQ-CONTROL-REAL-VECTOR-ECHO-001",
+      "status": "Draft",
+      "document": "docs/real-vector-echo.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-RESISTOR-TEMPERATURE-001",
+      "status": "Draft",
+      "document": "docs/resistor-temperature.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-CONTROL-WORD-BOOLEAN-001",
+      "status": "Draft",
+      "document": "docs/resistor-temperature.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-CONTROL-REAL-POWER-001",
+      "status": "Draft",
+      "document": "docs/resistor-temperature.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-BEHAVIOR-TEMPERATURE-001",
+      "status": "Draft",
+      "document": "docs/behavioral-temperature.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-REQUESTED-ROOT-TEMPERATURE-001",
+      "status": "Draft",
+      "document": "docs/behavioral-temperature.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-CONTROL-EARLY-FAILURE-001",
+      "status": "Draft",
+      "document": "docs/behavioral-temperature.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-CONTROL-SOURCE-PULSE-STATE-001",
+      "status": "Draft",
+      "document": "docs/source-pulse-alter.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-CONTROL-SOURCE-PULSE-OWNERSHIP-001",
+      "status": "Draft",
+      "document": "docs/source-pulse-alter.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-CORPUS-TERMINAL-ASSERTION-GATE-001",
+      "status": "Draft",
+      "document": "docs/source-pulse-alter.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-BEHAVIORAL-RESISTANCE-LAW-001",
+      "status": "Draft",
+      "document": "docs/behavioral-resistance.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-BEHAVIORAL-RESISTANCE-AC-001",
+      "status": "Draft",
+      "document": "docs/behavioral-resistance.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-BEHAVIORAL-RESISTANCE-TEMP-001",
+      "status": "Draft",
+      "document": "docs/behavioral-resistance.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-BEHAVIORAL-RESISTANCE-WIRE-001",
+      "status": "Draft",
+      "document": "docs/behavioral-resistance.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-VOLTAGE-SCALED-CCCS-LAW-001",
+      "status": "Draft",
+      "document": "docs/voltage-scaled-cccs.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-VOLTAGE-SCALED-CCCS-STAMPS-001",
+      "status": "Draft",
+      "document": "docs/voltage-scaled-cccs.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    },
+    {
+      "uid": "REQ-VOLTAGE-SCALED-CCCS-WIRE-001",
+      "status": "Draft",
+      "document": "docs/voltage-scaled-cccs.sdoc",
+      "scope": "Bounded implementation/verification evidence; no global acceptance status promoted"
+    }
+  ],
+  "strictdoc_final": {
+    "documents": 69,
+    "log": "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/strictdoc.log",
+    "tool": "StrictDoc0.30.4 SDReader"
+  },
+  "preceding_checkpoint_tests": {
+    "rerun_this_final_wake": false,
+    "mutations": {
+      "restored": "native49/client1/frontend926 plus typed client/native oracle/Pester pass",
+      "manual": [
+        {
+          "failed": 5,
+          "detected": true,
+          "mutation": "drop_voltage_partial",
+          "exit": 101,
+          "passed": 3
+        },
+        {
+          "failed": 7,
+          "detected": true,
+          "mutation": "freeze_voltage_modulation",
+          "exit": 101,
+          "passed": 1
+        },
+        {
+          "detected": true,
+          "mutation": "wrong_DTO_discriminator",
+          "exit": 1,
+          "failed": 1
+        }
+      ],
+      "maintained_tool_limit": "No cargo-mutants binary resolved; two native faults injected manually. C# change is DTO registration only; discriminator fault tested manually, no Stryker run claimed."
+    },
+    "source": "evidence/voltage-scaled-cccs.json",
+    "tools": {
+      "cargo": "1.99.1",
+      "schema_validator": "check-jsonschema0.39.0/jsonschema4.26.0, reused isolated prior E installation",
+      "coverlet": "10.1.0",
+      "strictdoc": "0.30.4",
+      "rustc": "1.99.1",
+      "pester": "5.7.1",
+      "sdk": "10.0.403",
+      "vstest": "18.7.0"
+    },
+    "tests": {
+      "client_focused": {
+        "failed": 0,
+        "passed": 1
+      },
+      "strictdoc_documents": 69,
+      "frontend": {
+        "failed": 0,
+        "passed": 926,
+        "skipped": 40
+      },
+      "native": {
+        "ignored": 0,
+        "nextest": "not resolved; cargo test used",
+        "groups": {
+          "voltage_scaled_cccs": 8,
+          "sparse_ac_circuits": 5,
+          "behavioral_resistor": 8,
+          "contracts": 3,
+          "behavioral_voltage": 7,
+          "pspice_switch": 6,
+          "analysis_audits": 12
+        },
+        "failed": 0,
+        "environment_seed": "202611131103",
+        "passed": 49
+      },
+      "pester": {
+        "failed": 0,
+        "passed": 2,
+        "version": "5.7.1",
+        "skipped": 0
+      },
+      "syntax": "Unchanged syntax; suite not rerun this slice. Prior531/1 is historical.",
+      "managed_build": "0 warnings,0 errors",
+      "schema": {
+        "negative": 4,
+        "failed": 0,
+        "positive": 6,
+        "schema_sha256": "33a88603ad0666ce59e40647f385fef983caf98709268bf43d5d3eb332a8e33a",
+        "tool": "check-jsonschema0.39.0/jsonschema4.26.0"
+      },
+      "properties": {
+        "related_fixed_seeds": {
+          "analysis_audits": "2026103006/32",
+          "behavioral_resistance": "202611131001/128",
+          "behavioral_voltage": "2026111101/64",
+          "switch": "environment202611131103/128"
+        },
+        "persisted_regression": "cc a9a0ab7c158088c495805d7a2dad0c0c0371c1e1a9947ef38ae7f13e8012e2f7",
+        "tool": "proptest1.9.0",
+        "current_derivative_seed": "202611131101",
+        "current_derivative_cases": 128,
+        "minimized": [
+          {
+            "minimized": [
+              "minimal failing input: gain = -74.75044421104471, coefficient = 1.6827466428674585, current = 0.02313572484678969, volts = 0.0"
+            ],
+            "mutation": "drop_voltage_partial"
+          },
+          {
+            "minimized": [
+              "minimal failing input: gain = -74.75044421104471, coefficient = 1.6827466428674585, current = 0.0, volts = 0.3709994438752729"
+            ],
+            "mutation": "freeze_voltage_modulation"
+          }
+        ],
+        "typed_boundary_fuzz_cases": 128,
+        "boundary_scope": "Generated node indices and signed IEEE coefficients exercise structural refusal; no coverage-guided fuzz process",
+        "typed_boundary_fuzz_seed": "202611131102"
+      }
+    },
+    "coverage": {
+      "native": {
+        "files": 48,
+        "model": {
+          "sha256": "feba120d7b2f6c3194533ae950515cd3e345583fcb74459217ba19beeb87c323",
+          "file": "src/voltage_scaled_cccs.rs",
+          "lines": {
+            "count": 29,
+            "covered": 29,
+            "percent": 100
+          }
+        },
+        "branches": null,
+        "lines_covered": 1755,
+        "lines_valid": 7902,
+        "report": "E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/native-coverage-final/summary.json",
+        "scope": "Owned library exercised by named integration test; vendor/test source excluded"
+      },
+      "managed": {
+        "client-restored-coverage": {
+          "branches_valid": 840,
+          "sha256": "882bfd2154617d28d962fd130e9dba64a0af545770b476c2aacee702360fa372",
+          "branches_covered": 279,
+          "lines_covered": 8463,
+          "report": "E:\\Artifacts\\Spice-sol-earlytransport-a1cd63e-20261113T1110\\client-restored-coverage\\a6fb1fff-f939-4d29-aacf-982442f54556\\coverage.cobertura.xml",
+          "lines_valid": 13909
+        },
+        "frontend-restored-coverage": {
+          "branches_valid": 10287,
+          "sha256": "41afe11bbc6799d6c2a310bf020e3336ca7fff664065caa4c477eb8ea48d19e5",
+          "branches_covered": 6500,
+          "lines_covered": 21845,
+          "report": "E:\\Artifacts\\Spice-sol-earlytransport-a1cd63e-20261113T1110\\frontend-restored-coverage\\31569730-8deb-45f5-a3cb-a1c63b246fbe\\coverage.cobertura.xml",
+          "lines_valid": 27740
+        }
+      },
+      "powershell": {
+        "command_percent": 92.9078014184397,
+        "branches": null,
+        "limitation": "Pester line counters coalesce multiple commands; ten throw commands remain unexecuted. No measured branch coverage.",
+        "report": "E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/pester-coverage.xml",
+        "jacoco_lines_missed": 0,
+        "commands_valid": 141,
+        "commands_covered": 131,
+        "jacoco_lines_covered": 54,
+        "scope": "Test-VoltageScaledCccsOracle.ps1 through2 Pester integration checks"
+      },
+      "limitations": [
+        "Managed scopes include generated metadata/transitive code and differ from one another.",
+        "Native focused8-test coverage is not full49-test regression coverage. Stable Rust branch coverage unavailable.",
+        "No vendor C/C++, Linux, GPU, full native transient or full BJT charge qualification."
+      ]
+    }
+  },
+  "limitations": [
+    "No new original success; cumulative count stays5.",
+    "BJT VA still requires coupled charge/base-resistance/dialect/observer qualification; no producer admission changed.",
+    "Initial authored helper used reserved PowerShell Error variable; corrected before successful current and Pester runs.",
+    "An initial direct Parse probe passed a boolean to ParserLimits; replaced by a verified concrete prepared=false result.",
+    "No refined-deck or control diagnostic is counted as original agreement.",
+    "Existing MOS stock-default mismatch remains open."
+  ],
+  "remaining": [
+    "rtlinv/BJT Early charge coupling, history, PNP and base resistance assumptions remain open; producer unchanged",
+    "Temper2 stock-default observer mismatch; refined-control diagnostic uncounted",
+    "MOS memory and RC stock-default mismatches remain open",
+    "Behavioral resistance transient/pole-zero/multi-control unqualified",
+    "Nonlinear AC physical audit explicitly not_checked without retained bias",
+    "Four unchanged strict-Clippy findings; normal Clippy warns",
+    "Windows/MSVC only; native vendor C/C++, stable Rust branch coverage, Linux/GPU and full model qualification unavailable"
+  ],
+  "policy": "Serialized timed owned process trees; no custom memory caps/admission, no push/merge/CI/schematic work",
+  "raw_hashes": {
+    "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/full-stock-originals.json": "80ac61c383416a408c828a446a40c7b5df68d551856d28a9dbd8f54c2771fab7",
+    "E:\\Artifacts\\Spice-sol-earlytransport-a1cd63e-20261113T1110\\build\\bin\\Simulator.Frontend.Tests\\debug\\Antlr4.Runtime.Standard.dll": "0440e3d2c5906326e04df87d6a5272192b7d29099901ba4215ca9e0f5dca7591",
+    "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/StockOriginals.ps1": "2b5ad31b64701ad5994a7437ced71202634c61b69524dd6fd3cc7940dcf0c21b",
+    "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/strictdoc.log": "c3cb364ab0679e2a228a9d8fe603cd891c35fbfbbf5575f8d7820eef6333d65d",
+    "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/ReplayFaer.ps1": "9f264d1acd3b01bf284cfc865520cd55f6b1898c50df0b1519e7014920464c35",
+    "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/Timed.ps1": "e8c06eaa4c4644ab0f2aa6a911f2798213e48311332a1cf5e50fff0f4ddb1e1f",
+    "E:\\Artifacts\\Spice-sol-earlytransport-a1cd63e-20261113T1110\\build\\bin\\Simulator.Frontend.Tests\\debug\\Simulator.Client.dll": "3b8a494ea73868d612250a4120d3e66a7a6115d6a1890131c860ff13aedc61f9",
+    "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/Replay.ps1": "909fa86eeb96e1ccc79685407d12c1c571488e6e23de844ba66d5564dd449ed7",
+    "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/replay-faer/summary.json": "22cafe9e5cbf0ecf42ab8066d1dc6622e5a1c87fbcafabbcee74f1609bb3df8f",
+    "E:\\Artifacts\\Spice-sol-earlytransport-a1cd63e-20261113T1110\\build\\bin\\Simulator.Frontend.Tests\\debug\\Simulator.Syntax.dll": "a964b53d9ce1ec3df3047c00669abce0d7db5527f74d830f6d303b00aff8c0ba",
+    "E:\\Artifacts\\Spice-sol-earlytransport-a1cd63e-20261113T1110\\build\\bin\\Simulator.Frontend.Tests\\debug\\Simulator.RequestedQualification.dll": "ac8d3d3499dd7064c47195548b28872fc859dc8281e314cdfda41e85ef18d0b0",
+    "E:/Artifacts/Spice-sol-earlytransport-a1cd63e-20261113T1110/target/debug/circuit-simulator.exe": "ccfa47b6b42ea066f56f3b33404fbf4c72731ded32ad35d45f949934b57c033a",
+    "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/replay-lu/summary.json": "70a8642d33c4a469382f40389cf2b69e86cc66558f4a35f1e37f0fdbedf00ca1",
+    "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/inventory.json": "7dde3bcd940ef4a707b86d84e301f4fbecfa025a8853e1176c6857f95b78404c",
+    "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/Docs.ps1": "51bac202bcb9326ba81643e1bd44a8309820f57a6731eb94910e999f207a254b",
+    "E:\\Artifacts\\Spice-sol-earlytransport-a1cd63e-20261113T1110\\build\\bin\\Simulator.Frontend.Tests\\debug\\Simulator.Frontend.dll": "e5c39d0ea0cacb9ff4cdb4bc82d0671ad34a82d09a593f54906538543c25a4d9"
+  },
+  "reproduction": [
+    "& 'E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/Replay.ps1' -Seconds 240",
+    "& 'E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/ReplayFaer.ps1' -Seconds 240",
+    "& 'E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/StockOriginals.ps1' -Seconds 180",
+    "& 'E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-final-697bfea-20261113T1210/Docs.ps1' -Seconds 120"
+  ],
+  "reproduction_note": "Output directories must be fresh. Copy bounded scripts and frozen inventory to a new checked E run root; scripts use PSScriptRoot. Paths to reused current binaries/corpus remain explicit. No output directories overwritten."
+}
