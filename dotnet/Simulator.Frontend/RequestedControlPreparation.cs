@@ -130,6 +130,11 @@ internal static partial class RequestedControlPreparation
       if(!accepted)return Fail("unsupported_control_setting:"+(name??"target"),setting.Range);
      }
      omissions.Add(new(0,"control_reporting_setting",command.Name,"reporting_setting_not_executed",command.Range));break;
+    case "source_parameter_alter":
+     if(lastAnalysisStart<0||command.Range.Start<=lastAnalysisStart||block.Commands.Count(c=>c.Kind=="analysis")!=1||
+        block.Commands.Single(c=>c.Kind=="analysis").Analysis?.Kind!="op"||command.SourceParameterAlteration?.Values.Length!=7)
+      return Fail("unsupported_source_parameter_alter_profile",command.Range);
+     omissions.Add(new(0,"control_source_parameter",command.Name,"source_parameter_alter_executed_separately",command.Range));break;
     case "postprocessing":
      if(ControlSuffixAdmission.Admit(command,lastAnalysisStart,locals) is {} suffixFailure)return Fail(suffixFailure,command.Range);
      omissions.Add(new(0,"control_postprocessing",command.Name,"postprocessing_not_executed",command.Range));break;

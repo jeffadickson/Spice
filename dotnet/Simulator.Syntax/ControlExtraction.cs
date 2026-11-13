@@ -39,7 +39,7 @@ internal static class ControlExtraction
    try{
     var tree=parser.controlCommandProfile();var item=tree.GetChild(0) as ParserRuleContext;
     if(item==null)return new("","comment",null,[],physical);
-    AnalysisSyntax? analysis=null;var name=item.Start.Text.ToLowerInvariant();var kind="unsupported";ImmutableArray<ControlSettingSyntax> settings=[];ControlPostprocessingSyntax? postprocessing=null;string? redirect=null;string? argument=null;ControlForeachSyntax? foreachHeader=null;
+    AnalysisSyntax? analysis=null;var name=item.Start.Text.ToLowerInvariant();var kind="unsupported";ImmutableArray<ControlSettingSyntax> settings=[];ControlPostprocessingSyntax? postprocessing=null;string? redirect=null;string? argument=null;ControlForeachSyntax? foreachHeader=null;ControlSourceParameterAlterSyntax? sourceAlter=null;
     switch(item){
      case SpiceParser.ControlOpContext:kind="analysis";analysis=new(scope,"op",[],[],physical);break;
      case SpiceParser.ControlAcContext ac:kind="analysis";analysis=new(scope,"ac",[ac.identifier(1).GetText()],ac.controlNumber().Select(Capture).ToImmutableArray(),physical);break;
@@ -72,6 +72,14 @@ internal static class ControlExtraction
      case SpiceParser.ControlReportContext:kind=print&&tokens.GetTokens().Any(t=>t.Text==">")?"unsupported":"report";break;
      case SpiceParser.ControlLetContext let:
       kind="postprocessing";postprocessing=new(ControlPostprocessingKind.Let,[let.identifier(1).GetText()],Capture(let.expression()));break;
+     case SpiceParser.ControlAlterSourceContext alter:
+      var reference=alter.sourceParameterReference();
+      var sourceName=reference.identifier(0).GetText();
+      if(sourceName.StartsWith('@')&&sourceName.Length>1&&reference.identifier(1).GetText().Equals("pulse",StringComparison.OrdinalIgnoreCase)){
+       kind="source_parameter_alter";
+       sourceAlter=new(sourceName[1..],ControlSourceParameterKind.Pulse,alter.controlNumber().Select(Capture).ToImmutableArray(),physical);
+      }
+      break;
      case SpiceParser.ControlComposeContext compose:
       kind="postprocessing";postprocessing=new(ControlPostprocessingKind.Compose,[compose.identifier(1).GetText()],null){Values=compose.expression().Select(Capture).ToImmutableArray()};break;
      case SpiceParser.ControlDefineContext define:
@@ -96,7 +104,7 @@ internal static class ControlExtraction
          &&SimpleName(target)&&ControlVectorExecution.IsLoopTemplate(template.Text))kind="loop_set";
       break;
     }
-    return new(name,kind,analysis,settings,physical,kind=="unsupported"?"unsupported_control_command:"+name:null){GrammarRule=SpiceParser.ruleNames[item.RuleIndex],Postprocessing=postprocessing,Argument=argument??token.Text[(item.Start.StopIndex+1)..].Trim(),RedirectTarget=redirect,Foreach=foreachHeader};
+    return new(name,kind,analysis,settings,physical,kind=="unsupported"?"unsupported_control_command:"+name:null){GrammarRule=SpiceParser.ruleNames[item.RuleIndex],Postprocessing=postprocessing,Argument=argument??token.Text[(item.Start.StopIndex+1)..].Trim(),RedirectTarget=redirect,Foreach=foreachHeader,SourceParameterAlteration=sourceAlter};
    }catch(ParseCanceledException){return new(token.Text,"unsupported",null,[],physical,"unsupported_control_syntax");}
   }
  }

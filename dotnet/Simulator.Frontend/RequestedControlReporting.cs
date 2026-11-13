@@ -55,6 +55,10 @@ public static partial class RequestedAnalysis
         if(operation.Kind=="dc"&&operation.CoordinateUnit=="degC")inputs.Add("temp-sweep",operation.Coordinates.ToArray());
         if(operation.Kind=="tran")inputs.Add("time",samples.Select(s=>s.TimeS).ToArray());
         var prefix=plan.ProgramOmissions.Any(o=>o.Kind=="control_prefix_reporting");
+        var alterations=blocks[0].Commands.Where(c=>c.SourceParameterAlteration!=null).Select(c=>c.SourceParameterAlteration!).ToArray();
+        var commands=prefix?blocks[0].Commands:blocks[0].Commands.Where(c=>c.Range.Start>origin.CommandRange.Start);
+        if(alterations.Length!=0)
+            return ControlVectorExecution.ExecuteWithSourceParameters(commands,inputs,RequestedSourceParameterBinding.Bind(circuit,alterations),prefix,plan.ControlConstants);
         return ControlVectorExecution.Execute(prefix?blocks[0].Commands:
             blocks[0].Commands.Where(c=>c.Range.Start>origin.CommandRange.Start),inputs,activateAtAnalysis:prefix,constants:plan.ControlConstants);
 

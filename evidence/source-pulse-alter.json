@@ -1,0 +1,243 @@
+{
+  "base_commit": "bd3bfb4bea057a3a1db2bb82accba970ee4723ea",
+  "source_dirty": true,
+  "artifact_root": "E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920",
+  "original": "regression/misc/alter-vec.cir",
+  "input_sha256": "7946f33023d63798e96162414867196ce064103606ef0fdb333ef649d56eeb40",
+  "corpus_pin": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "scope": "Post-OP pulse parameter metadata and reporting only; no new device physics or alteration before later analyses",
+  "baseline": "Fresh original refused unsupported_control_syntax",
+  "original_analyses": [
+    {
+      "kind": "op",
+      "observables": [
+        {
+          "engine_signal": "v(n1)",
+          "native_signal": "v(1)",
+          "unit": "V",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-06,
+          "relative_tolerance": 0.0001
+        },
+        {
+          "engine_signal": "i(e0)",
+          "native_signal": "i(v1)",
+          "unit": "A",
+          "points": 1,
+          "failed": 0,
+          "maximum_absolute_error": 0,
+          "absolute_tolerance": 1E-09,
+          "relative_tolerance": 0.0001
+        }
+      ],
+      "gaps": []
+    }
+  ],
+  "original_report": {
+    "output": [
+      "Note: err1 =  0",
+      "Note: err2 =  0",
+      "INFO: success"
+    ],
+    "locals": {
+      "err1": [
+        0
+      ],
+      "vec1": [
+        -1,
+        2,
+        0.003,
+        4E-06,
+        4.9999999999999996E-06,
+        0.006,
+        0.007
+      ],
+      "vec2": [
+        2,
+        5,
+        1.1000000000000001E-08,
+        1.2000000000000002E-08,
+        1.3E-08,
+        5.4E-08,
+        1.05E-07
+      ],
+      "gold2": [
+        2,
+        5,
+        1.1000000000000001E-08,
+        1.2000000000000002E-08,
+        1.3E-08,
+        5.4E-08,
+        1.05E-07
+      ],
+      "err2": [
+        0
+      ],
+      "gold1": [
+        -1,
+        2,
+        0.003,
+        4E-06,
+        4.9999999999999996E-06,
+        0.006,
+        0.007
+      ],
+      "success": [
+        2
+      ]
+    },
+    "exit_code": 0,
+    "diagnostics": [],
+    "redirected": {},
+    "source_parameters": {
+      "@v1[pulse]": [
+        2,
+        5,
+        1.1000000000000001E-08,
+        1.2000000000000002E-08,
+        1.3E-08,
+        5.4E-08,
+        1.05E-07
+      ]
+    }
+  },
+  "original_assertion_tolerance": 1E-15,
+  "native_full_original_exit": 0,
+  "authored_exits": {
+    "negative_full_native_exit": 1,
+    "current_source_example_full_native_exit": 0
+  },
+  "negative_fixture": {
+    "status": "requested_control_execution_failed",
+    "numerical_agreement": true,
+    "whole_program_agreement": false,
+    "reporting": "failed_assertions"
+  },
+  "runtime": {
+    "engine": "E:/Artifacts/Spice-behavioral-cdd4560/verified-engine/circuit-simulator.exe",
+    "engine_sha256": "9e32eeef6a23690f65eacf6d62ef2d983ab81be9e5d4721bbc22ff4a6f62b98c",
+    "engine_provenance": "Previously certified cdd4560 behavioral engine; no native build or Rust qualification this hour",
+    "oracle": "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe",
+    "oracle_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "oracle_version": "******\r\n** ngspice-47+ : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2026, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\r\n** Creation Date: Sat Oct 24 22:38:38 UTC 2026\r\n******\r\n"
+  },
+  "guidance": {
+    "file": "E:/Artifacts/RSpice-inspection-20261108T032637Z/source/crates/rspice-core/src/engine/control.rs",
+    "sha256": "27af126ac8059390cf69058e2c5982fc7361e9364930ed034eaac0a539e22b68",
+    "lines": "1040-1130",
+    "scope": "Target parsing and private-candidate validation/publish discipline; pinned RSpice has SIN-vector support here, not this pulse-vector implementation"
+  },
+  "tests": {
+    "syntax": {
+      "passed": 531,
+      "skipped": 1,
+      "failed": 0
+    },
+    "frontend": {
+      "passed": 916,
+      "skipped": 40,
+      "failed": 0
+    },
+    "restored_focused": {
+      "failed": 0,
+      "passed": 11
+    },
+    "strictdoc_documents": 67,
+    "property": {
+      "mutant_counterexample": "NonNegativeInt 0, after 1 test and 1 shrink",
+      "framework": "FsCheck",
+      "cases": 128,
+      "scope": "Seven-field vector order, cardinality and borrowed ownership",
+      "replay": "5006,2026111301"
+    },
+    "negative": "Unknown targets, unsupported parameters, nonfinite/wrong-cardinality vectors, malformed separators, before/interphase/nested effects, non-root sources",
+    "standalone_fuzz": "Not run this hour; seeded FsCheck and malformed-input tests ran"
+  },
+  "mutation": {
+    "tool": "Stryker.NET 5.0.0",
+    "selected_span": "RequestedSourceParameterBinding waveform kind/cardinality and root-origin guards",
+    "tested": 8,
+    "killed": 8,
+    "survived": 0,
+    "timeouts": 0,
+    "excluded_compile_errors": 2706,
+    "excluded_by_filter": 3117,
+    "manual": {
+      "restored_passed": 11,
+      "failed_tests": 2,
+      "killed": true,
+      "passed_tests": 9,
+      "change": "remove pulse parameter read-mirror replacement"
+    },
+    "manual_gate": {
+      "mutation": "restore ordered-only terminal failure gate",
+      "detected": true,
+      "regression": "negative fixture erroneously claimed whole-program native_agreed=true under mutant",
+      "reporting_status": "failed_assertions"
+    },
+    "report": "E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/stryker/reports/mutation-report.json"
+  },
+  "coverage": {
+    "syntax-final-coverage": {
+      "lines_valid": 11120,
+      "lines_covered": 7300,
+      "branches_valid": 4734,
+      "branches_covered": 2742,
+      "report": "E:\\Artifacts\\Spice-sol-sourcealter-bd3bfb4-20261113T0920\\syntax-final-coverage\\ab757147-081d-4b35-88e0-ab787a232e90\\coverage.cobertura.xml",
+      "sha256": "ade9bb09d9d4043b526c22587da4ecd49db610a466557316c5afd2d5202378b6"
+    },
+    "frontend-final-coverage": {
+      "lines_valid": 27247,
+      "lines_covered": 21388,
+      "branches_valid": 10227,
+      "branches_covered": 6439,
+      "report": "E:\\Artifacts\\Spice-sol-sourcealter-bd3bfb4-20261113T0920\\frontend-final-coverage\\67769d47-1f54-47a1-aa37-81cc24cde835\\coverage.cobertura.xml",
+      "sha256": "31559b10785d378c599f06b6bb774974e7a5d93a133450c4d852b450c874f193"
+    }
+  },
+  "limitations": [
+    "Coverage scopes differ and include generated grammar/transitive assemblies; no Rust coverage.",
+    "40 optional frontend integration tests skipped; explicit coordinator/native replay executed separately.",
+    "First syntax suite failed missing alter grammar witness, corrected before final 531-pass suite.",
+    "Initial authored example native run exposed missing bracket spaces; examples corrected, native final exits 0 and 1; failed attempt retained.",
+    "BJT legacy diagnostic modifications refused unsupported_bjt_profile and are uncounted; general VA dynamics and nonlinear behavioral resistor remain open.",
+    "mosmem original stock-default mismatch remains open; refined controls are not original closure."
+  ],
+  "source_hashes": {
+    "compat/ngspice/grammar-implementation.json": "63a7f1de72ed61ef12a66d3b97f5384791af7da0af243c79d2f99b58c3a63393",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "63c314142ff5f8c1879ec2c46f187bb76787c62d6aeb049f7f25bfa45d3dd55b",
+    "dotnet/Simulator.Frontend/RequestedControlPreparation.cs": "3b69fc671ab8c1a064a49aad3712deeaf8e9cdd5d3e4f8ec7dde12cc6ad3719b",
+    "dotnet/Simulator.Frontend/RequestedControlReporting.cs": "d9d780681d87d8b1afbbc26809917e6ba36b8bf1aedad0cf5c2191b4a7d171ca",
+    "dotnet/Simulator.RequestedQualification/RequestedCorpus.cs": "7d92be8b65130ad4050c9e43ac841781ad3686ec9e532b5de046610c63eacb16",
+    "dotnet/Simulator.Syntax.Tests/GrammarImplementationTests.cs": "162b8b76463de5dd59804092120786b7d8d6810002456fdbd8c20577647d10c8",
+    "dotnet/Simulator.Syntax/ControlExtraction.cs": "b3cef88acb91936ccc4adeb9463826438d4ddfc3a83ff4f0bffe81931a260e55",
+    "dotnet/Simulator.Syntax/ControlSyntax.cs": "ceb11ff1815375cee2bd3008689e559565ea8b30a906e9e4ff6968aa33efef5f",
+    "dotnet/Simulator.Syntax/ControlVectorExecution.cs": "be4f1b622ba776c6cf98aa695c9abf836a496737f915ca502d668b0864ab0ae6",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "4d6665383bdadcea48b61b66d08f6fdbec0206a9ec3ce4c649365b2384af1499",
+    "docs/source-pulse-alter.sdoc": "f6f0d7ceb31d3ba6036515e8837674c46a1c806ef91da56e46e82db0f9ec2405",
+    "dotnet/Simulator.Frontend.Tests/SourceAlterTests.cs": "2fb25a70429c2e320c478498d1b95ed3ee7e494f282d946aea46ab34f574a9e9",
+    "dotnet/Simulator.Frontend/RequestedSourceParameterBinding.cs": "62c0fa11e81ded38899d4c416d8ca2bae863194b063a360b3cd34525242bd9ac",
+    "dotnet/Simulator.Syntax.Tests/ControlSourceAlterTests.cs": "cd3a11d87609ce0724b4e55c7a9b139eea86ae49c139dcd09484e306e72256ad",
+    "examples/source-pulse-alter.cir": "05a5a0879d61e1ca67d185b86b77a3f6e8f601332409efaa93f69ebb49432871",
+    "tests/fixtures/source-pulse-alter-failed-assertion.cir": "d56c408bf0b7cf97aa3482b6d54cccbaf359ed76cd4ffd07437080a4af4e6b34"
+  },
+  "reproduction": [
+    "& 'E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/FullSyntax.ps1' -Seconds 240",
+    "& 'E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/FullFrontend.ps1' -Seconds 300",
+    "& 'E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/FinalReplayV2.ps1' -Seconds 120",
+    "& 'E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/Docs.ps1' -Seconds 120",
+    "& 'E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/Timed.ps1' -Script 'E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/Stryker.ps1' -Seconds 600"
+  ],
+  "tools": {
+    "sdk": "10.0.403",
+    "vstest": "18.7.0",
+    "strictdoc": "0.30.4",
+    "antlr": "4.13.1",
+    "coverlet": "10.1.0",
+    "stryker": "5.0.0",
+    "source_guidance": "pinned local RSpice29c28a source, no new dependency selected"
+  },
+  "restored_final_replay": "E:/Artifacts/Spice-sol-sourcealter-bd3bfb4-20261113T0920/restored-final-replay/summary.json"
+}

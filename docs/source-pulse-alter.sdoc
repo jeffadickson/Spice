@@ -1,0 +1,76 @@
+[DOCUMENT]
+TITLE: Post-OP source pulse parameter state
+
+[TEXT]
+STATEMENT: >>>
+Acceptance target: unchanged original regression/misc/alter-vec.cir, original
+OP observables, complete original parameter reads/alter/assertions and stock
+ngspice full program, without weaker bounds. This is source-parameter state
+and reporting support, not new device physics or alteration before a later
+analysis. The task's BJT diagnostic copies remain diagnostic and uncounted:
+VA is only supported by a selected-DC outer adapter, not general native dynamics.
+No approximation or promotion of that profile is authorized by this slice.
+
+Reuse existing generated control metadata, scalar number evaluation, bounded
+vector interpreter and prepared source waveform metadata. No additional parser,
+legacy runtime or dependency. Retained decisions are in spicesharp-evaluation.md.
+Pinned RSpice source guides parameter vector ownership; independently execute
+stock ngspice on the unchanged original. Add failing tests, typed pulse alteration,
+explicit borrowed parameter slots, post-OP-only admission and complete reporting
+failure gating; collect coverage, properties, malformed inputs, mutation and real
+StrictDoc evidence. Preserve no-memory-cap campaign policy and all E: artifacts.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-SOURCE-PULSE-STATE-001
+STATUS: Draft
+TITLE: Typed post-OP pulse parameter vector operation
+STATEMENT: >>>
+An admitted source pulse alteration shall retain a typed source identity,
+parameter kind and seven source-located scalar literals. Only an existing root
+independent source with seven explicit pulse parameters may be targeted, after
+the sole OP analysis. Alteration before or between analyses, nested alteration,
+unknown sources, unsupported parameters and malformed vectors shall refuse.
+The operation shall update only owned parameter metadata and preserve all
+completed physical result vectors and the original OP request.
+<<<
+COMMENT: >>>
+Implementation: generated control alter production, SourceParameterAlteration,
+RequestedControlPreparation and RequestedAnalysis. Verification: SourceAlterTests,
+ControlSourceAlterTests and unchanged original alter-vec.cir.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-SOURCE-PULSE-OWNERSHIP-001
+STATUS: Draft
+TITLE: Atomic owned source parameter state
+STATEMENT: >>>
+Pulse parameter reads shall return the currently owned seven-element vector.
+The initial parameter arrays and physical input arrays borrowed from callers
+shall never be mutated. An alteration shall validate its target, cardinality
+and finite scalar values before publishing replacement state. Failed reporting
+shall publish no successful result or partial external effect. Pulse amplitudes
+retain source units and the remaining five entries retain seconds; no additional
+physical timing defaults or later simulation semantics shall be inferred.
+<<<
+COMMENT: >>>
+Verification: negative/alias/ownership tests and reproducible FsCheck properties;
+evidence/source-pulse-alter.json. Numerical OP agreement is distinct from command
+execution, assertion success and future-analysis source alteration support.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CORPUS-TERMINAL-ASSERTION-GATE-001
+STATUS: Draft
+TITLE: Terminal failure prevents whole-program agreement
+STATEMENT: >>>
+Every attempted required terminal reporting region shall inspect both diagnostics
+and exit status. A failed assertion or reporting error shall prevent whole-program
+native agreement even when individual numerical analyses agree. Ordered and
+single-analysis reporting shall share this failure gate; unattempted reporting
+shall not be represented as executed.
+<<<
+COMMENT: >>>
+Implementation: RequestedCorpus. Verification: authored negative pulse assertion
+fixture, preserving its numerical agreement and explicit program failure.
+<<<

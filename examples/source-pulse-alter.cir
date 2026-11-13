@@ -1,0 +1,15 @@
+Post-OP pulse parameter state example
+Isrc output 0 DC .25 PULSE(-1 2 3m 4u 5u 6m 7m)
+Rload output 0 1k
+.control
+op
+let before=@isrc[pulse]
+alter @isrc[pulse] = [ 2 5 11n 12n 13n 54n 105n ]
+let after=@isrc[pulse]
+if after[0] ne 2
+  quit 1
+end
+echo source parameters updated
+quit 0
+.endc
+.end

@@ -107,6 +107,11 @@ public static partial class RequestedAnalysis
   var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,handledPhysicalStarts);
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
+  var sourceAlterations=catalog.ControlBlocks.SelectMany(b=>b.Commands).Where(c=>c.SourceParameterAlteration!=null).Select(c=>c.SourceParameterAlteration!).ToArray();
+  if(sourceAlterations.Length!=0){
+   var parameters=RequestedSourceParameterBinding.Bind(prepared,sourceAlterations);
+   if(sourceAlterations.Any(a=>!parameters.ContainsKey(a.Target)))return Fail("unsupported_source_parameter_alter_target",sourceAlterations.First(a=>!parameters.ContainsKey(a.Target)).Range);
+  }
   if(limits.TemperatureCelsius!=27&&!RequestedTemperaturePreparation.Supports(prepared))
     return Fail("unsupported_operating_temperature_profile",catalog.Cards.FirstOrDefault(c=>c.OperatingTemperature!=null)?.Range);
   if(baseRequest.Circuit.Elements.Any(e=>e is BsimSoiFdReference) &&

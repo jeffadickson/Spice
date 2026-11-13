@@ -1938,5 +1938,50 @@
     ],
     "extraction": "structural",
     "limitation": "Retains control port spelling; node binding and transfer validation occur in the requested preparation layer."
+  },
+  {
+    "rule": "controlAlterSource",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Syntax/ControlVectorExecution.cs",
+      "dotnet/Simulator.Frontend/RequestedSourceParameterBinding.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "REQ-CONTROL-SOURCE-PULSE-STATE-001",
+      "REQ-CONTROL-SOURCE-PULSE-OWNERSHIP-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/ControlSourceAlterTests.cs",
+      "dotnet/Simulator.Frontend.Tests/SourceAlterTests.cs"
+    ],
+    "limitation": "Seven explicit finite pulse literals, existing root independent source, after sole OP. No later analysis, physical request mutation, nested alter or general alter command is admitted.",
+    "commands": [
+      "alter"
+    ]
+  },
+  {
+    "rule": "sourceParameterReference",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/ControlExtraction.cs",
+      "dotnet/Simulator.Syntax/ControlVectorExecution.cs",
+      "dotnet/Simulator.Frontend/RequestedSourceParameterBinding.cs",
+      "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+    ],
+    "requirements": [
+      "REQ-CONTROL-SOURCE-PULSE-STATE-001",
+      "REQ-CONTROL-SOURCE-PULSE-OWNERSHIP-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Syntax.Tests/ControlSourceAlterTests.cs",
+      "dotnet/Simulator.Frontend.Tests/SourceAlterTests.cs"
+    ],
+    "limitation": "Seven explicit finite pulse literals, existing root independent source, after sole OP. No later analysis, physical request mutation, nested alter or general alter command is admitted."
   }
 ]

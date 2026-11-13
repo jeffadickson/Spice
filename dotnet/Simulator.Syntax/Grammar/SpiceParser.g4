@@ -163,7 +163,7 @@ expression: expression (POWER | CARET) expression
 
 // A bounded semantic entry over generated BODY tokens of one COMMAND_LINE.
 // Numeric command arguments deliberately exclude vectors, substitution and state.
-controlCommandProfile: (controlOp | controlAc | controlDc | controlTran | controlPz | controlRun | controlSet | controlLet | controlCompose | controlDefine | controlUnlet | controlIf | controlForeach | controlBoundary | controlEcho | controlRedirect | controlPowerVectorType | controlReport | controlQuit | controlUnknown)? EOF;
+controlCommandProfile: (controlOp | controlAc | controlDc | controlTran | controlPz | controlRun | controlSet | controlLet | controlAlterSource | controlCompose | controlDefine | controlUnlet | controlIf | controlForeach | controlBoundary | controlEcho | controlRedirect | controlPowerVectorType | controlReport | controlQuit | controlUnknown)? EOF;
 controlOp: {TokenStream.LT(1).Text.Equals("op",StringComparison.OrdinalIgnoreCase)}? identifier;
 controlAc: {TokenStream.LT(1).Text.Equals("ac",StringComparison.OrdinalIgnoreCase)}? identifier identifier controlNumber controlNumber controlNumber;
 controlDc: {TokenStream.LT(1).Text.Equals("dc",StringComparison.OrdinalIgnoreCase)}? identifier identifier controlNumber controlNumber controlNumber (identifier controlNumber controlNumber controlNumber)?;
@@ -175,6 +175,9 @@ controlSet: {TokenStream.LT(1).Text.Equals("set",StringComparison.OrdinalIgnoreC
 // These productions preserve declarations; they do not evaluate result vectors
 // or user functions. The requested compiler qualifies only a reporting suffix.
 controlLet: {TokenStream.LT(1).Text.Equals("let",StringComparison.OrdinalIgnoreCase)}? identifier identifier EQUAL expression;
+// Literal vector replacement is distinct from arithmetic compose expressions.
+controlAlterSource: {TokenStream.LT(1).Text.Equals("alter",StringComparison.OrdinalIgnoreCase)}? identifier sourceParameterReference EQUAL LBRACKET controlNumber (COMMA? controlNumber)* RBRACKET;
+sourceParameterReference: identifier LBRACKET identifier RBRACKET;
 // Each complete expression must yield a scalar. Binary operators belong to
 // that expression (native `values 1 -2 3` yields [-1,3]); commas separate items.
 controlCompose: {TokenStream.LT(1).Text.Equals("compose",StringComparison.OrdinalIgnoreCase)}? identifier identifier {TokenStream.LT(1).Text.Equals("values",StringComparison.OrdinalIgnoreCase)}? identifier expression (COMMA? expression)*;

@@ -15,6 +15,8 @@ public sealed record ControlCommandSyntax(string Name,string Kind,AnalysisSyntax
     public ControlPostprocessingSyntax? Postprocessing { get; init; }
     /// <summary>Qualified reporting loop variable and source vector names.</summary>
     public ControlForeachSyntax? Foreach { get; init; }
+    /// <summary>Typed source-parameter operation; no physical dispatch occurs during reporting.</summary>
+    public ControlSourceParameterAlterSyntax? SourceParameterAlteration { get; init; }
 }
 /// <summary>Bounded foreach header over a named real reporting vector.</summary>
 public sealed record ControlForeachSyntax(string Variable,string Vector);
@@ -40,3 +42,17 @@ public sealed record ControlPostprocessingSyntax(ControlPostprocessingKind Kind,
 }
 /// <summary>One original control envelope and ordered physical command records.</summary>
 public sealed record ControlBlockSyntax(int ScopeId,SourceRange Range,SourceRange OpenRange,SourceRange CloseRange,ImmutableArray<ControlCommandSyntax> Commands,string? Diagnostic=null);
+
+/// <summary>Source parameters supported by the bounded post-OP operation.</summary>
+public enum ControlSourceParameterKind
+{
+    /// <summary>Seven raw pulse parameters: two amplitudes in source units, then five times in seconds.</summary>
+    Pulse
+}
+/// <summary>Source identity and complete source-located replacement literals.</summary>
+public sealed record ControlSourceParameterAlterSyntax(string SourceName,ControlSourceParameterKind Parameter,
+    ImmutableArray<SourceSyntax> Values,SourceRange Range)
+{
+    /// <summary>Canonical expression key for the qualified pulse parameter vector.</summary>
+    public string Target=>"@"+SourceName+"[pulse]";
+}

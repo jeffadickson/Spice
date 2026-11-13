@@ -106,11 +106,11 @@ public static class RequestedCorpus
      result.Executed=failed?false:allExecuted?true:null;
      if(result.Executed!=true){result.Status=failed?"engine_operation_failed_atomically":"unattempted_budget";continue;}
      controlResults.Add(new(operation.Id,true,responses.Select((response,i)=>new RequestedPointResult(i,response,null)).ToImmutableArray()){PoleZero=controlRoots});
-     if(operation==plan.Operations[^1]&&row.ProgramOmissions.Any(o=>o.Reason is "conditional_reporting_not_executed" or "prefix_reporting_executed_separately" or "redirect_captured_separately")){
+     if(operation==plan.Operations[^1]&&row.ProgramOmissions.Any(o=>o.Reason is "conditional_reporting_not_executed" or "prefix_reporting_executed_separately" or "redirect_captured_separately" or "source_parameter_alter_executed_separately")){
       try{
        var reporting=RequestedAnalysis.ExecuteTerminalReporting(syntax,plan,responses);
        await File.WriteAllTextAsync(Path.Combine(folder,"control-report.json"),JsonSerializer.Serialize(reporting,Json));
-       row.ControlReportingStatus="executed";
+       row.ControlReportingStatus=reporting.Diagnostics.IsEmpty&&reporting.ExitCode is null or 0?"executed":"failed_assertions";
       }catch(InvalidDataException e){row.ControlReportingStatus=e.Message;}
      }
      if(row.Validation?.Mode=="execution_only"){result.Status="native_not_requested_by_contract";continue;}
@@ -170,7 +170,7 @@ public static class RequestedCorpus
     row.RequestedExecuted=row.Operations.Any(o=>o.Executed==false)?false:row.Operations.All(o=>o.Executed==true)?true:null;
     row.NativeAgreed=row.Operations.Any(o=>o.Agreed==false)?false:row.Operations.All(o=>o.Agreed==true)?true:null;
     row.Status=row.NativeAgreed==true?"all_individual_requested_analyses_agreed":row.RequestedExecuted==true?"requested_executed_not_fully_qualified":row.RequestedExecuted==false?"requested_execution_failed":"partially_unattempted_budget";
-    if(plan.ControlProfile=="ordered_direct_commands"&&row.ControlReportingStatus!="executed"){
+    if((plan.ControlProfile=="ordered_direct_commands"||row.ControlReportingStatus!=null)&&row.ControlReportingStatus!="executed"){
      row.Status="requested_control_execution_failed";row.RequestedExecuted=false;row.NativeAgreed=false;
     }
    }catch(Exception e)when(e is IOException or InvalidDataException or DecoderFallbackException or UnauthorizedAccessException or JsonException or ArgumentException){row.Status="input_or_qualification_failure";row.Diagnostics=[e.GetType().Name+":"+e.Message];}

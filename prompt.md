@@ -1,3 +1,15 @@
+# Sol checkpoint — November 13: post-OP pulse parameter state
+
+Read docs/source-pulse-alter-results.md and evidence/source-pulse-alter.json.
+Unchanged original regression/misc/alter-vec.cir now completes OP (two observers,
+zero error), original 1e-15 assertions and full stock ngspice. Sol total four.
+Scope is metadata/reporting only: no new physics or future-analysis source alter.
+Single-analysis failed terminal assertions now prevent whole-program agreement;
+authored negative retains numerical agreement but fails program status.
+Final syntax531/1skip, frontend916/40skip, StrictDoc67; Stryker selected8 killed
+plus stale-read and failed-assertion gate mutants detected/restored. Exact coverages/provenance in
+evidence. No native rebuild, MOS stock closure, pushes or CI. Preserve campaign
+hard stop and no-memory-cap policy in ignored work/hourly-deck-progress.json.
 # Sol checkpoint — November 13: affine behavioral temperature
 
 Read docs/behavioral-temperature-results.md and evidence/behavioral-temperature.json.

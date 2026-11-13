@@ -16,6 +16,8 @@ public sealed record ControlVectorReport(ImmutableArray<string> Output,
     public ImmutableArray<string> Diagnostics { get; init; } = [];
     /// <summary>Output captured under logical names. No filesystem is accessed.</summary>
     public ImmutableDictionary<string,string> Redirected { get; init; } = ImmutableDictionary<string,string>.Empty;
+    /// <summary>Final owned pulse parameter metadata, separate from physical result vectors.</summary>
+    public ImmutableDictionary<string,ImmutableArray<double>> SourceParameters { get; init; } = ImmutableDictionary<string,ImmutableArray<double>>.Empty;
 }
 
 /// <summary>Finite complex reporting output; the borrowed physical result arrays are never modified.</summary>
@@ -26,6 +28,8 @@ public sealed record ComplexControlVectorReport(ImmutableArray<string> Output,
     public ImmutableArray<string> Diagnostics { get; init; }=[];
     /// <summary>Captured logical output; evaluation does not access the filesystem.</summary>
     public ImmutableDictionary<string,string> Redirected { get; init; }=ImmutableDictionary<string,string>.Empty;
+    /// <summary>Final owned pulse parameter metadata; empty for ordinary complex reporting.</summary>
+    public ImmutableDictionary<string,ImmutableArray<double>> SourceParameters { get; init; } = ImmutableDictionary<string,ImmutableArray<double>>.Empty;
 }
 
 /// <summary>Finite report components without derived magnitude/phase properties that could overflow during serialization.</summary>
@@ -49,6 +53,20 @@ public static partial class ControlVectorExecution
     /// <summary>Preserves the real-only reporting contract using the shared bounded evaluator.</summary>
     public static ControlVectorReport Execute(IEnumerable<ControlCommandSyntax> commands,
         IReadOnlyDictionary<string,double[]> inputs,bool activateAtAnalysis=false,IReadOnlyDictionary<string,double>? constants=null)
+        =>ExecuteReal(commands,inputs,activateAtAnalysis,constants,null);
+
+    /// <summary>Executes reporting and pulse parameter operations over copied source metadata; borrowed physical and parameter arrays remain unchanged.</summary>
+    public static ControlVectorReport ExecuteWithSourceParameters(IEnumerable<ControlCommandSyntax> commands,
+        IReadOnlyDictionary<string,double[]> inputs,IReadOnlyDictionary<string,double[]> sourceParameters,
+        bool activateAtAnalysis=false,IReadOnlyDictionary<string,double>? constants=null)
+    {
+        ArgumentNullException.ThrowIfNull(sourceParameters);
+        return ExecuteReal(commands,inputs,activateAtAnalysis,constants,sourceParameters);
+    }
+
+    private static ControlVectorReport ExecuteReal(IEnumerable<ControlCommandSyntax> commands,
+        IReadOnlyDictionary<string,double[]> inputs,bool activateAtAnalysis,IReadOnlyDictionary<string,double>? constants,
+        IReadOnlyDictionary<string,double[]>? sourceParameters)
     {
         if(inputs.Count>256)throw new InvalidDataException("control_execution_budget");
         var converted=new Dictionary<string,Complex[]>(StringComparer.OrdinalIgnoreCase);
@@ -59,11 +77,10 @@ public static partial class ControlVectorExecution
             if(!converted.TryAdd(name,vector.Select(v=>new Complex(v,0)).ToArray()))
                 throw new InvalidDataException("duplicate_control_input");
         }
-        var result=ExecuteCore(commands,converted,activateAtAnalysis,constants,false,null);
+        var result=ExecuteCore(commands,converted,activateAtAnalysis,constants,false,null,sourceParameters);
         return new(result.Output,result.Locals.ToImmutableDictionary(p=>p.Key,p=>p.Value.Select(v=>v.Real).ToImmutableArray(),StringComparer.OrdinalIgnoreCase),result.ExitCode)
-            {Diagnostics=result.Diagnostics,Redirected=result.Redirected};
+            {Diagnostics=result.Diagnostics,Redirected=result.Redirected,SourceParameters=result.SourceParameters};
     }
-
     /// <summary>Executes reporting against copied finite complex vectors without an analysis boundary.</summary>
     public static ComplexControlVectorReport ExecuteComplex(IEnumerable<ControlCommandSyntax> commands,
         IReadOnlyDictionary<string,Complex[]> inputs,IReadOnlyDictionary<string,double>? constants=null)
@@ -101,11 +118,11 @@ public static partial class ControlVectorExecution
 
     /// <summary>Executes a reporting region atomically, returning no output on failure.</summary>
     private static ComplexControlVectorReport ExecuteCore(IEnumerable<ControlCommandSyntax> commands,
-        IReadOnlyDictionary<string,Complex[]> initialInputs, bool activateAtAnalysis, IReadOnlyDictionary<string,double>? constants, bool allowComplex, IReadOnlyDictionary<int,IReadOnlyDictionary<string,Complex[]>>? plots)
+        IReadOnlyDictionary<string,Complex[]> initialInputs, bool activateAtAnalysis, IReadOnlyDictionary<string,double>? constants, bool allowComplex, IReadOnlyDictionary<int,IReadOnlyDictionary<string,Complex[]>>? plots,IReadOnlyDictionary<string,double[]>? sourceParameters=null)
     {
         var inputs=initialInputs;
         var program = commands.Take(257).ToArray();
-        if (program.Length > 256 || inputs.Count + (constants?.Count??0) > 256)
+        if (program.Length > 256 || inputs.Count + (constants?.Count??0) + (sourceParameters?.Count??0) > 256)
             throw new InvalidDataException("control_execution_budget");
         var values = new Dictionary<string,Complex[]>(StringComparer.OrdinalIgnoreCase);
         var globalValues=new Dictionary<string,Complex[]>(StringComparer.OrdinalIgnoreCase);
@@ -113,6 +130,7 @@ public static partial class ControlVectorExecution
         var plotLocals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var functions = new Dictionary<string,ControlPostprocessingSyntax>(StringComparer.OrdinalIgnoreCase);
         var variables = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+        var parameterState=new Dictionary<string,Complex[]>(StringComparer.OrdinalIgnoreCase);
         var redirected = ImmutableDictionary.CreateBuilder<string,string>(StringComparer.Ordinal);
         var diagnostics = ImmutableArray.CreateBuilder<string>();
         // Const-plot scalars exist before the first dispatch and cannot be
@@ -125,6 +143,18 @@ public static partial class ControlVectorExecution
                     throw new InvalidDataException("invalid_control_constant");
                 values.Add(name,[value]);
             }
+        if(sourceParameters!=null)
+        {
+            if(sourceParameters.Count>128)throw new InvalidDataException("source_parameter_budget");
+            foreach(var (name,vector) in sourceParameters)
+            {
+                if(!PulseParameterKey(name)||vector is not {Length:7}||vector.Any(v=>!double.IsFinite(v)))
+                    throw new InvalidDataException("invalid_source_parameter_vector");
+                var copy=vector.Select(v=>new Complex(v,0)).ToArray();
+                if(!parameterState.TryAdd(name,copy)||!values.TryAdd(name,copy.ToArray()))
+                    throw new InvalidDataException("duplicate_source_parameter");
+            }
+        }
         if (!activateAtAnalysis) BindInputs();
         void BindInputs(IReadOnlyDictionary<string,Complex[]>? next=null)
         {
@@ -291,6 +321,20 @@ public static partial class ControlVectorExecution
                         redirected[target]=argument+" = "+value.ToString("0.000000e+00",CultureInfo.InvariantCulture);
                     }
                     break;
+                case "source_parameter_alter":
+                    if(!active||exit is not null)break;
+                    var alteration=command.SourceParameterAlteration;
+                    if(alteration is null||alteration.Parameter!=ControlSourceParameterKind.Pulse||!PulseParameterKey(alteration.Target))
+                        throw new InvalidDataException("unsupported_source_parameter_alteration");
+                    var sourceTarget=alteration.Target;
+                    if(!parameterState.ContainsKey(sourceTarget))throw new InvalidDataException("unknown_source_parameter");
+                    if(alteration.Values.IsDefault||alteration.Values.Length!=7)throw new InvalidDataException("invalid_source_parameter_vector");
+                    var sourceReplacement=alteration.Values.Select(v=>new Complex(Scalar(Evaluate(v.Text)),0)).ToArray();
+                    Validate(sourceReplacement,false);
+                    // Replacement, never in-place mutation: earlier reads keep their snapshot.
+                    parameterState[sourceTarget]=sourceReplacement;
+                    values[sourceTarget]=sourceReplacement.ToArray();
+                    break;
                 case "quit" or "quit_status":
                     if (active && exit is null) exit = argument == "1" ? 1 : 0;
                     break;
@@ -299,8 +343,8 @@ public static partial class ControlVectorExecution
         }
         if (!bound) throw new InvalidDataException("missing_control_analysis_boundary");
         if (stack.Count!=0||loop!=null) throw new InvalidDataException("unclosed_reporting_conditional");
-        return new(output.ToImmutable(),values.Where(p=>!inputs.Keys.Contains(p.Key,StringComparer.OrdinalIgnoreCase))
-            .ToImmutableDictionary(p=>p.Key,p=>p.Value.Select(v=>new ControlComplexValue(v.Real,v.Imaginary)).ToImmutableArray(),StringComparer.OrdinalIgnoreCase),exit) {Diagnostics=diagnostics.ToImmutable(),Redirected=redirected.ToImmutable()};
+        return new(output.ToImmutable(),values.Where(p=>!inputs.Keys.Contains(p.Key,StringComparer.OrdinalIgnoreCase)&&!parameterState.ContainsKey(p.Key))
+            .ToImmutableDictionary(p=>p.Key,p=>p.Value.Select(v=>new ControlComplexValue(v.Real,v.Imaginary)).ToImmutableArray(),StringComparer.OrdinalIgnoreCase),exit) {Diagnostics=diagnostics.ToImmutable(),Redirected=redirected.ToImmutable(),SourceParameters=parameterState.ToImmutableDictionary(p=>p.Key,p=>p.Value.Select(v=>v.Real).ToImmutableArray(),StringComparer.OrdinalIgnoreCase)};
 
         void BindLoopValue()=>variables[loop!.Variable]=loopValues[loopIndex].ToString("0",CultureInfo.InvariantCulture);
 
@@ -485,6 +529,12 @@ public static partial class ControlVectorExecution
         }
     }
 
+    private static bool PulseParameterKey(string? name)
+    {
+        if(name is not {Length:>=9 and <=144}||name[0]!='@'||char.ToLowerInvariant(name[1]) is not ('v' or 'i')||
+           !name.EndsWith("[pulse]",StringComparison.OrdinalIgnoreCase))return false;
+        return name[1..^7].All(c=>!char.IsWhiteSpace(c)&&c is not ('[' or ']' or ';'));
+    }
     private static double Scalar(Complex[] values)=>Real(ScalarValue(values));
     private static double Real(Complex value)=>value.Imaginary==0?value.Real:throw new InvalidDataException("control_real_required");
     private static string Format(Complex value)=>value.Imaginary==0?value.Real.ToString("G",CultureInfo.InvariantCulture):"("+value.Real.ToString("G",CultureInfo.InvariantCulture)+","+value.Imaginary.ToString("G",CultureInfo.InvariantCulture)+")";

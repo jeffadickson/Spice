@@ -1,0 +1,14 @@
+Post-OP pulse parameter state negative assertion
+Vsrc output 0 DC .25 PULSE(-1 2 3m 4u 5u 6m 7m)
+.control
+op
+let before=@vsrc[pulse]
+alter @vsrc[pulse] = [ 2 5 11n 12n 13n 54n 105n ]
+let after=@vsrc[pulse]
+if after[0] ne 99
+  quit 1
+end
+echo source parameters updated
+quit 0
+.endc
+.end
