@@ -1,5 +1,7 @@
 # Project instructions
 
+- For each numerical solver checkpoint on the Windows Intel development host, run `scripts/Run-ParallelProbe.ps1 -Probe Intel` alongside affected solver tests. `scripts/Test.ps1` includes this hardware gate. Report the actual device and numerical comparison; self-test-only runs, CPU fallback and unavailable hardware do not establish GPU coverage. This is an FP64 sparse kernel experiment, not an integrated GPU deck solver. Keep its outputs on E:.
+
 - Before substantial additional parser/solver/model implementation, apply the canonical reuse-before-build gate. Evaluate complete existing solutions, including SpiceSharp/SpiceSharpParser and ngspice integration, rather than limiting the search to Rust crates. Record concrete gaps and executable evidence; do not treat the current language/architecture choice as proof that reuse is unsuitable. An evaluation does not itself authorize a production migration.
 
 - Read `docs/implementation-plan.sdoc`, `docs/architecture.sdoc` and `docs/development-standards.sdoc` before implementation.

@@ -428,4 +428,15 @@ RELATIONS:
 - TYPE: Parent
   VALUE: DEV-SOLVER-PROBE-001
 
+[REQUIREMENT]
+UID: DEV-INTEL-ROUTINE-001
+STATUS: Draft
+TITLE: Routine physical Intel GPU verification
+STATEMENT: >>>
+Windows numerical checkpoint verification shall execute the physical Intel FP64 OpenCL sparse-kernel probe in addition to affected circuit tests. A validation-only run, CPU fallback, unavailable device or failed launch shall not count as GPU numerical coverage. Reports shall identify device, driver, seed and comparison results. Syntax-only verification remains hardware independent.
+<<<
+COMMENT: >>>
+Implementation: scripts/Test.ps1 and scripts/Run-ParallelProbe.ps1. Verification: scripts/tests/ParallelProbe.Tests.ps1 and the dated physical-device replay in docs/solver-parallelism-probes.md. This requirement does not qualify GPU factorization or end-to-end circuit execution.
+<<<
+
 [[/SECTION]]

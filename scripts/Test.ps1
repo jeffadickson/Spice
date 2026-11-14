@@ -18,6 +18,11 @@ if($SyntaxCorpus){
 }
 # This path intentionally returns before any numerical engine build or run.
 if($SyntaxOnly){return}
+# Numerical verification on this Windows/Intel development host must execute
+# the real FP64 OpenCL probe; its validation-only mode cannot satisfy this gate.
+if($IsWindows){
+    & (Join-Path $PSScriptRoot 'Run-ParallelProbe.ps1') -Probe Intel
+}
 cargo build --locked
 if ($LASTEXITCODE -ne 0) { throw 'Rust build failed' }
 cargo test --locked

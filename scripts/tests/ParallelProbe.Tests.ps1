@@ -3,6 +3,13 @@ BeforeAll {
 }
 
 Describe 'Parallel probe launcher' {
+    It 'keeps actual Intel execution in routine Windows numerical verification' {
+        $entry = Get-Content -LiteralPath (Join-Path $PSScriptRoot '../Test.ps1') -Raw
+        $entry | Should -Match 'if\(\$IsWindows\)'
+        $entry | Should -Match "Run-ParallelProbe.ps1'\) -Probe Intel"
+        $entry | Should -Not -Match 'Run-ParallelProbe.ps1.*-TestOnly'
+    }
+
     It 'refuses a missing artifact root without creating it' {
         $missing = Join-Path $TestDrive 'missing'
         { & $launcher -Probe Cpu -TestOnly -ArtifactRoot $missing } |
@@ -30,7 +37,7 @@ Describe 'Parallel probe launcher' {
                 if (!(Test-Path -LiteralPath $build -PathType Container)) {
                     New-Item -ItemType Directory -Path $build | Out-Null
                 }
-                $bin = Join-Path $build 'bin/release'
+                $bin = Join-Path $build 'bin/IntelSpmv.cs/release'
                 New-Item -ItemType Directory -Path $bin | Out-Null
                 New-Item -ItemType File -Path (Join-Path $bin 'IntelSpmv.dll') | Out-Null
             }

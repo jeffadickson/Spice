@@ -1,5 +1,29 @@
 # Solver parallelism probes
 
+## Routine Windows verification — November 14, 2026
+
+`scripts/Test.ps1` now runs `scripts/Run-ParallelProbe.ps1 -Probe Intel`
+for numerical verification on Windows. Syntax-only tests remain hardware
+independent. Individual numerical checkpoints must run this same command even
+when using narrower circuit tests instead of the full entry point. Failures are
+visible, including missing Intel FP64 support; there is no CPU fallback pass.
+SDK 11's file-app output directory is supported alongside the SDK 10 layout.
+
+Actual replay on Intel UHD Graphics 630, driver 31.0.101.2141, OpenCL 3.0 NEO,
+.NET 11.0.0: six fixtures (256/4096/65536 rows, batches 1/16), seed 18117,
+nine timed repetitions plus initial readback each. All 11,880,960 checked GPU
+values agreed with the independent stencil reference; maximum absolute error 0.
+Raw report: E:/Artifacts/Spice-parallel-Intel-32140c6a25eb486daac97e0fc37ac7df/intel-opencl.json.
+The comparison self-test rejected corrupted values, NaN and wrong shape.
+This is sparse matrix-vector multiplication, not factorization, nonlinear
+convergence or an integrated GPU deck solver. No GPU kernel line/branch coverage
+was measured. Timings are diagnostic and do not establish a general speedup.
+Launcher regression verification: Pester 5.7.1, six passed/zero failed/skipped;
+51/67 analyzed PowerShell commands covered (76.12%). This is command coverage,
+not C# or OpenCL line/branch coverage. Real StrictDoc parsing passed for the
+changed development-standards.sdoc. The complete numerical test entry point
+was not rerun for this orchestration-only change; the physical GPU command ran.
+
 This checkpoint follows DEV-SOLVER-PROBE-001. It evaluates three independently
 runnable paths. The production solver, netlist execution policies and package
 dependencies are unchanged.

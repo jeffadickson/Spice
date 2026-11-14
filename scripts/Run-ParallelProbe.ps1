@@ -45,7 +45,12 @@ try {
     $build = Join-Path $cache 'build'
     dotnet build $source -c Release --artifacts-path $build
     if ($LASTEXITCODE -ne 0) { throw "Intel probe build failed (exit $LASTEXITCODE)." }
-    $app = Join-Path $build 'bin/release/IntelSpmv.dll'
+    # File-based app artifact layouts include the app name on released SDK 11.
+    # Retain the SDK 10 layout for the repository's supported older toolchain.
+    $app = Join-Path $build 'bin/IntelSpmv.cs/release/IntelSpmv.dll'
+    if (!(Test-Path -LiteralPath $app -PathType Leaf)) {
+        $app = Join-Path $build 'bin/release/IntelSpmv.dll'
+    }
     if (!(Test-Path -LiteralPath $app -PathType Leaf)) { throw "Intel probe binary missing: $app" }
 
     # The self-test checks validation without loading the OpenCL driver.
