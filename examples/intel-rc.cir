@@ -1,0 +1,11 @@
+RC linear-provider comparison
+V1 in 0 PULSE(0 1 0 1u 1u 2u 4u) AC 1
+R1 in out 1k
+C1 out 0 1n
+.options method=trap
+.op
+.ac lin 3 10000 100000
+.tran 10n 1u
+.print ac v(in) v(out) i(V1)
+.print tran v(in) v(out) i(V1)
+.end

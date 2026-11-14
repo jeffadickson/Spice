@@ -16,11 +16,11 @@ public static class RequestedCorpus
  /// <summary>Runs a frozen inventory against existing executables with per-child deadlines, between-job admission budget and a final immutable-source gate.</summary>
  public static async Task<int> RunAsync(string[] args)
  {
-  if(args.Length is <6 or >8)throw new ArgumentException("Expected checkout, corpus, engine, ngspice, inventory JSON, fresh output, optional admission seconds and optional CPU backend (lu/faer).");
+  if(args.Length is <6 or >8)throw new ArgumentException("Expected checkout, corpus, engine, ngspice, inventory JSON, fresh output, optional admission seconds and optional backend (lu/faer/intel).");
   var root=Path.GetFullPath(args[0]);var corpus=Path.GetFullPath(args[1]);var engine=Path.GetFullPath(args[2]);var ngspice=Path.GetFullPath(args[3]);var inventory=Path.GetFullPath(args[4]);var output=Path.GetFullPath(args[5]);
   var seconds=args.Length>=7?int.Parse(args[6],NumberStyles.None,CultureInfo.InvariantCulture):1800;if(seconds is <1 or >21600)throw new ArgumentOutOfRangeException(nameof(args));
   var backend=args.Length==8?args[7]:"lu";
-  if(backend is not ("lu" or "faer"))throw new ArgumentException("Supported qualification CPU backends are lu and faer.");
+  if(backend is not ("lu" or "faer" or "intel"))throw new ArgumentException("Supported qualification backends are lu, faer and experimental intel.");
   foreach(var path in new[]{root,corpus,Path.GetDirectoryName(output)!})if(!Directory.Exists(path))throw new DirectoryNotFoundException(path);
   foreach(var path in new[]{engine,ngspice,inventory})if(!File.Exists(path))throw new FileNotFoundException(path);
   var compiledRoot=Directory.GetParent(Path.GetDirectoryName(SourcePath())!)!.Parent!.FullName;

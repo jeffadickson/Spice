@@ -22,6 +22,7 @@ if($SyntaxOnly){return}
 # the real FP64 OpenCL probe; its validation-only mode cannot satisfy this gate.
 if($IsWindows){
     & (Join-Path $PSScriptRoot 'Run-ParallelProbe.ps1') -Probe Intel
+    & (Join-Path $PSScriptRoot 'Test-IntelCircuits.ps1')
 }
 cargo build --locked
 if ($LASTEXITCODE -ne 0) { throw 'Rust build failed' }

@@ -16,6 +16,9 @@ impl BackendRegistry {
         r.register("qr", Arc::new(DenseQr)).unwrap();
         r.register("faer", Arc::new(crate::backend_faer::FaerSparseLu))
             .unwrap();
+        #[cfg(feature = "intel-opencl")]
+        r.register("intel", Arc::new(crate::backend_intel::IntelOpenCl))
+            .unwrap();
         r
     }
     pub fn register(&mut self, id: &str, provider: Arc<dyn LinearSolver>) -> SimResult<()> {

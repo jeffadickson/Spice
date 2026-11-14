@@ -4,7 +4,10 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.87"
 publish = false
+[features]
+intel-opencl = ["dep:spice-intel-host"]
 [dependencies]
+spice-intel-host = { path = "native/intel-host", optional = true }
 spice-bsim330-host = { path = "native/bsim330-host" }
 nalgebra = { version = "=0.34.1", default-features = false, features = ["std"] }
 serde = { version = "1", features = ["derive"] }

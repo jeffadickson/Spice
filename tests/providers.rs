@@ -82,14 +82,17 @@ fn malformed_sparse_layouts_rejected() {
 #[test]
 fn capability_discovery_is_sorted_and_honest() {
     let c = BackendRegistry::reference().capabilities();
+    #[cfg(not(feature = "intel-opencl"))]
     assert_eq!(
         c.iter().map(|x| x.0.as_str()).collect::<Vec<_>>(),
         vec!["faer", "lu", "qr"]
     );
-    assert!(c[0].1.sparse);
-    assert!(c[1].1.complex);
-    assert!(!c[2].1.complex);
-    assert!(c.iter().all(|x| !x.1.gpu));
+    assert!(c.iter().find(|x| x.0=="faer").unwrap().1.sparse);
+    assert!(c.iter().find(|x| x.0=="lu").unwrap().1.complex);
+    assert!(!c.iter().find(|x| x.0=="qr").unwrap().1.complex);
+    assert!(c.iter().filter(|x|x.0!="intel").all(|x| !x.1.gpu));
+    #[cfg(feature = "intel-opencl")]
+    assert!(c.iter().find(|x| x.0=="intel").unwrap().1.gpu);
 }
 
 #[test]

@@ -146,6 +146,14 @@ public sealed record ComparisonResult(string Status,ImmutableArray<ObservableCom
 /// <summary>Compares complete root voltages and supported root branch currents on the original requested grids.</summary>
 public static class RequestedComparison
 {
+ /// <summary>Rejects silent provider substitution, including CPU execution labelled as an Intel GPU request.</summary>
+ public static bool BackendIdentityMatches(string requested,BackendInfo actual)=>requested switch{
+  "lu"=>actual.Id=="nalgebra_dense_lu_reference"&&!actual.Gpu&&actual.Placement=="cpu",
+  "faer"=>actual.Id=="faer_sparse_lu"&&!actual.Gpu&&actual.Placement=="cpu",
+  "qr"=>actual.Id=="nalgebra_dense_qr_reference"&&!actual.Gpu&&actual.Placement=="cpu",
+  "intel"=>actual.Id=="intel_opencl_viennacl_gmres_experimental"&&actual.Gpu&&actual.Placement=="gpu",
+  _=>false
+ };
  /// <summary>Validates identity, units, shapes, finiteness and complete grids before any bound checks. Transient interpolation never extrapolates.</summary>
  public static ComparisonResult Compare(RequestedOperation operation,BridgeResult circuit,IReadOnlyList<SimulationResponse> responses,NativeRaw native,double voltageAbsolute=1e-6,double currentAbsolute=1e-9,double relative=1e-4)
   =>Compare(operation,circuit,responses,native,null,voltageAbsolute,currentAbsolute,relative);
@@ -157,7 +165,7 @@ public static class RequestedComparison
    if(responses.Count!=operation.Requests.Length||responses.Any(r=>!r.Succeeded))throw new InvalidDataException("incomplete_engine_operation");
    var manifests=responses.Select((response,i)=>{
     var m=RequestedAnalysis.ReportedManifest(operation,response);var request=operation.Requests[i];
-    if(m.CaseId!=request.CaseId||m.Backend.Id!=(request.Backend=="lu"?"nalgebra_dense_lu_reference":request.Backend=="faer"?"faer_sparse_lu":"nalgebra_dense_qr_reference")||m.Backend.Gpu||m.Backend.Placement!="cpu"||m.Signals.Select(s=>s.Id).Distinct(StringComparer.Ordinal).Count()!=m.Signals.Length)throw new InvalidDataException("engine_identity_gap");
+    if(m.CaseId!=request.CaseId||!BackendIdentityMatches(request.Backend,m.Backend)||m.Signals.Select(s=>s.Id).Distinct(StringComparer.Ordinal).Count()!=m.Signals.Length)throw new InvalidDataException("engine_identity_gap");
     if(m.Samples.Any(s=>!double.IsFinite(s.TimeS)||s.Values.Any(v=>!double.IsFinite(v)))||m.AcSamples.Any(s=>!double.IsFinite(s.FrequencyHz)||s.Values.Any(v=>!double.IsFinite(v.Real)||!double.IsFinite(v.Imag))))throw new InvalidDataException("nonfinite_engine_samples");return m;
    }).ToArray();
    var expectedPlot=operation.Kind switch{"op"=>"Operating Point","dc"=>"DC transfer characteristic","ac"=>"AC Analysis","tran"=>"Transient Analysis",_=>""};

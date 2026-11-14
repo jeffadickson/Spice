@@ -1,4 +1,22 @@
-# Current manual checkpoint — artifact flush survivor triage
+# Current manual checkpoint — Intel circuit execution and two original decks
+
+Read docs/intel-circuit-results.md, docs/two-original-decks-results.md and their
+bounded evidence. The optional Intel OpenCL/ViennaCL provider runs real DC/AC
+requests without CPU fallback, but is slower on the measured small circuits.
+Keep CPU solvers as default. GPU transient and behavioral AC deadlines remain
+open; RC/RLC CPU transients also disagree with ngspice while RSpice passes fresh
+references. Investigate shared integration/reference sampling without relaxing
+bounds. This is not full-SPICE, production GPU or Linux qualification.
+
+Two unchanged original programs now complete and agree: saved-source/indexed
+bugs-2 (1ab34d0) and negative scalar resistance (1b2d5ab). The latter is from the
+RSpice Xyce fixture group, outside the historical 113-file ngspice inventory.
+Do not inflate whole-corpus progress. Canonical main's sheet-resistor work and
+VeloSim remain separate and untouched. Current physical source is J:/dev;
+C:/dev is a junction. Keep bulk artifacts, builds, shader caches and scratch on
+E:. All requirements remain Draft and coverage scopes/failed attempts explicit.
+
+# Previous manual checkpoint — artifact flush survivor triage
 
 Read docs/artifact-flush-equivalence.md/.sdoc. Issue47's raw LimitedFile::flush
 survivor is equivalent on the assessed pinned Windows File target; keep raw count

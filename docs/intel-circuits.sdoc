@@ -1,0 +1,46 @@
+[DOCUMENT]
+TITLE: Experimental Intel circuit linear provider
+
+[REQUIREMENT]
+UID: INTEL-CIRCUIT-001
+STATUS: Draft
+TITLE: Physical GPU linear solves in circuit analyses
+STATEMENT: >>>
+The explicitly selected experimental Intel provider shall solve bounded real and complex MNA systems on an enumerated Intel FP64 GPU through the existing circuit analysis entry points. It shall preserve CPU-owned assembly, model evaluation, nonlinear control and integration. Missing hardware, native ABI failures and nonconvergence shall return explicit failures without substituting a CPU linear solver.
+<<<
+COMMENT: >>>
+Implementation: native/intel-opencl/solver.cpp, native/intel-host/lib.rs, src/backend_intel.rs and optional registry feature. Tests: tests/intel_backend.rs. Selection through the existing generated frontend and typed requests preserves the backend.
+<<<
+
+[REQUIREMENT]
+UID: INTEL-RESIDUAL-001
+STATUS: Draft
+TITLE: Independent physical-system residual gate
+STATEMENT: >>>
+GPU results shall have valid shape and finite values and satisfy a componentwise backward-error bound of 1e-10 on every original unscaled matrix row. A library iteration estimate shall not replace that check. Equilibration shall not silently drop nonzero coefficients. Comparisons shall reject incorrect provider identity or CPU placement reported for an Intel request.
+<<<
+COMMENT: >>>
+Implementation: native and safe Rust residual gates; RequestedComparison.BackendIdentityMatches. Verification includes zero-diagonal MNA, complex excitation, malformed and singular cases, corrupted solutions and fixed-seed known-solution properties.
+<<<
+
+[REQUIREMENT]
+UID: INTEL-DECK-EVIDENCE-001
+STATUS: Draft
+TITLE: Comparable circuit execution and cost evidence
+STATEMENT: >>>
+Named deck comparisons shall retain exact input and runtime hashes, analysis and signal coverage, unchanged comparison bounds and all failures. CPU/GPU transport timing shall use the same requests and analysis settings and identify build profile, process startup, driver-cache state and contention limits. RSpice comparisons shall identify whether references are fresh or historical and shall not count skipped or expected-unsupported cases as numerical passes.
+<<<
+COMMENT: >>>
+Reproduction: scripts/Compare-IntelDecks.ps1, scripts/Measure-IntelDeckLatency.ps1, scripts/Compare-IntelReplay.ps1 and docs/intel-circuit-results.md. Raw artifacts remain on E:. Finite circuit results are not whole-SPICE or production GPU qualification.
+<<<
+
+[REQUIREMENT]
+UID: INTEL-LIFECYCLE-001
+STATUS: Draft
+TITLE: One-shot provider resource lifetime
+STATEMENT: >>>
+Metadata enumeration shall not initialize a compute context. A one-shot circuit process shall finish GPU queue work and explicitly release its initialized context before native module process detach. An unused CPU execution shall not load the GPU module merely for cleanup. Cleanup failures shall be explicit. Shutdown is a final process operation; reuse after shutdown is outside this experimental contract.
+<<<
+COMMENT: >>>
+Implementation: CLI finalization, isolated host shutdown and the pinned noticed context-release overlay. Verification: actual Intel metadata child exit, physical circuit child exit and complete replay termination. Initial failed lifecycle strategies and timed-out workloads are retained in the dated assessment.
+<<<

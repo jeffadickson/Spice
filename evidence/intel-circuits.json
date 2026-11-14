@@ -1,0 +1,2757 @@
+{
+  "assessment_date": "2026-11-14",
+  "scope": "Five selected programs, not a full-corpus parity run; optional hybrid GPU-assisted linear solver",
+  "raw_artifact_root": "E:/Artifacts/Spice-Intel-decks-42e5356-20261114",
+  "tested_base": "42e53560273a2cd29e398e5b70e8c0114ff3bcb2",
+  "tested_source_dirty": true,
+  "source_hashes": {
+    "src/backend_intel.rs": "68169b6511194079eab4249b2584b0075fb000fe198992b879a25e27ad2cd2a5",
+    "src/main.rs": "5cc55e8e4ab155362c34ccb0c00518190968be5b69eb7f25f0878a9db213c3ec",
+    "src/registry.rs": "ff1d1bdf7d82f2b4c1fdc254d8679f89cd69cbb0bac4abb72fc4f97372c369a2",
+    "src/lib.rs": "ea3f48711f0713a78b57e895f88509d411e1ce868ca0c3309c0077073f358524",
+    "Cargo.toml": "a23275ac2e9219292e4195425ca0b4e18aa1796110155bc306bfba39eada0145",
+    "Cargo.lock": "69b0c6b10a3b047b4cfd2815ce2884c3d5f32a7c56696bf282633d29670a9e8c",
+    "native/intel-host/lib.rs": "bc41b12ac1ea2989b922cb2d5e49503c724296bf72e4f47cd9c7e1c044185b1d",
+    "native/intel-host/Cargo.toml": "3442294aab74d3cb7e3a9de83615a1df012ac7072ec48c5b25e37ec317e029c7",
+    "native/intel-opencl/solver.cpp": "5f2b2d8be28bcaf8be28ce8d27e316e3ac4b85773d013724ef92dc8e1bd5b8a2",
+    "native/intel-opencl/CMakeLists.txt": "720590916b0ab6d90c10422b34a4c8187ad74b8a155361ceed61e61e6292c17e",
+    "tests/intel_backend.rs": "075b700a80ae484e1f93181d25e57764da53ce6807b3ecfa44d889e6d273472f",
+    "tests/providers.rs": "51b3165f0b20f79b515939eeb1249896f48475c64a771a89772cf385bbe294fe",
+    "tests/campaign_cli.rs": "b41119a188f65c4198a11390d645ef4a3c442bcac58996aceae89680ec5540b2",
+    "evaluation/IntelGpuProbe/ProcessProbe.cs": "8a3efffd290eca33ab7d10fd499502f12f19311df75486c3769e46cdfe65f05a",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "c8dfb208c56376d58c24d5d5e84161a17aef8faada3d2297debd0f21113e0e38",
+    "dotnet/Simulator.Frontend/RequestedControlReporting.cs": "a4d4367bd919708169ae854a3513da9f2192650a3ba7cc8ae25670798d3fd391",
+    "dotnet/Simulator.Frontend/RequestedSourceDcCapture.cs": "ee4b649f1bb8a522552ef425e9ac752d9f74395dd960ff8f09341adbbe495753",
+    "dotnet/Simulator.Syntax/ControlVectorExecution.cs": "188f39d52cbe01d5d246a7c726491de1ab880e542e0c2937d58ff8c7af0cb5ea",
+    "dotnet/Simulator.RequestedQualification/RequestedCorpus.cs": "5ae7e2e50ded84ce885fe95e43758a4c49423eb0e9f222c4f24995159e563978",
+    "dotnet/Simulator.RequestedQualification/QualificationSupport.cs": "c89b91baf6bb0d2327c63d691d5602d660531f8742efd235f319e0cd0f18b153",
+    "scripts/Build-IntelEngine.ps1": "d48a66bf88f71d732c97d32a2a526d0e5b3fd91d9ccd205cb732abde74291762",
+    "scripts/Build-IntelProvider.ps1": "4e0a755cb061e305c8ae7a6abf149b31e6c8a3473bbbb085d140a198ee20ede7",
+    "scripts/Compare-IntelDecks.ps1": "8bef6d87874379a910fd7729427af8ada203d60199a6cd1d6ce0c8e8b811c2cf",
+    "scripts/Compare-IntelReplay.ps1": "1cc2d37567b78b660f5bd7c477cce9645b9ce3c53a2027ed8176da1372a3721f",
+    "scripts/Measure-IntelDeckLatency.ps1": "0675540d46fcfc783f622e5c093c3b9eb2468e682f663c26fc1d9606e8811c17",
+    "scripts/Test-IntelCircuits.ps1": "f30a3338ecb0c85ec8cbc241ac8f2dc01a4f3fc6d38bc90322bd6706ffb9e43d",
+    "scripts/Test-IntelSnapshot.ps1": "e54c51239ed5b51007fbb7654bb2b60c038dcd4a2cb1513821db3d9656e9ac80",
+    "scripts/Compare-RSpiceDecks.ps1": "6b271efd8382b26ca92f96c36e3442bc80cd38c641d9c2d47156b25d22cb5e59",
+    "scripts/Measure-RustIntegrationCoverage.ps1": "8f836ce29dbb79fe4571efc648595fac6ef4700d138917a6d257151badfa43df",
+    "scripts/Test.ps1": "354f1d014bbffa8e4ba268d36837b87538ec4bb78e28fbcb0234c33c123ea21e",
+    "scripts/tests/IntelReplay.Tests.ps1": "e17536639db0a71473cbab0fc4517515ce64c81e9d615eda2148cd2e3d2a19fe",
+    "scripts/tests/IntelCircuits.Tests.ps1": "dc3ec899fbb51da9e57db30f06531bd5505069706e4b7966e7601980bc2d9b44",
+    "dotnet/Simulator.Frontend.Tests/IntelBackendIdentityTests.cs": "b30b00f2a5aa3420ec2e918c0d7a0dc59031f3ba55820553ad39901e6d6fdd45"
+  },
+  "frontend_checkpoints": [
+    "1ab34d0",
+    "1b2d5ab"
+  ],
+  "corpus_pin_verification": {
+    "repository_root": "E:\\Artifacts\\RSpice-inspection-20261108T032637Z\\source",
+    "command": "git -c safe.directory=<discovered actual root> -C <root> rev-parse HEAD",
+    "run_manifest_limitation": "decks-v3 corpus_commit field empty because prior helper trusted an assumed grandparent; exact selected input hashes remain verified; manual pinned repository verification recorded separately",
+    "commit": "29c28a022625fd7cc2c56ead1cce2d3066663074"
+  },
+  "tools": {
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "powershell": "7.6.9",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)"
+  },
+  "device": {
+    "backend": "intel",
+    "cpu_fallback": false,
+    "device": "Intel(R) UHD Graphics 630 | driver 31.0.101.2141 | ViennaCL 1.7.1 OpenCL FP64 GMRES",
+    "experimental": true
+  },
+  "runtime": {
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "profile": "dev unoptimized library and entry; native GPU module separately Release",
+    "engine_sha256": "c4533fb658ae31bf32501e949f2a324fe57b437ff8c43692be96ffd3b16e5519",
+    "viennacl_commit": "77e9049d5622d46b6801a725917a931eda096f76",
+    "native_flags": "Release /O2 /fp:precise; OpenCL FP64 GMRES plus owned context-release overlay; no CPU fallback"
+  },
+  "standard_replay": {
+    "comparison": {
+      "runtime_provenance_valid": true,
+      "engine_sha256": "c4533fb658ae31bf32501e949f2a324fe57b437ff8c43692be96ffd3b16e5519",
+      "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+      "provider_after_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+      "inventory_sha256": "03412e103904eaddcdc152f7723473edea9f1ef3827d0f27d3bc65e41b6620e1",
+      "runs": [
+        {
+          "backend": "lu",
+          "summary": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\lu\\summary.json",
+          "exit_code": 0
+        },
+        {
+          "backend": "faer",
+          "summary": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\faer\\summary.json",
+          "exit_code": 0
+        },
+        {
+          "backend": "intel",
+          "summary": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\summary.json",
+          "exit_code": 0
+        }
+      ],
+      "limits": [
+        "Complete ordinary requested-analysis comparison uses existing voltage/current/relative bounds.",
+        "GPU assembly/Newton/time control remain on the CPU; no CPU linear-solve fallback.",
+        "Run elapsed includes reference generation and archival; it is not a solver speed benchmark."
+      ]
+    },
+    "runs": [
+      {
+        "source_commit": "42e53560273a2cd29e398e5b70e8c0114ff3bcb2",
+        "backend": "lu",
+        "rows": [
+          {
+            "control_reporting_status": null,
+            "expected_sha256": "846ae478282e313cb2358201d46ba1d8197cf4a0338dd3e10a5ec02d73e94603",
+            "status": "requested_executed_not_fully_qualified",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "op",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.2412670766236366E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.4406533980005745E-19,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "ac",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "numerical_disagreement",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 149,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.1102230246251565E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 149,
+                      "failed": 64,
+                      "maximum_absolute_error": 1.1585323752122352E-05,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 149,
+                      "failed": 15,
+                      "maximum_absolute_error": 1.1585323752117229E-08,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": false
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "tran",
+                "status": "numerical_disagreement"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "846ae478282e313cb2358201d46ba1d8197cf4a0338dd3e10a5ec02d73e94603",
+            "native_agreed": false,
+            "path": "examples/intel-rc.cir"
+          },
+          {
+            "control_reporting_status": null,
+            "expected_sha256": "1ad6adc5bf2e193e522c653b68a1e4b85a4b9d1315e9338e78f4509863db6aa5",
+            "status": "requested_executed_not_fully_qualified",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(mid)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e2)",
+                      "native_signal": "i(L1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "op",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(mid)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 3.469446951953614E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 2.3263411494723067E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.2655477284541136E-18,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e2)",
+                      "native_signal": "i(L1)",
+                      "unit": "A",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 8.677851511149104E-19,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "ac",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "numerical_disagreement",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 206,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.1102230246251565E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(mid)",
+                      "unit": "V",
+                      "points": 206,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.2449073095756324E-06,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 206,
+                      "failed": 156,
+                      "maximum_absolute_error": 1.295747463331276E-05,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 206,
+                      "failed": 88,
+                      "maximum_absolute_error": 1.2449073095765712E-08,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e2)",
+                      "native_signal": "i(L1)",
+                      "unit": "A",
+                      "points": 206,
+                      "failed": 88,
+                      "maximum_absolute_error": 1.2449073095805205E-08,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": false
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "tran",
+                "status": "numerical_disagreement"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "1ad6adc5bf2e193e522c653b68a1e4b85a4b9d1315e9338e78f4509863db6aa5",
+            "native_agreed": false,
+            "path": "examples/intel-rlc.cir"
+          },
+          {
+            "control_reporting_status": "executed",
+            "expected_sha256": "bceae1905e3521ce062ea6bca2d520fd434603a27275f83d96f28a1de9ca71a8",
+            "status": "all_individual_requested_analyses_agreed",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(1)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.4210854715202004E-14,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(2)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(3)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(v1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e1)",
+                      "native_signal": "i(v2)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e4)",
+                      "native_signal": "i(b3)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "op",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(1)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(2)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(3)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(v1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e1)",
+                      "native_signal": "i(v2)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e4)",
+                      "native_signal": "i(b3)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "ac",
+                "status": "agreed"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "bceae1905e3521ce062ea6bca2d520fd434603a27275f83d96f28a1de9ca71a8",
+            "native_agreed": true,
+            "path": "tests/ngspice/regression/misc/asrc-tc-1.cir"
+          },
+          {
+            "control_reporting_status": "executed",
+            "expected_sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387",
+            "status": "all_individual_requested_analyses_agreed",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(1)",
+                      "unit": "V",
+                      "points": 5,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(v1)",
+                      "unit": "A",
+                      "points": 5,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 1,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 2,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 3,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 4,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "dc",
+                "status": "agreed"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387",
+            "native_agreed": true,
+            "path": "tests/ngspice/regression/misc/bugs-2.cir"
+          },
+          {
+            "control_reporting_status": null,
+            "expected_sha256": "05ec226f360c873317c5f197de8a81d963e39660a659570c91a76f0e765a1586",
+            "status": "all_individual_requested_analyses_agreed",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(a)",
+                      "unit": "V",
+                      "points": 6,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 6,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 1,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 2,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 3,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 4,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 5,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "dc",
+                "status": "agreed"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "05ec226f360c873317c5f197de8a81d963e39660a659570c91a76f0e765a1586",
+            "native_agreed": true,
+            "path": "tests/xyce/Netlists/RESISTOR/resistor_neg.cir"
+          }
+        ],
+        "state": "completed_with_results",
+        "provenance_valid": true
+      },
+      {
+        "source_commit": "42e53560273a2cd29e398e5b70e8c0114ff3bcb2",
+        "backend": "faer",
+        "rows": [
+          {
+            "control_reporting_status": null,
+            "expected_sha256": "846ae478282e313cb2358201d46ba1d8197cf4a0338dd3e10a5ec02d73e94603",
+            "status": "requested_executed_not_fully_qualified",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "op",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.5700924586837752E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.4406533980005745E-19,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "ac",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "numerical_disagreement",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 149,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.1102230246251565E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 149,
+                      "failed": 64,
+                      "maximum_absolute_error": 1.1585323752109531E-05,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 149,
+                      "failed": 15,
+                      "maximum_absolute_error": 1.1585323752107065E-08,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": false
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "tran",
+                "status": "numerical_disagreement"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "846ae478282e313cb2358201d46ba1d8197cf4a0338dd3e10a5ec02d73e94603",
+            "native_agreed": false,
+            "path": "examples/intel-rc.cir"
+          },
+          {
+            "control_reporting_status": null,
+            "expected_sha256": "1ad6adc5bf2e193e522c653b68a1e4b85a4b9d1315e9338e78f4509863db6aa5",
+            "status": "requested_executed_not_fully_qualified",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(mid)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e2)",
+                      "native_signal": "i(L1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "op",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(mid)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 2.267533093483919E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 7.550332863779066E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 3.499912258834141E-18,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e2)",
+                      "native_signal": "i(L1)",
+                      "unit": "A",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 2.1662338230436697E-18,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "ac",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "numerical_disagreement",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 206,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.1102230246251565E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(mid)",
+                      "unit": "V",
+                      "points": 206,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.2449073095860408E-06,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 206,
+                      "failed": 156,
+                      "maximum_absolute_error": 1.2957474586405837E-05,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 206,
+                      "failed": 88,
+                      "maximum_absolute_error": 1.2449073095809704E-08,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e2)",
+                      "native_signal": "i(L1)",
+                      "unit": "A",
+                      "points": 206,
+                      "failed": 88,
+                      "maximum_absolute_error": 1.2449073095805258E-08,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": false
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "tran",
+                "status": "numerical_disagreement"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "1ad6adc5bf2e193e522c653b68a1e4b85a4b9d1315e9338e78f4509863db6aa5",
+            "native_agreed": false,
+            "path": "examples/intel-rlc.cir"
+          },
+          {
+            "control_reporting_status": "executed",
+            "expected_sha256": "bceae1905e3521ce062ea6bca2d520fd434603a27275f83d96f28a1de9ca71a8",
+            "status": "all_individual_requested_analyses_agreed",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(1)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.4210854715202004E-14,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(2)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(3)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.4210854715202004E-14,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(v1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e1)",
+                      "native_signal": "i(v2)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 2.842170943040401E-14,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e4)",
+                      "native_signal": "i(b3)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "op",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(1)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(2)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(3)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(v1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e1)",
+                      "native_signal": "i(v2)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e4)",
+                      "native_signal": "i(b3)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "ac",
+                "status": "agreed"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "bceae1905e3521ce062ea6bca2d520fd434603a27275f83d96f28a1de9ca71a8",
+            "native_agreed": true,
+            "path": "tests/ngspice/regression/misc/asrc-tc-1.cir"
+          },
+          {
+            "control_reporting_status": "executed",
+            "expected_sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387",
+            "status": "all_individual_requested_analyses_agreed",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(1)",
+                      "unit": "V",
+                      "points": 5,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(v1)",
+                      "unit": "A",
+                      "points": 5,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 1,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 2,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 3,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 4,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "dc",
+                "status": "agreed"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387",
+            "native_agreed": true,
+            "path": "tests/ngspice/regression/misc/bugs-2.cir"
+          },
+          {
+            "control_reporting_status": null,
+            "expected_sha256": "05ec226f360c873317c5f197de8a81d963e39660a659570c91a76f0e765a1586",
+            "status": "all_individual_requested_analyses_agreed",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(a)",
+                      "unit": "V",
+                      "points": 6,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 6,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 1,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 2,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 3,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 4,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 5,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "dc",
+                "status": "agreed"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "05ec226f360c873317c5f197de8a81d963e39660a659570c91a76f0e765a1586",
+            "native_agreed": true,
+            "path": "tests/xyce/Netlists/RESISTOR/resistor_neg.cir"
+          }
+        ],
+        "state": "completed_with_results",
+        "provenance_valid": true
+      },
+      {
+        "source_commit": "42e53560273a2cd29e398e5b70e8c0114ff3bcb2",
+        "backend": "intel",
+        "rows": [
+          {
+            "control_reporting_status": null,
+            "expected_sha256": "846ae478282e313cb2358201d46ba1d8197cf4a0338dd3e10a5ec02d73e94603",
+            "status": "requested_execution_failed",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "op",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.1102230246251565E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.4406533980005745E-19,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "ac",
+                "status": "agreed"
+              },
+              {
+                "executed": false,
+                "comparison": null,
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "timeout",
+                    "detail": "TaskCanceledException"
+                  }
+                ],
+                "kind": "tran",
+                "status": "engine_operation_failed_atomically"
+              }
+            ],
+            "requested_executed": false,
+            "input_sha256": "846ae478282e313cb2358201d46ba1d8197cf4a0338dd3e10a5ec02d73e94603",
+            "native_agreed": null,
+            "path": "examples/intel-rc.cir"
+          },
+          {
+            "control_reporting_status": null,
+            "expected_sha256": "1ad6adc5bf2e193e522c653b68a1e4b85a4b9d1315e9338e78f4509863db6aa5",
+            "status": "requested_execution_failed",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(mid)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e2)",
+                      "native_signal": "i(L1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "op",
+                "status": "agreed"
+              },
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(in)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 2.220446049250313E-16,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(mid)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.9229130190845832E-13,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(out)",
+                      "unit": "V",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 4.6419051413212574E-14,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 5.655624214675712E-16,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e2)",
+                      "native_signal": "i(L1)",
+                      "unit": "A",
+                      "points": 3,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.0876656638602758E-17,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "ac",
+                "status": "agreed"
+              },
+              {
+                "executed": false,
+                "comparison": null,
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "timeout",
+                    "detail": "TaskCanceledException"
+                  }
+                ],
+                "kind": "tran",
+                "status": "engine_operation_failed_atomically"
+              }
+            ],
+            "requested_executed": false,
+            "input_sha256": "1ad6adc5bf2e193e522c653b68a1e4b85a4b9d1315e9338e78f4509863db6aa5",
+            "native_agreed": null,
+            "path": "examples/intel-rlc.cir"
+          },
+          {
+            "control_reporting_status": "ordered_control_not_prepared",
+            "expected_sha256": "bceae1905e3521ce062ea6bca2d520fd434603a27275f83d96f28a1de9ca71a8",
+            "status": "requested_control_execution_failed",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(1)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n2)",
+                      "native_signal": "v(2)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "v(n3)",
+                      "native_signal": "v(3)",
+                      "unit": "V",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.4210854715202004E-14,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(v1)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e1)",
+                      "native_signal": "i(v2)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 1.4210854715202004E-14,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e4)",
+                      "native_signal": "i(b3)",
+                      "unit": "A",
+                      "points": 1,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "op",
+                "status": "agreed"
+              },
+              {
+                "executed": false,
+                "comparison": null,
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "timeout",
+                    "detail": "TaskCanceledException"
+                  }
+                ],
+                "kind": "ac",
+                "status": "engine_operation_failed_atomically"
+              }
+            ],
+            "requested_executed": false,
+            "input_sha256": "bceae1905e3521ce062ea6bca2d520fd434603a27275f83d96f28a1de9ca71a8",
+            "native_agreed": false,
+            "path": "tests/ngspice/regression/misc/asrc-tc-1.cir"
+          },
+          {
+            "control_reporting_status": "executed",
+            "expected_sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387",
+            "status": "all_individual_requested_analyses_agreed",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(1)",
+                      "unit": "V",
+                      "points": 5,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(v1)",
+                      "unit": "A",
+                      "points": 5,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 1,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 2,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 3,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 4,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "dc",
+                "status": "agreed"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387",
+            "native_agreed": true,
+            "path": "tests/ngspice/regression/misc/bugs-2.cir"
+          },
+          {
+            "control_reporting_status": null,
+            "expected_sha256": "05ec226f360c873317c5f197de8a81d963e39660a659570c91a76f0e765a1586",
+            "status": "all_individual_requested_analyses_agreed",
+            "operations": [
+              {
+                "executed": true,
+                "comparison": {
+                  "status": "agreed",
+                  "observables": [
+                    {
+                      "engine_signal": "v(n1)",
+                      "native_signal": "v(a)",
+                      "unit": "V",
+                      "points": 6,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-06,
+                      "relative_tolerance": 0.0001
+                    },
+                    {
+                      "engine_signal": "i(e0)",
+                      "native_signal": "i(V1)",
+                      "unit": "A",
+                      "points": 6,
+                      "failed": 0,
+                      "maximum_absolute_error": 0,
+                      "absolute_tolerance": 1E-09,
+                      "relative_tolerance": 0.0001
+                    }
+                  ],
+                  "gaps": [],
+                  "excluded_startup_samples": 0,
+                  "analytical_reference": null,
+                  "agreed": true
+                },
+                "points": [
+                  {
+                    "index": 0,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 1,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 2,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 3,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 4,
+                    "status": "completed",
+                    "detail": null
+                  },
+                  {
+                    "index": 5,
+                    "status": "completed",
+                    "detail": null
+                  }
+                ],
+                "kind": "dc",
+                "status": "agreed"
+              }
+            ],
+            "requested_executed": true,
+            "input_sha256": "05ec226f360c873317c5f197de8a81d963e39660a659570c91a76f0e765a1586",
+            "native_agreed": true,
+            "path": "tests/xyce/Netlists/RESISTOR/resistor_neg.cir"
+          }
+        ],
+        "state": "completed_with_results",
+        "provenance_valid": true
+      }
+    ],
+    "deadline_seconds": 30
+  },
+  "rspice": {
+    "runner_sha256": "4f54523100fb57fff20b4944a755812d4b5129d2e6e0eb1bdc43b0a50ac739f8",
+    "runner_unchanged": true,
+    "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "rows": [
+      {
+        "reference": "fresh ngspice, original numerical controls; no grid locking",
+        "input_sha256": "846ae478282e313cb2358201d46ba1d8197cf4a0338dd3e10a5ec02d73e94603",
+        "path": "examples/intel-rc.cir",
+        "scope": "repository",
+        "process_elapsed_seconds": 34.5116602,
+        "error": null,
+        "source_unchanged": true,
+        "state": "passed_upstream_comparison",
+        "mismatches": 0,
+        "upstream_pass": true,
+        "bounds": {
+          "relative": 0.0001,
+          "absolute": 1E-09
+        },
+        "analysis": "DC OP + AC + Transient"
+      },
+      {
+        "reference": "fresh ngspice, original numerical controls; no grid locking",
+        "input_sha256": "1ad6adc5bf2e193e522c653b68a1e4b85a4b9d1315e9338e78f4509863db6aa5",
+        "path": "examples/intel-rlc.cir",
+        "scope": "repository",
+        "process_elapsed_seconds": 10.2330985,
+        "error": null,
+        "source_unchanged": true,
+        "state": "passed_upstream_comparison",
+        "mismatches": 0,
+        "upstream_pass": true,
+        "bounds": {
+          "relative": 0.0001,
+          "absolute": 1E-09
+        },
+        "analysis": "DC OP + AC + Transient"
+      },
+      {
+        "reference": "fresh ngspice, original numerical controls; no grid locking",
+        "input_sha256": "bceae1905e3521ce062ea6bca2d520fd434603a27275f83d96f28a1de9ca71a8",
+        "path": "tests/ngspice/regression/misc/asrc-tc-1.cir",
+        "scope": "ngspice",
+        "process_elapsed_seconds": 2.1337149,
+        "error": null,
+        "source_unchanged": true,
+        "state": "explicit_skip_or_non_numerical_contract",
+        "mismatches": 0,
+        "upstream_pass": true,
+        "bounds": {
+          "relative": 0.0001,
+          "absolute": 1E-09
+        },
+        "analysis": "SMOKE"
+      },
+      {
+        "reference": "fresh ngspice, original numerical controls; no grid locking",
+        "input_sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387",
+        "path": "tests/ngspice/regression/misc/bugs-2.cir",
+        "scope": "ngspice",
+        "process_elapsed_seconds": 1.7691327,
+        "error": null,
+        "source_unchanged": true,
+        "state": "explicit_skip_or_non_numerical_contract",
+        "mismatches": 0,
+        "upstream_pass": true,
+        "bounds": {
+          "relative": 0.0001,
+          "absolute": 1E-09
+        },
+        "analysis": "SMOKE"
+      },
+      {
+        "reference": "fresh ngspice, original numerical controls; no grid locking",
+        "input_sha256": "05ec226f360c873317c5f197de8a81d963e39660a659570c91a76f0e765a1586",
+        "path": "tests/xyce/Netlists/RESISTOR/resistor_neg.cir",
+        "scope": "ngspice",
+        "process_elapsed_seconds": 4.3541246,
+        "error": null,
+        "source_unchanged": true,
+        "state": "passed_upstream_comparison",
+        "mismatches": 0,
+        "upstream_pass": true,
+        "bounds": {
+          "relative": 0.0001,
+          "absolute": 1E-09
+        },
+        "analysis": "DC Sweep"
+      }
+    ],
+    "limits": [
+      "Reused pinned-reference executable, not a fresh clean-build attestation.",
+      "Upstream comparator semantics and signal/analysis coverage remain distinct from our full mapped-observer comparator.",
+      "Elapsed includes fresh ngspice reference generation/comparison, so it is not a RSpice solver speed benchmark.",
+      "Skip, expected-unsupported and smoke results are never numerical agreement."
+    ]
+  },
+  "latency": {
+    "extended_transient": {
+      "process_id": 31828,
+      "exited": false,
+      "exit_code": null,
+      "elapsed_seconds": 302.2553335,
+      "stdout": "",
+      "stderr": "",
+      "clipped": false
+    },
+    "cpu_agreement": {
+      "scope": "CPU LU versus complete replay responses; no missing-value substitution, interpolation, or unequal-grid pass",
+      "results": [
+        {
+          "state": "agreed",
+          "points": 3,
+          "maximum_bound_ratio": 1.5272200825812015E-12,
+          "backend": "faer",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 0,
+          "iteration": 1
+        },
+        {
+          "state": "agreed",
+          "points": 3,
+          "maximum_bound_ratio": 1.5272200825812015E-12,
+          "backend": "faer",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 0,
+          "iteration": 2
+        },
+        {
+          "state": "agreed",
+          "points": 3,
+          "maximum_bound_ratio": 1.5272200825812015E-12,
+          "backend": "faer",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 0,
+          "iteration": 3
+        },
+        {
+          "state": "agreed",
+          "points": 3,
+          "maximum_bound_ratio": 8.511477851800532E-11,
+          "backend": "intel",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 0,
+          "iteration": 1
+        },
+        {
+          "state": "agreed",
+          "points": 3,
+          "maximum_bound_ratio": 8.511477851800532E-11,
+          "backend": "intel",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 0,
+          "iteration": 2
+        },
+        {
+          "state": "agreed",
+          "points": 3,
+          "maximum_bound_ratio": 8.511477851800532E-11,
+          "backend": "intel",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 0,
+          "iteration": 3
+        },
+        {
+          "state": "agreed",
+          "points": 1,
+          "maximum_bound_ratio": 0.0,
+          "backend": "faer",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 1,
+          "iteration": 1
+        },
+        {
+          "state": "agreed",
+          "points": 1,
+          "maximum_bound_ratio": 0.0,
+          "backend": "faer",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 1,
+          "iteration": 2
+        },
+        {
+          "state": "agreed",
+          "points": 1,
+          "maximum_bound_ratio": 0.0,
+          "backend": "faer",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 1,
+          "iteration": 3
+        },
+        {
+          "state": "agreed",
+          "points": 1,
+          "maximum_bound_ratio": 0.0,
+          "backend": "intel",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 1,
+          "iteration": 1
+        },
+        {
+          "state": "agreed",
+          "points": 1,
+          "maximum_bound_ratio": 0.0,
+          "backend": "intel",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 1,
+          "iteration": 2
+        },
+        {
+          "state": "agreed",
+          "points": 1,
+          "maximum_bound_ratio": 0.0,
+          "backend": "intel",
+          "detail": "All signals on matching grids; voltage 1e-6 V, current 1e-9 A, relative 1e-4",
+          "case": 1,
+          "iteration": 3
+        }
+      ]
+    },
+    "statistics": [
+      {
+        "case_backend": "0, faer",
+        "success_count": 3,
+        "median": 0.264685,
+        "count": 3,
+        "maximum": 0.4400959,
+        "minimum": 0.2003189
+      },
+      {
+        "case_backend": "0, intel",
+        "success_count": 3,
+        "median": 16.2010474,
+        "count": 3,
+        "maximum": 19.2972302,
+        "minimum": 13.3752337
+      },
+      {
+        "case_backend": "0, lu",
+        "success_count": 3,
+        "median": 0.1114399,
+        "count": 3,
+        "maximum": 0.2082309,
+        "minimum": 0.0800752
+      },
+      {
+        "case_backend": "1, faer",
+        "success_count": 3,
+        "median": 0.092901,
+        "count": 3,
+        "maximum": 0.1177966,
+        "minimum": 0.0904579
+      },
+      {
+        "case_backend": "1, intel",
+        "success_count": 3,
+        "median": 2.1618549,
+        "count": 3,
+        "maximum": 2.2266588,
+        "minimum": 1.9817288
+      },
+      {
+        "case_backend": "1, lu",
+        "success_count": 3,
+        "median": 0.309333,
+        "count": 3,
+        "maximum": 0.4057773,
+        "minimum": 0.2722377
+      }
+    ],
+    "interrupted_extended_diagnostic": {
+      "exited": true,
+      "start_utc": "2026-11-14T18:28:04.3383526Z",
+      "pid": 7916,
+      "action": "Stopped owned benchmark after captured 300-second transient timeout, avoiding three redundant timeout repeats",
+      "preserved_raw": "E:/Artifacts/Spice-Intel-decks-42e5356-20261114/latency-v1"
+    },
+    "summary": {
+      "timeout_milliseconds": 120000,
+      "provider_sha256": "4353E81A729F56F106212C8799B23AF3E74A6B1D20AB21A00C335BCFB870E955",
+      "engine_sha256": "C4533FB658AE31BF32501E949F2A324FE57B437FF8C43692BE96FFD3B16E5519",
+      "scope": "Same executable and circuit JSON except backend; first iteration excluded; fresh child per sample; private shader cache shared within run; dev Rust and Release native adapter, no release-speed claim",
+      "runtime_provenance_valid": true,
+      "rows": [
+        {
+          "seconds": 0.2844185,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": true,
+          "iteration": 0,
+          "identity": "nalgebra_dense_lu_reference",
+          "backend": "lu",
+          "artifact": "case-0-lu-0.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 0.0800752,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": false,
+          "iteration": 1,
+          "identity": "nalgebra_dense_lu_reference",
+          "backend": "lu",
+          "artifact": "case-0-lu-1.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 0.1114399,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": false,
+          "iteration": 2,
+          "identity": "nalgebra_dense_lu_reference",
+          "backend": "lu",
+          "artifact": "case-0-lu-2.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 0.2082309,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": false,
+          "iteration": 3,
+          "identity": "nalgebra_dense_lu_reference",
+          "backend": "lu",
+          "artifact": "case-0-lu-3.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 0.1136645,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": true,
+          "iteration": 0,
+          "identity": "faer_sparse_lu",
+          "backend": "faer",
+          "artifact": "case-0-faer-0.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 0.264685,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": false,
+          "iteration": 1,
+          "identity": "faer_sparse_lu",
+          "backend": "faer",
+          "artifact": "case-0-faer-1.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 0.2003189,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": false,
+          "iteration": 2,
+          "identity": "faer_sparse_lu",
+          "backend": "faer",
+          "artifact": "case-0-faer-2.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 0.4400959,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": false,
+          "iteration": 3,
+          "identity": "faer_sparse_lu",
+          "backend": "faer",
+          "artifact": "case-0-faer-3.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 38.58159,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": true,
+          "iteration": 0,
+          "identity": "intel_opencl_viennacl_gmres_experimental",
+          "backend": "intel",
+          "artifact": "case-0-intel-0.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 19.2972302,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": false,
+          "iteration": 1,
+          "identity": "intel_opencl_viennacl_gmres_experimental",
+          "backend": "intel",
+          "artifact": "case-0-intel-1.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 16.2010474,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": false,
+          "iteration": 2,
+          "identity": "intel_opencl_viennacl_gmres_experimental",
+          "backend": "intel",
+          "artifact": "case-0-intel-2.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 13.3752337,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0000\\requested_1\\00000.request.json",
+          "case": 0,
+          "warmup": false,
+          "iteration": 3,
+          "identity": "intel_opencl_viennacl_gmres_experimental",
+          "backend": "intel",
+          "artifact": "case-0-intel-3.json",
+          "success": true,
+          "request_sha256": "7EA5E4C0AE0CC8705D3B17FBB5DD1A319BD60FF7747EAB44D00144947995F377"
+        },
+        {
+          "seconds": 1.6561927,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": true,
+          "iteration": 0,
+          "identity": "nalgebra_dense_lu_reference",
+          "backend": "lu",
+          "artifact": "case-1-lu-0.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        },
+        {
+          "seconds": 0.309333,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": false,
+          "iteration": 1,
+          "identity": "nalgebra_dense_lu_reference",
+          "backend": "lu",
+          "artifact": "case-1-lu-1.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        },
+        {
+          "seconds": 0.4057773,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": false,
+          "iteration": 2,
+          "identity": "nalgebra_dense_lu_reference",
+          "backend": "lu",
+          "artifact": "case-1-lu-2.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        },
+        {
+          "seconds": 0.2722377,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": false,
+          "iteration": 3,
+          "identity": "nalgebra_dense_lu_reference",
+          "backend": "lu",
+          "artifact": "case-1-lu-3.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        },
+        {
+          "seconds": 0.1443738,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": true,
+          "iteration": 0,
+          "identity": "faer_sparse_lu",
+          "backend": "faer",
+          "artifact": "case-1-faer-0.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        },
+        {
+          "seconds": 0.092901,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": false,
+          "iteration": 1,
+          "identity": "faer_sparse_lu",
+          "backend": "faer",
+          "artifact": "case-1-faer-1.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        },
+        {
+          "seconds": 0.0904579,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": false,
+          "iteration": 2,
+          "identity": "faer_sparse_lu",
+          "backend": "faer",
+          "artifact": "case-1-faer-2.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        },
+        {
+          "seconds": 0.1177966,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": false,
+          "iteration": 3,
+          "identity": "faer_sparse_lu",
+          "backend": "faer",
+          "artifact": "case-1-faer-3.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        },
+        {
+          "seconds": 2.1024202,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": true,
+          "iteration": 0,
+          "identity": "intel_opencl_viennacl_gmres_experimental",
+          "backend": "intel",
+          "artifact": "case-1-intel-0.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        },
+        {
+          "seconds": 1.9817288,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": false,
+          "iteration": 1,
+          "identity": "intel_opencl_viennacl_gmres_experimental",
+          "backend": "intel",
+          "artifact": "case-1-intel-1.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        },
+        {
+          "seconds": 2.1618549,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": false,
+          "iteration": 2,
+          "identity": "intel_opencl_viennacl_gmres_experimental",
+          "backend": "intel",
+          "artifact": "case-1-intel-2.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        },
+        {
+          "seconds": 2.2266588,
+          "request": "E:\\Artifacts\\Spice-Intel-decks-42e5356-20261114\\decks-v3\\intel\\cases\\0004\\requested_0\\00005.request.json",
+          "case": 1,
+          "warmup": false,
+          "iteration": 3,
+          "identity": "intel_opencl_viennacl_gmres_experimental",
+          "backend": "intel",
+          "artifact": "case-1-intel-3.json",
+          "success": true,
+          "request_sha256": "2143D7A7E32CA489CA91D3027DD202B63306884C89FB0F3720DE5358BDDEDDCA"
+        }
+      ]
+    }
+  },
+  "verification": {
+    "frontend_passed": 960,
+    "manual_fault": {
+      "restored_control": "snapshot-tests-v3/gate.log: 2 passed",
+      "exit_code": 101,
+      "mutant_sha256": "67C15DD4CE7938DBDE2D2BE22EC87EBAE33C6803BBD4EC8DCC54FFE6E8431EEB",
+      "source_sha256": "68169B6511194079EAB4249B2584B0075FB000FE198992B879A25E27AD2CD2A5",
+      "scope": "One manual fault injection, not a cargo-mutants campaign or mutation score",
+      "mutation": "Remove nonfinite residual-scale rejection"
+    },
+    "provider_tests_passed": 8,
+    "physical_contract_passed": 1,
+    "host_ffi_native_kernel_coverage": null,
+    "fuzz_limit": "No dedicated AFL/SharpFuzz campaign in this task; bounded reproducible Proptest/FsCheck and malformed/negative tests only",
+    "residual_gate_tests_passed": 2,
+    "pester_failed": 0,
+    "property_cases": 16,
+    "pester_commands_covered": 203,
+    "cli_tests_passed": 4,
+    "format_limit": "cargo fmt --all -- --check reports pre-existing repository formatting differences; no whole-tree reformat performed",
+    "pester_passed": 21,
+    "safe_adapter_line_coverage": {
+      "file": "src/backend_intel.rs",
+      "sha256": "68169b6511194079eab4249b2584b0075fb000fe198992b879a25e27ad2cd2a5",
+      "lines": {
+        "count": 87,
+        "covered": 82,
+        "percent": 94.25287356321839
+      }
+    },
+    "focused_owned_library_lines": {
+      "total": 7543,
+      "covered": 939,
+      "files": 49
+    },
+    "broad_mutation_limit": "No cargo-mutants campaign; frontend Stryker timed out in initial build and assessed no mutants",
+    "frontend_skipped": 40,
+    "pester_commands_analyzed": 216,
+    "strictdoc_parsed": 74,
+    "pester_skipped": 0,
+    "property_seed": 2026111404,
+    "snapshot_runtime_provenance_valid": true,
+    "rust_branch_coverage": null,
+    "frontend_failed": 0,
+    "frontend_syntax_coverage": {
+      "collector": "Microsoft.CodeCoverage",
+      "lines_covered": 10225,
+      "lines_total": 12882,
+      "branches_total": 10649,
+      "branches_covered": 7012,
+      "scope": "Frontend and Syntax including captured lowering bodies"
+    }
+  },
+  "review": "Six actionable source-review findings addressed and verified; final follow-up found no further findings in assessed scope; not external expert review",
+  "limitations": [
+    "GPU transients and behavioral AC did not meet 30-second deadlines.",
+    "RC transient also failed to finish within extended 300-second diagnostic.",
+    "CPU RC/RLC transients disagree at unchanged stock-reference bounds; RSpice fresh comparisons agree.",
+    "RSpice bugs-2/asrc results are smoke-only and cannot establish numerical agreement.",
+    "RSpice elapsed includes native oracle; no standalone performance ranking.",
+    "Dev CPU/Rust profile and host contention prevent release-performance claims.",
+    "Linux/other GPUs/nonlinear GPU decks/unrestricted SPICE/production unqualified.",
+    "Final replay corpus_commit field unavailable; manual exact pin verification retained separately."
+  ],
+  "artifact_sha256": {
+    "observed-inventory.json": "03412e103904eaddcdc152f7723473edea9f1ef3827d0f27d3bc65e41b6620e1",
+    "native-v7/build-manifest.json": "79e2f1b4b8f20f9998087634c24494fcd2c1ed27fa625ceb13346b22d8df7b33",
+    "native-v7/VIENNACL-LICENSE.txt": "41f6ddd609e82a9e8f44ab0f7d59cb4dc676fa309e4b43dcd6594349900f294d",
+    "engine-v3/build-manifest.json": "cbd1c4c5bba3e7c4346567543cc04d85a6f014136a87d997ea34aa0b56f1b882",
+    "snapshot-tests-v3/summary.json": "3ddc473ed6a2a6752acd8294edfc64480e2a2afcc409086dbfe551d4e817d3ef",
+    "adapter-coverage-v1/summary.json": "926c4755ca49e677ce7aab9921ba095fd28ff23a1ed686a66da6d9a3b3287e63",
+    "decks-v3/comparison.json": "21bdeb9a5eca39aa971482a054b9e463f9daff83e0e7ee19638839e500294a15",
+    "decks-v3/lu/summary.json": "e5714840e27981b1b45c6cc67194eb524c3c17df9aa0185d2525f4c33f1bf2be",
+    "decks-v3/faer/summary.json": "953bd617f712cedc114200119acdcc9bef73c5117a980d45ecd20a6bad8f0a3c",
+    "decks-v3/intel/summary.json": "1fe2f1afa6030d6540442673b7315bb439448182e021717f5c6dab9e2b189fb3",
+    "rspice-v2/summary.json": "d252b69a9b00c302ff19e71ece3e993ff8953e010053da690642a76a40895db5",
+    "latency-v2/summary.json": "1c21d065d394159bf4226ad9f1a27f8c7f18cdcf96cdbd492fb16405db2a34f5",
+    "latency-v2/cpu-agreement.json": "db6ce573dec7188c4175fcd53da3c17e239d0ccb167ddcf74700cae39fcb95ae",
+    "latency-v2/statistics.json": "16775cea7c31bf1d9b248378ed25d6e261e146ade824d7624c5a0f6e90fe754f",
+    "latency-v1/case-1-intel-0.json": "b7b8acd610b06bed50564f6c68f23883e9773fbddfecbcdef64f89f564fab082",
+    "latency-v1-stop.json": "1f50fb309fdd6a62493011d6e92034b80d914b514078256b1951f1d23fa43ba1",
+    "gate-mutation-v1/summary.json": "67818f30e9023c01988a799dfbe06211984cc81186c78863a6e3a3cc8bd824a5",
+    "launcher-tests-v5.xml": "b9d4587e285b62808dc30a9a56826933defa9140f87b5d135ed1f2ec649a65d2",
+    "launcher-coverage-v5.xml": "b60dbe71919aaac69f90ae9b45b6febb3dfe0142fec050d35e9d622d28b5cdf2",
+    "device-final.json": "10f86e1d3ed66e0e8573f8830680de96c05293de3ffc56b76ca67b29da3d4d35",
+    "corpus-pin-verification.json": "b162980f4fc948fc4d09ec74462089b9ef46ff87f464b74bb69ddc6598a4e63a"
+  }
+}

@@ -8,6 +8,8 @@ pub mod assertion;
 pub mod audit;
 pub mod backend;
 pub mod backend_faer;
+#[cfg(feature = "intel-opencl")]
+pub mod backend_intel;
 pub mod behavioral_resistor;
 pub mod bsim330;
 pub mod campaign;

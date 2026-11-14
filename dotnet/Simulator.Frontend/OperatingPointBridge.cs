@@ -56,7 +56,7 @@ public static class OperatingPointBridge
         if(!Enum.IsDefined(limits.GroundAliases))throw new ArgumentOutOfRangeException(nameof(limits));
         BridgeResult Failure(string code,SourceRange? range)=>new(null,ImmutableDictionary.Create<string,string>(StringComparer.OrdinalIgnoreCase),[],[new(code,range)]);
         if(syntax.Status!="accepted_structure"||syntax.Declarations is not {} catalog)return Failure("syntax_not_accepted",null);
-        if(backend is not ("lu" or "qr" or "faer"))return Failure("unsupported_backend",null);
+        if(backend is not ("lu" or "qr" or "faer" or "intel"))return Failure("unsupported_backend",null);
         // Extensions may have globally physical effects even when spelled in
         // an unused body. Only the explicit selection's named observations and
         // analyses may be omitted; all other extensions remain conservative.

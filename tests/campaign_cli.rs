@@ -38,7 +38,7 @@ fn cli_capabilities_and_invalid_arguments_are_json() {
         .unwrap();
     assert!(output.status.success());
     let info: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
-    assert_eq!(info["gpu"], false);
+    assert_eq!(info["gpu"], cfg!(feature = "intel-opencl"));
     assert_eq!(info["nonlinear"]["diode_dc"], true);
     // Capabilities are a truthful contract for the bounded nonlinear configured path.
     assert_eq!(info["nonlinear"]["transient"], true);
@@ -57,7 +57,7 @@ fn cli_capabilities_and_invalid_arguments_are_json() {
     );
     assert_eq!(
         info["models"]["diode_with_capacitance"]["configured_trapezoidal"],
-        false
+        true
     );
     let output = Command::new(executable)
         .arg("--shell")
@@ -67,4 +67,24 @@ fn cli_capabilities_and_invalid_arguments_are_json() {
     assert!(!output.status.success());
     let info: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
     assert_eq!(info["complete"], false);
+}
+
+#[cfg(feature = "intel-opencl")]
+#[test]
+fn intel_metadata_process_releases_context_and_exits() {
+    let mut child=Command::new(env!("CARGO_BIN_EXE_circuit-simulator"))
+        .arg("--intel-device").stdin(Stdio::null()).stdout(Stdio::piped()).stderr(Stdio::piped()).spawn().unwrap();
+    let started=std::time::Instant::now();
+    while child.try_wait().unwrap().is_none() {
+        if started.elapsed()>std::time::Duration::from_secs(30) {
+            child.kill().unwrap();let _=child.wait();
+            panic!("Intel metadata emitted output but did not shut down within 30 seconds");
+        }
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
+    let result=child.wait_with_output().unwrap();
+    assert!(result.status.success(),"{}",String::from_utf8_lossy(&result.stderr));
+    let value:serde_json::Value=serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(value["backend"],"intel");assert_eq!(value["cpu_fallback"],false);
+    assert!(value["device"].as_str().unwrap().contains("Intel"));
 }
