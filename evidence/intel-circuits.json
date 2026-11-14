@@ -2753,5 +2753,11 @@
     "launcher-coverage-v5.xml": "b60dbe71919aaac69f90ae9b45b6febb3dfe0142fec050d35e9d622d28b5cdf2",
     "device-final.json": "10f86e1d3ed66e0e8573f8830680de96c05293de3ffc56b76ca67b29da3d4d35",
     "corpus-pin-verification.json": "b162980f4fc948fc4d09ec74462089b9ef46ff87f464b74bb69ddc6598a4e63a"
-  }
+  },
+  "results_issue": "https://github.com/jeffadickson/Spice/issues/48",
+  "pushed_checkpoints": [
+    "1ab34d0",
+    "1b2d5ab",
+    "40baa6c"
+  ]
 }

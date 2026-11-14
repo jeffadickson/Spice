@@ -187,3 +187,10 @@ Bounded evidence and the three selected-cohort stage charts are committed under
 `evidence/`. These charts cover five selected inputs, not overall corpus parity.
 Canonical main, its unknown sheet-resistor changes and VeloSim are untouched.
 No CI or new endurance campaign was dispatched.
+
+Checkpoints `1ab34d0`, `1b2d5ab` and `40baa6c` were pushed to
+`fix/deck-blocker-implementation` and its remote head verified. Results and
+prioritized follow-up are in [issue #48](https://github.com/jeffadickson/Spice/issues/48).
+The development branch's numerical entry points now include actual Intel
+circuit tests as well as the matrix probe. Canonical main and its nightly
+workflow were not updated or represented as running this new optional provider.

@@ -18,8 +18,10 @@ provider; existing compilation, assembly, analyses and public managed frontend.
   retain full signals, original hashes, failures, cold and warm timing scopes.
 - [x] Implement two additional original corpus blockers in an independent
   frontend workstream; verify all requested analyses without weakened bounds.
-- [ ] Add StrictDoc traceability, review, commit and push verified checkpoints.
+- [x] Add StrictDoc traceability, review, commit and push verified checkpoints.
 
 Execution is not universal acceptance: the final selected run retains GPU
 deadlines, CPU transient discrepancies and upstream smoke-only contracts.
 See docs/intel-circuit-results.md for the measured outcome and limitations.
+Checkpoints 1ab34d0, 1b2d5ab and 40baa6c were pushed and the remote head verified.
+Results and prioritized remaining work are tracked in repository issue #48.
