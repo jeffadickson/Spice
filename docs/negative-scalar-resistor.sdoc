@@ -1,0 +1,40 @@
+[DOCUMENT]
+TITLE: Requested finite negative scalar resistance
+
+[TEXT]
+STATEMENT: >>>
+Bounded original target: tests/xyce/Netlists/RESISTOR/resistor_neg.cir in pinned
+RSpice 29c28a022625fd7cc2c56ead1cce2d3066663074. This is an unchanged Xyce
+regression fixture retained by RSpice, outside the historical 113-deck ngspice
+subtree. Its six DC points and original current observations must agree with
+stock ngspice. The authored four-analysis example is separate and uncounted.
+
+Reuse the existing typed self-controlled VCCS and its native DC/AC/transient
+stamps. I(p to n) = (V(p)-V(n))/R is exact for a constant nonzero R of either
+sign. A negative scalar is an active conductance; it does not relax the native
+passive Resistor contract. No solver, dependency, schema or capacity change is
+needed. This does not establish convergence or stability of every active circuit.
+<<<
+
+[REQUIREMENT]
+UID: REQ-REQUESTED-NEGATIVE-SCALAR-R-001
+STATUS: Draft
+TITLE: Preserve finite signed scalar resistance and original identity
+STATEMENT: >>>
+Requested analysis preparation shall lower a supported plain finite negative
+scalar resistance, including a braced scalar parameter expression, to a self-controlled
+VCCS with output and control terminals in the original p/n order and Siemens
+equal to its signed reciprocal. It shall retain original element provenance.
+It shall refuse zero resistance and a negative value whose reciprocal is
+nonfinite before publishing any requested operation. Positive resistors shall retain their
+passive typed representation. Negative model, geometry and AC-only variants
+remain outside this slice; legacy selected OP admission shall remain explicit.
+<<<
+COMMENT: >>>
+Implementation: OperatingPointBridge requested scalar preparation and existing
+Vccs DTO/native stamps. Verification: NegativeScalarResistorTests, including
+128 FsCheck cases with replay 1001,2026111403, zero/overflow/model negatives,
+original resistor_neg.cir, and examples/negative-scalar-resistor.cir.
+The reproduced failing property minimized to NonNegativeInt 0 (R=-1 ohm).
+Evidence: evidence/negative-scalar-resistor.json.
+<<<

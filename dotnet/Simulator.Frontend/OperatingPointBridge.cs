@@ -178,16 +178,25 @@ public static class OperatingPointBridge
 
                     else if(selected&&primitive.Family=="R")
                     {
-                        var preparedResistor=requested?ResistorModelLowering.PrepareRequested(catalog,primitive,environment,limits.TemperatureCelsius):ResistorModelLowering.Prepare(catalog,primitive,environment);
-                        if(!preparedResistor.Success)throw new BridgeFailure(preparedResistor.Diagnostics[0].Code,preparedResistor.Diagnostics[0].Range);
-                        value=preparedResistor.Resistor!.Ohms;acOhms=preparedResistor.Resistor.AcOhms;dcOpen=preparedResistor.Resistor.DcOpen;
+                        // A plain negative scalar is an active conductance, not
+                        // a passive resistor model. Keep model/geometry/AC-only
+                        // variants under their separately qualified adapter.
+                        double? scalar=requested&&primitive.Supported&&primitive.Value is {} raw&&primitive.ResistorModel==null
+                            ?Evaluate(raw):null;
+                        if(scalar is <0)value=scalar.Value;
+                        else
+                        {
+                            var preparedResistor=requested?ResistorModelLowering.PrepareRequested(catalog,primitive,environment,limits.TemperatureCelsius):ResistorModelLowering.Prepare(catalog,primitive,environment);
+                            if(!preparedResistor.Success)throw new BridgeFailure(preparedResistor.Diagnostics[0].Code,preparedResistor.Diagnostics[0].Range);
+                            value=preparedResistor.Resistor!.Ohms;acOhms=preparedResistor.Resistor.AcOhms;dcOpen=preparedResistor.Resistor.DcOpen;
+                        }
                     }
                     else
                     {
                         if(!primitive.Supported||primitive.Value==null)throw new BridgeFailure("unsupported_primitive_header",primitive.Range);
                         value=Evaluate(primitive.Value);
                     }
-                    if(primitive.Family=="R"&&value<=0)throw new BridgeFailure("invalid_resistance",primitive.Range);
+                    if(primitive.Family=="R"&&(value==0||value<0&&(!requested||!double.IsFinite(1/value))))throw new BridgeFailure("invalid_resistance",primitive.Range);
                     if(primitive.Family=="C"&&value<=0)throw new BridgeFailure("invalid_capacitance",primitive.Range);
                     if(primitive.Family=="L"&&value<=0)throw new BridgeFailure("invalid_inductance",primitive.Range);
                     var p=Node(primitive.P.Text);var n=Node(primitive.N.Text);
@@ -212,6 +221,10 @@ public static class OperatingPointBridge
                         elements.Add(Controlled(id,p,n,cp,cn,value,primitive.Family=="E"));
                     }
                     else if(dcOpen)elements.Add(new Vccs(id,p,n,p,n,0)); // Exact open with stable terminals and wire ID.
+                    // I(p->n) = (V(p)-V(n))/R, including its negative slope.
+                    // Reuse the native active-source law; do not weaken the
+                    // native passive resistor's positive-resistance invariant.
+                    else if(primitive.Family=="R"&&value<0)elements.Add(new Vccs(id,p,n,p,n,1/value));
                     else elements.Add(primitive.Family switch{"R"=>new Resistor(id,p,n,value),"C"=>new Capacitor(id,p,n,value),"L"=>new Inductor(id,p,n,value),"V"=>new Voltage(id,p,n,value),_=>new Current(id,p,n,value)});
                     if(selected&&primitive.Family is ("V" or "I"))
                     {
