@@ -1,0 +1,180 @@
+{
+  "date": "2026-11-14",
+  "source_base": "42e53560273a2cd29e398e5b70e8c0114ff3bcb2",
+  "corpus_commit": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "artifact_root": "E:/Artifacts/Spice-two-originals-42e5356-20261114",
+  "runtime": "runtime-v4",
+  "assembly_hashes": [
+    {
+      "Path": "E:\\Artifacts\\Spice-two-originals-42e5356-20261114\\runtime-v4\\Antlr4.Runtime.Standard.dll",
+      "Hash": "0440E3D2C5906326E04DF87D6A5272192B7D29099901BA4215CA9E0F5DCA7591"
+    },
+    {
+      "Path": "E:\\Artifacts\\Spice-two-originals-42e5356-20261114\\runtime-v4\\Simulator.Client.dll",
+      "Hash": "19365EE5B91CDA1471D916877395C9DAB62F9D25AF0BE9960F153A84A9BD7C2A"
+    },
+    {
+      "Path": "E:\\Artifacts\\Spice-two-originals-42e5356-20261114\\runtime-v4\\Simulator.Frontend.dll",
+      "Hash": "CE58C547E22171A4AC4CA6602F67B6409DFA72E3595561C687BD227F8E2B9E05"
+    },
+    {
+      "Path": "E:\\Artifacts\\Spice-two-originals-42e5356-20261114\\runtime-v4\\Simulator.RequestedQualification.dll",
+      "Hash": "D2FB6E6C494354841284EFD10AB64980E32B12B9ABF9D454BF8D2F02EF429582"
+    },
+    {
+      "Path": "E:\\Artifacts\\Spice-two-originals-42e5356-20261114\\runtime-v4\\Simulator.Syntax.dll",
+      "Hash": "195A00BAF435C8D5D217B08B900545F71727DCC2487E725A3342F1128D783BF3"
+    }
+  ],
+  "engine_sha256": "3AE9AC2C1552AD1240901CB3DE9202DA907DB1BF9EF2A8A3D0E21790E41E2467",
+  "tests": {
+    "passed": 960,
+    "total": 1000,
+    "trx": "E:/Artifacts/Spice-two-originals-42e5356-20261114/microsoft-final-coverage/microsoft-final.trx",
+    "failed": 0,
+    "skipped": 40
+  },
+  "coverage": {
+    "lines_valid": 12882,
+    "raw_sha256": "F4C3B712CD85519F6C4C92E2CBD0F1F60F50A26399E747CD83C18C4CF6FF06F1",
+    "scope": "Simulator.Frontend and Simulator.Syntax including compiler-generated captured bodies",
+    "lines_covered": 10225,
+    "raw": "E:/Artifacts/Spice-two-originals-42e5356-20261114/microsoft-final-coverage/7232afd0-9ad8-4855-bf54-347a2e67fbd5/jeffd_OPTIPLEX7090_2026-11-14.10_22_35.cobertura.xml",
+    "earlier_coverlet": {
+      "branches_covered": 6558,
+      "branches_valid": 10347,
+      "limitation": "Different transitive scope; omits captured lowering bodies; not equivalent to Microsoft scope",
+      "lines_covered": 21999,
+      "lines_valid": 27909
+    },
+    "collector": "Microsoft.CodeCoverage 18.5.1",
+    "branches_covered": 7012,
+    "branches_valid": 10649
+  },
+  "tools": {
+    "fscheck": "3.5.0",
+    "sdk": "10.0.404",
+    "stryker": "5.0.0",
+    "vstest": "18.7.1",
+    "strictdoc": "0.30.4",
+    "ngspice": "47+"
+  },
+  "replay_commands": [
+    "pwsh -NoProfile -File FinalReplayV4.ps1 -Backend lu",
+    "pwsh -NoProfile -File FinalReplayV4.ps1 -Backend faer",
+    "pwsh -NoProfile -File MicrosoftFullFinal.ps1"
+  ],
+  "guards": "Owned process tree 4GiB, outer deadlines; parent aggregate watchdog 6GiB with OS headroom",
+  "mutation": {
+    "manual_sign_fault": {
+      "passed": 11,
+      "failed": 3,
+      "restored_passed": 14
+    },
+    "stryker_assessed": 0,
+    "manual_atomic_lookup_fault": {
+      "passed": 12,
+      "failed": 2,
+      "restored_passed": 14
+    },
+    "stryker_limitation": "600.18-second outer deadline during initial build; no score",
+    "scope": "Two deliberate snapshot faults before selective-save extension; production never mutated"
+  },
+  "limitations": [
+    "40 prerequisite skips retained",
+    "No standalone coverage-guided fuzz campaign",
+    "Draft requirements; finite evidence is not global proof",
+    "RSpice bugs2 scripted-control case is SMOKE only, not independent numeric evidence"
+  ],
+  "qualifications": [
+    {
+      "source_gate": true,
+      "rows": [
+        {
+          "reporting": "executed",
+          "path": "tests/ngspice/regression/misc/bugs-2.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387"
+        },
+        {
+          "reporting": null,
+          "path": "tests/xyce/Netlists/RESISTOR/resistor_neg.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "sha256": "05ec226f360c873317c5f197de8a81d963e39660a659570c91a76f0e765a1586"
+        },
+        {
+          "reporting": null,
+          "path": "examples/negative-scalar-resistor.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "sha256": "98e1540e0d2a4d34228d6767970125dec59bf9f39177fccd722ab494d66d9dba"
+        }
+      ],
+      "backend": "lu",
+      "summary": "E:/Artifacts/Spice-two-originals-42e5356-20261114/final-v4-lu/summary.json",
+      "summary_sha256": "0AD079F5B63BA25A147B601F74E098C381FE667A2961924F6F09CDC99EF7842E"
+    },
+    {
+      "source_gate": true,
+      "rows": [
+        {
+          "reporting": "executed",
+          "path": "tests/ngspice/regression/misc/bugs-2.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "sha256": "568aa57dda2bfd0eef311444a2e642c9f18e4c9720332dc149c2183972b15387"
+        },
+        {
+          "reporting": null,
+          "path": "tests/xyce/Netlists/RESISTOR/resistor_neg.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "sha256": "05ec226f360c873317c5f197de8a81d963e39660a659570c91a76f0e765a1586"
+        },
+        {
+          "reporting": null,
+          "path": "examples/negative-scalar-resistor.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "sha256": "98e1540e0d2a4d34228d6767970125dec59bf9f39177fccd722ab494d66d9dba"
+        }
+      ],
+      "backend": "faer",
+      "summary": "E:/Artifacts/Spice-two-originals-42e5356-20261114/final-v4-faer/summary.json",
+      "summary_sha256": "C07B801D6AC73CB1A77407D51D4D4A18ACC7498A8ED27CDC1C357AD6A79DE8B9"
+    }
+  ],
+  "feature": "source-dc-vector",
+  "requirements": [
+    "REQ-CONTROL-SOURCE-DC-VECTOR-001",
+    "REQ-CONTROL-SOURCE-DC-INDEX-001"
+  ],
+  "property": {
+    "replay": "987,2026111401",
+    "cases": 128
+  },
+  "source_hashes": [
+    {
+      "path": "dotnet/Simulator.Frontend/RequestedControlReporting.cs",
+      "sha256": "A4D4367BD919708169AE854A3513DA9F2192650A3BA7CC8AE25670798D3FD391"
+    },
+    {
+      "path": "dotnet/Simulator.Frontend/RequestedSourceDcCapture.cs",
+      "sha256": "EE4B649F1BB8A522552EF425E9AC752D9F74395DD960FF8F09341ADBBE495753"
+    },
+    {
+      "path": "dotnet/Simulator.Syntax/ControlVectorExecution.cs",
+      "sha256": "188F39D52CBE01D5D246A7C726491DE1AB880E542E0C2937D58FF8C7AF0CB5EA"
+    },
+    {
+      "path": "dotnet/Simulator.Frontend.Tests/SourceDcVectorTests.cs",
+      "sha256": "F9300653A34B59FD711A667D3A34DD122299D3DB1EC91717C903563625860C17"
+    }
+  ],
+  "review": "Internal automated read-only source review of product/test/requirements diffs: no actionable findings; no reviewer execution.",
+  "strictdoc": {
+    "log": "E:/Artifacts/Spice-two-originals-42e5356-20261114/strictdoc.log",
+    "parsed_documents": 74
+  },
+  "before": {
+    "scope": "Diagnostic baseline, source provenance changed during parent work; no qualifying closure claimed",
+    "raw": "E:/Artifacts/Spice-two-originals-42e5356-20261114/baseline-physical",
+    "status": "invalid_control_vector_index"
+  }
+}

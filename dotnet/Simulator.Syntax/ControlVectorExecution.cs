@@ -475,7 +475,13 @@ public static partial class ControlVectorExecution
             var children=node.expression();
             Complex[] Child(int i)=>Eval(children[i],locals,depth+1,condition);
             Complex[] result;
-            if (node.voltageReference()!=null ||
+            // A saved device parameter is an atomic vector name, even though
+            // the generated expression grammar represents its brackets as an
+            // index expression. Resolve known complete names before indexing;
+            // an outer index such as @v1[dc][2] then indexes that saved vector.
+            if(node.GetText().StartsWith('@')&&values.TryGetValue(node.GetText(),out var parameter))
+                result=parameter;
+            else if (node.voltageReference()!=null ||
                 (node.identifier()?.GetText().ToLowerInvariant() is "i" or "v" or "pole" or "zero") && node.LPAREN()!=null)
                 result=Resolve(node.GetText(),locals);
             else if (node.ChildCount==1)

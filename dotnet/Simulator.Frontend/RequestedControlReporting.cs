@@ -47,9 +47,39 @@ public static partial class RequestedAnalysis
             // Nutmeg exposes the same signed MNA branch unknown through both
             // i(source) and source#branch. Do not synthesize a second current.
             Add(element.NativeBranchName+"#branch","i("+element.WireId+")");
-            // This is the original source card's DC setting, not the DC sweep axis.
-            if(circuit.Request!.Circuit.Elements.Single(e=>e.Id==element.WireId) is Voltage source)
-                inputs.TryAdd("@"+element.NativeBranchName+"[dc]",[source.Volts]);
+        }
+        var savedDc=RequestedSourceDcCapture.Select(syntax,blocks[0],origin.CommandRange.Start);
+        // Saved independent-source parameters belong to the executed plot.
+        // A DC sweep changes the setting in each immutable point request; the
+        // original source card is only the preparation default. Repeat that
+        // point's setting for its retained samples, rather than broadcasting
+        // one stale scalar or confusing this value with a branch current.
+        foreach(var declaration in syntax.Declarations!.Primitives.Where(p=>p.ScopeId==0&&p.Family is "V" or "I"))
+        {
+            var binding=RequestedDcSourceBinding.Resolve(syntax.Declarations,circuit,declaration.Name);
+            if(binding.Source is not {} source)throw new InvalidDataException(binding.Error);
+            var key="@"+declaration.Name+"[dc]";
+            if(!savedDc.Contains(key))
+            {
+                // ngspice restores the original source parameter after DC.
+                // An unsaved query is that scalar, not the last sweep value.
+                inputs.TryAdd(key,[source switch{Voltage voltage=>voltage.Volts,Current current=>current.Amps,
+                    _=>throw new InvalidDataException("control_source_parameter_identity")}]);
+                continue;
+            }
+            var settings=operation.Requests.SelectMany((request,index)=>
+            {
+                var current=request.Circuit.Elements.SingleOrDefault(e=>e.Id==source.Id);
+                var value=current switch
+                {
+                    Voltage voltage when source is Voltage=>voltage.Volts,
+                    Current amperes when source is Current=>amperes.Amps,
+                    _=>throw new InvalidDataException("control_source_parameter_identity")
+                };
+                if(!double.IsFinite(value))throw new InvalidDataException("control_source_parameter_nonfinite");
+                return Enumerable.Repeat(value,manifests[index].Samples.Length);
+            }).ToArray();
+            inputs.TryAdd(key,settings);
         }
         if(operation.Kind=="op")foreach(var (name,value) in circuit.ModelScalars)inputs.TryAdd(name,[value]);
         if(operation.Kind=="dc"&&operation.CoordinateUnit=="degC")inputs.Add("temp-sweep",operation.Coordinates.ToArray());

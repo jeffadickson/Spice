@@ -1,0 +1,61 @@
+[DOCUMENT]
+TITLE: Saved independent-source DC parameter vectors
+
+[TEXT]
+STATEMENT: >>>
+Bounded target: execute unchanged pinned RSpice regression/misc/bugs-2.cir,
+including its five requested DC points and complete saved-parameter/indexed
+reporting program, with the established stock-ngspice observer bounds.
+Reuse the existing typed immutable requests, original-source identity binding,
+generated expression AST and reporting evaluator. No dependency or device
+equation changes. This slice does not implement arbitrary device parameters,
+future-analysis alteration, sensitivity, or broad simulator compatibility.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-SOURCE-DC-VECTOR-001
+STATUS: Draft
+TITLE: Saved source settings follow executed immutable point requests
+STATEMENT: >>>
+Terminal real reporting shall expose an explicitly saved original root
+independent voltage or current source's DC parameter as a vector sampled in
+executed request order. A root .save card or an exact selector in a control save
+before the dispatch shall select that parameter. A control save after dispatch
+shall not capture prior data, and save all shall not infer device parameters.
+An unsaved parameter query shall retain its original scalar setting after DC,
+as distinct from both the final sweep setting and a saved result vector.
+Each request's setting shall repeat for its retained real samples. A swept
+source shall follow the corresponding point request; an unswept source shall
+retain its own setting rather than borrowing the sweep coordinate. Units shall
+remain volts or amperes according to the original source type. Reporting shall
+refuse a missing, type-changed or nonfinite point setting rather than replace
+missing data with zero or publish a partial report.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Frontend/RequestedControlReporting.cs and
+RequestedSourceDcCapture.cs,
+using RequestedDcSourceBinding's original declaration/origin identity checks.
+Verification: SourceDcVectorTests, including independent expected coordinate
+values, saved unswept OP/DC and unsaved scalar checks, explicit capture ordering,
+corrupt-type/nonfinite cases, and 128 FsCheck cases
+with replay 987,2026111401. Evidence: evidence/source-dc-vector.json.
+<<<
+
+[REQUIREMENT]
+UID: REQ-CONTROL-SOURCE-DC-INDEX-001
+STATUS: Draft
+TITLE: Known saved parameters remain atomic under outer indexing
+STATEMENT: >>>
+The reporting evaluator shall resolve a known complete saved parameter name
+as one atomic vector at every expression AST level, including the inner operand
+of a subsequent numerical vector index. Existing zero-based integer bounds,
+missing-vector failures, finite-value validation and borrowed-input ownership
+shall remain enforced. An unknown parameter shall not become an inferred zero.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Syntax/ControlVectorExecution.cs.
+Verification: SourceDcVectorTests exercises both a saved local and direct
+@source[dc][2] reads, plus existing reporting/index/ownership regression suites.
+Unchanged original regression/misc/bugs-2.cir supplies the independent stock
+program and numerical oracle. Evidence: evidence/source-dc-vector.json.
+<<<
