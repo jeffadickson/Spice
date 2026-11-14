@@ -1,0 +1,43 @@
+{
+  "assessed_platform": "Microsoft Windows 10.0.26300",
+  "evidence_root": "E:/Artifacts/Spice-flush-equivalence-1aa258e-20261114",
+  "probe": {
+    "binary_sha256": "134a38435c53d6f7337bb2b289cb936e129dd139ff03e92b370346e0ac32774f",
+    "compiler": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "result": {
+      "cases": 4,
+      "pre_flush_visibility": true,
+      "post_flush_unchanged": true,
+      "sync_all_retained": true
+    },
+    "platform": "Microsoft Windows 10.0.26300",
+    "source_sha256": "cad63fe5b363cff93c932e69a9bab892ed8a31680088defcfe07af6cad75583c",
+    "limits": "Four finite I/O observations on the recorded platform; not power-loss durability or every future Rust version."
+  },
+  "subject_file_sha256": "e9e34389353e8ccd754cae84bd680e00fc359e9fe83438f1b0f6411d6b4e101f",
+  "subject_file": "src/artifact.rs",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "source_commit": "0face5844c108bbf80e2af39a2d9ec275c76f703",
+  "schema": "spice.mutant-triage.v1",
+  "classification": "equivalent_on_assessed_target",
+  "documentation": "docs/artifact-flush-equivalence.md",
+  "raw_outcome": "MissedMutant",
+  "tests": {
+    "pester_passed": 4,
+    "powershell_total_commands": 228,
+    "owned_scope_total_lines": 8011,
+    "owned_scope_lines": 1899,
+    "artifact_total_lines": 99,
+    "powershell_covered_commands": 76,
+    "rust_branches": null,
+    "artifact_lines": 90,
+    "publication_regressions_passed": 5
+  },
+  "replacement": "Ok(())",
+  "no_automatic_exclusion": true,
+  "raw_survivors": 1,
+  "reassessment": "Required if writer, standard-library or target semantics change; Unix runtime not exercised; no formal/power-loss proof.",
+  "production_change": "explanatory comment only; delegated flush and both sync_all calls retained",
+  "original_run": "20261114T080050Z-eeffe372",
+  "function": "LimitedFile::flush"
+}

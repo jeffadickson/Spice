@@ -1,9 +1,12 @@
-param([Parameter(Mandatory)][string]$Repository,[Parameter(Mandatory)][string]$TargetDirectory,[Parameter(Mandatory)][string]$Output,[string]$Test='pspice_switch',[string[]]$AdditionalCrates=@())
+param([Parameter(Mandatory)][string]$Repository,[Parameter(Mandatory)][string]$TargetDirectory,[Parameter(Mandatory)][string]$Output,[string]$Test='pspice_switch',[string[]]$AdditionalCrates=@(),[string]$WorkingDirectory='')
 # Instrument only the owned library, reusing uninstrumented vendor dependencies.
 # Compile the integration test against that exact rlib. This avoids an unnecessary
 # rebuild of all vendor crates and does not substitute a model/error shim.
 $ErrorActionPreference='Stop'
 foreach($p in @($Repository,$TargetDirectory)){if(-not(Test-Path -LiteralPath $p -PathType Container)){throw "Missing directory: $p"}}
+if(!$WorkingDirectory){$WorkingDirectory=$Repository}
+if(!(Test-Path -LiteralPath $WorkingDirectory -PathType Container)){throw 'Missing test working directory'}
+$WorkingDirectory=(Resolve-Path -LiteralPath $WorkingDirectory).Path
 if(Test-Path -LiteralPath $Output){throw 'Coverage output must be fresh'}
 $parent=Split-Path -Parent $Output;if(-not(Test-Path -LiteralPath $parent -PathType Container)){throw 'Missing output parent'}
 if($Test -notmatch '^[a-zA-Z0-9_]+$'){throw 'Invalid test name'}
@@ -35,7 +38,10 @@ try{
  & rustc --edition=2024 --test $inputTest --crate-name=spice_integration_coverage -C instrument-coverage --extern "circuit_simulator=$($library[0])" --extern "proptest=$($proptest[0].FullName)" --extern "serde_json=$($json[0].FullName)" @extra -L "dependency=$deps" -o $binary 2> (Join-Path $Output 'test-build.log')
  if($LASTEXITCODE){throw 'Instrumented integration test build failed'}
  $env:LLVM_PROFILE_FILE=Join-Path $Output '%m-%p.profraw'
- & $binary *> (Join-Path $Output 'test.log');if($LASTEXITCODE){throw 'Instrumented test failed'}
+ # Some tests use relative artifact paths. Keep their working tree explicitly
+ # selectable so bulk test data can stay on E: without changing source lookup.
+ Push-Location -LiteralPath $WorkingDirectory
+ try{& $binary *> (Join-Path $Output 'test.log');if($LASTEXITCODE){throw 'Instrumented test failed'}}finally{Pop-Location}
  $sysroot=(& rustc --print sysroot).Trim();$tools=Join-Path $sysroot 'lib/rustlib/x86_64-pc-windows-msvc/bin'
  foreach($name in @('llvm-profdata.exe','llvm-cov.exe')){if(-not(Test-Path -LiteralPath (Join-Path $tools $name) -PathType Leaf)){throw 'Matching LLVM tooling unavailable'}}
  $profiles=@(Get-ChildItem -LiteralPath $Output -Filter '*.profraw' -File|ForEach-Object FullName)

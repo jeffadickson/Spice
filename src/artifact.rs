@@ -40,6 +40,10 @@ impl Write for LimitedFile {
         Ok(n)
     }
     fn flush(&mut self) -> std::io::Result<()> {
+        // File has no userspace buffer on the assessed Windows/Unix targets;
+        // durability is provided by publish's separate sync_all. Keep forwarding
+        // for future std/platform semantics; issue47's Ok(()) mutant is equivalent
+        // on the assessed pinned target, not evidence of a missing numerical test.
         self.file.flush()
     }
 }

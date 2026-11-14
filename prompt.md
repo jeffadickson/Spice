@@ -1,4 +1,18 @@
-# Current manual checkpoint — coupled forward Early BJT charge
+# Current manual checkpoint — artifact flush survivor triage
+
+Read docs/artifact-flush-equivalence.md/.sdoc. Issue47's raw LimitedFile::flush
+survivor is equivalent on the assessed pinned Windows File target; keep raw count
+one and do not call it killed or suppress all future flush mutants. Four finite
+readback probes passed on rustc1.99.1 Windows; sync_all remains untouched. Existing
+publication coverage/regressions passed five tests; artifact module90/99 lines,
+owned library1899/8011 in that narrow scope; Rust branch metrics unavailable.
+Pester4passed, two-helper command coverage76/228. Coverage helper now accepts a
+validated absolute-normalized working directory so relative artifact paths stay
+on E:. Current-source/docs hashes and outputs are in the assessment. Canonical
+main and its sheet-resistor work remain untouched; C++ migration is deferred.
+Schematic LU/QR/Faer selection belongs to the VeloSim project, not this checkout.
+
+# Previous manual checkpoint — coupled forward Early BJT charge
 
 Read docs/bjt-coupled-charge-results.md and evidence/bjt-coupled-charge.json.
 VAF-only low-injection NPN/PNP now use native transport and coupled forward

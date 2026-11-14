@@ -1,0 +1,35 @@
+[DOCUMENT]
+TITLE: Artifact flush mutation classification
+
+[REQUIREMENT]
+UID: ARTIFACT-MUTANT-CLASSIFICATION-001
+STATUS: Draft
+TITLE: Preserve raw outcomes and bound equivalent-mutant claims
+STATEMENT: >>>
+Mutation triage shall retain the original tool outcome and distinguish a
+behavior-changing survivor from a platform/version-bounded equivalent mutation.
+The LimitedFile::flush replacement with Ok(()) shall not be called killed when
+the delegated unbuffered File::flush is a no-op. The explicit sync_all publication
+steps shall remain intact. Reassess this classification when the writer,
+standard library or target semantics change; do not exclude every future flush
+mutation or infer power-loss durability from finite I/O probes.
+<<<
+COMMENT: >>>
+Trace: src/artifact.rs flush and publish; experiments/file-flush.rs;
+scripts/Probe-FileFlush.ps1; docs/artifact-flush-equivalence.md.
+Bounded triage record: evidence/artifact-flush-triage.json. It is assessment data,
+not a tool exclusion or an instruction to rewrite native outcomes.
+Original run: 20261114T080050Z-eeffe372, issue47. Raw survivor count remains one.
+<<<
+
+[REQUIREMENT]
+UID: ARTIFACT-TEST-WORKDIR-001
+STATUS: Draft
+TITLE: Separate coverage test working directory from source
+STATEMENT: >>>
+The Rust integration coverage helper shall accept and validate an explicit test
+working directory before compilation, while retaining source-relative build
+inputs. Tests with relative artifact paths shall be executable under the E:
+artifact root without creating bulk output in the source checkout. Omitting the
+option shall preserve existing callers' working-directory behavior.
+<<<
