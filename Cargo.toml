@@ -11,7 +11,8 @@ spice-intel-host = { path = "native/intel-host", optional = true }
 spice-bsim330-host = { path = "native/bsim330-host" }
 nalgebra = { version = "=0.34.1", default-features = false, features = ["std"] }
 serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+# Preserve binary64 coordinates across the managed/native JSON boundary.
+serde_json = { version = "1", features = ["float_roundtrip"] }
 num-complex = { version = "0.4", features = ["serde"] }
 sha2 = "0.10"
 faer = { version = "=0.24.4", default-features = false, features = ["std", "sparse-linalg"] }

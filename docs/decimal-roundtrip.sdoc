@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Binary64 wire coordinate preservation
+
+[REQUIREMENT]
+UID: TRAN-DECIMAL-001
+STATUS: Draft
+TITLE: Binary64 coordinate round trips
+STATEMENT: >>>
+Finite binary64 coordinates serialized to round-trip JSON decimal strings shall deserialize to the same binary64 values across the managed/native boundary. Exact accepted-grid verification shall not be weakened to hide parser rounding. Input-coordinate preservation and numerical solution accuracy shall be verified separately.
+<<<
+COMMENT: >>>
+Implementation: the existing pinned serde_json 1.0.154 dependency's float_roundtrip feature. Tests: tests/decimal_time_roundtrip.rs. Evidence: evidence/decimal-roundtrip.json. Previous parsing displaced 1.0840005611200061e-10 by one ULP; the retained RED regression detects it. Feature use strengthens an existing dependency rather than introducing a custom numerical parser. This does not establish integration accuracy or cross-platform qualification.
+<<<

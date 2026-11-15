@@ -1,0 +1,21 @@
+{
+  "coordinates_checked": 6,
+  "dependency": "serde_json 1.0.154",
+  "dependency_rlib_sha256": "3AA64DD05829EDFD86B46CC11388CE369BE40D28B4686F8A6E8EA327501CB21B",
+  "red_log_sha256": "06B3564C191E8A0811C69B0AFA1FC7D696D69F2827512BE983AAC926C9DA3572",
+  "green_log_sha256": "22863D7B349CEB0C1E1F611E0A93870CB9C6F97A36561F765B2862FCDE62F9CC",
+  "feature": "float_roundtrip",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "tested_base": "76d5a20115b39a77fde5d5a539adc529bf0f7fa9",
+  "regression_passed": 1,
+  "expected_bits": "4457943479949664264",
+  "limits": [
+    "Regression verifies parsing/serialization, not solver accuracy.",
+    "Standalone test source is not instrumented; dependency coverage not collected.",
+    "Full numerical checkpoint coverage is recorded separately in the transient assessment."
+  ],
+  "requirement": "TRAN-DECIMAL-001",
+  "red_before_bits": "4457943479949664263",
+  "raw_root": "E:\\Artifacts\\Spice-RC-RLC-76d5a20-20261115T011507Z",
+  "source_sha256": "B5D6D81F26A5D7EAA160C05497B83614692C87C47581BD09C3D927D0420DB4A7"
+}
