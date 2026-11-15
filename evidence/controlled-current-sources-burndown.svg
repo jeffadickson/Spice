@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="350" viewBox="0 0 920 350" role="img" aria-labelledby="title desc">
+<title id="title">Selected controlled-current source cohort status</title><desc id="desc">Five unchanged retained Xyce VCCS programs. Before the fix all five were blocked. After the fix all five agree with ngspice on LU and Faer. Two also agree on Intel; three were not run there. This is not a whole-corpus count.</desc>
+<rect width="920" height="350" fill="#fafafa"/>
+<g font-family="sans-serif" fill="#182638"><text x="24" y="36" font-size="22">Five original programs: shared blocker removed</text><text x="24" y="66" font-size="14">Selected RSpice-retained Xyce VCCS cohort · November 14, 2026</text>
+<text x="24" y="116">Before: fba5e67</text><rect x="285" y="94" width="420" height="32" fill="#b76224"/><text x="725" y="116">5 blocked · 0 agree</text>
+<text x="24" y="170">After: LU and Faer</text><rect x="285" y="148" width="420" height="32" fill="#24815d"/><text x="725" y="170">0 blocked · 5 agree</text>
+<text x="24" y="224">Intel verification coverage</text><rect x="285" y="202" width="168" height="32" fill="#24815d"/><rect x="453" y="202" width="252" height="32" fill="#dce2e7"/><text x="725" y="224">2 agree · 3 unrun</text>
+<text x="24" y="279" font-size="14">All 12 requested DC points and four physical observables checked per program/provider.</text><text x="24" y="307" font-size="14">One preparation capability, not five new device models. Authored dynamic example counted separately.</text><text x="24" y="333" font-size="14">Outside the historical 113-file ngspice cohort; no new full-corpus count is claimed.</text></g></svg>

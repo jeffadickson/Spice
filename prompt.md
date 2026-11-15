@@ -1,3 +1,31 @@
+# Current manual checkpoint — five controlled-current originals
+
+Read docs/controlled-current-sources-results.md and evidence/controlled-current-sources.json.
+Five unchanged RSpice-retained Xyce VCCS programs now agree with stock ngspice
+on LU and Faer, all 12 DC points/four physical observables each. They are outside
+the historical 113-file ngspice cohort; no new passing count for that cohort is
+claimed. Two originals also agree through the actual Intel backend. RSpice's
+existing live-reference runner agrees on the same five, with zero mismatches.
+
+Generated G M= and affine G CUR= profiles reuse existing scalar/affine lowering
+and native VCCS/current stamps. A declared formal M is ordinary scoped data:
+unused nested M does not introduce Xyce implicit scaling. Only positive explicit
+multiplicity and affine current laws are qualified; nonpositive M, general
+nonlinear CUR, E VOL and implicit hierarchy multiplier semantics remain open.
+The nl fixture names do not establish nonlinear-model execution.
+
+The authored controlled-current-multiplier.cir separately agrees for OP/DC/AC
+and all 1001 transient samples; it is not another original count. Frontend 996 pass /
+40 skips, syntax 531 pass / 1 skip; new 128-case property seed 2026111501. Microsoft
+coverage includes captured bodies. Stryker killed one selected operator mutant
+and rolled back the other as compile-invalid; the precise skipped fault was
+independently compiled and detected by two tests, restored 19/19. Keep these
+counts separate and retain the raw 2,809 compile-error entries rather than calling
+them killed. No Rust equation/wire change, CI dispatch or new soak. Canonical
+main's sheet-resistor work and VeloSim remain untouched. Keep bulk outputs on E:.
+
+## Previous checkpoint (historical)
+
 # Current manual checkpoint — RC/RLC reference qualification
 
 Read docs/rc-rlc-transient-results.md and evidence/rc-rlc-transient.json first.

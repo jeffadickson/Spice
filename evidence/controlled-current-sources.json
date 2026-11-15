@@ -1,0 +1,1941 @@
+{
+  "run_id": "Spice-more-decks-fba5e67-20261115T024743Z",
+  "date_local": "2026-11-14",
+  "tested_base": "fba5e673883afd0f407eb8e46b2df7ffa009c3af",
+  "tested_source_is_base_plus_recorded_changes": true,
+  "raw_root": "E:\\Artifacts\\Spice-more-decks-fba5e67-20261115T024743Z",
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "8134c1b997cdc75c91e76b73942241b2979f402bbf47a63df8f43e36bb44f339",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "c0e10a1b214c66b8ff5c1fc7980b5111e6fb00a2f94e41baf62a538cab38b8d0",
+    "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs": "85f2bdbbcf4b5ae6553dc7121113c289481b4ddcf6325997494afd03b901d244",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "f31e9477b381d5f93f24caca9548dac6386722e01a1e6a0b3354d51ced90595b",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "cd6e1da99cd935ecf437db2cbfaed6adb75dfcd6afffe188694b75c2739e0a77",
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "28cd9ba4ae65842ab9656d7e53e392997d661b4c5442ee639e8abb1ed2863cc9",
+    "dotnet/Simulator.Frontend.Tests/ControlledCurrentSourceTests.cs": "6d5e97a3a10a7cff2608f7b5a6ee9235fbcf3b12fd8a681c51e4466a791a1093",
+    "dotnet/Simulator.Frontend.Tests/current-source-stryker.json": "c6761846b72c7c873734b1e10a564a6dab9dc16bfd5bf2321f4eb1c63acb53f5",
+    "examples/controlled-current-multiplier.cir": "d17cf1056b1b2e5e27bc63cbdff00a75a9e73020693e1c11da8dc6ee6e3c6bdc",
+    "compat/ngspice/grammar-implementation.json": "19f20262e7798af14f05382c303d307e9ad96aa7d0a09c21d0a398e13dd916fb",
+    "docs/controlled-current-sources.sdoc": "bac677afd24063b82124c722e44c83efa35e8745b5d735c2c240cb0a860c53b2"
+  },
+  "artifact_sha256": {
+    "vccs-candidates.json": "7704a51924e9d2eb4d767ec7954b2e9340bfef72ced02274de143c1d3d3f7a16",
+    "final-inventory.json": "b0ca6af15b3d5ed6fd13c76d4a0abfe8466d7400bda4cfb67efcaa091000c68d",
+    "final-lu/summary.json": "10cb1debabae578fe208fd16ce887ae9c521c7789ed6f01a1fc2f1fc2648769e",
+    "final-faer/summary.json": "e63b2dd726f734e13a70619c53f4ba6e64345f5caf926d53f72f504436d66fc0",
+    "intel-originals/summary.json": "b78ce5125795f804c08df8ce78f21cef4f6b6ca05ca57dcbf41f483df183d099",
+    "full-frontend-coverage/full.trx": "3ebc892c4f97d71fce01ce51c1d4d1ccf0e3c92c905b4d6651d8f24c93bd6b77",
+    "syntax-full-coverage/syntax.trx": "e0b53a153c63be8be239ea70f2b5d21dcfc4de0eefd8a66081183304c06c7a7a",
+    "red-tests/red.trx": "e7aa380257bf8e57c344dfbcabc23c3b30673e16dd3dab4a0b055621fc517646",
+    "green-tests/green.trx": "95dccfdd843a3f9920c95f1971a65574a2a09736ace54a072486fb9e49d247f7",
+    "properties-tests.log": "d163f6f82898a98b3c41afce4a60dbe1a3335cca8d5da6050ea664908e650a85",
+    "strictdoc.json": "4ff478c271884e9e9d0c5a3d18ce8c7ded16ba4d7f665cf96e34334781b8a657",
+    "stryker-summary.json": "bce9aec2ba3bb99e2a58df21b8f84e96c16617f61f8d655c96bf82964fa6f20d",
+    "selected-stryker-outcomes.json": "2040300ba035e2946914a7fa28606ba3b734b4ac651776bf395875cceb85e314",
+    "stryker/reports/mutation-report.json": "52e46db200954bcdd031422ce3257a89f4aa36875967ab6f1540f8d3695b9748",
+    "stryker.log": "71bc0e0d466f0c6613269fd641f89f62abc15d146aceee9664be4b1474948457",
+    "manual-linear-fault/summary.json": "9052b797a41fed245e65fbf4d8b5dfd761a7ce5885bf6df9cd0902494f72990f",
+    "manual-linear-fault/fault/fault.trx": "aafe8ceee25bc7ea1890cfc2e74dd1fbea7183eea6d82dee3747cedea4b83ba8",
+    "manual-linear-fault/restored/restored.trx": "aa0c2d93e6160e72813bbe61d5ffe2b78c97640a0c2ddf3644592a3dfac34626",
+    "rspice/summary.json": "08a6d9f628491aca0df59ae2846d0f6f1d8ccadb173f30466a1f4f01aca64cfa",
+    "intel-routine.log": "15dc9ed45c52d10e68ef71c1091ae6c21c2c938a118f0ad6346cd3dfce671376",
+    "intel-probe.log": "1a5061489b6ca1700b6d4cdc9ba5a2b89e87d0b6c3f7ca3eebb84ee033047ad7",
+    "mutation-input-hashes.json": "4bc825ea162c02597177246c771570d439d63f4ff6475e8d7f91b0c3595db781",
+    "grammar-map-tests/map.trx": "2afaabce8e9d38c4582026766eec137f29b9d23a5946dd7542157bc12141e629",
+    "managed-microsoft.runsettings": "27d4ab417587fee0d49c516de1f0a7b61ea37eefec0e94a50b5a84728d5cc129"
+  },
+  "corpus": {
+    "claimed_additional_historical_ngspice_originals": 0,
+    "working_tree_clean": true,
+    "pin": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+    "transport_scope_tag": "ngspice means external-corpus base in RequestedCorpus; it does not classify these files as historical ngspice-cohort members",
+    "claimed_additional_originals": 5,
+    "repository": "https://github.com/JaimeHW/RSpice",
+    "cohort": "Five unchanged retained Xyce VCCS programs, outside historical tests/ngspice cohort"
+  },
+  "before": [
+    {
+      "native_exit": 0,
+      "prepared": false,
+      "sha256": "a086e8749baca54191a95c22bdd3c9cdadf73ed19cdabe99299ec48a38b2fc7e",
+      "diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "path": "tests/xyce/Netlists/VCCS/vccs_m.cir"
+    },
+    {
+      "native_exit": 0,
+      "prepared": false,
+      "sha256": "b6e369b22c57816e79568c504be0de51821c5c3eb28abe11eddc02d8d23ee542",
+      "diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "path": "tests/xyce/Netlists/VCCS/vccs_nl1_m.cir"
+    },
+    {
+      "native_exit": 0,
+      "prepared": false,
+      "sha256": "87228aa8fd300e9dad81048ddcf48136076d82a62c5f960d1c92e95e6c991d11",
+      "diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "path": "tests/xyce/Netlists/VCCS/vccs_nl2_m.cir"
+    },
+    {
+      "native_exit": 0,
+      "prepared": false,
+      "sha256": "3a66619db7ad7a17c2e2470a7cf99234e9a04bbf697d730757b6ef3259c2dd98",
+      "diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "path": "tests/xyce/Netlists/VCCS/vccs_nl3_m.cir"
+    },
+    {
+      "native_exit": 0,
+      "prepared": false,
+      "sha256": "b860840c32e47948ba717b62feee11dab6f3bc7d54855dbc3d8923266595ad9c",
+      "diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "path": "tests/xyce/Netlists/VCCS/vccs_nl4_m.cir"
+    }
+  ],
+  "native_engine": {
+    "sha256": "b83d5181e1ddb3412f3a96bf9ada25e5d819775724d94111bdf02ff26781e8ee",
+    "path": "E:\\Artifacts\\Spice-RC-RLC-76d5a20-20261115T011507Z\\engine-v4\\circuit-simulator.exe",
+    "reuse": "Frozen prior verified engine; no new Rust model equations, native transport or Rust source changes",
+    "prior_core_source_hashes_matched": 51
+  },
+  "results": [
+    {
+      "summary_sha256": "10cb1debabae578fe208fd16ce887ae9c521c7789ed6f01a1fc2f1fc2648769e",
+      "rows": [
+        {
+          "sha256": "a086e8749baca54191a95c22bdd3c9cdadf73ed19cdabe99299ec48a38b2fc7e",
+          "path": "tests/xyce/Netlists/VCCS/vccs_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 2.842170943040401E-14,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.469446951953614E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "sha256": "b6e369b22c57816e79568c504be0de51821c5c3eb28abe11eddc02d8d23ee542",
+          "path": "tests/xyce/Netlists/VCCS/vccs_nl1_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 8.881784197001252E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.469446951953614E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "sha256": "87228aa8fd300e9dad81048ddcf48136076d82a62c5f960d1c92e95e6c991d11",
+          "path": "tests/xyce/Netlists/VCCS/vccs_nl2_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 8.881784197001252E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.469446951953614E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "sha256": "3a66619db7ad7a17c2e2470a7cf99234e9a04bbf697d730757b6ef3259c2dd98",
+          "path": "tests/xyce/Netlists/VCCS/vccs_nl3_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 8.881784197001252E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.7763568394002505E-15,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.469446951953614E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "sha256": "b860840c32e47948ba717b62feee11dab6f3bc7d54855dbc3d8923266595ad9c",
+          "path": "tests/xyce/Netlists/VCCS/vccs_nl4_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 8.881784197001252E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.7763568394002505E-15,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.469446951953614E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "sha256": "d17cf1056b1b2e5e27bc63cbdff00a75a9e73020693e1c11da8dc6ee6e3c6bdc",
+          "path": "examples/controlled-current-multiplier.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n4)",
+                    "native_signal": "v(expr)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 5.551115123125783E-17,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(ref)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e1)",
+                    "native_signal": "i(Vref)",
+                    "unit": "A",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "op",
+              "requested_coordinates": []
+            },
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n4)",
+                    "native_signal": "v(expr)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 2.220446049250313E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 5.551115123125783E-17,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(ref)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e1)",
+                    "native_signal": "i(Vref)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n4)",
+                    "native_signal": "v(expr)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.1102230246251565E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.1102230246251565E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(ref)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e1)",
+                    "native_signal": "i(Vref)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "ac",
+              "requested_coordinates": [
+                0,
+                500,
+                1000
+              ]
+            },
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n4)",
+                    "native_signal": "v(expr)",
+                    "unit": "V",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 5.917469564353794E-07,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 6.661338147750939E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 5.917469571015133E-07,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(ref)",
+                    "unit": "V",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e1)",
+                    "native_signal": "i(Vref)",
+                    "unit": "A",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "tran",
+              "requested_coordinates": []
+            }
+          ]
+        }
+      ],
+      "provenance_valid": true,
+      "source_commit": "fba5e673883afd0f407eb8e46b2df7ffa009c3af",
+      "backend": "lu"
+    },
+    {
+      "summary_sha256": "e63b2dd726f734e13a70619c53f4ba6e64345f5caf926d53f72f504436d66fc0",
+      "rows": [
+        {
+          "sha256": "a086e8749baca54191a95c22bdd3c9cdadf73ed19cdabe99299ec48a38b2fc7e",
+          "path": "tests/xyce/Netlists/VCCS/vccs_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 2.842170943040401E-14,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.469446951953614E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "sha256": "b6e369b22c57816e79568c504be0de51821c5c3eb28abe11eddc02d8d23ee542",
+          "path": "tests/xyce/Netlists/VCCS/vccs_nl1_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 2.842170943040401E-14,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.469446951953614E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "sha256": "87228aa8fd300e9dad81048ddcf48136076d82a62c5f960d1c92e95e6c991d11",
+          "path": "tests/xyce/Netlists/VCCS/vccs_nl2_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 2.842170943040401E-14,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.469446951953614E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "sha256": "3a66619db7ad7a17c2e2470a7cf99234e9a04bbf697d730757b6ef3259c2dd98",
+          "path": "tests/xyce/Netlists/VCCS/vccs_nl3_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.469446951953614E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "sha256": "b860840c32e47948ba717b62feee11dab6f3bc7d54855dbc3d8923266595ad9c",
+          "path": "tests/xyce/Netlists/VCCS/vccs_nl4_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.469446951953614E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "sha256": "d17cf1056b1b2e5e27bc63cbdff00a75a9e73020693e1c11da8dc6ee6e3c6bdc",
+          "path": "examples/controlled-current-multiplier.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n4)",
+                    "native_signal": "v(expr)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 5.551115123125783E-17,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(ref)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e1)",
+                    "native_signal": "i(Vref)",
+                    "unit": "A",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "op",
+              "requested_coordinates": []
+            },
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n4)",
+                    "native_signal": "v(expr)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 5.551115123125783E-17,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(ref)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e1)",
+                    "native_signal": "i(Vref)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n4)",
+                    "native_signal": "v(expr)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.1443916996305594E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 2.237726045655905E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(ref)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e1)",
+                    "native_signal": "i(Vref)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "ac",
+              "requested_coordinates": [
+                0,
+                500,
+                1000
+              ]
+            },
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n4)",
+                    "native_signal": "v(expr)",
+                    "unit": "V",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 5.917469564353794E-07,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 6.661338147750939E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 5.917469571015133E-07,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(ref)",
+                    "unit": "V",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e1)",
+                    "native_signal": "i(Vref)",
+                    "unit": "A",
+                    "points": 1001,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "tran",
+              "requested_coordinates": []
+            }
+          ]
+        }
+      ],
+      "provenance_valid": true,
+      "source_commit": "fba5e673883afd0f407eb8e46b2df7ffa009c3af",
+      "backend": "faer"
+    },
+    {
+      "summary_sha256": "b78ce5125795f804c08df8ce78f21cef4f6b6ca05ca57dcbf41f483df183d099",
+      "rows": [
+        {
+          "sha256": "a086e8749baca54191a95c22bdd3c9cdadf73ed19cdabe99299ec48a38b2fc7e",
+          "path": "tests/xyce/Netlists/VCCS/vccs_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 5.329070518200751E-15,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.0658141036401503E-14,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 8.526512829121202E-14,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 4.3368086899420177E-16,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "sha256": "b6e369b22c57816e79568c504be0de51821c5c3eb28abe11eddc02d8d23ee542",
+          "path": "tests/xyce/Netlists/VCCS/vccs_nl1_m.cir",
+          "status": "all_individual_requested_analyses_agreed",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(1)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(2)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.552713678800501E-15,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(3)",
+                    "unit": "V",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 2.842170943040401E-14,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(VIN)",
+                    "unit": "A",
+                    "points": 12,
+                    "failed": 0,
+                    "maximum_absolute_error": 2.896988204881268E-15,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "dc",
+              "requested_coordinates": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ]
+        }
+      ],
+      "provenance_valid": true,
+      "source_commit": "fba5e673883afd0f407eb8e46b2df7ffa009c3af",
+      "backend": "intel"
+    }
+  ],
+  "rspice": {
+    "scope": "Reused pinned RSpice ngspice runner with live original-default DC references; not a fresh RSpice build or cross-simulator performance benchmark",
+    "rows": [
+      {
+        "exit_code": 0,
+        "path": "tests/xyce/Netlists/VCCS/vccs_m.cir",
+        "elapsed_seconds": 1.2826083,
+        "input_sha256": "a086e8749baca54191a95c22bdd3c9cdadf73ed19cdabe99299ec48a38b2fc7e",
+        "source_unchanged": true,
+        "timeout": false,
+        "passed": true,
+        "mismatches": 0
+      },
+      {
+        "exit_code": 0,
+        "path": "tests/xyce/Netlists/VCCS/vccs_nl1_m.cir",
+        "elapsed_seconds": 0.3133532,
+        "input_sha256": "b6e369b22c57816e79568c504be0de51821c5c3eb28abe11eddc02d8d23ee542",
+        "source_unchanged": true,
+        "timeout": false,
+        "passed": true,
+        "mismatches": 0
+      },
+      {
+        "exit_code": 0,
+        "path": "tests/xyce/Netlists/VCCS/vccs_nl2_m.cir",
+        "elapsed_seconds": 0.2902537,
+        "input_sha256": "87228aa8fd300e9dad81048ddcf48136076d82a62c5f960d1c92e95e6c991d11",
+        "source_unchanged": true,
+        "timeout": false,
+        "passed": true,
+        "mismatches": 0
+      },
+      {
+        "exit_code": 0,
+        "path": "tests/xyce/Netlists/VCCS/vccs_nl3_m.cir",
+        "elapsed_seconds": 0.278529,
+        "input_sha256": "3a66619db7ad7a17c2e2470a7cf99234e9a04bbf697d730757b6ef3259c2dd98",
+        "source_unchanged": true,
+        "timeout": false,
+        "passed": true,
+        "mismatches": 0
+      },
+      {
+        "exit_code": 0,
+        "path": "tests/xyce/Netlists/VCCS/vccs_nl4_m.cir",
+        "elapsed_seconds": 0.3007296,
+        "input_sha256": "b860840c32e47948ba717b62feee11dab6f3bc7d54855dbc3d8923266595ad9c",
+        "source_unchanged": true,
+        "timeout": false,
+        "passed": true,
+        "mismatches": 0
+      }
+    ],
+    "oracle_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "runner_sha256": "4f54523100fb57fff20b4944a755812d4b5129d2e6e0eb1bdc43b0a50ac739f8",
+    "runner_unchanged": true
+  },
+  "bounds": {
+    "excluded_startup_samples": 0,
+    "accepted_time_replay": false,
+    "voltage_absolute_V": 1E-06,
+    "relative": 0.0001,
+    "current_absolute_A": 1E-09,
+    "default_original_inputs": true
+  },
+  "verification": {
+    "intel": {
+      "physical_probe_dispatched": true,
+      "original_decks": 2,
+      "device": "Intel UHD Graphics630",
+      "probe_seed": 18117,
+      "routine_passed": 13,
+      "scope": "Two original complete DC sweeps plus bounded routine/probe, not all five decks or GPU transient/performance qualification",
+      "driver": "31.0.101.2141",
+      "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+      "dc_points_each": 12
+    },
+    "counts": [
+      {
+        "passed": 996,
+        "total": 1036,
+        "run": "full-frontend-coverage/full.trx",
+        "not_executed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 531,
+        "total": 532,
+        "run": "syntax-full-coverage/syntax.trx",
+        "not_executed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 17,
+        "total": 19,
+        "run": "manual-linear-fault/fault/fault.trx",
+        "not_executed": 0,
+        "failed": 2
+      },
+      {
+        "passed": 19,
+        "total": 19,
+        "run": "manual-linear-fault/restored/restored.trx",
+        "not_executed": 0,
+        "failed": 0
+      }
+    ],
+    "frontend_coverage": {
+      "branches_covered": 7057,
+      "files": [
+        {
+          "total": 422,
+          "scope": "Microsoft mapped source lines including captured bodies; file-level branches not separately aggregated",
+          "covered": 416,
+          "file": "OperatingPointBridge.cs"
+        },
+        {
+          "total": 73,
+          "scope": "Microsoft mapped source lines including captured bodies; file-level branches not separately aggregated",
+          "covered": 71,
+          "file": "BehavioralSourceLowering.cs"
+        },
+        {
+          "total": 49,
+          "scope": "Microsoft mapped source lines including captured bodies; file-level branches not separately aggregated",
+          "covered": 48,
+          "file": "BehavioralSourceSyntax.cs"
+        },
+        {
+          "total": 85,
+          "scope": "Microsoft mapped source lines including captured bodies; file-level branches not separately aggregated",
+          "covered": 84,
+          "file": "PrimitiveSyntax.cs"
+        }
+      ],
+      "lines_covered": 10349,
+      "scope": "Full Frontend.Tests exercising Frontend and Syntax assemblies including compiler-generated captured bodies",
+      "branches_total": 10707,
+      "lines_total": 13016,
+      "collector": "Microsoft.CodeCoverage18.5.1"
+    },
+    "syntax_coverage": {
+      "branches_covered": 2751,
+      "lines_covered": 7318,
+      "scope": "Full Syntax.Tests, separate scope; do not merge or compare ratios as equivalent to Microsoft scope",
+      "branches_total": 4782,
+      "lines_total": 11270,
+      "collector": "Coverlet10.1.0"
+    },
+    "focused_cases": 19,
+    "parser_malformed_property": {
+      "cases": 512,
+      "replay": "362,20261031",
+      "name": "BoundaryTests.Malformed_text_never_escapes_the_syntax_result",
+      "scope": "Bounded random text, not coverage-guided fuzzing"
+    },
+    "new_property": {
+      "cases": 128,
+      "seed": 2026111501,
+      "library": "FsCheck3.5.0"
+    },
+    "review": "Fresh-context read-only code review found no substantive findings; no external expert or reviewer execution claim",
+    "mutations": {
+      "limitation": "Stryker safe-mode rolls back entire methods after injected definite-assignment errors, including one requested site. Its displayed100% describes one viable selected mutant, not this project or both sites. The exact skipped operator fault separately compiled and was detected by two tests; restored snapshot passed19. Raw framework CompileError status remains unchanged.",
+      "raw_report_slots": {
+        "compile_error": 2809,
+        "ignored": 3205,
+        "killed": 1
+      },
+      "manual_supplement": {
+        "source_sha256": "cd6e1da99cd935ecf437db2cbfaed6adb75dfcd6afffe188694b75c2739e0a77",
+        "source_restored": true,
+        "fault_test_exit": 1,
+        "fault_build_exit": 0,
+        "fault": "Exact Stryker1876 MultiplyAssignment to DivideAssignment, independently built without instrumentation",
+        "restored_test_exit": 0,
+        "production_unchanged": true
+      },
+      "raw_compile_errors_are_not_independent_successful_test_runs": true,
+      "selected_sites": 2,
+      "tool": "Stryker.NET5.0.0",
+      "selected_outcomes": [
+        {
+          "location": {
+            "start": {
+              "line": 71,
+              "column": 13
+            },
+            "end": {
+              "line": 71,
+              "column": 26
+            }
+          },
+          "mutator": "MultiplyAssignmentExpression to DivideAssignmentExpression mutation",
+          "status": "Killed",
+          "file": "E:\\Artifacts\\Spice-more-decks-fba5e67-20261115T024743Z\\mutation-source\\dotnet\\Simulator.Frontend\\BehavioralSourceLowering.cs",
+          "id": "97",
+          "reason": null
+        },
+        {
+          "location": {
+            "start": {
+              "line": 203,
+              "column": 25
+            },
+            "end": {
+              "line": 203,
+              "column": 38
+            }
+          },
+          "mutator": "MultiplyAssignmentExpression to DivideAssignmentExpression mutation",
+          "status": "CompileError",
+          "file": "E:\\Artifacts\\Spice-more-decks-fba5e67-20261115T024743Z\\mutation-source\\dotnet\\Simulator.Frontend\\OperatingPointBridge.cs",
+          "id": "1876",
+          "reason": "Mutant caused compile errors"
+        }
+      ]
+    },
+    "strictdoc": {
+      "parsed": 77,
+      "unique_uids": 548,
+      "duplicate_uids": 0,
+      "tool": "StrictDoc0.30.4"
+    },
+    "grammar_inventory": {
+      "passed": 21,
+      "scope": "After updating sourceMultiplicity/currentAliasProfile and related bounded grammar associations",
+      "failed": 0
+    }
+  },
+  "limits": [
+    "This is one controlled-current preparation capability across five distinct original programs, not five new device-model families.",
+    "Positive explicit multiplicity and affine CUR laws only; zero/negative multiplicity, general nonlinear current expressions, E VOL aliases and implicit Xyce hierarchy scaling remain outside this profile.",
+    "Originals and authored example are separate; authored OP/DC/AC/transient does not increase original count.",
+    "Historical113-file full-simulation census not rerun; no numerical progress for that cohort is claimed.",
+    "Forty frontend external-prerequisite skips and one syntax link-dependent skip remain unavailable; native GPU code and new long fuzz/soak coverage were not measured.",
+    "No full Rust regression/coverage rerun was needed for unchanged Rust source; thirteen routine Rust/Intel contract tests were rerun.",
+    "Exploratory preparation census omitted include resolution and is selection data, not a qualifying whole-corpus census.",
+    "Native binaries were reused and hashed, not freshly rebuilt in this slice.",
+    "No full SPICE, general Xyce, Linux hardware, arbitrary nonlinear convergence or production GPU qualification."
+  ],
+  "requirements": [
+    "SOURCE-G-MULTIPLIER-001",
+    "SOURCE-G-CURRENT-001"
+  ],
+  "tools": {
+    "fscheck": "3.5.0",
+    "antlr": "4.13.1",
+    "dotnet_sdk": "10.0.404",
+    "stryker": "5.0.0",
+    "ngspice": "47+ console",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "coverlet": "10.1.0",
+    "strictdoc": "0.30.4",
+    "powershell": "7.6.9",
+    "microsoft_codecoverage": "18.5.1"
+  },
+  "before_runtime": {
+    "sha256": {
+      "Simulator.Frontend": "aa899dca82379c61407957b8033b3a593bac83f806a874ed128d0a53eb93dcd1",
+      "Simulator.Client": "5cea34119bd37380018bdda0b84bb40e65570b264d9af88244f4b1d1fa4de47f",
+      "Simulator.Syntax": "8bb88ab1dd63b314033f192999dc24732c91bffb1af73458cbdaffc2ca9b888a",
+      "Simulator.RequestedQualification": "85e3f15bf6dd455217778212c0cc727215a57ea0a7153f94a6795fff890d72b7"
+    },
+    "source_equivalent_to": "fba5e673883afd0f407eb8e46b2df7ffa009c3af frontend; intervening prior checkpoint was evidence-only",
+    "root": "E:\\Artifacts\\Spice-RC-RLC-76d5a20-20261115T011507Z\\runtime-v2"
+  },
+  "commands": {
+    "intel": "scripts/Test-IntelCircuits.ps1 -Provider <trusted SHA256 provider> -ArtifactRoot <raw_root> -TargetDirectory <existing E cache>; scripts/Run-ParallelProbe.ps1 -Probe Intel -ArtifactRoot E:/Artifacts",
+    "strictdoc": "Pinned SDReader.read_with_parse_context on every rg --files -g *.sdoc UTF-8 source plus UID uniqueness",
+    "stryker": "From isolated mutation-source: dotnet tool run dotnet-stryker -- --config-file dotnet/Simulator.Frontend.Tests/current-source-stryker.json --test-project dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj --output <raw_root>/stryker --concurrency 1. Budget480s after verified snapshot baseline.",
+    "syntax_tests": "dotnet test dotnet/Simulator.Syntax.Tests --no-build --no-restore --artifacts-path <raw_root>/build --collect:\"XPlat Code Coverage\" --results-directory <raw_root>/syntax-full-coverage",
+    "originals": "Load five frozen runtime-v2 assemblies; RequestedCorpus.RunAsync([checkout,RSpiceRoot,hashedEngine,ngspice,final-inventory.json,freshOutput,600,lu|faer]); two original-only entries separately run with intel.",
+    "build": "dotnet build dotnet/Simulator.Frontend.Tests --artifacts-path <raw_root>/build -p:AntlrJar=<existing pinned jar> -p:GrammarOutput=<raw_root>/grammar -p:RestoreLockedMode=true -p:UseSharedCompilation=false --disable-build-servers -m:1",
+    "manual": "In disposable snapshot only: replace unique value*=factor; with value/=factor;, build with --no-restore --disable-build-servers -m:1 -p:UseSharedCompilation=false; dotnet test ... --no-build --no-restore --filter FullyQualifiedName~ControlledCurrentSourceTests. Fault:2 failed17 passed. Restore exact bytes, rebuild:19 passed.",
+    "rspice": "NGSPICE_EXE=<hashed oracle>; RSPICE_NGSPICE_LIVE_REFERENCES=1; rspice-ngspice-case-runner --test-dir <pinned source> --circuit <unchanged original> --result <fresh result> --relative-tolerance .0001 --absolute-tolerance .000000001 --skip-unsupported false --max-time-per-test-ms 30000",
+    "grammar_map_tests": "dotnet test dotnet/Simulator.Syntax.Tests --no-build --no-restore --artifacts-path <raw_root>/build --filter FullyQualifiedName~GrammarImplementationTests",
+    "frontend_tests": "dotnet vstest <raw_root>/build/bin/Simulator.Frontend.Tests/debug/Simulator.Frontend.Tests.dll /Collect:\"Code Coverage;Format=Cobertura\" /TestAdapterPath:<existing E package>/microsoft.codecoverage/18.5.1/build/netstandard2.0 /Settings:<raw_root>/managed-microsoft.runsettings /ResultsDirectory:<raw_root>/full-frontend-coverage /Logger:trx;LogFileName=full.trx"
+  },
+  "command_argument_arrays": {
+    "frontend_vstest": [
+      "vstest",
+      "E:\\Artifacts\\Spice-more-decks-fba5e67-20261115T024743Z\\build\\bin\\Simulator.Frontend.Tests\\debug\\Simulator.Frontend.Tests.dll",
+      "/Collect:Code Coverage;Format=Cobertura",
+      "/TestAdapterPath:E:/Artifacts/Spice-ac-resistance-a984f11/packages/microsoft.codecoverage/18.5.1/build/netstandard2.0",
+      "/Settings:E:\\Artifacts\\Spice-more-decks-fba5e67-20261115T024743Z\\managed-microsoft.runsettings",
+      "/ResultsDirectory:E:\\Artifacts\\Spice-more-decks-fba5e67-20261115T024743Z\\full-frontend-coverage",
+      "/Logger:trx;LogFileName=full.trx"
+    ],
+    "stryker": [
+      "tool",
+      "run",
+      "dotnet-stryker",
+      "--",
+      "--config-file",
+      "dotnet/Simulator.Frontend.Tests/current-source-stryker.json",
+      "--test-project",
+      "dotnet/Simulator.Frontend.Tests/Simulator.Frontend.Tests.csproj",
+      "--output",
+      "E:\\Artifacts\\Spice-more-decks-fba5e67-20261115T024743Z\\stryker",
+      "--concurrency",
+      "1"
+    ],
+    "coordinator_lu": [
+      "J:/dev/spice-deck-next",
+      "E:/Artifacts/RSpice-inspection-20261108T032637Z/source",
+      "E:\\Artifacts\\Spice-RC-RLC-76d5a20-20261115T011507Z\\engine-v4\\circuit-simulator.exe",
+      "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe",
+      "E:\\Artifacts\\Spice-more-decks-fba5e67-20261115T024743Z\\final-inventory.json",
+      "E:\\Artifacts\\Spice-more-decks-fba5e67-20261115T024743Z\\final-lu",
+      "600",
+      "lu"
+    ]
+  },
+  "implementation_checkpoint": "d43d88ba7d539c12dab084ee8bc083117b22b0ef",
+  "source_correspondence": "Final implementation checkpoint contains the verified producer changes. Runs used fba5e67 plus the recorded source hashes; documentation/evidence commit does not change runtime behavior."
+}
