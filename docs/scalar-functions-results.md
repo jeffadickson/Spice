@@ -2,6 +2,8 @@
 
 Ten previously refusing, unchanged files now execute every requested DC coordinate and agree with stock ngspice47+ on LU, Faer and the physical Intel backend. RSpice's retained live-reference runner passes the same ten. This is ten related original files, not ten new topologies or model families.
 
+Implementation checkpoint: `02f1a1322ee34862d5dfaa576f787917dd4f7b96`. Results and prioritized follow-ups: [issue51](https://github.com/jeffadickson/Spice/issues/51).
+
 Run: `Spice-ten-more-20261115T045430Z`, November14 Pacific. [Bounded evidence](../evidence/scalar-functions-decks.json), [selected-cohort burndown](../evidence/scalar-functions-burndown.svg), [requirements](scalar-functions.sdoc), [portable input inventory](../compat/ngspice/scalar-functions-inventory.json).
 
 | Original retained RSpice path | Before | Completed DC points |

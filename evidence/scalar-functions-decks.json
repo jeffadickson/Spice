@@ -625,5 +625,7 @@
     "General voltage-dependent user functions and nonlinear behavioral current kernels remain unsupported.",
     "Nonpositive B M and voltage-source M remain refused.",
     "No full-SPICE, general-Xyce, Linux hardware, global convergence or production-GPU claim."
-  ]
+  ],
+  "implementation_commit": "02f1a1322ee34862d5dfaa576f787917dd4f7b96",
+  "results_issue": "https://github.com/jeffadickson/Spice/issues/51"
 }
