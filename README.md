@@ -39,6 +39,7 @@ The five paired benchmark cases are a separate, much smaller scope.
 - R/C/L and independent sources; DC, complex AC, legacy fixed-step transient, and configured backward-Euler/trapezoidal transient.
 - A bounded Shockley diode with damped Newton DC, DC-biased small-signal AC and qualified backward-Euler nonlinear transient paths; broader nonlinear methods remain unsupported.
 - Configured consistent initial states, PWL/sine source overrides, source corners, optional adaptive step doubling, accepted-sample observers and integration statistics.
+- Optional bounded linear accepted-time replay for qualification: [RC wire example](examples/rc-accepted-grid.json), [reference-grid assessment](docs/rc-rlc-transient-results.md). This isolates integration physics from adaptive timing; it does not replace or qualify ordinary free-running control.
 - Unit-aware measurement/assertion results, DC power diagnostics and bounded sequential campaigns with separate case outcomes.
 - Immutable scalar sweeps and bounded Cartesian grids, including reproducible seeded uniform and log-uniform value plans with unit-aware per-point results.
 - One-shot JSON CLI, capability discovery, typed C# requests/results, and F# builders.

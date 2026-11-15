@@ -1,0 +1,1419 @@
+{
+  "tools": {
+    "dotnet_sdk": "10.0.404",
+    "powershell": "7.6.9",
+    "pester": "5.7.1",
+    "strictdoc": "0.30.4",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)"
+  },
+  "cache_recovery": {
+    "target": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target",
+    "cleaned_files": 17333,
+    "observed": "One post-mutation Rust test artifact failed a guard present in source; linked engine separately passed that guard.",
+    "targeted_rebuild_passed": 6,
+    "action": "Cargo-owned package cache invalidation and unchanged-source rebuild",
+    "incremental": false,
+    "underlying_compiler_bug_claimed": false,
+    "cleaned_GiB": 10.9
+  },
+  "date_local": "2026-11-14",
+  "run_id": "Spice-RC-RLC-76d5a20-20261115T011507Z",
+  "raw_root": "E:\\Artifacts\\Spice-RC-RLC-76d5a20-20261115T011507Z",
+  "tested_base": "26879bfba1c8ff111c7e319941f334cadf506f2f",
+  "tested_source_is_base_plus_recorded_changes": true,
+  "source_sha256": {
+    "Cargo.toml": "86310e52941b979619682ca1cb54e6421e0a4fd1e9e0093b2847b880391f1099",
+    "src/configured.rs": "1c450c6eddd26152855b5ee988f4a3ca935c48ea0db9d907ea5e5d246fc35512",
+    "dotnet/Simulator.Client/Requests.cs": "5af7a560c3f37317327ab1300b90e730145191a989eb5d966ffa6fcc08eb9eb6",
+    "dotnet/Simulator.RequestedQualification/ReferenceGridReplay.cs": "a66dd6d57e0aad2b98ee21f010093ec7d74ad5ff0807793dedd1b76f7d09079a",
+    "scripts/Compare-TransientGridReplay.ps1": "702e136c0b4f1af5430bb7da274b719a406cf2702b9cc1367f4ed75204fe0039",
+    "scripts/RampTransientReference.fsx": "0504c4e15e6123794e4024114cdf0f8cc69e6553a3910f29e6f790a94f2ab7b2",
+    "tests/accepted_time_grid.rs": "29cdc239d5c6dff8ef17d2df8c2be17c6a88f221626562fc5661cc45b475a9c7",
+    "tests/decimal_time_roundtrip.rs": "b5d6d81f26a5d7eaa160c05497b83614692c87c47581bd09c3d927d0420db4a7",
+    "tests/intel_backend.rs": "2893078acf2ecb8a5cfeac3cec7addb32fe2fa537c61f37fafe903a15f9d5b41",
+    "tests/model_charge.rs": "5fd135aeb13796b167b51fcd4b3909b353757736cd4e7c2e17bd17f188c00192",
+    "tests/ngspice_compat.rs": "1ce082c71d2116185a3714ba4f3a990cf104007befa7e60d0a30161a3ea3c592",
+    "tests/storage_power.rs": "676990fe7e8d30a90c530ef3ee8146e1fbe9ce6d3667f2859e920647afdd9f97",
+    "dotnet/Simulator.Frontend.Tests/ReferenceGridReplayNativeTests.cs": "f43eb39703f71d9b7e4abdb9a3dd744d6a52fa501c9cd8b8475100ed4d94c1f7",
+    "dotnet/Simulator.Frontend.Tests/ReferenceGridReplayTests.cs": "85452ca078117b4ea4af2061970a74d4ed3bb2fe3d0e5e5f5688ef35baaad92c",
+    "dotnet/Simulator.Frontend.Tests/ReferenceGridResponseTests.cs": "628b9890a648e6c3f3fe45294aa21f75d5c579339045e5fb6efed23ecee2b239"
+  },
+  "artifact_sha256": {
+    "final-v4/baseline-lu/summary.json": "ede88f1f64798abe57aa0ff35fed48e9ee9180ccae3cdc5e17bd4aaac291781f",
+    "final-v4/baseline-faer/summary.json": "0ff816fb4b438c98034b0f84483e866f5eef17ca74d6304f027f9790c56f46b0",
+    "final-v4/replay-lu/summary.json": "ebacdfea7c8b1bf187140b3e04a731307aefe5970298dfdb07f688c3e0af107f",
+    "final-v4/replay-faer/summary.json": "d16eb37c319e68fcc32139c6433f40e8771d2209c3977b1b30e5591c5ca29cd6",
+    "final-v4/analytical-lu.json": "2558c3a6eabde52508bc7279803e84767a83cd6e424873f513551770a3514a65",
+    "final-v4/analytical-faer.json": "a19dcb4ad871094ecd76d857ef3d424bf08068424f108cfad71070d83f85b993",
+    "rust-suite-clean-final.log": "7fa062b49b6d4c4aaa1a40731528005b3da87820ed405ea1dcbd57c2d23810dc",
+    "managed-full-clean/full.trx": "93adf5c87a4094a2a07f0b9b95f91404da158ec40034f9c565df540018ceef75",
+    "mutation-v2/mutants.out/outcomes.json": "7ecb8f33171d8e9b75a6a7e2a3136883dbb456829c25789741faa618b9fd65c7",
+    "replay-clean-tests.xml": "77af84f62bd25311735d94d3f08bfefd47bfd4e7a4e1ed6cffb2223c0ab508b8",
+    "replay-clean-coverage.xml": "e91dad6259d693f668330698051215f42f5846fa9a5eecd83d3ee550b57c4d05",
+    "strictdoc-clean-final.json": "47b2149b19b7a9c4569224994a4e7bc174cc23d24ca8a47e8f8729a918e795a7",
+    "grid-coverage/summary.json": "d42b4fb08330de85b4ddd8b0e0cc1ed1c52b5b01b4d8c503a9b31cec98221357",
+    "rspice-final/summary.json": "0e19815f92a47f6f6088c31dd45b81b6ec0da8dcc89d3471aaa1b232651e4a8d",
+    "rspice-final/interpretation.json": "4a6f9776f23b1fcac226372e7088698469e0da9729616aa9f4fb0f8630408b3a",
+    "analytical-negative-current-results.json": "4c7b0783628d50f7ee7642441818d4d0a20013871c135318d8d402fa9c0af681",
+    "intel-routine-final.log": "b21a80bfb8bfe186d9188b55a9cc50d5ea6cd2b607129ebf0e20bc39813d9c5a",
+    "intel-probe-final.log": "4b302c247dd451b36a64db929a40f9e0b467cbd3d093c15cef0ca179ce7dec1b",
+    "tool-versions.json": "84944ae81d03eb58a7ff4033ecc200681bd3a2855c74b77fd2637b9d72e5ba88",
+    "owned-cache-clean.log": "2699b5bcde714199a2c8026ef122eff13ecea5505b022269ecc112789437488f",
+    "grid-clean-verification.log": "532278f14ee9dd7a84fab67c6ef4ee2264e5251218c2579adea4b4175b84fe05",
+    "rust-suite-final-summary.json": "c9c72f3912b8b9293f811410d468255d2fa048843589c5558317c0a241147393",
+    "linked-corner-red-v2.log": "1f5058502cd8b677edf9101de948ef209b040de1beeb2fb208f2d28cecbd3811"
+  },
+  "scope": "Two unchanged repository RC/RLC fixtures; default accuracy, stock interpolation and controlled-grid physics are separate evidence. No new default agreeing decks.",
+  "requirements": [
+    "TRAN-GRID-001",
+    "TRAN-RECORD-BOUND-001",
+    "TRAN-REFERENCE-SCOPE-001",
+    "TRAN-RAMP-REFERENCE-001",
+    "TRAN-DECIMAL-001",
+    "TRAN-BUILD-PROVENANCE-001"
+  ],
+  "engine_sha256": "b83d5181e1ddb3412f3a96bf9ada25e5d819775724d94111bdf02ff26781e8ee",
+  "engine_build": {
+    "method": "Cargo-owned library graph + rustc normal CLI source at fresh path",
+    "profile": "dev unoptimized library and entry; native GPU module separately Release",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "main_sha256": "5cc55e8e4ab155362c34ccb0c00518190968be5b69eb7f25f0878a9db213c3ec",
+    "engine_sha256": "b83d5181e1ddb3412f3a96bf9ada25e5d819775724d94111bdf02ff26781e8ee",
+    "libraries": {
+      "circuit_simulator": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\libcircuit_simulator.rlib",
+      "tracing": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\deps\\libtracing-a79a4e83b53dd881.rlib",
+      "spice_intel_host": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\deps\\libspice_intel_host-bbe1b4d6a0224013.rlib",
+      "tracing_subscriber": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\deps\\libtracing_subscriber-d4a5c6a9593b6835.rlib",
+      "serde_json": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\deps\\libserde_json-8d04b280a7567056.rlib",
+      "serde": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\deps\\libserde-d21b195a621dafa5.rlib"
+    }
+  },
+  "linked_libraries": {
+    "circuit_simulator": {
+      "sha256": "ff5b3a8cd85f16a6d2a50e12e814e55b587c5892f002ebe83ca083ce52fa686e",
+      "path": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\libcircuit_simulator.rlib"
+    },
+    "tracing": {
+      "sha256": "d103f56b101ca221c6c832aed584715642938dbdf0d5500a091922f6a53d29ce",
+      "path": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\deps\\libtracing-a79a4e83b53dd881.rlib"
+    },
+    "spice_intel_host": {
+      "sha256": "2484b5facd0b764756218423ff3ea89fe42f3f190d1ce0d1ce3ac22e4bbf89a2",
+      "path": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\deps\\libspice_intel_host-bbe1b4d6a0224013.rlib"
+    },
+    "tracing_subscriber": {
+      "sha256": "65a61c75d615b03cb0e8b533b897ff3cc870eb5608b0db9a0a834b79591aa1dd",
+      "path": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\deps\\libtracing_subscriber-d4a5c6a9593b6835.rlib"
+    },
+    "serde_json": {
+      "sha256": "3aa64dd05829edfd86b46cc11388ce369be40d28b4686f8a6e8ea327501cb21b",
+      "path": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\deps\\libserde_json-8d04b280a7567056.rlib"
+    },
+    "serde": {
+      "sha256": "c8bb56a3785e4c295398b52775dbb88f24f53887e47985810f318c3d2a45bd19",
+      "path": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target\\debug\\deps\\libserde-d21b195a621dafa5.rlib"
+    }
+  },
+  "bounds": {
+    "voltage_absolute_V": 1E-06,
+    "current_absolute_A": 1E-09,
+    "relative": 0.0001,
+    "excluded_startup_samples": 0
+  },
+  "original_default_results": [
+    {
+      "source_commit": "26879bfba1c8ff111c7e319941f334cadf506f2f",
+      "backend": "lu",
+      "rows": [
+        {
+          "status": "requested_executed_not_fully_qualified",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "op"
+            },
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.2412670766236366E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.4406533980005745E-19,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "ac"
+            },
+            {
+              "comparison": {
+                "status": "numerical_disagreement",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 149,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.1102230246251565E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 149,
+                    "failed": 64,
+                    "maximum_absolute_error": 1.1585323752122352E-05,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 149,
+                    "failed": 15,
+                    "maximum_absolute_error": 1.1585323752117229E-08,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": false
+              },
+              "kind": "tran"
+            }
+          ],
+          "path": "examples/intel-rc.cir"
+        },
+        {
+          "status": "requested_executed_not_fully_qualified",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(mid)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e2)",
+                    "native_signal": "i(L1)",
+                    "unit": "A",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "op"
+            },
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(mid)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.469446951953614E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 2.3263411494723067E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.2655477284541136E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e2)",
+                    "native_signal": "i(L1)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 8.677851511149104E-19,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "ac"
+            },
+            {
+              "comparison": {
+                "status": "numerical_disagreement",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 206,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.1102230246251565E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(mid)",
+                    "unit": "V",
+                    "points": 206,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.2449073095756324E-06,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 206,
+                    "failed": 156,
+                    "maximum_absolute_error": 1.295747463331276E-05,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 206,
+                    "failed": 88,
+                    "maximum_absolute_error": 1.2449073095765712E-08,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e2)",
+                    "native_signal": "i(L1)",
+                    "unit": "A",
+                    "points": 206,
+                    "failed": 88,
+                    "maximum_absolute_error": 1.2449073095805205E-08,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": false
+              },
+              "kind": "tran"
+            }
+          ],
+          "path": "examples/intel-rlc.cir"
+        }
+      ],
+      "state": "completed_with_results"
+    },
+    {
+      "source_commit": "26879bfba1c8ff111c7e319941f334cadf506f2f",
+      "backend": "faer",
+      "rows": [
+        {
+          "status": "requested_executed_not_fully_qualified",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "op"
+            },
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.5700924586837752E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.4406533980005745E-19,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "ac"
+            },
+            {
+              "comparison": {
+                "status": "numerical_disagreement",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 149,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.1102230246251565E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 149,
+                    "failed": 64,
+                    "maximum_absolute_error": 1.1585323752109531E-05,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 149,
+                    "failed": 15,
+                    "maximum_absolute_error": 1.1585323752107065E-08,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": false
+              },
+              "kind": "tran"
+            }
+          ],
+          "path": "examples/intel-rc.cir"
+        },
+        {
+          "status": "requested_executed_not_fully_qualified",
+          "operations": [
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(mid)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e2)",
+                    "native_signal": "i(L1)",
+                    "unit": "A",
+                    "points": 1,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "op"
+            },
+            {
+              "comparison": {
+                "status": "agreed",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 0,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(mid)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 2.267533093483919E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 7.550332863779066E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 3.499912258834141E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e2)",
+                    "native_signal": "i(L1)",
+                    "unit": "A",
+                    "points": 3,
+                    "failed": 0,
+                    "maximum_absolute_error": 2.1662338230436697E-18,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": true
+              },
+              "kind": "ac"
+            },
+            {
+              "comparison": {
+                "status": "numerical_disagreement",
+                "observables": [
+                  {
+                    "engine_signal": "v(n1)",
+                    "native_signal": "v(in)",
+                    "unit": "V",
+                    "points": 206,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.1102230246251565E-16,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n2)",
+                    "native_signal": "v(mid)",
+                    "unit": "V",
+                    "points": 206,
+                    "failed": 0,
+                    "maximum_absolute_error": 1.2449073095860408E-06,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "v(n3)",
+                    "native_signal": "v(out)",
+                    "unit": "V",
+                    "points": 206,
+                    "failed": 156,
+                    "maximum_absolute_error": 1.2957474586405837E-05,
+                    "absolute_tolerance": 1E-06,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e0)",
+                    "native_signal": "i(V1)",
+                    "unit": "A",
+                    "points": 206,
+                    "failed": 88,
+                    "maximum_absolute_error": 1.2449073095809704E-08,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  },
+                  {
+                    "engine_signal": "i(e2)",
+                    "native_signal": "i(L1)",
+                    "unit": "A",
+                    "points": 206,
+                    "failed": 88,
+                    "maximum_absolute_error": 1.2449073095805258E-08,
+                    "absolute_tolerance": 1E-09,
+                    "relative_tolerance": 0.0001
+                  }
+                ],
+                "gaps": [],
+                "excluded_startup_samples": 0,
+                "analytical_reference": null,
+                "agreed": false
+              },
+              "kind": "tran"
+            }
+          ],
+          "path": "examples/intel-rlc.cir"
+        }
+      ],
+      "state": "completed_with_results"
+    }
+  ],
+  "controlled_grid_results": [
+    {
+      "results": [
+        {
+          "native_points": 108,
+          "input_sha256": "846ae478282e313cb2358201d46ba1d8197cf4a0338dd3e10a5ec02d73e94603",
+          "mode": "reference_grid_physics_replay",
+          "comparison": {
+            "Status": "agreed",
+            "Observables": [
+              {
+                "EngineSignal": "v(n1)",
+                "NativeSignal": "v(in)",
+                "Unit": "V",
+                "Points": 108,
+                "Failed": 0,
+                "MaximumAbsoluteError": 1.1102230246251565E-16,
+                "AbsoluteTolerance": 1E-06,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "v(n2)",
+                "NativeSignal": "v(out)",
+                "Unit": "V",
+                "Points": 108,
+                "Failed": 0,
+                "MaximumAbsoluteError": 9.997500399946257E-09,
+                "AbsoluteTolerance": 1E-06,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "i(e0)",
+                "NativeSignal": "i(V1)",
+                "Unit": "A",
+                "Points": 108,
+                "Failed": 0,
+                "MaximumAbsoluteError": 9.99750039993417E-12,
+                "AbsoluteTolerance": 1E-09,
+                "RelativeTolerance": 0.0001
+              }
+            ],
+            "Gaps": [],
+            "ExcludedStartupSamples": 0,
+            "AnalyticalReference": null,
+            "Agreed": true
+          },
+          "backend": "lu",
+          "native_raw_sha256": "4E58B2F343A0EDA4734D0185DEF688315A41C65A908951B5B64B02A1B107D717",
+          "agreed": true,
+          "status": "agreed",
+          "baseline_request_sha256": "32844DB316DA09ED5CE5DEED8752A98113F9FCEB41CB4B9579FAA7FEF1D63050",
+          "path": "examples/intel-rc.cir",
+          "replay_request_sha256": "16264D854E8AB011C22C5BADD733114D3177079900364668FC4F80688F94B1C7",
+          "response_sha256": "2BF266AE95021C5DA28E8F046AB19F2BA6E9E21B570A08915DE49BDC8E9CAFCA",
+          "original_request_sha256": "32844DB316DA09ED5CE5DEED8752A98113F9FCEB41CB4B9579FAA7FEF1D63050"
+        },
+        {
+          "native_points": 112,
+          "input_sha256": "1ad6adc5bf2e193e522c653b68a1e4b85a4b9d1315e9338e78f4509863db6aa5",
+          "mode": "reference_grid_physics_replay",
+          "comparison": {
+            "Status": "agreed",
+            "Observables": [
+              {
+                "EngineSignal": "v(n1)",
+                "NativeSignal": "v(in)",
+                "Unit": "V",
+                "Points": 112,
+                "Failed": 0,
+                "MaximumAbsoluteError": 1.1102230246251565E-16,
+                "AbsoluteTolerance": 1E-06,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "v(n2)",
+                "NativeSignal": "v(mid)",
+                "Unit": "V",
+                "Points": 112,
+                "Failed": 0,
+                "MaximumAbsoluteError": 5.035200784152347E-10,
+                "AbsoluteTolerance": 1E-06,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "v(n3)",
+                "NativeSignal": "v(out)",
+                "Unit": "V",
+                "Points": 112,
+                "Failed": 0,
+                "MaximumAbsoluteError": 4.0323052674651194E-09,
+                "AbsoluteTolerance": 1E-06,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "i(e0)",
+                "NativeSignal": "i(V1)",
+                "Unit": "A",
+                "Points": 112,
+                "Failed": 0,
+                "MaximumAbsoluteError": 5.035200780428246E-12,
+                "AbsoluteTolerance": 1E-09,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "i(e2)",
+                "NativeSignal": "i(L1)",
+                "Unit": "A",
+                "Points": 112,
+                "Failed": 0,
+                "MaximumAbsoluteError": 5.035200780623666E-12,
+                "AbsoluteTolerance": 1E-09,
+                "RelativeTolerance": 0.0001
+              }
+            ],
+            "Gaps": [],
+            "ExcludedStartupSamples": 0,
+            "AnalyticalReference": null,
+            "Agreed": true
+          },
+          "backend": "lu",
+          "native_raw_sha256": "09D639F54B454B87E84D2B1F0F3F95DB9F8833DFEBEF3FF42C80EC04389B04E7",
+          "agreed": true,
+          "status": "agreed",
+          "baseline_request_sha256": "C38CB4D98A40A47CC9DAF709914B90EB1072C29836B77B278A5FE51F0F207641",
+          "path": "examples/intel-rlc.cir",
+          "replay_request_sha256": "1BBA30BA47B4C756F926348ED08E1439439FC038E4FB2BB47CE9AFB78EC1E064",
+          "response_sha256": "F54F4D7FF8839F50BD6CB272E9CE8277AA518B65C193E2FE9C9C230BE653A507",
+          "original_request_sha256": "C38CB4D98A40A47CC9DAF709914B90EB1072C29836B77B278A5FE51F0F207641"
+        }
+      ],
+      "backend": "lu",
+      "mode": "reference_grid_physics_replay"
+    },
+    {
+      "results": [
+        {
+          "native_points": 108,
+          "input_sha256": "846ae478282e313cb2358201d46ba1d8197cf4a0338dd3e10a5ec02d73e94603",
+          "mode": "reference_grid_physics_replay",
+          "comparison": {
+            "Status": "agreed",
+            "Observables": [
+              {
+                "EngineSignal": "v(n1)",
+                "NativeSignal": "v(in)",
+                "Unit": "V",
+                "Points": 108,
+                "Failed": 0,
+                "MaximumAbsoluteError": 1.1102230246251565E-16,
+                "AbsoluteTolerance": 1E-06,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "v(n2)",
+                "NativeSignal": "v(out)",
+                "Unit": "V",
+                "Points": 108,
+                "Failed": 0,
+                "MaximumAbsoluteError": 9.99750039994626E-09,
+                "AbsoluteTolerance": 1E-06,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "i(e0)",
+                "NativeSignal": "i(V1)",
+                "Unit": "A",
+                "Points": 108,
+                "Failed": 0,
+                "MaximumAbsoluteError": 9.99750039993417E-12,
+                "AbsoluteTolerance": 1E-09,
+                "RelativeTolerance": 0.0001
+              }
+            ],
+            "Gaps": [],
+            "ExcludedStartupSamples": 0,
+            "AnalyticalReference": null,
+            "Agreed": true
+          },
+          "backend": "faer",
+          "native_raw_sha256": "C4B9B6321D4E39BC11306675F6630763E1F4FB93330630003476F39254FC744B",
+          "agreed": true,
+          "status": "agreed",
+          "baseline_request_sha256": "E901CD365C264EA5F6386F8E426A2FFD878FFE6AB9FC57FA9D802FF938AE4F7B",
+          "path": "examples/intel-rc.cir",
+          "replay_request_sha256": "80D579CB91644DAF5D3A24028526B6DD85EB395D11B7B47417F89C018668BBAB",
+          "response_sha256": "B3AC955B2DA9B1AE3B12ECDD16641C96C55BBD9D35DFDC0CDB53014F21203812",
+          "original_request_sha256": "E901CD365C264EA5F6386F8E426A2FFD878FFE6AB9FC57FA9D802FF938AE4F7B"
+        },
+        {
+          "native_points": 112,
+          "input_sha256": "1ad6adc5bf2e193e522c653b68a1e4b85a4b9d1315e9338e78f4509863db6aa5",
+          "mode": "reference_grid_physics_replay",
+          "comparison": {
+            "Status": "agreed",
+            "Observables": [
+              {
+                "EngineSignal": "v(n1)",
+                "NativeSignal": "v(in)",
+                "Unit": "V",
+                "Points": 112,
+                "Failed": 0,
+                "MaximumAbsoluteError": 1.1102230246251565E-16,
+                "AbsoluteTolerance": 1E-06,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "v(n2)",
+                "NativeSignal": "v(mid)",
+                "Unit": "V",
+                "Points": 112,
+                "Failed": 0,
+                "MaximumAbsoluteError": 5.035200780764216E-10,
+                "AbsoluteTolerance": 1E-06,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "v(n3)",
+                "NativeSignal": "v(out)",
+                "Unit": "V",
+                "Points": 112,
+                "Failed": 0,
+                "MaximumAbsoluteError": 4.032305295220695E-09,
+                "AbsoluteTolerance": 1E-06,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "i(e0)",
+                "NativeSignal": "i(V1)",
+                "Unit": "A",
+                "Points": 112,
+                "Failed": 0,
+                "MaximumAbsoluteError": 5.035200780640004E-12,
+                "AbsoluteTolerance": 1E-09,
+                "RelativeTolerance": 0.0001
+              },
+              {
+                "EngineSignal": "i(e2)",
+                "NativeSignal": "i(L1)",
+                "Unit": "A",
+                "Points": 112,
+                "Failed": 0,
+                "MaximumAbsoluteError": 5.035200780623667E-12,
+                "AbsoluteTolerance": 1E-09,
+                "RelativeTolerance": 0.0001
+              }
+            ],
+            "Gaps": [],
+            "ExcludedStartupSamples": 0,
+            "AnalyticalReference": null,
+            "Agreed": true
+          },
+          "backend": "faer",
+          "native_raw_sha256": "25D742356B6D09D028B3757204DEE84BA01B2DFD97A3676416D97792B966923B",
+          "agreed": true,
+          "status": "agreed",
+          "baseline_request_sha256": "1580765FDB2379F81F947CE8577AC5ABC34ABCE84B4161DCBE54741D0965FAE8",
+          "path": "examples/intel-rlc.cir",
+          "replay_request_sha256": "CC8E643E65DC0EFAB48F5919CE1A955889A7DD1305AE078355FF7FE9F7D3D953",
+          "response_sha256": "2F294B9B8CC5F7B5EA9BD026CC511D809C0E50BE5F2BCB823CCABF1F72F57EC0",
+          "original_request_sha256": "1580765FDB2379F81F947CE8577AC5ABC34ABCE84B4161DCBE54741D0965FAE8"
+        }
+      ],
+      "backend": "faer",
+      "mode": "reference_grid_physics_replay"
+    }
+  ],
+  "analytical_lu": [
+    {
+      "circuit": "RC",
+      "failed_samples": [
+        0,
+        0,
+        0
+      ],
+      "maximum_absolute_errors": [
+        0,
+        5.066461721825455E-07,
+        5.066461721730045E-10
+      ],
+      "points": 149,
+      "provider": "engine"
+    },
+    {
+      "circuit": "RC",
+      "failed_samples": [
+        0,
+        0,
+        0
+      ],
+      "maximum_absolute_errors": [
+        1.1102230246251565E-16,
+        3.0309166653141872E-06,
+        3.030916665325463E-09
+      ],
+      "points": 108,
+      "provider": "native"
+    },
+    {
+      "circuit": "RLC",
+      "failed_samples": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "maximum_absolute_errors": [
+        1.1102230246251565E-16,
+        6.358493853664271E-08,
+        3.5735290321303737E-07,
+        6.358491552293372E-10,
+        6.358490299497761E-10
+      ],
+      "points": 206,
+      "provider": "engine"
+    },
+    {
+      "circuit": "RLC",
+      "failed_samples": [
+        0,
+        0,
+        40,
+        0,
+        0
+      ],
+      "maximum_absolute_errors": [
+        1.1102230246251565E-16,
+        6.942091083095292E-07,
+        4.191226932986902E-06,
+        6.942091082757021E-09,
+        6.942091083353332E-09
+      ],
+      "points": 112,
+      "provider": "native"
+    }
+  ],
+  "analytical_faer": [
+    {
+      "circuit": "RC",
+      "failed_samples": [
+        0,
+        0,
+        0
+      ],
+      "maximum_absolute_errors": [
+        0,
+        5.066461712943671E-07,
+        5.066461713056428E-10
+      ],
+      "points": 149,
+      "provider": "engine"
+    },
+    {
+      "circuit": "RC",
+      "failed_samples": [
+        0,
+        0,
+        0
+      ],
+      "maximum_absolute_errors": [
+        1.1102230246251565E-16,
+        3.0309166653141872E-06,
+        3.030916665325463E-09
+      ],
+      "points": 108,
+      "provider": "native"
+    },
+    {
+      "circuit": "RLC",
+      "failed_samples": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "maximum_absolute_errors": [
+        1.1102230246251565E-16,
+        6.358490289848362E-08,
+        3.5735290415672694E-07,
+        6.358490285945234E-10,
+        6.358490287029436E-10
+      ],
+      "points": 206,
+      "provider": "engine"
+    },
+    {
+      "circuit": "RLC",
+      "failed_samples": [
+        0,
+        0,
+        40,
+        0,
+        0
+      ],
+      "maximum_absolute_errors": [
+        1.1102230246251565E-16,
+        6.942091083095292E-07,
+        4.191226932986902E-06,
+        6.942091082757021E-09,
+        6.942091083353332E-09
+      ],
+      "points": 112,
+      "provider": "native"
+    }
+  ],
+  "rspice": {
+    "pin": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+    "source": "https://github.com/JaimeHW/RSpice",
+    "result": {
+      "runner_sha256": "4f54523100fb57fff20b4944a755812d4b5129d2e6e0eb1bdc43b0a50ac739f8",
+      "runner_unchanged": true,
+      "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+      "rows": [
+        {
+          "process_elapsed_seconds": 1.8347879,
+          "error": null,
+          "reference": "fresh ngspice, original numerical controls; no grid locking",
+          "upstream_pass": true,
+          "bounds": {
+            "relative": 0.0001,
+            "absolute": 1E-09
+          },
+          "mismatches": 0,
+          "state": "passed_upstream_comparison",
+          "input_sha256": "846ae478282e313cb2358201d46ba1d8197cf4a0338dd3e10a5ec02d73e94603",
+          "source_unchanged": true,
+          "analysis": "DC OP + AC + Transient",
+          "scope": "repository",
+          "path": "examples/intel-rc.cir"
+        },
+        {
+          "process_elapsed_seconds": 0.6531883,
+          "error": null,
+          "reference": "fresh ngspice, original numerical controls; no grid locking",
+          "upstream_pass": true,
+          "bounds": {
+            "relative": 0.0001,
+            "absolute": 1E-09
+          },
+          "mismatches": 0,
+          "state": "passed_upstream_comparison",
+          "input_sha256": "1ad6adc5bf2e193e522c653b68a1e4b85a4b9d1315e9338e78f4509863db6aa5",
+          "source_unchanged": true,
+          "analysis": "DC OP + AC + Transient",
+          "scope": "repository",
+          "path": "examples/intel-rlc.cir"
+        }
+      ],
+      "limits": [
+        "Reused pinned-reference executable, not a fresh clean-build attestation.",
+        "Upstream comparator semantics and signal/analysis coverage remain distinct from our full mapped-observer comparator.",
+        "Elapsed includes fresh ngspice reference generation/comparison, so it is not a RSpice solver speed benchmark.",
+        "Skip, expected-unsupported and smoke results are never numerical agreement."
+      ]
+    },
+    "interpretation": {
+      "source_path": "tools/rspice-conformance/src/suites/execution/run.rs",
+      "scope": "Controlled-grid pointwise execution comparison, except measures/INTERP paths",
+      "raw_preserved": true,
+      "correction": "The runner invocation did not request grid locking explicitly, but pinned upstream execution code locks the transient grid by default. The raw summary reference text saying no grid locking is incorrect; do not interpret it as adaptive-accuracy evidence.",
+      "source_pin": "29c28a022625fd7cc2c56ead1cce2d3066663074"
+    }
+  },
+  "verification": {
+    "pester": {
+      "skipped": 0,
+      "branch_coverage": null,
+      "commands_covered": 145,
+      "commands_total": 159,
+      "failed": 0,
+      "scope": "Replay helper admission, real replay, assembly drift and archived-request drift",
+      "passed": 6
+    },
+    "intel": {
+      "physical_probe": "Actual Intel UHD Graphics 630 FP64 OpenCL dispatch; driver 31.0.101.2141; seed18117; self-test plus numerical checks",
+      "routine_result_lines": [
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.87s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.10s",
+        "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ],
+      "routine": {
+        "exit_code": 0,
+        "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+        "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+        "tests_log": "E:\\Artifacts\\Spice-RC-RLC-76d5a20-20261115T011507Z\\Spice-intel-circuit-tests-0b75a4b0b3ed421190441869b0b8de83\\tests.log",
+        "scope": "Actual Intel real/complex solves, known-solution properties, full divider circuit and bounded CLI lifecycle; not arbitrary deck qualification"
+      },
+      "no_cpu_fallback": true,
+      "limits": "Routine RC replay/provider contract and sparse-kernel check, not whole-deck GPU transient or performance qualification"
+    },
+    "rust_coverage": {
+      "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+      "cases": 6,
+      "test": "accepted_time_grid",
+      "actual_property_seed": 2026111406,
+      "line_covered": 1058.0,
+      "line_total": 8132.0,
+      "property_cases": 64,
+      "limitations": [
+        "Stable Rust instrumentation provides no measured branch coverage.",
+        "Other tests and executable main are outside this run.",
+        "A named test can pin its own seed, overriding the environment seed; retain actual test replay configuration alongside this report."
+      ],
+      "tool": "cargo rustc + rustc instrument-coverage + matching LLVM",
+      "configured": [
+        {
+          "file": "src/configured.rs",
+          "lines": {
+            "count": 348,
+            "covered": 171,
+            "percent": 49.137931034482754
+          },
+          "sha256": "1c450c6eddd26152855b5ee988f4a3ca935c48ea0db9d907ea5e5d246fc35512"
+        }
+      ],
+      "branch_coverage": null
+    },
+    "rust": {
+      "command": "cargo test --locked --features intel-opencl --no-fail-fast -- --test-threads=1",
+      "result_groups": 76,
+      "cargo_nextest": "unavailable; used cargo test",
+      "failed": 0,
+      "ignored": 5,
+      "seed": 2026111406,
+      "passed": 625,
+      "ignored_reasons": [
+        "test bsim330_ac_charge_and_backward_euler_history ... ignored, requires the pinned Windows native BSIM3 host and model",
+        "test bsim330_trial_stamps_four_terminal_current_and_jacobian ... ignored, requires the pinned Windows native BSIM3 host and model",
+        "test soi_fd_static_stamps_match_berkeley_t3 ... ignored, requires the pinned SOI FD host",
+        "test seeded_batch ... ignored, bounded batches are launched by scripts/Endurance.cs",
+        "test nonzero_depletion_transport_dc_ac_transient_against_ngspice ... ignored, requires SPICE_NGSPICE and SPICE_ORACLE_ARTIFACT_ROOT"
+      ]
+    },
+    "strictdoc": {
+      "parsed": 76,
+      "unique_uids": 546,
+      "duplicate_uids": 0
+    },
+    "review": "Read-only collaboration code review: no substantive remaining findings. Not an external expert review.",
+    "analytical_negative": [
+      {
+        "exit_code": 1,
+        "published": false,
+        "case": "physical_parameter"
+      },
+      {
+        "exit_code": 1,
+        "published": false,
+        "case": "missing_values"
+      },
+      {
+        "exit_code": 1,
+        "published": false,
+        "case": "wrong_units"
+      }
+    ],
+    "managed": {
+      "failed": 0,
+      "passed": 977,
+      "native_grid_cases": 4,
+      "branch_covered": 6702,
+      "native_negative_cases": 1,
+      "branch_total": 10471,
+      "fscheck_cases": 64,
+      "line_total": 28010,
+      "changed_classes": [
+        {
+          "line_rate": 0.9428,
+          "branch_rate": 0.8404,
+          "name": "Simulator.RequestedQualification.ReferenceGridReplay"
+        },
+        {
+          "line_rate": 1.0,
+          "branch_rate": 0.9285,
+          "name": "Simulator.RequestedQualification.ReferenceGridReplay/<RunAsync>d__0"
+        },
+        {
+          "line_rate": 0.6666,
+          "branch_rate": 1.0,
+          "name": "Simulator.RequestedQualification.ReferenceGridResult"
+        }
+      ],
+      "skipped": 40,
+      "total": 1017,
+      "line_covered": 22162,
+      "fscheck_seed": 2026111405,
+      "command": "dotnet test dotnet/Simulator.Frontend.Tests --no-build --no-restore --artifacts-path <E>/build --collect:\"XPlat Code Coverage\" --results-directory <E>/managed-full-clean"
+    },
+    "mutations": {
+      "unviable": 0,
+      "scope": "Three selected changed-line acceptance guards, not a full mutation score",
+      "initial_cancelled_attempt": "zero candidates assessed; preserved separately",
+      "caught": 3,
+      "timeout": 0,
+      "missed": 0,
+      "tool": "cargo-mutants 27.1.0",
+      "unmutated_baseline": "passed",
+      "total": 3,
+      "identities": [
+        "src/configured.rs:92:40 replace || with && in TransientConfig::validate",
+        "src/configured.rs:96:50 replace <= with > in TransientConfig::validate",
+        "src/configured.rs:213:83 replace < with > in run_observed"
+      ]
+    }
+  },
+  "additional_original_default_agreeing_decks": 0,
+  "limitations": [
+    "Original default/interpolated RC and RLC comparisons still disagree and are retained.",
+    "Accepted-time replay disables adaptive control and is linear/default-initialization only.",
+    "Native RLC misses the independent application voltage budget at 40 native points; this is not proof its equations are wrong.",
+    "Managed 40 unrelated prerequisite tests skipped; no full corpus rerun, Linux hardware, production GPU or global convergence qualification.",
+    "Rust coverage is named-test owned-library line coverage; main/vendor/test code excluded and stable branch coverage unavailable.",
+    "Three targeted mutants do not establish a global mutation score.",
+    "Prior failing builds/tests and cancelled mutation bootstrap are preserved; final verification supersedes their outcome only within the reported scope.",
+    "Bulk E: storage is exFAT; incremental hard links fell back to copying.",
+    "Canonical main and unrelated schematic/VeloSim changes were preserved. No CI was enabled or dispatched."
+  ],
+  "commands": {
+    "grid_replay": "scripts/Compare-TransientGridReplay.ps1 -ManagedBin <raw_root>/runtime-v2 -Engine <raw_root>/engine-v4/circuit-simulator.exe -BaselineDirectory <raw_root>/final-v4/baseline-{lu,faer} -OutputDirectory <raw_root>/final-v4/replay-{lu,faer}",
+    "pester": "Invoke-Pester scripts/tests/TransientGridReplay.Tests.ps1 via New-PesterConfiguration; TestResult and CodeCoverage enabled for Compare-TransientGridReplay.ps1; SPICE_REFERENCE_GRID_{MANAGED,OLD_MANAGED,BASELINE,ENGINE} point to frozen runtimes and final-v4 baseline/engine",
+    "mutation_warning": "Historical campaign used a shared mutable target; its later cached test failure required owned-cache invalidation. Use isolated mutation outputs in future.",
+    "intel_routine": "scripts/Test-IntelCircuits.ps1 -Provider E:/Artifacts/Spice-Intel-decks-42e5356-20261114/native-v7/spice_intel_opencl.dll -ArtifactRoot <raw_root> -TargetDirectory E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target",
+    "coverage": "scripts/Measure-RustIntegrationCoverage.ps1 -Repository J:/dev/spice-deck-next -TargetDirectory E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target -Output <raw_root>/grid-coverage -Test accepted_time_grid -Features intel-opencl -WorkingDirectory <raw_root>",
+    "intel_probe": "scripts/Run-ParallelProbe.ps1 -Probe Intel -ArtifactRoot E:/Artifacts",
+    "strictdoc": "Pinned StrictDoc 0.30.4 SDReader.read_with_parse_context for all rg --files -g *.sdoc inputs, plus UID uniqueness check",
+    "analytical": "dotnet fsi --reference:<five frozen runtime-v2 DLLs> --exec scripts/RampTransientReference.fsx <baseline> <fresh-json>",
+    "mutation_historical": "cargo-mutants.exe mutants --dir J:/dev/spice-deck-next --no-config --file src/configured.rs --in-diff <raw_root>/grid-final-v2.diff --re \"configured.rs:(92:40:|96:50:|213:83: replace < with > in)\" --features intel-opencl --jobs 1 --jobserver-tasks 1 --copy-target false --cap-lints false --build-timeout 180 --timeout 120 --output <raw_root>/mutation-v2 --leak-dirs --cargo-arg=--locked --cargo-arg=--test --cargo-arg=accepted_time_grid"
+  },
+  "implementation_checkpoint": "e44aefdb3de5e9daaff823e5788a17781089fcb7",
+  "source_correspondence": "Production/test hashes above were verified unchanged before committing e44aefd. Baselines ran on parent 26879bf plus these recorded changes; the final evidence-only commit does not change that code."
+}

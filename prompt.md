@@ -1,3 +1,26 @@
+# Current manual checkpoint — RC/RLC reference qualification
+
+Read docs/rc-rlc-transient-results.md and evidence/rc-rlc-transient.json first.
+Both unchanged RC/RLC fixtures agree with independent closed forms at every
+free-running sample, and both agree with fresh ngspice on an explicitly replayed
+native accepted-time grid using LU and Faer. Pinned RSpice's pointwise runner
+uses that controlled-grid approach too. Keep the original coarse-reference
+interpolation disagreements visible: zero new stock-default agreeing decks are
+counted. Ordinary adaptive control and R/L/C equations were not replaced.
+
+The optional linear accepted_times_s control rejects malformed/incomplete grids,
+missing source corners, nonlinear replay, adaptive conflicts and storage-budget
+violations. Report integration.time_control and require exact returned times
+before qualification comparison. The JSON boundary now uses serde_json's pinned
+float_roundtrip feature (26879bf); fixed-step storage admission now correctly
+permits the inclusive two-million-scalar limit. See the bounded evidence for
+actual tests, coverage, mutation scope, source hashes and E: reproduction paths.
+Keep Intel circuit and physical sparse-kernel checks in numerical checkpoints.
+Canonical main, unknown changes and VeloSim were preserved. No full-SPICE,
+production GPU, Linux hardware or global adaptive-error guarantee is claimed.
+
+## Previous checkpoint (historical)
+
 # Current manual checkpoint — Intel circuit execution and two original decks
 
 Read docs/intel-circuit-results.md, docs/two-original-decks-results.md and their

@@ -1,5 +1,12 @@
 # Intel circuit execution assessment — November 14, 2026
 
+Follow-up: [the RC/RLC reference study](rc-rlc-transient-results.md) corrects the
+interpretation of the transient gaps below. Both free-running engine traces
+satisfy independent analytical bounds; replaying the native grid also agrees.
+RSpice's passing pointwise comparison uses a controlled reference grid. The
+original measurements remain historical evidence, not proof of worse engine
+integration accuracy. GPU performance conclusions are unchanged.
+
 **The Intel GPU solves real DC and AC circuit requests correctly in the measured
 subset, but does not help these small decks. Keep LU/Faer as the default.**
 The experimental provider remains explicit and optional. It is not production
