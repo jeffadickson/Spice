@@ -137,6 +137,8 @@ public static partial class RequestedAnalysis
        ? BindInitialConditions(catalog,environment,prepared) : [];
    foreach(var directive in control.Directives){
     var card=directive.Analysis;
+    if(card.Kind is not ("op" or "dc")&&baseRequest.Circuit.Elements.Any(e=>e is VoltageScaledCccs{FactorOffset:0}))
+     throw new PreparationFailure("unsupported_bilinear_analysis",card.Range);
     if(card.Kind is not ("op" or "dc")&&baseRequest.Circuit.Elements.Any(e=>e is BehavioralVoltage))
      throw new PreparationFailure("unsupported_behavioral_analysis",card.Range);
     if(card.Kind is not ("op" or "dc" or "ac")&&baseRequest.Circuit.Elements.Any(e=>e is BehavioralResistor))
@@ -342,7 +344,7 @@ public static partial class RequestedAnalysis
  private static Analysis DcSweepAnalysis(SimulationRequest request)
  {
      var elements=request.Circuit.Elements;
-     return elements.Any(e=>e is Diode or DiodeWithCapacitance or SpiceDiode or Mos1Channel or Bsim330)
+     return elements.Any(e=>e is Diode or DiodeWithCapacitance or SpiceDiode or Mos1Channel or Bsim330 or BehavioralVoltage or VoltageScaledCccs)
          &&!elements.Any(e=>e is PspiceSwitch)
          ? new OperatingPointNewton(new NewtonOptions(MaxIterations:200,Continuation:new(InitialStep:1)))
          : request.Analysis;

@@ -1,0 +1,46 @@
+[DOCUMENT]
+TITLE: Bounded dynamic functions and bilinear voltage sources
+
+[REQUIREMENT]
+UID: BEH-FUNCTION-001
+STATUS: Draft
+TITLE: Single-control function expressions retain their AST and physical origins
+STATEMENT: >>>
+Requested OP/DC voltage laws shall bind user-function arguments as immutable generated expression frames, preserve physical argument/body source ranges and lexical function definitions, and retain parameter/formal shadowing. Unused arguments shall not introduce artificial voltage controls. One effective differential-voltage input is supported by this profile. Unknown/ambiguous functions, duplicate formals, arity errors, recursion, runtime variables and excessive expressions shall refuse atomically. Active calls shall not exceed32; total visits and emitted native nodes shall not exceed1024, and preparation/emitted depth shall not exceed64. Functions shall not be expanded by textual substitution or a second input lexer.
+<<<
+COMMENT: >>>
+Implementation: SingleControlVoltageCompiler. Verification: DynamicFunctionVoltageTests and six unchanged BSRC/SUBCKT originals in evidence/dynamic-bilinear-decks.json. Constant-return functions without an effective voltage input and general multi-input function kernels are outside this profile. Dynamic analyses remain separately refused.
+<<<
+
+[REQUIREMENT]
+UID: MODEL-SCALED-OFFSET-001
+STATUS: Draft
+TITLE: Explicit factor offset preserves legacy current-law defaults
+STATEMENT: >>>
+The voltage-scaled current primitive shall evaluate Iout=Gain*Icontrol*(FactorOffset+VoltageCoefficient*Vcontrol). FactorOffset is finite and dimensionless; omitted legacy requests shall retain1, while0 shall yield a pure product without unit-factor cancellation. Managed null shall omit the optional field. Native validation, dense/sparse DC and AC derivatives, physical audit and power reconstruction shall consume the same offset. Nonfinite values shall refuse rather than clamp or substitute zero. Older native executables that do not support the optional field are unavailable providers for new product requests.
+<<<
+COMMENT: >>>
+Implementation: managed Requests, native circuit/compile/newton/voltage_scaled_cccs/audit/power and exported request schema. Verification: tests/voltage_scaled_cccs.rs, wire/default tests, both CPU derivative checks and original-deck provider qualification. This does not qualify general nonlinear transient behavior.
+<<<
+
+[REQUIREMENT]
+UID: BEH-BILINEAR-001
+STATUS: Draft
+TITLE: Bounded products reuse exact native multiplier equations
+STATEMENT: >>>
+Requested OP/DC B voltage laws shall support an affine sum plus at most8 products of affine voltage factors, each within the existing16-term affine profile. Sums, signs and scalar factors shall preserve the numeric SI voltage law. Generated one-ohm sensing/output resistors and a one-inverse-volt multiplier coefficient shall provide explicit numerical normalization; the factor offset shall be0. Generated controls shall have private identities and obey node/element budgets before any request is published. Higher degree, nonlinear divisors, unsupported functions/attributes and unqualified requested analyses shall refuse explicitly. No cancelled unit-factor approximation is allowed.
+<<<
+COMMENT: >>>
+Implementation: BilinearVoltageExpressionEvaluator, BehavioralSourceLowering, OperatingPointBridge and RequestedAnalysis. Verification: BilinearVoltageTests, generated-law properties and four unchanged SUBCKT k0-k3 programs. Native KCL/power checks cover the generated system; aggregated original-device power attribution is not newly qualified.
+<<<
+
+[REQUIREMENT]
+UID: MUTATION-SNAPSHOT-002
+STATUS: Draft
+TITLE: Rust mutation snapshots include local path dependencies
+STATEMENT: >>>
+Mutation snapshots shall retain native local Cargo packages and request schemas in addition to ordinary Rust source and manifests. Snapshot enumeration shall prune target, bin, obj, .git and .tools directories before traversal and exclude linked files/directories. Missing path dependencies shall invalidate the unmutated baseline rather than produce mutation claims.
+<<<
+COMMENT: >>>
+Implementation: FrameworkMutations RustSourceInputs. Verification: --rust-inputs-self-test exercises native package/schema inclusion and nested target exclusion; the isolated cargo-mutants baseline resolves the native path dependencies. No claim of full snapshot security or arbitrary workspace layout support.
+<<<

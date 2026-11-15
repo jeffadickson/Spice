@@ -1,0 +1,75 @@
+{
+  "cohort": "Ten original dynamic-function and bilinear voltage programs, all currently refusing at the frozen prior checkpoint",
+  "rows": [
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "c13180ddda997ec3f6d81f493cb58651064215d67216446409fe4639026338c1"
+      },
+      "path": "tests/xyce/Netlists/BSRC/Bsrc_A1.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "7a7265493298fad001f8d434e1de4a8b91a370f0e17ea3ed876be71e4afe1f46"
+      },
+      "path": "tests/xyce/Netlists/BSRC/Bsrc_A2.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "b6d313189a11879026e1d4629ba0a3af9243dc98f51a3917785cb13ad21ab40b"
+      },
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_i1.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "49ffea7d0a7485e265e873d7d554e7d334982783d8894ba6df501ffc5db04a8b"
+      },
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_i2.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "a17bb9a114159bf3dec2546e2fb8aabca13fc010e3a76e48d85d75d8acc07a88"
+      },
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_i3.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "37ba7bb84cb1cac3c30be67217ad67a113695ddee8c0eae3292f48c5988fd481"
+      },
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_i3_hs.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "5a7fdd64f0b7e3281ea59ee311ec6da1a31bb8e9a0b30d3b1a9263873e022abe"
+      },
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_k0.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "efab1d018ca7a784b0989a08d72c5d6647ca7d5b35d241e0b6cd791f3b20df63"
+      },
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_k1.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "6a63b0e5356c1adbc99bbe3af602bc9dedb084e66676632e1e1d161d146b3fa8"
+      },
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_k2.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "4ccb0ca42f735b90eb1745b6e6ec9ebdd01e08fd369026b4a79ebe7fcd013b4d"
+      },
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_k3.cir"
+    }
+  ]
+}

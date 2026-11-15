@@ -328,8 +328,47 @@ public static class OperatingPointBridge
                     // Ground substitution can make a named voltage term
                     // identically zero. Remove it before allocating auxiliaries
                     // or checking element budgets; retain the offset source.
-                    var terms=source.Terms.Select(t=>(Control:Node(t.Node.Text),t.Coefficient)).Where(t=>t.Control!=0).ToArray();
-                    if(elements.Count+terms.Length+1>limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
+                    var terms=source.Terms.Select(t=>(Control:Node(t.Node.Text),t.Coefficient)).Where(t=>t.Control!=0).ToList();
+                    foreach(var product in source.Products)
+                    {
+                        // One-ohm sensing converts the left numeric voltage to a
+                        // signed branch current. A zero-offset native multiplier
+                        // injects -coefficient*left*right amperes into a one-ohm
+                        // output, reproducing the numeric voltage law directly.
+                        var left=PrivateNode();var control=EmitFactor(product.Left,left);
+                        var right=PrivateNode();EmitFactor(product.Right,right);
+                        AddInternal(new Resistor(NextId(),left,0,1));
+                        var output=PrivateNode();
+                        AddInternal(new VoltageScaledCccs(NextId(),output,0,right,0,control,product.Coefficient,1){FactorOffset=0});
+                        AddInternal(new Resistor(NextId(),output,0,1));
+                        terms.Add((output,1));
+                    }
+                    string NextId()=>"e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    void AddInternal(Element element)
+                    {
+                        if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
+                        elements.Add(element);
+                        origins.Add(new(element.Id,"$internal:"+source.Name+":"+element.Id,path,source.Range));
+                    }
+                    string EmitFactor(AffineVoltageForm factor,int output)
+                    {
+                        var effective=factor.Terms.Select(t=>(Control:Node(t.Node.Text),t.Coefficient)).Where(t=>t.Control!=0).ToArray();
+                        if(effective.Length==1&&factor.Offset==0)
+                        {
+                            // A VCVS already provides the sensed branch. Avoid a
+                            // redundant zero-source equality chain in the MNA.
+                            var direct=NextId();AddInternal(new Vcvs(direct,output,0,effective[0].Control,0,effective[0].Coefficient));return direct;
+                        }
+                        var previous=output;
+                        foreach(var term in factor.Terms)
+                        {
+                            var controlNode=Node(term.Node.Text);if(controlNode==0)continue;
+                            var next=PrivateNode();AddInternal(new Vcvs(NextId(),previous,next,controlNode,0,term.Coefficient));previous=next;
+                        }
+                        var id=NextId();AddInternal(new Voltage(id,previous,0,factor.Offset));
+                        acSources.Add(new(id,0,0));return id;
+                    }
+                    if(elements.Count+terms.Count+1>limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
                     var previous=p;var termIndex=0;
                     foreach(var term in terms)
                     {

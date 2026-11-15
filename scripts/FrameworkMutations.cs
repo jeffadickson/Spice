@@ -5,6 +5,24 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
+if(args is ["--rust-inputs-self-test"]) {
+    var temporary=Path.GetFullPath(Path.Combine(Path.GetTempPath(),"spice-rust-inputs-"+Guid.NewGuid().ToString("N")));
+    Directory.CreateDirectory(temporary);
+    try {
+        foreach(var name in new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml","src/lib.rs","native/example/Cargo.toml","native/example/src/lib.rs","native/example/target/bulk.bin","schemas/request-v1.json"}) {
+            var path=Path.Combine(temporary,name);Directory.CreateDirectory(Path.GetDirectoryName(path)!);File.WriteAllText(path,"fixture");
+        }
+        var inputs=RustSourceInputs(temporary).Select(p=>p.Replace('\\','/')).ToHashSet(StringComparer.Ordinal);
+        if(!inputs.Contains("native/example/Cargo.toml")||!inputs.Contains("native/example/src/lib.rs")||!inputs.Contains("schemas/request-v1.json")||inputs.Any(p=>p.Contains("/target/",StringComparison.Ordinal)))
+            throw new InvalidDataException("Rust snapshot omitted path dependencies or included build output.");
+        Console.WriteLine("Rust snapshot path-dependency/schema inclusion and target exclusion passed.");
+    } finally {
+        var parent=Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;
+        if(!temporary.StartsWith(parent,StringComparison.OrdinalIgnoreCase))throw new IOException("Temporary cleanup escaped its root.");
+        Directory.Delete(temporary,true);
+    }
+    return;
+}
 if(args is ["--physical-path-self-test",var requestedRoot]) {
     Console.WriteLine(PhysicalMutationRoot(requestedRoot));return;
 }
@@ -235,7 +253,7 @@ try {
     // Limit cargo-mutants' copy root to Rust-owned inputs. Its default copy mode
     // also visits work/ and can collide with our exclusive campaign lock.
     var rustRoot=Path.Combine(run,"rust-source");Directory.CreateDirectory(rustRoot);
-    foreach(var path in new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml"}.Concat(new[]{"src","tests","examples","compat"}.SelectMany(folder=>Directory.EnumerateFiles(folder,"*",SearchOption.AllDirectories)))) {
+    foreach(var path in RustSourceInputs(root)) {
         var destination=Path.Combine(rustRoot,path);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Copy(path,destination);
     }
     var rustArguments=new List<string>{"mutants","--dir",rustRoot,"--file",rustFile,"--shard",shard,"--sharding","round-robin","--no-shuffle","--jobs","1","--jobserver-tasks",workers.ToString(CultureInfo.InvariantCulture),"--timeout","120","--build-timeout","900","--output",Path.Combine(run,"rust"),"--colors","never","--cargo-arg=--locked"};
@@ -384,6 +402,22 @@ static void VerifyFrozen(string path,string hash) {
     if(Hash(path)!=hash)throw new IOException("Mutation input snapshot changed during execution.");
 }
 
+// Include local Cargo packages even when optional: cargo metadata resolves their
+// manifests before selecting features. Prune artifact trees before traversal.
+static IEnumerable<string> RustSourceInputs(string root) {
+    foreach(var name in new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml"})if(File.Exists(Path.Combine(root,name)))yield return name;
+    var excluded=new HashSet<string>(new[]{"target","bin","obj",".git",".tools"},StringComparer.OrdinalIgnoreCase);
+    foreach(var folder in new[]{"src","tests","examples","compat","native","schemas"}) {
+        var directory=Path.Combine(root,folder);if(!Directory.Exists(directory))continue;
+        if((File.GetAttributes(directory)&FileAttributes.ReparsePoint)!=0)throw new IOException("Linked Rust input root is not qualified.");
+        var files=new System.IO.Enumeration.FileSystemEnumerable<string>(directory,
+            (ref System.IO.Enumeration.FileSystemEntry entry)=>entry.ToFullPath(),
+            new EnumerationOptions{RecurseSubdirectories=true,AttributesToSkip=FileAttributes.ReparsePoint});
+        files.ShouldRecursePredicate=(ref System.IO.Enumeration.FileSystemEntry entry)=>!excluded.Contains(entry.FileName.ToString());
+        files.ShouldIncludePredicate=(ref System.IO.Enumeration.FileSystemEntry entry)=>!entry.IsDirectory;
+        foreach(var file in files)yield return Path.GetRelativePath(root,file);
+    }
+}
 /// Bounded campaign evidence, retaining logical source and physical layout
 /// identities separately. Remote importers consume their explicit allowlist.
 sealed class FrameworkReport {

@@ -7,6 +7,7 @@ namespace Simulator.Frontend;
 public sealed record PreparedAffineBehavioralSource(string Name,SourceSyntax P,SourceSyntax N,BehavioralQuantity Quantity,ImmutableArray<AffineVoltageTerm> Terms,double Offset,SourceRange Range)
 {
     internal PreparedBehavioralVoltage? Runtime { get; init; }
+    internal ImmutableArray<AffineVoltageProduct> Products { get; init; } = [];
 }
 internal sealed record PreparedBehavioralVoltage(SourceSyntax Cp,SourceSyntax Cn,BoundedExpression Expression);
 /// <summary>Atomic behavioral-source admission; no partial request or approximate coefficients are returned on refusal.</summary>
@@ -45,6 +46,14 @@ public static class BehavioralSourceLowering
                     if(!FitsNativeBudget(runtime.Expression!))return new(null,[new("expression_budget",source.Range)]);
                     return new(new(source.Name,source.P,source.N,source.Quantity,[],0,source.Range)
                         {Runtime=new(runtime.ControlP!,runtime.ControlN!,runtime.Expression!)},[]);
+                }
+                if(runtime.Diagnostics.Any(d=>d.Code=="unsupported_behavior_control_count"))
+                {
+                    var bilinear=BilinearVoltageExpressionEvaluator.Evaluate(catalog,environment,source.Expression);
+                    if(bilinear.Form is {} polynomial&&!polynomial.Products.IsEmpty)
+                        return new(new(source.Name,source.P,source.N,source.Quantity,polynomial.Affine.Terms,polynomial.Affine.Offset,source.Range){Products=polynomial.Products},[]);
+                    if(bilinear.Diagnostics.Any(d=>d.Code is "behavior_product_budget" or "expression_budget"))
+                        return new(null,bilinear.Diagnostics.Select(d=>new BridgeDiagnostic(d.Code,d.Range)).ToImmutableArray());
                 }
                 return new(null,runtime.Diagnostics.Select(d=>new BridgeDiagnostic(d.Code,d.Range)).ToImmutableArray());
             }

@@ -1,0 +1,306 @@
+{
+  "run": "Spice-next-ten-20261115T061009Z",
+  "source_base": "5c0b29b5f25ceeef838ae67e7e26f2e35014a568",
+  "source_dirty": true,
+  "artifact_root": "E:/Artifacts/Spice-next-ten-20261115T061009Z",
+  "engine_sha256": "d455551980fd7037451112f437d1408e873deb0acdf9f68927b38d8cfd0ea379",
+  "originals_selected": 10,
+  "previously_executed": 0,
+  "now_executed_cpu": 10,
+  "dc_points_per_provider": 350,
+  "stock_ngspice_agree_cpu": 4,
+  "stock_ngspice_disagree_cpu": 6,
+  "independent_polynomial_agree_cpu": 10,
+  "refined_ngspice_diagnostic_agree": 10,
+  "rspice_stock_agree": 4,
+  "rspice_stock_disagree": 6,
+  "bounds": {
+    "relative": 0.0001,
+    "volts": 1E-06,
+    "amperes": 1E-09
+  },
+  "regressions": {
+    "native_passed": 628,
+    "syntax_skipped": 1,
+    "frontend_passed": 1038,
+    "syntax_passed": 541,
+    "native_ignored": 5,
+    "frontend_skipped": 40
+  },
+  "managed_coverage": {
+    "lines_covered": 22595,
+    "modules": "Frontend, Syntax, Client from frontend regression; not merged with separate syntax run",
+    "lines_valid": 27373,
+    "branches_covered": 10277,
+    "branches_valid": 14445
+  },
+  "native_law_coverage": {
+    "scope": "only voltage_scaled_cccs law; not integration/GPU driver",
+    "regions_valid": 35,
+    "lines_valid": 38,
+    "functions_valid": 4,
+    "functions_covered": 4,
+    "regions_covered": 35,
+    "branches": "unavailable: zero branch counters emitted",
+    "lines_covered": 38
+  },
+  "mutations": {
+    "caught": 4,
+    "tool": "cargo-mutants 27.1.0",
+    "survived": 0,
+    "unattempted": 2,
+    "selected": 6,
+    "state": "interrupted by OS headroom watchdog; not complete"
+  },
+  "intel": {
+    "selected_original_campaign": "interrupted by OS headroom watchdog after two cases; no ten-deck GPU qualification",
+    "physical_probe_exit": 0,
+    "routine_exit": 0
+  },
+  "strictdoc": {
+    "documents": 79,
+    "uids": 554
+  },
+  "review": "Two proposed lexical-scope changes withdrawn after native 4V/80V probes; no remaining actionable findings; source inspection only",
+  "cases": [
+    {
+      "path": "tests/xyce/Netlists/BSRC/Bsrc_A1.cir",
+      "input_sha256": "c13180ddda997ec3f6d81f493cb58651064215d67216446409fe4639026338c1",
+      "points": 51,
+      "signal_samples": 204,
+      "failed": 0,
+      "voltage_maximum_error": 5.684341886080802E-14,
+      "current_maximum_error": 6.938893903907228E-18,
+      "agreed": true,
+      "stock_native_vs_polynomial": {
+        "signal_samples": 204,
+        "failed": 40,
+        "maximum_absolute_error_mixed_units": 0.20000000000015916,
+        "agreed": false
+      },
+      "refined_native_vs_polynomial": {
+        "signal_samples": 204,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 1.1368683772161603E-13,
+        "agreed": true
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/BSRC/Bsrc_A2.cir",
+      "input_sha256": "7a7265493298fad001f8d434e1de4a8b91a370f0e17ea3ed876be71e4afe1f46",
+      "points": 51,
+      "signal_samples": 204,
+      "failed": 0,
+      "voltage_maximum_error": 5.684341886080802E-14,
+      "current_maximum_error": 6.938893903907228E-18,
+      "agreed": true,
+      "stock_native_vs_polynomial": {
+        "signal_samples": 204,
+        "failed": 40,
+        "maximum_absolute_error_mixed_units": 0.20000000000015916,
+        "agreed": false
+      },
+      "refined_native_vs_polynomial": {
+        "signal_samples": 204,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 1.1368683772161603E-13,
+        "agreed": true
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_i1.cir",
+      "input_sha256": "b6d313189a11879026e1d4629ba0a3af9243dc98f51a3917785cb13ad21ab40b",
+      "points": 51,
+      "signal_samples": 306,
+      "failed": 0,
+      "voltage_maximum_error": 3.552713678800501E-15,
+      "current_maximum_error": 8.673617379884035E-19,
+      "agreed": true,
+      "stock_native_vs_polynomial": {
+        "signal_samples": 306,
+        "failed": 76,
+        "maximum_absolute_error_mixed_units": 0.020000000000017337,
+        "agreed": false
+      },
+      "refined_native_vs_polynomial": {
+        "signal_samples": 306,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 1.0658141036401503E-14,
+        "agreed": true
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_i2.cir",
+      "input_sha256": "49ffea7d0a7485e265e873d7d554e7d334982783d8894ba6df501ffc5db04a8b",
+      "points": 51,
+      "signal_samples": 306,
+      "failed": 0,
+      "voltage_maximum_error": 3.552713678800501E-15,
+      "current_maximum_error": 8.673617379884035E-19,
+      "agreed": true,
+      "stock_native_vs_polynomial": {
+        "signal_samples": 306,
+        "failed": 76,
+        "maximum_absolute_error_mixed_units": 0.020000000000017337,
+        "agreed": false
+      },
+      "refined_native_vs_polynomial": {
+        "signal_samples": 306,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 1.0658141036401503E-14,
+        "agreed": true
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_i3.cir",
+      "input_sha256": "a17bb9a114159bf3dec2546e2fb8aabca13fc010e3a76e48d85d75d8acc07a88",
+      "points": 51,
+      "signal_samples": 306,
+      "failed": 0,
+      "voltage_maximum_error": 3.552713678800501E-15,
+      "current_maximum_error": 8.673617379884035E-19,
+      "agreed": true,
+      "stock_native_vs_polynomial": {
+        "signal_samples": 306,
+        "failed": 76,
+        "maximum_absolute_error_mixed_units": 0.020000000000017337,
+        "agreed": false
+      },
+      "refined_native_vs_polynomial": {
+        "signal_samples": 306,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 1.0658141036401503E-14,
+        "agreed": true
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_i3_hs.cir",
+      "input_sha256": "37ba7bb84cb1cac3c30be67217ad67a113695ddee8c0eae3292f48c5988fd481",
+      "points": 51,
+      "signal_samples": 306,
+      "failed": 0,
+      "voltage_maximum_error": 3.552713678800501E-15,
+      "current_maximum_error": 8.673617379884035E-19,
+      "agreed": true,
+      "stock_native_vs_polynomial": {
+        "signal_samples": 306,
+        "failed": 76,
+        "maximum_absolute_error_mixed_units": 0.020000000000017337,
+        "agreed": false
+      },
+      "refined_native_vs_polynomial": {
+        "signal_samples": 306,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 1.0658141036401503E-14,
+        "agreed": true
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_k0.cir",
+      "input_sha256": "5a7fdd64f0b7e3281ea59ee311ec6da1a31bb8e9a0b30d3b1a9263873e022abe",
+      "points": 11,
+      "signal_samples": 88,
+      "failed": 0,
+      "voltage_maximum_error": 0,
+      "current_maximum_error": 0,
+      "agreed": true,
+      "stock_native_vs_polynomial": {
+        "signal_samples": 88,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 0,
+        "agreed": true
+      },
+      "refined_native_vs_polynomial": {
+        "signal_samples": 88,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 0,
+        "agreed": true
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_k1.cir",
+      "input_sha256": "efab1d018ca7a784b0989a08d72c5d6647ca7d5b35d241e0b6cd791f3b20df63",
+      "points": 11,
+      "signal_samples": 77,
+      "failed": 0,
+      "voltage_maximum_error": 0,
+      "current_maximum_error": 0,
+      "agreed": true,
+      "stock_native_vs_polynomial": {
+        "signal_samples": 77,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 0,
+        "agreed": true
+      },
+      "refined_native_vs_polynomial": {
+        "signal_samples": 77,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 0,
+        "agreed": true
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_k2.cir",
+      "input_sha256": "6a63b0e5356c1adbc99bbe3af602bc9dedb084e66676632e1e1d161d146b3fa8",
+      "points": 11,
+      "signal_samples": 77,
+      "failed": 0,
+      "voltage_maximum_error": 0,
+      "current_maximum_error": 0,
+      "agreed": true,
+      "stock_native_vs_polynomial": {
+        "signal_samples": 77,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 0,
+        "agreed": true
+      },
+      "refined_native_vs_polynomial": {
+        "signal_samples": 77,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 0,
+        "agreed": true
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/SUBCKT/subckt_k3.cir",
+      "input_sha256": "4ccb0ca42f735b90eb1745b6e6ec9ebdd01e08fd369026b4a79ebe7fcd013b4d",
+      "points": 11,
+      "signal_samples": 66,
+      "failed": 0,
+      "voltage_maximum_error": 0,
+      "current_maximum_error": 0,
+      "agreed": true,
+      "stock_native_vs_polynomial": {
+        "signal_samples": 66,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 0,
+        "agreed": true
+      },
+      "refined_native_vs_polynomial": {
+        "signal_samples": 66,
+        "failed": 0,
+        "maximum_absolute_error_mixed_units": 0,
+        "agreed": true
+      }
+    }
+  ],
+  "artifact_sha256": {
+    "after-v3-lu/summary.json": "029b0d2c8939226821ab1ec11c03c70e3fbf34282c284e0214d665a8f3ce817f",
+    "after-v3-faer/summary.json": "915a4757d95caa8de8ae7452f014ff68d978c4d10bc7a178270b454b7893ceee",
+    "analytic-refined-faer.json": "f2cf337811d2048fba32e1d6f1f8cb89df7b685ff014c9a843240b1d82112e3c",
+    "rspice/results.json": "d97cedeeed4129e6b7303fd1e2fc89af7e623a3d831dc92c8cc37063ad98a3f2",
+    "intel-exits.json": "494fcfd9b2fe69d0222a7381050dd223179d8b3315af3aca58f760818098372e",
+    "native-counts.json": "ab014e1a8303d345b9b968d40619bfcdf8d2ff196ab3d08a1c6c7a80ce1b26ec",
+    "after-intel-intel/summary.json": "bebd34989419119eee998ff48d46b55f8967206ce385ad5c7ef71032941f91d9",
+    "analytic-refined-lu.json": "f2cf337811d2048fba32e1d6f1f8cb89df7b685ff014c9a843240b1d82112e3c",
+    "strictdoc.json": "15d869c52848c0df352905aff4953c60ad66f0f95ff836541748a74b354edf70",
+    "cargo-mutants-v4/mutants.out/outcomes.json": "3aa02687fad2d98f83c44d025cc2953f14b7180951eafeb383710ae70260b4fb"
+  },
+  "limits": [
+    "Six original-default disagreements remain open; tightened diagnostic copies do not count as passes.",
+    "No full corpus rerun, global compatibility, Linux or new AC/transient bilinear qualification.",
+    "Framework snapshot helper self-test passed; line/branch coverage of that file-app unavailable.",
+    "No completed Stryker campaign or whole-native branch coverage; setup failures and resource-interrupted attempts preserved.",
+    "No GPU speedup claim; routine and real device probe passed, selected batch incomplete."
+  ]
+}
