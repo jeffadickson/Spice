@@ -19,13 +19,25 @@ pub fn linearize(
     control_amps: f64,
     control_volts: f64,
 ) -> SimResult<ScaledCurrentContribution> {
-    if [gain, voltage_coefficient, control_amps, control_volts]
+    linearize_with_offset(gain, voltage_coefficient, 1., control_amps, control_volts)
+}
+
+/// Evaluate a finite dimensionless factor offset explicitly. Zero produces an
+/// exact bilinear law without cancellation against a unit current contribution.
+pub fn linearize_with_offset(
+    gain: f64,
+    voltage_coefficient: f64,
+    factor_offset: f64,
+    control_amps: f64,
+    control_volts: f64,
+) -> SimResult<ScaledCurrentContribution> {
+    if [gain, voltage_coefficient, factor_offset, control_amps, control_volts]
         .iter()
         .any(|v| !v.is_finite())
     {
         return Err(SimError::invalid("nonfinite voltage-scaled CCCS input"));
     }
-    let current_gain = gain * (1. + voltage_coefficient * control_volts);
+    let current_gain = gain * (factor_offset + voltage_coefficient * control_volts);
     let current_amps = control_amps * current_gain;
     let control_siemens = (gain * control_amps) * voltage_coefficient;
     if [current_gain, current_amps, control_siemens]

@@ -61,7 +61,7 @@ pub fn conductance_at_bias_csc(
         );
     }
     for source in &plan.scaled_currents {
-        let c=crate::voltage_scaled_cccs::linearize(source.gain,source.voltage_coefficient,
+        let c=crate::voltage_scaled_cccs::linearize_with_offset(source.gain,source.voltage_coefficient,source.factor_offset,
             values[source.control],voltage(values,source.cp,source.cn))?;
         stamp_scaled_current(&mut stamps,source,c);
     }
@@ -231,7 +231,7 @@ fn linearize_with_rhs_gmin(
         );
     }
     for source in &plan.scaled_currents {
-        let c=crate::voltage_scaled_cccs::linearize(source.gain,source.voltage_coefficient,
+        let c=crate::voltage_scaled_cccs::linearize_with_offset(source.gain,source.voltage_coefficient,source.factor_offset,
             values[source.control],voltage(values,source.cp,source.cn))?;
         stamp_vector(&mut residual,source.p,source.n,c.current_amps);
         stamp_scaled_current(&mut jacobian,source,c);

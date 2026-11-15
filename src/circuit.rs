@@ -4,6 +4,8 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
+fn unit_factor_offset() -> f64 { 1. }
+fn is_unit_factor_offset(value: &f64) -> bool { *value == 1. }
 /// SI terminal conventions: currents flow p -> n, including source and inductor branches.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
@@ -131,10 +133,13 @@ pub enum Element {
         gain: f64,
     },
     /// High-impedance voltage modulation of a P-to-N branch current control.
-    /// Iout=gain*i(control_id)*(1+voltage_coefficient*(Vcp-Vcn)).
+    /// Iout=gain*i(control_id)*(factor_offset+voltage_coefficient*(Vcp-Vcn)); offset defaults to one.
     VoltageScaledCccs {
         id: String, p: NodeId, n: NodeId, cp: NodeId, cn: NodeId,
         control_id: String, gain: f64, voltage_coefficient: f64,
+        /// Finite dimensionless offset; omitted legacy requests retain one.
+        #[serde(default="unit_factor_offset", skip_serializing_if="is_unit_factor_offset")]
+        factor_offset: f64,
     },
     /// Current-controlled voltage source; V(p)-V(n) equals ohms*i(control_id).
     Ccvs {
@@ -346,8 +351,8 @@ impl Circuit {
                 {
                     return Err(SimError::invalid("invalid VCVS control terminals or gain"));
                 }
-                Element::VoltageScaledCccs {cp,cn,voltage_coefficient,..}
-                    if cp.0>=self.nodes.len() || cn.0>=self.nodes.len() || !voltage_coefficient.is_finite() => {
+                Element::VoltageScaledCccs {cp,cn,voltage_coefficient,factor_offset,..}
+                    if cp.0>=self.nodes.len() || cn.0>=self.nodes.len() || !voltage_coefficient.is_finite() || !factor_offset.is_finite() => {
                     return Err(SimError::invalid("invalid voltage-scaled CCCS voltage control"));
                 }
                 Element::Cccs {

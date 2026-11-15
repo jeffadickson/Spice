@@ -340,6 +340,9 @@
                   "voltage_coefficient": {
                     "type": "number"
                   },
+                  "factor_offset": {
+                    "type": "number"
+                  },
                   "p": {
                     "maximum": 127,
                     "type": "integer",

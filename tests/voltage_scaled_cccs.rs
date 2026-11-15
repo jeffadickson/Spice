@@ -43,6 +43,7 @@ fn circuit() -> Circuit {
                 control_id: "sense".into(),
                 gain: 2.,
                 voltage_coefficient: 0.25,
+                factor_offset: 1.,
             },
             Element::Resistor {
                 id: "load".into(),
@@ -248,5 +249,56 @@ proptest::proptest! {
         proptest::prop_assert!((c.current_gain-di).abs()<1e-7);
         proptest::prop_assert!((c.control_siemens-dv).abs()<1e-8);
         proptest::prop_assert!((c.current_amps-independent(current,volts)).abs()<1e-11);
+    }
+}
+
+#[test]
+fn explicit_zero_bias_product_preserves_legacy_defaults_and_both_ac_partials() {
+    let legacy=serde_json::to_value(circuit()).unwrap();
+    assert!(legacy["elements"][3].get("factor_offset").is_none());
+    let mut wire=legacy;
+    wire["elements"][3]["factor_offset"]=serde_json::json!(0.);
+    let product: Circuit=serde_json::from_value(wire).expect("explicit zero-bias product must be recognized");
+    let plan=compile(&product).unwrap();
+    for solver in [&DenseLu as &dyn circuit_simulator::linalg::LinearSolver,&FaerSparseLu] {
+        assert!((operating_point(&plan,solver).unwrap()[2]-10.).abs()<1e-11);
+        for (sense,control,expected) in [(1.,0.,10.),(0.,1.,5.)] {
+            let result=ac_with_source_phasors(&plan,&[1.,1000.],&[
+                AcSourcePhasor{id:"sense".into(),real:sense,imag:0.},
+                AcSourcePhasor{id:"control".into(),real:control,imag:0.}],solver).unwrap();
+            for point in result { assert!((point.values[2].real-expected).abs()<1e-10); }
+        }
+    }
+}
+
+#[test]
+fn zero_bias_avoids_unit_factor_cancellation_and_rejects_nonfinite_offsets() {
+    use circuit_simulator::voltage_scaled_cccs::linearize_with_offset;
+    for voltage in [1e-200,1e-20,-1e-20,1e20] {
+        let c=linearize_with_offset(1.,1.,0.,1.,voltage).unwrap();
+        assert_ne!(c.current_amps,0.);
+        assert!((c.current_amps/voltage-1.).abs()<1e-15);
+        assert_eq!(c.current_gain,voltage);
+        assert_eq!(c.control_siemens,1.);
+    }
+    assert!(linearize_with_offset(1.,1.,f64::NAN,1.,1.).is_err());
+    let mut invalid=circuit();
+    if let Element::VoltageScaledCccs{factor_offset,..}=&mut invalid.elements[3]{*factor_offset=f64::INFINITY;}
+    assert!(compile(&invalid).is_err());
+}
+
+proptest::proptest! {
+    #![proptest_config(proptest::test_runner::Config {cases:128,rng_seed:proptest::test_runner::RngSeed::Fixed(2026111511),..Default::default()})]
+    #[test]
+    fn optional_offset_partials_match_independent_centered_differences(
+        gain in -10f64..10.,coefficient in -2f64..2.,offset in -2f64..2.,current in -0.1f64..0.1,volts in -10f64..10.
+    ) {
+        let c=circuit_simulator::voltage_scaled_cccs::linearize_with_offset(gain,coefficient,offset,current,volts).unwrap();
+        let independent=|i:f64,v:f64|gain*offset*i+gain*coefficient*i*v;
+        let di=(independent(current+1e-6,volts)-independent(current-1e-6,volts))/2e-6;
+        let dv=(independent(current,volts+1e-5)-independent(current,volts-1e-5))/2e-5;
+        proptest::prop_assert!((c.current_gain-di).abs()<1e-8);
+        proptest::prop_assert!((c.control_siemens-dv).abs()<1e-9);
+        proptest::prop_assert!((c.current_amps-independent(current,volts)).abs()<1e-12);
     }
 }

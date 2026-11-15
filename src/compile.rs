@@ -75,6 +75,7 @@ pub(crate) struct CompiledScaledCurrent {
     pub(crate) control: usize,
     pub(crate) gain: f64,
     pub(crate) voltage_coefficient: f64,
+    pub(crate) factor_offset: f64,
 }
 /// Shared bounded stamping surface used by compile-time sparse accumulation and trial Jacobians.
 pub(crate) trait StampMatrix {
@@ -212,11 +213,11 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
             continue;
         }
         match e {
-            Element::VoltageScaledCccs {p,n,cp,cn,control_id,gain,voltage_coefficient,..} => {
+            Element::VoltageScaledCccs {p,n,cp,cn,control_id,gain,voltage_coefficient,factor_offset,..} => {
                 let control=branches.iter().position(|id|id==control_id)
                     .map(|index|index+circuit.nodes.len()-1)
                     .ok_or_else(||SimError::invalid("voltage-scaled CCCS control must name a branch source"))?;
-                scaled_currents.push(CompiledScaledCurrent{p:*p,n:*n,cp:*cp,cn:*cn,control,gain:*gain,voltage_coefficient:*voltage_coefficient});
+                scaled_currents.push(CompiledScaledCurrent{p:*p,n:*n,cp:*cp,cn:*cn,control,gain:*gain,voltage_coefficient:*voltage_coefficient,factor_offset:*factor_offset});
             }
             Element::BehavioralResistor {p,n,cp,cn,expression,..} => resistances.push(CompiledResistance {
                 p:*p,n:*n,cp:*cp,cn:*cn,expression:expression.clone(),
