@@ -92,6 +92,7 @@ pub fn ac(
         let (p, n) = e.terminals();
         let v = node(&state, p) - node(&state, n);
         let current = match e {
+            Element::MutualInductance{..}=>C::new(0.,0.),
             Element::Resistor { ohms, .. } => v / ohms,
             Element::Capacitor { farads, .. } => C::new(0., omega * farads) * v,
             Element::Current { id, amps, .. } => overrides
@@ -113,7 +114,14 @@ pub fn ac(
                     .copied()
                     .unwrap_or(C::new(*volts, 0.)),
             ),
-            Element::Inductor { henries, .. } => Some(C::new(0., omega * henries) * current),
+            Element::Inductor { henries, .. } => {
+                let mut flux=*henries*current;
+                for (first,second,m) in crate::mutual_inductance::pairs(circuit)? {
+                    let other=if first==e.id(){second}else if second==e.id(){first}else{continue};
+                    flux+=m*branch(circuit,&state,other)?;
+                }
+                Some(C::new(0.,omega)*flux)
+            },
             Element::Vcvs { cp, cn, gain, .. } => {
                 Some(gain * (node(&state, *cp) - node(&state, *cn)))
             }

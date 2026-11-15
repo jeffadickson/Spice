@@ -20,6 +20,14 @@ public interface IBoundedScalarExpressionFactory<T> where T:class
     T Exp(T argument);
     /// <summary>Construct a positive-domain natural logarithm.</summary>
     T Log(T argument);
+    /// <summary>Construct absolute value with zero derivative at the origin.</summary>
+    T Abs(T argument);
+    /// <summary>Construct inverse sine in its finite derivative domain.</summary>
+    T Asin(T argument);
+    /// <summary>Construct inverse cosine in its finite derivative domain.</summary>
+    T Acos(T argument);
+    /// <summary>Read a finite input-independent constant from an already bound expression tree.</summary>
+    bool TryConstant(T expression,out double value);
 }
 /// <summary>Atomic model lowering result with retained physical control-terminal spellings.</summary>
 public sealed record SingleControlVoltageExpression<T>(T? Expression,SourceSyntax? ControlP,SourceSyntax? ControlN,
@@ -115,6 +123,7 @@ public static class SingleControlVoltageCompiler
                 return name.ToLowerInvariant() switch
                 {
                     "ln" or "log"=>factory.Log(argumentValue),"exp"=>factory.Exp(argumentValue),
+                    "abs"=>factory.Abs(argumentValue),"asin"=>factory.Asin(argumentValue),"acos"=>factory.Acos(argumentValue),
                     "log10"=>factory.Divide(factory.Log(argumentValue),factory.Constant(Math.Log(10))),
                     _=>throw new CompileFailure("unsupported_behavior_function")
                 };
@@ -141,10 +150,17 @@ public static class SingleControlVoltageCompiler
                 {
                     "+"=>factory.Add(left,right),"-"=>factory.Add(left,factory.Multiply(factory.Constant(-1),right)),
                     "*"=>factory.Multiply(left,right),"/"=>factory.Divide(left,right),
+                    "**" or "^"=>Power(left,right),
                     _=>throw new CompileFailure("unsupported_behavior_expression")
                 };
             }
             throw new CompileFailure("unsupported_behavior_expression");
+        }
+        T Power(T value,T exponent) {
+            if(!factory.TryConstant(exponent,out var n)||n!=Math.Truncate(n)||Math.Abs(n)>16)throw new CompileFailure("unsupported_behavior_power");
+            T product=factory.Constant(1);
+            for(var i=0;i<Math.Abs(n);i++)product=factory.Multiply(product,value);
+            return n<0?factory.Divide(factory.Constant(1),product):product;
         }
         SourceSyntax Capture(ParserRuleContext node,SourceSyntax origin)
         {

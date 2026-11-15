@@ -43,6 +43,7 @@ pub fn dc_power(plan: &CompiledCircuit, x: &[f64]) -> SimResult<PowerReport> {
             continue;
         }
         let current = match element {
+            Element::MutualInductance{..} => 0.,
             Element::Bsim330 { .. } | Element::BsimSoiFdReference { .. } => {
                 unreachable!("four-terminal power handled above")
             }

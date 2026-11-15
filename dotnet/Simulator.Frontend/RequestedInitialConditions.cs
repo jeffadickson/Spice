@@ -16,7 +16,7 @@ public static partial class RequestedAnalysis
  private static ImmutableArray<PreparedNodeInitialCondition> BindInitialConditions(DeclarationCatalog catalog,ParameterEvaluation environment,BridgeResult prepared,bool uic=false){
   if(catalog.InitialConditions.IsEmpty)return [];
   var range=catalog.InitialConditions[0].Range;
-  if(!uic&&prepared.Request!.Circuit.Elements.Any(e=>e is not (Resistor or Voltage or Current or Capacitor or Inductor or Vcvs or Vccs)))throw new PreparationFailure("unsupported_initial_condition_device",range);
+  if(!uic&&prepared.Request!.Circuit.Elements.Any(e=>e is not (Resistor or Voltage or Current or Capacitor or Inductor or MutualInductance or Vcvs or Vccs)))throw new PreparationFailure("unsupported_initial_condition_device",range);
   var result=ImmutableArray.CreateBuilder<PreparedNodeInitialCondition>();var targets=new HashSet<int>();var circuit=prepared.Request!.Circuit;
   foreach(var ic in catalog.InitialConditions)foreach(var node in ic.Nodes){
    if(!prepared.RootNodes.TryGetValue(node.Node.Text,out var wire))throw new PreparationFailure("initial_condition_node_missing",node.Node.Range);
@@ -36,7 +36,7 @@ public static partial class RequestedAnalysis
   return request with{CaseId=id+"_initial_bias",Circuit=request.Circuit with{Elements=elements.ToArray()},Analysis=new OperatingPoint(),Experiment=null};
  }
  /// <summary>Runs an optional temporary clamped OP through the public client, then reconstructs original MNA state by descriptor identity and unit. No missing component defaults to zero.</summary>
- /// <remarks>State order is original non-ground Circuit.Nodes followed by V/L/E/H branches in Circuit.Elements order. UIC inductor currents come from the admitted zero-current device profile. The temporary clamp branches are excluded.</remarks>
+ /// <remarks>State order is original non-ground Circuit.Nodes followed by V/L/E/H branches in Circuit.Elements order. UIC inductor currents come from evaluated device hints, with the specified default zero. The temporary clamp branches are excluded.</remarks>
  public static async Task<RequestedExecutionPreparation> PrepareExecutionAsync(RequestedOperation operation,int point,SimulationClient client,CancellationToken cancellation=default){
   ArgumentNullException.ThrowIfNull(operation);ArgumentNullException.ThrowIfNull(client);if(point<0||point>=operation.Requests.Length)throw new ArgumentOutOfRangeException(nameof(point));cancellation.ThrowIfCancellationRequested();
   var request=operation.Requests[point];if(operation.InitializationRequest is not {} bias)return new(request,null,null);
@@ -45,7 +45,7 @@ public static partial class RequestedAnalysis
   try{
    var manifest=response.ReadManifest();if(manifest.CaseId!=bias.CaseId||manifest.Backend.Id!=(bias.Backend switch{"lu"=>"nalgebra_dense_lu_reference","faer"=>"faer_sparse_lu","qr"=>"nalgebra_dense_qr_reference",_=>"unsupported"})||manifest.Backend.Gpu||manifest.Backend.Placement!="cpu"||manifest.Samples.Length!=1||manifest.Samples[0].TimeS!=0||manifest.AcSamples.Length!=0||manifest.Signals.Select(s=>s.Id).Distinct(StringComparer.Ordinal).Count()!=manifest.Signals.Length)throw new InvalidDataException("initial_condition_bias_identity_or_shape");
    double Read(string id,string unit,string quantity){var indices=Enumerable.Range(0,manifest.Signals.Length).Where(i=>manifest.Signals[i].Id==id&&manifest.Signals[i].Unit==unit&&manifest.Signals[i].Quantity==quantity).ToArray();if(indices.Length!=1)throw new InvalidDataException("initial_condition_state_descriptor_missing");var value=manifest.Samples[0].Values[indices[0]];return double.IsFinite(value)?value:throw new InvalidDataException("initial_condition_state_nonfinite");}
-   var state=request.Circuit.Nodes.Skip(1).Select(n=>Read("v("+n+")","V","voltage")).Concat(request.Circuit.Elements.Where(Branch).Select(e=>operation.UsesUic&&e is Inductor?0:Read("i("+e.Id+")","A","current"))).ToArray();
+   var state=request.Circuit.Nodes.Skip(1).Select(n=>Read("v("+n+")","V","voltage")).Concat(request.Circuit.Elements.Where(Branch).Select(e=>operation.UsesUic&&e is Inductor?operation.InductorInitialCurrents.GetValueOrDefault(e.Id):Read("i("+e.Id+")","A","current"))).ToArray();
    foreach(var condition in operation.InitialConditions){var actual=state[condition.NodeIndex-1];var tolerance=1e-10*(1+Math.Abs(condition.Volts));if(!double.IsFinite(tolerance)||Math.Abs(actual-condition.Volts)>tolerance)throw new InvalidDataException("initial_condition_clamp_not_satisfied");}
    if(request.Analysis is not TransientConfigured transient)throw new InvalidDataException("initial_condition_nontransient_request");
    return new(request with{Analysis=new TransientConfigured(transient.Options with{InitialState=state,InitialNewton=null})},response,null);

@@ -76,6 +76,8 @@ pub enum Element {
         n: NodeId,
         farads: f64,
     },
+    /// Magnetic linkage only: no electrical terminals or independent branch.
+    MutualInductance { id:String, p:NodeId, n:NodeId, first:String, second:String, coefficient:f64 },
     Inductor {
         id: String,
         p: NodeId,
@@ -170,7 +172,7 @@ pub enum Element {
 impl Element {
     pub fn id(&self) -> &str {
         match self {
-            Self::BsimSoiFdReference { id, .. }
+            Self::MutualInductance { id, .. } | Self::BsimSoiFdReference { id, .. }
             | Self::Bsim330 { id, .. }
             | Self::Mos1Channel { id, .. }
             | Self::Resistor { id, .. }
@@ -216,6 +218,7 @@ impl Element {
 
     pub fn terminals(&self) -> (NodeId, NodeId) {
         match self {
+            Self::MutualInductance{..} => (NodeId(0),NodeId(0)),
             Self::BsimSoiFdReference { p, n, .. }
             | Self::Bsim330 { p, n, .. }
             | Self::Mos1Channel { p, n, .. }
@@ -273,7 +276,7 @@ impl Circuit {
                 ));
             }
             let (p, n) = e.terminals();
-            if p == n || p.0 >= self.nodes.len() || n.0 >= self.nodes.len() {
+            if !matches!(e,Element::MutualInductance{..}) && (p == n || p.0 >= self.nodes.len() || n.0 >= self.nodes.len()) {
                 return Err(SimError::invalid(format!(
                     "invalid terminals on {}",
                     e.id()
@@ -415,6 +418,7 @@ impl Circuit {
                 _ => {}
             }
         }
+        crate::mutual_inductance::validate(self)?;
         Ok(())
     }
 }

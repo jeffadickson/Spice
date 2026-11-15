@@ -125,7 +125,12 @@ pub fn configured_step(
             Element::Inductor { henries, .. } => {
                 let di = branch_current(&effective, &state.values, e.id())?
                     - branch_current(&effective, &previous.values, e.id())?;
-                let expected = henries * di / h;
+                let mut flux_change=henries*di;
+                for (first,second,m) in crate::mutual_inductance::pairs(&effective)? {
+                    let other=if first==e.id(){second}else if second==e.id(){first}else{continue};
+                    flux_change+=m*(branch_current(&effective,&state.values,other)?-branch_current(&effective,&previous.values,other)?);
+                }
+                let expected = flux_change / h;
                 checks.retain(|c| c.id != format!("constraint:{}", e.id()));
                 checks.push(Check::measured(
                     format!("constraint:{}", e.id()),
@@ -133,7 +138,7 @@ pub fn configured_step(
                     options.voltage_absolute_v + options.relative * (v.abs() + expected.abs()),
                     "V",
                 ));
-                henries * *current * di
+                *current * flux_change
             }
             _ => h * v * *current,
         };

@@ -213,6 +213,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
             continue;
         }
         match e {
+            Element::MutualInductance{..} => {},
             Element::VoltageScaledCccs {p,n,cp,cn,control_id,gain,voltage_coefficient,factor_offset,..} => {
                 let control=branches.iter().position(|id|id==control_id)
                     .map(|index|index+circuit.nodes.len()-1)
@@ -422,6 +423,13 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                 branch += 1;
             }
         }
+    }
+    // Voltage rows use -flux; stamp each magnetic pair symmetrically once.
+    for (first,second,m) in crate::mutual_inductance::pairs(circuit)? {
+        let offset=circuit.nodes.len()-1;
+        let i=offset+branches.iter().position(|x|x==first).ok_or_else(||SimError::invalid("missing coupled winding branch"))?;
+        let j=offset+branches.iter().position(|x|x==second).ok_or_else(||SimError::invalid("missing coupled winding branch"))?;
+        charge.add(i,j,-m);charge.add(j,i,-m);
     }
     let conductance_sparse = a.to_csc()?;
     let charge_sparse = charge.to_csc()?;

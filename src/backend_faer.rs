@@ -236,6 +236,32 @@ fn polish_homogeneous_rows(system:&SparseComplexSystem,rhs:&[num_complex::Comple
     Ok(())
 }
 
+/// Bounded same-factor correction for small cancellation errors in stiff real
+/// MNA systems. Every candidate must satisfy the original all-row 1e-10 check;
+/// there is no refactor, provider fallback or tolerance relaxation.
+fn refine_real_solution(matrix:&CscMatrix,rhs:&[f64],mut values:Vec<f64>,mut solve:impl FnMut(&[f64])->SimResult<Vec<f64>>)->SimResult<Vec<f64>> {
+    for attempt in 0..=3 {
+        if crate::solver_contract::verify_csc_solution(matrix,rhs,&values).is_ok(){return Ok(values);}        // Reuse the established homogeneous-row algebra, retaining every small
+        // coefficient. This removes factor leakage in an exact zero constraint,
+        // and the original all-row verifier remains authoritative afterwards.
+        let complex=SparseComplexSystem::new(matrix.pattern().clone(),matrix.values().iter().map(|v|num_complex::Complex64::new(*v,0.)).collect())?;
+        let complex_rhs:Vec<_>=rhs.iter().map(|v|num_complex::Complex64::new(*v,0.)).collect();
+        let mut polished:Vec<_>=values.iter().map(|v|num_complex::Complex64::new(*v,0.)).collect();
+        polish_homogeneous_rows(&complex,&complex_rhs,&mut polished)?;
+        for(value,polished)in values.iter_mut().zip(polished){*value=polished.re;}
+        if crate::solver_contract::verify_csc_solution(matrix,rhs,&values).is_ok(){return Ok(values);}
+        if attempt==3{break;}
+        let mut residual=rhs.to_vec();
+        for(row,column,coefficient)in matrix.entries(){residual[row]-=coefficient*values[column];}
+        if residual.iter().any(|x|!x.is_finite()){return Err(SimError::new(ErrorCode::NumericalFailure,"nonfinite real refinement residual"));}
+        let correction=solve(&residual)?;
+        if correction.len()!=values.len()||correction.iter().any(|x|!x.is_finite()){return Err(SimError::new(ErrorCode::NumericalFailure,"invalid real factor correction"));}
+        for(value,delta)in values.iter_mut().zip(correction){*value+=delta;}
+        tracing::debug!(attempt,"real_factor_refinement");
+    }
+    crate::solver_contract::verify_csc_solution(matrix,rhs,&values)?;Ok(values)
+}
+
 impl LinearSolver for FaerSparseLu {
     fn prepare_csc(
         &self,
@@ -258,11 +284,15 @@ impl LinearSolver for FaerSparseLu {
         let lu = sparse
             .sp_lu()
             .map_err(|error| SimError::new(ErrorCode::SingularMatrix, format!("{error:?}")))?;
+        let refinement_matrix=matrix.clone();
         Ok(Some(crate::linalg::PreparedSparseReal::new(
             matrix.clone(),
             move |rhs| {
                 let values = lu.solve(faer::Mat::from_fn(n, 1, |row, _| rhs[row]));
-                Ok((0..n).map(|row| values[(row, 0)]).collect())
+                refine_real_solution(&refinement_matrix,rhs,(0..n).map(|row|values[(row,0)]).collect(),|part| {
+                    let correction=lu.solve(faer::Mat::from_fn(n,1,|row,_|part[row]));
+                    Ok((0..n).map(|row|correction[(row,0)]).collect())
+                })
             },
         )))
     }
@@ -482,4 +512,19 @@ mod complex_refinement_contracts {
         );
         assert!(crate::solver_contract::verify_complex_solution(&system, &[], &result).is_err());
     }
+}
+
+#[cfg(test)]
+mod real_refinement_contracts {
+ use super::*;
+ #[test]fn homogeneous_real_reconstruction_preserves_small_terms_and_other_equations(){
+  let a=CscMatrix::new(2,vec![0,2,3],vec![0,1,1],vec![1.,1e-30,1.]).unwrap();let rhs=[1.,0.];
+  let x=refine_real_solution(&a,&rhs,vec![1.,1e-20],|_|panic!("exact homogeneous consequence needs no correction")).unwrap();assert_eq!(x,vec![1.,-1e-30]);
+  let mut calls=0;assert!(refine_real_solution(&a,&rhs,vec![0.5,1e-20],|_|{calls+=1;Ok(vec![0.,0.])}).is_err());assert_eq!(calls,3);
+ }
+ #[test]fn nonfinite_real_factor_corrections_are_not_accepted(){
+  let a=CscMatrix::new(1,vec![0,1],vec![0],vec![1.]).unwrap();
+  assert!(refine_real_solution(&a,&[1.],vec![2.],|_|Ok(vec![f64::NAN])).is_err());
+  assert!(refine_real_solution(&a,&[1.],vec![2.],|_|Ok(vec![])).is_err());
+ }
 }

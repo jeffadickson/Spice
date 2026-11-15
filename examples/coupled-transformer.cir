@@ -1,0 +1,11 @@
+Linear coupled transformer with signed dot convention
+V1 in 0 DC 0 AC 1 SIN(0 1 1k)
+R1 in primary 10
+L1 primary 0 1m
+L2 secondary 0 4m
+R2 secondary 0 40
+K1 L1 L2 0.75
+.op
+.ac dec 5 10 100k
+.tran 1u 1m
+.end

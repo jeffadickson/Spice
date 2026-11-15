@@ -18,6 +18,7 @@ public sealed record Circuit(string[] Nodes, Element[] Elements);
 [JsonDerivedType(typeof(Resistor), "resistor")]
 [JsonDerivedType(typeof(Capacitor), "capacitor")]
 [JsonDerivedType(typeof(Inductor), "inductor")]
+[JsonDerivedType(typeof(MutualInductance), "mutual_inductance")]
 [JsonDerivedType(typeof(Voltage), "voltage")]
 [JsonDerivedType(typeof(Current), "current")]
 [JsonDerivedType(typeof(Vcvs), "vcvs")]
@@ -236,3 +237,6 @@ public sealed record Bsim330(string Id,int P,int N,int Gate,int Bulk,Bsim330Mode
 
 /// <summary>Pinned Berkeley FD SOI static reference device with an independent back gate.</summary>
 public sealed record BsimSoiFdReference(string Id,int P,int N,int Gate,int BackGate):Element(Id,P,N);
+
+/// <summary>Signed dimensionless magnetic linkage between two winding IDs. P/N are reserved ground sentinels; this relation has no electrical port.</summary>
+public sealed record MutualInductance(string Id,string First,string Second,double Coefficient):Element(Id,0,0);

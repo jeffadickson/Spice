@@ -175,7 +175,7 @@ public static class RequestedComparison
    if(operation.Kind=="op"){
     if(native.Points.Length!=1||manifests.Length!=1||manifests[0].Samples.Length!=1||manifests[0].AcSamples.Length!=0)throw new InvalidDataException("op_shape_gap");actualAxis=[0];
    }else if(operation.Kind=="dc"){
-    if(native.Variables[0].Dimension!=(operation.CoordinateUnit switch{"V"=>"voltage","degC"=>"temp-sweep",_=>"current"})||manifests.Any(m=>m.Samples.Length!=1||m.AcSamples.Length!=0))throw new InvalidDataException("dc_shape_or_unit_gap");actualAxis=operation.Coordinates.ToArray();Grid(actualAxis,axis);
+    if(native.Variables[0].Dimension!=(operation.CoordinateUnit switch{"V"=>"voltage","degC"=>"temp-sweep",_=>"current"})||manifests.Any(m=>m.Samples.Length!=1||m.AcSamples.Length!=0))throw new InvalidDataException("dc_shape_or_unit_gap");actualAxis=operation.Coordinates.ToArray();Grid(actualAxis,axis,dcRoundoff:true);
     if(operation.NestedDc is {} secondary){
      int Terminal(string? signal){
       if(signal==null)return -1;
@@ -233,7 +233,15 @@ public static class RequestedComparison
    return result;
   }catch(InvalidDataException e){return new(e.Message,[],[e.Message]);}
  }
- private static void Grid(double[] requested,double[] actual){if(requested.Length==0||requested.Length!=actual.Length||requested.Where((v,i)=>!Near(v,actual[i])).Any())throw new InvalidDataException("original_grid_discrepancy");}
+ private static void Grid(double[] requested,double[] actual,bool dcRoundoff=false){
+  if(requested.Length==0||requested.Length!=actual.Length||requested.Any(v=>!double.IsFinite(v))||actual.Any(v=>!double.IsFinite(v)))throw new InvalidDataException("original_grid_discrepancy");
+  // Account only for binary64 accumulation versus start+i*step at a zero
+  // crossing. This is a coordinate identity bound, never a signal tolerance
+  // or a permission to interpolate/drop requested DC points.
+  var scale=requested.Max(v=>Math.Abs(v));
+  var roundoff=dcRoundoff?4*(Math.BitIncrement(1d)-1d)*requested.Length*scale:0;
+  if(!double.IsFinite(roundoff)||requested.Where((v,i)=>!Near(v,actual[i])&&Math.Abs(v-actual[i])>roundoff).Any())throw new InvalidDataException("original_grid_discrepancy");
+ }
  private static bool Near(double a,double b)=>double.IsFinite(a)&&double.IsFinite(b)&&Math.Abs(a-b)<=Math.Max(double.Epsilon*16,Math.Max(Math.Abs(a),Math.Abs(b))*1e-12);
  private static void StrictAxis(double[] values){if(values.Length==0||values.Any(v=>!double.IsFinite(v)||v<0)||values.Zip(values.Skip(1)).Any(p=>p.First>=p.Second))throw new InvalidDataException("invalid_axis");}
  private static ComplexValue Interpolate(NativeRaw raw,double[] axis,int column,double coordinate){

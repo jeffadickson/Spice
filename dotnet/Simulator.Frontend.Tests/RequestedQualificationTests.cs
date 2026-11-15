@@ -69,6 +69,12 @@ public sealed class RequestedQualificationTests
   Assert.Equal("missing_native_nested_dc_axis",RequestedComparison.Compare(op,circuit,responses,raw with{Variables=raw.Variables.SetItem(2,new("v(other)","voltage"))}).Status);
   if(floating)
    Assert.Equal("missing_native_nested_dc_axis",RequestedComparison.Compare(op,circuit,responses,raw with{Variables=raw.Variables.SetItem(1,new("v(other)","voltage"))}).Status);
+  // Native accumulates DC steps while the frontend forms start+i*step. A
+  // sub-ULP-at-grid-scale zero crossing is not a different requested sweep.
+  var zeroCrossing=(ComplexValue[])raw.Points[0].Clone();zeroCrossing[0]=new(8e-16,0);
+  Assert.True(RequestedComparison.Compare(op,circuit,responses,raw with{Points=raw.Points.SetItem(0,zeroCrossing)}).Agreed);
+  var shifted=(ComplexValue[])raw.Points[0].Clone();shifted[0]=new(1e-7,0);
+  Assert.Equal("original_grid_discrepancy",RequestedComparison.Compare(op,circuit,responses,raw with{Points=raw.Points.SetItem(0,shifted)}).Status);
   var wrong=(ComplexValue[])raw.Points[2].Clone();wrong[2]=new(2,0);
   Assert.Equal("original_grid_discrepancy",RequestedComparison.Compare(op,circuit,responses,raw with{Points=raw.Points.SetItem(2,wrong)}).Status);
  }

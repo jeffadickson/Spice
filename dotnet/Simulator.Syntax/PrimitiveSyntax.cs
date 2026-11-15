@@ -13,6 +13,8 @@ public sealed record PrimitiveSyntax(string Name,string Family,int ScopeId,Sourc
     public BehavioralResistanceSyntax? BehavioralResistance {get;init;}
     /// <summary>Unevaluated AC-only resistance in ohms for the single-assignment scalar profile.</summary>
     public SourceSyntax? AcResistance {get;init;}
+    /// <summary>Explicit inductor P-to-N initial current; applied only to UIC execution.</summary>
+    public SourceSyntax? InitialCurrent {get;init;}
     /// <summary>A leading reserved DC/AC token must satisfy the bounded clause grammar rather than become a same-named scalar parameter.</summary>
     public bool RequiresExcitationProfile { get; init; }
     /// <summary>Typed differential control terminals for a qualified linear E/G source.</summary>
@@ -50,10 +52,15 @@ public enum SourceWaveformKind
 /// <summary>Unevaluated ordered scalar fields from the generated waveform rule.</summary>
 public sealed record SourceWaveformSyntax(SourceWaveformKind Kind,ImmutableArray<SourceSyntax> Values);
 /// <summary>Every generated statement's lexical owner, for explicit active-capability checks.</summary>
+/// <summary>Generated linear K-card winding references and unevaluated signed coupling; model tails remain unqualified.</summary>
+public sealed record MutualCouplingSyntax(ImmutableArray<SourceSyntax> Windings,SourceSyntax Coefficient);
+/// <summary>Generated statement kind and physical origin in its lexical scope.</summary>
 public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range)
 {
     /// <summary>Original generated leading-token spelling; composite lexical headers may span more than one word.</summary>
     public string Name { get; init; } = "";
+    /// <summary>Typed generated linear magnetic coupling; null denotes another or unsupported card.</summary>
+    public MutualCouplingSyntax? Coupling {get;init;}
     /// <summary>True only for a nonempty generated .option(s) tail composed entirely of the qualified reporting and raw-file encoding settings.</summary>
     public bool ReportingOptionsOnly { get; init; }
     /// <summary>Generated directive whose only physical setting explicitly selects the fixed 27 Celsius model temperature.</summary>
@@ -125,8 +132,8 @@ internal static class PrimitiveExtraction
         if(family=="L"&&parameters.Length==2&&parameters[0].value()!=null
             &&parameters[1].assignment() is {} initial
             &&initial.referenceName()?.GetText().Equals("ic",StringComparison.OrdinalIgnoreCase)==true
-            &&initial.value()?.GetText()=="0")
-            return new(card.Start.Text,family,scope,capture(nodes.node(0)),capture(nodes.node(1)),capture(parameters[0]),true,capture(card).Range);
+            &&initial.value()!=null)
+            return new(card.Start.Text,family,scope,capture(nodes.node(0)),capture(nodes.node(1)),capture(parameters[0]),true,capture(card).Range){InitialCurrent=capture(initial.value())};
 
         var valueIndex=card is SpiceParser.SourceContext&&parameters.Length>0&&parameters[0].GetText().Equals("dc",StringComparison.OrdinalIgnoreCase)?1:0;
         var supported=parameters.Length==valueIndex+1&&parameters[valueIndex].assignment()==null&&!(card is SpiceParser.SourceContext&&parameters[valueIndex].call()!=null);

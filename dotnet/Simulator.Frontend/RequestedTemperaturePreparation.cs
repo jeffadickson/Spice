@@ -31,5 +31,5 @@ internal static class RequestedTemperaturePreparation
     // the complete runtime resistance expression. No intrinsic semiconductor
     // thermal model is inferred by this preparation check.
     internal static bool Supports(BridgeResult circuit)=>circuit.Request!.Circuit.Elements.All(e=>
-        e is Resistor or Voltage or Current or Capacitor or Inductor or Vcvs or Vccs or Cccs or Ccvs or BehavioralResistor);
+        e is Resistor or Voltage or Current or Capacitor or Inductor or MutualInductance or Vcvs or Vccs or Cccs or Ccvs or BehavioralResistor);
 }

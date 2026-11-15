@@ -13,6 +13,11 @@ void Constrain(JsonNode node)
 {
     if(node is JsonObject obj)
     {
+        if(obj["properties"] is JsonObject couplingProperties && couplingProperties["kind"]?["const"]?.GetValue<string>()=="mutual_inductance") {
+            couplingProperties["coefficient"]!["minimum"]=-1;couplingProperties["coefficient"]!["maximum"]=1;
+            couplingProperties["p"]!["const"]=0;couplingProperties["n"]!["const"]=0;
+            foreach(var name in new[]{"first","second"}){couplingProperties[name]!["minLength"]=1;couplingProperties[name]!["maxLength"]=256;}
+        }
         if(obj["properties"] is JsonObject properties)
         {
             obj["additionalProperties"]=false;
@@ -61,6 +66,11 @@ void Relocate(JsonNode node)
 {
     if(node is JsonObject obj)
     {
+        if(obj["properties"] is JsonObject properties && properties["kind"]?["const"]?.GetValue<string>()=="mutual_inductance") {
+            properties["coefficient"]!["minimum"]=-1;properties["coefficient"]!["maximum"]=1;
+            properties["p"]!["const"]=0;properties["n"]!["const"]=0;
+            foreach(var name in new[]{"first","second"}){properties[name]!["minLength"]=1;properties[name]!["maxLength"]=256;}
+        }
         if(obj["$ref"] is JsonValue value&&value.TryGetValue<string>(out var reference)&&reference.StartsWith('#'))obj["$ref"]="#/oneOf/0"+reference[1..];
         foreach(var child in obj.ToArray())if(child.Value is not null)Relocate(child.Value);
     }

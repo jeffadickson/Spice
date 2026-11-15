@@ -21,6 +21,8 @@ public sealed record RequestedOperation(string Id,string Kind,SourceRange Range,
  public SimulationRequest? InitializationRequest { get; init; }
  /// <summary>True for a requested UIC startup with storage constraints and no physical DC bias solve.</summary>
  public bool UsesUic { get; init; }
+ /// <summary>Explicit winding current hints retained from original device cards; applied only under UIC.</summary>
+ public ImmutableDictionary<string,double> InductorInitialCurrents {get;init;}=ImmutableDictionary<string,double>.Empty;
  /// <summary>Optional original root control command or finite run invocation.</summary>
  public RequestedControlOrigin? ControlOrigin { get; init; }
 }
@@ -164,7 +166,7 @@ public static partial class RequestedAnalysis
       if(card.Names.Length is <1 or >2)throw new PreparationFailure("unsupported_nested_dc_sweep",card.Range);
       if(card.Names.Any(name=>name.Equals("temp",StringComparison.OrdinalIgnoreCase)))
       {
-       if(card.Names.Length!=1||baseRequest.Circuit.Elements.Any(e=>e is not (Resistor or Voltage or Current or Capacitor or Inductor or Vcvs or Vccs or Cccs or Ccvs or SpiceDiode {Model.JunctionFarads:0,Model.TransitSeconds:0})))
+       if(card.Names.Length!=1||baseRequest.Circuit.Elements.Any(e=>e is not (Resistor or Voltage or Current or Capacitor or Inductor or MutualInductance or Vcvs or Vccs or Cccs or Ccvs or SpiceDiode {Model.JunctionFarads:0,Model.TransitSeconds:0})))
         throw new PreparationFailure("unsupported_temperature_sweep_profile",card.Range);
        unit="degC";
        coordinates=Linear(values[0],values[1],values[2],Math.Min(maxPoints,128),card.Range);
@@ -223,7 +225,7 @@ public static partial class RequestedAnalysis
       if(!prepared.AcResistances.IsEmpty){
        // The engine biases and linearizes nonlinear elements from the same
        // circuit. Substitution is exact only when AC stamps are bias independent.
-       if(acCircuit.Elements.Any(e=>e is not (Resistor or Capacitor or Inductor or Voltage or Current or Vcvs or Vccs or Cccs or Ccvs)))
+       if(acCircuit.Elements.Any(e=>e is not (Resistor or Capacitor or Inductor or MutualInductance or Voltage or Current or Vcvs or Vccs or Cccs or Ccvs)))
         throw new PreparationFailure("unsupported_nonlinear_ac_resistance",card.Range);
        acCircuit=acCircuit with{Elements=acCircuit.Elements.Select(e=>
            prepared.AcResistances.TryGetValue(e.Id,out var ohms)?new Resistor(e.Id,e.P,e.N,ohms):e).ToArray()};
@@ -247,7 +249,7 @@ public static partial class RequestedAnalysis
       }
       if(usesUic){
        var hints=BindInitialConditions(catalog,environment,prepared,uic:true);
-       (initialization,initialConditions)=UicStartup(baseRequest,id,hints,options,card.Range);
+       (initialization,initialConditions)=UicStartup(baseRequest,id,hints,options,card.Range,prepared.InductorInitialCurrents);
        // M=TT=0 reduces the junction to Q=C*V and the same Shockley
        // conduction law. Use the existing explicit-state wire profile.
        var elements=transientRequest.Circuit.Elements.Select(e=>e is SpiceDiode diode
@@ -291,7 +293,7 @@ public static partial class RequestedAnalysis
       requests.Add(transientRequest with{Analysis=new TransientConfigured(options)});break;
      default:throw new PreparationFailure("unsupported_requested_analysis:"+card.Kind,card.Range);
     }
-    operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { PoleZero=poleZero,CoordinateUnit=unit,NestedDc=nestedDc,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=initialConditions,UsesUic=usesUic,ControlOrigin=directive.Origin });
+    operations.Add(new(id,card.Kind,card.Range,requests.ToImmutable(),coordinates) { PoleZero=poleZero,CoordinateUnit=unit,NestedDc=nestedDc,Arguments=values.ToImmutableArray(),OutputStartS=outputStart,InitializationRequest=initialization,InitialConditions=initialConditions,UsesUic=usesUic,InductorInitialCurrents=prepared.InductorInitialCurrents,ControlOrigin=directive.Origin });
    }
   }catch(PreparationFailure e){return Fail(e.Code,e.Range);}
   var observations=selected.Omissions.Where(o=>o.Kind=="extension").ToImmutableArray();

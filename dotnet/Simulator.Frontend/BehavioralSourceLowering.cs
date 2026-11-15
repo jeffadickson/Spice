@@ -103,6 +103,9 @@ public static class BehavioralSourceLowering
                 case ExpressionDivide divide:pending.Push((divide.Left,item.Depth+1));pending.Push((divide.Right,item.Depth+1));break;
                 case ExpressionExp exp:pending.Push((exp.Argument,item.Depth+1));break;
                 case ExpressionLog log:pending.Push((log.Argument,item.Depth+1));break;
+                case ExpressionAbs a:pending.Push((a.Argument,item.Depth+1));break;
+                case ExpressionAsin a:pending.Push((a.Argument,item.Depth+1));break;
+                case ExpressionAcos a:pending.Push((a.Argument,item.Depth+1));break;
                 default:return false;
             }
         }
@@ -117,5 +120,23 @@ public static class BehavioralSourceLowering
         public BoundedExpression Divide(BoundedExpression left,BoundedExpression right)=>new ExpressionDivide(left,right);
         public BoundedExpression Exp(BoundedExpression argument)=>new ExpressionExp(argument);
         public BoundedExpression Log(BoundedExpression argument)=>new ExpressionLog(argument);
+        public BoundedExpression Abs(BoundedExpression argument)=>new ExpressionAbs(argument);
+        public BoundedExpression Asin(BoundedExpression argument)=>new ExpressionAsin(argument);
+        public BoundedExpression Acos(BoundedExpression argument)=>new ExpressionAcos(argument);
+        public bool TryConstant(BoundedExpression expression,out double value) {
+            var visited=0;
+            double Read(BoundedExpression e,int depth) {
+                if(++visited>1024||depth>64)return double.NaN;
+                double F(BoundedExpression child)=>Read(child,depth+1);
+                return e switch {
+                    ExpressionConstant c=>c.Value,ExpressionAdd a=>F(a.Left)+F(a.Right),
+                    ExpressionMultiply m=>F(m.Left)*F(m.Right),ExpressionDivide d=>F(d.Left)/F(d.Right),
+                    ExpressionExp u=>Math.Exp(F(u.Argument)),ExpressionLog u=>Math.Log(F(u.Argument)),
+                    ExpressionAbs u=>Math.Abs(F(u.Argument)),ExpressionAsin u=>Math.Asin(F(u.Argument)),ExpressionAcos u=>Math.Acos(F(u.Argument)),
+                    _=>double.NaN
+                };
+            }
+            value=Read(expression,0);return double.IsFinite(value);
+        }
     }
 }

@@ -163,6 +163,7 @@ fn dc_currents(circuit: &Circuit, state: &[f64]) -> SimResult<Vec<f64>> {
             let (p, n) = e.terminals();
             let v = voltage(state, p) - voltage(state, n);
             let current = match e {
+                Element::MutualInductance{..} => 0.,
                 Element::PspiceSwitch {
                     cp,
                     cn,
@@ -361,6 +362,10 @@ fn reference_expression(expr:&crate::expression::Expr,input:f64)->SimResult<f64>
         if depth>64||*left==0{return Err(SimError::invalid("audit expression budget exceeded"));}
         *left-=1;
         let result=match expr {
+            Expr::Abs(a)=>value(a,input,depth+1,left)?.abs(),
+            Expr::Asin(a)=>value(a,input,depth+1,left)?.asin(),
+            Expr::Acos(a)=>value(a,input,depth+1,left)?.acos(),
+
             Expr::Input=>input, Expr::Constant(v)=>*v,
             Expr::Add(a,b)=>value(a,input,depth+1,left)?+value(b,input,depth+1,left)?,
             Expr::Multiply(a,b)=>value(a,input,depth+1,left)?*value(b,input,depth+1,left)?,
@@ -509,7 +514,12 @@ pub fn backward_euler_step(
             }
             Element::Inductor { henries, .. } => {
                 let old_i = branch_current(circuit, previous, element.id())?;
-                let expected = henries * (*current - old_i) / step_s;
+                let mut flux_change=henries*(*current-old_i);
+                for (first,second,m) in crate::mutual_inductance::pairs(circuit)? {
+                    let other=if first==element.id(){second}else if second==element.id(){first}else{continue};
+                    flux_change+=m*(branch_current(circuit,state,other)?-branch_current(circuit,previous,other)?);
+                }
+                let expected = flux_change / step_s;
                 checks.retain(|c| c.id != format!("constraint:{}", element.id()));
                 checks.push(Check::measured(
                     format!("constraint:{}", element.id()),
@@ -517,7 +527,7 @@ pub fn backward_euler_step(
                     options.voltage_absolute_v + options.relative * (v.abs() + expected.abs()),
                     "V",
                 ));
-                henries * *current * (*current - old_i)
+                *current * flux_change
             }
             _ => step_s * v * *current,
         };

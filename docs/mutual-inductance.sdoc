@@ -1,0 +1,57 @@
+[DOCUMENT]
+TITLE: Linear magnetic coupling and bounded behavioral operators
+
+[REQUIREMENT]
+UID: MODEL-MUTUAL-001
+STATUS: Draft
+TITLE: Signed passive linear flux linkage
+STATEMENT: >>>
+A typed magnetic relation shall bind two existing distinct winding branch IDs, with finite signed dimensionless coefficient in [-1,1]. It has no electrical port and its reserved P/N fields shall be zero. Flux linkage shall include M=k*sqrt(L1)*sqrt(L2) symmetrically in the existing negative-flux voltage-row charge matrix. Duplicate pair terms are additive and the full normalized inductance matrix shall be checked for nonnegative energy within an explicit roundoff tolerance; passive perfect coupling remains admissible. Unknown windings, invalid coefficients, nonzero sentinel terminals, overflow and negative-energy groups shall fail before execution. DC linkage contributes no voltage; AC and transient use the existing qualified solvers and integration controllers.
+<<<
+COMMENT: >>>
+Implementation: circuit, mutual_inductance, compile and variation; audit_ac, audit_configured and audit reconstruct every mutual flux term. Generated K metadata is extracted with ANTLR, lexical parameters and hierarchy origins, not a second tokenizer. Nonlinear core models remain refused. Verification: tests/mutual_inductance.rs and MutualInductanceTests. PSD roundoff tolerance is 1e-12 times winding count on the normalized dimensionless matrix, not a circuit residual tolerance.
+<<<
+
+[REQUIREMENT]
+UID: FRONTEND-INDUCTOR-IC-002
+STATUS: Draft
+TITLE: Retain device current hints and apply them only under UIC
+STATEMENT: >>>
+Generated inductor IC expressions shall evaluate in the owning instance environment and retain signed P-to-N amperes. Ordinary non-UIC OP/DC/AC/transient shall use the native default bias semantics, not impose the hint. Under UIC, an independent startup consistency solve shall replace each winding with its specified current source (default zero), remove magnetic-only relations, and reconstruct the original MNA branch state using the specified currents. Unknown or nonfinite engineering values shall not silently become zero. Initial constraints and original device provenance shall remain distinct.
+<<<
+COMMENT: >>>
+Implementation: PrimitiveSyntax, OperatingPointBridge, RequestedUicStartup and RequestedInitialConditions. Verification: generated hierarchy/IC regressions and original mutually coupled decay programs. General nonlinear UIC, waveform UIC and nonlinear magnetic cores remain separately unsupported.
+<<<
+
+[REQUIREMENT]
+UID: BEH-UNARY-POWER-001
+STATUS: Draft
+TITLE: Bounded unary and integer-power voltage laws
+STATEMENT: >>>
+Requested single-control DC voltage laws shall accept typed abs, asin and acos operations with analytic first derivatives and independent value audits. Abs selects zero slope at zero; inverse trig requires an argument strictly within (-1,1), with endpoint/infinite-slope trials explicitly refused rather than clamped. Parameter-only integer exponents within [-16,16] shall lower through existing bounded products/quotients, with native domain checks and emitted node/depth budgets retained. These operators do not imply transient, arbitrary real power or multi-input function support.
+<<<
+COMMENT: >>>
+Verification: behavioral_unary.rs finite-difference/domain tests and original B-source DC programs. No blanket global Newton convergence claim.
+<<<
+
+[REQUIREMENT]
+UID: SOLVER-REAL-REFINE-001
+STATUS: Draft
+TITLE: Bounded Faer real same-factor corrections
+STATEMENT: >>>
+The Faer prepared real path shall apply at most three residual-correction solves with the same owned numeric factor when the initial finite solution fails the existing componentwise all-row 1e-10 check. Exact homogeneous-row consequences may first be reconstructed using every non-dominant coefficient, reusing the established complex-row routine with real-valued operands. Every accepted candidate shall pass that unchanged independent check. Invalid/nonfinite corrections shall refuse. Correction shall not refactor, switch provider, relax tolerances or silently accept a failed solution. Trace correction attempts separately from logical circuit solves.
+<<<
+COMMENT: >>>
+Verification: faer_real_refinement.rs retains the rejected actual coupled-transient matrix and uncorrected values. Independent diagnostic factor experiment reduced two approximately1.7e-10 row errors to below6e-17 after one correction. Runtime source: backend_faer.rs. The legacy direct-solve result and its existing analysis-level acceptance contract are unchanged; no new componentwise direct-path qualification is claimed. Global ill-conditioning/convergence and GPU equivalence remain unqualified.
+<<<
+
+[REQUIREMENT]
+UID: QUAL-GRID-ROUNDOFF-001
+STATUS: Draft
+TITLE: Preserve DC coordinate identity across binary64 zero crossings
+STATEMENT: >>>
+Requested/native grid comparison shall retain equal counts, finite coordinates, original ordering and the existing coordinate-relative check. It may additionally admit a difference bounded by four machine epsilons times coordinate count times the requested grid's maximum absolute coordinate, solely for binary64 step-accumulation roundoff near zero. It shall neither change voltage/current comparison tolerances nor interpolate, omit or substitute requested DC points. Genuinely shifted, malformed or incomplete grids shall remain refused.
+<<<
+COMMENT: >>>
+Verification: RequestedQualificationTests passes a zero-coordinate displacement8e-16 on a unit-scale sweep and refuses1e-7; retained wrong-secondary-axis and shape checks remain. Raw originals acos_asin and abmpow1 have equal point counts but native zero-crossing roundoff. This is a coordinate-identity correction, not weakened circuit agreement bounds.
+<<<

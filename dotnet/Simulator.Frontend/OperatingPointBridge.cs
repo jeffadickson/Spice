@@ -34,6 +34,8 @@ public sealed record BridgeResult(SimulationRequest? Request,ImmutableDictionary
     public int ExplicitAcSources { get; init; }
     /// <summary>Evaluated waveform fields, without an implicit transient analysis or guessed timing defaults.</summary>
     public ImmutableArray<PreparedSourceWaveform> SourceWaveforms {get;init;}=[];
+    /// <summary>Evaluated winding initial currents by wire ID, used only for requested UIC startup.</summary>
+    public ImmutableDictionary<string,double> InductorInitialCurrents {get;init;}=ImmutableDictionary<string,double>.Empty;
     /// <summary>All active cards fit the requested bounded operating-point preparation profile.</summary>
     public bool Success=>Request!=null&&Diagnostics.IsEmpty;
 }
@@ -76,7 +78,9 @@ public static class OperatingPointBridge
         var internalNodes=ImmutableDictionary.CreateBuilder<string,string>(StringComparer.OrdinalIgnoreCase);
         var bound=InstanceBinder.Bind(catalog).Instances.ToLookup(i=>i.Header.ScopeId);
         var modelScalars=ImmutableDictionary.CreateBuilder<string,double>(StringComparer.OrdinalIgnoreCase);
+        var initialCurrents=ImmutableDictionary.CreateBuilder<string,double>(StringComparer.Ordinal);
         var hasJfet = false;
+        var pendingCoupling=new List<(ScopedCard Card,ParameterEvaluation Environment,ImmutableArray<string> Path)>();
         var earlyEffects=ImmutableArray.CreateBuilder<ForwardEarlyEffect>();
         GroundBinding? groundBinding=null;
         var primitives=catalog.Primitives.ToLookup(p=>p.ScopeId);var cards=catalog.Cards.ToLookup(c=>c.ScopeId);
@@ -94,6 +98,24 @@ public static class OperatingPointBridge
                 if(groundBinding!.Policy!=GroundAliasPolicy.Disabled)globalNames.Remove("gnd");
             }
             Expand(0,rootParameters,new(StringComparer.OrdinalIgnoreCase),[],0);
+            foreach(var pending in pendingCoupling) {
+                var card=pending.Card;var coupling=card.Coupling!;
+                var k=ParameterEvaluator.EvaluateValue(catalog,pending.Environment,coupling.Coefficient);
+                if(k.Value is not {} coefficient||Math.Abs(coefficient)>1)throw new BridgeFailure("invalid_mutual_coupling",card.Range);
+                var windings=coupling.Windings.Select(w=> {
+                    var names=pending.Path.Concat(w.Text.Split(':')).ToArray();
+                    var origin=origins.SingleOrDefault(o=>o.InstancePath.Concat(new[]{o.LocalName}).SequenceEqual(names,StringComparer.OrdinalIgnoreCase));
+                    if(origin==null||elements.First(e=>e.Id==origin.WireId) is not Inductor)throw new BridgeFailure("missing_coupled_inductor",w.Range);
+                    return origin.WireId;
+                }).ToArray();
+                if(windings.Length>16||windings.Distinct().Count()!=windings.Length)throw new BridgeFailure("invalid_coupled_windings",card.Range);
+                for(var i=0;i<windings.Length;i++)for(var j=i+1;j<windings.Length;j++){
+                    if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",card.Range);
+                    var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    elements.Add(new MutualInductance(id,windings[i],windings[j],coefficient));
+                    origins.Add(new(id,card.Name+"$"+i+"_"+j,pending.Path,card.Range));
+                }
+            }
             if(elements.Count==0)throw new BridgeFailure("empty_circuit",null);
             var hasFd=elements.Any(e=>e is BsimSoiFdReference);
             if(fdOptions.Length==1 && (!hasFd || elements.Any(e=>e is not (BsimSoiFdReference or Voltage or Current or Resistor))))
@@ -103,7 +125,7 @@ public static class OperatingPointBridge
                 : hasJfet ? new OperatingPointNewton(new NewtonOptions(MaxIterations:200,Continuation:new(InitialStep:1)))
                 : new OperatingPoint();
             return new(new("frontend_op",new(nodes.ToArray(),elements.ToArray()),analysis,backend),roots.ToImmutable(),origins.ToImmutableArray(),[])
-            {ModelScalars=modelScalars.ToImmutable(),EarlyEffects=earlyEffects.ToImmutable(),InternalNodes=internalNodes.ToImmutable(),AcSources=acSources.ToImmutableArray(),AcResistances=acResistances.ToImmutable(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
+            {InductorInitialCurrents=initialCurrents.ToImmutable(),ModelScalars=modelScalars.ToImmutable(),EarlyEffects=earlyEffects.ToImmutable(),InternalNodes=internalNodes.ToImmutable(),AcSources=acSources.ToImmutableArray(),AcResistances=acResistances.ToImmutable(),ExplicitAcSources=explicitAcSources,SourceWaveforms=sourceWaveforms.ToImmutableArray(),GroundAliases=selected?groundBinding!.Policy:GroundAliasPolicy.Disabled};
         }
         catch(BridgeFailure e){return Failure(e.Code,e.Range);}
         void CollectGlobals(int scope,HashSet<int> seen,int depth)
@@ -137,6 +159,7 @@ public static class OperatingPointBridge
                 {
                     if(omittedStarts?.Contains(card.Range.Start)==true)continue;
                     if(selected&&card.GlobalNodes!=null)continue;
+                    if(selected&&card.Coupling!=null){if(!names.Add(card.Name))throw new BridgeFailure("duplicate_element",card.Range);pendingCoupling.Add((card,environment,path));continue;}
                     if(selected&&card.Kind=="function"&&catalog.Functions.Any(f=>f.Range.Start==card.Range.Start))continue;
                     if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice" or "diode" or "behavior" or "bjt" or "mos" or "jfet")))
                         throw new BridgeFailure("unsupported_active_card",card.Range);
@@ -213,6 +236,11 @@ public static class OperatingPointBridge
                     // Compact wire identifiers are collision-free and stay within
                     // Rust's byte limits; original spellings remain in provenance.
                     var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    if(primitive.InitialCurrent is {} initialCurrent) {
+                        var initial=ParameterEvaluator.EvaluateValue(catalog,environment,initialCurrent);
+                        if(initial.Value is not {} amps)throw new BridgeFailure(initial.Diagnostics[0].Code,initialCurrent.Range);
+                        initialCurrents.Add(id,amps);
+                    }
                     if(acOhms is {} acValue)acResistances.Add(id,acValue);
                     if(primitive.Family is "F" or "H")
                     {

@@ -46,7 +46,7 @@ public sealed class RequestedUicTests
     }
 
     [Theory]
-    [InlineData("L1 out 0 1m IC=1\nC1 out 0 1u", "", "unsupported_primitive_header")]
+    [InlineData("L1 out 0 1m IC=1 extra\nC1 out 0 1u", "", "unsupported_primitive_header")]
     [InlineData("R1 in 0 1k\nC1 in out 1u\nR2 out 0 1k", "", "unsupported_uic_device_profile")]
     [InlineData("R1 out 0 1k\nC1 out 0 1u", ".options method=trap gmin=1e-8", "unsupported_physical_directive")]
     public void Unqualified_device_state_and_mixed_options_refuse_atomically(string elements,string options,string code)

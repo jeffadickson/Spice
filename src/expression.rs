@@ -11,6 +11,7 @@ pub enum Expr {
     Divide(Box<Expr>, Box<Expr>),
     Exp(Box<Expr>),
     Log(Box<Expr>),
+    Abs(Box<Expr>), Asin(Box<Expr>), Acos(Box<Expr>),
 }
 impl Expr {
     /// Check structure and finite constants without evaluating a domain-sensitive
@@ -22,7 +23,7 @@ impl Expr {
             match expr {
                 Expr::Constant(v) if !v.is_finite() => Err(SimError::invalid("nonfinite expression constant")),
                 Expr::Add(a,b) | Expr::Multiply(a,b) | Expr::Divide(a,b) => { visit(a,depth+1,left)?; visit(b,depth+1,left) },
-                Expr::Exp(a) | Expr::Log(a) => visit(a,depth+1,left),
+                Expr::Exp(a) | Expr::Log(a) | Expr::Abs(a) | Expr::Asin(a) | Expr::Acos(a) => visit(a,depth+1,left),
                 _ => Ok(())
             }
         }
@@ -66,7 +67,14 @@ impl Expr {
                 let value = x.exp();
                 (value, value * dx)
             }
-            Self::Log(a) => {
+            Self::Abs(a) => { let (x,dx)=a.inner(input,depth+1,budget)?; (x.abs(),if x==0.{0.}else{dx*x.signum()}) }
+            Self::Asin(a) | Self::Acos(a) => {
+                let (x,dx)=a.inner(input,depth+1,budget)?;
+                // Endpoints have unbounded derivatives; do not invent a finite slope.
+                if x.abs()>=1. {return Err(SimError::invalid("inverse trig derivative domain"));}
+                let d=dx/((1.-x)*(1.+x)).sqrt();
+                if matches!(self,Self::Asin(_)){(x.asin(),d)}else{(x.acos(),-d)}
+            }            Self::Log(a) => {
                 let (x, dx) = a.inner(input, depth + 1, budget)?;
                 if x <= 0. {
                     return Err(SimError::invalid("log domain"));
@@ -90,6 +98,7 @@ enum WireExpr {
     Multiply { left: Box<WireExpr>, right: Box<WireExpr> },
     Divide { left: Box<WireExpr>, right: Box<WireExpr> },
     Exp { argument: Box<WireExpr> }, Log { argument: Box<WireExpr> },
+    Abs { argument: Box<WireExpr> }, Asin { argument: Box<WireExpr> }, Acos { argument: Box<WireExpr> },
 }
 impl From<WireExpr> for Expr {
     fn from(value: WireExpr) -> Self {
@@ -99,6 +108,7 @@ impl From<WireExpr> for Expr {
             WireExpr::Add{left,right}=>Self::Add(b(left),b(right)),
             WireExpr::Multiply{left,right}=>Self::Multiply(b(left),b(right)),
             WireExpr::Divide{left,right}=>Self::Divide(b(left),b(right)),
+            WireExpr::Abs{argument}=>Self::Abs(b(argument)), WireExpr::Asin{argument}=>Self::Asin(b(argument)), WireExpr::Acos{argument}=>Self::Acos(b(argument)),
             WireExpr::Exp{argument}=>Self::Exp(b(argument)), WireExpr::Log{argument}=>Self::Log(b(argument)),
         }
     }
@@ -111,6 +121,7 @@ impl From<Expr> for WireExpr {
             Expr::Add(left,right)=>Self::Add{left:b(left),right:b(right)},
             Expr::Multiply(left,right)=>Self::Multiply{left:b(left),right:b(right)},
             Expr::Divide(left,right)=>Self::Divide{left:b(left),right:b(right)},
+            Expr::Abs(argument)=>Self::Abs{argument:b(argument)}, Expr::Asin(argument)=>Self::Asin{argument:b(argument)}, Expr::Acos(argument)=>Self::Acos{argument:b(argument)},
             Expr::Exp(argument)=>Self::Exp{argument:b(argument)}, Expr::Log(argument)=>Self::Log{argument:b(argument)},
         }
     }

@@ -12,7 +12,7 @@ public static partial class RequestedAnalysis
     // zero-current inductors only in this separate consistency solve.
     private static (SimulationRequest,ImmutableArray<PreparedNodeInitialCondition>) UicStartup(
         SimulationRequest request,string id,ImmutableArray<PreparedNodeInitialCondition> hints,
-        TransientConfiguration options,SourceRange range)
+        TransientConfiguration options,SourceRange range,ImmutableDictionary<string,double> initialCurrents)
     {
         if(options.Sources is {Length:>0})
             throw new PreparationFailure("unsupported_uic_waveform",range);
@@ -28,10 +28,12 @@ public static partial class RequestedAnalysis
                 case Resistor or Voltage or Current:
                     biasElements.Add(element);
                     break;
-                case Inductor:
+                case MutualInductance: break;
+                case Inductor winding:
                     // The original branch still exists in the transient state
-                    // and its initial P-to-N current is explicitly zero.
+                    // and its initial P-to-N current is the evaluated device hint.
                     hasStorage=true;
+                    biasElements.Add(new Current(winding.Id,winding.P,winding.N,initialCurrents.GetValueOrDefault(winding.Id)));
                     break;
                 case Capacitor {N:0} or SpiceDiode {N:0,Model:{JunctionFarads:>0,Grading:0,TransitSeconds:0}}:
                     hasStorage=true;

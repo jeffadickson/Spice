@@ -145,9 +145,16 @@ internal sealed class DeclarationExtraction
             && directiveParameters.All(p=>p.assignment()?.referenceName()?.identifier()!=null)
             ? directiveParameters.Select(p=>Parameter(p.assignment())).ToImmutableArray()
             : ImmutableArray<ParameterSyntax>.Empty;
+        MutualCouplingSyntax? coupling=null;
+        if(card is SpiceParser.CouplingContext magnetic) {
+            var tail=magnetic.parameter();
+            if(tail.Length>0&&tail.All(p=>p.assignment()==null&&p.value()!=null)&&tail.SkipLast(1).All(p=>p.value().identifier()!=null))
+                coupling=new(magnetic.identifier().Select(Capture).Concat(tail.SkipLast(1).Select(p=>Capture(p.value().identifier()))).ToImmutableArray(),Capture(tail[^1].value()));
+        }
         cards.Add(new(owner,SpiceParser.ruleNames[card.RuleIndex],Range(card))
         {
             Name = card.Start.Text,
+            Coupling = coupling,
             GlobalNodes = GlobalNodeExtraction.Extract(card,Capture),
             ReportingOptionsOnly = reportingOnly,
             BsimSoiFdStaticOptions = optionCard && owner == 0 && IsBsimSoiFdStaticOptions(directiveParameters),

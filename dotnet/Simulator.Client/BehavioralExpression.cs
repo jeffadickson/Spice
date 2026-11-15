@@ -15,6 +15,9 @@ public sealed record BehavioralResistor(string Id,int P,int N,int Cp,int Cn,Boun
 [JsonDerivedType(typeof(ExpressionDivide),"divide")]
 [JsonDerivedType(typeof(ExpressionExp),"exp")]
 [JsonDerivedType(typeof(ExpressionLog),"log")]
+[JsonDerivedType(typeof(ExpressionAbs),"abs")]
+[JsonDerivedType(typeof(ExpressionAsin),"asin")]
+[JsonDerivedType(typeof(ExpressionAcos),"acos")]
 public abstract record BoundedExpression;
 /// <summary>One finite scalar constant.</summary>
 public sealed record ExpressionConstant(double Value):BoundedExpression;
@@ -30,3 +33,10 @@ public sealed record ExpressionDivide(BoundedExpression Left,BoundedExpression R
 public sealed record ExpressionExp(BoundedExpression Argument):BoundedExpression;
 /// <summary>Natural logarithm with strictly positive real argument.</summary>
 public sealed record ExpressionLog(BoundedExpression Argument):BoundedExpression;
+
+/// <summary>Absolute value; the selected derivative at zero is zero.</summary>
+public sealed record ExpressionAbs(BoundedExpression Argument):BoundedExpression;
+/// <summary>Real inverse sine; the native derivative profile requires an argument strictly inside (-1,1).</summary>
+public sealed record ExpressionAsin(BoundedExpression Argument):BoundedExpression;
+/// <summary>Real inverse cosine; the native derivative profile requires an argument strictly inside (-1,1).</summary>
+public sealed record ExpressionAcos(BoundedExpression Argument):BoundedExpression;
