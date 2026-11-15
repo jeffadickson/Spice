@@ -1,0 +1,21 @@
+{
+  "stryker-config": {
+    "test-case-filter": "FullyQualifiedName~ControlledCurrentSourceTests",
+    "project": "Simulator.Frontend.csproj",
+    "mutate": [
+      "**/OperatingPointBridge.cs{17331..17345}",
+      "**/BehavioralSourceLowering.cs{5422..5436}"
+    ],
+    "reporters": [
+      "json",
+      "cleartext"
+    ],
+    "concurrency": 1,
+    "thresholds": {
+      "low": 60,
+      "high": 80,
+      "break": 0
+    },
+    "additional-timeout": 5000
+  }
+}

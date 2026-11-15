@@ -166,6 +166,8 @@ internal sealed class DeclarationExtraction
         if(card is SpiceParser.DcContext dc)analyses.Add(new(owner,"dc",dc.identifier().Select(i=>i.GetText()).ToImmutableArray(),dc.value().Select(Capture).ToImmutableArray(),Range(card)));
         if(card is SpiceParser.BehaviorContext behavioral)
         {behavior.Add(BehavioralSourceExtraction.Extract(behavioral,owner,Capture,Capture));return;}
+        if(card is SpiceParser.VcontrolContext controlled&&BehavioralSourceExtraction.CurrentAlias(controlled,owner,Capture,Capture) is {} currentAlias)
+        {behavior.Add(currentAlias);return;}
         if(card is SpiceParser.TranContext tran){
             var values=tran.value();var names=tran.identifier()==null?ImmutableArray<string>.Empty:[tran.identifier().GetText()];
             // The optional generated value rule can consume the final UIC identifier.

@@ -539,15 +539,21 @@
     "execution": "bounded",
     "implementation": [
       "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
-      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs",
+      "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
     ],
     "requirements": [
-      "SEM-BRIDGE-001"
+      "SEM-BRIDGE-001",
+      "SOURCE-G-MULTIPLIER-001",
+      "SOURCE-G-CURRENT-001"
     ],
     "evidence": [
-      "evidence/five-area-integrated-verification.json"
+      "evidence/five-area-integrated-verification.json",
+      "dotnet/Simulator.Frontend.Tests/ControlledCurrentSourceTests.cs",
+      "evidence/controlled-current-sources.json"
     ],
-    "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
+    "limitation": "Bounded affine E/G and branch-current F/H profiles; G additionally supports explicit positive finite M and affine CUR. Nonlinear current aliases, other G attributes and implicit Xyce hierarchy scaling remain outside this profile."
   },
   {
     "rule": "icontrol",
@@ -573,15 +579,21 @@
     "execution": "bounded",
     "implementation": [
       "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
-      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs",
+      "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
     ],
     "requirements": [
-      "SEM-BRIDGE-001"
+      "SEM-BRIDGE-001",
+      "SOURCE-G-MULTIPLIER-001",
+      "SOURCE-G-CURRENT-001"
     ],
     "evidence": [
-      "evidence/five-area-integrated-verification.json"
+      "evidence/five-area-integrated-verification.json",
+      "dotnet/Simulator.Frontend.Tests/ControlledCurrentSourceTests.cs",
+      "evidence/controlled-current-sources.json"
     ],
-    "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
+    "limitation": "Bounded affine E/G and branch-current F/H profiles; G additionally supports explicit positive finite M and affine CUR. Nonlinear current aliases, other G attributes and implicit Xyce hierarchy scaling remain outside this profile."
   },
   {
     "rule": "currentControlProfile",
@@ -1983,5 +1995,49 @@
       "dotnet/Simulator.Frontend.Tests/SourceAlterTests.cs"
     ],
     "limitation": "Seven explicit finite pulse literals, existing root independent source, after sole OP. No later analysis, physical request mutation, nested alter or general alter command is admitted."
+  },
+  {
+    "rule": "sourceMultiplicity",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+      "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SOURCE-G-MULTIPLIER-001",
+      "SOURCE-G-CURRENT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/ControlledCurrentSourceTests.cs",
+      "evidence/controlled-current-sources.json"
+    ],
+    "limitation": "Explicit positive finite G multiplicity and affine CUR alias only; no general nonlinear current kernel, implicit Xyce X-line scaling or complete G-source dialect claim."
+  },
+  {
+    "rule": "currentAliasProfile",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+      "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+      "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+    ],
+    "requirements": [
+      "SOURCE-G-MULTIPLIER-001",
+      "SOURCE-G-CURRENT-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/ControlledCurrentSourceTests.cs",
+      "evidence/controlled-current-sources.json"
+    ],
+    "limitation": "Explicit positive finite G multiplicity and affine CUR alias only; no general nonlinear current kernel, implicit Xyce X-line scaling or complete G-source dialect claim."
   }
 ]

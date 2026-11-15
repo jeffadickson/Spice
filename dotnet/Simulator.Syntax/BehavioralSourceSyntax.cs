@@ -12,17 +12,38 @@ public enum BehavioralQuantity
     /// <summary>Imposed output current flowing P to N, amperes.</summary>
     Current
 }
-/// <summary>Generated B-card metadata, retaining physical ranges and lexical ownership. Unsupported tails remain explicitly unsupported.</summary>
+/// <summary>Generated behavioral-source metadata, including G CUR aliases, retaining physical ranges and lexical ownership. Unsupported tails remain explicit.</summary>
 public sealed record BehavioralSourceSyntax(string Name,int ScopeId,SourceSyntax? P,SourceSyntax? N,BehavioralQuantity Quantity,SourceSyntax? Expression,bool Supported,SourceRange Range)
 {
-    /// <summary>True when the generated V/I header is complete and every tail is an explicit assignment; physical admission remains separate.</summary>
+    /// <summary>True when the generated output-relation header is complete and each retained tail has typed assignment metadata; physical admission remains separate.</summary>
     public bool HeaderSupported { get; init; }
     /// <summary>Generated additional attributes with original source ranges; strict affine preparation does not admit them.</summary>
     public ImmutableArray<ParameterSyntax> Parameters { get; init; } = [];
+    /// <summary>Explicit multiplicity on a generated G CUR alias, evaluated in the source's lexical scope.</summary>
+    public SourceSyntax? CurrentMultiplier { get; init; }
 }
 
 internal static class BehavioralSourceExtraction
 {
+    internal static BehavioralSourceSyntax? CurrentAlias(SpiceParser.VcontrolContext card,int scope,
+        Func<ParserRuleContext,SourceSyntax> capture,Func<int,int,SourceSyntax> captureRange)
+    {
+        if(!card.Start.Text.StartsWith("g",StringComparison.OrdinalIgnoreCase)||card.tableTail()!=null)return null;
+        var parser=SourceProfileExtraction.CreateParser(card.parameter());if(parser==null)return null;
+        try {
+            var profile=parser.currentAliasProfile();var value=profile.value();
+            // The generated QUOTED token owns the delimiters. Preserve the
+            // inner physical range; affine evaluation reuses the expression
+            // grammar and never treats voltage references as scalar names.
+            var expression=value.QUOTED() is {} quoted
+                ?captureRange(quoted.Symbol.StartIndex+1,quoted.Symbol.StopIndex-1)
+                :value.expression() is {} inner?capture(inner):capture(value);
+            return new(card.Start.Text,scope,capture(card.twoNodes().node(0)),capture(card.twoNodes().node(1)),
+                BehavioralQuantity.Current,expression,true,capture(card).Range)
+            {HeaderSupported=true,CurrentMultiplier=profile.sourceMultiplicity() is {} multiplier?capture(multiplier.value()):null};
+        }catch(ParseCanceledException){return null;}
+    }
+
     internal static BehavioralSourceSyntax Extract(SpiceParser.BehaviorContext card,int scope,Func<ParserRuleContext,SourceSyntax> capture,Func<int,int,SourceSyntax> captureRange)
     {
         var range=capture(card).Range;var expression=card.expression();

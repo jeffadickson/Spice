@@ -19,6 +19,8 @@ public sealed record PrimitiveSyntax(string Name,string Family,int ScopeId,Sourc
     public VoltageControlSyntax? Control { get; init; }
     /// <summary>Original same-instance voltage-branch reference of an F/H source.</summary>
     public SourceSyntax? CurrentReference { get; init; }
+    /// <summary>Unevaluated explicit G-source parallel multiplier; other source families do not inherit this profile.</summary>
+    public SourceSyntax? CurrentMultiplier { get; init; }
 }
 /// <summary>Control voltage is V(P)-V(N); output polarity remains the primitive P-to-N convention.</summary>
 public sealed record VoltageControlSyntax(SourceSyntax P,SourceSyntax N);
@@ -95,8 +97,11 @@ internal static class PrimitiveExtraction
                 if(control.tableTail()==null&&parser!=null)
                 {
                     var profile=parser.linearControlProfile();
+                    if(profile.sourceMultiplicity()!=null&&!card.Start.Text.StartsWith("g",StringComparison.OrdinalIgnoreCase))
+                        return new(card.Start.Text,card.Start.Text[..1].ToUpperInvariant(),scope,capture(nodes.node(0)),capture(nodes.node(1)),null,false,capture(card).Range);
                     return new(card.Start.Text,card.Start.Text[..1].ToUpperInvariant(),scope,capture(nodes.node(0)),capture(nodes.node(1)),capture(profile.value()),true,capture(card).Range)
-                    {Control=new(capture(profile.twoNodes().node(0)),capture(profile.twoNodes().node(1)))};
+                    {Control=new(capture(profile.twoNodes().node(0)),capture(profile.twoNodes().node(1))),
+                     CurrentMultiplier=profile.sourceMultiplicity() is {} multiplier?capture(multiplier.value()):null};
                 }
             }
             catch(Antlr4.Runtime.Misc.ParseCanceledException){ }

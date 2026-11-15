@@ -1,0 +1,24 @@
+[DOCUMENT]
+TITLE: Bounded controlled-current source compatibility
+
+[REQUIREMENT]
+UID: SOURCE-G-MULTIPLIER-001
+STATUS: Draft
+TITLE: Explicit finite positive controlled-current multiplicity
+STATEMENT: >>>
+Requested linear G sources may specify one M assignment evaluated in their lexical parameter scope. A finite positive multiplier shall scale the complete signed transconductance without changing output polarity or terminal identity. Duplicate, unknown, zero, negative, nonfinite and overflowing settings shall refuse atomically. No undeclared implicit hierarchy multiplier shall be inferred from an ordinary formal parameter named M.
+<<<
+COMMENT: >>>
+Implementation: generated controlled-source profiles, PrimitiveExtraction and OperatingPointBridge. Verification: ControlledCurrentSourceTests and the five unchanged original programs in evidence/controlled-current-sources.json. The grammar implementation inventory retains the bounded association. This requirement does not import Xyce implicit hierarchy scaling or qualify nonpositive multipliers.
+<<<
+
+[REQUIREMENT]
+UID: SOURCE-G-CURRENT-001
+STATUS: Draft
+TITLE: Affine current-expression source alias
+STATEMENT: >>>
+Requested G CUR assignments shall preserve generated expression/source metadata and reuse bounded affine behavioral preparation. The imposed current flowing from output P to N shall equal M times the complete affine law, including every differential-voltage coefficient and DC offset. DC, AC derivatives and transient execution shall consume the same prepared stamps. Missing data, unsupported nonlinear current expressions and extra attributes shall not be silently ignored.
+<<<
+COMMENT: >>>
+Implementation: BehavioralSourceExtraction, DeclarationExtraction and BehavioralSourceLowering; existing native VCCS/current elements remain unchanged. Verification: evidence/controlled-current-sources.json, ControlledCurrentSourceTests, original DC sweeps, authored OP/AC/transient, lexical hierarchy, malformed headers and the 128-case property. Syntax recognition and physical admission remain separate. These affine fixtures do not qualify general nonlinear current kernels.
+<<<

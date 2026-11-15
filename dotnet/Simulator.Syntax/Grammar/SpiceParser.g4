@@ -32,7 +32,11 @@ acScalar: {TokenStream.LT(1).Text.ToLowerInvariant() is not ("dc" or "ac" or "pu
 // Distortion-only source coefficients are separate from ordinary waveforms.
 distortionExcitation: {TokenStream.LT(1).Text.ToLowerInvariant() is "distof1" or "distof2"}? identifier NUMBER;
 // Typed linear E/G tail; TABLE/POLY/behavioral headers remain outside this entry.
-linearControlProfile: twoNodes value EOF;
+linearControlProfile: twoNodes value sourceMultiplicity? EOF;
+// A current-producing G source may scale its complete law. Other families
+// retain their separate semantic admission; unknown/duplicate tails refuse.
+sourceMultiplicity: {TokenStream.LT(1).Text.Equals("m",StringComparison.OrdinalIgnoreCase)}? identifier EQUAL value;
+currentAliasProfile: {TokenStream.LT(1).Text.Equals("cur",StringComparison.OrdinalIgnoreCase)}? identifier EQUAL value sourceMultiplicity? EOF;
 // Bounded generated semantic entries over existing card tokens.
 currentControlProfile: value EOF;
 globalNodesProfile: node (COMMA? node)* EOF;

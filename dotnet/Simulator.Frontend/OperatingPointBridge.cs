@@ -196,6 +196,13 @@ public static class OperatingPointBridge
                         if(!primitive.Supported||primitive.Value==null)throw new BridgeFailure("unsupported_primitive_header",primitive.Range);
                         value=Evaluate(primitive.Value);
                     }
+                    if(primitive.CurrentMultiplier is {} multiplier)
+                    {
+                        var factor=Evaluate(multiplier);
+                        if(!double.IsFinite(factor)||factor<=0)throw new BridgeFailure("invalid_source_multiplier",multiplier.Range);
+                        value*=factor;
+                        if(!double.IsFinite(value))throw new BridgeFailure("invalid_source_multiplier",multiplier.Range);
+                    }
                     if(primitive.Family=="R"&&(value==0||value<0&&(!requested||!double.IsFinite(1/value))))throw new BridgeFailure("invalid_resistance",primitive.Range);
                     if(primitive.Family=="C"&&value<=0)throw new BridgeFailure("invalid_capacitance",primitive.Range);
                     if(primitive.Family=="L"&&value<=0)throw new BridgeFailure("invalid_inductance",primitive.Range);

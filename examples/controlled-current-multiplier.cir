@@ -1,0 +1,18 @@
+Controlled current sources with explicit multiplicity and affine offset
+.param gm=2m mult=3
+V1 in 0 DC 1 AC 1 PWL(0 1 1m 2)
+Vref ref 0 .25
+Glinear out 0 in ref {gm} M={mult}
+Rlinear out 0 100
+Clinear out 0 1u
+Gexpression expr 0 CUR='1m+gm*v(in,ref)' M={mult}
+Rexpression expr 0 100
+Cexpression expr 0 1u
+.op
+.dc V1 0 2 1
+.ac lin 3 0 1000
+.tran 1u 1m 0 1u
+.print dc v(out) v(expr)
+.print ac v(out) v(expr)
+.print tran v(out) v(expr)
+.end

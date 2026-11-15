@@ -63,10 +63,17 @@ public static class BehavioralSourceLowering
         // finite coefficients then drive the existing DC and AC typed stamps.
         var delta=temperatureCelsius-27;
         var factor=1+coefficients.GetValueOrDefault("tc1")*delta+coefficients.GetValueOrDefault("tc2")*delta*delta;
+        if(source.CurrentMultiplier is {} multiplier)
+        {
+            var evaluated=ParameterEvaluator.EvaluateValue(catalog,environment,multiplier);
+            if(evaluated.Value is not {} value)return new(null,evaluated.Diagnostics.Select(d=>new BridgeDiagnostic(d.Code,d.Range)).ToImmutableArray());
+            if(!double.IsFinite(value)||value<=0)return new(null,[new("invalid_source_multiplier",multiplier.Range)]);
+            factor*=value;
+        }
         var terms=form.Terms.Select(term=>term with{Coefficient=term.Coefficient*factor}).ToImmutableArray();
         var offset=form.Offset*factor;
         if(!double.IsFinite(factor)||!double.IsFinite(offset)||terms.Any(term=>!double.IsFinite(term.Coefficient)))
-            return new(null,[new("invalid_behavior_temperature_factor",source.Range)]);
+            return new(null,[new(source.CurrentMultiplier==null?"invalid_behavior_temperature_factor":"invalid_source_multiplier",source.Range)]);
         return new(new(source.Name,source.P,source.N,source.Quantity,terms,offset,source.Range),[]);
     }
     internal static bool FitsNativeBudget(BoundedExpression expression)
