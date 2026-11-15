@@ -1158,3 +1158,5 @@ Artifacts: E:/Artifacts/Spice-issue34-20261103T195804Z. Preserve canonical main'
 seven unrelated sheet-resistor/WIP files and all historical/raw evidence. CI off.
 
 Manual two-deck checkpoint (hourly automation remains paused): original ac-resistance now agrees for OP/AC/PZ and original assertions. Read docs/ordered-control-results.md and evidence/ordered-control-ac-resistance.json. Next finish original general/mosmem.cir startup and full transient comparison, without altered inputs or weaker tolerances. Preserve canonical main; local commits only; E: artifacts.
+
+2026-11-14 ten-deck checkpoint: docs/scalar-functions-results.md and evidence/scalar-functions-decks.json record ten additional retained Xyce originals agreeing with stock ngspice on LU/Faer/Intel. Four quoted B current laws and six scalar-function parameter programs; zero increment to historical tests/ngspice. Preserve explicit dynamic-function/model and Stryker instrumentation gaps. Bulk artifacts remain under E:/Artifacts/Spice-ten-more-20261115T045430Z. Canonical main and unknown sheet-resistor work remain untouched.

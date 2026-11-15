@@ -53,16 +53,18 @@ public static class BehavioralSourceLowering
         var coefficients=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase);
         foreach(var parameter in source.Parameters)
         {
-            if(parameter.Name is not {} name||name.ToLowerInvariant() is not ("tc1" or "tc2")||coefficients.ContainsKey(name))
+            if(parameter.Name is not {} name||name.ToLowerInvariant() is not ("tc1" or "tc2" or "m")||coefficients.ContainsKey(name))
                 return new(null,[new("unsupported_behavior_parameter",parameter.Range)]);
             var evaluated=ParameterEvaluator.EvaluateValue(catalog,environment,parameter.Value);
             if(evaluated.Value is not {} value)return new(null,evaluated.Diagnostics.Select(d=>new BridgeDiagnostic(d.Code,d.Range)).ToImmutableArray());
+            if(name.Equals("m",StringComparison.OrdinalIgnoreCase)&&(source.Quantity!=BehavioralQuantity.Current||!double.IsFinite(value)||value<=0))
+                return new(null,[new("invalid_source_multiplier",parameter.Range)]);
             coefficients.Add(name,value);
         }
         // Scale the complete affine law, including its DC offset. The same
         // finite coefficients then drive the existing DC and AC typed stamps.
         var delta=temperatureCelsius-27;
-        var factor=1+coefficients.GetValueOrDefault("tc1")*delta+coefficients.GetValueOrDefault("tc2")*delta*delta;
+        var factor=(1+coefficients.GetValueOrDefault("tc1")*delta+coefficients.GetValueOrDefault("tc2")*delta*delta)*coefficients.GetValueOrDefault("m",1);
         if(source.CurrentMultiplier is {} multiplier)
         {
             var evaluated=ParameterEvaluator.EvaluateValue(catalog,environment,multiplier);

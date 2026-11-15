@@ -1,0 +1,629 @@
+{
+  "run_id": "Spice-ten-more-20261115T045430Z",
+  "state": "completed_selected_qualification",
+  "date_local": "2026-11-14",
+  "tested_base": "a61046775870fe0de47e7d941638cc15f76fb179",
+  "tested_source": "Base plus recorded source changes; not a clean-checkout claim",
+  "raw_root": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z",
+  "source_sha256": {
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "785595febc41fa01bdd0759595a641cf2e581b22934234fcd3336ca81bc4b9ef",
+    "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs": "1b29df8bd43b13ec2012811e4fe73fe323e2deea27c543acbef6a2da2227d29b",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "6fb39c00800e15c163296bf0894576b96c32aaa6c61b369ea367b48b38b3157f",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "0915f51166f4a4de70795836a2a90c952153bde0fdccc7df7e020e04b942f3dc",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "85c23d1f1cf64406b00f2ca123e0287d644b3d54aa6c07aa4e9152c01becbf1d",
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "6b457937b8803cb138ecd053decb4c1f8aaa2ffda9a99f9204040279b8da6196",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "9b89ab61e99f6a94bbcaea4fce99540c2b6b0c0299e0cb355f5b715107285706",
+    "dotnet/Simulator.Frontend.Tests/QuotedBehaviorTests.cs": "a87109fbd70aa1a805651da4a0fc3a28e6a1a1e425d79b287893e0a9fb6eda68",
+    "dotnet/Simulator.Frontend.Tests/ScalarFunctionTests.cs": "2973883d15156583c23b87431463d257516f6aa76e0529dc002d032649396184",
+    "dotnet/Simulator.Syntax.Tests/ScalarFunctionEvaluationTests.cs": "0b5f58f67dd90a48810b9f2264ab379ac0bed7d7350ee49a3c8e9d16fb7ea30d",
+    "dotnet/Simulator.Syntax.Tests/scalar-functions-stryker.json": "1e17f0b426efb17f7ccdde4b0c2414df2c6f73d1dc5046228412a88f694824b2",
+    "docs/scalar-functions.sdoc": "af25c1df6db2dacc96a21d2ba09899349f720c69adc98da493f5af18e214a640",
+    "compat/ngspice/grammar-implementation.json": "3574f024d8093f759d306364cc17986373ab8696b491903100ed147f2c18d5e4",
+    "compat/ngspice/scalar-functions-inventory.json": "a31149fbe532cd3d49893ed605d0a297a1527a0f94ee08aa01d42e92ce4e259c",
+    "examples/scalar-functions.cir": "8fcc20b3b4abc7ee37a76c143ccbf5ac797c90dab64214db7e99862db52893d3"
+  },
+  "artifact_sha256": {
+    "inventory.json": "a31149fbe532cd3d49893ed605d0a297a1527a0f94ee08aa01d42e92ce4e259c",
+    "accepted-inventory.json": "08512547a21736800311dd219ed908fd243380f428fefa1cb42dc8b99b49dd1f",
+    "accepted-lu/summary.json": "7b17886aaae3f996ce72c300b63671c441423542d87b020009989ebc502a84cb",
+    "accepted-faer/summary.json": "8add3850eee927837890d11873aa64fa7086a443591a1a7057906ffcd652f8b6",
+    "accepted-intel/summary.json": "8d5398b67c435b08592f4c51241abb21aca094ee969898fce85264fd507077f7",
+    "rspice/results.json": "3353c7ff5b96e29c1b5d431c7af00bbc2c97c26f8d37e3ad03ef48675c0113ef",
+    "strictdoc.json": "702bee3770c585522bbcf79e73017975c96b603198869b080de0d61adff2188f",
+    "accepted-full-test-exits.json": "ae94da84182abc56b8049df42098f3a29df76c61793be945fe65d369f0df2923",
+    "accepted-full-frontend-coverage/full.trx": "740b38f8aa008bf2ff0207ae7aeedb066a7711d74a23f6f875995dedbc2c0d2b",
+    "accepted-full-syntax-coverage/syntax.trx": "361b16e3297a29a806d2d8f6ac584bcdf65e768097c9bd7a75597be6c0f22523",
+    "red/red.trx": "c33a51a39e4f61913c671bfcab81c81b4ac9c64c7db29051faad0c928f75719d",
+    "red-functions/red-functions.trx": "3944eb4765a6caa59d5a5669abb15ffe5eb3f564080d3811c8fae499f71280a0",
+    "builtin-before.json": "3e5840b9de95de4fc061f0715dc4d9170811ddd0c5c5918019763ed16a557352",
+    "alternating-before.json": "a1aa35ffc539b74a0b7374b5de999f19cf6f8bc1a45fdd230a8ec4e737da2826",
+    "faultcheck-faults.json": "dd4c624762bf51b0f073eec072087c19529aef3557e52a77ed246fba29585cf6",
+    "stryker/reports/mutation-report.json": "6a59c017c9ffdbf34dc749553eddc0ae5299bbad39bcdc78e0526c8fe48da01b",
+    "selected-stryker-depth.json": "75975749eee9c29820dccce1c481fbc1861e01ad01cc23f83275218e607a553c",
+    "intel-exits.json": "494fcfd9b2fe69d0222a7381050dd223179d8b3315af3aca58f760818098372e",
+    "intel-routine.log": "bbed3ad7821c128b6c635d544cf55d2b95fbef7354b3f8a3c01ea90c7feba98d",
+    "intel-probe.log": "060f7d3206ddace078fd5f537ce29f59c63dfeb54346bbe761a05ce655c6f097",
+    "function-scope-oracle.cir": "715b96655187ec8141793a7f79a5c436f01663c8230faf7590cc4e7836ebfd84",
+    "function-scope.raw": "057a5e78c0ea949d12a0182a7fed7908238d11ed7ec00510c991e88a7911842d",
+    "function-lookup-oracle.cir": "98fbb8e5260dbffec4b645489b5f104e3d2f9d6cad44e7679770e1573c14a3b2",
+    "function-lookup.raw": "92a051bc276cfe2437abca8ef956e414eb17a447deaaa5f8fbedb4f003302950",
+    "function-builtin-oracle.cir": "11b6c05f5fefc733b6570960d92e1151cfc00db9f4390b54f6517f77b2f79416",
+    "function-builtin.raw": "30d6ba1636b38a965961e19ec71f13ee9c792a18e9503a66745ce05392c73db5"
+  },
+  "native_engine": {
+    "reuse": "Frozen prior verified native engine; no native equations/transport changes",
+    "unchanged_native_source_hashes": 54,
+    "path": "E:/Artifacts/Spice-RC-RLC-76d5a20-20261115T011507Z/engine-v4/circuit-simulator.exe",
+    "sha256": "b83d5181e1ddb3412f3a96bf9ada25e5d819775724d94111bdf02ff26781e8ee"
+  },
+  "corpus": {
+    "pin": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+    "new_original_decks": 10,
+    "transport_scope_tag": "ngspice is the external-corpus base tag, not historical-cohort membership",
+    "new_historical_ngspice_decks": 0,
+    "cohort": "Ten unchanged retained Xyce DC programs outside historical tests/ngspice",
+    "repository": "https://github.com/JaimeHW/RSpice",
+    "distinct_topology_claim": false
+  },
+  "before": [
+    {
+      "prepared": false,
+      "diagnostics": [
+        "unsupported_expression"
+      ],
+      "path": "tests/xyce/Netlists/BSRC/bsrc1_m.cir",
+      "sha256": "a2ac71b37db5ee00e7e218cb680978e77bea9a0d169720a457f9ba6387afa5e3"
+    },
+    {
+      "prepared": false,
+      "diagnostics": [
+        "unsupported_expression"
+      ],
+      "path": "tests/xyce/Netlists/BSRC/bsrc2_m.cir",
+      "sha256": "fd5c0b66b3020ae60205a458119db044b823604580e487fc161cfeac666d9ea4"
+    },
+    {
+      "prepared": false,
+      "diagnostics": [
+        "unsupported_expression"
+      ],
+      "path": "tests/xyce/Netlists/BSRC/bsrc3_m.cir",
+      "sha256": "401505e845c9f4418f9c12742f5c0790a829da55354e919a44c1d3b163b9c2ed"
+    },
+    {
+      "prepared": false,
+      "diagnostics": [
+        "unsupported_expression"
+      ],
+      "path": "tests/xyce/Netlists/BSRC/bsrc4_m.cir",
+      "sha256": "4e533631890c7516ab55facaa1d3cfca538d7c6be1eb797bb8886e63b0a93773"
+    },
+    {
+      "prepared": false,
+      "diagnostics": [
+        "unsupported_active_card"
+      ],
+      "path": "tests/xyce/Netlists/PARAMS2/Params_A2.cir",
+      "sha256": "8d2440f63fac500d67c6b495909f9f8062a014adc04fd83e925f9d7cc51ed836"
+    },
+    {
+      "prepared": false,
+      "diagnostics": [
+        "unsupported_active_card"
+      ],
+      "path": "tests/xyce/Netlists/PARAMS2/Params_A8.cir",
+      "sha256": "e336b257078f3454e6c9295f2a32909e0860de4e8d02097a2a8ab681d49632ff"
+    },
+    {
+      "prepared": false,
+      "diagnostics": [
+        "unsupported_active_card"
+      ],
+      "path": "tests/xyce/Netlists/PARAMS2/Params_B2.cir",
+      "sha256": "f39d4f4ffe749be68aac31d5d0a5519e3b825d9ac58ab8929381d7594f6f5529"
+    },
+    {
+      "prepared": false,
+      "diagnostics": [
+        "unsupported_active_card"
+      ],
+      "path": "tests/xyce/Netlists/PARAMS2/Params_B7.cir",
+      "sha256": "681b9feaa3a8321bcac5228b975fbad888f2194760f40d82eda835382415aea9"
+    },
+    {
+      "prepared": false,
+      "diagnostics": [
+        "unsupported_active_card"
+      ],
+      "path": "tests/xyce/Netlists/PARAMS2/Params_B8.cir",
+      "sha256": "11290f953d0088468640e45e3eb0ef1f2652d67bcd81b19a95611669479ea48f"
+    },
+    {
+      "prepared": false,
+      "diagnostics": [
+        "unsupported_active_card"
+      ],
+      "path": "tests/xyce/Netlists/PARAMS2/Params_B9.cir",
+      "sha256": "8876953ac49ff12f4e6d8a853900e2ff15eb6569766f07629152e7ffc6543dfa"
+    }
+  ],
+  "after": [
+    {
+      "provider": "lu",
+      "state": "completed_with_results",
+      "provenance_valid": true,
+      "source_commit": "a61046775870fe0de47e7d941638cc15f76fb179",
+      "original_decks": 10,
+      "requested_dc_points": 84.0,
+      "mapped_signal_samples": 288.0,
+      "voltage_max_error": 1.7763568394002505E-15,
+      "current_max_error": 3.469446951953614E-18,
+      "programs": [
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc1_m.cir",
+          "input_sha256": "a2ac71b37db5ee00e7e218cb680978e77bea9a0d169720a457f9ba6387afa5e3",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc2_m.cir",
+          "input_sha256": "fd5c0b66b3020ae60205a458119db044b823604580e487fc161cfeac666d9ea4",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc3_m.cir",
+          "input_sha256": "401505e845c9f4418f9c12742f5c0790a829da55354e919a44c1d3b163b9c2ed",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc4_m.cir",
+          "input_sha256": "4e533631890c7516ab55facaa1d3cfca538d7c6be1eb797bb8886e63b0a93773",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_A2.cir",
+          "input_sha256": "8d2440f63fac500d67c6b495909f9f8062a014adc04fd83e925f9d7cc51ed836",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_A8.cir",
+          "input_sha256": "e336b257078f3454e6c9295f2a32909e0860de4e8d02097a2a8ab681d49632ff",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B2.cir",
+          "input_sha256": "f39d4f4ffe749be68aac31d5d0a5519e3b825d9ac58ab8929381d7594f6f5529",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B7.cir",
+          "input_sha256": "681b9feaa3a8321bcac5228b975fbad888f2194760f40d82eda835382415aea9",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B8.cir",
+          "input_sha256": "11290f953d0088468640e45e3eb0ef1f2652d67bcd81b19a95611669479ea48f",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B9.cir",
+          "input_sha256": "8876953ac49ff12f4e6d8a853900e2ff15eb6569766f07629152e7ffc6543dfa",
+          "status": "all_individual_requested_analyses_agreed"
+        }
+      ],
+      "authored": [
+        {
+          "status": "all_individual_requested_analyses_agreed",
+          "analyses": [
+            {
+              "kind": "op",
+              "status": "agreed",
+              "native_points": 1
+            },
+            {
+              "kind": "dc",
+              "status": "agreed",
+              "native_points": 5
+            },
+            {
+              "kind": "ac",
+              "status": "agreed",
+              "native_points": 7
+            },
+            {
+              "kind": "tran",
+              "status": "agreed",
+              "native_points": 108
+            }
+          ],
+          "path": "examples/scalar-functions.cir"
+        }
+      ]
+    },
+    {
+      "provider": "faer",
+      "state": "completed_with_results",
+      "provenance_valid": true,
+      "source_commit": "a61046775870fe0de47e7d941638cc15f76fb179",
+      "original_decks": 10,
+      "requested_dc_points": 84.0,
+      "mapped_signal_samples": 288.0,
+      "voltage_max_error": 2.842170943040401E-14,
+      "current_max_error": 3.469446951953614E-18,
+      "programs": [
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc1_m.cir",
+          "input_sha256": "a2ac71b37db5ee00e7e218cb680978e77bea9a0d169720a457f9ba6387afa5e3",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc2_m.cir",
+          "input_sha256": "fd5c0b66b3020ae60205a458119db044b823604580e487fc161cfeac666d9ea4",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc3_m.cir",
+          "input_sha256": "401505e845c9f4418f9c12742f5c0790a829da55354e919a44c1d3b163b9c2ed",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc4_m.cir",
+          "input_sha256": "4e533631890c7516ab55facaa1d3cfca538d7c6be1eb797bb8886e63b0a93773",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_A2.cir",
+          "input_sha256": "8d2440f63fac500d67c6b495909f9f8062a014adc04fd83e925f9d7cc51ed836",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_A8.cir",
+          "input_sha256": "e336b257078f3454e6c9295f2a32909e0860de4e8d02097a2a8ab681d49632ff",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B2.cir",
+          "input_sha256": "f39d4f4ffe749be68aac31d5d0a5519e3b825d9ac58ab8929381d7594f6f5529",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B7.cir",
+          "input_sha256": "681b9feaa3a8321bcac5228b975fbad888f2194760f40d82eda835382415aea9",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B8.cir",
+          "input_sha256": "11290f953d0088468640e45e3eb0ef1f2652d67bcd81b19a95611669479ea48f",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B9.cir",
+          "input_sha256": "8876953ac49ff12f4e6d8a853900e2ff15eb6569766f07629152e7ffc6543dfa",
+          "status": "all_individual_requested_analyses_agreed"
+        }
+      ],
+      "authored": [
+        {
+          "status": "all_individual_requested_analyses_agreed",
+          "analyses": [
+            {
+              "kind": "op",
+              "status": "agreed",
+              "native_points": 1
+            },
+            {
+              "kind": "dc",
+              "status": "agreed",
+              "native_points": 5
+            },
+            {
+              "kind": "ac",
+              "status": "agreed",
+              "native_points": 7
+            },
+            {
+              "kind": "tran",
+              "status": "agreed",
+              "native_points": 108
+            }
+          ],
+          "path": "examples/scalar-functions.cir"
+        }
+      ]
+    },
+    {
+      "provider": "intel",
+      "state": "completed_with_results",
+      "provenance_valid": true,
+      "source_commit": "a61046775870fe0de47e7d941638cc15f76fb179",
+      "original_decks": 10,
+      "requested_dc_points": 84.0,
+      "mapped_signal_samples": 288.0,
+      "voltage_max_error": 2.842170943040401E-14,
+      "current_max_error": 2.896988204881268E-15,
+      "programs": [
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc1_m.cir",
+          "input_sha256": "a2ac71b37db5ee00e7e218cb680978e77bea9a0d169720a457f9ba6387afa5e3",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc2_m.cir",
+          "input_sha256": "fd5c0b66b3020ae60205a458119db044b823604580e487fc161cfeac666d9ea4",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc3_m.cir",
+          "input_sha256": "401505e845c9f4418f9c12742f5c0790a829da55354e919a44c1d3b163b9c2ed",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/BSRC/bsrc4_m.cir",
+          "input_sha256": "4e533631890c7516ab55facaa1d3cfca538d7c6be1eb797bb8886e63b0a93773",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_A2.cir",
+          "input_sha256": "8d2440f63fac500d67c6b495909f9f8062a014adc04fd83e925f9d7cc51ed836",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_A8.cir",
+          "input_sha256": "e336b257078f3454e6c9295f2a32909e0860de4e8d02097a2a8ab681d49632ff",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B2.cir",
+          "input_sha256": "f39d4f4ffe749be68aac31d5d0a5519e3b825d9ac58ab8929381d7594f6f5529",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B7.cir",
+          "input_sha256": "681b9feaa3a8321bcac5228b975fbad888f2194760f40d82eda835382415aea9",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B8.cir",
+          "input_sha256": "11290f953d0088468640e45e3eb0ef1f2652d67bcd81b19a95611669479ea48f",
+          "status": "all_individual_requested_analyses_agreed"
+        },
+        {
+          "path": "tests/xyce/Netlists/PARAMS2/Params_B9.cir",
+          "input_sha256": "8876953ac49ff12f4e6d8a853900e2ff15eb6569766f07629152e7ffc6543dfa",
+          "status": "all_individual_requested_analyses_agreed"
+        }
+      ],
+      "authored": [
+        {
+          "status": "all_individual_requested_analyses_agreed",
+          "analyses": [
+            {
+              "kind": "op",
+              "status": "agreed",
+              "native_points": 1
+            },
+            {
+              "kind": "dc",
+              "status": "agreed",
+              "native_points": 5
+            },
+            {
+              "kind": "ac",
+              "status": "agreed",
+              "native_points": 7
+            },
+            {
+              "kind": "tran",
+              "status": "agreed",
+              "native_points": 108
+            }
+          ],
+          "path": "examples/scalar-functions.cir"
+        }
+      ]
+    }
+  ],
+  "tolerances": {
+    "voltage_absolute": 1E-06,
+    "excluded_startup_samples": 0,
+    "current_absolute": 1E-09,
+    "dropped_requested_analyses": 0,
+    "modified_inputs": 0,
+    "relative": 0.0001
+  },
+  "rspice": {
+    "originals_passed": 10,
+    "runner_sha256": "4f54523100fb57fff20b4944a755812d4b5129d2e6e0eb1bdc43b0a50ac739f8",
+    "results": [
+      {
+        "path": "tests/xyce/Netlists/BSRC/bsrc1_m.cir",
+        "exit": 0,
+        "timed_out": false,
+        "passed": true,
+        "result": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z/rspice/0.result"
+      },
+      {
+        "path": "tests/xyce/Netlists/BSRC/bsrc2_m.cir",
+        "exit": 0,
+        "timed_out": false,
+        "passed": true,
+        "result": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z/rspice/1.result"
+      },
+      {
+        "path": "tests/xyce/Netlists/BSRC/bsrc3_m.cir",
+        "exit": 0,
+        "timed_out": false,
+        "passed": true,
+        "result": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z/rspice/2.result"
+      },
+      {
+        "path": "tests/xyce/Netlists/BSRC/bsrc4_m.cir",
+        "exit": 0,
+        "timed_out": false,
+        "passed": true,
+        "result": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z/rspice/3.result"
+      },
+      {
+        "path": "tests/xyce/Netlists/PARAMS2/Params_A2.cir",
+        "exit": 0,
+        "timed_out": false,
+        "passed": true,
+        "result": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z/rspice/4.result"
+      },
+      {
+        "path": "tests/xyce/Netlists/PARAMS2/Params_A8.cir",
+        "exit": 0,
+        "timed_out": false,
+        "passed": true,
+        "result": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z/rspice/5.result"
+      },
+      {
+        "path": "tests/xyce/Netlists/PARAMS2/Params_B2.cir",
+        "exit": 0,
+        "timed_out": false,
+        "passed": true,
+        "result": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z/rspice/6.result"
+      },
+      {
+        "path": "tests/xyce/Netlists/PARAMS2/Params_B7.cir",
+        "exit": 0,
+        "timed_out": false,
+        "passed": true,
+        "result": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z/rspice/7.result"
+      },
+      {
+        "path": "tests/xyce/Netlists/PARAMS2/Params_B8.cir",
+        "exit": 0,
+        "timed_out": false,
+        "passed": true,
+        "result": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z/rspice/8.result"
+      },
+      {
+        "path": "tests/xyce/Netlists/PARAMS2/Params_B9.cir",
+        "exit": 0,
+        "timed_out": false,
+        "passed": true,
+        "result": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z/rspice/9.result"
+      }
+    ]
+  },
+  "tests": {
+    "malformed_text_cases": 512,
+    "frontend_passed": 1015,
+    "new_focused_cases": 29,
+    "frontend_skipped": 40,
+    "malformed_text_replay": "362,20261031",
+    "inherited_affine_property_seed": 2026111501,
+    "property_cases_each": 128,
+    "syntax_skipped": 1,
+    "syntax_passed": 541,
+    "inherited_affine_cases": 128,
+    "property_seeds": [
+      2026111503,
+      2026111505
+    ]
+  },
+  "coverage": {
+    "frontend_and_syntax": {
+      "lines_covered": 10495,
+      "branches_covered": 6993,
+      "branches_valid": 10603,
+      "tool": "Microsoft.CodeCoverage18.5.1 captures local bodies",
+      "lines_valid": 13131,
+      "file": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z\\accepted-full-frontend-coverage\\7f058c11-5244-4503-b9ef-26c662c16d5a\\jeffd_OPTIPLEX7090_2026-11-14.21_16_42.cobertura.xml",
+      "branch_percent": 65.95303216070923,
+      "line_percent": 79.92536745106999,
+      "sha256": "95c64c50eccfd1498f2759dd8543e4edb232578300821d5db0cdea66e79526a3"
+    },
+    "syntax_separate": {
+      "lines_covered": 7413,
+      "branches_covered": 2768,
+      "branches_valid": 4792,
+      "tool": "Coverlet10.1.0; separate scope, do not merge",
+      "lines_valid": 11390,
+      "file": "E:\\Artifacts\\Spice-ten-more-20261115T045430Z\\accepted-full-syntax-coverage\\ff87b242-555a-47d8-9b19-7e9e3a64b91d\\coverage.cobertura.xml",
+      "branch_percent": 57.76293823038397,
+      "line_percent": 65.08340649692713,
+      "sha256": "f4bf6380eb34165c5b4e8e2b816eeedd173f49b5aab621df5e84f6cc49b408fd"
+    },
+    "limits": [
+      "No new native Rust/GPU-driver line or branch instrumentation.",
+      "No Linux execution.",
+      "41 prerequisite/link skips remain unavailable coverage.",
+      "Stryker instrumentation failure is not passing mutation coverage."
+    ]
+  },
+  "mutations": {
+    "manual_faults": [
+      {
+        "label": "faultcheck-syntax-baseline",
+        "build_exit": 0,
+        "test_exit": 0
+      },
+      {
+        "label": "faultcheck-depth-fault",
+        "build_exit": 0,
+        "test_exit": 1
+      },
+      {
+        "label": "faultcheck-shadow-fault",
+        "build_exit": 0,
+        "test_exit": 1
+      },
+      {
+        "label": "faultcheck-syntax-restored",
+        "build_exit": 0,
+        "test_exit": 0
+      },
+      {
+        "label": "faultcheck-frontend-baseline",
+        "build_exit": 0,
+        "test_exit": 0
+      },
+      {
+        "label": "faultcheck-current-fault",
+        "build_exit": 0,
+        "test_exit": 1
+      },
+      {
+        "label": "faultcheck-frontend-restored",
+        "build_exit": 0,
+        "test_exit": 0
+      }
+    ],
+    "selected_depth_line_status": "CompileError",
+    "warning": "Raw rollback slots include out-of-filter entries; none are executed kills. Pre-shadow Stryker snapshot retained unchanged.",
+    "raw_report_slots": {
+      "CompileError": 2182,
+      "Ignored": 1946
+    },
+    "manual_scope": "Final production source copied into isolated snapshot. Depth comparison, builtin shadow bypass and current multiplication/division faults compiled and were detected; baseline and exact restored snapshots pass. Earlier invalid shadow fault compile attempt retained separately.",
+    "stryker_version": "5.0.0",
+    "selected_depth_line_slots": 5,
+    "state": "instrumentation_compile_failure_no_score"
+  },
+  "intel": {
+    "physical_probe_exit": 0,
+    "device": "Intel UHD Graphics 630",
+    "routine_tests": 13,
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "scope": "Ten original DC programs plus authored OP/DC/AC/transient and existing actual-circuit/sparse-kernel routines; no speedup or general GPU qualification",
+    "routine_exit": 0,
+    "driver": "31.0.101.2141"
+  },
+  "review": {
+    "accepted_fix": "Shared active-call/node budgets across parameter dependency edges, with 32/33 and aggregate budget regressions",
+    "kind": "Fresh read-only agent source inspection",
+    "final_findings": "No remaining actionable source-review findings",
+    "diagnostic_fix": "Preserved unsupported_expression for unknown functions",
+    "scope_disposition": "Initial lexical-free-variable concern withdrawn after native macro-scope probes"
+  },
+  "limitations": [
+    "Ten related files, not ten independently new circuit topologies/model families.",
+    "No new numerical progress claimed for historical 113-file ngspice cohort.",
+    "Originals are DC sweeps; authored extra is not an original count.",
+    "Formatted .print text is not reproduced; all mapped physical node/source-current signals are compared.",
+    "General voltage-dependent user functions and nonlinear behavioral current kernels remain unsupported.",
+    "Nonpositive B M and voltage-source M remain refused.",
+    "No full-SPICE, general-Xyce, Linux hardware, global convergence or production-GPU claim."
+  ]
+}

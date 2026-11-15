@@ -52,7 +52,7 @@ public static class ParameterEvaluator
                 return Failure("unknown_parameter_override",parameter.Name,parameter.Range);
             if(catalog.Parameters.Any(p=>p.ScopeId==scope&&p.Origin=="param_card"&&StringComparer.OrdinalIgnoreCase.Equals(p.Syntax.Name,parameter.Name)))
                 return Failure("ambiguous_local_override",parameter.Name,parameter.Range);
-            try{values[parameter.Name]=Expression(parameter.Value.Text,name=>caller.Values.TryGetValue(name,out var value)?value:throw new EvaluationFailure("missing_parameter",name));}
+            try{values[parameter.Name]=Expression(parameter.Value.Text,name=>caller.Values.TryGetValue(name,out var value)?value:throw new EvaluationFailure("missing_parameter",name),catalog,caller.ScopeId);}
             catch(EvaluationFailure e){return Failure(e.Code,e.Name??parameter.Name,parameter.Range);}
         }
         return EvaluateScope(catalog,scope,values,caller);
@@ -64,7 +64,7 @@ public static class ParameterEvaluator
         if(!environment.Success||!ReferenceEquals(environment.Catalog,catalog)||!environment.Environments.TryGetValue(environment.ScopeId,out var values)||!ReferenceEquals(values,environment.Values))
             return new(null,[new("invalid_parameter_environment","",syntax.Range)]);
         if(declarationScopeId is {} scope&&!environment.Environments.TryGetValue(scope,out values))return new(null,[new("invalid_parameter_environment","",syntax.Range)]);
-        try{return new(Expression(syntax.Text,name=>values.TryGetValue(name,out var value)?value:throw new EvaluationFailure("missing_parameter",name)),[]);}
+        try{return new(Expression(syntax.Text,name=>values.TryGetValue(name,out var value)?value:throw new EvaluationFailure("missing_parameter",name),catalog,declarationScopeId??environment.ScopeId),[]);}
         catch(EvaluationFailure e){return new(null,[new(e.Code,e.Name??"",syntax.Range)]);}
     }
     private static ParameterEvaluation EvaluateScope(DeclarationCatalog catalog,int scopeId,IReadOnlyDictionary<string,double>? overrides,ParameterEvaluation? enclosing=null,double? temperature=null)
@@ -103,10 +103,11 @@ public static class ParameterEvaluator
             var current=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase);
             if(scope==scopeId&&overrides!=null)foreach(var p in overrides)current[p.Key]=p.Value;
             var active=new HashSet<string>(StringComparer.OrdinalIgnoreCase);var depth=0;
+            var functionBudget=new FunctionBudget();
             var origin=catalog.Scopes[scope].Range;
             try
             {
-                foreach(var name in assignments.Keys){origin=assignments[name].Range;Resolve(name);}
+                foreach(var name in assignments.Keys){origin=assignments[name].Range;functionBudget=new();Resolve(name);}
                 result=result.SetItems(current);environments=environments.SetItem(scope,result);
             }
             catch(EvaluationFailure e){return Failure(e.Code,e.Name??"",e.Range??origin);}
@@ -116,7 +117,9 @@ public static class ParameterEvaluator
                 if(!assignments.TryGetValue(name,out var syntax))return result.TryGetValue(name,out value)?value:throw new EvaluationFailure("missing_parameter",name);
                 if(!active.Add(name))throw new EvaluationFailure("parameter_cycle",name);
                 if(++depth>64)throw new EvaluationFailure("parameter_depth",name);
-                try{value=Expression(syntax.Value.Text,Resolve);current[name]=value;return value;}
+                // Dependency edges share the active expression budget: a function
+                // resolving a parameter cannot restart its depth or node guards.
+                try{value=Expression(syntax.Value.Text,Resolve,catalog,scope,budget:functionBudget);current[name]=value;return value;}
                 catch(EvaluationFailure e){e.Range??=syntax.Range;throw;}
                 finally{depth--;active.Remove(name);}
             }
@@ -129,8 +132,11 @@ public static class ParameterEvaluator
 
     // Reuse the selected grammar, including its resource guards. Only the
     // adapter wrapper is synthetic; diagnostic origins remain real assignments.
-    private static double Expression(string source,Func<string,double> resolve)
+    private sealed class FunctionBudget { internal int Visited; internal int ActiveCalls; }
+    private static double Expression(string source,Func<string,double> resolve,DeclarationCatalog? catalog=null,int scopeId=0,int callDepth=0,FunctionBudget? budget=null)
     {
+        budget??=new();
+        if(callDepth>32)throw new EvaluationFailure("function_depth");
         var value=source.Trim();
         if(value.Length>4096)throw new EvaluationFailure("expression_budget");
         if(value.Length>=2&&((value[0]=='{'&&value[^1]=='}')||(value[0]=='\''&&value[^1]=='\'')))value=value[1..^1];
@@ -144,7 +150,7 @@ public static class ParameterEvaluator
         return Eval(expression,0);
         double Eval(SpiceParser.ExpressionContext node,int depth)
         {
-            if(++nodes>1024||depth>64)throw new EvaluationFailure("expression_budget");
+            if(++nodes>1024||depth>64||++budget.Visited>8192)throw new EvaluationFailure("expression_budget");
             var children=node.expression();double Child(int i)=>Eval(children[i],depth+1);
             double result;
             if(node.ChildCount==1)
@@ -154,7 +160,10 @@ public static class ParameterEvaluator
             else if(node.identifier()!=null&&node.GetChild(1).GetText()=="(")
             {
                 var args=children.Select(c=>Eval(c,depth+1)).ToArray();
-                result=(node.identifier().GetText().ToLowerInvariant(),args.Length) switch
+                var functionName=node.identifier().GetText();
+                // Native .func macros shadow builtins in the visible namespace.
+                // Never silently evaluate a declared sin/exp as another function.
+                result=HasUserFunction(functionName)?UserFunction(functionName,args):(functionName.ToLowerInvariant(),args.Length) switch
                 {("abs",1)=>Math.Abs(args[0]),("sqrt",1)=>Math.Sqrt(args[0]),("exp",1)=>Math.Exp(args[0]),("ln",1)=>Math.Log(args[0]),
                  // numparam log is natural (unlike some interactive Nutmeg
                  // conventions); nint follows IEEE ties-to-even, int truncates.
@@ -166,7 +175,7 @@ public static class ParameterEvaluator
                  ("sinh",1)=>Math.Sinh(args[0]),("cosh",1)=>Math.Cosh(args[0]),("tanh",1)=>Math.Tanh(args[0]),
                  ("asinh",1)=>Math.Asinh(args[0]),("acosh",1)=>Math.Acosh(args[0]),("atanh",1)=>Math.Atanh(args[0]),
                  ("min",2)=>Math.Min(args[0],args[1]),("max",2)=>Math.Max(args[0],args[1]),
-                 ("pow",2)=>Math.Pow(args[0],args[1]),("pwr",2)=>Math.Pow(Math.Abs(args[0]),args[1]),_=>throw new EvaluationFailure("unsupported_expression")};
+                 ("pow",2)=>Math.Pow(args[0],args[1]),("pwr",2)=>Math.Pow(Math.Abs(args[0]),args[1]),_=>UserFunction(node.identifier().GetText(),args)};
             }
             else if(node.ChildCount==3&&node.GetChild(0).GetText() is "(" or "{")result=Child(0);
             else if(node.ChildCount==5&&node.GetChild(1).GetText()=="?")result=Child(0)!=0?Child(1):Child(2);
@@ -185,6 +194,33 @@ public static class ParameterEvaluator
             else throw new EvaluationFailure("unsupported_expression");
             if(!double.IsFinite(result))throw new EvaluationFailure("nonfinite_parameter");
             return result;
+        }
+        bool HasUserFunction(string name)
+        {
+            if(catalog==null)return false;
+            for(int? scope=scopeId;scope!=null;scope=catalog.Scopes[scope.Value].ParentId)
+                if(catalog.Functions.Any(f=>f.ScopeId==scope&&f.Name.Equals(name,StringComparison.OrdinalIgnoreCase)))return true;
+            return false;
+        }
+        double UserFunction(string name,double[] args)
+        {
+            if(catalog==null)throw new EvaluationFailure("unsupported_expression",name);
+            for(int? scope=scopeId;scope!=null;scope=catalog.Scopes[scope.Value].ParentId)
+            {
+                var matches=catalog.Functions.Where(f=>f.ScopeId==scope&&f.Name.Equals(name,StringComparison.OrdinalIgnoreCase)).ToArray();
+                if(matches.Length==0)continue;
+                if(matches.Length!=1)throw new EvaluationFailure("ambiguous_function",name);
+                var function=matches[0];
+                if(function.Arguments.Length!=args.Length||function.Arguments.Distinct(StringComparer.OrdinalIgnoreCase).Count()!=args.Length)
+                    throw new EvaluationFailure("invalid_function_arguments",name);
+                var bindings=function.Arguments.Zip(args).ToDictionary(p=>p.First,p=>p.Second,StringComparer.OrdinalIgnoreCase);
+                // Bind values rather than text, preserving precedence and formal shadowing.
+                if(budget.ActiveCalls>=32)throw new EvaluationFailure("function_depth",name);
+                budget.ActiveCalls++;
+                try{return Expression(function.Body.Text,n=>bindings.TryGetValue(n,out var v)?v:resolve(n),catalog,function.ScopeId,callDepth+1,budget);}
+                finally{budget.ActiveCalls--;}
+            }
+            throw new EvaluationFailure("unsupported_expression",name);
         }
     }
     internal static double Number(string text)

@@ -137,6 +137,7 @@ public static class OperatingPointBridge
                 {
                     if(omittedStarts?.Contains(card.Range.Start)==true)continue;
                     if(selected&&card.GlobalNodes!=null)continue;
+                    if(selected&&card.Kind=="function"&&catalog.Functions.Any(f=>f.Range.Start==card.Range.Start))continue;
                     if(card.Kind=="endCard"&&scope!=0||card.Kind is not ("passive" or "source" or "subcall" or "paramCard" or "subcircuit" or "model" or "endCard" or "op")&&!(selected&&card.Kind is ("vcontrol" or "icontrol" or "switchCard" or "xspice" or "diode" or "behavior" or "bjt" or "mos" or "jfet")))
                         throw new BridgeFailure("unsupported_active_card",card.Range);
                 }

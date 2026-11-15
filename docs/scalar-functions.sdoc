@@ -1,0 +1,24 @@
+[DOCUMENT]
+TITLE: Scalar functions and quoted behavioral current laws
+
+[REQUIREMENT]
+UID: SOURCE-B-QUOTED-001
+STATUS: Draft
+TITLE: Quoted affine current laws preserve physical dependence
+STATEMENT: >>>
+Requested B current sources shall interpret generated quoted expression tokens as voltage-dependent laws, retaining the inner physical source range. One finite positive M attribute shall scale the entire affine law, including signed gains and offsets. Duplicate, invalid and unknown attributes shall refuse without publishing a partial circuit. Voltage-source M remains explicitly unsupported.
+<<<
+COMMENT: >>>
+Implementation: BehavioralSourceExtraction and BehavioralSourceLowering. Verification: QuotedBehaviorTests, inherited affine properties and four original BSRC DC programs in evidence/scalar-functions-decks.json. This subset does not qualify general nonlinear current functions or nonpositive multiplicity.
+<<<
+
+[REQUIREMENT]
+UID: PARAM-FUNCTION-001
+STATUS: Draft
+TITLE: Generated scalar function definitions and bounded evaluation
+STATEMENT: >>>
+Scalar device/model values, parameter definitions and instance overrides shall evaluate generated .func declarations using the nearest lexical function namespace, including visible user declarations that shadow builtin scalar functions. Arguments shall bind as finite scalar values before parameter lookup. Free parameter names and inherited enclosing formals shall follow the native ngspice macro parameter environment; nested function names shall resolve in the defining function namespace. Nested calls shall preserve formal shadowing and numerical precedence. Calls to ambiguous definitions, duplicate formals, arity errors and unresolved functions shall fail explicitly. Recursion shall terminate with a structured diagnostic within 32 call levels and an aggregate 8192 expression-node budget per scalar evaluation; each expression retains its 4096-character, 1024-node and 64-level bounds. No unsupported voltage-dependent user function shall be silently treated as a constant.
+<<<
+COMMENT: >>>
+Implementation: generated functionHeaderProfile, ScalarFunctionSyntax, DeclarationExtraction and ParameterEvaluator. Verification: ScalarFunctionTests and six unchanged PARAMS2 DC programs in evidence/scalar-functions-decks.json. Dynamic user-function lowering and general function-valued output expressions remain outside this scalar contract.
+<<<

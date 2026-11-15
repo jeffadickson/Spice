@@ -440,7 +440,8 @@
       "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
     ],
     "requirements": [
-      "SEM-PARAM-001"
+      "SEM-PARAM-001",
+      "PARAM-FUNCTION-001"
     ],
     "evidence": [
       "evidence/five-area-integrated-verification.json"
@@ -2039,5 +2040,23 @@
       "evidence/controlled-current-sources.json"
     ],
     "limitation": "Explicit positive finite G multiplicity and affine CUR alias only; no general nonlinear current kernel, implicit Xyce X-line scaling or complete G-source dialect claim."
+  },
+  {
+    "rule": "functionHeaderProfile",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Syntax/ParameterEvaluator.cs"
+    ],
+    "requirements": [
+      "PARAM-FUNCTION-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/ScalarFunctionTests.cs",
+      "evidence/scalar-functions-decks.json"
+    ],
+    "limitation": "Scalar finite calls only; bounded nearest-scope function lookup. Voltage-dependent function bodies remain outside this profile."
   }
 ]

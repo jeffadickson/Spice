@@ -1,0 +1,75 @@
+{
+  "cohort": "Ten unchanged retained Xyce behavioral/macro-parameter original programs",
+  "rows": [
+    {
+      "result": {
+        "Sha256": "a2ac71b37db5ee00e7e218cb680978e77bea9a0d169720a457f9ba6387afa5e3"
+      },
+      "path": "tests/xyce/Netlists/BSRC/bsrc1_m.cir",
+      "scope": "ngspice"
+    },
+    {
+      "result": {
+        "Sha256": "fd5c0b66b3020ae60205a458119db044b823604580e487fc161cfeac666d9ea4"
+      },
+      "path": "tests/xyce/Netlists/BSRC/bsrc2_m.cir",
+      "scope": "ngspice"
+    },
+    {
+      "result": {
+        "Sha256": "401505e845c9f4418f9c12742f5c0790a829da55354e919a44c1d3b163b9c2ed"
+      },
+      "path": "tests/xyce/Netlists/BSRC/bsrc3_m.cir",
+      "scope": "ngspice"
+    },
+    {
+      "result": {
+        "Sha256": "4e533631890c7516ab55facaa1d3cfca538d7c6be1eb797bb8886e63b0a93773"
+      },
+      "path": "tests/xyce/Netlists/BSRC/bsrc4_m.cir",
+      "scope": "ngspice"
+    },
+    {
+      "result": {
+        "Sha256": "8d2440f63fac500d67c6b495909f9f8062a014adc04fd83e925f9d7cc51ed836"
+      },
+      "path": "tests/xyce/Netlists/PARAMS2/Params_A2.cir",
+      "scope": "ngspice"
+    },
+    {
+      "result": {
+        "Sha256": "e336b257078f3454e6c9295f2a32909e0860de4e8d02097a2a8ab681d49632ff"
+      },
+      "path": "tests/xyce/Netlists/PARAMS2/Params_A8.cir",
+      "scope": "ngspice"
+    },
+    {
+      "result": {
+        "Sha256": "f39d4f4ffe749be68aac31d5d0a5519e3b825d9ac58ab8929381d7594f6f5529"
+      },
+      "path": "tests/xyce/Netlists/PARAMS2/Params_B2.cir",
+      "scope": "ngspice"
+    },
+    {
+      "result": {
+        "Sha256": "681b9feaa3a8321bcac5228b975fbad888f2194760f40d82eda835382415aea9"
+      },
+      "path": "tests/xyce/Netlists/PARAMS2/Params_B7.cir",
+      "scope": "ngspice"
+    },
+    {
+      "result": {
+        "Sha256": "11290f953d0088468640e45e3eb0ef1f2652d67bcd81b19a95611669479ea48f"
+      },
+      "path": "tests/xyce/Netlists/PARAMS2/Params_B8.cir",
+      "scope": "ngspice"
+    },
+    {
+      "result": {
+        "Sha256": "8876953ac49ff12f4e6d8a853900e2ff15eb6569766f07629152e7ffc6543dfa"
+      },
+      "path": "tests/xyce/Netlists/PARAMS2/Params_B9.cir",
+      "scope": "ngspice"
+    }
+  ]
+}

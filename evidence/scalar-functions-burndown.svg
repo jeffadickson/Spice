@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="350" viewBox="0 0 900 350" role="img" aria-labelledby="title desc">
+<title id="title">Ten selected original decks: remaining blockers fell from ten to zero</title>
+<desc id="desc">Before: four quoted behavioral-current decks and six scalar-function parameter decks refused. Final: all ten original DC programs agree with stock ngspice on LU, Faer and Intel. Related files, not ten independent model families.</desc>
+<rect width="900" height="350" fill="#f5f7fb"/><g font-family="Segoe UI,Arial,sans-serif" fill="#17243b">
+<text x="32" y="40" font-size="23" font-weight="bold">Selected original-deck burndown: 10 → 0</text>
+<text x="32" y="68" font-size="14">RSpice-retained Xyce originals; unchanged DC programs; November 14, 2026</text>
+<text x="32" y="120" font-size="16">Frozen baseline</text><rect x="225" y="99" width="500" height="30" fill="#bb4c4c"/><text x="740" y="120" font-size="16">10 blocked</text>
+<text x="32" y="180" font-size="16">Verified final</text><rect x="225" y="159" width="500" height="30" fill="#15987d"/><text x="740" y="180" font-size="16">10 agree</text>
+<text x="32" y="230" font-size="16">Shared gaps removed: 4 quoted B-current laws + 6 scalar-function programs</text>
+<text x="32" y="260" font-size="14">Per provider: 84 DC coordinates; 288 physical signal samples. RSpice runner: 10/10.</text>
+<text x="32" y="292" font-size="13">Not a whole-corpus burndown or ten new topologies. Historical ngspice-cohort increment: zero.</text>
+<text x="32" y="320" font-size="13">Source hashes, bounds, skips and mutation limitations: scalar-functions-decks.json</text></g></svg>

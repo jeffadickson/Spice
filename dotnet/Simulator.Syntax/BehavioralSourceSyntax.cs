@@ -47,6 +47,10 @@ internal static class BehavioralSourceExtraction
     internal static BehavioralSourceSyntax Extract(SpiceParser.BehaviorContext card,int scope,Func<ParserRuleContext,SourceSyntax> capture,Func<int,int,SourceSyntax> captureRange)
     {
         var range=capture(card).Range;var expression=card.expression();
+        // A quoted expression is still a voltage-dependent law. Strip only
+        // generated token delimiters and retain its physical inner range.
+        SourceSyntax? law=expression==null?null:expression.QUOTED() is {} quoted
+            ?captureRange(quoted.Symbol.StartIndex+1,quoted.Symbol.StopIndex-1):capture(expression);
         var quantity=card.identifier()?.GetText();var name=card.BEHAVIOR_NAME()?.GetText()??card.Start.Text;
         SourceSyntax? p=null,n=null;
         if(card.BEHAVIOR_START() is {} composite)
@@ -63,12 +67,12 @@ internal static class BehavioralSourceExtraction
                 SourceSyntax CaptureLocal(ParserRuleContext context)=>captureRange(token.StartIndex+context.Start.StartIndex,token.StartIndex+context.Stop.StopIndex);
                 p=CaptureLocal(header.twoNodes().node(0));n=CaptureLocal(header.twoNodes().node(1));
             }
-            catch(ParseCanceledException){return new(name,scope,null,null,BehavioralQuantity.Voltage,expression==null?null:capture(expression),false,range);}
+            catch(ParseCanceledException){return new(name,scope,null,null,BehavioralQuantity.Voltage,law,false,range);}
         }
         else if(card.twoNodes() is {} nodes){p=capture(nodes.node(0));n=capture(nodes.node(1));}
         var recognized=quantity?.ToLowerInvariant() is "v" or "i";
         return new(name,scope,p,n,quantity?.Equals("i",StringComparison.OrdinalIgnoreCase)==true?BehavioralQuantity.Current:BehavioralQuantity.Voltage,
-            expression==null?null:capture(expression),recognized&&p!=null&&n!=null&&expression!=null&&card.parameter().Length==0,range)
+            law,recognized&&p!=null&&n!=null&&expression!=null&&card.parameter().Length==0,range)
         {
             HeaderSupported=recognized&&p!=null&&n!=null&&expression!=null&&card.parameter().All(item=>item.assignment()!=null),
             Parameters=card.parameter().Where(item=>item.assignment()!=null).Select(item=>

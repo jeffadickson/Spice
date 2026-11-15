@@ -17,6 +17,7 @@ internal sealed class DeclarationExtraction
     private readonly List<PrimitiveSyntax> primitives=[];
     private readonly List<XspiceInstanceSyntax> xspice=[];
     private readonly List<BehavioralSourceSyntax> behavior=[];
+    private readonly List<ScalarFunctionSyntax> functions=[];
     private readonly List<ScopedCard> cards=[];
     private readonly List<AnalysisSyntax> analyses=[];
     private readonly List<InitialConditionSyntax> initialConditions=[];
@@ -164,6 +165,19 @@ internal sealed class DeclarationExtraction
         if(card is SpiceParser.OpContext)analyses.Add(new(owner,"op",[],[],Range(card)));
         if(card is SpiceParser.AcContext ac)analyses.Add(new(owner,"ac",[ac.identifier().GetText()],ac.value().Select(Capture).ToImmutableArray(),Range(card)));
         if(card is SpiceParser.DcContext dc)analyses.Add(new(owner,"dc",dc.identifier().Select(i=>i.GetText()).ToImmutableArray(),dc.value().Select(Capture).ToImmutableArray(),Range(card)));
+        if(card is SpiceParser.FunctionContext function)
+        {
+            // Reparse only the generated composite header in its semantic mode;
+            // the body remains the original generated expression and range.
+            var lexer=new SpiceLexer(new AntlrInputStream(function.FUNC_START().GetText())){SemanticHeaderOnly=true};
+            lexer.Mode(SpiceLexer.BODY);lexer.RemoveErrorListeners();
+            var parser=new SpiceParser(new CommonTokenStream(lexer)){ErrorHandler=new BailErrorStrategy()};parser.RemoveErrorListeners();
+            try {
+                var header=parser.functionHeaderProfile();var names=header.identifier();
+                functions.Add(new(owner,names[0].GetText(),names.Skip(1).Select(n=>n.GetText()).ToImmutableArray(),Capture(function.expression()),Range(function)));
+            }catch(Antlr4.Runtime.Misc.ParseCanceledException){ /* An untyped declaration stays an explicit bridge refusal. */ }
+            return;
+        }
         if(card is SpiceParser.BehaviorContext behavioral)
         {behavior.Add(BehavioralSourceExtraction.Extract(behavioral,owner,Capture,Capture));return;}
         if(card is SpiceParser.VcontrolContext controlled&&BehavioralSourceExtraction.CurrentAlias(controlled,owner,Capture,Capture) is {} currentAlias)
@@ -242,7 +256,7 @@ internal sealed class DeclarationExtraction
         }
     }
 
-    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray(),primitives.ToImmutableArray(),cards.ToImmutableArray()) { XspiceInstances=xspice.ToImmutableArray(), Analyses=analyses.ToImmutableArray(), BehavioralSources=behavior.ToImmutableArray(), InitialConditions=initialConditions.ToImmutableArray(),ControlBlocks=controlBlocks.ToImmutableArray() };
+    internal DeclarationCatalog Build()=>new(scopes.ToImmutableArray(),symbols.ToImmutableArray(),parameters.ToImmutableArray(),resources.ToImmutableArray(),deferredContexts.ToImmutableArray(),instances.ToImmutableArray(),libraryEnds.ToImmutableArray(),primitives.ToImmutableArray(),cards.ToImmutableArray()) { Functions=functions.ToImmutableArray(), XspiceInstances=xspice.ToImmutableArray(), Analyses=analyses.ToImmutableArray(), BehavioralSources=behavior.ToImmutableArray(), InitialConditions=initialConditions.ToImmutableArray(),ControlBlocks=controlBlocks.ToImmutableArray() };
 
     private int Enclosing(IParseTree? tree)
     {

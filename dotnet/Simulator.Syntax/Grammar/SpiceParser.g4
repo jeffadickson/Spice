@@ -67,6 +67,7 @@ coupling: COUPLING_NAME identifier identifier parameter+;
 // A target-only X header is a valid zero-port subcircuit call.
 subcall: SUBCALL_NAME node parameter*;
 behavior: BEHAVIOR_START expression parameter* | BEHAVIOR_NAME twoNodes identifier EQUAL expression | BEHAVIOR_NAME twoNodes parameter+;
+functionHeaderProfile: DIRECTIVE identifier LPAREN (identifier (COMMA identifier)*)? RPAREN EOF;
 function: FUNC_START EQUAL? expression;
 lineCard: LINE_NAME fourNodes parameter+;
 // Terminal count for OSDI and conductor dimension for CPL are model-dependent.

@@ -45,6 +45,8 @@ public sealed record NamedDeclaration(int Id,DeclarationKind Kind,string Name,in
 }
 /// <summary>An ordered header-default or .param assignment in a lexical scope.</summary>
 public sealed record ScopedParameter(int ScopeId,string Origin,ParameterSyntax Syntax);
+/// <summary>Generated scalar function definition; formals and body retain lexical ownership.</summary>
+public sealed record ScalarFunctionSyntax(int ScopeId,string Name,ImmutableArray<string> Arguments,SourceSyntax Body,SourceRange Range);
 /// <summary>An unresolved include/library declaration, never an instruction to open a file.</summary>
 public sealed record DeclaredResource(int ScopeId,string Kind,SourceSyntax Target,SourceRange Range)
 {
@@ -75,6 +77,8 @@ public sealed record DeclarationLookup<T>(NameLookupStatus Status,ImmutableArray
 /// <summary>Immutable declaration catalog and lexical lookup, independent of instance binding and execution.</summary>
 public sealed class DeclarationCatalog
 {
+    /// <summary>Typed scalar function declarations; execution remains bounded parameter semantics.</summary>
+    public ImmutableArray<ScalarFunctionSyntax> Functions { get; internal init; } = [];
     private readonly Dictionary<(DeclarationKind Kind,string Name),ImmutableArray<NamedDeclaration>>[] symbolsByScope;
     private readonly Dictionary<string,ImmutableArray<ScopedParameter>>[] parametersByScope;
     private readonly bool opaqueParameters;

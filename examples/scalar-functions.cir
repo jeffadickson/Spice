@@ -1,0 +1,11 @@
+Scalar functions and affine current law across requested analyses
+.func resistance(x) {2*x}
+.param base=50
+V1 in 0 DC 2 AC 1 SIN(2 1 1k)
+R1 out 0 {resistance(base)}
+B1 out 0 I='1m+v(in)*2m' M=2
+.op
+.dc V1 1 3 .5
+.ac dec 3 10 1000
+.tran 1u 100u
+.end
