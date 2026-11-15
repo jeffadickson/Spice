@@ -1,3 +1,31 @@
+# Current manual checkpoint — twenty originals execute
+
+Read docs/twenty-decks-results.md and evidence/twenty-decks.json first.
+Twenty new RSpice-retained Xyce originals execute all 21 ordinary requested
+analyses on LU and Faer. Four stock-ngspice agreements; fifteen numerical
+disagreements and one failed native reference remain. These are outside the
+historical 113-file core cohort. Never call this twenty agreeing decks.
+
+Shared additions: magnetic coupling, winding IC/UIC, bounded unary expressions
+and integer powers, prepared Faer residual refinement, bounded DC coordinate
+roundoff. Prepared-only Faer scope is intentional; legacy direct contract stays
+unchanged. Five Draft StrictDoc requirements describe limits. Independent
+inverse-trig equations do not replace a failed stock-default oracle comparison.
+
+Final native suite: 638 passed/5 ignored. Frontend: 1047 passed/42 skipped;
+syntax: 541 passed/1 skipped. Six selected mutual mutants caught. Intel actual
+circuits run, but only 3/20 originals execute and 2 agree; 17 execution failures
+remain. No GPU speedup claim. Keep CPU defaults.
+
+Raw: E:/Artifacts/Spice-twenty-20261115T163235Z. Final engine-checkpoint and
+runtime-refined; checkpoint-lu/faer/intel have valid provenance. File hashes
+identify tested dirty bytes before commits. Preserve prior failed attempts.
+Next: coupled transient differences, inverse-trig stock discrepancy, reciprocal
+power native startup failure and Intel failures. Canonical main and unknown
+sheet-resistor work preserved. Bulk artifacts stay E:. Windows manages ordinary
+RAM; only observed runaway mutants may receive limits.
+
+---
 # Current manual checkpoint — five controlled-current originals
 
 Read docs/controlled-current-sources-results.md and evidence/controlled-current-sources.json.

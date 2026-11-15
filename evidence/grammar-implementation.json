@@ -1,54 +1,79 @@
 {
   "state": "generated_inventory",
-  "source_commit": "bb1979926754da27b2770f8c4e694b5bb1e33b23",
-  "source_dirty": false,
-  "assessment_sha256": "54eef944b8f0b2ba44b30cb2603fe924e727362871e84ee6f15ddaf7e0c67ae7",
-  "syntax_assembly_sha256": "189e73b941ddec9f3a866eea6109fa1f7c86ffd9799bfdaa59469b52869da2d2",
+  "source_commit": "f4ac7c1d2241c5f43e4c953a5287f07545ae17eb",
+  "source_dirty": true,
+  "assessment_sha256": "ba596ef14f7cc02d04d479dd2b27bc8bd0617f494338170cc2646a9ab16a56c6",
+  "syntax_assembly_sha256": "0732859c3f9488d0ba4b31df2cdc1d59713c22927104b143f0032c711c667d63",
   "source_hashes": {
     "compat/ngspice/capability-support.json": "b2735a3fd98498ff915c491ff8036a828efb3ee2ba09459bb071de53d5a7a7c9",
-    "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs": "4362473f42c7aa2cc0f4068152b0f62b96fe8d499352ea23d576dfbf0c787249",
-    "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs": "4279d8e4a4b95f0efb3b2694e3f77d865b917564a5bc23ae4d6d49f64bfd21ce",
-    "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs": "0554f019dc95d11428d28f4f8a44f6b4d1782b2107d7e52d44f220996479c7f3",
-    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "0faa5a9057d83a98fdd5fcfdbde2d704a8ccd3bd505f8a64c84c29fd124f3a57",
-    "dotnet/Simulator.Frontend/BjtPreparation.cs": "6716efd83539e64c53cadc6f37bd3baef9e1600686f84bb05cb09093b0c7a48e",
-    "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs": "9e44fec055368b5dfeeb445ba1d183bfdfc1df9d58c21823c8c93ab3d8930a64",
-    "dotnet/Simulator.Frontend/Mos1Preparation.cs": "7024f190e4b238b1d75254675b524c33bc7ea2c9d3cc31b9d68237b9cf8c0f4b",
-    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "10fbc0295d70f31ce80e8cb09aa7efd3a1b25749f0c6db46779707bc3ea8bd4d",
-    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "8d91d59540a70eed87d75859c1bbfbbcaa1caca0b015dd97388f956078f27e2d",
-    "dotnet/Simulator.Frontend/RequestedControlPreparation.cs": "ad9dda29f40a646e24334ef8751ae39f884e39a19932747af6321111af4f74e8",
-    "dotnet/Simulator.Frontend/ResistorModelLowering.cs": "c8d78f97aa05834f596bbfa72741998b24c9221cbbc446d3bc76bf683b6b0c0f",
-    "dotnet/Simulator.Frontend/SemiconductorPreparation.cs": "6d793cb0006d1015e8c3c37f4fb02acb4743a1c9825203746bc022a7f4d04123",
-    "dotnet/Simulator.Frontend/TransientSelection.cs": "d34621b584adee4838ea025338338c9c0f1347d1039e6046b22af06664fcaf21",
-    "dotnet/Simulator.Frontend/XspiceGainLowering.cs": "ec46c7ee8aac31b420fe52e60c03eaee801e921888a8707603ad05d17c64129f",
+    "docs/mutual-inductance.sdoc": "c62a965e3515adfe2f96ce480d9db48633b988ee4ae7632a399bcc0fb43b5496",
+    "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs": "04b4648b32acf6d9110a869f94c54d634f17c941f50725f3e6c65a6443c2d7a5",
+    "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs": "b7de12f502499e8a22cf3336093a91a79dd8300be148eb12a0bd7e4b2defffd4",
+    "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs": "8f551653c7d3ed021ac813e7c1d02acfbe68df5309495f2cf8bb82d562deb6a7",
+    "dotnet/Simulator.Frontend.Tests/ControlledCurrentSourceTests.cs": "6d5e97a3a10a7cff2608f7b5a6ee9235fbcf3b12fd8a681c51e4466a791a1093",
+    "dotnet/Simulator.Frontend.Tests/Mos1Tests.cs": "2d47bf748df1690c8b519ceb647cb754a8e26eae8058e4a5ca3a3c9fcda54b35",
+    "dotnet/Simulator.Frontend.Tests/MutualInductanceTests.cs": "b28c6a8970271db6430f9fd6ee4531489399f16e784752257ff6ee8ebd224954",
+    "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs": "c0517ed257c365d222bfc89086daceecc6fb27a66d0b649070c1c9589be28471",
+    "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs": "acc4081989f36860bca77757f15c725179625b2215f152efecd51894d994809c",
+    "dotnet/Simulator.Frontend.Tests/RequestedForeachTests.cs": "2247efb045c355c25c23b967df630101d088fb5498de8d6f170021421c5608de",
+    "dotnet/Simulator.Frontend.Tests/RequestedPowerVectorTypeTests.cs": "fb00a2364c2301eae45015a9973edbc260804a55f606bccfe3ed8e30c5327127",
+    "dotnet/Simulator.Frontend.Tests/RequestedPrefixFunctionTests.cs": "cc14c44e93dd5aec375b3268c1227ee1aa4f7fc89e596cffdecc485858642ebd",
+    "dotnet/Simulator.Frontend.Tests/ScalarFunctionTests.cs": "2973883d15156583c23b87431463d257516f6aa76e0529dc002d032649396184",
+    "dotnet/Simulator.Frontend.Tests/SourceAlterTests.cs": "2fb25a70429c2e320c478498d1b95ed3ee7e494f282d946aea46ab34f574a9e9",
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "a8048309ed5f5b5dc17633c88592887900f101bd17a102b52adc3366fed33d50",
+    "dotnet/Simulator.Frontend/BjtPreparation.cs": "e989d7a59593c018a11844d398126d359d42d0b10fc1689158fc3dc3d8749a60",
+    "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs": "5a39fa512e17ff2c5be574795cf5b0894f2306971bf211699ce0a343c3e80a2e",
+    "dotnet/Simulator.Frontend/Mos1Preparation.cs": "4168d719dc4ceae11cf0ee65e4d6bee85a5f1691796ddd09233c78f69b225c9c",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "4e1eaff5f65a0afa863b40d71085132d299fab0e27afc0816de53d61ae9e412d",
+    "dotnet/Simulator.Frontend/OrderedControlPreparation.cs": "90c54e685f1a3b7ddd69657c06b4b7683395ddb2ce953af55eb13aac37806efc",
+    "dotnet/Simulator.Frontend/OrderedControlReporting.cs": "d8d35fb7893a25cca253d62088feaf0731e372ef120b404570546ef1e7bb7420",
+    "dotnet/Simulator.Frontend/PoleZeroSelection.cs": "ea14920d38198ce01ecee2b254fe105542e33736a7f60fc8b44db9f8f57acdcd",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "1dbbceffb6bfd4930f455d2dcf6e57316de7ce294864580fd790876be414c42b",
+    "dotnet/Simulator.Frontend/RequestedControlPreparation.cs": "3b69fc671ab8c1a064a49aad3712deeaf8e9cdd5d3e4f8ec7dde12cc6ad3719b",
+    "dotnet/Simulator.Frontend/RequestedSourceParameterBinding.cs": "62c0fa11e81ded38899d4c416d8ca2bae863194b063a360b3cd34525242bd9ac",
+    "dotnet/Simulator.Frontend/ResistorModelLowering.cs": "eb23fd1608ec8bba7cc9eb397f79fb6a45692a67d3eea3b113cabc8931704f13",
+    "dotnet/Simulator.Frontend/SemiconductorPreparation.cs": "e6f6562749619d377930f685ef991c3b4f335beacbabf7b733d95a3dabcf5802",
+    "dotnet/Simulator.Frontend/TransientSelection.cs": "66f4df6a9c401934b089f0e34c36fd5c530ae1b40e648e89c3c941bc319bcacf",
+    "dotnet/Simulator.Frontend/XspiceGainLowering.cs": "f888571b71cc44a7c9a4e7438d114c2e6d69b48eae2cea2033bb27a12cb3175b",
     "dotnet/Simulator.Frontend/XspiceSummerLowering.cs": "5f7eb348433cebee027cd4e6d13dd7640cf9b0b21d86e2415c68260280c5f3d6",
+    "dotnet/Simulator.Syntax.Tests/ControlSourceAlterTests.cs": "cd3a11d87609ce0724b4e55c7a9b139eea86ae49c139dcd09484e306e72256ad",
+    "dotnet/Simulator.Syntax.Tests/ControlVectorExecutionTests.cs": "263b37220765d323bac9d0955a738ccdc074b6ed50aca15b9126c5ce3cd686ee",
     "dotnet/Simulator.Syntax.Tests/GrammarTests.cs": "59aafed45bd2ba1b880936b976ecacab9a3117d540e8d60cb3b9f91b3458da07",
     "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs": "1153905511cb50a5680eba85102e04268e49046fba6d9e06bb2c6127880845b4",
-    "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs": "f23094ce58d7ed080360cffff9ceeb15e8b69a074b773683fa64b6b986b65c48",
-    "dotnet/Simulator.Syntax/ControlExtraction.cs": "bbf82fac4ee29a64b8600b1bac8f73ff260722cf91070bf7a005bc680b22a46f",
-    "dotnet/Simulator.Syntax/DeckSyntax.cs": "9c13eca33f1e03f647606e38471bfc7dc55b009e4bb44fdc3998bdae7b3b74dd",
-    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "fd3c0afe984fc298903544c1e2058e3d2691b856bc7b064f5bb60f8e060eef73",
-    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "9d12b449cca48c7adae97eeb57973647c57d93c501daf25d27ebac02d707b93f",
-    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "b899d6755a97bfb3a59582f0e295df9f9b9d0a44c86a54a1a86ce1fd683cb82b",
+    "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs": "1b29df8bd43b13ec2012811e4fe73fe323e2deea27c543acbef6a2da2227d29b",
+    "dotnet/Simulator.Syntax/ControlExtraction.cs": "b3cef88acb91936ccc4adeb9463826438d4ddfc3a83ff4f0bffe81931a260e55",
+    "dotnet/Simulator.Syntax/ControlVectorExecution.cs": "188f39d52cbe01d5d246a7c726491de1ab880e542e0c2937d58ff8c7af0cb5ea",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "6f0b96e8c791e10dbcabeda1299a3484c2060a47c10da630d4bf9d528b2ef9e9",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "23e4ac17279e958fff6032d15591ac67759d2641d29f1b66f04632ca2ac9e72c",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "a67165dcaf8f7f7cd5833c60af4411c1b0912e6e818ced3bf999c8f210f4da92",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "785595febc41fa01bdd0759595a641cf2e581b22934234fcd3336ca81bc4b9ef",
     "dotnet/Simulator.Syntax/GrammarImplementationInventory.cs": "99c7321832edc94381fef0c27e6b5effdd5bb5316cbbe6b4d28986ebc3dbd26a",
     "dotnet/Simulator.Syntax/InstanceBinding.cs": "48c7f176300f3db67094fba9f806404e4f4b2707539a898c6e839149ce4258ef",
     "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
-    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "38af84c7a03509348c2c81ea57789ca7ca143b1da0e3d0a81a3e46b1c99d1392",
-    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "f8532b0762321d4814cad34f52182eaceb099d28de0b50aa1ccfbce790f40cb5",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "85c23d1f1cf64406b00f2ca123e0287d644b3d54aa6c07aa4e9152c01becbf1d",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "d1194c0f08ab11a549ac3dfe14acb996c5f5c123fb64c4645b6c2471b43588f3",
     "dotnet/Simulator.Syntax/ResourceResolver.cs": "d6ddf6749e4a8f2a0e3aef617053b5154fdcc9e89e030edf0d54c459e8e4cfdb",
     "dotnet/Simulator.Syntax/ScalarVectorExtraction.cs": "085ffe8489b4532032dbe5b9a64a2c4947f6b9e1137a1fbf041fc4f46022d253",
-    "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "b28e44832d693805fffef22a90c9f96e0098f75530747e861809b3440071e4b2",
-    "dotnet/Simulator.Syntax/XspiceSyntax.cs": "e0ff95839342379abf1a19a86c8f21f0e57657fe9bb1057d4472ae11e5c4dbe4",
+    "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "1293958e6f9b6238aeac754533cb5410f5a63e78a7c438b7055dfdd4d909a481",
+    "dotnet/Simulator.Syntax/XspiceSyntax.cs": "5ec8216aa0b9cb9bf12880c9ca23331a80ee5f2fdbb26cc74013961c115965ad",
     "evidence/capability-inventory.json": "a036621f3eaf09354d06acb21a2653c2b21b832b0c7da25d4ac0c3c2ebc871da",
+    "evidence/controlled-current-sources.json": "e576caced9df63a28c69a133e8bb3a88be73896a7e84f0ed62f1eb87926daf74",
     "evidence/five-area-integrated-verification.json": "e10f42b6113ba0bf5acc90e74b50f35e58608b80b5c562e8e8302333b34ddeb4",
+    "evidence/grammar-cohort-checklist.md": "9623b9f2e6391ca281118a7d5168860faa2890b7dabfb056489496e1f48beb9e",
     "evidence/issue34-ground-checkpoint.json": "4aeb9d3430a2bf82b373e9774f8a5785948ec9376430edd6e898993be7ee1d50",
     "evidence/issue34-initial-bias.json": "1e11d5075052606fc7127e54d81794d839de36d0e4827003cb20e7aa26b47841",
+    "evidence/legacy-linear-annotations.md": "8b82bf016253f8d508964360d317f18b9628a15233143ddced3b421d37f1deb9",
     "evidence/pspice-switch-results.json": "c13ac6b399e793515ab70603ad80e2de6f940470f20ee8a43ca0772743764006",
     "evidence/requested-fc5db25.json": "1b2cc37e053c86a2c42f0651900492392c5860ce0e62d4827bbd6a048c48667a",
-    "scripts/GrammarImplementationMap.cs": "e49d79d9a4aa6835b828990149847fa3c7ed40c4cc667e58323f94a76eb96510"
+    "evidence/scalar-functions-decks.json": "762501115bfa01290822f83e6162e99963b24140bd24c3738badb05fbce00cf0",
+    "scripts/GrammarImplementationMap.cs": "e49d79d9a4aa6835b828990149847fa3c7ed40c4cc667e58323f94a76eb96510",
+    "src/compile.rs": "e6ae09d4139353b759c340e358dc0430cfa8e316aa7dd4ddafbfa96b0cc9e14c",
+    "src/mutual_inductance.rs": "9b8d373524cffa2aa8093a9db67bb6645b40864b8fd0047bf08c68d7e8994514",
+    "tests/mutual_inductance.rs": "a7f5b13064c1c04061ea7183dd4d4c348a75a03bf793095e2ab161d79c28d402"
   },
-  "generated_rules": 93,
-  "assessed_rules": 90,
-  "unassessed_rules": 3,
+  "generated_rules": 113,
+  "assessed_rules": 108,
+  "unassessed_rules": 5,
   "rules": [
     {
       "rule": "ac",
@@ -90,6 +115,18 @@
       "commands": []
     },
     {
+      "rule": "acScalar",
+      "assessed": false,
+      "extraction": "unassessed",
+      "preparation": "unassessed",
+      "execution": "unassessed",
+      "implementation": [],
+      "requirements": [],
+      "evidence": [],
+      "limitation": "No reviewed association; syntax recognition establishes no execution capability.",
+      "commands": []
+    },
+    {
       "rule": "arithmetic",
       "assessed": true,
       "extraction": "structural",
@@ -127,6 +164,25 @@
         "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
       ],
       "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "barePwlDc",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "FRONTEND-SOURCE-GROUPED-PWL-001"
+      ],
+      "evidence": [
+        "evidence/grammar-cohort-checklist.md"
+      ],
+      "limitation": "Generated PWL pairs and explicit zero DC prefix. Preparation and executable model support are separate.",
       "commands": []
     },
     {
@@ -298,19 +354,72 @@
       "execution": "bounded",
       "implementation": [
         "dotnet/Simulator.Syntax/ControlExtraction.cs",
-        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
       ],
       "requirements": [
         "FRONTEND-CONTROL-001",
         "FRONTEND-CONTROL-002",
-        "FRONTEND-CONTROL-005"
+        "FRONTEND-CONTROL-005",
+        "REQ-CONTROL-ORDERED-PLOTS-001",
+        "REQ-CONTROL-COMPLEX-VECTORS-001"
       ],
       "evidence": [
-        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
       ],
-      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
       "commands": [
         "ac"
+      ]
+    },
+    {
+      "rule": "controlAlterSource",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Syntax/ControlVectorExecution.cs",
+        "dotnet/Simulator.Frontend/RequestedSourceParameterBinding.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "REQ-CONTROL-SOURCE-PULSE-STATE-001",
+        "REQ-CONTROL-SOURCE-PULSE-OWNERSHIP-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/ControlSourceAlterTests.cs",
+        "dotnet/Simulator.Frontend.Tests/SourceAlterTests.cs"
+      ],
+      "limitation": "Seven explicit finite pulse literals, existing root independent source, after sole OP. No later analysis, physical request mutation, nested alter or general alter command is admitted.",
+      "commands": [
+        "alter"
+      ]
+    },
+    {
+      "rule": "controlBoundary",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "QUAL-CONTROL-TERMINAL-IF-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"
+      ],
+      "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections.",
+      "commands": [
+        "else",
+        "end"
       ]
     },
     {
@@ -321,17 +430,35 @@
       "execution": "bounded",
       "implementation": [
         "dotnet/Simulator.Syntax/ControlExtraction.cs",
-        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
       ],
       "requirements": [
         "FRONTEND-CONTROL-001",
         "FRONTEND-CONTROL-002",
-        "FRONTEND-CONTROL-005"
+        "FRONTEND-CONTROL-005",
+        "REQ-CONTROL-ORDERED-PLOTS-001",
+        "REQ-CONTROL-COMPLEX-VECTORS-001"
       ],
       "evidence": [
-        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
       ],
-      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
+      "commands": []
+    },
+    {
+      "rule": "controlCompose",
+      "assessed": false,
+      "extraction": "unassessed",
+      "preparation": "unassessed",
+      "execution": "unassessed",
+      "implementation": [],
+      "requirements": [],
+      "evidence": [],
+      "limitation": "No reviewed association; syntax recognition establishes no execution capability.",
       "commands": []
     },
     {
@@ -342,17 +469,23 @@
       "execution": "bounded",
       "implementation": [
         "dotnet/Simulator.Syntax/ControlExtraction.cs",
-        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
       ],
       "requirements": [
         "FRONTEND-CONTROL-001",
         "FRONTEND-CONTROL-002",
-        "FRONTEND-CONTROL-005"
+        "FRONTEND-CONTROL-005",
+        "REQ-CONTROL-ORDERED-PLOTS-001",
+        "REQ-CONTROL-COMPLEX-VECTORS-001"
       ],
       "evidence": [
-        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
       ],
-      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
       "commands": [
         "dc"
       ]
@@ -362,22 +495,95 @@
       "assessed": true,
       "extraction": "bounded",
       "preparation": "bounded",
-      "execution": "not_executed",
+      "execution": "bounded",
       "implementation": [
         "dotnet/Simulator.Syntax/ControlExtraction.cs",
         "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs",
-        "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+        "dotnet/Simulator.Syntax/ControlVectorExecution.cs"
       ],
       "requirements": [
-        "FRONTEND-CONTROL-006"
+        "FRONTEND-CONTROL-006",
+        "FRONTEND-CONTROL-007"
       ],
       "evidence": [
         "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
-        "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs"
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs",
+        "dotnet/Simulator.Frontend.Tests/RequestedPrefixFunctionTests.cs"
       ],
-      "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented.",
+      "limitation": "Bounded pure prefix functions around one direct analysis and bounded terminal reporting. Repeated dispatch and effectful prefix programs remain outside the profile.",
       "commands": [
         "define"
+      ]
+    },
+    {
+      "rule": "controlEcho",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "QUAL-CONTROL-TERMINAL-IF-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs"
+      ],
+      "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections.",
+      "commands": [
+        "echo"
+      ]
+    },
+    {
+      "rule": "controlForeach",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+        "dotnet/Simulator.Syntax/ControlVectorExecution.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-008"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedForeachTests.cs"
+      ],
+      "limitation": "Terminal reporting only. Bounded integer vector iteration and node templates. Nested loops and physical effects refuse.",
+      "commands": [
+        "foreach"
+      ]
+    },
+    {
+      "rule": "controlIf",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
+      ],
+      "requirements": [
+        "QUAL-CONTROL-TERMINAL-IF-001",
+        "REQ-CONTROL-ORDERED-PLOTS-001",
+        "REQ-CONTROL-COMPLEX-VECTORS-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
+        "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
+      ],
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
+      "commands": [
+        "if"
       ]
     },
     {
@@ -385,23 +591,51 @@
       "assessed": true,
       "extraction": "bounded",
       "preparation": "bounded",
-      "execution": "not_executed",
+      "execution": "bounded",
       "implementation": [
         "dotnet/Simulator.Syntax/ControlExtraction.cs",
         "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs",
-        "dotnet/Simulator.Frontend/RequestedAnalysis.cs"
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+        "dotnet/Simulator.Syntax/ControlVectorExecution.cs",
+        "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
       ],
       "requirements": [
-        "FRONTEND-CONTROL-006"
+        "FRONTEND-CONTROL-006",
+        "FRONTEND-CONTROL-007",
+        "REQ-CONTROL-ORDERED-PLOTS-001",
+        "REQ-CONTROL-COMPLEX-VECTORS-001"
       ],
       "evidence": [
         "dotnet/Simulator.Frontend.Tests/ControlSuffixTests.cs",
-        "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs"
+        "dotnet/Simulator.Frontend.Tests/ControlSuffixNativeTests.cs",
+        "dotnet/Simulator.Frontend.Tests/RequestedPrefixFunctionTests.cs",
+        "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
       ],
-      "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented.",
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
       "commands": [
         "let"
       ]
+    },
+    {
+      "rule": "controlNode",
+      "assessed": true,
+      "extraction": "structural",
+      "preparation": "not_applicable",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Syntax/ControlExtraction.cs"
+      ],
+      "requirements": [
+        "REQ-CONTROL-PZ-DISPATCH-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs"
+      ],
+      "limitation": "Retains control port spelling; node binding and transfer validation occur in the requested preparation layer.",
+      "commands": []
     },
     {
       "rule": "controlNumber",
@@ -432,19 +666,69 @@
       "execution": "bounded",
       "implementation": [
         "dotnet/Simulator.Syntax/ControlExtraction.cs",
-        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
       ],
       "requirements": [
         "FRONTEND-CONTROL-001",
         "FRONTEND-CONTROL-002",
-        "FRONTEND-CONTROL-005"
+        "FRONTEND-CONTROL-005",
+        "REQ-CONTROL-ORDERED-PLOTS-001",
+        "REQ-CONTROL-COMPLEX-VECTORS-001"
       ],
       "evidence": [
-        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
       ],
-      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
       "commands": [
         "op"
+      ]
+    },
+    {
+      "rule": "controlPowerVectorType",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_executed",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "FRONTEND-CONTROL-VECTORTYPE-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedPowerVectorTypeTests.cs"
+      ],
+      "limitation": "Terminal settype power on a simple device power vector is recorded as a reporting omission.",
+      "commands": [
+        "settype"
+      ]
+    },
+    {
+      "rule": "controlPz",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/PoleZeroSelection.cs"
+      ],
+      "requirements": [
+        "REQ-CONTROL-PZ-DISPATCH-001",
+        "REQ-CONTROL-ORDERED-PLOTS-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs"
+      ],
+      "limitation": "Unconditional typed PZ dispatch into the bounded passive transfer analyzer. Generalized roots, conditional analysis dispatch and arbitrary plot selection remain unsupported.",
+      "commands": [
+        "pz"
       ]
     },
     {
@@ -470,6 +754,25 @@
       "commands": [
         "quit"
       ]
+    },
+    {
+      "rule": "controlRedirect",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Syntax/ControlVectorExecution.cs"
+      ],
+      "requirements": [
+        "QUAL-CONTROL-PREFIX-REDIRECT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/ControlVectorExecutionTests.cs"
+      ],
+      "limitation": "Terminal scalar identifier capture under an ASCII logical name. No host path is opened.",
+      "commands": []
     },
     {
       "rule": "controlReport",
@@ -498,7 +801,6 @@
         "measure",
         "save",
         "gnuplot",
-        "echo",
         "rusage",
         "display",
         "listing"
@@ -559,17 +861,23 @@
       "execution": "bounded",
       "implementation": [
         "dotnet/Simulator.Syntax/ControlExtraction.cs",
-        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlPreparation.cs",
+        "dotnet/Simulator.Frontend/OrderedControlReporting.cs"
       ],
       "requirements": [
         "FRONTEND-CONTROL-001",
         "FRONTEND-CONTROL-002",
-        "FRONTEND-CONTROL-005"
+        "FRONTEND-CONTROL-005",
+        "REQ-CONTROL-ORDERED-PLOTS-001",
+        "REQ-CONTROL-COMPLEX-VECTORS-001"
       ],
       "evidence": [
-        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs"
+        "dotnet/Simulator.Frontend.Tests/RequestedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/OrderedControlTests.cs",
+        "dotnet/Simulator.Frontend.Tests/ComplexControlTests.cs"
       ],
-      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically.",
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported.",
       "commands": [
         "tran"
       ]
@@ -612,20 +920,25 @@
     {
       "rule": "coupling",
       "assessed": true,
-      "extraction": "structural",
-      "preparation": "unsupported",
-      "execution": "unsupported",
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
       "implementation": [
-        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
-        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs",
+        "src/mutual_inductance.rs",
+        "src/compile.rs"
       ],
       "requirements": [
-        "SEM-READINESS-001"
+        "MODEL-MUTUAL-001",
+        "FRONTEND-INDUCTOR-IC-002"
       ],
       "evidence": [
-        "evidence/requested-fc5db25.json"
+        "tests/mutual_inductance.rs",
+        "dotnet/Simulator.Frontend.Tests/MutualInductanceTests.cs",
+        "docs/mutual-inductance.sdoc"
       ],
-      "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend.",
+      "limitation": "Linear signed K cards only; finite passive groups, generated hierarchy and UIC current hints. Nonlinear core models remain unsupported. Stock-reference agreement remains per-deck evidence, not implied by execution.",
       "commands": []
     },
     {
@@ -664,6 +977,30 @@
         "evidence/requested-fc5db25.json"
       ],
       "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend.",
+      "commands": []
+    },
+    {
+      "rule": "currentAliasProfile",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+        "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SOURCE-G-MULTIPLIER-001",
+        "SOURCE-G-CURRENT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/ControlledCurrentSourceTests.cs",
+        "evidence/controlled-current-sources.json"
+      ],
+      "limitation": "Explicit positive finite G multiplicity and affine CUR alias only; no general nonlinear current kernel, implicit Xyce X-line scaling or complete G-source dialect claim.",
       "commands": []
     },
     {
@@ -761,6 +1098,24 @@
         "evidence/five-area-integrated-verification.json"
       ],
       "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "commands": []
+    },
+    {
+      "rule": "distortionExcitation",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/SourceProfileExtraction.cs"
+      ],
+      "requirements": [
+        "SEM-LEGACY-LINEAR-ANNOTATION-001"
+      ],
+      "evidence": [
+        "evidence/legacy-linear-annotations.md"
+      ],
+      "limitation": "Only distinct DISTOF1 0 and DISTOF2 0 annotations on an otherwise supported excitation.",
       "commands": []
     },
     {
@@ -865,12 +1220,33 @@
         "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
       ],
       "requirements": [
-        "SEM-PARAM-001"
+        "SEM-PARAM-001",
+        "PARAM-FUNCTION-001"
       ],
       "evidence": [
         "evidence/five-area-integrated-verification.json"
       ],
       "limitation": "Bounded scalar parameter evaluation and affine behavioral voltage expressions; arbitrary result vectors/functions and nonlinear behavior remain outside this contract.",
+      "commands": []
+    },
+    {
+      "rule": "functionHeaderProfile",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Syntax/ParameterEvaluator.cs"
+      ],
+      "requirements": [
+        "PARAM-FUNCTION-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/ScalarFunctionTests.cs",
+        "evidence/scalar-functions-decks.json"
+      ],
+      "limitation": "Scalar finite calls only; bounded nearest-scope function lookup. Voltage-dependent function bodies remain outside this profile.",
       "commands": []
     },
     {
@@ -911,6 +1287,25 @@
         "dotnet/Simulator.Syntax.Tests/GrammarTests.cs"
       ],
       "limitation": "Shared syntactic infrastructure; no independently executable command or guarantee that every admitted device tail has semantics.",
+      "commands": []
+    },
+    {
+      "rule": "groupedPwlExcitation",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "FRONTEND-SOURCE-GROUPED-PWL-001"
+      ],
+      "evidence": [
+        "evidence/grammar-cohort-checklist.md"
+      ],
+      "limitation": "Generated PWL pairs and explicit zero DC prefix. Preparation and executable model support are separate.",
       "commands": []
     },
     {
@@ -1036,15 +1431,21 @@
       "execution": "bounded",
       "implementation": [
         "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
-        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs",
+        "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
       ],
       "requirements": [
-        "SEM-BRIDGE-001"
+        "SEM-BRIDGE-001",
+        "SOURCE-G-MULTIPLIER-001",
+        "SOURCE-G-CURRENT-001"
       ],
       "evidence": [
-        "evidence/five-area-integrated-verification.json"
+        "evidence/five-area-integrated-verification.json",
+        "dotnet/Simulator.Frontend.Tests/ControlledCurrentSourceTests.cs",
+        "evidence/controlled-current-sources.json"
       ],
-      "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "limitation": "Bounded affine E/G and branch-current F/H profiles; G additionally supports explicit positive finite M and affine CUR. Nonlinear current aliases, other G attributes and implicit Xyce hierarchy scaling remain outside this profile.",
       "commands": []
     },
     {
@@ -1066,6 +1467,25 @@
         "evidence/five-area-integrated-verification.json"
       ],
       "limitation": "Model symbol/parameter resolution is generic; only explicitly named resistor/diode/BJT/MOS1/VSWITCH and gain/summer profiles execute. A model declaration alone does not establish support.",
+      "commands": []
+    },
+    {
+      "rule": "modelVersionAssignment",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_executed",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Frontend/Mos1Preparation.cs"
+      ],
+      "requirements": [
+        "SEMI-BSIM330-SELECT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/Mos1Tests.cs"
+      ],
+      "limitation": "Preserves a contiguous dotted VERSION selector and reports the unimplemented exact BSIM3 kernel.",
       "commands": []
     },
     {
@@ -1205,6 +1625,25 @@
         "evidence/five-area-integrated-verification.json"
       ],
       "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "commands": []
+    },
+    {
+      "rule": "pwlPair",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "not_applicable",
+      "implementation": [
+        "dotnet/Simulator.Syntax/SourceProfileExtraction.cs",
+        "dotnet/Simulator.Frontend/TransientSelection.cs"
+      ],
+      "requirements": [
+        "FRONTEND-SOURCE-GROUPED-PWL-001"
+      ],
+      "evidence": [
+        "evidence/grammar-cohort-checklist.md"
+      ],
+      "limitation": "Generated PWL pairs and explicit zero DC prefix. Preparation and executable model support are separate.",
       "commands": []
     },
     {
@@ -1420,6 +1859,53 @@
         "evidence/five-area-integrated-verification.json"
       ],
       "limitation": "Bounded generated excitation fields including named source forms; recognition alone does not qualify every expression/default/model interaction.",
+      "commands": []
+    },
+    {
+      "rule": "sourceMultiplicity",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
+        "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+        "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
+        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs",
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      ],
+      "requirements": [
+        "SOURCE-G-MULTIPLIER-001",
+        "SOURCE-G-CURRENT-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/ControlledCurrentSourceTests.cs",
+        "evidence/controlled-current-sources.json"
+      ],
+      "limitation": "Explicit positive finite G multiplicity and affine CUR alias only; no general nonlinear current kernel, implicit Xyce X-line scaling or complete G-source dialect claim.",
+      "commands": []
+    },
+    {
+      "rule": "sourceParameterReference",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/ControlExtraction.cs",
+        "dotnet/Simulator.Syntax/ControlVectorExecution.cs",
+        "dotnet/Simulator.Frontend/RequestedSourceParameterBinding.cs",
+        "dotnet/Simulator.Frontend/RequestedControlPreparation.cs"
+      ],
+      "requirements": [
+        "REQ-CONTROL-SOURCE-PULSE-STATE-001",
+        "REQ-CONTROL-SOURCE-PULSE-OWNERSHIP-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Syntax.Tests/ControlSourceAlterTests.cs",
+        "dotnet/Simulator.Frontend.Tests/SourceAlterTests.cs"
+      ],
+      "limitation": "Seven explicit finite pulse literals, existing root independent source, after sole OP. No later analysis, physical request mutation, nested alter or general alter command is admitted.",
       "commands": []
     },
     {
@@ -1735,15 +2221,21 @@
       "execution": "bounded",
       "implementation": [
         "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
-        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs",
+        "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
+        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
       ],
       "requirements": [
-        "SEM-BRIDGE-001"
+        "SEM-BRIDGE-001",
+        "SOURCE-G-MULTIPLIER-001",
+        "SOURCE-G-CURRENT-001"
       ],
       "evidence": [
-        "evidence/five-area-integrated-verification.json"
+        "evidence/five-area-integrated-verification.json",
+        "dotnet/Simulator.Frontend.Tests/ControlledCurrentSourceTests.cs",
+        "evidence/controlled-current-sources.json"
       ],
-      "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "limitation": "Bounded affine E/G and branch-current F/H profiles; G additionally supports explicit positive finite M and affine CUR. Nonlinear current aliases, other G attributes and implicit Xyce hierarchy scaling remain outside this profile.",
       "commands": []
     },
     {
@@ -1939,15 +2431,15 @@
       "occurrences": 202,
       "grammar_rule": "controlTran",
       "execution": "bounded",
-      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported."
     },
     {
       "command": "let",
       "decks": 171,
       "occurrences": 1662,
       "grammar_rule": "controlLet",
-      "execution": "not_executed",
-      "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented."
+      "execution": "bounded",
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported."
     },
     {
       "command": "run",
@@ -1961,9 +2453,9 @@
       "command": "end",
       "decks": 147,
       "occurrences": 544,
-      "grammar_rule": null,
-      "execution": "unassessed",
-      "limitation": "No concrete command association; generic command syntax is not execution support."
+      "grammar_rule": "controlBoundary",
+      "execution": "bounded",
+      "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections."
     },
     {
       "command": "dc",
@@ -1971,15 +2463,15 @@
       "occurrences": 222,
       "grammar_rule": "controlDc",
       "execution": "bounded",
-      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported."
     },
     {
       "command": "echo",
       "decks": 126,
       "occurrences": 809,
-      "grammar_rule": "controlReport",
-      "execution": "not_executed",
-      "limitation": "Exact reporting allowlist and final quit are recorded as omissions; arbitrary settings, plotting evaluation and process/IO effects are not executed."
+      "grammar_rule": "controlEcho",
+      "execution": "bounded",
+      "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections."
     },
     {
       "command": "rusage",
@@ -1993,17 +2485,17 @@
       "command": "if",
       "decks": 121,
       "occurrences": 385,
-      "grammar_rule": null,
-      "execution": "unassessed",
-      "limitation": "No concrete command association; generic command syntax is not execution support."
+      "grammar_rule": "controlIf",
+      "execution": "bounded",
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported."
     },
     {
       "command": "else",
       "decks": 104,
       "occurrences": 202,
-      "grammar_rule": null,
-      "execution": "unassessed",
-      "limitation": "No concrete command association; generic command syntax is not execution support."
+      "grammar_rule": "controlBoundary",
+      "execution": "bounded",
+      "limitation": "Bounded terminal real-vector reporting executes separately from circuit-only projections."
     },
     {
       "command": "save",
@@ -2019,7 +2511,7 @@
       "occurrences": 88,
       "grammar_rule": "controlOp",
       "execution": "bounded",
-      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported."
     },
     {
       "command": "print",
@@ -2033,9 +2525,9 @@
       "command": "alter",
       "decks": 49,
       "occurrences": 136,
-      "grammar_rule": null,
-      "execution": "unassessed",
-      "limitation": "No concrete command association; generic command syntax is not execution support."
+      "grammar_rule": "controlAlterSource",
+      "execution": "bounded",
+      "limitation": "Seven explicit finite pulse literals, existing root independent source, after sole OP. No later analysis, physical request mutation, nested alter or general alter command is admitted."
     },
     {
       "command": "setplot",
@@ -2073,9 +2565,9 @@
       "command": "settype",
       "decks": 40,
       "occurrences": 77,
-      "grammar_rule": null,
-      "execution": "unassessed",
-      "limitation": "No concrete command association; generic command syntax is not execution support."
+      "grammar_rule": "controlPowerVectorType",
+      "execution": "not_executed",
+      "limitation": "Terminal settype power on a simple device power vector is recorded as a reporting omission."
     },
     {
       "command": "destroy",
@@ -2099,15 +2591,15 @@
       "occurrences": 39,
       "grammar_rule": "controlAc",
       "execution": "bounded",
-      "limitation": "Finite literal individual OP/DC/AC/TRAN dispatch and unique-kind run only. Unsupported loops, substitutions, duplicate run jobs and state-changing commands refuse atomically."
+      "limitation": "Bounded real suffix and finite ordered direct reporting, with source-identified OP/DC/AC/TRAN/PZ snapshots and complex AC arithmetic. Conditional dispatch, physical mutation and arbitrary external effects remain unsupported."
     },
     {
       "command": "define",
       "decks": 33,
       "occurrences": 51,
       "grammar_rule": "controlDefine",
-      "execution": "not_executed",
-      "limitation": "Only bounded fresh-local declarations after the last analysis/run are admitted as explicit postprocessing_not_executed. No vector/function evaluation is implemented."
+      "execution": "bounded",
+      "limitation": "Bounded pure prefix functions around one direct analysis and bounded terminal reporting. Repeated dispatch and effectful prefix programs remain outside the profile."
     },
     {
       "command": "shell",
@@ -2121,9 +2613,9 @@
       "command": "foreach",
       "decks": 32,
       "occurrences": 38,
-      "grammar_rule": null,
-      "execution": "unassessed",
-      "limitation": "No concrete command association; generic command syntax is not execution support."
+      "grammar_rule": "controlForeach",
+      "execution": "bounded",
+      "limitation": "Terminal reporting only. Bounded integer vector iteration and node templates. Nested loops and physical effects refuse."
     },
     {
       "command": "display",
@@ -2777,9 +3269,9 @@
       "command": "pz",
       "decks": 1,
       "occurrences": 1,
-      "grammar_rule": null,
-      "execution": "unassessed",
-      "limitation": "No concrete command association; generic command syntax is not execution support."
+      "grammar_rule": "controlPz",
+      "execution": "bounded",
+      "limitation": "Unconditional typed PZ dispatch into the bounded passive transfer analyzer. Generalized roots, conditional analysis dispatch and arbitrary plot selection remain unsupported."
     },
     {
       "command": "remzerovec",

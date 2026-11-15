@@ -1711,20 +1711,25 @@
   },
   {
     "rule": "coupling",
-    "extraction": "structural",
-    "preparation": "unsupported",
-    "execution": "unsupported",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
     "implementation": [
-      "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4",
-      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs",
+      "src/mutual_inductance.rs",
+      "src/compile.rs"
     ],
     "requirements": [
-      "SEM-READINESS-001"
+      "MODEL-MUTUAL-001",
+      "FRONTEND-INDUCTOR-IC-002"
     ],
     "evidence": [
-      "evidence/requested-fc5db25.json"
+      "tests/mutual_inductance.rs",
+      "dotnet/Simulator.Frontend.Tests/MutualInductanceTests.cs",
+      "docs/mutual-inductance.sdoc"
     ],
-    "limitation": "Structure is recognized, but no qualified end-to-end generated preparation/runtime route for this family is provided by the current bounded frontend."
+    "limitation": "Linear signed K cards only; finite passive groups, generated hierarchy and UIC current hints. Nonlinear core models remain unsupported. Stock-reference agreement remains per-deck evidence, not implied by execution."
   },
   {
     "rule": "lineCard",

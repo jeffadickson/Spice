@@ -1,0 +1,145 @@
+{
+  "rows": [
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "0a2968e02855485c35f4fe01a088ccc4e513a45dab37561bdcf3005a5fa9a252"
+      },
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1946/bug_1946.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "aa4c9a19db9c4550b00bc875ce0677ab0df0e4ad8a46eb51f07dd186c8694cf2"
+      },
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1957/mutindlin_even_ps.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "e6592fbe5af04c942344ada6faa1f3fe80037dce28ff7fef94bd6af05c9b0a8c"
+      },
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1957/mutindlin_even_s3f5.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "86a3e14bea0cde650f0b21e749955a2e2a75cc4ffd8672cbbc7c04af263d9b8d"
+      },
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1957/mutindlin_odd_ps.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "b65132ffde56126b43c9163d84bb6d412dce56d9857bc83271680d4f551cf7ba"
+      },
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1957/mutindlin_odd_s3f5.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "5a8146da04554c6833fb9baa776ed6b982f4011db809c5ad91f4720c3ba82f75"
+      },
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_28_SON/bug_28_son2.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "2849faa6b40e3cc46f2d146788095647364e250ba12c8c493f03b9239529d691"
+      },
+      "path": "tests/xyce/Netlists/LEAD_CURRENTS/lead_min_ac.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "069d12b96679eb640b95d55bf8157190521c120b2f3a017fd3081b2d2cd9a069"
+      },
+      "path": "tests/xyce/Netlists/MINDUCTORS/InductorICBug.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "8915ef99b8a11d0fa197ecac76765f702b8928580caaaddfc9c8b803d3e54d20"
+      },
+      "path": "tests/xyce/Netlists/MINDUCTORS/MINDUCTORS_IC.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "0bf41aee49904621eaa58d2b4cfd50b95b63b96a689819912fe2035ba5991cb9"
+      },
+      "path": "tests/xyce/Netlists/MINDUCTORS/MINDUCTORS_IC2.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "c576e8ba3c76cfd308b4d3970b1457384753f7568bf5ef6fef795df765852813"
+      },
+      "path": "tests/xyce/Netlists/MINDUCTORS/MINDUCTORS_IC2baseline.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "f01b35c641b42edb27ce1517bc982e28d330efc81c764233d29dfdee946165a8"
+      },
+      "path": "tests/xyce/Netlists/MINDUCTORS/MINDUCTORS_IC3.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "28bc3a2043e9f08ab2704b3940cdd1be599f16009f3a8e49a036e854f1c978d4"
+      },
+      "path": "tests/xyce/Netlists/MINDUCTORS/MINDUCTORS_IC3baseline.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "4e2be83f40f84092639f45bb79b366e956f9b757816b91938d56467dc00002b9"
+      },
+      "path": "tests/xyce/Netlists/MINDUCTORS/MINDUCTORS_IC4.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "752f9e59826a97805def26e2f3f4ca6e6600f0969d941c8b20fe0fabe50b7a81"
+      },
+      "path": "tests/xyce/Netlists/MINDUCTORS/MINDUCTORS_IC4baseline.cir"
+    },
+    {
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "c8f6ff9bd96ad5460383ed3f6ff7cbe13d1ff2ca020e3d5daeaa6433d9fd9f94"
+      },
+      "path": "tests/xyce/Netlists/MINDUCTORS/MINDUCTORS.cir"
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_141_SON/abs.cir",
+      "result": {
+        "Sha256": "2e16e8976f61e1080ca185153dba4e81c192c82069d8ce5268b96764fcdf5a4d"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ABM_ACOS_ASIN/acos_asin.cir",
+      "result": {
+        "Sha256": "ddfbf8b97eeeac1f3a41be051cc888b80f1f400d41745b5955d948c2a1608429"
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/ABM_POW/abmpow1.cir",
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "4f52030edead9124200951587f09de0e74d788312798dfeecf0a5271727dd96d"
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/ABM_POW/abmpow2.cir",
+      "scope": "ngspice",
+      "result": {
+        "Sha256": "210ae744650556d32127dec904614fb0ca31b43608a877625aa2fc955a01ce05"
+      }
+    }
+  ],
+  "cohort": "Twenty original current-baseline failures: sixteen linear coupling/IC and four bounded behavioral voltage programs"
+}
