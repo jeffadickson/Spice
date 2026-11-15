@@ -1,0 +1,22 @@
+{
+  "schema_version": "1",
+  "case_id": "rc-accepted-grid",
+  "backend": "lu",
+  "circuit": {
+    "nodes": ["0", "in", "out"],
+    "elements": [
+      {"kind":"voltage","id":"V1","p":1,"n":0,"volts":0},
+      {"kind":"resistor","id":"R1","p":1,"n":2,"ohms":1000},
+      {"kind":"capacitor","id":"C1","p":2,"n":0,"farads":1e-9}
+    ]
+  },
+  "analysis": {
+    "kind": "transient_configured",
+    "options": {
+      "stop_s": 1e-6, "max_step_s": 5e-7, "max_steps": 10,
+      "method": "trapezoidal",
+      "accepted_times_s": [0,1e-7,3.5e-7,5e-7,1e-6],
+      "sources": [{"id":"V1","waveform":{"kind":"pulse","low":0,"high":1,"delay_s":0,"rise_s":1e-6,"fall_s":1e-6,"width_s":2e-6,"period_s":4e-6}}]
+    }
+  }
+}

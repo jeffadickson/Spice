@@ -1,0 +1,57 @@
+[DOCUMENT]
+TITLE: Transient reference alignment and accuracy evidence
+
+[REQUIREMENT]
+UID: TRAN-BUILD-PROVENANCE-001
+STATUS: Draft
+TITLE: Qualification executable must retain negative contracts
+STATEMENT: >>>
+Mutation snapshots shall not share mutable build outputs with normal qualification. Source restoration and hashes alone shall not establish executable correspondence after mutation. A contaminated owned-package cache shall be invalidated and rebuilt, and the final executable shall pass both positive reference-grid replay and the omitted-source-corner rejection contract before its results qualify.
+<<<
+COMMENT: >>>
+Verification: ReferenceGridReplayNativeTests.Linked_engine_refuses_an_omitted_source_corner and the all-observable RC/RLC native replay tests. Preserve the failed shared-cache attempt and rebuild receipt. This is a bounded executable contract check, not a proof of all compiler/cache behavior.
+<<<
+
+[REQUIREMENT]
+UID: TRAN-GRID-001
+STATUS: Draft
+TITLE: Explicit accepted-time linear replay
+STATEMENT: >>>
+A configured linear transient may request an explicit finite strictly increasing accepted-time grid beginning at zero and ending at the requested stop. It shall retain every requested point without interpolation, obey the original maximum-step and sample budgets, and reject conflicting adaptive control, missing source breakpoints and unsupported nonlinear replay before publishing samples. Absent a grid, the existing step-control algorithm shall remain selected. Reports shall identify accepted-grid, adaptive or fixed-step control.
+<<<
+COMMENT: >>>
+Implementation: src/configured.rs and Simulator.Client TransientConfiguration.AcceptedTimesS. Tests: tests/accepted_time_grid.rs, ReferenceGridReplayTests and ReferenceGridReplayNativeTests. Controlled-grid physics agreement does not establish adaptive-controller parity.
+<<<
+
+[REQUIREMENT]
+UID: TRAN-RECORD-BOUND-001
+STATUS: Draft
+TITLE: Inclusive retained-state recording budget
+STATEMENT: >>>
+Configured transient recording shall permit exactly two million retained unknown scalars and refuse any larger recording. Fixed and explicit-grid intervals shall reserve one endpoint; adaptive step doubling shall also account for its retained midpoint. Explicit grids whose known total exceeds this limit shall fail before publishing any sample.
+<<<
+COMMENT: >>>
+Implementation: configured run preflight and recording admission. Verification: existing configured_recording_accepts_exactly_two_million_scalars regression and accepted_time_grid::explicit_grid_exceeding_scalar_storage_is_refused_before_any_sample. The limit is unchanged; the previous fixed-step reservation was off by one sample.
+<<<
+
+[REQUIREMENT]
+UID: TRAN-REFERENCE-SCOPE-001
+STATUS: Draft
+TITLE: Separate free-running accuracy from controlled-grid physics
+STATEMENT: >>>
+Qualification shall preserve original inputs, requests and strict stock-reference results. Any replay that disables adaptive control shall be separately identified and retain original/replay request and runtime hashes. It shall not count as a newly agreeing stock-default deck. Every required observable and reference point shall remain checked at unchanged voltage/current/relative bounds; incomplete, extrapolated or provenance-invalid results shall not pass.
+<<<
+COMMENT: >>>
+Implementation: ReferenceGridReplay and Compare-TransientGridReplay.ps1. Verification includes full RC/RLC voltage and signed source/inductor-current traces on fresh ngspice grids, original free-running analytical checks, negative grid tests and immutable input/runtime gates.
+<<<
+
+[REQUIREMENT]
+UID: TRAN-RAMP-REFERENCE-001
+STATUS: Draft
+TITLE: Independent named ramp references
+STATEMENT: >>>
+For the explicitly validated RC and RLC ramp fixtures, qualification shall compare every free-running sample against independent closed-form solutions using the existing physical bounds. The reference shall validate the lowered circuit, excitation, time domain and complete observable identity before computing errors; it shall not silently apply the fixture's formula to another circuit or replace missing engineering values with zero.
+<<<
+COMMENT: >>>
+Verification: scripts/RampTransientReference.fsx; result scope is the two named fixtures, not arbitrary nonlinear circuits or a global transient accuracy guarantee. Native reference errors and interpolation discrepancies remain visible.
+<<<

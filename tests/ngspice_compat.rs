@@ -100,13 +100,24 @@ fn ngspice_mixed_transient_and_ac_directives_are_rejected() {
 }
 
 #[test]
-fn ngspice_ac_grid_rejects_nonpositive_start_frequency() {
+fn ngspice_ac_grid_rejects_negative_start_frequency() {
     let error = import_ngspice_request(
-        "title\nV1 out 0 DC 0 AC 1\nR1 out 0 1k\n.ac lin 2 0 1\n.end\n",
+        "title\nV1 out 0 DC 0 AC 1\nR1 out 0 1k\n.ac lin 2 -1 1\n.end\n",
         "ac-invalid",
     )
     .unwrap_err();
     assert_eq!(error.code, ErrorCode::InvalidInput);
+}
+
+#[test]
+fn zero_is_valid_for_a_linear_ac_grid_but_not_a_logarithmic_grid() {
+    let text="title\nV1 out 0 DC 0 AC 1\nR1 out 0 1k\n.ac lin 2 0 1\n.end\n";
+    let request=import_ngspice_request(text,"zero-ac").unwrap();
+    let circuit_simulator::api::Analysis::Ac{frequencies_hz,..}=request.analysis else {panic!("expected AC")};
+    assert_eq!(frequencies_hz,vec![0.,1.]);
+    for kind in ["dec","oct"] {
+        assert_eq!(import_ngspice_request(&text.replace("lin",kind),"bad-log").unwrap_err().code,ErrorCode::InvalidInput);
+    }
 }
 
 #[test]

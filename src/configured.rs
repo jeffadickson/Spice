@@ -37,6 +37,11 @@ pub struct TransientConfig {
     pub sources: Vec<SourceOverride>,
     #[serde(default)]
     pub adaptive: Option<AdaptiveOptions>,
+    /// Explicit accepted times, including zero and stop. Linear replay only;
+    /// mutually exclusive with adaptive control. No interpolation or extra
+    /// source-corner steps may silently change this caller-owned sequence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub accepted_times_s: Option<Vec<f64>>,
 }
 impl Default for TransientConfig {
     fn default() -> Self {
@@ -50,6 +55,7 @@ impl Default for TransientConfig {
             current_absolute_tolerance: None,
             sources: Vec::new(),
             adaptive: None,
+            accepted_times_s: None,
         }
     }
 }
@@ -81,12 +87,25 @@ impl TransientConfig {
         if let Some(options) = &self.adaptive {
             options.validate(self.max_step_s)?;
         }
+        if let Some(times) = &self.accepted_times_s {
+            let roundoff = 32. * f64::EPSILON * self.stop_s;
+            if self.adaptive.is_some() || times.len() < 2
+                || times.len() > self.max_steps + 1
+                || times.first() != Some(&0.) || times.last() != Some(&self.stop_s)
+                || times.iter().any(|t| !t.is_finite())
+                || times.windows(2).any(|p| p[1] <= p[0] || p[1]-p[0] > self.max_step_s+roundoff)
+            {
+                return Err(SimError::invalid("invalid accepted time grid or conflicting adaptive control"));
+            }
+        }
         Ok(())
     }
 }
 #[derive(Debug, Serialize)]
 pub struct IntegrationReport {
     pub method: Method,
+    /// Explicit-grid physics replay is distinct from adaptive qualification.
+    pub time_control: &'static str,
     /// Accepted nonlinear trapezoidal subintervals restarted with BE after
     /// startup or a source corner, including adaptive half steps. Endpoints permit independent
     /// audits and junction-current reconstruction to use the actual method.
@@ -174,6 +193,13 @@ pub fn run_observed(
 ) -> SimResult<ConfiguredResult> {
     plan.require_dynamic_native_models()?;
     options.validate()?;
+    if options.accepted_times_s.as_ref().is_some_and(|times|
+        times.len().checked_mul(plan.unknown_count()).is_none_or(|count| count>2_000_000)) {
+        return Err(SimError::new(ErrorCode::ResourceExhausted,"accepted time grid exceeds recording budget"));
+    }
+    if options.accepted_times_s.is_some() && plan.has_nonlinear_devices() {
+        return Err(SimError::new(ErrorCode::Unsupported,"accepted time grid currently requires a linear circuit"));
+    }
     if options.method == Method::Trapezoidal { crate::newton::require_trapezoidal_models(plan)?; }
     if !plan.has_nonlinear_devices() && options.initial_newton.is_some() {
         return Err(SimError::new(
@@ -182,6 +208,13 @@ pub fn run_observed(
         ));
     }
     let sources = BoundSources::new(plan, &options.sources)?;
+    if let Some(times) = &options.accepted_times_s {
+        for pair in times.windows(2) {
+            if sources.next_breakpoint(pair[0],pair[1]).is_some_and(|event| event < pair[1]) {
+                return Err(SimError::invalid("accepted time grid omits a source breakpoint"));
+            }
+        }
+    }
     let mut old_rhs = sources.rhs(0.)?;
     let with_current_tolerance = |mut policy: crate::newton::NewtonOptions| {
         if let Some(tolerance) = options.current_absolute_tolerance {
@@ -252,7 +285,11 @@ pub fn run_observed(
                 "configured run cancelled",
             ));
         }
-        if steps >= options.max_steps || (samples.len() + midpoint_count + 2) * plan.unknown_count() > 2_000_000 {
+        // Fixed/explicit intervals retain one new endpoint; step doubling also
+        // retains one midpoint. Reserving two for every method rejected the
+        // documented inclusive limit even when no midpoint would be recorded.
+        let additional = if options.adaptive.is_some() {2} else {1};
+        if steps >= options.max_steps || (samples.len() + midpoint_count + additional) * plan.unknown_count() > 2_000_000 {
             return Err(SimError::new(
                 ErrorCode::ResourceExhausted,
                 "configured run budget exhausted",
@@ -270,7 +307,9 @@ pub fn run_observed(
         }
         // Absolute fixed-grid times avoid accumulating n rounded additions.
         // Snap only endpoint roundoff before source clipping, never skip a source corner.
-        let candidate = if options.adaptive.is_none() {
+        let candidate = if let Some(times) = &options.accepted_times_s {
+            times[steps+1]
+        } else if options.adaptive.is_none() {
             // A physical source corner can differ by an ULP from n*h. Do not
             // create a near-zero interval just to visit that reporting grid.
             let grid_roundoff=32.*f64::EPSILON*time.abs().max(options.max_step_s);
@@ -286,12 +325,12 @@ pub fn run_observed(
         };
         let mut next = candidate.min(options.stop_s);
         let endpoint_roundoff = 32. * f64::EPSILON * options.stop_s.max(time).max(proposed);
-        if options.stop_s - next <= endpoint_roundoff {
+        if options.accepted_times_s.is_none() && options.stop_s - next <= endpoint_roundoff {
             next = options.stop_s;
         }
         // Prefer the authored corner over a roundoff-adjacent grid point, but
         // never merge two source corners or advance beyond the requested stop.
-        let breakpoint = sources.next_breakpoint(time, (next+endpoint_roundoff).min(options.stop_s));
+        let breakpoint = sources.next_breakpoint(time, if options.accepted_times_s.is_some() {next} else {(next+endpoint_roundoff).min(options.stop_s)});
         if let Some(event) = breakpoint {
             next = event;
         }
@@ -442,6 +481,7 @@ pub fn run_observed(
         midpoint_history,
         report: IntegrationReport {
             method: options.method,
+            time_control: if options.accepted_times_s.is_some() {"accepted_time_grid"} else if options.adaptive.is_some() {"adaptive"} else {"fixed_step"},
             backward_euler_restarts,
             effective_current_absolute_tolerance: step_policy.current_absolute_tolerance,
             retained_midpoints: midpoint_count,

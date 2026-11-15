@@ -18,7 +18,9 @@ fn root() -> std::path::PathBuf {
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
         .as_nanos();
-    std::path::PathBuf::from("work/artifact-tests").join(format!(
+    // Test artifacts follow the caller's TMP/TEMP (E: on the Windows host),
+    // rather than creating build/test output beneath the source checkout.
+    std::env::temp_dir().join("spice-artifact-tests").join(format!(
         "{}-{stamp}-{}",
         std::process::id(),
         COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed)

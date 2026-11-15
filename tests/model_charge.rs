@@ -41,17 +41,24 @@ fn named_diode_transient_refines_on_shared_times_and_remains_passive() {
 }
 
 #[test]
-fn composite_profile_rejects_unimplemented_configured_trapezoidal() {
+fn composite_profile_preserves_constant_bias_and_charge_under_configured_trapezoidal() {
     let request = profile_request(
         serde_json::json!({"kind":"transient_configured","options":{
             "stop_s":0.1,"max_step_s":0.1,"max_steps":2,"method":"trapezoidal"
         }}),
         "faer",
     );
-    assert_eq!(
-        circuit_simulator::api::run(&request).unwrap_err().code,
-        circuit_simulator::error::ErrorCode::Unsupported
-    );
+    // The bounded profile already supports configured trapezoidal integration.
+    // A DC-biased constant capacitor carries no displacement current; verify
+    // signed Shockley conduction instead of retaining a stale refusal claim.
+    let result=circuit_simulator::api::run(&request).unwrap();
+    let conduction=1e-12*4_f64.exp_m1();
+    assert_eq!(result.samples.len(),2);
+    for sample in result.samples {
+        assert!((sample.values[0]-0.1).abs()<1e-14);
+        assert!((sample.values[1]+conduction).abs()<1e-18);
+        assert!((sample.values[2]-conduction).abs()<1e-18);
+    }
 }
 
 #[test]

@@ -45,6 +45,17 @@ fn actual_intel_circuit_contract() {
     let got=gpu["samples"][0]["values"].as_array().unwrap();
     assert_eq!(expected.len(),got.len());
     for(a,b)in expected.iter().zip(got){assert!((a.as_f64().unwrap()-b.as_f64().unwrap()).abs()<1e-10);}
+    // Exercise the new time-control option on an actual RC circuit. This
+    // deliberately coarse grid checks provider parity, not global accuracy.
+    let mut grid:circuit_simulator::api::Request=serde_json::from_str(include_str!("../examples/rc-accepted-grid.json")).unwrap();
+    let reference=circuit_simulator::api::run(&grid).unwrap();
+    grid.backend="intel".into();let actual=circuit_simulator::api::run(&grid).unwrap();
+    assert_eq!(actual.integration.as_ref().unwrap().time_control,"accepted_time_grid");
+    assert_eq!(actual.samples.len(),reference.samples.len());
+    for(a,b) in actual.samples.iter().zip(&reference.samples){
+        assert_eq!(a.time_s.to_bits(),b.time_s.to_bits());
+        for(x,y) in a.values.iter().zip(&b.values){assert!((x-y).abs()<1e-10);}
+    }
     let config=ProptestConfig{cases:16,rng_seed:proptest::test_runner::RngSeed::Fixed(2026111404),failure_persistence:None,..ProptestConfig::default()};
     let mut runner=proptest::test_runner::TestRunner::new(config);
     runner.run(&(2usize..9,prop::collection::vec(-100i32..100,64),prop::collection::vec(-20i32..20,8)),|(n,coefficients,known)|{

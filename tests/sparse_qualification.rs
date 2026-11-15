@@ -202,6 +202,7 @@ fn transient_config(method: Method, breakpoint: bool) -> TransientConfig {
             vec![]
         },
         adaptive: None,
+        accepted_times_s: None,
     }
 }
 

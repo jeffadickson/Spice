@@ -136,6 +136,11 @@ public sealed record TransientConfiguration(double StopS, double MaxStepS, int M
     /// <summary>Requested upper bound on nonlinear current convergence error in amperes.
     /// The engine retains its stricter physical-consistency floor and reports the effective bound.</summary>
     public double? CurrentAbsoluteTolerance { get; init; }
+    /// <summary>Optional exact accepted times in seconds, including zero and StopS.
+    /// Linear circuits only; exclusive with Adaptive. Missing source corners,
+    /// non-increasing/oversized grids and steps above MaxStepS are refused.
+    /// This is explicit physics replay, not adaptive-controller qualification.</summary>
+    public double[]? AcceptedTimesS { get; init; }
 }
 /// <summary>Step-doubling tolerances in relative, volts and amperes, with minimum seconds and attempt budget.
 /// CurrentRelative optionally separates derivative-current accuracy from voltage-state accuracy; null retains Relative.</summary>
