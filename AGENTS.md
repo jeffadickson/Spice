@@ -20,3 +20,7 @@
 - Never commit build outputs, runtime environments, credentials, downloaded native binaries or large fuzz/benchmark corpora. Record reproducible acquisition instructions and immutable hashes when those assets become necessary.
 
 - Store new build/generated outputs, coverage, mutation/fuzz/soak data, downloaded tools and temporary test data under the existing E: artifact root on this Windows host (CODEX_ARTIFACT_ROOT when configured). Use a unique checkout/run subtree and supported tool output settings. Keep source on its existing filesystem, preserve active/unknown artifacts, and do not assume NTFS capabilities on exFAT.
+
+## Spice memory policy — explicit user override, 2026-11-15
+
+Windows manages host memory for Spice development, benchmarks and endurance campaigns. Do not impose per-process/aggregate RAM caps, free-RAM admission thresholds or memory-triggered termination, and do not invoke historical external memory watchdogs from artifact directories. This project-specific user instruction supersedes the earlier personal memory-watchdog default for Spice only. Keep bounded concurrency, timeouts/deadlines, cancellation, the exclusive campaign lock, E: artifact routing and disk-space checks. Preserve genuine allocation/OS failures as failed or incomplete evidence. Simulator input/model/output-size validation and parser recursion/node bounds remain unchanged; they are product contracts, not host RAM caps. Do not stop unrelated processes.
