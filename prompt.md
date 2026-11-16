@@ -1,3 +1,35 @@
+# Current checkpoint — another twenty originals execute on Faer
+
+Read docs/another-twenty-decks-results.md and evidence/another-twenty-decks.json.
+Twenty additional original files execute all ordinary analyses on Faer: six
+stock-ngspice agreements, seven differences, seven native model-lookup failures.
+LU executes eleven; Intel eight; each has six agreements. No overlap with the
+previous twenty and no increase claimed for the historical 113-file core cohort.
+
+Shared work: generated whole-card TIMEINT options, DEVICE temperature, explicit
+reporting omissions, bounded sharp-switch rejected-trial recovery and grounded
+memoryless BE B-voltage laws with directly driven controls. AC/storage/passive-
+mediated/cyclic behavioral startup and explicit state/continuation remain refused.
+Legacy Rust transient admission remains unchanged. Read six Draft requirements
+in docs/requested-timeint.sdoc before extending numerical or model scope.
+
+Native suite 644 passed/5 ignored. Frontend 1073 passed/42 skipped; syntax 541
+passed/1 skipped. Six selected native admission mutants caught. Managed line/
+branch coverage 81.97%/69.75%; targeted native line coverage and limits are in
+manifest. StrictDoc:82 documents/566 UIDs. No fresh Stryker or Linux qualification.
+
+Raw E:/Artifacts/Spice-another-twenty-20261115T233944Z; final engine-final and
+runtime-reviewed, reviewed-faer/lu/intel. Preserve earlier failed/trial artifacts.
+Six agreeing originals have final three-way process timings with one warmup,
+three repeats. Ours excludes SPICE preparation; RSpice core is unoptimized dev.
+Do not claim an overall speed ranking. Six-point DC launches six workers and is
+slower: persistent/batched dispatch is a measured target, not a promised speedup.
+Next: LU execution failures, waveform differences, dispatch overhead, release
+RSpice comparison, native nested-model lookup failures. Main and unrelated sheet-
+resistor work preserved. Artifacts E:. Ordinary RAM managed by Windows; only
+observed runaway mutant growth may trigger targeted intervention.
+
+---
 # Current manual checkpoint — twenty originals execute
 
 Read docs/twenty-decks-results.md and evidence/twenty-decks.json first.

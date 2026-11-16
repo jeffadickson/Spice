@@ -1,0 +1,144 @@
+{
+  "rows": [
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/AGECAP/agecap_ref.cir",
+      "result": {
+        "Sha256": "e93dcf28a3cb554452a613134fa1d5c79ca03b467530b02a2896af6caa06aad9"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_201_SON/bug201b.cir",
+      "result": {
+        "Sha256": "b2f9854fbe1a32958cac81b80b0f997e89d5c3c7a890d3ef8eba4fb4d4154d53"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_307/bug_307_d.cir",
+      "result": {
+        "Sha256": "a1838bea00c7a1f2c01257d8899753d64ea9506014eda290fbc47a1a4593a21c"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_307/bug_307_e.cir",
+      "result": {
+        "Sha256": "b1036bf2be6b0a588ab3c38ebafec2b54c40c9bd5385cbe0be8b215edb7894ac"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_307/bug_307_f.cir",
+      "result": {
+        "Sha256": "6b3430f380cff760e1314bb3bfed05fd56e85d89f09315ae9b1afc574432d6ef"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_307/bug_307_g.cir",
+      "result": {
+        "Sha256": "c77b748820f98dc4e7ab0fbc79faee5f9e9495dfd259fcedd8e61b88bcd9b053"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_307/bug_307_h.cir",
+      "result": {
+        "Sha256": "9c5db52c669dc0f5a7f0cad582efec5e937b6f2a4c4c9fcbd2419133abb7ed0c"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_311/bug_311_a.cir",
+      "result": {
+        "Sha256": "81ac9c56fedcd2b92b451e2fb38d4f914e31c6e4cf53cb3ea15984b47b9a8202"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_311/bug_311_b.cir",
+      "result": {
+        "Sha256": "5e796740ff927faaed4c8763646404fac232c193689170b5da07a552cd418020"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_61/capacitor.cir",
+      "result": {
+        "Sha256": "fec7710e1f94e9a9b76f75cc666806e73c35c15136a33abde47c5c77e168ff0b"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_80/capacitor.cir",
+      "result": {
+        "Sha256": "fb565c640ef45822446039cbbe0882339c67d3b2259d8efdbc7cdf680b6373c8"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/MCNC_BJT_RCA/rca.cir",
+      "result": {
+        "Sha256": "00d524a2735a6923b1e4890306fb9821fbffe5a9ee8818dd12e8ba6cbdb01614"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/TL1X/TL1X_mpi.cir",
+      "result": {
+        "Sha256": "3f120d3e6a49aa3a72d8e346a7c9ae39bd2acb5feae1c773fa14ef9db9c76f66"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/TIA/TRAP/testmaxstep.cir",
+      "result": {
+        "Sha256": "f2559c1fefcb04201694dd5fbe2f4f2f5369d5db499b6f3231daf7da61e330cf"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ACSENS/lowpass_fd.cir",
+      "result": {
+        "Sha256": "c173233c3cfa1e47f6c1f2c24adbed519964a72e335ada4b58f195f4168d3f7c"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/ISSUE_543/acBaseline1.cir",
+      "result": {
+        "Sha256": "8dfb7b029ac3f75dafa6c7eba7cd5d352ff569d59782325e3d91e459645235c2"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Output/TRAN/tran-prn-noheaderfooter.cir",
+      "result": {
+        "Sha256": "663f59ee557f89b26bd44d1fc4ac6d7c9e9aebcd90f388d3ed0de2b2fc280b8b"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/RESISTOR_TD/temp_dep_2.cir",
+      "result": {
+        "Sha256": "db78b73a999ccaa9e81038316b5d682e18ec7b6105edae61b951277f2d133493"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ABM_EXPLN/exp_ln.cir",
+      "result": {
+        "Sha256": "291af6ff5af5a2a5222116501134dbadda827ea2e4d5be4060a7a61ea7281073"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ABM_LOG/log.cir",
+      "result": {
+        "Sha256": "a381a1c91db36d38e1ac27ccfc7ee95643efa4bc8df6c98fc6c36128e52e6e36"
+      }
+    }
+  ]
+}

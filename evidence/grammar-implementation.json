@@ -1,9 +1,9 @@
 {
   "state": "generated_inventory",
-  "source_commit": "f4ac7c1d2241c5f43e4c953a5287f07545ae17eb",
+  "source_commit": "b0826a3dcec2ff11a3a8c2af1d72badad0e83329",
   "source_dirty": true,
-  "assessment_sha256": "ba596ef14f7cc02d04d479dd2b27bc8bd0617f494338170cc2646a9ab16a56c6",
-  "syntax_assembly_sha256": "0732859c3f9488d0ba4b31df2cdc1d59713c22927104b143f0032c711c667d63",
+  "assessment_sha256": "2d62438589e6912330eda92e8f0040b54cc89487de3587b9a35efe88ee6e7505",
+  "syntax_assembly_sha256": "36cbb3d4161d6f08ad495e4f5aad02237d8c53de0a6ee11d02a26e5dd900d954",
   "source_hashes": {
     "compat/ngspice/capability-support.json": "b2735a3fd98498ff915c491ff8036a828efb3ee2ba09459bb071de53d5a7a7c9",
     "docs/mutual-inductance.sdoc": "c62a965e3515adfe2f96ce480d9db48633b988ee4ae7632a399bcc0fb43b5496",
@@ -18,6 +18,7 @@
     "dotnet/Simulator.Frontend.Tests/RequestedForeachTests.cs": "2247efb045c355c25c23b967df630101d088fb5498de8d6f170021421c5608de",
     "dotnet/Simulator.Frontend.Tests/RequestedPowerVectorTypeTests.cs": "fb00a2364c2301eae45015a9973edbc260804a55f606bccfe3ed8e30c5327127",
     "dotnet/Simulator.Frontend.Tests/RequestedPrefixFunctionTests.cs": "cc14c44e93dd5aec375b3268c1227ee1aa4f7fc89e596cffdecc485858642ebd",
+    "dotnet/Simulator.Frontend.Tests/RequestedTimeintTests.cs": "d8624cfb68c231b5df47775138fea2816b832507a88dc8d6dc27bc19ca0c6eb6",
     "dotnet/Simulator.Frontend.Tests/ScalarFunctionTests.cs": "2973883d15156583c23b87431463d257516f6aa76e0529dc002d032649396184",
     "dotnet/Simulator.Frontend.Tests/SourceAlterTests.cs": "2fb25a70429c2e320c478498d1b95ed3ee7e494f282d946aea46ab34f574a9e9",
     "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "a8048309ed5f5b5dc17633c88592887900f101bd17a102b52adc3366fed33d50",
@@ -28,9 +29,11 @@
     "dotnet/Simulator.Frontend/OrderedControlPreparation.cs": "90c54e685f1a3b7ddd69657c06b4b7683395ddb2ce953af55eb13aac37806efc",
     "dotnet/Simulator.Frontend/OrderedControlReporting.cs": "d8d35fb7893a25cca253d62088feaf0731e372ef120b404570546ef1e7bb7420",
     "dotnet/Simulator.Frontend/PoleZeroSelection.cs": "ea14920d38198ce01ecee2b254fe105542e33736a7f60fc8b44db9f8f57acdcd",
-    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "1dbbceffb6bfd4930f455d2dcf6e57316de7ce294864580fd790876be414c42b",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "720c4a5095a83e6ede9dba087bd6419a721d37c9d84b20f45ac2268dea7b1269",
     "dotnet/Simulator.Frontend/RequestedControlPreparation.cs": "3b69fc671ab8c1a064a49aad3712deeaf8e9cdd5d3e4f8ec7dde12cc6ad3719b",
     "dotnet/Simulator.Frontend/RequestedSourceParameterBinding.cs": "62c0fa11e81ded38899d4c416d8ca2bae863194b063a360b3cd34525242bd9ac",
+    "dotnet/Simulator.Frontend/RequestedTemperaturePreparation.cs": "ffc28cebd52ee794629d684f1d06de080e2ac6089e73b047d2896fa3a6397a88",
+    "dotnet/Simulator.Frontend/RequestedTimeintPreparation.cs": "ee1436883430cb2d64016e663f6a078c9b28c3a43f94d6c7b2de35ded08509ce",
     "dotnet/Simulator.Frontend/ResistorModelLowering.cs": "eb23fd1608ec8bba7cc9eb397f79fb6a45692a67d3eea3b113cabc8931704f13",
     "dotnet/Simulator.Frontend/SemiconductorPreparation.cs": "e6f6562749619d377930f685ef991c3b4f335beacbabf7b733d95a3dabcf5802",
     "dotnet/Simulator.Frontend/TransientSelection.cs": "66f4df6a9c401934b089f0e34c36fd5c530ae1b40e648e89c3c941bc319bcacf",
@@ -44,14 +47,14 @@
     "dotnet/Simulator.Syntax/ControlExtraction.cs": "b3cef88acb91936ccc4adeb9463826438d4ddfc3a83ff4f0bffe81931a260e55",
     "dotnet/Simulator.Syntax/ControlVectorExecution.cs": "188f39d52cbe01d5d246a7c726491de1ab880e542e0c2937d58ff8c7af0cb5ea",
     "dotnet/Simulator.Syntax/DeckSyntax.cs": "6f0b96e8c791e10dbcabeda1299a3484c2060a47c10da630d4bf9d528b2ef9e9",
-    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "23e4ac17279e958fff6032d15591ac67759d2641d29f1b66f04632ca2ac9e72c",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "b1caa122676dfd464368e485b44a51c7c175a6148c960f67e6ef8674cbd57a8d",
     "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "a67165dcaf8f7f7cd5833c60af4411c1b0912e6e818ced3bf999c8f210f4da92",
     "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "785595febc41fa01bdd0759595a641cf2e581b22934234fcd3336ca81bc4b9ef",
     "dotnet/Simulator.Syntax/GrammarImplementationInventory.cs": "99c7321832edc94381fef0c27e6b5effdd5bb5316cbbe6b4d28986ebc3dbd26a",
     "dotnet/Simulator.Syntax/InstanceBinding.cs": "48c7f176300f3db67094fba9f806404e4f4b2707539a898c6e839149ce4258ef",
     "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
     "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "85c23d1f1cf64406b00f2ca123e0287d644b3d54aa6c07aa4e9152c01becbf1d",
-    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "d1194c0f08ab11a549ac3dfe14acb996c5f5c123fb64c4645b6c2471b43588f3",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "c3d8f41467bd298c7b6c6735df9277bd84d41bbcfa7e7bb0726e13a8fd509bd4",
     "dotnet/Simulator.Syntax/ResourceResolver.cs": "d6ddf6749e4a8f2a0e3aef617053b5154fdcc9e89e030edf0d54c459e8e4cfdb",
     "dotnet/Simulator.Syntax/ScalarVectorExtraction.cs": "085ffe8489b4532032dbe5b9a64a2c4947f6b9e1137a1fbf041fc4f46022d253",
     "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "1293958e6f9b6238aeac754533cb5410f5a63e78a7c438b7055dfdd4d909a481",
@@ -67,13 +70,18 @@
     "evidence/requested-fc5db25.json": "1b2cc37e053c86a2c42f0651900492392c5860ce0e62d4827bbd6a048c48667a",
     "evidence/scalar-functions-decks.json": "762501115bfa01290822f83e6162e99963b24140bd24c3738badb05fbce00cf0",
     "scripts/GrammarImplementationMap.cs": "e49d79d9a4aa6835b828990149847fa3c7ed40c4cc667e58323f94a76eb96510",
-    "src/compile.rs": "e6ae09d4139353b759c340e358dc0430cfa8e316aa7dd4ddafbfa96b0cc9e14c",
+    "src/api.rs": "60c849f4efe89f128edfb76c1ec1aae9245bb6cd1ba6a7dce7a5e01550c7a4ba",
+    "src/compile.rs": "5c277284738cd45fd6fc42999a352a87cf952022837560b2afcbdab17804f908",
+    "src/configured.rs": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
     "src/mutual_inductance.rs": "9b8d373524cffa2aa8093a9db67bb6645b40864b8fd0047bf08c68d7e8994514",
-    "tests/mutual_inductance.rs": "a7f5b13064c1c04061ea7183dd4d4c348a75a03bf793095e2ab161d79c28d402"
+    "src/transient.rs": "c4bb4261eb887c00094040eb1c5aac6d554259e6aa8c6ae01a99c20188b43939",
+    "tests/behavioral_transient.rs": "3fd001813a03ebf24c73dbb45b3390029f52083b31654cc809accb3e5fb9da5b",
+    "tests/configured_relative.rs": "927ad08929e7263948584db11509504d43fa6769a7eede1841396e8dcf39f118",
+    "tests/mutual_inductance.rs": "0a1b3f5e0858f33b95b6fcc59f9fe69cdd16c37c645c4629fd40d86b3f5c3db9"
   },
   "generated_rules": 113,
-  "assessed_rules": 108,
-  "unassessed_rules": 5,
+  "assessed_rules": 109,
+  "unassessed_rules": 4,
   "rules": [
     {
       "rule": "ac",
@@ -193,15 +201,21 @@
       "execution": "bounded",
       "implementation": [
         "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
-        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+        "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs",
+        "src/configured.rs",
+        "src/api.rs",
+        "src/transient.rs"
       ],
       "requirements": [
-        "SEM-BRIDGE-001"
+        "SEM-BRIDGE-001",
+        "BEH-MEMORYLESS-TRAN-001"
       ],
       "evidence": [
-        "evidence/five-area-integrated-verification.json"
+        "evidence/five-area-integrated-verification.json",
+        "tests/behavioral_transient.rs",
+        "dotnet/Simulator.Frontend.Tests/RequestedTimeintTests.cs"
       ],
-      "limitation": "Affine voltage-dependent independent/controlled B-source lowering only; nonlinear/time/current arbitrary behavioral kernels remain refused.",
+      "limitation": "Affine voltage-dependent independent/controlled B-source lowering only; nonlinear/time/current arbitrary behavioral kernels remain refused. Configured BE additionally admits grounded memoryless R/V/I laws with directly driven controls and bounded acyclic startup. AC, storage, passive-mediated controls, initial state/continuation and legacy transient remain refused.",
       "commands": []
     },
     {
@@ -1159,14 +1173,28 @@
     },
     {
       "rule": "extension",
-      "assessed": false,
-      "extraction": "unassessed",
-      "preparation": "unassessed",
-      "execution": "unassessed",
-      "implementation": [],
-      "requirements": [],
-      "evidence": [],
-      "limitation": "No reviewed association; syntax recognition establishes no execution capability.",
+      "assessed": true,
+      "extraction": "bounded",
+      "preparation": "bounded",
+      "execution": "bounded",
+      "implementation": [
+        "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+        "dotnet/Simulator.Frontend/RequestedTimeintPreparation.cs",
+        "dotnet/Simulator.Frontend/RequestedTemperaturePreparation.cs",
+        "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+        "src/configured.rs"
+      ],
+      "requirements": [
+        "FRONTEND-TIMEINT-001",
+        "SOLVER-RELATIVE-BOUND-001",
+        "FRONTEND-NAMESPACE-REPORT-001",
+        "FRONTEND-DEVICE-TEMP-001"
+      ],
+      "evidence": [
+        "dotnet/Simulator.Frontend.Tests/RequestedTimeintTests.cs",
+        "tests/configured_relative.rs"
+      ],
+      "limitation": "Named whole-card TIMEINT ABSTOL/RELTOL/DELMAX/CONSTSTEP=1, DEVICE TEMP and explicitly omitted reporting/debug flags only. Unknown keys/scopes remain physical refusals; generic extension syntax is not general execution support.",
       "commands": []
     },
     {

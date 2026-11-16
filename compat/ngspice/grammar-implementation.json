@@ -1063,15 +1063,21 @@
     "execution": "bounded",
     "implementation": [
       "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs",
-      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs"
+      "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs",
+      "src/configured.rs",
+      "src/api.rs",
+      "src/transient.rs"
     ],
     "requirements": [
-      "SEM-BRIDGE-001"
+      "SEM-BRIDGE-001",
+      "BEH-MEMORYLESS-TRAN-001"
     ],
     "evidence": [
-      "evidence/five-area-integrated-verification.json"
+      "evidence/five-area-integrated-verification.json",
+      "tests/behavioral_transient.rs",
+      "dotnet/Simulator.Frontend.Tests/RequestedTimeintTests.cs"
     ],
-    "limitation": "Affine voltage-dependent independent/controlled B-source lowering only; nonlinear/time/current arbitrary behavioral kernels remain refused."
+    "limitation": "Affine voltage-dependent independent/controlled B-source lowering only; nonlinear/time/current arbitrary behavioral kernels remain refused. Configured BE additionally admits grounded memoryless R/V/I laws with directly driven controls and bounded acyclic startup. AC, storage, passive-mediated controls, initial state/continuation and legacy transient remain refused."
   },
   {
     "rule": "behaviorHeaderProfile",
@@ -2063,5 +2069,29 @@
       "evidence/scalar-functions-decks.json"
     ],
     "limitation": "Scalar finite calls only; bounded nearest-scope function lookup. Voltage-dependent function bodies remain outside this profile."
+  },
+  {
+    "rule": "extension",
+    "extraction": "bounded",
+    "preparation": "bounded",
+    "execution": "bounded",
+    "implementation": [
+      "dotnet/Simulator.Syntax/DeclarationExtraction.cs",
+      "dotnet/Simulator.Frontend/RequestedTimeintPreparation.cs",
+      "dotnet/Simulator.Frontend/RequestedTemperaturePreparation.cs",
+      "dotnet/Simulator.Frontend/RequestedAnalysis.cs",
+      "src/configured.rs"
+    ],
+    "requirements": [
+      "FRONTEND-TIMEINT-001",
+      "SOLVER-RELATIVE-BOUND-001",
+      "FRONTEND-NAMESPACE-REPORT-001",
+      "FRONTEND-DEVICE-TEMP-001"
+    ],
+    "evidence": [
+      "dotnet/Simulator.Frontend.Tests/RequestedTimeintTests.cs",
+      "tests/configured_relative.rs"
+    ],
+    "limitation": "Named whole-card TIMEINT ABSTOL/RELTOL/DELMAX/CONSTSTEP=1, DEVICE TEMP and explicitly omitted reporting/debug flags only. Unknown keys/scopes remain physical refusals; generic extension syntax is not general execution support."
   }
 ]

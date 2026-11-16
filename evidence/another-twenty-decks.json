@@ -1,0 +1,974 @@
+{
+  "run_id": "Spice-another-twenty-20261115T233944Z",
+  "state": "completed_with_results",
+  "base_commit": "b0826a3dcec2ff11a3a8c2af1d72badad0e83329",
+  "tested_source_dirty": true,
+  "corpus_commit": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "raw_artifacts": "E:\\Artifacts\\Spice-another-twenty-20261115T233944Z",
+  "scope": "Twenty new RSpice-retained Xyce original files outside historical 113-file core cohort; ordinary requested analyses, not full control/report-file parity",
+  "counts": {
+    "selected": 20,
+    "previous_cohort_overlap": 0,
+    "frozen_baseline_executed": 0,
+    "faer_executed": 20,
+    "faer_stock_agreed": 6,
+    "faer_numerical_disagreements": 7,
+    "faer_native_unavailable": 7,
+    "lu_executed": 11,
+    "lu_stock_agreed": 6,
+    "intel_executed": 8,
+    "intel_stock_agreed": 6,
+    "rspice_reference_passed": 10,
+    "rspice_reference_failed": 10
+  },
+  "baseline": {
+    "summary": "before-lu/summary.json",
+    "frozen_runtime": "E:/Artifacts/Spice-twenty-20261115T163235Z/runtime-refined",
+    "frozen_engine": "E:/Artifacts/Spice-twenty-20261115T163235Z/engine-checkpoint/circuit-simulator.exe",
+    "identity_limit": "Initial raw baseline could not read Git identity under sandbox ownership; pre-change binaries are frozen prior verified artifacts, not a rebuild of the current dirty source",
+    "input_hashes_verified": true
+  },
+  "bounds": {
+    "voltage_absolute": 1E-06,
+    "relative": 0.0001,
+    "current_absolute": 1E-09
+  },
+  "tests": {
+    "managed_property_cases": 64,
+    "native_failed": 0,
+    "syntax_passed": 541,
+    "managed_property_replay": "1521,20261115",
+    "native_passed": 644,
+    "syntax_skipped": 1,
+    "native_property_cases": 64,
+    "frontend_skipped": 42,
+    "native_ignored": 5,
+    "native_targeted_current_tests": {
+      "seed": "2026111521",
+      "exit": 0
+    },
+    "native_property_seed": 2026111521,
+    "frontend_passed": 1073,
+    "syntax_scope": "Unchanged compiled test assembly run against newly built syntax assembly"
+  },
+  "coverage": {
+    "native_behavior": [
+      {
+        "sha256": "60c849f4efe89f128edfb76c1ec1aae9245bb6cd1ba6a7dce7a5e01550c7a4ba",
+        "lines": {
+          "count": 389,
+          "covered": 121,
+          "percent": 31.10539845758355
+        },
+        "file": "src/api.rs"
+      },
+      {
+        "sha256": "5c277284738cd45fd6fc42999a352a87cf952022837560b2afcbdab17804f908",
+        "lines": {
+          "count": 341,
+          "covered": 133,
+          "percent": 39.002932551319645
+        },
+        "file": "src/compile.rs"
+      },
+      {
+        "sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+        "lines": {
+          "count": 397,
+          "covered": 213,
+          "percent": 53.65239294710328
+        },
+        "file": "src/configured.rs"
+      },
+      {
+        "sha256": "c4bb4261eb887c00094040eb1c5aac6d554259e6aa8c6ae01a99c20188b43939",
+        "lines": {
+          "count": 80,
+          "covered": 22,
+          "percent": 27.500000000000004
+        },
+        "file": "src/transient.rs"
+      }
+    ],
+    "limits": [
+      "Targeted native line coverage is not whole-engine coverage.",
+      "Stable Rust branch instrumentation unavailable.",
+      "Timing helper/probe coverage unmeasured; no fresh Stryker run.",
+      "GPU driver/kernel and Linux execution coverage unavailable."
+    ],
+    "native_relative": [
+      {
+        "sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+        "lines": {
+          "count": 397,
+          "covered": 174,
+          "percent": 43.8287153652393
+        },
+        "file": "src/configured.rs"
+      }
+    ],
+    "managed": {
+      "scope": "Frontend, Syntax, Client, RequestedQualification; generated ANTLR parser may be included",
+      "lines_valid": 28704,
+      "branches_covered": 11386,
+      "raw_file": "E:\\Artifacts\\Spice-another-twenty-20261115T233944Z\\review-final-frontend-coverage\\11fd58ae-58cd-4e0c-be2e-eaf4cf039a9b\\jeffd_OPTIPLEX7090_2026-11-15.16_57_29.cobertura.xml",
+      "line_rate": 0.8196767001114827,
+      "branches_valid": 16325,
+      "lines_covered": 23528,
+      "branch_rate": 0.6974578866768759
+    }
+  },
+  "mutations": {
+    "selected": 6,
+    "peak_observed_tree_bytes": 1328017408,
+    "timeout": 0,
+    "observer": "Owned mutant tree only; sustained growth threshold, no ordinary-workload RAM caps",
+    "invalid": 0,
+    "missed": 0,
+    "scope": "Six configured transient admission-guard faults in an isolated snapshot; not all changed operators",
+    "memory_interventions": 0,
+    "caught": 6,
+    "tool": "cargo-mutants 27.1.0",
+    "snapshot_configured_sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab"
+  },
+  "strictdoc": {
+    "documents": 82,
+    "unique_uids": 566,
+    "parser": "StrictDoc SDReader",
+    "success": true
+  },
+  "intel": {
+    "deck_limit": "12 execution failures; not arbitrary GPU qualification or acceleration",
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "driver": "31.0.101.2141",
+    "circuit_gate": {
+      "exit_code": 0,
+      "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+      "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+      "tests_log": "E:\\Artifacts\\Spice-another-twenty-20261115T233944Z\\Spice-intel-circuit-tests-15cc3a0d54704c87a0c51edc66c449fa\\tests.log",
+      "scope": "Actual Intel real/complex solves, known-solution properties, full divider circuit and bounded CLI lifecycle; not arbitrary deck qualification"
+    },
+    "device": "Intel(R) UHD Graphics 630",
+    "probe_passed": true
+  },
+  "timing": {
+    "window": {
+      "finished_utc": "2026-11-16T01:17:23.4308092Z",
+      "success": true,
+      "scope": "No owned build/test/mutation workloads during final agreeing-cohort timing; other OS activity uncontrolled",
+      "started_utc": "2026-11-16T01:14:05.8697342Z"
+    },
+    "repetitions": 3,
+    "limits": [
+      "Ours excludes SPICE frontend preparation and includes per-point worker startup, JSON and audits.",
+      "Ngspice includes original SPICE parsing and RAW output.",
+      "RSpice probe excludes oracle generation/comparison; cached core is an unoptimized dev build.",
+      "Cold child processes follow a warmup; OS/cache/background activity is uncontrolled.",
+      "Wide spreads and unequal build/preparation scopes prevent an overall simulator speed ranking.",
+      "All-twenty timing trial ran during other owned workloads and is diagnostic only.",
+      "Six-point DC sweep launches six owned workers; batching/persistent dispatch is a performance target, not a proven speedup."
+    ],
+    "warmups": 1,
+    "rows": [
+      {
+        "path": "tests/xyce/Netlists/Certification_Tests/BUG_201_SON/bug201b.cir",
+        "ours_prepared_native_median_ms": 714.0691,
+        "ngspice_original_median_ms": 1433.4997,
+        "rspice_original_median_ms": 1939.5553,
+        "rspice_reference_passed": true,
+        "request_processes": 1,
+        "ours_samples_ms": [
+          485.2103,
+          874.3294,
+          714.0691
+        ],
+        "ngspice_samples_ms": [
+          1433.4997,
+          1313.2915,
+          1871.2705
+        ],
+        "rspice_samples_ms": [
+          2227.8922,
+          1743.5667,
+          1939.5553
+        ]
+      },
+      {
+        "path": "tests/xyce/Netlists/TIA/TRAP/testmaxstep.cir",
+        "ours_prepared_native_median_ms": 491.5979,
+        "ngspice_original_median_ms": 982.8879,
+        "rspice_original_median_ms": 1814.0546,
+        "rspice_reference_passed": true,
+        "request_processes": 1,
+        "ours_samples_ms": [
+          335.4689,
+          768.9984,
+          491.5979
+        ],
+        "ngspice_samples_ms": [
+          657.4365,
+          1089.4853,
+          982.8879
+        ],
+        "rspice_samples_ms": [
+          2701.0014,
+          1352.5558,
+          1814.0546
+        ]
+      },
+      {
+        "path": "tests/xyce/Netlists/ACSENS/lowpass_fd.cir",
+        "ours_prepared_native_median_ms": 1434.6044,
+        "ngspice_original_median_ms": 1842.9259,
+        "rspice_original_median_ms": 1982.1484,
+        "rspice_reference_passed": true,
+        "request_processes": 1,
+        "ours_samples_ms": [
+          1434.6044,
+          1559.3572,
+          1350.1396
+        ],
+        "ngspice_samples_ms": [
+          1842.9259,
+          2651.904,
+          1751.2101
+        ],
+        "rspice_samples_ms": [
+          2150.5203,
+          1982.1484,
+          1627.1035
+        ]
+      },
+      {
+        "path": "tests/xyce/Netlists/Certification_Tests/ISSUE_543/acBaseline1.cir",
+        "ours_prepared_native_median_ms": 972.939,
+        "ngspice_original_median_ms": 969.077,
+        "rspice_original_median_ms": 1157.5279,
+        "rspice_reference_passed": true,
+        "request_processes": 1,
+        "ours_samples_ms": [
+          972.939,
+          701.9697,
+          1130.5598
+        ],
+        "ngspice_samples_ms": [
+          851.8106,
+          969.077,
+          1158.2813
+        ],
+        "rspice_samples_ms": [
+          1232.5083,
+          1157.5279,
+          845.9184
+        ]
+      },
+      {
+        "path": "tests/xyce/Netlists/Output/TRAN/tran-prn-noheaderfooter.cir",
+        "ours_prepared_native_median_ms": 605.1316,
+        "ngspice_original_median_ms": 1088.7064,
+        "rspice_original_median_ms": 853.4023,
+        "rspice_reference_passed": true,
+        "request_processes": 1,
+        "ours_samples_ms": [
+          495.149,
+          605.1316,
+          776.5146
+        ],
+        "ngspice_samples_ms": [
+          926.8512,
+          1088.7064,
+          1092.2722
+        ],
+        "rspice_samples_ms": [
+          918.4614,
+          848.4032,
+          853.4023
+        ]
+      },
+      {
+        "path": "tests/xyce/Netlists/RESISTOR_TD/temp_dep_2.cir",
+        "ours_prepared_native_median_ms": 3157.1347,
+        "ngspice_original_median_ms": 738.8102,
+        "rspice_original_median_ms": 808.0256,
+        "rspice_reference_passed": true,
+        "request_processes": 6,
+        "ours_samples_ms": [
+          4268.5456,
+          3157.1347,
+          3015.2611
+        ],
+        "ngspice_samples_ms": [
+          1066.8294,
+          729.9907,
+          738.8102
+        ],
+        "rspice_samples_ms": [
+          803.2963,
+          808.0256,
+          3113.211
+        ]
+      }
+    ],
+    "external_probe": {
+      "source_commit": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+      "core_library": "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/target/debug/deps/librspice_core-5d2a1ba4a7b549b3.rlib",
+      "core_profile": "cached debug library; optimized probe glue does not optimize this library",
+      "probe_source_sha256": "699d01a4284a435b905c1e223c33615f01b559eb27adeb28df44fbace46e5a6d",
+      "probe_sha256": "d51adedfd6c01facc533bac71d386fd3226bc9d0099e6f786ffff66cc1484acb",
+      "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+      "scope": "Public RSpice Netlist and Engine; no reference process or comparison inside measured stage",
+      "core_library_sha256": "7a9a864db239d64220616e1f8b322897d747659aad435c8ce87ac9ac13591bc2"
+    },
+    "selected_agreeing": 6
+  },
+  "source_hashes": {
+    "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs": "1153905511cb50a5680eba85102e04268e49046fba6d9e06bb2c6127880845b4",
+    "dotnet/Simulator.Syntax/AnalysisSyntax.cs": "beb7a1a9271603e207d0be9c6fcebea16d5bcce5027a60a63c1384dd11aefb09",
+    "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs": "1b29df8bd43b13ec2012811e4fe73fe323e2deea27c543acbef6a2da2227d29b",
+    "dotnet/Simulator.Syntax/BilinearVoltageExpressionEvaluator.cs": "4f90f831bbd33157e980ba445f0c5726644e70ec88a1c0d9706acd03f80e1668",
+    "dotnet/Simulator.Syntax/CapabilityInventory.cs": "b41e919d3c145a33ad237ffb20b6830588a2b2eb93860c56dfdb7c5e383995ca",
+    "dotnet/Simulator.Syntax/ControlExtraction.cs": "b3cef88acb91936ccc4adeb9463826438d4ddfc3a83ff4f0bffe81931a260e55",
+    "dotnet/Simulator.Syntax/ControlReportTarget.cs": "dce85b0f3d19396f3eac6d7576113aaeeb59fe5c1928afb4703b34cfecfa4574",
+    "dotnet/Simulator.Syntax/ControlSyntax.cs": "ceb11ff1815375cee2bd3008689e559565ea8b30a906e9e4ff6968aa33efef5f",
+    "dotnet/Simulator.Syntax/ControlVectorExecution.cs": "188f39d52cbe01d5d246a7c726491de1ab880e542e0c2937d58ff8c7af0cb5ea",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "6f0b96e8c791e10dbcabeda1299a3484c2060a47c10da630d4bf9d528b2ef9e9",
+    "dotnet/Simulator.Syntax/DeclarationCatalog.cs": "6fb39c00800e15c163296bf0894576b96c32aaa6c61b369ea367b48b38b3157f",
+    "dotnet/Simulator.Syntax/DeclarationExtraction.cs": "b1caa122676dfd464368e485b44a51c7c175a6148c960f67e6ef8674cbd57a8d",
+    "dotnet/Simulator.Syntax/DeclarationSummary.cs": "0b8ad5c10b475f14a0f478d366c7262288ee44be359d0ba4727fb82e8d31a8a3",
+    "dotnet/Simulator.Syntax/FeatureExtraction.cs": "bf2fc543ed6c90b46ea07ec86166bfeb5b55dc0efffcb8ca042b87d2ec9d02cc",
+    "dotnet/Simulator.Syntax/GrammarImplementationInventory.cs": "99c7321832edc94381fef0c27e6b5effdd5bb5316cbbe6b4d28986ebc3dbd26a",
+    "dotnet/Simulator.Syntax/InitialConditionSyntax.cs": "752b1ecc02ed58cf1449e65482b859820b48175cb51f7d9e0f984a4ad34327f8",
+    "dotnet/Simulator.Syntax/InstanceBinding.cs": "48c7f176300f3db67094fba9f806404e4f4b2707539a898c6e839149ce4258ef",
+    "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
+    "dotnet/Simulator.Syntax/NetlistConditionalSelection.cs": "2dad3d3e6eda5ee743d7fc609f68b1e5f5a3d1269d8693844c5d2811e5e969f2",
+    "dotnet/Simulator.Syntax/packages.lock.json": "712947c27eeba85385138fbad6d87a89cbb34b8a9b7909be93f40c3cb4d5e4bf",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "85c23d1f1cf64406b00f2ca123e0287d644b3d54aa6c07aa4e9152c01becbf1d",
+    "dotnet/Simulator.Syntax/ParserLimits.cs": "cc69d5625d61399df2d7ae82b56d0a61b3cfc582b6c8a19201e6ab481c3b22ba",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "c3d8f41467bd298c7b6c6735df9277bd84d41bbcfa7e7bb0726e13a8fd509bd4",
+    "dotnet/Simulator.Syntax/ResistorModelSyntax.cs": "e29a12bc3c4dc64aee76ee19e3cd9bf5ece744363cf248e5eb9afecbb2a56ed6",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "d6ddf6749e4a8f2a0e3aef617053b5154fdcc9e89e030edf0d54c459e8e4cfdb",
+    "dotnet/Simulator.Syntax/ScalarVectorExtraction.cs": "085ffe8489b4532032dbe5b9a64a2c4947f6b9e1137a1fbf041fc4f46022d253",
+    "dotnet/Simulator.Syntax/SemanticSummary.cs": "461869527e6c3d75bc931bd1f0bac3d313699455c3c18902b3bca872fc2c9499",
+    "dotnet/Simulator.Syntax/Simulator.Syntax.csproj": "7fbce32d17c8df2bb768de542e4f7e40284ee94a90a57018a71a035ff53600f8",
+    "dotnet/Simulator.Syntax/SingleControlVoltageCompiler.cs": "203ab2461ad06abc8ca81df113c66ed8e27ed0b0b30c2e6975386c11c0835af9",
+    "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "1293958e6f9b6238aeac754533cb5410f5a63e78a7c438b7055dfdd4d909a481",
+    "dotnet/Simulator.Syntax/XspiceSyntax.cs": "5ec8216aa0b9cb9bf12880c9ca23331a80ee5f2fdbb26cc74013961c115965ad",
+    "dotnet/Simulator.Client/BehavioralExpression.cs": "294b70b7c1d1db9a804675e72d44f9df696ab28502a72a96e48bacff48f70cd0",
+    "dotnet/Simulator.Client/Client.cs": "2ff1902be91e86c7830c8344b9193d356f1fb5bdaefdb0a107cb2f0f40bc139b",
+    "dotnet/Simulator.Client/Requests.cs": "9363e450ab3b389664189ca8d4cd1b750f80fc1a953dc401aba021dede3434f8",
+    "dotnet/Simulator.Client/Results.cs": "542d6eedb64d295e71d1738f09204a7f03302a307e5b0218acd95a431b13d0c4",
+    "dotnet/Simulator.Client/Simulator.Client.csproj": "b01de3547a871f19037abf9422dc7a8a4be5d6a2da58f075b7964fb8fa9936f5",
+    "dotnet/Simulator.Client/SweepResults.cs": "010b1dfc4fff874ece61c258c44a36db736f41c28dc2209984ff8b2c94291857",
+    "dotnet/Simulator.Client/WireContext.cs": "09d813fad7bfb2d190679244de3a074482ddcd93d9038ff5cf6d84532b8a6be9",
+    "dotnet/Simulator.Frontend/BehavioralResistanceLowering.cs": "14a33dcff86fae060e29901ff2403d6998df8a6d44f00897af25ac6099f6b9d1",
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "a8048309ed5f5b5dc17633c88592887900f101bd17a102b52adc3366fed33d50",
+    "dotnet/Simulator.Frontend/BjtPreparation.cs": "e989d7a59593c018a11844d398126d359d42d0b10fc1689158fc3dc3d8749a60",
+    "dotnet/Simulator.Frontend/Bsim330Preparation.cs": "c3bededeca8fb1d0450910dd7f6e8a1579bb2415bcbf9489e46b281afdda4b61",
+    "dotnet/Simulator.Frontend/BsimSoiFdPreparation.cs": "7bae9fe706e78c9688c82fb3c972dcdad854e26db0c3b7df6de512c08036ea31",
+    "dotnet/Simulator.Frontend/CircuitReadiness.cs": "37c6194ee4b752532605ea11ff99ecab4e8af9470c2ce7d183549aa2e7c2f402",
+    "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs": "5a39fa512e17ff2c5be574795cf5b0894f2306971bf211699ce0a343c3e80a2e",
+    "dotnet/Simulator.Frontend/GroundAliasPolicy.cs": "9d9a02a475de0a60e13c6e5ffa92839dab40b2b1e494b236f8695ed90bc6c185",
+    "dotnet/Simulator.Frontend/GroundBinding.cs": "bbeaa2a7cc80eceac70a35146df8a0f6e92e973c723458d87e4725e947622c9c",
+    "dotnet/Simulator.Frontend/JfetPreparation.cs": "d7e973ac3fc30ee8d73272523ace522370b304872d5c81e81a503dda56c5549a",
+    "dotnet/Simulator.Frontend/Mos1Preparation.cs": "4168d719dc4ceae11cf0ee65e4d6bee85a5f1691796ddd09233c78f69b225c9c",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "4e1eaff5f65a0afa863b40d71085132d299fab0e27afc0816de53d61ae9e412d",
+    "dotnet/Simulator.Frontend/OperatingPointSelection.cs": "c29b35f95fb6c83f16be44702def92d180aec693d80a2dba89f2fd036d953b91",
+    "dotnet/Simulator.Frontend/OrderedControlPreparation.cs": "90c54e685f1a3b7ddd69657c06b4b7683395ddb2ce953af55eb13aac37806efc",
+    "dotnet/Simulator.Frontend/OrderedControlReporting.cs": "d8d35fb7893a25cca253d62088feaf0731e372ef120b404570546ef1e7bb7420",
+    "dotnet/Simulator.Frontend/packages.lock.json": "097ec0a0dbc1583feddcf74a69e4068ad9b2f417807b40a7f084099c256f12e4",
+    "dotnet/Simulator.Frontend/PoleZeroSelection.cs": "ea14920d38198ce01ecee2b254fe105542e33736a7f60fc8b44db9f8f57acdcd",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "720c4a5095a83e6ede9dba087bd6419a721d37c9d84b20f45ac2268dea7b1269",
+    "dotnet/Simulator.Frontend/RequestedControlConstants.cs": "e06a63897d04175d3a937a6af849baf59e9332b7eded9c31a060133bd0c18e78",
+    "dotnet/Simulator.Frontend/RequestedControlPreparation.cs": "3b69fc671ab8c1a064a49aad3712deeaf8e9cdd5d3e4f8ec7dde12cc6ad3719b",
+    "dotnet/Simulator.Frontend/RequestedControlReporting.cs": "a4d4367bd919708169ae854a3513da9f2192650a3ba7cc8ae25670798d3fd391",
+    "dotnet/Simulator.Frontend/RequestedDcSourceBinding.cs": "6aebf83cd9d048a7dd062bb28d177e238c11e0086f567cf010a06cf7524e448d",
+    "dotnet/Simulator.Frontend/RequestedInitialConditions.cs": "47f775528b9076a123ddfdcc01fdcda69c51ba85c76897a90d0491658ac88727",
+    "dotnet/Simulator.Frontend/RequestedSourceDcCapture.cs": "ee4b649f1bb8a522552ef425e9ac752d9f74395dd960ff8f09341adbbe495753",
+    "dotnet/Simulator.Frontend/RequestedSourceParameterBinding.cs": "62c0fa11e81ded38899d4c416d8ca2bae863194b063a360b3cd34525242bd9ac",
+    "dotnet/Simulator.Frontend/RequestedTemperaturePreparation.cs": "ffc28cebd52ee794629d684f1d06de080e2ac6089e73b047d2896fa3a6397a88",
+    "dotnet/Simulator.Frontend/RequestedTimeintPreparation.cs": "ee1436883430cb2d64016e663f6a078c9b28c3a43f94d6c7b2de35ded08509ce",
+    "dotnet/Simulator.Frontend/RequestedUicStartup.cs": "43147dab793719657a4cc58c438391f842d0103dae471f5ba33569ec9e9fb7d6",
+    "dotnet/Simulator.Frontend/ResistorModelLowering.cs": "eb23fd1608ec8bba7cc9eb397f79fb6a45692a67d3eea3b113cabc8931704f13",
+    "dotnet/Simulator.Frontend/SelectedDcBias.cs": "2bc8fb277043e5a5189acdf2bc5aa4344f29b95ffe1317546694632d9e14c122",
+    "dotnet/Simulator.Frontend/SemiconductorPreparation.cs": "e6f6562749619d377930f685ef991c3b4f335beacbabf7b733d95a3dabcf5802",
+    "dotnet/Simulator.Frontend/SensitivitySelection.cs": "8eb0c17ab46c3e9e4839e3e36c8d38195825e427991900cf4a9b437909b11174",
+    "dotnet/Simulator.Frontend/Simulator.Frontend.csproj": "78909cf4a02cad2674040921bb089ab1c822e3adb2c7aafd3e933386fbe4250f",
+    "dotnet/Simulator.Frontend/SourceWaveformPreparation.cs": "cf8f586f3feb8ec2adf87f4a576faf97062c3aa71413362b9e6f1fc443f9ec73",
+    "dotnet/Simulator.Frontend/TransferFunctionSelection.cs": "0c2240b860fb19b600dbe68a957d694c1ad7a92199bd04da540579890d11ab25",
+    "dotnet/Simulator.Frontend/TransientSelection.cs": "66f4df6a9c401934b089f0e34c36fd5c530ae1b40e648e89c3c941bc319bcacf",
+    "dotnet/Simulator.Frontend/XspiceGainLowering.cs": "f888571b71cc44a7c9a4e7438d114c2e6d69b48eae2cea2033bb27a12cb3175b",
+    "dotnet/Simulator.Frontend/XspiceSummerLowering.cs": "5f7eb348433cebee027cd4e6d13dd7640cf9b0b21d86e2415c68260280c5f3d6",
+    "dotnet/Simulator.RequestedQualification/AssemblyInfo.cs": "276831bee8be51c8cdcdf1d6afcbf22974e0eaecc72470e40e78533d84018f46",
+    "dotnet/Simulator.RequestedQualification/CorpusBlockerRanking.cs": "08d0339c5c7ef66385eb866fe218df6d24a0287d452b5c898944f9736611be4a",
+    "dotnet/Simulator.RequestedQualification/DeckValidationContract.cs": "fdae4723fa7b8996e924050a031baf549882ce092ac8efa30c096dd3429f0c75",
+    "dotnet/Simulator.RequestedQualification/MemorylessReference.cs": "3817cf89533ad96a7dcc48bf7fdbf2076b6afc002b18b12330d7bf96a7ce5434",
+    "dotnet/Simulator.RequestedQualification/packages.lock.json": "9fb39300af7be7f588bc9788e903c05e862a9fcfcfc5ef4ad5216f733bbe8bc3",
+    "dotnet/Simulator.RequestedQualification/PoleZeroQualification.cs": "b42451a1e4232196b6cf51068e01a9efc2861029dddeb3a038a3c5ea2aa2e2c6",
+    "dotnet/Simulator.RequestedQualification/QualificationSupport.cs": "75c0091546cade6d41e502fed1046a7fe7396279eb007031b1a8310ce690f28e",
+    "dotnet/Simulator.RequestedQualification/ReferenceGridReplay.cs": "a66dd6d57e0aad2b98ee21f010093ec7d74ad5ff0807793dedd1b76f7d09079a",
+    "dotnet/Simulator.RequestedQualification/RequestedCorpus.cs": "5ae7e2e50ded84ce885fe95e43758a4c49423eb0e9f222c4f24995159e563978",
+    "dotnet/Simulator.RequestedQualification/Simulator.RequestedQualification.csproj": "ce0b8357624b8fc8f5db909e17d56a6364c334f55f19e02cd572ad4087a299c0",
+    "dotnet/Simulator.RequestedQualification/StopGridQualification.cs": "aef133118cb23764ece8b221a577371fa45c3f138f96384995773fd7ddf3fcaf",
+    "dotnet/Simulator.Syntax/Grammar/SpiceLexer.g4": "a67165dcaf8f7f7cd5833c60af4411c1b0912e6e818ced3bf999c8f210f4da92",
+    "dotnet/Simulator.Syntax/Grammar/SpiceParser.g4": "785595febc41fa01bdd0759595a641cf2e581b22934234fcd3336ca81bc4b9ef",
+    "src/ac.rs": "fe144b6126bbed4226eacb77b6bbe72278365ec5932f11387e5da5db63263df8",
+    "src/adaptive.rs": "595ada0a4bd8b8cf3278d6e655f4906df341a1a77433d46ec67f0b9e969818fe",
+    "src/api.rs": "60c849f4efe89f128edfb76c1ec1aae9245bb6cd1ba6a7dce7a5e01550c7a4ba",
+    "src/artifact.rs": "71bc73886f4572ea500febc8f998e507504d54672fcdc5ee7aee56ca357cb8a1",
+    "src/assertion.rs": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+    "src/audit.rs": "637d457f5ec5e462c99706bbb199cc5e248bc1a6bcc0501430710fb12d10ef10",
+    "src/audit_ac.rs": "0e015c2b2f5d6489f3c8886d22cb2eb10729900c479233978b0e9b236ece8438",
+    "src/audit_configured.rs": "c9d51444f48cc1bca2201ca5edbe2915bf9f8ad4cfbf715dc85216faee37d6ad",
+    "src/backend.rs": "f08a887529bbcff110e91cfaf26d45e27101cf1357088a7ed3b99c42190decf2",
+    "src/backend_faer.rs": "d4271a240066ecc7b5fd6f8900348ea81b318094c0fca2ab69bbd7dc80343cea",
+    "src/backend_intel.rs": "68169b6511194079eab4249b2584b0075fb000fe198992b879a25e27ad2cd2a5",
+    "src/behavioral_resistor.rs": "be5cc6436bd19adf3882850cc611b3897a02bde2ca21f787d58622d838f4ad20",
+    "src/bsim330.rs": "7a00f300a96790a7c6e204ac50a39ef310ec4fb805ff330a9e06f5d05a8fa3e0",
+    "src/campaign.rs": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+    "src/charge.rs": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+    "src/circuit.rs": "455182e52eb7be9d1dbd6c69bdadc2128fb4b8fcb53a27c787eb29232e8a5925",
+    "src/compile.rs": "5c277284738cd45fd6fc42999a352a87cf952022837560b2afcbdab17804f908",
+    "src/configured.rs": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+    "src/dc.rs": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+    "src/error.rs": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+    "src/experiment.rs": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+    "src/expression.rs": "29bbba20f4f8872094be5c92bd82751ba4580db0748e5f67e34efe9d52e6fb46",
+    "src/grid.rs": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+    "src/ids.rs": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+    "src/integrator.rs": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+    "src/lib.rs": "e9bbcb570437c56a33d14f2a16c6a95b713d59acc9b71faa1b3225134d878077",
+    "src/linalg.rs": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+    "src/linear_dynamic.rs": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+    "src/main.rs": "4886acf19492adf81d7098ce63b137e88a988cf839ce70f62c6ec0ee8db73017",
+    "src/measurement.rs": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+    "src/model.rs": "500da23f436a9c916a0e264fb95a201a90189bae645d24858f8bdf17d9ec4d01",
+    "src/mos1.rs": "4dc1dc86f02e83a30e173cbd95bb31c52725e6aad16d7f9bb115be473e1ed9d3",
+    "src/mutual_inductance.rs": "9b8d373524cffa2aa8093a9db67bb6645b40864b8fd0047bf08c68d7e8994514",
+    "src/netlist.rs": "759d4d1808ea4431ef20e25723687c51fe4d9344374071e81955f894dcfdf0a5",
+    "src/newton.rs": "bfc4a495f17d25d7696cdd047443c462dc0d9f530f4e615a4a9968a03e8a4d1b",
+    "src/ngspice_resistor.rs": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3",
+    "src/power.rs": "ac25369c845b434d6efb599da77e050a374ac167b868edf765c3268923093406",
+    "src/provenance.rs": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+    "src/pspice_switch.rs": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9",
+    "src/quantity.rs": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397",
+    "src/registry.rs": "ff1d1bdf7d82f2b4c1fdc254d8679f89cd69cbb0bac4abb72fc4f97372c369a2",
+    "src/sampling.rs": "625df4752dc2a257f1147b148f0231e3d4181ead1cf19ecff4deb473d25a26e3",
+    "src/solver_contract.rs": "895b8d2800c55ae0c87e3c38f9bb5630df1f4e2c7988679eb1179e1db3f21201",
+    "src/sources.rs": "76ba60d9855777612e1a0fd0e0d438ea939d79eaadc000f1ca7aeb7f8ba91091",
+    "src/sparse.rs": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+    "src/spice_diode.rs": "992636edc3f26009e0af65fd92334161811ca27d901b8c079670875d7b72c64e",
+    "src/sweep.rs": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+    "src/topology.rs": "e08fee8153a6c701de145a0707acb866db960eb06162315a81f6286bdf699932",
+    "src/transient.rs": "c4bb4261eb887c00094040eb1c5aac6d554259e6aa8c6ae01a99c20188b43939",
+    "src/variation.rs": "c7c7b353f039e07b5f9136b4b3a405338851e1256a55616329dd18eb6aa3fe0d",
+    "src/voltage_scaled_cccs.rs": "0941725b00b87d405be1e94be2cbae45898a29f312736c77266902032b74f5e6",
+    "src/waveform.rs": "e3322998ebe3c4e8e8987809575744f450e9a4e118eddb76f5d703bdb9dc6007",
+    "Cargo.toml": "86310e52941b979619682ca1cb54e6421e0a4fd1e9e0093b2847b880391f1099",
+    "Cargo.lock": "69b0c6b10a3b047b4cfd2815ce2884c3d5f32a7c56696bf282633d29670a9e8c",
+    "rust-toolchain.toml": "c946aab8e3eafd93e58303a52f31fc8b9a0caf4bf7a63328ff00195e6a6ad30b",
+    "scripts/Run-RequestedCorpus.cs": "7ecfab760d4feebb92d2e5a30450266e86c548b7ed7faf6323a9afa0e666a34e",
+    "global.json": "c9c9cae030d639a70a7f7642ee546c9a31dda4bae6492a3a8aa21d08cab83779",
+    "E:/Artifacts/Spice-another-twenty-20261115T233944Z/inventory-v1.json": "e0c3f00387db35b88cafb77c1bd28d9a744841751ced26387326ec11930f5d3f",
+    "E:/Artifacts/Spice-another-twenty-20261115T233944Z/engine-final/circuit-simulator.exe": "3ec9017447aa9b949e572875951b220578802fa83b5394eabc116c62dfab9f95",
+    "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "E:/Artifacts/Spice-another-twenty-20261115T233944Z/runtime-reviewed/Simulator.RequestedQualification.dll": "5e84ac3c8a418edec4071cc21920b3f6e3846bf53eaf22b3b0b67ef0f37ed692",
+    "E:/Artifacts/Spice-another-twenty-20261115T233944Z/runtime-reviewed/Simulator.Frontend.dll": "ae36c4b502232b803c7f480cc390f8334402d0584e777595879eaff45d8dc88c",
+    "E:/Artifacts/Spice-another-twenty-20261115T233944Z/runtime-reviewed/Simulator.Syntax.dll": "36cbb3d4161d6f08ad495e4f5aad02237d8c53de0a6ee11d02a26e5dd900d954",
+    "E:/Artifacts/Spice-another-twenty-20261115T233944Z/runtime-reviewed/Simulator.Client.dll": "79d6b788b6ecd26cb5b625a0d345218a64b228b194f7523f3299dc9ea4d44b2d"
+  },
+  "artifact_sha256": {
+    "reviewed-faer/summary.json": "147a7e4a3785543c6beab4d669306805b84c3b6167997e0ea06e5a20754d6133",
+    "reviewed-lu/summary.json": "8152721adbf21f279318e409e1d4abb3abb1a70f556fdfea38e440e3cfbc6836",
+    "reviewed-intel/summary.json": "4d07fbbaeaeb024a2a996554c6181f4c7324a65b7363e9718e74725818671aa4",
+    "before-lu/summary.json": "cc26ee67fcaa0fb33267f665d562a66c5bdcfde3dfe80a7c2194f97f9768f64d",
+    "engine-final/circuit-simulator.exe": "3ec9017447aa9b949e572875951b220578802fa83b5394eabc116c62dfab9f95",
+    "timings-final/summary.json": "4e8e319603d1c09e6c6e802e59ff21e4cd48cdfcc81d8522936db4a04c8207f5",
+    "timings-v1/summary.json": "30479564bc3bbb40f5b6b56fbaa83c834de0145741c15d9a75fa1f298950cbae",
+    "rspice-final/results.json": "467acd6b31f2a09e2912267aeeedfb33115a32f87a071739a1638d8d292ce339",
+    "mutants-six/mutants.out/outcomes.json": "25f19cf73a837e14089dfcd8895cf5c7d4204b8ef5524b7eaff229e14c4b9734"
+  },
+  "review": {
+    "findings_fixed": [
+      "Legacy Rust entry-point scope bypass",
+      "Passive-mediated behavioral control admission",
+      "Even-count median calculation"
+    ],
+    "limits": "Direct source/B-output startup graph only; no full electrical dependency proof",
+    "kind": "Internal read-only source review; not an external expert or independent execution"
+  },
+  "cases": [
+    {
+      "path": "tests/xyce/Netlists/AGECAP/agecap_ref.cir",
+      "input_sha256": "e93dcf28a3cb554452a613134fa1d5c79ca03b467530b02a2896af6caa06aad9",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_executed_not_fully_qualified",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": false,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": false,
+          "status": "numerical_disagreement",
+          "native_exit": 0,
+          "native_points": 1030,
+          "native_dialect": "default",
+          "native_raw_sha256": "a0f079dab337e8c03b7f46c26cebb2cd374ffc4e01cf434b84b745ac70ce276b"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_201_SON/bug201b.cir",
+      "input_sha256": "b2f9854fbe1a32958cac81b80b0f997e89d5c3c7a890d3ef8eba4fb4d4154d53",
+      "faer": "all_individual_requested_analyses_agreed",
+      "lu": "all_individual_requested_analyses_agreed",
+      "intel": "all_individual_requested_analyses_agreed",
+      "rspice_reference_passed": true,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": true,
+          "status": "agreed",
+          "native_exit": 0,
+          "native_points": 1008,
+          "native_dialect": "default",
+          "native_raw_sha256": "781d180f106a60a277ce5c006e40011111aa3aaa52b7d59722dd6d5f6f9c8231"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_307/bug_307_d.cir",
+      "input_sha256": "a1838bea00c7a1f2c01257d8899753d64ea9506014eda290fbc47a1a4593a21c",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_execution_failed",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": false,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": null,
+          "status": "native_failed",
+          "native_exit": 1,
+          "native_points": null,
+          "native_dialect": "psa",
+          "native_raw_sha256": null
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_307/bug_307_e.cir",
+      "input_sha256": "b1036bf2be6b0a588ab3c38ebafec2b54c40c9bd5385cbe0be8b215edb7894ac",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_execution_failed",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": false,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": null,
+          "status": "native_failed",
+          "native_exit": 1,
+          "native_points": null,
+          "native_dialect": "psa",
+          "native_raw_sha256": null
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_307/bug_307_f.cir",
+      "input_sha256": "6b3430f380cff760e1314bb3bfed05fd56e85d89f09315ae9b1afc574432d6ef",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_execution_failed",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": false,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": null,
+          "status": "native_failed",
+          "native_exit": 1,
+          "native_points": null,
+          "native_dialect": "psa",
+          "native_raw_sha256": null
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_307/bug_307_g.cir",
+      "input_sha256": "c77b748820f98dc4e7ab0fbc79faee5f9e9495dfd259fcedd8e61b88bcd9b053",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_execution_failed",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": false,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": null,
+          "status": "native_failed",
+          "native_exit": 1,
+          "native_points": null,
+          "native_dialect": "psa",
+          "native_raw_sha256": null
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_307/bug_307_h.cir",
+      "input_sha256": "9c5db52c669dc0f5a7f0cad582efec5e937b6f2a4c4c9fcbd2419133abb7ed0c",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_execution_failed",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": false,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": null,
+          "status": "native_failed",
+          "native_exit": 1,
+          "native_points": null,
+          "native_dialect": "psa",
+          "native_raw_sha256": null
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_311/bug_311_a.cir",
+      "input_sha256": "81ac9c56fedcd2b92b451e2fb38d4f914e31c6e4cf53cb3ea15984b47b9a8202",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_execution_failed",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": false,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": null,
+          "status": "native_failed",
+          "native_exit": 1,
+          "native_points": null,
+          "native_dialect": "psa",
+          "native_raw_sha256": null
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_311/bug_311_b.cir",
+      "input_sha256": "5e796740ff927faaed4c8763646404fac232c193689170b5da07a552cd418020",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_execution_failed",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": false,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": null,
+          "status": "native_failed",
+          "native_exit": 1,
+          "native_points": null,
+          "native_dialect": "psa",
+          "native_raw_sha256": null
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_61/capacitor.cir",
+      "input_sha256": "fec7710e1f94e9a9b76f75cc666806e73c35c15136a33abde47c5c77e168ff0b",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_executed_not_fully_qualified",
+      "intel": "requested_executed_not_fully_qualified",
+      "rspice_reference_passed": false,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": false,
+          "status": "numerical_disagreement",
+          "native_exit": 0,
+          "native_points": 223,
+          "native_dialect": "default",
+          "native_raw_sha256": "3cc9aee4fca45e630a3c1ce6725bdbd527b3f1f243b427722348dd8816b10288"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_80/capacitor.cir",
+      "input_sha256": "fb565c640ef45822446039cbbe0882339c67d3b2259d8efdbc7cdf680b6373c8",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_executed_not_fully_qualified",
+      "intel": "requested_executed_not_fully_qualified",
+      "rspice_reference_passed": false,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": false,
+          "status": "numerical_disagreement",
+          "native_exit": 0,
+          "native_points": 223,
+          "native_dialect": "default",
+          "native_raw_sha256": "239ccaea7bf46a83d2bbb868376eaa64c81ca7c29c1500cc3c5ccbdb88c5d7d6"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/MCNC_BJT_RCA/rca.cir",
+      "input_sha256": "00d524a2735a6923b1e4890306fb9821fbffe5a9ee8818dd12e8ba6cbdb01614",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_execution_failed",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": true,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": false,
+          "status": "numerical_disagreement",
+          "native_exit": 0,
+          "native_points": 258,
+          "native_dialect": "default",
+          "native_raw_sha256": "20c7c7eb1e9bb6272eb5c3adcdf187df549091a80630f1f7afb039e164835021"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/TL1X/TL1X_mpi.cir",
+      "input_sha256": "3f120d3e6a49aa3a72d8e346a7c9ae39bd2acb5feae1c773fa14ef9db9c76f66",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_execution_failed",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": true,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": false,
+          "status": "numerical_disagreement",
+          "native_exit": 0,
+          "native_points": 3008,
+          "native_dialect": "default",
+          "native_raw_sha256": "db95374ca5dc58ae314f087deba863578b2b9a70ae91a5b88c02b901891d6ddf"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/TIA/TRAP/testmaxstep.cir",
+      "input_sha256": "f2559c1fefcb04201694dd5fbe2f4f2f5369d5db499b6f3231daf7da61e330cf",
+      "faer": "all_individual_requested_analyses_agreed",
+      "lu": "all_individual_requested_analyses_agreed",
+      "intel": "all_individual_requested_analyses_agreed",
+      "rspice_reference_passed": true,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": true,
+          "status": "agreed",
+          "native_exit": 0,
+          "native_points": 211,
+          "native_dialect": "default",
+          "native_raw_sha256": "eeeb93cdb707d40b38de95f527984a78e382185dcd38763efe838e71ab55fd85"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/ACSENS/lowpass_fd.cir",
+      "input_sha256": "c173233c3cfa1e47f6c1f2c24adbed519964a72e335ada4b58f195f4168d3f7c",
+      "faer": "all_individual_requested_analyses_agreed",
+      "lu": "all_individual_requested_analyses_agreed",
+      "intel": "all_individual_requested_analyses_agreed",
+      "rspice_reference_passed": true,
+      "operations": [
+        {
+          "kind": "ac",
+          "executed": true,
+          "agreed": true,
+          "status": "agreed",
+          "native_exit": 0,
+          "native_points": 1,
+          "native_dialect": "default",
+          "native_raw_sha256": "10a0f8a5fcfcad42d6ae823995b78fadbafeaeebcf82eb19396be487be57547c"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/ISSUE_543/acBaseline1.cir",
+      "input_sha256": "8dfb7b029ac3f75dafa6c7eba7cd5d352ff569d59782325e3d91e459645235c2",
+      "faer": "all_individual_requested_analyses_agreed",
+      "lu": "all_individual_requested_analyses_agreed",
+      "intel": "all_individual_requested_analyses_agreed",
+      "rspice_reference_passed": true,
+      "operations": [
+        {
+          "kind": "ac",
+          "executed": true,
+          "agreed": true,
+          "status": "agreed",
+          "native_exit": 0,
+          "native_points": 51,
+          "native_dialect": "default",
+          "native_raw_sha256": "5b3f0f167a1867807268ecfe0a579e90a3ac3e0afbd7d0baea0099252be64951"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Output/TRAN/tran-prn-noheaderfooter.cir",
+      "input_sha256": "663f59ee557f89b26bd44d1fc4ac6d7c9e9aebcd90f388d3ed0de2b2fc280b8b",
+      "faer": "all_individual_requested_analyses_agreed",
+      "lu": "all_individual_requested_analyses_agreed",
+      "intel": "all_individual_requested_analyses_agreed",
+      "rspice_reference_passed": true,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": true,
+          "status": "agreed",
+          "native_exit": 0,
+          "native_points": 59,
+          "native_dialect": "default",
+          "native_raw_sha256": "167d13c0d2460dad0d0536c3897b83796129a0fba6e51dfa85a1f1ffd13f85bd"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/RESISTOR_TD/temp_dep_2.cir",
+      "input_sha256": "db78b73a999ccaa9e81038316b5d682e18ec7b6105edae61b951277f2d133493",
+      "faer": "all_individual_requested_analyses_agreed",
+      "lu": "all_individual_requested_analyses_agreed",
+      "intel": "all_individual_requested_analyses_agreed",
+      "rspice_reference_passed": true,
+      "operations": [
+        {
+          "kind": "dc",
+          "executed": true,
+          "agreed": true,
+          "status": "agreed",
+          "native_exit": 0,
+          "native_points": 6,
+          "native_dialect": "default",
+          "native_raw_sha256": "5689efbf129f131beebee3a187e4da71e9c0a1d3be44cf181cc66a0a6e7fc90e"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/ABM_EXPLN/exp_ln.cir",
+      "input_sha256": "291af6ff5af5a2a5222116501134dbadda827ea2e4d5be4060a7a61ea7281073",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_executed_not_fully_qualified",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": true,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": false,
+          "status": "numerical_disagreement",
+          "native_exit": 0,
+          "native_points": 145,
+          "native_dialect": "default",
+          "native_raw_sha256": "5b230edc797c5d96f0e59502ed9344a0a016cdce17b6b88382a216f4efa4c347"
+        }
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/ABM_LOG/log.cir",
+      "input_sha256": "a381a1c91db36d38e1ac27ccfc7ee95643efa4bc8df6c98fc6c36128e52e6e36",
+      "faer": "requested_executed_not_fully_qualified",
+      "lu": "requested_executed_not_fully_qualified",
+      "intel": "requested_execution_failed",
+      "rspice_reference_passed": true,
+      "operations": [
+        {
+          "kind": "tran",
+          "executed": true,
+          "agreed": false,
+          "status": "numerical_disagreement",
+          "native_exit": 0,
+          "native_points": 71,
+          "native_dialect": "default",
+          "native_raw_sha256": "827f535b4fab102b2c7e3cbb97c54cd62a61401226419a78cd5a3442d1d2081d"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Twenty executing files do not mean twenty stock-ngspice agreements or twenty new physical model families.",
+    "Seven switch originals are rejected by stock ngspice nested SW model lookup; references remain unavailable.",
+    "Seven numerical differences remain unqualified.",
+    "No numerical bounds relaxed, original inputs edited or requested operations omitted.",
+    "Canonical main and unrelated work preserved; Windows x64 finite qualification only."
+  ],
+  "results_issue": "https://github.com/jeffadickson/Spice/issues/54",
+  "source_normalization": {
+    "normalized_content_identical": true,
+    "kind": "Trailing line breaks only; no executable tokens or source line positions changed",
+    "path": "src/main.rs",
+    "after_sha256": "252b74ea7b27398838d079eac8946c8729acf5b4b9467c772892385ffa4c55dd",
+    "before_sha256": "4886acf19492adf81d7098ce63b137e88a988cf839ce70f62c6ec0ee8db73017"
+  },
+  "timing_helper_contracts": [
+    {
+      "actual": 2.0,
+      "passed": true,
+      "kind": "median",
+      "values": [
+        1.0,
+        3.0
+      ]
+    },
+    {
+      "actual": 2.5,
+      "passed": true,
+      "kind": "median",
+      "values": [
+        1.0,
+        2.0,
+        3.0,
+        4.0
+      ]
+    },
+    {
+      "actual": 2.0,
+      "passed": true,
+      "kind": "median",
+      "values": [
+        1.0,
+        2.0,
+        7.0
+      ]
+    },
+    {
+      "output_absent": true,
+      "kind": "invalid_provenance",
+      "rejected": true
+    }
+  ],
+  "implementation_commit": "f1f31069cfab7090b6790b9457a578c29d14d3d9",
+  "publication_binary": {
+    "byte_identical": false,
+    "tested_binary_sha256": "3EC9017447AA9B949E572875951B220578802FA83B5394EABC116C62DFAB9F95",
+    "publication_binary_sha256": "36B29B785A45D5CA5E89C05264A0965A3430C41E4F040DB5D794F09E30782042"
+  },
+  "publication_whitespace": {
+    "trailing_line_break_cleanup": [
+      "dotnet/Simulator.Frontend.Tests/RequestedTimeintTests.cs",
+      "schemas/request-v1.json",
+      "tests/mutual_inductance.rs",
+      "tests/behavioral_transient.rs",
+      "tests/configured_relative.rs",
+      "docs/another-twenty-decks-plan.md",
+      "evaluation/RSpiceTimingProbe.rs",
+      "scripts/Build-RSpiceTimingProbe.ps1",
+      "scripts/Measure-OriginalDeckTimings.cs",
+      "scripts/Measure-OriginalDeckTimings.ps1"
+    ],
+    "executable_tokens_changed": false
+  }
+}
