@@ -250,6 +250,30 @@ fn enforce_homogeneous_constraints(
         let value=if grounded[r] {0.} else {values[r]};
         values[column]=value;
     }
+    // Preserve an already accepted correction, including its rounding. Most
+    // solves need no extra row sweep; do not perturb their Newton trajectory.
+    if real_backward_error(matrix,rhs,values)<=1e-10 { return; }
+    // A branch sensor row may contain a unit current coefficient beside a
+    // 1e-267 conductance. Factor refinement can stagnate at a current many
+    // orders above the actual leakage. Re-evaluate that dominant unknown
+    // from every other product, retaining even extremely small coefficients.
+    // This is a bounded polish, not acceptance: the caller still verifies
+    // the complete original system at the unchanged componentwise bound.
+    for row in 0..matrix.nrows() {
+        if rhs[row] != 0. { continue; }
+        let Some(column)=(0..n).max_by(|&a,&b|matrix[(row,a)].abs().total_cmp(&matrix[(row,b)].abs())) else { continue; };
+        let coefficient=matrix[(row,column)];
+        if coefficient==0. || (0..n).any(|other|other!=column && matrix[(row,other)].abs()>coefficient.abs()*f64::EPSILON) { continue; }
+        let mut rest=0.;
+        for other in 0..n { if other!=column { rest+=matrix[(row,other)]*values[other]; } }
+        let corrected=-rest/coefficient;
+        if corrected.is_finite() {
+            if values[column]!=corrected {
+                tracing::debug!(row,column,previous=values[column],corrected,"real_homogeneous_row_polish");
+            }
+            values[column]=corrected;
+        }
+    }
 }
 /// Independent algorithm within the same library, not a second qualified provider.
 #[derive(Debug, Default)]
@@ -341,6 +365,53 @@ fn real_backward_error(matrix: &DMatrix<f64>, rhs: &DVector<f64>, values: &DVect
 #[cfg(test)]
 mod october28_contracts {
     use super::*;
+    #[test]
+    fn already_acceptable_sensor_current_is_not_recomputed() {
+        // A one-ULP residual already meets the unchanged independent bound.
+        // Avoid perturbing an accepted Newton correction or paying for a polish.
+        let g:f64=1e-200;let voltage:f64=1.2345;
+        let current=(g*voltage).next_up();
+        let a=DMatrix::from_row_slice(2,2,&[1.,0.,g,-1.]);
+        let rhs=DVector::from_vec(vec![voltage,0.]);
+        let mut x=DVector::from_vec(vec![voltage,current]);
+        assert!(real_backward_error(&a,&rhs,&x)<1e-10);
+        enforce_homogeneous_constraints(&a,&rhs,&mut x);
+        assert_eq!(x[1],current);
+    }
+    proptest::proptest! {
+        #![proptest_config(proptest::test_runner::Config::with_cases(64))]
+        #[test]
+        fn homogeneous_sensor_polish_preserves_scaled_products(exponent in -240i32..240, voltage in 0.01f64..100.) {
+            let scale=10f64.powi(exponent);
+            let small=scale*1e-20;
+            let a=DMatrix::from_row_slice(2,2,&[1.,0.,small,-scale]);
+            let rhs=DVector::from_vec(vec![voltage,0.]);
+            let mut x=DVector::from_vec(vec![voltage,1e-10]);
+            enforce_homogeneous_constraints(&a,&rhs,&mut x);
+            proptest::prop_assert!((x[1]-voltage*1e-20).abs()<=voltage*1e-20*1e-14);
+            proptest::prop_assert!(real_backward_error(&a,&rhs,&x)<1e-10);
+            // A nonzero RHS is not a homogeneous constraint and is never polished.
+            let rhs=DVector::from_vec(vec![voltage,1.]);
+            let mut untouched=DVector::from_vec(vec![voltage,1e-10]);
+            enforce_homogeneous_constraints(&a,&rhs,&mut untouched);
+            proptest::prop_assert_eq!(untouched[1],1e-10);
+        }
+    }
+    #[test]
+    fn homogeneous_sensor_row_retains_the_actual_subnormal_scale_current() {
+        // Reduced RCA3040 Newton row: its branch current is ~1e-272 A, not
+        // the ~1e-39 roundoff returned after same-precision LU corrections.
+        let g = 1.556839682456523e-267;
+        let voltage = 6.362531751440587e-6;
+        let a = DMatrix::from_row_slice(3,3,&[1.,0.,0.,0.,1.,0.,-g,g,-1.]);
+        let rhs = DVector::from_vec(vec![0.,voltage,0.]);
+        let mut x = DVector::from_vec(vec![0.,voltage,-1.7316498676745834e-39]);
+        enforce_homogeneous_constraints(&a,&rhs,&mut x);
+        assert_eq!(x[2],g*voltage);
+        assert!(real_backward_error(&a,&rhs,&x)<=1e-10);
+        // A failed or zeroed correction must still be rejected independently.
+        x[2]=0.;assert_eq!(real_backward_error(&a,&rhs,&x),1.);
+    }
     #[test]
     fn homogeneous_projection_handles_transitive_ground_and_unanchored_chains() {
         for reverse in [false,true] {

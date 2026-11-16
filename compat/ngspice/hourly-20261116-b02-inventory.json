@@ -1,0 +1,74 @@
+{
+  "rows": [
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/BUG_237/Bug_237_A1.cir",
+      "result": {
+        "Sha256": "cc40a83e8bbab8b7d990f4d3e6dca39be54473f711240f7d997a5f2b4fd2b916"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/BUG_458/bug458.cir",
+      "result": {
+        "Sha256": "344cd4a8d319781d8b8dc81b3eb5e68ee54d99cc0f4752c92e9c0f3c41cc389c"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1041_SON/b3soi_invert_option_scale.cir",
+      "result": {
+        "Sha256": "1d392a6bd5c1e9297c73b3d73d6c83504a6b8ab98f627e623cb1514b0ffa30fa"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1041_SON/b3soi_invert_option_scale2.cir",
+      "result": {
+        "Sha256": "3beacc37c45cee40e7f809b9abcfa29e6027dfdef31fa7262b6f72a66efbee1c"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1041_SON/b3soi_invert_option_scale2Ref.cir",
+      "result": {
+        "Sha256": "ee833d69400f6d20a0df3e570ea5c3e1f7b4097d309cbc7d0066832c0b7b7bde"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1041_SON/b3soi_invert_scale.cir",
+      "result": {
+        "Sha256": "0bd927e79102d191bc008ff233d4d8bd95510bd294e03b31c7e7309ce72b8294"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1041_SON/b3soi_invert_scale2.cir",
+      "result": {
+        "Sha256": "dab2550b7d1bb046105eb34981ac2128c35699dcbbe00a590a0a104e23feb6a1"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1041_SON/mos1_invert_scale.cir",
+      "result": {
+        "Sha256": "6c3b93a74acdaec75f514f36883f9fd51e25b8208ea01dee1bf1fe96df7c7bae"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1041_SON/mos1_invert_scale2.cir",
+      "result": {
+        "Sha256": "b05fb88274ce638bb24ebbd8d6710b030432b66e0ca1e3bf15ecdf91c348af93"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1041_SON/mos1_invert_scale2Ref.cir",
+      "result": {
+        "Sha256": "bcd41d0f1641e0537b4cee1bc270b13a58a66ac2922b5245aeec1d883a305480"
+      }
+    }
+  ]
+}

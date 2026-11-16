@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: LU homogeneous sensor correction
+
+[REQUIREMENT]
+UID: SOLVER-LU-SENSOR-001
+STATUS: Draft
+TITLE: Retain tiny homogeneous sensor-row products
+STATEMENT: >>>
+The real LU adapter shall retain every finite coefficient when polishing a homogeneous row whose dominant coefficient exceeds every other coefficient by at least one binary64 epsilon ratio. The adapter may recompute that dominant unknown from all other products, but shall accept only after checking every equation of the original system at the unchanged componentwise backward-error bound. Nonzero right-hand sides shall not be treated as homogeneous. Direct and prepared factors shall follow the same policy. Diagnostics shall use the existing tracing framework and never contaminate protocol stdout.
+<<<
+COMMENT: >>>
+Implementation: src/backend.rs. Verification: captured RCA3040 numeric Newton fixture in tests/lu_tiny_sensors.rs, reduced red/green regression and 64 scaled product properties in backend.rs; exact original-deck qualification and evidence are separate. This correction is not a global conditioning or convergence guarantee.
+<<<

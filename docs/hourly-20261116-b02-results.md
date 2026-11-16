@@ -1,0 +1,30 @@
+# Hourly batch 20261116-b02: real LU correction, no new deck agreement
+
+Ten additional original files were frozen and baselined at 6662a0a. All ten still refuse preparation. This batch adds **zero** executing or agreeing original files. Twenty of the requested fifty additions are now selected; the four original AC agreements from B01 remain four, not eight. The original thirty retain their separate historical evidence and were not requalified here.
+
+The shared numerical investigation captured RCA3040's first AC operating-point Newton matrix. A homogeneous sensor row had conductance 1.556839682456523e-267 and a physically implied current around 9.9e-273 A, while repeated LU corrections retained approximately -1.7e-39 A. Its componentwise backward error was one. These tiny values are normal binary64 numbers, not zeros.
+
+The dense real adapter now recomputes a dominant homogeneous-row unknown from every other product when needed, following the existing sparse adapter's bounded polishing approach. It preserves already accepted corrections, keeps every coefficient, and checks every original equation at the unchanged 1e-10 bound. This handles direct and prepared factors. Structured debug events use tracing. Requirement SOLVER-LU-SENSOR-001 is Draft and links the implementation and regressions.
+
+The captured 98-by-98, 353-nonzero system passes direct/prepared public-API tests. Its original full deck now reaches the later **AC residual failure on LU**; that deck is still not counted as a LU agreement. Faer retains all four B01 full-analysis agreements. New B02 blockers group into four MOS1 geometry/model/TIMEINT cases, five SOI level-10 cases and one explicitly selected KLU backend. Parser acceptance is separate from all these execution gaps.
+
+Verification on the final production source: 650 native tests passed, five ignored; the library scope includes 39 tests and 64 new scaled-product property cases using seed 88320261116. Both genuine red/green regressions are retained. The ignored authored diode DC/AC/transient oracle was then explicitly enabled with the pinned ngspice executable and passed separately (one test); it is not a new original deck. The three native BSIM3/SOI provider tests and the endurance batch remain outside this run. Three selected cargo-mutants 27.1.0 mutations were caught after an unmutated baseline and owned-package invalidation in an isolated mutation target. This is a focused three-candidate result, not a repository mutation score. The captured-system coverage test measured 99/313 executable backend.rs lines (31.63%); other tests are not included in that measurement. Rust branch coverage remains unmeasured. StrictDoc SDReader parsed 86 documents and 572 unique IDs.
+
+The final Intel gates passed 13 tests and the low-level FP64 probe. The actual release executable also attempted all four B01 originals on Intel UHD Graphics 630, driver31.0.101.2141: zero completed or agreed. Its original-system residual gates rejected them; the first diffpair error was approximately 4.59e-12 against the provider's 1e-12 gate. RCA3040 also failed that gate. No CPU fallback was used. Small gate success does not qualify these nonlinear original decks, Linux, CUDA or general GPU acceleration.
+
+Three-way median child-process times in milliseconds follow. Eight measured samples per provider combine the initial three and a reverse-order five-sample repeat, with two warmups. The repeat was prompted by timing variability; both runs and all samples are retained.
+
+| Deck | Ours release | ngspice | RSpice |
+|---|---:|---:|---:|
+| diffpair_spiceMan.cir | 39.46 | 99.29 | 69.95 |
+| diffpair_spiceManLIN.cir | 40.49 | 100.45 | 69.79 |
+| diffpair_spiceManOld.cir | 35.69 | 100.72 | 65.56 |
+| rca3040.cir | 660.10 | 101.54 | 111.03 |
+
+The old and new binaries use matching Cargo release profiles, intel-opencl features, compiler identity and empty Rust flags. The initial and reverse-order medians varied: RCA3040 before/after were 708.63/886.06ms initially and 666.66/640.51ms on repetition. No speed improvement or regression is established by those small runs. RCA3040 remains substantially slower than both references. Ours excludes SPICE preparation; RSpice uses its cached debug core; parsing, protocols and output work differ. These are not end-to-end or solver-kernel speed claims.
+
+Qualification pitfalls are preserved as unavailable or predecessor evidence. Earlier directories named release used a debug executable because a slash-sensitive path replacement failed; their Intel unknown-backend errors are not actual GPU numerical failures. Only verified-release-* explicitly selects release-engine.exe with SHA-256 a591a9751a8ceaf3bdf2cdfdd6c740ecd62f53e4ea4236d93b0600103f9206ec. First-variant debug/release timing comparisons are excluded. Sandbox SDK probes could not read NuGet configuration; the required host-access probe passed. The first fast-path test attempt had a compile error; red-fastpath-v2.log is the real behavior failure. The earlier two-mutant and 649-test snapshot is not added to final counts.
+
+Raw artifacts remain at E:/Artifacts/Spice-hourly-20261116-b02-070019. Bounded evidence is evidence/hourly-20261116-b02.json, the inventory is compat/ngspice/hourly-20261116-b02-inventory.json, and the two burndowns distinguish this zero-agreement batch from the eighty-file work target. Actual execution used the existing RequestedCorpus coordinator with explicit engine arguments, frozen B01 managed assemblies, pinned originals and ngspice47+. Build: cargo build --locked --release --features intel-opencl --bin circuit-simulator. Test: cargo test --locked --tests. All target, scratch, coverage, mutation, OpenCL and timing outputs were routed to E:.
+
+Next high-yield work is MOS1 effective geometry/default precedence and SCALE, then SOI parameter/port/provider lowering and the refused TIMEINT forms. Inspect the pinned reference source for each contract; do not discard unimplemented physical terms. The LU complex AC residual and Intel failures remain separate numerical work.

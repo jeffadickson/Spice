@@ -1,0 +1,246 @@
+{
+  "run_id": "20261116-b02-070019",
+  "state": "verified_partial_checkpoint",
+  "tested_base": "6662a0a39a33278c66f9be65603cbf7401492656",
+  "raw_artifacts": "E:/Artifacts/Spice-hourly-20261116-b02-070019",
+  "selected_this_batch": 10,
+  "new_executions_this_batch": 0,
+  "new_agreements_this_batch": 0,
+  "additional_frozen": 20,
+  "additional_requested": 50,
+  "original_cohort": 30,
+  "work_target": 80,
+  "previous_additional_strict_agreements_retained": 4,
+  "changed_source_sha256": "b0116629427c879e6f9c9cf7210f370858833a6addbb507ab00e997958c6e6b1",
+  "fixture_sha256": "6211c15df6b01177ffe2b3790c5ee0cd1541d2c955babc2813931b36f4cddd42",
+  "native": {
+    "before_engine_sha256": "cd6c482cfd52874c8cdc10ef5b2583d5f0147cbeb6b0f21e1e0cf626ab1d4e00",
+    "rustflags": [],
+    "profile": "Cargo release optimized",
+    "path": "E:/Artifacts/Spice-hourly-20261116-b02-070019/release-engine.exe",
+    "matched_before_profile": true,
+    "engine_sha256": "a591a9751a8ceaf3bdf2cdfdd6c740ecd62f53e4ea4236d93b0600103f9206ec",
+    "features": [
+      "intel-opencl"
+    ]
+  },
+  "previous_b01_originals": {
+    "lu": {
+      "agreed": 3,
+      "provenance_valid": true,
+      "executed": 3
+    },
+    "faer": {
+      "agreed": 4,
+      "provenance_valid": true,
+      "executed": 4
+    },
+    "intel": {
+      "agreed": 0,
+      "provenance_valid": true,
+      "executed": 0
+    }
+  },
+  "tests": {
+    "passed": 650,
+    "library_tests": 39,
+    "new_property_cases": 64,
+    "failed": 0,
+    "ignored": 5,
+    "property_seed": "88320261116",
+    "explicitly_enabled_diode_oracle": {
+      "failed": 0,
+      "passed": 1,
+      "binary_sha256": "941690A8745F00AD522F4106699753FD7EA4592F61D7DC321626741A31933824",
+      "scope": "Authored diode DC/AC/transient fixture, not an additional original deck"
+    },
+    "default_ignored_scopes": [
+      "Two BSIM3 native host tests",
+      "SOI FD native host test",
+      "Endurance seeded_batch",
+      "Diode oracle: subsequently enabled separately and passed"
+    ]
+  },
+  "coverage": {
+    "branches": null,
+    "executable_lines": 313,
+    "file": "src/backend.rs",
+    "scope": "One public captured-system integration test; excludes the rest of the test suite, CLI main, vendor and platform code",
+    "covered_lines": 99,
+    "line_percent": 31.629392971246006
+  },
+  "mutations": {
+    "unviable": 0,
+    "timeouts": 0,
+    "selected": 3,
+    "baseline": "passed after owned-package invalidation in isolated mutation target",
+    "caught": 3,
+    "missed": 0,
+    "source_hash": "b0116629427c879e6f9c9cf7210f370858833a6addbb507ab00e997958c6e6b1",
+    "tool": "cargo-mutants 27.1.0",
+    "executable_sha256": "03abe0bd3d3b5e000311a75d294fedbb22e8cb2c863814775c782bf04a0fce4b"
+  },
+  "strictdoc": {
+    "documents": 86,
+    "unique_uids": 572,
+    "parser": "StrictDoc SDReader",
+    "success": true
+  },
+  "intel": {
+    "gate_passed": 13,
+    "low_level_probe": "passed with required host SDK access",
+    "reason": "Original-system backward-error gate; no CPU fallback",
+    "device": {
+      "backend": "intel",
+      "cpu_fallback": false,
+      "device": "Intel(R) UHD Graphics 630 | driver 31.0.101.2141 | ViennaCL 1.7.1 OpenCL FP64 GMRES",
+      "experimental": true
+    },
+    "original_decks_agreed": 0,
+    "original_decks_executed": 0,
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955"
+  },
+  "timings": [
+    {
+      "path": "tests/xyce/Netlists/ACtests/diffpair_spiceMan.cir",
+      "input_sha256": "2d20cabed5656d680c1d59a55d46744b8088084325a7bda05cf1d831178ca416",
+      "before_ours": {
+        "minimum_ms": 36.8504,
+        "maximum_ms": 50.4878,
+        "samples": 8,
+        "median_ms": 39.2638
+      },
+      "after": {
+        "ngspice_original": {
+          "minimum_ms": 95.0925,
+          "maximum_ms": 110.3323,
+          "samples": 8,
+          "median_ms": 99.28675
+        },
+        "rspice_original": {
+          "minimum_ms": 67.5947,
+          "maximum_ms": 72.6442,
+          "samples": 8,
+          "median_ms": 69.95275000000001
+        },
+        "ours_prepared_native": {
+          "minimum_ms": 37.5985,
+          "maximum_ms": 43.7583,
+          "samples": 8,
+          "median_ms": 39.4607
+        }
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/ACtests/diffpair_spiceManLIN.cir",
+      "input_sha256": "4ff0b59a9b2a38e80feb85690d44822cdaa0e824bc4166ef32451494102f92f3",
+      "before_ours": {
+        "minimum_ms": 36.7684,
+        "maximum_ms": 43.8436,
+        "samples": 8,
+        "median_ms": 39.41845
+      },
+      "after": {
+        "ngspice_original": {
+          "minimum_ms": 97.3,
+          "maximum_ms": 126.6712,
+          "samples": 8,
+          "median_ms": 100.44875
+        },
+        "rspice_original": {
+          "minimum_ms": 68.4562,
+          "maximum_ms": 72.3762,
+          "samples": 8,
+          "median_ms": 69.79035
+        },
+        "ours_prepared_native": {
+          "minimum_ms": 38.0653,
+          "maximum_ms": 44.9354,
+          "samples": 8,
+          "median_ms": 40.494299999999996
+        }
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/ACtests/diffpair_spiceManOld.cir",
+      "input_sha256": "fc027ec35b1f9f5b13c71472096b2113137a75dfac1e050035a83bd4c78960be",
+      "before_ours": {
+        "minimum_ms": 33.2362,
+        "maximum_ms": 45.3072,
+        "samples": 8,
+        "median_ms": 34.600750000000005
+      },
+      "after": {
+        "ngspice_original": {
+          "minimum_ms": 90.6767,
+          "maximum_ms": 115.1935,
+          "samples": 8,
+          "median_ms": 100.71575
+        },
+        "rspice_original": {
+          "minimum_ms": 62.7867,
+          "maximum_ms": 77.4545,
+          "samples": 8,
+          "median_ms": 65.55914999999999
+        },
+        "ours_prepared_native": {
+          "minimum_ms": 33.3993,
+          "maximum_ms": 43.8242,
+          "samples": 8,
+          "median_ms": 35.69455
+        }
+      }
+    },
+    {
+      "path": "tests/xyce/Netlists/ACtests/rca3040.cir",
+      "input_sha256": "5eeea6e15b4cae80eba39675d7e0b8650dad0a04703ab3102592e86abd8b1a45",
+      "before_ours": {
+        "minimum_ms": 621.8105,
+        "maximum_ms": 802.1465,
+        "samples": 8,
+        "median_ms": 684.86725
+      },
+      "after": {
+        "ngspice_original": {
+          "minimum_ms": 98.2678,
+          "maximum_ms": 113.9152,
+          "samples": 8,
+          "median_ms": 101.54320000000001
+        },
+        "rspice_original": {
+          "minimum_ms": 94.3535,
+          "maximum_ms": 136.3929,
+          "samples": 8,
+          "median_ms": 111.03135
+        },
+        "ours_prepared_native": {
+          "minimum_ms": 636.1541,
+          "maximum_ms": 915.5893,
+          "samples": 8,
+          "median_ms": 660.0996500000001
+        }
+      }
+    }
+  ],
+  "timing_scope": "Eight measured samples plus two warmups per executable/provider: initial 3 and reverse-order 5. Prepared JSON excludes SPICE preparation; RSpice core is cached debug. No demonstrated convergence-fix speedup or end-to-end speed claim.",
+  "open": [
+    "All ten B02 originals still refuse preparation: four MOS1 files with geometry/model/timeint gaps, five SOI level10 files, one explicit KLU backend selector.",
+    "RCA3040 LU now passes the captured real Newton system but its original AC residual still fails. Faer retains full agreement.",
+    "The original thirty are retained historical evidence, not requalified on this source revision.",
+    "Intel remains experimental: successful small gates do not establish BJT original-deck support.",
+    "No fresh broad fuzz/soak, Linux or CUDA qualification; Rust branch coverage is unmeasured."
+  ],
+  "discarded_attempts": [
+    "First fast-path test attempt failed to compile; red-fastpath-v2.log contains the actual behavior failure.",
+    "Pre-fast-path variant had 649 native passes and two caught mutants; not added to final counts.",
+    "release-*-b01 directories used the wrong debug executable due path-separator string replacement. They are unavailable release/GPU evidence; only verified-release-* explicitly select the built release engine.",
+    "timings-faer-b01 mixed debug with prior release and is excluded from code-performance conclusions.",
+    "Sandbox SDK probes failed on NuGet configuration access; successful host-intel-probe.log is retained separately."
+  ],
+  "tool_versions": {
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\r\nbinary: rustc\r\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\r\ncommit-date: 2026-10-13\r\nhost: x86_64-pc-windows-msvc\r\nrelease: 1.99.1\r\nLLVM version: 23.1.1",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "sdk": "10.0.404",
+    "ngspice": "47+"
+  }
+}

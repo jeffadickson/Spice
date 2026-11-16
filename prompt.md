@@ -1,3 +1,8 @@
+# Latest hourly checkpoint: B02, zero additional agreements
+
+Read docs/hourly-20261116-b02-results.md and evidence/hourly-20261116-b02.json first. Twenty additions are frozen; four B01 agreements remain four. B02's ten still refuse preparation. A real LU tiny-current Newton correction is verified; RCA3040 still fails its later LU AC residual. Final native650 passed/5 ignored plus one explicitly enabled diode DC/AC/transient oracle passed; three scoped mutants caught; StrictDoc86/572. Actual Intel original B01 attempts0/4 agree, despite13 small gates passing. Windows Intel only; no full compatibility qualification.
+
+Next prioritize MOS1 effective geometry/defaults and SCALE, then SOI level10 parameter/port/provider lowering and refused TIMEINT forms. Preserve all original inputs and tolerances. The report records misrouted debug/release attempts separately; only explicit verified-release-* runs select the built release engine. Reuse the existing coordinator with explicit paths. The ignored hourly queue carries the actual commit/push state. The 8am Pacific hard deadline and tonight's cancelled soak remain unchanged.
 # Active campaign — eighty-deck target and hourly work until 8am
 
 User requested fifty ADDITIONAL decks beyond the frozen thirty: eighty total.
