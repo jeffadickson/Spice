@@ -16,10 +16,14 @@ public static class RequestedCorpus
  /// <summary>Runs a frozen inventory against existing executables with per-child deadlines, between-job admission budget and a final immutable-source gate.</summary>
  public static async Task<int> RunAsync(string[] args)
  {
-  if(args.Length is <6 or >8)throw new ArgumentException("Expected checkout, corpus, engine, ngspice, inventory JSON, fresh output, optional admission seconds and optional backend (lu/faer/intel).");
+  if(args.Length is <6 or >9)throw new ArgumentException("Expected checkout, corpus, engine, ngspice, inventory JSON, fresh output, optional admission seconds, backend (lu/faer/intel) and explicit max points (1..100000).");
   var root=Path.GetFullPath(args[0]);var corpus=Path.GetFullPath(args[1]);var engine=Path.GetFullPath(args[2]);var ngspice=Path.GetFullPath(args[3]);var inventory=Path.GetFullPath(args[4]);var output=Path.GetFullPath(args[5]);
   var seconds=args.Length>=7?int.Parse(args[6],NumberStyles.None,CultureInfo.InvariantCulture):1800;if(seconds is <1 or >21600)throw new ArgumentOutOfRangeException(nameof(args));
-  var backend=args.Length==8?args[7]:"lu";
+  var backend=args.Length>=8?args[7]:"lu";
+  // A caller may opt into the already supported native ceiling. Keep the
+  // historical 10,000 default and record the effective budget in evidence.
+  var maxPoints=args.Length==9?int.Parse(args[8],NumberStyles.None,CultureInfo.InvariantCulture):10000;
+  if(maxPoints is <1 or >100000)throw new ArgumentOutOfRangeException(nameof(args));
   if(backend is not ("lu" or "faer" or "intel"))throw new ArgumentException("Supported qualification backends are lu, faer and experimental intel.");
   foreach(var path in new[]{root,corpus,Path.GetDirectoryName(output)!})if(!Directory.Exists(path))throw new DirectoryNotFoundException(path);
   foreach(var path in new[]{engine,ngspice,inventory})if(!File.Exists(path))throw new FileNotFoundException(path);
@@ -38,7 +42,7 @@ public static class RequestedCorpus
   }
   if(rows.Count==0)throw new InvalidDataException("empty_inventory");
   Directory.CreateDirectory(output);var snapshot=SourcePaths(root).Concat(new[]{inventory,engine,ngspice,typeof(RequestedCorpus).Assembly.Location,typeof(RequestedAnalysis).Assembly.Location,typeof(DeckParser).Assembly.Location,typeof(SimulationClient).Assembly.Location}).Distinct(StringComparer.OrdinalIgnoreCase).ToDictionary(p=>p,Hash,StringComparer.OrdinalIgnoreCase);
-  var report=new CorpusReport{State="running",StartedUtc=DateTimeOffset.UtcNow,InventorySha256=Hash(inventory),SourceHashes=snapshot,Rows=rows,AdmissionSeconds=seconds,Backend=backend};
+  var report=new CorpusReport{State="running",StartedUtc=DateTimeOffset.UtcNow,InventorySha256=Hash(inventory),SourceHashes=snapshot,Rows=rows,AdmissionSeconds=seconds,Backend=backend,MaxPoints=maxPoints};
   report.SourceCommit=(await Child("git",["-C",root,"rev-parse","HEAD"],output,null,"source-git")).Output.Trim();
   report.CorpusCommit=(await Child("git",["-C",corpus,"rev-parse","HEAD"],output,null,"corpus-git")).Output.Trim();
   var version=await Child(ngspice,["-n","--version"],output,null,"native-version");report.NativeVersion=version.Output+version.Error;
@@ -71,7 +75,7 @@ public static class RequestedCorpus
      ordinarySyntax=DeckParser.Parse(ordinaryText,limits,collectDeclarations:true);
     }
     var pzOnly=pz is not null&&ordinarySyntax.Declarations?.Analyses.IsEmpty==true;
-    var plan=pzOnly?new RequestedAnalysisPlan([],[]):RequestedAnalysis.Prepare(ordinarySyntax,backend:backend);
+    var plan=pzOnly?new RequestedAnalysisPlan([],[]):RequestedAnalysis.Prepare(ordinarySyntax,maxPoints:maxPoints,backend:backend);
     var circuit=plan.CircuitPreparation??pz?.CircuitPreparation??OperatingPointSelection.Select(ordinarySyntax).Prepared;row.CircuitPrepared=circuit.Success;
     if(!circuit.Success)row.Diagnostics=circuit.Diagnostics.Select(d=>d.Code).ToArray();
     row.RequestedPrepared=plan.Success||pzOnly;row.ControlProfile=plan.ControlProfile;row.ProgramOmissions=plan.ProgramOmissions.ToArray();
@@ -219,6 +223,7 @@ public static class RequestedCorpus
  private sealed class CorpusReport{
   // Same monotonic admission clock as final duration; internal state is not serialized.
   internal Stopwatch? ProgressClock{get;set;}
+  public int MaxPoints{get;set;}=10000;
   public string Backend{get;set;}="lu";public string State{get;set;}="";public DateTimeOffset StartedUtc{get;set;}public DateTimeOffset UpdatedUtc{get;set;}public string SourceCommit{get;set;}="";public string CorpusCommit{get;set;}="";public string InventorySha256{get;set;}="";public string NativeVersion{get;set;}="";public Dictionary<string,string> SourceHashes{get;set;}=[];public bool? ProvenanceValid{get;set;}public string[] ChangedPaths{get;set;}=[];public double ElapsedSeconds{get;set;}public int AdmissionSeconds{get;set;}public StageCount[] Stages{get;set;}=[];public List<CorpusRow> Rows{get;set;}=[];public string Scope{get;set;}="Individual ordinary requested analyses; not input-control-program parity. No hardcoded selected OP counts as requested execution. Full mapped root voltage and supported branch-current grids; declared transient oracle interpolation.";
  }
 }
