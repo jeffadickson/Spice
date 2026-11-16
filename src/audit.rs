@@ -362,6 +362,14 @@ fn reference_expression(expr:&crate::expression::Expr,input:f64)->SimResult<f64>
         if depth>64||*left==0{return Err(SimError::invalid("audit expression budget exceeded"));}
         *left-=1;
         let result=match expr {
+            Expr::Sin(a)=>value(a,input,depth+1,left)?.sin(),
+            Expr::Cos(a)=>value(a,input,depth+1,left)?.cos(),
+            Expr::Tan(a)=>value(a,input,depth+1,left)?.tan(),
+            Expr::Atan(a)=>value(a,input,depth+1,left)?.atan(),
+            Expr::Sqrt(a)=>value(a,input,depth+1,left)?.sqrt(),
+            Expr::Floor(a)=>value(a,input,depth+1,left)?.floor(),
+            Expr::Ceil(a)=>value(a,input,depth+1,left)?.ceil(),
+            Expr::Truncate(a)=>value(a,input,depth+1,left)?.trunc(),
             Expr::Abs(a)=>value(a,input,depth+1,left)?.abs(),
             Expr::Asin(a)=>value(a,input,depth+1,left)?.asin(),
             Expr::Acos(a)=>value(a,input,depth+1,left)?.acos(),

@@ -1,0 +1,35 @@
+[DOCUMENT]
+TITLE: Bounded scalar math and linear capacitor model preparation
+
+[REQUIREMENT]
+UID: BEH-SCALAR-MATH-001
+STATUS: Draft
+TITLE: Typed common mathematical laws and chain derivatives
+STATEMENT: >>>
+The requested generated-expression frontend and typed scalar wire contract shall retain SIN, COS, TAN, ATAN/ARCTAN, SQRT, FLOOR, CEIL and INT operations for one physical differential control. Native evaluation shall use radians, analytic chain derivatives and existing finite/depth/node checks. SQRT shall require a strictly positive real argument in this derivative-bearing profile. FLOOR, CEIL and truncation toward zero shall use an explicit zero piecewise slope; that convention does not establish differentiability at a jump. Independent endpoint audits shall reconstruct values without using production derivatives. A representable chain slope shall not be lost merely by avoidable intermediate underflow.
+<<<
+COMMENT: >>>
+Implementation: SingleControlVoltageCompiler, BehavioralExpression DTOs, BehavioralSourceLowering, expression.rs and audit.rs. Verification: expression_operators.rs including 64-case reproducible property and subnormal regression; BehavioralVoltageTests generated-parser-to-wire cases. Broader multiple controls, conditional/power semantics and default-reference waveform agreement remain open.
+<<<
+
+[REQUIREMENT]
+UID: FRONTEND-CAP-MODEL-001
+STATUS: Draft
+TITLE: Linear capacitor instance, geometry and temperature semantics
+STATEMENT: >>>
+Requested preparation shall resolve generated complete capacitor fields, lexical model and parameter bindings, and constant SI capacitance before dispatch. Explicit instance capacitance shall override model CAP; model CAP shall override geometric capacitance. Model C is a marker flag, not numeric capacitance. The qualified geometry subset shall require explicit positive L/W and compute area and sidewall terms with model SHORT/NARROW reductions. Instance TC1/TC2 shall override corresponding model coefficients; explicit TEMP shall take precedence over DTEMP, with Celsius TNOM default 27. Positive finite multiplicity and scale shall multiply charge. Unknown or duplicate fields, unsupported IC, invalid geometry/temperature and nonpositive/nonfinite physical capacitance shall refuse atomically. Strict legacy lowering shall retain its existing contract.
+<<<
+COMMENT: >>>
+Implementation: generated StorageParameters, CapacitorModelLowering and OperatingPointBridge. Tests: PassiveStorageModelTests including negative cases and area-homogeneity property; authored capacitor-model-contract.cir checks AC charge against stock ngspice separately from original cohort counts. Reference: ngspice captemp.c, cap.c and capmpar.c. Model CAP aliases, default geometry, nonlinear capacitance and device IC are not admitted by this subset.
+<<<
+
+[REQUIREMENT]
+UID: QUAL-EXPLICIT-POINT-BUDGET-001
+STATUS: Draft
+TITLE: Explicit bounded qualification point ceilings
+STATEMENT: >>>
+The corpus coordinator shall retain its historical 10000-point default and permit an explicit caller-selected point ceiling within the existing native 1 through 100000 bound. It shall report the effective ceiling in evidence, apply it to requested preparation, reject out-of-range values before output creation and preserve original authored stop/step settings. Increasing an explicit work budget shall neither loosen numerical comparison tolerances nor increase the native supported ceiling.
+<<<
+COMMENT: >>>
+Implementation: RequestedCorpus optional ninth argument and MaxPoints report field. Verification: CorpusPointBudgetTests and unchanged 20000-step originals run with an explicit 100000 ceiling. Existing 10000 runs remain baseline evidence; unavailable native references and numerical differences remain non-passing outcomes.
+<<<

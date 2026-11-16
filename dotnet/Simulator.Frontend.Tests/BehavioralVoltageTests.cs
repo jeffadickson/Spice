@@ -8,6 +8,27 @@ namespace Simulator.Frontend.Tests;
 
 public sealed class BehavioralVoltageTests
 {
+    [Theory]
+    [InlineData("sin","sin")]
+    [InlineData("cos","cos")]
+    [InlineData("tan","tan")]
+    [InlineData("atan","atan")]
+    [InlineData("arctan","atan")]
+    [InlineData("sqrt","sqrt")]
+    [InlineData("floor","floor")]
+    [InlineData("ceil","ceil")]
+    [InlineData("int","truncate")]
+    public void Requested_math_laws_retain_runtime_input_and_wire_operator(string function,string op)
+    {
+        var syntax=DeckParser.Parse($"math\nV1 in 0 0.7\nB1 out 0 V={function}(v(in))\nR1 out 0 1k\n.op\n.end\n",collectDeclarations:true);
+        var plan=RequestedAnalysis.Prepare(syntax);
+        Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
+        var request=Assert.Single(Assert.Single(plan.Operations).Requests);
+        using var wire=JsonDocument.Parse(JsonSerializer.Serialize(request,WireFormat.Options));
+        var element=Assert.Single(wire.RootElement.GetProperty("circuit").GetProperty("elements").EnumerateArray(),e=>e.GetProperty("kind").GetString()=="behavioral_voltage");
+        Assert.Equal(op,element.GetProperty("expression").GetProperty("op").GetString());
+        Assert.Equal("input",element.GetProperty("expression").GetProperty("argument").GetProperty("op").GetString());
+    }
     [Fact]
     public void Wire_envelope_can_serialize_the_native_depth_boundary()
     {
@@ -50,7 +71,7 @@ public sealed class BehavioralVoltageTests
 
     [Theory]
     [InlineData("ln(v(in)+v(other))","unsupported_behavior_control_count")]
-    [InlineData("sin(v(in))","unsupported_behavior_function")]
+    [InlineData("unknown_math(v(in))","unsupported_behavior_function")]
     [InlineData("ln(time)","unsupported_behavior_runtime")]
     public void Unimplemented_model_semantics_publish_no_partial_plan(string expression,string diagnostic)
     {

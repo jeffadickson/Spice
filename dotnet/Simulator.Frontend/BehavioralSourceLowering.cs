@@ -3,7 +3,7 @@ using Simulator.Syntax;
 using Simulator.Client;
 namespace Simulator.Frontend;
 
-/// <summary>Prepared affine relation; the requested compiler may instead attach an internal typed DC expression. Voltage is P-minus-N; current flows P to N.</summary>
+/// <summary>Prepared affine relation; the requested compiler may instead attach an internal typed scalar expression. Voltage is P-minus-N; current flows P to N.</summary>
 public sealed record PreparedAffineBehavioralSource(string Name,SourceSyntax P,SourceSyntax N,BehavioralQuantity Quantity,ImmutableArray<AffineVoltageTerm> Terms,double Offset,SourceRange Range)
 {
     internal PreparedBehavioralVoltage? Runtime { get; init; }
@@ -16,7 +16,7 @@ public sealed record BehavioralSourcePreparation(PreparedAffineBehavioralSource?
     /// <summary>True only when the whole source fits the explicitly selected preparation profile.</summary>
     public bool Success=>Source!=null&&Diagnostics.IsEmpty;
 }
-/// <summary>Generated-metadata adapter: strict public affine preparation and explicit requested DC expression lowering.</summary>
+/// <summary>Generated-metadata adapter: strict public affine preparation and explicit requested scalar expression lowering.</summary>
 public static class BehavioralSourceLowering
 {
     /// <summary>Prepares one catalog-owned B source in a retained lexical environment. Root bridge integration decides node allocation and existing typed VCVS/VCCS/source emission.</summary>
@@ -106,6 +106,14 @@ public static class BehavioralSourceLowering
                 case ExpressionAbs a:pending.Push((a.Argument,item.Depth+1));break;
                 case ExpressionAsin a:pending.Push((a.Argument,item.Depth+1));break;
                 case ExpressionAcos a:pending.Push((a.Argument,item.Depth+1));break;
+                case ExpressionSin a:pending.Push((a.Argument,item.Depth+1));break;
+                case ExpressionCos a:pending.Push((a.Argument,item.Depth+1));break;
+                case ExpressionTan a:pending.Push((a.Argument,item.Depth+1));break;
+                case ExpressionAtan a:pending.Push((a.Argument,item.Depth+1));break;
+                case ExpressionSqrt a:pending.Push((a.Argument,item.Depth+1));break;
+                case ExpressionFloor a:pending.Push((a.Argument,item.Depth+1));break;
+                case ExpressionCeil a:pending.Push((a.Argument,item.Depth+1));break;
+                case ExpressionTruncate a:pending.Push((a.Argument,item.Depth+1));break;
                 default:return false;
             }
         }
@@ -123,6 +131,14 @@ public static class BehavioralSourceLowering
         public BoundedExpression Abs(BoundedExpression argument)=>new ExpressionAbs(argument);
         public BoundedExpression Asin(BoundedExpression argument)=>new ExpressionAsin(argument);
         public BoundedExpression Acos(BoundedExpression argument)=>new ExpressionAcos(argument);
+        public BoundedExpression Sin(BoundedExpression argument)=>new ExpressionSin(argument);
+        public BoundedExpression Cos(BoundedExpression argument)=>new ExpressionCos(argument);
+        public BoundedExpression Tan(BoundedExpression argument)=>new ExpressionTan(argument);
+        public BoundedExpression Atan(BoundedExpression argument)=>new ExpressionAtan(argument);
+        public BoundedExpression Sqrt(BoundedExpression argument)=>new ExpressionSqrt(argument);
+        public BoundedExpression Floor(BoundedExpression argument)=>new ExpressionFloor(argument);
+        public BoundedExpression Ceil(BoundedExpression argument)=>new ExpressionCeil(argument);
+        public BoundedExpression Truncate(BoundedExpression argument)=>new ExpressionTruncate(argument);
         public bool TryConstant(BoundedExpression expression,out double value) {
             var visited=0;
             double Read(BoundedExpression e,int depth) {
@@ -133,6 +149,14 @@ public static class BehavioralSourceLowering
                     ExpressionMultiply m=>F(m.Left)*F(m.Right),ExpressionDivide d=>F(d.Left)/F(d.Right),
                     ExpressionExp u=>Math.Exp(F(u.Argument)),ExpressionLog u=>Math.Log(F(u.Argument)),
                     ExpressionAbs u=>Math.Abs(F(u.Argument)),ExpressionAsin u=>Math.Asin(F(u.Argument)),ExpressionAcos u=>Math.Acos(F(u.Argument)),
+                    ExpressionSin u=>Math.Sin(F(u.Argument)),
+                    ExpressionCos u=>Math.Cos(F(u.Argument)),
+                    ExpressionTan u=>Math.Tan(F(u.Argument)),
+                    ExpressionAtan u=>Math.Atan(F(u.Argument)),
+                    ExpressionSqrt u=>Math.Sqrt(F(u.Argument)),
+                    ExpressionFloor u=>Math.Floor(F(u.Argument)),
+                    ExpressionCeil u=>Math.Ceiling(F(u.Argument)),
+                    ExpressionTruncate u=>Math.Truncate(F(u.Argument)),
                     _=>double.NaN
                 };
             }

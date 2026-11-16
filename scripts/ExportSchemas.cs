@@ -79,7 +79,9 @@ void Relocate(JsonNode node)
 Relocate(success);
 var failure=JsonNode.Parse("""{"type":"object","additionalProperties":false,"required":["schema_version","status","complete","error"],"properties":{"schema_version":{"const":"1"},"status":{"const":"failed"},"complete":{"const":false},"error":{"type":"object","required":["code","message"],"properties":{"code":{"type":"string"},"message":{"type":"string"}}}}}""")!;
 var output=new JsonObject{["$schema"]="https://json-schema.org/draft/2020-12/schema",["title"]="Experimental simulator result v1",["oneOf"]=new JsonArray(success,failure)};
+// Schema metadata nests polymorphic alternatives more deeply than a request.
+// This writer-only bound does not enlarge runtime expression/input budgets.
 Directory.CreateDirectory("schemas");
-File.WriteAllText("schemas/request-v1.json",input.ToJsonString(new(){WriteIndented=true}));
-File.WriteAllText("schemas/result-v1.json",output.ToJsonString(new(){WriteIndented=true}));
+File.WriteAllText("schemas/request-v1.json",input.ToJsonString(new(){WriteIndented=true,MaxDepth=256}));
+File.WriteAllText("schemas/result-v1.json",output.ToJsonString(new(){WriteIndented=true,MaxDepth=256}));
 Console.WriteLine("Exported request/result schemas from current DTO metadata.");

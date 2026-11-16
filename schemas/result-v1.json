@@ -197,6 +197,163 @@
             },
             "prepared_reuses": {
               "type": "integer"
+            },
+            "initial_newton": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "iterations": {
+                  "type": "integer"
+                },
+                "residual_inf": {
+                  "type": "number"
+                },
+                "damped_steps": {
+                  "type": "integer"
+                },
+                "update_inf": {
+                  "type": "number",
+                  "default": 0
+                },
+                "linear_solves": {
+                  "type": "integer",
+                  "default": 0
+                },
+                "continuation": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "accepted_stages": {
+                      "type": "integer"
+                    },
+                    "rejected_stages": {
+                      "type": "integer"
+                    },
+                    "stages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "source_scale": {
+                            "type": "number"
+                          },
+                          "iterations": {
+                            "type": "integer"
+                          },
+                          "residual_inf": {
+                            "type": "number"
+                          },
+                          "update_inf": {
+                            "type": "number"
+                          },
+                          "damped_steps": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "source_scale",
+                          "iterations",
+                          "residual_inf",
+                          "update_inf",
+                          "damped_steps"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "accepted_stages",
+                    "rejected_stages",
+                    "stages"
+                  ],
+                  "default": null
+                },
+                "gmin_siemens": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "default": null
+                },
+                "gmin_continuation": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "stages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "gmin_siemens": {
+                            "type": "number"
+                          },
+                          "iterations": {
+                            "type": "integer"
+                          },
+                          "residual_inf": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "gmin_siemens",
+                          "iterations",
+                          "residual_inf"
+                        ]
+                      }
+                    },
+                    "final_unregularized": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "stages",
+                    "final_unregularized"
+                  ],
+                  "default": null
+                }
+              },
+              "required": [
+                "iterations",
+                "residual_inf",
+                "damped_steps"
+              ],
+              "default": null
+            },
+            "backward_euler_restarts": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "number"
+              },
+              "default": null
+            },
+            "effective_current_absolute_tolerance": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "default": null
+            },
+            "retained_midpoints": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "default": null
+            },
+            "failed_nonlinear_trials": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "default": null
             }
           },
           "required": [
@@ -289,6 +446,137 @@
             "sum_absorbed_w",
             "sum_absolute_w"
           ],
+          "default": null
+        },
+        "newton": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "iterations": {
+              "type": "integer"
+            },
+            "residual_inf": {
+              "type": "number"
+            },
+            "damped_steps": {
+              "type": "integer"
+            },
+            "update_inf": {
+              "type": "number",
+              "default": 0
+            },
+            "linear_solves": {
+              "type": "integer",
+              "default": 0
+            },
+            "continuation": {
+              "$ref": "#/oneOf/0/properties/integration/properties/initial_newton/properties/continuation",
+              "default": null
+            },
+            "gmin_siemens": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "default": null
+            },
+            "gmin_continuation": {
+              "$ref": "#/oneOf/0/properties/integration/properties/initial_newton/properties/gmin_continuation",
+              "default": null
+            }
+          },
+          "required": [
+            "iterations",
+            "residual_inf",
+            "damped_steps"
+          ],
+          "default": null
+        },
+        "consistency": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "discrepancy": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "tolerance": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "reason": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "status",
+                  "discrepancy",
+                  "tolerance",
+                  "unit",
+                  "reason"
+                ]
+              }
+            }
+          },
+          "required": [
+            "checks"
+          ],
+          "default": null
+        },
+        "diagnostics": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "severity": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "severity",
+              "subject",
+              "message"
+            ]
+          },
           "default": null
         }
       },

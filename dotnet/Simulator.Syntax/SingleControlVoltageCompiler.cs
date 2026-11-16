@@ -26,7 +26,23 @@ public interface IBoundedScalarExpressionFactory<T> where T:class
     T Asin(T argument);
     /// <summary>Construct inverse cosine in its finite derivative domain.</summary>
     T Acos(T argument);
-    /// <summary>Read a finite input-independent constant from an already bound expression tree.</summary>
+    /// <summary>Sine of a radian argument.</summary>
+    T Sin(T argument);
+    /// <summary>Cosine of a radian argument.</summary>
+    T Cos(T argument);
+    /// <summary>Tangent of a radian argument; nonfinite value or slope is refused.</summary>
+    T Tan(T argument);
+    /// <summary>Inverse tangent in radians.</summary>
+    T Atan(T argument);
+    /// <summary>Square root; runtime finite-derivative profile requires a strictly positive argument.</summary>
+    T Sqrt(T argument);
+    /// <summary>Round toward negative infinity; selected piecewise slope is zero.</summary>
+    T Floor(T argument);
+    /// <summary>Round toward positive infinity; selected piecewise slope is zero.</summary>
+    T Ceil(T argument);
+    /// <summary>Round toward zero; selected piecewise slope is zero.</summary>
+    T Truncate(T argument);
+    /// <summary>Read a finite input-independent scalar.</summary>
     bool TryConstant(T expression,out double value);
 }
 /// <summary>Atomic model lowering result with retained physical control-terminal spellings.</summary>
@@ -124,6 +140,14 @@ public static class SingleControlVoltageCompiler
                 {
                     "ln" or "log"=>factory.Log(argumentValue),"exp"=>factory.Exp(argumentValue),
                     "abs"=>factory.Abs(argumentValue),"asin"=>factory.Asin(argumentValue),"acos"=>factory.Acos(argumentValue),
+                    "sin"=>factory.Sin(argumentValue),
+                    "cos"=>factory.Cos(argumentValue),
+                    "tan"=>factory.Tan(argumentValue),
+                    "atan" or "arctan"=>factory.Atan(argumentValue),
+                    "sqrt"=>factory.Sqrt(argumentValue),
+                    "floor"=>factory.Floor(argumentValue),
+                    "ceil"=>factory.Ceil(argumentValue),
+                    "int"=>factory.Truncate(argumentValue),
                     "log10"=>factory.Divide(factory.Log(argumentValue),factory.Constant(Math.Log(10))),
                     _=>throw new CompileFailure("unsupported_behavior_function")
                 };
