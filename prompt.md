@@ -1,3 +1,5 @@
+Memory policy update: the user's 2026-11-16 canonical rules now require configured per-tree and aggregate runaway watchdogs before future intensive workloads. Free/available RAM is telemetry, never a startup or termination gate. This supersedes old no-cap text; preserve historical evidence as run.
+
 # Latest hourly checkpoint: B02, zero additional agreements
 
 Read docs/hourly-20261116-b02-results.md and evidence/hourly-20261116-b02.json first. Twenty additions are frozen; four B01 agreements remain four. B02's ten still refuse preparation. A real LU tiny-current Newton correction is verified; RCA3040 still fails its later LU AC residual. Final native650 passed/5 ignored plus one explicitly enabled diode DC/AC/transient oracle passed; three scoped mutants caught; StrictDoc86/572. Actual Intel original B01 attempts0/4 agree, despite13 small gates passing. Windows Intel only; no full compatibility qualification.
