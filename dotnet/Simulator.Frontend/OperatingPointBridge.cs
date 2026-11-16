@@ -200,6 +200,12 @@ public static class OperatingPointBridge
                         if(excitation.AcPhase!=null)phase=Evaluate(excitation.AcPhase);
                     }
 
+                    else if(requested&&primitive.Family=="C"&&!primitive.StorageParameters.IsEmpty)
+                    {
+                        var storage=CapacitorModelLowering.Prepare(catalog,primitive,environment,limits.TemperatureCelsius);
+                        if(storage.Error is {} error)throw new BridgeFailure(error.Code,error.Range);
+                        value=storage.Farads!.Value;
+                    }
                     else if(selected&&primitive.Family=="R")
                     {
                         // A plain negative scalar is an active conductance, not

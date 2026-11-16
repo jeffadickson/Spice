@@ -1,0 +1,11 @@
+Numeric capacitor model CAP, marker C and explicit geometry
+VDRIVE in 0 DC 1 AC 1
+C1 in 0 CONST
+C2 in 0 GEOM L=20u W=1u
+C3 in 0 MARKER L=20u W=1u
+.model CONST C (CAP=2p)
+.model GEOM C (CJ=1)
+.model MARKER C (C=2 CJ=1)
+.ac lin 1 1k 1k
+.print ac v(in) i(VDRIVE)
+.end
