@@ -33,6 +33,10 @@ pub struct TransientConfig {
     /// runtime may solve more tightly to retain its independent audit floor.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub current_absolute_tolerance: Option<f64>,
+    /// Requested upper bound for relative Newton convergence and adaptive
+    /// error. Existing stricter physical floors are retained and reported.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub relative_tolerance: Option<f64>,
     #[serde(default)]
     pub sources: Vec<SourceOverride>,
     #[serde(default)]
@@ -53,6 +57,7 @@ impl Default for TransientConfig {
             initial_state: None,
             initial_newton: None,
             current_absolute_tolerance: None,
+            relative_tolerance: None,
             sources: Vec::new(),
             adaptive: None,
             accepted_times_s: None,
@@ -65,6 +70,9 @@ impl TransientConfig {
         positive(self.max_step_s, "max_step_s")?;
         if let Some(tolerance) = self.current_absolute_tolerance {
             positive(tolerance, "current_absolute_tolerance")?;
+        }
+        if let Some(tolerance) = self.relative_tolerance {
+            positive(tolerance, "relative_tolerance")?;
         }
         if let Some(policy) = self.initial_newton {
             policy.validate()?;
@@ -113,6 +121,8 @@ pub struct IntegrationReport {
     /// Actual step-Newton bound after applying the requested upper bound and
     /// the stricter default physical-consistency floor. Input remains unchanged.
     pub effective_current_absolute_tolerance: f64,
+    /// Actual relative step-Newton bound, separate from integration error bounds.
+    pub effective_relative_tolerance: f64,
     /// Number of accepted fine-step midpoints retained for audits/observers.
     pub retained_midpoints: usize,
     /// Failed nonlinear trial intervals rejected before publishing any state.
@@ -193,6 +203,19 @@ pub fn run_observed(
 ) -> SimResult<ConfiguredResult> {
     plan.require_dynamic_native_models()?;
     options.validate()?;
+    if !plan.behaviors.is_empty() && (!plan.memoryless_behavioral_profile()
+        || options.method!=Method::BackwardEuler || options.initial_state.is_some()
+        || options.initial_newton.is_some_and(|p|p.continuation.is_some()||p.gmin_continuation.is_some())) {
+        return Err(SimError::new(ErrorCode::Unsupported,"behavioral transient requires grounded memoryless outputs and backward Euler"));
+    }
+    // Clone only the policy: authored input remains immutable. Relative bounds
+    // apply to both voltage and current error, including a separate current bound.
+    let mut effective_options = options.clone();
+    if let (Some(bound), Some(adaptive)) = (options.relative_tolerance, effective_options.adaptive.as_mut()) {
+        adaptive.relative = adaptive.relative.min(bound);
+        adaptive.current_relative = Some(adaptive.current_relative.unwrap_or(adaptive.relative).min(bound));
+    }
+    let options = &effective_options;
     if options.accepted_times_s.as_ref().is_some_and(|times|
         times.len().checked_mul(plan.unknown_count()).is_none_or(|count| count>2_000_000)) {
         return Err(SimError::new(ErrorCode::ResourceExhausted,"accepted time grid exceeds recording budget"));
@@ -217,6 +240,9 @@ pub fn run_observed(
     }
     let mut old_rhs = sources.rhs(0.)?;
     let with_current_tolerance = |mut policy: crate::newton::NewtonOptions| {
+        if let Some(bound) = options.relative_tolerance {
+            policy.relative_tolerance = policy.relative_tolerance.min(bound);
+        }
         if let Some(tolerance) = options.current_absolute_tolerance {
             policy.current_absolute_tolerance = policy.current_absolute_tolerance.min(tolerance);
         }
@@ -244,13 +270,17 @@ pub fn run_observed(
                     }
                     crate::newton::solve(plan, solver, policy)?
                 } else {
-                    crate::newton::solve_with_rhs(
+                    let (seed,seed_solves)=if plan.behaviors.is_empty(){(vec![0.;plan.unknown_count()],0)}
+                        else{behavior_seed(plan,solver,&old_rhs)?};
+                    let (state,mut report)=crate::newton::solve_with_rhs(
                         plan,
                         solver,
                         policy,
-                        vec![0.; plan.unknown_count()],
+                        seed,
                         &old_rhs,
-                    )?
+                    )?;
+                    report.linear_solves+=seed_solves;
+                    (state,report)
                 };
             // A nonlinear operating point can require several provider calls;
             // counting it as one hides work before the first transient step.
@@ -484,6 +514,7 @@ pub fn run_observed(
             time_control: if options.accepted_times_s.is_some() {"accepted_time_grid"} else if options.adaptive.is_some() {"adaptive"} else {"fixed_step"},
             backward_euler_restarts,
             effective_current_absolute_tolerance: step_policy.current_absolute_tolerance,
+            effective_relative_tolerance: step_policy.relative_tolerance,
             retained_midpoints: midpoint_count,
             failed_nonlinear_trials,
             initialization: if options.initial_state.is_some() {
@@ -514,4 +545,30 @@ fn nonlinear_step(
         Method::BackwardEuler => crate::newton::solve_backward_euler_step(plan,solver,policy,previous,h,rhs),
         Method::Trapezoidal => crate::newton::solve_trapezoidal_step(plan,solver,policy,previous,h,rhs,old_rhs),
     }
+}
+
+/// Build a finite seed for the admitted grounded, memoryless behavioral graph.
+/// This is not a circuit solution: the ordinary Newton solve and independent
+/// endpoint audit still enforce every voltage constraint and load current.
+fn behavior_seed(plan:&CompiledCircuit,solver:&dyn LinearSolver,rhs:&[f64])->SimResult<(Vec<f64>,usize)>{
+    let (mut state,_)=crate::dc::solve_csc_verified(plan.conductance_sparse(),rhs,solver)?;
+    let mut pending=vec![true;plan.behaviors.len()];
+    for _ in 0..plan.behaviors.len(){
+        let mut progress=false;
+        for (i,source) in plan.behaviors.iter().enumerate(){
+            if !pending[i]{continue;}
+            let blocked=plan.behaviors.iter().enumerate().any(|(j,other)|pending[j]
+                && [other.p,other.n].into_iter().any(|output|output.unknown().is_some()
+                    && (output==source.cp||output==source.cn)));
+            if blocked{continue;}
+            let voltage=|node:crate::ids::NodeId|node.unknown().map(|n|state[n]).unwrap_or(0.);
+            let (value,_)=source.expression.evaluate(voltage(source.cp)-voltage(source.cn))?;
+            if let Some(p)=source.p.unknown(){state[p]=value+voltage(source.n);}
+            else if let Some(n)=source.n.unknown(){state[n]=voltage(source.p)-value;}
+            pending[i]=false;progress=true;
+        }
+        if pending.iter().all(|p|!*p){return Ok((state,1));}
+        if !progress{break;}
+    }
+    Err(SimError::new(ErrorCode::Unsupported,"cyclic behavioral startup graph is outside the memoryless transient profile"))
 }

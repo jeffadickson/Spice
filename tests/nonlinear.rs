@@ -71,7 +71,7 @@ fn configured_backward_euler_accepts_nonlinear_diode_steps() {
             max_step_s: 1e-5,
             max_steps: 4,
             method: Method::BackwardEuler,
-            current_absolute_tolerance: None,
+            current_absolute_tolerance: None, relative_tolerance: None,
             accepted_times_s:None, initial_newton:None, initial_state: None,
             sources: vec![],
             adaptive: None,
@@ -1010,7 +1010,7 @@ fn configured_nonlinear_transient_accepts_source_breakpoints_and_adaptive_trials
             max_step_s: 1e-5,
             max_steps: 40,
             method: Method::BackwardEuler,
-            current_absolute_tolerance: None,
+            current_absolute_tolerance: None, relative_tolerance: None,
             accepted_times_s:None, initial_newton:None, initial_state: None,
             sources: vec![SourceOverride {
                 id: "V1".into(),

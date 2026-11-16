@@ -48,10 +48,12 @@ pub(crate) struct CompiledMos1 {
     pub(crate) bulk: NodeId,
     pub(crate) model: crate::mos1::Mos1Model,
 }
-/// One immutable DC constitutive relation; its output branch is an MNA voltage row.
+/// One immutable stateless constitutive relation; its output branch is an MNA voltage row.
 #[derive(Debug, Clone)]
 pub(crate) struct CompiledBehavior {
     pub(crate) branch: usize,
+    pub(crate) p: NodeId,
+    pub(crate) n: NodeId,
     pub(crate) cp: NodeId,
     pub(crate) cn: NodeId,
     pub(crate) expression: crate::expression::Expr,
@@ -145,10 +147,6 @@ impl CompiledCircuit {
     }
 
     pub(crate) fn require_dynamic_native_models(&self) -> SimResult<()> {
-        if !self.behaviors.is_empty() {
-            return Err(SimError::new(crate::error::ErrorCode::Unsupported,
-                "behavioral voltage expressions are currently DC only"));
-        }
         if self
             .bsim330
             .iter()
@@ -160,6 +158,24 @@ impl CompiledCircuit {
             ));
         }
         Ok(())
+    }
+
+    /// Finite memoryless behavioral subset; AC/storage have separate admission.
+    pub(crate) fn memoryless_behavioral_profile(&self) -> bool {
+        if !self.circuit.elements.iter().all(|e|matches!(e,
+            Element::Resistor{..}|Element::Voltage{..}|Element::Current{..}|Element::BehavioralVoltage{..}))
+            || !self.behaviors.iter().all(|b|b.p.unknown().is_none()||b.n.unknown().is_none()) {return false;}
+        // Startup propagation is over explicitly driven voltage nodes. A passive
+        // divider requires a separate network-seeding contract, not a guessed zero.
+        let mut driven=vec![NodeId(0)];
+        for element in &self.circuit.elements {
+            match element {
+                Element::Voltage{p,n,..}|Element::BehavioralVoltage{p,n,..}
+                    if p.unknown().is_none()||n.unknown().is_none()=>driven.extend([*p,*n]),
+                _=>{}
+            }
+        }
+        self.behaviors.iter().all(|b|driven.contains(&b.cp)&&driven.contains(&b.cn))
     }
 
     pub fn branch_index(&self, id: &str) -> Option<usize> {
@@ -393,7 +409,7 @@ pub fn compile(circuit: &Circuit) -> SimResult<CompiledCircuit> {
                 }
                 match e {
                     Element::BehavioralVoltage {cp,cn,expression,..} => {
-                        behaviors.push(CompiledBehavior{branch,cp:*cp,cn:*cn,expression:expression.clone()});
+                        behaviors.push(CompiledBehavior{branch,p:*p,n:*n,cp:*cp,cn:*cn,expression:expression.clone()});
                     }
                     Element::Voltage { volts, .. } => rhs[branch] = *volts,
                     Element::Inductor { henries, .. } => charge.add(branch, branch, -henries),

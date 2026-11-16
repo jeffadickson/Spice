@@ -52,6 +52,23 @@ internal sealed class DeclarationExtraction
         };
     }
 
+    private static bool IsNamespacedReporting(SpiceParser.ParameterContext[] parameters)
+    {
+        if(parameters.Length<2||parameters[0].assignment()!=null)return false;
+        var space=parameters[0].value()?.identifier()?.GetText().ToLowerInvariant();
+        return parameters.Skip(1).All(p=>
+        {
+            var key=p.assignment()?.referenceName()?.GetText().ToLowerInvariant();
+            var value=p.assignment()?.value()?.GetText().ToLowerInvariant();
+            return space switch {
+                "output"=>key is "printheader" or "printfooter" && value is "true" or "false" or "0" or "1",
+                "device"=>key=="debuglevel"&&int.TryParse(value,System.Globalization.NumberStyles.Integer,
+                    System.Globalization.CultureInfo.InvariantCulture,out var level)&&level<=0,
+                _=>false
+            };
+        });
+    }
+
     // A literal operating temperature equal to the current fixed Celsius
     // model temperature changes no equations. Expressions and other settings
     // require an engine/model contract and remain physical refusals.
@@ -133,7 +150,16 @@ internal sealed class DeclarationExtraction
         var directiveName = directive?.Start.Text.ToLowerInvariant();
         var directiveParameters = directive?.parameter() ?? [];
         var optionCard = directiveName is ".opt" or ".option" or ".options" && directiveParameters.Length > 0;
-        var reportingOnly = optionCard && directiveParameters.All(IsReportingOption);
+        var reportingOnly = optionCard && (directiveParameters.All(IsReportingOption)||IsNamespacedReporting(directiveParameters));
+        var deviceTemperature=optionCard&&directiveParameters.Length==2
+            && directiveParameters[0].value()?.identifier()?.GetText().Equals("device",StringComparison.OrdinalIgnoreCase)==true
+            && directiveParameters[1].assignment()?.referenceName()?.GetText().Equals("temp",StringComparison.OrdinalIgnoreCase)==true
+            ? directiveParameters[1].assignment().value() : null;
+        // TIMEINT is a dialect namespace, not an ignored physical option.
+        // Retain only whole known cards; unknown companions must not disappear.
+        var timeint = optionCard && directiveParameters[0].value()?.identifier()?.GetText().Equals("timeint",StringComparison.OrdinalIgnoreCase)==true
+            && directiveParameters.Length>1
+            && directiveParameters.Skip(1).All(p=>p.assignment()?.referenceName()?.GetText().ToLowerInvariant() is "abstol" or "reltol" or "delmax" or "conststep");
         // Admit the whole option card only when every companion has defined semantics.
         var abstolTerms = optionCard ? directiveParameters.Where(p =>
             string.Equals(p.assignment()?.referenceName()?.GetText(),"abstol",StringComparison.OrdinalIgnoreCase)).ToArray() : [];
@@ -157,6 +183,7 @@ internal sealed class DeclarationExtraction
             Coupling = coupling,
             GlobalNodes = GlobalNodeExtraction.Extract(card,Capture),
             ReportingOptionsOnly = reportingOnly,
+            TimeintOptions = timeint ? directiveParameters.Skip(1).Select(p=>Parameter(p.assignment())).ToImmutableArray() : [],
             BsimSoiFdStaticOptions = optionCard && owner == 0 && IsBsimSoiFdStaticOptions(directiveParameters),
             TransientMethodOption = abstolTerms.Length==0 || abstol!=null ? method : null,
             TransientAbstolOption = abstol==null ? null : Capture(abstol),
@@ -164,7 +191,7 @@ internal sealed class DeclarationExtraction
             DefaultTemperature = (optionCard && !reportingOnly
                 && directiveParameters.All(p => IsReportingOption(p) || IsDefaultTemperatureOption(p)))
                 || (directiveName == ".temp" && directiveParameters.Length == 1 && IsDefaultTemperature(directiveParameters[0].value())),
-            OperatingTemperature = directiveName == ".temp" && directiveParameters.Length == 1 && directiveParameters[0].value() is { } temperature && temperature.NUMBER()!=null ? Capture(temperature) : null,
+            OperatingTemperature = deviceTemperature!=null ? Capture(deviceTemperature) : directiveName == ".temp" && directiveParameters.Length == 1 && directiveParameters[0].value() is { } temperature && temperature.NUMBER()!=null ? Capture(temperature) : null,
             ReportingWidth = directiveName == ".width" && IsReportingWidth(directiveParameters)
         });
         if(card is SpiceParser.XspiceContext codeModel)

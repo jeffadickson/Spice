@@ -39,6 +39,12 @@ pub fn transient_controlled(
     cancel: &std::sync::atomic::AtomicBool,
 ) -> SimResult<Vec<Sample>> {
     plan.require_dynamic_native_models()?;
+    // The legacy public Rust entry point retains its original admission. Only
+    // configured BE has qualified behavioral startup and endpoint audits.
+    if !plan.behaviors.is_empty() {
+        return Err(SimError::new(crate::error::ErrorCode::Unsupported,
+            "behavioral voltage laws require the qualified configured transient profile"));
+    }
     positive(options.stop_s, "stop_s")?;
     positive(options.step_s, "step_s")?;
     let count = (options.stop_s / options.step_s).ceil().max(1.0);

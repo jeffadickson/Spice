@@ -62,13 +62,13 @@ public sealed class BehavioralVoltageTests
 
     [Theory]
     [InlineData(".ac lin 1 1 1")]
-    [InlineData(".tran 1n 10n")]
-    public void Dynamic_behavioral_analyses_remain_explicit_refusals(string analysis)
+    [InlineData(".tran 1n 10n\nC1 out 0 1n")]
+    public void Unqualified_dynamic_behavioral_profiles_remain_explicit_refusals(string analysis)
     {
         var syntax=DeckParser.Parse($"refuse\nV1 in 0 2.7\nB1 out 0 V=ln(v(in))\n{analysis}\n.end\n",collectDeclarations:true);
         var plan=RequestedAnalysis.Prepare(syntax);
         Assert.False(plan.Success);Assert.Empty(plan.Operations);
-        Assert.Contains(plan.Diagnostics,d=>d.Code=="unsupported_behavioral_analysis");
+        Assert.Contains(plan.Diagnostics,d=>d.Code is "unsupported_behavioral_analysis" or "unsupported_behavioral_transient_profile");
     }
 
     [Fact]

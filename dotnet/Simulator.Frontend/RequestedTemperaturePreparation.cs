@@ -11,7 +11,7 @@ internal static class RequestedTemperaturePreparation
     {
         var limits=requestedLimits??new BridgeLimits();
         Selection Fail(string code,SourceRange range)=>new(limits,[],new(code,range));
-        var cards=catalog.Cards.Where(c=>c.Name.Equals(".temp",StringComparison.OrdinalIgnoreCase)).ToArray();
+        var cards=catalog.Cards.Where(c=>c.OperatingTemperature!=null||c.Name.Equals(".temp",StringComparison.OrdinalIgnoreCase)).ToArray();
         if(cards.Length==0)return new(limits,[],null);
         if(cards.Length!=1)return Fail("ambiguous_operating_temperature",cards[1].Range);
         var card=cards[0];
@@ -22,7 +22,7 @@ internal static class RequestedTemperaturePreparation
             return Fail("invalid_operating_temperature",syntax.Range);
         // Control exports and option precedence are separate contracts; do not
         // silently evaluate those under the former default Celsius environment.
-        if(celsius!=27&&catalog.Cards.Any(c=>!c.ControlConstants.IsEmpty||c.DefaultTemperature&&c.Name!=card.Name))
+        if(celsius!=27&&catalog.Cards.Any(c=>!c.ControlConstants.IsEmpty||c.DefaultTemperature&&c.Range.Start!=card.Range.Start))
             return Fail("conflicting_operating_temperature_profile",card.Range);
         return new(limits with{TemperatureCelsius=celsius},[card.Range.Start],null);
     }

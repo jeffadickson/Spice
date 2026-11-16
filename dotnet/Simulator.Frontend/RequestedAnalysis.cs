@@ -104,8 +104,10 @@ public static partial class RequestedAnalysis
   if(abstolCards.Length>1)return Fail("ambiguous_transient_abstol",abstolCards[1].Range);
   if(abstolCards.Length!=0&&control.Directives.Any(d=>d.Analysis.Kind!="tran"))
    return Fail("unsupported_mixed_abstol_analyses",abstolCards[0].Range);
+  var timeint=RequestedTimeintPreparation.Prepare(catalog,hasTransient&&control.Directives.All(d=>d.Analysis.Kind=="tran"),abstolCards.Length!=0,limits.TemperatureCelsius);
+  if(timeint.Error is {} timeintError)return Fail(timeintError.Code,timeintError.Range);
   var handledPhysicalStarts=
-      temperature.Handled.Union(catalog.InitialConditions.Select(ic=>ic.Range.Start)).Concat(methodCards.Concat(abstolCards).Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet();
+      temperature.Handled.Union(timeint.Handled).Union(catalog.InitialConditions.Select(ic=>ic.Range.Start)).Concat(methodCards.Concat(abstolCards).Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet();
   var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,handledPhysicalStarts);
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
@@ -126,7 +128,7 @@ public static partial class RequestedAnalysis
       c.Postprocessing is {Kind:ControlPostprocessingKind.Let} local&&rootNames.Contains(local.Names[0]));
   if(clobber!=null)return Fail("unsupported_control_observable_assignment",clobber.Range);
   var environment=ParameterEvaluator.EvaluateAtTemperature(catalog,limits.TemperatureCelsius);
-  double? abstol=null;
+  double? abstol=timeint.Amps;
   if(abstolCards.SingleOrDefault()?.TransientAbstolOption is {} tolerance)
   {
    var value=ParameterEvaluator.EvaluateValue(catalog,environment,tolerance);
@@ -141,7 +143,7 @@ public static partial class RequestedAnalysis
     var card=directive.Analysis;
     if(card.Kind is not ("op" or "dc")&&baseRequest.Circuit.Elements.Any(e=>e is VoltageScaledCccs{FactorOffset:0}))
      throw new PreparationFailure("unsupported_bilinear_analysis",card.Range);
-    if(card.Kind is not ("op" or "dc")&&baseRequest.Circuit.Elements.Any(e=>e is BehavioralVoltage))
+    if(card.Kind is not ("op" or "dc" or "tran")&&baseRequest.Circuit.Elements.Any(e=>e is BehavioralVoltage))
      throw new PreparationFailure("unsupported_behavioral_analysis",card.Range);
     if(card.Kind is not ("op" or "dc" or "ac")&&baseRequest.Circuit.Elements.Any(e=>e is BehavioralResistor))
      throw new PreparationFailure("unsupported_behavioral_resistance_analysis",card.Range);
@@ -237,10 +239,22 @@ public static partial class RequestedAnalysis
       outputStart=values.Length>2?values[2]:0;
       if(outputStart<0||outputStart>values[1])throw new PreparationFailure("invalid_transient_start",card.Range);
       var maximumStep=values.Length>3?values[3]:Math.Min(values[0],(values[1]-outputStart)/50);
+      if(timeint.MaxStep is {} ceiling)maximumStep=Math.Min(maximumStep,ceiling);
       var transient=TransientSelection.PrepareRequested(syntax,values[1],values[0],maximumStep,maxPoints,limits,backend,selected);
       if(!transient.Success)throw new PreparationFailure(transient.Prepared.Diagnostics[0].Code,card.Range);
       var transientRequest=transient.Prepared.Request! with{CaseId=id};
       var options=((TransientConfigured)transientRequest.Analysis).Options;
+      if(transientRequest.Circuit.Elements.Any(e=>e is BehavioralVoltage)){
+       var driven=new HashSet<int>{0};
+       foreach(var element in transientRequest.Circuit.Elements)
+        if(element is Voltage or BehavioralVoltage && (element.P==0||element.N==0)){
+         driven.Add(element.P);driven.Add(element.N);
+        }
+       if(transientRequest.Circuit.Elements.Any(e=>e is not (Resistor or Voltage or Current or BehavioralVoltage))
+          || transientRequest.Circuit.Elements.OfType<BehavioralVoltage>().Any(b=>b.P!=0&&b.N!=0||!driven.Contains(b.Cp)||!driven.Contains(b.Cn))
+          ||requestedMethod is not (null or "backward_euler")||usesUic)
+        throw new PreparationFailure("unsupported_behavioral_transient_profile",card.Range);
+      }
       if(requestedMethod!=null){
        if(requestedMethod=="trapezoidal"&&options.InitialNewton!=null&&
            transientRequest.Circuit.Elements.Any(e=>e is Bsim330 or Mos1Channel{Model.OxideFarads:>0}))
@@ -279,6 +293,7 @@ public static partial class RequestedAnalysis
        };
       }
       options=options with{CurrentAbsoluteTolerance=abstol};
+      options=options with{RelativeTolerance=timeint.Relative};
       // Native MOS decks default to trapezoidal. The runtime records source-
       // corner BE restarts and reconstructs junction current with that method.
       if(!usesUic && requestedMethod is null && transientRequest.Circuit.Elements.Any(e=>e is Mos1Channel) &&
@@ -290,6 +305,14 @@ public static partial class RequestedAnalysis
            Math.Max(double.Epsilon,options.MaxStepS/1e6),4*options.MaxSteps,CurrentRelative:1e-4)};
       if(abstol is {} amps&&!usesUic&&initialization!=null&&options.InitialNewton!=null)
        initialization=initialization with{Analysis=new OperatingPointNewton(new NewtonOptions(CurrentAbsoluteTolerance:amps))};
+      // Sharp switch transitions need rejected Newton trials to shrink within
+      // an explicit policy. Reuse native rollback and step-doubling history;
+      // this changes neither equations nor the authored maximum step.
+      if(!usesUic&&options.Adaptive==null&&options.Sources is {Length:>0}
+          &&transientRequest.Circuit.Elements.Any(e=>e is PspiceSwitch))
+       options=options with{Adaptive=new AdaptiveOptions(1e-7,1e-9,1e-9,
+           Math.Max(double.Epsilon,options.MaxStepS/1e6),4*options.MaxSteps)};
+      if(timeint.Fixed)options=options with{Adaptive=null};
       requests.Add(transientRequest with{Analysis=new TransientConfigured(options)});break;
      default:throw new PreparationFailure("unsupported_requested_analysis:"+card.Kind,card.Range);
     }

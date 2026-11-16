@@ -1,0 +1,68 @@
+[DOCUMENT]
+TITLE: Requested numerical options and memoryless behavioral transients
+
+[REQUIREMENT]
+UID: FRONTEND-TIMEINT-001
+STATUS: Draft
+TITLE: Whole-card integration option semantics
+STATEMENT: >>>
+Generated TIMEINT metadata shall preserve parameter expressions for ABSTOL, RELTOL and DELMAX and evaluate them once in the owning root environment as positive finite SI values. CONSTSTEP=1 shall disable adaptive stepping while retaining physical source corners and final time. DELMAX shall cap, never enlarge, the authored/default maximum step. Unknown companions, duplicate keys, non-root declarations and mixed non-transient analysis scopes shall refuse atomically. Driven sharp-switch transients shall use explicit bounded rejected-trial recovery with unchanged equations and maximum step; CONSTSTEP=1 intentionally disables that adaptive policy. Integration budget and minimum-step validation remain effective.
+<<<
+COMMENT: >>>
+Implementation: DeclarationExtraction, RequestedTimeintPreparation, RequestedAnalysis. Tests: RequestedTimeintTests, configured_relative.rs. Xyce algorithm selectors such as ERROPTION, GEAR without a qualified order, NEWBPSTEPPING and user breakpoint schedules remain unsupported. See another-twenty-decks-results.md for original-deck evidence and limits.
+<<<
+
+[REQUIREMENT]
+UID: SOLVER-RELATIVE-BOUND-001
+STATUS: Draft
+TITLE: Explicit relative upper bound
+STATEMENT: >>>
+Configured integration shall validate a requested relative bound, retain immutable authored input, and apply the minimum of that bound and existing stricter Newton and adaptive relative policies. A separate adaptive current-relative policy shall also obey the requested bound. Every accepted result shall report its effective Newton relative tolerance separately from step-doubling error tolerances. No tolerance option shall disable independent physical audits, input bounds or cancellation.
+<<<
+COMMENT: >>>
+Implementation: configured.rs and TransientConfiguration. Verification: requested wire JSON, configured_relative fixed/negative/property checks. A relative convergence/error bound is not a proven global waveform accuracy bound. Existing strict current residual floor remains unchanged.
+<<<
+
+[REQUIREMENT]
+UID: BEH-MEMORYLESS-TRAN-001
+STATUS: Draft
+TITLE: Grounded stateless behavioral voltage transients
+STATEMENT: >>>
+Backward-Euler configured requests may execute stateless bounded scalar voltage laws in memoryless R/V/I circuits with grounded behavioral outputs and control nodes directly driven by grounded independent or behavioral voltage sources. Passive-mediated controls shall refuse before domain evaluation; this profile does not infer a full electrical dependency graph. Startup shall seed actual source voltages and evaluate acyclic behavioral dependencies before ordinary Newton enforcement of every original equation and load current. Nonfinite or out-of-domain values shall fail without substituting zero. Cyclic startup dependencies, storage, AC derivative execution, explicit startup state/continuation and other integration methods remain separate refused profiles. Accepted samples shall undergo independent endpoint constitutive and KCL checks.
+<<<
+COMMENT: >>>
+Implementation: compile.rs, configured.rs, api.rs and RequestedAnalysis. Verification: behavioral_transient.rs and original logarithm/exponential samples on independently selected providers. Startup graph ordering is a finite bounded domain-admission aid, not a solution proof or general convergence guarantee.
+<<<
+
+[REQUIREMENT]
+UID: FRONTEND-NAMESPACE-REPORT-001
+STATUS: Draft
+TITLE: Explicitly omitted reporting namespaces
+STATEMENT: >>>
+A whole OUTPUT option card containing only boolean PRINTHEADER/PRINTFOOTER settings, or a DEVICE card containing only a nonpositive literal integer DEBUGLEVEL, may be admitted as an explicit reporting omission. Unknown keys, positive debug modes and physical companions shall not inherit reporting admission. Typed numerical results shall retain all samples and signals; legacy formatted files are not reproduced by this admission.
+<<<
+COMMENT: >>>
+Implementation: generated DeclarationExtraction metadata and OperatingPointSelection reporting_options_not_selected observations. Verification: positive and malformed mixed-card tests. Reporting recognition contributes no claim of new physical model functionality.
+<<<
+
+[REQUIREMENT]
+UID: FRONTEND-DEVICE-TEMP-001
+STATUS: Draft
+TITLE: Namespaced Celsius environment
+STATEMENT: >>>
+A whole DEVICE TEMP option shall reuse the qualified requested operating-temperature environment and model support validation. It shall not become a reporting omission. Nonfinite temperatures, absolute-zero violations, duplicate/conflicting temperature declarations and unsupported model families shall refuse before execution.
+<<<
+COMMENT: >>>
+Implementation: DeclarationExtraction and RequestedTemperaturePreparation. Verification: TC1 resistance scaling and original temp_dep_2 numerical comparison. DEVICE companions and general semiconductor thermal physics remain separately qualified.
+<<<
+
+[REQUIREMENT]
+UID: QUAL-ORIGINAL-TIMING-001
+STATUS: Draft
+TITLE: Scoped three-simulator timing evidence
+STATEMENT: >>>
+Timing campaigns shall retain original input hashes, requested-analysis completeness, executable/library hashes, build profiles, warmups, repetitions, deadlines and actual failures. Speed comparisons shall distinguish prepared-request native execution, original SPICE preparation, process startup, solver work where independently measurable, serialization and reference-checking overhead. Failed or incomplete work shall never become a speedup. An even repetition count shall use the mean of its two central timing samples. Scope or build-profile differences shall remain explicit rather than implying an overall simulator ranking.
+<<<
+COMMENT: >>>
+Implementation: Measure-OriginalDeckTimings.cs/.ps1 and the public-API RSpiceTimingProbe integration glue. The external cached RSpice core is a debug library; optimizing probe glue does not qualify release-to-release comparisons. Ours consumes prepared JSON, so frontend parse time is not included in that number. Existing numerical qualification is outside measured intervals. Tests: bounded malformed-provenance refusal and odd/even median smoke checks; report helper coverage as unavailable until measured.
+<<<

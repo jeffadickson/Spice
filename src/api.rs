@@ -123,8 +123,11 @@ pub fn run_with_registry(
             "charged junction total current requires integration initialized from operating point",
         ));
     }
-    if !plan.behaviors.is_empty() && !matches!(request.analysis,Analysis::OperatingPoint|Analysis::OperatingPointNewton{..}) {
-        return Err(SimError::new(crate::error::ErrorCode::Unsupported,"behavioral voltage expressions are currently qualified for DC operating points only"));
+    let memoryless_behavior = matches!(&request.analysis,Analysis::TransientConfigured{options}
+        if options.method==crate::configured::Method::BackwardEuler && options.initial_state.is_none())
+        && plan.memoryless_behavioral_profile();
+    if !plan.behaviors.is_empty() && !matches!(request.analysis,Analysis::OperatingPoint|Analysis::OperatingPointNewton{..}) && !memoryless_behavior {
+        return Err(SimError::new(crate::error::ErrorCode::Unsupported,"behavioral voltage dynamic profile requires memoryless grounded outputs and backward Euler; AC and storage remain unqualified"));
     }
     tracing::debug!(unknowns = plan.unknown_count(), "circuit_compiled");
     let mut integration = None;

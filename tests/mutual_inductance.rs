@@ -23,7 +23,7 @@ fn configured_coupling_flux_energy_and_signed_current_match_independent_recurren
  use circuit_simulator::{configured::{run,Method,TransientConfig},audit::{self,AuditOptions}};
  let c=circuit(-0.75);let p=compile(&c).unwrap();let l1=0.001;let l2=0.004;let m=-0.0015;
  for method in [Method::BackwardEuler,Method::Trapezoidal] {
-  let h=1e-6;let options=TransientConfig{stop_s:1e-4,max_step_s:h,max_steps:200,method,current_absolute_tolerance:None,accepted_times_s:None,initial_newton:None,initial_state:Some(vec![1.,-0.4,0.5,-0.05,0.05,0.01]),sources:vec![],adaptive:None};
+  let h=1e-6;let options=TransientConfig{stop_s:1e-4,max_step_s:h,max_steps:200,method,current_absolute_tolerance:None,relative_tolerance:None,accepted_times_s:None,initial_newton:None,initial_state:Some(vec![1.,-0.4,0.5,-0.05,0.05,0.01]),sources:vec![],adaptive:None};
   let result=run(&p,&FaerSparseLu,&options,&false.into()).unwrap();let mut i1=0.05;let mut i2=0.01;
   for pair in result.samples.windows(2) {
    let dt=pair[1].time_s-pair[0].time_s;let scale=if matches!(method,Method::BackwardEuler){1.}else{0.5};

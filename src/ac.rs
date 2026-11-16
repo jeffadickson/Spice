@@ -35,6 +35,9 @@ pub fn ac_with_source_phasors(
     solver: &dyn LinearSolver,
 ) -> SimResult<Vec<AcSample>> {
     plan.require_dynamic_native_models()?;
+    if !plan.behaviors.is_empty() {
+        return Err(SimError::new(ErrorCode::Unsupported,"behavioral voltage AC derivative qualification remains unavailable"));
+    }
     if frequencies.is_empty() || frequencies.len() > 10_000 {
         return Err(SimError::invalid("AC grid must contain 1..10000 points"));
     }

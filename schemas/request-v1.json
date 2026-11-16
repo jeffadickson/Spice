@@ -5344,6 +5344,15 @@
                     "type": "null"
                   }
                 },
+                "relative_tolerance": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "not": {
+                    "type": "null"
+                  }
+                },
                 "accepted_times_s": {
                   "type": [
                     "array",

@@ -75,6 +75,8 @@ public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range)
     public string? TransientMethodOption { get; init; }
     /// <summary>Current convergence tolerance in amperes, retained as a deck expression.</summary>
     public SourceSyntax? TransientAbstolOption { get; init; }
+    /// <summary>Whole recognized TIMEINT card, without the namespace marker; values remain unevaluated.</summary>
+    public ImmutableArray<ParameterSyntax> TimeintOptions { get; init; } = [];
     /// <summary>Root scalar exports to the control namespace, separate from physical parameters.</summary>
     public ImmutableArray<ParameterSyntax> ControlConstants { get; init; } = [];
     /// <summary>Generated .global node list; null denotes another directive or an unsupported global header.</summary>
