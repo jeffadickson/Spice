@@ -1,0 +1,335 @@
+{
+  "source_pin": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "rows": [
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ABM_ATAN_TAN/atan_tan.cir",
+      "group": "math",
+      "baseline_diagnostics": [
+        "unsupported_behavior_function"
+      ],
+      "result": {
+        "Sha256": "7752b7dfd988080d26d82d653917beac819adc3c203400a6613788f664124ca3"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ABM_INT_FLOOR_CEIL/int_floor_ceil_bsrc.cir",
+      "group": "math",
+      "baseline_diagnostics": [
+        "unsupported_behavior_function"
+      ],
+      "result": {
+        "Sha256": "3fcb94c8cf0623f334ccb0caee2e598f4806023fe91ca56dc1f8a47ad24a6978"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ABM_POW/abmpow3.cir",
+      "group": "math",
+      "baseline_diagnostics": [
+        "unsupported_behavior_power"
+      ],
+      "result": {
+        "Sha256": "d72c73e625f573ad9b5cbe244a6a1f978a9ca7a213072da492860d469b23b7f2"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ABM_SCT/sct.cir",
+      "group": "math",
+      "baseline_diagnostics": [
+        "unsupported_behavior_function"
+      ],
+      "result": {
+        "Sha256": "b4fce77551ca268816933be9c94514164986ff4c706a94492c5c5c6e29f552d1"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ABM_SQRT/sqrt.cir",
+      "group": "math",
+      "baseline_diagnostics": [
+        "unsupported_behavior_function"
+      ],
+      "result": {
+        "Sha256": "eb167445082534e733fddfd92890ae835e70a24cf58bc20da489bf9c806a7230"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/BINARYOPS/binary_funcs.cir",
+      "group": "math",
+      "baseline_diagnostics": [
+        "unsupported_behavior_function"
+      ],
+      "result": {
+        "Sha256": "79ada8a88bd9591bf6ddbe7bc549646c3941300559046b34c083befeb1a45f6f"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/UNARYOPS/unary_funcs.cir",
+      "group": "math",
+      "baseline_diagnostics": [
+        "unsupported_behavior_expression"
+      ],
+      "result": {
+        "Sha256": "b9c417e519124b1c1e3c489036be4698592ced82615b79f62810b108e4c81db9"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/TERNARY_OP/ternary_op.cir",
+      "group": "math",
+      "baseline_diagnostics": [
+        "unsupported_behavior_expression"
+      ],
+      "result": {
+        "Sha256": "3f9fea6fd70af38713f29a0425c34797a39283bf840dc71f4721248112f67b66"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ABM_FUNC/func.cir",
+      "group": "behavior",
+      "baseline_diagnostics": [
+        "unsupported_behavior_control_count"
+      ],
+      "result": {
+        "Sha256": "10dbc1b2c0483f931d2be83bb801492a831e063ed9b3894573cea150e1815baa"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ABM_TIME/time.cir",
+      "group": "behavior",
+      "baseline_diagnostics": [
+        "unsupported_behavior_runtime"
+      ],
+      "result": {
+        "Sha256": "a56b0bd02c6bfa99d3043a9b14a2453c97e4e1dff8c35c3cde0a72fa1de4cb6c"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1085_SON/bug1085son.cir",
+      "group": "behavior",
+      "baseline_diagnostics": [
+        "unsupported_behavior_control_count"
+      ],
+      "result": {
+        "Sha256": "26adeb01208c2b235d62feb5450a40dedf5fa5d0530496d0f83e2561253aaf68"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1085_SON/bug1085sonRef.cir",
+      "group": "behavior",
+      "baseline_diagnostics": [
+        "unsupported_behavior_control_count"
+      ],
+      "result": {
+        "Sha256": "da48a167fcbcf8f54e2615af920a1b58ed2df262d755157526584f8cff093ece"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1806/bug_1806_2.cir",
+      "group": "behavior",
+      "baseline_diagnostics": [
+        "unsupported_behavior_control_count"
+      ],
+      "result": {
+        "Sha256": "63d8155e5b2faeb5ec82d92779007062021dcab33cf4d2a86ebd04227159d75f"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1806/bug_1806_2a.cir",
+      "group": "behavior",
+      "baseline_diagnostics": [
+        "unsupported_behavior_control_count"
+      ],
+      "result": {
+        "Sha256": "cf8ec9463787a61c4df8207902e90f6608adfb0ff4efc32d79a3eae4aec0586a"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/SOLN_DEP_RES/solDepRes2.cir",
+      "group": "behavior",
+      "baseline_diagnostics": [
+        "unsupported_behavior_control_count"
+      ],
+      "result": {
+        "Sha256": "d8d511b2a64b0e410897e106dc6276f38f39d790f1902bb007866a2613ac4d0e"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/ISSUE_310/issue310.cir",
+      "group": "behavior",
+      "baseline_diagnostics": [
+        "unsupported_behavior_runtime"
+      ],
+      "result": {
+        "Sha256": "52a22e6ab7e250acdbe2ecb3001c1326c4664fea18ce588dfc5f34d86044777c"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_524_SON/cmod_capmod.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "bbc42699cb679aa8fe9e1ae6d1da6c304a245729b3ce864f8b8043f1414cdf5e"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_524_SON/lmod_indmod.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "5e6dbdcbed9c06117f7d3aa675338a91093e968e394b69e4e929a3c8cf98ede0"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/TEMPCAP/tempcap.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "983d12b8c743da90401a88debb2a2c0271515b9678d06e9484320e268f7a7308"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/TEMPCAP/tempcap_instance.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "68eac2b8b55e77a50995c67d998046883c445273908f2c1f2dd3bbb8cfcacd7d"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/TEMPCAP/tempcap_instance2.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "2c95e85bb9480e588f1f5ee81cc8d109731e32d70e4d530e2f44281b73a91f38"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/TEMPIND/tempind.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "eba40c7dc17464fb214868ce9facf332c229607e625b537030116178aa0a3069"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/TEMPIND/tempind_instance.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "48c54ad200651b4f00aae33c19db2e46e14069cc12c0f9e533f1b7cc37a2317a"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/TEMPIND/tempind_instance2.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "6d9667a1107e986cc4a6740fa13ff05e32b5cb51ed4c88a5310a103e7b376a9f"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/SEMIC_CAPACITOR/semicap.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "3506724301d8f40ac0f0b8339b4976076fc7b571bf38e99cabe7e7798ef56e97"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/SEMIC_CAPACITOR/semicap_subc.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "3cba280a6e0301fcee28383e83018a494aca337571faaf3853738cc527aba584"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/MULTIPLICITY_FACTOR/inductor_ic.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "01b9b95776414d3ecd33b16ec8ebbb17c5acb88570098d239ca60e30439546e5"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/CAPACITOR/capacitor.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "e801d2cf0be7570bcd55c6015f3a0ca50e5801829f0569deb4400b531bde7601"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/BUG_374/capacitor.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "33884a25e0ff221dc53bed41cdc0904361a87a3c97d3a2c589b673dd59515eab"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/BUG_374/capacitor-bug.cir",
+      "group": "passive",
+      "baseline_diagnostics": [
+        "unsupported_primitive_header"
+      ],
+      "result": {
+        "Sha256": "1df131b9a04f1e4740b874135675fcfdded8a7509be2f71c0e035ece682fef6e"
+      }
+    }
+  ]
+}

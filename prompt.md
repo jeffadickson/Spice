@@ -1,3 +1,23 @@
+# Active selected cohort — thirty blocked originals
+
+Read docs/thirty-decks-plan.md, docs/corpus-cohort-qualification.sdoc,
+compat/ngspice/thirty-decks-inventory.json and evidence/thirty-decks-baseline.json.
+Thirty unique new originals are frozen: eight math, eight behavioral/time/control
+and fourteen passive-model cases. All thirty structurally parse and refuse
+requested-analysis preparation. Zero new numerical executions or agreements.
+The baseline completed with valid provenance in 16.9401797 seconds using the
+previous verified frozen runtime-reviewed/engine-final artifacts, not a fresh
+publication-source rebuild. Raw E:/Artifacts/Spice-thirty-20261116T014236Z.
+Implementation is pending; start with shared math/control blockers, then passive
+models and IC semantics. Do not replace the cohort with already passing files,
+omit requested analyses, weaken bounds or call this thirty working decks.
+Collect complete ngspice/RSpice correctness and scoped timing evidence after
+execution becomes available. Preserve main/unknown work, use E: artifacts and
+Windows-managed ordinary memory. This checkpoint changes data/docs only; no new
+solver, GPU, code coverage or mutation qualification is claimed. StrictDoc parsed
+83 documents / 567 unique UIDs. Selection validation rechecked all thirty hashes.
+
+---
 # Current checkpoint — another twenty originals execute on Faer
 
 Read docs/another-twenty-decks-results.md and evidence/another-twenty-decks.json.

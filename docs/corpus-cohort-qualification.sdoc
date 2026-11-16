@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Original corpus cohort qualification
+
+[REQUIREMENT]
+UID: QUAL-CORPUS-COHORT-001
+STATUS: Draft
+TITLE: Newly selected original deck identities and independent completion counts
+STATEMENT: >>>
+A newly selected compatibility cohort shall freeze unique original input identities and hashes, record a current executable baseline and exclude previously counted successful inputs. Syntax acceptance, preparation, requested-analysis execution, numerical agreement and performance shall have separate counts. Preparation refusals shall leave numerical agreement unavailable. New physical functionality shall be counted only after every requested analysis and required observable executes against an independent reference at the existing unweakened bounds. Related fixture files shall not be described as distinct model families. Original/default and altered or refined-reference results shall remain separate.
+<<<
+COMMENT: >>>
+Selection and baseline evidence: thirty-decks-plan.md, ../compat/ngspice/thirty-decks-inventory.json, ../evidence/thirty-decks-baseline.json and ../evidence/thirty-decks-burndown.svg. Thirty original files are currently preparation-blocked; no implementation or numerical closure is asserted. RequestedCorpus retains executable/DLL/input hashes and source correspondence. Full behavior and performance gates remain open.
+<<<
