@@ -1,0 +1,531 @@
+{
+  "kind": "thirty-deck-first-shared-blocker-checkpoint",
+  "target_after_user_expansion": {
+    "total": 80,
+    "original": 30,
+    "additional": 50,
+    "completed": false
+  },
+  "raw_artifacts": "E:\\Artifacts\\Spice-thirty-fixes-20261116T030107Z",
+  "source_commit_at_execution": "49c1ff4b9073696406ed3682e69487b8d7113ca8",
+  "tested_source_dirty": true,
+  "tested_source_identity": "Raw coordinator retains full code/DLL/input hashes. These are tested dirty working bytes, not a claim that base Git HEAD alone contains the change.",
+  "corpus_commit": "29c28a022625fd7cc2c56ead1cce2d3066663074",
+  "engine_current_sha256": "cd6c482cfd52874c8cdc10ef5b2583d5f0147cbeb6b0f21e1e0cf626ab1d4e00",
+  "counts": {
+    "intel_original_executed": 0,
+    "cpu_stock_agreed": 0,
+    "executed_native_reference_failures": 1,
+    "cpu_numerical_differences": 5,
+    "intel_original_agreed": 0,
+    "cpu_executed": 6,
+    "originals": 30,
+    "prepared_execution_failure": 1,
+    "requested_prepared": 7,
+    "preparation_refused": 23,
+    "authored_capacitor_ac_agreed": 1
+  },
+  "point_budget": {
+    "explicit_current": 100000,
+    "native_ceiling": 100000,
+    "authored_steps_unchanged": true,
+    "historical_default": 10000
+  },
+  "source_and_artifact_evidence": {
+    "intel_scope": "Thirty-deck run used preceding frozen engine-reviewed 413b986d..., before final sqrt denominator correction. Current authored Intel AC and explicit circuit gate are separate evidence.",
+    "lu_summary_sha256": "ac5727c99c9f791441b35edf49dd79b561f8f2fbfe8e2c02667fe90e2d85efa0",
+    "intel_summary_sha256": "a9ff599fce984dc5801ffd1b34daeb8f0682e8e39d958d18ae6bfc54cd588895",
+    "faer_summary_sha256": "b022931a4992636fbce141a8ae852567ef52044d724272f4a68d4ac8cd17eed6"
+  },
+  "verification": {
+    "native_post_review_targeted": {
+      "scope": "six expression tests and four behavioral-transient tests",
+      "passed": 10,
+      "seed": "2026111601",
+      "property_cases": 64,
+      "failed": 0
+    },
+    "mutants": {
+      "tool": "cargo-mutants 27.1.0",
+      "source_scope": "Earlier isolated snapshot of sine/cosine derivative and sqrt-positive-domain guards, before final sqrt denominator refinement. Not a whole-change mutation score.",
+      "selected": 4,
+      "caught": 4,
+      "memory_intervention": false,
+      "invalid": 0,
+      "missed": 0,
+      "timeouts": 0
+    },
+    "coverage": {
+      "managed_branches_valid": 16749,
+      "managed_line_rate": 0.8216029778369702,
+      "managed_branch_rate": 0.6988476923995462,
+      "native_scope": "Named integration test owned-library lines only; no stable native branch metric",
+      "managed_lines_valid": 29283,
+      "managed_lines_covered": 24059,
+      "native_expression": [
+        {
+          "sha256": "0157f0a3153adc51c184fbd0e6ce2409fc3bf83267327e9f3c4a4d3f434aaa14",
+          "lines": {
+            "count": 111,
+            "covered": 71,
+            "percent": 63.96396396396396
+          },
+          "file": "src/expression.rs"
+        }
+      ],
+      "coverage_seed": "88320261103",
+      "managed_scope": "Client, Frontend, Syntax and RequestedQualification; generated parser may be included",
+      "managed_branches_covered": 11705
+    },
+    "frontend": {
+      "scope": "fresh explicit full namespace run after valid FsCheck gamma correction",
+      "replay": "1601,20261117",
+      "failed": 0,
+      "property_cases": 64,
+      "skipped": 42,
+      "passed": 1099
+    },
+    "syntax": {
+      "passed": 541,
+      "failed": 0,
+      "skipped": 1
+    },
+    "native_full_before_final_edge_review": {
+      "source_scope": "Before final two sqrt-edge regressions/corrections; not relabeled as current full suite",
+      "passed": 648,
+      "failed": 0,
+      "ignored": 5
+    },
+    "strictdoc": {
+      "documents": 84,
+      "unique_uids": 570,
+      "parser": "StrictDoc SDReader",
+      "success": true
+    },
+    "current_intel_circuit_gate": {
+      "exit_code": 0,
+      "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+      "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+      "tests_log": "E:\\Artifacts\\Spice-intel-circuit-tests-b2b4326b2f6947eca322326a1124189f\\tests.log",
+      "scope": "Actual Intel real/complex solves, known-solution properties, full divider circuit and bounded CLI lifecycle; not arbitrary deck qualification"
+    },
+    "opencl_probe_path": "E:/Artifacts/Spice-parallel-Intel-19a842c85c80494ca4cb34b401430448/intel-opencl.json",
+    "grammar_map": {
+      "scope": "Reviewed bounded metadata; association does not establish complete grammar implementation",
+      "updated_rules": [
+        "expression",
+        "passive"
+      ],
+      "unassessed": 4,
+      "report": "evidence/grammar-implementation.json",
+      "actual_rules": 113,
+      "assessed": 109
+    }
+  },
+  "stock_original_reference_screen": {
+    "exit0_raw": 17,
+    "scope": "Direct unchanged original input process screen, not full signal qualification",
+    "rejected_without_raw": 13
+  },
+  "rspice_harness": {
+    "scope": "External live-reference harness; separate slope-gated time-jitter/reference-envelope comparisons. Not equivalent to strict comparator.",
+    "passed": 11,
+    "failed": 19
+  },
+  "timings": {
+    "engine_sha256": "413b986df009d451351a340f98c948f91a67b85b664663d6c56c2bf7b4b87047",
+    "repetitions": 3,
+    "warmups": 1,
+    "qualified_originals": 0,
+    "scope": "Diagnostic only: none of the six originals strictly agree; initial overlap with owned native test linking, differing sample counts and prepared-vs-SPICE parsing scopes. Cached RSpice core is debug.",
+    "rows": [
+      {
+        "rspice_debug_core_ms": 122.012,
+        "ngspice_ms": 195.24,
+        "ours_prepared_ms": 39.3566,
+        "path": "tests/xyce/Netlists/ABM_ATAN_TAN/atan_tan.cir"
+      },
+      {
+        "rspice_debug_core_ms": 75.5724,
+        "ngspice_ms": null,
+        "ours_prepared_ms": 773.1857999999999,
+        "path": "tests/xyce/Netlists/ABM_INT_FLOOR_CEIL/int_floor_ceil_bsrc.cir"
+      },
+      {
+        "rspice_debug_core_ms": 1052.5338,
+        "ngspice_ms": 316.59,
+        "ours_prepared_ms": 798.8329,
+        "path": "tests/xyce/Netlists/SEMIC_CAPACITOR/semicap.cir"
+      },
+      {
+        "rspice_debug_core_ms": 902.1707,
+        "ngspice_ms": 242.7852,
+        "ours_prepared_ms": 716.6735,
+        "path": "tests/xyce/Netlists/SEMIC_CAPACITOR/semicap_subc.cir"
+      },
+      {
+        "rspice_debug_core_ms": 1234.9252,
+        "ngspice_ms": 258.4701,
+        "ours_prepared_ms": 706.1044,
+        "path": "tests/xyce/Netlists/BUG_374/capacitor.cir"
+      },
+      {
+        "rspice_debug_core_ms": 985.877,
+        "ngspice_ms": 273.7234,
+        "ours_prepared_ms": 935.3008,
+        "path": "tests/xyce/Netlists/BUG_374/capacitor-bug.cir"
+      }
+    ],
+    "raw": "timing-six-diagnostic/summary.json"
+  },
+  "review": {
+    "independent_external_experts": false,
+    "resolved": [
+      "numeric model CAP vs no-op C marker",
+      "sqrt chain premature underflow",
+      "sqrt chain premature overflow after first correction"
+    ],
+    "kind": "Read-only internal agent source review"
+  },
+  "rows": [
+    {
+      "path": "tests/xyce/Netlists/ABM_ATAN_TAN/atan_tan.cir",
+      "input_sha256": "7752b7dfd988080d26d82d653917beac819adc3c203400a6613788f664124ca3",
+      "requested_prepared": true,
+      "requested_executed": true,
+      "native_agreed": false,
+      "status": "requested_executed_not_fully_qualified",
+      "diagnostics": []
+    },
+    {
+      "path": "tests/xyce/Netlists/ABM_INT_FLOOR_CEIL/int_floor_ceil_bsrc.cir",
+      "input_sha256": "3fcb94c8cf0623f334ccb0caee2e598f4806023fe91ca56dc1f8a47ad24a6978",
+      "requested_prepared": true,
+      "requested_executed": true,
+      "native_agreed": null,
+      "status": "requested_executed_not_fully_qualified",
+      "diagnostics": []
+    },
+    {
+      "path": "tests/xyce/Netlists/ABM_POW/abmpow3.cir",
+      "input_sha256": "d72c73e625f573ad9b5cbe244a6a1f978a9ca7a213072da492860d469b23b7f2",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "non_affine_behavior",
+        "unsupported_behavior_power"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/ABM_SCT/sct.cir",
+      "input_sha256": "b4fce77551ca268816933be9c94514164986ff4c706a94492c5c5c6e29f552d1",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "non_affine_behavior",
+        "unsupported_behavior_control_count"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/ABM_SQRT/sqrt.cir",
+      "input_sha256": "eb167445082534e733fddfd92890ae835e70a24cf58bc20da489bf9c806a7230",
+      "requested_prepared": true,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_execution_failed",
+      "diagnostics": []
+    },
+    {
+      "path": "tests/xyce/Netlists/BINARYOPS/binary_funcs.cir",
+      "input_sha256": "79ada8a88bd9591bf6ddbe7bc549646c3941300559046b34c083befeb1a45f6f",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "non_affine_behavior",
+        "unsupported_behavior_function"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/UNARYOPS/unary_funcs.cir",
+      "input_sha256": "b9c417e519124b1c1e3c489036be4698592ced82615b79f62810b108e4c81db9",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_behavior_expression"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/TERNARY_OP/ternary_op.cir",
+      "input_sha256": "3f9fea6fd70af38713f29a0425c34797a39283bf840dc71f4721248112f67b66",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_behavior_expression"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/ABM_FUNC/func.cir",
+      "input_sha256": "10dbc1b2c0483f931d2be83bb801492a831e063ed9b3894573cea150e1815baa",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "non_affine_behavior",
+        "unsupported_behavior_control_count"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/ABM_TIME/time.cir",
+      "input_sha256": "a56b0bd02c6bfa99d3043a9b14a2453c97e4e1dff8c35c3cde0a72fa1de4cb6c",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_behavior_runtime"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1085_SON/bug1085son.cir",
+      "input_sha256": "26adeb01208c2b235d62feb5450a40dedf5fa5d0530496d0f83e2561253aaf68",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "non_affine_behavior",
+        "unsupported_behavior_control_count"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1085_SON/bug1085sonRef.cir",
+      "input_sha256": "da48a167fcbcf8f54e2615af920a1b58ed2df262d755157526584f8cff093ece",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "non_affine_behavior",
+        "unsupported_behavior_control_count"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1806/bug_1806_2.cir",
+      "input_sha256": "63d8155e5b2faeb5ec82d92779007062021dcab33cf4d2a86ebd04227159d75f",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "non_affine_behavior",
+        "unsupported_behavior_control_count"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_1806/bug_1806_2a.cir",
+      "input_sha256": "cf8ec9463787a61c4df8207902e90f6608adfb0ff4efc32d79a3eae4aec0586a",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "non_affine_behavior",
+        "unsupported_behavior_control_count"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/SOLN_DEP_RES/solDepRes2.cir",
+      "input_sha256": "d8d511b2a64b0e410897e106dc6276f38f39d790f1902bb007866a2613ac4d0e",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_resistor_profile",
+        "unsupported_behavior_control_count"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/ISSUE_310/issue310.cir",
+      "input_sha256": "52a22e6ab7e250acdbe2ecb3001c1326c4664fea18ce588dfc5f34d86044777c",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_behavior_runtime"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_524_SON/cmod_capmod.cir",
+      "input_sha256": "bbc42699cb679aa8fe9e1ae6d1da6c304a245729b3ce864f8b8043f1414cdf5e",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_primitive_header",
+        "unsupported_capacitor_model"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/Certification_Tests/BUG_524_SON/lmod_indmod.cir",
+      "input_sha256": "5e6dbdcbed9c06117f7d3aa675338a91093e968e394b69e4e929a3c8cf98ede0",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_primitive_header"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/TEMPCAP/tempcap.cir",
+      "input_sha256": "983d12b8c743da90401a88debb2a2c0271515b9678d06e9484320e268f7a7308",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_physical_directive",
+        "unsupported_capacitor_instance_parameter"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/TEMPCAP/tempcap_instance.cir",
+      "input_sha256": "68eac2b8b55e77a50995c67d998046883c445273908f2c1f2dd3bbb8cfcacd7d",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_physical_directive",
+        "unsupported_capacitor_instance_parameter"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/TEMPCAP/tempcap_instance2.cir",
+      "input_sha256": "2c95e85bb9480e588f1f5ee81cc8d109731e32d70e4d530e2f44281b73a91f38",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_physical_directive",
+        "unsupported_capacitor_header"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/TEMPIND/tempind.cir",
+      "input_sha256": "eba40c7dc17464fb214868ce9facf332c229607e625b537030116178aa0a3069",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_primitive_header"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/TEMPIND/tempind_instance.cir",
+      "input_sha256": "48c54ad200651b4f00aae33c19db2e46e14069cc12c0f9e533f1b7cc37a2317a",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_primitive_header"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/TEMPIND/tempind_instance2.cir",
+      "input_sha256": "6d9667a1107e986cc4a6740fa13ff05e32b5cb51ed4c88a5310a103e7b376a9f",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_primitive_header"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/SEMIC_CAPACITOR/semicap.cir",
+      "input_sha256": "3506724301d8f40ac0f0b8339b4976076fc7b571bf38e99cabe7e7798ef56e97",
+      "requested_prepared": true,
+      "requested_executed": true,
+      "native_agreed": false,
+      "status": "requested_executed_not_fully_qualified",
+      "diagnostics": []
+    },
+    {
+      "path": "tests/xyce/Netlists/SEMIC_CAPACITOR/semicap_subc.cir",
+      "input_sha256": "3cba280a6e0301fcee28383e83018a494aca337571faaf3853738cc527aba584",
+      "requested_prepared": true,
+      "requested_executed": true,
+      "native_agreed": false,
+      "status": "requested_executed_not_fully_qualified",
+      "diagnostics": []
+    },
+    {
+      "path": "tests/xyce/Netlists/MULTIPLICITY_FACTOR/inductor_ic.cir",
+      "input_sha256": "01b9b95776414d3ecd33b16ec8ebbb17c5acb88570098d239ca60e30439546e5",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_primitive_header"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/CAPACITOR/capacitor.cir",
+      "input_sha256": "e801d2cf0be7570bcd55c6015f3a0ca50e5801829f0569deb4400b531bde7601",
+      "requested_prepared": false,
+      "requested_executed": false,
+      "native_agreed": null,
+      "status": "requested_preparation_refused",
+      "diagnostics": [
+        "unsupported_physical_directive",
+        "unsupported_capacitor_instance_parameter"
+      ]
+    },
+    {
+      "path": "tests/xyce/Netlists/BUG_374/capacitor.cir",
+      "input_sha256": "33884a25e0ff221dc53bed41cdc0904361a87a3c97d3a2c589b673dd59515eab",
+      "requested_prepared": true,
+      "requested_executed": true,
+      "native_agreed": false,
+      "status": "requested_executed_not_fully_qualified",
+      "diagnostics": []
+    },
+    {
+      "path": "tests/xyce/Netlists/BUG_374/capacitor-bug.cir",
+      "input_sha256": "1df131b9a04f1e4740b874135675fcfdded8a7509be2f71c0e035ece682fef6e",
+      "requested_prepared": true,
+      "requested_executed": true,
+      "native_agreed": false,
+      "status": "requested_executed_not_fully_qualified",
+      "diagnostics": []
+    }
+  ],
+  "limits": [
+    "Original agreement remains zero. Six executions are not six correctness qualifications.",
+    "Twenty-three preparation refusals plus one sqrt-zero-domain execution failure remain.",
+    "No fresh Stryker.NET or broad input fuzz campaign. No Linux qualification.",
+    "No GPU acceleration or overall faster claim. No CI or main merge.",
+    "Fifty additional originals are a pending expansion; 38 candidate stock native outputs were screened, not counted as completed decks.",
+    "Failed sandbox SDK bootstraps, schema writer depth attempt, invalid replay gamma and earlier reduced-discovery runs remain raw evidence and are not full passing runs."
+  ],
+  "results_issue": "https://github.com/jeffadickson/Spice/issues/56"
+}

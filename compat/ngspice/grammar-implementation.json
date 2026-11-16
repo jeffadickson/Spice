@@ -420,15 +420,20 @@
     "execution": "not_applicable",
     "implementation": [
       "dotnet/Simulator.Syntax/ParameterEvaluator.cs",
-      "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
+      "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs",
+      "dotnet/Simulator.Syntax/SingleControlVoltageCompiler.cs",
+      "src/expression.rs",
+      "src/audit.rs"
     ],
     "requirements": [
-      "SEM-PARAM-001"
+      "SEM-PARAM-001",
+      "BEH-SCALAR-MATH-001"
     ],
     "evidence": [
-      "evidence/five-area-integrated-verification.json"
+      "evidence/five-area-integrated-verification.json",
+      "evidence/thirty-decks-first-fixes.json"
     ],
-    "limitation": "Bounded scalar parameter evaluation and affine behavioral voltage expressions; arbitrary result vectors/functions and nonlinear behavior remain outside this contract."
+    "limitation": "Bounded scalar parameters, affine/bilinear laws and requested single-control typed unary math are implemented. Multiple general controls, time laws, conditionals and arbitrary functions remain separately refused; execution is analysis/profile bounded."
   },
   {
     "rule": "function",
@@ -489,15 +494,18 @@
     "execution": "bounded",
     "implementation": [
       "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
-      "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+      "dotnet/Simulator.Frontend/OperatingPointBridge.cs",
+      "dotnet/Simulator.Frontend/CapacitorModelLowering.cs"
     ],
     "requirements": [
-      "SEM-BRIDGE-001"
+      "SEM-BRIDGE-001",
+      "FRONTEND-CAP-MODEL-001"
     ],
     "evidence": [
-      "evidence/five-area-integrated-verification.json"
+      "evidence/five-area-integrated-verification.json",
+      "evidence/thirty-decks-first-fixes.json"
     ],
-    "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced."
+    "limitation": "Qualified R/C/L and selected source subsets; requested linear C scalar/model CAP, explicit geometry and temperature resolve to constant charge. Unknown tails, nonlinear capacitance, default geometry and device IC remain separately bounded/refused."
   },
   {
     "rule": "source",

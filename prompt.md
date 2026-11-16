@@ -1,3 +1,29 @@
+# Active campaign — eighty-deck target and hourly work until 8am
+
+User requested fifty ADDITIONAL decks beyond the frozen thirty: eighty total.
+The target remains incomplete. Tonight (Nov15–16) midnight soak is cancelled;
+hourly ten-new-deck work is scheduled9pm–8am Pacific, hard deadline
+2026-11-16T16:00:00Z. Preserve serialized in-progress work; never fabricate a
+batch quota. Read ignored work/hourly-decks-20261116.json for queue/provenance.
+
+Read docs/thirty-decks-first-fixes.md and evidence/thirty-decks-first-fixes.json.
+Current thirty:7 prepared,6 execute on LU/Faer,0 strict stock agreements;
+5 differences,1 native INT rejection,1 SQRT-zero derivative failure and23
+preparation refusals. Intel original execution0; separately authored capacitor
+model AC agrees on CPU/Intel and is not an original increment. Fifty additions
+are not yet frozen;38 candidate native outputs were screened only.
+
+Shared math/linear capacitor semantics and explicit corpus maxPoints were added.
+Model CAP is numeric; model C is a marker. Final sqrt slope dx/(2*sqrt(x)) has
+subnormal and large-slope red/green tests. Full frontend1099 passed/42 skipped;
+syntax541/1. Earlier full native648/5 predates final edge corrections; current
+focused native10 pass. Four scoped earlier-snapshot mutants caught. StrictDoc
+84 documents/570 UIDs. Scope/coverage/timing limits are in report; no full SPICE,
+Linux or GPU acceleration qualification. First diagnostic times are not speedup
+proof. Raw E:/Artifacts/Spice-thirty-fixes-20261116T030107Z; engine-current and
+runtime-reviewed identify current CPU results. Main/unknown work preserved.
+
+---
 # Active selected cohort — thirty blocked originals
 
 Read docs/thirty-decks-plan.md, docs/corpus-cohort-qualification.sdoc,

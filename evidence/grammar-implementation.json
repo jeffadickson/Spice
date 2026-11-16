@@ -1,9 +1,9 @@
 {
   "state": "generated_inventory",
-  "source_commit": "b0826a3dcec2ff11a3a8c2af1d72badad0e83329",
+  "source_commit": "49c1ff4b9073696406ed3682e69487b8d7113ca8",
   "source_dirty": true,
-  "assessment_sha256": "2d62438589e6912330eda92e8f0040b54cc89487de3587b9a35efe88ee6e7505",
-  "syntax_assembly_sha256": "36cbb3d4161d6f08ad495e4f5aad02237d8c53de0a6ee11d02a26e5dd900d954",
+  "assessment_sha256": "2158405852c0cb931cc6f1d6aa9760bae65b62c5937a923196dca48b9c1a5ddb",
+  "syntax_assembly_sha256": "da0f86251519e7c30554f3bf4170e603708b6a4374ffbc0b79cc7d2d2493368d",
   "source_hashes": {
     "compat/ngspice/capability-support.json": "b2735a3fd98498ff915c491ff8036a828efb3ee2ba09459bb071de53d5a7a7c9",
     "docs/mutual-inductance.sdoc": "c62a965e3515adfe2f96ce480d9db48633b988ee4ae7632a399bcc0fb43b5496",
@@ -18,14 +18,15 @@
     "dotnet/Simulator.Frontend.Tests/RequestedForeachTests.cs": "2247efb045c355c25c23b967df630101d088fb5498de8d6f170021421c5608de",
     "dotnet/Simulator.Frontend.Tests/RequestedPowerVectorTypeTests.cs": "fb00a2364c2301eae45015a9973edbc260804a55f606bccfe3ed8e30c5327127",
     "dotnet/Simulator.Frontend.Tests/RequestedPrefixFunctionTests.cs": "cc14c44e93dd5aec375b3268c1227ee1aa4f7fc89e596cffdecc485858642ebd",
-    "dotnet/Simulator.Frontend.Tests/RequestedTimeintTests.cs": "d8624cfb68c231b5df47775138fea2816b832507a88dc8d6dc27bc19ca0c6eb6",
+    "dotnet/Simulator.Frontend.Tests/RequestedTimeintTests.cs": "65bf908c7d94d7ce41459932d4a155b6a7e87568734d1f4b7bc11bb9c3fc0944",
     "dotnet/Simulator.Frontend.Tests/ScalarFunctionTests.cs": "2973883d15156583c23b87431463d257516f6aa76e0529dc002d032649396184",
     "dotnet/Simulator.Frontend.Tests/SourceAlterTests.cs": "2fb25a70429c2e320c478498d1b95ed3ee7e494f282d946aea46ab34f574a9e9",
-    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "a8048309ed5f5b5dc17633c88592887900f101bd17a102b52adc3366fed33d50",
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "044bdcac10f6de2653715af9b39c632359c051587a382adda6866ef55c0f7076",
     "dotnet/Simulator.Frontend/BjtPreparation.cs": "e989d7a59593c018a11844d398126d359d42d0b10fc1689158fc3dc3d8749a60",
+    "dotnet/Simulator.Frontend/CapacitorModelLowering.cs": "cd654c8ef0922671ba9d7d967a8d853c7d3d7b69efe0b78e74ed8d9204dca4c3",
     "dotnet/Simulator.Frontend/ControlSuffixAdmission.cs": "5a39fa512e17ff2c5be574795cf5b0894f2306971bf211699ce0a343c3e80a2e",
     "dotnet/Simulator.Frontend/Mos1Preparation.cs": "4168d719dc4ceae11cf0ee65e4d6bee85a5f1691796ddd09233c78f69b225c9c",
-    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "4e1eaff5f65a0afa863b40d71085132d299fab0e27afc0816de53d61ae9e412d",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "4abe757cb5a2fd7e1e449be05cbdab87d478993362e91021a125f1bef8807d07",
     "dotnet/Simulator.Frontend/OrderedControlPreparation.cs": "90c54e685f1a3b7ddd69657c06b4b7683395ddb2ce953af55eb13aac37806efc",
     "dotnet/Simulator.Frontend/OrderedControlReporting.cs": "d8d35fb7893a25cca253d62088feaf0731e372ef120b404570546ef1e7bb7420",
     "dotnet/Simulator.Frontend/PoleZeroSelection.cs": "ea14920d38198ce01ecee2b254fe105542e33736a7f60fc8b44db9f8f57acdcd",
@@ -54,9 +55,10 @@
     "dotnet/Simulator.Syntax/InstanceBinding.cs": "48c7f176300f3db67094fba9f806404e4f4b2707539a898c6e839149ce4258ef",
     "dotnet/Simulator.Syntax/InstanceExtraction.cs": "348aedc0693432f25738de243aaf2e401506d3dab889a595223895069cb5cc3a",
     "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "85c23d1f1cf64406b00f2ca123e0287d644b3d54aa6c07aa4e9152c01becbf1d",
-    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "c3d8f41467bd298c7b6c6735df9277bd84d41bbcfa7e7bb0726e13a8fd509bd4",
+    "dotnet/Simulator.Syntax/PrimitiveSyntax.cs": "cd1bd5c95371f7466a99283c71c9f2b8fe548cff4916798e1cbb7a266a94058b",
     "dotnet/Simulator.Syntax/ResourceResolver.cs": "d6ddf6749e4a8f2a0e3aef617053b5154fdcc9e89e030edf0d54c459e8e4cfdb",
     "dotnet/Simulator.Syntax/ScalarVectorExtraction.cs": "085ffe8489b4532032dbe5b9a64a2c4947f6b9e1137a1fbf041fc4f46022d253",
+    "dotnet/Simulator.Syntax/SingleControlVoltageCompiler.cs": "7beb9d6f9d2f09176380abf67f99b7a98d4ba54d87d038abbc518574b44ea038",
     "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "1293958e6f9b6238aeac754533cb5410f5a63e78a7c438b7055dfdd4d909a481",
     "dotnet/Simulator.Syntax/XspiceSyntax.cs": "5ec8216aa0b9cb9bf12880c9ca23331a80ee5f2fdbb26cc74013961c115965ad",
     "evidence/capability-inventory.json": "a036621f3eaf09354d06acb21a2653c2b21b832b0c7da25d4ac0c3c2ebc871da",
@@ -69,15 +71,18 @@
     "evidence/pspice-switch-results.json": "c13ac6b399e793515ab70603ad80e2de6f940470f20ee8a43ca0772743764006",
     "evidence/requested-fc5db25.json": "1b2cc37e053c86a2c42f0651900492392c5860ce0e62d4827bbd6a048c48667a",
     "evidence/scalar-functions-decks.json": "762501115bfa01290822f83e6162e99963b24140bd24c3738badb05fbce00cf0",
+    "evidence/thirty-decks-first-fixes.json": "bd4cf72e1f54c581f3f132159242d54901983bf2fba7f6f336d31d879bdb33a8",
     "scripts/GrammarImplementationMap.cs": "e49d79d9a4aa6835b828990149847fa3c7ed40c4cc667e58323f94a76eb96510",
     "src/api.rs": "60c849f4efe89f128edfb76c1ec1aae9245bb6cd1ba6a7dce7a5e01550c7a4ba",
+    "src/audit.rs": "8e953af44a4dbaef84ac6457d5b1617ef4b01ae4296fb242b2915425992d7258",
     "src/compile.rs": "5c277284738cd45fd6fc42999a352a87cf952022837560b2afcbdab17804f908",
     "src/configured.rs": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+    "src/expression.rs": "0157f0a3153adc51c184fbd0e6ce2409fc3bf83267327e9f3c4a4d3f434aaa14",
     "src/mutual_inductance.rs": "9b8d373524cffa2aa8093a9db67bb6645b40864b8fd0047bf08c68d7e8994514",
     "src/transient.rs": "c4bb4261eb887c00094040eb1c5aac6d554259e6aa8c6ae01a99c20188b43939",
-    "tests/behavioral_transient.rs": "3fd001813a03ebf24c73dbb45b3390029f52083b31654cc809accb3e5fb9da5b",
-    "tests/configured_relative.rs": "927ad08929e7263948584db11509504d43fa6769a7eede1841396e8dcf39f118",
-    "tests/mutual_inductance.rs": "0a1b3f5e0858f33b95b6fcc59f9fe69cdd16c37c645c4629fd40d86b3f5c3db9"
+    "tests/behavioral_transient.rs": "a3a68bf82ce9983c6e35c77e43a319f2e9c639d92a2af460190096f2bf262400",
+    "tests/configured_relative.rs": "d93e8188b8fda509e88040687431ed41b92102d48eaf56e438d2814b6b8b6c0c",
+    "tests/mutual_inductance.rs": "3f8cb184b1b11bdcdc5bc8290b1ab6d2cee3de01a4d4e2816bf862d847d35200"
   },
   "generated_rules": 113,
   "assessed_rules": 109,
@@ -1160,15 +1165,20 @@
       "execution": "not_applicable",
       "implementation": [
         "dotnet/Simulator.Syntax/ParameterEvaluator.cs",
-        "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs"
+        "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs",
+        "dotnet/Simulator.Syntax/SingleControlVoltageCompiler.cs",
+        "src/expression.rs",
+        "src/audit.rs"
       ],
       "requirements": [
-        "SEM-PARAM-001"
+        "SEM-PARAM-001",
+        "BEH-SCALAR-MATH-001"
       ],
       "evidence": [
-        "evidence/five-area-integrated-verification.json"
+        "evidence/five-area-integrated-verification.json",
+        "evidence/thirty-decks-first-fixes.json"
       ],
-      "limitation": "Bounded scalar parameter evaluation and affine behavioral voltage expressions; arbitrary result vectors/functions and nonlinear behavior remain outside this contract.",
+      "limitation": "Bounded scalar parameters, affine/bilinear laws and requested single-control typed unary math are implemented. Multiple general controls, time laws, conditionals and arbitrary functions remain separately refused; execution is analysis/profile bounded.",
       "commands": []
     },
     {
@@ -1644,15 +1654,18 @@
       "execution": "bounded",
       "implementation": [
         "dotnet/Simulator.Syntax/PrimitiveSyntax.cs",
-        "dotnet/Simulator.Frontend/OperatingPointBridge.cs"
+        "dotnet/Simulator.Frontend/OperatingPointBridge.cs",
+        "dotnet/Simulator.Frontend/CapacitorModelLowering.cs"
       ],
       "requirements": [
-        "SEM-BRIDGE-001"
+        "SEM-BRIDGE-001",
+        "FRONTEND-CAP-MODEL-001"
       ],
       "evidence": [
-        "evidence/five-area-integrated-verification.json"
+        "evidence/five-area-integrated-verification.json",
+        "evidence/thirty-decks-first-fixes.json"
       ],
-      "limitation": "Qualified R/C/L, independent sources, affine E/G and branch-current F/H subsets only; dimensional values/model tails and analysis restrictions remain enforced.",
+      "limitation": "Qualified R/C/L and selected source subsets; requested linear C scalar/model CAP, explicit geometry and temperature resolve to constant charge. Unknown tails, nonlinear capacitance, default geometry and device IC remain separately bounded/refused.",
       "commands": []
     },
     {
