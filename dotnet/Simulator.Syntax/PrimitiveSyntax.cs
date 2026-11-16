@@ -65,6 +65,8 @@ public sealed record ScopedCard(int ScopeId,string Kind,SourceRange Range)
     public MutualCouplingSyntax? Coupling {get;init;}
     /// <summary>True only for a nonempty generated .option(s) tail composed entirely of the qualified reporting and raw-file encoding settings.</summary>
     public bool ReportingOptionsOnly { get; init; }
+    /// <summary>Whole DEVICE NEWEXCESSPHASE=0/1 card; physical zero-delay admission is checked separately.</summary>
+    public bool ZeroDelayExcessPhaseOption {get;init;}
     /// <summary>Generated directive whose only physical setting explicitly selects the fixed 27 Celsius model temperature.</summary>
     public bool DefaultTemperature { get; init; }
     /// <summary>One generated literal .temp argument in Celsius, without evaluating physical admission.</summary>

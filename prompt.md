@@ -10,8 +10,7 @@ Read docs/thirty-decks-first-fixes.md and evidence/thirty-decks-first-fixes.json
 Current thirty:7 prepared,6 execute on LU/Faer,0 strict stock agreements;
 5 differences,1 native INT rejection,1 SQRT-zero derivative failure and23
 preparation refusals. Intel original execution0; separately authored capacitor
-model AC agrees on CPU/Intel and is not an original increment. Fifty additions
-are not yet frozen;38 candidate native outputs were screened only.
+model AC agrees on CPU/Intel and is not an original increment. Ten additions are frozen; four execute and strictly agree on Faer. See docs/hourly-20261116-b01-results.md. Forty additions remain to be selected.
 
 Shared math/linear capacitor semantics and explicit corpus maxPoints were added.
 Model CAP is numeric; model C is a marker. Final sqrt slope dx/(2*sqrt(x)) has

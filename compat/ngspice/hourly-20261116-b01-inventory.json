@@ -1,0 +1,74 @@
+{
+  "rows": [
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ACtests/diffpair_spiceMan.cir",
+      "result": {
+        "Sha256": "2d20cabed5656d680c1d59a55d46744b8088084325a7bda05cf1d831178ca416"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ACtests/diffpair_spiceManLIN.cir",
+      "result": {
+        "Sha256": "4ff0b59a9b2a38e80feb85690d44822cdaa0e824bc4166ef32451494102f92f3"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ACtests/diffpair_spiceManOld.cir",
+      "result": {
+        "Sha256": "fc027ec35b1f9f5b13c71472096b2113137a75dfac1e050035a83bd4c78960be"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ACtests/rca3040.cir",
+      "result": {
+        "Sha256": "5eeea6e15b4cae80eba39675d7e0b8650dad0a04703ab3102592e86abd8b1a45"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ACtests/gminstepping/opamp-vf-gstepping.cir",
+      "result": {
+        "Sha256": "a1d17f09b742443612c7445d21b98a509ed56af00e8d52e8b69c422b975d4b30"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ACtests/gminstepping/opamp-vf.cir",
+      "result": {
+        "Sha256": "c8a00856031989892134cb458e346c9b3413bb833cbd59866e778d7ecb5db789"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/ACtests/mos/opamp-ol.cir",
+      "result": {
+        "Sha256": "54b1e768135b69f17cadaa4b9a1807e3b597434f7f1d91b68aa0f0197d000cfa"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/BJT_ANALYTIC/ramp_test1.cir",
+      "result": {
+        "Sha256": "b9bced4c64e1dcea41b3b56f35a88e70dde915c9a88dedb60b9a94449bf3a761"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/BJT_ANALYTIC/ramp_test2.cir",
+      "result": {
+        "Sha256": "b65e5a2e91a866e5d20bc9be055f4aa9b9dd8644ac34a77d3d37603d04a30cf1"
+      }
+    },
+    {
+      "scope": "ngspice",
+      "path": "tests/xyce/Netlists/BJT_OFF/bjt_off.cir",
+      "result": {
+        "Sha256": "2bd40bf96bb2ca5b37d33207d6ca7e94b3ac2208da72490976c52ce12e067ed0"
+      }
+    }
+  ]
+}

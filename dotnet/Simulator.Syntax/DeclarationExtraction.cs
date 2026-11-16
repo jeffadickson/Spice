@@ -183,6 +183,10 @@ internal sealed class DeclarationExtraction
             Coupling = coupling,
             GlobalNodes = GlobalNodeExtraction.Extract(card,Capture),
             ReportingOptionsOnly = reportingOnly,
+            ZeroDelayExcessPhaseOption = optionCard && directiveParameters.Length==2
+                && directiveParameters[0].value()?.identifier()?.GetText().Equals("device",StringComparison.OrdinalIgnoreCase)==true
+                && directiveParameters[1].assignment()?.referenceName()?.GetText().Equals("newexcessphase",StringComparison.OrdinalIgnoreCase)==true
+                && directiveParameters[1].assignment()?.value()?.GetText() is "0" or "1",
             TimeintOptions = timeint ? directiveParameters.Skip(1).Select(p=>Parameter(p.assignment())).ToImmutableArray() : [],
             BsimSoiFdStaticOptions = optionCard && owner == 0 && IsBsimSoiFdStaticOptions(directiveParameters),
             TransientMethodOption = abstolTerms.Length==0 || abstol!=null ? method : null,

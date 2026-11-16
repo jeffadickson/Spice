@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: BJT zero-delay excess-phase algorithm selection
+
+[REQUIREMENT]
+UID: FRONTEND-BJT-PHASE-001
+STATUS: Draft
+TITLE: Conditional physical equivalence of zero excess delay
+STATEMENT: >>>
+Requested preparation may admit a single root whole DEVICE NEWEXCESSPHASE card with literal value zero or one only when the admitted BJT models have no authored excess-phase PTF. TF storage alone shall not imply a phase delay. The request shall retain exactly the same physical circuit and analyses as the corresponding zero-delay circuit without the selector and report zero_delay_excess_phase_equivalence explicitly. Unknown companions, unsupported values, nested or duplicate cards and any authored PTF shall refuse atomically. This admission shall not claim implementation of nonzero excess-phase algorithms or relax other model/analysis support checks.
+<<<
+COMMENT: >>>
+Implementation: generated ZeroDelayExcessPhaseOption metadata and RequestedExcessPhasePreparation. Tests: ZeroDelayExcessPhaseTests complete-request invariance, unsupported-companion/real-delay negatives and seeded randomized selector refusals. Guidance: Xyce N_DEV_BJT.C zero-delay auxiliary equations, ngspice bjttemp.c excess phase factor, and pinned RSpice bjt_excess_phase.rs. No vendor source copied. Original differential-pair and RCA3040 AC qualification is bounded evidence, not full Gummel-Poon or nonzero PTF closure.
+<<<

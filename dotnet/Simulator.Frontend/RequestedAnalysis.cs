@@ -106,8 +106,10 @@ public static partial class RequestedAnalysis
    return Fail("unsupported_mixed_abstol_analyses",abstolCards[0].Range);
   var timeint=RequestedTimeintPreparation.Prepare(catalog,hasTransient&&control.Directives.All(d=>d.Analysis.Kind=="tran"),abstolCards.Length!=0,limits.TemperatureCelsius);
   if(timeint.Error is {} timeintError)return Fail(timeintError.Code,timeintError.Range);
+  var excessPhase=RequestedExcessPhasePreparation.Prepare(catalog);
+  if(excessPhase.Error is {} phaseError)return Fail(phaseError.Code,phaseError.Range);
   var handledPhysicalStarts=
-      temperature.Handled.Union(timeint.Handled).Union(catalog.InitialConditions.Select(ic=>ic.Range.Start)).Concat(methodCards.Concat(abstolCards).Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet();
+      temperature.Handled.Union(timeint.Handled).Union(excessPhase.Handled).Union(catalog.InitialConditions.Select(ic=>ic.Range.Start)).Concat(methodCards.Concat(abstolCards).Concat(catalog.Cards.Where(c=>!c.ControlConstants.IsEmpty)).Select(c=>c.Range.Start)).ToImmutableHashSet();
   var selected=OperatingPointSelection.SelectRequested(syntax,limits,backend,handledPhysicalStarts);
   if(!selected.Success)return new([],selected.Prepared.Diagnostics);
   var prepared=selected.Prepared;var baseRequest=prepared.Request!;
@@ -322,7 +324,7 @@ public static partial class RequestedAnalysis
   var observations=selected.Omissions.Where(o=>o.Kind=="extension").ToImmutableArray();
   if(!hasTransient)observations=observations.AddRange(catalog.InitialConditions.Select(ic=>
       new OperatingPointOmission(ic.ScopeId,"extension",".ic","initial_conditions_not_used_by_requested_analyses",ic.Range)));
-  return new(operations.ToImmutable(),[]) { Observations=observations,CircuitPreparation=prepared,OperatingTemperatureCelsius=temperature.Limits.TemperatureCelsius,ControlProfile=control.Profile,ControlConstants=constants,ProgramOmissions=control.Omissions };
+  return new(operations.ToImmutable(),[]) { Observations=observations.AddRange(excessPhase.Observations),CircuitPreparation=prepared,OperatingTemperatureCelsius=temperature.Limits.TemperatureCelsius,ControlProfile=control.Profile,ControlConstants=constants,ProgramOmissions=control.Omissions };
  }
  private static ImmutableArray<double> Linear(double start,double stop,double step,int maximum,SourceRange range)
  {
