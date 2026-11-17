@@ -49,8 +49,21 @@ public sealed record SimulationResponse(string SchemaVersion, string Status, boo
 }
 
 /// <summary>One-shot local executable transport, not yet a persistent worker/C ABI SDK.</summary>
-public sealed class SimulationClient(string executable)
+public sealed class SimulationClient
 {
+    private readonly string executable;
+    private readonly Func<ProcessStartInfo,Process?> startProcess;
+    // Reuse main's strict decoder configuration. Emitting a UTF-8 preamble is
+    // an encoder setting and must not produce an equivalent decoder mutant.
+    private static readonly System.Text.Encoding StrictUtf8=System.Text.Encoding.GetEncoding(
+        System.Text.Encoding.UTF8.CodePage,System.Text.EncoderFallback.ExceptionFallback,
+        System.Text.DecoderFallback.ExceptionFallback);
+    /// <summary>Creates the one-shot transport using the operating-system process launcher.</summary>
+    public SimulationClient(string executable):this(executable,Process.Start) { }
+    // Test the nullable launcher contract without requiring a platform-specific
+    // shell association or replacing process ownership/cleanup in production.
+    internal SimulationClient(string executable,Func<ProcessStartInfo,Process?> startProcess)
+    { this.executable=executable;this.startProcess=startProcess; }
     /// <summary>Typed authoring path shared by C# and F#; Rust still validates semantics.</summary>
     public Task<SimulationResponse> RunAsync(SimulationRequest request, CancellationToken cancellation = default) =>
         RunJsonAsync(JsonSerializer.Serialize(request, WireContext.Default.SimulationRequest), cancellation);
@@ -60,7 +73,7 @@ public sealed class SimulationClient(string executable)
         cancellation.ThrowIfCancellationRequested();
         if (System.Text.Encoding.UTF8.GetByteCount(requestJson) > 1_048_576)
             throw new ArgumentException("Request exceeds 1 MiB.", nameof(requestJson));
-        using var process = Process.Start(CreateStartInfo(executable)) ?? throw new IOException("Could not start simulator.");
+        using var process = startProcess(CreateStartInfo(executable)) ?? throw new IOException("Could not start simulator.");
         try
         {
             var output = ReadBoundedAsync(process.StandardOutput.BaseStream, cancellation);
@@ -151,7 +164,7 @@ public sealed class SimulationClient(string executable)
                 throw new InvalidDataException("Native output exceeded 32 MiB.");
             bytes.Write(buffer, 0, read);
         }
-        try { return new System.Text.UTF8Encoding(false, true).GetString(bytes.GetBuffer(), 0, (int)bytes.Length); }
+        try { return StrictUtf8.GetString(bytes.GetBuffer(), 0, (int)bytes.Length); }
         catch (System.Text.DecoderFallbackException error) { throw new InvalidDataException("Native output is not valid UTF-8.", error); }
     }
 }

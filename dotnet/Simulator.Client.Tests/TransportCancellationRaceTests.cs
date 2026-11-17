@@ -4,6 +4,32 @@ using Xunit;
 public sealed class TransportCancellationRaceTests
 {
     [Fact]
+    public async Task LauncherWithoutProcessReportsTheTransportFailure()
+    {
+        var launches=0;
+        var client=new SimulationClient("no-process-engine",start=>{
+            launches++;
+            Assert.False(start.UseShellExecute);Assert.True(start.CreateNoWindow);
+            Assert.Equal("no-process-engine",start.FileName);
+            return null;
+        });
+        var error=await Assert.ThrowsAsync<IOException>(()=>client.RunJsonAsync("{}"));
+        Assert.Equal("Could not start simulator.",error.Message);Assert.Equal(1,launches);
+    }
+
+    [Fact]
+    public async Task CompletedTasksAreRemovedBeforeCancellationIsNeeded()
+    {
+        // Run even a broken synchronous completion loop off the test thread.
+        // Its own observed cancellation bounds the mutant; a thrown cancellation
+        // fails this completion contract instead of consuming Stryker's timeout.
+        using var deadline=new CancellationTokenSource(TimeSpan.FromSeconds(1));
+        var pending=new List<Task>{Task.CompletedTask,Task.FromResult(1)};
+        await Task.Run(()=>SimulationClient.DrainAsync(pending,deadline.Token)).WaitAsync(TimeSpan.FromSeconds(3));
+        Assert.Empty(pending);
+    }
+
+    [Fact]
     public void NativeLaunchUsesHeadlessRedirectedTransport()
     {
         var start = SimulationClient.CreateStartInfo("engine path");

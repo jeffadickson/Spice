@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Transport mutation follow-up
+
+[REQUIREMENT]
+UID: TRANSPORT-MUTATION-001
+STATUS: Draft
+TITLE: Observe launcher failure and bounded ready-task completion
+STATEMENT: >>>
+The one-shot process transport shall return its documented IOException when the launcher returns no process, preserving a headless redirected launch request. Draining an already completed finite set of transport tasks shall remove those tasks and finish successfully without requiring cancellation. Regression tests shall independently bound a deliberately broken completion loop so that a failed completion contract is reported as a test failure rather than an unbounded mutation-host hang.
+<<<
+COMMENT: >>>
+Implementation: Simulator.Client/Client.cs internal process-start seam and existing DrainAsync; verification: TransportCancellationRaceTests null launcher and finite ready-task completion, real Stryker.NET selected Client mutations. Public constructor and production Process.Start ownership/cleanup remain unchanged.
+<<<

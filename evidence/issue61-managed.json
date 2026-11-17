@@ -1,0 +1,74 @@
+{
+  "issue": 61,
+  "base_commit": "b3e8d42",
+  "source_dirty": true,
+  "source_hashes": {
+    "dotnet/Simulator.Client/Client.cs": "bbb468eac785721db08cdf27fd50b3f62fc7370756feaab9453c3b4114859433",
+    "dotnet/Simulator.Client.Tests/TransportCancellationRaceTests.cs": "1265b3aa6e3b3e8789de0a7141df11b5984222e4132b52be23d4a78f6a182274"
+  },
+  "artifact_root": "E:\\Artifacts\\Spice-issue61-20261117T133906Z",
+  "stryker": {
+    "version": "5.0.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 204,
+    "killed": 190,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 1,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 13,
+    "unattempted": 0,
+    "report_sha256": "f8f6cbde2573c4577d83f470afa1a74c78ee1b202c965df13e5764090e7faba8",
+    "log_sha256": "a9e9f4bc4bb497f01134e2f89bc9d88596d81531555962c202c3832547144de3"
+  },
+  "targeted_mutants": [
+    {
+      "id": "89",
+      "status": "Killed",
+      "replacement": "\"\"",
+      "line": 76,
+      "mutator": "String mutation"
+    },
+    {
+      "id": "185",
+      "status": "Killed",
+      "replacement": ";",
+      "line": 149,
+      "mutator": "Statement mutation"
+    }
+  ],
+  "ignored_categories": [
+    {
+      "Name": "Removed by block already covered filter",
+      "Count": 12
+    },
+    {
+      "Name": "Removed by mutate filter",
+      "Count": 1
+    }
+  ],
+  "managed_tests": {
+    "passed": 92,
+    "skipped": 0,
+    "trx_sha256": "ef8d5873b34c86b4916a64e4ef5c77c8e4110173b49a662b8ca4ccbdc99e9a7e",
+    "failed": 0
+  },
+  "coverage": {
+    "assembly": "Simulator.Client",
+    "scope": "Client tests and frozen real engine; other assemblies in raw report are excluded from these quoted rates",
+    "raw_sha256": "4d11d61f35a64c01ab382cd8ed54f601a5839c9115c571107063563cf8dc4f7d",
+    "line_rate": 0.9034151547491995,
+    "branch_rate": 0.9257265877287406
+  },
+  "engine_sha256": "86cb94b4debb27a1fb0373b3b7fcdc53326225cbd61d138e865d398f83df6ca4",
+  "scope": "Managed findings resolved; Rust277-cohort follow-up remains active, issue61 must remain open until accounted",
+  "limits": [
+    "Windows only",
+    "One compile-invalid and13tool-filtered candidates are not test kills",
+    "No long fuzz or new Linux/native-provider qualification in this managed checkpoint",
+    "Managed mutation completed before memory-policy correction; historical cap logs retained; subsequent jobs uncapped"
+  ]
+}
