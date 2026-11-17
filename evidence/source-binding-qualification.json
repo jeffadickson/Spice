@@ -1,0 +1,100 @@
+{
+  "campaign": "fifty-more-originals",
+  "target": 50,
+  "new_agreeing_originals": 0,
+  "source_commit": "f5cddded4a6f91a3639b38f6031d94903716131b",
+  "dirty_source": true,
+  "managed": {
+    "failed": 0,
+    "skipped": 42,
+    "passed": 1131,
+    "fscheck_seeds": [
+      "2162,20261117",
+      "2163,20261117"
+    ]
+  },
+  "coverage": {
+    "scope": "Client, Frontend, Syntax, RequestedQualification through managed Frontend.Tests; skipped native integrations are not covered",
+    "line_rate": "0.8227494290486417",
+    "branches_covered": 11808,
+    "branches_valid": 16853,
+    "lines_valid": 29337,
+    "lines_covered": 24137,
+    "report_sha256": "baad6049fea66d115a96641de6658a6ee557c8381c4dca76aa6e94a475746004",
+    "branch_rate": "0.7006467691212247"
+  },
+  "strictdoc": {
+    "unique_uids": 574,
+    "success": true,
+    "documents": 88
+  },
+  "authored_fixtures": {
+    "analyses": [
+      "op",
+      "ac",
+      "tran"
+    ],
+    "all_agreed": true,
+    "counts_toward_originals": false,
+    "count": 2,
+    "backends": [
+      "lu",
+      "faer"
+    ]
+  },
+  "originals": {
+    "executed": 0,
+    "prepared": 2,
+    "agreed": 0,
+    "selected": 10,
+    "next_failure": "Butterworth startup source-continuation stalls at scale 0.5584716796875"
+  },
+  "raw_artifacts": "E:/Artifacts/Spice-hourly-20261116-b03-152359",
+  "limitations": [
+    "Stryker initial tests stalled; mutation evidence unavailable",
+    "GPU small gates do not establish original-deck compatibility",
+    "Full 113-file baseline stopped during many-point SOI row; incomplete",
+    "No new original-deck timings or agreements yet"
+  ],
+  "mutation": {
+    "tool": "Stryker.NET 5.0.0",
+    "tests_discovered": 22,
+    "detail": "Isolated snapshot, two setup failures corrected; third attempt stalled in initial tests and its positively identified tree was stopped. No score claimed.",
+    "mutants_tested": 0,
+    "state": "stalled_initial_test"
+  },
+  "source_hashes": {
+    "dotnet/Simulator.Frontend.Tests/ImplicitZeroSourceTests.cs": "1bbb1ae55fecc182ffba64629a0955c1805874cadc6a87ae0a064431bcba3286",
+    "dotnet/Simulator.Syntax/BehavioralSourceSyntax.cs": "9cee8547a9d0e98e361582a81e9fd17e566cedd2d56ef6616e5b2febd5978a6a",
+    "dotnet/Simulator.Syntax/SourceProfileExtraction.cs": "8620a46bbd9e5f328e876ead9eb48cad08a60b5510a8301dcee7a261b09bb3d0",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "df237ff652c05314b0b2fb23d527ab6d5de151d3f6e0ad7e29509a0d13c3eae9",
+    "dotnet/Simulator.Frontend.Tests/BranchCurrentBehaviorTests.cs": "59e7721f8425d55ffdbecafb238db068cfea6b78fb75605ee9eb94b43bf64724",
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "20f6a1510dba9fd79ff3f1d4ad8cb103008d7b75dd95e5092602c3c46b815004"
+  },
+  "oracle_summaries": {
+    "lu": {
+      "all_agreed": true,
+      "analyses_per_row": [
+        "op",
+        "ac",
+        "tran"
+      ],
+      "sha256": "4d9b6c48796ca542c2e349d135a1543764e211701139dae22f3f5d77e5eb8ff0",
+      "rows": 2,
+      "transient_points": 2001,
+      "ac_points": 7
+    },
+    "faer": {
+      "all_agreed": true,
+      "analyses_per_row": [
+        "op",
+        "ac",
+        "tran"
+      ],
+      "sha256": "6bd0e4fa3e8c67e6886030a409a7a33197471584a800d31d9745aea0a0421baf",
+      "rows": 2,
+      "transient_points": 2001,
+      "ac_points": 7
+    }
+  }
+}

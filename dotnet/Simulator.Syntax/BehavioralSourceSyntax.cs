@@ -21,6 +21,8 @@ public sealed record BehavioralSourceSyntax(string Name,int ScopeId,SourceSyntax
     public ImmutableArray<ParameterSyntax> Parameters { get; init; } = [];
     /// <summary>Explicit multiplicity on a generated G CUR alias, evaluated in the source's lexical scope.</summary>
     public SourceSyntax? CurrentMultiplier { get; init; }
+    /// <summary>Whole unquoted I(name) read of a voltage-defined branch; numerical binding remains requested-profile work.</summary>
+    public SourceSyntax? BranchCurrentReference { get; init; }
 }
 
 internal static class BehavioralSourceExtraction
@@ -75,6 +77,7 @@ internal static class BehavioralSourceExtraction
             law,recognized&&p!=null&&n!=null&&expression!=null&&card.parameter().Length==0,range)
         {
             HeaderSupported=recognized&&p!=null&&n!=null&&expression!=null&&card.parameter().All(item=>item.assignment()!=null),
+            BranchCurrentReference=SingleCurrentReference(expression,capture),
             Parameters=card.parameter().Where(item=>item.assignment()!=null).Select(item=>
             {
                 var assignment=item.assignment();
@@ -83,5 +86,23 @@ internal static class BehavioralSourceExtraction
                 return new ParameterSyntax(assignment.referenceName()?.GetText(),capture(target),capture(value),capture(assignment).Range);
             }).ToImmutableArray()
         };
+    }
+    // Inspect the existing generated expression tree: no text splitting,
+    // function substitution, parameter lookup, or discarded expression tail.
+    private static SourceSyntax? SingleCurrentReference(SpiceParser.ExpressionContext? expression,Func<ParserRuleContext,SourceSyntax> capture)
+    {
+        if(expression==null)return null;
+        var depth=0;
+        while(expression.ChildCount==3&&expression.GetChild(0).GetText() is "{" or "(")
+        {
+            var children=expression.expression();
+            if(++depth>64||children.Length!=1)return null;
+            expression=children[0];
+        }
+        var arguments=expression.expression();
+        return expression.identifier()?.GetText().Equals("i",StringComparison.OrdinalIgnoreCase)==true
+            && expression.LPAREN()!=null&&arguments.Length==1
+            && arguments[0].ChildCount==1&&arguments[0].identifier()!=null
+            ?capture(arguments[0]):null;
     }
 }

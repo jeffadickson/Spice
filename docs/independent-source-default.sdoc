@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Independent source default bias
+
+[REQUIREMENT]
+UID: FRONTEND-SOURCE-DEFAULT-001
+STATUS: Draft
+TITLE: Empty independent-source clause has a defined zero DC value
+STATEMENT: >>>
+A generated independent voltage or current source with both terminals and no authored source clauses shall lower to zero DC bias and zero AC excitation, including inside an instantiated subcircuit. Its lossless declaration shall retain the absent authored value. This rule shall not turn unresolved expressions, unsupported authored tails, missing passive values or malformed terminal lists into zero. Preparation failures shall remain atomic.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.Syntax/SourceProfileExtraction.cs and existing OperatingPointBridge excitation lowering. Verification: ImplicitZeroSourceTests compares complete physical requests against explicit zero, hierarchy and refusals, with 64 unknown-identifier property cases. Primary references: ngspice vsrctemp.c and isrctemp.c explicitly report no-value DC 0; pinned RSpice parser/elements.rs constructs SourceSpec::Dc(0.0) for the same empty-clause case. Original-file execution and agreement remain separate evidence.
+<<<

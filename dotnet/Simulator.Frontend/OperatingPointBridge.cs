@@ -351,6 +351,19 @@ public static class OperatingPointBridge
                     if(!lowered.Success)throw new BridgeFailure(lowered.Diagnostics[0].Code,lowered.Diagnostics[0].Range);
                     var source=lowered.Source!;var p=Node(source.P.Text);var n=Node(source.N.Text);
                     if(p==n)throw new BridgeFailure("shorted_behavior_output",source.Range);
+                    if(source.BranchCurrentReference is {} reference)
+                    {
+                        if(!frameIds.TryGetValue(reference.Text,out var controller))throw new BridgeFailure("missing_current_control",reference.Range);
+                        // Match the qualified F/H controller contract. No resistor
+                        // current inference, synthetic sensor, or implicit zero.
+                        if(controller.Family is not ("V" or "E" or "H"))throw new BridgeFailure("current_control_not_voltage_branch",reference.Range);
+                        if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
+                        var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        elements.Add(source.Quantity==BehavioralQuantity.Current
+                            ?new Cccs(id,p,n,controller.Id,1):new Ccvs(id,p,n,controller.Id,1));
+                        origins.Add(new(id,source.Name,path,source.Range){NativeBranchName=source.Quantity==BehavioralQuantity.Voltage?source.Name:null});
+                        continue;
+                    }
                     if(source.Runtime is {} runtime)
                     {
                         if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);

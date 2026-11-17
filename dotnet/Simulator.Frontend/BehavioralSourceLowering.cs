@@ -6,6 +6,8 @@ namespace Simulator.Frontend;
 /// <summary>Prepared affine relation; the requested compiler may instead attach an internal typed scalar expression. Voltage is P-minus-N; current flows P to N.</summary>
 public sealed record PreparedAffineBehavioralSource(string Name,SourceSyntax P,SourceSyntax N,BehavioralQuantity Quantity,ImmutableArray<AffineVoltageTerm> Terms,double Offset,SourceRange Range)
 {
+    // Kept internal: the strict public affine-voltage API does not expose an incomplete current law.
+    internal SourceSyntax? BranchCurrentReference {get;init;}
     internal PreparedBehavioralVoltage? Runtime { get; init; }
     internal ImmutableArray<AffineVoltageProduct> Products { get; init; } = [];
 }
@@ -31,6 +33,13 @@ public static class BehavioralSourceLowering
         ArgumentNullException.ThrowIfNull(catalog);ArgumentNullException.ThrowIfNull(source);ArgumentNullException.ThrowIfNull(environment);
         if(!catalog.BehavioralSources.Contains(source))return new(null,[new("foreign_behavior_source",source.Range)]);
         if(!(source.Supported||requested&&source.HeaderSupported)||source.P==null||source.N==null||source.Expression==null)return new(null,[new("unsupported_behavior_header",source.Range)]);
+        // A whole branch-current read is not a scalar function. The bridge
+        // resolves its lexical voltage-defined branch and emits existing F/H IR.
+        if(requested&&source.Parameters.IsEmpty&&source.BranchCurrentReference is {} current)
+        {
+            if(source.Expression.Text.Length>4096)return new(null,[new("expression_budget",source.Expression.Range)]);
+            return new(new(source.Name,source.P,source.N,source.Quantity,[],0,source.Range){BranchCurrentReference=current},[]);
+        }
         var affine=AffineVoltageExpressionEvaluator.Evaluate(catalog,environment,source.Expression);
         if(affine.Form is not {} form)
         {

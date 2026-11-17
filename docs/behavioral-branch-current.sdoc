@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Behavioral branch-current reads
+
+[REQUIREMENT]
+UID: FRONTEND-BRANCH-CURRENT-001
+STATUS: Draft
+TITLE: Whole I(name) behavioral law uses the bound voltage-source branch
+STATEMENT: >>>
+Requested behavioral voltage and current sources whose complete unquoted law is I(name), allowing grouping, shall resolve the named local V/E/H voltage-defined branch and lower to the existing unit-transresistance or unit-current-gain element respectively. Resolution shall preserve scope, forward references, P-to-N polarity and source observability. Missing or unsupported controller kinds shall refuse atomically; arithmetic tails, extra arguments and unsupported parameters shall not be dropped. The strict public voltage-affine preparation API shall keep its prior contract.
+<<<
+COMMENT: >>>
+Implementation: generated-tree metadata in BehavioralSourceSyntax, requested BehavioralSourceLowering, and OperatingPointBridge. Tests: BranchCurrentBehaviorTests and original BUG_1152 opamp decks. Existing Rust CCCS/CCVS kernels execute all dynamics; no expression is parsed in the numerical loop. Numerical agreement and broader current expressions remain separate qualification work.
+<<<

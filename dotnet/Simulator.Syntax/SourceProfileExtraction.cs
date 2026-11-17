@@ -12,6 +12,10 @@ internal static class SourceProfileExtraction
 {
     internal static SourceExcitationSyntax? Extract(SpiceParser.SourceContext source,Func<ParserRuleContext,SourceSyntax> capture)
     {
+        // The independent-source grammar has already validated both terminals.
+        // No authored clause means SPICE's defined zero DC value, not an
+        // unresolved engineering quantity. Keep Dc null to retain lexical absence.
+        if(source.parameter().Length==0)return new(null,null,null);
         var parser=CreateParser(source.parameter());
         if(parser==null)return null;
         try
