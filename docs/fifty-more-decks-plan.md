@@ -19,3 +19,5 @@ Count fifty newly agreeing original input identities, excluding previously agree
 All bulk outputs, TEMP/TMP, builds and reports use unique E:/Artifacts directories. Source remains on NTFS. Serialize intensive jobs with explicit process/tree and aggregate watchdog budgets; Windows manages paging and free RAM is telemetry only. Current managed-job guard: 1536 MiB per process, 3072 MiB aggregate, full-tree termination and logged outcomes. Size other workloads explicitly before dispatch. No soak, CI, main merge or unrelated schematic changes.
 
 Initial progress: no newly agreeing originals credited to this campaign yet. Two Butterworth originals advance beyond omitted-source refusal but still require behavioral branch-current execution. Existing verified diffpair/rca3040 files are excluded.
+
+Verified checkpoint: two new Faer-agreeing original Chebyshev decks; forty-eight remain. See fifty-more-checkpoint.md and ../evidence/fifty-more-checkpoint.json. Butterworth execution alone does not count. The next twelve apparent JFET refusals in the historical ngspice subset are chiefly distinct HFET/MESA/MES model families; retain those distinctions.

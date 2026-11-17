@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Differential affine behavioral current realization
+
+[REQUIREMENT]
+UID: FRONTEND-AFFINE-CURRENT-CONDITIONING-001
+STATUS: Draft
+TITLE: Evaluate multi-term affine currents before current injection
+STATEMENT: >>>
+A requested multi-term affine behavioral current shall retain all evaluated coefficients and offset, local node bindings and P-to-N polarity while realizing its variable part through internal voltage constraints followed by one unit-siemens current injection. The bridge shall avoid splitting a small differential current into separate large common-mode KCL injections. Auxiliary nodes and elements shall respect existing atomic budgets and remain absent from original root observables. Existing single-term and unsupported-law contracts shall remain unchanged. DC, AC and transient behavior shall be checked against independent equations and ngspice, including high-common-mode small differences.
+<<<
+COMMENT: >>>
+Implementation: OperatingPointBridge reuses EmitFactor, VCVS and VCCS; no native model or parser is replaced. Verification: DifferentialBehaviorCurrentTests and ControlledCurrentSourceTests preserve scaled coefficient and offset checks. Original BUG_1152 Butterworth execution remains independently qualified, not presumed from algebraic equivalence. The unit conversion uses an internal numerical voltage representing the current law times one ohm, followed by one siemens.
+<<<

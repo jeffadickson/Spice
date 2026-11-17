@@ -1,3 +1,15 @@
+# Current task: fifty further original-deck agreements
+
+This new user authorization supersedes the expired hourly campaign, its 8am deadline and all older active-campaign headings preserved below as history. Do not restart that automation or a cancelled soak. The target is incomplete: two newly agreeing originals on explicitly selected Faer, forty-eight remain. Read docs/fifty-more-decks-plan.md, docs/fifty-more-checkpoint.md and evidence/fifty-more-checkpoint.json first.
+
+Continue inline in J:/dev/spice-deck-next, fix/deck-blocker-implementation; verify actual status/history/remotes before changes. Preserve canonical main and unrelated resistor changes. Keep bulk outputs/TEMP/builds/logs on E:. Arm per-process/tree and aggregate watchdogs before intensive jobs; free RAM is telemetry only. No CI or main merge. Publish small verified checkpoints on the existing development branch.
+
+SANDLER8 and SANDLER9 now agree with ngspice across all original AC frequencies on Faer; SANDLER9 also agrees on LU, SANDLER8 still fails LU AC residual. Intel qualifies neither. BUG_1152 Butterworth originals now execute but fail the unchanged transient comparison's TSTART coverage requirement; do not count them. Scope broad model refusals accurately: the twelve historical unsupported_jfet1_profile rows are largely HFET/MESA/MES families, not twelve ordinary JFET level-1 omissions. Do not substitute a different model to inflate counts.
+
+Next prioritize shared ordinary model/geometry and numerical blockers from the actual inventories, retaining original inputs and all analyses. Exclude previously passing files and duplicate hashes; authored tests and parser/preparation acceptance never count as newly agreeing originals. Keep ngspice/RSpice/ours timings and build-mode/preparation limits explicit. Current two-deck timings are slower for ours. Numerical requirement Draft status and review follow-ups remain open. Raw checkpoint: E:/Artifacts/Spice-fifty-residual-20261117T031043Z; managed logs/runtime snapshots: E:/Artifacts/Spice-hourly-20261116-b03-152359. No current workload is authorized to extend an expired deadline.
+
+# Historical handoff notes — inactive campaign schedules below
+
 Memory policy update: the user's 2026-11-16 canonical rules now require configured per-tree and aggregate runaway watchdogs before future intensive workloads. Free/available RAM is telemetry, never a startup or termination gate. This supersedes old no-cap text; preserve historical evidence as run.
 
 # Latest hourly checkpoint: B02, zero additional agreements

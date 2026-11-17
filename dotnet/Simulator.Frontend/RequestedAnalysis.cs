@@ -219,11 +219,18 @@ public static partial class RequestedAnalysis
       if(count<1||count!=Math.Truncate(count)||count>maxPoints||values[1]<0||mode!="lin"&&values[1]==0||values[2]<values[1])throw new PreparationFailure("invalid_requested_ac",card.Range);
       if(mode=="lin")coordinates=count==1?[values[1]]:Enumerable.Range(0,(int)count).Select(i=>values[1]+(values[2]-values[1])*i/(count-1)).ToImmutableArray();
       else if(mode is "dec" or "oct"){
-       var ratio=mode=="dec"?10d:2d;var span=Math.Log(values[2]/values[1],ratio)*count;
+       var ratio=mode=="dec"?10d:2d;
+       var span=(mode=="dec"?Math.Log10(values[2]/values[1]):Math.Log(values[2]/values[1],ratio))*count;
        if(!double.IsFinite(span)||span>=maxPoints)throw new PreparationFailure("requested_point_budget",card.Range);
-       var points=(int)Math.Floor(span+1e-10)+1;
+       // ngspice's DECADE profile normalizes the ratio to the authored stop
+       // when the span is at least one decade (acan.c). Shorter DEC spans
+       // and all OCT sweeps keep their ordinary constant-ratio construction.
+       var normalized=mode=="dec"&&values[2]/10>=values[1];
+       var points=(int)Math.Floor(span+(normalized?0:1e-10))+1;
        if(points>maxPoints)throw new PreparationFailure("requested_point_budget",card.Range);
-       coordinates=Enumerable.Range(0,points).Select(i=>values[1]*Math.Pow(ratio,i/count)).ToImmutableArray();
+       coordinates=normalized
+        ?Enumerable.Range(0,points).Select(i=>i==points-1?values[2]:values[1]*Math.Exp(Math.Log(values[2]/values[1])*i/(points-1))).ToImmutableArray()
+        :Enumerable.Range(0,points).Select(i=>values[1]*Math.Pow(ratio,i/count)).ToImmutableArray();
       }else throw new PreparationFailure("unsupported_ac_grid",card.Range);
       var acCircuit=baseRequest.Circuit;
       if(!prepared.AcResistances.IsEmpty){

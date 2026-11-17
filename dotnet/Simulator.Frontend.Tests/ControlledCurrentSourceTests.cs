@@ -27,7 +27,10 @@ public sealed class ControlledCurrentSourceTests
         var plan=Prepare(Deck("V2 other 0 1\nG1 out 0 CUR='2m+3m*v(in,other)' M=4"));
         Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
         var elements=plan.Operations[0].Requests[0].Circuit.Elements;
-        Assert.Equal(new[]{-.012,.012},elements.OfType<Vccs>().Select(g=>g.Siemens).Order().ToArray());
+        // Differential affine laws retain both scaled coefficients in the
+        // internal voltage evaluator, followed by one unit transconductance.
+        Assert.Equal(new[]{-.012,.012},elements.OfType<Vcvs>().Select(g=>g.Gain).Order().ToArray());
+        Assert.Equal(1,Assert.Single(elements.OfType<Vccs>()).Siemens);
         Assert.Contains(elements,e=>e is Current {Amps:.008});
     }
 

@@ -351,17 +351,34 @@ public static class OperatingPointBridge
                     if(!lowered.Success)throw new BridgeFailure(lowered.Diagnostics[0].Code,lowered.Diagnostics[0].Range);
                     var source=lowered.Source!;var p=Node(source.P.Text);var n=Node(source.N.Text);
                     if(p==n)throw new BridgeFailure("shorted_behavior_output",source.Range);
-                    if(source.BranchCurrentReference is {} reference)
+                    var currentForm=source.BranchCurrentForm??(source.BranchCurrentReference is {} singleCurrent
+                        ?new AffineBranchCurrentForm(0,[new(singleCurrent,1)]):null);
+                    if(currentForm is not null)
                     {
-                        if(!frameIds.TryGetValue(reference.Text,out var controller))throw new BridgeFailure("missing_current_control",reference.Range);
-                        // Match the qualified F/H controller contract. No resistor
-                        // current inference, synthetic sensor, or implicit zero.
-                        if(controller.Family is not ("V" or "E" or "H"))throw new BridgeFailure("current_control_not_voltage_branch",reference.Range);
-                        if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
-                        var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                        elements.Add(source.Quantity==BehavioralQuantity.Current
-                            ?new Cccs(id,p,n,controller.Id,1):new Ccvs(id,p,n,controller.Id,1));
-                        origins.Add(new(id,source.Name,path,source.Range){NativeBranchName=source.Quantity==BehavioralQuantity.Voltage?source.Name:null});
+                        var currentPrevious=p;var index=0;
+                        foreach(var term in currentForm.Terms)
+                        {
+                            var reference=term.Branch;
+                            if(!frameIds.TryGetValue(reference.Text,out var controller))throw new BridgeFailure("missing_current_control",reference.Range);
+                            // Resolve even zero coefficients. No resistor-current
+                            // inference, synthetic sensor, or implicit zero.
+                            if(controller.Family is not ("V" or "E" or "H"))throw new BridgeFailure("current_control_not_voltage_branch",reference.Range);
+                            if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
+                            var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            var last=index==currentForm.Terms.Length-1&&currentForm.Offset==0;
+                            var next=source.Quantity==BehavioralQuantity.Voltage&&!last?PrivateNode():n;
+                            elements.Add(source.Quantity==BehavioralQuantity.Current
+                                ?new Cccs(id,p,n,controller.Id,term.Coefficient):new Ccvs(id,currentPrevious,next,controller.Id,term.Coefficient));
+                            origins.Add(new(id,index==0?source.Name:source.Name+"$term"+index,path,source.Range){NativeBranchName=index==0&&source.Quantity==BehavioralQuantity.Voltage?source.Name:null});
+                            currentPrevious=next;index++;
+                        }
+                        if(currentForm.Offset!=0)
+                        {
+                            if(elements.Count>=limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
+                            var id="e"+elements.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            elements.Add(source.Quantity==BehavioralQuantity.Current?new Current(id,p,n,currentForm.Offset):new Voltage(id,currentPrevious,n,currentForm.Offset));
+                            origins.Add(new(id,source.Name+"$offset",path,source.Range));acSources.Add(new(id,0,0));
+                        }
                         continue;
                     }
                     if(source.Runtime is {} runtime)
@@ -414,6 +431,18 @@ public static class OperatingPointBridge
                         }
                         var id=NextId();AddInternal(new Voltage(id,previous,0,factor.Offset));
                         acSources.Add(new(id,0,0));return id;
+                    }
+                    if(source.Quantity==BehavioralQuantity.Current&&source.Products.IsEmpty&&terms.Count>1)
+                    {
+                        // Evaluate the affine law in voltage-constraint rows,
+                        // then convert its numeric value through one siemens.
+                        // Splitting g*(Vp-Vn) into opposing g*Vp and g*Vn
+                        // current injections loses small KCL terms at large
+                        // common-mode bias. The auxiliary is internal and the
+                        // original root observables and law are unchanged.
+                        var control=PrivateNode();
+                        EmitFactor(new AffineVoltageForm(0,source.Terms),control);
+                        terms.Clear();terms.Add((control,1));
                     }
                     if(elements.Count+terms.Count+1>limits.MaxElements)throw new BridgeFailure("element_budget",source.Range);
                     var previous=p;var termIndex=0;

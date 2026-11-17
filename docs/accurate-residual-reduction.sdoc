@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Accurate Newton residual reduction
+
+[REQUIREMENT]
+UID: NUMERICS-RESIDUAL-REDUCTION-001
+STATUS: Draft
+TITLE: Retain small finite contributions during linear residual reduction
+STATEMENT: >>>
+Newton residual assembly shall reduce the original linear MNA row and right-hand side using product and addition compensation, so cancelling large finite terms do not silently erase small representable KCL contributions. The implementation shall retain the original matrix, physical units, provider selection, residual/update bounds and nonfinite rejection. Tests shall include exact dyadic cancellation, an independently known product-rounding remainder, malformed/nonfinite cases and randomized scale variation. Underflow, overflow and arbitrary-precision equivalence remain outside any exactness claim.
+<<<
+COMMENT: >>>
+Implementation: src/newton.rs, compensated_product_sum and linearize_with_rhs_gmin. Verification: cancellation_residual_contracts, initial_newton integration and original-corpus comparisons; numerical qualification remains separate from analytical cases. Source: Ogita, Rump and Oishi, Accurate Sum and Dot Product, SISC 26(6), 2005, https://www.tuhh.de/ti3/paper/rump/OgRuOi05.pdf. Rust standard f64::mul_add supplies fused single-rounding multiplication/addition. Reuse assessment: accurate crate exposes similar algorithms, but the required bounded matrix-row reduction uses the existing standard facility and a small documented integration routine, adding no numerical dependency or replacement solver. Do not infer measured speed improvements or full SPICE convergence from this requirement.
+<<<

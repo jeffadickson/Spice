@@ -177,6 +177,16 @@ public sealed class RequestedAnalysisTests
  [Fact] public void No_analysis_is_an_explicit_refusal()=>Assert.False(Prepare("").Success);
  [Fact] public void Scalar_expressions_and_logarithmic_grid_are_evaluated()
  {var plan=Prepare(".param upper=1k\n.ac dec 2 10 {upper}");Assert.True(plan.Success);Assert.Equal(5,plan.Operations[0].Coordinates.Length);Assert.Equal(1000,plan.Operations[0].Coordinates[^1],8);}
+ [Fact] public void Nonintegral_decade_span_matches_ngspice_normalized_endpoint_grid()
+ {
+  var plan=Prepare(".ac dec 51 1k 20k");Assert.True(plan.Success);
+  var grid=Assert.Single(plan.Operations).Coordinates;
+  Assert.Equal(67,grid.Length);Assert.Equal(20000,grid[^1]);
+  Assert.InRange(Math.Abs(grid[1]-1046.435767831359),0,1e-9);
+ }
+ [Theory][InlineData(".ac dec 2 1 5",3.1622776601683795)][InlineData(".ac oct 2 1 3",2.8284271247461903)]
+ public void Subdecade_and_octave_sweeps_retain_their_unadjusted_ratio(string card,double expectedLast)
+ {var plan=Prepare(card);Assert.True(plan.Success);Assert.InRange(Math.Abs(plan.Operations[0].Coordinates[^1]-expectedLast),0,1e-12);}
  [Fact] public async Task Transport_failures_preserve_all_operation_and_point_identities()
  {
   var plan=Prepare(".dc V1 0 1 .5\n.op");

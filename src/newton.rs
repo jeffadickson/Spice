@@ -1,5 +1,48 @@
 //! Residual/Jacobian assembly and bounded damped Newton operating-point solves.
 
+#[cfg(test)]
+mod cancellation_residual_contracts {
+    use super::*;
+    use crate::{circuit::{Circuit, Element}, ids::NodeId};
+
+    #[test]
+    fn linear_residual_retains_small_current_between_opposing_large_terms() {
+        // Binary powers and unit voltages make this an exact independent
+        // current-balance oracle: 2^54 + 1 - 2^54 - 1 = 0 amperes.
+        let gain = 2_f64.powi(54);
+        let plan = crate::compile::compile(&Circuit {
+            nodes: vec!["0".into(), "out".into(), "a".into(), "b".into()],
+            elements: vec![
+                Element::Resistor { id:"R".into(), p:NodeId(1), n:NodeId(0), ohms:1. },
+                Element::Vccs { id:"G1".into(), p:NodeId(1), n:NodeId(0), cp:NodeId(2), cn:NodeId(0), siemens:gain },
+                Element::Vccs { id:"G2".into(), p:NodeId(1), n:NodeId(0), cp:NodeId(3), cn:NodeId(0), siemens:-gain },
+                Element::Current { id:"I".into(), p:NodeId(0), n:NodeId(1), amps:1. },
+            ],
+        }).unwrap();
+        let result = linearize(&plan, &[1., 1., 1.]).unwrap();
+        assert_eq!(result.residual[0], 0., "Cancellation must not manufacture a one-ampere imbalance");
+    }
+
+    #[test]
+    fn product_rounding_is_retained_before_rhs_cancellation() {
+        let u=2_f64.powi(-27);
+        // (1+u)(1-u)-1 = -u^2 exactly; rounding the product first loses it.
+        assert_eq!(compensated_product_sum([(1.+u,1.-u)].into_iter(),-1.),-u*u);
+        assert_eq!(compensated_product_sum([(2_f64.powi(54),1.),(1.,1.),(-2_f64.powi(54),1.)].into_iter(),0.),1.);
+        assert!(!compensated_product_sum([(f64::MAX,2.)].into_iter(),0.).is_finite());
+    }
+
+    proptest::proptest! {
+        #![proptest_config(proptest::test_runner::Config::with_cases(128))]
+        #[test]
+        fn dyadic_cancellation_retains_the_exact_small_term(exponent in -400_i32..400) {
+            let small=2_f64.powi(exponent);let large=2_f64.powi(exponent+54);
+            let result=compensated_product_sum([(large,1.),(small,1.),(-large,1.)].into_iter(),0.);
+            proptest::prop_assert_eq!(result,small);
+        }
+    }
+}
+
 use crate::{
     compile::CompiledCircuit,
     error::{ErrorCode, SimError, SimResult},
@@ -192,6 +235,27 @@ pub fn linearize_with_rhs(
 }
 
 /// Adds only explicitly requested DC Gmin shunts; it never changes a nominal solve silently.
+// Dot2-style residual reduction (Ogita/Rump/Oishi, SISC 2005). Standard
+// mul_add retains each product's rounding remainder; TwoSum retains each
+// addition's remainder. Include the RHS in the same reduction rather than
+// subtracting it after losing a small KCL term between opposing large terms.
+// This improves evaluation of the SAME binary64 equations, not tolerances.
+// No exactness claim is made for underflow/overflow; nonfinite results still
+// fail the existing residual checks. Do not enable reassociation/fast-math.
+fn compensated_product_sum(products: impl Iterator<Item=(f64,f64)>, offset:f64) -> f64 {
+    let mut sum=offset;let mut correction=0.;
+    for (a,b) in products {
+        let product=a*b;
+        let product_error=a.mul_add(b,-product);
+        let next=sum+product;
+        let back=next-sum;
+        let addition_error=(sum-(next-back))+(product-back);
+        correction+=product_error+addition_error;
+        sum=next;
+    }
+    sum+correction
+}
+
 fn linearize_with_rhs_gmin(
     plan: &CompiledCircuit,
     values: &[f64],
@@ -207,10 +271,8 @@ fn linearize_with_rhs_gmin(
     }
     let mut residual = vec![0.; values.len()];
     for (row, residual_value) in residual.iter_mut().enumerate() {
-        *residual_value = (0..values.len())
-            .map(|column| plan.conductance.at(row, column) * values[column])
-            .sum::<f64>()
-            - rhs[row];
+        *residual_value = compensated_product_sum((0..values.len())
+            .map(|column| (plan.conductance.at(row, column), values[column])), -rhs[row]);
     }
     let mut jacobian = plan.conductance.clone();
     for source in &plan.behaviors {

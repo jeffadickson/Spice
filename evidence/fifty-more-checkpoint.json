@@ -1,0 +1,174 @@
+{
+  "campaign": "fifty-more-original-decks",
+  "target": 50,
+  "new_agreeing_originals": 2,
+  "remaining": 48,
+  "count_scope": "Two newly agreeing original input hashes on explicitly selected Faer; not two additional model families or universal CPU/GPU qualification",
+  "source_base": "392c6990af67ed8aa196ba651624f181a51cafa4",
+  "source_dirty_at_verification": true,
+  "engine_manifest": {
+    "engine_sha256": "95379FBD24E313E246F5650A345910E757B57059BEACCC20072F048C04000579",
+    "cargo_target": "E:/Artifacts/Spice-bjt-coupled-8c54991-20261113/target",
+    "profile": "release",
+    "source_dirty": true,
+    "source_commit": "392c6990af67ed8aa196ba651624f181a51cafa4",
+    "newton_sha256": "C840560EBAA835C267ED21A6D511A0CE73E4D51D497023FA8D530CCD76E8C5F3",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "features": [
+      "intel-opencl"
+    ],
+    "seed": "88320261117"
+  },
+  "originals": [
+    {
+      "intel": "requested_execution_failed",
+      "before": "requested_preparation_refused:missing_parameter",
+      "sha256": "ba19c2eb9f6f94fc49b790362d548e2efde3e3a2b36cfa1e8f90b952d110880b",
+      "analyses": [
+        {
+          "kind": "ac",
+          "excluded_startup_samples": 0,
+          "failed_observables": 0,
+          "observables": 14,
+          "native_points": 67
+        }
+      ],
+      "path": "tests/xyce/Netlists/ACtests/SANDLER8/sandler8.cir",
+      "faer": "all_individual_requested_analyses_agreed",
+      "lu": "requested_execution_failed"
+    },
+    {
+      "intel": "requested_execution_failed",
+      "before": "requested_preparation_refused:missing_parameter",
+      "sha256": "ded28b427f0f5bfe70c7783b0bfb874dd794d537ed31682e34a4223049ac98ee",
+      "analyses": [
+        {
+          "kind": "ac",
+          "excluded_startup_samples": 0,
+          "failed_observables": 0,
+          "observables": 11,
+          "native_points": 121
+        }
+      ],
+      "path": "tests/xyce/Netlists/ACtests/SANDLER9/sandler9.cir",
+      "faer": "all_individual_requested_analyses_agreed",
+      "lu": "all_individual_requested_analyses_agreed"
+    }
+  ],
+  "managed": {
+    "skipped": 42,
+    "failed": 0,
+    "passed": 1143,
+    "build_warnings": 0
+  },
+  "native": {
+    "fixture_backends": [
+      "lu",
+      "faer"
+    ],
+    "authored_fixtures_count_toward_originals": false,
+    "unit_passed": 42,
+    "fixture_analyses": [
+      "op",
+      "ac",
+      "tran"
+    ],
+    "property_seed": "88320261117",
+    "native_affine_oracle_method_passed": 1,
+    "authored_current_law_fixtures": 2,
+    "failed": 0,
+    "integration_passed": 66
+  },
+  "coverage": {
+    "managed": {
+      "branches_valid": 16935,
+      "scope": "Client/Syntax/Frontend/RequestedQualification through managed Frontend.Tests; separate native oracle runs are not included",
+      "lines_covered": 24187,
+      "lines_valid": 29387,
+      "branches_covered": 11890
+    },
+    "limitations": [
+      "Rust branch coverage unavailable with this stable instrumentation",
+      "Coverage does not prove conformance; 42 managed integration-dependent skips remain explicit"
+    ],
+    "rust_newton": {
+      "branches": null,
+      "scope": "initial_newton integration test only",
+      "lines_covered": 715,
+      "lines_valid": 1113
+    }
+  },
+  "mutation": {
+    "tool": "cargo-mutants 27.1.0",
+    "other_listed_candidates_unattempted": 19,
+    "seed": "88320261117",
+    "baseline": "passed",
+    "dotnet": "Stryker 5.0.0 attempt stalled in initial test stage; no C# mutation outcomes or score claimed",
+    "scope": "Five selected operators in compensated_product_sum",
+    "survived": 0,
+    "compile_errors": 0,
+    "selected": 5,
+    "timeouts": 0,
+    "caught": 5
+  },
+  "strictdoc": {
+    "documents": 92,
+    "unique_uids": 578,
+    "parser": "StrictDoc SDReader",
+    "success": true
+  },
+  "timings": [
+    {
+      "ngspice_original_ms": 170.3551,
+      "rspice_debug_probe_ms": 118.1959,
+      "path": "tests/xyce/Netlists/ACtests/SANDLER8/sandler8.cir",
+      "repetitions": 3,
+      "ours_prepared_native_ms": 430.5885
+    },
+    {
+      "ngspice_original_ms": 173.9656,
+      "rspice_debug_probe_ms": 109.1797,
+      "path": "tests/xyce/Netlists/ACtests/SANDLER9/sandler9.cir",
+      "repetitions": 3,
+      "ours_prepared_native_ms": 225.7437
+    }
+  ],
+  "limits": [
+    "Butterworth two original transients now execute but remain unqualified: transient_extrapolation; no comparison tolerance or sample omission changed",
+    "SANDLER8 LU AC residual fails; no provider fallback",
+    "Intel SANDLER8 timed out and SANDLER9 returned numerical_failure; neither qualified",
+    "Only two original AC inputs; no semiconductor charge, Linux, full SPICE or production qualification claim",
+    "The interrupted 113-file baseline is incomplete and not passing evidence",
+    "High-common-mode lifted-law numerical boundary checks and broader affine-current hierarchy/division/budget tests remain review follow-ups; requirements remain Draft",
+    "No dedicated new fuzz campaign ran; negative tests and maintained FsCheck/Proptest checks ran"
+  ],
+  "review": {
+    "kind": "Fresh-context read-only code review",
+    "open_minor": [
+      "Numerically exercise lifted law at high common-mode small differential inputs",
+      "Expand affine-current hierarchical/forward/division/budget boundaries"
+    ],
+    "substantive_findings": 0
+  },
+  "raw_artifacts": [
+    "E:\\Artifacts\\Spice-fifty-residual-20261117T031043Z",
+    "E:/Artifacts/Spice-hourly-20261116-b03-152359"
+  ],
+  "source_hashes": {
+    "dotnet/Simulator.Frontend/BehavioralSourceLowering.cs": "8275a2ff94037e071b5ded8fb4f76b092e5dac0bd5fa63c4b60f43561e11517c",
+    "dotnet/Simulator.Syntax/AffineVoltageExpressionEvaluator.cs": "5f022d221643235b03c43d84ba48806f7b9cbede6e31f6f4751ef154adf61eab",
+    "dotnet/Simulator.Frontend/OperatingPointBridge.cs": "827bf1866fb68346ec24c3e6ce3fccbd5624031e1321656f07d192439d13c75b",
+    "src/newton.rs": "c840560ebaa835c267ed21a6d511a0ce73e4d51d497023fa8d530ccd76e8c5f3",
+    "dotnet/Simulator.Frontend/RequestedAnalysis.cs": "f56424ee7bb864a8385f19e85e904369520de80119489f583ca2d414597e2b30"
+  },
+  "timing_scope": "Child process wall time. Ours excludes SPICE preparation; ngspice includes parser/RAW; RSpice includes parser with cached debug core. No reference invocation inside RSpice timing probe; comparison outside time. No automatic speedup claim.",
+  "raw_manifest_hashes": {
+    "coverage/summary.json": "bc4cc8db9cabdd36cb3379367c9820888191f04395e35b8df4bf930cf235523f",
+    "dec-sandler-intel/summary.json": "cac0239548f87bc095a83e12ce4361d608171eedb97d63204937d467943f0d9e",
+    "mutants/mutants.out/outcomes.json": "82a494ac67ec0ab64e8e95209d005edc85f11f74046f01ea9a08a9f60c135dd2",
+    "dec-sandler-faer/summary.json": "2651157cee8291c7fae98fc1a7d00a2974b769dc4600c54136aaaecc1223fd1d",
+    "timings/summary.json": "d4a4469af762469316c1f9667ed9eeac7087f55af7b7b3659089a672afbb7410",
+    "dec-sandler-lu/summary.json": "96a4df623abd11b38817b9d732d32812556f7ea6efd1566aef28dd34419c33b0",
+    "final-strictdoc.json": "687dbfdbc7243d302cc7ce85dae05880ea29530a12dd72f008e35270710ed438"
+  }
+}

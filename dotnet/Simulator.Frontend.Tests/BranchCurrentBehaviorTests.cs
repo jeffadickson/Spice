@@ -12,7 +12,7 @@ public sealed class BranchCurrentBehaviorTests
         var plan=Prepare(quantity,"Vsense",nested);
         Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
         var elements=plan.Operations[0].Requests[0].Circuit.Elements;
-        var sensor=Assert.Single(elements.OfType<Voltage>().Where(v=>v.Volts==0));
+        var sensor=Assert.Single(elements.OfType<Voltage>(),v=>v.Volts==0);
         if(quantity=="I") {var controlled=Assert.Single(elements.OfType<Cccs>());Assert.Equal(sensor.Id,controlled.ControlId);Assert.Equal(1,controlled.Gain);}
         else {var controlled=Assert.Single(elements.OfType<Ccvs>());Assert.Equal(sensor.Id,controlled.ControlId);Assert.Equal(1,controlled.Ohms);}
     }
@@ -22,8 +22,8 @@ public sealed class BranchCurrentBehaviorTests
     {
         var plan=Prepare("I",control,false);Assert.False(plan.Success);Assert.Empty(plan.Operations);
     }
-    /// <summary>General current expressions are outside the whole single-reference profile.</summary>
-    [Theory][InlineData("I(Vsense)*2")][InlineData("I(Vsense)+1")][InlineData("I(Vsense,Vdrive)")]
+    /// <summary>Nonlinear products, mixed runtime signals and extra arguments remain unsupported.</summary>
+    [Theory][InlineData("I(Vsense)*I(Vdrive)")][InlineData("I(Vsense)+v(mid)")][InlineData("I(Vsense,Vdrive)")]
     public void ExtraOperatorsAndArgumentsAreNotDropped(string law)
     {
         var text="Current read\nVdrive in 0 1\nR1 in mid 1k\nVsense mid 0\nBcopy out 0 I={"+law+"}\nRload out 0 2k\n.op\n.end\n";

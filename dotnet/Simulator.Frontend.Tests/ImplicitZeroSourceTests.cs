@@ -33,7 +33,7 @@ public sealed class ImplicitZeroSourceTests
     {
         var plan=RequestedAnalysis.Prepare(DeckParser.Parse("Nested sensor\nVdrive in 0 1\nR1 in out 1k\nX1 out 0 sense\n.subckt sense p n\nVsense p n\n.ends sense\n.op\n.end\n",collectDeclarations:true));
         Assert.True(plan.Success,string.Join(',',plan.Diagnostics.Select(d=>d.Code)));
-        Assert.Single(plan.Operations[0].Requests[0].Circuit.Elements.OfType<Voltage>().Where(v=>v.Volts==0));
+        Assert.Single(plan.Operations[0].Requests[0].Circuit.Elements.OfType<Voltage>(),v=>v.Volts==0);
     }
     /// <summary>Unknown authored identifiers cannot enter the missing-clause default path.</summary>
     [FsCheck.Xunit.Property(MaxTest=64,Replay="2162,20261117")]

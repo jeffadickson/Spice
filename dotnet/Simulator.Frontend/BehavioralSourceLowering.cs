@@ -8,6 +8,7 @@ public sealed record PreparedAffineBehavioralSource(string Name,SourceSyntax P,S
 {
     // Kept internal: the strict public affine-voltage API does not expose an incomplete current law.
     internal SourceSyntax? BranchCurrentReference {get;init;}
+    internal AffineBranchCurrentForm? BranchCurrentForm {get;init;}
     internal PreparedBehavioralVoltage? Runtime { get; init; }
     internal ImmutableArray<AffineVoltageProduct> Products { get; init; } = [];
 }
@@ -43,6 +44,12 @@ public static class BehavioralSourceLowering
         var affine=AffineVoltageExpressionEvaluator.Evaluate(catalog,environment,source.Expression);
         if(affine.Form is not {} form)
         {
+            if(requested&&source.Parameters.IsEmpty&&source.CurrentMultiplier is null)
+            {
+                var currents=AffineVoltageExpressionEvaluator.EvaluateBranchCurrents(catalog,environment,source.Expression);
+                if(currents.Form is {Terms.IsEmpty:false} currentForm)
+                    return new(new(source.Name,source.P,source.N,source.Quantity,[],currentForm.Offset,source.Range){BranchCurrentForm=currentForm},[]);
+            }
             // Preserve the strict public affine API. The requested compiler
             // explicitly opts into the separately bounded DC model contract.
             if(requested&&source.Parameters.IsEmpty&&source.Quantity==BehavioralQuantity.Voltage&&affine.Diagnostics.Any(d=>d.Code=="non_affine_behavior"))

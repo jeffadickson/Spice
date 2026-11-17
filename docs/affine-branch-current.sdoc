@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Affine branch-current behavioral laws
+
+[REQUIREMENT]
+UID: FRONTEND-AFFINE-BRANCH-CURRENT-001
+STATUS: Draft
+TITLE: Bind complete finite affine sums of local branch-current reads
+STATEMENT: >>>
+The requested behavioral-source profile shall evaluate finite affine sums of unquoted I(name) branch reads with scalar multiplication, nonzero scalar division and constant offsets, using the existing generated expression grammar and lexical parameter evaluation. Both current and voltage outputs shall retain every coefficient, offset, P-to-N sign, controller identity and original observable mapping. Controller resolution shall validate local V/E/H branches even when their coefficient is zero or cancels. Mixed runtime voltage/current expressions, nonlinear current operations, extra arguments and unsupported source multipliers or parameter tails shall refuse atomically. The existing public voltage-affine API shall retain its voltage-only contract; the current evaluator shall publish distinctly typed branch terms. Existing expression, term, node and element budgets shall remain effective.
+<<<
+COMMENT: >>>
+Implementation: AffineVoltageExpressionEvaluator reuses its generated-tree algebra through an explicit branch-current mode and returns AffineBranchCurrentEvaluation; BehavioralSourceLowering and OperatingPointBridge bind and emit existing F/H/source IR. Tests: AffineBranchCurrentTests, BranchCurrentBehaviorTests and complete original SANDLER8/SANDLER9 AC comparisons. Corpus agreement is separately measured, never presumed from preparation. Broader nonlinear current laws and explicit current-alias multipliers remain open.
+<<<

@@ -1,0 +1,19 @@
+{
+  "rows": [
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/affine-branch-current-I.cir",
+      "result": {
+        "Sha256": "e25d900b7e4f0b133d43bddc291a51fa60aadc758606dd2334c2a40e3936e9dc"
+      }
+    },
+    {
+      "scope": "repository",
+      "path": "compat/ngspice/affine-branch-current-V.cir",
+      "result": {
+        "Sha256": "bc50fc40739f2212aa03a9e75d38ab0a7134abdea8f383e866116d4d6fe9b9ac"
+      }
+    }
+  ],
+  "scope_note": "Authored regression fixtures; never count as new original corpus decks"
+}

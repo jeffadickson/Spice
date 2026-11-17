@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Native-compatible decade AC sweep construction
+
+[REQUIREMENT]
+UID: FRONTEND-AC-DEC-GRID-001
+STATUS: Draft
+TITLE: Match the retained ngspice decade endpoint construction
+STATEMENT: >>>
+For the ngspice requested-analysis profile, a DEC sweep spanning at least one decade shall use floor(log10(stop/start)*points-per-decade) intervals and normalize the exponential ratio to the original stop frequency. Shorter DEC sweeps and OCT sweeps shall retain their unadjusted per-decade or per-octave ratios. Original point budgets, scalar evaluation and frequency comparison tolerances shall remain effective. Verification shall independently check the 51-point-per-decade 1 kHz to 20 kHz case, shorter spans and octave behavior, and compare every original native frequency and mapped observable.
+<<<
+COMMENT: >>>
+Primary implementation reference: retained ngspice src/spicelib/analysis/acan.c DECADE and OCTAVE cases; ngspice 47+ oracle separately executed. Implementation: RequestedAnalysis AC coordinate preparation. Tests: RequestedAnalysisTests.Nonintegral_decade_span_matches_ngspice_normalized_endpoint_grid and Subdecade_and_octave_sweeps_retain_their_unadjusted_ratio. Original SANDLER8 AC comparison remains distinct evidence. This is a named ngspice profile, not a claim that every SPICE dialect constructs nonintegral sweeps identically.
+<<<

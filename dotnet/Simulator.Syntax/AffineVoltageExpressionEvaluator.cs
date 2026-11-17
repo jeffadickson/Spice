@@ -10,12 +10,30 @@ public sealed record AffineVoltageTerm(SourceSyntax Node,double Coefficient);
 public sealed record AffineVoltageForm(double Offset,ImmutableArray<AffineVoltageTerm> Terms);
 /// <summary>Atomic affine preparation result; no partial coefficients escape a refusal.</summary>
 public sealed record AffineVoltageEvaluation(AffineVoltageForm? Form,ImmutableArray<ParameterDiagnostic> Diagnostics);
+/// <summary>One finite coefficient times a named branch current; spelling and physical range remain original.</summary>
+public sealed record AffineBranchCurrentTerm(SourceSyntax Branch,double Coefficient);
+/// <summary>Finite affine branch-current law, requiring later lexical controller binding.</summary>
+public sealed record AffineBranchCurrentForm(double Offset,ImmutableArray<AffineBranchCurrentTerm> Terms);
+/// <summary>Atomic current-law evaluation; no partial form escapes a refusal.</summary>
+public sealed record AffineBranchCurrentEvaluation(AffineBranchCurrentForm? Form,ImmutableArray<ParameterDiagnostic> Diagnostics);
 
 /// <summary>Derives a bounded affine voltage form from the existing generated expression grammar. Constants reuse ParameterEvaluator.</summary>
 public static class AffineVoltageExpressionEvaluator
 {
     /// <summary>Admits voltage references, sums, scalar products and scalar divisors. Nonlinear/runtime operations, conditions and quoted node references are explicit refusals.</summary>
     public static AffineVoltageEvaluation Evaluate(DeclarationCatalog catalog,ParameterEvaluation environment,SourceSyntax syntax,int maxTerms=16)
+        =>EvaluateCore(catalog,environment,syntax,maxTerms,false);
+
+    /// <summary>Evaluates sums of scaled I(name) reads, retaining zero coefficients for controller validation. Mixed voltage laws and nonlinear current operations refuse.</summary>
+    public static AffineBranchCurrentEvaluation EvaluateBranchCurrents(DeclarationCatalog catalog,ParameterEvaluation environment,SourceSyntax syntax,int maxTerms=16)
+    {
+        // Reuse generated-tree algebra internally; publish distinct typed
+        // branch terms so a consumer cannot mistake a branch name for a node.
+        var result=EvaluateCore(catalog,environment,syntax,maxTerms,true);
+        return new(result.Form is {} form?new(form.Offset,form.Terms.Select(t=>new AffineBranchCurrentTerm(t.Node,t.Coefficient)).ToImmutableArray()):null,result.Diagnostics);
+    }
+
+    private static AffineVoltageEvaluation EvaluateCore(DeclarationCatalog catalog,ParameterEvaluation environment,SourceSyntax syntax,int maxTerms,bool currentReferences)
     {
         ArgumentNullException.ThrowIfNull(catalog);ArgumentNullException.ThrowIfNull(environment);ArgumentNullException.ThrowIfNull(syntax);
         if(maxTerms is <1 or >64)throw new ArgumentOutOfRangeException(nameof(maxTerms));
@@ -52,8 +70,16 @@ public static class AffineVoltageExpressionEvaluator
         AffineVoltageForm Eval(SpiceParser.ExpressionContext node,int depth)
         {
             if(++visited>1024||depth>64)throw new AffineFailure("expression_budget",Capture(node).Range);
+            if(currentReferences&&node.identifier()?.GetText().Equals("i",StringComparison.OrdinalIgnoreCase)==true&&node.LPAREN()!=null)
+            {
+                var arguments=node.expression();
+                if(arguments.Length!=1||arguments[0].ChildCount!=1||arguments[0].identifier()==null)
+                    throw new AffineFailure("unsupported_behavior_current_reference",Capture(node).Range);
+                return AddTerm(new(0,[]),Capture(arguments[0]),1);
+            }
             if(node.voltageReference() is {} reference)
             {
+                if(currentReferences)throw new AffineFailure("non_affine_behavior",Capture(reference).Range);
                 var nodes=reference.referenceNode();
                 if(nodes.Any(n=>n.WORD()==null))throw new AffineFailure("unsupported_behavior_node",Capture(reference).Range);
                 var form=new AffineVoltageForm(0,[]);
@@ -87,17 +113,20 @@ public static class AffineVoltageExpressionEvaluator
             while(stack.TryPop(out var child))
             {
                 if(child is SpiceParser.VoltageReferenceContext)return true;
+                if(currentReferences&&child is SpiceParser.ExpressionContext e&&e.identifier()?.GetText().Equals("i",StringComparison.OrdinalIgnoreCase)==true&&e.LPAREN()!=null)return true;
                 for(var i=0;i<child.ChildCount;i++)stack.Push(child.GetChild(i));
             }
             return false;
         }
         AffineVoltageForm AddTerm(AffineVoltageForm form,SourceSyntax node,double coefficient)
         {
-            if(node.Text=="0")return form;
+            if(!currentReferences&&node.Text=="0")return form;
             var terms=form.Terms.ToDictionary(t=>t.Node.Text,StringComparer.OrdinalIgnoreCase);
             if(terms.TryGetValue(node.Text,out var previous))coefficient+=previous.Coefficient;
             if(!double.IsFinite(coefficient))throw new AffineFailure("nonfinite_behavior_coefficient",node.Range);
-            if(coefficient==0)terms.Remove(node.Text);else terms[node.Text]=new(previous?.Node??node,coefficient);
+            // Keep zero current terms: even cancelled references must bind to
+            // an existing supported voltage-defined branch before admission.
+            if(coefficient==0&&!currentReferences)terms.Remove(node.Text);else terms[node.Text]=new(previous?.Node??node,coefficient);
             if(terms.Count>maxTerms)throw new AffineFailure("behavior_term_budget",node.Range);
             return form with{Terms=terms.Values.OrderBy(t=>t.Node.Text,StringComparer.OrdinalIgnoreCase).ToImmutableArray()};
         }
