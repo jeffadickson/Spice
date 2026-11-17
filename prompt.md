@@ -1,8 +1,12 @@
+# Current task: issue 61 findings
+
+Read docs/issue61-followup-active.md and work/issue61-artifacts.txt before launching anything. The mutation replay is active; preserve its owned processes/targets and finish the findings before closing issue61. User memory correction Nov17 supersedes all historical cap instructions. Keep the existing fifty-deck objective incomplete at2/50.
+
 # Current task: fifty further original-deck agreements
 
 This new user authorization supersedes the expired hourly campaign, its 8am deadline and all older active-campaign headings preserved below as history. Do not restart that automation or a cancelled soak. The target is incomplete: two newly agreeing originals on explicitly selected Faer, forty-eight remain. Read docs/fifty-more-decks-plan.md, docs/fifty-more-checkpoint.md and evidence/fifty-more-checkpoint.json first.
 
-Continue inline in J:/dev/spice-deck-next, fix/deck-blocker-implementation; verify actual status/history/remotes before changes. Preserve canonical main and unrelated resistor changes. Keep bulk outputs/TEMP/builds/logs on E:. Arm per-process/tree and aggregate watchdogs before intensive jobs; free RAM is telemetry only. No CI or main merge. Publish small verified checkpoints on the existing development branch.
+Continue inline in J:/dev/spice-deck-next, fix/deck-blocker-implementation; verify actual status/history/remotes before changes. Preserve canonical main and unrelated resistor changes. Keep bulk outputs/TEMP/builds/logs on E:. Let Windows manage memory and paging; mutation-only runaway monitoring, no general host caps or free-RAM gates (user correction 2026-11-17). No CI or main merge. Publish small verified checkpoints on the existing development branch.
 
 SANDLER8 and SANDLER9 now agree with ngspice across all original AC frequencies on Faer; SANDLER9 also agrees on LU, SANDLER8 still fails LU AC residual. Intel qualifies neither. BUG_1152 Butterworth originals now execute but fail the unchanged transient comparison's TSTART coverage requirement; do not count them. Scope broad model refusals accurately: the twelve historical unsupported_jfet1_profile rows are largely HFET/MESA/MES families, not twelve ordinary JFET level-1 omissions. Do not substitute a different model to inflate counts.
 

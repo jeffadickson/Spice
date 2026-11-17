@@ -70,5 +70,135 @@
     "One compile-invalid and13tool-filtered candidates are not test kills",
     "No long fuzz or new Linux/native-provider qualification in this managed checkpoint",
     "Managed mutation completed before memory-policy correction; historical cap logs retained; subsequent jobs uncapped"
+  ],
+  "ignored_candidates": [
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "0",
+      "mutator": "Block removal mutation",
+      "line": 11,
+      "column": 5,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "60",
+      "mutator": "Block removal mutation",
+      "line": 32,
+      "column": 9,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "64",
+      "mutator": "Block removal mutation",
+      "line": 40,
+      "column": 5,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "82",
+      "mutator": "Block removal mutation",
+      "line": 72,
+      "column": 5,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "90",
+      "mutator": "Block removal mutation",
+      "line": 78,
+      "column": 9,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "166",
+      "mutator": "Block removal mutation",
+      "line": 118,
+      "column": 9,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "170",
+      "mutator": "Block removal mutation",
+      "line": 127,
+      "column": 5,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "178",
+      "mutator": "Block removal mutation",
+      "line": 139,
+      "column": 5,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "182",
+      "mutator": "Block removal mutation",
+      "line": 144,
+      "column": 9,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "186",
+      "mutator": "Block removal mutation",
+      "line": 154,
+      "column": 5,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "188",
+      "mutator": "Block removal mutation",
+      "line": 161,
+      "column": 9,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "200",
+      "mutator": "Block removal mutation",
+      "line": 168,
+      "column": 60,
+      "replacement": "{}",
+      "reason": "Removed by block already covered filter"
+    },
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Requests.cs",
+      "id": "203",
+      "mutator": "String mutation",
+      "line": 11,
+      "column": 36,
+      "replacement": "\"\"",
+      "reason": "Removed by mutate filter"
+    }
+  ],
+  "compile_invalid_candidates": [
+    {
+      "file": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\fm\\20261117T135705Z-ddd2abae\\managed\\dotnet\\Simulator.Client\\Client.cs",
+      "id": "180",
+      "mutator": "Equality mutation",
+      "line": 143,
+      "column": 36,
+      "replacement": "< 0",
+      "reason": "Mutant caused compile errors"
+    }
   ]
 }
