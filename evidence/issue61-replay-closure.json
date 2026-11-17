@@ -1,0 +1,451 @@
+{
+  "issue": 61,
+  "tested_base_commit": "2ba0a15",
+  "historical_source": "0face5844c108bbf80e2af39a2d9ec275c76f703",
+  "original_cohort_counts": {
+    "unattempted": 0,
+    "invalid": 90,
+    "candidates": 300,
+    "raw_survivors": 19,
+    "caught": 191
+  },
+  "previously_unattempted_counts": {
+    "unattempted": 0,
+    "invalid": 85,
+    "candidates": 277,
+    "raw_survivors": 19,
+    "caught": 173
+  },
+  "full_confirmation": {
+    "finished_utc": "2026-11-17T17:59:34.2974063+00:00",
+    "library_misses": 154,
+    "raw_survivors": 17,
+    "caught": 137
+  },
+  "historical_dispositions": [
+    {
+      "original_name": "src/audit.rs:384:28: replace * with + in backward_euler_step",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/audit.rs:411:22: replace += with *= in backward_euler_step",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/campaign.rs:22:46: replace > with >= in run_cases",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/circuit.rs:243:21: replace || with && in Circuit::validate",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/configured.rs:127:56: replace > with >= in initial",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/configured.rs:302:23: replace / with * in run_observed",
+      "disposition": "same_new_regression_catches_exact_old_snapshot_mutant_current_macro_not_emitted",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/grid.rs:17:77: replace - with + in log_grid",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/netlist.rs:14:19: replace > with >= in parse",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/netlist.rs:362:30: replace - with + in parse_ngspice_basic",
+      "disposition": "conditional_equivalent_not_killed",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/newton.rs:112:45: replace * with / in stamp_switch",
+      "disposition": "conditional_equivalent_not_killed",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/newton.rs:399:42: replace - with / in line_search_references",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/newton.rs:937:46: replace || with && in solve_with_rhs",
+      "disposition": "duplicate_masked_guard_replaced_by_shared_validator_current_mutant_caught",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/sampling.rs:85:36: replace - with + in SeededSequence::uniform",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/waveform.rs:221:34: replace < with <= in Waveform::validate",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/waveform.rs:295:73: replace + with - in Waveform::at_validated",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/waveform.rs:319:40: replace * with / in Waveform::at_validated",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/waveform.rs:339:37: replace < with <= in Waveform::at_validated",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/waveform.rs:359:36: replace < with <= in Waveform::at_validated",
+      "disposition": "conditional_equivalent_not_killed",
+      "historical_outcome": "MissedMutant"
+    },
+    {
+      "original_name": "src/audit_configured.rs:73:9: replace || with && in configured_step",
+      "disposition": "targeted_regression_catches_current_counterpart",
+      "historical_outcome": "MissedMutant"
+    }
+  ],
+  "followup_native_proofs": [
+    {
+      "summary_sha256": "91e1ba8a31d5714b6e9b26b491d82f2a211b5fda4934966786c06f2b9dbb447b",
+      "run": "20261117T145923Z-974ec93c",
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 4,
+        "killed": 4,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "9077aa143d50c7fdeddf84df08862dd95b6252fe2901363caffc2383a78d5dc5",
+        "log_sha256": "078538a15ebf33a6fdec26169e919cff7f77e48c93a1778a7f4580013652fe8b"
+      }
+    },
+    {
+      "summary_sha256": "d4cf822d3890befac90a27623edef5ca54deeb428e90e0b0844a5d5cfa865ad1",
+      "run": "20261117T162251Z-31bab05c",
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "e8cc9a9c5e98939e28339e83744331e3803710764b1af43d386db79c2549f4f3",
+        "log_sha256": "4bab096fcdc06d07a3cf00b11c6c0f86889c41f60f94f0bedaa27349197f57e6"
+      }
+    },
+    {
+      "summary_sha256": "aaa9a64ffbee659c3a33eca1e7efdaaa57a9f2470b75bd8309f6e704bbfa37e8",
+      "run": "20261117T163138Z-b9f7b151",
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "9e316c9479965c30c08972b749a4844df4c3d5f0a4a3f8add04a25e2f3370ef5",
+        "log_sha256": "a6cdd49565afde47410c629438f30c785753ff2dc50ecb26053da1a21d97cf99"
+      }
+    },
+    {
+      "summary_sha256": "3ff3fa2fec2def53007bf33a03723eaa5dba0052fff44ae1fd03f06a87bf4637",
+      "run": "20261117T172012Z-ada898ba",
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "9476140316018e662c8c3f1b7b6de51f91dd8d316ecb75c1e1437efca98539e3",
+        "log_sha256": "b12202a917ee4bb0a45731493adaff5d1df6afa7f9aa996d12f90fe9f6e89a41"
+      }
+    },
+    {
+      "summary_sha256": "7c991650235a7c6a2389dd7bce27796dc9a07699d20efdac70a1d37edc6ed3a8",
+      "run": "20261117T165255Z-4af4bc0b",
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "7fbc86a7dc019856a06db38060118847cee997288d11e3f6ef8faadf15342b06",
+        "log_sha256": "4bc0d93dfd1314bd515252f4142c606d298ff3d8614f93f83cd736336b27766e"
+      }
+    },
+    {
+      "summary_sha256": "6bcb8416fa2b82c36b44f5f927e2eb5fb4530f413bbb780fcb99ca32961b5c04",
+      "run": "20261117T170308Z-d545e9ae",
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "15b946c90f5af9d1abfa101723676d30f6d333a07f9268bf81aae2a2ce741c7e",
+        "log_sha256": "b703c965bf1f021f62a61e418cea53e45f5339a4161e1843754aa1aa8d743a74"
+      }
+    },
+    {
+      "summary_sha256": "5c1c044aaa0384e51eb0dfd47d43517b91e9067edb592829c134566ec5dc600a",
+      "run": "20261117T174257Z-8585e69e",
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 2,
+        "killed": 2,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "8c581368d1e3f5c1867092049328c4208de7df25b0037fa18a7889632c98ec0f",
+        "log_sha256": "f0200c93e51e76b01b94521d07ec944faf5b570c6fb5a49b66b98884032c600f"
+      }
+    },
+    {
+      "summary_sha256": "ae8ef171e05bafe10187968f08cefbb968630ad2ce1b59938d7a131e54917ff3",
+      "run": "20261117T174625Z-861121ae",
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 9,
+        "killed": 9,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "9cff9af03986595b2d8a3726e76592b2086eac81ab60ce0e21767ecec66add71",
+        "log_sha256": "f2655e01e820d6bfbc3fb4cf9cbc27fc4dd4b7eb6de514a8b8bf002c498a2581"
+      }
+    },
+    {
+      "summary_sha256": "f4eedc5a0d2caf19f5949d3b68cb9b6a24a01fbce20ce833162211b9b1c5f98e",
+      "run": "20261117T175659Z-bee92c5b",
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 4,
+        "killed": 4,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "266faf460941f5ab65d42eaa66750a9a6515faa084c08950b4fa2fe763afddc9",
+        "log_sha256": "10fa1e16f6a0bf813d298bd29d4f145ad4b7c4edc73cb2a8d0028c4af4ceb5e4"
+      }
+    }
+  ],
+  "followup_native_total": {
+    "supplementary": 8,
+    "shared_replacement": 1,
+    "invalid": 0,
+    "timeout": 0,
+    "unattempted": 0,
+    "candidates": 24,
+    "original_regression_findings": 15,
+    "survived": 0,
+    "killed": 24
+  },
+  "invalid_log_review": {
+    "raw_review_sha256": "bc3670b0b0962011938303dae70d78597eee73684a674adfc8458068ce076e02",
+    "logs_reviewed": 90,
+    "compiler_diagnostics": 90,
+    "infrastructure_markers": 0
+  },
+  "verification": {
+    "strictdoc_documents": 104,
+    "ngspice_diode_oracle_pass": 1,
+    "property_methods": 18,
+    "unit_pass": 45,
+    "property_requested_cases": 128,
+    "pester_pass": 8,
+    "strictdoc_requirement_uids": 596,
+    "aggregate_integration_pass": 632,
+    "aggregate_explicit_skips": 5,
+    "intel_circuit_provider_tests_pass": 15,
+    "property_environment_seed": "2026111701"
+  },
+  "intel_spmv": {
+    "checked_values": 11880960.0,
+    "scenarios": 6,
+    "driver": "31.0.101.2141",
+    "device": "Intel(R) UHD Graphics 630",
+    "repetitions": 9,
+    "seed": 18117,
+    "scope": "Separate SpMV probe, not whole-deck speedup",
+    "max_absolute_error": 0.0
+  },
+  "source_and_tool_limits": [
+    "Historical raw survivors remain raw survivors, not rewritten as kills.",
+    "Three source-reviewed conditional equivalents have explicit assumptions; one duplicated masked guard was replaced with tested shared ownership.",
+    "Current nonlinear half-step macro lacks a directly emitted current mutation; exact old production mutant is caught by the same new current regression.",
+    "Client-only managed Stryker scope remains190killed,1compile-invalid,13filtered of204; raw compile reason is unavailable beyond tool classification.",
+    "Stable Rust line coverage is selected-test scope; Rust branches unavailable; managed Client line90.34%,branch92.57% are a different scope.",
+    "Frozen qualification helperV3 uses .NET11; pinned product SDK remains10.0.404.",
+    "No new original corpus decks, full SPICE, full GPU or production qualification, benchmark speedup, CI dispatch or main merge.",
+    "The original night tested shard1/16; completing its300 candidates does not qualify all possible mutants."
+  ],
+  "artifact_root": "E:/Artifacts/Spice-issue61-20261117T133906Z",
+  "native_reports": [
+    {
+      "path": "E:/Artifacts/Spice-nightly-20261117T080301Z-0face58/fm/20261117T080340Z-69652ceb/rust/mutants.out/outcomes.json",
+      "sha256": "19246c01855cff608b341fce67d4fdc723e43dcfa9bd8069ba78b1bdd1d44981",
+      "scope": "original night"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\completed-before-memory-policy-transition.json",
+      "sha256": "ad5c16e3539db72d03cb90ec7a4dc4366e423aa5bd2bc033db367a0a8ac60995",
+      "scope": "early full-suite replay"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\completed-before-tiered-replay.json",
+      "sha256": "5c8437c53ea606512ae0591f335c6bccc174dc141f21d03c954245072954eba9",
+      "scope": "early full-suite replay"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T145410Z-e824c123\\rust\\mutants.out\\outcomes.json",
+      "sha256": "dae024f1ce95c987449a2023888cc5a488796323abf3eb03d219f61d5dbf0d1a",
+      "scope": "lib"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T150813Z-693946c2\\rust\\mutants.out\\outcomes.json",
+      "sha256": "b6d9a7d6b5803cdd030b6930d999594472eba5ccbf47e66ec77055f41bac609c",
+      "scope": "lib"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T151923Z-f63b4dc7\\rust\\mutants.out\\outcomes.json",
+      "sha256": "26b37f2ec577ca765a6cc7441e8b8f0f6e74aed869d6289fb17e71204c20923a",
+      "scope": "lib"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T152730Z-f8e6fae5\\rust\\mutants.out\\outcomes.json",
+      "sha256": "61b385673f6acc023a26e73d7c7bc4e9c3d163ec38e41d6d819053c475085e10",
+      "scope": "lib"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T153743Z-e2ed0979\\rust\\mutants.out\\outcomes.json",
+      "sha256": "a6b406584fd583b43490e3072b8e7fe2856d867e989b254e7b732129ebe40f87",
+      "scope": "lib"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T154451Z-80ecd7a0\\rust\\mutants.out\\outcomes.json",
+      "sha256": "e82c81114d349525f235051a60b34c71e2d554a897b39326b509b7f3f314ed23",
+      "scope": "lib"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T155123Z-1cc43bff\\rust\\mutants.out\\outcomes.json",
+      "sha256": "538dcd4e623e9ef89de13a4178edb231e3fd4c6d8dc9ba01f49b38e946a4bc9e",
+      "scope": "lib"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T155813Z-d9331e9b\\rust\\mutants.out\\outcomes.json",
+      "sha256": "20e711372dd374042d99495020959cb1facc8d78c43ca0178ebd70a140782bb2",
+      "scope": "lib"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T160633Z-84765a9a\\rust\\mutants.out\\outcomes.json",
+      "sha256": "ea44d0f3e6119cb631b55b7407779e1a859adad5c7df81c75a3c611baac022ff",
+      "scope": "lib"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T160846Z-e8142a6c\\rust\\mutants.out\\outcomes.json",
+      "sha256": "025be3a086dd150c2b428ee326d8eb41343cf37de91ffc68d727d0d47ccddcf6",
+      "scope": "lib,mutation_suite"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T162907Z-71938bdb\\rust\\mutants.out\\outcomes.json",
+      "sha256": "ea8c6773bc726ac50334709697e81ab94c9a3393d056d795e26a6a5ca02da1e4",
+      "scope": "lib,mutation_suite"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T164930Z-468e0973\\rust\\mutants.out\\outcomes.json",
+      "sha256": "949b5cc58af7288b1ca03a4c7106427ae9d7656dcf458fa3ab6880cc2be9f53e",
+      "scope": "lib,mutation_suite"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T171048Z-aba07ff1\\rust\\mutants.out\\outcomes.json",
+      "sha256": "a814945059c131afd5e99ce92186c66c9488f15b3b7104d83cdf074fd7adadaf",
+      "scope": "lib,mutation_suite"
+    },
+    {
+      "path": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\rust-framework\\20261117T173130Z-1af8921f\\rust\\mutants.out\\outcomes.json",
+      "sha256": "d814ec6633fada12537e7486e9f55b3dee3dae9bc2a72446b4e76b5711adbf57",
+      "scope": "lib,mutation_suite"
+    }
+  ]
+}

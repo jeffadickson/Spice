@@ -1,0 +1,25 @@
+{
+  "original_source": "0face5844c108bbf80e2af39a2d9ec275c76f703",
+  "native_inventory_sha256": "a3baf02d10e674fe956051cb6af6b56c54bfda6ece669446e91316392fc54687",
+  "entries": [
+    {
+      "original_name": "src/netlist.rs:362:30: replace - with + in parse_ngspice_basic",
+      "native_diff_sha256": "34d8ff29b3b24e87276c4a4e5bf199c7258542fe6c40752c4e520bf56551b897",
+      "disposition": "conditional_equivalent_source_review_not_killed"
+    },
+    {
+      "original_name": "src/newton.rs:112:45: replace * with / in stamp_switch",
+      "native_diff_sha256": "d80d139b45df68f445c6023dcd7c92421ba150653c3957c75b8628c74e3afd92",
+      "disposition": "conditional_equivalent_source_review_not_killed"
+    },
+    {
+      "disposition": "conditional_equivalent_source_review_not_killed",
+      "native_diff_sha256": "37a39eca80bfeec864c5b8bc3f1523a6d76ff194750dd68a6f42f881b3678375",
+      "original_name": "src/waveform.rs:359:36: replace < with <= in Waveform::at_validated"
+    }
+  ],
+  "limitations": [
+    "Source-based conditional equivalence, not solver proof or a test kill.",
+    "Reopen if integer representation, token container, literal signs, arithmetic mode or stamping expression changes."
+  ]
+}
