@@ -108,3 +108,51 @@ fn pwl_uses_local_time_and_rejects_individual_invalid_point_fields() {
         assert!(Waveform::Pwl { points: bad }.validate().is_err());
     }
 }
+
+#[test]
+fn exponential_delays_admit_equality_and_refuse_reversed_order() {
+    let source = |fall_delay_s| Waveform::Exponential {
+        initial: 2., pulsed: 5., rise_delay_s: 1., rise_tau_s: 1.,
+        fall_delay_s, fall_tau_s: 2.,
+    };
+    let coincident = source(1.);
+    coincident.validate().unwrap();
+    assert_eq!(coincident.at(1.).unwrap(), 2.);
+    // The two exponentials start together with distinct time constants.
+    let expected = 2. + 3. * ((-0.5_f64).exp() - (-1.0_f64).exp());
+    assert!((coincident.at(2.).unwrap() - expected).abs() < 1e-14);
+    source(1.0_f64.next_up()).validate().unwrap();
+    assert!(source(1.0_f64.next_down()).validate().is_err());
+}
+
+#[test]
+fn sine_phase_retains_its_sign_at_independent_special_angles() {
+    for (phase_rad, expected) in [(std::f64::consts::FRAC_PI_2, 5.), (-std::f64::consts::FRAC_PI_2, -1.)] {
+        let wave = Waveform::Sine { offset: 2., amplitude: 3., frequency_hz: 1., phase_rad };
+        assert!((wave.at(0.).unwrap() - expected).abs() < 1e-14);
+        assert!((wave.at(0.5).unwrap() - (4.-expected)).abs() < 1e-14);
+    }
+}
+
+#[test]
+fn damped_sine_multiplies_the_envelope_instead_of_amplifying_it() {
+    let wave = Waveform::DampedSine {
+        offset: 2., amplitude: 3., frequency_hz: 0.25, delay_s: 0.25,
+        damping_per_s: std::f64::consts::LN_2, phase_rad: 0.,
+    };
+    assert_eq!(wave.at(0.).unwrap(), 2.);
+    // One-second half-life at successive positive/negative sine extrema.
+    assert!((wave.at(1.25).unwrap()-3.5).abs()<1e-14);
+    assert!((wave.at(3.25).unwrap()-1.625).abs()<1e-14);
+}
+
+#[test]
+fn pulse_fall_endpoint_returns_the_declared_low_level_exactly() {
+    let wave = Waveform::Pulse { low: 1., high: 1e16, delay_s: 0.,
+        rise_s: 0.25, width_s: 0.5, fall_s: 0.25, period_s: 2. };
+    wave.validate().unwrap();
+    // At the exact end, interpolating high+(low-high) loses the unit low level.
+    // The settled segment owns this breakpoint and must return the declared low.
+    assert_eq!(wave.at(1.).unwrap(), 1.);
+    assert_eq!(wave.at(1.0_f64.next_up()).unwrap(), 1.);
+}

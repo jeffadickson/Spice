@@ -1,0 +1,46 @@
+[DOCUMENT]
+TITLE: Exponential source delay ordering
+
+[REQUIREMENT]
+UID: EXP-DELAY-ORDER-001
+STATUS: Draft
+TITLE: Inclusive exponential fall-delay order
+STATEMENT: >>>
+An exponential source shall accept a fall delay equal to or later than its rise delay, provided its other parameters are valid, and reject a fall delay earlier than the rise delay. Equal delays shall evaluate both exponential contributions using their respective positive time constants.
+<<<
+COMMENT: >>>
+Inferred from waveform.rs::Waveform::validate. tests/soak_tail_contracts.rs::exponential_delays_admit_equality_and_refuse_reversed_order checks adjacent representable delays and the independent two-exponential equation at absolute error below1e-14. Original issue61 waveform.rs:221:34 changes the ordering from < to <=. This is a source contract regression, not a new original corpus deck.
+<<<
+
+[REQUIREMENT]
+UID: SINE-PHASE-SIGN-001
+STATUS: Draft
+TITLE: Preserve signed sine phase
+STATEMENT: >>>
+A sinusoidal waveform shall add its signed phase in radians to angular-frequency times elapsed seconds before evaluation, preserving the offset and amplitude conventions. Positive and negative quarter-cycle phases shall be verified against independent special-angle values.
+<<<
+COMMENT: >>>
+Inferred from waveform.rs::Waveform::at_validated. tests/soak_tail_contracts.rs::sine_phase_retains_its_sign_at_independent_special_angles checks positive/negative pi/2 at0 and0.5s with1Hz and absolute error below1e-14. Original issue61 waveform.rs:295:73 changes phase addition to subtraction.
+<<<
+
+[REQUIREMENT]
+UID: DAMPED-SINE-DECAY-001
+STATUS: Draft
+TITLE: Multiply sinusoidal amplitude by its decaying envelope
+STATEMENT: >>>
+A delayed damped sinusoidal source shall multiply its sinusoidal amplitude by exp(-damping_per_second * elapsed_seconds) after its delay. Positive damping shall attenuate the amplitude about the offset rather than amplify it.
+<<<
+COMMENT: >>>
+Inferred from waveform.rs::Waveform::at_validated. tests/soak_tail_contracts.rs::damped_sine_multiplies_the_envelope_instead_of_amplifying_it checks a1second half-life at independent positive/negative special-angle extrema and the predelay value, absolute bound1e-14. Original issue61 waveform.rs:319:40 changes amplitude multiplication by the envelope to division.
+<<<
+
+[REQUIREMENT]
+UID: PULSE-SETTLED-ENDPOINT-001
+STATUS: Draft
+TITLE: Exact declared pulse low level after the fall
+STATEMENT: >>>
+At the exact end of the falling pulse segment and throughout its settled low segment, the waveform shall return the declared low level without reinterpolating the fall endpoint. Qualification shall include large high-to-low dynamic range where interpolation would lose a representable low level through cancellation.
+<<<
+COMMENT: >>>
+Inferred from waveform.rs::Waveform::at_validated. tests/soak_tail_contracts.rs::pulse_fall_endpoint_returns_the_declared_low_level_exactly checks low1,high1e16 at the exact1second falling endpoint and its next representable time. Original issue61 waveform.rs:339:37 changes < to <= and wrongly chooses fall interpolation at that endpoint.
+<<<

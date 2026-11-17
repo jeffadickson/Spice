@@ -1,0 +1,63 @@
+{
+  "issue": 61,
+  "base_commit": "5184457",
+  "source_dirty": true,
+  "production_waveform_changed": false,
+  "source_hashes": {
+    "tests/soak_tail_contracts.rs": "2d492b3dd56e914de03340ae3e7d16abd032f0945c3bf717bf4385a57c2541de",
+    "src/waveform.rs": "e3322998ebe3c4e8e8987809575744f450e9a4e118eddb76f5d703bdb9dc6007"
+  },
+  "native_run": "20261117T175659Z-bee92c5b",
+  "native_names": [
+    "src/waveform.rs:221:34: replace < with <= in Waveform::validate",
+    "src/waveform.rs:295:73: replace + with - in Waveform::at_validated",
+    "src/waveform.rs:319:40: replace * with / in Waveform::at_validated",
+    "src/waveform.rs:339:37: replace < with <= in Waveform::at_validated"
+  ],
+  "native_counts": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 4,
+    "killed": 4,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "266faf460941f5ab65d42eaa66750a9a6515faa084c08950b4fa2fe763afddc9",
+    "log_sha256": "10fa1e16f6a0bf813d298bd29d4f145ad4b7c4edc73cb2a8d0028c4af4ceb5e4"
+  },
+  "normal_tests": {
+    "passed": 8,
+    "ignored": 0,
+    "failed": 0
+  },
+  "coverage": [
+    {
+      "sha256": "e3322998ebe3c4e8e8987809575744f450e9a4e118eddb76f5d703bdb9dc6007",
+      "file": "src/waveform.rs",
+      "lines": {
+        "count": 276,
+        "covered": 148,
+        "percent": 53.62318840579711
+      }
+    }
+  ],
+  "branches": null,
+  "independent_cases": [
+    "Equal exponential delays: adjacent accepted/refused boundary plus two exponential values",
+    "Signed sine phase: positive/negative quarter-cycle special angles",
+    "Damped sine: one-second half-life at opposite extrema",
+    "Pulse end: exact low1 after falling from1e16"
+  ],
+  "limitations": [
+    "Selected waveform line scope only; no measured stable Rust branches.",
+    "Four executing exact native mutation kills; separate exponential fall-delay conditional equivalence is not a kill.",
+    "No new original corpus deck and no external numerical tolerance weakened."
+  ],
+  "artifact_root": "E:/Artifacts/Spice-issue61-20261117T133906Z"
+}
