@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Request-local AC operating-point reuse
+
+[REQUIREMENT]
+UID: AC-BIAS-REUSE-001
+STATUS: Draft
+TITLE: All AC observables use the sweep's verified linearization point
+STATEMENT: >>>
+One nonlinear AC analysis shall solve its physical operating point once, retain the verified MNA bias for the lifetime of that sweep, and use that same bias for conductance/charge linearization and all published diode, charged-junction and MOS channel currents. Adding derived observables shall not trigger further operating-point/provider work. Linear AC shall not acquire an unnecessary bias solve. Separate requests shall own separate state. Original equations, solver choice, frequency grid, signal identities, units, validation-before-provider behavior, residual tolerances, independent audits and atomic failures shall remain unchanged.
+<<<
+COMMENT: >>>
+Implementation: crate-private AcSweep in src/ac.rs and consumption in src/api.rs; existing public AC Vec<AcSample> and JSON schema remain unchanged. Verification: tests/ac_bias_reuse.rs counts real and complex calls through the public registry API, checks independent Shockley/charge/MOS derivatives and separate biases, rejects invalid grids before provider work, and exercises linear AC and seeded properties. Performance must be measured through the full public entry and compared with independent original-deck oracles; counts alone do not establish speed. Existing pinned RSpice engine/ac.rs retains PreparedAc.linearization.bias, demonstrating reuse without a new library or global cache. Requirement status remains scoped to measured evidence, not general simulator or provider qualification.
+<<<

@@ -1,0 +1,155 @@
+{
+  "base_commit": "421377c8157f49a92f4d7cbd64a5d7e5e506b111",
+  "source_dirty": true,
+  "source_hashes": {
+    "tests/ac_bias_reuse.rs": "5668ef69e201d830edbdb747c9a4b954d810930e925d8bd44a430d1d9b6d3593",
+    "dotnet/Simulator.Syntax/ParameterEvaluator.cs": "a37b64e851f61fefc0c3ab97e05bb1ffa00730da98e5f120ee4eaad325ff3748",
+    "dotnet/Simulator.Syntax.Tests/ParameterLiteralPerformanceTests.cs": "418e4b0e491e685fadfd2990fe0b72b71d07f40cbca6ebaa1b6c977a82b4974e",
+    "scripts/Measure-RequestedPipeline.cs": "4ceb70ff958d0f817f7b21338b0c4cd8eaeccc187b2145d9a22e3f2912e3e939",
+    "src/api.rs": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96",
+    "src/ac.rs": "6a87eaaffaebf03ef84aec71db525c3b1c807b3b1dec5b3cfe57184fb6aba9b6"
+  },
+  "artifact_root": "E:/Artifacts/Spice-performance-20261117T052423Z",
+  "engine_sha256": "14ebad6399cfd5f2e6f7c676f5353fe50ae9b3b016bc493ddda3309b385d2482",
+  "ngspice_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+  "rspice_sha256": "d51adedfd6c01facc533bac71d386fd3226bc9d0099e6f786ffff66cc1484acb",
+  "timing_scope": "Child process wall time. Ours excludes SPICE preparation; ngspice includes parser/RAW; RSpice includes parser with cached debug core. No reference invocation inside RSpice timing probe; comparison outside time. No automatic speedup claim.",
+  "repetitions": 5,
+  "pipeline_warmups": 3,
+  "pipeline_scope": "Public .NET resource resolution + generated parsing + requested preparation + native child execution/reporting. Three recorded unmeasured warmups, then samples; no guarantee of fully steady tiered-JIT state. Helper compilation/startup and independent oracle comparison excluded. Not equivalent to cold CLI startup or prepared-native-only timing.",
+  "timings": [
+    {
+      "path": "tests/xyce/Netlists/ACtests/SANDLER8/sandler8.cir",
+      "input_sha256": "ba19c2eb9f6f94fc49b790362d548e2efde3e3a2b36cfa1e8f90b952d110880b",
+      "ours_native_ms": 65.9696,
+      "rspice_ms": 108.9494,
+      "ngspice_ms": 135.3089
+    },
+    {
+      "path": "tests/xyce/Netlists/ACtests/SANDLER9/sandler9.cir",
+      "input_sha256": "ded28b427f0f5bfe70c7783b0bfb874dd794d537ed31682e34a4223049ac98ee",
+      "ours_native_ms": 76.028,
+      "rspice_ms": 120.6596,
+      "ngspice_ms": 148.0403
+    }
+  ],
+  "pipeline": [
+    {
+      "core": "old",
+      "path": "tests/xyce/Netlists/ACtests/SANDLER8/sandler8.cir",
+      "median_ms": 452.6832,
+      "range_ms": [
+        427.0925,
+        702.2312
+      ],
+      "synthetic_preparations": [
+        3,
+        3,
+        3,
+        3,
+        3
+      ]
+    },
+    {
+      "core": "old",
+      "path": "tests/xyce/Netlists/ACtests/SANDLER9/sandler9.cir",
+      "median_ms": 195.5188,
+      "range_ms": [
+        186.2362,
+        224.727
+      ],
+      "synthetic_preparations": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "core": "new",
+      "path": "tests/xyce/Netlists/ACtests/SANDLER8/sandler8.cir",
+      "median_ms": 207.3167,
+      "range_ms": [
+        199.0726,
+        316.9443
+      ],
+      "synthetic_preparations": [
+        3,
+        3,
+        3,
+        3,
+        3
+      ]
+    },
+    {
+      "core": "new",
+      "path": "tests/xyce/Netlists/ACtests/SANDLER9/sandler9.cir",
+      "median_ms": 158.5267,
+      "range_ms": [
+        142.063,
+        190.417
+      ],
+      "synthetic_preparations": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    }
+  ],
+  "ngspice_agreements": 2,
+  "new_decks": 0,
+  "fifty_goal": 2,
+  "bias_solves_before": [
+    28,
+    19
+  ],
+  "bias_solves_after": [
+    1,
+    1
+  ],
+  "responses_exactly_equal": [
+    true,
+    true
+  ],
+  "native_regression_passed": 41,
+  "additional_charge_passed": 34,
+  "overlap": 4,
+  "managed_passed": 1699,
+  "managed_skipped": 43,
+  "managed_failed": 0,
+  "managed_coverage": {
+    "line_rate": 0.856846543575096,
+    "scope": "Combined managed test session, includes measured assembly scope; not universal qualification",
+    "branch_rate": 0.7900167677028247
+  },
+  "rust_coverage": {
+    "scope": "ac_bias_reuse integration only",
+    "ac_lines": "100/142",
+    "branches": null,
+    "api_lines": "198/393"
+  },
+  "strictdoc": {
+    "unique_uids": 580,
+    "success": true,
+    "documents": 94
+  },
+  "property_seeds": [
+    "Proptest 88320261117 (32 cases)",
+    "Coverage environment 88320261103",
+    "FsCheck 2164,20261117 (128 cases)"
+  ],
+  "mutation": "TDD old repeated-bias implementation and six literal preparation cases failed before fixes; no maintained framework mutation campaign rerun or mutation score",
+  "intel": "Circuit gates and matrix probe passed; original SANDLER decks not newly GPU-qualified",
+  "review": "Fresh-context reviewer P2 budget charge fixed to 1+signLength, boundary regression passed; no further concrete source findings",
+  "limits": [
+    "Windows only",
+    "Draft numerical requirements",
+    "No cold CLI parity or general RSpice release speed claim",
+    "Full preparation remains slower",
+    "LU residual and TSTART issues remain",
+    "Managed test runner succeeded but first runtime freeze refused existing directory; final runtime-reviewed used"
+  ]
+}

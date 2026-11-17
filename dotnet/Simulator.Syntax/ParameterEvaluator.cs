@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Globalization;
+using System.Diagnostics.Metrics;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Simulator.Syntax.Generated;
@@ -23,6 +24,11 @@ public sealed record ScalarEvaluation(double? Value,ImmutableArray<ParameterDiag
 /// <summary>Finite, bounded numeric semantics over the existing generated ANTLR expression tree.</summary>
 public static class ParameterEvaluator
 {
+    // Standard optional telemetry: counts synthetic expression preparations,
+    // never input text, parameter names, values or caller-owned mutable state.
+    private static readonly Meter EvaluationMeter=new("Simulator.Syntax.Parameters","1.0");
+    private static readonly Counter<long> SyntheticPreparations=EvaluationMeter.CreateCounter<long>(
+        "parameter.synthetic_expression_preparations","{expression}","Full synthetic-deck scalar evaluation attempts");
     private static readonly ImmutableDictionary<string,double> Empty=ImmutableDictionary.Create<string,double>(StringComparer.OrdinalIgnoreCase);
     /// <summary>Evaluates lexical scopes from ancestors to the requested scope; later same-scope assignments win.</summary>
     /// <remarks>Each scope's dependency graph is simultaneous; self-reference is a cycle, not an implicit prior-value update.</remarks>
@@ -139,7 +145,32 @@ public static class ParameterEvaluator
         if(callDepth>32)throw new EvaluationFailure("function_depth");
         var value=source.Trim();
         if(value.Length>4096)throw new EvaluationFailure("expression_budget");
-        if(value.Length>=2&&((value[0]=='{'&&value[^1]=='}')||(value[0]=='\''&&value[^1]=='\'')))value=value[1..^1];
+        if(value.Length>=2&&((value[0]=='{'&&value[^1]=='}')||(value[0]=='\''&&value[^1]=='\'')))value=value[1..^1].Trim();
+        // Generated lexer recognition, not a second numeric grammar. Require
+        // exact source coverage so skipped bad characters, extra tokens and
+        // whitespace-separated tails cannot become a numeric prefix value.
+        if(value.Length>0&&(char.IsDigit(value[0])||value[0] is '.' or '+' or '-'))
+        {
+            var literalLexer=new SpiceLexer(new AntlrInputStream(value));
+            literalLexer.Mode(SpiceLexer.BODY);literalLexer.RemoveErrorListeners();
+            var token=literalLexer.NextToken();var sign=1d;var signLength=0;
+            if(token.StartIndex==0&&token.StopIndex==0&&token.Text is "+" or "-")
+            {
+                sign=token.Text=="-"?-1:1;signLength=1;token=literalLexer.NextToken();
+            }
+            if(token.Type==SpiceLexer.NUMBER&&token.StartIndex==signLength&&token.StopIndex==value.Length-1
+                &&literalLexer.NextToken().Type==TokenConstants.EOF)
+            {
+                // The wrapper selects the inner expression: optional unary
+                // sign and numeric leaf. Preserve the shared macro budget.
+                budget.Visited+=1+signLength;
+                if(budget.Visited>8192)throw new EvaluationFailure("expression_budget");
+                var literal=sign*Number(token.Text);
+                if(!double.IsFinite(literal))throw new EvaluationFailure("nonfinite_parameter");
+                return literal;
+            }
+        }
+        SyntheticPreparations.Add(1);
         var text="Parameter expression\n.param __value={"+value+"}\n.end\n";
         if(DeckParser.Parse(text).Status!="accepted_structure")throw new EvaluationFailure("unsupported_expression");
         var lexer=new SpiceLexer(new AntlrInputStream(text));var parser=new SpiceParser(new CommonTokenStream(lexer));

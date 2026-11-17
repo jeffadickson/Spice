@@ -159,12 +159,15 @@ pub fn run_with_registry(
             result.samples
         }
     };
-    let mut ac_samples = match &request.analysis {
+    let (mut ac_samples, ac_bias) = match &request.analysis {
         Analysis::Ac {
             frequencies_hz,
             source_phasors,
-        } => crate::ac::ac_with_source_phasors(&plan, frequencies_hz, source_phasors, solver)?,
-        _ => Vec::new(),
+        } => {
+            let sweep = crate::ac::ac_with_source_phasors_detailed(&plan, frequencies_hz, source_phasors, solver)?;
+            (sweep.samples, sweep.bias)
+        }
+        _ => (Vec::new(), None),
     };
     // Audit raw MNA states before adding derived public signals. This layer uses
     // element equations, not the matrices whose assembly it is checking.
@@ -313,7 +316,7 @@ pub fn run_with_registry(
                 .push(diode.model.linearize(voltage)?.current_amps);
         }
         if !ac_samples.is_empty() {
-            let bias = crate::dc::operating_point(&plan, solver)?;
+            let bias = ac_bias.as_deref().ok_or_else(|| SimError::invalid("missing AC linearization bias"))?;
             let voltage = diode.p.unknown().map(|i| bias[i]).unwrap_or(0.)
                 - diode.n.unknown().map(|i| bias[i]).unwrap_or(0.);
             let conductance = diode.model.linearize(voltage)?.conductance_siemens;
@@ -380,11 +383,11 @@ pub fn run_with_registry(
                 old_displacement = displacement;
             }
             if !ac_samples.is_empty() {
-                let bias = crate::dc::operating_point(&plan, solver)?;
+                let bias = ac_bias.as_deref().ok_or_else(|| SimError::invalid("missing AC linearization bias"))?;
                 let v = diode.p.unknown().map(|i| bias[i]).unwrap_or(0.)
                     - diode.n.unknown().map(|i| bias[i]).unwrap_or(0.);
                 let g = model.linearize(v)?.conductance_siemens;
-                let q=diode.charge(&bias)?.ok_or_else(|| SimError::invalid("missing SPICE charge"))?;
+                let q=diode.charge(bias)?.ok_or_else(|| SimError::invalid("missing SPICE charge"))?;
                 let c=q.capacitance_farads;
                 for sample in &mut ac_samples {
                     let real = diode
@@ -444,7 +447,7 @@ pub fn run_with_registry(
             );
         }
         if !ac_samples.is_empty() {
-            let bias = crate::dc::operating_point(&plan, solver)?;
+            let bias = ac_bias.as_deref().ok_or_else(|| SimError::invalid("missing AC linearization bias"))?;
             let partials = channel
                 .model
                 .spice_ac_linearize(nodes.map(|node| node.unknown().map(|i| bias[i]).unwrap_or(0.)))?

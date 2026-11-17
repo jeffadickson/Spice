@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Generated-token numeric literal evaluation
+
+[REQUIREMENT]
+UID: PARAM-LITERAL-FAST-001
+STATUS: Draft
+TITLE: Whole numeric literals avoid synthetic-deck preparation
+STATEMENT: >>>
+Parameter evaluation may recognize a whole optionally signed numeric literal through the existing generated ANTLR BODY lexer and existing engineering-number decoder, without preparing a synthetic deck. Recognition shall require complete original character coverage and EOF; skipped bad characters, whitespace-separated tails and extra tokens shall not become accepted numeric prefixes. All nonliteral inputs shall retain the existing expression grammar path. Environment branding, declaration scope, finite checks and cumulative expression/function budgets shall remain effective. A standard diagnostic metric shall expose full synthetic expression preparation attempts without recording input text or values. Independent literal values, malformed input, environment tampering, nonfinite values and seeded full-grammar equivalence checks shall be verified.
+<<<
+COMMENT: >>>
+Implementation: ParameterEvaluator.Expression, generated SpiceLexer and existing Number; System.Diagnostics.Metrics publisher Simulator.Syntax.Parameters, counter parameter.synthetic_expression_preparations. Tests: ParameterLiteralPerformanceTests and existing ParameterEvaluationTests. Metric measures full-expression preparation attempts, not individual parser calls. Profiling through Measure-RequestedPipeline.cs must retain preparation/execution timing boundaries and original input hashes. There is no new lexer, handwritten numeric grammar or mutable result cache. Fast-path work is not universal syntax or numerical qualification.
+<<<

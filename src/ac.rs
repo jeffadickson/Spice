@@ -18,6 +18,12 @@ pub struct AcSample {
     pub frequency_hz: f64,
     pub values: Vec<ComplexValue>,
 }
+/// One request-local small-signal sweep and the verified bias used to form its
+/// Jacobians. Derived currents must use this same state, not solve another OP.
+pub(crate) struct AcSweep {
+    pub samples: Vec<AcSample>,
+    pub bias: Option<Vec<f64>>,
+}
 /// Real rhs values are small-signal source amplitudes in this reference profile.
 pub fn ac(
     plan: &CompiledCircuit,
@@ -34,6 +40,17 @@ pub fn ac_with_source_phasors(
     source_phasors: &[AcSourcePhasor],
     solver: &dyn LinearSolver,
 ) -> SimResult<Vec<AcSample>> {
+    Ok(ac_with_source_phasors_detailed(plan, frequencies, source_phasors, solver)?.samples)
+}
+
+/// Retain ownership of the physical linearization point for API observables.
+/// It never escapes into a process-global or cross-request cache.
+pub(crate) fn ac_with_source_phasors_detailed(
+    plan: &CompiledCircuit,
+    frequencies: &[f64],
+    source_phasors: &[AcSourcePhasor],
+    solver: &dyn LinearSolver,
+) -> SimResult<AcSweep> {
     plan.require_dynamic_native_models()?;
     if !plan.behaviors.is_empty() {
         return Err(SimError::new(ErrorCode::Unsupported,"behavioral voltage AC derivative qualification remains unavailable"));
@@ -120,11 +137,13 @@ pub fn ac_with_source_phasors(
     }
     // DC convergence is still the bounded Newton/reference path; incremental
     // AC conductance stamps and every subsequent complex solve stay sparse.
-    let (conductance_sparse, charge_sparse) = if plan.has_nonlinear_devices() {
-        let bias = crate::dc::operating_point(plan, solver)?;
+    let bias = if plan.has_nonlinear_devices() {
+        Some(crate::dc::operating_point(plan, solver)?)
+    } else { None };
+    let (conductance_sparse, charge_sparse) = if let Some(bias) = bias.as_deref() {
         (
-            crate::newton::conductance_at_bias_csc(plan, &bias)?,
-            crate::newton::charge_at_bias_csc(plan, &bias)?,
+            crate::newton::conductance_at_bias_csc(plan, bias)?,
+            crate::newton::charge_at_bias_csc(plan, bias)?,
         )
     } else {
         (
@@ -168,7 +187,7 @@ pub fn ac_with_source_phasors(
                 .collect(),
         });
     }
-    Ok(output)
+    Ok(AcSweep { samples: output, bias })
 }
 
 /// Independently check componentwise backward error by traversing canonical
