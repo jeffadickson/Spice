@@ -134,3 +134,49 @@ fn interpolated_measurement_and_missing_policy() {
     assert_eq!(within(Some(1.0), 0.0, 1.0), Outcome::Pass);
     assert_eq!(within(Some(2.0), 0.0, 1.0), Outcome::Fail);
 }
+
+#[test]
+fn logarithmic_grid_interior_points_match_independent_geometric_sequences() {
+    let decade = log_grid(1., 1000., 4).unwrap();
+    for (actual, expected) in decade.iter().zip([1., 10., 100., 1000.]) {
+        assert!(
+            (actual / expected - 1.).abs() < 2e-13,
+            "{actual} vs {expected}"
+        );
+    }
+    for scale in [1e-12, 1., 1e12] {
+        let grid = log_grid(scale, 8. * scale, 4).unwrap();
+        assert_eq!(grid.len(), 4);
+        assert_eq!(*grid.last().unwrap(), 8. * scale);
+        for (index, actual) in grid.iter().enumerate() {
+            let expected = scale * 2_f64.powi(index as i32);
+            assert!(
+                (actual / expected - 1.).abs() < 2e-13,
+                "{actual} vs {expected}"
+            );
+        }
+    }
+}
+
+#[test]
+fn native_subset_netlist_byte_limit_includes_the_exact_maximum() {
+    const BASE: &str = "RC\nV1 in 0 10\nR1 in out 1k\nR2 out 0 1k\n.end\n";
+    let reference = serde_json::to_value(parse(BASE).unwrap()).unwrap();
+    for bytes in [1_048_575, 1_048_576, 1_048_577] {
+        let mut text = String::with_capacity(bytes);
+        text.push_str(BASE);
+        // Blank trailing input is legal and changes no circuit semantics. It
+        // isolates the whole-input byte limit from syntax/topology failures.
+        text.extend(std::iter::repeat_n(' ', bytes - BASE.len()));
+        assert_eq!(text.len(), bytes);
+        let result = parse(&text);
+        if bytes == 1_048_577 {
+            assert_eq!(
+                result.err().expect("oversized input must fail").code,
+                circuit_simulator::error::ErrorCode::ResourceExhausted
+            );
+        } else {
+            assert_eq!(serde_json::to_value(result.unwrap()).unwrap(), reference);
+        }
+    }
+}

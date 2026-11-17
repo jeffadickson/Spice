@@ -141,3 +141,39 @@ fn malformed_sampling_ranges_fail_before_sampling() {
         .is_err()
     );
 }
+
+#[test]
+fn uniform_sampling_excludes_adjacent_upper_endpoints() {
+    for low in [1.0_f64, -1.0, 0.0] {
+        let range = UniformRange { low, high: low.next_up() };
+        for seed in 0..128 {
+            let value = SeededSequence::new(seed).uniform(range).unwrap();
+            assert!(value >= low && value < range.high, "seed={seed}, range={range:?}, value={value}");
+        }
+    }
+}
+
+#[test]
+fn uniform_sampling_translates_the_same_seeded_unit_sequence() {
+    // Binary-exact integer widths isolate translation from stream generation.
+    for seed in 0..128 {
+        let unit = uniform_values(seed, 16, UniformRange { low: 0., high: 1. }).unwrap();
+        for (low, high) in [(3., 7.), (-7., -3.), (-3., 5.)] {
+            let values = uniform_values(seed, 16, UniformRange { low, high }).unwrap();
+            for (value, fraction) in values.into_iter().zip(&unit) {
+                assert_eq!(value, low + (high-low) * fraction, "seed={seed}");
+            }
+        }
+    }
+}
+
+#[test]
+fn uniform_sampling_handles_opposite_extreme_finite_endpoints() {
+    let range = UniformRange { low: -f64::MAX, high: f64::MAX };
+    range.validate().unwrap();
+    for seed in 0..128 {
+        for value in uniform_values(seed, 16, range).unwrap() {
+            assert!(value.is_finite() && value >= range.low && value < range.high, "seed={seed}, value={value}");
+        }
+    }
+}

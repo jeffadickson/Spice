@@ -1,0 +1,93 @@
+{
+  "issue": 61,
+  "base_commit": "701efec",
+  "source_dirty": true,
+  "source_hashes": {
+    "docs/native-input-grids.sdoc": "f2041bc07d28c3cdfa3caf65c875397ce3154f35bed75a225246572ef111413b",
+    "docs/sampling-interval.sdoc": "364a6386a766af3d54e6351d56ae9337607790621a84617d32b02e10c39077a4",
+    "tests/analyses.rs": "9639c041d374732420eb46645a59f62a997010aae6f9d9f732a1e69977bd2c94",
+    "tests/sampling.rs": "f5d4c7408179f184a04c760a7e705b5db505585d201bf30291c335c11636724c",
+    "src/sampling.rs": "2cbbdcaa1e01f8cd7dcbbd9122271f59b4dc24cfb3e7a9c6f78a4b8165826196"
+  },
+  "native_run": "20261117T174625Z-861121ae",
+  "native_names": [
+    "src/grid.rs:17:77: replace - with + in log_grid",
+    "src/grid.rs:17:77: replace - with / in log_grid",
+    "src/netlist.rs:14:19: replace > with == in parse",
+    "src/netlist.rs:14:19: replace > with < in parse",
+    "src/netlist.rs:14:19: replace > with >= in parse",
+    "src/netlist.rs:676:17: delete field max_step_s from struct crate::configured::TransientConfig expression in import_ngspice_request",
+    "src/netlist.rs:677:17: delete field stop_s from struct crate::configured::TransientConfig expression in import_ngspice_request",
+    "src/sampling.rs:87:32: replace - with + in SeededSequence::uniform",
+    "src/sampling.rs:93:30: replace - with + in SeededSequence::uniform"
+  ],
+  "native_counts": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 9,
+    "killed": 9,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "9cff9af03986595b2d8a3726e76592b2086eac81ab60ce0e21767ecec66add71",
+    "log_sha256": "f2655e01e820d6bfbc3fb4cf9cbc27fc4dd4b7eb6de514a8b8bf002c498a2581"
+  },
+  "normal_counts": {
+    "sampling": 12,
+    "analyses": 10
+  },
+  "coverage": [
+    {
+      "lines": {
+        "count": 81,
+        "covered": 77,
+        "percent": 95.06172839506173
+      },
+      "file": "src/sampling.rs",
+      "sha256": "2cbbdcaa1e01f8cd7dcbbd9122271f59b4dc24cfb3e7a9c6f78a4b8165826196"
+    },
+    {
+      "file": "src/grid.rs",
+      "sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+      "lines": {
+        "count": 15,
+        "covered": 15,
+        "percent": 100
+      }
+    },
+    {
+      "file": "src/netlist.rs",
+      "sha256": "759d4d1808ea4431ef20e25723687c51fe4d9344374071e81955f894dcfdf0a5",
+      "lines": {
+        "count": 1055,
+        "covered": 98,
+        "percent": 9.289099526066352
+      }
+    }
+  ],
+  "branches": null,
+  "sampling_red": [
+    "sampling-red.log: seed0 rounds to excluded1.next_up endpoint",
+    "sampling-extreme-red.log: seed0 gives infinity for [-MAX,MAX]"
+  ],
+  "fixed_seed_corpus": {
+    "draws_per_seed": 16,
+    "adjacent_ranges": 3,
+    "extreme_range": "[-f64::MAX,f64::MAX]",
+    "seeds": "0..127",
+    "translation_ranges": 3
+  },
+  "limitations": [
+    "Finite deterministic seed corpus; no statistical-quality guarantee.",
+    "Selected integration line scopes only; stable branch coverage unavailable.",
+    "Two native transient field deletions are supplementary to the original300 and are killed separately, not reclassified as invalid.",
+    "No original new SPICE corpus decks or performance gain claimed."
+  ],
+  "artifact_root": "E:/Artifacts/Spice-issue61-20261117T133906Z"
+}

@@ -82,7 +82,17 @@ impl SeededSequence {
     pub fn uniform(&mut self, range: UniformRange) -> SimResult<f64> {
         range.validate()?;
         let fraction = (self.next_u64() >> 11) as f64 * (1.0 / ((1u64 << 53) as f64));
-        Ok(range.low + (range.high - range.low) * fraction)
+        // Floating-point affine rounding can reach the excluded upper endpoint,
+        // even though the 53-bit fraction itself is strictly less than one.
+        let width = range.high - range.low;
+        // An overflowing width implies opposite-sign endpoints. Weighted terms
+        // then have opposite signs and remain finite without forming the width.
+        let value = if width.is_finite() {
+            range.low + width * fraction
+        } else {
+            range.low * (1.0 - fraction) + range.high * fraction
+        };
+        Ok(if value == range.high { range.high.next_down() } else { value })
     }
 }
 

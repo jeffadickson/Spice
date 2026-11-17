@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Seeded uniform sampling interval contract
+
+[REQUIREMENT]
+UID: SAMPLING-HALF-OPEN-001
+STATUS: Draft
+TITLE: Preserve the exclusive upper sampling endpoint
+STATEMENT: >>>
+Uniform sampling of a validated finite ordered range shall return a finite value greater than or equal to its lower bound and strictly less than its upper bound, including adjacent representable endpoints. Affine floating-point rounding to the upper endpoint shall be corrected to its immediate predecessor. Opposite-sign endpoints whose difference overflows shall use finite weighted interpolation. Reproducibility shall preserve the recorded seed and stream ordering.
+<<<
+COMMENT: >>>
+Inferred from sampling.rs::SeededSequence::uniform. tests/sampling.rs checks adjacent positive, negative and subnormal ranges with seeds0..127 and nonzero translations of the same seeded unit sequence (128 seeds,16 draws,3 ranges). Seed0 formerly returned the upper endpoint for [1,1.next_up()). The nonzero translation test detects the original width subtraction-to-addition mutant. This is a finite deterministic seed corpus, not exhaustive randomness qualification.
+<<<

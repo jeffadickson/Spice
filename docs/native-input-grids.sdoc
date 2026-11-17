@@ -1,0 +1,24 @@
+[DOCUMENT]
+TITLE: Native input and logarithmic grid boundaries
+
+[REQUIREMENT]
+UID: GRID-SPACING-001
+STATUS: Draft
+TITLE: Verify interior logarithmic spacing independently
+STATEMENT: >>>
+The native logarithmic frequency grid shall preserve the requested bounded count and geometric interior spacing between positive ordered endpoints. Qualification shall check independent decade and octave sequences, including interior points and scale variation, with explicit floating-point comparison bounds; checking only monotonicity and the final endpoint is insufficient evidence. This does not define a global waveform accuracy bound.
+<<<
+COMMENT: >>>
+Inferred from src/grid.rs::log_grid. Verification: tests/analyses.rs::logarithmic_grid_interior_points_match_independent_geometric_sequences, four-point decades and scaled octaves at relative error below2e-13 on the qualified host. Existing 2..10000 count/domain refusals remain in force. Issue61 original grid.rs:17:77 changes the points-minus-one denominator while preserving the explicit last endpoint.
+<<<
+
+[REQUIREMENT]
+UID: NATIVE-INPUT-BOUND-001
+STATUS: Draft
+TITLE: Inclusive native subset input byte bound
+STATEMENT: >>>
+The native subset netlist entrypoint shall admit otherwise valid input up to and including 1048576 UTF-8 bytes, and reject larger input with ResourceExhausted. Boundary qualification shall isolate size from syntax and circuit validity and verify that legal padding preserves the parsed circuit. This requirement applies to the explicitly bounded native subset, not universal SPICE grammar acceptance or a new frontend capability.
+<<<
+COMMENT: >>>
+Inferred from src/netlist.rs::parse and its 1 MiB limit. Verification: tests/analyses.rs::native_subset_netlist_byte_limit_includes_the_exact_maximum uses legal ASCII padding below/at/above the bound and canonical circuit equality. Issue61 original netlist.rs:14:19 changes > to >=.
+<<<
