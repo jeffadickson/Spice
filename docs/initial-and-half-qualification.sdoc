@@ -1,0 +1,35 @@
+[DOCUMENT]
+TITLE: Initial and adaptive interval qualification
+
+[REQUIREMENT]
+UID: INITIAL-ALGEBRAIC-BOUND-001
+STATUS: Draft
+TITLE: Include equality in initial consistency acceptance
+STATEMENT: >>>
+An explicitly supplied initial state shall retain the declared inclusive algebraic consistency bound: a finite residual magnitude equal to the bound shall remain admitted, while a magnitude strictly above it shall fail explicitly. Qualification shall isolate equality and adjacent representable values using an independently specified algebraic row. This does not establish global numerical accuracy.
+<<<
+COMMENT: >>>
+Inferred from src/configured.rs::initial. tests/initial_newton.rs::initial_algebraic_current_tolerance_includes_its_exact_boundary uses a one-ohm ground resistor with zero RHS, where initial voltage gives the residual current directly; the present default bound is1e-10A. It checks the adjacent f64 values and preserves accepted initial samples. Original issue61 configured.rs:127:56 maps to current178:56; exact native current replay is retained separately.
+<<<
+
+[REQUIREMENT]
+UID: ADAPTIVE-NONLINEAR-HALF-001
+STATUS: Draft
+TITLE: Retain the nonlinear backward-Euler half-step identity
+STATEMENT: >>>
+For the admitted nonlinear backward-Euler step-doubling path, the first fine solve shall integrate half the attempted interval, and the second shall advance from that midpoint to the attempted endpoint. Acceptance shall retain the fine path's state. Qualification shall compare a nonlinearly dispatched constant-charge circuit against an independent discrete reference, and shall distinguish a current regression from a replay against an older direct-call implementation.
+<<<
+COMMENT: >>>
+Implementation: src/configured.rs nonlinear_trial macro first-half argument. Verification: tests/nonlinear_half_step.rs uses RC=1s with negligibly conducting Shockley current and1F parallel charge; two BE half steps give1-(1+h/2)^(-2). Local LTE settings intentionally admit one known attempt; the endpoint is checked at1e-11V, not by the loose controller setting. Both current and pinned old source pass. Exact old configured.rs:302:23 mutation is killed with this new fixture; cargo-mutants27.1.0 emits no direct current macro-argument counterpart, so automatic current mutation coverage is unavailable for that expression. Wider model families/global accuracy are not qualified by this fixture.
+<<<
+
+[REQUIREMENT]
+UID: AUDIT-INTERVAL-DOMAIN-001
+STATUS: Draft
+TITLE: Refuse configured audit endpoints beyond the requested stop
+STATEMENT: >>>
+The configured physical-audit entrypoint shall reject an interval whose endpoint exceeds the configured stop, independently of whether its elapsed time is finite and positive. The exact stop endpoint shall remain admitted for an otherwise valid interval and state. Qualification shall isolate this time-domain check in physically balanced states so numerical failure cannot mask a missing admission guard.
+<<<
+COMMENT: >>>
+Inferred from src/audit_configured.rs::configured_step and AUD-CONFIG-001. Verification: tests/analysis_audits.rs::configured_audit_rejects_a_positive_interval_beyond_the_stop_time uses a constant RC equilibrium, previous time0.09s, valid endpoint0.1s and invalid endpoint0.11s, both positive intervals shorter than max_step. Native issue61 audit_configured.rs:73:9 changes the final connective before state.time_s>stop; the original diff, not hand-counted positions, binds the exact replay identity. A rejected neighboring-operator proof is retained locally as invalidated analysis and is not a waiver.
+<<<

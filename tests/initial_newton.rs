@@ -249,3 +249,43 @@ fn continuation_never_substitutes_nominal_sources_for_a_different_time_zero_rhs(
     let expected = 0.02585_f64 * (1.0_f64 + 2e-6 / 1e-15).ln();
     assert!((result.samples[0].values[0] - expected).abs() < 2e-7);
 }
+
+#[test]
+fn initial_algebraic_current_tolerance_includes_its_exact_boundary() {
+    // One ohm to ground: the algebraic residual in amperes equals this node's
+    // voltage in volts. With zero RHS the declared consistency bound is 1e-10 A.
+    let circuit = Circuit {
+        nodes: vec!["0".into(), "out".into()],
+        elements: vec![Element::Resistor {
+            id: "R1".into(),
+            p: NodeId(1),
+            n: NodeId(0),
+            ohms: 1.,
+        }],
+    };
+    let plan = compile(&circuit).unwrap();
+    let bound = 1e-10_f64;
+    for voltage in [bound.next_down(), bound, bound.next_up()] {
+        let config = TransientConfig {
+            stop_s: 0.25,
+            max_step_s: 0.25,
+            max_steps: 2,
+            initial_state: Some(vec![voltage]),
+            ..Default::default()
+        };
+        let result = run(&plan, &DenseLu, &config, &false.into());
+        if voltage > bound {
+            assert_eq!(
+                result
+                    .err()
+                    .expect("above-bound initial state must be rejected")
+                    .code,
+                circuit_simulator::error::ErrorCode::InvalidInput
+            );
+        } else {
+            let result = result.unwrap();
+            assert_eq!(result.samples[0].values[0], voltage);
+            assert!(result.samples.last().unwrap().values[0].abs() < 1e-30);
+        }
+    }
+}

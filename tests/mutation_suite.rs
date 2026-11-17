@@ -165,3 +165,6 @@ mod suite_transient;
 mod suite_variation;
 #[path = "voltage_scaled_cccs.rs"]
 mod suite_voltage_scaled_cccs;
+
+#[path = "nonlinear_half_step.rs"]
+mod suite_nonlinear_half_step;

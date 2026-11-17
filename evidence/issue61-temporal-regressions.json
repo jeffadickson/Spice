@@ -1,0 +1,188 @@
+{
+  "issue": 61,
+  "base_commit": "176c187",
+  "source_dirty": true,
+  "source_hashes": {
+    "tests/analysis_audits.rs": "ba73b4fe55af9d1a15b0d8b1eb00061931f0f1fc087192bedd7df62eb5fd7070",
+    "tests/nonlinear_half_step.rs": "ba0e1166712cbffd74f731054a2a4088b72e14d85131b7fb170c30b79779b885",
+    "tests/initial_newton.rs": "2fbdda98e36bac33240c6d7fbefd0cb5c7371ba02ef3fccf4322e30550fcc6d3",
+    "docs/initial-and-half-qualification.sdoc": "f578b4d12ed4d0a8ed9bd1478e3e16715aaaa138a6a3f956756f84ff6875d30a",
+    "tests/mutation_suite.rs": "4f630aba939c3e3c6bdacf6ffe02745294269d59073666f07f1e09e3690441a7"
+  },
+  "proofs": [
+    {
+      "run": "20261117T172012Z-ada898ba",
+      "scope": "analysis_audits",
+      "names": [
+        "src/audit_configured.rs:73:9: replace || with && in configured_step"
+      ],
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "9476140316018e662c8c3f1b7b6de51f91dd8d316ecb75c1e1437efca98539e3",
+        "log_sha256": "b12202a917ee4bb0a45731493adaff5d1df6afa7f9aa996d12f90fe9f6e89a41"
+      }
+    },
+    {
+      "run": "20261117T165255Z-4af4bc0b",
+      "scope": "initial_newton",
+      "names": [
+        "src/configured.rs:178:56: replace > with >= in initial"
+      ],
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "7fbc86a7dc019856a06db38060118847cee997288d11e3f6ef8faadf15342b06",
+        "log_sha256": "4bc0d93dfd1314bd515252f4142c606d298ff3d8614f93f83cd736336b27766e"
+      }
+    },
+    {
+      "run": "20261117T170308Z-d545e9ae",
+      "scope": "nonlinear_half_step",
+      "names": [
+        "src/configured.rs:302:23: replace / with * in run_observed"
+      ],
+      "counts": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "15b946c90f5af9d1abfa101723676d30f6d333a07f9268bf81aae2a2ce741c7e",
+        "log_sha256": "b703c965bf1f021f62a61e418cea53e45f5339a4161e1843754aa1aa8d743a74"
+      }
+    }
+  ],
+  "normal_counts": {
+    "initial_newton": 12,
+    "analysis_audits": 14,
+    "nonlinear_half_step": 1
+  },
+  "coverage": {
+    "initial_newton": [
+      {
+        "file": "src/audit_configured.rs",
+        "sha256": "c9d51444f48cc1bca2201ca5edbe2915bf9f8ad4cfbf715dc85216faee37d6ad",
+        "lines": {
+          "count": 170,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/configured.rs",
+        "sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+        "lines": {
+          "count": 397,
+          "covered": 253,
+          "percent": 63.72795969773299
+        }
+      },
+      {
+        "file": "src/newton.rs",
+        "sha256": "3133abf1d96c6740cd93aeb311f356d26db1c01bdcc519b1e41b717a47ace4d7",
+        "lines": {
+          "count": 1111,
+          "covered": 746,
+          "percent": 67.14671467146715
+        }
+      }
+    ],
+    "analysis_audits": [
+      {
+        "file": "src/audit_configured.rs",
+        "sha256": "c9d51444f48cc1bca2201ca5edbe2915bf9f8ad4cfbf715dc85216faee37d6ad",
+        "lines": {
+          "count": 170,
+          "covered": 151,
+          "percent": 88.8235294117647
+        }
+      },
+      {
+        "file": "src/configured.rs",
+        "sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+        "lines": {
+          "count": 397,
+          "covered": 221,
+          "percent": 55.66750629722922
+        }
+      },
+      {
+        "file": "src/newton.rs",
+        "sha256": "3133abf1d96c6740cd93aeb311f356d26db1c01bdcc519b1e41b717a47ace4d7",
+        "lines": {
+          "count": 1111,
+          "covered": 594,
+          "percent": 53.46534653465347
+        }
+      }
+    ],
+    "nonlinear_half_step": [
+      {
+        "file": "src/audit_configured.rs",
+        "sha256": "c9d51444f48cc1bca2201ca5edbe2915bf9f8ad4cfbf715dc85216faee37d6ad",
+        "lines": {
+          "count": 170,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/configured.rs",
+        "sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+        "lines": {
+          "count": 397,
+          "covered": 226,
+          "percent": 56.92695214105793
+        }
+      },
+      {
+        "file": "src/newton.rs",
+        "sha256": "3133abf1d96c6740cd93aeb311f356d26db1c01bdcc519b1e41b717a47ace4d7",
+        "lines": {
+          "count": 1111,
+          "covered": 405,
+          "percent": 36.45364536453645
+        }
+      }
+    ]
+  },
+  "branches": null,
+  "limitations": [
+    "Selected integration-test line scopes, not whole simulator coverage. Stable instrumentation has no branch measurements.",
+    "Half-step exact old302:23 mutation was killed in immutable old production snapshot with only the same new regression added; current macro argument has no automatically emitted direct counterpart.",
+    "No new original corpus deck or full SPICE qualification claimed.",
+    "Boundary test relative0.9/absolute0.001 settings admit a single adaptive attempt; independent discrete endpoint assertion remains1e-11."
+  ],
+  "artifact_root": "E:/Artifacts/Spice-issue61-20261117T133906Z"
+}

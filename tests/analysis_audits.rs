@@ -567,3 +567,45 @@ fn configured_abstol_requires_finite_positive_amperes() {
     };
     assert!(config.validate().is_ok());
 }
+
+#[test]
+fn configured_audit_rejects_a_positive_interval_beyond_the_stop_time() {
+    let circuit = rc();
+    let previous = circuit_simulator::transient::Sample {
+        time_s: 0.09,
+        values: vec![1., 1., 0.],
+    };
+    let config = TransientConfig {
+        stop_s: 0.1,
+        max_step_s: 0.1,
+        max_steps: 4,
+        ..Default::default()
+    };
+    let endpoint = |time_s| circuit_simulator::transient::Sample {
+        time_s,
+        values: previous.values.clone(),
+    };
+    // The constant equilibrium is physically balanced. Only the timestamp is
+    // invalid, with a positive interval shorter than max_step, isolating stop.
+    let control = audit::configured_step(
+        &circuit,
+        &previous,
+        &endpoint(0.1),
+        &config,
+        AuditOptions::default(),
+    )
+    .unwrap();
+    assert!(!control.has_failures());
+    let error = audit::configured_step(
+        &circuit,
+        &previous,
+        &endpoint(0.11),
+        &config,
+        AuditOptions::default(),
+    )
+    .unwrap_err();
+    assert_eq!(
+        error.code,
+        circuit_simulator::error::ErrorCode::InvalidInput
+    );
+}
