@@ -1,0 +1,14 @@
+[DOCUMENT]
+TITLE: Resumable mutation qualification
+
+[REQUIREMENT]
+UID: MUTATION-RESUME-001
+STATUS: Draft
+TITLE: Preserve candidate identity and accelerate repeated test linking
+STATEMENT: >>>
+Mutation follow-up shall retain the original tested source, native outcome reports, unattempted candidate identities and exact current-source mapping. Completed, killed, surviving, invalid, ignored, timeout and unattempted outcomes shall remain distinct. An explicitly selected mutation profile may omit debug symbols and aggregate existing integration tests, provided every standalone suite is included exactly once, the aggregate baseline succeeds and self-spawned tests retain their qualified selectors and verify child completion and normal product/test selection remains unchanged by default. Mutation target caches shall be isolated from normal qualification and contained in the run's artifact directory. Source correspondence, selected names, profile, test targets, versions, budgets and limitations shall be retained. No timeout or compiler rejection shall be labeled a test kill.
+<<<
+COMMENT: >>>
+Implementation: scripts/FrameworkMutations.cs and Run-FrameworkMutations.ps1, Cargo.toml opt-in mutation-suite feature/profile, tests/mutation_suite.rs. Verification: tests/MutationSuite.Tests.ps1 inventory contract; real aggregate baseline and cargo-mutants native reports. Historical mapping with no current match requires explicit disposition rather than omission. A library-first tier may detect candidates before the full integration replay; misses from that tier require explicit full-suite confirmation and must not be represented as full-suite survivors or kills. The opt-in profile disables incremental compilation because exFAT cannot hard-link its cache; codegen-units16 is a measured experiment setting, not a proven whole-campaign speedup. Whole-deck compatibility and other mutation shards remain separate qualification.
+<<<
+

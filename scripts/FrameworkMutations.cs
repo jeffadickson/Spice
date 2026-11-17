@@ -73,7 +73,7 @@ if(args is ["--selection-self-test"]) {
     Console.WriteLine("Exact selection path/rest-pattern contracts passed.");
     return;
 }
-var minutes=60d;var shard="0/1";var rustFile="src/*.rs";var rustTest="all";var selectedTool="all";var rustFilter="";var workers=2;
+var minutes=60d;var shard="0/1";var rustFile="src/*.rs";var rustTest="all";var selectedTool="all";var rustFilter="";var workers=2;var rustProfile="test";int? testWorkers=null;
 string? rustNamesFile=null;string[]? selectedNames=null;string? selectionHash=null;
 for(var i=0;i<args.Length;i++) switch(args[i]) {
     case "--minutes":minutes=double.Parse(args[++i],CultureInfo.InvariantCulture);break;
@@ -84,11 +84,16 @@ for(var i=0;i<args.Length;i++) switch(args[i]) {
     case "--rust-filter":rustFilter=args[++i];break;
     case "--rust-names-file":rustNamesFile=args[++i];break;
     case "--workers":workers=int.Parse(args[++i],CultureInfo.InvariantCulture);break;
+    case "--rust-profile":rustProfile=args[++i];break;
+    case "--test-workers":testWorkers=int.Parse(args[++i],CultureInfo.InvariantCulture);break;
     default:throw new ArgumentException("Unknown framework argument: "+args[i]);
 }
 if(!double.IsFinite(minutes)||minutes<=0||minutes>1440)throw new ArgumentException("Minutes must be in (0,1440].");
 if(selectedTool is not ("all" or "rust" or "dotnet"))throw new ArgumentException("Tool must be all, rust or dotnet.");
 if(workers<1||workers>16)throw new ArgumentException("Workers must be in 1..16.");
+var effectiveTestWorkers=testWorkers??workers;
+if(effectiveTestWorkers<1||effectiveTestWorkers>16)throw new ArgumentException("Test workers must be in 1..16.");
+if(rustProfile is not ("test" or "mutants"))throw new ArgumentException("Rust profile must be test or mutants.");
 if(rustFilter.Length>512||rustFilter.Contains('\0'))throw new ArgumentException("Rust filter exceeds its bound.");
 if(rustNamesFile is not null) {
     if(rustFilter.Length!=0||shard!="0/1")throw new ArgumentException("Exact names cannot be combined with a regex or shard.");
@@ -135,17 +140,22 @@ if(requestedWorkRoot is null) {
     requestedWorkRoot=Path.Combine(artifactRoot,"framework-mutations");Directory.CreateDirectory(requestedWorkRoot);
 }
 var physicalWorkRoot=PhysicalMutationRoot(requestedWorkRoot);
+// Exact-name batches may share fingerprinted vendor builds within one explicit
+// artifact campaign. Serialize that cache across checkouts as well as callers.
+using var artifactRustLock=selectedTool!="dotnet"?new FileStream(Path.Combine(physicalWorkRoot,"rust-cache.lock"),FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.None):null;
 var run=Path.Combine(physicalWorkRoot,DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8]);Directory.CreateDirectory(run);
 var options=new JsonSerializerOptions{WriteIndented=true,PropertyNamingPolicy=JsonNamingPolicy.SnakeCaseLower};
 var report=new FrameworkReport{RequestedSeconds=minutes*60,Shard=shard,RustFile=rustFile,RustTest=rustTest,Tool=selectedTool,RustFilter=rustFilter,Workers=workers};
 report.RustSelectedNames=selectedNames;report.RustSelectionSha256=selectionHash;
+report.RustProfile=rustProfile;
+report.TestWorkers=effectiveTestWorkers;
 report.LogicalSourceRoot=root;report.PhysicalWorkRoot=physicalWorkRoot;
 var clock=Stopwatch.StartNew();
 double Remaining()=>Math.Max(0,minutes*60-clock.Elapsed.TotalSeconds);
 async Task<(int Exit,bool Timeout)> Execute(string file,IEnumerable<string> arguments,string log,double seconds,Dictionary<string,string>? environment=null,string? directory=null) {
     var start=new ProcessStartInfo(file){WorkingDirectory=directory??root,UseShellExecute=false,RedirectStandardOutput=true,RedirectStandardError=true,CreateNoWindow=true};
     foreach(var arg in arguments)start.ArgumentList.Add(arg);
-    start.Environment["CARGO_BUILD_JOBS"]=workers.ToString(CultureInfo.InvariantCulture);start.Environment["RUST_TEST_THREADS"]=workers.ToString(CultureInfo.InvariantCulture);
+    start.Environment["CARGO_BUILD_JOBS"]=workers.ToString(CultureInfo.InvariantCulture);start.Environment["RUST_TEST_THREADS"]=effectiveTestWorkers.ToString(CultureInfo.InvariantCulture);
     if(environment is not null)foreach(var pair in environment)start.Environment[pair.Key]=pair.Value;
     // Check immediately before dispatch. A minimum timeout must never grant a
     // fresh tool permission to start after the shared campaign has expired.
@@ -257,6 +267,7 @@ try {
         var destination=Path.Combine(rustRoot,path);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Copy(path,destination);
     }
     var rustArguments=new List<string>{"mutants","--dir",rustRoot,"--file",rustFile,"--shard",shard,"--sharding","round-robin","--no-shuffle","--jobs","1","--jobserver-tasks",workers.ToString(CultureInfo.InvariantCulture),"--timeout","120","--build-timeout","900","--output",Path.Combine(run,"rust"),"--colors","never","--cargo-arg=--locked"};
+    rustArguments.Add("--profile");rustArguments.Add(rustProfile);
     if(rustFilter.Length!=0){rustArguments.Add("--re");rustArguments.Add(rustFilter);}
     // Test selection must constrain BOTH the compile baseline and test runs;
     // cargo-test-arg alone still compiles every integration binary.
@@ -264,6 +275,7 @@ try {
         if(test=="lib")rustArguments.Add("--cargo-arg=--lib");
         else {rustArguments.Add("--cargo-arg=--test");rustArguments.Add("--cargo-arg="+test);}
     }
+    if(testTargets.Contains("mutation_suite"))rustArguments.Add("--cargo-arg=--features=mutation-suite");
     if(requestedFilter is not null||selectedSet is not null) {
         // The native field-deletion genre has been observed outside --re.
         // Check its actual name inventory before any mutation, failing closed.
@@ -280,8 +292,12 @@ try {
         if(selectedNames is not null&&!new HashSet<string>(selectedNames,StringComparer.Ordinal).SetEquals(names))
             throw new IOException("Exact native selection is missing or gained names; no mutants executed.");
     }
-    var cache=Path.GetFullPath(Path.Combine(root,"target","framework-rust"));
-    var targetRoot=Path.GetFullPath(Path.Combine(root,"target"));
+    // Mutation targets belong to the explicit artifact campaign, never the
+    // source checkout or normal engine cache. The shared artifact lock above
+    // permits vendor-cache reuse across bounded exact-name batches; the owned
+    // package is invalidated below before every baseline.
+    var targetRoot=Path.GetFullPath(physicalWorkRoot);
+    var cache=Path.Combine(targetRoot,"rust-target");
     if(!cache.StartsWith(targetRoot+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))
         throw new IOException("Mutation cache escaped the target directory.");
     foreach(var path in new[]{targetRoot,cache})
@@ -290,8 +306,8 @@ try {
     // Restoring source timestamps can leave a mutant binary marked Fresh in a
     // reused Cargo target. Clean only this owned package before each baseline,
     // retaining fingerprinted vendor dependencies and the isolated target path.
-    var clean=await Execute("cargo",["clean","--package","circuit-simulator"],"cargo-clean-owned.log",
-        Math.Min(60,Remaining()),new(){["CARGO_TARGET_DIR"]=cache},rustRoot);
+    var clean=await Execute("cargo",["clean","--package","circuit-simulator","--profile",rustProfile],"cargo-clean-owned.log",
+        Math.Min(300,Remaining()),new(){["CARGO_TARGET_DIR"]=cache},rustRoot);
     if(clean.Timeout||clean.Exit!=0)throw new IOException("Owned mutation artifacts could not be refreshed.");
     var rust=await Execute(cargo,rustArguments,"cargo-mutants.log",Remaining(),
         new(){["CARGO_TARGET_DIR"]=cache});
@@ -428,6 +444,8 @@ sealed class FrameworkReport {
     public string RustTest{get;set;}="all";
     public string Tool{get;set;}="all";
     public string RustFilter{get;set;}="";
+    public string RustProfile{get;set;}="test";
+    public int TestWorkers{get;set;}
     public int Workers{get;set;}=2;
     public int OwnedWorkersReaped{get;set;}
     public string[]? RustSelectedNames{get;set;}public string? RustSelectionSha256{get;set;}

@@ -1,0 +1,127 @@
+{
+  "issue": 61,
+  "base_commit": "0ca6eee",
+  "source_dirty": true,
+  "source_hashes": {
+    "Cargo.toml": "398b782b985525465e60ecd5b781f7a288703cf63e96f44eded036efcce881a1",
+    "tests/mutation_suite.rs": "b7fbabc32b363f304bcf04a6cac0578ec2cfa3d5342d7a42c8d30db1b5c0890f",
+    "tests/csc_union_progress.rs": "b47095d133181235a579d0001f723f52ebdd088a2f4c97eedeb2b71b376025e6",
+    "scripts/FrameworkMutations.cs": "0c32fc162d795e57a7e4ed717d3ee73fe106fef116cf8b760a01c845406a700f",
+    "scripts/Run-FrameworkMutations.ps1": "54ca3e30062a6c36d1b9fd85e5845a33ef44292ea853c79855fa6b2a81f3a8d5",
+    "scripts/Observe-MutationRun.ps1": "72551faf1d515fe592c294447a7ac6a61f086329d2ac7940480b697e6799ef28",
+    "scripts/MutationObservation.ps1": "700cfa84197f114918a322af691eba0f5325f12300d080dfc55937ebf3a1b125",
+    "tests/MutationSuite.Tests.ps1": "5f7483a45b7161089e40efb173ad6fb678f183f880aa17e51b93207ca2dcb985",
+    "tests/MutationObserver.Tests.ps1": "e4716e01fe9dede2186c5483262738da4757e65cc9ceda3e2e0b64eb5c72df1e"
+  },
+  "artifact_root": "E:/Artifacts/Spice-issue61-20261117T133906Z",
+  "helper": {
+    "self_test_log_sha256": "f2d43be0ac0f9908375d6ad2cc0c640e83c918c3860d157858e4f7a6e324faec",
+    "version": "FrameworkQualifiedV3",
+    "sha256": "a6f6b7d1e00f6c12e73ac37f5cac664efb6e8f3603490f9159e8653237cdaa80",
+    "source_sha256": "0c32fc162d795e57a7e4ed717d3ee73fe106fef116cf8b760a01c845406a700f",
+    "self_tests_passed": 3
+  },
+  "tests": {
+    "negative_scope": "Missing child selector, unsafe native names/paths, snapshot tamper, unsupported profile, zero test workers, exited worker sample, root failure/orphan cleanup, owned deadline",
+    "aggregate_library_passed": 42,
+    "observer_functional_tests_passed": 4,
+    "standalone_csc_passed": 3,
+    "failed": 0,
+    "aggregate_integration_passed": 617,
+    "inventory_and_option_tests_passed": 4,
+    "aggregate_integration_ignored": 5
+  },
+  "observer_coverage": {
+    "branches": null,
+    "scope": "Pester parent-process command instrumentation only; independently spawned observer script bodies not instrumented",
+    "commands_executed": 3,
+    "lines": null,
+    "raw_sha256": "bce9c6ebc7cd1f93a35b781a71da9446620b71e33c693e373652e0e067a2a2aa",
+    "percent": 2.56410256410256,
+    "commands_analyzed": 117
+  },
+  "framework_coverage": {
+    "branches": null,
+    "lines": null,
+    "limit": "File-based native-framework supervisor not instrumented; self-tests and real framework execution are behavioral evidence, not line/branch metrics"
+  },
+  "mutation": {
+    "targets": "lib,mutation_suite",
+    "incremental": false,
+    "profile": "mutants",
+    "timed_out": 0,
+    "unattempted": 0,
+    "tool": "cargo-mutants27.1.0",
+    "killed": 4,
+    "scope": "Two current audit findings plus two explicit supplementary fields only; not all Rust candidates",
+    "proof_run": "20261117T145923Z-974ec93c",
+    "survived": 0,
+    "codegen_units": 16,
+    "invalid": 0
+  },
+  "original_invalid_classification": [
+    {
+      "name": "src/ac.rs:28:5: replace ac -> SimResult<Vec<AcSample>> with SimResult::from(vec![Default::default()])",
+      "diagnostics": [
+        "error[E0308]: mismatched types",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error; 1 warning emitted",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error; 1 warning emitted"
+      ],
+      "sha256": "a57ef5fa13fa43d826d7b5d2fa08ef3a20d500aeb2bcf02fe357288855627ffc"
+    },
+    {
+      "name": "src/ac.rs:175:5: replace verify_complex_system -> SimResult<f64> with SimResult::from_iter([0.0])",
+      "diagnostics": [
+        "error[E0271]: type mismatch resolving `<[{float}; 1] as IntoIterator>::Item == Result<_, SimError>`",
+        "error[E0277]: a value of type `f64` cannot be built from an iterator over elements of type `_`",
+        "error: could not compile `circuit-simulator` (lib test) due to 2 previous errors; 1 warning emitted",
+        "error: could not compile `circuit-simulator` (lib) due to 2 previous errors; 1 warning emitted"
+      ],
+      "sha256": "e41ff949da53164c9b5188e0d0f58bc7ed97b7b098aa437b12a6c12f3463d8bf"
+    },
+    {
+      "name": "src/adaptive.rs:40:9: replace AdaptiveOptions::error -> SimResult<f64> with SimResult::new(-1.0)",
+      "diagnostics": [
+        "error[E0599]: no variant, associated function, or constant named `new` found for enum `Result<T, E>` in the current scope",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error; 1 warning emitted",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error; 1 warning emitted"
+      ],
+      "sha256": "09c2355406f5e4bb14154b7214c5e914720d1b63692cf5b8d117dc4c33cf1f16"
+    },
+    {
+      "name": "src/audit.rs:150:5: replace branch_current -> SimResult<f64> with SimResult::new(-1.0)",
+      "diagnostics": [
+        "error[E0599]: no variant, associated function, or constant named `new` found for enum `Result<T, E>` in the current scope",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error; 1 warning emitted",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error; 1 warning emitted"
+      ],
+      "sha256": "07ba1c8ad40113a9884ed0bc111852a16dfea44342594e9804f082af994b8ff7"
+    },
+    {
+      "name": "src/audit.rs:158:5: replace dc_currents -> SimResult<Vec<f64>> with SimResult::from(vec![1.0])",
+      "diagnostics": [
+        "error[E0308]: mismatched types",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error; 1 warning emitted",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error; 1 warning emitted"
+      ],
+      "sha256": "7e7dacbcfc7b1b12e93370daaaae29b067591c6427c4fb8f54bc8f85884b3505"
+    }
+  ],
+  "queue": {
+    "completed_before_tiered": 16,
+    "current_findings_killed": 2,
+    "original_pending": 277,
+    "scope": "lib first, then full aggregate confirmation of every miss",
+    "remaining_dispatched_to_tiered": 261,
+    "state": "active_not_completed",
+    "raw_old_source_findings": 2
+  },
+  "limits": [
+    "Windows only",
+    "No full277outcome claim; issue remains open",
+    "No campaign speedup claim: profile and test target changed together",
+    "Historical interrupted runs and cleanup/preflight failures retained separately",
+    "No general memory caps/free-RAM gates; mutation observation only",
+    "Other native mutation shards remain unavailable coverage"
+  ]
+}

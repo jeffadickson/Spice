@@ -1,11 +1,12 @@
-param([double]$Minutes=60,[string]$Shard='0/1',[string]$RustFile='src/*.rs',[string]$RustTest='all',[ValidateSet('all','rust','dotnet')][string]$Tool='all',[string]$RustFilter='',[ValidateRange(1,16)][int]$Workers=2)
+param([double]$Minutes=60,[string]$Shard='0/1',[string]$RustFile='src/*.rs',[string]$RustTest='all',[ValidateSet('all','rust','dotnet')][string]$Tool='all',[string]$RustFilter='',[ValidateRange(1,16)][int]$Workers=2,[ValidateSet('test','mutants')][string]$RustProfile='test',[ValidateRange(0,16)][int]$TestWorkers=0)
 # Keep argument boundaries intact; C# validates budgets, filters and shards.
 $ErrorActionPreference='Stop'
 Set-Location (Split-Path $PSScriptRoot -Parent)
 . ./scripts/HostTools.ps1
 Import-SpiceTools -Root (Get-Location).Path
 & ./scripts/Setup-MutationTools.ps1
-$arguments=@('run','--file','scripts/FrameworkMutations.cs','--','--minutes',$Minutes.ToString([cultureinfo]::InvariantCulture),'--shard',$Shard,'--rust-file',$RustFile,'--rust-test',$RustTest,'--tool',$Tool,'--workers',$Workers)
+$arguments=@('run','--file','scripts/FrameworkMutations.cs','--','--minutes',$Minutes.ToString([cultureinfo]::InvariantCulture),'--shard',$Shard,'--rust-file',$RustFile,'--rust-test',$RustTest,'--tool',$Tool,'--workers',$Workers,'--rust-profile',$RustProfile)
 if($RustFilter){$arguments+=@('--rust-filter',$RustFilter)}
+if($TestWorkers){$arguments+=@('--test-workers',$TestWorkers)}
 dotnet @arguments
 exit $LASTEXITCODE

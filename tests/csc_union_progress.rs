@@ -4,6 +4,7 @@ use proptest::prelude::*;
 use proptest::test_runner::{Config, FileFailurePersistence, RngSeed, TestRunner};
 use std::{
     collections::BTreeSet,
+    io::Read,
     process::{Child, Command, Stdio},
     time::{Duration, Instant},
 };
@@ -19,11 +20,23 @@ impl Drop for OwnedProbe {
 
 #[test]
 fn csc_union_completes_within_a_bounded_probe() {
+    // Strip only the crate component: an opt-in aggregate harness adds a real
+    // module path which libtest's exact selector must retain.
+    let prefix = module_path!().split_once("::").map(|(_, path)| format!("{path}::")).unwrap_or_default();
+    assert!(run_probe(&format!("{prefix}csc_union_probe_child")), "CSC probe did not execute all property cases");
+}
+
+#[test]
+fn missing_probe_is_not_a_successful_liveness_check() {
+    assert!(!run_probe("__missing_csc_union_probe__"));
+}
+
+fn run_probe(test_name: &str) -> bool {
     let mut child = OwnedProbe(
         Command::new(std::env::current_exe().unwrap())
-            .args(["--exact", "csc_union_probe_child", "--nocapture"])
+            .args(["--exact", test_name, "--nocapture"])
             .env("SPICE_CSC_UNION_PROBE", "1")
-            .stdout(Stdio::null())
+            .stdout(Stdio::piped())
             .spawn()
             .unwrap(),
     );
@@ -31,8 +44,9 @@ fn csc_union_completes_within_a_bounded_probe() {
     let deadline = Instant::now() + Duration::from_secs(3);
     loop {
         if let Some(status) = child.0.try_wait().unwrap() {
-            assert!(status.success(), "isolated CSC union contract failed");
-            break;
+            let mut output=String::new();
+            child.0.stdout.take().unwrap().take(16_384).read_to_string(&mut output).unwrap();
+            return status.success() && output.contains("csc-union-probe-completed:256");
         }
         assert!(
             Instant::now() < deadline,
@@ -95,4 +109,5 @@ fn csc_union_probe_child() {
             Ok(())
         })
         .unwrap();
+    println!("csc-union-probe-completed:256");
 }

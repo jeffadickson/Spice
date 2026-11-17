@@ -6,6 +6,14 @@ rust-version = "1.87"
 publish = false
 [features]
 intel-opencl = ["dep:spice-intel-host"]
+# Opt-in aggregation of existing integration tests for mutation throughput only.
+mutation-suite = []
+
+[[test]]
+name = "mutation_suite"
+path = "tests/mutation_suite.rs"
+required-features = ["mutation-suite"]
+
 [dependencies]
 spice-intel-host = { path = "native/intel-host", optional = true }
 spice-bsim330-host = { path = "native/bsim330-host" }
@@ -20,6 +28,15 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 [lints.rust]
 unsafe_code = "forbid"
+
+# Mutation runs rebuild the owned crate repeatedly. Avoid expensive per-binary
+# debug symbols while preserving unoptimized checks and normal test assertions.
+# Product and ordinary qualification profiles are unchanged.
+[profile.mutants]
+inherits = "dev"
+debug = 0
+incremental = false
+codegen-units = 16
 
 [dev-dependencies]
 proptest = { version = "=1.9.0", default-features = false, features = ["std"] }
