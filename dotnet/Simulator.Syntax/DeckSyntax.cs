@@ -27,6 +27,9 @@ public sealed record DeckSyntax(string Status, string Title,
 /// <summary>Generated-grammar frontend. It never executes cards or resolves external files.</summary>
 public static class DeckParser
 {
+    private static readonly System.Diagnostics.Metrics.Meter RecognitionMeter=new("Simulator.Syntax.Recognition","1.0");
+    private static readonly System.Diagnostics.Metrics.Counter<long> Preparations=RecognitionMeter.CreateCounter<long>(
+        "syntax.deck_preparations","{deck}","Complete deck recognition attempts, including rejected inputs");
     // These directives have balanced structural tails, not complete semantic or
     // command-specific validation. Unknown dot directives remain explicit gaps.
     private static readonly HashSet<string> StructuralDirectives = new(StringComparer.OrdinalIgnoreCase)
@@ -41,6 +44,7 @@ public static class DeckParser
     public static DeckSyntax Parse(string text,ParserLimits? limits=null,bool collectFeatures=false,bool collectDeclarations=false)
     {
         ArgumentNullException.ThrowIfNull(text);
+        Preparations.Add(1);
         limits??=ParserLimits.Default;
         if (text.Length > limits.MaxInputCharacters) return Resource(FormattableString.Invariant($"Input exceeds {limits.MaxInputCharacters:N0} UTF-16 characters"));
         var errors = new List<SyntaxDiagnostic>();

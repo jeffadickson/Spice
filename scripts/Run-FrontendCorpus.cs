@@ -58,7 +58,7 @@ foreach(var item in input.RootElement.GetProperty("rows").EnumerateArray())
   if(loadedRoot==null||!loadedRoot.Sha256.Equals(row.InputSha256,StringComparison.OrdinalIgnoreCase))
   {row.Status="input_changed_during_resolution";row.Detail="root_graph_hash_differs_from_inventory_read";continue;}
   row.Sources=resolved.Sources.Select(s=>new SourceHash(s.Path,s.Section,s.Sha256)).ToArray();
-  var parsed=DeckParser.Parse(resolved.Text!,limits,collectDeclarations:true);
+  var parsed=resolved.Parse(limits,collectDeclarations:true);
   if(parsed.Status!="accepted_structure"){row.Status="syntax_refused";row.Detail=parsed.Status;continue;}
   var selection=selected?OperatingPointSelection.Select(parsed):null;
   var prepared=selection?.Prepared??OperatingPointBridge.Lower(parsed);

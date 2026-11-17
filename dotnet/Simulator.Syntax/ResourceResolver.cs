@@ -24,10 +24,25 @@ public sealed record ResourceDiagnostic(string Code,string SourcePath,SourceRang
 /// <summary>Atomic expanded source/provenance result; failures contain no partial source text or graph.</summary>
 public sealed record ResourceResolution(string? Text,ImmutableArray<ResolvedSource> Sources,ImmutableArray<SourceSegment> Segments,ImmutableArray<ResourceDiagnostic> Diagnostics)
 {
+    // Only the resolver can bind recognition to exact immutable text and bounds.
+    // A public record copy with changed Text must fall back to recognition.
+    internal (string Text,ParserLimits Limits,DeckSyntax Syntax)? RecognizedRoot { get; init; }
     /// <summary>Explicitly inert fragment .end cards; original source bytes remain in Sources.</summary>
     public ImmutableArray<FragmentTerminator> FragmentTerminators {get;init;}=[];
     /// <summary>True only when resolution finished within the explicit resource policy.</summary>
     public bool Success=>Diagnostics.IsEmpty&&Text!=null;
+    /// <summary>Recognizes resolved text, reusing root recognition only for identical text, limits and metadata. Failed resolution cannot be parsed.</summary>
+    public DeckSyntax Parse(ParserLimits? limits=null,bool collectFeatures=false,bool collectDeclarations=false)
+    {
+        if(!Success)throw new InvalidOperationException("Resource resolution did not succeed.");
+        limits??=ParserLimits.Default;
+        if(collectDeclarations&&!collectFeatures&&RecognizedRoot is {} root
+            &&string.Equals(Text,root.Text,StringComparison.Ordinal)
+            &&limits.MaxInputCharacters==root.Limits.MaxInputCharacters
+            &&limits.MaxTokens==root.Limits.MaxTokens&&limits.UseSllFirst==root.Limits.UseSllFirst)
+            return root.Syntax;
+        return DeckParser.Parse(Text!,limits,collectFeatures,collectDeclarations);
+    }
 }
 /// <summary>Opt-in bounded UTF-8 include/library resolver, independent of syntax acceptance and simulation.</summary>
 public static class ResourceResolver
@@ -44,11 +59,14 @@ public static class ResourceResolver
         var roots=policy.AllowedRoots.Select(Path.GetFullPath).ToArray();
         var sources=new List<ResolvedSource>();var segments=new List<SourceSegment>();var output=new StringBuilder();var terminators=new List<FragmentTerminator>();
         var active=new HashSet<string>(comparer);var fileCount=0;long bytes=0;
+        (string Text,ParserLimits Limits,DeckSyntax Syntax)? recognizedRoot=null;
         try
         {
             foreach(var root in roots){if(root.StartsWith("\\\\",StringComparison.Ordinal))throw Fail("denied_path",root,null,root);if(!Directory.Exists(root))throw Fail("missing_allowed_root",root,null,root);RejectLinks(root,root,null);}
             Load(Path.GetFullPath(rootPath),null,0,false,rootPath,null);
-            return new(output.ToString(),sources.ToImmutableArray(),segments.ToImmutableArray(),[]){FragmentTerminators=terminators.ToImmutableArray()};
+            var expanded=output.ToString();
+            return new(expanded,sources.ToImmutableArray(),segments.ToImmutableArray(),[]){FragmentTerminators=terminators.ToImmutableArray(),
+                RecognizedRoot=recognizedRoot is {} candidate&&string.Equals(expanded,candidate.Text,StringComparison.Ordinal)?candidate:null};
         }
         catch(ResourceFailure failure){return new(null,[],[],[failure.Diagnostic]);}
         catch(Exception e) when(e is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
@@ -86,6 +104,7 @@ public static class ResourceResolver
                 var parsed=DeckParser.Parse((fragment?title:"")+text,policy.ParsingLimits,collectDeclarations:true);
                 if(parsed.Status=="resource_rejected")throw ParseFailure("resource_parse_budget",path,parsed,fragment);
                 if(parsed.Status!="accepted_structure"||parsed.Declarations==null)throw ParseFailure("resource_syntax",path,parsed,fragment);
+                if(!fragment)recognizedRoot=(text,policy.ParsingLimits,parsed);
                 var catalog=parsed.Declarations;
                 var start=0;var end=text.Length;
                 var fragmentEnds=fragment?catalog.Cards.Where(c=>c.Kind=="endCard").OrderBy(c=>c.Range.Start).ToArray():[];
@@ -98,6 +117,11 @@ public static class ResourceResolver
                     while(end<text.Length&&text[end] is not ('\r' or '\n'))end++;
                     if(end<text.Length&&text[end]=='\r')end++;
                     if(end<text.Length&&text[end]=='\n')end++;
+                    // Keep already-validated blank padding after the root .end.
+                    // It has no cards to suppress and retaining its exact source
+                    // allows the root recognition/provenance to remain reusable.
+                    // Nonblank tails retain the established truncation policy.
+                    if(catalog.Resources.IsEmpty&&text.AsSpan(end).IndexOfAnyExcept(" \t\r\n")<0)end=text.Length;
                 }
                 // .csparam exports a control vector after preprocessing; it does not
                 // choose file branches. Its parameter semantics remain deferred.

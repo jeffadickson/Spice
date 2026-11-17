@@ -59,7 +59,7 @@ public static class RequestedCorpus
     if(!resources.Success){row.Status="resource_refused";row.Diagnostics=resources.Diagnostics.Select(d=>d.Code).ToArray();continue;}
     if(!row.Sources.Any(s=>s.Section==null&&s.Path.Equals(row.InputPath,PathComparison)&&s.Sha256.Equals(row.InputSha256,StringComparison.OrdinalIgnoreCase))){row.Status="input_changed_during_resolution";continue;}
     var expanded=resources.Text!;await File.WriteAllTextAsync(Path.Combine(folder,"expanded.cir"),expanded);row.ExpandedSha256=Hash(Path.Combine(folder,"expanded.cir"));
-    var syntax=DeckParser.Parse(expanded,limits,collectDeclarations:true);row.ExpandedSyntaxStatus=syntax.Status;
+    var syntax=resources.Parse(limits,collectDeclarations:true);row.ExpandedSyntaxStatus=syntax.Status;
     if(syntax.Status!="accepted_structure"){row.Status="expanded_syntax_refused";continue;}
     var pzCard=syntax.Declarations?.Cards.FirstOrDefault(c=>c.Name.Equals(".pz",StringComparison.OrdinalIgnoreCase));
     var pz=pzCard is null?null:PoleZeroSelection.Analyze(syntax);

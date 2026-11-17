@@ -1,0 +1,161 @@
+{
+  "base_commit": "afb6f6b",
+  "source_dirty": true,
+  "source_hashes": {
+    "dotnet/Simulator.RequestedQualification/RequestedCorpus.cs": "9284089ae5415f6e14e130d922cb33dfd2be52f5257c7933089db935dfd70ee5",
+    "dotnet/Simulator.Syntax/DeckSyntax.cs": "39cd42b5eeb8fce040ef0e54e6143821ecac463b2f905f1a7cac4fd495abd2ed",
+    "scripts/Run-RequestedDeck.cs": "eecda16f4fc128895dc9c799ae534014dde5b8c200d7b9a26e8d48f216a90665",
+    "scripts/Run-FrontendCorpus.cs": "1f33ca99fd9ada1b725219697b5b1135a7f080286aab4cb6ebb2a579d4c236e8",
+    "dotnet/Simulator.Syntax.Tests/ResourceRecognitionReuseTests.cs": "a2476187135d1cd1c441b8cc1575fa7b411806882d5a8d22550d10870281d62f",
+    "dotnet/Simulator.Syntax/ResourceResolver.cs": "75dcf57738243528ae1db7a96867a9a5d36b048f4aef5f291a14cf4db5f38b3d",
+    "scripts/Measure-RequestedPipeline.cs": "d5b979c8e445d77701a8303f1c95631f95e0322a0e2a879db4614ab403bdf89d",
+    "dotnet/Simulator.Syntax.Corpus/Program.cs": "0c5dceb6c4e2a1215610195ac29c02c59c4fe53986e286d5bc4b337cb9a2b0de"
+  },
+  "artifact_root": "E:\\Artifacts\\Spice-preparation-20261117T060225Z",
+  "engine_sha256": "14ebad6399cfd5f2e6f7c676f5353fe50ae9b3b016bc493ddda3309b385d2482",
+  "engine_scope": "Frozen unchanged native checkpoint; no native source changes in this run",
+  "frontend_sha256": "f5bfd760d1696a0edd5746b045b129dbd2beac1e15f35727deed2bf111abe843",
+  "warmups": 15,
+  "repetitions": 5,
+  "pipeline_scope": "Public .NET resource resolution + generated parsing + requested preparation + native child execution/reporting. Recorded unmeasured warmups, then samples; no guarantee of fully steady tiered-JIT state. Fresh mode forces duplicate resolved-text recognition as a same-build baseline. Helper compilation/startup and independent oracle comparison excluded. Not equivalent to cold CLI startup or prepared-native-only timing.",
+  "paired": [
+    {
+      "mode": "fresh",
+      "path": "tests/xyce/Netlists/ACtests/SANDLER8/sandler8.cir",
+      "input_sha256": "ba19c2eb9f6f94fc49b790362d548e2efde3e3a2b36cfa1e8f90b952d110880b",
+      "median_ms": 113.4181,
+      "range_ms": [
+        108.1918,
+        125.9514
+      ],
+      "parse_median_ms": 10.1477,
+      "recognitions": [
+        14,
+        14,
+        14,
+        14,
+        14
+      ]
+    },
+    {
+      "mode": "fresh",
+      "path": "tests/xyce/Netlists/ACtests/SANDLER9/sandler9.cir",
+      "input_sha256": "ded28b427f0f5bfe70c7783b0bfb874dd794d537ed31682e34a4223049ac98ee",
+      "median_ms": 104.8202,
+      "range_ms": [
+        94.9388,
+        123.0771
+      ],
+      "parse_median_ms": 8.7469,
+      "recognitions": [
+        10,
+        10,
+        10,
+        10,
+        10
+      ]
+    },
+    {
+      "mode": "reuse",
+      "path": "tests/xyce/Netlists/ACtests/SANDLER8/sandler8.cir",
+      "input_sha256": "ba19c2eb9f6f94fc49b790362d548e2efde3e3a2b36cfa1e8f90b952d110880b",
+      "median_ms": 108.6975,
+      "range_ms": [
+        96.8031,
+        115.5618
+      ],
+      "parse_median_ms": 0.0007,
+      "recognitions": [
+        13,
+        13,
+        13,
+        13,
+        13
+      ]
+    },
+    {
+      "mode": "reuse",
+      "path": "tests/xyce/Netlists/ACtests/SANDLER9/sandler9.cir",
+      "input_sha256": "ded28b427f0f5bfe70c7783b0bfb874dd794d537ed31682e34a4223049ac98ee",
+      "median_ms": 89.9623,
+      "range_ms": [
+        87.2672,
+        95.16
+      ],
+      "parse_median_ms": 0.0008,
+      "recognitions": [
+        9,
+        9,
+        9,
+        9,
+        9
+      ]
+    }
+  ],
+  "reference_process_scope": "Child process wall time. Ours excludes SPICE preparation; ngspice includes parser/RAW; RSpice includes parser with cached debug core. No reference invocation inside RSpice timing probe; comparison outside time. No automatic speedup claim.",
+  "reference_timings": [
+    {
+      "path": "tests/xyce/Netlists/ACtests/SANDLER8/sandler8.cir",
+      "native_ms": 57.5937,
+      "rspice_ms": 88.6934,
+      "ngspice_ms": 110.1269
+    },
+    {
+      "path": "tests/xyce/Netlists/ACtests/SANDLER9/sandler9.cir",
+      "native_ms": 59.6428,
+      "rspice_ms": 84.2614,
+      "ngspice_ms": 115.1202
+    }
+  ],
+  "ngspice_agreements": 2,
+  "new_decks": 0,
+  "fifty_goal": 2,
+  "managed": {
+    "total": 1749,
+    "skipped": 43,
+    "failed": 0,
+    "syntax_passed": 563,
+    "passed": 1706,
+    "frontend_passed": 1143
+  },
+  "coverage": {
+    "lines_valid": 29429,
+    "branches_valid": 15534,
+    "lines_covered": 25219,
+    "line_rate": 0.8569438309150837,
+    "scope": "Combined corrected managed test run, measured assemblies only; not universal solver qualification",
+    "branch_rate": 0.7903952620059225,
+    "branches_covered": 12278
+  },
+  "strictdoc": {
+    "documents": 95,
+    "unique_uids": 581,
+    "parser": "StrictDoc SDReader",
+    "success": true
+  },
+  "randomized": "New FsCheck32 cases replay2164,20261119; existing syntax property/malformed suites ran",
+  "review": "P2 expanded-padding limit regression fixed by restricting retention to resource-free roots, explicit include-budget regression passed; reviewer reinspected",
+  "mutations": "TDD fallback failed count3 versus1; maintained mutation framework not rerun, no mutation score",
+  "limits": [
+    "Windows only",
+    "15 warmups differs from previous checkpoint3; only same-build fresh/reuse pair used for gain",
+    "Five samples, timing ranges overlap; not universal speedup or cold startup parity",
+    "General fuzz/mutation campaigns not rerun",
+    "43 skips include optional native oracle prerequisites and exFAT links",
+    "Initial bad FsCheck gamma20261118 caused partial suites with zero VSTest exit; corrected odd gamma and exact TRX inventory/exception check now pass",
+    "Intel and Linux not rerun because native core/provider unchanged",
+    "Expanded root text intentionally retains ASCII blank padding only for resource-free roots; source byte hashes remain unchanged"
+  ],
+  "normal_cli": {
+    "scope": "Cold requested-deck CLI writes complete archives; separate from warm helper timing. Original SANDLER9 executed; oracle comparisons remain separate",
+    "archive_bytes": 1417595,
+    "consumer_builds": [
+      "Simulator.Syntax.Corpus",
+      "Run-RequestedDeck.cs",
+      "Run-FrontendCorpus.cs"
+    ],
+    "qualification": "not_performed",
+    "elapsed_seconds": 1.4010486,
+    "status": "executed"
+  }
+}

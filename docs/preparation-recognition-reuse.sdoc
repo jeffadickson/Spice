@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Request-local resource recognition reuse
+
+[REQUIREMENT]
+UID: PREP-RECOGNITION-REUSE-001
+STATUS: Draft
+TITLE: Avoid duplicate recognition of unchanged resolved roots
+STATEMENT: >>>
+The normal resolved-deck execution path shall reuse successful root declaration recognition only when expanded text, parser character/token limits, prediction strategy and requested metadata match the original recognition. Changed text, expanded includes, trimmed tails, feature collection and stricter recognition limits shall not reuse incompatible syntax. Failed resource resolution shall not publish executable syntax. Resource hashes, physical ranges, atomic failure, filesystem policy and all numerical preparation/solver behavior shall remain unchanged. Reuse shall be request-local, with no global filesystem or simulation cache. A standard input-free diagnostic counter shall expose complete recognition attempts. Performance shall be measured at the normal public preparation/execution entry and distinguished from prepared-native-only timing.
+<<<
+COMMENT: >>>
+Implementation: ResourceResolution.Parse, ResourceResolver and DeckParser; normal requested-deck/corpus and benchmark callers. Validated ASCII blank padding after resource-free root .end is retained verbatim instead of discarded, keeping text, root scope length and source segments consistent with the original recognition; nonblank tails retain truncation. Verification: ResourceRecognitionReuseTests counts recognition, compares independently recognized declarations/ranges, challenges changed records, metadata, limits, include expansion and newline forms. Existing resource/confinement and frontend suites remain applicable. Evidence: docs/preparation-reuse-results.md and evidence/preparation-reuse.json. Bounded measured evidence does not qualify arbitrary SPICE inputs or a general RSpice performance claim.
+<<<

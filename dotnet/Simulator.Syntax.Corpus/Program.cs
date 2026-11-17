@@ -197,7 +197,7 @@ internal static class ResourceProfileObserver
         var resolved=ResourceResolver.Resolve(input,new(roots.ToImmutableArray()){ParsingLimits=parsingLimits});
         if(!resolved.Success)return new("resource_refused",0,resolved.Diagnostics.Select(d=>d.Code).ToArray(),null,[],resolved.Diagnostics.ToArray());
         var sources=resolved.Sources.Select(s=>new ResourceFingerprint(s.Path,s.Section,s.Sha256)).ToArray();
-        var parsed=DeckParser.Parse(resolved.Text!,parsingLimits,collectDeclarations:true);
+        var parsed=resolved.Parse(parsingLimits,collectDeclarations:true);
         return parsed.Declarations is {} catalog?new("resolved",resolved.Sources.Length,[],SemanticSummary.From(catalog),sources,[]):
             new("expanded_syntax_refused",resolved.Sources.Length,parsed.Diagnostics.Select(d=>d.Code).ToArray(),null,sources,[]);
     }

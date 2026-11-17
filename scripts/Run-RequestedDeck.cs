@@ -39,7 +39,7 @@ try{
  if(!resources.Success){status="refused";failure="resource_resolution_refused";}
  else{
   await SaveText("expanded.cir",resources.Text!,job.Token);
-  var syntax=DeckParser.Parse(resources.Text!,collectDeclarations:true);
+  var syntax=resources.Parse(collectDeclarations:true);
   plan=syntax.Declarations?.Analyses.Length>32?new RequestedAnalysisPlan([],[new("job_operation_budget",null)]):RequestedAnalysis.Prepare(syntax,maxPoints:maxTotalPoints);
   job.Token.ThrowIfCancellationRequested();
   if(!plan.Success){status="refused";failure="requested_analysis_refused";}
