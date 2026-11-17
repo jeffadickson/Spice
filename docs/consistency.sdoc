@@ -78,7 +78,7 @@ STATEMENT: >>>
 For finite complete MNA states and positive timesteps with constant nominal sources, the audit shall independently check capacitor current, inductor voltage, KCL, source constraints and discrete energy balance. The energy identity shall include backward-Euler numerical dissipation, not assert exact continuous energy conservation. Waveform aggregation shall retain the worst normalized discrepancy per check with memory bounded by circuit size.
 <<<
 COMMENT: >>>
-Implementation: src/audit.rs::backward_euler_step and AuditReport::merge_worst. Verification: tests/consistency.rs::backward_euler_energy_audit_includes_integration_dissipation.
+Implementation: src/audit.rs::backward_euler_step and AuditReport::merge_worst. Verification: tests/consistency.rs::backward_euler_energy_audit_includes_integration_dissipation and tests/analysis_audits.rs::memoryless_spice_diode_has_a_checked_backward_euler_energy_balance. The latter uses independently specified Shockley equilibrium and checks energy for zero CJO/TT; nonzero charge remains explicitly NotChecked, not a passing stored-energy claim.
 <<<
 RELATIONS:
 - TYPE: Parent

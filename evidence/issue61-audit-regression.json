@@ -1,0 +1,88 @@
+{
+  "issue": 61,
+  "base_commit": "0030bd2",
+  "source_dirty": true,
+  "source_hashes": {
+    "src/audit.rs": "8e953af44a4dbaef84ac6457d5b1617ef4b01ae4296fb242b2915425992d7258",
+    "tests/analysis_audits.rs": "21409e706ec222f9f8ab2f80b1e38ebde9ac5bf6ce3464a767c2faef28654e92"
+  },
+  "production_rust_changed": false,
+  "artifact_root": "E:/Artifacts/Spice-issue61-20261117T133906Z",
+  "old_full_suite_misses": [
+    "src/audit.rs:384:28: replace * with + in backward_euler_step",
+    "src/audit.rs:411:22: replace += with *= in backward_euler_step"
+  ],
+  "current_native_run": "20261117T145923Z-974ec93c",
+  "cargo_mutants": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 4,
+    "killed": 4,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "9077aa143d50c7fdeddf84df08862dd95b6252fe2901363caffc2383a78d5dc5",
+    "log_sha256": "078538a15ebf33a6fdec26169e919cff7f77e48c93a1778a7f4580013652fe8b"
+  },
+  "original_findings_current_counterparts": [
+    "src/audit.rs:511:28: replace * with + in backward_euler_step",
+    "src/audit.rs:543:22: replace += with *= in backward_euler_step"
+  ],
+  "supplementary_candidates": 2,
+  "supplementary_scope": "Two cargo-mutants field-deletion extras: survived narrow audit-only target, both caught by full aggregate; outside original277",
+  "native_tests": "lib,mutation_suite",
+  "baseline": {
+    "failed": 0,
+    "integration_passed": 617,
+    "integration_ignored": 5,
+    "library_passed": 42
+  },
+  "standalone_audit_tests": {
+    "failed": 0,
+    "ignored": 0,
+    "passed": 13
+  },
+  "property": {
+    "fixed_seed": 2026103006,
+    "cases": 32,
+    "framework": "Proptest1.9.0",
+    "method": "seeded_rc_physical_checks"
+  },
+  "coverage": {
+    "scope": "analysis_audits only, mapped owned source; not whole-library coverage",
+    "branches": null,
+    "unavailable": "Stable Rust branch coverage; other integration tests and executable not measured",
+    "lines": {
+      "count": 579,
+      "covered": 282,
+      "percent": 48.704663212435236
+    },
+    "raw_sha256": "cfbb2055d5d7239667a638a18a0a84522cedb05bc2da7a67a79aad280f6c2b2d",
+    "file": "src/audit.rs"
+  },
+  "intel": {
+    "probe_checked_values": 11880960,
+    "probe_seed": 18117,
+    "probe_scenarios": 6,
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "probe_device": "Intel(R) UHD Graphics630",
+    "probe_max_absolute_error": 0,
+    "probe_scope": "FP64 SpMV; not full simulator speed",
+    "circuit_gate_failed": 0,
+    "scope": "Real/complex linear solves, properties, divider and CLI lifecycle; no arbitrary-deck GPU qualification",
+    "circuit_gate_passed": 13,
+    "probe_sha256": "4fb16ac60319ec877fd32cdef2e001ccdd45281fa55df5abc877a1caf79ea12e"
+  },
+  "limits": [
+    "Original277cohort still being replayed; issue61 remains open",
+    "Old raw misses remain misses; these are current-source regression kills",
+    "No long fuzz, Linux or full corpus benchmark in this regression checkpoint",
+    "Native full proof includes opt-in profile/aggregation tooling tracked in the following tooling checkpoint"
+  ]
+}

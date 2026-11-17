@@ -17,6 +17,86 @@ fn rc() -> circuit_simulator::circuit::Circuit {
 }
 
 #[test]
+fn memoryless_spice_diode_has_a_checked_backward_euler_energy_balance() {
+    // Independently specified equilibrium: the source supplies Shockley power.
+    // A charge-free named diode is memoryless, so nonlinear stored-energy
+    // exclusions must not hide an incorrect timestep/power product.
+    let volts = 0.1_f64;
+    let saturation = 1e-9;
+    let thermal = 0.025;
+    let current = saturation * (volts / thermal).exp_m1();
+    for capacitance in [0., 1e-12] {
+        let circuit = serde_json::from_value(serde_json::json!({
+            "nodes":["0","out"],"elements":[
+                {"kind":"voltage","id":"V1","p":1,"n":0,"volts":volts},
+                {"kind":"spice_diode","id":"D1","p":1,"n":0,"model":{
+                    "saturation_amps":saturation,"thermal_volts":thermal,
+                    "junction_farads":capacitance,"junction_volts":0.8,
+                    "grading":0.5,"forward_coefficient":0.5,"transit_seconds":0.
+                }}
+            ]
+        }))
+        .unwrap();
+        let state = [volts, -current];
+        let report =
+            audit::backward_euler_step(&circuit, &state, &state, 0.00013, AuditOptions::default())
+                .unwrap();
+        assert!(!report.has_failures(), "{report:?}");
+        let energy = report
+            .checks
+            .iter()
+            .find(|c| c.id == "be_energy_balance")
+            .unwrap();
+        if capacitance == 0. {
+            assert_eq!(energy.status, CheckStatus::Passed);
+            assert!(energy.discrepancy.unwrap().abs() < 1e-20);
+            // The relative bound scales with the SUM of absolute energy terms,
+            // not their signed cancellation. A small, explicitly tolerated KCL
+            // residual must not be rejected by collapsing that scale to zero.
+            let delta = 1e-11;
+            let perturbed = [volts, -current + delta];
+            let options = AuditOptions {
+                energy_absolute_j: 1e-18,
+                relative: 1e-3,
+                ..AuditOptions::default()
+            };
+            let report =
+                audit::backward_euler_step(&circuit, &state, &perturbed, 0.00013, options).unwrap();
+            let balance = report
+                .checks
+                .iter()
+                .find(|c| c.id == "be_energy_balance")
+                .unwrap();
+            assert_eq!(balance.status, CheckStatus::Passed);
+            let expected = options.energy_absolute_j
+                + options.relative * 0.00013 * volts * ((-current + delta).abs() + current);
+            assert!((balance.tolerance.unwrap() - expected).abs() < 1e-27);
+            assert!((balance.discrepancy.unwrap() - 0.00013 * volts * delta).abs() < 1e-26);
+            let corrupt = [volts, -current + 0.002];
+            let report = audit::backward_euler_step(
+                &circuit,
+                &state,
+                &corrupt,
+                0.00013,
+                AuditOptions::default(),
+            )
+            .unwrap();
+            assert_eq!(
+                report
+                    .checks
+                    .iter()
+                    .find(|c| c.id == "be_energy_balance")
+                    .unwrap()
+                    .status,
+                CheckStatus::Failed
+            );
+        } else {
+            assert_eq!(energy.status, CheckStatus::NotChecked);
+        }
+    }
+}
+
+#[test]
 fn linear_ac_checks_complex_drive_kcl_and_peak_power() {
     let circuit = rc();
     let plan = compile(&circuit).unwrap();
@@ -67,8 +147,11 @@ fn configured_rlc_checks_signed_flux_and_midpoint_stored_energy() {
             max_step_s: 1e-5,
             max_steps: 200,
             method,
-            current_absolute_tolerance: None, relative_tolerance: None, accepted_times_s: None,
-            initial_newton:None, initial_state: Some(vec![1., 1., 0., 0., 0.]),
+            current_absolute_tolerance: None,
+            relative_tolerance: None,
+            accepted_times_s: None,
+            initial_newton: None,
+            initial_state: Some(vec![1., 1., 0., 0., 0.]),
             sources: vec![],
             adaptive: None,
         };
@@ -150,8 +233,11 @@ fn config(method: Method) -> TransientConfig {
         stop_s: 0.004,
         max_step_s: 0.0001,
         max_steps: 100,
-        current_absolute_tolerance: None, relative_tolerance: None, accepted_times_s: None,
-        initial_newton:None, initial_state: Some(vec![1., 0., -0.001]),
+        current_absolute_tolerance: None,
+        relative_tolerance: None,
+        accepted_times_s: None,
+        initial_newton: None,
+        initial_state: Some(vec![1., 0., -0.001]),
         sources: vec![SourceOverride {
             id: "V1".into(),
             waveform: Waveform::Sine {
@@ -220,7 +306,8 @@ fn configured_invalid_interval_and_adaptive_hidden_history_are_explicit() {
         )
         .is_err()
     );
-    config.adaptive = Some(circuit_simulator::adaptive::AdaptiveOptions { current_relative: None,
+    config.adaptive = Some(circuit_simulator::adaptive::AdaptiveOptions {
+        current_relative: None,
         relative: 1e-3,
         voltage_absolute: 1e-6,
         current_absolute: 1e-9,
@@ -329,8 +416,11 @@ fn configured_nonlinear_be_constant_charge_matches_independent_energy() {
         max_step_s: 0.0001,
         max_steps: 100,
         method: Method::BackwardEuler,
-        current_absolute_tolerance: None, relative_tolerance: None, accepted_times_s: None,
-        initial_newton:None, initial_state: Some(vec![0., 0.]),
+        current_absolute_tolerance: None,
+        relative_tolerance: None,
+        accepted_times_s: None,
+        initial_newton: None,
+        initial_state: Some(vec![0., 0.]),
         adaptive: None,
         sources: vec![SourceOverride {
             id: "V1".into(),
