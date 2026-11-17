@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Controlled-source input validation
+
+[REQUIREMENT]
+UID: CONTROL-VALIDATION-001
+STATUS: Draft
+TITLE: Reject independently invalid control indices and nonfinite gains
+STATEMENT: >>>
+Within the admitted VCCS and VCVS profiles, each control-node index shall independently reference an existing node, including ground. Validation shall reject either out-of-range index and any nonfinite transconductance or voltage gain with InvalidInput before compilation can index terminal arrays. Finite negative and zero gains shall remain admitted for otherwise valid requests. Qualification shall isolate each invalid field in an otherwise valid circuit, and shall verify Circuit validation directly as well as compiler rejection so an unrelated topology failure cannot mask a weakened guard.
+<<<
+COMMENT: >>>
+Inferred from src/circuit.rs Circuit::validate. VCCS transconductance uses siemens and VCVS voltage gain is dimensionless. Verification: tests/controlled_sources.rs::controlled_source_control_indices_and_gains_are_independently_validated, both control polarities, first-invalid and maximum-usize indices, NaN and signed infinities, and existing physical polarity/power oracles. Issue61 old native mutant circuit.rs:243:21 weakens || to &&; current corresponding statement is circuit.rs:344:21. Wider model admission remains separate.
+<<<

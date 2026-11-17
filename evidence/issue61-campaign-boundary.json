@@ -55,7 +55,8 @@
     "documents": 99,
     "raw_sha256": "d4e388858f2352b5623fa6d5c34a975baaac4a8c1994d877bc9898d7894c9485",
     "success": true,
-    "unique_uids": 585
+    "unique_uids": 585,
+    "scope": "Parsed working tree included the pending controlled-source requirement; counts are not an isolated abcca9d-only document inventory"
   },
   "review": "Read-only source review, no blockers; execution evidence separately recorded",
   "artifact_root": "E:/Artifacts/Spice-issue61-20261117T133906Z",
@@ -64,5 +65,6 @@
     "Old raw survivor remains survived; current regression kills it",
     "Other277cohort full confirmations still active; issue61 not closed",
     "No newly agreeing original deck or performance claim"
-  ]
+  ],
+  "source_dirty": true
 }

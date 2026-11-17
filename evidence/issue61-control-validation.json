@@ -1,0 +1,69 @@
+{
+  "issue": 61,
+  "base_commit": "abcca9d",
+  "source_dirty": true,
+  "source_hashes": {
+    "src/circuit.rs": "455182e52eb7be9d1dbd6c69bdadc2128fb4b8fcb53a27c787eb29232e8a5925",
+    "tests/controlled_sources.rs": "a7a19fa41d6d3beb8e6ea220ebecacd02ed7462917d20d99e6104a0244b20645",
+    "docs/controlled-source-validation.sdoc": "482da36e4c4327e5851117d64dd3dd037eef7597c14f59cff49d8cd06c4c076c"
+  },
+  "production_rust_changed": false,
+  "old_survivor": "src/circuit.rs:243:21: replace || with && in Circuit::validate",
+  "current_name": "src/circuit.rs:344:21: replace || with && in Circuit::validate",
+  "native_run": "20261117T163138Z-b9f7b151",
+  "native_scope": "src/circuit.rs and controlled_sources target, exact1candidate; no supplementary candidates",
+  "native_counts": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 1,
+    "killed": 1,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "9e316c9479965c30c08972b749a4844df4c3d5f0a4a3f8add04a25e2f3370ef5",
+    "log_sha256": "a6cdd49565afde47410c629438f30c785753ff2dc50ecb26053da1a21d97cf99"
+  },
+  "normal_tests": {
+    "ignored": 0,
+    "passed": 21,
+    "new_matrix": {
+      "invalid_index_cases": 10,
+      "valid_cases": 12,
+      "nonfinite_gain_cases": 6
+    },
+    "failed": 0,
+    "scope": "VCCS and VCVS direct validation plus compiler result, isolated invalid fields; existing polarity/power/API checks retained"
+  },
+  "coverage": {
+    "branches": null,
+    "lines": {
+      "count": 194,
+      "covered": 65,
+      "percent": 33.50515463917525
+    },
+    "raw_sha256": "13b4d866c8895017f8c07a37dac33322dbd585d46497c572452251ba246152de",
+    "file": "src/circuit.rs",
+    "scope": "controlled_sources integration only, other model families unmeasured; stable Rust branches unavailable"
+  },
+  "relocation": {
+    "native_selection_sha256": "694fee7a74f4c368ae0bfc2e46427f1ce356aad3679b0c8a676b2eda7051d2ac",
+    "index_sha256": "943b5da7455abdf7730bca160475be63559f2d8cce80173253b33449a0a2ca03",
+    "sdk": "10.0.404",
+    "helper": "scripts/Prepare-SurvivorReplay.cs"
+  },
+  "requirements": "CONTROL-VALIDATION-001 inferred/Draft; realStrictDoc99documents585UIDssuccess",
+  "review": "Read-only source review found no blockers; tests separately executed",
+  "artifact_root": "E:/Artifacts/Spice-issue61-20261117T133906Z",
+  "limits": [
+    "Windows only",
+    "No new original deck/model-family/GPU qualification",
+    "Raw old outcome remains survived; current exact counterpart killed",
+    "Other full-cohort findings still active, issue61 stays open"
+  ]
+}

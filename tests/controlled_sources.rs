@@ -586,3 +586,72 @@ fn ccvs_json_request_is_solved_through_the_public_api() {
     let result = run(&request).unwrap();
     assert!((result.samples[0].values[1] + 6.).abs() < 1e-12);
 }
+
+#[test]
+fn controlled_source_control_indices_and_gains_are_independently_validated() {
+    use circuit_simulator::error::ErrorCode;
+    // Every other terminal and component is valid. Test validation directly so
+    // an unrelated topology/compiler rejection cannot mask a missing guard.
+    for voltage_source in [false, true] {
+        let make = |cp, cn, gain| Circuit {
+            nodes: vec!["0".into(), "control".into(), "out".into()],
+            elements: vec![
+                Element::Voltage {
+                    id: "V1".into(),
+                    p: NodeId(1),
+                    n: NodeId(0),
+                    volts: 2.,
+                },
+                if voltage_source {
+                    Element::Vcvs {
+                        id: "E1".into(),
+                        p: NodeId(2),
+                        n: NodeId(0),
+                        cp: NodeId(cp),
+                        cn: NodeId(cn),
+                        gain,
+                    }
+                } else {
+                    Element::Vccs {
+                        id: "G1".into(),
+                        p: NodeId(2),
+                        n: NodeId(0),
+                        cp: NodeId(cp),
+                        cn: NodeId(cn),
+                        siemens: gain,
+                    }
+                },
+                Element::Resistor {
+                    id: "R1".into(),
+                    p: NodeId(2),
+                    n: NodeId(0),
+                    ohms: 1.,
+                },
+            ],
+        };
+        for (cp, cn) in [(1, 0), (0, 1)] {
+            for gain in [-0.5, 0., 0.5] {
+                let circuit = make(cp, cn, gain);
+                circuit.validate().unwrap();
+                compile(&circuit).unwrap();
+            }
+        }
+        // len is the first invalid index; ground remains a valid control node.
+        for (cp, cn) in [(3, 0), (1, 3), (3, 4), (usize::MAX, 0), (1, usize::MAX)] {
+            let circuit = make(cp, cn, 0.5);
+            assert_eq!(
+                circuit.validate().unwrap_err().code,
+                ErrorCode::InvalidInput
+            );
+            assert_eq!(compile(&circuit).unwrap_err().code, ErrorCode::InvalidInput);
+        }
+        for gain in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+            let circuit = make(1, 0, gain);
+            assert_eq!(
+                circuit.validate().unwrap_err().code,
+                ErrorCode::InvalidInput
+            );
+            assert_eq!(compile(&circuit).unwrap_err().code, ErrorCode::InvalidInput);
+        }
+    }
+}
