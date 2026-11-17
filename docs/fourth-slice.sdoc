@@ -194,7 +194,7 @@ UID: REF4-014
 STATUS: Draft
 TITLE: Finite nonlinear state and provider boundaries
 STATEMENT: >>>
-The nonlinear DC and backward-Euler paths shall reject nonfinite norms, trial/history/source vectors and malformed provider corrections without panic or false convergence. Nested continuation policies shall be validated consistently, with strictly positive Gmin reduction factors below one. DC-only recovery options shall not be silently ignored by transient or explicit-RHS entry points.
+The nonlinear DC and backward-Euler paths shall reject nonfinite norms, trial/history/source vectors and malformed provider corrections without panic or false convergence. Nested continuation policies shall be validated consistently, with strictly positive Gmin reduction factors below one. DC-only recovery options shall not be silently ignored by transient or explicit-RHS entry points. Explicit-RHS policy qualification shall isolate source and Gmin continuation separately and verify refusal before provider dispatch.
 <<<
 COMMENT: >>>
 Derived implementation requirement for the user-authorized convergence-hardening campaign; acceptance closure remains pending checkpoint evidence. Implementation: src/newton.rs. Verification: tests/continuation_hardening.rs and tests/continuation.rs. Every changed guard is to be challenged by negative/property checks and selected mutations; broad convergence and model validity are not implied.

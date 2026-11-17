@@ -1,0 +1,57 @@
+{
+  "issue": 61,
+  "base_commit": "e4fac39",
+  "source_dirty": true,
+  "source_hashes": {
+    "src/newton.rs": "3133abf1d96c6740cd93aeb311f356d26db1c01bdcc519b1e41b717a47ace4d7"
+  },
+  "native_run": "20261117T174257Z-8585e69e",
+  "native_names": [
+    "src/newton.rs:599:42: replace - with / in line_search_references",
+    "src/newton.rs:1822:43: replace || with && in require_finite_mna_state"
+  ],
+  "native_counts": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 2,
+    "killed": 2,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "8c581368d1e3f5c1867092049328c4208de7df25b0037fa18a7889632c98ec0f",
+    "log_sha256": "f0200c93e51e76b01b94521d07ec944faf5b570c6fb5a49b66b98884032c600f"
+  },
+  "normal_unit_tests": 45,
+  "normal_aggregate_tests": {
+    "failed": 0,
+    "passed": 628,
+    "ignored": 5
+  },
+  "coverage": [
+    {
+      "file": "src/newton.rs",
+      "sha256": "3133abf1d96c6740cd93aeb311f356d26db1c01bdcc519b1e41b717a47ace4d7",
+      "lines": {
+        "count": 1111,
+        "covered": 746,
+        "percent": 67.14671467146715
+      }
+    }
+  ],
+  "branches": null,
+  "original_masked_mutant": "src/newton.rs:937:46: replace || with && in solve_with_rhs",
+  "original_masked_outcome": "MissedMutant, preserved; shared ownership replaces duplicate predicates without changing diagnostics",
+  "review": "Read-only review found no validator blocker; source-only review, no external experts",
+  "limitations": [
+    "Selected initial_newton integration line coverage excludes direct unit-test-only validator cases and is not whole-suite coverage.",
+    "Original rowcount mutant relocated from399:42 to599:42; native diff verified.",
+    "No numerical algorithm, tolerance, new corpus deck or performance improvement claimed."
+  ],
+  "artifact_root": "E:/Artifacts/Spice-issue61-20261117T133906Z"
+}

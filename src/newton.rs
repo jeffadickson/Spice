@@ -263,9 +263,7 @@ fn linearize_with_rhs_gmin(
     gmin_siemens: Option<f64>,
     charge_history: Option<(&[f64], f64)>,
 ) -> SimResult<LinearizedSystem> {
-    if values.len() != plan.unknown_count() || values.iter().any(|value| !value.is_finite()) {
-        return Err(SimError::invalid("invalid Newton trial vector"));
-    }
+    require_finite_mna_state(plan, values, "invalid Newton trial vector")?;
     if rhs.len() != values.len() || rhs.iter().any(|value| !value.is_finite()) {
         return Err(SimError::invalid("invalid Newton source right-hand side"));
     }
@@ -962,9 +960,7 @@ pub fn solve_from(
     initial: Vec<f64>,
 ) -> SimResult<(Vec<f64>, NewtonReport)> {
     options.validate()?;
-    if initial.len() != plan.unknown_count() || initial.iter().any(|value| !value.is_finite()) {
-        return Err(SimError::invalid("invalid Newton initial state"));
-    }
+    require_finite_mna_state(plan, &initial, "invalid Newton initial state")?;
     let counted = CorrectionCounter {
         inner: solver,
         calls: std::sync::atomic::AtomicUsize::new(0),
@@ -1170,9 +1166,7 @@ pub fn solve_with_rhs(
             "continuation is only valid for the circuit's nominal DC source vector",
         ));
     }
-    if initial.len() != plan.unknown_count() || initial.iter().any(|value| !value.is_finite()) {
-        return Err(SimError::invalid("invalid Newton initial state"));
-    }
+    require_finite_mna_state(plan, &initial, "invalid Newton initial state")?;
     solve_from_rhs(plan, solver, options, initial, rhs)
 }
 
@@ -1763,4 +1757,70 @@ mod november3_feasibility_contracts {
             );
         }
     }
+}
+
+#[cfg(test)]
+mod issue61_dimensional_and_rhs_contracts {
+    use super::*;
+    fn zero_source_plan() -> CompiledCircuit {
+        crate::compile::compile(&crate::netlist::parse("title\nV1 x 0 0\nR1 x 0 100\n.end").unwrap()).unwrap()
+    }
+    #[test]
+    fn zero_magnitude_row_floors_distinguish_amperes_from_volts() {
+        let plan=zero_source_plan();
+        let mut options=NewtonOptions::default();
+        options.current_absolute_tolerance=1e-12;
+        options.voltage_absolute_tolerance=1e-3;
+        // Ground is excluded from voltage unknowns. Row0 is KCL in amperes;
+        // row1 is the ideal-source voltage constraint, despite being the first branch.
+        let refs=line_search_references(&plan,&plan.conductance,&plan.rhs,
+            &[0.,0.],&[0.,0.],options).unwrap();
+        assert_eq!(refs,vec![1e-12,1e-3]);
+    }
+    #[test]
+    fn explicit_rhs_refuses_each_continuation_policy_before_provider_dispatch() {
+        let plan=zero_source_plan();let rhs=[0.,1.5];
+        for source_policy in [true,false] {
+            let mut options=NewtonOptions::default();
+            if source_policy {options.continuation=Some(Default::default());}
+            else {options.gmin_continuation=Some(Default::default());}
+            options.validate().unwrap();
+            let counter=CorrectionCounter{inner:&crate::backend::DenseLu,
+                calls:std::sync::atomic::AtomicUsize::new(0)};
+            let error=solve_with_rhs(&plan,&counter,options,vec![0.,0.],&rhs).err().expect("policy must be refused");
+            assert_eq!(error.code,ErrorCode::Unsupported);
+            assert_eq!(counter.calls.load(std::sync::atomic::Ordering::Relaxed),0);
+        }
+        // Wrong length and nonfiniteness are independent invalid inputs. Neither
+        // may reach a linear provider, even when the other property is valid.
+        for initial in [vec![],vec![0.],vec![0.,0.,0.],vec![f64::NAN,0.],vec![0.,f64::INFINITY]] {
+            let counter=CorrectionCounter{inner:&crate::backend::DenseLu,calls:std::sync::atomic::AtomicUsize::new(0)};
+            let error=solve_with_rhs(&plan,&counter,Default::default(),initial,&rhs).err().expect("invalid initial vector");
+            assert_eq!(error.code,ErrorCode::InvalidInput);
+            assert_eq!(counter.calls.load(std::sync::atomic::Ordering::Relaxed),0);
+        }
+        // Without an inapplicable policy, solve the supplied1.5 V RHS rather
+        // than substituting the plan's nominal0 V source.
+        let (values,_)=solve_with_rhs(&plan,&crate::backend::DenseLu,Default::default(),vec![0.,0.],&rhs).unwrap();
+        assert!((values[0]-1.5).abs()<1e-12);
+        assert!((values[1]+0.015).abs()<1e-12);
+    }
+    #[test]
+    fn shared_mna_state_validator_rejects_each_fault_without_downstream_masking() {
+        let plan=zero_source_plan();
+        for values in [vec![],vec![0.],vec![0.,0.,0.],vec![f64::NAN,0.],vec![0.,f64::NEG_INFINITY]] {
+            assert_eq!(require_finite_mna_state(&plan,&values,"test state").unwrap_err().code,ErrorCode::InvalidInput);
+        }
+        require_finite_mna_state(&plan,&[0.,0.],"test state").unwrap();
+        require_finite_mna_state(&plan,&[1.5,-0.015],"test state").unwrap();
+    }
+}
+/// Own the full-MNA input invariant shared by explicit initialization and trial
+/// assembly. Caller context preserves existing diagnostics; provider corrections
+/// have a different error class and deliberately retain their separate validator.
+fn require_finite_mna_state(plan:&CompiledCircuit,values:&[f64],context:&'static str)->SimResult<()> {
+    if values.len()!=plan.unknown_count() || values.iter().any(|value|!value.is_finite()) {
+        return Err(SimError::invalid(context));
+    }
+    Ok(())
 }

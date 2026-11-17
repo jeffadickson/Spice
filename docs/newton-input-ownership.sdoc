@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Newton input vector ownership
+
+[REQUIREMENT]
+UID: NEWTON-MNA-INPUT-001
+STATUS: Draft
+TITLE: Share the finite full-MNA input contract
+STATEMENT: >>>
+Newton initialization and trial assembly shall reject input vectors whose length differs from the compiled full-MNA unknown count or that contain nonfinite values, before provider dispatch. A shared validator shall own this invariant while preserving caller-specific diagnostics. Invalid input vectors shall return InvalidInput; numerical provider correction failures retain their separate error classification.
+<<<
+COMMENT: >>>
+Inferred from newton.rs initialization and trial boundaries. issue61_dimensional_and_rhs_contracts checks independent shape/nonfiniteness faults directly and at solve_with_rhs, zero provider calls on refusal, finite controls, and independent continuation policy refusal. The original duplicated initial-vector guard could be masked by downstream validation; its raw survival is retained. Current shared-validator || to && mutation is killed by direct ownership tests. The row-floor regression separately verifies that KCL rows use amperes and voltage constraints use volts, excluding ground.
+<<<
