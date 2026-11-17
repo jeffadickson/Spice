@@ -1,0 +1,13 @@
+[DOCUMENT]
+TITLE: Bounded sequential case campaigns
+
+[REQUIREMENT]
+UID: CAMPAIGN-BOUNDS-001
+STATUS: Draft
+TITLE: Inclusive case-count limits and validation before publication
+STATEMENT: >>>
+The sequential campaign API shall accept one through 64 cases inclusive. It shall reject an empty collection, more than 64 cases, empty case IDs or duplicate case IDs with InvalidInput before invoking any case observer. For a valid campaign without cancellation or observer failure, it shall publish one outcome for each request in input order and retain each corresponding case ID and simulation result or error. Invalid input shall not publish an earlier valid prefix. This requirement does not imply distributed execution, retries, rollback of previously published valid outcomes or cancellation inside a case.
+<<<
+COMMENT: >>>
+Inferred from the existing src/campaign.rs public contract and its 1..64 validation message. Verification: tests/campaign_cli.rs inclusive counts 0,1,63,64,65 with independently checked 5 V divider outputs; invalid final IDs; existing mixed-success retention and duplicate-ID tests. Issue61 native old/current mutant at campaign.rs:22:46 changes > to >= and incorrectly rejects exactly64. Native replay and source hashes are retained in checkpoint evidence.
+<<<

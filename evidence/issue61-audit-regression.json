@@ -84,5 +84,38 @@
     "Old raw misses remain misses; these are current-source regression kills",
     "No long fuzz, Linux or full corpus benchmark in this regression checkpoint",
     "Native full proof includes opt-in profile/aggregation tooling tracked in the following tooling checkpoint"
-  ]
+  ],
+  "additional_diode_reference_gate": {
+    "tool": "ngspice47+ (existing pinned executable)",
+    "oracle_sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "fixture_sha256": "4073f01a7b01511a7ddd5792c5011f1f19b82fd5352f1e6f72063f3c6a1ddc71",
+    "deck_sha256": "08094537e631f6b1d9fc59495d66ac154225d3b4dfd882222f475f2ef37947d5",
+    "command": "cargo test --locked --offline --test spice_diode_oracle -- --ignored --test-threads=1",
+    "profile": "test, debug0/incrementalfalse/codegen16; unmutated qualification-target",
+    "passed": 1,
+    "failed": 0,
+    "ignored": 0,
+    "test_seconds": 1.23,
+    "backends": [
+      "lu",
+      "faer"
+    ],
+    "analyses": [
+      "operating point",
+      "AC at1MHz",
+      "transient selected1ns,5ns,10ns"
+    ],
+    "bounds": {
+      "dc_a": 2E-11,
+      "transient_selected_v": 0.002,
+      "ac_v_real_imag": 2E-06,
+      "ac_a_real_imag": 2E-09,
+      "dc_v": 2E-08,
+      "transient_selected_a": 2E-06
+    },
+    "artifact_directory": "E:/Artifacts/Spice-issue61-20261117T133906Z/diode-oracle-66232",
+    "log_sha256": "21ba3facdce21dcc83303943101cc2ab3a2367fbef8c9e5c7f98db5fe2a42f03",
+    "scope": "Existing synthetic charged-diode DC/AC/selected-transient reference fixture, original bounds unchanged; not a newly agreeing original corpus deck, not all transient samples, no RSpice execution in this check",
+    "aggregate_ignored_status": "The preceding native aggregate still ignored this oracle; this separate normal-source run explicitly executes it. Three native-model tests and endurance batch remain outside that aggregate qualification."
+  }
 }

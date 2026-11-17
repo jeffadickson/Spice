@@ -19,7 +19,10 @@
     "version": "FrameworkQualifiedV3",
     "sha256": "a6f6b7d1e00f6c12e73ac37f5cac664efb6e8f3603490f9159e8653237cdaa80",
     "source_sha256": "0c32fc162d795e57a7e4ed717d3ee73fe106fef116cf8b760a01c845406a700f",
-    "self_tests_passed": 3
+    "self_tests_passed": 3,
+    "compiled_target_framework": "net11.0",
+    "declared_runtime_framework": "11.0.0",
+    "host_scope_note": "Immutable copied orchestration helper built outside the Spice SDK pin. Simulator .NET projects stay net10.0/pinned SDK10.0.404; reused relocation helper built with that SDK. Native Rust compiler unchanged."
   },
   "tests": {
     "negative_scope": "Missing child selector, unsafe native names/paths, snapshot tamper, unsupported profile, zero test workers, exited worker sample, root failure/orphan cleanup, owned deadline",

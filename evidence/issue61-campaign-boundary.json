@@ -1,0 +1,68 @@
+{
+  "issue": 61,
+  "base_commit": "347a569",
+  "production_rust_changed": false,
+  "source_hashes": {
+    "src/campaign.rs": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+    "tests/campaign_cli.rs": "0013df8dfdd8266b21df03bb8542e01057a3b1299f51cc2e493aaa0c8247e7a8",
+    "docs/campaign-bounds.sdoc": "8d52f77238cf52e4c5cba27cf699a67081737147eb564941f468eb092959b489"
+  },
+  "old_full_suite_survivor": "src/campaign.rs:22:46: replace > with >= in run_cases",
+  "current_native_name": "src/campaign.rs:22:46: replace > with >= in run_cases",
+  "native_run": "20261117T162251Z-31bab05c",
+  "native_scope": "src/campaign.rs only; campaign_cli tests; exact native inventory includes no supplementary fields",
+  "native_counts": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 1,
+    "killed": 1,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "e8cc9a9c5e98939e28339e83744331e3803710764b1af43d386db79c2549f4f3",
+    "log_sha256": "4bab096fcdc06d07a3cf00b11c6c0f86889c41f60f94f0bedaa27349197f57e6"
+  },
+  "normal_tests": {
+    "failed": 0,
+    "ignored": 0,
+    "contract": "Inclusive0,1,63,64,65; actual5V outputs/order; no publication for invalid count or invalid final ID",
+    "passed": 5
+  },
+  "coverage": {
+    "lines": {
+      "count": 37,
+      "covered": 31,
+      "percent": 83.78378378378379
+    },
+    "raw_sha256": "ac173c8b693472bca63037c76013955973d743ab994c0184f865b07148bf6457",
+    "file": "src/campaign.rs",
+    "branches": null,
+    "scope": "campaign_cli integration only; stable Rust branches unavailable"
+  },
+  "relocation": {
+    "inventory_sha256": "47cb88cf6bf0420ede185b2845028f8b7caa5984497f916f05ed5b28eab02c7c",
+    "helper": "scripts/Prepare-SurvivorReplay.cs",
+    "sdk": "10.0.404",
+    "scope": "Existing bounded helper verified unique unchanged5line context; native inventory then validated exact name"
+  },
+  "strictdoc": {
+    "documents": 99,
+    "raw_sha256": "d4e388858f2352b5623fa6d5c34a975baaac4a8c1994d877bc9898d7894c9485",
+    "success": true,
+    "unique_uids": 585
+  },
+  "review": "Read-only source review, no blockers; execution evidence separately recorded",
+  "artifact_root": "E:/Artifacts/Spice-issue61-20261117T133906Z",
+  "limits": [
+    "Windows only",
+    "Old raw survivor remains survived; current regression kills it",
+    "Other277cohort full confirmations still active; issue61 not closed",
+    "No newly agreeing original deck or performance claim"
+  ]
+}
