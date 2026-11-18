@@ -1,3 +1,45 @@
+# Completed checkpoint: November18 backlog survivor findings
+
+This supersedes older headers below that say273 candidates are unattempted.
+Read docs/backlog-findings-20261118.md, docs/backlog-findings-20261118.sdoc and
+evidence/backlog-findings-20261118.json. The original frozen old-production
+cohort completed273/273:159caught,21survived,93invalid,zero pending/timeouts.
+Original source0face58 had an explicit qualification-only overlay; do not call
+it a clean-main run or change its historical outcome counts.
+
+On the current development-source counterparts, all21 are dispositioned:
+19caught by meaningful regressions and2reviewed numerical equivalents (MOS1
+zeroVds mode choice; redundant DC damping OR). Raw native MissedMutant counts
+remain visible; never call equivalents killed. Two supplementary netlist
+step/stop field mutants initially survived the focused run, then2/2were caught
+by the new public import-to-simulation fixture. Exact names/diffs/source hashes
+and both native runs are in the evidence. No production numerical expression
+changed and no original corpus deck increment. Fifty-deck target remains2/50.
+
+All93 compiler-invalid logs were reviewed:91unsupported SimResult alias
+constructor shapes (42new,24from,25from_iter),2missing Default capability
+replacements. .cargo/mutants.toml narrowly filters the impossible alias shapes
+for pinned cargo-mutants27.1; the framework now snapshots that config. Filtered
+is not caught; requalify on tool/alias changes. Do not derive Default just to
+make a mutant compile or hide other candidates.
+
+Final checks:47unit+650integration passed,6explicit skips;14new focused
+integration+2private unit contracts;64case Proptest seed2026111802; Pester
+4aggregation+1alias+12controller checks; StrictDoc107documents/607UIDs; Intel
+15routine checks and separate SpMV passed. Selected LLVM line coverage is in
+evidence; stable Rust branch coverage and C# adapter coverage are unavailable.
+The backlog UTC-Z deadline regression failed4cases before typed timestamp
+conversion and passed afterward. The original completed worker had noFinishBy
+and was unchanged. All raw outputs/temp/cache data remain under the ignored
+work/backlog-findings-artifacts.txt E: pointer. Keep mutable mutation and normal
+targets separate; Windows manages RAM, mutation-only runaway observation.
+
+Preserve canonical main and unknown changes. No main merge or CI. Publish
+verified checkpoints only on fix/deck-blocker-implementation. Issue62can record
+this completed selected-cohort follow-up; broader corpus/current-source
+qualification remains separately scoped. Do not rerun the completed273 or
+start random fresh shards instead of persisting a qualified new source epoch.
+
 # Completed checkpoint: issue62 diode-current survivors
 
 User requested addressing the two survivors from the November18 nightly.

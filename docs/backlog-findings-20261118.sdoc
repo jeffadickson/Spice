@@ -1,0 +1,77 @@
+[DOCUMENT]
+TITLE: November 18 Mutation Findings Contracts
+
+[REQUIREMENT]
+UID: SPICE-VALIDATION-BOUNDARY-018
+TITLE: Inclusive budgets and independent invalid operands
+STATEMENT: >>>
+Public validation shall accept the documented inclusive byte/count limits and
+reject the next value. Nonfinite measurement-window endpoints and invalid
+Newton/refinement tolerances shall each be rejected independently. Bounds
+include element/measurement/assertion identifiers, generated case bases, hash
+domains, grid dimensions, PWL points and FM frequency deviation.
+<<<
+
+[REQUIREMENT]
+UID: SPICE-AUDIT-COMMONMODE-018
+TITLE: Differential capacitor storage in trapezoidal audit
+STATEMENT: >>>
+The independent trapezoidal capacitor audit shall use the change in terminal
+voltage difference, with current positive from P to N. Adding a constant common
+potential shall not change capacitor current or the discrete energy identity.
+A corrupted source-current state shall fail the audit.
+<<<
+
+[REQUIREMENT]
+UID: SPICE-EXPRESSION-CHAIN-018
+TITLE: Exponential composition derivatives
+STATEMENT: >>>
+The bounded expression evaluator shall apply the chain rule for exp(a*x),
+including zero, negative and nonunit finite a. Analytic slopes shall agree with
+independent central finite differences within explicitly recorded numerical
+bounds on the selected finite test domain.
+<<<
+
+[REQUIREMENT]
+UID: SPICE-NEWTON-EVIDENCE-018
+TITLE: Dynamic convergence and damping evidence
+STATEMENT: >>>
+A stationary committed dynamic state shall require zero corrections. After a
+nonzero update, dynamic acceptance shall require both residual and update
+criteria. A full undamped linear correction shall not be reported as damped.
+Line-search reference construction shall reject an incorrectly sized correction
+even when the state and right-hand side dimensions are valid.
+<<<
+
+[REQUIREMENT]
+UID: SPICE-MUTATION-INVALID-018
+TITLE: Invalid generator shapes remain separate evidence
+STATEMENT: >>>
+Compile-invalid mutation replacements shall remain distinct from caught,
+surviving, filtered and unattempted candidates. A pinned generator workaround
+shall exclude only a reviewed invalid replacement shape, retain behavioral
+operator mutations, and be included in source snapshot provenance. Tool
+upgrades require requalification of the workaround.
+<<<
+
+[REQUIREMENT]
+UID: SPICE-IMPORTED-TRAN-018
+TITLE: Imported transient settings reach execution
+STATEMENT: >>>
+An accepted transient directive shall preserve its explicit stop time and
+maximum step in the executable configured analysis. Default settings shall not
+replace supplied values. Executing a single-point constant PWL voltage fixture
+shall cover zero through the requested stop with increasing times, no accepted
+step above the requested maximum and the analytically specified voltage.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Implementation and verification: tests/backlog_survivors_20261118.rs,
+src/newton.rs november18_pending_contracts, tests/MutationAliasFilter.Tests.ps1,
+.cargo/mutants.toml, tests/imported_transient_contract.rs and
+scripts/FrameworkMutations.cs. Numerical expressions
+already implement these contracts; added tests close selected coverage gaps.
+Evidence and scoped limitations: docs/backlog-findings-20261118.md and the paired
+evidence JSON. Equivalent mutants require an explicit disposition, never a kill.
+<<<

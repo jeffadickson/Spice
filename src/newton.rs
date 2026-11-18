@@ -1824,3 +1824,26 @@ fn require_finite_mna_state(plan:&CompiledCircuit,values:&[f64],context:&'static
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod november18_pending_contracts {
+    use super::*;
+    #[test]
+    fn mismatched_correction_is_rejected_even_when_state_and_rhs_match() {
+        let p=crate::compile::compile(&crate::netlist::parse("test\nV1 a 0 2\nR1 a 0 10\n.end").unwrap()).unwrap();
+        for delta in [vec![],vec![0.],vec![0.;3]] {
+            assert!(line_search_references(&p,&p.conductance,&p.rhs,&[0.,0.],&delta,Default::default()).is_err());
+        }
+        assert!(line_search_references(&p,&p.conductance,&p.rhs,&[0.,0.],&[0.,0.],Default::default()).is_ok());
+    }
+    #[test]
+    fn every_backtracked_step_is_already_reported_as_damped() {
+        // For integer attempt>0, alpha=2^-attempt<1 and 0<=limit<=1;
+        // therefore alpha*limit<1. The OR with attempt>0 is redundant.
+        let p=crate::compile::compile(&crate::netlist::parse("test\nR1 a 0 1\n.end").unwrap()).unwrap();
+        for attempt in 1..MAX_BACKTRACK_TRIALS {
+            let (_,damped)=limited_candidate(&p,&[0.],&[2.],2f64.powi(-(attempt as i32)),false);
+            assert!(damped);
+        }
+    }
+}

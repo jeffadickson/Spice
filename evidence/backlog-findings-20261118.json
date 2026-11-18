@@ -1,0 +1,1125 @@
+{
+  "source_base": "3bd8b26cf6d7fdbf6b3ac2897fdd647c669b06bb",
+  "source_dirty": true,
+  "production_numerical_behavior_changed": false,
+  "source_hashes": [
+    {
+      "path": "src/newton.rs",
+      "sha256": "5ab306611286cf084d814eaa742e683fa862930da1ba9174fe64979684f4f590"
+    },
+    {
+      "path": "tests/backlog_survivors_20261118.rs",
+      "sha256": "2f493d78d8b667f0105299031dfe0e81ae38378e22c99f60257a57e412ce61c4"
+    },
+    {
+      "path": "tests/imported_transient_contract.rs",
+      "sha256": "e5f68a3e396d153999f98d0a1ec3f6b267d540cd38964c35dc7087482ee782de"
+    },
+    {
+      "path": "tests/mutation_suite.rs",
+      "sha256": "e8c28c6a1cdefd6e3858c4f8593306c5ea2b239198d54ee7243b5648c3807392"
+    },
+    {
+      "path": ".cargo/mutants.toml",
+      "sha256": "4a28627c8d7c92f29c51d916d1366fbbb807b1d3db565ec071bea3260bb74c16"
+    },
+    {
+      "path": "scripts/FrameworkMutations.cs",
+      "sha256": "837a122247f5fe525e0198c5c6cab5d01b09c37bda93718a2e65a7e8ba01bf48"
+    },
+    {
+      "path": "scripts/Run-MutationBacklog.ps1",
+      "sha256": "164d32a6aa81b455e84bdac6907705175efa1bb6bf37df42ab4b80bfca8f2a80"
+    },
+    {
+      "path": "tests/MutationBacklog.Tests.ps1",
+      "sha256": "e52cc63fd3aafeecddd28224b4cc2e22f871f650412532aeed09a2e60bd1c47b"
+    },
+    {
+      "path": "tests/MutationAliasFilter.Tests.ps1",
+      "sha256": "a3b149a665d9d11c459bc0bb1b2df5b60f30c2b9cdd67ee29c50f39314ef9310"
+    }
+  ],
+  "artifact_root": "E:\\Artifacts\\Spice-backlog-findings-20261118T195605Z",
+  "original_backlog": {
+    "caught": 159,
+    "invalid": 93,
+    "pending": 0,
+    "elapsed_seconds": 8746.0172125,
+    "source": "0face5844c108bbf80e2af39a2d9ec275c76f703",
+    "timeouts": 0,
+    "summary": "E:/Artifacts/Spice-mutation-backlog-20261118-172613/summary.json",
+    "completed": 273,
+    "qualification_overlay": [
+      "Cargo.toml profile/aggregate target",
+      "tests/mutation_suite.rs",
+      "tests/csc_union_progress.rs exact-selector fix"
+    ],
+    "survived": 21
+  },
+  "survivors": {
+    "invalid": 0,
+    "reviewed_equivalent": 2,
+    "dispositions": [
+      {
+        "original": "src/audit_configured.rs:120:48: replace - with + in configured_step",
+        "current": "src/audit_configured.rs:118:48: replace - with + in configured_step",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__audit_configured.rs_line_118_col_48.diff",
+        "log_sha256": "24ef388c929c509b3a13992764372331f79b34ed75faefc60cbc0a8b8c5eac3c"
+      },
+      {
+        "original": "src/audit.rs:485:9: replace || with && in compare_refinement",
+        "current": "src/audit.rs:642:9: replace || with && in compare_refinement",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__audit.rs_line_642_col_9.diff",
+        "log_sha256": "1a2f7bb9576a16227d7a1efc208ebdf2dc14723c77fadfac34d5537cfe80fbd9"
+      },
+      {
+        "original": "src/circuit.rs:197:50: replace > with >= in Circuit::validate",
+        "current": "src/circuit.rs:273:50: replace > with >= in Circuit::validate",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__circuit.rs_line_273_col_50.diff",
+        "log_sha256": "ed4315a90e36370580efb604408cbc530640b198bc78e307acc0b997435e1fef"
+      },
+      {
+        "original": "src/experiment.rs:66:46: replace > with >= in ExperimentSpec::validate",
+        "current": "src/experiment.rs:66:46: replace > with >= in ExperimentSpec::validate",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__experiment.rs_line_66_col_46.diff",
+        "log_sha256": "cf43ef4407e7df30e228b2befd153c8475ded23323056754db56d9c6c9c4d1a0"
+      },
+      {
+        "original": "src/experiment.rs:78:25: replace || with && in ExperimentSpec::validate",
+        "current": "src/experiment.rs:78:25: replace || with && in ExperimentSpec::validate",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__experiment.rs_line_78_col_25.diff",
+        "log_sha256": "434d055f210bf8c0ba30df6b2c93feb65be5e78ecc2a70f235ac71a3e7b2da56"
+      },
+      {
+        "original": "src/experiment.rs:90:31: replace > with >= in ExperimentSpec::validate",
+        "current": "src/experiment.rs:90:31: replace > with >= in ExperimentSpec::validate",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__experiment.rs_line_90_col_31.diff",
+        "log_sha256": "945a27f7f827b705ec17b0c22a1fc48b6d1285bfcf84acf68251da6523b59d09"
+      },
+      {
+        "original": "src/expression.rs:50:31: replace * with / in Expr::inner",
+        "current": "src/expression.rs:69:31: replace * with / in Expr::inner",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__expression.rs_line_69_col_31.diff",
+        "log_sha256": "8ba7baa50134f475a6f0370b5a5881b21e06298974ac9abaf1e074615b1824aa"
+      },
+      {
+        "original": "src/mos1.rs:50:42: replace < with <= in Mos1Model::linearize",
+        "current": "src/mos1.rs:115:42: replace < with <= in Mos1Model::linearize",
+        "disposition": "reviewed_numerical_equivalent",
+        "reason": "At Vds=0 the effective source potentials coincide; Id=gm=gmb=0 and gd is unchanged. Signed zero is not a separate physical current.",
+        "native_outcome": "MissedMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__mos1.rs_line_115_col_42.diff",
+        "log_sha256": "622e1293e18027852d319ce9ee4a42d95747bbf0cd885c3684996bfe91cd47e1"
+      },
+      {
+        "original": "src/netlist.rs:1009:29: replace < with == in import_ngspice_request",
+        "current": "src/netlist.rs:1015:29: replace < with == in import_ngspice_request",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__netlist.rs_line_1015_col_29.diff",
+        "log_sha256": "a608b89748af34d7b00800270528090bcbb5d7cf167bb3ea9823a61b3a395f7e"
+      },
+      {
+        "original": "src/newton.rs:1071:48: replace == with != in solve_backward_euler_step",
+        "current": "src/newton.rs:1366:48: replace == with != in solve_dynamic_step",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__newton.rs_line_1366_col_48.diff",
+        "log_sha256": "b5e70854bded43dfb341a35302481cb825a59a6205a71de7ee3ebf4700b09de3"
+      },
+      {
+        "original": "src/newton.rs:1138:63: replace > with >= in solve_backward_euler_step",
+        "current": "src/newton.rs:1438:63: replace > with >= in solve_dynamic_step",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__newton.rs_line_1438_col_63.diff",
+        "log_sha256": "a7ee70108c8e66d0d5b0d01cfb357309352fb751d828036f4416880b234901c9"
+      },
+      {
+        "original": "src/newton.rs:393:9: replace || with && in line_search_references",
+        "current": "src/newton.rs:593:9: replace || with && in line_search_references",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__newton.rs_line_593_col_9.diff",
+        "log_sha256": "c94dad6b20f1889cb0b3f358f07b34806a7d80b535276f2af949204c3b731388"
+      },
+      {
+        "original": "src/newton.rs:514:13: replace || with && in NewtonOptions::validate",
+        "current": "src/newton.rs:714:13: replace || with && in NewtonOptions::validate",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__newton.rs_line_714_col_13.diff",
+        "log_sha256": "999397fe5726be131b113a1a8c5faefe07d8f67b79067d0a3c0e37ada1abb744"
+      },
+      {
+        "original": "src/newton.rs:838:39: replace > with < in solve_from_rhs",
+        "current": "src/newton.rs:1070:39: replace > with < in solve_from_rhs",
+        "disposition": "reviewed_numerical_equivalent",
+        "reason": "For attempt>0, alpha=2^-attempt<1 and limit<=1, so limited_candidate already returns damped=true; the OR term is redundant.",
+        "native_outcome": "MissedMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__newton.rs_line_1070_col_39.diff",
+        "log_sha256": "aeaccb17f8afb75044a611220a803cebcc96897dc66469d688108731b6f3246e"
+      },
+      {
+        "original": "src/provenance.rs:14:25: replace > with == in typed_hash",
+        "current": "src/provenance.rs:14:25: replace > with == in typed_hash",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__provenance.rs_line_14_col_25.diff",
+        "log_sha256": "6bc9933347ffc6332cf58a4b9e0475980e51d1865eea0023abfa51ce7dd6cb27"
+      },
+      {
+        "original": "src/sweep.rs:56:38: replace > with >= in derived_case_id",
+        "current": "src/sweep.rs:56:38: replace > with >= in derived_case_id",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__sweep.rs_line_56_col_38.diff",
+        "log_sha256": "8c7d413775287cff94fb634a52230ca95835ea3545448a0260a98cb5f431c101"
+      },
+      {
+        "original": "src/variation.rs:243:64: replace > with == in ScalarGrid::validate",
+        "current": "src/variation.rs:251:64: replace > with == in ScalarGrid::validate",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__variation.rs_line_251_col_64.diff",
+        "log_sha256": "aa885df83ba614d4ce79334fd4aa87c4335d989c45c4007b9bcea377f9298527"
+      },
+      {
+        "original": "src/variation.rs:84:50: replace > with >= in replace_scalar",
+        "current": "src/variation.rs:88:50: replace > with >= in replace_scalar",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__variation.rs_line_88_col_50.diff",
+        "log_sha256": "cf3c513af527a799460b05d192dc290210d499551e1274ee3647aa07c05af6df"
+      },
+      {
+        "original": "src/waveform.rs:103:38: replace > with == in Waveform::validate",
+        "current": "src/waveform.rs:103:38: replace > with == in Waveform::validate",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__waveform.rs_line_103_col_38.diff",
+        "log_sha256": "bd5cc83f9a3b9b052b0b6b44cd70c442604477069998bef15e1cd9be2a5799e6"
+      },
+      {
+        "original": "src/waveform.rs:175:37: replace > with == in Waveform::validate",
+        "current": "src/waveform.rs:175:37: replace > with == in Waveform::validate",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__waveform.rs_line_175_col_37.diff",
+        "log_sha256": "919c9d6abafe92eedf04812f6c89c9d0bdcbe307d61bb20f72ca4f27aded496d"
+      },
+      {
+        "original": "src/waveform.rs:337:37: replace < with <= in Waveform::at_validated",
+        "current": "src/waveform.rs:337:37: replace < with <= in Waveform::at_validated",
+        "disposition": "caught_by_regression",
+        "reason": "Independent boundary, malformed-input, derivative, physical audit or solver-evidence regression in tests/backlog_survivors_20261118.rs or src/newton.rs november18_pending_contracts.",
+        "native_outcome": "CaughtMutant",
+        "native_diff": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261118T200546Z-56bb929e\\rust\\mutants.out\\diff\\src__waveform.rs_line_337_col_37.diff",
+        "log_sha256": "f97112d1f02ec0747cf3444c3b1a4c40bc3dcfde306762f5252ed690050fa9b2"
+      }
+    ],
+    "selected": 21,
+    "timeout": 0,
+    "caught": 19
+  },
+  "primary_native": {
+    "counts": {
+      "version": "27.1.0",
+      "status": "completed",
+      "exit_code": 2,
+      "candidates": 23,
+      "killed": 19,
+      "survived": 4,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": "276b8874f466a4a820752d9b79f3b662b95d5555ece64715fe4aea3d7ce71cbc",
+      "log_sha256": "fbe479aebc008dcc7d22b98caaa2f9452a46295602578d5baa5a75a2017770b4"
+    },
+    "meaning": "21 historical survivor counterparts plus2 tool-emitted supplementary netlist field candidates",
+    "path": "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261118T200546Z-56bb929e"
+  },
+  "supplementary_followup": {
+    "counts": {
+      "version": "27.1.0",
+      "status": "completed",
+      "exit_code": 0,
+      "candidates": 2,
+      "killed": 2,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": "4c5f906d13fd4487c5b9d95032ae0251ec7feddb6b3cc90597d78940834263b6",
+      "log_sha256": "91b23a36c75d4880b410ce0aa12fc866195077e2df56054193416f1833561623"
+    },
+    "meaning": "Both initially surviving supplementary fields caught by new public import-to-execution test; not part of21 denominator",
+    "path": "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261118T202444Z-a7a06a1c"
+  },
+  "compiler_invalid": {
+    "expression_inventory_probe": {
+      "filtered": 64,
+      "before": 186,
+      "after": 122
+    },
+    "proof": "MutationAliasFilter.Tests.ps1: real installed tool inventories, unmutated cargo check control and three deliberately invalid constructor forms",
+    "alias_shapes": {
+      "from_iter": 25,
+      "from": 24,
+      "new": 42
+    },
+    "all_candidates": [
+      {
+        "name": "src/audit_configured.rs:14:5: replace effective -> SimResult<Circuit> with SimResult::new(Default::default())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "ebb130a4241eec30dc72e1449396f99ae0bc1a8a30655232800ca91b30863075"
+      },
+      {
+        "name": "src/audit_configured.rs:60:5: replace configured_step -> SimResult<AuditReport> with SimResult::new()",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "67ee164dd6d72bbbe8b8b0606a043ee64b237049eed2d6b42cef264301ac91ca"
+      },
+      {
+        "name": "src/audit.rs:363:5: replace backward_euler_step -> SimResult<AuditReport> with SimResult::new()",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "7b85e3badd494edb8b64788d0d14813de98847124fed9a59306336ce72ccff7d"
+      },
+      {
+        "name": "src/audit.rs:536:5: replace independent_mos1_current -> SimResult<f64> with SimResult::new(0.0)",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "0b967380e863beacc7ff7d2ad92c619cc2138d367b832d11fb2d36f4e3f063a2"
+      },
+      {
+        "name": "src/backend_faer.rs:100:9: replace <impl SparseLinearBackend for FaerSparseLu>::solve_sparse_complex_rhs -> SimResult<Vec<num_complex::Complex64>> with SimResult::new()",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "e4587643fa1476584ec3d50a142db8afde559b988e60c20a5898b4df3aef3e34"
+      },
+      {
+        "name": "src/backend_faer.rs:154:5: replace refine_complex_solution -> SimResult<Vec<num_complex::Complex64>> with SimResult::from(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "d399b320af8ff0b77448456bf2e11afddc15d14420f855743441c2bf09196197"
+      },
+      {
+        "name": "src/backend_faer.rs:189:9: replace <impl LinearSolver for FaerSparseLu>::prepare_csc -> SimResult<Option<crate::linalg::PreparedSparseReal>> with SimResult::new(None)",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "e4315dd80a0e6c4591741bf27d51f50615fd26061b0f67e91ff7eab10169342f"
+      },
+      {
+        "name": "src/backend_faer.rs:228:9: replace <impl LinearSolver for FaerSparseLu>::solve_csc -> SimResult<Vec<f64>> with SimResult::from(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "3e74c3071c9a118aebf99cc5bfe8bb73896c5b0401e322585070495a10dd26c2"
+      },
+      {
+        "name": "src/backend_faer.rs:235:9: replace <impl LinearSolver for FaerSparseLu>::solve_complex_csc -> SimResult<Vec<num_complex::Complex64>> with SimResult::from(vec![Default::default()])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "cb89823991e546c1e6ad8b71d83ab41c589553b060477a1a4e2e6ac2c9d97b29"
+      },
+      {
+        "name": "src/backend_faer.rs:42:9: replace FaerSparseLu::solve_compiled_csc -> SimResult<Vec<f64>> with SimResult::from_iter([vec![0.0]])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "5eb63cd05ba6a1408dbe33898951456dbdd9acaad733cf8ac7fe1747bacd755b"
+      },
+      {
+        "name": "src/backend_faer.rs:52:9: replace <impl SparseLinearBackend for FaerSparseLu>::solve_sparse_real -> SimResult<Vec<f64>> with SimResult::from(vec![0.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "d0c5203a2b4f9f94f6866e37195f6b3de09434658e004b3f4fb4e35a85732ba9"
+      },
+      {
+        "name": "src/backend.rs:116:9: replace <impl LinearSolver for DenseLu>::solve_complex_rhs -> SimResult<Vec<num_complex::Complex64>> with SimResult::new(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "a8fa86d0be94b5b6c8776c21a46c08cc5021220be08e0613d144ec97cdbcf09d"
+      },
+      {
+        "name": "src/backend.rs:145:9: replace <impl LinearSolver for DenseLu>::solve -> SimResult<Vec<f64>> with SimResult::new(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "494ed7ed356cb94e2bd268591786d1c3e388b1e77916c8da682e5956e1c97c7c"
+      },
+      {
+        "name": "src/backend.rs:162:5: replace solve_refined_real_lu -> SimResult<Vec<f64>> with SimResult::new(vec![0.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "53cc5a49dcf9ea9e2ed55c996ab5ec670883d089150abdd76f84791b42152df6"
+      },
+      {
+        "name": "src/backend.rs:251:9: replace <impl LinearSolver for DenseQr>::solve -> SimResult<Vec<f64>> with SimResult::new(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "7c40a4f60914420599b3a13bfcb4949979c43c11d2cf046f9d282db7fc51547c"
+      },
+      {
+        "name": "src/backend.rs:41:9: replace <impl SparseLinearBackend for DenseLu>::sparse_capabilities -> crate::linalg::BackendCapabilities with Default::default()",
+        "category": "capability_has_no_Default",
+        "log_sha256": "46cf00d0939b08a00e96611c24a2b320782ff209303fd71aa594b86e2b001a59"
+      },
+      {
+        "name": "src/backend.rs:52:9: replace <impl SparseLinearBackend for DenseLu>::solve_sparse_complex -> SimResult<Vec<num_complex::Complex64>> with SimResult::new(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "545d930682ed62db3efeab3295a4a84440f8d5d5543ddea3971da1ee8ef41984"
+      },
+      {
+        "name": "src/backend.rs:69:9: replace <impl LinearSolver for DenseLu>::prepare -> SimResult<Option<crate::linalg::PreparedReal>> with SimResult::from_iter([Some(Default::default())])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "6e27882f453ed76fbee9a4472187dce3f9a2aa53196a939f6bc296a4f6b5b018"
+      },
+      {
+        "name": "src/campaign.rs:22:5: replace run_cases -> SimResult<()> with SimResult::from_iter([()])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "351ed1bb61f4767b9b02f04dc1e94a8cb961cfa540caa74d06cfef4168d1b4bd"
+      },
+      {
+        "name": "src/configured.rs:105:5: replace initial -> SimResult<Vec<f64>> with SimResult::new(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "96888b8e9e3e861084f5e0b633a47ca889856dbc0a24854c42407f6c19e2b665"
+      },
+      {
+        "name": "src/configured.rs:153:5: replace run_observed -> SimResult<ConfiguredResult> with SimResult::from_iter([Default::default()])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "73603e2a5ef93cb0bdc46a6ae15cf636e794ca776ab91475c5c4205212c02d6d"
+      },
+      {
+        "name": "src/dc.rs:101:5: replace operating_point -> SimResult<Vec<f64>> with SimResult::from_iter([vec![]])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "732910148488157c6fb6eef937da981f1f80d349371addb2e7b2775dada5d7df"
+      },
+      {
+        "name": "src/dc.rs:109:5: replace operating_point_detailed -> SimResult<(Vec<f64>, Option<crate::newton::NewtonReport>)> with SimResult::from_iter([(vec![], Some(Default::default()))])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "0c4f803b813759123b071de4a1928d561e9399a18a17a884f0b234b30d97495d"
+      },
+      {
+        "name": "src/dc.rs:109:5: replace operating_point_detailed -> SimResult<(Vec<f64>, Option<crate::newton::NewtonReport>)> with SimResult::new((vec![-1.0], None))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "ecf091250312a48924db8ae8c57ba60da6fa739a1180b29e12b270c72c60cede"
+      },
+      {
+        "name": "src/dc.rs:117:5: replace operating_point_with_options -> SimResult<(Vec<f64>, Option<crate::newton::NewtonReport>)> with SimResult::new((vec![0.0], Some(Default::default())))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "7c826327dc0ed305b6787f769f9bd4caf150609cf22bb3e2c1b1ec97dfdbc18d"
+      },
+      {
+        "name": "src/dc.rs:12:5: replace solve_verified -> SimResult<(Vec<f64>, f64)> with SimResult::from_iter([(vec![-1.0], -1.0)])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "50b9a3faf4c43858e2861fd236119865ccfa2ab2d48f0110c89367f67acb41b2"
+      },
+      {
+        "name": "src/dc.rs:12:5: replace solve_verified -> SimResult<(Vec<f64>, f64)> with SimResult::from((vec![0.0], -1.0))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "d6de37682599770851d257f16da32be3885ddb47b766828761889ba9ffbdee7a"
+      },
+      {
+        "name": "src/dc.rs:12:5: replace solve_verified -> SimResult<(Vec<f64>, f64)> with SimResult::new((vec![], 0.0))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "202f6c15cb2450038e06443be966e91b8b609c1ab2154a29f929e81fba2e7c81"
+      },
+      {
+        "name": "src/dc.rs:26:5: replace solve_compiled_verified -> SimResult<(Vec<f64>, f64)> with SimResult::from_iter([(vec![0.0], 1.0)])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "93ab9f95983c7390e0aa3260310df12e0e7cb2988f8fcaa50f4ebc887fb49314"
+      },
+      {
+        "name": "src/dc.rs:26:5: replace solve_compiled_verified -> SimResult<(Vec<f64>, f64)> with SimResult::new((vec![-1.0], 0.0))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "21259b2fb22bf720c9c4552620d2c456d7599225a88c3178d822466fc44b84bf"
+      },
+      {
+        "name": "src/dc.rs:36:5: replace solve_csc_verified -> SimResult<(Vec<f64>, f64)> with SimResult::from((vec![1.0], 1.0))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "493c7e79a79994f5d406978580e952cc9ac019edb64ab025a23c594ffe4973c5"
+      },
+      {
+        "name": "src/dc.rs:36:5: replace solve_csc_verified -> SimResult<(Vec<f64>, f64)> with SimResult::new((vec![], -1.0))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "e7f25cc3191f230161483fa005d29c8e474d8301bdf0a1f81553afd4a0f2f571"
+      },
+      {
+        "name": "src/dc.rs:49:5: replace validate_sparse_rhs -> SimResult<()> with SimResult::new()",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "a8657b9ac31a6e9560c50b84fe50e857d3d29886cf3d9b2240a45ebff1f757a8"
+      },
+      {
+        "name": "src/dc.rs:62:5: replace verify_csc_solution -> SimResult<f64> with SimResult::from(-1.0)",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "8b2fb511ce96203f4296e7102c16e98a08e8c0a3ee4f8aa05d7d899437305989"
+      },
+      {
+        "name": "src/experiment.rs:105:5: replace calculate -> SimResult<f64> with SimResult::new(1.0)",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "a30fc65423ae58b0040cde8185eba54ec55288876e74e81f3a1a1d6bc44b65f6"
+      },
+      {
+        "name": "src/experiment.rs:141:5: replace evaluate -> SimResult<(Vec<MeasurementResult>, Vec<AssertionResult>)> with SimResult::from((vec![], vec![Default::default()]))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "a4e387ce97add43f0cb97b406c68ab3bffbb5e518412e3343525381c10b6ccd5"
+      },
+      {
+        "name": "src/experiment.rs:61:9: replace ExperimentSpec::validate -> SimResult<()> with SimResult::new()",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "40aa17f6c6baa5b7f7e74edc3e53d05eeb52fb94e8df127c691aa6e3e5b43b18"
+      },
+      {
+        "name": "src/expression.rs:15:9: replace Expr::evaluate -> SimResult<(f64, f64)> with SimResult::from_iter([(-1.0, 1.0)])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "4115e56c077999dc9ad8ea675ee538882722c67f74814e61e9b7c3e7410d4888"
+      },
+      {
+        "name": "src/expression.rs:15:9: replace Expr::evaluate -> SimResult<(f64, f64)> with SimResult::from((0.0, 1.0))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "81903b93f1b46d77f82bd1ad742cf97b5803987c9b3bfa1d379ac2639c8d0ca6"
+      },
+      {
+        "name": "src/expression.rs:22:9: replace Expr::inner -> SimResult<(f64, f64)> with SimResult::from_iter([(-1.0, -1.0)])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "17bd38ba1880c4525dc5dd724bc3d13c379bebceea46735523ee171bf5254254"
+      },
+      {
+        "name": "src/expression.rs:22:9: replace Expr::inner -> SimResult<(f64, f64)> with SimResult::from((0.0, -1.0))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "342979069fbc6b9c74fcd84252ed0f89ac8a8b3996c8c69e5e76d5fd52243b94"
+      },
+      {
+        "name": "src/grid.rs:7:5: replace log_grid -> SimResult<Vec<f64>> with SimResult::from_iter([vec![1.0]])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "84c802f767b8a34635f25404db0fe4830128429447f8378a6f70ab36b8a62adb"
+      },
+      {
+        "name": "src/integrator.rs:19:9: replace Factors::solve -> SimResult<Vec<f64>> with SimResult::new(vec![0.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "e057dd844c39b6442550de993801366517a329340b861d40a8992172c8b90218"
+      },
+      {
+        "name": "src/integrator.rs:49:9: replace Stepper<'a>::advance -> SimResult<Vec<f64>> with SimResult::new(vec![1.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "7a6c128400ba15c6387d326acb4fef557b5fee2988d91c81767c8b9883302a2f"
+      },
+      {
+        "name": "src/linalg.rs:102:9: replace LinearSolver::solve_complex -> SimResult<Vec<num_complex::Complex64>> with SimResult::from_iter([vec![Default::default()]])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "a9354abe2ec0ed6eb0452e635a47a2cb9e84bf03cfc11125aa75f955731bb3f6"
+      },
+      {
+        "name": "src/linalg.rs:193:9: replace PreparedSparseReal::solve -> SimResult<Vec<f64>> with SimResult::new(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "8f2985ff0b93ac344c3e1e6e25de1d9c766a15f5ba03195801070ec9b5042a4a"
+      },
+      {
+        "name": "src/linalg.rs:216:9: replace PreparedReal::solve -> SimResult<Vec<f64>> with SimResult::from_iter([vec![]])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "9c32578a7d062447230f58c0c4ac92bce4865bf6203835f0458fd6dcb69abc59"
+      },
+      {
+        "name": "src/linalg.rs:64:9: replace LinearSolver::solve_csc -> SimResult<Vec<f64>> with SimResult::new()",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "7b044bbf7e65b91acdcd58c7e22b47837a88e581a1fa57855a3ef9e957f14ef1"
+      },
+      {
+        "name": "src/linalg.rs:76:9: replace LinearSolver::solve_complex_csc -> SimResult<Vec<num_complex::Complex64>> with SimResult::from(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "9a903e9885ac643a4c2c63ba964a2338ffa5254b78092a950c61def482ed71bd"
+      },
+      {
+        "name": "src/linear_dynamic.rs:28:5: replace assemble -> SimResult<LinearStepSystem> with SimResult::from_iter([Default::default()])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "158258609a708b6f493ea8bad687eb2bd605ef089eeb67c53b9018719cc44e2d"
+      },
+      {
+        "name": "src/measurement.rs:7:5: replace value_at -> SimResult<f64> with SimResult::new(0.0)",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "a5c631e24cea9f45b68b6e0e885e455fa06acd55a4c292d7687593ef725575c9"
+      },
+      {
+        "name": "src/model.rs:126:9: replace DiodeModel::linearize -> SimResult<DiodeLinearization> with SimResult::from(Default::default())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "610cc25a3d2d2f34be374b17f0afa64da9e08071bdcf2cee9b9079d6f531c966"
+      },
+      {
+        "name": "src/model.rs:36:9: replace DiodeProfile::validate -> SimResult<()> with SimResult::new(())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "15c40a551d642c85c6c4f98464f8714331a552b2d4fede4f9e6e77a7a7c9a6c0"
+      },
+      {
+        "name": "src/model.rs:79:9: replace DiodeProfile::nonlinear_charge -> SimResult<Option<crate::spice_diode::JunctionCharge>> with SimResult::from(None)",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "522f6e1aebb026e2153611d1d9585d3340a6ea9e5e24ce5867b52cd3109084b6"
+      },
+      {
+        "name": "src/mos1.rs:26:9: replace Mos1Model::validate -> SimResult<()> with SimResult::from_iter([()])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "b59cce1052aa6cae87af340926d40109f0675d6ce675e4b5b90e309e1abad830"
+      },
+      {
+        "name": "src/netlist.rs:1147:5: replace bounded_sine -> SimResult<Waveform> with SimResult::from(Default::default())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "49dd8cc0b06b38bc4d849aa7a80dd3c05bdfd2e62dc4db7597d3095e2dc51041"
+      },
+      {
+        "name": "src/netlist.rs:14:5: replace parse -> SimResult<Circuit> with SimResult::new()",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "0f3a63c6c41ddd6710ee6da14f125a78226a4277a38bdab50cb993f3d58223c1"
+      },
+      {
+        "name": "src/netlist.rs:415:5: replace bounded_diode_models -> SimResult<std::collections::BTreeMap<String, BoundedDiodeModel>> with SimResult::new(BTreeMap::new())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "85ce348052f3bfbed2dc6d2a26a275b1b4a94832113593f034c7664bd43529f8"
+      },
+      {
+        "name": "src/netlist.rs:584:5: replace bounded_source_phasor -> SimResult<AcSourcePhasor> with SimResult::from_iter([Default::default()])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "a33c098817ddec0f604c9d86fbfc0796877cf97a0f041605540a5c97fa066402"
+      },
+      {
+        "name": "src/newton.rs:1053:5: replace solve_backward_euler_step -> SimResult<(Vec<f64>, NewtonReport)> with SimResult::new((vec![], Default::default()))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "f9980352cf8b6597dc01c4333135791426bcf6d83ea30c04329e62fe9665bfe3"
+      },
+      {
+        "name": "src/newton.rs:195:5: replace linearize_backward_euler -> SimResult<LinearizedSystem> with SimResult::new()",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "8b99d9638a0fcb3fe1c2f9d6a6510a0057a5ddb79dad41dd91ff3dd9a93c5917"
+      },
+      {
+        "name": "src/newton.rs:297:9: replace <impl LinearSolver for CorrectionCounter<'_>>::solve -> SimResult<Vec<f64>> with SimResult::from(vec![0.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "b1c0ec191aa14dfe7c58db0ea871357fd994ceff5f0d24f76e6f633326125717"
+      },
+      {
+        "name": "src/newton.rs:306:5: replace scaled_component -> SimResult<f64> with SimResult::from(-1.0)",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "d41c2159355d5a51c5d53e1ec1737f06b20f7dd4015d907a95963fc1738c334a"
+      },
+      {
+        "name": "src/newton.rs:32:5: replace linearize -> SimResult<LinearizedSystem> with SimResult::new(Default::default())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "159b577452a7cb72a1c5ee0b95bcfe9f60ef49b2a355e775e6f0ce50e0a1835d"
+      },
+      {
+        "name": "src/newton.rs:327:5: replace scaled_residual_norm -> SimResult<f64> with SimResult::new()",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "d8c66ca715baca5a31c14f97f8924d5fea8dd9a95d3e34e2019d6575c3f708ee"
+      },
+      {
+        "name": "src/newton.rs:579:9: replace ContinuationOptions::validate -> SimResult<()> with SimResult::from_iter([()])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "0386f52323ddf9e095cff0d290427edb263ccabdd8626e7464ec81622998075f"
+      },
+      {
+        "name": "src/newton.rs:721:5: replace solve -> SimResult<(Vec<f64>, NewtonReport)> with SimResult::from((vec![-1.0], Default::default()))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "9c39f3aecbb5da884ed93eb794a783916c1afb86dea5d3c0c85022e78d8047f9"
+      },
+      {
+        "name": "src/newton.rs:869:5: replace solve_with_gmin_continuation -> SimResult<(Vec<f64>, NewtonReport)> with SimResult::from((vec![-1.0], Default::default()))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "6a8881b35a3dba164e49fa01e11b11f7ef213459f6f9f310061ae8578670db9f"
+      },
+      {
+        "name": "src/newton.rs:930:5: replace solve_with_rhs -> SimResult<(Vec<f64>, NewtonReport)> with SimResult::new((vec![1.0], Default::default()))",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "98b6e23d29975ccb4c9ca5b81f68c37a07f9b8b34ed257ea14a4ab66de2bd728"
+      },
+      {
+        "name": "src/newton.rs:951:5: replace solve_with_source_continuation -> SimResult<(Vec<f64>, NewtonReport)> with SimResult::from_iter([(vec![1.0], Default::default())])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "da8f75f32d847b4640c679e877a776b37822edb4376bb7cd6b8565f93516a1eb"
+      },
+      {
+        "name": "src/ngspice_resistor.rs:12:5: replace lower -> SimResult<Vec<String>> with SimResult::new(vec![String::new()])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "1a86f72d9b483eb78082bd33933691aeb236bd69e5cf8b5bef569292bdef8f5f"
+      },
+      {
+        "name": "src/provenance.rs:6:5: replace request_hash -> SimResult<String> with SimResult::new()",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "043aa547e94efbe55b3aea8dac3bba40dd8bd37bd5697ac61a12419801da8baa"
+      },
+      {
+        "name": "src/pspice_switch.rs:40:9: replace SwitchModel::linearize -> SimResult<SwitchContribution> with SimResult::from_iter([Default::default()])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "9792297ab253cc3c377962cbac186e54a397c7f22114c972e2892c7335b091dd"
+      },
+      {
+        "name": "src/quantity.rs:13:5: replace finite -> SimResult<f64> with SimResult::from_iter([0.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "a3cc0d4c5fbc2196a6b045722562a8035358d8c138bcbd9c1bb2063f254c526e"
+      },
+      {
+        "name": "src/quantity.rs:25:5: replace spice_scalar -> SimResult<f64> with SimResult::from_iter([-1.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "9ce58d8b32ca05dba99dbadaccc07c372bf4fc0dfe2390efd290ca88606b9bda"
+      },
+      {
+        "name": "src/registry.rs:38:9: replace BackendRegistry::capabilities -> Vec<(String, crate::linalg::BackendCapabilities)> with vec![(String::new(), Default::default())]",
+        "category": "capability_has_no_Default",
+        "log_sha256": "5fc6fe81cb4fbe77ce59dba5ebe1e86e9b695e59679905d0fc7fa0197f016fc8"
+      },
+      {
+        "name": "src/sampling.rs:101:5: replace log_uniform_values -> SimResult<Vec<f64>> with SimResult::from(vec![0.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "87fc916134000fb24133a2fe0c94c73f0a4f5b22e1862ef9f903a09651263937"
+      },
+      {
+        "name": "src/sampling.rs:153:9: replace LogUniformSweepPlan::materialize -> SimResult<ScalarSweep> with SimResult::from(Default::default())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "20915dc2492e78595e61e9ccbc88574338c0cc88ac448302c6f8a519a4825184"
+      },
+      {
+        "name": "src/sampling.rs:91:5: replace uniform_values -> SimResult<Vec<f64>> with SimResult::new(vec![1.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "712352ec5e43e3bdc26bdc4486f56d6c7a830970856802a000007b7f6a48379c"
+      },
+      {
+        "name": "src/solver_contract.rs:100:9: replace SparseComplexSystem::validate_complex_rhs -> SimResult<()> with SimResult::new(())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "4dd0c2321024855b512a8ffc54fc4aac24d78e5a29fd81a996188cfe42fae022"
+      },
+      {
+        "name": "src/solver_contract.rs:148:5: replace verify_csc_solution -> SimResult<f64> with SimResult::new(0.0)",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "1634443ea5beeba1dd7a90efd5bbec8edc6c83243656780a2e45850b7a77e52e"
+      },
+      {
+        "name": "src/solver_contract.rs:186:5: replace complex_backward_error -> SimResult<f64> with SimResult::from_iter([0.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "11e5e095d2c4c142658d65592c59735b1b177bdb23755f57a996c1fde59c33c8"
+      },
+      {
+        "name": "src/solver_contract.rs:54:9: replace SparseComplexSystem::from_real_parts -> SimResult<Self> with SimResult::from(Default::default())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "7340dcdc68020f04a58102182601f4101644844e0103fc7b0922aa218245952a"
+      },
+      {
+        "name": "src/sparse.rs:161:9: replace CscMatrix::from_pattern -> SimResult<Self> with SimResult::from(Default::default())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "e4da4b1806fdd1b5cb8f6480b6d11ad73048cea6ebeb7285f453a0377038c22a"
+      },
+      {
+        "name": "src/sweep.rs:323:5: replace execute_scalar -> SimResult<ScalarSweepRun> with SimResult::from(Default::default())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "ba64fa0a3f77c596843fdfc0d39f75e85c353932d99d91c976faee01819e7782"
+      },
+      {
+        "name": "src/sweep.rs:50:5: replace run_log_uniform_plan -> SimResult<Vec<SweepPoint>> with SimResult::from(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "b3891d81eb4a2ce8a353fef5fd4103742598393bbdc6b7aba83d27b02a9a1ab5"
+      },
+      {
+        "name": "src/sweep.rs:90:5: replace final_signal -> SimResult<f64> with SimResult::from_iter([-1.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "ca07ddac4dd8b46aa84b1ab05b6df6ef9aed28ea353b104741d261bcec5a8d32"
+      },
+      {
+        "name": "src/topology.rs:20:5: replace inspect -> SimResult<Vec<Diagnostic>> with SimResult::from_iter([vec![]])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "6d45f00fc4fbdf55338bac425f058d025162572883fbb97eb00c3cf2da7c6508"
+      },
+      {
+        "name": "src/transient.rs:27:5: replace transient -> SimResult<Vec<Sample>> with SimResult::new(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "8c2af6e55fcf3d288838e8afbdac59cd6bf3f40663aeea78a2a56c53008373c1"
+      },
+      {
+        "name": "src/variation.rs:192:9: replace ScalarSweep::selection -> SimResult<ScalarSelection> with SimResult::new()",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "140d18ebb6ea16995b5129e0f2afe2ab170f6f8b82f9930735ed3db83b70970d"
+      },
+      {
+        "name": "src/variation.rs:275:9: replace ScalarGrid::circuits -> SimResult<Vec<(Vec<f64>, Circuit)>> with SimResult::new(vec![])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "26f61e8439c0ba7d7a5732f25cadc286fd320945de3f1a21dd819e357a46e00d"
+      },
+      {
+        "name": "src/waveform.rs:231:9: replace Waveform::at -> SimResult<f64> with SimResult::from_iter([-1.0])",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "7c1fcfd06668fb810e3901f3d311d413061cb9f87f1b432f6d61f77172f041c9"
+      },
+      {
+        "name": "src/waveform.rs:77:9: replace Waveform::validate -> SimResult<()> with SimResult::new(())",
+        "category": "unsupported_result_alias_constructor",
+        "log_sha256": "2e430a478143b98784a11b7e9f38940c171d65ccc3478c3dc4aebda54208d700"
+      }
+    ],
+    "counts": {
+      "reviewed": 93,
+      "alias_constructor": 91,
+      "missing_capability_Default": 2,
+      "infrastructure_markers": []
+    },
+    "workaround": "Pinned .cargo/mutants.toml excludes reviewed impossible alias constructor replacements; filtered is not killed"
+  },
+  "tests": {
+    "focused_new_integration": 14,
+    "proptest": {
+      "cases": 64,
+      "epsilon": 1E-05,
+      "domain": "slope[-3,3), x[-1,1)",
+      "seed": 2026111802,
+      "error_bound": "1e-7*(1+abs(derivative))"
+    },
+    "focused_private_unit": 2,
+    "rust_integration_passed": 650,
+    "rust_unit_passed": 47,
+    "pester": {
+      "skipped": 0,
+      "alias_filter": 1,
+      "failed": 0,
+      "aggregation": 4,
+      "backlog": 12
+    },
+    "rust_integration_ignored": 6
+  },
+  "utc_deadline_fix": {
+    "scripts_command_total": 408,
+    "explanation": "Typed DateTimeOffset conversion retains decoded JSON DateTime.Kind; no culture-formatted UTC reparsing",
+    "green_controller_tests": 12,
+    "scripts_line_total": 150,
+    "requirement": "SPICE-MUTATION-BACKLOG-002",
+    "scripts_line_covered": 109,
+    "red_failed_cases": 4,
+    "branch_coverage": null,
+    "scripts_command_covered": 275
+  },
+  "rust_line_coverage": [
+    {
+      "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+      "test": "backlog_survivors_20261118",
+      "files": [
+        {
+          "lines": {
+            "count": 393,
+            "covered": 0,
+            "percent": 0
+          },
+          "sha256": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96",
+          "file": "src/api.rs"
+        },
+        {
+          "lines": {
+            "count": 579,
+            "covered": 216,
+            "percent": 37.30569948186528
+          },
+          "sha256": "8e953af44a4dbaef84ac6457d5b1617ef4b01ae4296fb242b2915425992d7258",
+          "file": "src/audit.rs"
+        },
+        {
+          "lines": {
+            "count": 170,
+            "covered": 90,
+            "percent": 52.94117647058824
+          },
+          "sha256": "c9d51444f48cc1bca2201ca5edbe2915bf9f8ad4cfbf715dc85216faee37d6ad",
+          "file": "src/audit_configured.rs"
+        },
+        {
+          "lines": {
+            "count": 194,
+            "covered": 47,
+            "percent": 24.22680412371134
+          },
+          "sha256": "455182e52eb7be9d1dbd6c69bdadc2128fb4b8fcb53a27c787eb29232e8a5925",
+          "file": "src/circuit.rs"
+        },
+        {
+          "lines": {
+            "count": 397,
+            "covered": 32,
+            "percent": 8.060453400503778
+          },
+          "sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+          "file": "src/configured.rs"
+        },
+        {
+          "lines": {
+            "count": 123,
+            "covered": 33,
+            "percent": 26.82926829268293
+          },
+          "sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+          "file": "src/experiment.rs"
+        },
+        {
+          "lines": {
+            "count": 111,
+            "covered": 25,
+            "percent": 22.52252252252252
+          },
+          "sha256": "0157f0a3153adc51c184fbd0e6ce2409fc3bf83267327e9f3c4a4d3f434aaa14",
+          "file": "src/expression.rs"
+        },
+        {
+          "lines": {
+            "count": 141,
+            "covered": 70,
+            "percent": 49.645390070921984
+          },
+          "sha256": "4dc1dc86f02e83a30e173cbd95bb31c52725e6aad16d7f9bb115be473e1ed9d3",
+          "file": "src/mos1.rs"
+        },
+        {
+          "lines": {
+            "count": 1055,
+            "covered": 399,
+            "percent": 37.81990521327015
+          },
+          "sha256": "759d4d1808ea4431ef20e25723687c51fe4d9344374071e81955f894dcfdf0a5",
+          "file": "src/netlist.rs"
+        },
+        {
+          "lines": {
+            "count": 1111,
+            "covered": 377,
+            "percent": 33.93339333933393
+          },
+          "sha256": "5ab306611286cf084d814eaa742e683fa862930da1ba9174fe64979684f4f590",
+          "file": "src/newton.rs"
+        },
+        {
+          "lines": {
+            "count": 22,
+            "covered": 16,
+            "percent": 72.72727272727273
+          },
+          "sha256": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+          "file": "src/provenance.rs"
+        },
+        {
+          "lines": {
+            "count": 250,
+            "covered": 6,
+            "percent": 2.4
+          },
+          "sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+          "file": "src/sweep.rs"
+        },
+        {
+          "lines": {
+            "count": 192,
+            "covered": 51,
+            "percent": 26.5625
+          },
+          "sha256": "c7c7b353f039e07b5f9136b4b3a405338851e1256a55616329dd18eb6aa3fe0d",
+          "file": "src/variation.rs"
+        },
+        {
+          "lines": {
+            "count": 276,
+            "covered": 97,
+            "percent": 35.14492753623188
+          },
+          "sha256": "e3322998ebe3c4e8e8987809575744f450e9a4e118eddb76f5d703bdb9dc6007",
+          "file": "src/waveform.rs"
+        }
+      ],
+      "branches": null
+    },
+    {
+      "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+      "test": "imported_transient_contract",
+      "files": [
+        {
+          "sha256": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96",
+          "lines": {
+            "count": 393,
+            "covered": 120,
+            "percent": 30.53435114503817
+          },
+          "file": "src/api.rs"
+        },
+        {
+          "sha256": "8e953af44a4dbaef84ac6457d5b1617ef4b01ae4296fb242b2915425992d7258",
+          "lines": {
+            "count": 579,
+            "covered": 219,
+            "percent": 37.82383419689119
+          },
+          "file": "src/audit.rs"
+        },
+        {
+          "sha256": "c9d51444f48cc1bca2201ca5edbe2915bf9f8ad4cfbf715dc85216faee37d6ad",
+          "lines": {
+            "count": 170,
+            "covered": 55,
+            "percent": 32.35294117647059
+          },
+          "file": "src/audit_configured.rs"
+        },
+        {
+          "sha256": "455182e52eb7be9d1dbd6c69bdadc2128fb4b8fcb53a27c787eb29232e8a5925",
+          "lines": {
+            "count": 194,
+            "covered": 41,
+            "percent": 21.1340206185567
+          },
+          "file": "src/circuit.rs"
+        },
+        {
+          "sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+          "lines": {
+            "count": 397,
+            "covered": 188,
+            "percent": 47.3551637279597
+          },
+          "file": "src/configured.rs"
+        },
+        {
+          "sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+          "lines": {
+            "count": 123,
+            "covered": 0,
+            "percent": 0
+          },
+          "file": "src/experiment.rs"
+        },
+        {
+          "sha256": "0157f0a3153adc51c184fbd0e6ce2409fc3bf83267327e9f3c4a4d3f434aaa14",
+          "lines": {
+            "count": 111,
+            "covered": 0,
+            "percent": 0
+          },
+          "file": "src/expression.rs"
+        },
+        {
+          "sha256": "4dc1dc86f02e83a30e173cbd95bb31c52725e6aad16d7f9bb115be473e1ed9d3",
+          "lines": {
+            "count": 141,
+            "covered": 0,
+            "percent": 0
+          },
+          "file": "src/mos1.rs"
+        },
+        {
+          "sha256": "759d4d1808ea4431ef20e25723687c51fe4d9344374071e81955f894dcfdf0a5",
+          "lines": {
+            "count": 1055,
+            "covered": 390,
+            "percent": 36.96682464454976
+          },
+          "file": "src/netlist.rs"
+        },
+        {
+          "sha256": "5ab306611286cf084d814eaa742e683fa862930da1ba9174fe64979684f4f590",
+          "lines": {
+            "count": 1111,
+            "covered": 12,
+            "percent": 1.08010801080108
+          },
+          "file": "src/newton.rs"
+        },
+        {
+          "sha256": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+          "lines": {
+            "count": 22,
+            "covered": 4,
+            "percent": 18.181818181818183
+          },
+          "file": "src/provenance.rs"
+        },
+        {
+          "sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+          "lines": {
+            "count": 250,
+            "covered": 0,
+            "percent": 0
+          },
+          "file": "src/sweep.rs"
+        },
+        {
+          "sha256": "c7c7b353f039e07b5f9136b4b3a405338851e1256a55616329dd18eb6aa3fe0d",
+          "lines": {
+            "count": 192,
+            "covered": 0,
+            "percent": 0
+          },
+          "file": "src/variation.rs"
+        },
+        {
+          "sha256": "e3322998ebe3c4e8e8987809575744f450e9a4e118eddb76f5d703bdb9dc6007",
+          "lines": {
+            "count": 276,
+            "covered": 34,
+            "percent": 12.318840579710146
+          },
+          "file": "src/waveform.rs"
+        }
+      ],
+      "branches": null
+    }
+  ],
+  "intel": {
+    "spmv_checked_values": 11880960.0,
+    "seed": 18117,
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "driver": "31.0.101.2141",
+    "device": "Intel(R) UHD Graphics 630",
+    "routine_passed": 15,
+    "spmv_max_absolute_error": 0.0
+  },
+  "strictdoc": {
+    "documents": 107,
+    "unique_uids": 607,
+    "parser": "StrictDoc SDReader",
+    "success": true
+  },
+  "limits": [
+    "Different tested-source snapshots: original273 counts are historical; current mapped21 replay is not full current-source273 qualification",
+    "Two raw MissedMutant outcomes in original21 are reviewed numerical equivalents, not kills or byte-identity proof",
+    "Stable Rust and Pester true branch coverage unavailable; measured line scopes exclude test/vendor source",
+    "C# snapshot adapter and cfg(test) private helper have executed checks but no measured line coverage",
+    "No separate fuzz engine, Stryker campaign, new ngspice oracle or original deck increment",
+    "Intel checks are routine hardware evidence, not whole-deck performance or universal GPU qualification",
+    "First supplemental launcher failed a string/DateTime PID-start representation comparison before tests; fixed launch preserved separately"
+  ],
+  "commands": [
+    "cargo test --locked --profile mutants --features mutation-suite --lib --test mutation_suite",
+    "cargo test --locked --profile mutants --test backlog_survivors_20261118",
+    "cargo test --locked --profile mutants --test imported_transient_contract",
+    "Measure-RustIntegrationCoverage.ps1 -Repository J:/dev/spice-deck-next -TargetDirectory E:/Artifacts/Spice-issue61-20261117T133906Z/qualification-target -Test <named-test> -Output <fresh-E-output>",
+    "Replay-Current.ps1 and Replay-Extra-AfterCurrent.ps1 retain exact maintained framework arguments under artifact_root"
+  ],
+  "review": "Read-only agent review of tests, filter, source snapshots and import execution found no important correctness findings; simulated review, not external experts",
+  "trailing_whitespace_normalization": {
+    "native_snapshot_sha256": "6b8ae83fb2432540915c725f0f73ce78faa597b8f34478ab9371102a6a2a25d5",
+    "final_focused_log": "E:\\Artifacts\\Spice-backlog-findings-20261118T195605Z/final-normalized-focused.log",
+    "trailing_whitespace_only": true,
+    "file": "tests/backlog_survivors_20261118.rs"
+  }
+}

@@ -1,0 +1,6 @@
+# cargo-mutants 27.1 treats the SimResult<T> alias as an ordinary container and
+# synthesizes constructors that Result<T,SimError> does not implement. These
+# generated bodies are compile-invalid, not test kills. Keep operator mutations,
+# explicit Result-returning bodies and every other candidate in the inventory.
+# Requalify this narrow workaround when upgrading cargo-mutants.
+exclude_re = ['replace .* -> SimResult<.* with SimResult::(new|from|from_iter)\(']

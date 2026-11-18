@@ -168,3 +168,9 @@ mod suite_voltage_scaled_cccs;
 
 #[path = "nonlinear_half_step.rs"]
 mod suite_nonlinear_half_step;
+
+#[path = "backlog_survivors_20261118.rs"]
+mod suite_backlog_survivors_20261118;
+
+#[path = "imported_transient_contract.rs"]
+mod suite_imported_transient_contract;

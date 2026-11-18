@@ -9,11 +9,11 @@ if(args is ["--rust-inputs-self-test"]) {
     var temporary=Path.GetFullPath(Path.Combine(Path.GetTempPath(),"spice-rust-inputs-"+Guid.NewGuid().ToString("N")));
     Directory.CreateDirectory(temporary);
     try {
-        foreach(var name in new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml","src/lib.rs","native/example/Cargo.toml","native/example/src/lib.rs","native/example/target/bulk.bin","schemas/request-v1.json"}) {
+        foreach(var name in new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml","src/lib.rs","native/example/Cargo.toml","native/example/src/lib.rs","native/example/target/bulk.bin","schemas/request-v1.json",".cargo/mutants.toml"}) {
             var path=Path.Combine(temporary,name);Directory.CreateDirectory(Path.GetDirectoryName(path)!);File.WriteAllText(path,"fixture");
         }
         var inputs=RustSourceInputs(temporary).Select(p=>p.Replace('\\','/')).ToHashSet(StringComparer.Ordinal);
-        if(!inputs.Contains("native/example/Cargo.toml")||!inputs.Contains("native/example/src/lib.rs")||!inputs.Contains("schemas/request-v1.json")||inputs.Any(p=>p.Contains("/target/",StringComparison.Ordinal)))
+        if(!inputs.Contains("native/example/Cargo.toml")||!inputs.Contains("native/example/src/lib.rs")||!inputs.Contains("schemas/request-v1.json")||!inputs.Contains(".cargo/mutants.toml")||inputs.Any(p=>p.Contains("/target/",StringComparison.Ordinal)))
             throw new InvalidDataException("Rust snapshot omitted path dependencies or included build output.");
         Console.WriteLine("Rust snapshot path-dependency/schema inclusion and target exclusion passed.");
     } finally {
@@ -423,7 +423,7 @@ static void VerifyFrozen(string path,string hash) {
 static IEnumerable<string> RustSourceInputs(string root) {
     foreach(var name in new[]{"Cargo.toml","Cargo.lock","rust-toolchain.toml"})if(File.Exists(Path.Combine(root,name)))yield return name;
     var excluded=new HashSet<string>(new[]{"target","bin","obj",".git",".tools"},StringComparer.OrdinalIgnoreCase);
-    foreach(var folder in new[]{"src","tests","examples","compat","native","schemas"}) {
+    foreach(var folder in new[]{"src","tests","examples","compat","native","schemas",".cargo"}) {
         var directory=Path.Combine(root,folder);if(!Directory.Exists(directory))continue;
         if((File.GetAttributes(directory)&FileAttributes.ReparsePoint)!=0)throw new IOException("Linked Rust input root is not qualified.");
         var files=new System.IO.Enumeration.FileSystemEnumerable<string>(directory,
