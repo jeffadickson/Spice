@@ -12,7 +12,7 @@ The nightly mutation controller shall retain an exact candidate selection and te
 UID: SPICE-MUTATION-BACKLOG-002
 TITLE: Exclusive execution and artifact storage
 STATEMENT: >>>
-The controller shall preserve an active campaign using the canonical exclusive endurance lease. Windows mutation scratch, caches, logs and result files shall reside on E:. Invocation deadlines shall bound work without converting unfinished candidates into successful outcomes. Ordinary memory admission limits shall not be imposed.
+The controller shall preserve an active campaign using the canonical exclusive endurance lease. Windows mutation scratch, caches, logs and result files shall reside on E:. Invocation deadlines shall bound work without converting unfinished candidates into successful outcomes. Ordinary memory admission limits shall not be imposed. An ISO UTC finish deadline shall retain its instant when the JSON reader has already decoded a Z-suffixed value as a DateTime; culture-formatted reparsing shall not extend the authorized window.
 <<<
 
 [REQUIREMENT]

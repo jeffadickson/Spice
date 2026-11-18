@@ -70,6 +70,13 @@ Describe 'Durable mutation backlog' {
   $migrated=Get-Content -LiteralPath (Join-Path $fixture 'artifacts/summary.json') -Raw|ConvertFrom-Json
   $migrated.completed_candidates|Should -Be 1
   $migrated.campaign_identity|Should -Not -BeNullOrEmpty
+  # Z-suffixed JSON dates become UTC DateTime values in PowerShell 7.6.
+  # Reparsing their culture-formatted text would lose UTC and extend the window.
+  $expectedDeadline=[DateTimeOffset]::UtcNow.AddMinutes(3)
+  $config.minutes=60;$config.finish_by_utc=$expectedDeadline.UtcDateTime.ToString('o');Write-Config
+  & $driver -Configuration $configuration
+  $timed=Get-Content -LiteralPath (Join-Path $fixture 'artifacts/summary.json') -Raw|ConvertFrom-Json
+  [Math]::Abs((([DateTimeOffset]$timed.deadline_utc)-$expectedDeadline).TotalSeconds)|Should -BeLessThan 0.01
   # A different replay seed is a distinct campaign, even with the same names.
   $config.seed='2';Write-Config
   {& $driver -Configuration $configuration}|Should -Throw '*provenance mismatch*'

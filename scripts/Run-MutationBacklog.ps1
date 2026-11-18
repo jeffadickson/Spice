@@ -44,9 +44,10 @@ $env:SPICE_CARGO_MUTANTS=$config.cargo_mutants;$env:NUGET_PACKAGES=$config.nuget
 $env:CARGO_PROFILE_MUTANTS_INCREMENTAL='false';$env:CARGO_PROFILE_MUTANTS_CODEGEN_UNITS='16'
 $env:PROPTEST_RNG_SEED=$config.seed
 $lockPath=Join-Path $config.canonical_repository 'work/endurance.lock'
+# Preserve DateTime.Kind when JSON has already decoded an ISO UTC timestamp.
 $guard=[IO.File]::Open($lockPath,'OpenOrCreate','ReadWrite','None')
 $started=[DateTimeOffset]::UtcNow;$deadline=$started.AddMinutes($config.minutes)
-if($config.finish_by_utc){$finish=[DateTimeOffset]::Parse($config.finish_by_utc);if($finish -lt $deadline){$deadline=$finish}}
+if($config.finish_by_utc){$finish=([DateTimeOffset]$config.finish_by_utc);if($finish -lt $deadline){$deadline=$finish}}
 if($deadline -le $started){$guard.Dispose();throw 'Backlog deadline already expired'}
 $campaignStarted=$started
 $statePath=Join-Path $config.artifacts 'summary.json'
@@ -107,7 +108,7 @@ try{
    if(!$legacyValid){throw 'Checkpoint campaign provenance mismatch; explicit legacy import required'}
   }
   if($old.source_commit -ne $config.source_commit -or $old.pending_sha256 -ne $config.pending_sha256 -or $old.requested_candidates -ne $names.Count){throw 'Checkpoint identity mismatch'}
-  if($old.campaign_started_utc){$campaignStarted=[DateTimeOffset]::Parse($old.campaign_started_utc)}elseif($old.started_utc){$campaignStarted=[DateTimeOffset]::Parse($old.started_utc)}
+  if($old.campaign_started_utc){$campaignStarted=([DateTimeOffset]$old.campaign_started_utc)}elseif($old.started_utc){$campaignStarted=([DateTimeOffset]$old.started_utc)}
   foreach($run in $old.framework_runs){$runs.Add($run);Import-NativeProgress $run}
  }
  # Reconcile dispatches whose native outcomes survived a controller crash before
