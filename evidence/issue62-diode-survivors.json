@@ -1,0 +1,372 @@
+{
+  "issue": 62,
+  "base_commit": "66d7f74",
+  "source_dirty": true,
+  "production_source_changed": false,
+  "source_hashes": {
+    "tests/spice_diode_oracle.rs": "5a378b29d2de1e4743caeac1980a81a1f70865618dec81bd2465bb51a274124f",
+    "src/spice_diode.rs": "992636edc3f26009e0af65fd92334161811ca27d901b8c079670875d7b72c64e",
+    "docs/diode-terminal-current.sdoc": "fae121d4cd0dd9b2d9b47ea2b1337eca725a03bcb00f78c6fb02e3b1632d6c96",
+    "tests/spice_diode.rs": "069f593eb5c7466ccfcaadfe2c271164990ab5ab1ec6b6b3dfdb484658fb701b",
+    "src/api.rs": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96"
+  },
+  "original_source": "0face5844c108bbf80e2af39a2d9ec275c76f703",
+  "original_report_sha256": "38c4188f0f072996c0a85f55f13b5346a7bdfec0a83d9c91a784d1a52165e468",
+  "mapping": [
+    {
+      "original_name": "src/api.rs:327:21: replace - with + in run_with_registry",
+      "diff": "diff/src__api.rs_line_351_col_21.diff",
+      "current_name": "src/api.rs:351:21: replace - with + in run_with_registry",
+      "log": "log/src__api.rs_line_351_col_21.log",
+      "original_diff_sha256": "31518d8e3f6469bf220a3605ccb672f747c9b514ef1004d1e2f2b745105170b6",
+      "current_diff_sha256": "880e622d69133bf306dacafb244e0ae353a594cdbc33b94bc9e5148ec1462365",
+      "outcome": "CaughtMutant"
+    },
+    {
+      "original_name": "src/api.rs:352:21: replace - with + in run_with_registry",
+      "diff": "diff/src__api.rs_line_388_col_21.diff",
+      "current_name": "src/api.rs:388:21: replace - with + in run_with_registry",
+      "log": "log/src__api.rs_line_388_col_21.log",
+      "original_diff_sha256": "c35de105cfc02eef053bb76b648763c6961405e745fed05d14d35021b54044a3",
+      "current_diff_sha256": "a91ed2ce7ae9118558ccbf1f34606b1ab359299d51e1cf22b6926c11d4dd4856",
+      "outcome": "CaughtMutant"
+    }
+  ],
+  "native_proof_root": "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261118T150618Z-211baa90",
+  "native_counts": {
+    "version": "27.1.0",
+    "status": "completed",
+    "exit_code": 0,
+    "candidates": 2,
+    "killed": 2,
+    "survived": 0,
+    "timed_out": 0,
+    "invalid": 0,
+    "not_covered": 0,
+    "pending": 0,
+    "other": 0,
+    "ignored": 0,
+    "unattempted": 0,
+    "report_sha256": "bd0e6c19690cf03aefaebbfb9377597a0145ce2dc9ccfb103f0669110935b203",
+    "log_sha256": "b611e6212e74c0bd5659edb62b593a2d9338d12f3dfc1a5091760a28e438a054"
+  },
+  "native_summary_sha256": "dddb48caf97042a7ae07b82eda8b8ba4b7fb0c8d73ab059974f98bdc6c94a5b6",
+  "test_executables": [
+    {
+      "log": "verified-native-suite.log",
+      "profile": "dev/test,debug0,incrementalfalse,codegen16",
+      "sha256": "f67dc32a85d6f882a616e5855c050819b90bce710dca65874414029e125d8c3b",
+      "features": "mutation-suite",
+      "path": "E:/Artifacts/Spice-issue61-20261117T133906Z/qualification-target\\debug\\deps\\circuit_simulator-ec16352c82678e55.exe"
+    },
+    {
+      "log": "verified-native-suite.log",
+      "profile": "dev/test,debug0,incrementalfalse,codegen16",
+      "sha256": "cbc62aac288b4fe98116a64e96749c5f8d6f81fd2c78aa5137b20d5f54de92a5",
+      "features": "mutation-suite",
+      "path": "E:/Artifacts/Spice-issue61-20261117T133906Z/qualification-target\\debug\\deps\\mutation_suite-959d2566832d66d2.exe"
+    },
+    {
+      "log": "verified-oracles.log",
+      "profile": "dev/test,debug0,incrementalfalse,codegen16",
+      "sha256": "87c1b312bdd004614b16a6918159a1c9889f6bd572d75dfb54a877f31cd6c331",
+      "features": "default",
+      "path": "E:/Artifacts/Spice-issue61-20261117T133906Z/qualification-target\\debug\\deps\\spice_diode_oracle-fb3d286d90911884.exe"
+    },
+    {
+      "log": "verified-spice-diode.log",
+      "path": "E:/Artifacts/Spice-issue61-20261117T133906Z/qualification-target\\debug\\deps\\spice_diode-f19106a1e740ef74.exe",
+      "profile": "dev/test,debug0,incrementalfalse,codegen16",
+      "sha256": "e13686a858ab23d033eec0a4f58290439746818a0734325ae8deec23a4fe6a38",
+      "features": "default"
+    }
+  ],
+  "normal_tests": {
+    "explicit_oracles_passed": 2,
+    "spice_diode_passed": 13,
+    "unit_passed": 45,
+    "aggregate_passed": 636,
+    "aggregate_explicit_skips": 6
+  },
+  "properties": {
+    "charge_derivative_configured_cases": 128,
+    "common_mode_seed": "2026111801",
+    "common_mode_configured_cases": 64,
+    "charge_derivative_seed": "2026110201"
+  },
+  "coverage": [
+    {
+      "file": "src/api.rs",
+      "sha256": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96",
+      "lines": {
+        "count": 393,
+        "covered": 257,
+        "percent": 65.39440203562341
+      }
+    },
+    {
+      "file": "src/spice_diode.rs",
+      "sha256": "992636edc3f26009e0af65fd92334161811ca27d901b8c079670875d7b72c64e",
+      "lines": {
+        "count": 85,
+        "covered": 63,
+        "percent": 74.11764705882354
+      }
+    }
+  ],
+  "branches": null,
+  "oracle": {
+    "fixtures": [
+      {
+        "sha256": "37c927fa7d9ec6a764e56706a40a8512ff01a8064ff1199b15f93bfe6b8f46a3",
+        "path": "E:\\Artifacts\\Spice-issue62-20261118T145539Z\\floating-diode-oracle-56828\\0\\oracle.cir"
+      },
+      {
+        "sha256": "de7f576ec1ffd04de11ecd45663383338cff1f412c16e61a974a1b037c83884a",
+        "path": "E:\\Artifacts\\Spice-issue62-20261118T145539Z\\floating-diode-oracle-56828\\1\\oracle.cir"
+      },
+      {
+        "sha256": "fe42fc75b67361205e9ecbaca36380ab2d28842ef204dd349369ee6dda5227f1",
+        "path": "E:\\Artifacts\\Spice-issue62-20261118T145539Z\\floating-diode-oracle-56828\\2\\oracle.cir"
+      }
+    ],
+    "executable": "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe",
+    "metrics": {
+      "ac_comparisons": 6,
+      "bounds": {
+        "ac_component_amps": 2E-09,
+        "ac_component_volts": 2E-06,
+        "dc_amps": 2E-11,
+        "dc_volts": 2E-08,
+        "transient_amps": 2E-06,
+        "transient_volts": 0.002
+      },
+      "common_mode_volts": [
+        -0.4,
+        0.2,
+        1.0
+      ],
+      "dc_comparisons": 6,
+      "max_abs_ac_component_amps": 4.994409833619651E-13,
+      "max_abs_ac_component_volts": 6.994409496030585E-10,
+      "max_abs_dc_amps": 4.560209466613404E-13,
+      "max_abs_dc_volts": 8.260209183319489E-10,
+      "max_abs_transient_amps": 5.997523229698436E-08,
+      "max_abs_transient_volts": 5.997513232436358E-05,
+      "providers": [
+        "lu",
+        "faer"
+      ],
+      "selected_transient_comparisons": 30
+    },
+    "timestamp_bounds_s": {
+      "reference": 1E-12,
+      "native": 1E-16
+    },
+    "limits": "Finite authored fixtures and selected transient points,not original-corpus growth or full waveform conformance",
+    "start": "operating-point plus differential PWL ramp",
+    "tool": "ngspice47+",
+    "sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "fixture_root": "E:\\Artifacts\\Spice-issue62-20261118T145539Z\\floating-diode-oracle-56828",
+    "artifact_hashes": [
+      {
+        "sha256": "e5a2c9ebdfba5d08dbf4dde26ba18e577c6a2c57db08a6032b6c8575766d442b",
+        "path": "comparison-summary.json"
+      },
+      {
+        "sha256": "80121ecfd59f22add929c22c8591174438f5e022ec4ea1d6bd7ffb574df1782a",
+        "path": "0/ac.txt"
+      },
+      {
+        "sha256": "4cc3ee48fdd674603ccd75bb569395e2e45e40873a43fbbf2543e1e7a1193ef1",
+        "path": "0/native-faer-ac.json"
+      },
+      {
+        "sha256": "9a26dce3c6c19e9ff069bc2c04e7622989fd20fcfd26a4a42b2fad15516e9e0b",
+        "path": "0/native-faer-op.json"
+      },
+      {
+        "sha256": "0e08e82d6fa28a83c65cebab101dbfd32523de029fb98bfcd0b7c006178eff87",
+        "path": "0/native-faer-transient.json"
+      },
+      {
+        "sha256": "a0abc80123ae9c6f5f7702b19422c8d553acaf9f840fd2d0e4196246183b9cc3",
+        "path": "0/native-lu-ac.json"
+      },
+      {
+        "sha256": "b248eedfda39629645c6baa0182ddcce28f91f65721bd0443e38d02df8477e94",
+        "path": "0/native-lu-op.json"
+      },
+      {
+        "sha256": "41f5c179df0631155f20650de88b108da8b8b80299769f5e47620c784d59e174",
+        "path": "0/native-lu-transient.json"
+      },
+      {
+        "sha256": "6a6c80e992888699cd5cd6b6ed899f767ccfc15fc0e708325c4f7fa458e2b0ee",
+        "path": "0/op.txt"
+      },
+      {
+        "sha256": "37c927fa7d9ec6a764e56706a40a8512ff01a8064ff1199b15f93bfe6b8f46a3",
+        "path": "0/oracle.cir"
+      },
+      {
+        "sha256": "0e644ac58fd32036e250ecd33b4e17daa73f943a1ef408e39119790942f86813",
+        "path": "0/oracle.log"
+      },
+      {
+        "sha256": "aeb4cb1e4cd502952d27ec917e68628e65e8d4d95c98687acea548268c577469",
+        "path": "0/tran.txt"
+      },
+      {
+        "sha256": "80121ecfd59f22add929c22c8591174438f5e022ec4ea1d6bd7ffb574df1782a",
+        "path": "1/ac.txt"
+      },
+      {
+        "sha256": "af933bd8fb3c09f24604341de5d3684e78fde04be0636c427062cfc769911fd4",
+        "path": "1/native-faer-ac.json"
+      },
+      {
+        "sha256": "0de9663773e42cfdf31fac7e021258a1279848b412cf8cf8e8dec306b47efd83",
+        "path": "1/native-faer-op.json"
+      },
+      {
+        "sha256": "157ae98651567f2e2369ca630de4911c438d28f6c166d61c5ac71a11aaca2597",
+        "path": "1/native-faer-transient.json"
+      },
+      {
+        "sha256": "caa10c765e4134106d46f02b962a6e671d79d0b385904a9a4560c56c25877c44",
+        "path": "1/native-lu-ac.json"
+      },
+      {
+        "sha256": "edd366a545d143c07827c203a3623b4baf885f31fbc7cb6d622c062ea6586241",
+        "path": "1/native-lu-op.json"
+      },
+      {
+        "sha256": "e74514bf4bbe61ad09091168401d3da11fa43384ccfd30bd6f0b1f97d6fef11a",
+        "path": "1/native-lu-transient.json"
+      },
+      {
+        "sha256": "b25472b3fdb5ef215ed70f30cda28b31eb92ae2363bbfbda36a6316a3717e024",
+        "path": "1/op.txt"
+      },
+      {
+        "sha256": "de7f576ec1ffd04de11ecd45663383338cff1f412c16e61a974a1b037c83884a",
+        "path": "1/oracle.cir"
+      },
+      {
+        "sha256": "4b3a7ddbb708ac857ef32d3976a2822b4131ed446d52f8a6f334498853535f7f",
+        "path": "1/oracle.log"
+      },
+      {
+        "sha256": "1d17340c906d89fc2cf372149e552762ede4d6124768bc759ae098343937b910",
+        "path": "1/tran.txt"
+      },
+      {
+        "sha256": "80121ecfd59f22add929c22c8591174438f5e022ec4ea1d6bd7ffb574df1782a",
+        "path": "2/ac.txt"
+      },
+      {
+        "sha256": "f95aaf39640d9a63d49d5fcd4b243aa206b889d677da12c094a3772a3e2adfa3",
+        "path": "2/native-faer-ac.json"
+      },
+      {
+        "sha256": "2fa46c4804a424aa996fd1e5be70c92e5e5acafdf6b1f41f315c7118a6d6aa30",
+        "path": "2/native-faer-op.json"
+      },
+      {
+        "sha256": "3f02c02e9bd8e479f72b3e180c2f026e8df256864e89e39222ea18dfe9abcf45",
+        "path": "2/native-faer-transient.json"
+      },
+      {
+        "sha256": "0164d3428b7d35e1f672d92511abc947c541f78bbb85de3d031cfea355960bc6",
+        "path": "2/native-lu-ac.json"
+      },
+      {
+        "sha256": "77199170365078825490e2c2875477129085c8d4261d083d2e12ed4a7ac11346",
+        "path": "2/native-lu-op.json"
+      },
+      {
+        "sha256": "55c19d5b279a45cc42792b2cc0b504f90944eec63d8c355d3f76e0012649fcf5",
+        "path": "2/native-lu-transient.json"
+      },
+      {
+        "sha256": "3bf0c36d0d999b02c39e6d650f1974f5b3d533a7561647fcd2162f3f3ef6c5e7",
+        "path": "2/op.txt"
+      },
+      {
+        "sha256": "fe42fc75b67361205e9ecbaca36380ab2d28842ef204dd349369ee6dda5227f1",
+        "path": "2/oracle.cir"
+      },
+      {
+        "sha256": "4f2c9dd21b6990d12241e54922e31736897b2bf52b0cd5c48aaef1e186bc03d5",
+        "path": "2/oracle.log"
+      },
+      {
+        "sha256": "dd7fbb587ce787879e7384bf7ede990692c74208fcadfdf82c4367104aa37c75",
+        "path": "2/tran.txt"
+      }
+    ]
+  },
+  "intel": {
+    "routine_tests_passed": 15,
+    "spmv_checked_values": 11880960.0,
+    "spmv_seed": 18117,
+    "device": "Intel(R) UHD Graphics 630",
+    "spmv_max_absolute_error": 0.0,
+    "limitations": "Routine Intel circuits/provider gates; new floating diode fixtures qualified only on LU/Faer; SpMV is not whole-deck performance",
+    "driver": "31.0.101.2141"
+  },
+  "strictdoc": {
+    "documents": 105,
+    "success": true,
+    "uids": 598
+  },
+  "managed_existing_evidence": {
+    "reference": "evidence/issue61-managed.json",
+    "source_fingerprints": [
+      {
+        "matches": true,
+        "path": "dotnet/Simulator.Client/Client.cs"
+      },
+      {
+        "matches": true,
+        "path": "dotnet/Simulator.Client.Tests/TransportCancellationRaceTests.cs"
+      }
+    ],
+    "fresh_managed_mutation_run": false,
+    "meaning": "Old-main uncovered Client mutant is already covered on unchanged development sources; no new managed kill claim"
+  },
+  "commands": [
+    "cargo test --locked --offline --test spice_diode",
+    "cargo test --locked --offline --features mutation-suite --lib --test mutation_suite",
+    "$env:SPICE_NGSPICE='E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe'; $env:SPICE_ORACLE_ARTIFACT_ROOT='E:\\Artifacts\\Spice-issue62-20261118T145539Z'; cargo test --locked --offline --test spice_diode_oracle -- --ignored --nocapture",
+    "& scripts/Measure-RustIntegrationCoverage.ps1 -Repository 'J:/dev/spice-deck-next' -TargetDirectory 'E:/Artifacts/Spice-issue61-20261117T133906Z/qualification-target' -Output 'E:\\Artifacts\\Spice-issue62-20261118T145539Z/diode-coverage-final' -Test spice_diode -AdditionalCrates num_complex",
+    "CurrentApiProofFinal.ps1 invokes frozen maintained-framework helper with --rust-test spice_diode --rust-file src/api.rs and exact2names; native target isolated from normal builds"
+  ],
+  "artifact_root": "E:\\Artifacts\\Spice-issue62-20261118T145539Z",
+  "limitations": [
+    "Both subtraction expressions were already correct; no production numerical change. Existing development AC check also detects the AC mutation.",
+    "Original historical survivor outcomes are not rewritten.",
+    "273 unattempted nightly candidates remain unavailable coverage and are not replayed by this task.",
+    "Stable Rust branch coverage unavailable; mapped lines are selected-test scope.",
+    "Initial test-harness type-name compile error and two truncated ngspice UIC reference attempts retained as failed attempts,not numerical passing coverage.",
+    "Earlier evidence before review timestamp guards is superseded by final verified-oracles and native replay.",
+    "No new original decks,no main merge,no CI or full SPICE qualification."
+  ],
+  "helper": {
+    "runtime": ".NET11 frozen V3 qualification helper; repository SDK10.0.404 unchanged",
+    "sha256": "a6f6b7d1e00f6c12e73ac37f5cac664efb6e8f3603490f9159e8653237cdaa80",
+    "path": "E:/Artifacts/Spice-issue61-20261117T133906Z/framework-qualified-v3-build/bin/FrameworkQualifiedV3.cs/release/FrameworkQualifiedV3.dll"
+  },
+  "normal_environment": {
+    "TEMP": "E:\\Artifacts\\Spice-issue62-20261118T145539Z",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_PROFILE_DEV_INCREMENTAL": "false",
+    "CARGO_PROFILE_DEV_CODEGEN_UNITS": "16",
+    "RUST_TEST_THREADS": "2",
+    "PROPTEST_RNG_SEED": "2026111801",
+    "CARGO_TARGET_DIR": "E:/Artifacts/Spice-issue61-20261117T133906Z/qualification-target",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "TMP": "E:\\Artifacts\\Spice-issue62-20261118T145539Z"
+  }
+}

@@ -1,0 +1,24 @@
+[DOCUMENT]
+TITLE: Diode terminal-current polarity qualification
+
+[REQUIREMENT]
+UID: DIODE-CURRENT-DIFFERENTIAL-001
+STATUS: Draft
+TITLE: Diode observation uses differential terminal bias
+STATEMENT: >>>
+Published diode conduction and total terminal currents shall use signed Vp minus Vn for their physical model bias, including when both terminals have nonzero absolute potentials. A common-mode translation of constrained terminal voltages shall preserve the physical current. AC observations shall use this same differential DC bias and the signed complex terminal-voltage difference, including displacement current.
+<<<
+COMMENT: >>>
+Inferred from the public API current convention. tests/spice_diode.rs independently checks Shockley current, constant-depletion charge plus transit storage, BE initial charge history and complex admittance using positive/negative common-mode offsets, forward/reverse bias, both LU/Faer and fixed Proptest seed2026111801 (64 cases). Ground-only checks cannot detect the issue62 subtraction-to-addition survivors. Original native spans api.rs:327:21 and352:21 map to current351:21 and388:21; identities are bound to actual native diff evidence rather than line proximity. Production current expressions already use subtraction; this adds missing qualification rather than changing the model.
+<<<
+
+[REQUIREMENT]
+UID: DIODE-CURRENT-ORACLE-001
+STATUS: Draft
+TITLE: Independently qualify nongrounded diode currents
+STATEMENT: >>>
+A separate-process ngspice comparison shall exercise diode terminal-current observation with both physical terminals nongrounded in DC, AC and selected transient samples, preserving declared comparison bounds. It shall retain exact authored inputs, source/tool hashes, provider selection and raw reference/native outputs, and distinguish this finite fixture qualification from original-corpus growth or full waveform agreement.
+<<<
+COMMENT: >>>
+tests/spice_diode_oracle.rs::nongrounded_diode_currents_agree_with_ngspice_under_common_mode_offsets translates an authored nonlinear RC junction fixture by -0.4V,+0.2V,+1V, with operating-point startup and a differential PWL ramp. Raw BE zero-charge startup is qualified separately by the analytic test. Both LU/Faer are compared using the original bounds: DC2e-8V/2e-11A,AC2e-6V/2e-9A,transient0.002V/2e-6A at1ns,3ns,5ns,7ns,10ns. Both results must reach10ns; native/requested timestamps differ by at most1e-16s and nearest reference/requested timestamps by at most1e-12s. Explicit AC sample-count/frequency checks prevent vacuous passes. Native ordinary tests explicitly skip the external oracle unless invoked with configured executable/artifact paths. This is not a claim of full transient coverage or new original deck agreements.
+<<<

@@ -11,6 +11,112 @@ fn model() -> SpiceDiodeModel {
         transit_seconds: 1e-9,
     }
 }
+
+// Independently forced terminal voltages expose common-mode mistakes that a
+// grounded cathode cannot. Zero grading gives the closed-form q=C*v+TT*I(v).
+fn floating_request(common: f64, differential: f64, backend: &str, analysis: serde_json::Value)
+    -> circuit_simulator::api::Request
+{
+    serde_json::from_value(serde_json::json!({
+        "schema_version":"1","case_id":"floating-junction","backend":backend,
+        "circuit":{"nodes":["0","p","n"],"elements":[
+            {"kind":"voltage","id":"VP","p":1,"n":0,"volts":common+differential},
+            {"kind":"voltage","id":"VN","p":2,"n":0,"volts":common},
+            {"kind":"spice_diode","id":"D1","p":1,"n":2,
+             "model":{"saturation_amps":1e-14,"thermal_volts":0.02585,
+                "junction_farads":2e-12,"junction_volts":0.8,"grading":0.,
+                "forward_coefficient":0.5,"transit_seconds":1e-9}}
+        ]},"analysis":analysis
+    })).unwrap()
+}
+
+fn floating_current(result: &circuit_simulator::api::Manifest, id: &str) -> usize {
+    result.signals.iter().position(|s| s.id==id).expect("explicit diode signal")
+}
+
+#[test]
+fn floating_diode_dc_uses_signed_differential_bias_on_both_cpu_providers() {
+    for backend in ["lu","faer"] {
+        for common in [-0.4,0.2,1.] {
+            for differential in [-0.1_f64,0.2,0.5] {
+                let result=circuit_simulator::api::run(&floating_request(common,differential,
+                    backend,serde_json::json!({"kind":"operating_point"}))).unwrap();
+                let expected=1e-14*(differential/0.02585).exp_m1();
+                for id in ["i(D1)","i_conduction(D1)"] {
+                    let actual=result.samples[0].values[floating_current(&result,id)];
+                    assert!((actual-expected).abs()<=1e-18+expected.abs()*1e-9,
+                        "{backend},common={common},dv={differential},{id}: {actual} vs{expected}");
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn floating_diode_backward_euler_current_has_independent_charge_history() {
+    let differential=0.5_f64;
+    let conduction=1e-14*(differential/0.02585).exp_m1();
+    let charge=2e-12*differential+1e-9*conduction;
+    for backend in ["lu","faer"] {
+        for common in [-0.4,0.2,1.] {
+            let result=circuit_simulator::api::run(&floating_request(common,differential,
+                backend,serde_json::json!({"kind":"transient","options":{
+                    "stop_s":4e-8,"step_s":1e-8,"max_steps":4}}))).unwrap();
+            assert_eq!(result.samples.len(),4);
+            let total=floating_current(&result,"i(D1)");
+            let dc=floating_current(&result,"i_conduction(D1)");
+            for (index,sample) in result.samples.iter().enumerate() {
+                // Raw BE starts with zero differential charge, then the ideal
+                // sources force a fixed bias. Only the first step charges it.
+                let expected=conduction+if index==0 {charge/sample.time_s} else {0.};
+                assert!((sample.values[total]-expected).abs()<1e-13+expected.abs()*1e-9,
+                    "{backend},common={common},step={index}: {} vs{expected}",sample.values[total]);
+                assert!((sample.values[dc]-conduction).abs()<1e-15);
+            }
+        }
+    }
+}
+
+#[test]
+fn floating_diode_ac_current_uses_differential_bias_and_complex_excitation() {
+    let dv=0.5_f64;
+    let g=1e-14*(dv/0.02585).exp()/0.02585;
+    let capacitance=2e-12+1e-9*g;
+    for backend in ["lu","faer"] {
+        for common in [-0.4,0.2,1.] {
+            let result=circuit_simulator::api::run(&floating_request(common,dv,backend,
+                serde_json::json!({"kind":"ac","frequencies_hz":[1e3,1e6],
+                 "source_phasors":[{"id":"VP","real":0.7,"imag":0.3},
+                                   {"id":"VN","real":0.2,"imag":-0.1}]}))).unwrap();
+            let total=floating_current(&result,"i(D1)");
+            let conduction=floating_current(&result,"i_conduction(D1)");
+            assert_eq!(result.ac_samples.len(),2);
+            for (sample,frequency) in result.ac_samples.iter().zip([1e3,1e6]) {
+                assert_eq!(sample.frequency_hz,frequency);
+                let wc=std::f64::consts::TAU*sample.frequency_hz*capacitance;
+                let actual=&sample.values[total];
+                assert!((actual.real-(0.5*g-0.4*wc)).abs()<1e-13);
+                assert!((actual.imag-(0.4*g+0.5*wc)).abs()<1e-13);
+                assert!((sample.values[conduction].real-0.5*g).abs()<1e-13);
+                assert!((sample.values[conduction].imag-0.4*g).abs()<1e-13);
+            }
+        }
+    }
+}
+
+proptest::proptest! {
+    #![proptest_config(proptest::test_runner::Config {cases:64,
+        rng_seed:proptest::test_runner::RngSeed::Fixed(2026111801),..Default::default()})]
+    #[test]
+    fn diode_dc_current_is_invariant_under_generated_common_mode(
+        common in -1.0f64..1., differential in 0.1f64..0.5) {
+        let reference=1e-14*(differential/0.02585).exp_m1();
+        let result=circuit_simulator::api::run(&floating_request(common,differential,"lu",
+            serde_json::json!({"kind":"operating_point"}))).unwrap();
+        let actual=result.samples[0].values[floating_current(&result,"i(D1)")];
+        proptest::prop_assert!((actual-reference).abs()<1e-18+reference.abs()*1e-9);
+    }
+}
 #[test]
 fn depletion_is_voltage_dependent_and_matches_integral() {
     let m = model();

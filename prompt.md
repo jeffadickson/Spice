@@ -1,7 +1,36 @@
-# Current task: issue 61 findings
+# Completed checkpoint: issue62 diode-current survivors
 
-Read docs/issue61-followup-active.md and work/issue61-artifacts.txt before launching anything. The mutation replay is active; preserve its owned processes/targets and finish the findings before closing issue61. User memory correction Nov17 supersedes all historical cap instructions. Keep the existing fifty-deck objective incomplete at2/50.
+User requested addressing the two survivors from the November18 nightly.
+Work stays in J:/dev/spice-deck-next on fix/deck-blocker-implementation; preserve
+canonical main and its unrelated local changes. No main merge or CI. Artifacts:
+read ignored work/issue62-artifacts.txt. Product current expressions already use
+Vp-Vn; the gap was missing nongrounded-terminal observation tests. Exact old
+native api327:21/352:21 map to current351:21/388:21; bind actual native diffs.
 
+New analytic DC/raw-BE/complex-AC and64case Proptest(seed2026111801) checks pass
+on LU/Faer. New authored ngspice RC fixture uses three common-mode offsets,
+operating-point startup and a differential PWL ramp,with unchanged numerical
+bounds. Earlier authored UIC attempts aborted ngspice and are failed reference
+coverage,not passing numerical evidence. Final checks require full reference/
+native stop coverage and explicit requested-time proximity; no nearest-surviving
+sample substitution. No original corpus deck increment; fifty target stays2/50.
+
+Issue61 is CLOSED with complete selected-cohort dispositions in commit66d7f74.
+Its workers are finished; do not resume them or recreate their campaigns. The
+November18 nightly tested old main0face58,not this development branch. Issue62
+also retains273unattempted Rust candidates; that separate replay is not completed
+by killing the two current survivors. Let Windows manage memory/paging; only
+mutation runaway observation,never blanket RAM caps or free-RAM gates.
+
+Final issue62 checks: exact current native replay2/2caught in
+E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261118T150618Z-211baa90;
+45unit+636integration pass/6explicit skips,13focused diode tests,2explicit
+ngspice oracles,Intel15routine checks and separate SpMV pass. StrictDoc105/598.
+API mapped line257/393,SPICE diode63/85 in selected test scope; Rust branch
+coverage unavailable. Read docs/issue62-diode-survivors.md and paired evidence
+JSON. Review timestamp/sample-count gaps were fixed and final checks rerun.
+No production current expression changed. This coherent test checkpoint is verified; issue62 stays open for273unattempted candidates. Preserve original
+nightly survivor outcomes and failed UIC reference attempts as history.
 # Current task: fifty further original-deck agreements
 
 This new user authorization supersedes the expired hourly campaign, its 8am deadline and all older active-campaign headings preserved below as history. Do not restart that automation or a cancelled soak. The target is incomplete: two newly agreeing originals on explicitly selected Faer, forty-eight remain. Read docs/fifty-more-decks-plan.md, docs/fifty-more-checkpoint.md and evidence/fifty-more-checkpoint.json first.
