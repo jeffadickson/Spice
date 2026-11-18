@@ -1,0 +1,40 @@
+[DOCUMENT]
+TITLE: Durable Epoch Admission and Feature Qualification
+
+[REQUIREMENT]
+UID: SPICE-EPOCH-ADMISSION-001
+TITLE: Independent adaptive bounds and inclusive CLI byte limit
+STATEMENT: >>>
+Adaptive relative tolerance shall lie strictly between zero and one and the
+minimum step shall not exceed the supplied finite positive maximum step. Each
+bound shall be enforced independently. The CLI shall admit a valid JSON request
+of exactly 1,048,576 UTF-8 bytes and reject the next byte with ResourceExhausted.
+<<<
+
+[REQUIREMENT]
+UID: SPICE-EPOCH-REJECTION-001
+TITLE: Stable rejection before provider work
+STATEMENT: >>>
+An AC override with an independently nonfinite real or imaginary component shall
+fail with InvalidInput before numerical provider work. An adaptive trial with
+a nonfinite coarse or fine component shall fail with InvalidInput. Error message
+text is diagnostic context rather than a stable machine error identifier.
+<<<
+
+[REQUIREMENT]
+UID: SPICE-EPOCH-FEATURE-001
+TITLE: Feature-specific mutation evidence
+STATEMENT: >>>
+Mutation reports shall retain the enabled feature scope. A mutation in code
+compiled out of the tested feature set shall not be classified as numerically
+equivalent or caught merely because the default tests pass. Qualification of
+the Intel CLI dispatch shall use intel-opencl and actual provider execution.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Verification: tests/epoch_validation_contracts.rs, src/adaptive.rs
+independently_nonfinite_trials_are_rejected_by_the_error_boundary, native scoped
+mutation replays and docs/epoch-admission-results.md. The frozen 4,411-candidate
+campaign is independent of these later development-branch regressions.
+<<<

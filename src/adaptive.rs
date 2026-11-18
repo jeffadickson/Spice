@@ -91,6 +91,34 @@ impl AdaptiveOptions {
 mod survivor_contracts {
     use super::*;
     #[test]
+    fn voltage_and_branch_errors_keep_their_distinct_si_budgets() {
+        let plan=crate::compile::compile(&crate::netlist::parse("test\nV1 a 0 1\nR1 a 0 1\n.end").unwrap()).unwrap();
+        let options=AdaptiveOptions{relative:0.1,current_relative:Some(0.2),voltage_absolute:0.2,
+            current_absolute:0.01,min_step_s:1e-6,max_attempts:100};
+        // Independently derived step-doubling errors: 0.5/(0.2+0.1*1)
+        // for a node voltage and 0.5/(0.01+0.2*1) for a branch current.
+        assert!((options.error(&plan,&[1.,1.],&[0.5,1.],1).unwrap()-5./3.).abs()<1e-14);
+        assert!((options.restart_error(&plan,&[1.,1.],&[0.5,1.],1).unwrap()-5./3.).abs()<1e-14);
+        assert!((options.error(&plan,&[1.,1.],&[1.,0.5],1).unwrap()-50./21.).abs()<1e-14);
+    }
+    #[test]
+    fn independently_nonfinite_trials_are_rejected_by_the_error_boundary() {
+        let plan=crate::compile::compile(&crate::netlist::parse("test\nR1 a 0 1\n.end").unwrap()).unwrap();
+        let options=AdaptiveOptions{relative:0.1,current_relative:None,voltage_absolute:1e-6,
+            current_absolute:1e-9,min_step_s:1e-6,max_attempts:100};
+        for bad in [f64::NAN,f64::INFINITY,f64::NEG_INFINITY] {
+            for (coarse,fine) in [(bad,1.),(1.,bad),(bad,bad)] {
+                for order in [1,2] {
+                    let error=options.error_selected(&plan,&[coarse],&[fine],order,1.).unwrap_err();
+                    assert_eq!(error.code,crate::error::ErrorCode::InvalidInput);
+                }
+            }
+        }
+        // Even if the early finite-state guard is changed, subtraction or
+        // scaling remains nonfinite and the later guard rejects InvalidInput.
+        // Diagnostic text is contextual, not a stable error identifier.
+    }
+    #[test]
     fn algebraic_current_accuracy_and_restart_budget_remain_explicit() {
         let plan=crate::compile::compile(&crate::netlist::parse("V1 a 0 1\nR1 a 0 1").unwrap()).unwrap();
         let options=AdaptiveOptions { current_relative: None,relative:0.1,voltage_absolute:0.1,current_absolute:0.01,min_step_s:1e-6,max_attempts:100};

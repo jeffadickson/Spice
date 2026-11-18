@@ -1,0 +1,190 @@
+{
+  "source_base": "30a5a9aab91effadefb3f0860b408b1269eb7dff",
+  "production_numerical_behavior_changed": false,
+  "artifact_root": "E:\\Artifacts\\Spice-epoch-triage-20261118T214553Z",
+  "epoch": "30a5a9a-20261118T203254Z",
+  "selected_candidates": 8,
+  "dispositions": [
+    {
+      "name": "src/ac.rs:85:13: replace || with && in ac_with_source_phasors_detailed",
+      "disposition": "reviewed_rejection_equivalent",
+      "original_feature_scope": "default plus mutation-suite",
+      "qualification_feature_scope": "default",
+      "diagnostic_text_identity_claim": false
+    },
+    {
+      "name": "src/ac.rs:86:13: replace || with && in ac_with_source_phasors_detailed",
+      "disposition": "reviewed_rejection_equivalent",
+      "original_feature_scope": "default plus mutation-suite",
+      "qualification_feature_scope": "default",
+      "diagnostic_text_identity_claim": false
+    },
+    {
+      "name": "src/adaptive.rs:34:13: replace || with && in AdaptiveOptions::validate",
+      "disposition": "caught_by_regression",
+      "original_feature_scope": "default plus mutation-suite",
+      "qualification_feature_scope": "default",
+      "diagnostic_text_identity_claim": false
+    },
+    {
+      "name": "src/adaptive.rs:67:31: replace || with && in AdaptiveOptions::error_selected",
+      "disposition": "reviewed_rejection_equivalent",
+      "original_feature_scope": "default plus mutation-suite",
+      "qualification_feature_scope": "default",
+      "diagnostic_text_identity_claim": false
+    },
+    {
+      "name": "src/adaptive.rs:73:30: replace < with > in AdaptiveOptions::error_selected",
+      "disposition": "caught_by_regression",
+      "original_feature_scope": "default plus mutation-suite",
+      "qualification_feature_scope": "default",
+      "diagnostic_text_identity_claim": false
+    },
+    {
+      "name": "src/main.rs:37:20: replace > with == in execute",
+      "disposition": "caught_by_regression",
+      "original_feature_scope": "default plus mutation-suite",
+      "qualification_feature_scope": "default",
+      "diagnostic_text_identity_claim": false
+    },
+    {
+      "name": "src/main.rs:37:20: replace > with >= in execute",
+      "disposition": "caught_by_regression",
+      "original_feature_scope": "default plus mutation-suite",
+      "qualification_feature_scope": "default",
+      "diagnostic_text_identity_claim": false
+    },
+    {
+      "name": "src/main.rs:16:13: replace == with != in execute",
+      "disposition": "caught_with_intel_opencl_feature",
+      "original_feature_scope": "default plus mutation-suite",
+      "qualification_feature_scope": "intel-opencl",
+      "diagnostic_text_identity_claim": false
+    }
+  ],
+  "default_stage": {
+    "path": "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261118T214929Z-2466ae1b",
+    "counts": {
+      "selected": 6,
+      "invalid": 0,
+      "timeout": 0,
+      "survived": 4,
+      "caught": 2
+    },
+    "reason": "Newly observed adaptive SI-budget selector was a real test gap; other three raw survivors retain stable rejection"
+  },
+  "followup_stage": {
+    "selected": [
+      "adaptive73 SI budget selector",
+      "main37 inclusive1MiB"
+    ],
+    "path": "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261118T215855Z-8213f693",
+    "counts": {
+      "version": "27.1.0",
+      "status": "completed",
+      "exit_code": 0,
+      "candidates": 2,
+      "killed": 2,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": "ba1ba4a32c4fcbe23d04a3d5661d7f17f548f8fa26ba13374326c525d958d595",
+      "log_sha256": "e7baea8173a1bcc1af7d2b11001d731e4d0db65e7701e19facbac155293b9ee2"
+    }
+  },
+  "intel_stage": {
+    "caught": 1,
+    "invalid": 0,
+    "provider": "E:/Artifacts/Spice-Intel-decks-42e5356-20261114/native-v7/spice_intel_opencl.dll",
+    "survived": 0,
+    "timeout": 0,
+    "path": "E:\\Artifacts\\Spice-epoch-triage-20261118T214553Z/intel-proof-final",
+    "feature": "intel-opencl",
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "baseline_tests_passed": 7,
+    "command": "cargo mutants --features intel-opencl --file src/main.rs --re <exactname> --profile mutants --jobs1 --jobserver-tasks2 --cargo-arg=--locked --cargo-arg=--test --cargo-arg=intel_backend --cargo-arg=--test --cargo-arg=campaign_cli"
+  },
+  "tests": {
+    "new_integration": 3,
+    "integration": 653,
+    "unit": 49,
+    "separate_spmv": "passed",
+    "new_private_unit": 2,
+    "intel_routine": 15,
+    "ignored": 6,
+    "pester_aggregation": 4
+  },
+  "coverage": {
+    "private_cfg_test": "unmeasured in integration-only library instrumentation",
+    "tool": "cargo rustc + rustc instrument-coverage + matching LLVM",
+    "cli_main": "not instrumented; subprocess behavior verified separately",
+    "branches": null,
+    "test": "epoch_validation_contracts",
+    "files": [
+      {
+        "lines": {
+          "count": 142,
+          "covered": 103,
+          "percent": 72.53521126760563
+        },
+        "sha256": "6a87eaaffaebf03ef84aec71db525c3b1c807b3b1dec5b3cfe57184fb6aba9b6",
+        "file": "src/ac.rs"
+      },
+      {
+        "lines": {
+          "count": 54,
+          "covered": 15,
+          "percent": 27.77777777777778
+        },
+        "sha256": "0381addaf866d151711f7dfc191657e4ae3a0b96572b38ae0332b036a3b8c7b9",
+        "file": "src/adaptive.rs"
+      }
+    ]
+  },
+  "strictdoc": {
+    "documents": 108,
+    "unique_uids": 610,
+    "parser": "StrictDoc SDReader",
+    "success": true
+  },
+  "review": "Read-only agent review found no important correctness findings; not external expert participation",
+  "limits": [
+    "Frozen4411 run remains active and unchanged; these targeted results do not replace its historical outcomes",
+    "Intel CLI mutation is compiled out of default-feature coverage, not numerically equivalent",
+    "Three raw misses preserve stable InvalidInput and provider noninvocation but may change contextual message text",
+    "No fresh separate fuzz engine or Stryker run; existing properties ran in full Rust suite",
+    "First Intel proof launch had incorrect Cargo argument placement and was stopped; raw artifacts retained as unavailable evidence",
+    "No original corpus deck increment or full SPICE/GPU/production qualification"
+  ],
+  "source_hashes": [
+    {
+      "sha256": "6a87eaaffaebf03ef84aec71db525c3b1c807b3b1dec5b3cfe57184fb6aba9b6",
+      "path": "src/ac.rs"
+    },
+    {
+      "sha256": "64eaff5c162f0127f47db51ff98df0d58030168c346e193856e7ffdedff10df5",
+      "path": "src/adaptive.rs"
+    },
+    {
+      "sha256": "252b74ea7b27398838d079eac8946c8729acf5b4b9467c772892385ffa4c55dd",
+      "path": "src/main.rs"
+    },
+    {
+      "sha256": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+      "path": "src/error.rs"
+    },
+    {
+      "sha256": "42bb616d82836d4913a6b5710ea62c680e6da1708a98ce91ef0d34a2d4249cc0",
+      "path": "tests/epoch_validation_contracts.rs"
+    },
+    {
+      "sha256": "52b4df85f6d65eb651d60606d82cc3d9f61f649769383a477204ebe0743228cb",
+      "path": "tests/mutation_suite.rs"
+    }
+  ]
+}

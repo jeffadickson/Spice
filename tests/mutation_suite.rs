@@ -174,3 +174,6 @@ mod suite_backlog_survivors_20261118;
 
 #[path = "imported_transient_contract.rs"]
 mod suite_imported_transient_contract;
+
+#[path = "epoch_validation_contracts.rs"]
+mod suite_epoch_validation_contracts;
