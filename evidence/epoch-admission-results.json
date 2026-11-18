@@ -3,7 +3,7 @@
   "production_numerical_behavior_changed": false,
   "artifact_root": "E:\\Artifacts\\Spice-epoch-triage-20261118T214553Z",
   "epoch": "30a5a9a-20261118T203254Z",
-  "selected_candidates": 8,
+  "selected_candidates": 9,
   "dispositions": [
     {
       "name": "src/ac.rs:85:13: replace || with && in ac_with_source_phasors_detailed",
@@ -59,6 +59,13 @@
       "disposition": "caught_with_intel_opencl_feature",
       "original_feature_scope": "default plus mutation-suite",
       "qualification_feature_scope": "intel-opencl",
+      "diagnostic_text_identity_claim": false
+    },
+    {
+      "name": "src/adaptive.rs:75:22: replace < with > in AdaptiveOptions::error_selected",
+      "disposition": "caught_by_regression",
+      "original_feature_scope": "default plus mutation-suite",
+      "qualification_feature_scope": "default",
       "diagnostic_text_identity_claim": false
     }
   ],
@@ -186,5 +193,26 @@
       "sha256": "52b4df85f6d65eb651d60606d82cc3d9f61f649769383a477204ebe0743228cb",
       "path": "tests/mutation_suite.rs"
     }
-  ]
+  ],
+  "relative_budget_followup": {
+    "counts": {
+      "version": "27.1.0",
+      "status": "completed",
+      "exit_code": 0,
+      "candidates": 1,
+      "killed": 1,
+      "survived": 0,
+      "timed_out": 0,
+      "invalid": 0,
+      "not_covered": 0,
+      "pending": 0,
+      "other": 0,
+      "ignored": 0,
+      "unattempted": 0,
+      "report_sha256": "cda3d390065ece7a5e8a65bc86cd4a8f3a960bce175231c43def68f26636d153",
+      "log_sha256": "034c8452fdbc961c425ff1287a68a679611b21ec10a367553ea16acb40095a89"
+    },
+    "path": "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261118T220355Z-42ef21f7",
+    "meaning": "The same independent SI-budget test catches the newly arriving relative-selector mutant without another code change"
+  }
 }

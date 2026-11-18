@@ -5,9 +5,9 @@ working-tree qualification neither edits that source nor rewrites its outcomes.
 Read evidence/epoch-admission-results.json for the exact tested snapshots, native
 reports, counts, input hashes and remaining feature/coverage limits.
 
-The first bounded review covers eight candidates: two AC finite-operand guards,
-two adaptive admission/error guards, one subsequently observed voltage/current
-budget selector, two CLI size comparisons, and one Intel-only CLI dispatch.
+The first bounded review covers nine candidates: two AC finite-operand guards,
+two adaptive admission/error guards, two subsequently observed voltage/current
+budget selectors, two CLI size comparisons, and one Intel-only CLI dispatch.
 New tests exercise independently invalid adaptive bounds, a valid maximum-step
 boundary, AC nonfinite operands with a provider-call spy and a valid analytic
 2+3i control, and valid divider JSON at1MiB-1,1MiB,1MiB+1 bytes. Whitespace
@@ -47,3 +47,10 @@ measurement. Stable Rust branch coverage is unavailable. The full default suite,
 StrictDoc, aggregation inventory, Intel routine gates and separate SpMV probe
 are recorded in the evidence; no new source deck, production numerical behavior,
 full SPICE compatibility or GPU acceleration is claimed.
+
+A later relative-budget selector survivor was caught by the same SI-budget test
+without another implementation change. A separate one-candidate native replay
+records that result. The bounded first review now covers nine candidates:
+five default-feature regressions caught, one Intel-enabled candidate caught,
+and three reviewed rejection equivalents. The frozen campaign still records
+its original outcomes; these follow-ups do not retest the remaining inventory.

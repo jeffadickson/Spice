@@ -5,7 +5,7 @@ Read docs/epoch-admission-results.md, docs/epoch-admission-contracts.sdoc and
 remains clean at30a5a9a; its E:4411-candidate campaign is active. Never update
 its source/config/helper or replace its ledger with later targeted results.
 
-Eight early candidates are reviewed on current development tests: four default-
+Nine early candidates are reviewed on current development tests: five default-
 feature behavior distinctions caught (adaptive independent bounds, voltage versus
 current error budget, both CLI1MiB comparisons); Intel-only CLI dispatch caught
 separately with intel-opencl and actual device tests. Three guard mutations are
@@ -14,7 +14,7 @@ InvalidInput before provider work. Message text can differ and is not a stable
 API identifier. Raw misses remain visible. The Intel guard is compiled out in
 the default epoch, not equivalent or covered there.
 
-Native stages: first6=2caught4missed, followup2=2caught, Intel1=1caught.
+Native stages: first6=2caught4missed, followup2=2caught, relative-selector1=1caught, Intel1=1caught.
 Full49unit653integration pass/6explicit skips;3new integration+2private unit
 contracts;4aggregation checks;StrictDoc108/610;Intel15routine and separateSpMV
 pass. Selected line coverage ac103/142,adaptive15/54; branch coverage unavailable.
