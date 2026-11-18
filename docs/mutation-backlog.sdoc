@@ -1,0 +1,29 @@
+[DOCUMENT]
+TITLE: Durable Mutation Backlog Qualification
+
+[REQUIREMENT]
+UID: SPICE-MUTATION-BACKLOG-001
+TITLE: Frozen candidate cohorts and resume
+STATEMENT: >>>
+The nightly mutation controller shall retain an exact candidate selection and tested source, test and helper identities across invocations. It shall recover terminal outcomes from native cargo-mutants reports and dispatch only pending candidates. A changed identity shall fail validation rather than reuse incompatible evidence.
+<<<
+
+[REQUIREMENT]
+UID: SPICE-MUTATION-BACKLOG-002
+TITLE: Exclusive execution and artifact storage
+STATEMENT: >>>
+The controller shall preserve an active campaign using the canonical exclusive endurance lease. Windows mutation scratch, caches, logs and result files shall reside on E:. Invocation deadlines shall bound work without converting unfinished candidates into successful outcomes. Ordinary memory admission limits shall not be imposed.
+<<<
+
+[REQUIREMENT]
+UID: SPICE-MUTATION-BACKLOG-003
+TITLE: Outcome honesty and optimized execution
+STATEMENT: >>>
+The resumed Rust cohort shall use the qualified mutants build profile and aggregate integration target with bounded concurrency. Reports shall distinguish caught, surviving, invalid, timeout and pending candidates, identify any qualification-only source overlay, and retain native report paths and replay seeds. Finishing a cohort shall require findings review and shall not imply every mutant was caught.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Implementation: scripts/Run-MutationBacklog.ps1 and scripts/Resume-MutationBacklog.ps1.
+Verification: tests/MutationBacklog.Tests.ps1; docs/mutation-backlog.md. These requirements are implemented subsets, not full simulator qualification. Coverage and live campaign outcomes are reported separately.
+<<<

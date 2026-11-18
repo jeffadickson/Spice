@@ -1,0 +1,69 @@
+{
+  "scope": "durable Rust mutation backlog orchestration",
+  "source_base": "3eb124b56ffd1f66e25e83355935c4323bc34a0f",
+  "verification_utc": "2026-11-18T17:46:46.4695754+00:00",
+  "pester": {
+    "skipped": 0,
+    "passed": 12,
+    "version": "5.7.1",
+    "failed": 0,
+    "counters": [
+      {
+        "type": "INSTRUCTION",
+        "covered": 273,
+        "missed": 132
+      },
+      {
+        "type": "LINE",
+        "covered": 109,
+        "missed": 41
+      },
+      {
+        "type": "METHOD",
+        "covered": 5,
+        "missed": 1
+      },
+      {
+        "type": "CLASS",
+        "covered": 2,
+        "missed": 0
+      }
+    ],
+    "command_coverage_percent": 67.41,
+    "branch_coverage": "unavailable: Pester JaCoCo command/line instrumentation is not true branch coverage"
+  },
+  "strictdoc": {
+    "documents": 106,
+    "unique_uids": 601,
+    "parser": "StrictDoc SDReader",
+    "success": true
+  },
+  "live_run": {
+    "artifact_directory": "E:/Artifacts/Spice-mutation-backlog-20261118-172613",
+    "product_source_changed": false,
+    "completed": 9,
+    "source_dirty": true,
+    "outcome_counts": [
+      {
+        "Name": "CaughtMutant",
+        "Count": 8
+      },
+      {
+        "Name": "Unviable",
+        "Count": 1
+      }
+    ],
+    "source": "0face5844c108bbf80e2af39a2d9ec275c76f703",
+    "seed": "14534976553127891467",
+    "status": "running",
+    "pending": 264
+  },
+  "limitations": [
+    "Active 273-candidate campaign is unfinished; counts are a timestamped observation",
+    "No production Rust change, full Rust tests not repeated for this PowerShell-only change",
+    "Child failure/deadline paths not exhaustively covered by fixtures",
+    "No separate PowerShell mutation engine or fuzz engine executed; real Rust cargo-mutants campaign is active",
+    "Native outcomes and raw reports remain on E:; counts must be refreshed",
+    "Nightly settings updated in existing thread automations; subsequent frozen source epochs require qualification"
+  ]
+}
