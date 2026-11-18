@@ -1,0 +1,138 @@
+{
+  "source_base": "342855313aeb59b9c1abfa42dd096f94be5ab21b",
+  "production_numerical_behavior_changed": false,
+  "artifact_root": "E:\\Artifacts\\Spice-epoch-triage-20261118T224552Z",
+  "selected": 7,
+  "caught_current": 5,
+  "reviewed_tie_equivalent": 1,
+  "profile_error_priority_limit": 1,
+  "cases": [
+    {
+      "name": "src/adaptive.rs:77:35: replace || with && in AdaptiveOptions::error_selected",
+      "disposition": "caught_current_regression",
+      "initial_replay": "MissedMutant",
+      "final_replay": "CaughtMutant",
+      "diff_sha256": "eabe74e0c996b285a28c84258870eebdd066cf0d8910691e4425f5e93f526cba"
+    },
+    {
+      "name": "src/adaptive.rs:80:22: replace > with >= in AdaptiveOptions::error_selected",
+      "disposition": "reviewed_numerical_tie_equivalence_diagnostic_difference",
+      "initial_replay": "MissedMutant",
+      "final_replay": "MissedMutant",
+      "diff_sha256": "1003d398d33024079648c442a15c2a0547eb851786d88eb14e42b3f997fd58fd"
+    },
+    {
+      "name": "src/adaptive.rs:82:16: replace > with == in AdaptiveOptions::error_selected",
+      "disposition": "caught_current_regression",
+      "initial_replay": "CaughtMutant",
+      "final_replay": "CaughtMutant",
+      "diff_sha256": "b38f622f99151fe116c84adad8b152c9f34731bfa9541d3f4a83b43379caa357"
+    },
+    {
+      "name": "src/adaptive.rs:82:16: replace > with < in AdaptiveOptions::error_selected",
+      "disposition": "caught_current_regression",
+      "initial_replay": "CaughtMutant",
+      "final_replay": "CaughtMutant",
+      "diff_sha256": "957ba0bf3e63f3953cb27afffe3455e2791df25aaa65ac737aba7132949af1c8"
+    },
+    {
+      "name": "src/adaptive.rs:82:16: replace > with >= in AdaptiveOptions::error_selected",
+      "disposition": "caught_current_regression",
+      "initial_replay": "CaughtMutant",
+      "final_replay": "CaughtMutant",
+      "diff_sha256": "6c7f50a7c6c0eae3fe9407e267fc8c4f15de0f35e997aa53872be7304b557607"
+    },
+    {
+      "name": "src/api.rs:92:93: replace > with >= in run_with_registry",
+      "disposition": "caught_current_regression",
+      "initial_replay": "CaughtMutant",
+      "final_replay": "CaughtMutant",
+      "diff_sha256": "bc351639da8afd74427b8536bd326ffd44005faee95b979824a374c5c55ff831"
+    },
+    {
+      "name": "src/api.rs:128:9: replace && with || in run_with_registry",
+      "disposition": "scoped_profile_redundancy_error_priority_open",
+      "initial_replay": "MissedMutant",
+      "final_replay": "MissedMutant",
+      "diff_sha256": "ace650b1a87e9b940fe12cbaa7987a5aa4d5805837a0597d6aaabcae4099379b"
+    }
+  ],
+  "stages": [
+    "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261118T224834Z-56714e29",
+    "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261118T225410Z-1991fa38",
+    "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261118T230049Z-1fbf1052"
+  ],
+  "stage_counts": {
+    "profile": "1:1missed",
+    "first": "7:4caught,3missed",
+    "overflow": "1:1caught"
+  },
+  "tests": {
+    "integration": 656,
+    "new_api": 3,
+    "intel_routine": 15,
+    "unit": 51,
+    "new_private": 2,
+    "ignored": 6,
+    "pester": 4,
+    "spmv": "passed"
+  },
+  "coverage": {
+    "branches": null,
+    "tool": "cargo rustc + rustc instrument-coverage + matching LLVM",
+    "private_unit_measurement": "unavailable in integration-only library scope",
+    "files": [
+      {
+        "file": "src/api.rs",
+        "sha256": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96",
+        "lines": {
+          "count": 393,
+          "covered": 192,
+          "percent": 48.854961832061065
+        }
+      }
+    ],
+    "test": "epoch_api_admission"
+  },
+  "strictdoc": {
+    "documents": 109,
+    "unique_uids": 613,
+    "parser": "StrictDoc SDReader",
+    "success": true
+  },
+  "invalid": [
+    {
+      "classification": "compile-invalid, not killed",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261118T222328Z-13f6f7b7",
+      "diagnostic": "E0282: ac_bias type inference after sole AC producer deletion",
+      "name": "src/api.rs:163:9: delete match arm Analysis::Ac{frequencies_hz, source_phasors,} in run_with_registry"
+    }
+  ],
+  "review": "Read-only agent review found no important issues; scoped error-priority limitation retained",
+  "limits": [
+    "Frozen4411 source/results are unchanged; this is later-source targeted evidence",
+    "Three caught mutants concern DEBUG observability, not changed numerical output",
+    "API128 may change failure precedence for multiply-invalid configured requests; not full typed-error equivalence",
+    "No new source deck, full SPICE/GPU qualification or speed claim",
+    "Stable Rust branch and private cfg(test) line coverage unmeasured",
+    "Initial StrictDoc caller-path invocation failed; successful standalone parse retained"
+  ],
+  "source_hashes": [
+    {
+      "sha256": "7da703f8317ba10a7181869ada3ce959a09e2774a0e53f436037ce67690bf861",
+      "path": "src/adaptive.rs"
+    },
+    {
+      "sha256": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96",
+      "path": "src/api.rs"
+    },
+    {
+      "sha256": "f317c2c56a1cece31bb4373c466d2f94de94d22f88b7a655a5c722a605e23529",
+      "path": "tests/epoch_api_admission.rs"
+    },
+    {
+      "sha256": "371075ef6ea9446ae03c8be0ee56a3a8ead268c871c0ae9f15fc4e924ab3a175",
+      "path": "tests/mutation_suite.rs"
+    }
+  ]
+}

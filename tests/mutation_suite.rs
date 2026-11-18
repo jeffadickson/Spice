@@ -177,3 +177,6 @@ mod suite_imported_transient_contract;
 
 #[path = "epoch_validation_contracts.rs"]
 mod suite_epoch_validation_contracts;
+
+#[path = "epoch_api_admission.rs"]
+mod suite_epoch_api_admission;

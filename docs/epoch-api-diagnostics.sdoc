@@ -1,0 +1,46 @@
+[DOCUMENT]
+TITLE: Epoch API Admission and Adaptive Diagnostics
+
+[REQUIREMENT]
+UID: SPICE-EPOCH-API-002
+TITLE: Inclusive request identity and joint charge refusal
+STATEMENT: >>>
+The API shall accept and preserve a 256-byte nonempty case identifier and reject
+257 bytes. A charged junction shall not prohibit a DC operating point, and an
+explicit initial state shall remain supported for a linear RC transient. The
+existing charged-junction plus explicit-state dynamic refusal shall remain a
+joint predicate rather than refusing either independently valid use case.
+<<<
+
+[REQUIREMENT]
+UID: SPICE-EPOCH-TRACE-002
+TITLE: Truthful adaptive rejection diagnostics
+STATUS: Draft
+STATEMENT: >>>
+Inferred diagnostic contract: the structured DEBUG event
+adaptive_local_error_rejected shall be emitted only when the scaled local
+error exceeds one. It shall report the actual scaled_error. An exactly-one
+accepted boundary shall not be described as rejected. This finite-scenario
+verification does not establish a public stable log schema or a unique
+tie-breaking rule for equally worst unknowns.
+<<<
+
+[TEXT]
+STATEMENT: >>>
+Verification: tests/epoch_api_admission.rs and
+src/adaptive.rs rejection_event_records_only_errors_strictly_above_one.
+Counterparts are replayed against the later development tests without changing
+the frozen 4,411-candidate source or its historical results. A reviewed equal-
+norm tie choice may change diagnostic row identity while preserving the norm.
+<<<
+
+[REQUIREMENT]
+UID: SPICE-EPOCH-ERROR-002
+TITLE: Finite operands do not authorize nonfinite error calculations
+STATEMENT: >>>
+Adaptive error estimation shall fail with InvalidInput when a computed tolerance
+scale or discrepancy is nonfinite, even if both trial operands and supplied
+tolerances are finite. An overflowed denominator shall not turn an unknown
+error into a successful zero; an overflowed difference shall not return a
+successful infinite norm.
+<<<

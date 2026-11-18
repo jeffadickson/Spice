@@ -91,6 +91,62 @@ impl AdaptiveOptions {
 mod survivor_contracts {
     use super::*;
     #[test]
+    fn finite_trials_cannot_hide_overflow_in_error_or_scale() {
+        let plan=crate::compile::compile(&crate::netlist::parse("test\nR1 a 0 1\n.end").unwrap()).unwrap();
+        let normal=AdaptiveOptions{relative:0.1,current_relative:None,voltage_absolute:1e-6,
+            current_absolute:1e-9,min_step_s:1e-6,max_attempts:100};
+        normal.validate(1e-3).unwrap();
+        // Every operand is finite; subtraction alone overflows. A missing
+        // computed-error check must not return Ok(infinity).
+        assert_eq!(normal.error(&plan,&[f64::MAX],&[-f64::MAX],1).unwrap_err().code,
+            crate::error::ErrorCode::InvalidInput);
+        let huge=AdaptiveOptions{voltage_absolute:f64::MAX,..normal};
+        huge.validate(1e-3).unwrap();
+        // A finite discrepancy divided by an overflowed scale becomes zero.
+        // That zero must never masquerade as a successful local error estimate.
+        for value in [f64::MAX,f64::MAX/2.,f64::MAX/4.] {
+            assert_eq!(huge.error(&plan,&[value],&[value/2.],1).unwrap_err().code,
+                crate::error::ErrorCode::InvalidInput);
+        }
+    }
+    #[test]
+    fn rejection_event_records_only_errors_strictly_above_one() {
+        use std::sync::{Arc,Mutex};
+        use tracing_subscriber::{layer::{Layer,SubscriberExt},Registry};
+        #[derive(Default)]
+        struct Recorded { message:String, scaled:Option<f64>, level:Option<tracing::Level> }
+        impl tracing::field::Visit for Recorded {
+            fn record_debug(&mut self,field:&tracing::field::Field,value:&dyn std::fmt::Debug) {
+                if field.name()=="message" {self.message=format!("{value:?}");}
+            }
+            fn record_f64(&mut self,field:&tracing::field::Field,value:f64) {
+                if field.name()=="scaled_error" {self.scaled=Some(value);}
+            }
+        }
+        struct Capture(Arc<Mutex<Vec<Recorded>>>);
+        impl<S:tracing::Subscriber> Layer<S> for Capture {
+            fn on_event(&self,event:&tracing::Event<'_>,_:tracing_subscriber::layer::Context<'_,S>) {
+                let mut value=Recorded{level:Some(*event.metadata().level()),..Default::default()};
+                event.record(&mut value);self.0.lock().unwrap().push(value);
+            }
+        }
+        let plan=crate::compile::compile(&crate::netlist::parse("test\nR1 a 0 1\n.end").unwrap()).unwrap();
+        let options=AdaptiveOptions{relative:0.5,current_relative:None,voltage_absolute:0.5,
+            current_absolute:0.01,min_step_s:1e-6,max_attempts:100};
+        let records=Arc::new(Mutex::new(Vec::new()));
+        // Thread-local dispatch avoids changing another test's global logging.
+        tracing::subscriber::with_default(Registry::default().with(Capture(records.clone())),|| {
+            for (fine,expected) in [(0.,0.),(1.,1.),(2.,4./3.)] {
+                assert!((options.error(&plan,&[0.],&[fine],1).unwrap()-expected).abs()<1e-14);
+            }
+        });
+        let records=records.lock().unwrap();
+        let rejected:Vec<_>=records.iter().filter(|e|e.message.contains("adaptive_local_error_rejected")).collect();
+        assert_eq!(rejected.len(),1,"accepted states must not be logged as rejected");
+        assert_eq!(rejected[0].level,Some(tracing::Level::DEBUG));
+        assert!((rejected[0].scaled.unwrap()-4./3.).abs()<1e-14);
+    }
+    #[test]
     fn voltage_and_branch_errors_keep_their_distinct_si_budgets() {
         let plan=crate::compile::compile(&crate::netlist::parse("test\nV1 a 0 1\nR1 a 0 1\n.end").unwrap()).unwrap();
         let options=AdaptiveOptions{relative:0.1,current_relative:Some(0.2),voltage_absolute:0.2,

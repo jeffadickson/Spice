@@ -1,3 +1,34 @@
+# Active4,411 epoch: second API/diagnostic checkpoint
+
+Read docs/epoch-api-diagnostics.md/.sdoc and evidence/epoch-api-diagnostics.json.
+The frozen clean30a5a9a campaign is unchanged and continues on E:. This bounded
+batch reviews7new raw survivors:5caught by later tests,1numerical tie-selection
+equivalence with a diagnostic-row difference,1duplicate memoryless-profile
+preflight with a documented open typed-error priority limit. Do not call the
+last case fully equivalent: multiply-invalid requests can change Unsupported
+versus InvalidInput precedence. Track that policy question in issue63.
+
+API128 is memoryless_behavior A&&B, not the charged-junction guard. Its valid-
+parameter refusals are repeated in each analysis controller. The new charged-
+junction/RC positive tests are additional contracts, not credited mutation kills.
+CaseIDs at256UTF8bytes remain accepted;257refused. New finite-input overflow
+checks catch scale->infinity->false-zero and difference->infinity. New thread-
+local tracing tests catch3DEBUGthreshold mutants atnorm0,1,4/3; this inferred
+log contract isDraft, not public stable schema or a numerical-output change.
+
+Stages first7=4caught3missed; overflow1=1caught; strengthened profile1=1missed.
+Full51unit656integration pass/6skips,3API+2private focused tests,4aggregation
+checks,StrictDoc109/613,Intel15routine+SpMVpassed. ScopedAPIline192/393; stable
+Rust branch andprivatecfg(test) linecoverageunavailable. One frozenAC-arm
+compiler-invalid remainsE0282(ac_biasinference); not infrastructure or a kill.
+
+Use ignored work/mutation-survivor-triage.json for consumed names, lease and
+artifact pointers; do not reprocess prior reviewed names as new successes.
+All raw native reports, failed setup attempts, scratch/cache data stay on E:.
+Preserve main/unknown work and the frozen4411source. Commit/push verified
+checkpoints only on fix/deck-blocker-implementation, with no CI or main merge.
+The earlier first-checkpoint evidence andfifty-deck2/50objective remain valid.
+
 # Active frozen4,411 epoch: first admission checkpoint
 
 Read docs/epoch-admission-results.md, docs/epoch-admission-contracts.sdoc and
