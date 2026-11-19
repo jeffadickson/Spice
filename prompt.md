@@ -1,7 +1,7 @@
 # Active epoch: independent audit admission and charge checkpoint
 
-Read docs/epoch-audit-admission-results.md/.sdoc (requirements file is
- epoch-audit-admission.sdoc) and evidence/epoch-audit-admission-results.json.
+Read docs/epoch-audit-admission-results.md, docs/epoch-audit-admission.sdoc
+and evidence/epoch-audit-admission-results.json.
 Production unchanged. New tests catch27distinct frozen counterparts on later
 source:3assertion/metadata/finiteguards plus24MOS1charge-audit cases. FirstMOS
 run23caught1missed atunitdelta; nonunit.25/1/2V followup caughtthelast. Preserve
