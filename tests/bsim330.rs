@@ -16,6 +16,41 @@ fn bsim330_rejects_invalid_geometry_before_native_work() {
 }
 
 #[test]
+fn bsim330_admission_checks_each_parameter_before_provider_calls() {
+    use circuit_simulator::{bsim330::Model,circuit::Element,error::ErrorCode};
+    let base:Circuit=serde_json::from_str(CARD).unwrap();
+    let nominal=match &base.elements[0] {Element::Bsim330{model,..}=>*model,_=>unreachable!()};
+    let make=|model| {
+        let mut circuit=base.clone();
+        if let Element::Bsim330{model:slot,..}=&mut circuit.elements[0] {*slot=model;}
+        circuit
+    };
+    let invalid=|model|assert_eq!(make(model).validate().unwrap_err().code,ErrorCode::InvalidInput);
+    let positive:[fn(&mut Model,f64);5]=[
+        |m,v|m.tox=v,|m,v|m.nch=v,|m,v|m.nsub=v,|m,v|m.w=v,|m,v|m.l=v];
+    let nonnegative:[fn(&mut Model,f64);4]=[
+        |m,v|m.pd=v,|m,v|m.ps=v,|m,v|m.ad=v,|m,v|m.source_area=v];
+    let threshold:[fn(&mut Model,f64);1]=[|m,v|m.vth0=v];
+    // Direct Rust inputs reach this boundary without JSON's earlier NaN/Inf
+    // rejection. Change exactly one parameter while every other field is valid.
+    for set in positive.iter().chain(nonnegative.iter()).chain(threshold.iter()) {
+        for value in [f64::NAN,f64::INFINITY,f64::NEG_INFINITY] {
+            let mut model=nominal;set(&mut model,value);invalid(model);
+        }
+    }
+    for set in positive {for value in [0.,-1.] {let mut model=nominal;set(&mut model,value);invalid(model);}}
+    for set in nonnegative {let mut model=nominal;set(&mut model,-1.);invalid(model);}
+    for polarity in [0,-2,2] {invalid(Model{polarity,..nominal});}
+    // Zero parasitic geometry and a signed threshold are admitted by this
+    // schema; that admission is not a claim of native PMOS/device accuracy.
+    for polarity in [-1,1] {
+        let mut model=Model{polarity,vth0:-0.15,..nominal};
+        for set in nonnegative {set(&mut model,0.);}
+        make(model).validate().unwrap();
+    }
+}
+
+#[test]
 #[ignore = "requires the pinned Windows native BSIM3 host and model"]
 fn bsim330_trial_stamps_four_terminal_current_and_jacobian() {
     let circuit: Circuit = serde_json::from_str(CARD).unwrap();

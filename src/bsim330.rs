@@ -108,6 +108,45 @@ pub(crate) struct TerminalValues {
     pub(crate) charge: Option<[f64; 4]>,
 }
 
+#[cfg(test)]
+mod soi_domain_contracts {
+    use super::*;
+    use proptest::{prelude::*,test_runner::{Config,RngSeed,TestRunner}};
+
+    fn domain_admitted(bias:[f64;4])->bool {
+        // Valid input may reach an unavailable provider. Do not mistake that
+        // structured Unsupported result for InvalidInput, or for a solved model.
+        match NativeModel::SoiFd.evaluate(bias) {
+            Ok(_)=>true,
+            Err(error)=>error.code==ErrorCode::Unsupported,
+        }
+    }
+
+    #[test]
+    fn soi_bias_domain_preserves_independent_components_and_inclusive_edges() {
+        for index in 0..4 {
+            for value in [0.,-6.,6.] {
+                let mut bias=[0.;4];bias[index]=value;
+                assert!(domain_admitted(bias),"valid domain rejected: {bias:?}");
+            }
+            for value in [f64::NAN,f64::INFINITY,f64::NEG_INFINITY,6_f64.next_up(),(-6_f64).next_down()] {
+                let mut bias=[0.;4];bias[index]=value;
+                let error=NativeModel::SoiFd.evaluate(bias).err().expect("invalid SOI bias admitted");
+                assert_eq!(error.code,ErrorCode::InvalidInput,"{bias:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn soi_bias_domain_accepts_seeded_finite_interior_points() {
+        let config=Config{cases:64,rng_seed:RngSeed::Fixed(2026111919),failure_persistence:None,..Config::default()};
+        TestRunner::new(config).run(&proptest::array::uniform4(-6_f64..6_f64),|bias| {
+            prop_assert!(domain_admitted(bias),"finite interior bias rejected: {:?}",bias);
+            Ok(())
+        }).unwrap();
+    }
+}
+
 impl TerminalValues {
     pub(crate) fn require_charge(&self) -> SimResult<[f64; 4]> {
         self.charge.ok_or_else(|| {

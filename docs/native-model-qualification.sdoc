@@ -1,0 +1,70 @@
+[DOCUMENT]
+TITLE: Native model admission and typed terminal adapter qualification
+
+[REQUIREMENT]
+UID: MODEL-NATIVE-ADMISSION-001
+STATUS: Draft
+TITLE: Validate each bulk-model parameter before native evaluation
+STATEMENT: >>>
+Bulk BSIM3 model admission shall independently reject a nonfinite numeric
+parameter, invalid polarity, nonpositive oxide/doping/channel geometry, and
+negative parasitic geometry. Zero parasitic geometry and a finite signed
+threshold shall remain admissible, without implying device accuracy.
+<<<
+COMMENT: >>>
+Verification: bsim330_admission_checks_each_parameter_before_provider_calls
+uses direct Rust objects and independently changed fields. Native bulk trials
+are separately exercised by explicitly including the two ignored provider tests.
+<<<
+
+[REQUIREMENT]
+UID: MODEL-NATIVE-PORT-VIEW-001
+STATUS: Draft
+TITLE: Preserve native model kind and D/G/S/body port order
+STATEMENT: >>>
+The element adapter shall preserve the four distinct D/G/S/body indices and
+bulk-versus-FD-reference model kind. Non-native elements shall have no native
+model view. FD-reference adapter evidence shall not imply FD-provider behavior.
+<<<
+COMMENT: >>>
+Verification: bsim330_native_accessor_preserves_four_terminal_order_and_kind
+uses four distinct indices and both native element variants; no provider calls.
+<<<
+
+[REQUIREMENT]
+UID: MODEL-PROVIDER-MUTATION-LANE-001
+STATUS: Draft
+TITLE: Bind provider-dependent mutations to executed native tests
+STATEMENT: >>>
+Provider-dependent mutation evidence shall retain the tested source, exact
+candidate names, trusted native asset hashes and explicitly enabled test scope.
+Unavailable providers and excluded model families shall remain separate from
+caught candidates and reviewed numerical equivalents.
+<<<
+COMMENT: >>>
+Qualification lane:35bulk-model candidates and3adapter candidates, with trusted
+Windows bulk host/model. SOI-domain guards have a separate validation-only lane;
+missing FD-provider results shall not be presented as physical model evidence.
+Results require reviewed native outcomes; start alone is not success.
+<<<
+
+[REQUIREMENT]
+UID: MODEL-SOI-BIAS-DOMAIN-001
+STATUS: Draft
+TITLE: Separate invalid SOI bias from provider availability
+STATEMENT: >>>
+The static FD-reference bias domain shall independently require each of its
+four terminal voltages to be finite and within the inclusive interval [-6,6]V.
+Out-of-domain input shall return InvalidInput before provider lookup. Valid
+domain input may proceed to a provider result or a structured Unsupported
+availability result; missing output shall not be replaced with zero.
+<<<
+COMMENT: >>>
+Verification: soi_bias_domain_preserves_independent_components_and_inclusive_edges
+and soi_bias_domain_accepts_seeded_finite_interior_points,64Proptest cases,
+seed2026111919. This is input/error-stage evidence, not FD-provider execution,
+numerical-current accuracy or SOI dynamic-charge qualification.
+Unsupported can represent any mapped host error. The qualification process
+explicitly leaves the FD host unset; the assertions establish domain admission,
+not a diagnosis of arbitrary host failures or proof of a usable model result.
+<<<

@@ -1,0 +1,1114 @@
+{
+  "soi_counts": {
+    "invalid": 0,
+    "caught": 5,
+    "missed": 0,
+    "candidates": 5,
+    "timeout": 0
+  },
+  "soi_domain_coverage": {
+    "fd_host_configured": false,
+    "branches": null,
+    "property_cases": 64,
+    "limitations": [
+      "Module line denominator includes unit-test lines.",
+      "Do not compare this scope with the native-integration-only wrapper percentage.",
+      "Branch/native/vendor/main coverage unavailable."
+    ],
+    "source_sha256": "5173d8a3a0879b3b5cdb7d062acc04a78bdcce4e2c70b29ed3e2b31e5cc62d27",
+    "lines": {
+      "count": 133,
+      "covered": 35,
+      "percent": 26.31578947368421
+    },
+    "dependency_sha256": {
+      "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\qualification-target\\debug\\deps\\libproptest-27a5283e8208f952.rlib": "d51aae729bcd672b6b54c6d218d365336f5bf783d0aa0201cc5979bf9fb3354f",
+      "E:/Artifacts/Spice-issue61-20261117T133906Z/qualification-target\\debug\\libcircuit_simulator.rlib": "475ad96f810bfb4a9d141e4b14d471fe3bec28a0a61f40fc733c772a028b377d",
+      "E:/Artifacts/Spice-issue61-20261117T133906Z/qualification-target\\debug\\deps\\libserde-d21b195a621dafa5.rlib": "f0ce01af6d90671a6f263e8add087f3d6fbad00a462d062fa22d6e4fb82a4433",
+      "E:/Artifacts/Spice-issue61-20261117T133906Z/qualification-target\\debug\\deps\\libspice_bsim330_host-1a6d9a0521f8af35.rlib": "cb54bd9feec2176b654c8b8717bce1ee3571de758ddf76dae865583e6f8722a5"
+    },
+    "property_seed": "2026111919",
+    "tests": 2,
+    "binary_sha256": "e1eb8ebff973b22877d7e20db35d6e2aa2234e160e7cb6cd74ef467e9eac94bd",
+    "scope": "Actual bsim wrapper source including cfg(test) stage tests; unavailable FD host, no FD current/charge/physics coverage"
+  },
+  "source_hashes": {
+    "test": "1dbebbfee1279386caa0599fd50e87dcc314a4eb413c25698b30ac8d47219e09",
+    "bsim330": "5173d8a3a0879b3b5cdb7d062acc04a78bdcce4e2c70b29ed3e2b31e5cc62d27",
+    "circuit": "6101d36783cea8e4587a52e5a357581e05b9595817a97b19cbb8c01a545298f3"
+  },
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "soi_baseline": {
+    "test_results": [
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 53 filtered out; finished in 0.00s"
+    ],
+    "fd_host_configured": false,
+    "clean_log": "Removed 32 files, 165.3MiB total",
+    "fresh_owned_rustc": true
+  },
+  "requirements": [
+    "MODEL-NATIVE-ADMISSION-001",
+    "MODEL-NATIVE-PORT-VIEW-001",
+    "MODEL-PROVIDER-MUTATION-LANE-001",
+    "MODEL-SOI-BIAS-DOMAIN-001"
+  ],
+  "limits": [
+    "Frozen4411scores stay historical; no wholecurrent-source4411retest.",
+    "No actual FD-provider/current/charge execution in domain lane.",
+    "No new original decks/ngspice/Stryker/standalonefuzz/Linuxqualification.",
+    "Rust wrapper coverage excludes nativehost/model; domain denominator includes tests, scopes incomparable, branchcoverageunavailable.",
+    "Pure accessorunit has no isolated measured line coverage.",
+    "Finite-difference step survivor remains open."
+  ],
+  "focused": {
+    "domain_property_cases": 64,
+    "bulk_property_seed": "330",
+    "bulk_native_tests": 4,
+    "accessor_unit": 1,
+    "bulk_property_cases": 64,
+    "domain_unit": 2,
+    "domain_property_seed": "2026111919"
+  },
+  "artifact_root": "E:/Artifacts/Spice-bsim-provider-replay-20261119T150437Z",
+  "production_function_changes": false,
+  "native_integration_coverage": {
+    "limitations": [
+      "Native host/model, vendor, test and main code uninstrumented.",
+      "SOI static behavior and SOI domain mutations excluded.",
+      "Stable branch coverage unavailable."
+    ],
+    "branches": null,
+    "files": [
+      {
+        "file": "src/ac.rs",
+        "sha256": "6a87eaaffaebf03ef84aec71db525c3b1c807b3b1dec5b3cfe57184fb6aba9b6",
+        "lines": {
+          "count": 142,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/adaptive.rs",
+        "sha256": "7da703f8317ba10a7181869ada3ce959a09e2774a0e53f436037ce67690bf861",
+        "lines": {
+          "count": 54,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/api.rs",
+        "sha256": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96",
+        "lines": {
+          "count": 393,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/artifact.rs",
+        "sha256": "71bc73886f4572ea500febc8f998e507504d54672fcdc5ee7aee56ca357cb8a1",
+        "lines": {
+          "count": 99,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/assertion.rs",
+        "sha256": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+        "lines": {
+          "count": 11,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/audit.rs",
+        "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03",
+        "lines": {
+          "count": 586,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/audit_ac.rs",
+        "sha256": "0e015c2b2f5d6489f3c8886d22cb2eb10729900c479233978b0e9b236ece8438",
+        "lines": {
+          "count": 135,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/audit_configured.rs",
+        "sha256": "07a822a30108b4942444805a2a9d02816cf3efdcdc5a498772ff9510f6c5ab62",
+        "lines": {
+          "count": 170,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/backend.rs",
+        "sha256": "b0116629427c879e6f9c9cf7210f370858833a6addbb507ab00e997958c6e6b1",
+        "lines": {
+          "count": 313,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/backend_faer.rs",
+        "sha256": "088fb6ce327c61a516738ad178085cb6ab9b39b6d7696dee6cccd599ad7dd028",
+        "lines": {
+          "count": 338,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/behavioral_resistor.rs",
+        "sha256": "be5cc6436bd19adf3882850cc611b3897a02bde2ca21f787d58622d838f4ad20",
+        "lines": {
+          "count": 29,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/bsim330.rs",
+        "sha256": "5173d8a3a0879b3b5cdb7d062acc04a78bdcce4e2c70b29ed3e2b31e5cc62d27",
+        "lines": {
+          "count": 109,
+          "covered": 89,
+          "percent": 81.65137614678899
+        }
+      },
+      {
+        "file": "src/campaign.rs",
+        "sha256": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+        "lines": {
+          "count": 37,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/charge.rs",
+        "sha256": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+        "lines": {
+          "count": 16,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/circuit.rs",
+        "sha256": "6101d36783cea8e4587a52e5a357581e05b9595817a97b19cbb8c01a545298f3",
+        "lines": {
+          "count": 194,
+          "covered": 45,
+          "percent": 23.195876288659793
+        }
+      },
+      {
+        "file": "src/compile.rs",
+        "sha256": "5c277284738cd45fd6fc42999a352a87cf952022837560b2afcbdab17804f908",
+        "lines": {
+          "count": 341,
+          "covered": 73,
+          "percent": 21.407624633431084
+        }
+      },
+      {
+        "file": "src/configured.rs",
+        "sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+        "lines": {
+          "count": 397,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/dc.rs",
+        "sha256": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+        "lines": {
+          "count": 101,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/error.rs",
+        "sha256": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+        "lines": {
+          "count": 12,
+          "covered": 9,
+          "percent": 75
+        }
+      },
+      {
+        "file": "src/experiment.rs",
+        "sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+        "lines": {
+          "count": 123,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/expression.rs",
+        "sha256": "0157f0a3153adc51c184fbd0e6ce2409fc3bf83267327e9f3c4a4d3f434aaa14",
+        "lines": {
+          "count": 111,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/grid.rs",
+        "sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+        "lines": {
+          "count": 15,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/ids.rs",
+        "sha256": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+        "lines": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        }
+      },
+      {
+        "file": "src/integrator.rs",
+        "sha256": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+        "lines": {
+          "count": 81,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/linalg.rs",
+        "sha256": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+        "lines": {
+          "count": 173,
+          "covered": 14,
+          "percent": 8.092485549132949
+        }
+      },
+      {
+        "file": "src/linear_dynamic.rs",
+        "sha256": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+        "lines": {
+          "count": 52,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/measurement.rs",
+        "sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+        "lines": {
+          "count": 28,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/model.rs",
+        "sha256": "500da23f436a9c916a0e264fb95a201a90189bae645d24858f8bdf17d9ec4d01",
+        "lines": {
+          "count": 97,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/mos1.rs",
+        "sha256": "4dc1dc86f02e83a30e173cbd95bb31c52725e6aad16d7f9bb115be473e1ed9d3",
+        "lines": {
+          "count": 141,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/mutual_inductance.rs",
+        "sha256": "9b8d373524cffa2aa8093a9db67bb6645b40864b8fd0047bf08c68d7e8994514",
+        "lines": {
+          "count": 30,
+          "covered": 8,
+          "percent": 26.666666666666668
+        }
+      },
+      {
+        "file": "src/netlist.rs",
+        "sha256": "759d4d1808ea4431ef20e25723687c51fe4d9344374071e81955f894dcfdf0a5",
+        "lines": {
+          "count": 553,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/newton.rs",
+        "sha256": "5ab306611286cf084d814eaa742e683fa862930da1ba9174fe64979684f4f590",
+        "lines": {
+          "count": 1111,
+          "covered": 173,
+          "percent": 15.57155715571557
+        }
+      },
+      {
+        "file": "src/ngspice_resistor.rs",
+        "sha256": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3",
+        "lines": {
+          "count": 3,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/power.rs",
+        "sha256": "ac25369c845b434d6efb599da77e050a374ac167b868edf765c3268923093406",
+        "lines": {
+          "count": 108,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/provenance.rs",
+        "sha256": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+        "lines": {
+          "count": 22,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/pspice_switch.rs",
+        "sha256": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9",
+        "lines": {
+          "count": 42,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/quantity.rs",
+        "sha256": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397",
+        "lines": {
+          "count": 43,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/registry.rs",
+        "sha256": "ff1d1bdf7d82f2b4c1fdc254d8679f89cd69cbb0bac4abb72fc4f97372c369a2",
+        "lines": {
+          "count": 30,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/sampling.rs",
+        "sha256": "2cbbdcaa1e01f8cd7dcbbd9122271f59b4dc24cfb3e7a9c6f78a4b8165826196",
+        "lines": {
+          "count": 81,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/solver_contract.rs",
+        "sha256": "895b8d2800c55ae0c87e3c38f9bb5630df1f4e2c7988679eb1179e1db3f21201",
+        "lines": {
+          "count": 166,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/sources.rs",
+        "sha256": "76ba60d9855777612e1a0fd0e0d438ea939d79eaadc000f1ca7aeb7f8ba91091",
+        "lines": {
+          "count": 109,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/sparse.rs",
+        "sha256": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+        "lines": {
+          "count": 188,
+          "covered": 98,
+          "percent": 52.12765957446809
+        }
+      },
+      {
+        "file": "src/spice_diode.rs",
+        "sha256": "992636edc3f26009e0af65fd92334161811ca27d901b8c079670875d7b72c64e",
+        "lines": {
+          "count": 85,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/sweep.rs",
+        "sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+        "lines": {
+          "count": 250,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/topology.rs",
+        "sha256": "e08fee8153a6c701de145a0707acb866db960eb06162315a81f6286bdf699932",
+        "lines": {
+          "count": 45,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/transient.rs",
+        "sha256": "c4bb4261eb887c00094040eb1c5aac6d554259e6aa8c6ae01a99c20188b43939",
+        "lines": {
+          "count": 80,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/variation.rs",
+        "sha256": "c7c7b353f039e07b5f9136b4b3a405338851e1256a55616329dd18eb6aa3fe0d",
+        "lines": {
+          "count": 192,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/voltage_scaled_cccs.rs",
+        "sha256": "0941725b00b87d405be1e94be2cbae45898a29f312736c77266902032b74f5e6",
+        "lines": {
+          "count": 38,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/waveform.rs",
+        "sha256": "e3322998ebe3c4e8e8987809575744f450e9a4e118eddb76f5d703bdb9dc6007",
+        "lines": {
+          "count": 276,
+          "covered": 0,
+          "percent": 0
+        }
+      }
+    ],
+    "soi_tests_excluded": 2,
+    "property_seed": "330",
+    "native_bulk_tests": 2,
+    "binary_sha256": "d67fa25fb7cc4b83c6b0f22820de7265e48d8aed97afc23c00fa58952f4da45e",
+    "scope": "Owned library exercised by four bulk integration tests, including actual trusted provider; not the pure cfg(test) accessor unit",
+    "property_cases": 64,
+    "tests": 4,
+    "filter": "bsim330_ --include-ignored --test-threads=1"
+  },
+  "strictdoc": {
+    "uids": 651,
+    "documents": 122,
+    "parser": "SDReader"
+  },
+  "bulk_baseline": {
+    "results": [
+      "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 52 filtered out; finished in 0.00s",
+      "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.02s"
+    ],
+    "fresh_owned_rustc": true
+  },
+  "recorded_utc": "2026-11-19T16:16:27.4314808+00:00",
+  "profile": "mutants",
+  "soi_ledger_sha256": "5f1692c703e0ebd69b7b35d3147289b79ec756f741d1835e888e32ec39f19758",
+  "mappings": [
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_28_col_9.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:28:9: replace Model::parameters -> [f64; 11] with [0.0; 11]",
+      "original_diff_sha256": "f3b517a9b711095989c80b94dc291f07f18ad2a11691915084675701809f8380",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_28_col_9.diff",
+      "current_diff": "diff/src__bsim330.rs_line_28_col_9.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_28_col_9_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:28:9: replace Model::parameters -> [f64; 11] with [1.0; 11]",
+      "original_diff_sha256": "aff9ff3761fcb21281f227c50ff3c05b590d2c9bceeff0ca0eaeb152ff270816",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_28_col_9_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_28_col_9_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_28_col_9_002.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:28:9: replace Model::parameters -> [f64; 11] with [-1.0; 11]",
+      "original_diff_sha256": "855fab888e7e2dc1bf01f5e3874429059409f800cc7eb8fd37d84499d29e66c8",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_28_col_9_002.diff",
+      "current_diff": "diff/src__bsim330.rs_line_28_col_9_002.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_45_col_13.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:45:13: replace || with && in Model::validate",
+      "original_diff_sha256": "6a0d41c7853ba6a50a69a1ed376f274a83b7f71925057729275499f1595fec3d",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_45_col_13.diff",
+      "current_diff": "diff/src__bsim330.rs_line_45_col_13.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_44_col_12.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:44:12: delete ! in Model::validate",
+      "original_diff_sha256": "2d6d9e2caf6a44a67d2303734e66d34146b9dc75c3ab8ea952367db8a991ca37",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_44_col_12.diff",
+      "current_diff": "diff/src__bsim330.rs_line_44_col_12.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_45_col_49.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:45:49: delete ! in Model::validate",
+      "original_diff_sha256": "b6c56aded2d91151a27cbf2dc6c297c17c37d592de36dd7bfdcf4d13da66af28",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_45_col_49.diff",
+      "current_diff": "diff/src__bsim330.rs_line_45_col_49.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_48_col_29.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:48:29: replace <= with > in Model::validate",
+      "original_diff_sha256": "73f759e70d12325f58870636c31b611117dabff92af513a670dcf47f181ce99a",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_48_col_29.diff",
+      "current_diff": "diff/src__bsim330.rs_line_48_col_29.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_51_col_29.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:51:29: replace < with == in Model::validate",
+      "original_diff_sha256": "bade7d817aca0fe367c55cb1e3298e4544c1596baf67438d86e6937b2eb860e2",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_51_col_29.diff",
+      "current_diff": "diff/src__bsim330.rs_line_51_col_29.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_51_col_29_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:51:29: replace < with > in Model::validate",
+      "original_diff_sha256": "6b2f7bd9c6161e9439065ccb00aa651cd5f3fe4a5b7812e2ed919205ff3f116a",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_51_col_29_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_51_col_29_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_51_col_29_002.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:51:29: replace < with <= in Model::validate",
+      "original_diff_sha256": "0847a7658b37174491fade2511a423e58bb83a3b42bec7237c74b664962bf85c",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_51_col_29_002.diff",
+      "current_diff": "diff/src__bsim330.rs_line_51_col_29_002.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_59_col_32.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:59:32: delete ! in Model::evaluate",
+      "original_diff_sha256": "0ee4b29b46a44f988e076ef75f52a3f52274b5853a4d4c6d7a74855b08c9dd15",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_59_col_32.diff",
+      "current_diff": "diff/src__bsim330.rs_line_59_col_32.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_81_col_67.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:81:67: replace + with - in NativeModel::evaluate",
+      "original_diff_sha256": "90b3a25e3001c37f8784e4ea10f61df3716007187911cddd2e2546462c901f5c",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_81_col_67.diff",
+      "current_diff": "diff/src__bsim330.rs_line_81_col_67.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_81_col_67_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:81:67: replace + with * in NativeModel::evaluate",
+      "original_diff_sha256": "af40b6a5b72073f288a62af3224d815585f67748c9045e4d317007d257e1bfb1",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_81_col_67_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_81_col_67_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_102_col_5.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:102:5: replace voltages -> [f64; 4] with [0.0; 4]",
+      "original_diff_sha256": "9db9eca832b7d8adfbb923dc720b1aeeab468681e1fd9582a5edb1d995fc9e93",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_102_col_5.diff",
+      "current_diff": "diff/src__bsim330.rs_line_102_col_5.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_102_col_5_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:102:5: replace voltages -> [f64; 4] with [1.0; 4]",
+      "original_diff_sha256": "db3b44dee505fda1c6e02e42fe7cc231cf6812fface9e8db3ff2370acdd7719a",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_102_col_5_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_102_col_5_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_102_col_5_002.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:102:5: replace voltages -> [f64; 4] with [-1.0; 4]",
+      "original_diff_sha256": "5eb8850ed4b0e89bc0717f369cd2f03999ab123d8736b3889f905e25b5bb40c0",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_102_col_5_002.diff",
+      "current_diff": "diff/src__bsim330.rs_line_102_col_5_002.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_132_col_25.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:132:25: replace * with + in linearize",
+      "original_diff_sha256": "b01417d7d8d50a9444c99a261dd35e5c58026953fe7a843c15c12d79159a3d9a",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_132_col_25.diff",
+      "current_diff": "diff/src__bsim330.rs_line_132_col_25.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "MissedMutant",
+      "current_log": "log/src__bsim330.rs_line_132_col_25_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:132:25: replace * with / in linearize",
+      "original_diff_sha256": "4a73b786e53ff85e381a9440ac0bf6e5825a7dd0dd9e6550bd8d17affad8afee",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_132_col_25_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_132_col_25_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_135_col_19.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:135:19: replace += with -= in linearize",
+      "original_diff_sha256": "6efc5f1044a6a9b4b7baf36955f36e756b622e6da8fa3b78f37ff74e75ba3aa4",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_135_col_19.diff",
+      "current_diff": "diff/src__bsim330.rs_line_135_col_19.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_135_col_19_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:135:19: replace += with *= in linearize",
+      "original_diff_sha256": "0b48143bdcb4cc9f6904b4084263aa52f3de20b5534e3bad18ae4fbfd5c7a22f",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_135_col_19_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_135_col_19_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_136_col_18.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:136:18: replace -= with += in linearize",
+      "original_diff_sha256": "f2ede828c71718607679bcaf11e2f9b64853079a409d8ce8f8992a1d24b2563d",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_136_col_18.diff",
+      "current_diff": "diff/src__bsim330.rs_line_136_col_18.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_136_col_18_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:136:18: replace -= with /= in linearize",
+      "original_diff_sha256": "a827688415f425cbba360396a1dc33137bdae69652d8e3105b22d5567857276c",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_136_col_18_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_136_col_18_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_140_col_73.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:140:73: replace / with % in linearize",
+      "original_diff_sha256": "5d85e3781aea10bd07e9cc6fb5fc5ba28dc0b758018fec363d63ff936420626d",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_140_col_73.diff",
+      "current_diff": "diff/src__bsim330.rs_line_140_col_73.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_140_col_73_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:140:73: replace / with * in linearize",
+      "original_diff_sha256": "3753fd32d789062036f1685096186c3167b876a0ee4cdf875824f25277ccc9c9",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_140_col_73_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_140_col_73_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_140_col_53.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:140:53: replace - with + in linearize",
+      "original_diff_sha256": "e8286ac5784a6babd7dd93af20ed66669faf16d215da5c3665d294c34946d9af",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_140_col_53.diff",
+      "current_diff": "diff/src__bsim330.rs_line_140_col_53.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_140_col_53_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:140:53: replace - with / in linearize",
+      "original_diff_sha256": "4dbc57c5b23054a586d13f3d1d2be8e7bb1452a39273aab32e5e0368f4eba74d",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_140_col_53_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_140_col_53_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_140_col_80.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:140:80: replace * with + in linearize",
+      "original_diff_sha256": "dd962a68d311f75dd3e2d668edda95eef68e6d35bf71e6a4a32e265028cf3f98",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_140_col_80.diff",
+      "current_diff": "diff/src__bsim330.rs_line_140_col_80.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_140_col_80_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:140:80: replace * with / in linearize",
+      "original_diff_sha256": "6010837fe1a806699e2287299036cb9dff2ba307d0494dbfcaa7c8fcf4bd0015",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_140_col_80_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_140_col_80_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_145_col_63.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:145:63: replace / with % in linearize",
+      "original_diff_sha256": "9e5bd7c6cf07b2ff669f01180aaa15067769454883f32605d36fd88c0b6c38ea",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_145_col_63.diff",
+      "current_diff": "diff/src__bsim330.rs_line_145_col_63.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_145_col_63_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:145:63: replace / with * in linearize",
+      "original_diff_sha256": "a3836a3985f2e7c85b201dc349771aab52a4bb11889abc8f16f9a23bbcea9237",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_145_col_63_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_145_col_63_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_145_col_51.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:145:51: replace - with + in linearize",
+      "original_diff_sha256": "0a61c3b40845e926f2b660db6cdac685b00db9114121f9ccce75fb452ddd67b4",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_145_col_51.diff",
+      "current_diff": "diff/src__bsim330.rs_line_145_col_51.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_145_col_51_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:145:51: replace - with / in linearize",
+      "original_diff_sha256": "438f304729605978e6a96f5106d91ddc3251de978eaff66c379b2f576abfc529",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_145_col_51_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_145_col_51_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_145_col_70.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:145:70: replace * with + in linearize",
+      "original_diff_sha256": "7ffe0d3d0b9727c53671dac010dce0351515920db02a892fd695f364ebc3be6c",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_145_col_70.diff",
+      "current_diff": "diff/src__bsim330.rs_line_145_col_70.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_145_col_70_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:145:70: replace * with / in linearize",
+      "original_diff_sha256": "936b789f84e5a3f5a4388e2173f7328a706e041edcc1ca0021020fa47262df41",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_145_col_70_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_145_col_70_001.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_153_col_18.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:153:18: delete ! in linearize",
+      "original_diff_sha256": "75d6d26ad780f2f37e03593dde4c88ad4b3d0d20c7b7847576d844d0f7623c40",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_153_col_18.diff",
+      "current_diff": "diff/src__bsim330.rs_line_153_col_18.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__circuit.rs_line_198_col_9.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/circuit.rs:198:9: replace Element::native_mos -> Option<([NodeId; 4], crate::bsim330::NativeModel)> with None",
+      "original_diff_sha256": "aa6d50cec2c735ea6cabc93b369c08305159d43d38189dce18bfd2bcc853cf41",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T112035Z-3ef5e945\\rust\\mutants.out\\diff\\src__circuit.rs_line_198_col_9.diff",
+      "current_diff": "diff/src__circuit.rs_line_198_col_9.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__circuit.rs_line_200_col_13.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/circuit.rs:200:13: delete match arm Self::Bsim330{p, n, gate, bulk, model, ..} in Element::native_mos",
+      "original_diff_sha256": "72480e811bd7cf2605a53a2261de6bd61d20378847f967f59eaa246333a4f4e3",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T112035Z-3ef5e945\\rust\\mutants.out\\diff\\src__circuit.rs_line_200_col_13.diff",
+      "current_diff": "diff/src__circuit.rs_line_200_col_13.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__circuit.rs_line_208_col_13.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/circuit.rs:208:13: delete match arm Self::BsimSoiFdReference{p, n, gate, back_gate, ..} in Element::native_mos",
+      "original_diff_sha256": "fb3d32ded07a07cd9f1432cd2b5c0d026f5ac7eab7eb9715898c1a76954f9b10",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T112035Z-3ef5e945\\rust\\mutants.out\\diff\\src__circuit.rs_line_208_col_13.diff",
+      "current_diff": "diff/src__circuit.rs_line_208_col_13.diff",
+      "stage": "bulk_provider_38"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_85_col_55.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:85:55: replace || with && in NativeModel::evaluate",
+      "original_diff_sha256": "1c2764b4aad63992d8bacb7d0cc92ebfe0786d58a6d583676795b715f1b95a7e",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_85_col_55.diff",
+      "current_diff": "diff/src__bsim330.rs_line_85_col_55.diff",
+      "stage": "soi_domain_5"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_85_col_40.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:85:40: delete ! in NativeModel::evaluate",
+      "original_diff_sha256": "a4a5f4b80d032d97477338e109e03a3478af97004f2578ce88d1fc8e8d8d699b",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T103305Z-6a1120c0\\rust\\mutants.out\\diff\\src__bsim330.rs_line_85_col_40.diff",
+      "current_diff": "diff/src__bsim330.rs_line_85_col_40.diff",
+      "stage": "soi_domain_5"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_85_col_66.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:85:66: replace > with == in NativeModel::evaluate",
+      "original_diff_sha256": "1bc537a61cb34e0b15d552a49a5dcfc03136153bc3cfeca9dba9f8e11bbaf8e4",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_85_col_66.diff",
+      "current_diff": "diff/src__bsim330.rs_line_85_col_66.diff",
+      "stage": "soi_domain_5"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_85_col_66_001.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:85:66: replace > with < in NativeModel::evaluate",
+      "original_diff_sha256": "6f438945f761340078fe3ef1fd8cc205747efeae19d25045e9dfd098ed3945b0",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_85_col_66_001.diff",
+      "current_diff": "diff/src__bsim330.rs_line_85_col_66_001.diff",
+      "stage": "soi_domain_5"
+    },
+    {
+      "current_outcome": "CaughtMutant",
+      "current_log": "log/src__bsim330.rs_line_85_col_66_002.log",
+      "original_outcome": "MissedMutant",
+      "name": "src/bsim330.rs:85:66: replace > with >= in NativeModel::evaluate",
+      "original_diff_sha256": "7fe5f845a3cec31837744bd520abcba40f073530acaa8c38abe1cebd1a58958b",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T105526Z-d4f38a50\\rust\\mutants.out\\diff\\src__bsim330.rs_line_85_col_66_002.diff",
+      "current_diff": "diff/src__bsim330.rs_line_85_col_66_002.diff",
+      "stage": "soi_domain_5"
+    }
+  ],
+  "bulk_counts": {
+    "invalid": 0,
+    "caught": 37,
+    "missed": 1,
+    "candidates": 38,
+    "timeout": 0
+  },
+  "source_dirty_during_qualification": true,
+  "qualification_overlay": [
+    "tests/bsim330.rs",
+    "src/circuit.rs cfg(test)",
+    "src/bsim330.rs cfg(test)"
+  ],
+  "soi_stage_manifest": {
+    "property_cases": 64,
+    "scope": "SOI input-domain/error-stage checks only; valid domain may yield Unsupported, no native FD physical results",
+    "source_dirty": true,
+    "property_seed": "2026111919",
+    "source_base": "7132b5d4eeeb4cf16c76b037b7be9e162b76a756",
+    "source_sha256": "5173d8a3a0879b3b5cdb7d062acc04a78bdcce4e2c70b29ed3e2b31e5cc62d27",
+    "fd_host_configured": false
+  },
+  "commands": [
+    "Run-BulkReplay.ps1 retains exact38selector/source/provider hashes/profile/args.",
+    "cargo clean --package circuit-simulator --profile mutants before each invocation",
+    "SOIdomain exact5selector in soi-domain/selector.txt; --cargo-arg=--lib -- -- soi_bias_domain_ --test-threads=1, FDhostenvunset",
+    "cargo test --profile mutants --lib --test mutation_suite --features mutation-suite",
+    "Measure-RustIntegrationCoverage.ps1 + Measure-NativeProfiles-FinalV2.ps1 + Measure-SoiDomain-V2.ps1 retain LLVM commands and real dependencies",
+    "Test-IntelCircuits.ps1 and Run-ParallelProbe.ps1 -Probe Intel"
+  ],
+  "bulk_ledger_sha256": "acdf5ee18d55fcc9cf1d31b943d81bb1d588093265c9e6897c1342144ba25c2f",
+  "distinct": {
+    "open": 1,
+    "caught": 42,
+    "candidates": 43
+  },
+  "intel": {
+    "tests": 15,
+    "exit_code": 0,
+    "probe_seed": 18117,
+    "device": "Intel UHD Graphics630",
+    "driver": "31.0.101.2141",
+    "scope": "Bounded routine circuits and separateFP64probe, no general GPU qualification"
+  },
+  "tool": "cargo-mutants27.1.0",
+  "bulk_stage_manifest": {
+    "test_filter": "bsim330_ --include-ignored",
+    "target": "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/rust-target",
+    "started_utc": "2026-11-19T15:08:19.4784970Z",
+    "pid": 27296,
+    "source_hashes": {
+      "Cargo.lock": "69b0c6b10a3b047b4cfd2815ce2884c3d5f32a7c56696bf282633d29670a9e8c",
+      "src/bsim330.rs": "7a00f300a96790a7c6e204ac50a39ef310ec4fb805ff330a9e06f5d05a8fa3e0",
+      "tests/mutation_suite.rs": "85cdbb85b972c60ef2f44df6306088aee7bb7d44eae12326960328431b9d4aa6",
+      "src/circuit.rs": "6101d36783cea8e4587a52e5a357581e05b9595817a97b19cbb8c01a545298f3",
+      "tests/bsim330.rs": "1dbebbfee1279386caa0599fd50e87dcc314a4eb413c25698b30ac8d47219e09",
+      "Cargo.toml": "398b782b985525465e60ecd5b781f7a288703cf63e96f44eded036efcce881a1"
+    },
+    "artifact_directory": "E:/Artifacts/Spice-bsim-provider-replay-20261119T150437Z",
+    "deferred_soi_domain": 5,
+    "production_unchanged": true,
+    "model_sha256": "11d9e3df00edf728db2fc531efc030685d6cc70098a8550e3f13d1513238fd17",
+    "property_seed": "330",
+    "seed": "2026111917",
+    "host_sha256": "c10014846bbb96c74d92ea01963a55be7144db6b3565664a3b30be118c23fdfd",
+    "memory_policy": "observe only, no caps/free-RAM gate",
+    "candidate_count": 38,
+    "source_dirty": true,
+    "property_cases": 64,
+    "qualification_overlay": [
+      "tests/bsim330.rs",
+      "src/circuit.rs cfg(test) module"
+    ],
+    "base": "7132b5d4eeeb4cf16c76b037b7be9e162b76a756",
+    "state": "native_command_finished",
+    "finished_utc": "2026-11-19T15:31:56.9563642+00:00",
+    "exit_code": 2
+  },
+  "executed_binaries": [
+    {
+      "log": "E:\\Artifacts\\Spice-bsim-provider-replay-20261119T150437Z\\full-final-tests.log",
+      "sha256": "cae0ff397835b862849eddad2cbee78a1220583a991a2820cbe7e4fa020d3b55",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\circuit_simulator-ec16352c82678e55.exe"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-bsim-provider-replay-20261119T150437Z\\full-final-tests.log",
+      "sha256": "17f186f84ad7877416fe6f558ae5aa37d47921ac2b5c4620036bdbb42cbb9d05",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\mutation_suite-959d2566832d66d2.exe"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-bsim-provider-replay-20261119T150437Z\\Spice-intel-circuit-tests-7ac8022ff9f5482bbb718310d22a5367\\tests.log",
+      "sha256": "872ac1c58ffe5aa183c16ccce09ba2f4d30ab92a03567edeefe5598d1782faf0",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\campaign_cli-55654e9809069435.exe"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-bsim-provider-replay-20261119T150437Z\\Spice-intel-circuit-tests-7ac8022ff9f5482bbb718310d22a5367\\tests.log",
+      "sha256": "4b0d84cfa901e25a14cb899110a3b3d9898c4a23a125a6354dd30935f8ea56a4",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\intel_backend-b3b260dd2491da49.exe"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-bsim-provider-replay-20261119T150437Z\\Spice-intel-circuit-tests-7ac8022ff9f5482bbb718310d22a5367\\tests.log",
+      "sha256": "748591ed26564d4d99595d97a1ac59a1d084a4235be195fdea5b9acea97cef63",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\providers-b75df9ebae7099d3.exe"
+    }
+  ],
+  "coverage_preflight_failures": [
+    "Copied final-profile script failed fresh-output guard;0tests.",
+    "First domain coverage driver missedserdeextern;0tests. Corrected finalsource runs retained separately."
+  ],
+  "review": {
+    "limits": [
+      "Onlyw/tox bulk-copy fields asserted; scopeports/kind.",
+      "Unsupported maps anyhostfailure; FDenvabsent documented separately, domain acceptance not provider diagnosis."
+    ],
+    "kind": "Simulated read-only code review",
+    "findings": "No important issues"
+  },
+  "unresolved": {
+    "classification": "Open, no equivalence/product-bug claim",
+    "original": "src/bsim330.rs:132:25: replace * with / in linearize",
+    "current_source_line": 171,
+    "next": "Independent tangent/reference evidence at qualified biases; conservation alone is insufficient. Do not impose arbitrary step assertion or change physics/tolerances to force a kill."
+  },
+  "base": "7132b5d4eeeb4cf16c76b037b7be9e162b76a756",
+  "regression": {
+    "ignored": 7,
+    "features": [
+      "mutation-suite"
+    ],
+    "seed": "2026111920",
+    "integration": 700,
+    "unit": 55
+  },
+  "features": []
+}

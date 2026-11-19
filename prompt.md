@@ -1,4 +1,24 @@
-# Active epoch: direct Rust circuit admission
+# Active epoch: native-model wrapper and SOI-domain qualification
+
+Read docs/native-model-qualification-results.md and its StrictDoc/evidence pair.
+Base7132b5d with test-only dirty overlay, production functions/assets unchanged.
+Native38=35bulk+3accessor:37caught/1missed, noinvalid/timeout, actualtrusted host
+c100148... + OSDImodule11d9e3... reused. Pure adapter verifiesports/kind,
+onlyw/tox sentinels, no SOIphysics. Separate SOI domain5/5caught with FDhostunset,
+InvalidInput versus admitted-domain Ok/Unsupported;64propertycases seed2026111919.
+Distinct43=42caught+1open. Originalstep132:25 *->/ survives; aftercfgtest insertion
+unchangedstep expression at171. Need independent tangent/qualified-bias evidence;
+do not change correct physics/tolerances or assert arbitraryalgorithm justtokill.
+Final55unit+700integrationpass/7ignored; native4 + domain2; Intel15+UHD630probe;
+StrictDoc122docs651UIDs. Nativewrapper89/109lines excludes tests/native/vendor;
+domain35/133includes cfgtest, incomparable scopes; branch coverageunavailable.
+Raw E:/Artifacts/Spice-bsim-provider-replay-20261119T150437Z; soi-domain stage.
+Preserve rawfrozen4411outcomes/config/helper, source/main/unknownwork and caches.
+No fullBSIM/SOIphysics/GPU/Linuxqualification or new originaldeck count.
+Nextremaining linear-backend, compile/configured survivors and independentstep
+assessment: inspect current bookmark/diffs, not stale function-name dispositions.
+
+# Previous checkpoint: direct Rust circuit admission
 
 Read docs/circuit-rust-admission-results.md and StrictDoc/evidence pair.
 Base311742a, productioncircuit.rs unchanged/frozenSHA455182e52eb7be9d1dbd6c69bdadc2128fb4b8fcb53a27c787eb29232e8a5925.

@@ -422,3 +422,28 @@ impl Circuit {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod native_adapter_contracts {
+    use super::*;
+    use crate::bsim330::{Model,NativeModel};
+
+    #[test]
+    fn bsim330_native_accessor_preserves_four_terminal_order_and_kind() {
+        let model=Model{polarity:1,tox:3.5e-9,nch:2.4e17,nsub:5e16,vth0:0.15,
+            w:1e-6,l:3.5e-7,pd:1.5e-6,ps:1.5e-6,ad:1.5e-12,source_area:1.5e-12};
+        let bulk=Element::Bsim330{id:"M".into(),p:NodeId(1),gate:NodeId(2),n:NodeId(3),bulk:NodeId(4),model};
+        let fd=Element::BsimSoiFdReference{id:"M".into(),p:NodeId(1),gate:NodeId(2),n:NodeId(3),back_gate:NodeId(4)};
+        // D/G/S/B (or FD back gate E) is the adapter's wire order. All indices
+        // differ so a source/gate permutation cannot hide behind grounded pins.
+        for (element,expect_bulk) in [(bulk,true),(fd,false)] {
+            let (ports,kind)=element.native_mos().expect("native element lost its adapter");
+            assert_eq!(ports,[NodeId(1),NodeId(2),NodeId(3),NodeId(4)]);
+            match kind {
+                NativeModel::Bulk(actual)=>{assert!(expect_bulk);assert_eq!(actual.w,model.w);assert_eq!(actual.tox,model.tox);}
+                NativeModel::SoiFd=>assert!(!expect_bulk),
+            }
+        }
+        assert!(Element::Resistor{id:"R".into(),p:NodeId(1),n:NodeId(0),ohms:1.}.native_mos().is_none());
+    }
+}
