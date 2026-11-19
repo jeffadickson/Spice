@@ -1,0 +1,49 @@
+[DOCUMENT]
+TITLE: Intel optional-profile and complex-boundary qualification
+
+[REQUIREMENT]
+UID: MUT-OPTIONAL-PROFILE-001
+STATUS: Draft
+TITLE: Bind optional-code mutation evidence to an enabled profile
+STATEMENT: >>>
+Mutation qualification of an optional backend shall execute that backend's
+enabled feature and applicable provider tests. A selected mutation in disabled
+code shall not be reported as evidence of equivalence or tested numerical
+behavior. Separate profile outcomes shall retain original candidate identities.
+<<<
+COMMENT: >>>
+Verification: Intel83 replay source d786a58, intel-opencl feature, trusted native
+provider and lib/intel_backend/providers/campaign_cli. Original frozen outcomes
+remain unchanged. Raw evidence: docs/intel-mutation-profile-results.md.
+<<<
+
+[REQUIREMENT]
+UID: INTEL-RELATIVE-BOUNDARY-001
+STATUS: Draft
+TITLE: Preserve scale-independent and inclusive residual acceptance
+STATEMENT: >>>
+Intel adapter verification shall reject a relative residual above 1e-10 even
+when its absolute residual is small, accept finite valid solutions across
+equation scales, and accept the represented 1e-10 boundary inclusively.
+<<<
+COMMENT: >>>
+Verification: backend_intel::tests::relative_residual_is_not_an_absolute_small_number_gate;
+represented_relative_error_boundary_is_inclusive includes the adjacent-ULP
+rejection. The fixtures verify the safe owned gate, not the native kernel.
+<<<
+
+[REQUIREMENT]
+UID: INTEL-COMPLEX-ADMISSION-001
+STATUS: Draft
+TITLE: Independently validate and embed complex systems
+STATEMENT: >>>
+The Intel backend shall reject incompatible complex matrix/RHS dimensions or
+either nonfinite RHS component as InvalidInput. One complex unknown shall map
+to two real unknowns, and finite known complex solutions shall retain both
+components. The backend shall retain its documented experimental identity.
+<<<
+COMMENT: >>>
+Verification: actual_intel_circuit_contract tests independent malformed inputs,
+scalar A=.5+.25j with x=2-3j, and explicit backend name/capability identity.
+Actual trusted provider execution is required; missing hardware is not a pass.
+<<<

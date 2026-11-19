@@ -1,0 +1,220 @@
+{
+  "initial_enabled_baseline": {
+    "providers": 8,
+    "cli": 6,
+    "unit": 54,
+    "intel_contract": 1
+  },
+  "followup_enabled_baseline": {
+    "clean_log": "clean-owned.log",
+    "fresh_owned_rustc": true,
+    "unit": 56,
+    "intel_contract": 1
+  },
+  "recorded_utc": "2026-11-19T05:12:51.5382208-08:00",
+  "followup_mappings": [
+    {
+      "final": "CaughtMutant",
+      "name": "src/backend_intel.rs:32:28: replace / with % in verified",
+      "first": "MissedMutant",
+      "log": "log/src__backend_intel.rs_line_32_col_28.log",
+      "diff": "diff/src__backend_intel.rs_line_32_col_28.diff"
+    },
+    {
+      "final": "CaughtMutant",
+      "name": "src/backend_intel.rs:32:28: replace / with * in verified",
+      "first": "MissedMutant",
+      "log": "log/src__backend_intel.rs_line_32_col_28_001.log",
+      "diff": "diff/src__backend_intel.rs_line_32_col_28_001.diff"
+    },
+    {
+      "final": "CaughtMutant",
+      "name": "src/backend_intel.rs:34:87: replace > with >= in verified",
+      "first": "MissedMutant",
+      "log": "log/src__backend_intel.rs_line_34_col_87.log",
+      "diff": "diff/src__backend_intel.rs_line_34_col_87.diff"
+    },
+    {
+      "final": "CaughtMutant",
+      "name": "src/backend_intel.rs:44:9: replace <impl LinearSolver for IntelOpenCl>::name -> &'static str with \"\"",
+      "first": "MissedMutant",
+      "log": "log/src__backend_intel.rs_line_44_col_9.log",
+      "diff": "diff/src__backend_intel.rs_line_44_col_9.diff"
+    },
+    {
+      "final": "CaughtMutant",
+      "name": "src/backend_intel.rs:83:13: replace || with && in <impl LinearSolver for IntelOpenCl>::solve_complex_rhs",
+      "first": "MissedMutant",
+      "log": "log/src__backend_intel.rs_line_83_col_13.log",
+      "diff": "diff/src__backend_intel.rs_line_83_col_13.diff"
+    },
+    {
+      "final": "CaughtMutant",
+      "name": "src/backend_intel.rs:82:13: replace || with && in <impl LinearSolver for IntelOpenCl>::solve_complex_rhs",
+      "first": "MissedMutant",
+      "log": "log/src__backend_intel.rs_line_82_col_13.log",
+      "diff": "diff/src__backend_intel.rs_line_82_col_13.diff"
+    },
+    {
+      "final": "CaughtMutant",
+      "name": "src/backend_intel.rs:83:51: replace || with && in <impl LinearSolver for IntelOpenCl>::solve_complex_rhs",
+      "first": "MissedMutant",
+      "log": "log/src__backend_intel.rs_line_83_col_51.log",
+      "diff": "diff/src__backend_intel.rs_line_83_col_51.diff"
+    },
+    {
+      "final": "CaughtMutant",
+      "name": "src/backend_intel.rs:90:19: replace * with + in <impl LinearSolver for IntelOpenCl>::solve_complex_rhs",
+      "first": "MissedMutant",
+      "log": "log/src__backend_intel.rs_line_90_col_19.log",
+      "diff": "diff/src__backend_intel.rs_line_90_col_19.diff"
+    }
+  ],
+  "production_prefix_unchanged": true,
+  "initial_ledger_sha256": "d71dcff793a381722f7470c1e0893265618394d953fc9d04aa82066145d10a86",
+  "limits": [
+    "Raw frozen survivor totals must not be rewritten with these separate outcomes.",
+    "No production code/tolerance change, new original decks or new ngspice run.",
+    "Future optional-provider lane orchestration remains separate from the frozen config.",
+    "Owned gate coverage includes unit tests, branch/native/GPU kernel/main/vendor coverage unavailable.",
+    "No new standalone fuzz/Stryker campaign."
+  ],
+  "original_intel_sha256": "68169b6511194079eab4249b2584b0075fb000fe198992b879a25e27ad2cd2a5",
+  "raw83": "E:/Artifacts/Spice-intel-feature-replay-20261119T115640Z",
+  "seeds": {
+    "initial83": "2026111912",
+    "actual_intel_property": "2026111404",
+    "followup8": "2026111913",
+    "actual_intel_property_cases": 16
+  },
+  "coverage": {
+    "lines": {
+      "count": 116,
+      "covered": 54,
+      "percent": 46.55172413793103
+    },
+    "branches": null,
+    "dependency_sha256": {
+      "E:\\Artifacts\\Spice-backlog-findings-20261118T195605Z\\target\\mutants\\deps\\libspice_intel_host-532b7d420301e66b.rlib": "4527230c0285771efa5cdb8afce41ee33fcbdfd81587c486ae6fd9d68e929037",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\libcircuit_simulator.rlib": "41583c61bd7246b0fe8759666794b6314a095027cb8e09007faaf3fba7cdddee",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libnum_complex-1fb2eb415a884458.rlib": "9e62abf2b084bbae99f4d056df27edb1263018e1293cee5bddd6d52b74d7088a"
+    },
+    "source_sha256": "c8e4fa62b18301793561c4d02b7867e5fa483d0985a7dc6a88377a6d16f8142e",
+    "binary_sha256": "5d5ef27e1afb9a49f02c1747fabfb189389e80d014332db27f671bff5ad9cdee",
+    "scope": "Actual backend_intel.rs safe gate unit tests, module includes unit-test lines. Actual provider integration tested separately; other core/vendor/native/GPU/main uninstrumented."
+  },
+  "requirements": [
+    "MUT-OPTIONAL-PROFILE-001",
+    "INTEL-RELATIVE-BOUNDARY-001",
+    "INTEL-COMPLEX-ADMISSION-001"
+  ],
+  "commands": [
+    "Raw83/Run-IntelReplay.ps1 retains exact commands, features, provider/source and isolated paths.",
+    "Raw8/selector.txt contains exact original eight-name regex.",
+    "cargo clean --package circuit-simulator --profile mutants before separate eight-candidate cargo-mutants invocation.",
+    "cargo-mutants mutants --gitignore true --file src/backend_intel.rs --re <selector.txt> --features intel-opencl --profile mutants --jobs 1 --jobserver-tasks 2 --timeout 120 --build-timeout 240 --output <raw8>/mutations --cargo-arg=--lib --cargo-arg=--test --cargo-arg=intel_backend -- -- --test-threads=1",
+    "cargo test --profile mutants --lib --test mutation_suite --features mutation-suite",
+    "Raw8/Measure-Gate.ps1 records real-dependency LLVM compilation/export commands."
+  ],
+  "native_provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+  "ordinary": {
+    "integration": 693,
+    "unit": 52,
+    "ignored": 7,
+    "seed": "2026111914"
+  },
+  "base": "d786a58c2e986523d3c6fe26a6c911a9392c4fc3",
+  "invalids": [
+    {
+      "log": "E:\\Artifacts\\Spice-intel-feature-replay-20261119T115640Z\\mutations\\mutants.out\\log\\src__backend_intel.rs_line_13_col_5.log",
+      "name": "src/backend_intel.rs:13:5: replace gpu_error -> SimError with Default::default()",
+      "errors": [
+        "error[E0277]: the trait bound `error::SimError: Default` is not satisfied",
+        "   |     ^^^^^^^^^^^^^^^^^^ unsatisfied trait bound",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error; 1 warning emitted"
+      ],
+      "sha256": "109c090803eb6beb55ae1d3a80823893a6f530d21c3d86cb97c0100707d14752"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-intel-feature-replay-20261119T115640Z\\mutations\\mutants.out\\log\\src__backend_intel.rs_line_47_col_9.log",
+      "name": "src/backend_intel.rs:47:9: replace <impl LinearSolver for IntelOpenCl>::capabilities -> BackendCapabilities with Default::default()",
+      "errors": [
+        "error[E0277]: the trait bound `BackendCapabilities: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "sha256": "5a236f43621cbfaf403994c24aa74aa88311753b809645dd10c3bab7437b1d78"
+    }
+  ],
+  "profile": "mutants",
+  "initial_counts": {
+    "caught": 73,
+    "invalid": 2,
+    "timeout": 0,
+    "missed": 8
+  },
+  "integration_sha256": "4a1a3300ce9426cf79cfb141254294954ac135b796cabeb61828908664b4ebe8",
+  "review": "Simulated read-only review: no important issues; arithmetic and boundary fixture independently checked",
+  "followup_counts": {
+    "caught": 8,
+    "invalid": 0,
+    "timeout": 0,
+    "missed": 0
+  },
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "features": [
+    "intel-opencl"
+  ],
+  "strictdoc": {
+    "parser": "SDReader",
+    "uids": 644,
+    "documents": 120
+  },
+  "distinct_final": {
+    "caught": 81,
+    "invalid": 2,
+    "timeout": 0,
+    "missed": 0,
+    "candidates": 83
+  },
+  "current_intel_sha256": "c8e4fa62b18301793561c4d02b7867e5fa483d0985a7dc6a88377a6d16f8142e",
+  "frozen_source": "30a5a9aab91effadefb3f0860b408b1269eb7dff",
+  "followup_ledger_sha256": "d23a4af605da06d1c1fbf31fa1e2df7bd7734432ca74ce8f0e42107bce043b11",
+  "tool": "cargo-mutants27.1.0",
+  "raw8": "E:/Artifacts/Spice-intel-survivors-20261119T130253Z",
+  "intel_routine": {
+    "fp64_probe_seed": 18117,
+    "driver": "31.0.101.2141",
+    "scope": "actual real/complex solves, divider and accepted-grid RC, lifecycle and independent SpMV probe; no arbitrary deck/kernel coverage",
+    "tests": 15,
+    "exit_code": 0,
+    "device": "Intel UHD Graphics630"
+  },
+  "executed_binaries": [
+    {
+      "log": "E:\\Artifacts\\Spice-intel-survivors-20261119T130253Z\\full-tests.log",
+      "sha256": "df50b3ecb34cf7e48420e5e9eb746bd236c20a6bc93786ef47491bdb5affc6c7",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\circuit_simulator-ec16352c82678e55.exe"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-intel-survivors-20261119T130253Z\\full-tests.log",
+      "sha256": "39268593c287851da1a9eb22646746e76a3e0de1631bf7d536e9e2c47c86b275",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\mutation_suite-959d2566832d66d2.exe"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-intel-survivors-20261119T130253Z\\Spice-intel-circuit-tests-21e7bdfc4f5e4e428a0372e89f7ece98\\tests.log",
+      "sha256": "5ff15733227e6d0f5a9b6771359bc9e5dcb45b5545b740bbb0da6655df6adf9c",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\campaign_cli-55654e9809069435.exe"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-intel-survivors-20261119T130253Z\\Spice-intel-circuit-tests-21e7bdfc4f5e4e428a0372e89f7ece98\\tests.log",
+      "sha256": "6590c7f9d3cee264019f72d73225cf5e86ac64a42cbba3ba40295cc6b47fa151",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\intel_backend-b3b260dd2491da49.exe"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-intel-survivors-20261119T130253Z\\Spice-intel-circuit-tests-21e7bdfc4f5e4e428a0372e89f7ece98\\tests.log",
+      "sha256": "019d4453c5bd29ffbf9b5a33255ed557fc7e39e5eff2fa75f689eecdec064240",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\providers-b75df9ebae7099d3.exe"
+    }
+  ]
+}

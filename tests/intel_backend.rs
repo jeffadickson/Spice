@@ -14,6 +14,29 @@ fn actual_intel_circuit_contract() {
     let solver=BackendRegistry::reference().get("intel").unwrap();
     assert!(solver.capabilities().gpu);
     assert_eq!(solver.capabilities().placement,"gpu");
+    assert_eq!(solver.name(),"intel_opencl_viennacl_gmres_experimental");
+    assert_eq!(solver.capabilities().id,solver.name());
+    // One complex unknown embeds into TWO real unknowns. Existing two-node
+    // fixtures alone cannot distinguish 2*n from 2+n in the embedding size.
+    let scalar=Matrix{n:1,values:vec![0.5]};
+    let quadrature=Matrix{n:1,values:vec![0.25]};
+    let value=solver.solve_complex_rhs(&scalar,&quadrature,&[Complex64::new(1.75,-1.)]).unwrap();
+    assert_eq!(value.len(),1);
+    assert!((value[0]-Complex64::new(2.,-3.)).norm()<1e-10);
+    // Each malformed dimension/component must be rejected independently,
+    // before the host is asked to solve an incompatible embedded matrix.
+    let two=Matrix{n:2,values:vec![1.,0.,0.,1.]};
+    for (imag,rhs) in [
+        (&two,vec![Complex64::new(1.,0.)]),
+        (&quadrature,vec![]),
+        (&quadrature,vec![Complex64::new(f64::NAN,1.)]),
+        (&quadrature,vec![Complex64::new(1.,f64::NAN)]),
+        (&quadrature,vec![Complex64::new(f64::INFINITY,1.)]),
+        (&quadrature,vec![Complex64::new(1.,f64::NEG_INFINITY)]),
+    ] {
+        let result=solver.solve_complex_rhs(&scalar,imag,&rhs);
+        assert!(matches!(&result,Err(e) if e.code==circuit_simulator::error::ErrorCode::InvalidInput),"{rhs:?}: {result:?}");
+    }
     assert!((solver.solve(&Matrix{n:1,values:vec![0.001]},&[0.001]).unwrap()[0]-1.).abs()<1e-10);
     // A source constraint has a zero diagonal; SPD-only or unpivoted LU
     // cannot substitute for a general real/complex circuit solve.

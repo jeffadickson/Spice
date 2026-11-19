@@ -112,6 +112,31 @@ impl LinearSolver for IntelOpenCl {
 mod tests {
     use super::*;
     #[test]
+    fn represented_relative_error_boundary_is_inclusive() {
+        // First-row cancellation leaves h, with scale 1+h. This represented
+        // coefficient makes the quotient exactly the public 1e-10 bound.
+        // The two other rows are exact; increasing h by one ULP crosses it.
+        let h = 1.0000000001000001e-10_f64;
+        assert_eq!(h / (1. + h), 1e-10);
+        let matrix = |h| Matrix { n: 3, values: vec![0.5, -0.5, h, 0., 1., 0., 0., 0., 1.] };
+        assert!(verified(&matrix(h), &[0., 1., 1.], vec![1.; 3]).is_ok());
+        assert!(verified(&matrix(h.next_up()), &[0., 1., 1.], vec![1.; 3]).is_err());
+    }
+    #[test]
+    fn relative_residual_is_not_an_absolute_small_number_gate() {
+        // b=A*1 is exact, while x=1+/-1e-6 has a relative error far above
+        // the fixed 1e-10 bound. Scaling the equation must not turn that
+        // incorrect result into success merely because its residual is tiny.
+        for exponent in [-100, -30, -12, 0, 12, 30, 100] {
+            let scale = 10_f64.powi(exponent);
+            let a = Matrix { n: 1, values: vec![scale] };
+            assert_eq!(verified(&a, &[scale], vec![1.]).unwrap(), vec![1.]);
+            for value in [1. + 1e-6, 1. - 1e-6] {
+                assert_eq!(verified(&a, &[scale], vec![value]).unwrap_err().code, ErrorCode::NumericalFailure);
+            }
+        }
+    }
+    #[test]
     fn corrupt_and_nonfinite_gpu_results_are_rejected() {
         let a = Matrix {
             n: 2,

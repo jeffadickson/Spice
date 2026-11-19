@@ -1,4 +1,22 @@
-# Active epoch: sparse complex correction arithmetic and optional profiles
+# Active epoch: Intel-enabled profile qualification
+
+Read docs/intel-mutation-profile-results.md and its StrictDoc/evidence pair.
+Separate Intel83 lane at clean d786a58 enabled intel-opencl and actual provider:
+73caught,8missed,2E0277invalid,0timeouts, about55minutes. Original frozen campaign
+remains unchanged. Test hardening addresses relative/inclusive residual gates,
+stable backend identity, scalar complex embedding and independent malformed RHS
+or matrix dimensions/components. Production functions/tolerances unchanged.
+Raw83 E:/Artifacts/Spice-intel-feature-replay-20261119T115640Z; focused evidence
+E:/Artifacts/Spice-intel-survivors-20261119T130253Z. All8follow-up mutants caught;
+distinct Intel83 dispositions81caught/2invalid. Normal52unit+693integration pass,
+7ignored; enabled baseline56unit+1Intelcontract; finalIntel15+UHD630probe pass.
+StrictDoc120docs644UIDs; safe-gate coverage54/116includes tests, branches unavailable.
+Consult final evidence ledger for names/hashes/scopes. Never add
+the two enabled attempts together as distinct frozen candidates. Default-only
+coverage of disabled Intel code is not qualified; future runs need explicit
+optional-provider lanes. Native BSIM and remaining core survivors still need work.
+
+# Prior checkpoint: sparse complex correction arithmetic and optional profiles
 
 Read docs/faer-refinement-arithmetic-results.md and its StrictDoc/evidence pair.
 Base cd114d4; one exact coupled-complex unit test added, production unchanged.
