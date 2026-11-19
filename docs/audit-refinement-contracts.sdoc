@@ -1,0 +1,59 @@
+[DOCUMENT]
+TITLE: Worst-case audit evidence and refinement admission
+
+[REQUIREMENT]
+UID: AUDIT-WORST-EVIDENCE-001
+STATUS: Draft
+TITLE: Preserve the worst normalized evidence including unavailable failure metrics
+STATEMENT: >>>
+Audit merging shall retain the greatest absolute discrepancy divided by its
+effective tolerance per identifier. A failed check missing either discrepancy
+or tolerance shall outrank finite measured evidence. Distinct identifiers shall
+remain distinct. An equal severity shall retain the first evidence, including
+its discrepancy, tolerance and explanatory sample context.
+<<<
+COMMENT: >>>
+The deterministic first-on-tie rule records existing behavior as a draft
+requirement; it is not a new physics or global-accuracy guarantee.
+Verification: tests/audit_refinement_contracts.rs a_failed_check_missing_either_metric_outranks_finite_evidence,
+normalized_severity_matches_exact_rational_cross_products (128 cases, seed2026111907),
+equal_normalized_severity_retains_the_first_evidence_and_distinct_ids.
+The randomized oracle uses bounded exact integer cross products, not the
+floating-point division used by implementation. Implementation: AuditReport::merge_worst.
+<<<
+
+[REQUIREMENT]
+UID: AUDIT-REFINEMENT-ADMISSION-001
+STATUS: Draft
+TITLE: Validate refinement dimensions and selected axes independently
+STATEMENT: >>>
+Refinement comparison shall reject each nonfinite or nonpositive absolute or
+relative bound, unsupported unit, empty coarse input, non-finer fine input,
+negative or nonfinite sample time, non-increasing axis and unavailable/nonfinite
+selected signal. A malformed input shall return a typed error rather than a
+passing report or panic. Independent invalid inputs shall not require another
+invalid field to activate admission checks.
+<<<
+COMMENT: >>>
+Verification: refinement_bounds_units_and_empty_input_are_independent_admission_checks
+and malformed_shared_axes_and_selected_signals_are_refused. Matching negative
+or positive-infinite axis points in both runs prevent incidental later
+no-match failures from hiding deficient admission. Implementation: compare_refinement.
+<<<
+
+[REQUIREMENT]
+UID: AUDIT-REFINEMENT-SHARED-POINTS-001
+STATUS: Draft
+TITLE: Report observed normalized change at exactly shared points
+STATEMENT: >>>
+Refinement shall compare selected signals only at exactly shared coarse sample
+times and report the worst normalized difference with its physical bound,
+unit and sample context. Unmatched fine midpoints shall not be interpolated
+into that comparison. The result shall explicitly distinguish observed change
+from a global numerical error bound.
+<<<
+COMMENT: >>>
+Verification: refinement_selects_normalized_shared_point_change_without_global_accuracy_claims.
+The analytical fixture has ratios 1/0.2=5 and 2/1.1<2; an unmatched midpoint
+has value99. V and A units retain the same known selected-point calculation.
+<<<

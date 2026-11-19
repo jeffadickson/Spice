@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "base_commit": "ba03ed2f2b3c21b7c0ac55fa7b83f68fc7ab3b3e",
+  "production_source_changed": false,
+  "artifact_root": "E:/Artifacts/Spice-refinement-audit-20261119T070011Z",
+  "requirements": [
+    "AUDIT-WORST-EVIDENCE-001",
+    "AUDIT-REFINEMENT-ADMISSION-001",
+    "AUDIT-REFINEMENT-SHARED-POINTS-001"
+  ],
+  "hashes": [
+    {
+      "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03",
+      "file": "src/audit.rs"
+    },
+    {
+      "sha256": "51a471a16badb5cd3367da59a39dd5ac16d767507c872d5dff4fb4bb9d9f0352",
+      "file": "tests/audit_refinement_contracts.rs"
+    },
+    {
+      "sha256": "1c2c472ab496092f084b76e30520ca6e73dd2ad594d3c7a2cf18433a012a9fa5",
+      "file": "tests/mutation_suite.rs"
+    }
+  ],
+  "focused_executable": {
+    "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target/mutants/deps/audit_refinement_contracts-dedd00a1177ef4fb.exe",
+    "passed": 6,
+    "sha256": "111b9a6202b7f2776bea5cda742d2b4d268c8b42bb1030374037691f793162c5",
+    "profile": "mutants"
+  },
+  "property": {
+    "oracle": "bounded exact rational cross products, no floating division mirror",
+    "seed": 2026111907,
+    "limits": "bounded integer ratios, not all f64 inputs or formal proof",
+    "cases": 128
+  },
+  "full_tests": {
+    "integration": 684,
+    "ignored": 7,
+    "unit": 51,
+    "environment_seed": 2026111907
+  },
+  "mutations": {
+    "tested": 9,
+    "frozen_counterparts": 6,
+    "missed": 0,
+    "compiler_test_workers": 2,
+    "invalid": 0,
+    "tool": "cargo-mutants27.1.0",
+    "additional": 3,
+    "mutants_in_parallel": 1,
+    "cases": [
+      {
+        "outcome": "CaughtMutant",
+        "diff": "diff/src__audit.rs_line_617_col_76.diff",
+        "log": "log/src__audit.rs_line_617_col_76.log",
+        "name": "src/audit.rs:617:76: replace || with && in AuditReport::merge_worst::severity",
+        "diff_sha256": "11b14571798fb66a70cc905efd01d4a045df9d56df3523efa01fc5b1edf48208"
+      },
+      {
+        "outcome": "CaughtMutant",
+        "diff": "diff/src__audit.rs_line_622_col_47.diff",
+        "log": "log/src__audit.rs_line_622_col_47.log",
+        "name": "src/audit.rs:622:47: replace / with % in AuditReport::merge_worst::severity",
+        "diff_sha256": "f1137d9b44df3188a3cf626ba72a3c55fcce26ec6938fd86782983b927112ecb"
+      },
+      {
+        "outcome": "CaughtMutant",
+        "diff": "diff/src__audit.rs_line_622_col_47_001.diff",
+        "log": "log/src__audit.rs_line_622_col_47_001.log",
+        "name": "src/audit.rs:622:47: replace / with * in AuditReport::merge_worst::severity",
+        "diff_sha256": "809b871403af2031b5066d718b4489a5002a32908a3253e34508216f71b89f24"
+      },
+      {
+        "outcome": "CaughtMutant",
+        "diff": "diff/src__audit.rs_line_628_col_37.diff",
+        "log": "log/src__audit.rs_line_628_col_37.log",
+        "name": "src/audit.rs:628:37: replace > with == in AuditReport::merge_worst",
+        "diff_sha256": "95b149db7acbe47243b793baebe9865d60fe28c5131c7f77feebd705a90abf36"
+      },
+      {
+        "outcome": "CaughtMutant",
+        "diff": "diff/src__audit.rs_line_628_col_37_001.diff",
+        "log": "log/src__audit.rs_line_628_col_37_001.log",
+        "name": "src/audit.rs:628:37: replace > with < in AuditReport::merge_worst",
+        "diff_sha256": "68bb3efcf718986c899838c0963165b5b8432b0fe4a04c623480dd037694305d"
+      },
+      {
+        "outcome": "CaughtMutant",
+        "diff": "diff/src__audit.rs_line_628_col_37_002.diff",
+        "log": "log/src__audit.rs_line_628_col_37_002.log",
+        "name": "src/audit.rs:628:37: replace > with >= in AuditReport::merge_worst",
+        "diff_sha256": "4398c6eb9f9932d28bd228a836e99cfa3e8bd2c91b07fdb450456ff8444f64cc"
+      },
+      {
+        "outcome": "CaughtMutant",
+        "diff": "diff/src__audit.rs_line_654_col_9.diff",
+        "log": "log/src__audit.rs_line_654_col_9.log",
+        "name": "src/audit.rs:654:9: replace || with && in compare_refinement",
+        "diff_sha256": "ceda19ace97b79b709a7de36768f7b04bf2b1d79d7c12c850c08e1f3c14ad515"
+      },
+      {
+        "outcome": "CaughtMutant",
+        "diff": "diff/src__audit.rs_line_650_col_9.diff",
+        "log": "log/src__audit.rs_line_650_col_9.log",
+        "name": "src/audit.rs:650:9: replace || with && in compare_refinement",
+        "diff_sha256": "412033bdbebd0d188642f7cff223be27f3f2cca7324d69d147466cf8830bc2fa"
+      },
+      {
+        "outcome": "CaughtMutant",
+        "diff": "diff/src__audit.rs_line_663_col_17.diff",
+        "log": "log/src__audit.rs_line_663_col_17.log",
+        "name": "src/audit.rs:663:17: replace || with && in compare_refinement",
+        "diff_sha256": "cc1e03226681bfa9fb3c1cced300cc6af66c4a219128c9e1b337fe7812aace80"
+      }
+    ],
+    "timeouts": 0,
+    "profile": "mutants",
+    "caught": 9
+  },
+  "mapping": [
+    {
+      "raw_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T054907Z-38ae5013\\rust\\mutants.out\\diff\\src__audit.rs_line_607_col_76.diff",
+      "frozen_name": "src/audit.rs:607:76: replace || with && in AuditReport::merge_worst::severity",
+      "frozen_outcome": "MissedMutant",
+      "raw_log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T054907Z-38ae5013\\rust\\mutants.out\\log\\src__audit.rs_line_607_col_76.log",
+      "current_name": "src/audit.rs:617:76: replace || with && in AuditReport::merge_worst::severity",
+      "raw_diff_sha256": "7ab2f1c7a51f9f96cd5202a6cab98c809c95fadd9218332c094c6723930a9640"
+    },
+    {
+      "raw_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T061552Z-283ebd06\\rust\\mutants.out\\diff\\src__audit.rs_line_612_col_47_001.diff",
+      "frozen_name": "src/audit.rs:612:47: replace / with * in AuditReport::merge_worst::severity",
+      "frozen_outcome": "MissedMutant",
+      "raw_log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T061552Z-283ebd06\\rust\\mutants.out\\log\\src__audit.rs_line_612_col_47_001.log",
+      "current_name": "src/audit.rs:622:47: replace / with * in AuditReport::merge_worst::severity",
+      "raw_diff_sha256": "f9373b0ec4cb08e3508b3a329007e5af77c77d57e0e46e034fe45767c034d41c"
+    },
+    {
+      "raw_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T061552Z-283ebd06\\rust\\mutants.out\\diff\\src__audit.rs_line_618_col_37_002.diff",
+      "frozen_name": "src/audit.rs:618:37: replace > with >= in AuditReport::merge_worst",
+      "frozen_outcome": "MissedMutant",
+      "raw_log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T061552Z-283ebd06\\rust\\mutants.out\\log\\src__audit.rs_line_618_col_37_002.log",
+      "current_name": "src/audit.rs:628:37: replace > with >= in AuditReport::merge_worst",
+      "raw_diff_sha256": "7849cdd0412313c06e28a35bb74485337bca6442bce084de18f1bf2bf2986beb"
+    },
+    {
+      "raw_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T061552Z-283ebd06\\rust\\mutants.out\\diff\\src__audit.rs_line_640_col_9.diff",
+      "frozen_name": "src/audit.rs:640:9: replace || with && in compare_refinement",
+      "frozen_outcome": "MissedMutant",
+      "raw_log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T061552Z-283ebd06\\rust\\mutants.out\\log\\src__audit.rs_line_640_col_9.log",
+      "current_name": "src/audit.rs:650:9: replace || with && in compare_refinement",
+      "raw_diff_sha256": "27b2674fa946dd6d84ca3289e98c17652842ffee3d323726e754631d47ab1b58"
+    },
+    {
+      "raw_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T061552Z-283ebd06\\rust\\mutants.out\\diff\\src__audit.rs_line_644_col_9.diff",
+      "frozen_name": "src/audit.rs:644:9: replace || with && in compare_refinement",
+      "frozen_outcome": "MissedMutant",
+      "raw_log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T061552Z-283ebd06\\rust\\mutants.out\\log\\src__audit.rs_line_644_col_9.log",
+      "current_name": "src/audit.rs:654:9: replace || with && in compare_refinement",
+      "raw_diff_sha256": "6e61e5a8de0cfff701563431119cf67a83d7811e4ae6eecacde719b9d507685d"
+    },
+    {
+      "raw_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T061552Z-283ebd06\\rust\\mutants.out\\diff\\src__audit.rs_line_653_col_17.diff",
+      "frozen_name": "src/audit.rs:653:17: replace || with && in compare_refinement",
+      "frozen_outcome": "MissedMutant",
+      "raw_log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T061552Z-283ebd06\\rust\\mutants.out\\log\\src__audit.rs_line_653_col_17.log",
+      "current_name": "src/audit.rs:663:17: replace || with && in compare_refinement",
+      "raw_diff_sha256": "c96dba8cf8ea3cdc028815f436b6c0023be1c6f98102aa966a807b915fc36c2c"
+    }
+  ],
+  "coverage": {
+    "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+    "file": {
+      "lines": {
+        "count": 586,
+        "covered": 89,
+        "percent": 15.187713310580206
+      },
+      "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03",
+      "file": "src/audit.rs"
+    },
+    "excluded": [
+      "test source",
+      "vendor/native models",
+      "main"
+    ],
+    "branches": null
+  },
+  "strictdoc": {
+    "unique_uids": 635,
+    "documents": 116,
+    "version": "0.31.0"
+  },
+  "intel": {
+    "passed_tests": 15,
+    "probe": "Intel UHD630 FP64 SpMV; seed18117",
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955"
+  },
+  "recovery": {
+    "observer_seconds": 86400,
+    "observer_pid": 68840,
+    "error": "Windows Access denied5 removing epoch framework/rust-target/mutants/circuit-simulator.exe",
+    "minutes": 1439,
+    "observed_progress_beyond_recovered_count": true,
+    "invocation": "E:/Artifacts/Spice-mutation-epoch-30a5a9a-20261118T203254Z/invocation-20261119T065737Z",
+    "worker_pid": 97824,
+    "exclusive_read_probe": "succeeded before resume; does not establish earlier lock owner or permanent fix",
+    "root_cause_resolved": false,
+    "deadline_utc": "2026-11-20T06:57:07.9688126Z",
+    "immutable_configuration_sha256": "f22206deb98fb9cc6b4f349b64b442660473697ccf6ad8540c3721c45b705e39",
+    "source_clean": true,
+    "source_commit": "30a5a9aab91effadefb3f0860b408b1269eb7dff",
+    "failed_at_utc": "2026-11-19T06:40:06Z",
+    "campaign_identity": "3c4cf42f70063c253fa9ff6819ba81304333951c0c39dbb12a02b39d8cade412",
+    "failed_stage": "E:/Artifacts/Spice-mutation-epoch-30a5a9a-20261118T203254Z/framework/20261119T063915Z-e2ded23d",
+    "classification": "unmutated Cargo bootstrap I/O failure; zero new native candidate outcomes",
+    "prior_completed": 768,
+    "worker_start_utc": "2026-11-19T06:58:06.4036526Z"
+  },
+  "review": "No important findings; Draft first-on-tie requirement records existing strict comparison behavior",
+  "limits": [
+    "No fresh standalone fuzz, Stryker or ngspice run for this test-only change",
+    "No overall or measured branch coverage",
+    "No new original decks, numerical solver/model changes, performance or formal/full SPICE/GPU claims",
+    "API128 error precedence and Windows executable-removal cause remain open",
+    "Current targeted results do not rewrite frozen4411 outcomes"
+  ]
+}

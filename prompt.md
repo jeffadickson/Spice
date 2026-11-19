@@ -1,4 +1,26 @@
-# Active epoch: stable junction audit and boundary dispositions
+# Active epoch: resumed campaign and refinement evidence contracts
+
+Read docs/audit-refinement-results.md, docs/audit-refinement-contracts.sdoc and
+evidence/audit-refinement-results.json. Baseba03ed2, no production source changes.
+Nine current mutants caught including6new frozen counterparts: missing failure
+metrics, normalized severity, stable first-on-tie and independent refinement
+admission. Six tests/128Proptestcases seed2026111907;51unit684integrationpass,
+7ignored. Intel15+UHD630 SpMVpass; StrictDoc116docs635UIDs. Scoped audit89/586lines;
+branch/test/vendor/native-model/main unmeasured. No new ngspice/solver/deck claim.
+Original worker64316failed at06:40UTC after768 cases due AccessDenied removing
+framework/rust-target/mutants/circuit-simulator.exe during unmutated build.
+No candidate invalids in that failed stage. Exact Windows sharing cause remains
+open; exclusive read succeeded later. No frozen helper/config/source edits.
+Same epoch resumed under pinned adapter and observer: worker97824 start
+2026-11-19T06:58:06.4036526Z, observer68840; progress beyond768 verified. New
+session deadline2026-11-20T06:57:07.9688126Z,1439minutes/86400souter observer.
+Original Start-FullEpoch and failed summary retained in epoch invocation
+invocation-20261119T065737Z. Frozen4411 ID/config/inventory/source unchanged.
+Raw triage E:/Artifacts/Spice-refinement-audit-20261119T070011Z. Native replays
+and qualification caches remain separate from live epoch. Main/CI preserved.
+API128 multiply-invalid error precedence remains open alongside sharing I/O.
+
+# Prior checkpoint: stable junction audit and boundary dispositions
 
 Read docs/audit-charge-boundaries-results.md, docs/audit-charge-boundaries.sdoc
 and evidence/audit-charge-boundaries-results.json. Basefdc34ff. Three actual
