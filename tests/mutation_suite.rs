@@ -11,6 +11,8 @@ mod suite_accepted_time_grid;
 mod suite_adaptive;
 #[path = "analyses.rs"]
 mod suite_analyses;
+#[path = "audit_reference_contracts.rs"]
+mod suite_audit_reference_contracts;
 #[path = "analysis_audits.rs"]
 mod suite_analysis_audits;
 #[path = "behavioral_resistor.rs"]

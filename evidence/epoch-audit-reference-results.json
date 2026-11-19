@@ -1,0 +1,458 @@
+{
+  "source_base": "7af85bc2bc4de22f8f33c8de919df6088a681823",
+  "production_changed": false,
+  "artifact_root": "E:/Artifacts/Spice-epoch-triage-20261119T025238Z",
+  "selected": 47,
+  "attempts": 49,
+  "final_unique_caught": 25,
+  "reviewed_public_equivalents": 22,
+  "caught_names": [
+    "src/audit.rs:201:86: replace - with + in dc_currents",
+    "src/audit.rs:287:35: replace != with == in kcl_checks",
+    "src/audit.rs:314:19: replace += with *= in kcl_checks",
+    "src/audit.rs:362:17: replace > with == in reference_expression::value",
+    "src/audit.rs:362:17: replace > with >= in reference_expression::value",
+    "src/audit.rs:365:46: replace + with - in reference_expression::value",
+    "src/audit.rs:366:46: replace + with - in reference_expression::value",
+    "src/audit.rs:367:46: replace + with - in reference_expression::value",
+    "src/audit.rs:368:47: replace + with - in reference_expression::value",
+    "src/audit.rs:369:47: replace + with - in reference_expression::value",
+    "src/audit.rs:370:48: replace + with - in reference_expression::value",
+    "src/audit.rs:371:47: replace + with - in reference_expression::value",
+    "src/audit.rs:372:51: replace + with - in reference_expression::value",
+    "src/audit.rs:373:46: replace + with - in reference_expression::value",
+    "src/audit.rs:374:47: replace + with - in reference_expression::value",
+    "src/audit.rs:375:47: replace + with - in reference_expression::value",
+    "src/audit.rs:379:62: replace * with + in reference_expression::value",
+    "src/audit.rs:379:62: replace * with / in reference_expression::value",
+    "src/audit.rs:379:53: replace + with - in reference_expression::value",
+    "src/audit.rs:379:82: replace + with - in reference_expression::value",
+    "src/audit.rs:380:60: replace / with % in reference_expression::value",
+    "src/audit.rs:380:60: replace / with * in reference_expression::value",
+    "src/audit.rs:380:51: replace + with - in reference_expression::value",
+    "src/audit.rs:380:80: replace + with - in reference_expression::value",
+    "src/audit.rs:232:79: replace - with + in dc_currents"
+  ],
+  "equivalents": [
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T015914Z-d828cde2\\rust\\mutants.out\\diff\\src__audit.rs_line_362_col_20.diff",
+      "rule": "guard_relaxed",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:362:20: replace || with && in reference_expression::value",
+      "sha256": "b8242f243d0d14fad10bc4916850ce837fa1905ef397a1e954e1ef47aa2c7df2",
+      "mutated_line": [
+        "+        if depth>64&& /* ~ changed by cargo-mutants ~ */*left==0{return Err(SimError::invalid(\"audit expression budget exceeded\"));}"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T015914Z-d828cde2\\rust\\mutants.out\\diff\\src__audit.rs_line_363_col_14.diff",
+      "rule": "remaining_increases_at_most2048",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:363:14: replace -= with += in reference_expression::value",
+      "sha256": "ea60b0101120bf918d74ae998e7ebafe390a4376b4390a6dc67b238ff3df9a4c",
+      "mutated_line": [
+        "+        *left+= /* ~ changed by cargo-mutants ~ */1;"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T015914Z-d828cde2\\rust\\mutants.out\\diff\\src__audit.rs_line_363_col_14_001.diff",
+      "rule": "remaining_stays1024",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:363:14: replace -= with /= in reference_expression::value",
+      "sha256": "58735cd1080e812b1782b4b871e11e9a93a9db32d84ab5f5c95579a417961f5c",
+      "mutated_line": [
+        "+        *left/= /* ~ changed by cargo-mutants ~ */1;"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T015914Z-d828cde2\\rust\\mutants.out\\diff\\src__audit.rs_line_365_col_46_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:365:46: replace + with * in reference_expression::value",
+      "sha256": "e51356b849bb6535f4f3ded9ae7077dedaf6d9f012ae3d10381a1fd89fe46378",
+      "mutated_line": [
+        "+            Expr::Sin(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.sin(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T015914Z-d828cde2\\rust\\mutants.out\\diff\\src__audit.rs_line_366_col_46_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:366:46: replace + with * in reference_expression::value",
+      "sha256": "dcb8eda416b5eb40be3b4ddcd1e1e1bc72deb6e98007457b4b5d03413b2b0ac2",
+      "mutated_line": [
+        "+            Expr::Cos(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.cos(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T015914Z-d828cde2\\rust\\mutants.out\\diff\\src__audit.rs_line_367_col_46_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:367:46: replace + with * in reference_expression::value",
+      "sha256": "c3b2b9b4dbdc41621d1814deb2b498decef5a59b24a147cbe2ba61fd63073703",
+      "mutated_line": [
+        "+            Expr::Tan(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.tan(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T015914Z-d828cde2\\rust\\mutants.out\\diff\\src__audit.rs_line_368_col_47_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:368:47: replace + with * in reference_expression::value",
+      "sha256": "226772c03eaecc39946d387df4194887f4bab49a3974df15f66846caa3147374",
+      "mutated_line": [
+        "+            Expr::Atan(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.atan(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T015914Z-d828cde2\\rust\\mutants.out\\diff\\src__audit.rs_line_369_col_47_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:369:47: replace + with * in reference_expression::value",
+      "sha256": "e7cffb823a69b1af4816f28b3406b83053f9d86c41dd716f03daa502cb83cd6b",
+      "mutated_line": [
+        "+            Expr::Sqrt(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.sqrt(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_370_col_48_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:370:48: replace + with * in reference_expression::value",
+      "sha256": "a88b1e9dce3281aec03d5d9f5f633429becac3708eb5fc96845c6b763f0712d8",
+      "mutated_line": [
+        "+            Expr::Floor(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.floor(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_371_col_47_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:371:47: replace + with * in reference_expression::value",
+      "sha256": "9f2ef934c0716f7677f6870a5db87cc68642c080648214ddfc088981bfebefd9",
+      "mutated_line": [
+        "+            Expr::Ceil(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.ceil(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_372_col_51_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:372:51: replace + with * in reference_expression::value",
+      "sha256": "bcf7a3da405b1b16fa8ba0e7029243e8e04a865b37e071643dcfab53cfc1c2eb",
+      "mutated_line": [
+        "+            Expr::Truncate(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.trunc(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_373_col_46_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:373:46: replace + with * in reference_expression::value",
+      "sha256": "b89f526fc62277c56140788ce9618aa1238ab29e5c039d5a9b24202ee1941115",
+      "mutated_line": [
+        "+            Expr::Abs(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.abs(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_374_col_47_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:374:47: replace + with * in reference_expression::value",
+      "sha256": "a30f6df5cfc054642f44a5ad4b0bc706be9e74e544bf41c211860c2b21e2f561",
+      "mutated_line": [
+        "+            Expr::Asin(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.asin(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_375_col_47_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:375:47: replace + with * in reference_expression::value",
+      "sha256": "a3dcdd716f3cf83259f295af2cf4496efde7abbd25caae2c140a223f416838b7",
+      "mutated_line": [
+        "+            Expr::Acos(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.acos(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_378_col_48_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:378:48: replace + with * in reference_expression::value",
+      "sha256": "494e6b3f0a62de5ceb67e260e1aa6fd4d1b285aec6adb8c93c969a9cb5795a59",
+      "mutated_line": [
+        "+            Expr::Add(a,b)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?+value(b,input,depth+1,left)?,"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_378_col_77_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:378:77: replace + with * in reference_expression::value",
+      "sha256": "a57a92c008e2ffa7d09e6ac162278100f6c77324583167a2aea0b7b781cee80b",
+      "mutated_line": [
+        "+            Expr::Add(a,b)=>value(a,input,depth+1,left)?+value(b,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?,"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_379_col_53_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:379:53: replace + with * in reference_expression::value",
+      "sha256": "c50e5157da681cb5fa11072aca461a58d1b7e1042d0792aa8a328417b6eb6134",
+      "mutated_line": [
+        "+            Expr::Multiply(a,b)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?*value(b,input,depth+1,left)?,"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_379_col_82_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:379:82: replace + with * in reference_expression::value",
+      "sha256": "7f1ab2c46280691e9217763dfba4eca3b6f6546b8b47e9dae1e70d7fcb88f27d",
+      "mutated_line": [
+        "+            Expr::Multiply(a,b)=>value(a,input,depth+1,left)?*value(b,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?,"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_380_col_51_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:380:51: replace + with * in reference_expression::value",
+      "sha256": "5fd441b7aa36f21f436e9f133a4fcd519c1524f8532c365ba2fcf4ec1d850f14",
+      "mutated_line": [
+        "+            Expr::Divide(a,b)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?/value(b,input,depth+1,left)?,"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_380_col_80_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:380:80: replace + with * in reference_expression::value",
+      "sha256": "a033914596bae0e83f9e51755f5762f306f62a92970f6ff990f40f49a7c7afcb",
+      "mutated_line": [
+        "+            Expr::Divide(a,b)=>value(a,input,depth+1,left)?/value(b,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?,"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T022604Z-db45d7c4\\rust\\mutants.out\\diff\\src__audit.rs_line_381_col_46_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:381:46: replace + with * in reference_expression::value",
+      "sha256": "586bbe77eca6b257b0d6cd0c09780fcab27482999eb408120d9469da88d91585",
+      "mutated_line": [
+        "+            Expr::Exp(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.exp(),"
+      ]
+    },
+    {
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T024922Z-572f35a5\\rust\\mutants.out\\diff\\src__audit.rs_line_382_col_46_001.diff",
+      "rule": "tracked_depth_not_greater_than_actual",
+      "disposition": "reviewed_current_public_equivalence",
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:382:46: replace + with * in reference_expression::value",
+      "sha256": "044ff103bc3bd41a6a9d4178bbb4ce78ff2521437b30ff62be6683f1b09d88c6",
+      "mutated_line": [
+        "+            Expr::Log(a)=>value(a,input,depth* /* ~ changed by cargo-mutants ~ */1,left)?.ln(),"
+      ]
+    }
+  ],
+  "stages": [
+    {
+      "root": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261119T025750Z-f1728e0a",
+      "snapshot_test_sha256": "3b0f6ddc119393465424de8a6f79edd931d9d5c73352b744d47545f9688df396",
+      "native": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 2,
+        "candidates": 47,
+        "killed": 24,
+        "survived": 22,
+        "timed_out": 0,
+        "invalid": 1,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "81690282d9626879327af1816e3a93630f69035685d39d2d203ac17c03177496",
+        "log_sha256": "8fedb3692118de47a95855cb01240bf4a993de987096e81ea07c2de755267689"
+      },
+      "test_targets": "audit_reference_contracts,consistency"
+    },
+    {
+      "root": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261119T032354Z-829d130d",
+      "snapshot_test_sha256": "3b0f6ddc119393465424de8a6f79edd931d9d5c73352b744d47545f9688df396",
+      "native": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 2,
+        "candidates": 1,
+        "killed": 0,
+        "survived": 1,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "e398edb0a15d60f82e12d69064b4d48e9cfff6b583c57adb8f218cbfab298eee",
+        "log_sha256": "9c19e471b94aa784cdb695adf0299e9125d20b99284101ab12c8a6cc69c1bf13"
+      },
+      "test_targets": "audit_reference_contracts"
+    },
+    {
+      "root": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261119T032729Z-838455e5",
+      "snapshot_test_sha256": "3d5cb2d974c3b40bcf83931b9e397607e78bc5c5772996d4f7c50fa18c03495d",
+      "native": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "b3294860801f365dc71a23fa186a1d7744dd9148b32b51c7b9722a1d658d027e",
+        "log_sha256": "cf173511f7f0a822a171f667478ee19255612365f1e7a62d637d92d94046ca4c"
+      },
+      "test_targets": "audit_reference_contracts"
+    }
+  ],
+  "profile": "mutants",
+  "features": [],
+  "tool": "cargo-mutants27.1.0",
+  "workers": 2,
+  "test_workers": 2,
+  "seed": "2026111903",
+  "frozen_seed": "2026111901",
+  "tests": {
+    "intel": 15,
+    "intel_spmv": "passed",
+    "ignored": 6,
+    "unit": 51,
+    "integration": 667,
+    "focused": 5
+  },
+  "ignored_scope": [
+    "three native BSIM/SOI tests",
+    "two ngspice-oracle tests",
+    "separately launched endurance batch"
+  ],
+  "coverage": [
+    {
+      "lines": {
+        "count": 579,
+        "covered": 246,
+        "percent": 42.487046632124354
+      },
+      "sha256": "8e953af44a4dbaef84ac6457d5b1617ef4b01ae4296fb242b2915425992d7258",
+      "file": "src/audit.rs"
+    }
+  ],
+  "branches": null,
+  "coverage_seed": "88320261103",
+  "strictdoc": {
+    "documents": 112,
+    "unique_uids": 623,
+    "version": "0.31.0",
+    "parser": "StrictDoc SDReader",
+    "success": true
+  },
+  "review": "Independent read-only review verified every22diff hash/changed line, public call-path validation dominance, numerical fixtures and the final scaledCCCS fixture; no important issues",
+  "io_failure": {
+    "operation": "remove circuit-simulator.exe",
+    "live_owned_runner_found_at_review": false,
+    "diagnostic": "Access is denied. (os error5)",
+    "cause": "unresolved beyond filesystem operation",
+    "native_category": "Unviable",
+    "permanent_fix_claimed": false
+  },
+  "replay_command": {
+    "arguments": [
+      "--tool",
+      "rust",
+      "--minutes",
+      "35",
+      "--workers",
+      "2",
+      "--test-workers",
+      "2",
+      "--rust-profile",
+      "mutants",
+      "--rust-test",
+      "audit_reference_contracts,consistency",
+      "--rust-file",
+      "src/audit.rs",
+      "--rust-names-file",
+      "E:\\Artifacts\\Spice-epoch-triage-20261119T025238Z\\selected-names.json"
+    ],
+    "executable": "dotnet",
+    "helper": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/helper-final/build/bin/release/FrameworkMutations.dll",
+    "working_directory": "J:/dev/spice-deck-next"
+  },
+  "source_hashes": [
+    {
+      "sha256": "8e953af44a4dbaef84ac6457d5b1617ef4b01ae4296fb242b2915425992d7258",
+      "file": "src/audit.rs"
+    },
+    {
+      "sha256": "455182e52eb7be9d1dbd6c69bdadc2128fb4b8fcb53a27c787eb29232e8a5925",
+      "file": "src/circuit.rs"
+    },
+    {
+      "sha256": "0157f0a3153adc51c184fbd0e6ce2409fc3bf83267327e9f3c4a4d3f434aaa14",
+      "file": "src/expression.rs"
+    },
+    {
+      "sha256": "3d5cb2d974c3b40bcf83931b9e397607e78bc5c5772996d4f7c50fa18c03495d",
+      "file": "tests/audit_reference_contracts.rs"
+    },
+    {
+      "sha256": "4821ab7f32de7cf238d80e8fa3da707dc1d22f520f63d2d71ec10257872fd442",
+      "file": "tests/mutation_suite.rs"
+    }
+  ],
+  "limits": [
+    "Source-reviewed current public equivalence, not formal proof, future-call guarantee or a blanket filter.",
+    "Raw native Missed/Unviable outcomes preserved; later targeted kills do not retest frozen4411.",
+    "Test/vendor/main source outside scoped library coverage; stable branch coverage unavailable.",
+    "No fresh standalone fuzz engine, Stryker or ngspice comparison; existing property tests ran in full suite.",
+    "Ignored native/oracle/endurance evidence not called passing.",
+    "Intel routine gates are not arbitrary GPU-deck qualification.",
+    "Initial Windows I/O failure and compiled-but-survived retry retained separately."
+  ],
+  "intel_provider": {
+    "exit_code": 0,
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "tests_log": "E:\\Artifacts\\Spice-epoch-triage-20261119T025238Z\\Spice-intel-circuit-tests-f8da5156c085478c992e067e634be231\\tests.log",
+    "scope": "Actual Intel real/complex solves, known-solution properties, full divider circuit and bounded CLI lifecycle; not arbitrary deck qualification"
+  }
+}

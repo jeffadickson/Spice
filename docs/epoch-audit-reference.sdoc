@@ -1,0 +1,73 @@
+[DOCUMENT]
+TITLE: Independent reference-expression and control audits
+
+[REQUIREMENT]
+UID: EPOCH-AUDIT-REFERENCE-001
+STATUS: Draft
+TITLE: Value-only reference expression reconstruction
+STATEMENT: >>>
+The physical audit shall reconstruct supported expression values without using
+the production AD evaluator or Jacobian. Manufactured load states shall balance
+for every supported operator against independent analytical values, and fail
+when the supplying current is perturbed. Invalid domains shall not become zero
+values or passing physical checks.
+<<<
+COMMENT: >>>
+Verification: audit_reference_contracts every_reference_operator_and_nonzero_control_terminal_obeys_independent_values
+and reference_domains_fail_without_substituting_a_zero_or_passing_audit.
+Implementation: audit.rs reference_expression, dc_currents and constraint_checks.
+Finite operator cases do not establish universal floating-point accuracy.
+<<<
+
+[REQUIREMENT]
+UID: EPOCH-AUDIT-REFERENCE-LIMITS-001
+STATUS: Draft
+TITLE: Preserve public expression structure limits
+STATEMENT: >>>
+Public audit entry points shall validate expression structure before reference
+evaluation. An expression at depth 64 or exactly 1024 nodes shall remain
+admissible when other inputs are valid. Depth 65 or 1025 nodes shall be rejected
+as InvalidInput before independent reconstruction.
+<<<
+COMMENT: >>>
+Verification: public_validation_and_reference_evaluation_agree_at_exact_structure_limits.
+Source path: audit public entry -> validate_state -> Circuit::validate -> Expr::validate.
+Configured source overrides preserve expression trees. Counter mutations in a
+private reference traversal may be redundant only under this current validation
+invariant; retain original raw outcomes and inspect each diff. Do not remove
+defensive guards or add broad mutation filters on the basis of that observation.
+This source-path assessment is not a formal proof or a future API guarantee.
+<<<
+
+[REQUIREMENT]
+UID: EPOCH-AUDIT-CONTROL-001
+STATUS: Draft
+TITLE: Signed control difference is independent of common-mode voltage
+STATEMENT: >>>
+Behavioral resistance, VCCS and voltage-scaled CCCS physical audits shall use V(cp)-V(cn), including
+nonzero negative control terminals. Translating both control potentials by the
+same offset shall preserve their load currents and physical audit outcomes.
+<<<
+COMMENT: >>>
+Verification: every_reference_operator_and_nonzero_control_terminal_obeys_independent_values,
+18 expression forms and three control offsets with analytical source currents.
+Voltage-scaled CCCS verification uses voltage_scaled_cccs_uses_signed_differential_control_and_sensed_branch_current
+with a separately loaded sensing source and known signed branch current.
+These finite states do not qualify arbitrary nonlinear circuit convergence.
+<<<
+
+[REQUIREMENT]
+UID: EPOCH-AUDIT-GMIN-001
+STATUS: Draft
+TITLE: Add explicit shunt current to signed physical currents
+STATEMENT: >>>
+For an explicitly regularized audit, each node shunt current Gmin*V(node) shall
+be added to its signed physical current sum. A current state balancing the
+regularized circuit shall pass, while omitting the nonzero shunt supply current
+shall fail. Non-unit valid Gmin values shall obey the same rule.
+<<<
+COMMENT: >>>
+Verification: explicit_nonunit_gmin_is_added_to_physical_node_currents.
+Manufactured 2 V source and 2 ohm load use three explicit shunt conductances.
+Regularized physics is not evidence for the unregularized circuit.
+<<<

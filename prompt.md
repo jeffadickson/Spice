@@ -1,3 +1,22 @@
+# Active epoch: reference expressions and signed controls
+
+Read docs/epoch-audit-reference-results.md, docs/epoch-audit-reference.sdoc and
+ evidence/epoch-audit-reference-results.json. Base7af85bc, production unchanged.
+47named counterparts now dispositioned:25caught after targeted tests;22reviewed
+public-boundary equivalents (guard1,counters2,depth-bookkeeping19). Exact frozen
+diffs/hashes retained; no filter or defensive-guard removal. All public reference
+callers validate immutable ASTs first; re-review if callers/limits/overrides change.
+Depth64/node1024 remain valid;65/1025 refused. New fixtures cover18operator forms,
+nonzero control terminals, nonunitGmin and separately loaded voltage-scaledCCCS.
+Audit232 is VoltageScaledCccs, NOT plain VCCS. Stage47=24caught22missed1Windows
+exe-removal AccessDenied. Retry compiled but missed until a nonzero sensing-current
+fixture was added; final exact replay caught it. Preserve all49attempts/three stages.
+Windows denial root cause remains unresolved; pinned frozen helper/config stay fixed.
+Final51unit667integration pass/6ignored; Intel15+SpMVpass; StrictDoc112docs623IDs.
+Scoped audit246/579lines; branches/testsource/vendor/main unmeasured. Skips are
+3nativeBSIM/SOI,2ngspiceoracle,1separateendurancebatch, not passing evidence.
+Raw E:/Artifacts/Spice-epoch-triage-20261119T025238Z. Review remaining native audit
+and newly arriving guards next; issue63 remains the one epoch results issue.
 # Active epoch: independent audit admission and charge checkpoint
 
 Read docs/epoch-audit-admission-results.md, docs/epoch-audit-admission.sdoc
