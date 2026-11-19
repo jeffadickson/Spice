@@ -1,0 +1,1022 @@
+{
+  "base_commit": "ef0087013a5da713234ab493a2ecc9554d7b015b",
+  "artifact_root": "E:/Artifacts/Spice-dc-validation-20261119T190322Z",
+  "production_changed": false,
+  "source_sha256": {
+    "tests/mutation_suite.rs": "9ff6a18722702d046244c5f403cb061fda86cf7a3384a6fe3391a2047a855614",
+    "src/dc.rs": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+    "tests/dc_validation_contracts.rs": "1b91f2783b32f7ee67e7af10bfd83e0a3001ab03ed72f36a76f05599c91410bd"
+  },
+  "executable_sha256": {
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\providers-b75df9ebae7099d3.exe": "748591ed26564d4d99595d97a1ac59a1d084a4235be195fdea5b9acea97cef63",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\intel_backend-b3b260dd2491da49.exe": "4b0d84cfa901e25a14cb899110a3b3d9898c4a23a125a6354dd30935f8ea56a4",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\campaign_cli-55654e9809069435.exe": "872ac1c58ffe5aa183c16ccce09ba2f4d30ab92a03567edeefe5598d1782faf0",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\circuit_simulator-ec16352c82678e55.exe": "cae0ff397835b862849eddad2cbee78a1220583a991a2820cbe7e4fa020d3b55",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\mutation_suite-959d2566832d66d2.exe": "ebf121a7378f3411a199f2f5a665bccbe0b7e45a8e7d6eda612f7ad46403c566",
+    "E:/Artifacts/Spice-dc-validation-20261119T190322Z/coverage/instrumented-tests.exe": "f8e2a0c93a6f4721b2b7448769f09e0f52c9b49cd57fecbef010f2a709d0072c"
+  },
+  "source_correspondence": {
+    "current": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+    "snapshot_sha256": "1b91f2783b32f7ee67e7af10bfd83e0a3001ab03ed72f36a76f05599c91410bd",
+    "frozen": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+    "final_test_sha256": "1b91f2783b32f7ee67e7af10bfd83e0a3001ab03ed72f36a76f05599c91410bd"
+  },
+  "frozen_integrity": {
+    "observed_utc": "2026-11-19T11:06:12.7115156-08:00",
+    "frozen_commit": "30a5a9aab91effadefb3f0860b408b1269eb7dff",
+    "hashes": {
+      "E:/Artifacts/Spice-mutation-epoch-30a5a9a-20261118T203254Z/inventory.json": "508d6d350c84f6ae1ca832fdb97b36ae0f7292fb1f8d3005a61c3204583b8f52",
+      "E:/Artifacts/Spice-mutation-epoch-30a5a9a-20261118T203254Z/config.json": "f22206deb98fb9cc6b4f349b64b442660473697ccf6ad8540c3721c45b705e39",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/helper-final/build/bin/release/FrameworkMutations.dll": "62c93a3b0a1adc5452e9b515ff606260729bbe117df6bc78b0bfd148f6ecde61"
+    },
+    "worker": 97824,
+    "source_dirty": false,
+    "canonical_origin": "https://github.com/jeffadickson/Spice.git",
+    "stale_prepared_state": "prepared_not_started",
+    "worker_started_utc": "2026-11-19T06:58:06.4036526Z"
+  },
+  "tool_versions": {
+    "cargo_mutants": "27.1.0",
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)"
+  },
+  "profile": "mutants",
+  "features": {
+    "regression": "mutation-suite",
+    "intel": "intel-opencl",
+    "native": "default"
+  },
+  "original_outcomes": [
+    {
+      "name": "src/dc.rs:49:40: replace || with && in validate_sparse_rhs",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7",
+      "log": "log/src__dc.rs_line_49_col_40.log",
+      "diff": "diff/src__dc.rs_line_49_col_40.diff"
+    },
+    {
+      "name": "src/dc.rs:67:23: replace || with && in verify_solution",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7",
+      "log": "log/src__dc.rs_line_67_col_23.log",
+      "diff": "diff/src__dc.rs_line_67_col_23.diff"
+    },
+    {
+      "name": "src/dc.rs:76:73: replace * with + in verify_solution",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7",
+      "log": "log/src__dc.rs_line_76_col_73.log",
+      "diff": "diff/src__dc.rs_line_76_col_73.diff"
+    },
+    {
+      "name": "src/dc.rs:77:29: replace || with && in verify_solution",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7",
+      "log": "log/src__dc.rs_line_77_col_29.log",
+      "diff": "diff/src__dc.rs_line_77_col_29.diff"
+    },
+    {
+      "name": "src/dc.rs:92:14: replace > with >= in verify_solution",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7",
+      "log": "log/src__dc.rs_line_92_col_14_002.log",
+      "diff": "diff/src__dc.rs_line_92_col_14_002.diff"
+    }
+  ],
+  "original_diff_map": [
+    {
+      "name": "src/dc.rs:49:40: replace || with && in validate_sparse_rhs",
+      "diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7\\rust\\mutants.out\\diff\\src__dc.rs_line_49_col_40.diff",
+      "diff_sha256": "3a3345b68e3d3577eff3c91a4a0fb4e0c37eaffc9123475e2817628b94a0a71d"
+    },
+    {
+      "name": "src/dc.rs:67:23: replace || with && in verify_solution",
+      "diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7\\rust\\mutants.out\\diff\\src__dc.rs_line_67_col_23.diff",
+      "diff_sha256": "ea162a548e453d5b8b5391e32352ab6912cb24c28ec1e1879446728ad0ce3ce7"
+    },
+    {
+      "name": "src/dc.rs:76:73: replace * with + in verify_solution",
+      "diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7\\rust\\mutants.out\\diff\\src__dc.rs_line_76_col_73.diff",
+      "diff_sha256": "9676189f06f2b894a3526ffc1ee7e499a94f9e56a51bd6b055abc0a489ffda16"
+    },
+    {
+      "name": "src/dc.rs:77:29: replace || with && in verify_solution",
+      "diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7\\rust\\mutants.out\\diff\\src__dc.rs_line_77_col_29.diff",
+      "diff_sha256": "3fd95a8ce0042e6c0c6199f4955a486b60ee2e1eec86d96ceb57647538506514"
+    },
+    {
+      "name": "src/dc.rs:92:14: replace > with >= in verify_solution",
+      "diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7\\rust\\mutants.out\\diff\\src__dc.rs_line_92_col_14_002.diff",
+      "diff_sha256": "e709b7d8eeb256463cf8e919b9b93b89ce8ff937920e4840b2c220c7ab722c36"
+    }
+  ],
+  "native_results": {
+    "outcomes": [
+      {
+        "scenario": "Baseline",
+        "summary": "Success",
+        "log_path": "log/baseline.log",
+        "diff_path": null,
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 42.6598376,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.4073250999999996,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/dc.rs:49:40: replace || with && in validate_sparse_rhs",
+            "package": "circuit-simulator",
+            "file": "src/dc.rs",
+            "function": {
+              "function_name": "validate_sparse_rhs",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 48,
+                  "column": 1
+                },
+                "end": {
+                  "line": 53,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 49,
+                "column": 40
+              },
+              "end": {
+                "line": 49,
+                "column": 42
+              }
+            },
+            "replacement": "&&",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__dc.rs_line_49_col_40.log",
+        "diff_path": "diff/src__dc.rs_line_49_col_40.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 22.930994300000002,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.5605021,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/dc.rs:67:23: replace || with && in verify_solution",
+            "package": "circuit-simulator",
+            "file": "src/dc.rs",
+            "function": {
+              "function_name": "verify_solution",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 64,
+                  "column": 1
+                },
+                "end": {
+                  "line": 99,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 67,
+                "column": 23
+              },
+              "end": {
+                "line": 67,
+                "column": 25
+              }
+            },
+            "replacement": "&&",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__dc.rs_line_67_col_23.log",
+        "diff_path": "diff/src__dc.rs_line_67_col_23.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 18.8223066,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.4007043,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/dc.rs:76:73: replace * with + in verify_solution",
+            "package": "circuit-simulator",
+            "file": "src/dc.rs",
+            "function": {
+              "function_name": "verify_solution",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 64,
+                  "column": 1
+                },
+                "end": {
+                  "line": 99,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 76,
+                "column": 73
+              },
+              "end": {
+                "line": 76,
+                "column": 74
+              }
+            },
+            "replacement": "+",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__dc.rs_line_76_col_73.log",
+        "diff_path": "diff/src__dc.rs_line_76_col_73.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 22.6849762,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.2979646,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/dc.rs:77:29: replace || with && in verify_solution",
+            "package": "circuit-simulator",
+            "file": "src/dc.rs",
+            "function": {
+              "function_name": "verify_solution",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 64,
+                  "column": 1
+                },
+                "end": {
+                  "line": 99,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 77,
+                "column": 29
+              },
+              "end": {
+                "line": 77,
+                "column": 31
+              }
+            },
+            "replacement": "&&",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__dc.rs_line_77_col_29.log",
+        "diff_path": "diff/src__dc.rs_line_77_col_29.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 18.6434796,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.1641158,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/dc.rs:92:14: replace > with >= in verify_solution",
+            "package": "circuit-simulator",
+            "file": "src/dc.rs",
+            "function": {
+              "function_name": "verify_solution",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 64,
+                  "column": 1
+                },
+                "end": {
+                  "line": 99,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 92,
+                "column": 14
+              },
+              "end": {
+                "line": 92,
+                "column": 15
+              }
+            },
+            "replacement": ">=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__dc.rs_line_92_col_14.log",
+        "diff_path": "diff/src__dc.rs_line_92_col_14.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 21.6920131,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.7999895,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "dc_validation_contracts"
+            ]
+          }
+        ]
+      }
+    ],
+    "total_mutants": 5,
+    "missed": 0,
+    "caught": 5,
+    "timeout": 0,
+    "unviable": 0,
+    "success": 0,
+    "start_time": "2026-11-19T19:05:03.9119601Z",
+    "end_time": "2026-11-19T19:09:50.8531061Z",
+    "cargo_mutants_version": "27.1.0"
+  },
+  "baseline": {
+    "clean": "     Removed 23 files, 107.0MiB total\r\n",
+    "five_tests_passed": true,
+    "fresh_owned_rustc": true
+  },
+  "commands": {
+    "strictdoc": "Real SDReader.read(text,path) for docs/**/*.sdoc; unique UID check",
+    "regression": "cargo test --profile mutants --lib --test mutation_suite --features mutation-suite",
+    "coverage": "scripts/Measure-RustIntegrationCoverage.ps1 -Test dc_validation_contracts",
+    "invalidate": "cargo clean --package circuit-simulator --profile mutants",
+    "native": "cargo-mutants mutants --gitignore true --file src/dc.rs --re ^(?:src/dc\\.rs:49:40:\\ replace\\ \\|\\|\\ with\\ &&\\ in\\ validate_sparse_rhs|src/dc\\.rs:67:23:\\ replace\\ \\|\\|\\ with\\ &&\\ in\\ verify_solution|src/dc\\.rs:76:73:\\ replace\\ \\*\\ with\\ \\+\\ in\\ verify_solution|src/dc\\.rs:77:29:\\ replace\\ \\|\\|\\ with\\ &&\\ in\\ verify_solution|src/dc\\.rs:92:14:\\ replace\\ >\\ with\\ >=\\ in\\ verify_solution)$ --profile mutants --jobs 1 --jobserver-tasks 2 --timeout 120 --build-timeout 240 --output E:/Artifacts/Spice-dc-validation-20261119T190322Z/mutations --cargo-arg=--test --cargo-arg=dc_validation_contracts"
+  },
+  "tests": {
+    "integration_passed": 714,
+    "unit_passed": 55,
+    "instrumented_passed": 5,
+    "ignored": 7,
+    "focused_passed": 5
+  },
+  "property": {
+    "seed": 2026111925,
+    "environment_seed": 2026111926,
+    "generated_cases": 64,
+    "exponent_max": 20,
+    "exponent_min": -20
+  },
+  "coverage": {
+    "tool": "cargo rustc + rustc instrument-coverage + matching LLVM",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "test": "dc_validation_contracts",
+    "features": [],
+    "environment_seed": "88320261103",
+    "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+    "files": [
+      {
+        "file": "src/ac.rs",
+        "sha256": "6a87eaaffaebf03ef84aec71db525c3b1c807b3b1dec5b3cfe57184fb6aba9b6",
+        "lines": {
+          "count": 142,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/adaptive.rs",
+        "sha256": "7da703f8317ba10a7181869ada3ce959a09e2774a0e53f436037ce67690bf861",
+        "lines": {
+          "count": 54,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/api.rs",
+        "sha256": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96",
+        "lines": {
+          "count": 393,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/artifact.rs",
+        "sha256": "71bc73886f4572ea500febc8f998e507504d54672fcdc5ee7aee56ca357cb8a1",
+        "lines": {
+          "count": 99,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/assertion.rs",
+        "sha256": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+        "lines": {
+          "count": 11,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/audit.rs",
+        "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03",
+        "lines": {
+          "count": 586,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/audit_ac.rs",
+        "sha256": "0e015c2b2f5d6489f3c8886d22cb2eb10729900c479233978b0e9b236ece8438",
+        "lines": {
+          "count": 135,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/audit_configured.rs",
+        "sha256": "07a822a30108b4942444805a2a9d02816cf3efdcdc5a498772ff9510f6c5ab62",
+        "lines": {
+          "count": 170,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/backend.rs",
+        "sha256": "b0116629427c879e6f9c9cf7210f370858833a6addbb507ab00e997958c6e6b1",
+        "lines": {
+          "count": 313,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/backend_faer.rs",
+        "sha256": "088fb6ce327c61a516738ad178085cb6ab9b39b6d7696dee6cccd599ad7dd028",
+        "lines": {
+          "count": 338,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/behavioral_resistor.rs",
+        "sha256": "be5cc6436bd19adf3882850cc611b3897a02bde2ca21f787d58622d838f4ad20",
+        "lines": {
+          "count": 29,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/bsim330.rs",
+        "sha256": "5173d8a3a0879b3b5cdb7d062acc04a78bdcce4e2c70b29ed3e2b31e5cc62d27",
+        "lines": {
+          "count": 109,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/campaign.rs",
+        "sha256": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+        "lines": {
+          "count": 37,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/charge.rs",
+        "sha256": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+        "lines": {
+          "count": 16,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/circuit.rs",
+        "sha256": "6101d36783cea8e4587a52e5a357581e05b9595817a97b19cbb8c01a545298f3",
+        "lines": {
+          "count": 194,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/compile.rs",
+        "sha256": "5c277284738cd45fd6fc42999a352a87cf952022837560b2afcbdab17804f908",
+        "lines": {
+          "count": 341,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/configured.rs",
+        "sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+        "lines": {
+          "count": 397,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/dc.rs",
+        "sha256": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+        "lines": {
+          "count": 101,
+          "covered": 45,
+          "percent": 44.554455445544555
+        }
+      },
+      {
+        "file": "src/error.rs",
+        "sha256": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+        "lines": {
+          "count": 12,
+          "covered": 9,
+          "percent": 75
+        }
+      },
+      {
+        "file": "src/experiment.rs",
+        "sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+        "lines": {
+          "count": 123,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/expression.rs",
+        "sha256": "0157f0a3153adc51c184fbd0e6ce2409fc3bf83267327e9f3c4a4d3f434aaa14",
+        "lines": {
+          "count": 111,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/grid.rs",
+        "sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+        "lines": {
+          "count": 15,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/ids.rs",
+        "sha256": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+        "lines": {
+          "count": 3,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/integrator.rs",
+        "sha256": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+        "lines": {
+          "count": 81,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/linalg.rs",
+        "sha256": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+        "lines": {
+          "count": 173,
+          "covered": 14,
+          "percent": 8.092485549132949
+        }
+      },
+      {
+        "file": "src/linear_dynamic.rs",
+        "sha256": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+        "lines": {
+          "count": 52,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/measurement.rs",
+        "sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+        "lines": {
+          "count": 28,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/model.rs",
+        "sha256": "500da23f436a9c916a0e264fb95a201a90189bae645d24858f8bdf17d9ec4d01",
+        "lines": {
+          "count": 97,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/mos1.rs",
+        "sha256": "4dc1dc86f02e83a30e173cbd95bb31c52725e6aad16d7f9bb115be473e1ed9d3",
+        "lines": {
+          "count": 141,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/mutual_inductance.rs",
+        "sha256": "9b8d373524cffa2aa8093a9db67bb6645b40864b8fd0047bf08c68d7e8994514",
+        "lines": {
+          "count": 30,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/netlist.rs",
+        "sha256": "759d4d1808ea4431ef20e25723687c51fe4d9344374071e81955f894dcfdf0a5",
+        "lines": {
+          "count": 553,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/newton.rs",
+        "sha256": "5ab306611286cf084d814eaa742e683fa862930da1ba9174fe64979684f4f590",
+        "lines": {
+          "count": 1111,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/ngspice_resistor.rs",
+        "sha256": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3",
+        "lines": {
+          "count": 3,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/power.rs",
+        "sha256": "ac25369c845b434d6efb599da77e050a374ac167b868edf765c3268923093406",
+        "lines": {
+          "count": 108,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/provenance.rs",
+        "sha256": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+        "lines": {
+          "count": 22,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/pspice_switch.rs",
+        "sha256": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9",
+        "lines": {
+          "count": 42,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/quantity.rs",
+        "sha256": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397",
+        "lines": {
+          "count": 43,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/registry.rs",
+        "sha256": "ff1d1bdf7d82f2b4c1fdc254d8679f89cd69cbb0bac4abb72fc4f97372c369a2",
+        "lines": {
+          "count": 30,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/sampling.rs",
+        "sha256": "2cbbdcaa1e01f8cd7dcbbd9122271f59b4dc24cfb3e7a9c6f78a4b8165826196",
+        "lines": {
+          "count": 81,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/solver_contract.rs",
+        "sha256": "895b8d2800c55ae0c87e3c38f9bb5630df1f4e2c7988679eb1179e1db3f21201",
+        "lines": {
+          "count": 166,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/sources.rs",
+        "sha256": "76ba60d9855777612e1a0fd0e0d438ea939d79eaadc000f1ca7aeb7f8ba91091",
+        "lines": {
+          "count": 109,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/sparse.rs",
+        "sha256": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+        "lines": {
+          "count": 188,
+          "covered": 44,
+          "percent": 23.404255319148938
+        }
+      },
+      {
+        "file": "src/spice_diode.rs",
+        "sha256": "992636edc3f26009e0af65fd92334161811ca27d901b8c079670875d7b72c64e",
+        "lines": {
+          "count": 85,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/sweep.rs",
+        "sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+        "lines": {
+          "count": 250,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/topology.rs",
+        "sha256": "e08fee8153a6c701de145a0707acb866db960eb06162315a81f6286bdf699932",
+        "lines": {
+          "count": 45,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/transient.rs",
+        "sha256": "c4bb4261eb887c00094040eb1c5aac6d554259e6aa8c6ae01a99c20188b43939",
+        "lines": {
+          "count": 80,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/variation.rs",
+        "sha256": "c7c7b353f039e07b5f9136b4b3a405338851e1256a55616329dd18eb6aa3fe0d",
+        "lines": {
+          "count": 192,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/voltage_scaled_cccs.rs",
+        "sha256": "0941725b00b87d405be1e94be2cbae45898a29f312736c77266902032b74f5e6",
+        "lines": {
+          "count": 38,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "file": "src/waveform.rs",
+        "sha256": "e3322998ebe3c4e8e8987809575744f450e9a4e118eddb76f5d703bdb9dc6007",
+        "lines": {
+          "count": 276,
+          "covered": 0,
+          "percent": 0
+        }
+      }
+    ],
+    "branches": null,
+    "limitations": [
+      "Stable Rust instrumentation provides no measured branch coverage.",
+      "Other tests and executable main are outside this run.",
+      "A named test can pin its own seed, overriding the environment seed; retain actual test replay configuration alongside this report."
+    ]
+  },
+  "strictdoc": {
+    "unique_uids": 660,
+    "log": "strictdoc.log",
+    "documents": 125
+  },
+  "intel": {
+    "device": "Intel UHD 630",
+    "seed": 18117,
+    "probe": "intel-probe.log",
+    "routine_tests_passed": 15,
+    "driver": "31.0.101.2141",
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "raw": "E:\\Artifacts\\Spice-dc-validation-20261119T190322Z\\Spice-intel-circuit-tests-d8db5dc0afb2436f828c3b3a236eba4b"
+  },
+  "review": "Read-only simulated source review; no important findings",
+  "limitations": [
+    "Owned validator scope, not vendor conditioning/factorization qualification",
+    "All frozen scores preserved; current-source targeted replay is not a4411-cohort retest",
+    "Focused library line coverage excludes tests/vendor/main and unexercised DC dispatch; branches unavailable",
+    "Finite64case property sampling is not formal/global proof",
+    "No new original-deck/ngspice/Linux/Stryker/standalone fuzz/performance evidence"
+  ]
+}

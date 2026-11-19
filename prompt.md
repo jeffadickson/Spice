@@ -1,4 +1,21 @@
-# Active epoch: configured execution and startup qualification
+# Active epoch: independent DC validation qualification
+
+Read docs/dc-validation-results.md and StrictDoc/evidence pair.
+Base ef00870; production dc.rs remains byte-identical to frozen source.
+Five new public contracts catch five original DC survivors (49/67/76/77/92),
+native5/5 caught with fresh owned baseline after replay-package clean.
+Independent malformed RHS tripwire, response shape, cancelling finite sum with
+overflowing absolute scale, scalar row-scaling reference and inclusive1e-10
+boundary/next_up witness. Proptest64cases seed2026111925; environment2026111926.
+55unit+714integration passed/7ignored; Intel15+UHD630probe; StrictDoc125/660.
+Scoped dc45/101lines, branches/main/vendor unmeasured. No provider conditioning,
+new original-deck/ngspice/Linux/Stryker/standalone fuzz qualification claimed.
+Raw E:/Artifacts/Spice-dc-validation-20261119T190322Z.
+Preserve frozen4411 source/config/helper/outcomes/cache and canonical main.
+Continue backend/configured/experiment/expression survivors using actual diffs.
+The live frozen campaign is historical test evidence; current retests stay separate.
+
+# Prior checkpoint: configured execution and startup qualification
 
 Read docs/configured-execution-results.md and its StrictDoc/evidence pair.
 Base2a497a7; production configured.rs and compile.rs remain byte-identical to

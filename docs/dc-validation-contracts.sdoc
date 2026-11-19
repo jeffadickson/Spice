@@ -1,0 +1,51 @@
+[DOCUMENT]
+TITLE: Independent DC response validation
+
+[REQUIREMENT]
+UID: DC-VALIDATION-ADMISSION-001
+STATUS: Draft
+TITLE: Validate sparse excitation before provider invocation
+STATEMENT: >>>
+Sparse excitation shall have exactly the matrix dimension and finite components.
+Either violation alone shall return InvalidInput before invoking a provider.
+Dense provider responses shall have exactly the matrix dimension and finite
+components; violations shall be classified as NumericalFailure.
+<<<
+COMMENT: >>>
+Verification: sparse_rhs_shape_and_finiteness_fail_independently_before_provider_calls
+uses a tripwire provider; dense_provider_response_requires_exact_shape_and_finite_components
+checks malformed response vectors through the public independent validator.
+<<<
+
+[REQUIREMENT]
+UID: DC-VALIDATION-SCALE-001
+STATUS: Draft
+TITLE: Retain finite componentwise backward-error evidence
+STATEMENT: >>>
+Independent DC verification shall normalize the residual by absolute RHS plus
+absolute coefficient-times-solution contributions. A finite accumulated residual
+shall not hide overflow of its absolute scale. Nonrepresentable validation
+evidence shall return NumericalFailure rather than a successful zero error.
+<<<
+COMMENT: >>>
+Verification: cancellation_does_not_hide_overflow_of_the_absolute_residual_scale
+uses finite cancelling terms with an overflowing absolute sum. The scalar
+reference delta/(12+delta) in row_scaling_preserves_the_independent_scalar_backward_error
+is checked under64 exact power-of-two row scalings, Proptest seed2026111925.
+This verifies the validator, not arbitrary provider conditioning or convergence.
+<<<
+
+[REQUIREMENT]
+UID: DC-VALIDATION-BOUNDARY-001
+STATUS: Draft
+TITLE: Preserve inclusive componentwise acceptance
+STATEMENT: >>>
+The existing DC componentwise backward-error limit of1e-10 shall be inclusive;
+a representably greater error shall fail with NumericalFailure.
+<<<
+COMMENT: >>>
+Verification: exact_backward_error_limit_is_inclusive_but_the_next_solution_is_not
+constructs exact half-integer RHS and solution values with residual1 and scale
+10^10, then increases the solution by one representable step. This preserves
+the existing policy and does not introduce a new physical signal tolerance.
+<<<
