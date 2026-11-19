@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "base_commit": "29ea45d897774bce18350378d4927ee66863281b",
+  "production_changed": false,
+  "artifact_root": "E:/Artifacts/Spice-complex-lu-20261119T090354Z",
+  "requirements": [
+    "LU-COMPLEX-RHS-FINITE-001",
+    "LU-COMPLEX-OUTPUT-FINITE-001"
+  ],
+  "hashes": [
+    {
+      "sha256": "b0116629427c879e6f9c9cf7210f370858833a6addbb507ab00e997958c6e6b1",
+      "file": "src/backend.rs"
+    },
+    {
+      "sha256": "20f02fa473bad134ee588226be882f153b8b1ae3efe8a1d159f9ad6504ad672f",
+      "file": "tests/complex_lu_finiteness.rs"
+    },
+    {
+      "sha256": "2e1d603e1472bc41f32589f1d74839e49f87c4f503cb49555872ac8f66734030",
+      "file": "tests/mutation_suite.rs"
+    }
+  ],
+  "frozen_backend_sha256": "b0116629427c879e6f9c9cf7210f370858833a6addbb507ab00e997958c6e6b1",
+  "focused_tests": {
+    "passed": 3,
+    "property_cases": 96,
+    "oracle": "exact small integer/quarter products for known complex solution",
+    "seed": 2026111910
+  },
+  "full_tests": {
+    "unit": 51,
+    "environment_seed": 2026111910,
+    "integration": 693,
+    "ignored": 7
+  },
+  "mutations": {
+    "cases": [
+      {
+        "outcome": "CaughtMutant",
+        "diff": "diff/src__backend.rs_line_121_col_72.diff",
+        "diff_sha256": "267da6d007530919b09ff8335615fed6053f5751bbf66c2436a3afb4ee594db5",
+        "name": "src/backend.rs:121:72: replace || with && in <impl LinearSolver for DenseLu>::solve_complex_rhs",
+        "log": "log/src__backend.rs_line_121_col_72.log"
+      },
+      {
+        "outcome": "CaughtMutant",
+        "diff": "diff/src__backend.rs_line_136_col_47.diff",
+        "diff_sha256": "1cb82486bfc99d2341169e34aeda2b59f378bcab0112e74129cf6b53fecf2b53",
+        "name": "src/backend.rs:136:47: replace || with && in <impl LinearSolver for DenseLu>::solve_complex_rhs",
+        "log": "log/src__backend.rs_line_136_col_47.log"
+      }
+    ],
+    "missed": 0,
+    "profile": "mutants",
+    "invalid": 0,
+    "timeouts": 0,
+    "caught": 2,
+    "mutants_parallel": 1,
+    "frozen_counterparts": 2,
+    "tool": "cargo-mutants27.1.0",
+    "compiler_test_workers": 2,
+    "owned_clean": "23files105.4MiB in replay target",
+    "fresh_owned_rustc_baseline_verified": true,
+    "tested": 2
+  },
+  "mapping": [
+    {
+      "frozen_name": "src/backend.rs:121:72: replace || with && in <impl LinearSolver for DenseLu>::solve_complex_rhs",
+      "diff_sha256": "267da6d007530919b09ff8335615fed6053f5751bbf66c2436a3afb4ee594db5",
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T080032Z-c225d0bb\\rust\\mutants.out\\diff\\src__backend.rs_line_121_col_72.diff",
+      "outcome": "MissedMutant",
+      "current_name": "src/backend.rs:121:72: replace || with && in <impl LinearSolver for DenseLu>::solve_complex_rhs"
+    },
+    {
+      "frozen_name": "src/backend.rs:136:47: replace || with && in <impl LinearSolver for DenseLu>::solve_complex_rhs",
+      "diff_sha256": "1cb82486bfc99d2341169e34aeda2b59f378bcab0112e74129cf6b53fecf2b53",
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T082752Z-1ee0a4f5\\rust\\mutants.out\\diff\\src__backend.rs_line_136_col_47.diff",
+      "outcome": "MissedMutant",
+      "current_name": "src/backend.rs:136:47: replace || with && in <impl LinearSolver for DenseLu>::solve_complex_rhs"
+    }
+  ],
+  "counterexample": "output guard mutant returns Ok([Complex{re:inf,im:2}]) for finiteb(MAX,1),A=.5",
+  "backend_invalid_review": [
+    {
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T080032Z-c225d0bb\\rust\\mutants.out\\log\\src__backend.rs_line_13_col_5.log",
+      "diagnostics": [
+        "error[E0277]: the trait bound `linalg::Matrix: Default` is not satisfied"
+      ],
+      "reviewed": true,
+      "log_sha256": "590afffec917f2936c7bbc3cfccdcc34782b9b0b1c99df8221f08c36d46ce3a5",
+      "raw_outcome": "Unviable",
+      "name": "src/backend.rs:13:5: replace real_dense -> Matrix with Default::default()",
+      "classification": "Generated unsupported Rust trait/operator replacement; not a test kill"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T082752Z-1ee0a4f5\\rust\\mutants.out\\log\\src__backend.rs_line_180_col_28_001.log",
+      "diagnostics": [
+        "error[E0277]: cannot divide `&nalgebra::Matrix<f64, Dyn, nalgebra::Const<1>, VecStorage<f64, Dyn, nalgebra::Const<1>>>` by `&nalgebra::Matrix<f64, Dyn, Dyn, VecStorage<f64, Dyn, Dyn>>`"
+      ],
+      "reviewed": true,
+      "log_sha256": "77dd9bc1e90c4473cc0f98b748fee0b009db316b3f3adb58ae01506bbe0f060a",
+      "raw_outcome": "Unviable",
+      "name": "src/backend.rs:180:28: replace - with / in solve_refined_real_lu",
+      "classification": "Generated unsupported Rust trait/operator replacement; not a test kill"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T082752Z-1ee0a4f5\\rust\\mutants.out\\log\\src__backend.rs_line_180_col_37_001.log",
+      "diagnostics": [
+        "error[E0277]: cannot divide `&nalgebra::Matrix<f64, Dyn, Dyn, VecStorage<f64, Dyn, Dyn>>` by `&nalgebra::Matrix<f64, Dyn, nalgebra::Const<1>, VecStorage<f64, Dyn, nalgebra::Const<1>>>`"
+      ],
+      "reviewed": true,
+      "log_sha256": "a5e1c0e9c6f28c6816457925db450b81952b1d38a8ff20e9691e7e617bc27576",
+      "raw_outcome": "Unviable",
+      "name": "src/backend.rs:180:37: replace * with / in solve_refined_real_lu",
+      "classification": "Generated unsupported Rust trait/operator replacement; not a test kill"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T080032Z-c225d0bb\\rust\\mutants.out\\log\\src__backend.rs_line_23_col_5.log",
+      "diagnostics": [
+        "error[E0277]: the trait bound `linalg::Matrix: Default` is not satisfied"
+      ],
+      "reviewed": true,
+      "log_sha256": "2c2c4cd8b229a4e544d4bc2c79bc4cc1212124797c2786bb0dbd09337650ee61",
+      "raw_outcome": "Unviable",
+      "name": "src/backend.rs:23:5: replace complex_dense -> (Matrix, Matrix) with (Default::default(), Default::default())",
+      "classification": "Generated unsupported Rust trait/operator replacement; not a test kill"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T084840Z-2c433504\\rust\\mutants.out\\log\\src__backend.rs_line_283_col_9.log",
+      "diagnostics": [
+        "error[E0277]: the trait bound `BackendCapabilities: Default` is not satisfied"
+      ],
+      "reviewed": true,
+      "log_sha256": "b30d7239c2dd6020f0fd9fdc6fa75e3626fc969d6708bb1eef8be8ca5753f96f",
+      "raw_outcome": "Unviable",
+      "name": "src/backend.rs:283:9: replace <impl LinearSolver for DenseQr>::capabilities -> crate::linalg::BackendCapabilities with Default::default()",
+      "classification": "Generated unsupported Rust trait/operator replacement; not a test kill"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T084840Z-2c433504\\rust\\mutants.out\\log\\src__backend.rs_line_311_col_33_001.log",
+      "diagnostics": [
+        "error[E0277]: cannot divide `&nalgebra::Matrix<f64, Dyn, nalgebra::Const<1>, VecStorage<f64, Dyn, nalgebra::Const<1>>>` by `&nalgebra::Matrix<f64, Dyn, Dyn, VecStorage<f64, Dyn, Dyn>>`"
+      ],
+      "reviewed": true,
+      "log_sha256": "ab2e4d88e1c1a524c216ef2dc4805a92a7cba088ae5a152be69aa168199fa207",
+      "raw_outcome": "Unviable",
+      "name": "src/backend.rs:311:33: replace - with / in <impl LinearSolver for DenseQr>::solve",
+      "classification": "Generated unsupported Rust trait/operator replacement; not a test kill"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T084840Z-2c433504\\rust\\mutants.out\\log\\src__backend.rs_line_311_col_43_001.log",
+      "diagnostics": [
+        "error[E0277]: cannot divide `&nalgebra::Matrix<f64, Dyn, Dyn, VecStorage<f64, Dyn, Dyn>>` by `&nalgebra::Matrix<f64, Dyn, nalgebra::Const<1>, VecStorage<f64, Dyn, nalgebra::Const<1>>>`"
+      ],
+      "reviewed": true,
+      "log_sha256": "274279f147d6d6a746dd86d26ebb8e8e0e1377f221df3ce700dd27b21d92b8c7",
+      "raw_outcome": "Unviable",
+      "name": "src/backend.rs:311:43: replace * with / in <impl LinearSolver for DenseQr>::solve",
+      "classification": "Generated unsupported Rust trait/operator replacement; not a test kill"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T080032Z-c225d0bb\\rust\\mutants.out\\log\\src__backend.rs_line_41_col_9.log",
+      "diagnostics": [
+        "error[E0277]: the trait bound `BackendCapabilities: Default` is not satisfied"
+      ],
+      "reviewed": true,
+      "log_sha256": "74b4ecdb7cdbe0a648697074b2a681c76aa98bc0fa1a5f1408cd6da9bb91f098",
+      "raw_outcome": "Unviable",
+      "name": "src/backend.rs:41:9: replace <impl SparseLinearBackend for DenseLu>::sparse_capabilities -> crate::linalg::BackendCapabilities with Default::default()",
+      "classification": "Generated unsupported Rust trait/operator replacement; not a test kill"
+    },
+    {
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T080032Z-c225d0bb\\rust\\mutants.out\\log\\src__backend.rs_line_84_col_9.log",
+      "diagnostics": [
+        "error[E0277]: the trait bound `BackendCapabilities: Default` is not satisfied"
+      ],
+      "reviewed": true,
+      "log_sha256": "50a7a4fa59a685183d6d09f096aec6548b2a74ee21b3ac65ed12fd17fc7001e0",
+      "raw_outcome": "Unviable",
+      "name": "src/backend.rs:84:9: replace <impl LinearSolver for DenseLu>::capabilities -> crate::linalg::BackendCapabilities with Default::default()",
+      "classification": "Generated unsupported Rust trait/operator replacement; not a test kill"
+    }
+  ],
+  "timeout_review": {
+    "phases": [
+      {
+        "phase": "Build",
+        "duration": 22.6453421,
+        "process_status": "Success"
+      },
+      {
+        "phase": "Test",
+        "duration": 120.0490541,
+        "process_status": "Timeout"
+      }
+    ],
+    "raw_outcome": "Timeout",
+    "disposition": "Deliberate root equality-loop mutation; Timeout retained, notCaught; no original solver hang claim",
+    "name": "src/backend.rs:227:24: replace != with == in enforce_homogeneous_constraints::root",
+    "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T082752Z-1ee0a4f5\\rust\\mutants.out\\diff\\src__backend.rs_line_227_col_24.diff",
+    "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T082752Z-1ee0a4f5\\rust\\mutants.out\\log\\src__backend.rs_line_227_col_24.log",
+    "process_observation": [],
+    "diff_sha256": "0adefcb4bfdbe143e7463db495ce84892623b60f1499c492172f237b3df9c765"
+  },
+  "coverage": {
+    "branches": null,
+    "excluded": [
+      "test source",
+      "vendor",
+      "main"
+    ],
+    "file": {
+      "file": "src/backend.rs",
+      "sha256": "b0116629427c879e6f9c9cf7210f370858833a6addbb507ab00e997958c6e6b1",
+      "lines": {
+        "count": 313,
+        "covered": 36,
+        "percent": 11.501597444089457
+      }
+    },
+    "scope": "Owned library exercised by named complex test"
+  },
+  "strictdoc": {
+    "version": "0.31.0",
+    "documents": 118,
+    "unique_uids": 640
+  },
+  "intel": {
+    "probe": "Intel UHD630 FP64 SpMV seed18117",
+    "passed_tests": 15,
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955"
+  },
+  "review": "Read-only collaboration review: no important issues; exact pinned nalgebra/num-complex arithmetic reviewed",
+  "pending_scope": [
+    "real-LU correction acceptance195",
+    "homogeneous polish EPS boundary266",
+    "changed-value debug gate271",
+    "new DenseQr acceptance328 comparisons"
+  ],
+  "limits": [
+    "No fresh ngspice, standalonefuzz orStryker",
+    "No measured branch/overall coverage, new originaldeck, performance/formal/fullSPICE/GPU claim",
+    "API128 precedence and Windows exe-removal cause remain open",
+    "Current replays do not rewrite frozen outcomes"
+  ]
+}

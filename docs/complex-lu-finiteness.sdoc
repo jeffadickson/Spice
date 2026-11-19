@@ -1,0 +1,37 @@
+[DOCUMENT]
+TITLE: Independent complex LU component admission and output integrity
+
+[REQUIREMENT]
+UID: LU-COMPLEX-RHS-FINITE-001
+STATUS: Draft
+TITLE: Reject either nonfinite complex RHS component independently
+STATEMENT: >>>
+Dense LU complex solves shall reject an incorrectly sized RHS or a nonfinite
+real or imaginary RHS component as InvalidInput, even when the other component
+is finite. Invalid data shall not be admitted and relabeled as a later generic
+numerical failure.
+<<<
+COMMENT: >>>
+Verification: complex_lu_finiteness each_rhs_component_must_be_finite_independently.
+Well-conditioned unit matrices isolate RHS validation; NaN and both infinities
+are independently placed in each component, including the paired case.
+<<<
+
+[REQUIREMENT]
+UID: LU-COMPLEX-OUTPUT-FINITE-001
+STATUS: Draft
+TITLE: Refuse a solution with either unrepresentable component
+STATEMENT: >>>
+Dense LU shall return NumericalFailure rather than success when a complex
+solution has a nonfinite real or imaginary component, even if the other
+component is representable. Valid well-conditioned finite known solutions
+shall preserve both complex components.
+<<<
+COMMENT: >>>
+Verification: overflow_in_either_solution_component_cannot_be_returned_as_success
+uses scalar A=0.5 with finite RHS(MAX,1) and(1,MAX), including negative signs.
+complex_known_solutions_preserve_both_components forms RHS from exact small
+integer/quarter products and independent known solutions;96 Proptest cases,
+seed2026111910. No production residual routine supplies expected answers.
+Implementation: src/backend.rs DenseLu::solve_complex_rhs, unchanged here.
+<<<

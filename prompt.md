@@ -1,4 +1,27 @@
-# Active epoch: independent gate-overdrive audit admission
+# Active epoch: complex LU component boundaries and backend triage
+
+Read docs/complex-lu-finiteness-results.md, docs/complex-lu-finiteness.sdoc and
+evidence/complex-lu-finiteness-results.json. Base29ea45d; backend source unchanged
+and byte-identical to frozen backend SHA b0116629427c879e6f9c9cf7210f370858833a6addbb507ab00e997958c6e6b1.
+Two new121/136complex-guard counterparts caught; RHS components independently
+InvalidInput, one-component outputoverflow NumericalFailure. Executed guard
+mutant returnsOk([Inf+2j]) for A=.5,b(MAX,1). Three focusedtests/96propertycases
+seed2026111910,51unit693integrationpass/7ignored. Ownedclean before replay and
+freshownedrustc baseline verified. Intel15+UHD630probe pass, StrictDoc118docs640IDs;
+scoped backend36/313lines; branch/test/vendor/main unmeasured, no freshngspice.
+Nine newbackendUnviable logs reviewedE0277: missingDefault Matrix/Capabilities
+and unsupported nalgebra division. KeepinvalidnotCaught; no filters/traitsadded.
+root227 !=→== createsroot-selfloop; nativeTimeout120.049s retainednotCaught.
+Campaignadvanced; noold epochtestexe foundin reviewedCIMinventory. Notprodhang
+orformalterminationproof. Raw E:/Artifacts/Spice-complex-lu-20261119T090354Z.
+Pending: real-LU195 correction acceptance (>==/>=/||&&), polish266 exactEPS
+boundary, polish271 diagnostic logging (assignmentoutsidecondition), DenseQr328
+acceptancecomparisons and newerarrivals. Do not calltheseequivalentwithout
+boundary/diagnostic evidence. API128 precedence and Windowsexe-removalcauseopen.
+Keepfrozen4411 source/config/helper/cacheisolated, main/unknownwork/otherjobs/CI
+preserved. Current targetedkills do not rewrite frozenrawscore.
+
+# Prior checkpoint: independent gate-overdrive audit admission
 
 Read docs/audit-mos-gate-results.md and evidence/audit-mos-gate-results.json.
 Baseb761893; production unchanged. Frozen716||&& mapscurrent726, caught using
