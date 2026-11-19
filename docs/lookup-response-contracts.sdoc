@@ -1,0 +1,70 @@
+[DOCUMENT]
+TITLE: Public response admission and measurement lookup boundaries
+
+[REQUIREMENT]
+UID: RESPONSE-MATRIX-ADMISSION-001
+STATUS: Draft
+TITLE: Bound matrix dimensions independently of storage shape
+STATEMENT: >>>
+Matrix admission shall accept dimensions1and256with matching finite storage and
+RHS shape, and reject dimension0or257even when their storage and RHS shapes
+match. Malformed storage/RHS lengths shall independently return InvalidInput.
+<<<
+COMMENT: >>>
+Verification: matrix_dimension_limits_and_malformed_shapes_are_independent.
+Zero-valued admitted matrices are not claimed solvable; this is validation only.
+<<<
+
+[REQUIREMENT]
+UID: RESPONSE-COMPLEX-FINITE-001
+STATUS: Draft
+TITLE: Reject either nonfinite complex response component
+STATEMENT: >>>
+The public complex compatibility solve shall reject a nonfinite real or
+imaginary response component independently, and reject incorrect response
+lengths, with NumericalFailure instead of publishing malformed data.
+<<<
+COMMENT: >>>
+Verification: complex_response_components_and_shape_are_validated_independently
+uses deliberately invalid scripted responses and one-call accounting. Actual
+DenseLu solves the scalar complex identity for the positive numerical control.
+<<<
+
+[REQUIREMENT]
+UID: LOOKUP-AXIS-KNOT-001
+STATUS: Draft
+TITLE: Preserve typed failures and exact-knot precedence
+STATEMENT: >>>
+Measurement lookup shall reject empty, malformed or out-of-range data/queries
+with InvalidInput and a nonempty reason. Exact sample times shall return their
+recorded values before interpolation; valid interior queries shall interpolate
+only within the recorded axis.
+<<<
+COMMENT: >>>
+Verification: measurement_empty_malformed_and_outside_queries_stay_typed_failures
+and exact_measurement_knots_precede_strict_interior_interpolation. The linear
+2t+1fixture includes adjacent representable times around an interior knot.
+No exact diagnostic-text contract is introduced; range-reason mutation remains
+an explicitly open diagnostic question rather than a claimed numerical defect.
+<<<
+
+[REQUIREMENT]
+UID: EXPR-UNARY-BOUNDARY-001
+STATUS: Draft
+TITLE: Preserve unary slopes and recursion admission
+STATEMENT: >>>
+Selected inverse-sine/cosine values and slopes shall agree with circle geometry
+within the tested1e-13absolute bounds. Direct inverse/log evaluation shall admit
+the depth64fixtures and reject deeper counterparts without relying on unrelated
+domain or overflow failures. Absolute value shall preserve its existing sign
+slope, including the explicit zero-slope cusp convention, and the same depth bound.
+<<<
+COMMENT: >>>
+Verification: inverse_trigonometric_slopes_match_circle_geometry uses the3-4-5
+triangle and64generated dyadic inputs[-0.875,0.875], Proptest seed2026111933.
+inverse_and_log_recursion_guards_are_not_masked_by_domain_errors uses Asin(0)
+chains and Log(Exp(0)) pairs, with valid controls before the deeper negatives.
+absolute_value_preserves_the_sign_convention_and_recursion_bound adds positive,
+negative and zero controls plus its independent depth64/65case.
+This does not prove arbitrary expression accuracy or domain coverage.
+<<<

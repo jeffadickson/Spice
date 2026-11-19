@@ -1,4 +1,25 @@
-# Active epoch: homogeneous polishing and refinement boundaries
+# Active epoch: public response admission and measurement lookup
+
+Read docs/lookup-response-results.md and StrictDoc/evidence pair.
+Base30b9916; source linalg/measurement/expression byte-identical to frozen.
+Final native9=5caught+4rawmiss:3reviewed numerical equivalents and1OPENdiagnostic
+variant measurement17:33 (out-of-range reason versus final no-bracket reason).
+Do not force exact diagnostic text or close that variant as full equivalence.
+Equivalents: Abs signum multiply/divide with finite children; two interpolation
+<=variants where the prior exact-knot loop has already consumed equality.
+Initial6test native9=4caught5miss; actual91diff was Abs, not inverse trig.
+Added Abs64/65witness and replayed all9 against final7test snapshot.
+59unit+733integration passed/7ignored; Intel15+UHD630probe; StrictDoc129/674.
+Scoped linalg53/173,measurement27/28,expression33/111lines; branches/main/vendor
+unmeasured. Property64circle-geometry cases seed2026111933; environment2026111934.
+ActualDenseLu scalar complex identity is positive control; malformed responses
+are explicitly scripted invalid data, not solver qualification. One new E0277
+DiodeModelDefault case reviewed. No newdecks/ngspice/Linux/Stryker/fuzz claim.
+Raw E:/Artifacts/Spice-lookup-contracts-20261119T230805Z. Preserve frozen4411
+scores/config/helper/source, main/unknownwork and separated caches. Continue
+remaining backend/refinement/configured/native-step and newly arrived model cases.
+
+# Prior checkpoint: homogeneous polishing and refinement boundaries
 
 Read docs/polish-boundary-results.md and StrictDoc/evidence pair.
 Base73cc342; four appended unit tests, backend/backend_faer production prefixes

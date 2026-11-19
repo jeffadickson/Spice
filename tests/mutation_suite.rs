@@ -217,3 +217,6 @@ mod suite_expression_boundary_contracts;
 
 #[path = "experiment_boundary_contracts.rs"]
 mod suite_experiment_boundary_contracts;
+
+#[path = "lookup_response_contracts.rs"]
+mod suite_lookup_response_contracts;
