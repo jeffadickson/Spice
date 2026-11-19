@@ -1,0 +1,43 @@
+[DOCUMENT]
+TITLE: Independent MOS1 audit polarity and differential admission
+
+[REQUIREMENT]
+UID: AUDIT-MOS1-POLARITY-001
+STATUS: Draft
+TITLE: Preserve NMOS and PMOS terminal-current signs under reversal and translation
+STATEMENT: >>>
+Independent MOS1 current audits shall preserve channel polarity, drain/source
+orientation and common-mode translation of terminal voltages. Known memoryless
+triode currents shall satisfy DC and stationary backward-Euler KCL and power
+with default audit tolerances. At zero body bias a finite body-effect
+coefficient shall not shift the channel threshold. Corrupting a supplying
+current shall fail audit.
+<<<
+COMMENT: >>>
+Verification: tests/audit_mos_polarity.rs nmos_pmos_and_reversed_terminals_agree_with_known_triode_current
+and current_conservation_survives_common_mode_polarity_and_orientation.
+Zero-body trace: zero_body_bias_has_no_shift_with_nonzero_body_effect_coefficients.
+The independent 57.75 microamp fixture follows the closed-form triode law,
+without evaluating production model current or Jacobian. Three offsets and
+both polarities/orientations plus96 Proptest cases, seed2026111908.
+This qualifies the bounded memoryless audit fixture, not general MOS physics.
+<<<
+
+[REQUIREMENT]
+UID: AUDIT-MOS1-DIFFERENTIAL-ADMISSION-001
+STATUS: Draft
+TITLE: Reject each unrepresentable MOS voltage differential before continuation
+STATEMENT: >>>
+Finite MOS terminal potentials shall not imply representable physical voltage
+differences. An independently overflowing channel span or body bias shall
+produce InvalidInput before downstream span/overdrive min/max or bounded body continuation can turn
+unknown physics into a passing cutoff state. DC and stationary backward-Euler
+audits shall enforce these independent domain checks for both polarities.
+<<<
+COMMENT: >>>
+Verification: body_overflow_is_refused_even_with_finite_zero_channel_span and
+channel_span_overflow_is_refused_even_with_finite_body_bias. Bare MOS circuits
+avoid incidental ideal-source tolerance overflows masking the admission test.
+These are finite-arithmetic malformed-state tests, not solved circuit decks.
+Implementation: src/audit.rs independent_mos1_current, unchanged by this checkpoint.
+<<<

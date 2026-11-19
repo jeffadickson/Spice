@@ -1,0 +1,365 @@
+{
+  "schema_version": 1,
+  "base_commit": "dccb86391bcf018729f385408881082577938ddb",
+  "production_source_changed": false,
+  "artifact_root": "E:/Artifacts/Spice-mos-audit-20261119T072340Z",
+  "requirements": [
+    "AUDIT-MOS1-POLARITY-001",
+    "AUDIT-MOS1-DIFFERENTIAL-ADMISSION-001"
+  ],
+  "hashes": [
+    {
+      "file": "src/audit.rs",
+      "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03"
+    },
+    {
+      "file": "tests/audit_mos_polarity.rs",
+      "sha256": "cd0671f2bcf08479ce7243ce55f77a48e705f79975f1dc44877bbd6e45594d18"
+    },
+    {
+      "file": "tests/mutation_suite.rs",
+      "sha256": "f456da0f489d0c218c98672f9cc4a03a8b2f73f15c765f32266f3f0cf51fc543"
+    }
+  ],
+  "focused_tests": {
+    "passed": 5,
+    "property_cases": 96,
+    "oracle": "closed-form57.75uA triode plus polarity/orientation/common-mode invariance and zero-body coefficient invariance",
+    "seed": 2026111908
+  },
+  "full_tests": {
+    "unit": 51,
+    "ignored": 7,
+    "environment_seed": 2026111908,
+    "integration": 689
+  },
+  "mutations": {
+    "profile": "mutants",
+    "cases": [
+      {
+        "log": "log/src__audit.rs_line_703_col_37.log",
+        "outcome": "CaughtMutant",
+        "name": "src/audit.rs:703:37: delete - in independent_mos1_current",
+        "diff": "diff/src__audit.rs_line_703_col_37.diff",
+        "diff_sha256": "13322395881a2ef0f92568778c60465c346d2d4bee07e3ac73fc35b3ab755e25"
+      },
+      {
+        "log": "log/src__audit.rs_line_711_col_26.log",
+        "outcome": "CaughtMutant",
+        "name": "src/audit.rs:711:26: replace || with && in independent_mos1_current",
+        "diff": "diff/src__audit.rs_line_711_col_26.diff",
+        "diff_sha256": "fad0dd1e74d4e887fa84c9efa9a8d98d31c8cc1aa3ce048908d0803532f1ec77"
+      },
+      {
+        "log": "log/src__audit.rs_line_711_col_8.log",
+        "outcome": "CaughtMutant",
+        "name": "src/audit.rs:711:8: delete ! in independent_mos1_current",
+        "diff": "diff/src__audit.rs_line_711_col_8.diff",
+        "diff_sha256": "34265aff7dfe08439226d1c32f58cd8e3c009d9e3d9ad81263ce3d7f5714da10"
+      },
+      {
+        "log": "log/src__audit.rs_line_711_col_29.log",
+        "outcome": "CaughtMutant",
+        "name": "src/audit.rs:711:29: delete ! in independent_mos1_current",
+        "diff": "diff/src__audit.rs_line_711_col_29.diff",
+        "diff_sha256": "ddbdeaa3c2b8bb33f0996050a17efeb32140608b21120f094fd9314d8e921924"
+      },
+      {
+        "log": "log/src__audit.rs_line_718_col_27.log",
+        "outcome": "MissedMutant",
+        "name": "src/audit.rs:718:27: replace > with >= in independent_mos1_current",
+        "diff": "diff/src__audit.rs_line_718_col_27.diff",
+        "diff_sha256": "67edabf6fcb2ae8b2f40a71e124ae70b1b8975be29c0d867fec4ab285fc5cfd3"
+      }
+    ],
+    "compiler_test_workers": 2,
+    "counterparts_caught": 2,
+    "final_baseline": "Success; owned rustc library rebuild observed, five linked positive/negative tests passed",
+    "counterparts_reviewed_equivalent": 1,
+    "mutants_in_parallel": 1,
+    "additional_caught": 2,
+    "caught": 4,
+    "timeouts": 0,
+    "invalid": 0,
+    "final_tested": 5,
+    "frozen_survivor_counterparts": 3,
+    "raw_missed": 1,
+    "tool": "cargo-mutants27.1.0"
+  },
+  "earlier_attempts": [
+    {
+      "path": "mutations",
+      "caught": 4,
+      "candidate_attempts": 4,
+      "scope": "Retained historical attempt, not the final five-test source qualification",
+      "fixture": "initial four-test source before additive zero-body test"
+    },
+    {
+      "path": "body-boundary-mutations",
+      "baseline": "Failed",
+      "candidate_attempts": 0,
+      "classification": "Unavailable source correspondence; Fresh owned library plus failures consistent with preceding mutant artifact reuse, not a product regression/compile-invalid candidate"
+    }
+  ],
+  "attempt_counting": {
+    "do_not_sum_duplicate_kills": true,
+    "distinct_candidate_names": 5,
+    "successful_native_candidate_attempts": 9
+  },
+  "cache_recovery": {
+    "baseline_owned_rustc_observed": true,
+    "frozen_helper_unchanged": true,
+    "guidance_updated": [
+      "AGENTS.md",
+      "docs/native-audit-results.md"
+    ],
+    "removed": "51 files/133.1MiB",
+    "action": "cargo clean --package circuit-simulator --profile mutants in replay target",
+    "normal_and_live_campaign_targets_separate": true,
+    "cargo_internal_cause_independently_proved": false
+  },
+  "mapping": [
+    {
+      "outcome": "MissedMutant",
+      "frozen_name": "src/audit.rs:693:37: delete - in independent_mos1_current",
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T065811Z-6df59ff3\\rust\\mutants.out\\diff\\src__audit.rs_line_693_col_37.diff",
+      "current_name": "src/audit.rs:703:37: delete - in independent_mos1_current",
+      "diff_sha256": "f4e15f3e3f4202b5e0575351c11edef95669f131041c4ba65db4b561f2f08dad"
+    },
+    {
+      "outcome": "MissedMutant",
+      "frozen_name": "src/audit.rs:701:26: replace || with && in independent_mos1_current",
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T065811Z-6df59ff3\\rust\\mutants.out\\diff\\src__audit.rs_line_701_col_26.diff",
+      "current_name": "src/audit.rs:711:26: replace || with && in independent_mos1_current",
+      "diff_sha256": "2027a1031dc62de9acb9343a2effcfc0ba10a8eaa781536c3f944bdbad37a6c5"
+    },
+    {
+      "outcome": "MissedMutant",
+      "frozen_name": "src/audit.rs:708:27: replace > with >= in independent_mos1_current",
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T065811Z-6df59ff3\\rust\\mutants.out\\diff\\src__audit.rs_line_708_col_27_002.diff",
+      "current_name": "src/audit.rs:718:27: replace > with >= in independent_mos1_current",
+      "diff_sha256": "fb7802fde68b5789dbd9ef63ae478c9be711fa492498c6b65cce7915f2de9e3f"
+    }
+  ],
+  "equivalence": {
+    "status": "Raw Missed retained; bounded public physical-report equivalent",
+    "name": "body>0 to body>=0 at frozen708/current718",
+    "exclusions": [
+      "bitwise/private shift equality",
+      "formal proof",
+      "production body-root derivative or charge",
+      "future private-value logging",
+      "neighbor ==/< mutations"
+    ],
+    "reason": "Validated phi>0, finite gamma: both shifts zero at body+/-0; current aggregate reports absorb signed-zero differences"
+  },
+  "counterfactual_guard_evidence": {
+    "log": "mutations/mutants.out/log/src__audit.rs_line_711_col_26.log",
+    "body": "Guard mutant returns OkAuditReport with all KCL/power Passed",
+    "span": "Guard mutant reaches later NumericalFailure instead of required InvalidInput"
+  },
+  "ngspice": {
+    "oracle": "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe",
+    "sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f",
+    "cases": 12,
+    "bound_amps": 2E-11,
+    "max_abs_error_amps": 5.100000215435378E-13,
+    "results": [
+      {
+        "expected_drain_amps": 5.775E-05,
+        "deck_sha256": "c468b7407ec5b11403eed484bfd083dd87fbec0a20d4e36d6cad00cdabef5595",
+        "common": -1.0,
+        "vd_branch_amps": -5.7750000509999995E-05,
+        "reverse": false,
+        "case": 0,
+        "oracle_wall_ms": 166.2673,
+        "p_channel": false,
+        "max_abs_error_amps": 5.099999944384835E-13,
+        "vs_branch_amps": 5.775000000000002E-05,
+        "initial_deck_sha256": "69d22bbb42f56d912af5a4df5961e2d50b7d33fbbc0e835c2da6e18651ebc911"
+      },
+      {
+        "expected_drain_amps": -5.775E-05,
+        "deck_sha256": "efeec9f726c35e723a993c0fc69c7a40eec5d2ef6ad9feea347f39313755c8f4",
+        "common": -1.0,
+        "vd_branch_amps": 5.775000000000002E-05,
+        "reverse": true,
+        "case": 1,
+        "oracle_wall_ms": 151.0355,
+        "p_channel": false,
+        "max_abs_error_amps": 5.099999944384835E-13,
+        "vs_branch_amps": -5.7750000509999995E-05,
+        "initial_deck_sha256": "7494168b740b6ae839318dbe66eb5713b06dabd6bcd2840f3f93ed68012ce743"
+      },
+      {
+        "expected_drain_amps": -5.775E-05,
+        "deck_sha256": "21a56e0f53caac33f89f8c1f4822d12044a7f5049dfd12af699e753e968314aa",
+        "common": -1.0,
+        "vd_branch_amps": 5.775000050999997E-05,
+        "reverse": false,
+        "case": 2,
+        "oracle_wall_ms": 133.7518,
+        "p_channel": true,
+        "max_abs_error_amps": 5.099999673334292E-13,
+        "vs_branch_amps": -5.774999999999994E-05,
+        "initial_deck_sha256": "811b730a101d26b8d105fab662e5acc31e88b08094fc3e0eedff121ecbc18c73"
+      },
+      {
+        "expected_drain_amps": 5.775E-05,
+        "deck_sha256": "36c1e91b6bff1f9b79a45c2c8265313edc232e5963b8fc37fe886e099717e7b2",
+        "common": -1.0,
+        "vd_branch_amps": -5.774999999999997E-05,
+        "reverse": true,
+        "case": 3,
+        "oracle_wall_ms": 178.8498,
+        "p_channel": true,
+        "max_abs_error_amps": 5.099999944384835E-13,
+        "vs_branch_amps": 5.7750000509999995E-05,
+        "initial_deck_sha256": "1eaf0400bafde2b21474ccf7caac2734d621cd03050ac9f2954e0ba9834881af"
+      },
+      {
+        "expected_drain_amps": 5.775E-05,
+        "deck_sha256": "4ed20bad6b5c7f74250843a4f6d830f2646b638b95c412989e34ec92877e53c3",
+        "common": 0.0,
+        "vd_branch_amps": -5.7750000509999995E-05,
+        "reverse": false,
+        "case": 4,
+        "oracle_wall_ms": 189.2075,
+        "p_channel": false,
+        "max_abs_error_amps": 5.099999944384835E-13,
+        "vs_branch_amps": 5.7749999999999994E-05,
+        "initial_deck_sha256": "c4ea8f25a7f16735a746b1c9676c731905973d122796f1966e0f03dfb9449ea7"
+      },
+      {
+        "expected_drain_amps": -5.775E-05,
+        "deck_sha256": "218b5f1ded32d83fdff73c65afaf43e94f4a9065c23fb96cb3ba6b0d8e1531de",
+        "common": 0.0,
+        "vd_branch_amps": 5.7749999999999994E-05,
+        "reverse": true,
+        "case": 5,
+        "oracle_wall_ms": 143.8401,
+        "p_channel": false,
+        "max_abs_error_amps": 5.099999944384835E-13,
+        "vs_branch_amps": -5.7750000509999995E-05,
+        "initial_deck_sha256": "b435b8fc9fbbf7391f83d941891f2351260251f420292b91025a6cd36ac006d5"
+      },
+      {
+        "expected_drain_amps": -5.775E-05,
+        "deck_sha256": "a29e544d9b671bd3e3a314f301c63bc1cbc52115e476cce178ce27cfa4c302d3",
+        "common": 0.0,
+        "vd_branch_amps": 5.7750000509999995E-05,
+        "reverse": false,
+        "case": 6,
+        "oracle_wall_ms": 144.1604,
+        "p_channel": true,
+        "max_abs_error_amps": 5.099999944384835E-13,
+        "vs_branch_amps": -5.7749999999999994E-05,
+        "initial_deck_sha256": "9a6a1099cadda72c7a2bc4dc8524b9f239de9c5c8dfc1ac5a85aa09c07647024"
+      },
+      {
+        "expected_drain_amps": 5.775E-05,
+        "deck_sha256": "354a73fc585cedda01a235cb58dee0f9585e8c477609f5ff7b0d87a24eb51653",
+        "common": 0.0,
+        "vd_branch_amps": -5.7749999999999994E-05,
+        "reverse": true,
+        "case": 7,
+        "oracle_wall_ms": 127.7088,
+        "p_channel": true,
+        "max_abs_error_amps": 5.099999944384835E-13,
+        "vs_branch_amps": 5.7750000509999995E-05,
+        "initial_deck_sha256": "fd2a6156870866aa5d189b5d7b53d019ebae8264c1354d4dfdd8fe8316310463"
+      },
+      {
+        "expected_drain_amps": 5.775E-05,
+        "deck_sha256": "f962e140625b450ed917040dc39163e8b76f12e402937f7a7024fdb2aa2a5a05",
+        "common": 2.0,
+        "vd_branch_amps": -5.775000051000002E-05,
+        "reverse": false,
+        "case": 8,
+        "oracle_wall_ms": 117.6976,
+        "p_channel": false,
+        "max_abs_error_amps": 5.100000215435378E-13,
+        "vs_branch_amps": 5.7749999999999994E-05,
+        "initial_deck_sha256": "9f2611f942255baa1a4157ae84575091a3b92cb3befd442336f5f76b63bae891"
+      },
+      {
+        "expected_drain_amps": -5.775E-05,
+        "deck_sha256": "1d3e3d34aacb8a9c2f942b9284ce35e22934c7d9b13ea1b160f1b1cda7d0fa7e",
+        "common": 2.0,
+        "vd_branch_amps": 5.774999999999997E-05,
+        "reverse": true,
+        "case": 9,
+        "oracle_wall_ms": 162.6896,
+        "p_channel": false,
+        "max_abs_error_amps": 5.099999944384835E-13,
+        "vs_branch_amps": -5.7750000509999995E-05,
+        "initial_deck_sha256": "bd234afa377f8952b5b632237e416f9fbd312de3064d43aa678f5737a9429051"
+      },
+      {
+        "expected_drain_amps": -5.775E-05,
+        "deck_sha256": "25fad0988eb32023cb022aba999b568fc4b6613b5438faf6cbf6b0f72e69113d",
+        "common": 2.0,
+        "vd_branch_amps": 5.7750000509999995E-05,
+        "reverse": false,
+        "case": 10,
+        "oracle_wall_ms": 550.3596,
+        "p_channel": true,
+        "max_abs_error_amps": 5.099999944384835E-13,
+        "vs_branch_amps": -5.775000000000002E-05,
+        "initial_deck_sha256": "ccf7c24338ca914fe8d4564ac7c7d063dd0a9e0a300dafbbada5e3e46b0371a8"
+      },
+      {
+        "expected_drain_amps": 5.775E-05,
+        "deck_sha256": "7ae5f570abd45703405e296962999721c6c35a69c3537fdf13550156089768a2",
+        "common": 2.0,
+        "vd_branch_amps": -5.775000000000002E-05,
+        "reverse": true,
+        "case": 11,
+        "oracle_wall_ms": 221.0202,
+        "p_channel": true,
+        "max_abs_error_amps": 5.099999944384835E-13,
+        "vs_branch_amps": 5.7750000509999995E-05,
+        "initial_deck_sha256": "30930d53a8fd7df5500fe794f23cb7f2b497e1fe0b3aa80f132ec7a3e4879f6e"
+      }
+    ],
+    "scope": "Fresh ngspice DC check of analytic fixture, not new original corpus decks or a comparable per-engine benchmark",
+    "printed_digits": 17,
+    "artifact_root": "E:\\Artifacts\\Spice-mos-audit-20261119T072340Z\\ngspice-precision",
+    "all_numeric_outputs_finite": true
+  },
+  "coverage": {
+    "file": {
+      "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03",
+      "file": "src/audit.rs",
+      "lines": {
+        "count": 586,
+        "covered": 290,
+        "percent": 49.48805460750853
+      }
+    },
+    "scope": "Owned library exercised by audit_mos_polarity; named-suite scope only",
+    "excluded": [
+      "test source",
+      "vendor/native model",
+      "main"
+    ],
+    "branches": null
+  },
+  "strictdoc": {
+    "version": "0.31.0",
+    "documents": 117,
+    "unique_uids": 637
+  },
+  "intel": {
+    "probe": "Intel UHD630 FP64 SpMV seed18117",
+    "passed_tests": 15,
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955"
+  },
+  "review": "Read-only collaboration review: no important sign/oracle findings; exact raw boundary diff reviewed; error-category vs false-pass mechanisms distinguished; cache cause tied to observed evidence only",
+  "limits": [
+    "No full MOS1 derivatives/dynamic charge, original corpus deck, speedup, formal/full SPICE/GPU qualification",
+    "No measured branch/overall coverage or fresh standalone fuzz/Stryker",
+    "API128 precedence and separate epoch Windows executable-removal cause remain open",
+    "Current outcomes do not rewrite frozen4411 counts"
+  ]
+}

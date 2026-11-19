@@ -89,6 +89,12 @@ locks and an isolated mutant target. `--cargo-arg=--test` plus
 `--cargo-arg=native_audit_contracts` restrict compilation. The trailing arguments
 are `-- -- --ignored --test-threads=1`: one separator belongs to cargo-mutants,
 the next to Cargo. Check the unmutated baseline actually executed the fixture.
+Before each separate replay invocation, run Cargo's owned-package clean in that
+replay target and verify the baseline rebuilt the owned library. Restored source
+does not invalidate a previous mutant rlib by itself; a newly compiled integration
+target can otherwise relink that stale code. Preserve contaminated attempts as
+unavailable, not passing qualification. Ordinary and active-epoch targets remain
+separate. See the later MOS audit checkpoint for a reproduced baseline failure.
 The initial snapshot-lock failure, an argument-validation error requiring an
 explicit Git-ignore Boolean, and a missing-separator baseline failure were
 retained, not counted as mutation outcomes. No frozen epoch helper,

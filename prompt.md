@@ -1,4 +1,27 @@
-# Active epoch: resumed campaign and refinement evidence contracts
+# Active epoch: MOS audit polarity and independent differential checks
+
+Read docs/audit-mos-polarity-results.md, docs/audit-mos-polarity.sdoc and
+evidence/audit-mos-polarity-results.json. Basedccb863; production source unchanged.
+Finalclean replay5cases:4caught/1rawMissed. Frozen693/701 map703/711 caught by
+analytic PMOS/reversal and independent span/body-overflow tests; two additional
+negated guards caught. Frozen708 maps718 >= reviewed public-report equivalent
+at body+/-0, excluding private bitwise/derivatives/future logging/neighborops.
+Five tests/96Proptestcases seed2026111908;51unit689integrationpass/7ignored.
+Fresh12ngspice DC analytic fixtures17digits max5.100000215e-13A<2e-11A; not new
+original decks or dynamic qualification. Intel15+SpMVpass. StrictDoc117docs637IDs;
+scoped audit290/586lines, branch/test/vendor/native-model/main unmeasured.
+Replay follow-up baseline failed with stale mutant-linked library evidence;
+zero candidates, retained unavailable. Ownedcargo clean removed51files133.1MiB,
+then final baseline rebuilt library and passed5linked tests. Before EACH separate
+replay, clean owned package in that replay target; AGENTS/native guide updated.
+Initial4caught stage and failedfollowup preserved; final9attempts5distinctnames,
+not9distinctkills. Raw E:/Artifacts/Spice-mos-audit-20261119T072340Z binds final
+test source, old/current diffhashes, rebuildlogs/oracle/coverage and dispositions.
+Live epoch is separate/cache-isolated; frozen source/config/helper immutable.
+API128 error precedence and separate Windows exe-removal sharing cause remain
+open. Keep main/unknownwork/otherjobs/CI unchanged; raw frozen counts stay raw.
+
+# Prior checkpoint: resumed campaign and refinement evidence contracts
 
 Read docs/audit-refinement-results.md, docs/audit-refinement-contracts.sdoc and
 evidence/audit-refinement-results.json. Baseba03ed2, no production source changes.

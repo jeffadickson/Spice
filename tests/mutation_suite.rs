@@ -193,3 +193,6 @@ mod suite_audit_charge_boundaries;
 
 #[path = "audit_refinement_contracts.rs"]
 mod suite_audit_refinement_contracts;
+
+#[path = "audit_mos_polarity.rs"]
+mod suite_audit_mos_polarity;
