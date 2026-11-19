@@ -1,4 +1,23 @@
-# Active epoch: Intel-enabled profile qualification
+# Active epoch: direct Rust circuit admission
+
+Read docs/circuit-rust-admission-results.md and StrictDoc/evidence pair.
+Base311742a, productioncircuit.rs unchanged/frozenSHA455182e52eb7be9d1dbd6c69bdadc2128fb4b8fcb53a27c787eb29232e8a5925.
+Sixnew public-boundary tests catch21originalcircuit survivors, with64Proptest
+positive-scale cases seed2026111915. One1.->1.0explicitf64literal reviewed
+equivalent, not caught; three private native_mos accessor cases remain open.
+Modelports are validation-only: no native provider/BSIM/SOI physics closure.
+52unit+699integrationpass/7ignored; Intel15+UHD630probe; StrictDoc121docs647UIDs.
+Scoped circuit80/194lines, branch coverage unavailable; test/vendor excluded.
+Initialfocused compile failed diagnostic formatting; corrected source SHA
+289df31d45eb2a8781426edd9ebaaa87c812fb6937588e63b4b1bb9819875f1b
+matched actual native snapshot; fresh native baseline rebuilt owned library.
+Fourcompile.rsDefaultE0277 + unarynegation-removalE0308 reviewed invalid, notkills.
+Raw E:/Artifacts/Spice-circuit-admission-20261119T140601Z. Keepfrozen4411snapshot,
+main/unknownwork, native outcome ledger, helper/config and caches separate.
+Next: BSIM40/nativeaccessor3 provider lane and remaining linear/backend/compile
+survivors. Consult bookmark/current raw outcomes; no old21-survivor recounting.
+
+# Previous checkpoint: Intel-enabled profile qualification
 
 Read docs/intel-mutation-profile-results.md and its StrictDoc/evidence pair.
 Separate Intel83 lane at clean d786a58 enabled intel-opencl and actual provider:

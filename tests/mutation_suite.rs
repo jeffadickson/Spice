@@ -199,3 +199,6 @@ mod suite_complex_lu_finiteness;
 
 #[path = "audit_mos_polarity.rs"]
 mod suite_audit_mos_polarity;
+
+#[path = "circuit_admission.rs"]
+mod suite_circuit_admission;

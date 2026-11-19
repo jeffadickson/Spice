@@ -1,0 +1,389 @@
+{
+  "limits": [
+    "Three native_mos accessors and40nativeBSIM survivors remain open; no provider/constitutive-law qualification.",
+    "One exact typed-literal equivalent is reviewed, not a test kill/current replay.",
+    "Initial focused test compilation failed formatting; corrected actual snapshot and passing baseline retained separately.",
+    "No new original decks, ngspice, standalone fuzz or Stryker run.",
+    "Frozen raw campaign outcomes are never rewritten with current-source targeted kills."
+  ],
+  "strictdoc": {
+    "uids": 647,
+    "parser": "SDReader",
+    "documents": 121
+  },
+  "property": {
+    "framework": "Proptest",
+    "domain": "positive10^exponent, integerexponents[-250,249]",
+    "seed": "2026111915",
+    "cases": 64
+  },
+  "test_sha256": "289df31d45eb2a8781426edd9ebaaa87c812fb6937588e63b4b1bb9819875f1b",
+  "intel": {
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "exit_code": 0,
+    "routine_tests": 15,
+    "device": "Intel UHD Graphics630",
+    "driver": "31.0.101.2141",
+    "scope": "Bounded routine real/complex circuits + separate low-level probe, no arbitrary GPU deck claim",
+    "fp64_probe_seed": 18117
+  },
+  "base": "311742a951275f1518a0b79e3fb05004ded04e10",
+  "snapshot_verification": {
+    "snapshot_test": "E:\\Artifacts\\Spice-circuit-admission-20261119T140601Z\\temp\\cargo-mutants-spice-deck-next-CHwkMO.tmp\\tests\\circuit_admission.rs",
+    "matches_final_test": true,
+    "sha256": "289df31d45eb2a8781426edd9ebaaa87c812fb6937588e63b4b1bb9819875f1b",
+    "initial_focused_compile_error": "Proptest stringified struct braces require explicit assertion diagnostic; corrected. Initial draft and focused.log retained. No product behavior changed."
+  },
+  "invalid_reviews": [
+    {
+      "sha256": "694099ff588d7d29c4a90c4084b625f3688b877ac4a94bd280c5ddaa259d857a",
+      "errors": [
+        "error[E0277]: the trait bound `circuit::Circuit: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "name": "src/compile.rs:117:9: replace CompiledCircuit::circuit -> &Circuit with Box::leak(Box::new(Default::default()))",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T130102Z-36839418\\rust\\mutants.out\\log\\src__compile.rs_line_117_col_9.log"
+    },
+    {
+      "sha256": "dc1ab8c80b0e8961ba20171432abd2aaf23adfe42d1a3831e20e53ace369263c",
+      "errors": [
+        "error[E0277]: the trait bound `CscMatrix: Default` is not satisfied",
+        "error[E0277]: the trait bound `sparse::CscMatrix: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error"
+      ],
+      "name": "src/compile.rs:124:9: replace CompiledCircuit::conductance_sparse -> &CscMatrix with Box::leak(Box::new(Default::default()))",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T130102Z-36839418\\rust\\mutants.out\\log\\src__compile.rs_line_124_col_9.log"
+    },
+    {
+      "sha256": "3c252a3b302ffe1da1e72184abbfb8c7d1b2fab0cb28bfce60c71a7015b575cb",
+      "errors": [
+        "error[E0277]: the trait bound `CscMatrix: Default` is not satisfied",
+        "error[E0277]: the trait bound `sparse::CscMatrix: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error"
+      ],
+      "name": "src/compile.rs:128:9: replace CompiledCircuit::charge_sparse -> &CscMatrix with Box::leak(Box::new(Default::default()))",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T130102Z-36839418\\rust\\mutants.out\\log\\src__compile.rs_line_128_col_9.log"
+    },
+    {
+      "sha256": "ac25b68e0a0be9abab3c1c6ad8b247dbed873fadd1730cac7cf837ab1b9ca374",
+      "errors": [
+        "error[E0277]: the trait bound `linalg::Matrix: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "name": "src/compile.rs:136:9: replace CompiledCircuit::conductance_reference -> &Matrix with Box::leak(Box::new(Default::default()))",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T132315Z-1505da92\\rust\\mutants.out\\log\\src__compile.rs_line_136_col_9.log"
+    },
+    {
+      "sha256": "6d6ccd9c345efb5505a2d1eba4eca902aa0ed5b6daf9ac96b03235991e0ff79f",
+      "errors": [
+        "error[E0308]: mismatched types",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "name": "src/compile.rs:415:85: delete - in compile",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T140557Z-3a171086\\rust\\mutants.out\\log\\src__compile.rs_line_415_col_85.log"
+    }
+  ],
+  "regression": {
+    "features": [
+      "mutation-suite"
+    ],
+    "ignored": 7,
+    "environment_seed": "2026111916",
+    "unit": 52,
+    "profile": "mutants",
+    "integration": 699
+  },
+  "production_changed": false,
+  "artifact_root": "E:/Artifacts/Spice-circuit-admission-20261119T140601Z",
+  "review": "Simulated read-only review found no important issue; literal equivalence reviewed by exact typed value",
+  "commands": [
+    "cargo test --profile mutants --test circuit_admission",
+    "cargo clean --package circuit-simulator --profile mutants",
+    "cargo-mutants mutants --gitignore true --file src/circuit.rs --re <selector.txt> --profile mutants --jobs 1 --jobserver-tasks 2 --timeout 120 --build-timeout 240 --output <raw>/mutations --cargo-arg=--test --cargo-arg=circuit_admission",
+    "cargo test --profile mutants --lib --test mutation_suite --features mutation-suite",
+    "Measure-RustIntegrationCoverage.ps1 -Repository J:/dev/spice-deck-next -TargetDirectory <separate qualification target> -Output <raw>/coverage -Test circuit_admission",
+    "Test-IntelCircuits.ps1 + Run-ParallelProbe.ps1 -Probe Intel"
+  ],
+  "recorded_utc": "2026-11-19T14:20:07.6330938+00:00",
+  "circuit_sha256": "455182e52eb7be9d1dbd6c69bdadc2128fb4b8fcb53a27c787eb29232e8a5925",
+  "frozen_source": "30a5a9aab91effadefb3f0860b408b1269eb7dff",
+  "equivalent": {
+    "review": "Simulated read-only code review agrees",
+    "scope": "Exact same explicit f64 constant: original1. and replacement1.0, no side effects",
+    "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T112035Z-3ef5e945\\rust\\mutants.out\\diff\\src__circuit.rs_line_7_col_34_001.diff",
+    "disposition": "Reviewed typed-literal equivalent, not a test kill",
+    "original_outcome": "MissedMutant",
+    "diff_sha256": "f3eaa9e1f0d5f194e9b0101d82da95a5e903215c698060865e136d5fef1160f0",
+    "current_replay": "Not separately executed for identity candidate",
+    "name": "src/circuit.rs:7:34: replace unit_factor_offset -> f64 with 1.0"
+  },
+  "requirements": [
+    "CIRCUIT-RUST-ADMISSION-001",
+    "CIRCUIT-MODEL-PORTS-001",
+    "CIRCUIT-OFFSET-WIRE-001"
+  ],
+  "mutation_suite_sha256": "85cdbb85b972c60ef2f44df6306088aee7bb7d44eae12326960328431b9d4aa6",
+  "focused_tests": 6,
+  "native": {
+    "tool": "cargo-mutants27.1.0",
+    "timeout": 0,
+    "missed": 0,
+    "selector": "selector.txt",
+    "profile": "mutants",
+    "test": "circuit_admission",
+    "caught": 21,
+    "invalid": 0,
+    "ledger_sha256": "d5b9931a639d51697e6cf014562f6ffab8773dec2b21defe6cbcff7a31b7ca9c",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "features": [],
+    "baseline": {
+      "fresh_owned_rustc": true,
+      "clean": "Removed 30 files, 165.8MiB total",
+      "source_snapshot_sha256": "289df31d45eb2a8781426edd9ebaaa87c812fb6937588e63b4b1bb9819875f1b",
+      "test_results": [
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    },
+    "maps": [
+      {
+        "current_log": "log/src__circuit.rs_line_8_col_49.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T112035Z-3ef5e945\\rust\\mutants.out\\diff\\src__circuit.rs_line_8_col_49.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:8:49: replace is_unit_factor_offset -> bool with true",
+        "current_diff": "diff/src__circuit.rs_line_8_col_49.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "d599eff3b8be482ef1f47124553a3359e468d8a051e9d41e6b4f6296d6810a84"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_308_col_72.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T114149Z-1ab9dc89\\rust\\mutants.out\\diff\\src__circuit.rs_line_308_col_72.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:308:72: replace || with && in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_308_col_72.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "17191aabc7f2be87ab08cc9286849ce35ab56848ce96377621a40b157d03a242"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_308_col_51.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T114149Z-1ab9dc89\\rust\\mutants.out\\diff\\src__circuit.rs_line_308_col_51.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:308:51: replace || with && in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_308_col_51.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "3114793eafccde5ddc461922cffa8388c10e32383579e4cffdd87dc1ccab5cd8"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_308_col_21.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T114149Z-1ab9dc89\\rust\\mutants.out\\diff\\src__circuit.rs_line_308_col_21.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:308:21: replace || with && in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_308_col_21.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "936c0c86c49664b36fdda753d46f50aa4a52f8318ab717335196ef99ca544405"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_332_col_17.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T114149Z-1ab9dc89\\rust\\mutants.out\\diff\\src__circuit.rs_line_332_col_17.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:332:17: delete match arm Element::Mos1Channel{gate, bulk, model, ..} in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_332_col_17.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "76af7f9c9262b69af2c265463216dc305fe70a34405c53dfaf42d2a307a754e8"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_415_col_17.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T120533Z-3fb6014d\\rust\\mutants.out\\diff\\src__circuit.rs_line_415_col_17.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:415:17: delete match arm Element::SpiceDiode{model, ..} | Element::JunctionStorage{model, ..} in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_415_col_17.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "c63e2fe57b24a98bdc1269b258f3b3936949817bf7b038afcf804b4746cba97d"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_321_col_22.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T120533Z-3fb6014d\\rust\\mutants.out\\diff\\src__circuit.rs_line_321_col_22.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:321:22: replace match guard gate.0 >= self.nodes.len() || back_gate.0 >= self.nodes.len() with true in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_321_col_22.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "d7101010fcdcb3cbc6a1aa37715acb6968699cccabbf4e1cfff143376908298e"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_321_col_22_001.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T120533Z-3fb6014d\\rust\\mutants.out\\diff\\src__circuit.rs_line_321_col_22_001.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:321:22: replace match guard gate.0 >= self.nodes.len() || back_gate.0 >= self.nodes.len() with false in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_321_col_22_001.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "71fbd2ad27aa1d788f60e81070bedfa85e3ba88633b507c3bba2c9c3d713ee81"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_378_col_54.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T120533Z-3fb6014d\\rust\\mutants.out\\diff\\src__circuit.rs_line_378_col_54_001.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:378:54: replace match guard !farads.is_finite() || *farads <= 0.0 with false in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_378_col_54.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "60f6a4095c47a9cbb291eb99e2f2d296d0cba8a3a1c8a4e2befdbf31a1ad3e5a"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_381_col_54.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T120533Z-3fb6014d\\rust\\mutants.out\\diff\\src__circuit.rs_line_381_col_54_001.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:381:54: replace match guard !henries.is_finite() || *henries <= 0.0 with false in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_381_col_54.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "23b8d28d427b2d83ea354b72e0fb558ba867f8f8f65d7f285ef77d7a8e21db26"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_384_col_51.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T120533Z-3fb6014d\\rust\\mutants.out\\diff\\src__circuit.rs_line_384_col_51_001.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:384:51: replace match guard !volts.is_finite() with false in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_384_col_51.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "d0c533da24b3f38cb47eac5c02da5559d4abf22de24cd428441900463c9ed412"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_387_col_50.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T120533Z-3fb6014d\\rust\\mutants.out\\diff\\src__circuit.rs_line_387_col_50_001.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:387:50: replace match guard !amps.is_finite() with false in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_387_col_50.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "6a33cf588bdafc9a6406df2941d760ba534173760841925b1090b7081bf0079c"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_321_col_49.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T120533Z-3fb6014d\\rust\\mutants.out\\diff\\src__circuit.rs_line_321_col_49.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:321:49: replace || with && in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_321_col_49.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "695b8ae322f1df9cd9614018fb53a80f10231aedaff48153db0eb2ca173565f6"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_321_col_29.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T120533Z-3fb6014d\\rust\\mutants.out\\diff\\src__circuit.rs_line_321_col_29.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:321:29: replace >= with < in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_321_col_29.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "0b452562fcfefe4c54b2037e017c32d4792f365b64b4f93ef762bd0d56056f5d"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_321_col_64.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T123351Z-65665ef6\\rust\\mutants.out\\diff\\src__circuit.rs_line_321_col_64.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:321:64: replace >= with < in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_321_col_64.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "e0919a85c0ce05b105b1b3624cc6f14837c3ae669fcc9c899ff1bc8fcef37883"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_327_col_51.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T123351Z-65665ef6\\rust\\mutants.out\\diff\\src__circuit.rs_line_327_col_51.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:327:51: replace || with && in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_327_col_51.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "36a3ccd065dd2946657c022403887ebb45393cf7e32f94dabed2ad68aad66fe0"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_327_col_31.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T123351Z-65665ef6\\rust\\mutants.out\\diff\\src__circuit.rs_line_327_col_31.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:327:31: replace >= with < in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_327_col_31.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "283cb541ad201f05db44cb34833c3af2aa7f036705a6c01a8aef4cf915d61e94"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_327_col_61.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T123351Z-65665ef6\\rust\\mutants.out\\diff\\src__circuit.rs_line_327_col_61.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:327:61: replace >= with < in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_327_col_61.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "b51e7a15e73c634c410bb6b124ece8016ca004cc162a4c718569c45d491e5d30"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_335_col_51.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T123351Z-65665ef6\\rust\\mutants.out\\diff\\src__circuit.rs_line_335_col_51.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:335:51: replace || with && in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_335_col_51.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "b604ec0a5a86bf3c67fc21b67457e60aaec848f8ae03b63fb46af45798d0c04a"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_378_col_74.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T130102Z-36839418\\rust\\mutants.out\\diff\\src__circuit.rs_line_378_col_74.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:378:74: replace || with && in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_378_col_74.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "95da0fe1d04a1879ad697ae68111786d2d11f5c20174825e254cd0a16b19950b"
+      },
+      {
+        "current_log": "log/src__circuit.rs_line_381_col_75.log",
+        "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T130102Z-36839418\\rust\\mutants.out\\diff\\src__circuit.rs_line_381_col_75.diff",
+        "current_outcome": "CaughtMutant",
+        "name": "src/circuit.rs:381:75: replace || with && in Circuit::validate",
+        "current_diff": "diff/src__circuit.rs_line_381_col_75.diff",
+        "original_outcome": "MissedMutant",
+        "original_diff_sha256": "dd7fd9d1198f0f58e432f9176bca5e47581972574579e9cfa7d028e347a20bf9"
+      }
+    ]
+  },
+  "executed_binaries": [
+    {
+      "sha256": "df50b3ecb34cf7e48420e5e9eb746bd236c20a6bc93786ef47491bdb5affc6c7",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\circuit_simulator-ec16352c82678e55.exe",
+      "log": "E:\\Artifacts\\Spice-circuit-admission-20261119T140601Z\\full-tests.log"
+    },
+    {
+      "sha256": "72e4c26351b391c253a9fec1c94e5ea65dbd43e0f3454665e0d36faee8c37389",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\mutation_suite-959d2566832d66d2.exe",
+      "log": "E:\\Artifacts\\Spice-circuit-admission-20261119T140601Z\\full-tests.log"
+    },
+    {
+      "sha256": "5ff15733227e6d0f5a9b6771359bc9e5dcb45b5545b740bbb0da6655df6adf9c",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\campaign_cli-55654e9809069435.exe",
+      "log": "E:\\Artifacts\\Spice-circuit-admission-20261119T140601Z\\Spice-intel-circuit-tests-17f8ae4e731d4248800a184178866858\\tests.log"
+    },
+    {
+      "sha256": "6590c7f9d3cee264019f72d73225cf5e86ac64a42cbba3ba40295cc6b47fa151",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\intel_backend-b3b260dd2491da49.exe",
+      "log": "E:\\Artifacts\\Spice-circuit-admission-20261119T140601Z\\Spice-intel-circuit-tests-17f8ae4e731d4248800a184178866858\\tests.log"
+    },
+    {
+      "sha256": "019d4453c5bd29ffbf9b5a33255ed557fc7e39e5eff2fa75f689eecdec064240",
+      "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\providers-b75df9ebae7099d3.exe",
+      "log": "E:\\Artifacts\\Spice-circuit-admission-20261119T140601Z\\Spice-intel-circuit-tests-17f8ae4e731d4248800a184178866858\\tests.log"
+    }
+  ],
+  "coverage": {
+    "branches": null,
+    "instrumented_binary_sha256": "41b6675d884ce691c1f4337886d2186024066b80f8c79d6ac760cb82b68afffa",
+    "file": {
+      "sha256": "455182e52eb7be9d1dbd6c69bdadc2128fb4b8fcb53a27c787eb29232e8a5925",
+      "lines": {
+        "count": 194,
+        "covered": 80,
+        "percent": 41.23711340206185
+      },
+      "file": "src/circuit.rs"
+    },
+    "scope": "Owned circuit.rs exercised by named integration test; test/vendor source excluded",
+    "limitations": [
+      "Not whole-engine/provider/model-runtime coverage.",
+      "Branch coverage unavailable.",
+      "Other source file scopes in raw report are not a global coverage trend."
+    ],
+    "instrumented_tests": 6
+  }
+}

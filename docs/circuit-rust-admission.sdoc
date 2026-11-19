@@ -1,0 +1,52 @@
+[DOCUMENT]
+TITLE: Direct Rust circuit admission and wire preservation
+
+[REQUIREMENT]
+UID: CIRCUIT-RUST-ADMISSION-001
+STATUS: Draft
+TITLE: Validate numerical inputs at the public Rust boundary
+STATEMENT: >>>
+Circuit validation shall independently reject nonfinite or nonpositive passive
+values and nonfinite independent source values. Finite zero and negative source
+values shall remain valid. These checks shall apply to direct Rust objects,
+without depending on an earlier JSON decoder rejecting nonfinite numbers.
+<<<
+COMMENT: >>>
+Verification: tests/circuit_admission.rs passive_values_are_independently_positive_and_finite
+and source_values_require_finiteness_but_allow_zero_and_negative_values.
+Positive-scale property:64Proptest cases, seed2026111915. No convergence claim.
+<<<
+
+[REQUIREMENT]
+UID: CIRCUIT-MODEL-PORTS-001
+STATUS: Draft
+TITLE: Independently admit model ports and control parameters
+STATEMENT: >>>
+Circuit validation shall independently reject out-of-range gate/body or
+back-gate ports for the named MOS1, bulk BSIM3 and FD SOI reference elements.
+Junction Early-effect controls shall independently validate their node indices
+and positive finite voltage scale with finite reciprocal. Both junction element
+variants and MOS1 channels shall validate their model parameters before use.
+<<<
+COMMENT: >>>
+Verification: each_early_control_operand_is_validated_independently,
+model_gate_and_body_ports_are_checked_without_loading_a_provider,
+both_junction_element_variants_validate_the_model. Valid controls also execute.
+This admission-only scope does not qualify native providers, constitutive laws,
+charge behavior or the native_mos adapter accessor.
+<<<
+
+[REQUIREMENT]
+UID: CIRCUIT-OFFSET-WIRE-001
+STATUS: Draft
+TITLE: Preserve nonunit current-control offsets across serialization
+STATEMENT: >>>
+Serialization shall retain a nonunit voltage-scaled CCCS factor offset.
+An omitted legacy offset shall deserialize to exactly one; omitting the unit
+offset on output shall preserve its roundtrip meaning.
+<<<
+COMMENT: >>>
+Verification: nonunit_factor_offsets_survive_the_wire_roundtrip tests negative,
+zero, fractional, unit and positive nonunit values. This tests Element wire
+semantics alone, not whether a referenced controlling branch exists.
+<<<
