@@ -1,0 +1,26 @@
+[DOCUMENT]
+TITLE: Corpus failure progress and unavailable sweep evidence
+
+[REQUIREMENT]
+UID: FRONTEND-CORPUS-FAILURE-PROGRESS-001
+STATUS: Draft
+TITLE: Stop a failed operation without losing its missing coordinates
+STATEMENT: >>>
+After the first initialization, engine or transport failure in one requested
+operation, the offline qualification coordinator shall launch no more points of
+that operation. It shall retain the first failure, record every remaining point
+as unattempted_after_operation_failure and mark the operation unsuccessful.
+Later requested operations and later original decks shall still receive their
+own attempt subject to the existing admission deadline. Unattempted points shall
+never contribute passing execution or numerical agreement evidence.
+<<<
+COMMENT: >>>
+Implementation: dotnet/Simulator.RequestedQualification/RequestedCorpus.cs.
+Verification: RequestedFailFastNativeTests uses incompatible parallel ideal
+voltage sources, a three-point DC sweep, a later OP and a separate valid divider.
+Observed red: remaining points were actually launched and failed. Observed green:
+one failing response, two explicit unattempted points, later OP attempted and the
+separate divider agrees with ngspice. This is runner verification, not a newly
+agreeing original corpus deck. Coverage and broader regression evidence remain
+to collect for this checkpoint. Raw: E:/Artifacts/Spice-next-fifty-20261119T233347Z.
+<<<

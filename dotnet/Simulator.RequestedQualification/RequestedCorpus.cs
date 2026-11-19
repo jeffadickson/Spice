@@ -93,6 +93,11 @@ public static class RequestedCorpus
       await File.WriteAllTextAsync(Path.Combine(operationFolder,"roots.json"),JsonSerializer.Serialize(controlRoots,Json));
      }
      for(var point=0;point<operation.Requests.Length;point++){
+      // One failed point invalidates this entire operation. Retain every
+      // remaining coordinate as unavailable evidence instead of launching
+      // thousands of requests against the same missing provider or bad model.
+      // Other operations and decks still receive their own execution attempt.
+      if(failed){result.Points.Add(new(point,"unattempted_after_operation_failure",null));allExecuted=false;continue;}
       if(watch.Elapsed.TotalSeconds>=seconds){result.Points.Add(new(point,"unattempted_budget",null));allExecuted=false;continue;}
       var request=operation.Requests[point];var requestPath=Path.Combine(operationFolder,point.ToString("D5",CultureInfo.InvariantCulture)+".request.json");await File.WriteAllTextAsync(requestPath,JsonSerializer.Serialize(request,WireFormat.Options));
       using var deadline=new CancellationTokenSource(TimeSpan.FromSeconds(30));
