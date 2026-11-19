@@ -1,3 +1,15 @@
+# Active epoch: AC phase and publication admission checkpoint
+
+Read docs/epoch-ac-phase-results.md and evidence/epoch-ac-phase-results.json.
+Four targeted later-source mutants caught: three coupled-current phase reporting,
+one publication OR guard. Production code unchanged. Full51unit658integration
+pass/6ignored; focusedAC10/publication6; Intel15+SpMVpass; StrictDoc0.31.0
+110documents parsed. ScopeAPI276/393 andartifact90/99lines; branch unavailable.
+Keep frozen30a5a9a cohort unchanged, never rewrite rawsurvivors with later kills.
+Reusable StrictDoc packages now E:/Artifacts/Spice-epoch-triage-20261119T004906Z/strictdoc-packages;
+use PYTHONPATH there and SDReader.read(text,path), not read(path).
+Publication flush remains a documented platform-specific reviewed equivalence.
+Review other newly arriving raw survivors next; issue63 is the one epoch issue.
 # Active4,411 epoch: second API/diagnostic checkpoint
 
 Read docs/epoch-api-diagnostics.md/.sdoc and evidence/epoch-api-diagnostics.json.

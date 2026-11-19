@@ -49,6 +49,26 @@ fn artifact_paths_and_incomplete_results_are_rejected() {
     assert!(!root.exists());
 }
 #[test]
+fn publication_metadata_fields_are_independently_required_before_storage() {
+    // A valid complete flag must not excuse failed status or unknown schema.
+    // Exercise each independent admission field and their combinations.
+    for complete in [false, true] {
+        for status in ["succeeded", "failed"] {
+            for schema in ["1", "future"] {
+                if complete && status == "succeeded" && schema == "1" { continue; }
+                let root = root();
+                let mut result = result();
+                result.complete = complete;
+                result.status = status.into();
+                result.schema_version = schema.into();
+                let error = artifact::publish(&root, "metadata", &result).unwrap_err();
+                assert_eq!(error.code, circuit_simulator::error::ErrorCode::InvalidInput);
+                assert!(!root.exists(), "rejected metadata must not publish partial storage");
+            }
+        }
+    }
+}
+#[test]
 fn independent_dc_power_accounting_balances_source_and_load() {
     let result = result();
     let p = result.dc_power.unwrap();

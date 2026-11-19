@@ -1,0 +1,102 @@
+{
+  "source_base": "0a911a46dfe8bc9af82b4a07f680f34634c2062b",
+  "production_code_changed": false,
+  "artifact_root": "E:/Artifacts/Spice-epoch-triage-20261119T004906Z",
+  "native_replay": "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261119T005020Z-8ada84cf",
+  "selected_names": [
+    "src/api.rs:420:26: delete - in run_with_registry",
+    "src/api.rs:420:64: replace * with / in run_with_registry",
+    "src/api.rs:423:51: replace + with - in run_with_registry"
+  ],
+  "replay_counts": {
+    "invalid": 0,
+    "timeouts": 0,
+    "survived": 0,
+    "caught": 3
+  },
+  "profile": "mutants",
+  "features": [],
+  "seed": "2026111901",
+  "tests": {
+    "ignored": 6,
+    "unit": 51,
+    "focused": 10,
+    "integration": 658,
+    "publication": 6
+  },
+  "coverage_api": [
+    {
+      "file": "src/api.rs",
+      "sha256": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96",
+      "lines": {
+        "count": 393,
+        "covered": 276,
+        "percent": 70.22900763358778
+      }
+    }
+  ],
+  "branch_coverage": null,
+  "source_hashes": [
+    {
+      "path": "src/api.rs",
+      "sha256": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96"
+    },
+    {
+      "path": "tests/bjt_coupled_charge.rs",
+      "sha256": "7a9cbfc08de24e6efc42d76ad40b84ea503c0fe69f21144761b5362ecede3139"
+    },
+    {
+      "path": "docs/bjt-coupled-charge.sdoc",
+      "sha256": "946877a96cccd8d9e5f1aa3638fe15b084cc01e44279127a400c95604ae3cd53"
+    },
+    {
+      "sha256": "70fcace412e1b4043213a240f913182270d46d6700ebda999107ff0504d5afd9",
+      "path": "tests/storage_power.rs"
+    },
+    {
+      "sha256": "296fcac0e9e4dd0db5cca6df525d01838f08bd56e5fbac2e831ae2611339bdc8",
+      "path": "docs/epoch-publication-admission.sdoc"
+    }
+  ],
+  "limits": [
+    "Later-source replay does not retest frozen cohort.",
+    "Finite analytic phase tests, not full Gummel-Poon or new original decks.",
+    "Coverage scope differs from admission suite; no overall increase claimed.",
+    "No new standalone fuzz or Stryker run."
+  ],
+  "supplemental_verification": "15 Intel routine tests plus separate SpMV passed; StrictDoc0.31.0 parsed110 documents",
+  "intel_provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+  "publication_replay": "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/20261119T010920Z-a9a04d67",
+  "publication_counts": {
+    "survived": 0,
+    "timeouts": 0,
+    "caught": 1,
+    "invalid": 0
+  },
+  "coverage_artifact": [
+    {
+      "file": "src/artifact.rs",
+      "sha256": "71bc73886f4572ea500febc8f998e507504d54672fcdc5ee7aee56ca357cb8a1",
+      "lines": {
+        "count": 99,
+        "covered": 90,
+        "percent": 90.9090909090909
+      }
+    }
+  ],
+  "strictdoc": {
+    "documents": 110,
+    "parser": "StrictDoc SDReader",
+    "version": "0.31.0",
+    "success": true
+  },
+  "review": "Read-only independent source review: no important issues; results count corrected to658",
+  "commands": [
+    "cargo test --profile mutants --test bjt_coupled_charge",
+    "cargo test --profile mutants --test storage_power",
+    "cargo test --profile mutants --lib --test mutation_suite --features mutation-suite",
+    "Measure-RustIntegrationCoverage.ps1 -Test bjt_coupled_charge; -Test storage_power; separate normal qualification-target",
+    "Test-IntelCircuits.ps1 -Provider pinned4353e81a; Run-ParallelProbe.ps1 -Probe Intel",
+    "StrictDoc SDReader.read(UTF8 text,path) over docs/*.sdoc; package0.31.0 isolated onE"
+  ]
+}

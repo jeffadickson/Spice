@@ -1,0 +1,20 @@
+[DOCUMENT]
+TITLE: Independent publication metadata admission
+
+[REQUIREMENT]
+UID: ARTIFACT-METADATA-ADMISSION-001
+STATUS: Draft
+TITLE: Every publication metadata field is necessary
+STATEMENT: >>>
+Publication shall require complete=true, status=succeeded and schema_version=1
+independently. A failed field shall return InvalidInput before creating the
+destination root or any partial published files. Valid fields shall not excuse
+another failed field.
+<<<
+COMMENT: >>>
+Implementation: artifact.rs publish metadata preflight.
+Verification: storage_power publication_metadata_fields_are_independently_required_before_storage
+tests all seven invalid combinations; artifact_roundtrip_collision_and_corruption
+retains the valid positive control. This requirement does not establish crash-proof
+or adversarial filesystem durability.
+<<<

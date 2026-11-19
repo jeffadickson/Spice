@@ -47,3 +47,21 @@ Implementation: backend_faer.rs provider-side row evaluation before initial scor
 and after each correction. Verification: complex_refinement_contracts and the
 public generated BJT AC request with a grounded zero-phasor supply.
 <<<
+
+[REQUIREMENT]
+UID: BJT-EARLY-AC-PHASE-001
+STATUS: Draft
+TITLE: Coupled storage current preserves complex phase
+STATEMENT: >>>
+The public AC terminal-current observable shall retain both complex components
+of the Early-effect charge derivative. With an AC-grounded base and collector
+phasor a+j*b, its control contribution shall be -omega*k*b+j*omega*k*a,
+where k=TF*IS*expm1(VBE/VT)/VA at positive forward bias. The supplying base
+source shall balance both components and the ideal control shall draw no current.
+<<<
+COMMENT: >>>
+Verification: tests/bjt_coupled_charge.rs,
+quadrature_control_current_obeys_jomega_charge_and_terminal_kcl.
+Finite analytical cases cover LU and Faer at two frequencies and three phases;
+they do not establish full Gummel-Poon or arbitrary BJT model qualification.
+<<<

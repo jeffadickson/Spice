@@ -50,6 +50,40 @@ fn control_only_ac_reaches_sparse_solver_and_reported_terminal_current() {
     }
 }
 #[test]
+fn quadrature_control_current_obeys_jomega_charge_and_terminal_kcl() {
+    // With the base AC-grounded, dQ/dVc = TF*Is*expm1(Vbe/Vt)/VA.
+    // Thus Icpl = j*omega*k*Vc: an imaginary drive produces a negative real
+    // current. The earlier real-only drive cannot detect that sign/phase path.
+    let k = 2e-9 * 1e-15 * (0.62 / 0.02585_f64).exp_m1() / 50.;
+    for backend in ["lu", "faer"] {
+        for (re, im) in [(0., 1.), (0.7, -0.3), (-0.2, 0.8)] {
+            let mut req = request(serde_json::json!({"kind":"ac",
+                "frequencies_hz":[1e3, 1e6], "source_phasors":[
+                {"id":"VB","real":0.,"imag":0.},
+                {"id":"VC","real":re,"imag":im}]}));
+            req.backend = backend.into();
+            let result = circuit_simulator::api::run(&req).unwrap();
+            let at = |name: &str| result.signals.iter().position(|s| s.id == name).unwrap();
+            let iq = at("i(QBE)");
+            let ib = at("i(VB)");
+            let ic = at("i(VC)");
+            for sample in &result.ac_samples {
+                let wk = std::f64::consts::TAU * sample.frequency_hz * k;
+                let current = &sample.values[iq];
+                let tolerance = 1e-12 * wk;
+                assert!((current.real + wk * im).abs() < tolerance, "real {backend}");
+                assert!((current.imag - wk * re).abs() < tolerance, "imag {backend}");
+                // The base source supplies the storage current. The ideal
+                // voltage control draws no current at either complex phase.
+                assert!((sample.values[ib].real + current.real).abs() < tolerance);
+                assert!((sample.values[ib].imag + current.imag).abs() < tolerance);
+                assert!(sample.values[ic].real.abs() < tolerance);
+                assert!(sample.values[ic].imag.abs() < tolerance);
+            }
+        }
+    }
+}
+#[test]
 fn be_residual_cross_jacobian_and_history_are_consistent_without_state_mutation() {
     let req=request(serde_json::json!({"kind":"operating_point"}));
     let plan=circuit_simulator::compile::compile(&req.circuit).unwrap();
