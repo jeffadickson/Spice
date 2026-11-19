@@ -24,6 +24,65 @@ fn audit_metrics_are_json_safe_and_bounds_are_validated() {
 }
 
 #[test]
+fn measured_check_requires_each_finite_operand_and_nonnegative_tolerance() {
+    for (discrepancy, tolerance) in [
+        (0., f64::INFINITY), (0., f64::NEG_INFINITY), (0., f64::NAN),
+        (f64::INFINITY, 1.), (f64::NEG_INFINITY, 1.), (f64::NAN, 1.),
+        (0., -1.),
+    ] {
+        let check = Check::measured("invalid-input", discrepancy, tolerance, "A");
+        assert_eq!(check.status, CheckStatus::Failed);
+        assert!(check.reason.is_some());
+        let json = serde_json::to_value(&check).unwrap();
+        if !discrepancy.is_finite() { assert!(json["discrepancy"].is_null()); }
+        if !tolerance.is_finite() || tolerance < 0. { assert!(json["tolerance"].is_null()); }
+    }
+    assert_eq!(Check::measured("exact-zero", 0., 0., "A").status, CheckStatus::Passed);
+    assert_eq!(Check::measured("finite-failure", 2., 1., "A").status, CheckStatus::Failed);
+}
+#[test]
+fn accumulation_mos_charge_audit_matches_independent_capacitor_and_common_mode() {
+    use circuit_simulator::{audit::backward_euler_step, circuit::{Circuit, Element}, ids::NodeId as N, mos1::Mos1Model};
+    // Deep accumulation has Cgb=Cox, Cgs=Cgd=0 and zero channel current.
+    // Manufacture non-unit gate steps: independent I=Cox*deltaV/h fixes both
+    // supplying source currents, without evaluating production charge code.
+    let model = Mos1Model { p_channel:false, oxide_farads:3e-9,
+        threshold_volts:0.7, beta_amps_per_volt_squared:2e-4,
+        body_effect_sqrt_volts:0., surface_potential_volts:0.6,
+        channel_length_modulation_per_volt:0. };
+    for offset in [-1., 0., 2.] {
+        for h in [1e-6, 2e-6, 5e-6] {
+          for delta in [0.25, 1., 2.] {
+            let volts = [1.+offset, -2.+offset, offset, -0.25+offset];
+            let mut elements: Vec<Element> = ["VD", "VG", "VS", "VB"].into_iter().enumerate()
+                .map(|(i,id)| Element::Voltage {id:id.into(),p:N(i+1),n:N(0),volts:volts[i]}).collect();
+            elements.push(Element::Mos1Channel {id:"M".into(),p:N(1),n:N(3),gate:N(2),bulk:N(4),model});
+            let circuit = Circuit {nodes:["0","d","g","s","b"].map(str::to_owned).to_vec(),elements};
+            let current = 3e-9*delta/h;
+            let mut state = volts.to_vec();
+            state.extend([0., -current, 0., current]);
+            let mut previous = state.clone(); previous[1] -= delta;
+            let report = backward_euler_step(&circuit,&previous,&state,h,AuditOptions::default()).unwrap();
+            let kcl:Vec<_> = report.checks.iter().filter(|c|c.id.starts_with("kcl:")).collect();
+            assert_eq!(kcl.len(),5);
+            assert!(kcl.iter().all(|c|c.status==CheckStatus::Passed),"offset={offset} h={h}: {kcl:?}");
+            // The relative bound scales with the sum of absolute physical
+            // currents, not their cancelling signed sum or a product.
+            for check in &kcl {
+                let scale = if ["kcl:0", "kcl:g", "kcl:b"].contains(&check.id.as_str()) {2.*current} else {0.};
+                let options = AuditOptions::default();
+                let expected = options.current_absolute_a + options.relative*scale;
+                assert!((check.tolerance.unwrap()-expected).abs() <= expected*1e-12);
+            }
+            // A wrong terminal current must not be forgiven by the audit.
+            state[5] += current*0.1;
+            assert!(backward_euler_step(&circuit,&previous,&state,h,AuditOptions::default()).unwrap()
+                .checks.iter().any(|c|c.id=="kcl:g" && c.status==CheckStatus::Failed));
+          }
+        }
+    }
+}
+#[test]
 fn independent_kcl_detects_perturbed_current_and_rejects_malformed_states() {
     use circuit_simulator::{
         audit::dc, backend::DenseLu, compile::compile, dc::operating_point, netlist::parse,

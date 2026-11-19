@@ -49,6 +49,31 @@ fn artifact_paths_and_incomplete_results_are_rejected() {
     assert!(!root.exists());
 }
 #[test]
+fn payload_length_and_digest_are_independent_integrity_requirements() {
+    let root = root();
+    let payload = result();
+    let changed_hash = artifact::publish(&root, "same-length-tamper", &payload).unwrap();
+    let path = changed_hash.join("result.json");
+    let original = std::fs::read_to_string(&path).unwrap();
+    let tampered = original.replacen("divider", "dividex", 1);
+    assert_ne!(original, tampered);
+    assert_eq!(original.len(), tampered.len());
+    // Still-valid JSON and identical length isolate the digest check.
+    serde_json::from_str::<serde_json::Value>(&tampered).unwrap();
+    std::fs::write(&path, tampered).unwrap();
+    let error = artifact::read_verified(&changed_hash).unwrap_err();
+    assert_eq!(error.code, circuit_simulator::error::ErrorCode::InvalidInput);
+
+    let wrong_length = artifact::publish(&root, "length-marker-only", &payload).unwrap();
+    let marker_path = wrong_length.join("manifest.json");
+    let mut marker: serde_json::Value = serde_json::from_slice(&std::fs::read(&marker_path).unwrap()).unwrap();
+    marker["bytes"] = (marker["bytes"].as_u64().unwrap() + 1).into();
+    // The payload and its SHA256 are unchanged: only the declared length fails.
+    std::fs::write(marker_path, serde_json::to_vec(&marker).unwrap()).unwrap();
+    let error = artifact::read_verified(&wrong_length).unwrap_err();
+    assert_eq!(error.code, circuit_simulator::error::ErrorCode::InvalidInput);
+}
+#[test]
 fn publication_metadata_fields_are_independently_required_before_storage() {
     // A valid complete flag must not excuse failed status or unknown schema.
     // Exercise each independent admission field and their combinations.

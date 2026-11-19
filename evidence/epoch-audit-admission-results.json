@@ -1,0 +1,284 @@
+{
+  "source_base": "af30897036f173920b35f8c5dc91b630b060ac98",
+  "production_code_changed": false,
+  "artifact_root": "E:/Artifacts/Spice-epoch-triage-20261119T015337Z",
+  "stages": [
+    {
+      "native": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 3,
+        "killed": 3,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "65dc56a88406e1702124e32ad2630bb7539af9cdf271a887113a2c9f0d8e09fd",
+        "log_sha256": "2113126195911e08329fe3c4e48e5032399eb84497a45001a4f8235ffe78e315"
+      },
+      "root": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261119T015543Z-8ad01d17",
+      "status": "completed",
+      "snapshot_test_hashes": [
+        {
+          "sha256": "770f279dbebb74c25ad56359a709536dafeba846f8910c0e7e919eecdb445106",
+          "file": "tests/consistency.rs"
+        },
+        {
+          "sha256": "11cfc8df1dee97c1302b55a56a50df464f4316c421a95ede8332c176ddd39784",
+          "file": "tests/analyses.rs"
+        },
+        {
+          "sha256": "9063f5e6e0f59eb21da1bc7126089dcd1a99bcaa55b1daa1767aa5af66cd4ad1",
+          "file": "tests/storage_power.rs"
+        }
+      ]
+    },
+    {
+      "native": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 2,
+        "candidates": 24,
+        "killed": 23,
+        "survived": 1,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "de48adfb3f57bf35e0a48e8f5750ecb7837d18adc91edf7d14a42a00ac3b2429",
+        "log_sha256": "c5caea11ec861736ecea23af80c4594c6d530482c14b5faafc75e96424455962"
+      },
+      "root": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261119T015925Z-7d9c8539",
+      "status": "completed",
+      "snapshot_test_hashes": [
+        {
+          "sha256": "31a4d2eeea5d6513bfb3dbb4c07ce4fc330fd9cea0b688052c2067001280cb7b",
+          "file": "tests/consistency.rs"
+        },
+        {
+          "sha256": "11cfc8df1dee97c1302b55a56a50df464f4316c421a95ede8332c176ddd39784",
+          "file": "tests/analyses.rs"
+        },
+        {
+          "sha256": "9063f5e6e0f59eb21da1bc7126089dcd1a99bcaa55b1daa1767aa5af66cd4ad1",
+          "file": "tests/storage_power.rs"
+        }
+      ]
+    },
+    {
+      "native": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "9860d24f74833d64e517072c72f112ead2df59e49e1c2d433271ab84b5595654",
+        "log_sha256": "b97bc1a6e37ec5b4e420ddb4f77c7514c4ad627e56c7028414738b501046cf9d"
+      },
+      "root": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261119T021327Z-7178cd98",
+      "status": "completed",
+      "snapshot_test_hashes": [
+        {
+          "sha256": "5f18adb95e9cf558109a56a5691fe661ef93e886d17e0adec80e0de3a56828cf",
+          "file": "tests/consistency.rs"
+        },
+        {
+          "sha256": "11cfc8df1dee97c1302b55a56a50df464f4316c421a95ede8332c176ddd39784",
+          "file": "tests/analyses.rs"
+        },
+        {
+          "sha256": "9063f5e6e0f59eb21da1bc7126089dcd1a99bcaa55b1daa1767aa5af66cd4ad1",
+          "file": "tests/storage_power.rs"
+        }
+      ]
+    }
+  ],
+  "test_seed": "2026111902",
+  "frozen_seed": "2026111901",
+  "profile": "mutants",
+  "features": [],
+  "workers": 2,
+  "test_workers": 2,
+  "tests": {
+    "consistency": 15,
+    "intel": 15,
+    "storage_power": 7,
+    "ignored": 6,
+    "unit": 51,
+    "integration": 662,
+    "intel_spmv": "passed",
+    "analyses": 11
+  },
+  "coverage": [
+    {
+      "metrics": [
+        {
+          "file": "src/audit.rs",
+          "sha256": "8e953af44a4dbaef84ac6457d5b1617ef4b01ae4296fb242b2915425992d7258",
+          "lines": {
+            "count": 579,
+            "covered": 427,
+            "percent": 73.74784110535406
+          }
+        }
+      ],
+      "suite": "consistency",
+      "branches": null,
+      "coverage_seed": "88320261103"
+    },
+    {
+      "metrics": [
+        {
+          "sha256": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+          "lines": {
+            "count": 11,
+            "covered": 10,
+            "percent": 90.9090909090909
+          },
+          "file": "src/assertion.rs"
+        }
+      ],
+      "suite": "analyses",
+      "branches": null,
+      "coverage_seed": "88320261103"
+    },
+    {
+      "metrics": [
+        {
+          "sha256": "71bc73886f4572ea500febc8f998e507504d54672fcdc5ee7aee56ca357cb8a1",
+          "lines": {
+            "count": 99,
+            "covered": 90,
+            "percent": 90.9090909090909
+          },
+          "file": "src/artifact.rs"
+        }
+      ],
+      "suite": "storage_power",
+      "branches": null,
+      "coverage_seed": "88320261103"
+    }
+  ],
+  "cli_for_uninstrumented_child": {
+    "profile": "mutants",
+    "mutated": false,
+    "path": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target/mutants/circuit-simulator.exe",
+    "sha256": "9a94b7454ef3451f63fe60f403e2bd079400dc750486028fba1741cd2631f933"
+  },
+  "strictdoc": {
+    "documents": 111,
+    "unique_uids": 619,
+    "version": "0.31.0",
+    "parser": "StrictDoc SDReader",
+    "success": true
+  },
+  "flush": {
+    "source_sha256": "cad63fe5b363cff93c932e69a9bab892ed8a31680088defcfe07af6cad75583c",
+    "platform": "Microsoft Windows 10.0.26300",
+    "binary_sha256": "663699e4b8a1a8be1f1e1c616b06cbeb5d33d21752238554e38364248bf98c94",
+    "compiler": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "limits": "Four finite I/O observations on the recorded platform; not power-loss durability or every future Rust version.",
+    "result": {
+      "cases": 4,
+      "pre_flush_visibility": true,
+      "post_flush_unchanged": true,
+      "sync_all_retained": true
+    }
+  },
+  "compile_invalid": [
+    {
+      "diagnostic": "error[E0282]: type annotations needed for `&_`",
+      "name": "src/api.rs:163:9: delete match arm Analysis::Ac{frequencies_hz, source_phasors,} in run_with_registry",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261118T222328Z-13f6f7b7\\rust\\mutants.out\\log\\src__api.rs_line_163_col_9.log"
+    },
+    {
+      "diagnostic": "error[E0277]: the trait bound `error::SimError: Default` is not satisfied",
+      "name": "src/artifact.rs:23:5: replace io -> SimError with Default::default()",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261118T231411Z-601c9d4c\\rust\\mutants.out\\log\\src__artifact.rs_line_23_col_5.log"
+    },
+    {
+      "diagnostic": "error: `<` is interpreted as a start of generic arguments for `u64`, not a comparison",
+      "name": "src/artifact.rs:33:32: replace > with < in <impl Write for LimitedFile>::write",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261118T231411Z-601c9d4c\\rust\\mutants.out\\log\\src__artifact.rs_line_33_col_32_001.log"
+    },
+    {
+      "diagnostic": "error[E0277]: the trait bound `Outcome: Default` is not satisfied",
+      "name": "src/assertion.rs:11:5: replace within -> Outcome with Default::default()",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261118T235730Z-3f14ceb8\\rust\\mutants.out\\log\\src__assertion.rs_line_11_col_5.log"
+    },
+    {
+      "diagnostic": "error[E0277]: the trait bound `audit::Check: Default` is not satisfied",
+      "name": "src/audit.rs:40:9: replace Check::measured -> Self with Default::default()",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261118T235730Z-3f14ceb8\\rust\\mutants.out\\log\\src__audit.rs_line_40_col_9.log"
+    },
+    {
+      "diagnostic": "error[E0277]: the trait bound `audit::Check: Default` is not satisfied",
+      "name": "src/audit.rs:56:9: replace Check::not_checked -> Self with Default::default()",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T001930Z-185fbc69\\rust\\mutants.out\\log\\src__audit.rs_line_56_col_9.log"
+    }
+  ],
+  "review": "Read-only independent source review found no important issues; non-unit amplitude extension follows surviving unit-step observation",
+  "source_hashes": [
+    {
+      "sha256": "8e953af44a4dbaef84ac6457d5b1617ef4b01ae4296fb242b2915425992d7258",
+      "file": "src/audit.rs"
+    },
+    {
+      "sha256": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+      "file": "src/assertion.rs"
+    },
+    {
+      "sha256": "71bc73886f4572ea500febc8f998e507504d54672fcdc5ee7aee56ca357cb8a1",
+      "file": "src/artifact.rs"
+    },
+    {
+      "sha256": "5f18adb95e9cf558109a56a5691fe661ef93e886d17e0adec80e0de3a56828cf",
+      "file": "tests/consistency.rs"
+    },
+    {
+      "sha256": "11cfc8df1dee97c1302b55a56a50df464f4316c421a95ede8332c176ddd39784",
+      "file": "tests/analyses.rs"
+    },
+    {
+      "sha256": "9063f5e6e0f59eb21da1bc7126089dcd1a99bcaa55b1daa1767aa5af66cd4ad1",
+      "file": "tests/storage_power.rs"
+    }
+  ],
+  "limits": [
+    "Frozen native outcomes unchanged by later test kills.",
+    "First MOS batch is23caught1missed on unit steps; final nonunit replay separate.",
+    "Finite deep accumulation only; native BSIM, inversion and remaining raw survivors unqualified.",
+    "No fresh standalone fuzz engine or Stryker run; existing property tests included in full run.",
+    "Stable Rust branch coverage and CLI-child coverage unavailable.",
+    "Two coverage attempts lacked explicit CLI path; failed attempts retained, not covered.",
+    "File.flush remains target-specific reviewed equivalence, not killed or durability proof.",
+    "Intel routine and SpMV checks do not qualify arbitrary GPU decks."
+  ],
+  "final_unique_caught": 27,
+  "replay_attempts": 28,
+  "flush_classification": "Reviewed equivalent on recorded Windows26300/Rust1.99.1; four finite observations rerun; not caught",
+  "commands": [
+    "cargo test --profile mutants --lib --test mutation_suite --features mutation-suite; normal target isolated onE",
+    "FrameworkMutations.dll --tool rust --workers2 --test-workers2 --rust-profile mutants; named selections and snapshots in recorded stages",
+    "Measure-RustIntegrationCoverage.ps1 -Test consistency/analyses/storage_power; explicit CARGO_BIN_EXE_circuit-simulator in each standalone PowerShell process",
+    "Test-IntelCircuits.ps1 with trusted provider4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955; separate Run-ParallelProbe.ps1 -Probe Intel",
+    "Probe-FileFlush.ps1 -OutputDirectory E:/Artifacts/Spice-epoch-triage-20261119T015337Z/flush-probe",
+    "StrictDoc0.31.0 SDReader.read(UTF8 text,path);111docs619uniqueIDs"
+  ]
+}

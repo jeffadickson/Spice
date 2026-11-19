@@ -7,6 +7,16 @@ use circuit_simulator::{
     quantity::spice_scalar,
     transient::Sample,
 };
+
+#[test]
+fn nonfinite_measurements_are_indeterminate_even_with_valid_finite_bounds() {
+    for value in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+        assert_eq!(within(Some(value), -1., 1.), Outcome::Indeterminate);
+    }
+    assert_eq!(within(Some(-1.), -1., 1.), Outcome::Pass);
+    assert_eq!(within(Some(1.), -1., 1.), Outcome::Pass);
+    assert_eq!(within(Some(2.), -1., 1.), Outcome::Fail);
+}
 #[test]
 fn rc_ac_matches_complex_transfer() {
     let c = parse("RC\nV1 in 0 1\nR1 in out 1k\nC1 out 0 1u\n.end").unwrap();

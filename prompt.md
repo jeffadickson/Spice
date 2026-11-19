@@ -1,3 +1,19 @@
+# Active epoch: independent audit admission and charge checkpoint
+
+Read docs/epoch-audit-admission-results.md/.sdoc (requirements file is
+ epoch-audit-admission.sdoc) and evidence/epoch-audit-admission-results.json.
+Production unchanged. New tests catch27distinct frozen counterparts on later
+source:3assertion/metadata/finiteguards plus24MOS1charge-audit cases. FirstMOS
+run23caught1missed atunitdelta; nonunit.25/1/2V followup caughtthelast. Preserve
+all stages/snapshot hashes; do notrewrite frozen outcomes. File.flush remains
+reviewed target-specific equivalent, four-case diagnostic rerun, not killed.
+Final51unit662integration pass/6ignored; Intel15+SpMVpass; StrictDoc111docs619IDs.
+Scoped audit427/579, assertion10/11, artifact90/99lines; branches/CLIchildunmeasured.
+Coverage needs explicit CARGO_BIN_EXE_circuit-simulator in each PowerShell process;
+two missing-env failed attempts are retained. Raw E:/Artifacts/Spice-epoch-triage-20261119T015337Z.
+Next prioritize remaining nativeBSIM/control-voltage audit paths, with true
+provider/features and independent terminal-current references. Keep issue63
+and bounded ignored mutation-survivor-triage bookmark; main untouched.
 # Active epoch: AC phase and publication admission checkpoint
 
 Read docs/epoch-ac-phase-results.md and evidence/epoch-ac-phase-results.json.

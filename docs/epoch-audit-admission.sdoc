@@ -1,0 +1,63 @@
+[DOCUMENT]
+TITLE: Independent assertion, artifact and charge audit contracts
+
+[REQUIREMENT]
+UID: EPOCH-ASSERT-FINITE-001
+STATUS: Draft
+TITLE: Nonfinite measured values remain indeterminate
+STATEMENT: >>>
+A missing or nonfinite measurement shall be Indeterminate even when both
+assertion bounds are valid finite numbers. Valid inclusive endpoints shall
+pass and finite out-of-range values shall fail.
+<<<
+COMMENT: >>>
+Verification: analyses nonfinite_measurements_are_indeterminate_even_with_valid_finite_bounds.
+Implementation: assertion.rs within. NaN and both signed infinities are distinct cases.
+<<<
+
+[REQUIREMENT]
+UID: EPOCH-AUDIT-FINITE-001
+STATUS: Draft
+TITLE: Each measured audit operand must be valid
+STATEMENT: >>>
+A measured physical check shall require a finite discrepancy and a finite
+nonnegative tolerance independently. Invalid input shall fail with a reason,
+and invalid numeric fields shall serialize as null rather than passing or
+producing nonfinite JSON numbers.
+<<<
+COMMENT: >>>
+Verification: consistency measured_check_requires_each_finite_operand_and_nonnegative_tolerance.
+Implementation: audit.rs Check::measured. Finite passing and failing controls retained.
+<<<
+
+[REQUIREMENT]
+UID: EPOCH-ARTIFACT-INTEGRITY-001
+STATUS: Draft
+TITLE: Length and digest are independent integrity conditions
+STATEMENT: >>>
+Verified artifact reads shall reject either a payload length mismatch or a
+SHA256 mismatch independently, including valid JSON tampered without changing
+length and valid unchanged payloads with an incorrect declared byte count.
+<<<
+COMMENT: >>>
+Verification: storage_power payload_length_and_digest_are_independent_integrity_requirements.
+Implementation: artifact.rs read_verified. A checksum does not authenticate an untrusted author.
+<<<
+
+[REQUIREMENT]
+UID: EPOCH-MOS-CHARGE-AUDIT-001
+STATUS: Draft
+TITLE: Independent deep-accumulation terminal KCL
+STATEMENT: >>>
+For the bounded MOS1 deep-accumulation fixture, intrinsic gate-bulk displacement
+shall obey I=Cox*deltaV/h with opposite gate and bulk terminal currents. The
+audit shall preserve this result under a common-mode voltage translation and
+scale the relative KCL tolerance by the sum of absolute terminal currents.
+A deliberately perturbed supplying current shall fail the gate KCL check.
+<<<
+COMMENT: >>>
+Verification: consistency accumulation_mos_charge_audit_matches_independent_capacitor_and_common_mode.
+Manufactured states use three voltage steps, three time steps and three offsets without calling the
+production capacitance routine for expected values. This finite accumulation
+fixture does not qualify inversion, native BSIM providers or arbitrary device behavior.
+<<<
