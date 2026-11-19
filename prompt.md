@@ -1,4 +1,21 @@
-# Active epoch: native-model wrapper and SOI-domain qualification
+# Active epoch: accepted-grid boundary qualification
+
+Read docs/configured-grid-boundary-results.md and StrictDoc/evidence pair.
+Basead9e34f; productionconfigured.rs byte-identical to frozen, no math/tolerance
+change. Four public tests catch6/6 original configured99/100/101/104/220 guards.
+Two-pointminimum, authoredintervalbudget, stop-scaled roundoffedge+nextULP,
+64exactdyadic Proptestcases seed2026111921. ActualLU20resistor zero solution:
+2Mscalarpreflight admitted thenCallbackCancelled,2M+20 rejected beforeobserver.
+This does not prove fullretention/trajectory; existing fixed-grid test remains.
+55unit+704integrationpass/7ignored; Intel15+UHD630probe; StrictDoc123docs654UIDs;
+scopedconfigured103/397lines,test/vendor excluded,branchesunavailable.
+Initialdraftcompile Debug-bound error corrected in test, not production; final
+freshowned replay baseline verified. Raw E:/Artifacts/Spice-accepted-grid-20261119T170729Z.
+Preservefrozen4411source/config/helper/outcomes/caches, main/unknownwork/CI.
+Continue remaining backend/compile/configured and independentnative-step evidence;
+no numerical-policy changes merely to kill a mutant; inspect exactnewdiffs.
+
+# Prior checkpoint: native-model wrapper and SOI-domain qualification
 
 Read docs/native-model-qualification-results.md and its StrictDoc/evidence pair.
 Base7132b5d with test-only dirty overlay, production functions/assets unchanged.

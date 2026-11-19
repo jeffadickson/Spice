@@ -202,3 +202,6 @@ mod suite_audit_mos_polarity;
 
 #[path = "circuit_admission.rs"]
 mod suite_circuit_admission;
+
+#[path = "configured_grid_contracts.rs"]
+mod suite_configured_grid_contracts;

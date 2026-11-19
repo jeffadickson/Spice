@@ -1,0 +1,52 @@
+[DOCUMENT]
+TITLE: Authored accepted-grid admission boundaries
+
+[REQUIREMENT]
+UID: CONFIGURED-GRID-CARDINALITY-001
+STATUS: Draft
+TITLE: Admit a single authored interval and enforce its step budget
+STATEMENT: >>>
+An accepted time grid shall admit exactly two endpoints for one interval and
+shall reject a grid containing more than max_steps+1points. Positive exact
+dyadic grids within the authored interval budget shall remain admissible.
+<<<
+COMMENT: >>>
+Verification: two_endpoints_are_a_valid_single_interval_grid and
+seeded_dyadic_grids_use_the_exact_authored_interval_budget;64Proptest cases,
+seed2026111921. This is grid admission, not a trajectory accuracy guarantee.
+<<<
+
+[REQUIREMENT]
+UID: CONFIGURED-GRID-ROUNDOFF-001
+STATUS: Draft
+TITLE: Preserve the represented step-roundoff boundary in seconds
+STATEMENT: >>>
+Accepted-grid maximum-gap admission shall preserve the existing inclusive
+max_step_s+32*binary64_epsilon*stop_s allowance. A represented gap at that
+boundary shall be admitted and the adjacent representable larger gap refused.
+The allowance shall scale with stop time, preserving its units of seconds.
+<<<
+COMMENT: >>>
+Inferred numerical protocol from the existing implementation, recorded as Draft;
+not a new voltage/current accuracy tolerance. Verification:
+represented_step_roundoff_boundary_is_inclusive_and_scaled_by_stop constructs
+the stop=2,max_step=1 boundary by64ULPs of1, independently of production math.
+<<<
+
+[REQUIREMENT]
+UID: CONFIGURED-GRID-PREFLIGHT-001
+STATUS: Draft
+TITLE: Keep the recording preflight limit inclusive before callbacks
+STATEMENT: >>>
+The accepted-grid preflight shall admit exactly2,000,000requested retained
+scalars and reject a larger request as ResourceExhausted before observer
+publication. Observer cancellation after a valid initial sample shall retain
+its Cancelled outcome instead of being mistaken for budget exhaustion.
+<<<
+COMMENT: >>>
+Verification: recording_preflight_admits_exact_limit_before_callback_cancellation
+uses20independent zero-excitation resistors and the actual LU provider. Requests
+100000versus100001points distinguish2,000,000from2,000,020scalars. Exact-limit
+execution stops after one analytically zero sample; this does not measure full
+two-million-scalar retention or establish a completed trajectory.
+<<<

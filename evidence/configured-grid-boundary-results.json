@@ -1,0 +1,535 @@
+{
+  "base_commit": "ad9e34fdbdba40914f22e8ad48a56245adb07560",
+  "artifact_root": "E:/Artifacts/Spice-accepted-grid-20261119T170729Z",
+  "production_changed": false,
+  "source_sha256": {
+    "tests/configured_grid_contracts.rs": "15060c16fb0fd7d086766502649d672731702274f479e201d746a7632db41ee0",
+    "tests/mutation_suite.rs": "e6668f30d5f50f7cb3eb6edb5bea20adeef9abe399f5d88dc9cab103291da5c2",
+    "src/configured.rs": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab"
+  },
+  "mutation_tool": "cargo-mutants 27.1.0",
+  "native_results": {
+    "outcomes": [
+      {
+        "scenario": "Baseline",
+        "summary": "Success",
+        "log_path": "log/baseline.log",
+        "diff_path": null,
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 34.8548168,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.6279074,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:99:47: replace * with / in TransientConfig::validate",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "TransientConfig::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 68,
+                  "column": 5
+                },
+                "end": {
+                  "line": 110,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 99,
+                "column": 47
+              },
+              "end": {
+                "line": 99,
+                "column": 48
+              }
+            },
+            "replacement": "/",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_99_col_47.log",
+        "diff_path": "diff/src__configured.rs_line_99_col_47.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 20.9562469,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.5087558,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:101:17: replace || with && in TransientConfig::validate",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "TransientConfig::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 68,
+                  "column": 5
+                },
+                "end": {
+                  "line": 110,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 101,
+                "column": 17
+              },
+              "end": {
+                "line": 101,
+                "column": 19
+              }
+            },
+            "replacement": "&&",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_101_col_17.log",
+        "diff_path": "diff/src__configured.rs_line_101_col_17.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 18.9238972,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 5.9435795,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:100:55: replace < with == in TransientConfig::validate",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "TransientConfig::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 68,
+                  "column": 5
+                },
+                "end": {
+                  "line": 110,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 100,
+                "column": 55
+              },
+              "end": {
+                "line": 100,
+                "column": 56
+              }
+            },
+            "replacement": "==",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_100_col_55.log",
+        "diff_path": "diff/src__configured.rs_line_100_col_55.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 23.5062378,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 8.2075461,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:100:55: replace < with <= in TransientConfig::validate",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "TransientConfig::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 68,
+                  "column": 5
+                },
+                "end": {
+                  "line": 110,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 100,
+                "column": 55
+              },
+              "end": {
+                "line": 100,
+                "column": 56
+              }
+            },
+            "replacement": "<=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_100_col_55_001.log",
+        "diff_path": "diff/src__configured.rs_line_100_col_55_001.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 20.4958141,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 8.5280633,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:104:71: replace > with >= in TransientConfig::validate",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "TransientConfig::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 68,
+                  "column": 5
+                },
+                "end": {
+                  "line": 110,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 104,
+                "column": 71
+              },
+              "end": {
+                "line": 104,
+                "column": 72
+              }
+            },
+            "replacement": ">=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_104_col_71.log",
+        "diff_path": "diff/src__configured.rs_line_104_col_71.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 24.4336794,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.3541682,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:220:79: replace > with >= in run_observed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "run_observed",
+              "return_type": "-> SimResult<ConfiguredResult>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 535,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 220,
+                "column": 79
+              },
+              "end": {
+                "line": 220,
+                "column": 80
+              }
+            },
+            "replacement": ">=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_220_col_79.log",
+        "diff_path": "diff/src__configured.rs_line_220_col_79.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 19.46368,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 5.9947036,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_grid_contracts"
+            ]
+          }
+        ]
+      }
+    ],
+    "total_mutants": 6,
+    "missed": 0,
+    "caught": 6,
+    "timeout": 0,
+    "unviable": 0,
+    "success": 0,
+    "start_time": "2026-11-19T17:09:18.5570686Z",
+    "end_time": "2026-11-19T17:14:38.909391Z",
+    "cargo_mutants_version": "27.1.0"
+  },
+  "baseline": {
+    "clean": "Removed 7 files, 31.9MiB total",
+    "results": [
+      "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s"
+    ],
+    "owned_rustc_observed": true
+  },
+  "normal_tests": {
+    "log": "full-tests.log",
+    "unit_passed": 55,
+    "ignored": 7,
+    "integration_passed": 704
+  },
+  "focused_tests": 4,
+  "property": {
+    "environment_seed": 2026111922,
+    "seed": 2026111921,
+    "cases": 64
+  },
+  "coverage": {
+    "scope": "Focused integration; excludes tests/vendor; not whole-engine coverage",
+    "raw": "coverage/summary.json",
+    "total_lines": 397,
+    "branches": null,
+    "source": "src/configured.rs",
+    "covered_lines": 103
+  },
+  "strictdoc": {
+    "log": "strictdoc.log",
+    "uids": 654,
+    "documents": 123
+  },
+  "intel": {
+    "logs": [
+      "intel.log",
+      "intel-probe.log"
+    ],
+    "device": "Intel UHD 630",
+    "probe_seed": 18117,
+    "tests_passed": 15
+  },
+  "review": "Read-only simulated review: no important findings",
+  "limitations": [
+    "Initial test-only compilation failed: Debug bound from unwrap_err; corrected before native replay; zero tests executed in failed attempt",
+    "No new ngspice/original-deck, Linux, Stryker or standalone fuzz evidence",
+    "Recording exact-quota witness cancels at first sample; not full retention",
+    "Frozen campaign scores unchanged"
+  ]
+}
