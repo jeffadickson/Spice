@@ -1,0 +1,67 @@
+[DOCUMENT]
+TITLE: Experiment admission, window and RMS contracts
+
+[REQUIREMENT]
+UID: EXP-CAPACITY-BOUNDARY-001
+STATUS: Draft
+TITLE: Keep experiment capacities inclusive and independent
+STATEMENT: >>>
+Experiment validation shall admit256measurements and512assertions independently,
+and reject larger respective counts with InvalidInput. IDs and references shall
+remain otherwise valid when testing these capacity boundaries.
+<<<
+COMMENT: >>>
+Verification: experiment_capacities_are_inclusive_and_independently_bounded.
+These are bounded specification checks, not circuit or provider executions.
+<<<
+
+[REQUIREMENT]
+UID: EXP-ASSERTION-BOUNDARY-001
+STATUS: Draft
+TITLE: Preserve finite inclusive assertion bounds
+STATEMENT: >>>
+Equal finite lower and upper assertion bounds shall be admissible. Inverted
+bounds or a nonfinite endpoint alone shall return InvalidInput.
+<<<
+COMMENT: >>>
+Verification: assertion_bounds_allow_equality_but_reject_inversion_and_nonfinite_values.
+Other IDs, references and units are kept valid to isolate each defect.
+<<<
+
+[REQUIREMENT]
+UID: EXP-WINDOW-CLIPPING-001
+STATUS: Draft
+TITLE: Measure only the requested recorded window
+STATEMENT: >>>
+Minimum, maximum, integral and RMS measurements shall use the requested window
+and its interpolated boundaries, without including outside samples. Integral
+units shall append seconds; RMS shall retain the original signal unit. Unusable
+recordings shall remain explicitly unavailable with indeterminate assertions.
+<<<
+COMMENT: >>>
+Verification: translated_window_operations_ignore_outside_samples_and_keep_units,
+64generated translated-window cases, Proptest seed2026111929; and
+unusable_recordings_remain_unavailable_and_assertions_indeterminate. Fixtures
+are explicitly synthetic recorded data, not claimed simulator output.
+<<<
+
+[REQUIREMENT]
+UID: EXP-RMS-STABILITY-001
+STATUS: Draft
+TITLE: Preserve representable RMS amplitude and piecewise-linear meaning
+STATEMENT: >>>
+RMS shall retain the existing piecewise-linear interpolant meaning without
+unnecessarily squaring physical amplitudes that overflow or underflow. Exactly
+constant clipped finite levels shall return their absolute level after data
+validation. Zero-duration segments shall contribute no energy. The returned
+RMS shall not exceed the largest absolute clipped endpoint.
+<<<
+COMMENT: >>>
+Verification: large_constant_rms_stays_finite_without_squaring_physical_amplitudes,
+tiny_constant_rms_does_not_collapse_to_a_false_zero and
+triangular_extreme_rms_matches_the_linear_interpolant. Selected constants include
+1e154,maximum finite,1e-200,minimum normal and minimum subnormal values. The
+triangle reference is amplitude/sqrt(3), relative fixture bound4e-15, on[1,3].
+This is bounded numerical evidence, not correctly rounded/global time-axis or
+upstream interpolation qualification. See docs/rms-stability-design.md.
+<<<

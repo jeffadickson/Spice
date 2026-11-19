@@ -124,12 +124,7 @@ fn calculate(samples: &[Sample], signal: usize, operation: &Operation) -> SimRes
             .windows(2)
             .map(|w| (w[1].0 - w[0].0) * (w[0].1 / 2. + w[1].1 / 2.))
             .sum(),
-        Operation::Rms { .. } => (points
-            .windows(2)
-            .map(|w| (w[1].0 - w[0].0) * (w[0].1 * w[0].1 + w[0].1 * w[1].1 + w[1].1 * w[1].1) / 3.)
-            .sum::<f64>()
-            / (stop - start))
-            .sqrt(),
+        Operation::Rms { .. } => rms_piecewise_linear(&points, stop - start)?,
         Operation::ValueAt { .. } => unreachable!(),
     };
     crate::quantity::finite(value, "measurement")
@@ -195,4 +190,44 @@ pub fn evaluate(
         })
         .collect();
     Ok((measurements, assertions))
+}
+
+/// RMS of the recorded piecewise-linear interpolant, in the original signal
+/// unit. Normalize amplitudes before forming norms so finite large/tiny values
+/// are not lost by squaring physical samples. This does not change the waveform.
+fn rms_piecewise_linear(points: &[(f64, f64)], duration: f64) -> SimResult<f64> {
+    if points.len() < 2 || !duration.is_finite() || duration <= 0.
+        || points.iter().any(|(time, value)| !time.is_finite() || !value.is_finite()) {
+        return Err(SimError::invalid("invalid RMS data or duration"));
+    }
+    let scale = points.iter().map(|(_, value)| value.abs()).fold(0., f64::max);
+    let constant = points.iter().all(|(_, value)| *value == points[0].1);
+    let root_duration = duration.sqrt();
+    let root_three = 3_f64.sqrt();
+    let mut norm = 0_f64;
+    for pair in points.windows(2) {
+        let width = pair[1].0 - pair[0].0;
+        if !width.is_finite() || width < 0. {
+            return Err(SimError::invalid("invalid RMS segment ordering"));
+        }
+        // A duplicate endpoint contributes no time or energy. Skip it before
+        // arithmetic; zero times an overflowing intermediate is not zero.
+        if width == 0. || constant { continue; }
+        let a = pair[0].1 / scale;
+        let b = pair[1].1 / scale;
+        // Average square on a linear segment is midpoint^2 + half_difference^2/3.
+        // Standard-library hypot avoids explicitly squaring either contribution.
+        let segment = a.midpoint(b).hypot(a.midpoint(-b) / root_three);
+        // Square roots before division avoid underflow of width/duration itself.
+        let weighted = segment * (width.sqrt() / root_duration);
+        norm = norm.hypot(weighted);
+    }
+    // Preserve an exactly recorded constant level, including subnormals, rather
+    // than introduce roundoff through otherwise unnecessary time weighting.
+    // Ordering was still checked for every segment before taking this result.
+    if constant { return Ok(scale); }
+    if !norm.is_finite() { return Err(SimError::invalid("nonfinite RMS norm")); }
+    // A linear interpolant and its RMS cannot exceed the largest absolute
+    // endpoint. Preserve this convex bound against accumulated roundoff only.
+    crate::quantity::finite(scale * norm.min(1.), "RMS measurement")
 }

@@ -1,0 +1,2344 @@
+{
+  "base_commit": "3523ca4031d552496f7b5b819d70109096cc1036",
+  "artifact_root": "E:/Artifacts/Spice-experiment-contracts-20261119T211131Z",
+  "production_changed": true,
+  "source_sha256": {
+    "tests/mutation_suite.rs": "2d1138fca51a8c0ef2921fa3db7c5a8ef01bd1c1c73a4350117a5d6f3ffc53f1",
+    "src/experiment.rs": "2d16adbc52a0352ac1a22e0bd2f2405d3389f0838f612d276ec478c18b6b76ca",
+    "tests/experiment_boundary_contracts.rs": "c8ed450b3def9ff1d9621c5fc456d8768efe9603e803eb7ded87c3c9b30b2a8d"
+  },
+  "executables": {
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\providers-b75df9ebae7099d3.exe": "461a2b3173520ff2809a6eacd0143388d4f70c6ad326df1b5aa4b311200e77d3",
+    "E:/Artifacts/Spice-experiment-contracts-20261119T211131Z/coverage/instrumented-tests.exe": "5ec52ac5d87d5d10cd2c06c1fba1e16ab674e9de643d02e876f82d8408c938c7",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\campaign_cli-55654e9809069435.exe": "fe14cad19a3edbce945733f245a524d678a6c28cb76b15e285664700ed799ba7",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\mutation_suite-959d2566832d66d2.exe": "092566217b7c69a937de61aa692b1ee1a17375499dd1606ec5370b14f2f8047b",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\circuit_simulator-ec16352c82678e55.exe": "4dff761155d6471109e0acda04c1ca1b77ccf2b8db87b81c378177dea91ce767",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\intel_backend-b3b260dd2491da49.exe": "81e1583771c5c6c8cb25ce4b4d0f16742cac26cb4d77eec1f06749ec070697f7"
+  },
+  "before_source": {
+    "frozen_sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+    "test_sha256": "fd43496de1c05c42a2e39e3961cb9c0f767f8738f59181f41cd32442b3bc839b",
+    "before_sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee"
+  },
+  "before_results": {
+    "passed": 5,
+    "failed": 2,
+    "log": "before-fix.log",
+    "failures": [
+      "large finite constant unavailable",
+      "tiny finite constant false zero"
+    ]
+  },
+  "reference_provenance": {
+    "test_overlay_sha256": "fd43496de1c05c42a2e39e3961cb9c0f767f8738f59181f41cd32442b3bc839b",
+    "archive_sha256": "67de75c24213af45775a70584596d19566a43ba0aac9b371ed1bcc8862ec5747",
+    "base_commit": "3523ca4031d552496f7b5b819d70109096cc1036",
+    "frozen_measurement_sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+    "measurement_sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+    "scope": "Historical experiment code and measurement dependency match frozen bytes; other source is pinned3523ca4; one focused test only",
+    "experiment_sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee"
+  },
+  "unchanged_reference_triangle_function_sha256": "e0c9dd397eb57c5595198098c37f4e1a6e7295f9060dc0e2add6fb6599bcc802",
+  "integrity": {
+    "source_dirty": false,
+    "origin": "https://github.com/jeffadickson/Spice.git",
+    "frozen_commit": "30a5a9aab91effadefb3f0860b408b1269eb7dff",
+    "worker": 97824,
+    "stale_prepared_state": "prepared_not_started",
+    "hashes": {
+      "E:/Artifacts/Spice-mutation-epoch-30a5a9a-20261118T203254Z/config.json": "f22206deb98fb9cc6b4f349b64b442660473697ccf6ad8540c3721c45b705e39",
+      "E:/Artifacts/Spice-mutation-epoch-30a5a9a-20261118T203254Z/inventory.json": "508d6d350c84f6ae1ca832fdb97b36ae0f7292fb1f8d3005a61c3204583b8f52",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/helper-final/build/bin/release/FrameworkMutations.dll": "62c93a3b0a1adc5452e9b515ff606260729bbe117df6bc78b0bfd148f6ecde61"
+    },
+    "checked_utc": "2026-11-19T13:30:40.1990377-08:00",
+    "worker_start": "2026-11-19T06:58:06.4036526Z"
+  },
+  "tools": {
+    "cargo_mutants_sha256": "03abe0bd3d3b5e000311a75d294fedbb22e8cb2c863814775c782bf04a0fce4b",
+    "norm_reference": "Rust1.99.1 standard-library hypot/midpoint documentation, rust-hypot-primary-doc.txt",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo_mutants": "27.1.0"
+  },
+  "profile": "mutants",
+  "features": {
+    "intel": "intel-opencl",
+    "replays": "default",
+    "regression": "mutation-suite"
+  },
+  "original_outcomes": [
+    {
+      "name": "src/experiment.rs:116:34: replace > with >= in calculate",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T181722Z-097b66c9",
+      "log": "log/src__experiment.rs_line_116_col_34_002.log",
+      "diff": "diff/src__experiment.rs_line_116_col_34_002.diff"
+    },
+    {
+      "name": "src/experiment.rs:116:42: replace && with || in calculate",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T181722Z-097b66c9",
+      "log": "log/src__experiment.rs_line_116_col_42.log",
+      "diff": "diff/src__experiment.rs_line_116_col_42.diff"
+    },
+    {
+      "name": "src/experiment.rs:116:54: replace < with <= in calculate",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T181722Z-097b66c9",
+      "log": "log/src__experiment.rs_line_116_col_54_002.log",
+      "diff": "diff/src__experiment.rs_line_116_col_54_002.diff"
+    },
+    {
+      "name": "src/experiment.rs:131:21: replace - with + in calculate",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T184037Z-c9b96759",
+      "log": "log/src__experiment.rs_line_131_col_21.log",
+      "diff": "diff/src__experiment.rs_line_131_col_21.diff"
+    },
+    {
+      "name": "src/experiment.rs:61:36: replace > with == in ExperimentSpec::validate",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7",
+      "log": "log/src__experiment.rs_line_61_col_36.log",
+      "diff": "diff/src__experiment.rs_line_61_col_36.diff"
+    },
+    {
+      "name": "src/experiment.rs:61:36: replace > with >= in ExperimentSpec::validate",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7",
+      "log": "log/src__experiment.rs_line_61_col_36_002.log",
+      "diff": "diff/src__experiment.rs_line_61_col_36_002.diff"
+    },
+    {
+      "name": "src/experiment.rs:61:67: replace > with == in ExperimentSpec::validate",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7",
+      "log": "log/src__experiment.rs_line_61_col_67.log",
+      "diff": "diff/src__experiment.rs_line_61_col_67.diff"
+    },
+    {
+      "name": "src/experiment.rs:61:67: replace > with >= in ExperimentSpec::validate",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T174957Z-5d33df8a",
+      "log": "log/src__experiment.rs_line_61_col_67_001.log",
+      "diff": "diff/src__experiment.rs_line_61_col_67_001.diff"
+    },
+    {
+      "name": "src/experiment.rs:96:17: replace || with && in ExperimentSpec::validate",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T174957Z-5d33df8a",
+      "log": "log/src__experiment.rs_line_96_col_17.log",
+      "diff": "diff/src__experiment.rs_line_96_col_17.diff"
+    },
+    {
+      "name": "src/experiment.rs:96:26: replace > with == in ExperimentSpec::validate",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T181722Z-097b66c9",
+      "log": "log/src__experiment.rs_line_96_col_26.log",
+      "diff": "diff/src__experiment.rs_line_96_col_26.diff"
+    },
+    {
+      "name": "src/experiment.rs:96:26: replace > with >= in ExperimentSpec::validate",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T181722Z-097b66c9",
+      "log": "log/src__experiment.rs_line_96_col_26_002.log",
+      "diff": "diff/src__experiment.rs_line_96_col_26_002.diff"
+    }
+  ],
+  "replay_map": [
+    {
+      "original_name": "src/experiment.rs:116:34: replace > with >= in calculate",
+      "original_diff_sha256": "79d625b0af89a8bb2ae24f299536f565a597a9868ea7efc8b638cf5f5deea0bb",
+      "current_name": "src/experiment.rs:116:34: replace > with >= in calculate",
+      "current_diff": "--- src/experiment.rs\n+++ replace > with >= in calculate\n@@ -108,17 +108,17 @@\n         | Operation::Maximum { start_s, stop_s }\n         | Operation::Integral { start_s, stop_s }\n         | Operation::Rms { start_s, stop_s } => (start_s, stop_s),\n     };\n     let mut points = vec![(start, value_at(samples, signal, start)?)];\n     points.extend(\n         samples\n             .iter()\n-            .filter(|s| s.time_s > start && s.time_s < stop)\n+            .filter(|s| s.time_s >= /* ~ changed by cargo-mutants ~ */ start && s.time_s < stop)\n             .map(|s| (s.time_s, s.values[signal])),\n     );\n     points.push((stop, value_at(samples, signal, stop)?));\n     let value = match operation {\n         Operation::Minimum { .. } => points.iter().map(|p| p.1).fold(f64::INFINITY, f64::min),\n         Operation::Maximum { .. } => points.iter().map(|p| p.1).fold(f64::NEG_INFINITY, f64::max),\n         Operation::Integral { .. } => points\n             .windows(2)\n",
+      "original_diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T181722Z-097b66c9\\rust\\mutants.out\\diff\\src__experiment.rs_line_116_col_34_002.diff",
+      "mapping": "unchanged site"
+    },
+    {
+      "original_name": "src/experiment.rs:116:42: replace && with || in calculate",
+      "original_diff_sha256": "dbaef96208c485cd43e798bf12fadaabecc322c34304b2bd66f3ecf48dd9da14",
+      "current_name": "src/experiment.rs:116:42: replace && with || in calculate",
+      "current_diff": "--- src/experiment.rs\n+++ replace && with || in calculate\n@@ -108,17 +108,17 @@\n         | Operation::Maximum { start_s, stop_s }\n         | Operation::Integral { start_s, stop_s }\n         | Operation::Rms { start_s, stop_s } => (start_s, stop_s),\n     };\n     let mut points = vec![(start, value_at(samples, signal, start)?)];\n     points.extend(\n         samples\n             .iter()\n-            .filter(|s| s.time_s > start && s.time_s < stop)\n+            .filter(|s| s.time_s > start || /* ~ changed by cargo-mutants ~ */ s.time_s < stop)\n             .map(|s| (s.time_s, s.values[signal])),\n     );\n     points.push((stop, value_at(samples, signal, stop)?));\n     let value = match operation {\n         Operation::Minimum { .. } => points.iter().map(|p| p.1).fold(f64::INFINITY, f64::min),\n         Operation::Maximum { .. } => points.iter().map(|p| p.1).fold(f64::NEG_INFINITY, f64::max),\n         Operation::Integral { .. } => points\n             .windows(2)\n",
+      "original_diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T181722Z-097b66c9\\rust\\mutants.out\\diff\\src__experiment.rs_line_116_col_42.diff",
+      "mapping": "unchanged site"
+    },
+    {
+      "original_name": "src/experiment.rs:116:54: replace < with <= in calculate",
+      "original_diff_sha256": "89a98ac78dae49f71df26ad573bf4f3cf7e3b06cbfe3eb3f43984027ce8d710f",
+      "current_name": "src/experiment.rs:116:54: replace < with <= in calculate",
+      "current_diff": "--- src/experiment.rs\n+++ replace < with <= in calculate\n@@ -108,17 +108,17 @@\n         | Operation::Maximum { start_s, stop_s }\n         | Operation::Integral { start_s, stop_s }\n         | Operation::Rms { start_s, stop_s } => (start_s, stop_s),\n     };\n     let mut points = vec![(start, value_at(samples, signal, start)?)];\n     points.extend(\n         samples\n             .iter()\n-            .filter(|s| s.time_s > start && s.time_s < stop)\n+            .filter(|s| s.time_s > start && s.time_s <= /* ~ changed by cargo-mutants ~ */ stop)\n             .map(|s| (s.time_s, s.values[signal])),\n     );\n     points.push((stop, value_at(samples, signal, stop)?));\n     let value = match operation {\n         Operation::Minimum { .. } => points.iter().map(|p| p.1).fold(f64::INFINITY, f64::min),\n         Operation::Maximum { .. } => points.iter().map(|p| p.1).fold(f64::NEG_INFINITY, f64::max),\n         Operation::Integral { .. } => points\n             .windows(2)\n",
+      "original_diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T181722Z-097b66c9\\rust\\mutants.out\\diff\\src__experiment.rs_line_116_col_54_002.diff",
+      "mapping": "unchanged site"
+    },
+    {
+      "original_name": "src/experiment.rs:131:21: replace - with + in calculate",
+      "original_diff_sha256": "63145dc64661787cbcfa36b9c9552823ff8ca19c77e6bfbbf64b6efcf52b75f2",
+      "current_name": "src/experiment.rs:127:69: replace - with + in calculate",
+      "current_diff": "--- src/experiment.rs\n+++ replace - with + in calculate\n@@ -119,17 +119,17 @@\n     points.push((stop, value_at(samples, signal, stop)?));\n     let value = match operation {\n         Operation::Minimum { .. } => points.iter().map(|p| p.1).fold(f64::INFINITY, f64::min),\n         Operation::Maximum { .. } => points.iter().map(|p| p.1).fold(f64::NEG_INFINITY, f64::max),\n         Operation::Integral { .. } => points\n             .windows(2)\n             .map(|w| (w[1].0 - w[0].0) * (w[0].1 / 2. + w[1].1 / 2.))\n             .sum(),\n-        Operation::Rms { .. } => rms_piecewise_linear(&points, stop - start)?,\n+        Operation::Rms { .. } => rms_piecewise_linear(&points, stop + /* ~ changed by cargo-mutants ~ */ start)?,\n         Operation::ValueAt { .. } => unreachable!(),\n     };\n     crate::quantity::finite(value, \"measurement\")\n }\n pub fn evaluate(\n     manifest: &Manifest,\n     spec: &ExperimentSpec,\n ) -> SimResult<(Vec<MeasurementResult>, Vec<AssertionResult>)> {\n",
+      "original_diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T184037Z-c9b96759\\rust\\mutants.out\\diff\\src__experiment.rs_line_131_col_21.diff",
+      "mapping": "same stop-start window duration relocated into RMS helper argument"
+    },
+    {
+      "original_name": "src/experiment.rs:61:36: replace > with == in ExperimentSpec::validate",
+      "original_diff_sha256": "5e840480274f2859f82ca1b76fdd5c80f597a25399eb28b5eeb128384807a8d4",
+      "current_name": "src/experiment.rs:61:36: replace > with == in ExperimentSpec::validate",
+      "current_diff": "--- src/experiment.rs\n+++ replace > with == in ExperimentSpec::validate\n@@ -53,17 +53,17 @@\n pub struct AssertionResult {\n     pub id: String,\n     pub measurement: String,\n     pub outcome: Outcome,\n     pub reason: Option<String>,\n }\n impl ExperimentSpec {\n     pub fn validate(&self) -> SimResult<()> {\n-        if self.measurements.len() > 256 || self.assertions.len() > 512 {\n+        if self.measurements.len() == /* ~ changed by cargo-mutants ~ */ 256 || self.assertions.len() > 512 {\n             return Err(SimError::invalid(\"experiment size limit\"));\n         }\n         let mut ids = BTreeSet::new();\n         for m in &self.measurements {\n             if m.id.is_empty() || m.id.len() > 256 || m.signal.len() > 512 || !ids.insert(&m.id) {\n                 return Err(SimError::invalid(\"invalid/duplicate measurement ID\"));\n             }\n             match m.operation {\n",
+      "original_diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7\\rust\\mutants.out\\diff\\src__experiment.rs_line_61_col_36.diff",
+      "mapping": "unchanged site"
+    },
+    {
+      "original_name": "src/experiment.rs:61:36: replace > with >= in ExperimentSpec::validate",
+      "original_diff_sha256": "db19e9018d12a947f7f4ebf297ee72c9b65f3b9f81e713930827fbe6021bb79c",
+      "current_name": "src/experiment.rs:61:36: replace > with >= in ExperimentSpec::validate",
+      "current_diff": "--- src/experiment.rs\n+++ replace > with >= in ExperimentSpec::validate\n@@ -53,17 +53,17 @@\n pub struct AssertionResult {\n     pub id: String,\n     pub measurement: String,\n     pub outcome: Outcome,\n     pub reason: Option<String>,\n }\n impl ExperimentSpec {\n     pub fn validate(&self) -> SimResult<()> {\n-        if self.measurements.len() > 256 || self.assertions.len() > 512 {\n+        if self.measurements.len() >= /* ~ changed by cargo-mutants ~ */ 256 || self.assertions.len() > 512 {\n             return Err(SimError::invalid(\"experiment size limit\"));\n         }\n         let mut ids = BTreeSet::new();\n         for m in &self.measurements {\n             if m.id.is_empty() || m.id.len() > 256 || m.signal.len() > 512 || !ids.insert(&m.id) {\n                 return Err(SimError::invalid(\"invalid/duplicate measurement ID\"));\n             }\n             match m.operation {\n",
+      "original_diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7\\rust\\mutants.out\\diff\\src__experiment.rs_line_61_col_36_002.diff",
+      "mapping": "unchanged site"
+    },
+    {
+      "original_name": "src/experiment.rs:61:67: replace > with == in ExperimentSpec::validate",
+      "original_diff_sha256": "29ed25cd2bb7f627e3428cdf0ecaca42319935c9fc7561740fae3009177b1e01",
+      "current_name": "src/experiment.rs:61:67: replace > with == in ExperimentSpec::validate",
+      "current_diff": "--- src/experiment.rs\n+++ replace > with == in ExperimentSpec::validate\n@@ -53,17 +53,17 @@\n pub struct AssertionResult {\n     pub id: String,\n     pub measurement: String,\n     pub outcome: Outcome,\n     pub reason: Option<String>,\n }\n impl ExperimentSpec {\n     pub fn validate(&self) -> SimResult<()> {\n-        if self.measurements.len() > 256 || self.assertions.len() > 512 {\n+        if self.measurements.len() > 256 || self.assertions.len() == /* ~ changed by cargo-mutants ~ */ 512 {\n             return Err(SimError::invalid(\"experiment size limit\"));\n         }\n         let mut ids = BTreeSet::new();\n         for m in &self.measurements {\n             if m.id.is_empty() || m.id.len() > 256 || m.signal.len() > 512 || !ids.insert(&m.id) {\n                 return Err(SimError::invalid(\"invalid/duplicate measurement ID\"));\n             }\n             match m.operation {\n",
+      "original_diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7\\rust\\mutants.out\\diff\\src__experiment.rs_line_61_col_67.diff",
+      "mapping": "unchanged site"
+    },
+    {
+      "original_name": "src/experiment.rs:61:67: replace > with >= in ExperimentSpec::validate",
+      "original_diff_sha256": "4c02a171643b6c0ca5554e7b1901290fa68e87a25247ddcc7d6c49094bb84069",
+      "current_name": "src/experiment.rs:61:67: replace > with >= in ExperimentSpec::validate",
+      "current_diff": "--- src/experiment.rs\n+++ replace > with >= in ExperimentSpec::validate\n@@ -53,17 +53,17 @@\n pub struct AssertionResult {\n     pub id: String,\n     pub measurement: String,\n     pub outcome: Outcome,\n     pub reason: Option<String>,\n }\n impl ExperimentSpec {\n     pub fn validate(&self) -> SimResult<()> {\n-        if self.measurements.len() > 256 || self.assertions.len() > 512 {\n+        if self.measurements.len() > 256 || self.assertions.len() >= /* ~ changed by cargo-mutants ~ */ 512 {\n             return Err(SimError::invalid(\"experiment size limit\"));\n         }\n         let mut ids = BTreeSet::new();\n         for m in &self.measurements {\n             if m.id.is_empty() || m.id.len() > 256 || m.signal.len() > 512 || !ids.insert(&m.id) {\n                 return Err(SimError::invalid(\"invalid/duplicate measurement ID\"));\n             }\n             match m.operation {\n",
+      "original_diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T174957Z-5d33df8a\\rust\\mutants.out\\diff\\src__experiment.rs_line_61_col_67_001.diff",
+      "mapping": "unchanged site"
+    },
+    {
+      "original_name": "src/experiment.rs:96:17: replace || with && in ExperimentSpec::validate",
+      "original_diff_sha256": "ec6c10092544a0961c4736c40a39e8f6d3bddbc6477fe8bcd721a6dc1da5e978",
+      "current_name": "src/experiment.rs:96:17: replace || with && in ExperimentSpec::validate",
+      "current_diff": "--- src/experiment.rs\n+++ replace || with && in ExperimentSpec::validate\n@@ -88,17 +88,17 @@\n         for a in &self.assertions {\n             if a.id.is_empty()\n                 || a.id.len() > 256\n                 || a.unit.len() > 64\n                 || !assertions.insert(&a.id)\n                 || !ids.contains(&a.measurement)\n                 || !a.low.is_finite()\n                 || !a.high.is_finite()\n-                || a.low > a.high\n+                && /* ~ changed by cargo-mutants ~ */ a.low > a.high\n             {\n                 return Err(SimError::invalid(\"invalid assertion bounds/reference/ID\"));\n             }\n         }\n         Ok(())\n     }\n }\n fn calculate(samples: &[Sample], signal: usize, operation: &Operation) -> SimResult<f64> {\n",
+      "original_diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T174957Z-5d33df8a\\rust\\mutants.out\\diff\\src__experiment.rs_line_96_col_17.diff",
+      "mapping": "unchanged site"
+    },
+    {
+      "original_name": "src/experiment.rs:96:26: replace > with == in ExperimentSpec::validate",
+      "original_diff_sha256": "4dd861c0c741b439f08226d895a7c74360527f41e6f9a53bdf87cd1f5f0e41ba",
+      "current_name": "src/experiment.rs:96:26: replace > with == in ExperimentSpec::validate",
+      "current_diff": "--- src/experiment.rs\n+++ replace > with == in ExperimentSpec::validate\n@@ -88,17 +88,17 @@\n         for a in &self.assertions {\n             if a.id.is_empty()\n                 || a.id.len() > 256\n                 || a.unit.len() > 64\n                 || !assertions.insert(&a.id)\n                 || !ids.contains(&a.measurement)\n                 || !a.low.is_finite()\n                 || !a.high.is_finite()\n-                || a.low > a.high\n+                || a.low == /* ~ changed by cargo-mutants ~ */ a.high\n             {\n                 return Err(SimError::invalid(\"invalid assertion bounds/reference/ID\"));\n             }\n         }\n         Ok(())\n     }\n }\n fn calculate(samples: &[Sample], signal: usize, operation: &Operation) -> SimResult<f64> {\n",
+      "original_diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T181722Z-097b66c9\\rust\\mutants.out\\diff\\src__experiment.rs_line_96_col_26.diff",
+      "mapping": "unchanged site"
+    },
+    {
+      "original_name": "src/experiment.rs:96:26: replace > with >= in ExperimentSpec::validate",
+      "original_diff_sha256": "298c3d63c9418cb19c4550adf5cffb40e16ae739bb48469bcafd008d9ba45a07",
+      "current_name": "src/experiment.rs:96:26: replace > with >= in ExperimentSpec::validate",
+      "current_diff": "--- src/experiment.rs\n+++ replace > with >= in ExperimentSpec::validate\n@@ -88,17 +88,17 @@\n         for a in &self.assertions {\n             if a.id.is_empty()\n                 || a.id.len() > 256\n                 || a.unit.len() > 64\n                 || !assertions.insert(&a.id)\n                 || !ids.contains(&a.measurement)\n                 || !a.low.is_finite()\n                 || !a.high.is_finite()\n-                || a.low > a.high\n+                || a.low >= /* ~ changed by cargo-mutants ~ */ a.high\n             {\n                 return Err(SimError::invalid(\"invalid assertion bounds/reference/ID\"));\n             }\n         }\n         Ok(())\n     }\n }\n fn calculate(samples: &[Sample], signal: usize, operation: &Operation) -> SimResult<f64> {\n",
+      "original_diff_path": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T181722Z-097b66c9\\rust\\mutants.out\\diff\\src__experiment.rs_line_96_col_26_002.diff",
+      "mapping": "unchanged site"
+    }
+  ],
+  "reference_native": {
+    "outcomes": [
+      {
+        "scenario": "Baseline",
+        "summary": "Success",
+        "log_path": "log/baseline.log",
+        "diff_path": null,
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 47.9949816,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts",
+              "triangular_extreme_rms_matches_the_linear_interpolant"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 8.8137812,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts",
+              "triangular_extreme_rms_matches_the_linear_interpolant"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:116:34: replace > with >= in calculate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "calculate",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 104,
+                  "column": 1
+                },
+                "end": {
+                  "line": 136,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 116,
+                "column": 34
+              },
+              "end": {
+                "line": 116,
+                "column": 35
+              }
+            },
+            "replacement": ">=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_116_col_34.log",
+        "diff_path": "diff/src__experiment.rs_line_116_col_34.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 20.6987842,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts",
+              "triangular_extreme_rms_matches_the_linear_interpolant"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.6704091,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts",
+              "triangular_extreme_rms_matches_the_linear_interpolant"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:116:54: replace < with <= in calculate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "calculate",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 104,
+                  "column": 1
+                },
+                "end": {
+                  "line": 136,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 116,
+                "column": 54
+              },
+              "end": {
+                "line": 116,
+                "column": 55
+              }
+            },
+            "replacement": "<=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_116_col_54.log",
+        "diff_path": "diff/src__experiment.rs_line_116_col_54.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 29.8792532,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts",
+              "triangular_extreme_rms_matches_the_linear_interpolant"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.908683,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts",
+              "triangular_extreme_rms_matches_the_linear_interpolant"
+            ]
+          }
+        ]
+      }
+    ],
+    "total_mutants": 2,
+    "missed": 0,
+    "caught": 2,
+    "timeout": 0,
+    "unviable": 0,
+    "success": 0,
+    "start_time": "2026-11-19T21:22:16.848588Z",
+    "end_time": "2026-11-19T21:26:06.0538737Z",
+    "cargo_mutants_version": "27.1.0"
+  },
+  "current_native": {
+    "outcomes": [
+      {
+        "scenario": "Baseline",
+        "summary": "Success",
+        "log_path": "log/baseline.log",
+        "diff_path": null,
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 26.5411659,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 8.4200895,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:61:36: replace > with == in ExperimentSpec::validate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "ExperimentSpec::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 60,
+                  "column": 5
+                },
+                "end": {
+                  "line": 102,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 61,
+                "column": 36
+              },
+              "end": {
+                "line": 61,
+                "column": 37
+              }
+            },
+            "replacement": "==",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_61_col_36.log",
+        "diff_path": "diff/src__experiment.rs_line_61_col_36.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 25.0542138,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.9637416,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:61:36: replace > with >= in ExperimentSpec::validate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "ExperimentSpec::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 60,
+                  "column": 5
+                },
+                "end": {
+                  "line": 102,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 61,
+                "column": 36
+              },
+              "end": {
+                "line": 61,
+                "column": 37
+              }
+            },
+            "replacement": ">=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_61_col_36_001.log",
+        "diff_path": "diff/src__experiment.rs_line_61_col_36_001.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 18.4572996,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 8.1330509,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:61:67: replace > with == in ExperimentSpec::validate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "ExperimentSpec::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 60,
+                  "column": 5
+                },
+                "end": {
+                  "line": 102,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 61,
+                "column": 67
+              },
+              "end": {
+                "line": 61,
+                "column": 68
+              }
+            },
+            "replacement": "==",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_61_col_67.log",
+        "diff_path": "diff/src__experiment.rs_line_61_col_67.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 22.6190411,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.3455485,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:61:67: replace > with >= in ExperimentSpec::validate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "ExperimentSpec::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 60,
+                  "column": 5
+                },
+                "end": {
+                  "line": 102,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 61,
+                "column": 67
+              },
+              "end": {
+                "line": 61,
+                "column": 68
+              }
+            },
+            "replacement": ">=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_61_col_67_001.log",
+        "diff_path": "diff/src__experiment.rs_line_61_col_67_001.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 18.4799246,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.6332408,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:96:17: replace || with && in ExperimentSpec::validate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "ExperimentSpec::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 60,
+                  "column": 5
+                },
+                "end": {
+                  "line": 102,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 96,
+                "column": 17
+              },
+              "end": {
+                "line": 96,
+                "column": 19
+              }
+            },
+            "replacement": "&&",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_96_col_17.log",
+        "diff_path": "diff/src__experiment.rs_line_96_col_17.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 22.5878757,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.9143422,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:96:26: replace > with == in ExperimentSpec::validate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "ExperimentSpec::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 60,
+                  "column": 5
+                },
+                "end": {
+                  "line": 102,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 96,
+                "column": 26
+              },
+              "end": {
+                "line": 96,
+                "column": 27
+              }
+            },
+            "replacement": "==",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_96_col_26.log",
+        "diff_path": "diff/src__experiment.rs_line_96_col_26.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 18.941865,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.5997492,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:96:26: replace > with >= in ExperimentSpec::validate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "ExperimentSpec::validate",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 60,
+                  "column": 5
+                },
+                "end": {
+                  "line": 102,
+                  "column": 6
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 96,
+                "column": 26
+              },
+              "end": {
+                "line": 96,
+                "column": 27
+              }
+            },
+            "replacement": ">=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_96_col_26_001.log",
+        "diff_path": "diff/src__experiment.rs_line_96_col_26_001.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 22.1865283,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.7183074000000005,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:116:42: replace && with || in calculate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "calculate",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 104,
+                  "column": 1
+                },
+                "end": {
+                  "line": 131,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 116,
+                "column": 42
+              },
+              "end": {
+                "line": 116,
+                "column": 44
+              }
+            },
+            "replacement": "||",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_116_col_42.log",
+        "diff_path": "diff/src__experiment.rs_line_116_col_42.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 18.2168768,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 5.2426311,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:116:34: replace > with >= in calculate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "calculate",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 104,
+                  "column": 1
+                },
+                "end": {
+                  "line": 131,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 116,
+                "column": 34
+              },
+              "end": {
+                "line": 116,
+                "column": 35
+              }
+            },
+            "replacement": ">=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "MissedMutant",
+        "log_path": "log/src__experiment.rs_line_116_col_34.log",
+        "diff_path": "diff/src__experiment.rs_line_116_col_34.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 22.3033449,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.8999127,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:116:54: replace < with <= in calculate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "calculate",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 104,
+                  "column": 1
+                },
+                "end": {
+                  "line": 131,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 116,
+                "column": 54
+              },
+              "end": {
+                "line": 116,
+                "column": 55
+              }
+            },
+            "replacement": "<=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "MissedMutant",
+        "log_path": "log/src__experiment.rs_line_116_col_54.log",
+        "diff_path": "diff/src__experiment.rs_line_116_col_54.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 19.9962927,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 5.6417507,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:127:69: replace - with + in calculate",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "calculate",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 104,
+                  "column": 1
+                },
+                "end": {
+                  "line": 131,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 127,
+                "column": 69
+              },
+              "end": {
+                "line": 127,
+                "column": 70
+              }
+            },
+            "replacement": "+",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_127_col_69.log",
+        "diff_path": "diff/src__experiment.rs_line_127_col_69.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 22.4356037,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.7772521,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:204:58: replace == with != in rms_piecewise_linear",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "rms_piecewise_linear",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 233,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 204,
+                "column": 58
+              },
+              "end": {
+                "line": 204,
+                "column": 60
+              }
+            },
+            "replacement": "!=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_204_col_58.log",
+        "diff_path": "diff/src__experiment.rs_line_204_col_58.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 20.7963892,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.3952364,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:216:27: replace / with * in rms_piecewise_linear",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "rms_piecewise_linear",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 233,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 216,
+                "column": 27
+              },
+              "end": {
+                "line": 216,
+                "column": 28
+              }
+            },
+            "replacement": "*",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_216_col_27.log",
+        "diff_path": "diff/src__experiment.rs_line_216_col_27.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 18.7849163,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 5.3388704,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:217:27: replace / with * in rms_piecewise_linear",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "rms_piecewise_linear",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 233,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 217,
+                "column": 27
+              },
+              "end": {
+                "line": 217,
+                "column": 28
+              }
+            },
+            "replacement": "*",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_217_col_27.log",
+        "diff_path": "diff/src__experiment.rs_line_217_col_27.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 23.0384815,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.5654848999999995,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:220:58: replace / with * in rms_piecewise_linear",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "rms_piecewise_linear",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 233,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 220,
+                "column": 58
+              },
+              "end": {
+                "line": 220,
+                "column": 59
+              }
+            },
+            "replacement": "*",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_220_col_58.log",
+        "diff_path": "diff/src__experiment.rs_line_220_col_58.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 19.7536493,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.6067542,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:222:32: replace * with + in rms_piecewise_linear",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "rms_piecewise_linear",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 233,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 222,
+                "column": 32
+              },
+              "end": {
+                "line": 222,
+                "column": 33
+              }
+            },
+            "replacement": "+",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_222_col_32.log",
+        "diff_path": "diff/src__experiment.rs_line_222_col_32.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 22.0114917,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.3456897,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:222:48: replace / with * in rms_piecewise_linear",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "rms_piecewise_linear",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 233,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 222,
+                "column": 48
+              },
+              "end": {
+                "line": 222,
+                "column": 49
+              }
+            },
+            "replacement": "*",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_222_col_48.log",
+        "diff_path": "diff/src__experiment.rs_line_222_col_48.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 20.3401131,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 8.1501081,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/experiment.rs:232:35: replace * with + in rms_piecewise_linear",
+            "package": "circuit-simulator",
+            "file": "src/experiment.rs",
+            "function": {
+              "function_name": "rms_piecewise_linear",
+              "return_type": "-> SimResult<f64>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 233,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 232,
+                "column": 35
+              },
+              "end": {
+                "line": 232,
+                "column": 36
+              }
+            },
+            "replacement": "+",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__experiment.rs_line_232_col_35.log",
+        "diff_path": "diff/src__experiment.rs_line_232_col_35.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 20.6849368,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 5.4006606999999995,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "experiment_boundary_contracts"
+            ]
+          }
+        ]
+      }
+    ],
+    "total_mutants": 18,
+    "missed": 2,
+    "caught": 16,
+    "timeout": 0,
+    "unviable": 0,
+    "success": 0,
+    "start_time": "2026-11-19T21:26:32.2938428Z",
+    "end_time": "2026-11-19T21:37:18.2069835Z",
+    "cargo_mutants_version": "27.1.0"
+  },
+  "baseline_provenance": {
+    "reference": {
+      "passed_expected_tests": true,
+      "clean": "     Removed 23 files, 104.9MiB total\r\n",
+      "fresh_owned_rustc": true
+    },
+    "current": {
+      "passed_expected_tests": true,
+      "clean": "     Removed 23 files, 105.1MiB total\r\n",
+      "fresh_owned_rustc": true
+    }
+  },
+  "dispositions": {
+    "original_cases": 11,
+    "native_current_missed_retained": 2,
+    "supplemental_caught": 7,
+    "current_endpoint_reviewed_equivalents": 2,
+    "current_original_caught": 9,
+    "historical_endpoint_caught": 2
+  },
+  "supplemental_names": [
+    "src/experiment.rs:216:27: replace / with * in rms_piecewise_linear",
+    "src/experiment.rs:217:27: replace / with * in rms_piecewise_linear",
+    "src/experiment.rs:220:58: replace / with * in rms_piecewise_linear",
+    "src/experiment.rs:222:48: replace / with * in rms_piecewise_linear",
+    "src/experiment.rs:222:32: replace * with + in rms_piecewise_linear",
+    "src/experiment.rs:232:35: replace * with + in rms_piecewise_linear",
+    "src/experiment.rs:204:58: replace == with != in rms_piecewise_linear"
+  ],
+  "reviewed_equivalent_names": [
+    "src/experiment.rs:116:34: replace > with >= in calculate",
+    "src/experiment.rs:116:54: replace < with <= in calculate"
+  ],
+  "reviewed_equivalence_scope": "Current validated public window: exact duplicate endpoint value adds zero duration/energy; excludes old source, bitwise guarantees and malformed private inputs",
+  "new_invalid_review": [
+    {
+      "log_sha256": "66e5a4c33f4301a18614c6b45aafb9bdfbbf222d4ad9bc3cfaa911209ecfd0c4",
+      "name": "src/expression.rs:134:42: replace <impl From<WireExpr> for Expr>::from::b -> Box<Expr> with Box::new(Default::default())",
+      "errors": [
+        "error[E0277]: the trait bound `Expr: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T201855Z-5065ea3b\\rust\\mutants.out\\log\\src__expression.rs_line_134_col_42.log"
+    },
+    {
+      "log_sha256": "03ec2bfd6328119e88cee301b465e30ffcb0fdb5526b8d1cf7ef7e96b23a2328",
+      "name": "src/expression.rs:134:9: replace <impl From<WireExpr> for Expr>::from -> Self with Default::default()",
+      "errors": [
+        "error[E0277]: the trait bound `Expr: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T201855Z-5065ea3b\\rust\\mutants.out\\log\\src__expression.rs_line_134_col_9.log"
+    },
+    {
+      "log_sha256": "42ad0403f426a6ab57e3a8475bdf4869f83eb02d8f62438fd8d473f1d5624268",
+      "name": "src/expression.rs:155:42: replace <impl From<Expr> for WireExpr>::from::b -> Box<WireExpr> with Box::new(Default::default())",
+      "errors": [
+        "error[E0277]: the trait bound `WireExpr: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T201855Z-5065ea3b\\rust\\mutants.out\\log\\src__expression.rs_line_155_col_42.log"
+    },
+    {
+      "log_sha256": "f941f9dfec424703467dcdb8fa78dae8037a88be359ed8c7a65f803ebd4c1047",
+      "name": "src/expression.rs:155:9: replace <impl From<Expr> for WireExpr>::from -> Self with Default::default()",
+      "errors": [
+        "error[E0277]: the trait bound `WireExpr: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T201855Z-5065ea3b\\rust\\mutants.out\\log\\src__expression.rs_line_155_col_9.log"
+    },
+    {
+      "log_sha256": "3d38dee9cd35864b3391a7acc909b77bd74be6e74277c335993b21a1d471f122",
+      "name": "src/linalg.rs:108:9: replace LinearSolver::capabilities -> BackendCapabilities with Default::default()",
+      "errors": [
+        "error[E0277]: the trait bound `BackendCapabilities: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T210152Z-fff8d21f\\rust\\mutants.out\\log\\src__linalg.rs_line_108_col_9.log"
+    }
+  ],
+  "tests": {
+    "unit": 55,
+    "focused_after": 7,
+    "integration": 726,
+    "reference_executed": 1,
+    "instrumented": 7,
+    "reference_filtered": 6,
+    "ignored": 7
+  },
+  "property": {
+    "seed": 2026111929,
+    "native_regression_environment_seed": 2026111930,
+    "cases": 64
+  },
+  "coverage": {
+    "tool": "cargo rustc + rustc instrument-coverage + matching LLVM",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "test": "experiment_boundary_contracts",
+    "features": [],
+    "environment_seed": "88320261103",
+    "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+    "files": [
+      {
+        "lines": {
+          "count": 142,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/ac.rs",
+        "sha256": "6a87eaaffaebf03ef84aec71db525c3b1c807b3b1dec5b3cfe57184fb6aba9b6"
+      },
+      {
+        "lines": {
+          "count": 54,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/adaptive.rs",
+        "sha256": "7da703f8317ba10a7181869ada3ce959a09e2774a0e53f436037ce67690bf861"
+      },
+      {
+        "lines": {
+          "count": 393,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/api.rs",
+        "sha256": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96"
+      },
+      {
+        "lines": {
+          "count": 99,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/artifact.rs",
+        "sha256": "71bc73886f4572ea500febc8f998e507504d54672fcdc5ee7aee56ca357cb8a1"
+      },
+      {
+        "lines": {
+          "count": 11,
+          "covered": 5,
+          "percent": 45.45454545454545
+        },
+        "file": "src/assertion.rs",
+        "sha256": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6"
+      },
+      {
+        "lines": {
+          "count": 586,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/audit.rs",
+        "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03"
+      },
+      {
+        "lines": {
+          "count": 135,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/audit_ac.rs",
+        "sha256": "0e015c2b2f5d6489f3c8886d22cb2eb10729900c479233978b0e9b236ece8438"
+      },
+      {
+        "lines": {
+          "count": 170,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/audit_configured.rs",
+        "sha256": "07a822a30108b4942444805a2a9d02816cf3efdcdc5a498772ff9510f6c5ab62"
+      },
+      {
+        "lines": {
+          "count": 313,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/backend.rs",
+        "sha256": "b0116629427c879e6f9c9cf7210f370858833a6addbb507ab00e997958c6e6b1"
+      },
+      {
+        "lines": {
+          "count": 338,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/backend_faer.rs",
+        "sha256": "088fb6ce327c61a516738ad178085cb6ab9b39b6d7696dee6cccd599ad7dd028"
+      },
+      {
+        "lines": {
+          "count": 29,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/behavioral_resistor.rs",
+        "sha256": "be5cc6436bd19adf3882850cc611b3897a02bde2ca21f787d58622d838f4ad20"
+      },
+      {
+        "lines": {
+          "count": 109,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/bsim330.rs",
+        "sha256": "5173d8a3a0879b3b5cdb7d062acc04a78bdcce4e2c70b29ed3e2b31e5cc62d27"
+      },
+      {
+        "lines": {
+          "count": 37,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/campaign.rs",
+        "sha256": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20"
+      },
+      {
+        "lines": {
+          "count": 16,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/charge.rs",
+        "sha256": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888"
+      },
+      {
+        "lines": {
+          "count": 194,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/circuit.rs",
+        "sha256": "6101d36783cea8e4587a52e5a357581e05b9595817a97b19cbb8c01a545298f3"
+      },
+      {
+        "lines": {
+          "count": 341,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/compile.rs",
+        "sha256": "5c277284738cd45fd6fc42999a352a87cf952022837560b2afcbdab17804f908"
+      },
+      {
+        "lines": {
+          "count": 397,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/configured.rs",
+        "sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab"
+      },
+      {
+        "lines": {
+          "count": 101,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/dc.rs",
+        "sha256": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7"
+      },
+      {
+        "lines": {
+          "count": 12,
+          "covered": 9,
+          "percent": 75
+        },
+        "file": "src/error.rs",
+        "sha256": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743"
+      },
+      {
+        "lines": {
+          "count": 145,
+          "covered": 132,
+          "percent": 91.0344827586207
+        },
+        "file": "src/experiment.rs",
+        "sha256": "2d16adbc52a0352ac1a22e0bd2f2405d3389f0838f612d276ec478c18b6b76ca"
+      },
+      {
+        "lines": {
+          "count": 111,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/expression.rs",
+        "sha256": "0157f0a3153adc51c184fbd0e6ce2409fc3bf83267327e9f3c4a4d3f434aaa14"
+      },
+      {
+        "lines": {
+          "count": 15,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/grid.rs",
+        "sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019"
+      },
+      {
+        "lines": {
+          "count": 3,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/ids.rs",
+        "sha256": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad"
+      },
+      {
+        "lines": {
+          "count": 81,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/integrator.rs",
+        "sha256": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963"
+      },
+      {
+        "lines": {
+          "count": 173,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/linalg.rs",
+        "sha256": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54"
+      },
+      {
+        "lines": {
+          "count": 52,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/linear_dynamic.rs",
+        "sha256": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605"
+      },
+      {
+        "lines": {
+          "count": 28,
+          "covered": 19,
+          "percent": 67.85714285714286
+        },
+        "file": "src/measurement.rs",
+        "sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60"
+      },
+      {
+        "lines": {
+          "count": 97,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/model.rs",
+        "sha256": "500da23f436a9c916a0e264fb95a201a90189bae645d24858f8bdf17d9ec4d01"
+      },
+      {
+        "lines": {
+          "count": 141,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/mos1.rs",
+        "sha256": "4dc1dc86f02e83a30e173cbd95bb31c52725e6aad16d7f9bb115be473e1ed9d3"
+      },
+      {
+        "lines": {
+          "count": 30,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/mutual_inductance.rs",
+        "sha256": "9b8d373524cffa2aa8093a9db67bb6645b40864b8fd0047bf08c68d7e8994514"
+      },
+      {
+        "lines": {
+          "count": 553,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/netlist.rs",
+        "sha256": "759d4d1808ea4431ef20e25723687c51fe4d9344374071e81955f894dcfdf0a5"
+      },
+      {
+        "lines": {
+          "count": 1111,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/newton.rs",
+        "sha256": "5ab306611286cf084d814eaa742e683fa862930da1ba9174fe64979684f4f590"
+      },
+      {
+        "lines": {
+          "count": 3,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/ngspice_resistor.rs",
+        "sha256": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3"
+      },
+      {
+        "lines": {
+          "count": 108,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/power.rs",
+        "sha256": "ac25369c845b434d6efb599da77e050a374ac167b868edf765c3268923093406"
+      },
+      {
+        "lines": {
+          "count": 22,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/provenance.rs",
+        "sha256": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e"
+      },
+      {
+        "lines": {
+          "count": 42,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/pspice_switch.rs",
+        "sha256": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9"
+      },
+      {
+        "lines": {
+          "count": 43,
+          "covered": 4,
+          "percent": 9.30232558139535
+        },
+        "file": "src/quantity.rs",
+        "sha256": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397"
+      },
+      {
+        "lines": {
+          "count": 30,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/registry.rs",
+        "sha256": "ff1d1bdf7d82f2b4c1fdc254d8679f89cd69cbb0bac4abb72fc4f97372c369a2"
+      },
+      {
+        "lines": {
+          "count": 81,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/sampling.rs",
+        "sha256": "2cbbdcaa1e01f8cd7dcbbd9122271f59b4dc24cfb3e7a9c6f78a4b8165826196"
+      },
+      {
+        "lines": {
+          "count": 166,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/solver_contract.rs",
+        "sha256": "895b8d2800c55ae0c87e3c38f9bb5630df1f4e2c7988679eb1179e1db3f21201"
+      },
+      {
+        "lines": {
+          "count": 109,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/sources.rs",
+        "sha256": "76ba60d9855777612e1a0fd0e0d438ea939d79eaadc000f1ca7aeb7f8ba91091"
+      },
+      {
+        "lines": {
+          "count": 188,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/sparse.rs",
+        "sha256": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40"
+      },
+      {
+        "lines": {
+          "count": 85,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/spice_diode.rs",
+        "sha256": "992636edc3f26009e0af65fd92334161811ca27d901b8c079670875d7b72c64e"
+      },
+      {
+        "lines": {
+          "count": 250,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/sweep.rs",
+        "sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f"
+      },
+      {
+        "lines": {
+          "count": 45,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/topology.rs",
+        "sha256": "e08fee8153a6c701de145a0707acb866db960eb06162315a81f6286bdf699932"
+      },
+      {
+        "lines": {
+          "count": 80,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/transient.rs",
+        "sha256": "c4bb4261eb887c00094040eb1c5aac6d554259e6aa8c6ae01a99c20188b43939"
+      },
+      {
+        "lines": {
+          "count": 192,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/variation.rs",
+        "sha256": "c7c7b353f039e07b5f9136b4b3a405338851e1256a55616329dd18eb6aa3fe0d"
+      },
+      {
+        "lines": {
+          "count": 38,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/voltage_scaled_cccs.rs",
+        "sha256": "0941725b00b87d405be1e94be2cbae45898a29f312736c77266902032b74f5e6"
+      },
+      {
+        "lines": {
+          "count": 276,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/waveform.rs",
+        "sha256": "e3322998ebe3c4e8e8987809575744f450e9a4e118eddb76f5d703bdb9dc6007"
+      }
+    ],
+    "branches": null,
+    "limitations": [
+      "Stable Rust instrumentation provides no measured branch coverage.",
+      "Other tests and executable main are outside this run.",
+      "A named test can pin its own seed, overriding the environment seed; retain actual test replay configuration alongside this report."
+    ]
+  },
+  "strictdoc": {
+    "uids": 667,
+    "log": "strictdoc.log",
+    "documents": 127
+  },
+  "intel": {
+    "driver": "31.0.101.2141",
+    "routine_passed": 15,
+    "seed": 18117,
+    "probe": "intel-probe.log",
+    "device": "Intel UHD630",
+    "raw": "E:\\Artifacts\\Spice-experiment-contracts-20261119T211131Z\\Spice-intel-circuit-tests-87f3b00594a542fa820866f2ba44128b"
+  },
+  "review": "Read-only simulated numerical/source review; no important findings; ordering/constant recommendations incorporated",
+  "reproduction": {
+    "current": "Eleven replay-map current names plus supplemental-seven.json; current-selector.txt",
+    "reference": "Pinned3523ca4 archive plus test overlay; one triangular test filter; reference-selector.txt",
+    "normal": "cargo test --profile mutants --lib --test mutation_suite --features mutation-suite",
+    "native_bounds": "jobs1, jobserver-tasks2, test timeout120s, build timeout240s",
+    "invalidation": "cargo clean --package circuit-simulator --profile mutants before each separate replay"
+  },
+  "limitations": [
+    "Frozen source/config/helper/outcomes never changed; source/replay stages not a whole4411retest",
+    "Current rawtwo missed retained; old-source two kills and new-source equivalence remain separate",
+    "Private RMS relies on clipped partition duration; no global/correctly-rounded/extreme-time-axis/interpolation claim",
+    "Synthetic recorded-data qualification, not new circuit execution",
+    "Branch/main/vendor coverage unmeasured; no new ngspice/original-deck/Linux/Stryker/standalone fuzz/throughput qualification"
+  ]
+}

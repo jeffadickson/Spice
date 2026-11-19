@@ -1,4 +1,25 @@
-# Active epoch: bounded expression admission and evaluation
+# Active epoch: RMS stability and experiment integrity
+
+Read docs/experiment-boundary-results.md, rms-stability-design.md and the
+StrictDoc/evidence pair. Base3523ca4. Real RMS defect reproduced on unchanged
+frozen-equivalent experiment.rs:5focused passed2failed (largeconstant unavailable,
+tinyconstant falsezero). Fixed RMS uses normalized midpoint/hypot norms;
+constant levels exact after ordering validation; units/schema/solver unchanged.
+Current native18=9mappedoriginal kills+7supplemental kills+2reviewed endpoint
+equivalents. Separate pre-fix archive stage2/2caught those endpoint mutations,
+baseline1passed/6filtered. Do not merge these scopes or call supplemental kills
+new frozen survivors. Original RMS denominator131:21 maps to current127:69.
+55unit+726integration passed/7ignored; Intel15+UHD630probe; StrictDoc127/667.
+Scoped experiment132/145lines, branches/main/vendor unmeasured. Proptest64cases
+seed2026111929; environment2026111930. Five more E0277Default mutations reviewed.
+Private RMS assumes caller points partition duration; no global/correct-rounding,
+extreme-time-axis/interpolation/Linux/newdeck/ngspice/throughput qualification.
+Raw E:/Artifacts/Spice-experiment-contracts-20261119T211131Z.
+Preserve frozen4411 identities/scores, main/unknown work and replay cache isolation.
+Continue backend/configured/native-step and newly arrived survivors with exact
+current diff maps. Keep numerical equivalence, caught, invalid and pending apart.
+
+# Prior checkpoint: bounded expression admission and evaluation
 
 Read docs/expression-boundary-results.md and its StrictDoc/evidence pair.
 Base e52cf09; production expression.rs remains byte-identical to frozen source.
