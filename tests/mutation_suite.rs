@@ -205,3 +205,6 @@ mod suite_circuit_admission;
 
 #[path = "configured_grid_contracts.rs"]
 mod suite_configured_grid_contracts;
+
+#[path = "configured_execution_contracts.rs"]
+mod suite_configured_execution_contracts;

@@ -1,4 +1,25 @@
-# Active epoch: accepted-grid boundary qualification
+# Active epoch: configured execution and startup qualification
+
+Read docs/configured-execution-results.md and its StrictDoc/evidence pair.
+Base2a497a7; production configured.rs and compile.rs remain byte-identical to
+frozen source. Final native4/4caught: report seed work, nonlinear TR restart,
+behavioral dependency ordering and differential control. Five public tests,
+64dyadic Proptest cases seed2026111923 and six behavioral common-mode/orientation
+cases. Independent Shockley/RC endpoint balance1e-10A, actual LU-call accounting.
+55unit+709integration passed/7ignored; Intel15+UHD630probe; StrictDoc124/657.
+Scoped configured275/397 and compile186/341lines; branches unavailable.
+Initial diagnostic10=4caught/6missed includes two unrelated netlist fields;
+preserve its earlier test snapshot separately from final4 source replay.
+Reviewed equivalents: compile337 literal±1 sign multiplication/division;
+configured566 addition/subtraction of grounded zero, physical not signed-bit
+equivalence. configured350 mutates skipped safety count, NOT fixed_index;
+both variants remain open, no unreachable proof. Seven compile-invalid logs
+reviewed separately; never add Default implementations just to qualify mutants.
+Raw E:/Artifacts/Spice-configured-execution-20261119T180048Z.
+Continue other backend/configured/DC/experiment survivors as the live campaign
+arrives. Preserve frozen4411, main, unknown work, source/cache and score separation.
+
+# Prior checkpoint: accepted-grid boundary qualification
 
 Read docs/configured-grid-boundary-results.md and StrictDoc/evidence pair.
 Basead9e34f; productionconfigured.rs byte-identical to frozen, no math/tolerance

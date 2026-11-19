@@ -1,0 +1,1800 @@
+{
+  "base_commit": "2a497a7c4f917ac094846be26bc99deb6ec59586",
+  "artifact_root": "E:/Artifacts/Spice-configured-execution-20261119T180048Z",
+  "production_changed": false,
+  "source_sha256": {
+    "tests/configured_execution_contracts.rs": "b7b5cb15554c3f4ea6fc80ac27a21b9d0a659ddea49e6a8e5241d7aa99997ef2",
+    "tests/mutation_suite.rs": "c0e2c916b28eb8497e59efb2d473b26b75d00a752d64e1a56c5a432610fe39a9",
+    "src/configured.rs": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+    "src/compile.rs": "5c277284738cd45fd6fc42999a352a87cf952022837560b2afcbdab17804f908"
+  },
+  "executable_sha256": {
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\intel_backend-b3b260dd2491da49.exe": "4b0d84cfa901e25a14cb899110a3b3d9898c4a23a125a6354dd30935f8ea56a4",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\campaign_cli-55654e9809069435.exe": "872ac1c58ffe5aa183c16ccce09ba2f4d30ab92a03567edeefe5598d1782faf0",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\circuit_simulator-ec16352c82678e55.exe": "cae0ff397835b862849eddad2cbee78a1220583a991a2820cbe7e4fa020d3b55",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\mutation_suite-959d2566832d66d2.exe": "0f2ca64b1bc49c2554f9ccc2334bc6ae7a879b3fc36879777d1f951d36b7fd49",
+    "E:/Artifacts/Spice-configured-execution-20261119T180048Z/coverage-final/instrumented-tests.exe": "069a082477fc863cda4819a2e7aee3b1177be83f003d962e50c53ed6096c75df",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\providers-b75df9ebae7099d3.exe": "748591ed26564d4d99595d97a1ac59a1d084a4235be195fdea5b9acea97cef63"
+  },
+  "frozen_integrity": {
+    "source_dirty": false,
+    "canonical_origin": "https://github.com/jeffadickson/Spice.git",
+    "frozen_commit": "30a5a9aab91effadefb3f0860b408b1269eb7dff",
+    "checked_utc": "2026-11-19T10:13:40.3290587-08:00",
+    "hashes": {
+      "E:/Artifacts/Spice-mutation-epoch-30a5a9a-20261118T203254Z/config.json": "f22206deb98fb9cc6b4f349b64b442660473697ccf6ad8540c3721c45b705e39",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/helper-final/build/bin/release/FrameworkMutations.dll": "62c93a3b0a1adc5452e9b515ff606260729bbe117df6bc78b0bfd148f6ecde61",
+      "E:/Artifacts/Spice-mutation-epoch-30a5a9a-20261118T203254Z/inventory.json": "508d6d350c84f6ae1ca832fdb97b36ae0f7292fb1f8d3005a61c3204583b8f52"
+    }
+  },
+  "profile": "mutants",
+  "features": "default for native focused; mutation-suite for regression; intel-opencl for routine Intel",
+  "tool_versions": {
+    "cargo_mutants": "27.1.0",
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)"
+  },
+  "final_four": {
+    "outcomes": [
+      {
+        "scenario": "Baseline",
+        "summary": "Success",
+        "log_path": "log/baseline.log",
+        "diff_path": null,
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 25.980039,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.611506,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:282:41: replace += with -= in run_observed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "run_observed",
+              "return_type": "-> SimResult<ConfiguredResult>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 535,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 282,
+                "column": 41
+              },
+              "end": {
+                "line": 282,
+                "column": 43
+              }
+            },
+            "replacement": "-=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_282_col_41.log",
+        "diff_path": "diff/src__configured.rs_line_282_col_41.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 20.1321511,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 8.4059174,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:375:43: replace && with || in run_observed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "run_observed",
+              "return_type": "-> SimResult<ConfiguredResult>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 535,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 375,
+                "column": 43
+              },
+              "end": {
+                "line": 375,
+                "column": 45
+              }
+            },
+            "replacement": "||",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_375_col_43.log",
+        "diff_path": "diff/src__configured.rs_line_375_col_43.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 21.8082396,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 5.9984222,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:562:42: replace || with && in behavior_seed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "behavior_seed",
+              "return_type": "-> SimResult<(Vec<f64>, usize)>",
+              "span": {
+                "start": {
+                  "line": 550,
+                  "column": 1
+                },
+                "end": {
+                  "line": 574,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 562,
+                "column": 42
+              },
+              "end": {
+                "line": 562,
+                "column": 44
+              }
+            },
+            "replacement": "&&",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_562_col_42.log",
+        "diff_path": "diff/src__configured.rs_line_562_col_42.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 19.3140934,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 8.5079537,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:565:72: replace - with + in behavior_seed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "behavior_seed",
+              "return_type": "-> SimResult<(Vec<f64>, usize)>",
+              "span": {
+                "start": {
+                  "line": 550,
+                  "column": 1
+                },
+                "end": {
+                  "line": 574,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 565,
+                "column": 72
+              },
+              "end": {
+                "line": 565,
+                "column": 73
+              }
+            },
+            "replacement": "+",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_565_col_72.log",
+        "diff_path": "diff/src__configured.rs_line_565_col_72.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 21.7070498,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.1420202,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      }
+    ],
+    "total_mutants": 4,
+    "missed": 0,
+    "caught": 4,
+    "timeout": 0,
+    "unviable": 0,
+    "success": 0,
+    "start_time": "2026-11-19T18:11:54.4117477Z",
+    "end_time": "2026-11-19T18:15:56.7470198Z",
+    "cargo_mutants_version": "27.1.0"
+  },
+  "final_baseline": {
+    "clean": "     Removed 23 files, 107.0MiB total\r\n",
+    "five_tests_passed": true,
+    "fresh_owned_rustc": true
+  },
+  "initial_ten": {
+    "outcomes": [
+      {
+        "scenario": "Baseline",
+        "summary": "Success",
+        "log_path": "log/baseline.log",
+        "diff_path": null,
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 46.961936,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 11.3809146,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/compile.rs:337:57: replace * with / in compile",
+            "package": "circuit-simulator",
+            "file": "src/compile.rs",
+            "function": {
+              "function_name": "compile",
+              "return_type": "-> SimResult<CompiledCircuit>",
+              "span": {
+                "start": {
+                  "line": 200,
+                  "column": 1
+                },
+                "end": {
+                  "line": 477,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 337,
+                "column": 57
+              },
+              "end": {
+                "line": 337,
+                "column": 58
+              }
+            },
+            "replacement": "/",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "MissedMutant",
+        "log_path": "log/src__compile.rs_line_337_col_57.log",
+        "diff_path": "diff/src__compile.rs_line_337_col_57.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 26.578615,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.3549306,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:282:41: replace += with -= in run_observed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "run_observed",
+              "return_type": "-> SimResult<ConfiguredResult>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 535,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 282,
+                "column": 41
+              },
+              "end": {
+                "line": 282,
+                "column": 43
+              }
+            },
+            "replacement": "-=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_282_col_41.log",
+        "diff_path": "diff/src__configured.rs_line_282_col_41.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 19.9973064,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 5.4405759,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:350:25: replace += with -= in run_observed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "run_observed",
+              "return_type": "-> SimResult<ConfiguredResult>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 535,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 350,
+                "column": 25
+              },
+              "end": {
+                "line": 350,
+                "column": 27
+              }
+            },
+            "replacement": "-=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "MissedMutant",
+        "log_path": "log/src__configured.rs_line_350_col_25.log",
+        "diff_path": "diff/src__configured.rs_line_350_col_25.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 24.9400944,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.1999766,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:350:25: replace += with *= in run_observed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "run_observed",
+              "return_type": "-> SimResult<ConfiguredResult>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 535,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 350,
+                "column": 25
+              },
+              "end": {
+                "line": 350,
+                "column": 27
+              }
+            },
+            "replacement": "*=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "MissedMutant",
+        "log_path": "log/src__configured.rs_line_350_col_25_001.log",
+        "diff_path": "diff/src__configured.rs_line_350_col_25_001.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 21.1139176,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 10.6295804,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:375:43: replace && with || in run_observed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "run_observed",
+              "return_type": "-> SimResult<ConfiguredResult>",
+              "span": {
+                "start": {
+                  "line": 195,
+                  "column": 1
+                },
+                "end": {
+                  "line": 535,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 375,
+                "column": 43
+              },
+              "end": {
+                "line": 375,
+                "column": 45
+              }
+            },
+            "replacement": "||",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_375_col_43.log",
+        "diff_path": "diff/src__configured.rs_line_375_col_43.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 21.9839163,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.7098794999999996,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:562:42: replace || with && in behavior_seed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "behavior_seed",
+              "return_type": "-> SimResult<(Vec<f64>, usize)>",
+              "span": {
+                "start": {
+                  "line": 550,
+                  "column": 1
+                },
+                "end": {
+                  "line": 574,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 562,
+                "column": 42
+              },
+              "end": {
+                "line": 562,
+                "column": 44
+              }
+            },
+            "replacement": "&&",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_562_col_42.log",
+        "diff_path": "diff/src__configured.rs_line_562_col_42.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 19.2008757,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.7637456,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:565:72: replace - with + in behavior_seed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "behavior_seed",
+              "return_type": "-> SimResult<(Vec<f64>, usize)>",
+              "span": {
+                "start": {
+                  "line": 550,
+                  "column": 1
+                },
+                "end": {
+                  "line": 574,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 565,
+                "column": 72
+              },
+              "end": {
+                "line": 565,
+                "column": 73
+              }
+            },
+            "replacement": "+",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__configured.rs_line_565_col_72.log",
+        "diff_path": "diff/src__configured.rs_line_565_col_72.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 24.0672932,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.5101375,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/configured.rs:566:61: replace + with - in behavior_seed",
+            "package": "circuit-simulator",
+            "file": "src/configured.rs",
+            "function": {
+              "function_name": "behavior_seed",
+              "return_type": "-> SimResult<(Vec<f64>, usize)>",
+              "span": {
+                "start": {
+                  "line": 550,
+                  "column": 1
+                },
+                "end": {
+                  "line": 574,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 566,
+                "column": 61
+              },
+              "end": {
+                "line": 566,
+                "column": 62
+              }
+            },
+            "replacement": "-",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "MissedMutant",
+        "log_path": "log/src__configured.rs_line_566_col_61.log",
+        "diff_path": "diff/src__configured.rs_line_566_col_61.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 18.7291788,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.2422209,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/netlist.rs:676:17: delete field max_step_s from struct crate::configured::TransientConfig expression in import_ngspice_request",
+            "package": "circuit-simulator",
+            "file": "src/netlist.rs",
+            "function": {
+              "function_name": "import_ngspice_request",
+              "return_type": "-> SimResult<Request>",
+              "span": {
+                "start": {
+                  "line": 601,
+                  "column": 1
+                },
+                "end": {
+                  "line": 1149,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 676,
+                "column": 17
+              },
+              "end": {
+                "line": 676,
+                "column": 42
+              }
+            },
+            "replacement": "",
+            "genre": "StructField"
+          }
+        },
+        "summary": "MissedMutant",
+        "log_path": "log/src__netlist.rs_line_676_col_17.log",
+        "diff_path": "diff/src__netlist.rs_line_676_col_17.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 21.6662121,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.9564627,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/netlist.rs:677:17: delete field stop_s from struct crate::configured::TransientConfig expression in import_ngspice_request",
+            "package": "circuit-simulator",
+            "file": "src/netlist.rs",
+            "function": {
+              "function_name": "import_ngspice_request",
+              "return_type": "-> SimResult<Request>",
+              "span": {
+                "start": {
+                  "line": 601,
+                  "column": 1
+                },
+                "end": {
+                  "line": 1149,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 677,
+                "column": 17
+              },
+              "end": {
+                "line": 677,
+                "column": 30
+              }
+            },
+            "replacement": "",
+            "genre": "StructField"
+          }
+        },
+        "summary": "MissedMutant",
+        "log_path": "log/src__netlist.rs_line_677_col_17.log",
+        "diff_path": "diff/src__netlist.rs_line_677_col_17.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 19.4881285,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 5.0833533,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--test",
+              "configured_execution_contracts"
+            ]
+          }
+        ]
+      }
+    ],
+    "total_mutants": 10,
+    "missed": 6,
+    "caught": 4,
+    "timeout": 0,
+    "unviable": 0,
+    "success": 0,
+    "start_time": "2026-11-19T18:04:58.4799925Z",
+    "end_time": "2026-11-19T18:12:29.030545Z",
+    "cargo_mutants_version": "27.1.0"
+  },
+  "initial_replay_test_sha256": "da9e6d957a5edfa7f498b8ee484992e9566d53d5b3bae98ccb923f304119d679",
+  "original_eight": [
+    {
+      "name": "src/compile.rs:337:57: replace * with / in compile",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T134440Z-9d978468",
+      "log": "log/src__compile.rs_line_337_col_57_001.log",
+      "diff": "diff/src__compile.rs_line_337_col_57_001.diff"
+    },
+    {
+      "name": "src/configured.rs:282:41: replace += with -= in run_observed",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T152329Z-f0801010",
+      "log": "log/src__configured.rs_line_282_col_41.log",
+      "diff": "diff/src__configured.rs_line_282_col_41.diff"
+    },
+    {
+      "name": "src/configured.rs:350:25: replace += with -= in run_observed",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T155101Z-dc7b2217",
+      "log": "log/src__configured.rs_line_350_col_25.log",
+      "diff": "diff/src__configured.rs_line_350_col_25.diff"
+    },
+    {
+      "name": "src/configured.rs:350:25: replace += with *= in run_observed",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T155101Z-dc7b2217",
+      "log": "log/src__configured.rs_line_350_col_25_001.log",
+      "diff": "diff/src__configured.rs_line_350_col_25_001.diff"
+    },
+    {
+      "name": "src/configured.rs:375:43: replace && with || in run_observed",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T155101Z-dc7b2217",
+      "log": "log/src__configured.rs_line_375_col_43.log",
+      "diff": "diff/src__configured.rs_line_375_col_43.diff"
+    },
+    {
+      "name": "src/configured.rs:562:42: replace || with && in behavior_seed",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T165801Z-bbe40a03",
+      "log": "log/src__configured.rs_line_562_col_42.log",
+      "diff": "diff/src__configured.rs_line_562_col_42.diff"
+    },
+    {
+      "name": "src/configured.rs:565:72: replace - with + in behavior_seed",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T165801Z-bbe40a03",
+      "log": "log/src__configured.rs_line_565_col_72.log",
+      "diff": "diff/src__configured.rs_line_565_col_72.diff"
+    },
+    {
+      "name": "src/configured.rs:566:61: replace + with - in behavior_seed",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T165801Z-bbe40a03",
+      "log": "log/src__configured.rs_line_566_col_61.log",
+      "diff": "diff/src__configured.rs_line_566_col_61.diff"
+    }
+  ],
+  "original_diff_provenance": [
+    {
+      "diff_sha256": "A55C8F9A19681F38D040E5685702646AFF6ACB4C65CC17C266B91749FF67076B",
+      "name": "src/compile.rs:337:57: replace * with / in compile",
+      "file": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T134440Z-9d978468\\rust\\mutants.out\\diff\\src__compile.rs_line_337_col_57_001.diff"
+    },
+    {
+      "diff_sha256": "92989ADDA58505E33E59345F8EA4D8F6F54DE1B2E13367AC50C178EB203D393E",
+      "name": "src/configured.rs:282:41: replace += with -= in run_observed",
+      "file": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T152329Z-f0801010\\rust\\mutants.out\\diff\\src__configured.rs_line_282_col_41.diff"
+    },
+    {
+      "diff_sha256": "E11A473199CFD19F7D8145794397316F3DFDF58DE12E3057FE497365FC8B8E5E",
+      "name": "src/configured.rs:350:25: replace += with -= in run_observed",
+      "file": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T155101Z-dc7b2217\\rust\\mutants.out\\diff\\src__configured.rs_line_350_col_25.diff"
+    },
+    {
+      "diff_sha256": "15C0940AB7A2FE04C4FC29894C8EB75F2F74F3E07F1B1EDF965BADB01AF198D1",
+      "name": "src/configured.rs:350:25: replace += with *= in run_observed",
+      "file": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T155101Z-dc7b2217\\rust\\mutants.out\\diff\\src__configured.rs_line_350_col_25_001.diff"
+    },
+    {
+      "diff_sha256": "243CCF3B7687C32FAD9F62B2C0AEC89B58022AAEAAD5D4FF8D58FE5F4A01F359",
+      "name": "src/configured.rs:375:43: replace && with || in run_observed",
+      "file": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T155101Z-dc7b2217\\rust\\mutants.out\\diff\\src__configured.rs_line_375_col_43.diff"
+    },
+    {
+      "diff_sha256": "A95723FDE9958DCB14B888F192EA45385BB8A7D3CE780923A1D110FA2E887A31",
+      "name": "src/configured.rs:562:42: replace || with && in behavior_seed",
+      "file": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T165801Z-bbe40a03\\rust\\mutants.out\\diff\\src__configured.rs_line_562_col_42.diff"
+    },
+    {
+      "diff_sha256": "4AFD6CED64F52002C603F6FC7FA569F443A51F32D1AAB03624F4B07461F6A6C1",
+      "name": "src/configured.rs:565:72: replace - with + in behavior_seed",
+      "file": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T165801Z-bbe40a03\\rust\\mutants.out\\diff\\src__configured.rs_line_565_col_72.diff"
+    },
+    {
+      "diff_sha256": "44718EFCBD4B7D0DBED6995877102C4D8C638E0313EFD215DB9E3C5A54D42584",
+      "name": "src/configured.rs:566:61: replace + with - in behavior_seed",
+      "file": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T165801Z-bbe40a03\\rust\\mutants.out\\diff\\src__configured.rs_line_566_col_61.diff"
+    }
+  ],
+  "distinct_original_disposition": {
+    "caught": 4,
+    "incidental_netlist_misses": 2,
+    "open": 2,
+    "reviewed_equivalent": 2
+  },
+  "equivalent_notes": [
+    "compile337: literal±1 orientation multiply/divide exact subexpression; no arbitrary signs",
+    "configured566: admitted grounded output physical seed equality; excludes signed-zero bits and future unrestricted callers"
+  ],
+  "open_names": [
+    "src/configured.rs:350:25: replace += with -= in run_observed",
+    "src/configured.rs:350:25: replace += with *= in run_observed"
+  ],
+  "invalid_log_review": [
+    {
+      "name": "src/api.rs:163:9: delete match arm Analysis::Ac{frequencies_hz, source_phasors,} in run_with_registry",
+      "errors": [
+        "error[E0282]: type annotations needed for `&_`",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261118T222328Z-13f6f7b7\\rust\\mutants.out\\log\\src__api.rs_line_163_col_9.log",
+      "sha256": "2d5a4ab13abe79ee4638e0afe3aac59d1a678fd56f690e21ce07d05868b6ff15"
+    },
+    {
+      "name": "src/artifact.rs:23:5: replace io -> SimError with Default::default()",
+      "errors": [
+        "error[E0277]: the trait bound `error::SimError: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261118T231411Z-601c9d4c\\rust\\mutants.out\\log\\src__artifact.rs_line_23_col_5.log",
+      "sha256": "5eb180747d20d6554ff4d9eaa35aaf16169a47944cc0113c34eb7065f77d8754"
+    },
+    {
+      "name": "src/artifact.rs:33:32: replace > with < in <impl Write for LimitedFile>::write",
+      "errors": [
+        "error: `<` is interpreted as a start of generic arguments for `u64`, not a comparison",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261118T231411Z-601c9d4c\\rust\\mutants.out\\log\\src__artifact.rs_line_33_col_32_001.log",
+      "sha256": "7d4a92b38c2e40c3737123ee8fa2aae5f7a77ac72a164cea6598d48b0b6c579f"
+    },
+    {
+      "name": "src/assertion.rs:11:5: replace within -> Outcome with Default::default()",
+      "errors": [
+        "error[E0277]: the trait bound `Outcome: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261118T235730Z-3f14ceb8\\rust\\mutants.out\\log\\src__assertion.rs_line_11_col_5.log",
+      "sha256": "07a8e3f5d69ec69c6276a9269ff5eb710a83502e707b278ebe14eb5e93c08293"
+    },
+    {
+      "name": "src/audit.rs:40:9: replace Check::measured -> Self with Default::default()",
+      "errors": [
+        "error[E0277]: the trait bound `audit::Check: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261118T235730Z-3f14ceb8\\rust\\mutants.out\\log\\src__audit.rs_line_40_col_9.log",
+      "sha256": "04206ccefa334a39c4bce52d339b65f8e85f881c7adf854d3291401a751ab893"
+    },
+    {
+      "name": "src/audit.rs:56:9: replace Check::not_checked -> Self with Default::default()",
+      "errors": [
+        "error[E0277]: the trait bound `audit::Check: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T001930Z-185fbc69\\rust\\mutants.out\\log\\src__audit.rs_line_56_col_9.log",
+      "sha256": "40692901a0066d9444ae404641a5fc057891ff0992e3ae196e34d0a57b7cea5b"
+    },
+    {
+      "name": "src/error.rs:28:9: replace SimError::invalid -> Self with Default::default()",
+      "errors": [
+        "error[E0277]: the trait bound `error::SimError: Default` is not satisfied",
+        "error: could not compile `circuit-simulator` (lib) due to 1 previous error",
+        "error: could not compile `circuit-simulator` (lib test) due to 1 previous error"
+      ],
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T172649Z-0e0a1ed7\\rust\\mutants.out\\log\\src__error.rs_line_28_col_9.log",
+      "sha256": "b94252b77806a0cc92e51e7552a9a23ed7701ebc3763f01d5fe90aea9e96fb93"
+    }
+  ],
+  "normal_tests": {
+    "integration_passed": 709,
+    "unit_passed": 55,
+    "ignored": 7,
+    "raw": "full-final.log"
+  },
+  "properties": {
+    "cases": 64,
+    "seed": 2026111923,
+    "environment_seed": 2026111924
+  },
+  "coverage": {
+    "tool": "cargo rustc + rustc instrument-coverage + matching LLVM",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "test": "configured_execution_contracts",
+    "features": [],
+    "environment_seed": "88320261103",
+    "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+    "files": [
+      {
+        "sha256": "6a87eaaffaebf03ef84aec71db525c3b1c807b3b1dec5b3cfe57184fb6aba9b6",
+        "lines": {
+          "count": 142,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/ac.rs"
+      },
+      {
+        "sha256": "7da703f8317ba10a7181869ada3ce959a09e2774a0e53f436037ce67690bf861",
+        "lines": {
+          "count": 54,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/adaptive.rs"
+      },
+      {
+        "sha256": "48197cdb0d2fce529531aa12e3d884b79b2363a26190d0306e8b14f66c45ad96",
+        "lines": {
+          "count": 393,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/api.rs"
+      },
+      {
+        "sha256": "71bc73886f4572ea500febc8f998e507504d54672fcdc5ee7aee56ca357cb8a1",
+        "lines": {
+          "count": 99,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/artifact.rs"
+      },
+      {
+        "sha256": "281e9fa171904df847b2e5ddfb5058995f3d1467e025ce573da20cf03ed58dc6",
+        "lines": {
+          "count": 11,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/assertion.rs"
+      },
+      {
+        "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03",
+        "lines": {
+          "count": 586,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/audit.rs"
+      },
+      {
+        "sha256": "0e015c2b2f5d6489f3c8886d22cb2eb10729900c479233978b0e9b236ece8438",
+        "lines": {
+          "count": 135,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/audit_ac.rs"
+      },
+      {
+        "sha256": "07a822a30108b4942444805a2a9d02816cf3efdcdc5a498772ff9510f6c5ab62",
+        "lines": {
+          "count": 170,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/audit_configured.rs"
+      },
+      {
+        "sha256": "b0116629427c879e6f9c9cf7210f370858833a6addbb507ab00e997958c6e6b1",
+        "lines": {
+          "count": 313,
+          "covered": 82,
+          "percent": 26.198083067092654
+        },
+        "file": "src/backend.rs"
+      },
+      {
+        "sha256": "088fb6ce327c61a516738ad178085cb6ab9b39b6d7696dee6cccd599ad7dd028",
+        "lines": {
+          "count": 338,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/backend_faer.rs"
+      },
+      {
+        "sha256": "be5cc6436bd19adf3882850cc611b3897a02bde2ca21f787d58622d838f4ad20",
+        "lines": {
+          "count": 29,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/behavioral_resistor.rs"
+      },
+      {
+        "sha256": "5173d8a3a0879b3b5cdb7d062acc04a78bdcce4e2c70b29ed3e2b31e5cc62d27",
+        "lines": {
+          "count": 109,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/bsim330.rs"
+      },
+      {
+        "sha256": "85fdb9120ab561baee27bbfa79df2e4482a3d257bfb734d5bac1e15690db2f20",
+        "lines": {
+          "count": 37,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/campaign.rs"
+      },
+      {
+        "sha256": "cd7bf56d7ccc1e00c318fbc178b3cdbdb8ff6cbbd4233987f2c6537d58f37888",
+        "lines": {
+          "count": 16,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/charge.rs"
+      },
+      {
+        "sha256": "6101d36783cea8e4587a52e5a357581e05b9595817a97b19cbb8c01a545298f3",
+        "lines": {
+          "count": 194,
+          "covered": 68,
+          "percent": 35.051546391752574
+        },
+        "file": "src/circuit.rs"
+      },
+      {
+        "sha256": "5c277284738cd45fd6fc42999a352a87cf952022837560b2afcbdab17804f908",
+        "lines": {
+          "count": 341,
+          "covered": 186,
+          "percent": 54.54545454545454
+        },
+        "file": "src/compile.rs"
+      },
+      {
+        "sha256": "0222c0147bac0b037115f7eca227d7a4f7beffcf0cbae5b76fca60082b3e3aab",
+        "lines": {
+          "count": 397,
+          "covered": 275,
+          "percent": 69.26952141057934
+        },
+        "file": "src/configured.rs"
+      },
+      {
+        "sha256": "748ad99b4e8132938af33d7e4ab9a6ad102c0d57ca1c40239fa5ac818d0f6da7",
+        "lines": {
+          "count": 101,
+          "covered": 25,
+          "percent": 24.752475247524753
+        },
+        "file": "src/dc.rs"
+      },
+      {
+        "sha256": "c3a30db8d51ba0d0f719115b7c8dd2247284025355f2271fa9ab56ed19a35743",
+        "lines": {
+          "count": 12,
+          "covered": 6,
+          "percent": 50
+        },
+        "file": "src/error.rs"
+      },
+      {
+        "sha256": "c37f472dba04f3b461425a264186993bc3f481905eaf3a3807db7b228c41f5ee",
+        "lines": {
+          "count": 123,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/experiment.rs"
+      },
+      {
+        "sha256": "0157f0a3153adc51c184fbd0e6ce2409fc3bf83267327e9f3c4a4d3f434aaa14",
+        "lines": {
+          "count": 111,
+          "covered": 30,
+          "percent": 27.027027027027028
+        },
+        "file": "src/expression.rs"
+      },
+      {
+        "sha256": "75f8759e71d041fdb85feb97c56b60ade8303f8d7925bd86fafc08da4b72b019",
+        "lines": {
+          "count": 15,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/grid.rs"
+      },
+      {
+        "sha256": "caeb61d1ae3b430c30a755ef837fe88bc113e175737d462f9481ff8ed32dafad",
+        "lines": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        },
+        "file": "src/ids.rs"
+      },
+      {
+        "sha256": "f598443ead5873d6d3aa7df64c155197e3f980307835e44b815dfda989a6e963",
+        "lines": {
+          "count": 81,
+          "covered": 55,
+          "percent": 67.90123456790124
+        },
+        "file": "src/integrator.rs"
+      },
+      {
+        "sha256": "80b2025af7446da1053601151f74ca53f08dc7af8f67a072f8be01020d532e54",
+        "lines": {
+          "count": 173,
+          "covered": 58,
+          "percent": 33.52601156069364
+        },
+        "file": "src/linalg.rs"
+      },
+      {
+        "sha256": "fa9002885353d761ab578b362d063eeda836fee88fd034221a30abd12a1eb605",
+        "lines": {
+          "count": 52,
+          "covered": 34,
+          "percent": 65.38461538461539
+        },
+        "file": "src/linear_dynamic.rs"
+      },
+      {
+        "sha256": "1964eaa0c8c3ef809a660b21402d25f870d7cd955ceb72c984fe509ecddc8a60",
+        "lines": {
+          "count": 28,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/measurement.rs"
+      },
+      {
+        "sha256": "500da23f436a9c916a0e264fb95a201a90189bae645d24858f8bdf17d9ec4d01",
+        "lines": {
+          "count": 97,
+          "covered": 70,
+          "percent": 72.16494845360825
+        },
+        "file": "src/model.rs"
+      },
+      {
+        "sha256": "4dc1dc86f02e83a30e173cbd95bb31c52725e6aad16d7f9bb115be473e1ed9d3",
+        "lines": {
+          "count": 141,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/mos1.rs"
+      },
+      {
+        "sha256": "9b8d373524cffa2aa8093a9db67bb6645b40864b8fd0047bf08c68d7e8994514",
+        "lines": {
+          "count": 30,
+          "covered": 8,
+          "percent": 26.666666666666668
+        },
+        "file": "src/mutual_inductance.rs"
+      },
+      {
+        "sha256": "759d4d1808ea4431ef20e25723687c51fe4d9344374071e81955f894dcfdf0a5",
+        "lines": {
+          "count": 553,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/netlist.rs"
+      },
+      {
+        "sha256": "5ab306611286cf084d814eaa742e683fa862930da1ba9174fe64979684f4f590",
+        "lines": {
+          "count": 1111,
+          "covered": 510,
+          "percent": 45.9045904590459
+        },
+        "file": "src/newton.rs"
+      },
+      {
+        "sha256": "69cd47966d725d8f497dbe896c1114d16718a1976e8cc943eb639f30a5cbb2d3",
+        "lines": {
+          "count": 3,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/ngspice_resistor.rs"
+      },
+      {
+        "sha256": "ac25369c845b434d6efb599da77e050a374ac167b868edf765c3268923093406",
+        "lines": {
+          "count": 108,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/power.rs"
+      },
+      {
+        "sha256": "bde56fbfd6ba4c33d256f223b0d8d6a2a326e736ed58f38d5cf92bc3ab54592e",
+        "lines": {
+          "count": 22,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/provenance.rs"
+      },
+      {
+        "sha256": "efaad82ab310566224209a59f92fcfe0429f5c451f1717cc08d3e7128d7c49b9",
+        "lines": {
+          "count": 42,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/pspice_switch.rs"
+      },
+      {
+        "sha256": "592f2c5caa696ab2f568667cad001822c4698e1dc6d335c36105556de5b19397",
+        "lines": {
+          "count": 43,
+          "covered": 8,
+          "percent": 18.6046511627907
+        },
+        "file": "src/quantity.rs"
+      },
+      {
+        "sha256": "ff1d1bdf7d82f2b4c1fdc254d8679f89cd69cbb0bac4abb72fc4f97372c369a2",
+        "lines": {
+          "count": 30,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/registry.rs"
+      },
+      {
+        "sha256": "2cbbdcaa1e01f8cd7dcbbd9122271f59b4dc24cfb3e7a9c6f78a4b8165826196",
+        "lines": {
+          "count": 81,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/sampling.rs"
+      },
+      {
+        "sha256": "895b8d2800c55ae0c87e3c38f9bb5630df1f4e2c7988679eb1179e1db3f21201",
+        "lines": {
+          "count": 166,
+          "covered": 27,
+          "percent": 16.265060240963855
+        },
+        "file": "src/solver_contract.rs"
+      },
+      {
+        "sha256": "76ba60d9855777612e1a0fd0e0d438ea939d79eaadc000f1ca7aeb7f8ba91091",
+        "lines": {
+          "count": 109,
+          "covered": 66,
+          "percent": 60.550458715596335
+        },
+        "file": "src/sources.rs"
+      },
+      {
+        "sha256": "e40375079584ad82330bea4a310bb89a6c5895e15538a950d2685763d697ee40",
+        "lines": {
+          "count": 188,
+          "covered": 150,
+          "percent": 79.7872340425532
+        },
+        "file": "src/sparse.rs"
+      },
+      {
+        "sha256": "992636edc3f26009e0af65fd92334161811ca27d901b8c079670875d7b72c64e",
+        "lines": {
+          "count": 85,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/spice_diode.rs"
+      },
+      {
+        "sha256": "84c4fa67e7ac7886c6e0be647eda4dad79a80293f433a3d6d7a2d327bed9416f",
+        "lines": {
+          "count": 250,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/sweep.rs"
+      },
+      {
+        "sha256": "e08fee8153a6c701de145a0707acb866db960eb06162315a81f6286bdf699932",
+        "lines": {
+          "count": 45,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/topology.rs"
+      },
+      {
+        "sha256": "c4bb4261eb887c00094040eb1c5aac6d554259e6aa8c6ae01a99c20188b43939",
+        "lines": {
+          "count": 80,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/transient.rs"
+      },
+      {
+        "sha256": "c7c7b353f039e07b5f9136b4b3a405338851e1256a55616329dd18eb6aa3fe0d",
+        "lines": {
+          "count": 192,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/variation.rs"
+      },
+      {
+        "sha256": "0941725b00b87d405be1e94be2cbae45898a29f312736c77266902032b74f5e6",
+        "lines": {
+          "count": 38,
+          "covered": 0,
+          "percent": 0
+        },
+        "file": "src/voltage_scaled_cccs.rs"
+      },
+      {
+        "sha256": "e3322998ebe3c4e8e8987809575744f450e9a4e118eddb76f5d703bdb9dc6007",
+        "lines": {
+          "count": 276,
+          "covered": 10,
+          "percent": 3.6231884057971016
+        },
+        "file": "src/waveform.rs"
+      }
+    ],
+    "branches": null,
+    "limitations": [
+      "Stable Rust instrumentation provides no measured branch coverage.",
+      "Other tests and executable main are outside this run.",
+      "A named test can pin its own seed, overriding the environment seed; retain actual test replay configuration alongside this report."
+    ]
+  },
+  "strictdoc": {
+    "documents": 124,
+    "raw": "strictdoc-final.log",
+    "unique_uids": 657
+  },
+  "intel": {
+    "tests_passed": 15,
+    "device": "Intel UHD 630",
+    "probe_log": "intel-probe.log",
+    "driver": "31.0.101.2141",
+    "raw": "E:\\Artifacts\\Spice-configured-execution-20261119T180048Z\\Spice-intel-circuit-tests-f16169a6c8b74735a7657dfc79cd31d2",
+    "probe_seed": 18117
+  },
+  "review": "Read-only simulated review; no important findings",
+  "limitations": [
+    "No production bug/physics/tolerance change; frozen cohort scores unchanged",
+    "Initial fixture parsing failure and stopped replay with no terminal candidates retained and excluded",
+    "Initial diagnostic replay predates common-mode extension; final4 replay uses exact final test snapshot",
+    "Two incidental netlist field misses are outside focused contracts and not closed",
+    "Skipped safety-counter mutations remain open; no unreachability proof",
+    "Branch/main/vendor coverage unavailable; no new ngspice/original-deck/Linux/Stryker/standalone fuzz evidence"
+  ]
+}

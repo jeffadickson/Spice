@@ -1,0 +1,48 @@
+[DOCUMENT]
+TITLE: Configured execution and startup contracts
+
+[REQUIREMENT]
+UID: CONFIGURED-EXECUTION-GRID-001
+STATUS: Draft
+TITLE: Preserve authored times and advance fixed grids
+STATEMENT: >>>
+Fixed dyadic runs shall publish every requested endpoint exactly once through
+the stop time within their authored step budget. Explicit accepted grids shall
+retain distinct representable penultimate times even inside endpoint roundoff.
+<<<
+COMMENT: >>>
+Verification: fixed_dyadic_grid_advances_without_drift_or_missing_endpoints,
+64Proptest cases seed2026111923; explicit_grid_retains_a_distinct_penultimate_time_within_stop_roundoff.
+Uses an analytic6V resistive circuit through the actual LU provider.
+<<<
+
+[REQUIREMENT]
+UID: CONFIGURED-EXECUTION-STARTUP-001
+STATUS: Draft
+TITLE: Preserve behavioral startup dependencies and account for work
+STATEMENT: >>>
+Admitted grounded memoryless behavioral chains shall seed dependencies before
+dependent domain-sensitive expressions, preserving differential controls and
+output polarity. Reported linear solves shall include actual seed-provider work.
+<<<
+COMMENT: >>>
+Verification: chained_behavioral_startup_obeys_polarity_domains_and_counts_seed_work
+uses a reversed-declaration two-stage log chain, three common-mode translations,
+both grounded output orientations and independently counted LU calls. No fixed
+Newton iteration count or unrestricted behavioral profile is required.
+<<<
+
+[REQUIREMENT]
+UID: CONFIGURED-EXECUTION-RESTART-001
+STATUS: Draft
+TITLE: Restore trapezoidal integration after startup
+STATEMENT: >>>
+A nonlinear trapezoidal run without source corners shall use backward Euler
+at startup and trapezoidal endpoint balance on subsequent accepted intervals.
+The restart report shall identify only intervals actually restarted.
+<<<
+COMMENT: >>>
+Verification: nonlinear_trapezoidal_startup_restarts_once_then_obeys_endpoint_balance
+independently checks resistor/Shockley/constant-capacitance current balance
+in amperes within1e-10A. This is a bounded scalar circuit, not all model families.
+<<<
