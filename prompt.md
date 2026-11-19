@@ -1,4 +1,21 @@
-# Active epoch: complex LU component boundaries and backend triage
+# Active epoch: sparse complex correction arithmetic and optional profiles
+
+Read docs/faer-refinement-arithmetic-results.md and its StrictDoc/evidence pair.
+Base cd114d4; one exact coupled-complex unit test added, production unchanged.
+Five original Faer163/170 arithmetic counterparts now caught by native replay;
+owned package cleaned first, fresh owned rustc baseline observed. Full52unit,
+693integration pass/7ignored; Intel15 + UHD630 probe pass. StrictDoc119docs641UIDs.
+Coverage201/483 backend_faer lines includes unit tests, branch coverage unavailable;
+9 instrumented complex-refinement tests include existing64-case seed2026111308.
+First coverage attempt failed private-validator access; retained, not test failure.
+83 original Intel survivors at review shared disabled intel-opencl profile:
+not caught/equivalent, need separate enabled mutation lane. Three Faer invalids
+are E0308/E0277, not product bugs. Current targeted outcomes never rewrite frozen
+4411 results. Continue remaining real/complex refinement/boundary survivors,
+Intel feature lane and native BSIM lane; preserve original names and raw logs.
+Raw E:/Artifacts/Spice-faer-refinement-20261119T105614Z. Main/frozen/CI unchanged.
+
+# Previous checkpoint: complex LU component boundaries and backend triage
 
 Read docs/complex-lu-finiteness-results.md, docs/complex-lu-finiteness.sdoc and
 evidence/complex-lu-finiteness-results.json. Base29ea45d; backend source unchanged

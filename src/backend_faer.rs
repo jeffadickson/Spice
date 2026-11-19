@@ -367,6 +367,26 @@ mod complex_refinement_contracts {
     use crate::{solver_contract::complex_backward_error, sparse::CscPattern};
     use num_complex::Complex64 as C;
     use std::cell::Cell;
+    #[test]
+    fn coupled_complex_correction_uses_original_residual_and_adds_the_delta() {
+        // A=[[2,j],[0,3]], x=[1+2j,3-j]. Quarter-valued initial errors
+        // make every residual product exact in binary. The independently
+        // expanded equations test the factor boundary, not its own verifier.
+        let system = SparseComplexSystem::new(
+            CscPattern::new(2, vec![0, 1, 3], vec![0, 0, 1]).unwrap(),
+            vec![C::new(2., 0.), C::new(0., 1.), C::new(3., 0.)],
+        ).unwrap();
+        let rhs = [C::new(3., 7.), C::new(9., -3.)];
+        let initial = vec![C::new(0.25, 0.5), C::new(1., -0.25)];
+        let mut calls = 0;
+        let result = refine_complex_solution(&system, &rhs, initial, |residual| {
+            calls += 1;
+            assert_eq!(residual, &[C::new(2.25, 5.), C::new(6., -2.25)]);
+            Ok(vec![C::new(0.75, 1.5), C::new(2., -0.75)])
+        }).unwrap();
+        assert_eq!(calls, 1);
+        assert_eq!(result, vec![C::new(1., 2.), C::new(3., -1.)]);
+    }
     fn identity() -> SparseComplexSystem {
         SparseComplexSystem::new(
             CscPattern::new(1, vec![0, 1], vec![0]).unwrap(),

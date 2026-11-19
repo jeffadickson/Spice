@@ -1,0 +1,138 @@
+{
+  "base": "cd114d40e5b99fa318ebafb2541913a5cf7c2b8f",
+  "recorded_utc": "2026-11-19T03:03:58.8778242-08:00",
+  "artifact_root": "E:/Artifacts/Spice-faer-refinement-20261119T105614Z",
+  "frozen_source": "30a5a9aab91effadefb3f0860b408b1269eb7dff",
+  "frozen_faer_sha256": "d4271a240066ecc7b5fd6f8900348ea81b318094c0fca2ab69bbd7dc80343cea",
+  "current_faer_sha256": "088fb6ce327c61a516738ad178085cb6ab9b39b6d7696dee6cccd599ad7dd028",
+  "production_prefix_unchanged": true,
+  "requirement": "FAER-COMPLEX-CORRECTION-001",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "mutants": "27.1.0",
+  "replays": [
+    {
+      "name": "src/backend_faer.rs:163:27: replace -= with += in refine_complex_solution",
+      "current_diff": "diff/src__backend_faer.rs_line_163_col_27.diff",
+      "current_outcome": "CaughtMutant",
+      "frozen_outcome": "MissedMutant",
+      "original_diff_sha256": "9ddd32a4abd8c4a6c04698a8bb157da2d1f4f849568462abe1bd4a24efe2e9da",
+      "current_log": "log/src__backend_faer.rs_line_163_col_27.log",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T090850Z-4d33d854\\rust\\mutants.out\\diff\\src__backend_faer.rs_line_163_col_27.diff"
+    },
+    {
+      "name": "src/backend_faer.rs:163:27: replace -= with /= in refine_complex_solution",
+      "current_diff": "diff/src__backend_faer.rs_line_163_col_27_001.diff",
+      "current_outcome": "CaughtMutant",
+      "frozen_outcome": "MissedMutant",
+      "original_diff_sha256": "8e57297bdc027a0bdd534db15dfb400cfd74188fdf24157d8b3c25c7a4794c1c",
+      "current_log": "log/src__backend_faer.rs_line_163_col_27_001.log",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T090850Z-4d33d854\\rust\\mutants.out\\diff\\src__backend_faer.rs_line_163_col_27_001.diff"
+    },
+    {
+      "name": "src/backend_faer.rs:163:43: replace * with + in refine_complex_solution",
+      "current_diff": "diff/src__backend_faer.rs_line_163_col_43.diff",
+      "current_outcome": "CaughtMutant",
+      "frozen_outcome": "MissedMutant",
+      "original_diff_sha256": "b21a4db9696c3fce85e0e8b1eda7b1a5bdae63766e9a222581128ecbc24d6c87",
+      "current_log": "log/src__backend_faer.rs_line_163_col_43.log",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T090850Z-4d33d854\\rust\\mutants.out\\diff\\src__backend_faer.rs_line_163_col_43.diff"
+    },
+    {
+      "name": "src/backend_faer.rs:163:43: replace * with / in refine_complex_solution",
+      "current_diff": "diff/src__backend_faer.rs_line_163_col_43_001.diff",
+      "current_outcome": "CaughtMutant",
+      "frozen_outcome": "MissedMutant",
+      "original_diff_sha256": "2315d2d0b12eb5a1e92bbfcf1e416872fe617d2c6df7741a535d12c5c4955bc9",
+      "current_log": "log/src__backend_faer.rs_line_163_col_43_001.log",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T090850Z-4d33d854\\rust\\mutants.out\\diff\\src__backend_faer.rs_line_163_col_43_001.diff"
+    },
+    {
+      "name": "src/backend_faer.rs:170:42: replace + with * in refine_complex_solution",
+      "current_diff": "diff/src__backend_faer.rs_line_170_col_42.diff",
+      "current_outcome": "CaughtMutant",
+      "frozen_outcome": "MissedMutant",
+      "original_diff_sha256": "9de09564e3e3524f295cc3cac159b3771d4d88776f63da4a859ec0e62750431e",
+      "current_log": "log/src__backend_faer.rs_line_170_col_42.log",
+      "original_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T090850Z-4d33d854\\rust\\mutants.out\\diff\\src__backend_faer.rs_line_170_col_42_001.diff"
+    }
+  ],
+  "counts": {
+    "invalid": 0,
+    "missed": 0,
+    "timeout": 0,
+    "caught": 5
+  },
+  "baseline": {
+    "fresh_owned_rustc_observed": true,
+    "clean_removed": "23 files,105.1MiB",
+    "cache": "E:/Artifacts/Spice-issue61-20261117T133906Z/current-audit-lean/rust-target",
+    "tests": 1
+  },
+  "regression": {
+    "environment_seed": "2026111911",
+    "features": [
+      "mutation-suite"
+    ],
+    "profile": "mutants",
+    "integration": 693,
+    "unit": 52,
+    "ignored": 7
+  },
+  "coverage": {
+    "source": "J:\\dev\\spice-deck-next\\src\\backend_faer.rs",
+    "limitations": [
+      "Unit-test module lines included; no whole-program coverage percentage.",
+      "Branch coverage unavailable.",
+      "Vendor, native provider, main and GPU code uninstrumented."
+    ],
+    "binary_sha256": "2f0697d335866ee582690047b9c84d35b7ba17b1a5a93c9314926afb2f796294",
+    "scope": "Actual owned library compiled as instrumented unit executable; only complex_refinement_contracts tests run. Reported file is backend_faer.rs including its unit tests.",
+    "lines": {
+      "count": 483,
+      "covered": 201,
+      "percent": 41.61490683229814
+    },
+    "source_sha256": "088fb6ce327c61a516738ad178085cb6ab9b39b6d7696dee6cccd599ad7dd028",
+    "branches": null
+  },
+  "instrumented_tests": 9,
+  "existing_property": {
+    "cases": 64,
+    "seed": "2026111308"
+  },
+  "strictdoc": {
+    "uids": 641,
+    "documents": 119,
+    "parser": "SDReader"
+  },
+  "intel": {
+    "exit_code": 0,
+    "probe_seed": 18117,
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "probe": "FP64 SpMV, finite/shape/corruption gates",
+    "device": "Intel UHD Graphics630",
+    "tests": 15,
+    "coverage_limit": "No enabled-profile replay of83originalIntelmutants yet",
+    "driver": "31.0.101.2141"
+  },
+  "review": {
+    "kind": "simulated read-only code review",
+    "finding": "No important issues; equations and scope checked"
+  },
+  "compile_invalid_review": "invalid-review.json: three Faer E0308/E0277 cases, not kills",
+  "coverage_attempt_failure": "unit-coverage/build.log private validator access; no executed cases, preserved",
+  "commands": [
+    "cargo test --profile mutants --lib --test mutation_suite --features mutation-suite",
+    "cargo clean --package circuit-simulator --profile mutants",
+    "cargo-mutants mutants --gitignore true --file src/backend_faer.rs --re ^src/backend_faer.rs:(163:27: replace -= with (/=|\\+=)|163:43: replace \\* with (/|\\+)|170:42: replace \\+ with \\*) in refine_complex_solution$ --profile mutants --jobs 1 --jobserver-tasks 2 --timeout 120 --build-timeout 180 --output <run>/mutations --cargo-arg=--lib -- -- coupled_complex_correction_uses_original_residual_and_adds_the_delta",
+    "Raw Measure-Unit.ps1 binds actual library sources, graph-recorded dependencies and LLVM commands.",
+    "Test-IntelCircuits.ps1 + Run-ParallelProbe.ps1 -Probe Intel"
+  ],
+  "limits": [
+    "No production code/tolerance/frozen campaign change.",
+    "No new original decks/ngspice/Stryker/standalone fuzz.",
+    "Original frozen scores remain historical; targeted replay is not whole4411retest.",
+    "Module line coverage includes unit test source, branches unavailable.",
+    "Intel optional-feature survivors remain pending separate enabled replay."
+  ]
+}

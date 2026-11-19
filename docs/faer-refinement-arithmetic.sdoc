@@ -1,0 +1,23 @@
+[DOCUMENT]
+TITLE: Sparse complex factor-correction arithmetic
+
+[REQUIREMENT]
+UID: FAER-COMPLEX-CORRECTION-001
+STATUS: Draft
+TITLE: Preserve the original equations across factor corrections
+STATEMENT: >>>
+Sparse complex iterative refinement shall submit the original residual b-A*x
+to the existing factor and add the returned correction to the current values.
+The candidate shall still satisfy the independent all-row acceptance bound;
+the correction shall not replace or multiply the current values.
+<<<
+COMMENT: >>>
+Implementation: src/backend_faer.rs refine_complex_solution, unchanged.
+Verification: complex_refinement_contracts::
+coupled_complex_correction_uses_original_residual_and_adds_the_delta uses
+A=[[2,j],[0,3]], b=[3+7j,9-3j] and known x=[1+2j,3-j]. Independently expanded
+quarter-valued residual and correction are exact in binary. The callback tests
+the internal factor boundary; this is not an independent factor-library test.
+Evidence: docs/faer-refinement-arithmetic-results.md and
+evidence/faer-refinement-arithmetic-results.json.
+<<<
