@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "base_commit": "b76189325d14bcf0e3cf21b19c9ae031ba4bc8dc",
+  "production_source_changed": false,
+  "artifact_root": "E:/Artifacts/Spice-mos-gate-audit-20261119T080057Z",
+  "requirement": "AUDIT-MOS1-OVERDRIVE-ADMISSION-001",
+  "hashes": [
+    {
+      "file": "src/audit.rs",
+      "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03"
+    },
+    {
+      "file": "tests/audit_mos_polarity.rs",
+      "sha256": "1bb638fbb7df551ca5a605035713101e8159e1f60cf2f96c792f8df6cc997043"
+    },
+    {
+      "file": "tests/mutation_suite.rs",
+      "sha256": "f456da0f489d0c218c98672f9cc4a03a8b2f73f15c765f32266f3f0cf51fc543"
+    }
+  ],
+  "mapping": {
+    "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T073002Z-726480f1\\rust\\mutants.out\\diff\\src__audit.rs_line_716_col_31.diff",
+    "outcome": "MissedMutant",
+    "diff_sha256": "bf9abd86622d1497aad1dc39289809b1039e00219384232def97071f5d2c63b4",
+    "current_name": "src/audit.rs:726:31: replace || with && in independent_mos1_current",
+    "frozen_name": "src/audit.rs:716:31: replace || with && in independent_mos1_current"
+  },
+  "focused_tests": {
+    "new_test": "gate_overdrive_overflow_is_refused_with_finite_threshold_span_and_body",
+    "oracle": "independent finite threshold .7 and zero span/body; only gate difference overflows",
+    "fixed_property_seed": 2026111908,
+    "retained_property_cases": 96,
+    "passed": 6
+  },
+  "full_tests": {
+    "environment_seed": 2026111909,
+    "integration": 690,
+    "unit": 51,
+    "ignored": 7
+  },
+  "mutations": {
+    "compiler_test_workers": 2,
+    "timeouts": 0,
+    "missed": 0,
+    "profile": "mutants",
+    "owned_rustc_baseline_rebuild_verified": true,
+    "owned_clean": "23 files/105.4MiB; only replay target",
+    "additional_negated_guard_cases": 2,
+    "tested": 3,
+    "invalid": 0,
+    "mutants_parallel": 1,
+    "frozen_survivor_counterparts": 1,
+    "caught": 3,
+    "tool": "cargo-mutants27.1.0",
+    "cases": [
+      {
+        "diff_sha256": "65d49a372338c4216852e74ea171af414bb162ceab0ebe38352f0298cb5e054f",
+        "log": "log/src__audit.rs_line_726_col_31.log",
+        "diff": "diff/src__audit.rs_line_726_col_31.diff",
+        "outcome": "CaughtMutant",
+        "name": "src/audit.rs:726:31: replace || with && in independent_mos1_current"
+      },
+      {
+        "diff_sha256": "f7f4b74a38dfc5a4bf0e8a3e4f750f770b42c601946ecdc48a4d4287813bf060",
+        "log": "log/src__audit.rs_line_726_col_8.log",
+        "diff": "diff/src__audit.rs_line_726_col_8.diff",
+        "outcome": "CaughtMutant",
+        "name": "src/audit.rs:726:8: delete ! in independent_mos1_current"
+      },
+      {
+        "diff_sha256": "2519165a84c2e22852d742125bec5032e5f04c13a7683fdd577fbac1ef622729",
+        "log": "log/src__audit.rs_line_726_col_34.log",
+        "diff": "diff/src__audit.rs_line_726_col_34.diff",
+        "outcome": "CaughtMutant",
+        "name": "src/audit.rs:726:34: delete ! in independent_mos1_current"
+      }
+    ]
+  },
+  "counterfactual_evidence": {
+    "positive_overdrive": "Source-reviewed later NaN/NumericalFailure path; unmutated positive case executes, mutant panic may stop before it",
+    "negative_overdrive": "Executed guard mutant produces OkAuditReport with allKCL/powerPassed",
+    "log": "mutations/mutants.out/log/src__audit.rs_line_726_col_31.log"
+  },
+  "coverage": {
+    "file": {
+      "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03",
+      "lines": {
+        "count": 586,
+        "covered": 293,
+        "percent": 50
+      },
+      "file": "src/audit.rs"
+    },
+    "excluded": [
+      "test source",
+      "vendor/native models",
+      "main"
+    ],
+    "branches": null,
+    "scope": "Owned library exercised by audit_mos_polarity"
+  },
+  "strictdoc": {
+    "version": "0.31.0",
+    "documents": 117,
+    "unique_uids": 638
+  },
+  "intel": {
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "passed_tests": 15,
+    "probe": "Intel UHD630 OpenCL FP64 SpMV seed18117"
+  },
+  "review": {
+    "exact_frozen_diff_sha256": "bf9abd86622d1497aad1dc39289809b1039e00219384232def97071f5d2c63b4",
+    "important_findings": 0,
+    "kind": "Read-only collaboration source review",
+    "comment_disposition": "Documentation clarifies normalized threshold+.7 versus declared thresholds+/-.7"
+  },
+  "limits": [
+    "No fresh standalone fuzz/Stryker/ngspice run; deterministic malformed arithmetic plus retained properties",
+    "No overall/measured branch coverage or full model/solver/GPU/formal qualification",
+    "No new original corpus decks or per-engine speed claim",
+    "API128 precedence and Windows executable-removal root cause remain open",
+    "Frozen4411 source/config/helper and raw outcomes unchanged"
+  ]
+}

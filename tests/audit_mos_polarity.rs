@@ -69,6 +69,15 @@ fn channel_span_overflow_is_refused_even_with_finite_body_bias() {
 }
 
 #[test]
+fn gate_overdrive_overflow_is_refused_with_finite_threshold_span_and_body() {
+    // Threshold remains +/-0.7 V, span and body are zero. Only gate-minus-
+    // effective-source overflows. Negative infinity must not become cutoff;
+    // positive infinity must not become a later generic numerical failure.
+    invalid_differential([f64::MAX,-f64::MAX,f64::MAX,f64::MAX]);
+    invalid_differential([-f64::MAX,f64::MAX,-f64::MAX,-f64::MAX]);
+}
+
+#[test]
 fn current_conservation_survives_common_mode_polarity_and_orientation() {
     let config=Config{cases:96,rng_seed:RngSeed::Fixed(2026111908),failure_persistence:None,..Config::default()};
     TestRunner::new(config).run(&(-10_f64..10.,any::<bool>(),any::<bool>()),|(common,p,reverse)| {

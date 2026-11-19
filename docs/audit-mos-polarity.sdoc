@@ -41,3 +41,23 @@ avoid incidental ideal-source tolerance overflows masking the admission test.
 These are finite-arithmetic malformed-state tests, not solved circuit decks.
 Implementation: src/audit.rs independent_mos1_current, unchanged by this checkpoint.
 <<<
+
+[REQUIREMENT]
+UID: AUDIT-MOS1-OVERDRIVE-ADMISSION-001
+STATUS: Draft
+TITLE: Reject an overflowing gate overdrive even with a finite threshold
+STATEMENT: >>>
+An independently overflowing gate-minus-effective-source overdrive shall
+produce InvalidInput before cutoff clipping or magnitude evaluation, even
+when channel span, body bias and modeled threshold are finite. Positive and
+negative overdrive overflow shall be refused in DC and stationary BE audits
+for either MOS polarity, rather than reported as passing cutoff or a later
+generic NumericalFailure.
+<<<
+COMMENT: >>>
+Verification: audit_mos_polarity gate_overdrive_overflow_is_refused_with_finite_threshold_span_and_body.
+Normalized drain=source=bulk and modeled threshold +0.7 V isolate gate arithmetic.
+Declared model thresholds remain +/-0.7 V. Bare-MOS fixtures exclude unrelated
+ideal-clamp failures. These are malformed finite-potential arithmetic states,
+not solved circuits or an extension of the physical device domain.
+<<<

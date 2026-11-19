@@ -1,4 +1,23 @@
-# Active epoch: MOS audit polarity and independent differential checks
+# Active epoch: independent gate-overdrive audit admission
+
+Read docs/audit-mos-gate-results.md and evidence/audit-mos-gate-results.json.
+Baseb761893; production unchanged. Frozen716||&& mapscurrent726, caught using
+finite normalizedthreshold+.7, span/bodyzero, gate-overdrive +/-Inf. Negative
+overflow mutant yieldspassingcutoff; positive-case laterfailure is source review,
+not necessarilyexecuted after mutant's firstpanic. PublicDC/stationaryBE tested.
+Ownedcargo clean removed23files105.4MiB before replay; freshownedrustc baseline
+passed6linkedtests. Final3/3caught incl1newcounterpart and2negatedguards, noinvalid
+or timeout. Raw E:/Artifacts/Spice-mos-gate-audit-20261119T080057Z binds testsource,
+old/currentdiffs, clean/buildlogs, ordinary regression/coverage and disposition.
+51unit690integrationpass/7ignored; retained96Proptestcases seed2026111908, full
+environmentseed2026111909. Intel15+UHD630probe pass. StrictDoc117docs638UIDs.
+Scoped audit293/586lines; branch/test/vendor/native/main unmeasured. Nofresh
+ngspice, standalonefuzz/Stryker, originaldeck/solver/model/speedup/formal claim.
+Keepfrozen4411 source/config/helper unchanged and cachesisolated; cleanowned
+package beforeEVERYseparatetargetedreplay. API128 precedence and separateWindows
+exe-removal cause remain open. Preservemain/unknownwork/otherjobs/CIpolicy.
+
+# Prior checkpoint: MOS audit polarity and independent differential checks
 
 Read docs/audit-mos-polarity-results.md, docs/audit-mos-polarity.sdoc and
 evidence/audit-mos-polarity-results.json. Basedccb863; production source unchanged.
