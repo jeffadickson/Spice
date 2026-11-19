@@ -211,3 +211,6 @@ mod suite_configured_execution_contracts;
 
 #[path = "dc_validation_contracts.rs"]
 mod suite_dc_validation_contracts;
+
+#[path = "expression_boundary_contracts.rs"]
+mod suite_expression_boundary_contracts;

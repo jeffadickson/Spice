@@ -1,4 +1,25 @@
-# Active epoch: independent DC validation qualification
+# Active epoch: bounded expression admission and evaluation
+
+Read docs/expression-boundary-results.md and its StrictDoc/evidence pair.
+Base e52cf09; production expression.rs remains byte-identical to frozen source.
+Five public tests catch13/13 original survivors in structural depth/node budgets,
+nested finite-constant validation, direct-evaluation recursion progress and the
+quotient derivative. Native baseline freshly rebuilt after owned-package clean.
+Depth64 positive controls precede deeper negatives; exp(log(1)) avoids masking
+missing increments with numerical overflow. Exact1024/1025node shallow trees.
+Analytic fractional slope1/(3x+2)^2,64generated dyadic cases seed2026111927.
+55unit+719integration passed/7ignored; Intel15+UHD630probe; StrictDoc126/663.
+Scoped expression58/111lines, branches/main/vendor/otherfamilies unmeasured.
+No new original decks/ngspice/Linux/Stryker/standalone fuzz or global derivative proof.
+Raw E:/Artifacts/Spice-expression-contracts-20261119T200826Z.
+Preserve frozen4411 identities/scores, main/unknown work and cache separation.
+Next experiment.rs admission/window contracts and remaining backend/configured/
+native-step survivors; inspect actual new diffs. Raw next-group-hypotheses from
+the configured-execution checkpoint are unverified: strict-window endpoint
+mutants are not automatically equivalent, since duplicate zero-duration RMS
+terms can combine0*Inf for large finite endpoint values. Validate independently.
+
+# Prior checkpoint: independent DC validation qualification
 
 Read docs/dc-validation-results.md and StrictDoc/evidence pair.
 Base ef00870; production dc.rs remains byte-identical to frozen source.

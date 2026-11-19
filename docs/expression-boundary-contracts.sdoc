@@ -1,0 +1,53 @@
+[DOCUMENT]
+TITLE: Bounded expression admission and evaluation
+
+[REQUIREMENT]
+UID: EXPR-STRUCTURAL-LIMITS-001
+STATUS: Draft
+TITLE: Validate every child within inclusive structural budgets
+STATEMENT: >>>
+Structural expression validation shall visit both binary children and reject
+nonfinite constants wherever nested. Root depth is zero; depth64 and1024nodes
+are admissible, while depth65 or1025nodes shall return InvalidInput. Structural
+validation shall not invent an input to evaluate domain-sensitive functions.
+<<<
+COMMENT: >>>
+Verification: structural_depth_is_inclusive_and_counts_both_binary_children,
+structural_node_budget_admits_1024_and_rejects_1025_nodes and
+structural_checks_visit_nested_constants_without_inventing_domain_inputs.
+Shallow full binary trees isolate node count from depth limits. Log(-1) remains
+structurally valid while evaluation reports its domain failure.
+<<<
+
+[REQUIREMENT]
+UID: EXPR-EVALUATION-DEPTH-001
+STATUS: Draft
+TITLE: Retain recursion admission on direct evaluation
+STATEMENT: >>>
+The public expression evaluator shall independently enforce its recursion bound
+even when structural validation has not been called. Recursion through binary
+children and unary functions shall advance depth consistently. Selected finite
+depth64 fixtures shall succeed and deeper counterparts return InvalidInput.
+<<<
+COMMENT: >>>
+Verification: direct_evaluation_enforces_recursion_bounds_before_returning_finite_values
+uses right-nested addition/product, sine chains and exp(log(1)) pairs, with
+positive depth64 controls. Fixtures remain mathematically finite to avoid an
+unrelated overflow/domain rejection masking a missing depth increment.
+<<<
+
+[REQUIREMENT]
+UID: EXPR-QUOTIENT-DERIVATIVE-001
+STATUS: Draft
+TITLE: Retain the analytic derivative of a nontrivial quotient
+STATEMENT: >>>
+For f(x)=(2x+1)/(3x+2) on the bounded tested interval[-0.25,4], the expression
+evaluator shall return the analytic value and derivative1/(3x+2)^2 within the
+fixture's1e-13 absolute value/slope bounds.
+<<<
+COMMENT: >>>
+Verification: linear_fractional_value_and_slope_match_the_analytic_reference;
+64generated dyadic-input cases, Proptest seed2026111927. The positive denominator
+avoids poles and the slope follows independently from determinant4-3=1. These
+finite tests do not prove arbitrary expression derivatives or global accuracy.
+<<<
