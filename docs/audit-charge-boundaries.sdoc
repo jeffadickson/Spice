@@ -1,0 +1,57 @@
+[DOCUMENT]
+TITLE: Stable independent junction charge and domain admission
+
+[REQUIREMENT]
+UID: AUDIT-JUNCTION-SMALL-CHARGE-001
+STATUS: Draft
+TITLE: Preserve small finite depletion and transport charge
+STATEMENT: >>>
+Independent accepted-step audits shall preserve finite junction charge near zero
+voltage rather than lose it through subtraction from one. For grading zero and
+zero transit time, reconstructed displacement shall agree with C*(Vnew-Vold)/h.
+Transport charge shall form the physical current before multiplying by transit
+time, avoiding an overflowing TT*IS intermediate when TT*I is finite.
+<<<
+COMMENT: >>>
+Verification: tests/audit_charge_boundaries.rs small_linear_junction_charge_is_not_lost_by_subtraction_from_one
+and zero_transport_charge_does_not_overflow_a_discarded_parameter_product.
+The expected results are the closed-form constant-capacitance and zero-current
+laws. Extreme finite-parameter tests qualify arithmetic, not a physical device.
+Implementation: src/audit.rs independent_junction_charge and independent_element_charge.
+<<<
+
+[REQUIREMENT]
+UID: AUDIT-JUNCTION-CONTROL-DOMAIN-001
+STATUS: Draft
+TITLE: Reject unrepresentable or unsupported Early charge domains
+STATEMENT: >>>
+An available fixed-step junction audit shall reject nonfinite differential BC control,
+nonfinite Early modulation and nonpositive forward Early charge-domain factors,
+including at zero or reverse BE bias. Unrepresentable reconstructed charge
+shall return a typed error. Fixed-step backward Euler and nonlinear trapezoidal
+adapters shall propagate these errors without publishing a passing report.
+<<<
+COMMENT: >>>
+Verification: early_control_domain_is_validated_even_at_zero_or_reverse_be_bias,
+including finite node voltages whose difference overflows. Stable domain
+admission is independent of whether the forward-diffusion branch is active.
+Implementation: src/audit.rs and src/audit_configured.rs. This does not qualify
+nonlinear stored energy, which remains explicitly unavailable.
+<<<
+
+[REQUIREMENT]
+UID: AUDIT-JUNCTION-TRANSITION-001
+STATUS: Draft
+TITLE: Use the declared forward continuation at the junction transition
+STATEMENT: >>>
+At the represented transition FC*VJ, independent junction audits shall use the
+forward continuation's constant defined by FC, rather than recompute FC as
+(FC*VJ)/VJ. Rounding that quotient near the depletion singularity shall not
+silently change the selected piecewise law or its boundary charge.
+<<<
+COMMENT: >>>
+Verification: depletion_transition_uses_declared_fc_not_a_rounded_reconstructed_ratio.
+Grading 3/4 permits an independent nested-square-root integral. The retained
+seed2026111906 first sample exercises a one-ulp quotient change with a material
+charge difference. Default audit tolerances are retained.
+<<<

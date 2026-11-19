@@ -504,8 +504,8 @@ pub fn backward_euler_step(
                 0.
             }
             Element::SpiceDiode { model, .. } | Element::JunctionStorage { model, .. } => {
-                let q = independent_element_charge(element,*model,state);
-                let old = independent_element_charge(element,*model,previous);
+                let q = independent_element_charge(element,*model,state)?;
+                let old = independent_element_charge(element,*model,previous)?;
                 *current += (q - old) / step_s;
                 nonlinear_storage |= model.has_charge();
                 step_s * v * *current
@@ -569,16 +569,25 @@ pub fn backward_euler_step(
 
 /// Value-only independent reconstruction of the VAF-only diffusion product.
 /// This deliberately does not call the production coupled charge/Jacobian.
-fn independent_element_charge(element:&crate::circuit::Element,model:crate::spice_diode::SpiceDiodeModel,state:&[f64])->f64 {
+fn independent_element_charge(element:&crate::circuit::Element,model:crate::spice_diode::SpiceDiodeModel,state:&[f64])->SimResult<f64> {
     let (p,n)=element.terminals();let be=voltage(state,p)-voltage(state,n);
     let mut q=independent_junction_charge(model,be);
     if let crate::circuit::Element::JunctionStorage{early_effect:Some(control),..}=element {
+        // The control domain belongs to the model, even when forward diffusion
+        // is inactive. Finite node potentials can overflow their difference.
+        let bc=voltage(state,control.cp)-voltage(state,control.cn);
+        let factor=1.-bc/control.volts;
+        if !bc.is_finite() || !factor.is_finite() || factor<=0. {
+            return Err(SimError::invalid("audit forward Early charge domain/overflow"));
+        }
         if be>0. {
-            let bc=voltage(state,control.cp)-voltage(state,control.cn);
-            q-=model.transit_seconds*model.saturation_amps*(be/model.thermal_volts).exp_m1()*bc/control.volts;
+            // Form physical current first: TT*IS can overflow despite finite TT*I.
+            let diffusion=model.transit_seconds*(model.saturation_amps*(be/model.thermal_volts).exp_m1());
+            q-=diffusion*(bc/control.volts);
         }
     }
-    q
+    if !q.is_finite() {return Err(SimError::invalid("audit junction charge overflow"));}
+    Ok(q)
 }
 
 // Independently reconstruct the SPICE depletion integral and transport charge;
@@ -586,17 +595,18 @@ fn independent_element_charge(element:&crate::circuit::Element,model:crate::spic
 fn independent_junction_charge(m: crate::spice_diode::SpiceDiodeModel, v: f64) -> f64 {
     let threshold = m.forward_coefficient * m.junction_volts;
     let depletion = if v < threshold {
-        m.junction_volts * m.junction_farads / (1. - m.grading)
-            * (1. - (1. - v / m.junction_volts).powf(1. - m.grading))
+        // log1p/expm1 preserve Q for |V/VJ| below one floating-point ulp.
+        -m.junction_volts * m.junction_farads / (1. - m.grading)
+            * ((1. - m.grading)*(-v/m.junction_volts).ln_1p()).exp_m1()
     } else {
         let a = 1. - m.forward_coefficient;
-        let base =
-            m.junction_volts * m.junction_farads / (1. - m.grading) * (1. - a.powf(1. - m.grading));
+        let base = -m.junction_volts * m.junction_farads / (1. - m.grading)
+            * ((1. - m.grading)*(-m.forward_coefficient).ln_1p()).exp_m1();
         base + m.junction_farads / a.powf(1. + m.grading)
             * ((1. - m.forward_coefficient * (1. + m.grading)) * (v - threshold)
                 + m.grading / (2. * m.junction_volts) * (v * v - threshold * threshold))
     };
-    depletion + m.transit_seconds * m.saturation_amps * (v / m.thermal_volts).exp_m1()
+    depletion + m.transit_seconds * (m.saturation_amps * (v / m.thermal_volts).exp_m1())
 }
 
 impl AuditReport {

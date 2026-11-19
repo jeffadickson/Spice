@@ -1,0 +1,250 @@
+{
+  "schema_version": 1,
+  "base_commit": "fdc34ffdcfdec52c7edf98c09278447a6f5713ca",
+  "artifact_root": "E:/Artifacts/Spice-charge-boundary-20261119T055407Z",
+  "changed_scope": "Independent audit reconstruction/admission and BE/fixed-trap propagation; device solver unchanged",
+  "source_hashes": [
+    {
+      "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03",
+      "file": "src/audit.rs"
+    },
+    {
+      "sha256": "07a822a30108b4942444805a2a9d02816cf3efdcdc5a498772ff9510f6c5ab62",
+      "file": "src/audit_configured.rs"
+    },
+    {
+      "sha256": "e3541660d492b70e709d89244d8c8c18cdbced5d3995c6d0afe00751c817619d",
+      "file": "tests/audit_charge_boundaries.rs"
+    },
+    {
+      "sha256": "32700ffec4c3b0bfdfff92f1e016e2b69862a538b6681467ca7fe99db1e0dfa4",
+      "file": "tests/mutation_suite.rs"
+    }
+  ],
+  "requirements": [
+    "AUDIT-JUNCTION-SMALL-CHARGE-001",
+    "AUDIT-JUNCTION-CONTROL-DOMAIN-001",
+    "AUDIT-JUNCTION-TRANSITION-001"
+  ],
+  "red_evidence": [
+    "red-tests.log: two original tests failed",
+    "transport-red-corrected-build.log: two passed, zero-transport test failed"
+  ],
+  "development_compile_failures": [
+    "E0369: shared trapezoidal adapter also required Result propagation",
+    "E0282: explicit property tuple types required"
+  ],
+  "focused_tests": {
+    "boundary_sample": {
+      "grading": 0.75,
+      "vj": 8.106362047980708,
+      "fc": "nextDown(1)",
+      "trial": 0,
+      "oracle": "nested square root"
+    },
+    "passed": 6,
+    "property_cases": 96,
+    "boundary_probe_seed": 2026111906,
+    "property_seed": 2026111906
+  },
+  "full_tests": {
+    "integration_passed": 678,
+    "unit_passed": 51,
+    "environment_seed": 2026111906,
+    "ignored": 7
+  },
+  "mutations": {
+    "tested": 8,
+    "caught": 7,
+    "timeouts": 0,
+    "mutants_in_parallel": 1,
+    "cases": [
+      {
+        "summary": "CaughtMutant",
+        "diff_sha256": "e4b5764cfe927c2c4b40f988340c15a1c9a1d111ca7123eec84783e45c081b07",
+        "diff": "diff/src__audit.rs_line_580_col_51.diff",
+        "log": "log/src__audit.rs_line_580_col_51.log",
+        "name": "src/audit.rs:580:51: replace || with && in independent_element_charge"
+      },
+      {
+        "summary": "CaughtMutant",
+        "diff_sha256": "87a2a23baf9ff56143849a8e0403c77fd65b5e32d813125d5b32b201f44bbaf8",
+        "diff": "diff/src__audit.rs_line_580_col_28.diff",
+        "log": "log/src__audit.rs_line_580_col_28.log",
+        "name": "src/audit.rs:580:28: replace || with && in independent_element_charge"
+      },
+      {
+        "summary": "CaughtMutant",
+        "diff_sha256": "2d2d348684042b179bdbd31e6f6804dc39dda740d6c31d96392c0dbde9741b95",
+        "diff": "diff/src__audit.rs_line_580_col_12.diff",
+        "log": "log/src__audit.rs_line_580_col_12.log",
+        "name": "src/audit.rs:580:12: delete ! in independent_element_charge"
+      },
+      {
+        "summary": "CaughtMutant",
+        "diff_sha256": "f0ba164803c2eb661fb448f97af88e84331284eb6c0dbbf218807d3914ce9063",
+        "diff": "diff/src__audit.rs_line_580_col_31.diff",
+        "log": "log/src__audit.rs_line_580_col_31.log",
+        "name": "src/audit.rs:580:31: delete ! in independent_element_charge"
+      },
+      {
+        "summary": "CaughtMutant",
+        "diff_sha256": "7184300cd2651fdbb5246145d457eb891689ec87b0405e72076f6edf2a5d0b7d",
+        "diff": "diff/src__audit.rs_line_580_col_60.diff",
+        "log": "log/src__audit.rs_line_580_col_60.log",
+        "name": "src/audit.rs:580:60: replace <= with > in independent_element_charge"
+      },
+      {
+        "summary": "MissedMutant",
+        "diff_sha256": "06da36a216f05b4afc8cba21b901263eafc40d9919dd6edd42e3c438780f827c",
+        "diff": "diff/src__audit.rs_line_583_col_14.diff",
+        "log": "log/src__audit.rs_line_583_col_14.log",
+        "name": "src/audit.rs:583:14: replace > with >= in independent_element_charge"
+      },
+      {
+        "summary": "CaughtMutant",
+        "diff_sha256": "21a30161b9972ddd0f852fc7658d4e75c62630a900257dc91baf7fb57fb6b29f",
+        "diff": "diff/src__audit.rs_line_589_col_8.diff",
+        "log": "log/src__audit.rs_line_589_col_8.log",
+        "name": "src/audit.rs:589:8: delete ! in independent_element_charge"
+      },
+      {
+        "summary": "CaughtMutant",
+        "diff_sha256": "0db7945fcb0c3a5ec1532f96efa22d6ac4ce352a62160f87767f882e30037b47",
+        "diff": "diff/src__audit.rs_line_597_col_26.diff",
+        "log": "log/src__audit.rs_line_597_col_26.log",
+        "name": "src/audit.rs:597:26: replace < with <= in independent_junction_charge"
+      }
+    ],
+    "invalid": 0,
+    "profile": "mutants",
+    "compiler_test_workers": 2,
+    "raw_missed": 1,
+    "tool": "cargo-mutants27.1.0"
+  },
+  "frozen_boundaries": [
+    {
+      "name": "src/audit.rs:576:14: replace > with >= in independent_element_charge",
+      "diff_sha256": "03ba19922ca8d01fd3ba90a2fa6b47ab3c15c7ea247c6322d65ac0e502489d3a",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T043404Z-be42ab7d\\rust\\mutants.out\\log\\src__audit.rs_line_576_col_14_002.log",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T043404Z-be42ab7d",
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T043404Z-be42ab7d\\rust\\mutants.out\\diff\\src__audit.rs_line_576_col_14_002.diff"
+    },
+    {
+      "name": "src/audit.rs:588:26: replace < with <= in independent_junction_charge",
+      "diff_sha256": "297bee6985bb3e70f5479d1a009f3a65b0699850ad7e2e05566c268ded5b0563",
+      "log": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T045718Z-ab0674e1\\rust\\mutants.out\\log\\src__audit.rs_line_588_col_26_002.log",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T045718Z-ab0674e1",
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T045718Z-ab0674e1\\rust\\mutants.out\\diff\\src__audit.rs_line_588_col_26_002.diff"
+    }
+  ],
+  "mapping": [
+    {
+      "result": "Raw Missed; current validated public physical-report equivalent",
+      "limits": "Not private-Q/bitwise/formal/frozen-global equivalence. Unmutated domain admission fixed.",
+      "frozen_line": 576,
+      "current_line": 583
+    },
+    {
+      "result": "Current counterpart caught by independent FC-boundary fixture",
+      "limits": "Changed source formulas; preserve original and current source/diff hashes.",
+      "frozen_line": 588,
+      "current_line": 597
+    }
+  ],
+  "coverage": {
+    "files": [
+      {
+        "lines": {
+          "count": 586,
+          "covered": 244,
+          "percent": 41.63822525597269
+        },
+        "file": "src/audit.rs",
+        "sha256": "d263363fd258a7390596f720cc46fa2cc49f0e9c65b7b276f73bb63a002f7e03"
+      },
+      {
+        "lines": {
+          "count": 170,
+          "covered": 78,
+          "percent": 45.88235294117647
+        },
+        "file": "src/audit_configured.rs",
+        "sha256": "07a822a30108b4942444805a2a9d02816cf3efdcdc5a498772ff9510f6c5ab62"
+      }
+    ],
+    "scope": "Owned library exercised by named integration test; vendor/test source excluded",
+    "exclusions": [
+      "test source",
+      "vendor/native model",
+      "main"
+    ],
+    "branches": null
+  },
+  "ngspice": {
+    "providers": [
+      "lu",
+      "faer"
+    ],
+    "version": "47+",
+    "passed_tests": 2,
+    "floating_case_summary": {
+      "ac_comparisons": 6,
+      "bounds": {
+        "ac_component_amps": 2E-09,
+        "ac_component_volts": 2E-06,
+        "dc_amps": 2E-11,
+        "dc_volts": 2E-08,
+        "transient_amps": 2E-06,
+        "transient_volts": 0.002
+      },
+      "common_mode_volts": [
+        -0.4,
+        0.2,
+        1.0
+      ],
+      "dc_comparisons": 6,
+      "max_abs_ac_component_amps": 4.994409833619651E-13,
+      "max_abs_ac_component_volts": 6.994409496030585E-10,
+      "max_abs_dc_amps": 4.560209466613404E-13,
+      "max_abs_dc_volts": 8.260209183319489E-10,
+      "max_abs_transient_amps": 5.997523229698436E-08,
+      "max_abs_transient_volts": 5.997513232436358E-05,
+      "providers": [
+        "lu",
+        "faer"
+      ],
+      "selected_transient_comparisons": 30
+    },
+    "timing": {
+      "scope": "Combined regression duration, not comparable per-engine benchmark",
+      "total_build_and_comparison_seconds": 30.9627129,
+      "exit_code": 0
+    },
+    "oracle": {
+      "path": "E:/Artifacts/Spice-RSpice-parity-20261108T054942Z/console-oracle/ngspice_con.exe",
+      "sha256": "12bc57018aa5142d28065704d09bc6b06da2a3886f7864ca042ed4824ccf910f"
+    }
+  },
+  "intel": {
+    "passed_tests": 15,
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "probe": "Intel UHD630 FP64 SpMV; seed18117"
+  },
+  "strictdoc": {
+    "documents": 115,
+    "version": "0.31.0",
+    "unique_uids": 632
+  },
+  "review": "Exact current diffs and numerical changes reviewed read-only; no important findings. Equivalence bounded to current validated public reports.",
+  "limitations": [
+    "No overall or measured branch coverage",
+    "No fresh standalone fuzz/Stryker run",
+    "No full model/GPU/SPICE or formal qualification",
+    "No new original corpus decks or per-engine speed claim",
+    "API128 precedence and earlier Windows executable-removal failure remain open",
+    "Frozen4411 ledger unchanged"
+  ]
+}

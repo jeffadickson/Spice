@@ -187,3 +187,6 @@ mod suite_epoch_api_admission;
 
 #[path = "native_audit_contracts.rs"]
 mod suite_native_audit_contracts;
+
+#[path = "audit_charge_boundaries.rs"]
+mod suite_audit_charge_boundaries;

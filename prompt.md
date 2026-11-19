@@ -1,4 +1,26 @@
-# Active epoch: explicit native audit lane
+# Active epoch: stable junction audit and boundary dispositions
+
+Read docs/audit-charge-boundaries-results.md, docs/audit-charge-boundaries.sdoc
+and evidence/audit-charge-boundaries-results.json. Basefdc34ff. Three actual
+audit defects reproduced: tiny depletion cancellation, dormant Early-domain
+admission, and TT*IS intermediate overflow. Stable standard functions, physical
+current-first transport and typed Result propagation now cover BE and fixed
+nonlinear trap. Device solver and frozen4411 source/config/helper unchanged.
+Six regressions/96Proptestcases seed2026111906;51unit678integrationpass/7ignored.
+Two existing ngspice47+ oracle tests explicitly pass with LU/Faer; Intel15 and
+UHD630 FP64 probe pass. StrictDoc115docs632UIDs. Scoped audit244/586 and configured
+audit78/170lines; branches/vendor/test/native model/main coverage unmeasured.
+Current mapped8mutants:7caught/1rawMissed. Frozen588 <= maps to597 caught by
+independent FC-boundary fourth-root fixture. Frozen576 >= maps to583 rawMissed;
+reviewed current validated public-report equivalent after domain/finiteness fix.
+Private signed-zero bits/formal/frozen-global equivalence explicitly excluded.
+Raw E:/Artifacts/Spice-charge-boundary-20261119T055407Z retains original/current
+diff hashes, red/green/build failures, independent oracle/coverage and mappings.
+Do not treat the older pending576/588 notes below as fresh unprocessed work.
+API128 multiply-invalid error precedence and executable-removal I/O cause remain
+open; don't change frozen helper or relabel raw outcomes. Preserve main/CI policy.
+
+# Prior checkpoint: explicit native audit lane
 
 Read docs/native-audit-results.md, docs/native-audit-contracts.sdoc and
 evidence/native-audit-results.json. Base7550704; production source unchanged.
