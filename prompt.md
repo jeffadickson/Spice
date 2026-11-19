@@ -1,4 +1,22 @@
-# Active epoch: RMS stability and experiment integrity
+# Active epoch: homogeneous polishing and refinement boundaries
+
+Read docs/polish-boundary-results.md and StrictDoc/evidence pair.
+Base73cc342; four appended unit tests, backend/backend_faer production prefixes
+unchanged from frozen. Native6=5caught+1rawmiss reviewed tie-selection equivalent.
+203:96 max ties cannot pass epsilon dominance whichever tied target is chosen;
+retain rawmiss, not generic/future equivalence. Complexrow x0+r(1+j)x1=0,
+x1=2-j =>x0=-r(3+j),64dyadic cases seed2026111931 plus all-row verification.
+Malformed real correction lengths stop after1callback versus valid stagnant3;
+dense backward-error overflow retains+Inf rather thanfalsezero.
+59unit+726integration passed/7ignored; Intel15+UHD630probe; StrictDoc128/670.
+Focused unit coverage backend26/428,Faer104/526 INCLUDE unit lines, unlike
+integration-only metrics. Branch/main/vendor/unexecuted paths unmeasured.
+No newdecks/ngspice/factorization/Linux/Stryker/standalonefuzz/performance claim.
+Raw E:/Artifacts/Spice-polish-contracts-20261119T220725Z. Preserve frozen4411,
+main/unknownwork and cache separation. Continue remaining refinement acceptance,
+configured/native-step and fresh linalg/measurement/expression survivors.
+
+# Prior checkpoint: RMS stability and experiment integrity
 
 Read docs/experiment-boundary-results.md, rms-stability-design.md and the
 StrictDoc/evidence pair. Base3523ca4. Real RMS defect reproduced on unchanged

@@ -1,0 +1,51 @@
+[DOCUMENT]
+TITLE: Homogeneous polishing and refinement boundary contracts
+
+[REQUIREMENT]
+UID: SOLVER-POLISH-PRODUCTS-001
+STATUS: Draft
+TITLE: Retain complex products and require coefficient dominance
+STATEMENT: >>>
+An eligible homogeneous row correction shall preserve every other complex
+coefficient-times-state contribution and leave unrelated equations intact.
+Rows with tied nonzero maximum coefficient magnitudes shall not be polished
+under the existing epsilon-dominance criterion.
+<<<
+COMMENT: >>>
+Verification: dominant_sensor_row_reconstructs_every_small_complex_product uses
+x0+r(1+j)x1=0 and x1=2-j, hence x0=-r(3+j);64generated dyadic gaps55..100,
+Proptest seed2026111931. Independent all-row verification follows. The separate
+equal_strength_rows_are_not_polished_without_dominance case remains unchanged
+and independently fails the final verifier. This is private helper qualification.
+<<<
+
+[REQUIREMENT]
+UID: SOLVER-CORRECTION-TERMINAL-001
+STATUS: Draft
+TITLE: Stop after a malformed real correction response
+STATEMENT: >>>
+A real refinement response with an incorrect vector length shall fail with
+NumericalFailure after its first provider callback rather than spending further
+correction calls. A correctly shaped but unhelpful correction shall retain the
+existing bounded three-callback refinement policy.
+<<<
+COMMENT: >>>
+Verification: malformed_real_corrections_stop_after_the_first_callback isolates
+empty and overlong finite responses on a valid scalar identity system. A valid
+zero correction supplies the control. No vendor factorization is simulated.
+<<<
+
+[REQUIREMENT]
+UID: SOLVER-RESIDUAL-SCALE-001
+STATUS: Draft
+TITLE: Preserve unavailable backward-error evidence on scale overflow
+STATEMENT: >>>
+The internal real backward-error helper shall return positive infinity when its
+absolute residual scale overflows, even if signed products cancel to a finite
+zero residual. A finite scale with an exact zero residual shall report zero.
+<<<
+COMMENT: >>>
+Verification: finite_cancellation_cannot_hide_an_overflowed_backward_error_scale
+uses A*x=(0,-1), x=(1,-1), and coefficients1e100 versus1e308. This preserves the
+existing numerical policy; it does not change physical signal tolerances.
+<<<

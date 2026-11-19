@@ -548,3 +548,62 @@ mod real_refinement_contracts {
   assert!(refine_real_solution(&a,&[1.],vec![2.],|_|Ok(vec![])).is_err());
  }
 }
+
+#[cfg(test)]
+mod boundary_polish_contracts {
+    use super::*;
+    use crate::sparse::CscPattern;
+    use num_complex::Complex64 as C;
+    use proptest::{prelude::*,test_runner::{Config,RngSeed,TestRunner}};
+
+    #[test]
+    fn dominant_sensor_row_reconstructs_every_small_complex_product() {
+        // Row0: x0 + r(1+j)*x1=0; row1 fixes x1=2-j. Hence
+        // x0=-r(3+j), independently expanded with exact dyadic products.
+        let config=Config{cases:64,rng_seed:RngSeed::Fixed(2026111931),failure_persistence:None,..Default::default()};
+        TestRunner::new(config).run(&(55_i32..101),|gap| {
+            let r=2_f64.powi(-gap);
+            let system=SparseComplexSystem::new(CscPattern::new(2,vec![0,1,3],vec![0,0,1]).unwrap(),
+                vec![C::new(1.,0.),C::new(r,r),C::new(1.,0.)]).unwrap();
+            let rhs=[C::new(0.,0.),C::new(2.,-1.)];
+            let mut values=vec![C::new(0.25,-0.125),rhs[1]];
+            polish_homogeneous_rows(&system,&rhs,&mut values).unwrap();
+            prop_assert_eq!(values[0],C::new(-3.*r,-r));
+            prop_assert_eq!(values[1],rhs[1]);
+            prop_assert_eq!(crate::solver_contract::verify_complex_solution(&system,&rhs,&values).unwrap(),0.);
+            Ok(())
+        }).unwrap();
+    }
+
+    #[test]
+    fn equal_strength_rows_are_not_polished_without_dominance() {
+        // Choosing either tied coefficient cannot satisfy the epsilon-dominance
+        // admission. Preserve the state and let all-row verification reject it.
+        let system=SparseComplexSystem::new(CscPattern::new(2,vec![0,1,3],vec![0,0,1]).unwrap(),
+            vec![C::new(1.,0.),C::new(1.,0.),C::new(1.,0.)]).unwrap();
+        let rhs=[C::new(0.,0.),C::new(1.,0.)];
+        let original=vec![C::new(7.,0.),rhs[1]];
+        let mut values=original.clone();
+        polish_homogeneous_rows(&system,&rhs,&mut values).unwrap();
+        assert_eq!(values,original);
+        assert!(crate::solver_contract::verify_complex_solution(&system,&rhs,&values).is_err());
+    }
+
+    #[test]
+    fn malformed_real_corrections_stop_after_the_first_callback() {
+        let matrix=CscMatrix::new(1,vec![0,1],vec![0],vec![1.]).unwrap();
+        for correction in [vec![],vec![0.,0.]] {
+            let mut calls=0;
+            let error=refine_real_solution(&matrix,&[1.],vec![2.],|_| {
+                calls+=1;Ok(correction.clone())
+            }).unwrap_err();
+            assert_eq!(error.code,ErrorCode::NumericalFailure);
+            assert_eq!(calls,1,"malformed corrections must not spend another provider call");
+        }
+        // A correctly shaped but unhelpful correction follows the ordinary
+        // bounded refinement policy instead of the malformed-response path.
+        let mut calls=0;
+        assert!(refine_real_solution(&matrix,&[1.],vec![2.],|_|{calls+=1;Ok(vec![0.])}).is_err());
+        assert_eq!(calls,3);
+    }
+}

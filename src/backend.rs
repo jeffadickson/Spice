@@ -537,3 +537,21 @@ mod lu_refinement_contracts {
         );
     }
 }
+
+#[cfg(test)]
+mod boundary_polish_contracts {
+    use super::*;
+    #[test]
+    fn finite_cancellation_cannot_hide_an_overflowed_backward_error_scale() {
+        // A*x=(0,-1) exactly for x=(1,-1). The absolute row scale is
+        // finite at1e100 and overflows at1e308 despite a zero residual.
+        for coefficient in [1e100,1e308] {
+            let matrix=DMatrix::from_row_slice(2,2,&[coefficient,coefficient,0.,1.]);
+            let rhs=DVector::from_vec(vec![0.,-1.]);
+            let values=DVector::from_vec(vec![1.,-1.]);
+            let error=real_backward_error(&matrix,&rhs,&values);
+            if coefficient==1e100 {assert_eq!(error,0.);}
+            else {assert!(error.is_infinite()&&error.is_sign_positive());}
+        }
+    }
+}

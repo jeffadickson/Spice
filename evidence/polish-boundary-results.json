@@ -1,0 +1,742 @@
+{
+  "base_commit": "73cc342621fbea98ad49cd8aab7fe107c991994f",
+  "artifact_root": "E:/Artifacts/Spice-polish-contracts-20261119T220725Z",
+  "production_changed": false,
+  "source_proof": [
+    {
+      "current_sha256": "06ee42b3d955f562c43b2b1a243726afce4b8c22edabbab9fd288bbcfc006a63",
+      "production_prefix_unchanged": true,
+      "file": "backend.rs",
+      "frozen_sha256": "b0116629427c879e6f9c9cf7210f370858833a6addbb507ab00e997958c6e6b1"
+    },
+    {
+      "current_sha256": "ec515a20991fa8e8f221efed1c2d449507c14311ba904d7339777181aad807fd",
+      "production_prefix_unchanged": true,
+      "file": "backend_faer.rs",
+      "frozen_sha256": "d4271a240066ecc7b5fd6f8900348ea81b318094c0fca2ab69bbd7dc80343cea"
+    }
+  ],
+  "integrity": {
+    "worker_start": "2026-11-19T06:58:06.4036526Z",
+    "dirty": false,
+    "hashes": {
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/helper-final/build/bin/release/FrameworkMutations.dll": "62c93a3b0a1adc5452e9b515ff606260729bbe117df6bc78b0bfd148f6ecde61",
+      "E:/Artifacts/Spice-mutation-epoch-30a5a9a-20261118T203254Z/config.json": "f22206deb98fb9cc6b4f349b64b442660473697ccf6ad8540c3721c45b705e39",
+      "E:/Artifacts/Spice-mutation-epoch-30a5a9a-20261118T203254Z/inventory.json": "508d6d350c84f6ae1ca832fdb97b36ae0f7292fb1f8d3005a61c3204583b8f52"
+    },
+    "checked_utc": "2026-11-19T14:24:55.5590587-08:00",
+    "frozen_commit": "30a5a9aab91effadefb3f0860b408b1269eb7dff",
+    "origin": "https://github.com/jeffadickson/Spice.git",
+    "worker": 97824,
+    "stale_prepared_state": "prepared_not_started"
+  },
+  "executable_sha256": {
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\intel_backend-b3b260dd2491da49.exe": "41a1fb5b58a2f4d7e8998ef0688ab8380290efe4a2afc8855f7f5beffee7276e",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\mutation_suite-959d2566832d66d2.exe": "4741864d014e59ecafe23226fd6d037bba45373480c7333514b1758918b08c22",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\circuit_simulator-ec16352c82678e55.exe": "8a049c470b307cf49bdb8dd3f8b47efb3980af7e95e727e19a6501729f07a86d",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\campaign_cli-55654e9809069435.exe": "ff8f580bb2810cc5728c76b90bb79c2c5cc930108f897d259bc1f844cf38912d",
+    "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\debug\\deps\\providers-b75df9ebae7099d3.exe": "ada521a38dc89dbafd6ee741618e493aad34384e4509525b596c2a002822ae8d"
+  },
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "cargo_mutants": "27.1.0",
+  "profile": "mutants",
+  "native_features": "default",
+  "native_test_filter": "--lib boundary_polish_contracts",
+  "original_outcomes": [
+    {
+      "name": "src/backend_faer.rs:203:31: replace && with || in polish_homogeneous_rows",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T092859Z-3beabf4d",
+      "log": "log/src__backend_faer.rs_line_203_col_31.log",
+      "diff": "diff/src__backend_faer.rs_line_203_col_31.diff"
+    },
+    {
+      "name": "src/backend_faer.rs:203:96: replace > with >= in polish_homogeneous_rows",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T092859Z-3beabf4d",
+      "log": "log/src__backend_faer.rs_line_203_col_96_002.log",
+      "diff": "diff/src__backend_faer.rs_line_203_col_96_002.diff"
+    },
+    {
+      "name": "src/backend_faer.rs:211:120: replace * with / in polish_homogeneous_rows",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T092859Z-3beabf4d",
+      "log": "log/src__backend_faer.rs_line_211_col_120_001.log",
+      "diff": "diff/src__backend_faer.rs_line_211_col_120_001.diff"
+    },
+    {
+      "name": "src/backend_faer.rs:211:120: replace * with + in polish_homogeneous_rows",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T092859Z-3beabf4d",
+      "log": "log/src__backend_faer.rs_line_211_col_120.log",
+      "diff": "diff/src__backend_faer.rs_line_211_col_120.diff"
+    },
+    {
+      "name": "src/backend_faer.rs:258:42: replace || with && in refine_real_solution",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T095202Z-f66f0e0b",
+      "log": "log/src__backend_faer.rs_line_258_col_42.log",
+      "diff": "diff/src__backend_faer.rs_line_258_col_42.diff"
+    },
+    {
+      "name": "src/backend.rs:357:31: replace || with && in real_backward_error",
+      "outcome": "MissedMutant",
+      "run": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T090850Z-4d33d854",
+      "log": "log/src__backend.rs_line_357_col_31.log",
+      "diff": "diff/src__backend.rs_line_357_col_31.diff"
+    }
+  ],
+  "original_diff_map": [
+    {
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T092859Z-3beabf4d\\rust\\mutants.out\\diff\\src__backend_faer.rs_line_203_col_31.diff",
+      "name": "src/backend_faer.rs:203:31: replace && with || in polish_homogeneous_rows",
+      "sha256": "3db56413e2d61e881e320704f39253ada9cc7ebb64900c5fbc9accd6f254742c"
+    },
+    {
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T092859Z-3beabf4d\\rust\\mutants.out\\diff\\src__backend_faer.rs_line_203_col_96_002.diff",
+      "name": "src/backend_faer.rs:203:96: replace > with >= in polish_homogeneous_rows",
+      "sha256": "be0a28cfd6dfc263580181e3102c5bcf3ddfa051acc7ae1393a424966ac50959"
+    },
+    {
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T092859Z-3beabf4d\\rust\\mutants.out\\diff\\src__backend_faer.rs_line_211_col_120_001.diff",
+      "name": "src/backend_faer.rs:211:120: replace * with / in polish_homogeneous_rows",
+      "sha256": "3b0164a828b5e2589144b4ea777da87611b4a5b05579a068a547f63c8e773e9b"
+    },
+    {
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T092859Z-3beabf4d\\rust\\mutants.out\\diff\\src__backend_faer.rs_line_211_col_120.diff",
+      "name": "src/backend_faer.rs:211:120: replace * with + in polish_homogeneous_rows",
+      "sha256": "68b874a1f3d89eca85d049a7bcb7b6c4c93df91e2496ec5b77aceb6b3df4d717"
+    },
+    {
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T095202Z-f66f0e0b\\rust\\mutants.out\\diff\\src__backend_faer.rs_line_258_col_42.diff",
+      "name": "src/backend_faer.rs:258:42: replace || with && in refine_real_solution",
+      "sha256": "f7f14019ae21855c9d96d7b4bad7963e8f3b14f56b96768dc2aab7244842e775"
+    },
+    {
+      "diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T090850Z-4d33d854\\rust\\mutants.out\\diff\\src__backend.rs_line_357_col_31.diff",
+      "name": "src/backend.rs:357:31: replace || with && in real_backward_error",
+      "sha256": "af049ca5d8a83c75237486158f8863ace564e6cb3c3eab1f6372c71e423b0d3c"
+    }
+  ],
+  "native_results": {
+    "outcomes": [
+      {
+        "scenario": "Baseline",
+        "summary": "Success",
+        "log_path": "log/baseline.log",
+        "diff_path": null,
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 31.5147801,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.5465685,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/backend.rs:357:31: replace || with && in real_backward_error",
+            "package": "circuit-simulator",
+            "file": "src/backend.rs",
+            "function": {
+              "function_name": "real_backward_error",
+              "return_type": "-> f64",
+              "span": {
+                "start": {
+                  "line": 344,
+                  "column": 1
+                },
+                "end": {
+                  "line": 363,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 357,
+                "column": 31
+              },
+              "end": {
+                "line": 357,
+                "column": 33
+              }
+            },
+            "replacement": "&&",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__backend.rs_line_357_col_31.log",
+        "diff_path": "diff/src__backend.rs_line_357_col_31.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 16.365951,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.6799538,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/backend_faer.rs:203:31: replace && with || in polish_homogeneous_rows",
+            "package": "circuit-simulator",
+            "file": "src/backend_faer.rs",
+            "function": {
+              "function_name": "polish_homogeneous_rows",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 188,
+                  "column": 1
+                },
+                "end": {
+                  "line": 237,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 203,
+                "column": 31
+              },
+              "end": {
+                "line": 203,
+                "column": 33
+              }
+            },
+            "replacement": "||",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__backend_faer.rs_line_203_col_31.log",
+        "diff_path": "diff/src__backend_faer.rs_line_203_col_31.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 18.9383262,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 7.4783829,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/backend_faer.rs:203:96: replace > with >= in polish_homogeneous_rows",
+            "package": "circuit-simulator",
+            "file": "src/backend_faer.rs",
+            "function": {
+              "function_name": "polish_homogeneous_rows",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 188,
+                  "column": 1
+                },
+                "end": {
+                  "line": 237,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 203,
+                "column": 96
+              },
+              "end": {
+                "line": 203,
+                "column": 97
+              }
+            },
+            "replacement": ">=",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "MissedMutant",
+        "log_path": "log/src__backend_faer.rs_line_203_col_96.log",
+        "diff_path": "diff/src__backend_faer.rs_line_203_col_96.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 14.5953731,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.3910076,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/backend_faer.rs:211:120: replace * with + in polish_homogeneous_rows",
+            "package": "circuit-simulator",
+            "file": "src/backend_faer.rs",
+            "function": {
+              "function_name": "polish_homogeneous_rows",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 188,
+                  "column": 1
+                },
+                "end": {
+                  "line": 237,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 211,
+                "column": 120
+              },
+              "end": {
+                "line": 211,
+                "column": 121
+              }
+            },
+            "replacement": "+",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__backend_faer.rs_line_211_col_120.log",
+        "diff_path": "diff/src__backend_faer.rs_line_211_col_120.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 13.9373336,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 9.2858401,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/backend_faer.rs:211:120: replace * with / in polish_homogeneous_rows",
+            "package": "circuit-simulator",
+            "file": "src/backend_faer.rs",
+            "function": {
+              "function_name": "polish_homogeneous_rows",
+              "return_type": "-> SimResult<()>",
+              "span": {
+                "start": {
+                  "line": 188,
+                  "column": 1
+                },
+                "end": {
+                  "line": 237,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 211,
+                "column": 120
+              },
+              "end": {
+                "line": 211,
+                "column": 121
+              }
+            },
+            "replacement": "/",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__backend_faer.rs_line_211_col_120_001.log",
+        "diff_path": "diff/src__backend_faer.rs_line_211_col_120_001.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 19.941279,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 6.9178287,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          }
+        ]
+      },
+      {
+        "scenario": {
+          "Mutant": {
+            "name": "src/backend_faer.rs:258:42: replace || with && in refine_real_solution",
+            "package": "circuit-simulator",
+            "file": "src/backend_faer.rs",
+            "function": {
+              "function_name": "refine_real_solution",
+              "return_type": "-> SimResult<Vec<f64>>",
+              "span": {
+                "start": {
+                  "line": 239,
+                  "column": 1
+                },
+                "end": {
+                  "line": 263,
+                  "column": 2
+                }
+              }
+            },
+            "span": {
+              "start": {
+                "line": 258,
+                "column": 42
+              },
+              "end": {
+                "line": 258,
+                "column": 44
+              }
+            },
+            "replacement": "&&",
+            "genre": "BinaryOperator"
+          }
+        },
+        "summary": "CaughtMutant",
+        "log_path": "log/src__backend_faer.rs_line_258_col_42.log",
+        "diff_path": "diff/src__backend_faer.rs_line_258_col_42.diff",
+        "phase_results": [
+          {
+            "phase": "Build",
+            "duration": 17.0139773,
+            "process_status": "Success",
+            "argv": [
+              "cargo",
+              "test",
+              "--no-run",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          },
+          {
+            "phase": "Test",
+            "duration": 9.3296355,
+            "process_status": {
+              "Failure": 101
+            },
+            "argv": [
+              "cargo",
+              "test",
+              "--profile=mutants",
+              "--verbose",
+              "--package=circuit-simulator@0.1.0",
+              "--lib",
+              "boundary_polish_contracts"
+            ]
+          }
+        ]
+      }
+    ],
+    "total_mutants": 6,
+    "missed": 1,
+    "caught": 5,
+    "timeout": 0,
+    "unviable": 0,
+    "success": 0,
+    "start_time": "2026-11-19T22:10:19.1984382Z",
+    "end_time": "2026-11-19T22:15:08.0640334Z",
+    "cargo_mutants_version": "27.1.0"
+  },
+  "baseline": {
+    "clean": "     Removed 23 files, 105.1MiB total\r\n",
+    "fresh_owned_rustc": true,
+    "four_tests_passed": true
+  },
+  "reviewed_equivalent_name": "src/backend_faer.rs:203:96: replace > with >= in polish_homogeneous_rows",
+  "equivalence_scope": "Validated finite CSC current algorithm only: any nonzero maximum tie fails epsilon-dominance admission",
+  "tests": {
+    "integration_passed": 726,
+    "native_baseline_filtered": 55,
+    "instrumented": 4,
+    "focused": 4,
+    "unit_passed": 59,
+    "ignored": 7
+  },
+  "property": {
+    "gap_min": 55,
+    "environment_seed": 2026111932,
+    "seed": 2026111931,
+    "gap_max": 100,
+    "generated_cases": 64
+  },
+  "coverage": {
+    "scope": "Actual owned library instrumented as unit executable; boundary_polish_contracts filter only; per-file totals INCLUDE unit-test lines",
+    "branches": null,
+    "dependency_sha256": {
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libtracing_subscriber-b41206d0d4ce6123.rlib": "d306a97e4543b1a665979a255f17030bb72b8ef82b3e984378d1c49fde92646d",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libtracing-4fa30a0ad4faf616.rlib": "fe98bd2d7e3a699bc94e5f5dc9595a0c4bc39b678127f765671191c84993b5b2",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libserde_json-2e845e853ccf85de.rlib": "d2d4bd08eba6645a380d46345fcc1ede19a60fb5d51ee3fb7df65afb4d77df03",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libfaer-081cd5bf5b0a6cf7.rlib": "3f59dc6c44f5711bc7f4e9431eb4b08010fd86fce9d5c9448fe42c1b8a223ac2",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libnalgebra-fe9fc1020ea34333.rlib": "8c6378f38a02d2c15f4204ca1c8e069b9535e7f21805bdaf56d91ffaa7488cfb",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libsha2-8cba812e2420715c.rlib": "5c2a66c62b3e138f668eb3eaa16ae8fa9e0c8a852495497b367116d17a5ed4b5",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libserde-a4a86354104b77bf.rlib": "f965d9de643d7d2a0fb95593f868bb8275c4f24c9f42724936e2b5b4ae3b0688",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libnum_complex-1fb2eb415a884458.rlib": "9e62abf2b084bbae99f4d056df27edb1263018e1293cee5bddd6d52b74d7088a",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libproptest-27a5283e8208f952.rlib": "d51aae729bcd672b6b54c6d218d365336f5bf783d0aa0201cc5979bf9fb3354f",
+      "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libspice_bsim330_host-31ee7d57068566d3.rlib": "069c46ea72538ddf2c0017b14c73c6f41e6c1886bf6e02c49be0436c3c41efa7"
+    },
+    "limits": [
+      "Not whole program/vendor/main/GPU coverage",
+      "Unit-line denominators are not comparable to integration-only production metrics",
+      "No measured branch coverage"
+    ],
+    "binary_sha256": "67754c2c9a405692bcb8832e1d36f4f880fb2a22be18b65840ed03d1a409949e",
+    "metrics": [
+      {
+        "sha256": "06ee42b3d955f562c43b2b1a243726afce4b8c22edabbab9fd288bbcfc006a63",
+        "source": "src/backend.rs",
+        "lines": {
+          "count": 428,
+          "covered": 26,
+          "percent": 6.074766355140187
+        }
+      },
+      {
+        "sha256": "ec515a20991fa8e8f221efed1c2d449507c14311ba904d7339777181aad807fd",
+        "source": "src/backend_faer.rs",
+        "lines": {
+          "count": 526,
+          "covered": 104,
+          "percent": 19.771863117870723
+        }
+      }
+    ]
+  },
+  "instrumentation_arguments": [
+    "--edition=2024",
+    "--crate-name",
+    "circuit_simulator",
+    "--test",
+    "J:/dev/spice-deck-next/src/lib.rs",
+    "-C",
+    "instrument-coverage",
+    "--extern",
+    "faer=E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libfaer-081cd5bf5b0a6cf7.rlib",
+    "--extern",
+    "num_complex=E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libnum_complex-1fb2eb415a884458.rlib",
+    "--extern",
+    "tracing=E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libtracing-4fa30a0ad4faf616.rlib",
+    "--extern",
+    "proptest=E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libproptest-27a5283e8208f952.rlib",
+    "--extern",
+    "spice_bsim330_host=E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libspice_bsim330_host-31ee7d57068566d3.rlib",
+    "--extern",
+    "nalgebra=E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libnalgebra-fe9fc1020ea34333.rlib",
+    "--extern",
+    "serde=E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libserde-a4a86354104b77bf.rlib",
+    "--extern",
+    "serde_json=E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libserde_json-2e845e853ccf85de.rlib",
+    "--extern",
+    "sha2=E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libsha2-8cba812e2420715c.rlib",
+    "--extern",
+    "tracing_subscriber=E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target\\mutants\\deps\\libtracing_subscriber-b41206d0d4ce6123.rlib",
+    "-L",
+    "dependency=E:/Artifacts/Spice-backlog-findings-20261118T195605Z/target/mutants/deps",
+    "-o",
+    "E:/Artifacts/Spice-polish-contracts-20261119T220725Z/unit-coverage/units.exe"
+  ],
+  "strictdoc": {
+    "documents": 128,
+    "log": "strictdoc.log",
+    "uids": 670
+  },
+  "intel": {
+    "seed": 18117,
+    "device": "Intel UHD630",
+    "routine_tests": 15,
+    "probe": "intel-probe.log",
+    "raw": "E:\\Artifacts\\Spice-polish-contracts-20261119T220725Z\\Spice-intel-circuit-tests-e9a75267b804409d90e395fe10b77883",
+    "driver": "31.0.101.2141"
+  },
+  "review": "Read-only simulated source review; no important findings",
+  "reproduction": {
+    "native": [
+      "mutants",
+      "--gitignore",
+      "true",
+      "--file",
+      "src/backend.rs",
+      "--file",
+      "src/backend_faer.rs",
+      "--re",
+      "^(?:src/backend_faer\\.rs:203:31:\\ replace\\ &&\\ with\\ \\|\\|\\ in\\ polish_homogeneous_rows|src/backend_faer\\.rs:203:96:\\ replace\\ >\\ with\\ >=\\ in\\ polish_homogeneous_rows|src/backend_faer\\.rs:211:120:\\ replace\\ \\*\\ with\\ /\\ in\\ polish_homogeneous_rows|src/backend_faer\\.rs:211:120:\\ replace\\ \\*\\ with\\ \\+\\ in\\ polish_homogeneous_rows|src/backend_faer\\.rs:258:42:\\ replace\\ \\|\\|\\ with\\ &&\\ in\\ refine_real_solution|src/backend\\.rs:357:31:\\ replace\\ \\|\\|\\ with\\ &&\\ in\\ real_backward_error)$",
+      "--profile",
+      "mutants",
+      "--jobs",
+      "1",
+      "--jobserver-tasks",
+      "2",
+      "--timeout",
+      "120",
+      "--build-timeout",
+      "240",
+      "--output",
+      "E:/Artifacts/Spice-polish-contracts-20261119T220725Z/mutations",
+      "--cargo-arg=--lib",
+      "--cargo-arg=boundary_polish_contracts"
+    ],
+    "regression": "cargo test --profile mutants --lib --test mutation_suite --features mutation-suite",
+    "clean": "cargo clean --package circuit-simulator --profile mutants"
+  },
+  "limitations": [
+    "Five kills plus one reviewed raw miss, not six kills; frozen4411scores unchanged",
+    "Private helper/controller scope, not new vendor factorization or actual deck qualification",
+    "Unit coverage includes test lines; branch/vendor/main/GPU unmeasured",
+    "No new ngspice/Linux/Stryker/standalone fuzz/performance/convergence claim"
+  ],
+  "cargo_mutants_sha256": "03abe0bd3d3b5e000311a75d294fedbb22e8cb2c863814775c782bf04a0fce4b"
+}
