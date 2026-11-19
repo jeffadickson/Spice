@@ -1,3 +1,24 @@
+# Active epoch: named constraints and qualified energy outputs
+
+Read docs/epoch-audit-outputs-results.md, docs/epoch-audit-outputs.sdoc and
+ evidence/epoch-audit-outputs-results.json. Baseca51425, production unchanged.
+13counterparts dispositioned:9caught,4reviewedunobservableenergytemporaries.
+Stage13=8caught5missed, then an independent power-tolerance assertion caught451;
+14attempts, no invalid/timeouts. Preserve first outcomes and per-stage snapshots.
+Key lesson: zero KCL/power residuals cannot replace named L/H/behavioral-voltage
+constraints; check constraint presence and physical tolerance normalization.
+Power451 changes scale, not signed balance: a2V/2ohm/G circuit has absPower4+8G.
+Charged MOS energy stays NotChecked/None/reason; memoryless stationary balance
+is checked. Four500arithmetic mutations affect only energy discarded behind that
+unchanged qualification flag. No formal/physics proof or filter/removal implied.
+Final51unit672integration pass/6ignored; Intel15+SpMVpass; StrictDoc113docs627IDs.
+Scoped audit344/579lines; branch/test/vendor/main coverage unavailable.
+Raw E:/Artifacts/Spice-epoch-triage-20261119T035409Z. Native BSIM/SOI current/charge
+and power cases remain pending. Provider environment is unset in ordinary tests;
+do not infer binaries are missing. Reuse existing E: assets and independently
+qualified references; native host needs SPICE_BSIM330_HOST/SPICE_BSIM330_MODEL,
+SOI FD has SPICE_BSIM_SOI_FD_HOST. Check source/installed tool help for a separate
+ignored-test qualification lane; never change frozen4411 source/config/helper.
 # Active epoch: reference expressions and signed controls
 
 Read docs/epoch-audit-reference-results.md, docs/epoch-audit-reference.sdoc and

@@ -1,0 +1,197 @@
+{
+  "source_base": "ca51425c74840afa2eae1ccf46c41b840ac4d48a",
+  "production_changed": false,
+  "artifact_root": "E:/Artifacts/Spice-epoch-triage-20261119T035409Z",
+  "selected": 13,
+  "attempts": 14,
+  "final_unique_caught": 9,
+  "reviewed_unobservable": 4,
+  "caught_names": [
+    "src/audit.rs:402:13: delete match arm Element::Inductor{..} in constraint_checks",
+    "src/audit.rs:409:13: delete match arm Element::Ccvs{control_id, ohms, ..} in constraint_checks",
+    "src/audit.rs:407:67: replace - with + in constraint_checks",
+    "src/audit.rs:417:75: replace + with - in constraint_checks",
+    "src/audit.rs:417:75: replace + with * in constraint_checks",
+    "src/audit.rs:497:51: replace match guard model.oxide_farads != 0. with true in backward_euler_step",
+    "src/audit.rs:497:51: replace match guard model.oxide_farads != 0. with false in backward_euler_step",
+    "src/audit.rs:497:70: replace != with == in backward_euler_step",
+    "src/audit.rs:451:15: replace += with -= in power_check"
+  ],
+  "equivalents": [
+    {
+      "mutated_line": [
+        "+                step_s / /* ~ changed by cargo-mutants ~ */ v * *current"
+      ],
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:500:24: replace * with / in backward_euler_step",
+      "sha256": "a8d61e592d623646f1e75a4848b4f52db3ce3aca54facae41f6778fed5f164cc",
+      "reason": "Charged MOS branch sets nonlinear_storage true and changes no currents. Accumulated energy/scale are discarded for NotChecked; no numeric metrics or term-derived error exposed under recorded floating execution semantics.",
+      "disposition": "reviewed_current_unobservable_energy_temporary",
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T034348Z-fc2a5166\\rust\\mutants.out\\diff\\src__audit.rs_line_500_col_24_001.diff"
+    },
+    {
+      "mutated_line": [
+        "+                step_s + /* ~ changed by cargo-mutants ~ */ v * *current"
+      ],
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:500:24: replace * with + in backward_euler_step",
+      "sha256": "6354235abc99e9f8382678fd9813a4d45af23d569253140401981d16c66b83b2",
+      "reason": "Charged MOS branch sets nonlinear_storage true and changes no currents. Accumulated energy/scale are discarded for NotChecked; no numeric metrics or term-derived error exposed under recorded floating execution semantics.",
+      "disposition": "reviewed_current_unobservable_energy_temporary",
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T034348Z-fc2a5166\\rust\\mutants.out\\diff\\src__audit.rs_line_500_col_24.diff"
+    },
+    {
+      "mutated_line": [
+        "+                step_s * v / /* ~ changed by cargo-mutants ~ */ *current"
+      ],
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:500:28: replace * with / in backward_euler_step",
+      "sha256": "fa2c90f2621468068f9fdefce66b85410c4dd751312c2afaeaa892d8fe5e7550",
+      "reason": "Charged MOS branch sets nonlinear_storage true and changes no currents. Accumulated energy/scale are discarded for NotChecked; no numeric metrics or term-derived error exposed under recorded floating execution semantics.",
+      "disposition": "reviewed_current_unobservable_energy_temporary",
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T034348Z-fc2a5166\\rust\\mutants.out\\diff\\src__audit.rs_line_500_col_28_001.diff"
+    },
+    {
+      "mutated_line": [
+        "+                step_s * v + /* ~ changed by cargo-mutants ~ */ *current"
+      ],
+      "native_outcome": "MissedMutant",
+      "name": "src/audit.rs:500:28: replace * with + in backward_euler_step",
+      "sha256": "de38a9103eb0e7ef8b066a616ff9a5f0f7837c32ac3ca5faf2c428babe799602",
+      "reason": "Charged MOS branch sets nonlinear_storage true and changes no currents. Accumulated energy/scale are discarded for NotChecked; no numeric metrics or term-derived error exposed under recorded floating execution semantics.",
+      "disposition": "reviewed_current_unobservable_energy_temporary",
+      "frozen_diff": "E:\\Artifacts\\Spice-mutation-epoch-30a5a9a-20261118T203254Z\\framework\\20261119T034348Z-fc2a5166\\rust\\mutants.out\\diff\\src__audit.rs_line_500_col_28.diff"
+    }
+  ],
+  "stages": [
+    {
+      "root": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261119T040005Z-fa8f450f",
+      "snapshot_test_sha256": "8a7b3d0f440e3f34458f26e42e3e89ecab3cf3bdf6ea608b43e44d3ab103854a",
+      "native": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 2,
+        "candidates": 13,
+        "killed": 8,
+        "survived": 5,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "e028759bdd88448c16545ef6b1d359a2f67417311e0561cb4632ee6a49af70e6",
+        "log_sha256": "228878f568b539b97ef54bb4cd27bb701a333fd231954007118f557db8e34964"
+      },
+      "targets": "audit_output_contracts,audit_reference_contracts"
+    },
+    {
+      "root": "E:\\Artifacts\\Spice-issue61-20261117T133906Z\\current-audit-lean\\20261119T040904Z-4817f02f",
+      "snapshot_test_sha256": "69b6bc4951c2cfc71efd708a226e5e228bd0f456d82e2e0ee1b234afb4f4325a",
+      "native": {
+        "version": "27.1.0",
+        "status": "completed",
+        "exit_code": 0,
+        "candidates": 1,
+        "killed": 1,
+        "survived": 0,
+        "timed_out": 0,
+        "invalid": 0,
+        "not_covered": 0,
+        "pending": 0,
+        "other": 0,
+        "ignored": 0,
+        "unattempted": 0,
+        "report_sha256": "676ff246b255b70a490dd7d03a42ea13b343c53cfba00efa5c26497131ded2b8",
+        "log_sha256": "55247344b4507de1acc25c5b644d3c37a1ab96fd7cd595aaa1ff5f3fc5bdad4b"
+      },
+      "targets": "audit_output_contracts"
+    }
+  ],
+  "profile": "mutants",
+  "features": [],
+  "seed": "2026111904",
+  "frozen_seed": "2026111901",
+  "coverage_seed": "88320261103",
+  "tests": {
+    "new_contract_tests": 5,
+    "integration": 672,
+    "ignored": 6,
+    "unit": 51,
+    "intel": 15,
+    "intel_spmv": "passed"
+  },
+  "coverage": [
+    {
+      "lines": {
+        "count": 579,
+        "covered": 344,
+        "percent": 59.41278065630398
+      },
+      "sha256": "8e953af44a4dbaef84ac6457d5b1617ef4b01ae4296fb242b2915425992d7258",
+      "file": "src/audit.rs"
+    }
+  ],
+  "branches": null,
+  "strictdoc": {
+    "documents": 113,
+    "unique_uids": 627,
+    "version": "0.31.0",
+    "parser": "StrictDoc SDReader",
+    "success": true
+  },
+  "intel_provider": {
+    "exit_code": 0,
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "tests_log": "E:\\Artifacts\\Spice-epoch-triage-20261119T035409Z\\Spice-intel-circuit-tests-90788f0914474da18799115056edb02b\\tests.log",
+    "scope": "Actual Intel real/complex solves, known-solution properties, full divider circuit and bounded CLI lifecycle; not arbitrary deck qualification"
+  },
+  "review": "Read-only reviewer checked manufactured constraints, finalGminpower magnitude and all four exact frozen diff hashes/changed lines. No important issue.",
+  "replay": {
+    "helper": "E:/Artifacts/Spice-backlog-findings-20261118T195605Z/helper-final/build/bin/release/FrameworkMutations.dll",
+    "followup_names": "E:\\Artifacts\\Spice-epoch-triage-20261119T035409Z\\power-names.json",
+    "args": [
+      "--tool",
+      "rust",
+      "--minutes",
+      "25",
+      "--workers",
+      "2",
+      "--test-workers",
+      "2",
+      "--rust-profile",
+      "mutants",
+      "--rust-test",
+      "audit_output_contracts,audit_reference_contracts",
+      "--rust-file",
+      "src/audit.rs",
+      "--rust-names-file",
+      "E:\\Artifacts\\Spice-epoch-triage-20261119T035409Z\\selected-names.json"
+    ]
+  },
+  "source_hashes": [
+    {
+      "file": "src/audit.rs",
+      "sha256": "8e953af44a4dbaef84ac6457d5b1617ef4b01ae4296fb242b2915425992d7258"
+    },
+    {
+      "file": "tests/audit_output_contracts.rs",
+      "sha256": "69b6bc4951c2cfc71efd708a226e5e228bd0f456d82e2e0ee1b234afb4f4325a"
+    },
+    {
+      "file": "tests/mutation_suite.rs",
+      "sha256": "843e5d05976b8340d686323167609b54ff3907735cb4ec8abd020482d8f47060"
+    }
+  ],
+  "limits": [
+    "Frozen raw outcomes are unchanged by later test evidence; no whole4411 retest.",
+    "Four energy arithmetic mutants remain native Missed and are reviewed only for current output unobservability under recorded execution semantics.",
+    "ChargedMOS nonlinear energy remains unqualified; no physics algorithm changed.",
+    "No fresh standalone fuzz engine,Stryker or ngspice; existing property tests ran.",
+    "Six ignored native/oracle/endurance cases remain unavailable, not passing.",
+    "Stable branch,test/vendor/main coverage unavailable.",
+    "Intel gates are bounded routine coverage, not arbitrary GPUdeck qualification."
+  ]
+}

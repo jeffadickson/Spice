@@ -13,6 +13,8 @@ mod suite_adaptive;
 mod suite_analyses;
 #[path = "audit_reference_contracts.rs"]
 mod suite_audit_reference_contracts;
+#[path = "audit_output_contracts.rs"]
+mod suite_audit_output_contracts;
 #[path = "analysis_audits.rs"]
 mod suite_analysis_audits;
 #[path = "behavioral_resistor.rs"]

@@ -1,0 +1,71 @@
+[DOCUMENT]
+TITLE: Constraint reporting and energy qualification
+
+[REQUIREMENT]
+UID: EPOCH-AUDIT-CONSTRAINT-OUTPUT-001
+STATUS: Draft
+TITLE: Report constitutive constraints independently of conservation
+STATEMENT: >>>
+DC audit reports shall include named constraints for inductors, CCVS and
+behavioral voltage sources. A manufactured state satisfying KCL and total power
+but violating the device voltage equation shall fail the corresponding named
+constraint. Absence of a constraint is not a passing constraint.
+<<<
+COMMENT: >>>
+Verification: audit_output_contracts dc_inductor_constraint_is_present_and_rejects_a_conservation_consistent_voltage,
+ccvs_constraint_uses_the_signed_nonzero_sensing_current and
+behavioral_voltage_constraint_and_relative_bound_use_differential_magnitudes.
+Known source/load states are specified analytically without a solver or Jacobian.
+<<<
+
+[REQUIREMENT]
+UID: EPOCH-AUDIT-VOLTAGE-BOUND-001
+STATUS: Draft
+TITLE: Voltage-equation tolerance uses absolute physical magnitudes
+STATEMENT: >>>
+The effective voltage-constraint tolerance shall equal its configured absolute
+voltage bound plus relative times the sum of absolute actual and expected
+voltages. Signed cancellation or multiplication of those magnitudes shall not
+replace that sum. Behavioral control shall use V(cp)-V(cn), including nonzero
+negative control terminals and common control translations.
+<<<
+COMMENT: >>>
+Verification: behavioral_voltage_constraint_and_relative_bound_use_differential_magnitudes.
+The manufactured correct state has actual=expected=2*control, giving an
+independent bound absolute+relative*2*abs(expected). Three drives and offsets.
+<<<
+
+[REQUIREMENT]
+UID: EPOCH-AUDIT-MOS-ENERGY-QUAL-001
+STATUS: Draft
+TITLE: Distinguish unavailable charged-MOS energy from checked memoryless balance
+STATEMENT: >>>
+Until its nonlinear charge energy audit is qualified, a charged intrinsic MOS1
+step shall report be_energy_balance as NotChecked with unavailable numeric
+metrics and an explanatory reason. A memoryless MOS1 stationary step with a
+known balanced source/conduction state shall retain its measured passing energy
+check. Adding or removing oxide charge shall not fabricate or suppress evidence.
+<<<
+COMMENT: >>>
+Verification: mos_charge_energy_qualification_is_not_a_fabricated_numeric_pass.
+Zero oxide and 3 nF oxide cases use the independently known 75 microamp triode
+current and two non-unit timesteps. This does not qualify nonlinear stored energy.
+Only arithmetic discarded behind an unchanged NotChecked result may be reviewed
+as currently unobservable; preserve each raw outcome and reassess if metrics,
+logging, qualification or floating execution semantics change. Retain guards.
+<<<
+
+[REQUIREMENT]
+UID: EPOCH-AUDIT-POWER-BOUND-001
+STATUS: Draft
+TITLE: Include shunt dissipation in absolute power scaling
+STATEMENT: >>>
+The measured power-balance tolerance shall include the absolute magnitudes of
+source, load and explicit Gmin shunt powers. Cancellation of signed powers shall
+not remove those terms from the relative tolerance scale.
+<<<
+COMMENT: >>>
+Verification: nonunit_gmin_power_bound_counts_source_load_and_shunt_magnitudes.
+A 2 V source, 2 ohm load and shunt G have signed powers -(2+4G), 2 and 4G W,
+and absolute sum 4+8G W. Three non-unit shunts distinguish scale from residual.
+<<<
