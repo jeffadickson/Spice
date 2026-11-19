@@ -184,3 +184,6 @@ mod suite_epoch_validation_contracts;
 
 #[path = "epoch_api_admission.rs"]
 mod suite_epoch_api_admission;
+
+#[path = "native_audit_contracts.rs"]
+mod suite_native_audit_contracts;

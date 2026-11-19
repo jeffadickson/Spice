@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "base_commit": "7550704fef954c39ff359c505291a536add8bc56",
+  "product_source_changed": false,
+  "artifact_root": "E:/Artifacts/Spice-native-audit-20261119T050702Z",
+  "requirements": [
+    "AUDIT-NATIVE-TERMINALS-001",
+    "AUDIT-NATIVE-ENERGY-QUAL-001"
+  ],
+  "test_source_sha256": "8e757913bc43b9eaf6f5667353046d2614dca41833a20e063df0071034315e60",
+  "native_provider": {
+    "base_commit": "7550704fef954c39ff359c505291a536add8bc56",
+    "created_utc": "2026-11-18T21:26:13.7343588-08:00",
+    "openvaf_version": "OpenVAF-reloaded 20260616-3-g0e83f1ed",
+    "model_source_url": "https://raw.githubusercontent.com/robtaylor/VACASK/main/devices/spice/bsim3v3.va",
+    "compiler_url": "https://fides.fe.uni-lj.si/openvaf/download/openvaf-reloaded-20260616-3-g0e83f1ed-win_x64.zip",
+    "model_license": "AGPL-3.0-or-later; local reference asset, not redistributed",
+    "historical_module_sha256": "57dc3bebe54a95b36723b3b1e1b543ba01b32a7c9c9a00524b966b3459161608",
+    "hashes": [
+      {
+        "sha256": "7ebe8923faa0f1e70d462b958a91d0d681a06c2d63b4a07af0a8e16f45453f69",
+        "file": "E:/Artifacts/Spice-native-audit-20261119T050702Z/compiler.zip"
+      },
+      {
+        "sha256": "5ad1c62f8effe61cd613a14995d1ec22ade97361ac29d25c1c22f0239435a655",
+        "file": "E:/Artifacts/Spice-native-audit-20261119T050702Z/compiler/openvaf-r.exe"
+      },
+      {
+        "sha256": "14e9d752a6db896959f3c97a32112899365e7528221e308250cee9cbc8141f84",
+        "file": "E:/Artifacts/Spice-native-audit-20261119T050702Z/bsim3v3.va"
+      },
+      {
+        "sha256": "11d9e3df00edf728db2fc531efc030685d6cc70098a8550e3f13d1513238fd17",
+        "file": "E:/Artifacts/Spice-native-audit-20261119T050702Z/bsim3v3.osdi"
+      },
+      {
+        "sha256": "c10014846bbb96c74d92ea01963a55be7144db6b3565664a3b30be118c23fdfd",
+        "file": "E:/Artifacts/Spice-native-audit-20261119T050702Z/host.dll"
+      },
+      {
+        "sha256": "d4fee34ba8f58526fe48d5b592583865ecb96e663c11113c516fbafab2baa24c",
+        "file": "J:/dev/spice-deck-next/scripts/Bsim330Host.c"
+      },
+      {
+        "sha256": "8e953af44a4dbaef84ac6457d5b1617ef4b01ae4296fb242b2915425992d7258",
+        "file": "J:/dev/spice-deck-next/src/audit.rs"
+      },
+      {
+        "sha256": "8e757913bc43b9eaf6f5667353046d2614dca41833a20e063df0071034315e60",
+        "file": "J:/dev/spice-deck-next/tests/native_audit_contracts.rs"
+      },
+      {
+        "sha256": "b38ef3b01e509fea7efa3b99ff1f70d09185009218ce34a45233d7d9de6da09c",
+        "file": "C:/dev/ngspice-ngspice/src/osdi/osdilegacy.h"
+      },
+      {
+        "sha256": "23186321e69b908b9eb50b2e94608bf099881a3d8cbfe834272f5a40f25fb7da",
+        "file": "C:/dev/ngspice-ngspice/src/osdi/osdi.h"
+      }
+    ]
+  },
+  "native_test_passed": 1,
+  "existing_native_baseline_passed": 2,
+  "native_property": {
+    "seed": 330,
+    "cases": 64
+  },
+  "ordinary_tests": {
+    "integration_passed": 672,
+    "ignored": 7,
+    "unit_passed": 51,
+    "environment_seed": "2026111905"
+  },
+  "mutations": {
+    "invalid": 0,
+    "timeouts": 0,
+    "tool": "cargo-mutants27.1.0",
+    "total": 14,
+    "additional_case": 1,
+    "compiler_jobs": 2,
+    "profile": "mutants",
+    "caught": 14,
+    "frozen_survivor_counterparts": 13,
+    "baseline": "Success; explicitly executed ignored fixture",
+    "cases": [
+      {
+        "name": "src/audit.rs:197:17: delete match arm Element::Bsim330{..} | Element::BsimSoiFdReference{..} in dc_currents",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_197_col_17.log",
+        "diff": "diff/src__audit.rs_line_197_col_17.diff",
+        "diff_sha256": "0239362133a3f4467d145e07f89d1d320d784e5efc753dc17712e2750ff1675d"
+      },
+      {
+        "name": "src/audit.rs:267:21: replace + with - in kcl_checks",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_267_col_21.log",
+        "diff": "diff/src__audit.rs_line_267_col_21.diff",
+        "diff_sha256": "afbd88bbf15696d82b258f0e22a1d0931b73668f600c17b029bd478c9f42b2fb"
+      },
+      {
+        "name": "src/audit.rs:267:21: replace + with * in kcl_checks",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_267_col_21_001.log",
+        "diff": "diff/src__audit.rs_line_267_col_21_001.diff",
+        "diff_sha256": "0db704889d1ab907505a1547cddeedfd0cbeaaa77750b356d7ad22b0235298b8"
+      },
+      {
+        "name": "src/audit.rs:269:80: replace / with % in kcl_checks",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_269_col_80.log",
+        "diff": "diff/src__audit.rs_line_269_col_80.diff",
+        "diff_sha256": "ecef7ba90352adf5305fe653c066096f083784981fba8c409f635963a135279b"
+      },
+      {
+        "name": "src/audit.rs:269:80: replace / with * in kcl_checks",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_269_col_80_001.log",
+        "diff": "diff/src__audit.rs_line_269_col_80_001.diff",
+        "diff_sha256": "9b0d0e8d31f8277cc25ca72a5bc77ba78633d61cce44f8c2d85cc72fc1e8663c"
+      },
+      {
+        "name": "src/audit.rs:269:66: replace - with + in kcl_checks",
+        "summary": "CaughtMutant",
+        "frozen_survivor": false,
+        "log": "log/src__audit.rs_line_269_col_66.log",
+        "diff": "diff/src__audit.rs_line_269_col_66.diff",
+        "diff_sha256": "1e948bca342c6c99707537a3739eb06b00a0b487f63512ec101b0467ebd67e77"
+      },
+      {
+        "name": "src/audit.rs:269:66: replace - with / in kcl_checks",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_269_col_66_001.log",
+        "diff": "diff/src__audit.rs_line_269_col_66_001.diff",
+        "diff_sha256": "907101e28598d0e37cc7d67223122eafeb1ddd144ae2910f6337e8ebd83a024b"
+      },
+      {
+        "name": "src/audit.rs:270:30: replace += with -= in kcl_checks",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_270_col_30.log",
+        "diff": "diff/src__audit.rs_line_270_col_30.diff",
+        "diff_sha256": "3a3457e0ee7b213b1b1ad4b23e483ab5aa263a84f1baf55148a3c8ba420ef4d4"
+      },
+      {
+        "name": "src/audit.rs:270:30: replace += with *= in kcl_checks",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_270_col_30_001.log",
+        "diff": "diff/src__audit.rs_line_270_col_30_001.diff",
+        "diff_sha256": "b590d03c9d24484f3c5470f92d5e9767bc9515abadc840ee3c50e30c9c099f63"
+      },
+      {
+        "name": "src/audit.rs:271:32: replace += with -= in kcl_checks",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_271_col_32.log",
+        "diff": "diff/src__audit.rs_line_271_col_32.diff",
+        "diff_sha256": "df8f851f340093493e16e97681362a0e81c90bed6356be23b2e05fd8eedab618"
+      },
+      {
+        "name": "src/audit.rs:271:32: replace += with *= in kcl_checks",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_271_col_32_001.log",
+        "diff": "diff/src__audit.rs_line_271_col_32_001.diff",
+        "diff_sha256": "41445dec16dec153c9f4d623d0b996350a32ff73090d37b7de1a4f8b87b7b486"
+      },
+      {
+        "name": "src/audit.rs:440:33: replace * with + in power_check",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_440_col_33.log",
+        "diff": "diff/src__audit.rs_line_440_col_33.diff",
+        "diff_sha256": "d7602405dc8a54de67c074dab2366f9e0e80fcf73782b6654a735859e190f791"
+      },
+      {
+        "name": "src/audit.rs:440:33: replace * with / in power_check",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_440_col_33_001.log",
+        "diff": "diff/src__audit.rs_line_440_col_33_001.diff",
+        "diff_sha256": "79d3c05af38384a4d1d501981e7759ec326cb3722b205b6dacce775b64351ea4"
+      },
+      {
+        "name": "src/audit.rs:502:13: delete match arm Element::Bsim330{..} in backward_euler_step",
+        "summary": "CaughtMutant",
+        "frozen_survivor": true,
+        "log": "log/src__audit.rs_line_502_col_13.log",
+        "diff": "diff/src__audit.rs_line_502_col_13.diff",
+        "diff_sha256": "b686b2c9014c565e2b0931ba2fb9d7dade0cdd50d342a79d80a928f718b22df0"
+      }
+    ],
+    "survived": 0,
+    "mutant_jobs": 1
+  },
+  "failed_launches": {
+    "option": "mutation-retry.log: missing explicit gitignore value; no mutant outcomes",
+    "baseline": "mutation-retry-2.log: Cargo/libtest separator missing; no mutant outcomes",
+    "snapshot": "mutation-launch.log: held scratch lock; no mutant outcomes"
+  },
+  "coverage": {
+    "scope": "Owned Rust library exercised by explicit native fixture",
+    "audit_lines": {
+      "count": 579,
+      "covered": 278,
+      "percent": 48.01381692573403
+    },
+    "branches": null,
+    "excluded": [
+      "external native model and adapter",
+      "vendor code",
+      "test source",
+      "main"
+    ]
+  },
+  "strictdoc": {
+    "unique_uids": 629,
+    "version": "0.31.0",
+    "documents": 114
+  },
+  "intel": {
+    "probe": "Intel UHD630 OpenCL FP64 SpMV; seed18117",
+    "circuit_tests_passed": 15,
+    "provider_sha256": "4353e81a729f56f106212c8799b23af3e74a6b1d20ab21a00c335bcfb870e955"
+  },
+  "review": {
+    "followup": "No new findings",
+    "finding": "Source power unobservable at zero source bias",
+    "disposition": "Added DC common-mode translation; gate and near-zero bulk conduction limits retained"
+  },
+  "limits": [
+    "Native fixture uses provider-produced I/Q for integration; model goldens are separate",
+    "SOI dynamic charge and Linux unverified",
+    "No standalone fresh fuzz engine or Stryker run",
+    "Two new charge-boundary survivors remain pending",
+    "API128 multiply-invalid error precedence unresolved",
+    "Earlier executable-removal I/O failure unresolved",
+    "No new corpus deck, performance or full model/GPU/SPICE qualification"
+  ]
+}

@@ -1,0 +1,40 @@
+[DOCUMENT]
+TITLE: Explicit native terminal audit qualification
+
+[REQUIREMENT]
+UID: AUDIT-NATIVE-TERMINALS-001
+STATUS: Draft
+TITLE: Audit each native bulk MOS terminal and its physical scale
+STATEMENT: >>>
+An explicitly enabled native bulk MOS audit shall reconstruct D/G/S/B currents
+and backward-Euler displacement (Qnew-Qold)/h at each terminal. KCL shall include
+all named nodes and ground. Its tolerance shall use the configured absolute
+current bound plus relative times the sum of absolute incident currents.
+Native power shall sum voltage times signed current at every terminal.
+Corrupting an individual clamping-source current shall fail conservation.
+<<<
+COMMENT: >>>
+Verification: tests/native_audit_contracts.rs native_terminal_current_and_dynamic_charge_audits.
+Four separate non-ground terminals, two non-unit timesteps and all four current
+corruptions. A common-mode translation makes source power nonzero. Gate and
+near-zero bulk conduction power are not meaningfully challenged at these biases.
+Explicit ignored-test lane requires qualified provider assets.
+The manufactured integration state uses the provider as a fixture producer;
+it does not independently qualify its model equations. Existing tests/bsim330.rs
+retain independent ngspice DC/charge goldens and randomized conservation.
+<<<
+
+[REQUIREMENT]
+UID: AUDIT-NATIVE-ENERGY-QUAL-001
+STATUS: Draft
+TITLE: Preserve unavailable nonlinear native stored-energy evidence
+STATEMENT: >>>
+Until qualified, a native bulk MOS backward-Euler energy audit shall report
+NotChecked with absent discrepancy and tolerance and an explanatory reason.
+Passing current conservation shall not imply a qualified energy calculation.
+<<<
+COMMENT: >>>
+Verification: native_terminal_current_and_dynamic_charge_audits checks the
+status and absent metrics at two dynamic steps. SOI dynamic charge, other model
+families, arbitrary operating points and Linux execution are outside this lane.
+<<<

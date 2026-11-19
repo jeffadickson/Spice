@@ -1,4 +1,26 @@
-# Active epoch: named constraints and qualified energy outputs
+# Active epoch: explicit native audit lane
+
+Read docs/native-audit-results.md, docs/native-audit-contracts.sdoc and
+evidence/native-audit-results.json. Base7550704; production source unchanged.
+Separate native run caught14/14 including13 previously raw frozen survivors.
+Native fixture explicitly ignored in ordinary suite; run with --ignored and
+qualified SPICE_BSIM330_HOST/MODEL. Two existing native bulk tests also passed.
+New source/module/compiler hashes and primary acquisition provenance are in
+the evidence. Module differs from historical binary; goldens were rerun, not
+assumed from compiler/source identity. No generated native assets enter Git.
+Default51unit672integration pass/7ignored; Intel15+SpMVpass. Native integration
+coverage audit278/579lines; no branch/vendor/model/main coverage. Distinct scope.
+StrictDoc114docs629UIDs. Raw E:/Artifacts/Spice-native-audit-20261119T050702Z.
+Failed snapshot/option/baseline launches retained, no mutant outcomes counted.
+Native common-mode translation makes source power observable; gate/near-zero
+bulk conduction and SOI dynamic charge remain outside meaningful power coverage.
+Next raw audit576 >= and588 <= charge boundaries remain pending. Do not label
+boundary changes equivalent without domain/overflow and exact-diff review.
+API128 multiply-invalid error precedence and Windows executable-removal I/O
+failure remain open. Keep frozen4411 source/config/helper immutable; current
+source results do not rewrite raw counts. Preserve canonical main and CI policy.
+
+# Prior checkpoint: named constraints and qualified energy outputs
 
 Read docs/epoch-audit-outputs-results.md, docs/epoch-audit-outputs.sdoc and
  evidence/epoch-audit-outputs-results.json. Baseca51425, production unchanged.
