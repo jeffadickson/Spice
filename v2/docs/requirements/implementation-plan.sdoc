@@ -1,0 +1,228 @@
+[DOCUMENT]
+TITLE: Spice V2 - Milestone Implementation Plan and Work Packages
+
+[TEXT]
+STATEMENT: >>>
+Version 2.0, 2026-11-20. Turns the V2 C++20 + KLU + OSDI + Xyce Strangler Fig + StarLark-cs + Schematic architecture into concrete, gate-based vertical slices. v2/backlog.json is derived from this document.
+
+Work packages progress honestly from Proposed -> InProgress -> Verified only when their exit gates execute and pass. Dependencies form an acyclic graph.
+<<<
+
+[[SECTION]]
+TITLE: 1. Slice 0 and M1 platform foundation (XyceBackend + DSL + Schematic)
+
+[REQUIREMENT]
+UID: PLAN-V2-001
+STATUS: InProgress
+TITLE: Slice 0 - Branch reset, adjusted StrictDoc set and C++20 build scaffold
+STATEMENT: >>>
+Establish branch v2, the six authoritative StrictDoc documents, lean AGENTS.md, derived backlog.json, CMake/vcpkg C++20 core scaffold (core types, universal DAE Device contract, versioned spice_capi.h), passing unit/boundary tests, and .NET V2 solution layout.
+<<<
+COMMENT: >>>
+Phase: Slice 0
+Depends-on: none
+Deliverables: v2/AGENTS.md, 6 StrictDoc files under v2/docs/requirements/, v2/backlog.json, v2/CMakeLists.txt, v2/vcpkg.json, v2/include/spice/capi.h, v2/cpp/{core,dae,capi}, v2/tests/, v2/dotnet/ solution skeleton.
+Verification: Clean C++20 CMake build with warnings-as-errors, passing unit/ABI/DAE tests, real gcov line/branch coverage on owned C++20 code, and StrictDoc UID/parent validation.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-LANG-001
+- TYPE: Parent
+  VALUE: ARCH-DEP-001
+- TYPE: Parent
+  VALUE: ARCH-API-003
+
+[REQUIREMENT]
+UID: PLAN-V2-002
+STATUS: Proposed
+TITLE: M1a - Canonical IR, Unified Device Descriptor and thin XyceBackend
+STATEMENT: >>>
+Implement the immutable Canonical IR, fail-closed Unified Device Descriptor registry, typed ResultManifest schema, and thin external-process XyceBackend (GPL-isolated) in Spice.Ir and Spice.Sdk, plus opt-in independent DC/AC/transient physical audits.
+<<<
+COMMENT: >>>
+Phase: M1
+Depends-on: PLAN-V2-001
+Deliverables: Spice.Ir, Spice.Sdk (ISimulationBackend, XyceBackend), physical-audit checks, and differential RC/RLC/diode/BJT/MOS reference fixtures running on prebuilt Xyce.
+Verification: Real circuits execute end-to-end via XyceBackend with typed signals/measurements and passing physical audits; zero GPL/Trilinos linkage in core targets.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-COMPAT-002
+- TYPE: Parent
+  VALUE: ARCH-SCHEM-001
+- TYPE: Parent
+  VALUE: AUDIT-001
+
+[REQUIREMENT]
+UID: PLAN-V2-003
+STATUS: Proposed
+TITLE: M1b - StarLark-cs DSL frontend and parallel campaign authoring
+STATEMENT: >>>
+Embed StarLark-cs with SharpUnits dimensional constructors in Spice.Starlark so circuits, hierarchical subcircuits, sweeps, corners, Monte Carlo plans, and assertions compile to Canonical IR and run deterministically with parallel_map on XyceBackend.
+<<<
+COMMENT: >>>
+Phase: M1
+Depends-on: PLAN-V2-002
+Deliverables: Spice.Starlark host module (@sim/v2), budget enforcement, deterministic parallel_map sweep examples, and IR equivalence tests against C#/F# builders.
+Verification: Identical RC, filter, and corner campaigns authored in StarLark-cs and C# produce identical Canonical IR and pass XyceBackend execution.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-DSL-001
+- TYPE: Parent
+  VALUE: ARCH-DSL-002
+
+[REQUIREMENT]
+UID: PLAN-V2-004
+STATUS: Proposed
+TITLE: M1c - Schematic capture model, ERC and interactive desktop app
+STATEMENT: >>>
+Build Spice.Schematic (versioned diffable document model, hierarchical subsheets, ERC, Unified Device Descriptor binding, Canonical IR emitter, SPICE/StarLark/SVG export) and the initial Spice.App desktop schematic editor and waveform cross-probing viewer backed by ISimulationBackend.
+<<<
+COMMENT: >>>
+Phase: M1
+Depends-on: PLAN-V2-002
+Deliverables: Spice.Schematic, Spice.App (schematic editor + live waveform/OP probing), ERC test suite, and round-trip persistence/export tests.
+Verification: Circuits drawn in Spice.Schematic compile cleanly to Canonical IR, run on XyceBackend, and support live node/branch cross-probing.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-SCHEM-002
+- TYPE: Parent
+  VALUE: ARCH-SCHEM-003
+- TYPE: Parent
+  VALUE: ARCH-SCHEM-004
+- TYPE: Parent
+  VALUE: ARCH-SCHEM-005
+
+[[/SECTION]]
+
+[[SECTION]]
+TITLE: 2. M2 native C++20 engine replacing Xyce on core analog
+
+[REQUIREMENT]
+UID: PLAN-V2-005
+STATUS: Proposed
+TITLE: M2a - C++20 linear core, SuiteSparse KLU and in-process NativeCppBackend
+STATEMENT: >>>
+Implement CSC sparse assembly with pre-bound device slots, SuiteSparse KLU shared-library adapter (real/complex, symbolic reuse), dense reference solver, linear primitives (R/C/L/K/V/I waveforms/E/F/G/H), OP/DC/AC/TRAN drivers, full spice_capi.h execution API, and in-process NativeCppBackend via LibraryImport/SafeHandle.
+<<<
+COMMENT: >>>
+Phase: M2
+Depends-on: PLAN-V2-001, PLAN-V2-002
+Deliverables: cpp/linalg (KLU + dense), cpp/devices (linear), cpp/analysis (OP/DC/AC/TRAN), cpp/audit, cpp/capi, NativeCppBackend in Spice.Sdk.
+Verification: Matches XyceBackend within strict tolerances on shared linear decks and beats ngspice wall time on SANDLER8/SANDLER9 and a 1,000-node RC/RLC ladder.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-LIN-002
+- TYPE: Parent
+  VALUE: ARCH-API-002
+- TYPE: Parent
+  VALUE: ARCH-EQ-001
+
+[REQUIREMENT]
+UID: PLAN-V2-006
+STATUS: Proposed
+TITLE: M2b - Nonlinear DAE solver, autodiff B-sources and generic OSDI 0.3/0.4 loader
+STATEMENT: >>>
+Implement dimensioned Newton with voltage limiting and source/Gmin continuation (mandatory final Gmin removal), adaptive BE/Trapezoidal/BDF2 integration with breakpoints, compiled B-source expression VM with dual-number autodiff, and one generic OSDI 0.3/0.4 dynamic loader running OpenVAF-compiled Diode, VBIC/BJT, BSIM3, BSIM4, JFET, and EKV models, plus the native canonical SPICE3f5 parser/elaborator.
+<<<
+COMMENT: >>>
+Phase: M2
+Depends-on: PLAN-V2-005
+Deliverables: cpp/solver, cpp/devices (B-source VM, switches), cpp/osdi, cpp/parser (SPICE3f5), curated 50-deck Xyce/ngspice differential benchmark suite.
+Verification: NativeCppBackend runs transistor/op-amp/filter decks natively in-process faster than ngspice and matches XyceBackend/ngspice with passing physical audits.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-EQ-002
+- TYPE: Parent
+  VALUE: ARCH-EQ-004
+- TYPE: Parent
+  VALUE: ARCH-MOD-001
+- TYPE: Parent
+  VALUE: ARCH-CAP-004
+
+[REQUIREMENT]
+UID: PLAN-V2-007
+STATUS: Proposed
+TITLE: M2c - Full core analog analysis parity, dialects, formats and CLI contract
+STATEMENT: >>>
+Complete core analog RSpice parity in NativeCppBackend: .NOISE, .PZ, .TF, .SENS, .DCMATCH, .FOUR, .FFT, .MC, --corners, .SP (Touchstone), .STB, TRNOISE, checkpoint/resume, transmission lines (ideal/LTRA/TXL/CPL), saturable core, dialect profiles (ngspice/xyce/best, SPEF, Spectre subset), Arrow/HDF5/RAW/CSV/VCD exports, and the full CLI subcommand/exit-code contract.
+<<<
+COMMENT: >>>
+Phase: M2
+Depends-on: PLAN-V2-006
+Deliverables: cpp/analysis (complete core analog), cpp/parser (dialect/SPEF/Spectre), export writers, native CLI subcommands and exit-code tests.
+Verification: End-to-end differential verification against Xyce/ngspice and round-trip export/CLI contract suites.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-CAP-001
+- TYPE: Parent
+  VALUE: ARCH-CAP-005
+- TYPE: Parent
+  VALUE: ARCH-CAP-006
+
+[[/SECTION]]
+
+[[SECTION]]
+TITLE: 3. M3 RF steady-state and M4 mixed-signal / ecosystem
+
+[REQUIREMENT]
+UID: PLAN-V2-008
+STATUS: Proposed
+TITLE: M3 - RF steady-state and periodic analyses over universal DAE
+STATEMENT: >>>
+Implement .DISTO (Volterra), .HB (Harmonic Balance), .ENVELOPE, .PSS (driven/autonomous shooting), .PAC, .PXF, .PNOISE (Floquet/PPV phase noise), .PSTB, and quasi-periodic .QPSS/.QPAC/.QPXF/.QPNOISE reusing the universal DAE and OSDI model interfaces.
+<<<
+COMMENT: >>>
+Phase: M3
+Depends-on: PLAN-V2-007
+Deliverables: cpp/analysis RF/periodic solvers and oscillator/mixer/PA qualification suite.
+Verification: Analytic and Xyce HB/shooting comparisons with fail-closed checks on devices lacking HB/noise metadata.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-CAP-002
+
+[REQUIREMENT]
+UID: PLAN-V2-009
+STATUS: Proposed
+TITLE: M4a - Mixed-signal Verilog-AMS co-simulation and signed model packs
+STATEMENT: >>>
+Implement the separate event-driven discrete kernel (cpp/mixed) for Verilog-AMS digital and wreal modules, SystemVerilog real nettypes, automatic connect modules, and XSPICE code models, plus signed immutable ed25519 model packs and optional Cameo DSL frontend over Canonical IR.
+<<<
+COMMENT: >>>
+Phase: M4
+Depends-on: PLAN-V2-007
+Deliverables: cpp/mixed co-simulation kernel, VCD trace integration in Spice.App, signed model-pack loader, optional Cameo frontend.
+Verification: Mixed-signal comparator/ADC/PLL suites and signature/tamper-detection negative tests.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-CAP-003
+- TYPE: Parent
+  VALUE: ARCH-MOD-002
+
+[REQUIREMENT]
+UID: PLAN-V2-010
+STATUS: Proposed
+TITLE: M4b - Optional large-circuit GPU and batched acceleration
+STATEMENT: >>>
+Evaluate and optionally qualify a GPU sparse direct or batched linear backend (such as cuDSS or Ginkgo) only after CPU C++20 + KLU benchmarks on 1,000-10,000+ unknown circuits demonstrate transfer-inclusive speedup.
+<<<
+COMMENT: >>>
+Phase: M4
+Depends-on: PLAN-V2-007
+Deliverables: Optional GPU adapter isolated under cpp/linalg, transfer-inclusive cold/warm CPU-vs-GPU benchmarks, explicit hardware capability tests.
+Verification: Real hardware benchmarks and CPU-vs-GPU residual/waveform qualification; CPU-only builds remain unaffected.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GPU-001
+- TYPE: Parent
+  VALUE: DEV-GPU-001
+
+[[/SECTION]]

@@ -1,0 +1,109 @@
+[DOCUMENT]
+TITLE: Spice V2 - Capability Matrix and Full RSpice Parity Requirements
+
+[TEXT]
+STATEMENT: >>>
+Version 2.0, 2026-11-20. Defines the full functional capability scope for Spice V2, targeting complete analog, RF, mixed-signal, model, dialect, export, and CLI parity with modern simulators such as RSpice while phased cleanly across Milestones M1-M4 over the single universal DAE + OSDI architecture.
+
+All capabilities fail closed when not yet implemented in a given milestone build; no silent fallback or dropped parameters are permitted.
+<<<
+
+[[SECTION]]
+TITLE: 1. Phased analysis suite
+
+[REQUIREMENT]
+UID: ARCH-CAP-001
+STATUS: Proposed
+TITLE: Core analog and statistical analyses (M1-M2)
+STATEMENT: >>>
+The simulator shall support DC operating point (.OP), single and nested two-source DC sweep (.DC), temperature sweep (.TEMP), parametric/device/table sweeps (.STEP), adaptive transient with breakpoints, transient noise (TRNOISE) and checkpoint/resume (.TRAN), small-signal AC including DATA= tables (.AC), noise (.NOISE), pole-zero (.PZ), transfer function (.TF), DC/AC sensitivity (.SENS), DC mismatch (.DCMATCH), Fourier/THD (.FOUR), calibrated windowed FFT (.FFT), Monte Carlo (.MC), process corners, S-parameters (.SP), loop-gain stability (.STB), and declarative measurements (.MEAS).
+<<<
+COMMENT: >>>
+Phasing: Available on Day 1 via XyceBackend where Xyce supports the analysis (M1); implemented natively in C++20 over the universal DAE interface in M2a (OP/DC/AC/TRAN) and M2c (remaining core analog analyses). Verification: Analytic fixtures plus differential comparison against Xyce and ngspice.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-EQ-001
+
+[REQUIREMENT]
+UID: ARCH-CAP-002
+STATUS: Proposed
+TITLE: RF steady-state and periodic analyses (M3)
+STATEMENT: >>>
+The simulator shall support third-order Volterra distortion (.DISTO), harmonic balance (.HB), envelope following (.ENVELOPE), driven and autonomous shooting periodic steady state (.PSS), periodic small-signal AC, transfer function, noise/phase-noise via Floquet/PPV projection (.PAC, .PXF, .PNOISE), periodic stability (.PSTB), and multi-tone quasi-periodic analyses (.QPSS, .QPAC, .QPXF, .QPNOISE) built directly over the universal DAE device interface.
+<<<
+COMMENT: >>>
+Phasing: M3 after M2 core analog and OSDI models are qualified. Devices lacking exact HB/charge/noise capability metadata shall fail closed with explicit capability diagnostics. Verification: Oscillator phase noise, mixer IMD, and PA benchmarks against analytic and Xyce HB references.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-EQ-001
+
+[REQUIREMENT]
+UID: ARCH-CAP-003
+STATUS: Proposed
+TITLE: Mixed-signal Verilog-AMS and code-model co-simulation (M4)
+STATEMENT: >>>
+The simulator shall support mixed-signal circuits combining the analog DAE core with a separate event-driven discrete kernel for Verilog-AMS digital and real-number (wreal) modules, SystemVerilog real nettypes, automatic connect-module insertion at analog/discrete boundaries, and XSPICE-style analog/digital code models with explicit time synchronization and rollback.
+<<<
+COMMENT: >>>
+Phasing: M4 in cpp/mixed without leaking discrete kernel internals into the analog DAE core. Verification: Mixed-signal comparator, ADC, and PLL co-simulation tests producing synchronized analog waveforms and VCD traces.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-001
+- TYPE: Parent
+  VALUE: ARCH-EQ-005
+
+[[/SECTION]]
+
+[[SECTION]]
+TITLE: 2. Devices, compact models, dialects and CLI contracts
+
+[REQUIREMENT]
+UID: ARCH-CAP-004
+STATUS: Proposed
+TITLE: Built-in primitives and compiled Verilog-A/OSDI compact model catalog
+STATEMENT: >>>
+The simulator shall provide built-in primitives (R/C/L with temperature coefficients, coupled inductors and multi-winding transformers, Jiles-Atherton saturable inductors, ideal/LTRA/TXL/CPL transmission lines, V/I sources with PULSE/SIN/EXP/PWL/PAT/SFFM/AM/TRNOISE and file PWL, E/F/G/H controlled sources, compiled autodiff B-sources, Laplace sources, and V/I switches) and full semiconductor coverage via native kernels plus OpenVAF/OSDI compiled Verilog-A models (MOS1/2/3/6/9, BSIM1-4, BSIM-SOI FD/DD/PD, VDMOS, EKV 2.6/3, BSIM-BULK/CMG/IMG, PSP104, HiSIM, Gummel-Poon, VBIC, HICUM L0/L2, MEXTRAM, Diode 0-3, DIODE_CMC, JUNCAP200, JFET1/2, MESFET/GaN HEMT). Unlisted levels or unsupported parameters shall fail closed by name.
+<<<
+COMMENT: >>>
+Verification: Per-family DC/CV/AC/transient qualification against independent equations, Xyce, and ngspice; explicit fail-closed tests for unlisted LEVELs and unknown parameters.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-MOD-001
+
+[REQUIREMENT]
+UID: ARCH-CAP-005
+STATUS: Proposed
+TITLE: Netlist dialect profiles, back-annotation and interoperability formats
+STATEMENT: >>>
+The parser layer shall support canonical SPICE3f5 (.SUBCKT, .PARAM/.CSPARAM, .FUNC, .IF/.ELSEIF/.ELSE/.ENDIF, .INCLUDE, .LIB, .MODEL, .GLOBAL, .IC, .NODESET, .SAVE/.PROBE, .PRINT/.PLOT, .OPTIONS, .TEMP, .ALTER, .DATA) with explicit dialect profiles (ngspice, xyce, best), SPEF (IEEE 1481) parasitic back-annotation, a fail-closed Spectre foundry model-card front end, LTspice .raw reading, and result export to SPICE binary/ASCII raw, CSV, TSV, JSON, Arrow IPC, HDF5, VCD, and Touchstone (.sNp).
+<<<
+COMMENT: >>>
+Verification: Round-trip format tests and dialect profile corpus checks with source-located diagnostics on unsupported syntax.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-COMPAT-001
+- TYPE: Parent
+  VALUE: ARCH-DATA-001
+
+[REQUIREMENT]
+UID: ARCH-CAP-006
+STATUS: Proposed
+TITLE: Scriptable CLI contract and signed model packs
+STATEMENT: >>>
+The native CLI shall expose deterministic subcommands (run, study, check, info, models, compare, convert, health, capabilities, compile-va) with stable machine-readable exit codes distinguishing success, verification/measurement failure, malformed input, unsupported capability, engine convergence/solver failure, timeout, and interruption. External model packs shall support immutable signed manifests (ed25519) with content hashes and hardened archive loading.
+<<<
+COMMENT: >>>
+Verification: CLI exit-code matrix tests and tampered-archive / signature-verification negative tests.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-API-001
+- TYPE: Parent
+  VALUE: ARCH-MOD-002
+
+[[/SECTION]]

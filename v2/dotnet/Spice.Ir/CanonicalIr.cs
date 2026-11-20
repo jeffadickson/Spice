@@ -1,0 +1,79 @@
+namespace Spice.Ir;
+
+/// <summary>
+/// Single fail-closed Unified Device Descriptor shared across schematic capture,
+/// ERC, StarLark-cs authoring, Canonical IR emission, and native/Xyce execution
+/// (ARCH-SCHEM-001).
+/// </summary>
+public sealed record DeviceDescriptor(
+    string KindId,
+    string DisplayName,
+    IReadOnlyList<PinDescriptor> Pins,
+    IReadOnlyList<ParameterDescriptor> Parameters,
+    string? SymbolId = null);
+
+public sealed record PinDescriptor(string Name, string Role);
+
+public sealed record ParameterDescriptor(
+    string Name,
+    string SiUnit,
+    double? DefaultValue = null,
+    bool Required = false);
+
+public sealed record DeviceInstanceIr(
+    string Id,
+    string KindId,
+    IReadOnlyDictionary<string, string> PinConnections,
+    IReadOnlyDictionary<string, double> Parameters,
+    string? ModelName = null);
+
+/// <summary>
+/// Immutable frontend-agnostic circuit representation emitted by StarLark-cs,
+/// Spice.Schematic, C#/F# builders, and SPICE parsers (ARCH-API-001).
+/// </summary>
+public sealed record CircuitIr(
+    string Name,
+    IReadOnlyList<string> Nodes,
+    IReadOnlyList<DeviceInstanceIr> Devices,
+    IReadOnlyDictionary<string, string>? Provenance = null);
+
+public enum AnalysisKind
+{
+    OperatingPoint,
+    DcSweep,
+    Ac,
+    Transient,
+    Noise,
+    HarmonicBalance,
+    PeriodicSteadyState
+}
+
+public sealed record SimulationRequestIr(
+    string CaseId,
+    CircuitIr Circuit,
+    AnalysisKind Analysis,
+    IReadOnlyDictionary<string, double>? Options = null,
+    bool EnablePhysicalAudits = true);
+
+public enum RunTerminalStatus
+{
+    Succeeded,
+    Failed,
+    Cancelled,
+    ResourceExhausted
+}
+
+public sealed record SignalDescriptor(
+    string Id,
+    string Quantity,
+    string SiUnit,
+    bool IsComplex);
+
+public sealed record ResultManifestIr(
+    string CaseId,
+    string BackendId,
+    RunTerminalStatus Status,
+    bool Complete,
+    IReadOnlyList<SignalDescriptor> Signals,
+    string? ErrorCode = null,
+    string? ErrorMessage = null);

@@ -1,0 +1,138 @@
+[DOCUMENT]
+TITLE: Spice V2 - Development Standards and Tiered Verification
+
+[TEXT]
+STATEMENT: >>>
+Version 2.0, 2026-11-20. Adapts the user's standing development standards (DEV-*) cleanly for the Spice V2 C++20 + .NET architecture, preserving honest coverage, meaningful comments, StrictDoc traceability, and adversarial testing while adding explicit verification tiers and anti-bloat guardrails so engineering velocity stays high.
+<<<
+
+[[SECTION]]
+TITLE: 1. Languages, tooling and documentation discipline
+
+[REQUIREMENT]
+UID: DEV-LANG-001
+STATUS: Accepted
+TITLE: C++20 core with C#/F# host and automation
+STATEMENT: >>>
+The core simulation engine shall be implemented in C++20 with CMake and vcpkg; C# and F# shall be used for the host SDK, StarLark-cs integration, schematic UI, and automation scripts by default, with PowerShell cmdlets on Windows and standard shell tooling in Linux CI where PowerShell is absent.
+<<<
+COMMENT: >>>
+Verification: Inspect CMakeLists.txt, vcpkg.json, and v2/dotnet projects.
+<<<
+
+[REQUIREMENT]
+UID: DEV-TOOL-001
+STATUS: Accepted
+TITLE: Native and managed test frameworks
+STATEMENT: >>>
+C++20 tests shall execute via CTest (preferring Catch2 via vcpkg, with a zero-dependency standalone harness fallback for offline environments); .NET tests shall use xUnit and FsCheck for property-based testing; PowerShell scripts shall use Pester where applicable.
+<<<
+COMMENT: >>>
+Verification: Run ctest and dotnet test and preserve execution summaries.
+<<<
+
+[REQUIREMENT]
+UID: DEV-TOOL-004
+STATUS: Accepted
+TITLE: Columnar data interchange
+STATEMENT: >>>
+Apache Arrow shall be preferred for high-throughput columnar waveform interchange between native and managed layers, with HDF5/RAW/CSV/VCD/Touchstone supported per ARCH-CAP-005.
+<<<
+COMMENT: >>>
+Verification: Verify schema round-trips on real and complex simulation waveforms.
+<<<
+
+[REQUIREMENT]
+UID: DEV-DOC-001
+STATUS: Accepted
+TITLE: Meaningful synchronized comments
+STATEMENT: >>>
+Public interfaces, units, sign conventions, handle ownership, numerical assumptions, and non-obvious invariants shall be commented meaningfully and updated alongside code changes.
+<<<
+COMMENT: >>>
+Verification: Review changed headers and implementation files for accurate interface and numerical comments.
+<<<
+
+[REQUIREMENT]
+UID: DEV-DOC-003
+STATUS: Accepted
+TITLE: Six-file authoritative StrictDoc set (anti-sprawl)
+STATEMENT: >>>
+Authoritative V2 software requirements shall live in StrictDoc under v2/docs/requirements/ in a bounded set of six domain documents (architecture, capabilities, schematic, physical-audits, implementation-plan, development-standards) with stable unique UIDs and honest statuses. One-off .sdoc files shall not be created per bugfix, PR, or mutant replay.
+<<<
+COMMENT: >>>
+Verification: Validate UID uniqueness, parent link resolution, and document count under v2/docs/requirements/.
+<<<
+
+[[/SECTION]]
+
+[[SECTION]]
+TITLE: 2. Coverage, tiered verification and GPU discipline
+
+[REQUIREMENT]
+UID: DEV-COV-001
+STATUS: Accepted
+TITLE: Honest scoped coverage reporting
+STATEMENT: >>>
+Code changes shall report actual line and branch coverage where supported (gcov/llvm-cov for C++20, Coverlet for C#), explicitly separating owned code from third-party/vendor libraries and reporting any unmeasured scopes or unavailable tooling honestly without inventing metrics.
+<<<
+COMMENT: >>>
+Verification: Inspect tool output and reported line/branch counts, exclusions, and missing-tool disclosures.
+<<<
+
+[REQUIREMENT]
+UID: DEV-TEST-003
+STATUS: Accepted
+TITLE: Malformed inputs and boundary testing
+STATEMENT: >>>
+Every public boundary (C ABI, IR validation, parsers, OSDI loader, schematic ERC) shall test null/stale handles, mismatched versions, malformed syntax, nonfinite numbers, and resource limits with explicit fail-closed diagnostics.
+<<<
+COMMENT: >>>
+Verification: Execute negative boundary suites in Tier 1 CTest and xUnit runs.
+<<<
+
+[REQUIREMENT]
+UID: DEV-TEST-006
+STATUS: Accepted
+TITLE: Reproducible seeds and regression retention
+STATEMENT: >>>
+Randomized, property-based, and fuzz tests shall record seeds, minimized counterexamples, and replay commands; confirmed defects shall become permanent deterministic Tier 1 regressions.
+<<<
+COMMENT: >>>
+Verification: Replay retained seeds and verify regressions fail against unpatched code.
+<<<
+
+[REQUIREMENT]
+UID: DEV-TEST-009
+STATUS: Accepted
+TITLE: Three-tier verification cadence
+STATEMENT: >>>
+Verification shall operate in three bounded tiers so quality stays high without stalling feature delivery: Tier 1 (every commit, target under 60 seconds: unit, negative-boundary, opt-in physical audits, and fast differential smoke); Tier 2 (PR and milestone: curated Xyce/ngspice oracle suite, property tests, and scoped line/branch coverage); Tier 3 (scheduled or release gate: targeted mutation testing on numerical/audit kernels and bounded parser/ABI fuzzing).
+<<<
+COMMENT: >>>
+Verification: Confirm Tier 1 remains fast enough for every commit and Tier 3 campaigns never block routine feature merges.
+<<<
+
+[REQUIREMENT]
+UID: DEV-GPU-001
+STATUS: Accepted
+TITLE: Evidence-gated GPU adoption
+STATEMENT: >>>
+GPU dependencies and mandatory GPU test gates shall not be introduced until the CPU C++20 + KLU engine is qualified and transfer-inclusive benchmarks on 1,000+ unknown circuits demonstrate clear end-to-end speedup; a qualified CPU path shall always remain primary.
+<<<
+COMMENT: >>>
+Verification: Inspect CMake and CI configuration to confirm zero mandatory GPU gates before M4b benchmarks justify them.
+<<<
+
+[REQUIREMENT]
+UID: DEV-REPORT-001
+STATUS: Accepted
+TITLE: Honest concise delivery reporting
+STATEMENT: >>>
+Delivery updates shall report what changed, what actually ran, measured coverage/benchmark results, and explicit limitations without claiming unexecuted checks passed.
+<<<
+COMMENT: >>>
+Verification: Cross-check delivery summaries against actual command outputs.
+<<<
+
+[[/SECTION]]

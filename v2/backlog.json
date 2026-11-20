@@ -1,0 +1,166 @@
+{
+  "schema_version": "2.0",
+  "authoritative_source": "v2/docs/requirements/implementation-plan.sdoc",
+  "generated_date": "2026-11-20",
+  "implementation_status": "Slice 0 in progress: V2 C++20 + KLU + OSDI + Xyce Strangler Fig + StarLark-cs + Schematic reset",
+  "work_packages": [
+    {
+      "id": "PLAN-V2-001",
+      "title": "Slice 0 - Branch reset, adjusted StrictDoc set and C++20 build scaffold",
+      "status": "InProgress",
+      "phase": "Slice 0",
+      "depends_on": [],
+      "architecture_requirements": [
+        "ARCH-LANG-001",
+        "ARCH-DEP-001",
+        "ARCH-API-003"
+      ],
+      "source": "v2/docs/requirements/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-V2-002",
+      "title": "M1a - Canonical IR, Unified Device Descriptor and thin XyceBackend",
+      "status": "Proposed",
+      "phase": "M1",
+      "depends_on": [
+        "PLAN-V2-001"
+      ],
+      "architecture_requirements": [
+        "ARCH-COMPAT-002",
+        "ARCH-SCHEM-001",
+        "AUDIT-001"
+      ],
+      "source": "v2/docs/requirements/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-V2-003",
+      "title": "M1b - StarLark-cs DSL frontend and parallel campaign authoring",
+      "status": "Proposed",
+      "phase": "M1",
+      "depends_on": [
+        "PLAN-V2-002"
+      ],
+      "architecture_requirements": [
+        "ARCH-DSL-001",
+        "ARCH-DSL-002"
+      ],
+      "source": "v2/docs/requirements/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-V2-004",
+      "title": "M1c - Schematic capture model, ERC and interactive desktop app",
+      "status": "Proposed",
+      "phase": "M1",
+      "depends_on": [
+        "PLAN-V2-002"
+      ],
+      "architecture_requirements": [
+        "ARCH-SCHEM-002",
+        "ARCH-SCHEM-003",
+        "ARCH-SCHEM-004",
+        "ARCH-SCHEM-005"
+      ],
+      "source": "v2/docs/requirements/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-V2-005",
+      "title": "M2a - C++20 linear core, SuiteSparse KLU and in-process NativeCppBackend",
+      "status": "Proposed",
+      "phase": "M2",
+      "depends_on": [
+        "PLAN-V2-001",
+        "PLAN-V2-002"
+      ],
+      "architecture_requirements": [
+        "ARCH-LIN-002",
+        "ARCH-API-002",
+        "ARCH-EQ-001"
+      ],
+      "source": "v2/docs/requirements/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-V2-006",
+      "title": "M2b - Nonlinear DAE solver, autodiff B-sources and generic OSDI 0.3/0.4 loader",
+      "status": "Proposed",
+      "phase": "M2",
+      "depends_on": [
+        "PLAN-V2-005"
+      ],
+      "architecture_requirements": [
+        "ARCH-EQ-002",
+        "ARCH-EQ-004",
+        "ARCH-MOD-001",
+        "ARCH-CAP-004"
+      ],
+      "source": "v2/docs/requirements/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-V2-007",
+      "title": "M2c - Full core analog analysis parity, dialects, formats and CLI contract",
+      "status": "Proposed",
+      "phase": "M2",
+      "depends_on": [
+        "PLAN-V2-006"
+      ],
+      "architecture_requirements": [
+        "ARCH-CAP-001",
+        "ARCH-CAP-005",
+        "ARCH-CAP-006"
+      ],
+      "source": "v2/docs/requirements/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-V2-008",
+      "title": "M3 - RF steady-state and periodic analyses over universal DAE",
+      "status": "Proposed",
+      "phase": "M3",
+      "depends_on": [
+        "PLAN-V2-007"
+      ],
+      "architecture_requirements": [
+        "ARCH-CAP-002"
+      ],
+      "source": "v2/docs/requirements/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-V2-009",
+      "title": "M4a - Mixed-signal Verilog-AMS co-simulation and signed model packs",
+      "status": "Proposed",
+      "phase": "M4",
+      "depends_on": [
+        "PLAN-V2-007"
+      ],
+      "architecture_requirements": [
+        "ARCH-CAP-003",
+        "ARCH-MOD-002"
+      ],
+      "source": "v2/docs/requirements/implementation-plan.sdoc"
+    },
+    {
+      "id": "PLAN-V2-010",
+      "title": "M4b - Optional large-circuit GPU and batched acceleration",
+      "status": "Proposed",
+      "phase": "M4",
+      "depends_on": [
+        "PLAN-V2-007"
+      ],
+      "architecture_requirements": [
+        "ARCH-GPU-001",
+        "DEV-GPU-001"
+      ],
+      "source": "v2/docs/requirements/implementation-plan.sdoc"
+    }
+  ],
+  "valid_topological_order": [
+    "PLAN-V2-001",
+    "PLAN-V2-002",
+    "PLAN-V2-003",
+    "PLAN-V2-004",
+    "PLAN-V2-005",
+    "PLAN-V2-006",
+    "PLAN-V2-007",
+    "PLAN-V2-008",
+    "PLAN-V2-009",
+    "PLAN-V2-010"
+  ]
+}

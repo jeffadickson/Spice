@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "spice-v2",
+  "version-semver": "0.1.0",
+  "description": "Spice V2 C++20 circuit simulator core (KLU sparse direct solver + OSDI compact models)",
+  "dependencies": [
+    "suitesparse-klu",
+    "catch2"
+  ]
+}

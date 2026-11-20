@@ -1,0 +1,90 @@
+[DOCUMENT]
+TITLE: Spice V2 - Schematic Capture, Unified Device Descriptor and Interactive UI
+
+[TEXT]
+STATEMENT: >>>
+Version 2.0, 2026-11-20. Establishes schematic capture and interactive waveform probing as first-class surfaces of Spice V2, built in C#/.NET (Spice.Schematic and Spice.App) over the exact same Unified Device Descriptor and Canonical IR used by StarLark-cs, C#/F# scripts, and netlist parsers.
+<<<
+
+[[SECTION]]
+TITLE: 1. Unified descriptor and schematic-to-simulation contracts
+
+[REQUIREMENT]
+UID: ARCH-SCHEM-001
+STATUS: Proposed
+TITLE: Single fail-closed Unified Device Descriptor
+STATEMENT: >>>
+Every schematic and simulation device shall be backed by one canonical descriptor defining its stable ID, pin/terminal contract, typed parameters with SI units/defaults/domains, symbol binding, ERC rules, and Canonical IR lowering. Any device whose ID, terminal contract, parameter contract, or symbol cannot be resolved shall fail closed rather than falling back to a generic element or dropping parameters.
+<<<
+COMMENT: >>>
+Verification: Validate catalog integrity across all built-in and OSDI devices; test missing pin, invalid unit, unknown parameter, and missing symbol failure modes.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-003
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
+
+[REQUIREMENT]
+UID: ARCH-SCHEM-002
+STATUS: Proposed
+TITLE: Schematic emission to Canonical IR
+STATEMENT: >>>
+The schematic document model (Spice.Schematic) shall compile hierarchical schematics directly into the immutable Canonical IR consumed by both XyceBackend and NativeCppBackend, preserving bidirectional component/net identity maps without accessing internal solver or model state.
+<<<
+COMMENT: >>>
+Verification: Compile schematic fixtures (including hierarchical subsheets) to Canonical IR, run on XyceBackend and NativeCppBackend, and verify equivalence to hand-authored StarLark-cs/SPICE inputs.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-API-001
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
+
+[REQUIREMENT]
+UID: ARCH-SCHEM-003
+STATUS: Proposed
+TITLE: Electrical rule checks and hierarchical sheets
+STATEMENT: >>>
+Spice.Schematic shall support hierarchical subsheets, buses/ports, global power/ground nets, parameterized instances, and pre-simulation electrical rule checks (floating pins, shorted conflicting sources, missing ground reference, unresolved model references) with exact schematic element/coordinate diagnostics.
+<<<
+COMMENT: >>>
+Verification: Execute ERC test suite on valid hierarchical designs and deliberate connectivity/source-conflict/parameter-error schematics.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-STATE-003
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-SCHEM-004
+STATUS: Proposed
+TITLE: Live cross-probing and waveform integration
+STATEMENT: >>>
+Spice.App shall link schematic nets, pins, and device branches deterministically to ResultManifest signal IDs for live cross-probing, DC operating-point annotations on the schematic, and synchronized waveform viewing (analog plots, Bode/Smith charts, FFT, and VCD digital traces). Display downsampling shall never alter underlying analysis data or measurements.
+<<<
+COMMENT: >>>
+Verification: Verify deterministic net/pin-to-signal mapping across flattened hierarchy, live streaming updates during runs, and exact agreement between probed cursor values and exported Arrow/RAW data.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-DATA-001
+- TYPE: Parent
+  VALUE: ARCH-API-002
+
+[REQUIREMENT]
+UID: ARCH-SCHEM-005
+STATUS: Proposed
+TITLE: Versioned persistence and publication exports
+STATEMENT: >>>
+Schematic documents shall persist in a versioned, deterministic, Git-diffable file format and support clean export to canonical SPICE netlists, StarLark-cs scripts, BOMs, and vector/hardcopy graphics (SVG/PDF) derived from the same Unified Device Descriptor.
+<<<
+COMMENT: >>>
+Verification: Round-trip save/load stability tests, schema-version migration/rejection tests, and deterministic SVG/netlist export checks.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
+
+[[/SECTION]]

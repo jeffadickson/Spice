@@ -1,0 +1,597 @@
+[DOCUMENT]
+TITLE: Spice V2 - Clean C++20 Architecture and Interface Contracts
+
+[TEXT]
+STATEMENT: >>>
+Version 2.0, 2026-11-20. Supersedes v1 Rust prototype architecture for the V2 reset while preserving core ARCH-* UIDs and clean numerical boundaries.
+
+Spice V2 is a standalone, modern C++20 analog, RF, and mixed-signal circuit simulator designed to replace ngspice without inheriting SPICE3's global mutable state, C macro preprocessor, or interactive Nutmeg control shell. It adopts a Xyce-inspired universal DAE architecture without Trilinos or MPI build overhead, using SuiteSparse KLU (LGPL-2.1+ shared library) for sparse circuit factorization and a single generic OSDI 0.3/0.4 loader for OpenVAF-compiled Verilog-A compact models.
+
+To deliver immediate real-circuit utility and a continuous differential oracle, V2 uses a Strangler Fig transition: a thin external-process XyceBackend executes the Canonical IR on Day 1 (fully GPL-isolated), and NativeCppBackend (C++20 + KLU + OSDI) replaces it slice-by-slice behind the exact same ISimulationBackend and Canonical IR contracts.
+
+Core engine licensing targets MIT or Apache-2.0, allowing LGPL-2.1+ dynamic libraries (SuiteSparse KLU). Authoring and automation are first-class in C#/.NET (including StarLark-cs and SharpUnits) and F#, plus a schematic capture UI sharing a single fail-closed Unified Device Descriptor.
+
+Statuses are honest: Accepted records a settled architecture decision; Proposed/Draft records unimplemented requirements; Implemented/Verified requires executable evidence links.
+<<<
+
+[[SECTION]]
+TITLE: 1. Architecture goals and fixed boundaries
+
+[REQUIREMENT]
+UID: ARCH-GOAL-001
+STATUS: Accepted
+TITLE: Independent C++20 core
+STATEMENT: >>>
+The simulator shall use a self-contained C++20 numerical and circuit core with no compile-time or link-time dependency on ngspice, Xyce, Trilinos, a graphical interface, or an interactive command shell.
+<<<
+COMMENT: >>>
+Verification: Build and test the headless C++20 core library and C ABI without GUI, shell, or legacy simulator libraries; inspect CMake targets and linked libraries.
+<<<
+
+[REQUIREMENT]
+UID: ARCH-GOAL-002
+STATUS: Accepted
+TITLE: Replaceable numerical backends
+STATEMENT: >>>
+The simulator shall expose circuit-independent numerical contracts through which qualified CPU and optional future GPU solver libraries can be exchanged without modifying device equations or public request schemas.
+<<<
+COMMENT: >>>
+Verification: Run the same qualified circuit and matrix cases through SuiteSparse KLU and an independently implemented dense reference solver and compare outcomes and residuals.
+<<<
+
+[REQUIREMENT]
+UID: ARCH-GOAL-003
+STATUS: Accepted
+TITLE: Independent model ecosystem
+STATEMENT: >>>
+The simulator shall support built-in C++20 models and versioned compiled-model adapters (OSDI 0.3/0.4) without allowing model-specific layouts, dialect syntax, or native plugin types into the numerical core.
+<<<
+COMMENT: >>>
+Verification: Load an OpenVAF-compiled OSDI model through the generic adapter and inspect core interfaces for forbidden vendor/plugin types.
+<<<
+
+[REQUIREMENT]
+UID: ARCH-GOAL-004
+STATUS: Accepted
+TITLE: Automation-first and schematic-ready interfaces
+STATEMENT: >>>
+The simulator shall expose typed Canonical IR inputs, job states, signals, measurements, diagnostics, and results to C++, CLI, C#, F#, StarLark-cs, and schematic UI clients without requiring console-output parsing.
+<<<
+COMMENT: >>>
+Verification: Execute an end-to-end circuit from CLI, C#, StarLark-cs, and schematic IR emission and recover typed results and structured diagnostics.
+<<<
+
+[REQUIREMENT]
+UID: ARCH-GOAL-005
+STATUS: Accepted
+TITLE: Qualified behavior and honest outcomes
+STATEMENT: >>>
+The simulator shall distinguish numerical correctness, model validity, execution completeness, and assertion outcomes and shall associate capability claims with reproducible verification evidence.
+<<<
+COMMENT: >>>
+Verification: Inspect test evidence for analytic, nonconvergent, cancelled, out-of-domain, and completed-but-failing cases.
+<<<
+
+[[/SECTION]]
+
+[[SECTION]]
+TITLE: 2. Component layout and dependency direction
+
+[TEXT]
+STATEMENT: >>>
+V2 layout under v2/:
+- include/spice/capi.h: stable flat extern "C" ABI (opaque handles, version checks, contiguous buffers).
+- cpp/core: typed IDs, Canonical IR, Unified Device Descriptor registry, diagnostics, CSC pattern contracts.
+- cpp/dae: universal Device interface (F, Q, dF/dx, dQ/dx, noise PSDs, trial/commit rollback).
+- cpp/devices: built-in passives, transmission lines, sources, controlled sources, compiled B-source autodiff VM, switches.
+- cpp/osdi: generic OSDI 0.3/0.4 dynamic model loader.
+- cpp/linalg: CSC matrix assembly, SuiteSparse KLU shared-library adapter (real/complex), dense reference solver.
+- cpp/solver: dimensioned Newton, voltage limiting, source/Gmin continuation with mandatory physical final solve.
+- cpp/analysis: OP, DC, AC, TRAN, Noise, PZ, TF, Sens, SP, STB, FFT, HB, PSS, PAC, PNoise, QPSS.
+- cpp/mixed: separate event-driven Verilog-AMS digital/wreal co-simulation kernel (M4).
+- cpp/parser: canonical SPICE3f5 parser/elaborator, dialect profiles, SPEF and fail-closed Spectre subset.
+- cpp/audit: opt-in independent physical consistency audits.
+- cpp/capi: thin extern "C" wrapper with exception containment.
+- dotnet/: Spice.Ir, Spice.Sdk (ISimulationBackend, NativeCppBackend, XyceBackend), Spice.Starlark, Spice.Schematic, Spice.App.
+
+Dependency spine: capi -> analysis -> solver -> linalg -> core; analysis -> dae -> core; devices/osdi -> dae. No reverse edge from linalg, dae, or devices to parsers, C ABI, or .NET SDK.
+<<<
+
+[REQUIREMENT]
+UID: ARCH-DEP-001
+STATUS: Accepted
+TITLE: Enforced dependency direction
+STATEMENT: >>>
+CMake target dependencies shall remain acyclic and prevent core model, DAE, and linear-algebra libraries from depending on parsers, concrete solver adapters, GUI code, or .NET host components.
+<<<
+COMMENT: >>>
+Verification: Inspect CMake target link graphs and compile standalone unit tests for core, dae, and linalg without parser or C ABI targets.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-001
+
+[REQUIREMENT]
+UID: ARCH-DEP-002
+STATUS: Accepted
+TITLE: Explicit construction and optional dependencies
+STATEMENT: >>>
+Engine instances shall construct device registries, model loaders, and solver factories explicitly with no mutable process-global circuit state. CPU-only builds shall require no GPU drivers, MPI, or Trilinos.
+<<<
+COMMENT: >>>
+Verification: Build and run the CPU package on a no-GPU machine and execute concurrent engine instances with distinct registries.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-001
+- TYPE: Parent
+  VALUE: ARCH-GOAL-002
+
+[[/SECTION]]
+
+[[SECTION]]
+TITLE: 3. Circuit representation, ownership and DAE contracts
+
+[TEXT]
+STATEMENT: >>>
+Canonical IR (immutable circuit, device descriptors, analysis plans, sweeps) compiles into an immutable ExecutionPlan containing unknown ordering, CSC sparsity pattern, pre-bound device matrix slot indices, state layout, and signal catalog. No artificial 128-node or 256-unknown cap applies; size is bounded only by explicit caller resource budgets.
+
+All analyses build on one modified-nodal DAE formulation:
+F(x, t, p) + dQ(x, t, p)/dt = 0.
+
+Devices stamp local F, Q, dF/dx, dQ/dx, and optional limiting/noise contributions into pre-bound CSC slots. DC solves F = 0; AC solves (G + j*omega*C) dx = b; TRAN solves F + alpha*Q + history = 0; periodic/RF analyses reuse the same DAE evaluations and derivatives.
+<<<
+
+[REQUIREMENT]
+UID: ARCH-STATE-001
+STATUS: Proposed
+TITLE: Session-local mutable state
+STATEMENT: >>>
+All mutable simulation, device trial/accepted state, and solver workspace shall belong to an explicit engine or run session; no mutable process-global circuit state shall be used.
+<<<
+COMMENT: >>>
+Verification: Execute independent circuits concurrently across threads and compare against isolated serial runs.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-001
+
+[REQUIREMENT]
+UID: ARCH-STATE-002
+STATUS: Proposed
+TITLE: Structural and numeric invalidation
+STATEMENT: >>>
+The compiler shall compute structural and numeric invalidation keys and invalidate affected sparsity patterns, symbolic/numeric factors, and operating points after relevant parameter or topology changes.
+<<<
+COMMENT: >>>
+Verification: Mutate numeric and structural parameters across reused runs and compare against fresh compilations.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-STATE-003
+STATUS: Proposed
+TITLE: Typed indices and bounded loading
+STATEMENT: >>>
+The core shall distinguish node, unknown, device, state, signal, and sparse-slot identifiers, validate all indices before allocation or access, and enforce caller-configured size, include, and hierarchy limits.
+<<<
+COMMENT: >>>
+Verification: Run negative and boundary tests on malformed indices, deep hierarchy, and oversized inputs; assert classified errors without crashes or unbounded allocation.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-001
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-EQ-001
+STATUS: Proposed
+TITLE: Analysis-independent universal DAE equations
+STATEMENT: >>>
+Every device shall expose residual F, charge/flux Q, and analytical derivatives dF/dx and dQ/dx independent of analysis drivers, using one documented SI sign, unit, and excitation convention.
+<<<
+COMMENT: >>>
+Verification: Verify DC, AC, and transient equations for built-in and OSDI devices against analytic formulas and finite-difference derivative checks.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-003
+
+[REQUIREMENT]
+UID: ARCH-EQ-002
+STATUS: Proposed
+TITLE: Central dimensioned convergence policy
+STATEMENT: >>>
+Newton control shall apply scaled dimensional residual and update checks, voltage limiting with consistent linearized corrections, bounded source/Gmin continuation with mandatory final physical Gmin removal, and finite-value checks; linear solver success alone shall never imply circuit convergence.
+<<<
+COMMENT: >>>
+Verification: Test tiny-update/large-residual, singular, overflow, regularized, and multistable circuits and inspect convergence diagnostics.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-EQ-003
+STATUS: Proposed
+TITLE: Explicit initialization and tolerances
+STATEMENT: >>>
+Analyses shall distinguish operating-point initialization, NODESET hints, forced IC, and UIC modes explicitly and record effective dimensional tolerances in result provenance.
+<<<
+COMMENT: >>>
+Verification: Compare precharged capacitor/inductor circuits across initialization modes against Xyce and analytic solutions.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-EQ-004
+STATUS: Proposed
+TITLE: Transactional transient acceptance and rollback
+STATEMENT: >>>
+Transient integration shall commit trial device state, history, and events only after nonlinear convergence and LTE acceptance pass, and shall restore accepted state identically upon step rejection.
+<<<
+COMMENT: >>>
+Verification: Force step rejections on nonlinear and history-dependent devices and verify identical trajectories to unrejected replays.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-EQ-005
+STATUS: Proposed
+TITLE: Breakpoints, events and sample semantics
+STATEMENT: >>>
+The transient engine shall schedule known source breakpoints, process model events with deterministic ordering, and distinguish accepted solver timepoints from resampled or interpolated outputs.
+<<<
+COMMENT: >>>
+Verification: Exercise PULSE/PWL corners, switch transitions, and TSTART windows against analytic and Xyce references.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[[/SECTION]]
+
+[[SECTION]]
+TITLE: 4. Linear solvers, plugins and acceleration boundaries
+
+[REQUIREMENT]
+UID: ARCH-LIN-001
+STATUS: Proposed
+TITLE: Circuit-independent linear solver contract
+STATEMENT: >>>
+Linear solver adapters shall consume validated CSC pattern, value, RHS, and option contracts without depending on circuit, device, parser, or API types.
+<<<
+COMMENT: >>>
+Verification: Compile and run standalone matrix conformance tests with no circuit targets linked.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-002
+
+[REQUIREMENT]
+UID: ARCH-LIN-002
+STATUS: Proposed
+TITLE: Capabilities, matrix classes and KLU reuse
+STATEMENT: >>>
+Linear backends shall declare supported scalar types (real64/complex64), index widths, symbolic reuse, numeric refactorization, and transpose solves, and reject unsupported combinations before execution. SuiteSparse KLU shall serve as the primary CPU sparse direct solver for general unsymmetric circuit matrices.
+<<<
+COMMENT: >>>
+Verification: Test real/complex unsymmetric, singular, and ill-conditioned matrices through KLU and dense reference adapters; verify symbolic reuse across Newton iterations.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-002
+
+[REQUIREMENT]
+UID: ARCH-LIN-003
+STATUS: Proposed
+TITLE: Cache validity and handle ownership
+STATEMENT: >>>
+Solver session and factor handles shall enforce ownership and invalidate cached symbolic or numeric factors after structural/value changes or failed refactorization; stale numeric factors shall never be silently reused.
+<<<
+COMMENT: >>>
+Verification: Mutate patterns and values, inject refactor failures, and compare against fresh solves.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-002
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-LIN-004
+STATUS: Proposed
+TITLE: Independent numerical solver verification
+STATEMENT: >>>
+Every linear backend shall pass a shared real/complex unsymmetric matrix corpus with independent backward-error checks before use in qualified analyses.
+<<<
+COMMENT: >>>
+Verification: Verify componentwise backward error and singularity detection across KLU and dense reference backends.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-LIN-005
+STATUS: Proposed
+TITLE: Vendor representation isolation
+STATEMENT: >>>
+Core circuit, compiler, analysis, and public API layers shall not expose concrete third-party sparse-matrix or vendor solver types.
+<<<
+COMMENT: >>>
+Verification: Inspect public and core headers to confirm SuiteSparse/KLU headers appear only inside cpp/linalg adapter implementation files.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-002
+
+[REQUIREMENT]
+UID: ARCH-PORT-001
+STATUS: Proposed
+TITLE: Distinct numerical solver roles
+STATEMENT: >>>
+The solver registry shall keep direct-linear, iterative-linear, nonlinear, and DAE-integrator roles distinct with capability-based composition and exactly one controller owner per nonlinear loop and timestep history.
+<<<
+COMMENT: >>>
+Verification: Inspect registry capability checks and confirm optional future adapters (such as SUNDIALS IDA or cuDSS) assign single ownership without competing controllers.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-002
+
+[REQUIREMENT]
+UID: ARCH-ADOPT-001
+STATUS: Accepted
+TITLE: Evidence-gated numerical dependency adoption
+STATEMENT: >>>
+Every production numerical dependency shall record pinned version, license review (MIT/Apache core; LGPL-2.1+ shared libraries permitted), platform matrix, numerical qualification, and benchmark evidence.
+<<<
+COMMENT: >>>
+Verification: Inspect v2/vcpkg.json, license notices, and benchmark qualification reports.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-002
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-GPU-001
+STATUS: Proposed
+TITLE: Deferred evidence-gated GPU acceleration
+STATEMENT: >>>
+GPU linear or batched solvers shall remain optional deferred adapters introduced only after the CPU C++20 + KLU engine is qualified and transfer-inclusive benchmarks on 1,000+ unknown circuits demonstrate measurable benefit.
+<<<
+COMMENT: >>>
+Verification: Confirm CPU-only builds have zero GPU dependencies and reject premature GPU gates on small circuits.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-002
+
+[REQUIREMENT]
+UID: ARCH-MOD-001
+STATUS: Proposed
+TITLE: Generic OSDI 0.3/0.4 compiled-model adapter
+STATEMENT: >>>
+The engine shall implement one generic OSDI 0.3/0.4 dynamic loader mapping OpenVAF-compiled Verilog-A compact models onto the universal DAE Device interface, validating ABI versions, sizes, sparsity, and capabilities and failing closed on unsupported physics or parameters.
+<<<
+COMMENT: >>>
+Verification: Load OpenVAF-compiled Diode, VBIC/BJT, BSIM3, and BSIM4 OSDI libraries and qualify DC/AC/transient results against Xyce and ngspice.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-003
+
+[REQUIREMENT]
+UID: ARCH-MOD-002
+STATUS: Proposed
+TITLE: Model package provenance and isolation
+STATEMENT: >>>
+Compiled model libraries and model packs shall record content hashes, compiler/ABI versions, and licenses; untrusted native libraries shall execute only in isolated worker processes with explicit opt-in required for trusted in-process loading.
+<<<
+COMMENT: >>>
+Verification: Verify hash/ABI validation, mismatched descriptor refusal, and worker crash containment.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-003
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[[/SECTION]]
+
+[[SECTION]]
+TITLE: 5. Public C ABI, .NET SDK, DSL and Strangler Fig compatibility
+
+[REQUIREMENT]
+UID: ARCH-LANG-001
+STATUS: Accepted
+TITLE: C++20 core with language-neutral C ABI
+STATEMENT: >>>
+The core simulator engine shall be implemented in C++20 (CMake + vcpkg) for direct, low-overhead integration with SuiteSparse KLU, OSDI, and optional C/C++ numerical libraries, while exposing a flat versioned extern "C" ABI for C#, F#, CLI, and schematic clients.
+<<<
+COMMENT: >>>
+Decision record (2026-11-20): V1 Rust prototype suffered high cross-language friction between its C# frontend, JSON-over-subprocess transport, and native C/C++ solver/model libraries. V2 adopts lean C++20 without Trilinos while keeping C#/.NET as the host SDK, StarLark-cs DSL, and schematic UI platform.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-001
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
+
+[REQUIREMENT]
+UID: ARCH-API-001
+STATUS: Proposed
+TITLE: Shared typed application boundary
+STATEMENT: >>>
+CLI, C ABI, .NET SDK, StarLark-cs, and schematic UI clients shall construct the same validated Canonical IR and receive consistent capabilities, structured diagnostics, and typed result manifests.
+<<<
+COMMENT: >>>
+Verification: Run identical circuits through CLI, C# SDK, StarLark-cs, and schematic IR emission and assert matching results.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
+
+[REQUIREMENT]
+UID: ARCH-API-002
+STATUS: Proposed
+TITLE: First-class C# and F# in-process SDK
+STATEMENT: >>>
+The .NET SDK (Spice.Sdk) shall consume spice_capi.h via LibraryImport and SafeHandle with typed async execution, CancellationToken propagation, deterministic disposal, and zero per-run JSON subprocess overhead for NativeCppBackend.
+<<<
+COMMENT: >>>
+Verification: Run C# and F# examples against NativeCppBackend and test cancellation, disposal, and error marshaling.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
+
+[REQUIREMENT]
+UID: ARCH-API-003
+STATUS: Proposed
+TITLE: Safe versioned C ABI
+STATEMENT: >>>
+The C ABI (v2/include/spice/capi.h) shall negotiate ABI versions and struct sizes, validate handles and buffer lengths, own explicit release functions, and prevent C++ exceptions from crossing extern "C" boundaries.
+<<<
+COMMENT: >>>
+Verification: Test mismatched ABI versions, null/stale handles, zero/undersized buffers, and exception-containment paths under C++ unit tests.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-DATA-001
+STATUS: Proposed
+TITLE: Self-describing typed result schemas and streaming
+STATEMENT: >>>
+Results shall preserve scoped signal IDs, physical quantities, SI units, real/complex binary64 data, adaptive/ragged axes, completeness flags, and provenance, supporting bounded streaming and durable export (Arrow IPC, HDF5, RAW, CSV, TSV, JSON, VCD, Touchstone).
+<<<
+COMMENT: >>>
+Verification: Read real, complex, and ragged transient/sweep outputs from C++ and .NET and verify metadata fidelity after round-trip export.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-RUN-001
+STATUS: Proposed
+TITLE: Classified job lifecycle, limits and checkpoints
+STATEMENT: >>>
+Every run shall end in one terminal state (succeeded, failed, cancelled, resource_exhausted) with structured diagnostics, provenance, seeds, and explicit completeness metadata; supported transient checkpoints shall capture complete accepted solver and device state.
+<<<
+COMMENT: >>>
+Verification: Exercise cancellation, resource budgets, and checkpoint/resume fixtures and verify terminal state accounting.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-COMPAT-001
+STATUS: Proposed
+TITLE: Dialect profiles isolated from solver core
+STATEMENT: >>>
+Netlist dialect differences (ngspice, xyce, best, SPEF, Spectre model subset) shall be resolved through explicit dialect profiles and adapters emitting Canonical IR; unsupported constructs shall fail closed with source-located diagnostics rather than silent approximations.
+<<<
+COMMENT: >>>
+Verification: Test dialect-specific fixtures and unrecognized parameters/levels and confirm fail-closed diagnostics.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-001
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-COMPAT-002
+STATUS: Accepted
+TITLE: Strangler Fig XyceBackend isolation
+STATEMENT: >>>
+Spice.Sdk shall provide a thin external-process XyceBackend implementing ISimulationBackend over the Canonical IR so real circuits run immediately and act as a differential oracle for NativeCppBackend without introducing GPLv3 or Trilinos dependencies into the C++20 core or .NET SDK.
+<<<
+COMMENT: >>>
+Verification: Execute the same Canonical IR circuit on XyceBackend (external prebuilt binary) and NativeCppBackend and compare typed results; inspect build graphs to verify zero link-time Xyce dependency.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-001
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-DSL-001
+STATUS: Accepted
+TITLE: StarLark-cs primary DSL over Canonical IR
+STATEMENT: >>>
+Spice.Starlark shall embed StarLark-cs with SharpUnits-compatible dimensional constructors and bounded host bindings to emit Canonical IR circuits, analyses, sweeps, and assertions; the IR boundary shall remain frontend-agnostic so additional frontends (such as Cameo, F#, or C#) target the exact same IR.
+<<<
+COMMENT: >>>
+Verification: Author identical RC, subcircuit, and sweep circuits in StarLark-cs and C# builders and assert canonical IR equivalence.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-004
+
+[REQUIREMENT]
+UID: ARCH-DSL-002
+STATUS: Proposed
+TITLE: Hermetic budgets, parallel campaigns and behavioral separation
+STATEMENT: >>>
+StarLark-cs execution shall enforce step, wall-clock, cancellation, and memory budgets, use deterministic parallel_map/spawn futures for sweep/corner campaigns, and never run inside the C++20 Newton/device hot loop; runtime behavioral equations shall compile to the C++20 autodiff expression VM.
+<<<
+COMMENT: >>>
+Verification: Test budget exhaustion, deterministic parallel sweep ordering, and analytical B-source derivatives evaluated purely in C++.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-003
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-VERIFY-001
+STATUS: Accepted
+TITLE: Multi-oracle and physical-audit verification
+STATEMENT: >>>
+Numerical qualification shall combine analytic closed-form solutions, opt-in independent physical audits (AUDIT-*), and differential comparisons against Xyce and ngspice; no single legacy simulator shall be treated as an infallible oracle.
+<<<
+COMMENT: >>>
+Verification: Adjudicate oracle discrepancies against circuit equations and independent audits rather than relaxing tolerances.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[REQUIREMENT]
+UID: ARCH-RELEASE-001
+STATUS: Proposed
+TITLE: Evidence-gated capability claims
+STATEMENT: >>>
+Releases and capability queries shall advertise only verified analyses, device models, and backends, publishing exact versions, licenses, limitations, and reproducible benchmark results.
+<<<
+COMMENT: >>>
+Verification: Compare runtime capability reports against actual passing qualification suites.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+
+[[/SECTION]]

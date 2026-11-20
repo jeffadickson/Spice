@@ -1,5 +1,7 @@
 # Build and tool environments
 /build/
+/v2/build/
+/v2/vcpkg_installed/
 /target/
 **/bin/
 **/obj/

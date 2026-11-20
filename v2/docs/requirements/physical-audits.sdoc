@@ -1,0 +1,84 @@
+[DOCUMENT]
+TITLE: Spice V2 - Independent Physical Consistency Audits
+
+[TEXT]
+STATEMENT: >>>
+Version 2.0, 2026-11-20. Ports the proven independent physical-audit concepts from v1 (CONS-*) into a clean, opt-in C++20 verification layer (v2/cpp/audit) and .NET result contract. Audits evaluate element-level conservation laws independently of solver matrices; passing checks confirm physical consistency within recorded tolerances, never global waveform accuracy or compact-model physical validity.
+<<<
+
+[[SECTION]]
+TITLE: 1. Opt-in independent physical checks
+
+[REQUIREMENT]
+UID: AUDIT-001
+STATUS: Proposed
+TITLE: Explicit bounded audit outcomes and opt-in execution
+STATEMENT: >>>
+Physical audits shall report passed, failed, or not_checked outcomes with SI discrepancy, effective tolerance, and an explicit reason when unavailable. Audits shall be selectable per run (default enabled in verification/test suites, opt-in during raw speed benchmarks) so unrequested audits never tax production solver throughput.
+<<<
+COMMENT: >>>
+Verification: Test passed, failed, and not_checked transitions, nonfinite arithmetic rejection, and zero audit overhead when disabled in benchmark runs.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-VERIFY-001
+
+[REQUIREMENT]
+UID: AUDIT-002
+STATUS: Proposed
+TITLE: Independent DC KCL, voltage-constraint and power conservation
+STATEMENT: >>>
+The DC physical audit shall reconstruct element currents independently of assembled MNA matrices, verify KCL at every node including ground, verify ideal voltage/inductor/controlled-voltage constraints in voltage units, and verify passive-sign power conservation including any explicit Gmin regularization.
+<<<
+COMMENT: >>>
+Verification: Perturb a single node voltage or branch current and confirm independent KCL, voltage-constraint, and power checks detect the defect.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: AUDIT-001
+
+[REQUIREMENT]
+UID: AUDIT-003
+STATUS: Proposed
+TITLE: Independent linear AC complex current and power balance
+STATEMENT: >>>
+For supported small-signal AC points, the audit shall independently verify complex KCL, complex source constraints, and complex power balance (Tellegen's theorem) across real and imaginary components.
+<<<
+COMMENT: >>>
+Verification: Exercise RC, RLC, and controlled-source AC solutions with complex excitations and verify perturbation detection.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: AUDIT-001
+
+[REQUIREMENT]
+UID: AUDIT-004
+STATUS: Proposed
+TITLE: Discrete transient step conservation and dissipation
+STATEMENT: >>>
+For supported fixed or accepted backward-Euler and trapezoidal steps, the transient audit shall independently check companion currents, inductor voltages, KCL, source constraints, and discrete energy balance (explicitly accounting for backward-Euler numerical dissipation) while retaining worst normalized discrepancies with bounded memory.
+<<<
+COMMENT: >>>
+Verification: Verify RC/RLC transient steps and confirm perturbed states or missing dissipation terms fail the audit.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: AUDIT-001
+
+[REQUIREMENT]
+UID: AUDIT-005
+STATUS: Proposed
+TITLE: Explicit non-claims on global accuracy
+STATEMENT: >>>
+Audit reports shall explicitly mark global continuous-time accuracy as not_checked and distinguish physical step consistency from timestep-refinement comparison and independent oracle agreement.
+<<<
+COMMENT: >>>
+Verification: Inspect serialized ResultManifest audit sections and confirm global_accuracy stays explicitly not_checked.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: ARCH-GOAL-005
+- TYPE: Parent
+  VALUE: AUDIT-001
+
+[[/SECTION]]
