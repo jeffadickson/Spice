@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "authoritative_source": "v2/docs/requirements/implementation-plan.sdoc",
   "generated_date": "2026-11-20",
-  "implementation_status": "Slice 0 in progress: V2 C++20 + KLU + OSDI + Xyce Strangler Fig + StarLark-cs + Schematic reset",
+  "implementation_status": "Slice 0 + M2a C++20 linear DAE core in progress on branch v2",
   "work_packages": [
     {
       "id": "PLAN-V2-001",
@@ -65,7 +65,7 @@
     {
       "id": "PLAN-V2-005",
       "title": "M2a - C++20 linear core, SuiteSparse KLU and in-process NativeCppBackend",
-      "status": "Proposed",
+      "status": "InProgress",
       "phase": "M2",
       "depends_on": [
         "PLAN-V2-001",

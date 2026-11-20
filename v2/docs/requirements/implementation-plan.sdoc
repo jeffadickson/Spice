@@ -102,7 +102,7 @@ TITLE: 2. M2 native C++20 engine replacing Xyce on core analog
 
 [REQUIREMENT]
 UID: PLAN-V2-005
-STATUS: Proposed
+STATUS: InProgress
 TITLE: M2a - C++20 linear core, SuiteSparse KLU and in-process NativeCppBackend
 STATEMENT: >>>
 Implement CSC sparse assembly with pre-bound device slots, SuiteSparse KLU shared-library adapter (real/complex, symbolic reuse), dense reference solver, linear primitives (R/C/L/K/V/I waveforms/E/F/G/H), OP/DC/AC/TRAN drivers, full spice_capi.h execution API, and in-process NativeCppBackend via LibraryImport/SafeHandle.
@@ -110,8 +110,8 @@ Implement CSC sparse assembly with pre-bound device slots, SuiteSparse KLU share
 COMMENT: >>>
 Phase: M2
 Depends-on: PLAN-V2-001, PLAN-V2-002
-Deliverables: cpp/linalg (KLU + dense), cpp/devices (linear), cpp/analysis (OP/DC/AC/TRAN), cpp/audit, cpp/capi, NativeCppBackend in Spice.Sdk.
-Verification: Matches XyceBackend within strict tolerances on shared linear decks and beats ngspice wall time on SANDLER8/SANDLER9 and a 1,000-node RC/RLC ladder.
+Deliverables: cpp/linalg (SparseLu + DenseLu + KLU adapter), cpp/devices (R/C/L/V/I/E/F/G/H + waveforms), cpp/analysis (OP/DC sweep/AC/TRAN BE & Trap + UIC + breakpoints), cpp/audit (DC/AC/TRAN physical audits), cpp/capi, NativeCppBackend in Spice.Sdk.
+Verification: GCC 12 and Clang 14 C++20 -Werror builds pass all unit, analytic, controlled-source, breakpoint, audit fault-injection, C ABI, and 1,000-node RC ladder (~28.5-29.8 ms compile+OP+50-pt AC+200-step TRAN) tests. Remaining to close M2a: coupled mutual inductor (K), vcpkg SuiteSparse KLU link test, dotnet build/test of NativeCppBackend, and head-to-head XyceBackend/ngspice SANDLER8/SANDLER9 comparison.
 <<<
 RELATIONS:
 - TYPE: Parent

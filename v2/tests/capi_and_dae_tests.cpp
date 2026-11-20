@@ -180,7 +180,7 @@ TEST_CASE("C ABI enforces version, struct size, null checks and handle lifecycle
     REQUIRE(caps.abi_minor == SPICE_CAPI_ABI_MINOR);
     REQUIRE(caps.default_max_unknowns == 50'000u);
     REQUIRE(caps.osdi_available == 0u);
-    REQUIRE(caps.audits_available == 0u);
+    REQUIRE(caps.audits_available == 1u);
 
     /* Null handle validation. */
     REQUIRE(spice_engine_capabilities(nullptr, &caps) == SPICE_STATUS_INVALID_HANDLE);
