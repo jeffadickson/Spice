@@ -136,6 +136,48 @@ struct CcvsSpec {
     double ohms{0.0};
 };
 
+/* Coupled mutual inductance M = coupling_k * sqrt(L1 * L2), |k| < 1. */
+struct MutualInductanceSpec {
+    std::string id;
+    std::string inductor1_id;
+    std::string inductor2_id;
+    double coupling_k{0.0};
+};
+
+/* Nonlinear SPICE diode with Shockley conduction + depletion/transit charge Q(V). */
+struct DiodeSpec {
+    std::string id;
+    NodeId p;
+    NodeId n;
+    double is_amps{1.0e-14};
+    double n_emission{1.0};
+    double vt_volts{0.025851991}; /* kT/q at 300 K */
+    double cjo_farads{0.0};       /* Zero-bias junction capacitance */
+    double vj_volts{1.0};         /* Built-in junction potential */
+    double m_grading{0.5};        /* Grading coefficient (0 < m < 1) */
+    double tt_s{0.0};             /* Transit time */
+    double gmin_siemens{1.0e-12}; /* Parallel numerical conductance inside model if desired (0 allowed) */
+};
+
+/* Compiled behavioral voltage (B_v) or current (B_i) source with autodiff Jacobians. */
+struct BehavioralSourceSpec {
+    std::string id;
+    NodeId p;
+    NodeId n;
+    bool is_voltage{false}; /* true: V(p)-V(n)=expr; false: I(p->n)=expr */
+    std::string expression;
+};
+
+/* Dynamically loaded OSDI 0.3/0.4 compiled Verilog-A model instance (ARCH-MOD-001). */
+struct OsdiInstanceSpec {
+    std::string id;
+    std::string library_path;
+    std::string model_name;
+    std::vector<NodeId> terminals;
+    std::vector<std::pair<std::string, double>> model_params;
+    std::vector<std::pair<std::string, double>> instance_params;
+};
+
 using ElementSpec = std::variant<
     ResistorSpec,
     CapacitorSpec,
@@ -145,7 +187,11 @@ using ElementSpec = std::variant<
     VccsSpec,
     VcvsSpec,
     CccsSpec,
-    CcvsSpec>;
+    CcvsSpec,
+    MutualInductanceSpec,
+    DiodeSpec,
+    BehavioralSourceSpec,
+    OsdiInstanceSpec>;
 
 struct SignalDescriptor {
     std::string id;        /* e.g. "v(out)" or "i(V1)" */

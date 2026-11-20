@@ -120,7 +120,7 @@ spice_status_t spice_engine_capabilities(
         out_capabilities->abi_major = SPICE_CAPI_ABI_MAJOR;
         out_capabilities->abi_minor = SPICE_CAPI_ABI_MINOR;
         out_capabilities->klu_available = spice::linalg::klu_is_linked() ? 1u : 0u;
-        out_capabilities->osdi_available = 0u;    /* M2b */
+        out_capabilities->osdi_available = 1u;    /* Generic OSDI 0.3/0.4 loader active in M2b */
         out_capabilities->audits_available = 1u;  /* Active in M2a */
         out_capabilities->default_max_unknowns = engine->max_unknowns;
         engine->last_error.clear();

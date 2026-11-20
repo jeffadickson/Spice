@@ -21,15 +21,61 @@ struct OverrideGuard {
     ~OverrideGuard() { (void)plan.set_dc_source_override(source_id, std::nullopt); }
 };
 
+/* Check whether all elements in `plan` are covered by the standalone physical audit equations. */
+bool plan_supports_dc_audit(const devices::CompiledPlan& plan) noexcept {
+    for (const auto& e : plan.circuit.elements) {
+        if (std::holds_alternative<core::BehavioralSourceSpec>(e) ||
+            std::holds_alternative<core::OsdiInstanceSpec>(e)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool plan_supports_linear_ac_or_tran_audit(const devices::CompiledPlan& plan) noexcept {
+    if (plan.has_nonlinear) return false;
+    for (const auto& e : plan.circuit.elements) {
+        if (std::holds_alternative<core::MutualInductanceSpec>(e)) return false;
+    }
+    return true;
+}
+
+audit::AuditReport make_unavailable_audit(const std::string& reason) {
+    audit::AuditReport rep;
+    rep.checks.push_back(audit::AuditCheck{
+        "physical_audit", audit::CheckStatus::NotChecked, 0.0, 0.0, "", reason});
+    rep.checks.push_back(audit::AuditCheck{
+        "global_accuracy",
+        audit::CheckStatus::NotChecked,
+        0.0,
+        0.0,
+        "",
+        "physical consistency does not bound continuous-time global error (AUDIT-005)"});
+    return rep;
+}
+
 /* Solve consistent t=0 state for transient startup (OperatingPoint or UIC). */
 Diagnostic compute_transient_startup(
-    const devices::CompiledPlan& plan,
+    devices::CompiledPlan& plan,
     StartupMode mode,
     const AnalysisCommonOptions& common,
     std::vector<double>& out_x0) {
     const std::uint32_t dim = plan.unknown_count();
     if (mode == StartupMode::OperatingPoint) {
-        /* Build temporary linear system at t=0 using transient t=0 source values. */
+        std::unique_ptr<linalg::RealLinearSolver> solver;
+        if (auto d = linalg::create_real_solver(common.backend, solver); !d.ok()) return d;
+        if (auto d = solver->analyze(plan.pattern); !d.ok()) return d;
+
+        if (plan.has_nonlinear) {
+            out_x0.assign(dim, 0.0);
+            solver::NewtonProblem prob{};
+            prob.time_s = 0.0;
+            prob.mode = AnalysisMode::Transient;
+            prob.alpha = 0.0;
+            solver::NewtonReport nrep{};
+            return solver::solve_newton(plan, *solver, prob, common.newton_options, out_x0, nrep);
+        }
+
         std::vector<double> x_zero(dim, 0.0);
         std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
         std::vector<double> g_vals(plan.pattern.nnz(), 0.0), c_vals(plan.pattern.nnz(), 0.0);
@@ -40,9 +86,6 @@ Diagnostic compute_transient_startup(
         std::vector<double> rhs(dim);
         for (std::uint32_t i = 0; i < dim; ++i) rhs[i] = -f0[i];
 
-        std::unique_ptr<linalg::RealLinearSolver> solver;
-        if (auto d = linalg::create_real_solver(common.backend, solver); !d.ok()) return d;
-        if (auto d = solver->analyze(plan.pattern); !d.ok()) return d;
         if (auto d = solver->factor(g_vals); !d.ok()) return d;
         out_x0.assign(dim, 0.0);
         if (auto d = solver->solve(rhs, out_x0); !d.ok()) return d;
@@ -55,8 +98,7 @@ Diagnostic compute_transient_startup(
     }
 
     /* UIC startup (ARCH-EQ-003): replace C with voltage source at ic_volts (default 0)
-     * and L with current source at ic_amps (default 0), evaluate independent sources at t=0,
-     * solve the algebraic startup network, and map back into the full MNA vector. */
+     * and L with current source at ic_amps (default 0), evaluate independent sources at t=0. */
     core::Circuit uic_ckt{};
     uic_ckt.name = plan.circuit.name + "_uic_t0";
     uic_ckt.nodes = plan.circuit.nodes;
@@ -68,6 +110,8 @@ Diagnostic compute_transient_startup(
         } else if (const auto* l = std::get_if<core::InductorSpec>(&elem)) {
             uic_ckt.elements.push_back(core::CurrentSourceSpec{
                 "__uic_l_" + l->id, l->p, l->n, l->ic_amps.value_or(0.0), {0.0, 0.0}, std::nullopt});
+        } else if (std::holds_alternative<core::MutualInductanceSpec>(elem)) {
+            /* Mutual inductance contributes only to dQ/dt, zero in t=0 algebraic UIC network. */
         } else if (const auto* v = std::get_if<core::VoltageSourceSpec>(&elem)) {
             uic_ckt.elements.push_back(core::VoltageSourceSpec{
                 v->id, v->p, v->n, core::source_value_at(*v, 0.0, true), {0.0, 0.0}, std::nullopt});
@@ -91,8 +135,7 @@ Diagnostic compute_transient_startup(
     if (auto d = run_op(uic_plan, uic_opts, uic_op); !d.ok()) return d;
 
     out_x0.assign(dim, 0.0);
-    const std::size_t n_node_unknowns = plan.circuit.nodes.size() - 1u;
-    for (std::size_t i = 0; i < n_node_unknowns; ++i) {
+    for (std::size_t i = 0; i < plan.node_unknown_count && i < uic_op.values.size(); ++i) {
         out_x0[i] = uic_op.values[i];
     }
     for (const auto& elem : plan.circuit.elements) {
@@ -103,6 +146,9 @@ Diagnostic compute_transient_startup(
                    std::holds_alternative<core::CcvsSpec>(elem)) {
             const auto& id = core::element_id(elem);
             out_x0[plan.branch_unknowns.at(id).value] = uic_op.values[uic_plan.branch_unknowns.at(id).value];
+        } else if (const auto* b = std::get_if<core::BehavioralSourceSpec>(&elem); b != nullptr && b->is_voltage) {
+            out_x0[plan.branch_unknowns.at(b->id).value] =
+                uic_op.values[uic_plan.branch_unknowns.at(b->id).value];
         }
     }
     return Diagnostic::success();
@@ -111,47 +157,68 @@ Diagnostic compute_transient_startup(
 }  // namespace
 
 Diagnostic run_op(
-    const devices::CompiledPlan& plan,
+    devices::CompiledPlan& plan,
     const AnalysisCommonOptions& opts,
     OpResult& out_result) {
     const std::uint32_t dim = plan.unknown_count();
-    std::vector<double> x_zero(dim, 0.0);
-    std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
-    std::vector<double> g_vals(plan.pattern.nnz(), 0.0), c_vals(plan.pattern.nnz(), 0.0);
-
-    EvalContext ctx{0.0, 300.15, AnalysisMode::OperatingPoint, x_zero};
-    StampTarget target{f0, q0, g_vals, c_vals};
-    if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
-
-    std::vector<double> rhs(dim);
-    for (std::uint32_t i = 0; i < dim; ++i) rhs[i] = -f0[i];
 
     std::unique_ptr<linalg::RealLinearSolver> solver;
     if (auto d = linalg::create_real_solver(opts.backend, solver); !d.ok()) return d;
     if (auto d = solver->analyze(plan.pattern); !d.ok()) return d;
-    if (auto d = solver->factor(g_vals); !d.ok()) return d;
-
-    std::vector<double> x(dim, 0.0);
-    if (auto d = solver->solve(rhs, x); !d.ok()) return d;
-
-    const double berr = linalg::real_backward_error(plan.pattern, g_vals, x, rhs);
-    if (berr > opts.max_backward_error) {
-        return Diagnostic::error(
-            StatusCode::NumericalFailure, "DC operating-point backward error exceeded tolerance");
-    }
 
     OpResult res{};
     res.backend_name = solver->name();
-    res.values = std::move(x);
-    res.backward_error = berr;
-    res.solver_stats = solver->stats();
+
+    if (plan.has_nonlinear) {
+        std::vector<double> x(dim, 0.0);
+        solver::NewtonProblem prob{};
+        prob.time_s = 0.0;
+        prob.mode = AnalysisMode::OperatingPoint;
+        prob.alpha = 0.0;
+        solver::NewtonReport nrep{};
+        if (auto d = solver::solve_newton(plan, *solver, prob, opts.newton_options, x, nrep); !d.ok()) {
+            return d;
+        }
+        res.values = std::move(x);
+        res.backward_error = nrep.worst_backward_error;
+        res.newton = nrep;
+        res.solver_stats = solver->stats();
+    } else {
+        std::vector<double> x_zero(dim, 0.0);
+        std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
+        std::vector<double> g_vals(plan.pattern.nnz(), 0.0), c_vals(plan.pattern.nnz(), 0.0);
+        EvalContext ctx{0.0, 300.15, AnalysisMode::OperatingPoint, x_zero};
+        StampTarget target{f0, q0, g_vals, c_vals};
+        if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
+
+        std::vector<double> rhs(dim);
+        for (std::uint32_t i = 0; i < dim; ++i) rhs[i] = -f0[i];
+
+        if (auto d = solver->factor(g_vals); !d.ok()) return d;
+        std::vector<double> x(dim, 0.0);
+        if (auto d = solver->solve(rhs, x); !d.ok()) return d;
+
+        const double berr = linalg::real_backward_error(plan.pattern, g_vals, x, rhs);
+        if (berr > opts.max_backward_error) {
+            return Diagnostic::error(
+                StatusCode::NumericalFailure, "DC operating-point backward error exceeded tolerance");
+        }
+        res.values = std::move(x);
+        res.backward_error = berr;
+        res.solver_stats = solver->stats();
+    }
 
     if (opts.enable_audits) {
-        auto report = audit::audit_dc(plan, res.values, opts.audit_options);
-        if (report.any_failed()) {
-            return Diagnostic::error(StatusCode::NumericalFailure, "independent DC physical audit failed");
+        if (plan_supports_dc_audit(plan)) {
+            auto report = audit::audit_dc(plan, res.values, opts.audit_options);
+            if (report.any_failed()) {
+                return Diagnostic::error(StatusCode::NumericalFailure, "independent DC physical audit failed");
+            }
+            res.audit = std::move(report);
+        } else {
+            res.audit = make_unavailable_audit(
+                "opaque OSDI or behavioral devices excluded from standalone DC physical audit");
         }
-        res.audit = std::move(report);
     }
 
     out_result = std::move(res);
@@ -179,44 +246,61 @@ Diagnostic run_dc_sweep(
     OverrideGuard guard{plan, opts.source_id};
 
     const std::uint32_t dim = plan.unknown_count();
-    std::vector<double> x_zero(dim, 0.0);
-    std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
-    std::vector<double> g_vals(plan.pattern.nnz(), 0.0), c_vals(plan.pattern.nnz(), 0.0);
-
-    /* Factor linear Jacobian G once and reuse numeric factors across every sweep point. */
-    EvalContext ctx{0.0, 300.15, AnalysisMode::DcSweep, x_zero};
-    StampTarget target{f0, q0, g_vals, c_vals};
-    if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
-
     std::unique_ptr<linalg::RealLinearSolver> solver;
     if (auto d = linalg::create_real_solver(opts.common.backend, solver); !d.ok()) return d;
     if (auto d = solver->analyze(plan.pattern); !d.ok()) return d;
-    if (auto d = solver->factor(g_vals); !d.ok()) return d;
 
     DcSweepResult res{};
     res.backend_name = solver->name();
-    std::vector<double> rhs(dim);
     const std::size_t n_pts = static_cast<std::size_t>(std::floor(approx_steps + 1.0e-12)) + 1u;
     res.points.reserve(n_pts);
 
-    for (std::size_t k = 0; k < n_pts; ++k) {
-        double v = opts.start + static_cast<double>(k) * opts.step;
-        if ((opts.step > 0.0 && v > opts.stop) || (opts.step < 0.0 && v < opts.stop)) {
-            v = opts.stop;
-        }
-        if (auto d = plan.set_dc_source_override(opts.source_id, v); !d.ok()) return d;
-        if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
-        for (std::uint32_t i = 0; i < dim; ++i) rhs[i] = -f0[i];
+    if (plan.has_nonlinear) {
+        std::vector<double> x_guess(dim, 0.0);
+        for (std::size_t k = 0; k < n_pts; ++k) {
+            double v = opts.start + static_cast<double>(k) * opts.step;
+            if ((opts.step > 0.0 && v > opts.stop) || (opts.step < 0.0 && v < opts.stop)) v = opts.stop;
+            if (auto d = plan.set_dc_source_override(opts.source_id, v); !d.ok()) return d;
 
-        std::vector<double> x(dim, 0.0);
-        if (auto d = solver->solve(rhs, x); !d.ok()) return d;
-        const double berr = linalg::real_backward_error(plan.pattern, g_vals, x, rhs);
-        if (berr > opts.common.max_backward_error) {
-            return Diagnostic::error(
-                StatusCode::NumericalFailure, "DC sweep backward error exceeded tolerance");
+            solver::NewtonProblem prob{};
+            prob.time_s = 0.0;
+            prob.mode = AnalysisMode::DcSweep;
+            prob.alpha = 0.0;
+            solver::NewtonReport nrep{};
+            if (auto d = solver::solve_newton(plan, *solver, prob, opts.common.newton_options, x_guess, nrep);
+                !d.ok()) {
+                return d;
+            }
+            res.worst_backward_error = std::max(res.worst_backward_error, nrep.worst_backward_error);
+            res.points.push_back(DcSweepPoint{v, x_guess});
         }
-        res.worst_backward_error = std::max(res.worst_backward_error, berr);
-        res.points.push_back(DcSweepPoint{v, std::move(x)});
+    } else {
+        std::vector<double> x_zero(dim, 0.0);
+        std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
+        std::vector<double> g_vals(plan.pattern.nnz(), 0.0), c_vals(plan.pattern.nnz(), 0.0);
+        EvalContext ctx{0.0, 300.15, AnalysisMode::DcSweep, x_zero};
+        StampTarget target{f0, q0, g_vals, c_vals};
+        if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
+        if (auto d = solver->factor(g_vals); !d.ok()) return d;
+
+        std::vector<double> rhs(dim);
+        for (std::size_t k = 0; k < n_pts; ++k) {
+            double v = opts.start + static_cast<double>(k) * opts.step;
+            if ((opts.step > 0.0 && v > opts.stop) || (opts.step < 0.0 && v < opts.stop)) v = opts.stop;
+            if (auto d = plan.set_dc_source_override(opts.source_id, v); !d.ok()) return d;
+            if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
+            for (std::uint32_t i = 0; i < dim; ++i) rhs[i] = -f0[i];
+
+            std::vector<double> x(dim, 0.0);
+            if (auto d = solver->solve(rhs, x); !d.ok()) return d;
+            const double berr = linalg::real_backward_error(plan.pattern, g_vals, x, rhs);
+            if (berr > opts.common.max_backward_error) {
+                return Diagnostic::error(
+                    StatusCode::NumericalFailure, "DC sweep backward error exceeded tolerance");
+            }
+            res.worst_backward_error = std::max(res.worst_backward_error, berr);
+            res.points.push_back(DcSweepPoint{v, std::move(x)});
+        }
     }
 
     res.solver_stats = solver->stats();
@@ -225,7 +309,7 @@ Diagnostic run_dc_sweep(
 }
 
 Diagnostic run_ac(
-    const devices::CompiledPlan& plan,
+    devices::CompiledPlan& plan,
     const AcOptions& opts,
     AcResult& out_result) {
     if (opts.frequencies_hz.empty()) {
@@ -238,11 +322,20 @@ Diagnostic run_ac(
     }
 
     const std::uint32_t dim = plan.unknown_count();
-    std::vector<double> x_zero(dim, 0.0);
+    std::vector<double> x_op(dim, 0.0);
+
+    /* For nonlinear circuits, compute the DC operating point first and linearize G(x_op), C(x_op). */
+    if (plan.has_nonlinear) {
+        AnalysisCommonOptions op_opts = opts.common;
+        op_opts.enable_audits = false;
+        OpResult op{};
+        if (auto d = run_op(plan, op_opts, op); !d.ok()) return d;
+        x_op = std::move(op.values);
+    }
+
     std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
     std::vector<double> g_vals(plan.pattern.nnz(), 0.0), c_vals(plan.pattern.nnz(), 0.0);
-
-    EvalContext ctx{0.0, 300.15, AnalysisMode::AcLinearize, x_zero};
+    EvalContext ctx{0.0, 300.15, AnalysisMode::AcLinearize, x_op};
     StampTarget target{f0, q0, g_vals, c_vals};
     if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
 
@@ -255,9 +348,11 @@ Diagnostic run_ac(
 
     AcResult res{};
     res.backend_name = solver->name();
+    res.operating_point = std::move(x_op);
     res.points.reserve(opts.frequencies_hz.size());
 
     std::vector<Complex> a_vals(plan.pattern.nnz());
+    const bool can_audit_ac = plan_supports_linear_ac_or_tran_audit(plan);
     audit::AuditReport merged_audit{};
 
     for (double freq_hz : opts.frequencies_hz) {
@@ -277,7 +372,7 @@ Diagnostic run_ac(
         }
         res.worst_backward_error = std::max(res.worst_backward_error, berr);
 
-        if (opts.common.enable_audits) {
+        if (opts.common.enable_audits && can_audit_ac) {
             auto pt_audit = audit::audit_ac(plan, x, freq_hz, opts.common.audit_options);
             if (pt_audit.any_failed()) {
                 return Diagnostic::error(StatusCode::NumericalFailure, "independent AC physical audit failed");
@@ -289,7 +384,10 @@ Diagnostic run_ac(
 
     res.solver_stats = solver->stats();
     if (opts.common.enable_audits) {
-        res.audit = std::move(merged_audit);
+        res.audit = can_audit_ac
+                        ? std::move(merged_audit)
+                        : make_unavailable_audit(
+                              "nonlinear/coupled small-signal AC excluded from standalone linear AC audit");
     }
     out_result = std::move(res);
     return Diagnostic::success();
@@ -305,7 +403,6 @@ Diagnostic run_transient(
             StatusCode::InvalidArgument, "transient step_s and stop_s must be finite and positive");
     }
 
-    /* Build exact time grid merging nominal steps with all source breakpoints (ARCH-EQ-005). */
     std::vector<double> breakpoints = plan.collect_breakpoints(0.0, opts.stop_s);
     std::vector<double> time_grid;
     time_grid.push_back(0.0);
@@ -317,9 +414,7 @@ Diagnostic run_transient(
             return Diagnostic::error(StatusCode::ResourceExhausted, "transient exceeded max_steps budget");
         }
         double t_next = std::min(t + opts.step_s, opts.stop_s);
-        while (bp_idx < breakpoints.size() && breakpoints[bp_idx] <= t + eps) {
-            ++bp_idx;
-        }
+        while (bp_idx < breakpoints.size() && breakpoints[bp_idx] <= t + eps) ++bp_idx;
         if (bp_idx < breakpoints.size() && breakpoints[bp_idx] < t_next - eps) {
             t_next = breakpoints[bp_idx];
         }
@@ -351,94 +446,135 @@ Diagnostic run_transient(
     res.samples.reserve(time_grid.size());
     res.samples.push_back(TransientSample{0.0, x_prev});
 
-    std::vector<double> x_zero(dim, 0.0);
-    std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
-    std::vector<double> a_vals(plan.pattern.nnz(), 0.0);
-    std::vector<double> rhs(dim, 0.0);
+    const bool can_audit_tran = plan_supports_linear_ac_or_tran_audit(plan);
+    audit::AuditReport merged_audit{};
+
     std::vector<double> x_curr(dim, 0.0);
     std::vector<double> f_curr(dim, 0.0), q_curr(dim, 0.0);
 
-    bool has_factor = false;
-    double factored_h = 0.0;
-    audit::AuditReport merged_audit{};
+    if (plan.has_nonlinear) {
+        std::vector<double> history(dim, 0.0);
+        for (std::size_t step_idx = 1; step_idx < time_grid.size(); ++step_idx) {
+            const double t_prev = time_grid[step_idx - 1u];
+            const double t_curr = time_grid[step_idx];
+            const double h = t_curr - t_prev;
+            const double alpha =
+                (opts.method == IntegrationMethod::BackwardEuler) ? (1.0 / h) : (2.0 / h);
 
-    for (std::size_t step_idx = 1; step_idx < time_grid.size(); ++step_idx) {
-        const double t_prev = time_grid[step_idx - 1u];
-        const double t_curr = time_grid[step_idx];
-        const double h = t_curr - t_prev;
-
-        /* Evaluate source contribution F(0, t_curr) and linear G, C. */
-        EvalContext ctx_zero{t_curr, 300.15, AnalysisMode::Transient, x_zero};
-        StampTarget target_zero{f0, q0, g_vals, c_vals};
-        if (auto d = plan.evaluate_all(ctx_zero, target_zero); !d.ok()) return d;
-
-        const double alpha =
-            (opts.method == IntegrationMethod::BackwardEuler) ? (1.0 / h) : (2.0 / h);
-
-        /* Exact-step numeric factor reuse whenever h is unchanged. */
-        if (!has_factor || std::abs(h - factored_h) > 1.0e-14 * std::max(1.0, factored_h)) {
-            for (std::size_t k = 0; k < a_vals.size(); ++k) {
-                a_vals[k] = g_vals[k] + alpha * c_vals[k];
+            if (opts.method == IntegrationMethod::BackwardEuler) {
+                for (std::uint32_t i = 0; i < dim; ++i) history[i] = -alpha * q_prev[i];
+            } else {
+                for (std::uint32_t i = 0; i < dim; ++i) history[i] = f_prev[i] - alpha * q_prev[i];
             }
-            if (auto d = solver->factor(a_vals); !d.ok()) return d;
-            has_factor = true;
-            factored_h = h;
-        }
 
-        if (opts.method == IntegrationMethod::BackwardEuler) {
-            /* (G + C/h) * x_n = -F(0, t_n) + Q(x_{n-1})/h */
-            for (std::uint32_t i = 0; i < dim; ++i) {
-                rhs[i] = -f0[i] + alpha * q_prev[i];
+            x_curr = x_prev; /* Predictor: previous accepted solution. */
+            solver::NewtonProblem prob{};
+            prob.time_s = t_curr;
+            prob.mode = AnalysisMode::Transient;
+            prob.alpha = alpha;
+            prob.history = history;
+
+            solver::NewtonReport nrep{};
+            if (auto d = solver::solve_newton(plan, *solver, prob, opts.common.newton_options, x_curr, nrep);
+                !d.ok()) {
+                plan.rollback_all_trials();
+                return d;
             }
-        } else {
-            /* Trapezoidal: (G + 2C/h) * x_n = -F(0, t_n) - F(x_{n-1}, t_{n-1}) + (2/h) * Q(x_{n-1}) */
-            for (std::uint32_t i = 0; i < dim; ++i) {
-                rhs[i] = -f0[i] - f_prev[i] + alpha * q_prev[i];
+            res.total_newton_iterations += nrep.iterations;
+            res.worst_backward_error = std::max(res.worst_backward_error, nrep.worst_backward_error);
+
+            EvalContext ctx_curr{t_curr, 300.15, AnalysisMode::Transient, x_curr};
+            StampTarget target_curr{f_curr, q_curr, g_vals, c_vals};
+            if (auto d = plan.evaluate_all(ctx_curr, target_curr); !d.ok()) {
+                plan.rollback_all_trials();
+                return d;
             }
+            plan.commit_all_trials();
+            res.samples.push_back(TransientSample{t_curr, x_curr});
+            x_prev.swap(x_curr);
+            f_prev.swap(f_curr);
+            q_prev.swap(q_curr);
         }
+    } else {
+        std::vector<double> x_zero(dim, 0.0);
+        std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
+        std::vector<double> a_vals(plan.pattern.nnz(), 0.0);
+        std::vector<double> rhs(dim, 0.0);
+        bool has_factor = false;
+        double factored_h = 0.0;
 
-        if (auto d = solver->solve(rhs, x_curr); !d.ok()) return d;
-        const double berr = linalg::real_backward_error(plan.pattern, a_vals, x_curr, rhs);
-        if (berr > opts.common.max_backward_error) {
-            plan.rollback_all_trials();
-            return Diagnostic::error(
-                StatusCode::NumericalFailure, "transient linear backward error exceeded tolerance");
-        }
-        res.worst_backward_error = std::max(res.worst_backward_error, berr);
+        for (std::size_t step_idx = 1; step_idx < time_grid.size(); ++step_idx) {
+            const double t_prev = time_grid[step_idx - 1u];
+            const double t_curr = time_grid[step_idx];
+            const double h = t_curr - t_prev;
 
-        /* Re-evaluate exact F(x_curr, t_curr) and Q(x_curr) for next step history & audit. */
-        EvalContext ctx_curr{t_curr, 300.15, AnalysisMode::Transient, x_curr};
-        StampTarget target_curr{f_curr, q_curr, g_vals, c_vals};
-        if (auto d = plan.evaluate_all(ctx_curr, target_curr); !d.ok()) {
-            plan.rollback_all_trials();
-            return d;
-        }
+            EvalContext ctx_zero{t_curr, 300.15, AnalysisMode::Transient, x_zero};
+            StampTarget target_zero{f0, q0, g_vals, c_vals};
+            if (auto d = plan.evaluate_all(ctx_zero, target_zero); !d.ok()) return d;
 
-        if (opts.common.enable_audits) {
-            const auto audit_method =
-                (opts.method == IntegrationMethod::BackwardEuler)
-                    ? audit::TransientAuditMethod::BackwardEuler
-                    : audit::TransientAuditMethod::Trapezoidal;
-            auto step_audit = audit::audit_transient_step(
-                plan, x_prev, x_curr, t_prev, t_curr, audit_method, opts.common.audit_options);
-            if (step_audit.any_failed()) {
+            const double alpha =
+                (opts.method == IntegrationMethod::BackwardEuler) ? (1.0 / h) : (2.0 / h);
+
+            if (!has_factor || std::abs(h - factored_h) > 1.0e-14 * std::max(1.0, factored_h)) {
+                for (std::size_t k = 0; k < a_vals.size(); ++k) {
+                    a_vals[k] = g_vals[k] + alpha * c_vals[k];
+                }
+                if (auto d = solver->factor(a_vals); !d.ok()) return d;
+                has_factor = true;
+                factored_h = h;
+            }
+
+            if (opts.method == IntegrationMethod::BackwardEuler) {
+                for (std::uint32_t i = 0; i < dim; ++i) rhs[i] = -f0[i] + alpha * q_prev[i];
+            } else {
+                for (std::uint32_t i = 0; i < dim; ++i) rhs[i] = -f0[i] - f_prev[i] + alpha * q_prev[i];
+            }
+
+            if (auto d = solver->solve(rhs, x_curr); !d.ok()) return d;
+            const double berr = linalg::real_backward_error(plan.pattern, a_vals, x_curr, rhs);
+            if (berr > opts.common.max_backward_error) {
                 plan.rollback_all_trials();
                 return Diagnostic::error(
-                    StatusCode::NumericalFailure, "independent transient physical audit failed");
+                    StatusCode::NumericalFailure, "transient linear backward error exceeded tolerance");
             }
-            merged_audit.merge_worst(step_audit);
-        }
+            res.worst_backward_error = std::max(res.worst_backward_error, berr);
 
-        plan.commit_all_trials();
-        res.samples.push_back(TransientSample{t_curr, x_curr});
-        x_prev.swap(x_curr);
-        f_prev.swap(f_curr);
-        q_prev.swap(q_curr);
+            EvalContext ctx_curr{t_curr, 300.15, AnalysisMode::Transient, x_curr};
+            StampTarget target_curr{f_curr, q_curr, g_vals, c_vals};
+            if (auto d = plan.evaluate_all(ctx_curr, target_curr); !d.ok()) {
+                plan.rollback_all_trials();
+                return d;
+            }
+
+            if (opts.common.enable_audits && can_audit_tran) {
+                const auto audit_method =
+                    (opts.method == IntegrationMethod::BackwardEuler)
+                        ? audit::TransientAuditMethod::BackwardEuler
+                        : audit::TransientAuditMethod::Trapezoidal;
+                auto step_audit = audit::audit_transient_step(
+                    plan, x_prev, x_curr, t_prev, t_curr, audit_method, opts.common.audit_options);
+                if (step_audit.any_failed()) {
+                    plan.rollback_all_trials();
+                    return Diagnostic::error(
+                        StatusCode::NumericalFailure, "independent transient physical audit failed");
+                }
+                merged_audit.merge_worst(step_audit);
+            }
+
+            plan.commit_all_trials();
+            res.samples.push_back(TransientSample{t_curr, x_curr});
+            x_prev.swap(x_curr);
+            f_prev.swap(f_curr);
+            q_prev.swap(q_curr);
+        }
     }
 
     res.solver_stats = solver->stats();
     if (opts.common.enable_audits) {
-        res.audit = std::move(merged_audit);
+        res.audit = can_audit_tran
+                        ? std::move(merged_audit)
+                        : make_unavailable_audit(
+                              "nonlinear/coupled transient excluded from standalone linear energy audit");
     }
     out_result = std::move(res);
     return Diagnostic::success();

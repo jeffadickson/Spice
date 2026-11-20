@@ -210,6 +210,7 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
 
     std::set<std::string> seen_ids;
     std::set<std::string> branch_source_ids;
+    std::set<std::string> inductor_ids;
     std::uint64_t branch_count = 0;
     for (const auto& e : elements) {
         const auto& id = element_id(e);
@@ -217,10 +218,16 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
             return Diagnostic::error(
                 StatusCode::InvalidArgument, "element IDs must be nonempty and unique", id);
         }
+        if (std::holds_alternative<InductorSpec>(e)) {
+            inductor_ids.insert(id);
+        }
         if (std::holds_alternative<VoltageSourceSpec>(e) ||
             std::holds_alternative<InductorSpec>(e) ||
             std::holds_alternative<VcvsSpec>(e) ||
             std::holds_alternative<CcvsSpec>(e)) {
+            ++branch_count;
+            branch_source_ids.insert(id);
+        } else if (const auto* b = std::get_if<BehavioralSourceSpec>(&e); b != nullptr && b->is_voltage) {
             ++branch_count;
             branch_source_ids.insert(id);
         }
@@ -342,6 +349,63 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
                         !branch_source_ids.contains(h.control_source_id)) {
                         return Diagnostic::error(
                             StatusCode::InvalidArgument, "invalid CCVS or unknown control branch", h.id);
+                    }
+                    return Diagnostic::success();
+                },
+                [&](const MutualInductanceSpec& k) -> Diagnostic {
+                    if (k.inductor1_id == k.inductor2_id ||
+                        !inductor_ids.contains(k.inductor1_id) ||
+                        !inductor_ids.contains(k.inductor2_id) ||
+                        !std::isfinite(k.coupling_k) || std::abs(k.coupling_k) >= 1.0) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid mutual inductance K (|k| must be < 1)", k.id);
+                    }
+                    return Diagnostic::success();
+                },
+                [&](const DiodeSpec& d_spec) -> Diagnostic {
+                    if (auto x = check_node(d_spec.p, d_spec.id); !x.ok()) return x;
+                    if (auto x = check_node(d_spec.n, d_spec.id); !x.ok()) return x;
+                    if (d_spec.p == d_spec.n || !std::isfinite(d_spec.is_amps) || d_spec.is_amps <= 0.0 ||
+                        !std::isfinite(d_spec.n_emission) || d_spec.n_emission <= 0.0 ||
+                        !std::isfinite(d_spec.vt_volts) || d_spec.vt_volts <= 0.0 ||
+                        !std::isfinite(d_spec.cjo_farads) || d_spec.cjo_farads < 0.0 ||
+                        !std::isfinite(d_spec.vj_volts) || d_spec.vj_volts <= 0.0 ||
+                        !std::isfinite(d_spec.m_grading) || d_spec.m_grading <= 0.0 || d_spec.m_grading >= 1.0 ||
+                        !std::isfinite(d_spec.tt_s) || d_spec.tt_s < 0.0 ||
+                        !std::isfinite(d_spec.gmin_siemens) || d_spec.gmin_siemens < 0.0) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid diode parameters or terminals", d_spec.id);
+                    }
+                    return Diagnostic::success();
+                },
+                [&](const BehavioralSourceSpec& b) -> Diagnostic {
+                    if (auto x = check_node(b.p, b.id); !x.ok()) return x;
+                    if (auto x = check_node(b.n, b.id); !x.ok()) return x;
+                    if (b.p == b.n || b.expression.empty()) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid behavioral source", b.id);
+                    }
+                    return Diagnostic::success();
+                },
+                [&](const OsdiInstanceSpec& o) -> Diagnostic {
+                    if (o.library_path.empty() || o.model_name.empty() || o.terminals.empty()) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid OSDI instance specification", o.id);
+                    }
+                    for (NodeId t : o.terminals) {
+                        if (auto x = check_node(t, o.id); !x.ok()) return x;
+                    }
+                    for (const auto& [pname, pval] : o.model_params) {
+                        if (pname.empty() || !std::isfinite(pval)) {
+                            return Diagnostic::error(
+                                StatusCode::InvalidArgument, "invalid OSDI model param", o.id);
+                        }
+                    }
+                    for (const auto& [pname, pval] : o.instance_params) {
+                        if (pname.empty() || !std::isfinite(pval)) {
+                            return Diagnostic::error(
+                                StatusCode::InvalidArgument, "invalid OSDI instance param", o.id);
+                        }
                     }
                     return Diagnostic::success();
                 }},

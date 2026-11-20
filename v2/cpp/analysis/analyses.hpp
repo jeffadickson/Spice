@@ -3,6 +3,7 @@
 #include "audit/physical_audit.hpp"
 #include "devices/linear_devices.hpp"
 #include "linalg/solver.hpp"
+#include "solver/newton.hpp"
 
 #include <complex>
 #include <cstddef>
@@ -16,6 +17,7 @@ struct AnalysisCommonOptions {
     linalg::BackendPreference backend{linalg::BackendPreference::Auto};
     bool enable_audits{true};
     audit::AuditOptions audit_options{};
+    solver::NewtonOptions newton_options{};
     double max_backward_error{1.0e-10};
 };
 
@@ -24,6 +26,7 @@ struct OpResult {
     std::vector<double> values;
     double backward_error{0.0};
     linalg::SolverStats solver_stats{};
+    std::optional<solver::NewtonReport> newton;
     std::optional<audit::AuditReport> audit;
 };
 
@@ -61,6 +64,7 @@ struct AcPoint {
 struct AcResult {
     std::string backend_name;
     std::vector<AcPoint> points;
+    std::vector<double> operating_point;
     double worst_backward_error{0.0};
     linalg::SolverStats solver_stats{};
     std::optional<audit::AuditReport> audit;
@@ -95,11 +99,12 @@ struct TransientResult {
     std::vector<TransientSample> samples;
     double worst_backward_error{0.0};
     linalg::SolverStats solver_stats{};
+    std::size_t total_newton_iterations{0};
     std::optional<audit::AuditReport> audit;
 };
 
 [[nodiscard]] core::Diagnostic run_op(
-    const devices::CompiledPlan& plan,
+    devices::CompiledPlan& plan,
     const AnalysisCommonOptions& opts,
     OpResult& out_result);
 
@@ -109,7 +114,7 @@ struct TransientResult {
     DcSweepResult& out_result);
 
 [[nodiscard]] core::Diagnostic run_ac(
-    const devices::CompiledPlan& plan,
+    devices::CompiledPlan& plan,
     const AcOptions& opts,
     AcResult& out_result);
 

@@ -1,8 +1,11 @@
 #include "devices/linear_devices.hpp"
+#include "devices/expr_vm.hpp"
+#include "osdi/osdi_loader.hpp"
 
 #include <algorithm>
 #include <cmath>
 #include <optional>
+#include <unordered_map>
 #include <utility>
 
 namespace spice::devices {
@@ -59,10 +62,11 @@ bool stamp_dq_opt(StampTarget& t, std::optional<SlotId> s, double val) noexcept 
     return !s.has_value() || t.add_dq(*s, val);
 }
 
-/* Base helper for independent sources supporting temporary DC sweep override. */
+/* Base helper for independent sources supporting DC sweep override and source continuation. */
 class OverridableSourceDevice : public Device {
 public:
     virtual void set_dc_override(std::optional<double> value) noexcept = 0;
+    virtual void set_source_scale(double scale) noexcept = 0;
 };
 
 /* 1. Resistor: F_p = G*(v_p - v_n), F_n = -F_p, Q = 0 */
@@ -264,8 +268,9 @@ public:
 
     Diagnostic evaluate(const EvalContext& ctx, StampTarget& t) override {
         const bool is_tran = (ctx.mode == AnalysisMode::Transient);
-        const double vsrc =
+        const double raw_vsrc =
             dc_override_.has_value() && !is_tran ? *dc_override_ : core::source_value_at(spec_, ctx.time_s, is_tran);
+        const double vsrc = source_scale_ * raw_vsrc;
         const double i_v = ctx.x[br_.value];
         const double v = node_voltage(ctx.x, p_) - node_voltage(ctx.x, n_);
         if (!stamp_f_opt(t, p_, i_v) || !stamp_f_opt(t, n_, -i_v) ||
@@ -278,6 +283,7 @@ public:
     }
 
     void set_dc_override(std::optional<double> value) noexcept override { dc_override_ = value; }
+    void set_source_scale(double scale) noexcept override { source_scale_ = scale; }
     void commit_trial() noexcept override {}
     void rollback_trial() noexcept override {}
 
@@ -287,6 +293,7 @@ private:
     UnknownId br_;
     core::VoltageSourceSpec spec_;
     std::optional<double> dc_override_;
+    double source_scale_{1.0};
     std::optional<SlotId> p_br_, n_br_, br_p_, br_n_;
 };
 
@@ -311,8 +318,9 @@ public:
 
     Diagnostic evaluate(const EvalContext& ctx, StampTarget& t) override {
         const bool is_tran = (ctx.mode == AnalysisMode::Transient);
-        const double isrc =
+        const double raw_isrc =
             dc_override_.has_value() && !is_tran ? *dc_override_ : core::source_value_at(spec_, ctx.time_s, is_tran);
+        const double isrc = source_scale_ * raw_isrc;
         if (!stamp_f_opt(t, p_, isrc) || !stamp_f_opt(t, n_, -isrc)) {
             return Diagnostic::error(StatusCode::NumericalFailure, "current source stamp failed");
         }
@@ -320,6 +328,7 @@ public:
     }
 
     void set_dc_override(std::optional<double> value) noexcept override { dc_override_ = value; }
+    void set_source_scale(double scale) noexcept override { source_scale_ = scale; }
     void commit_trial() noexcept override {}
     void rollback_trial() noexcept override {}
 
@@ -328,6 +337,7 @@ private:
     std::optional<UnknownId> p_, n_;
     core::CurrentSourceSpec spec_;
     std::optional<double> dc_override_;
+    double source_scale_{1.0};
 };
 
 /* 6. VCCS: current p -> n equals gm * (v_cp - v_cn) */
@@ -564,6 +574,266 @@ private:
     std::optional<SlotId> p_br_, n_br_, br_p_, br_n_, br_ctrl_;
 };
 
+/* 10. Mutual Inductance K: Q_br1 -= M * i_2, Q_br2 -= M * i_1, where M = k * sqrt(L1 * L2). */
+class MutualInductanceDevice final : public Device {
+public:
+    MutualInductanceDevice(UnknownId br1, UnknownId br2, double mutual_henries)
+        : br1_(br1), br2_(br2), m_(mutual_henries) {
+        desc_.kind_id = "spice.mutual_inductance";
+        desc_.display_name = "Mutual Inductance";
+    }
+
+    static void record_stencil(CoordList& coords, UnknownId br1, UnknownId br2) {
+        coords.emplace_back(br1.value, br2.value);
+        coords.emplace_back(br2.value, br1.value);
+    }
+
+    const DeviceDescriptor& descriptor() const noexcept override { return desc_; }
+
+    Diagnostic bind_slots(const CscPattern& pat) override {
+        if (!bind_optional(pat, br1_, br2_, s12_) || !bind_optional(pat, br2_, br1_, s21_)) {
+            return Diagnostic::error(StatusCode::InvalidArgument, "missing mutual inductance CSC slot");
+        }
+        return Diagnostic::success();
+    }
+
+    Diagnostic evaluate(const EvalContext& ctx, StampTarget& t) override {
+        const double i1 = ctx.x[br1_.value];
+        const double i2 = ctx.x[br2_.value];
+        if (!t.add_q(br1_, -m_ * i2) || !t.add_q(br2_, -m_ * i1) ||
+            !stamp_dq_opt(t, s12_, -m_) || !stamp_dq_opt(t, s21_, -m_)) {
+            return Diagnostic::error(StatusCode::NumericalFailure, "mutual inductance stamp failed");
+        }
+        return Diagnostic::success();
+    }
+
+    void commit_trial() noexcept override {}
+    void rollback_trial() noexcept override {}
+
+private:
+    DeviceDescriptor desc_;
+    UnknownId br1_, br2_;
+    double m_;
+    std::optional<SlotId> s12_, s21_;
+};
+
+/*
+ * 11. Nonlinear SPICE Diode: Shockley conduction + SPICE depletion & transit-time charge Q(V).
+ * Smooth linear continuation above exp_arg = 40 prevents numeric overflow during wild trial
+ * steps while preserving C1 continuity (identical I and dI/dV at the join).
+ */
+class DiodeDevice final : public Device {
+public:
+    DiodeDevice(std::optional<UnknownId> p, std::optional<UnknownId> n, core::DiodeSpec spec)
+        : p_(p), n_(n), spec_(std::move(spec)), nvt_(spec_.n_emission * spec_.vt_volts) {
+        desc_.kind_id = "spice.diode";
+        desc_.display_name = "SPICE Diode";
+        desc_.pins = {{"p", "anode"}, {"n", "cathode"}};
+    }
+
+    static void record_stencil(CoordList& coords, std::optional<UnknownId> p, std::optional<UnknownId> n) {
+        add_if_present(coords, p, p);
+        add_if_present(coords, p, n);
+        add_if_present(coords, n, p);
+        add_if_present(coords, n, n);
+    }
+
+    const DeviceDescriptor& descriptor() const noexcept override { return desc_; }
+
+    Diagnostic bind_slots(const CscPattern& pat) override {
+        if (!bind_optional(pat, p_, p_, pp_) || !bind_optional(pat, p_, n_, pn_) ||
+            !bind_optional(pat, n_, p_, np_) || !bind_optional(pat, n_, n_, nn_)) {
+            return Diagnostic::error(StatusCode::InvalidArgument, "missing diode CSC slot");
+        }
+        return Diagnostic::success();
+    }
+
+    Diagnostic evaluate(const EvalContext& ctx, StampTarget& t) override {
+        const double vd = node_voltage(ctx.x, p_) - node_voltage(ctx.x, n_);
+        if (!std::isfinite(vd)) {
+            return Diagnostic::error(StatusCode::NumericalFailure, "nonfinite diode voltage");
+        }
+        const double arg = vd / nvt_;
+        double id_shockley = 0.0;
+        double gd_shockley = 0.0;
+        constexpr double kExpMaxArg = 40.0;
+        if (arg <= kExpMaxArg) {
+            const double ev = std::exp(arg);
+            id_shockley = spec_.is_amps * std::expm1(arg);
+            gd_shockley = (spec_.is_amps * ev) / nvt_;
+        } else {
+            const double ev = std::exp(kExpMaxArg);
+            const double v_lim = kExpMaxArg * nvt_;
+            gd_shockley = (spec_.is_amps * ev) / nvt_;
+            id_shockley = spec_.is_amps * std::expm1(kExpMaxArg) + gd_shockley * (vd - v_lim);
+        }
+
+        const double i_total = id_shockley + spec_.gmin_siemens * vd;
+        const double g_total = gd_shockley + spec_.gmin_siemens;
+
+        /* Transit charge Q_tt = tt * I_shockley + SPICE depletion charge Q_dep (fc = 0.5). */
+        double q_total = spec_.tt_s * id_shockley;
+        double c_total = spec_.tt_s * gd_shockley;
+
+        if (spec_.cjo_farads > 0.0) {
+            constexpr double fc = 0.5;
+            const double fcpb = fc * spec_.vj_volts;
+            const double one_m_m = 1.0 - spec_.m_grading;
+            if (vd < fcpb) {
+                const double s = 1.0 - vd / spec_.vj_volts;
+                const double s_pow = std::pow(s, -spec_.m_grading);
+                c_total += spec_.cjo_farads * s_pow;
+                q_total += spec_.cjo_farads * spec_.vj_volts * (1.0 - std::pow(s, one_m_m)) / one_m_m;
+            } else {
+                const double f1 = spec_.vj_volts * (1.0 - std::pow(1.0 - fc, one_m_m)) / one_m_m;
+                const double f2 = std::pow(1.0 - fc, 1.0 + spec_.m_grading);
+                const double f3 = 1.0 - fc * (1.0 + spec_.m_grading);
+                const double dv = vd - fcpb;
+                c_total += (spec_.cjo_farads / f2) * (f3 + (spec_.m_grading * vd) / spec_.vj_volts);
+                q_total += spec_.cjo_farads * f1 +
+                           (spec_.cjo_farads / f2) *
+                               (f3 * dv + (spec_.m_grading / (2.0 * spec_.vj_volts)) *
+                                              (vd * vd - fcpb * fcpb));
+            }
+        }
+
+        if (!stamp_f_opt(t, p_, i_total) || !stamp_f_opt(t, n_, -i_total) ||
+            !stamp_q_opt(t, p_, q_total) || !stamp_q_opt(t, n_, -q_total) ||
+            !stamp_df_opt(t, pp_, g_total) || !stamp_df_opt(t, pn_, -g_total) ||
+            !stamp_df_opt(t, np_, -g_total) || !stamp_df_opt(t, nn_, g_total) ||
+            !stamp_dq_opt(t, pp_, c_total) || !stamp_dq_opt(t, pn_, -c_total) ||
+            !stamp_dq_opt(t, np_, -c_total) || !stamp_dq_opt(t, nn_, c_total)) {
+            return Diagnostic::error(StatusCode::NumericalFailure, "diode stamp failed");
+        }
+        return Diagnostic::success();
+    }
+
+    void commit_trial() noexcept override {}
+    void rollback_trial() noexcept override {}
+
+private:
+    DeviceDescriptor desc_;
+    std::optional<UnknownId> p_, n_;
+    core::DiodeSpec spec_;
+    double nvt_;
+    std::optional<SlotId> pp_, pn_, np_, nn_;
+};
+
+/*
+ * 12. Compiled Behavioral Source (B_i / B_v) using exact forward-mode autodiff.
+ * - Current mode: F_p = +expr(x, t), F_n = -expr(x, t)
+ * - Voltage mode: KCL F_p = +i_B, F_n = -i_B; Branch F_br = (v_p - v_n) - expr(x, t) = 0
+ */
+class BehavioralSourceDevice final : public Device {
+public:
+    BehavioralSourceDevice(
+        std::optional<UnknownId> p,
+        std::optional<UnknownId> n,
+        std::optional<UnknownId> br,
+        bool is_voltage,
+        CompiledExpr expr)
+        : p_(p), n_(n), br_(br), is_voltage_(is_voltage), expr_(std::move(expr)) {
+        desc_.kind_id = is_voltage ? "spice.bsrc_v" : "spice.bsrc_i";
+        desc_.display_name = is_voltage ? "Behavioral Voltage Source" : "Behavioral Current Source";
+        desc_.pins = {{"p", "positive"}, {"n", "negative"}};
+    }
+
+    static void record_stencil(
+        CoordList& coords,
+        std::optional<UnknownId> p,
+        std::optional<UnknownId> n,
+        std::optional<UnknownId> br,
+        bool is_voltage,
+        const CompiledExpr& expr) {
+        if (is_voltage) {
+            add_if_present(coords, p, br);
+            add_if_present(coords, n, br);
+            add_if_present(coords, br, p);
+            add_if_present(coords, br, n);
+            for (UnknownId u : expr.referenced_unknowns()) {
+                add_if_present(coords, br, u);
+            }
+        } else {
+            for (UnknownId u : expr.referenced_unknowns()) {
+                add_if_present(coords, p, u);
+                add_if_present(coords, n, u);
+            }
+        }
+    }
+
+    const DeviceDescriptor& descriptor() const noexcept override { return desc_; }
+
+    Diagnostic bind_slots(const CscPattern& pat) override {
+        const auto& refs = expr_.referenced_unknowns();
+        if (is_voltage_) {
+            if (!bind_optional(pat, p_, br_, p_br_) || !bind_optional(pat, n_, br_, n_br_) ||
+                !bind_optional(pat, br_, p_, br_p_) || !bind_optional(pat, br_, n_, br_n_)) {
+                return Diagnostic::error(StatusCode::InvalidArgument, "missing B_v CSC slot");
+            }
+            br_ref_slots_.resize(refs.size());
+            for (std::size_t k = 0; k < refs.size(); ++k) {
+                if (!bind_optional(pat, br_, refs[k], br_ref_slots_[k])) {
+                    return Diagnostic::error(StatusCode::InvalidArgument, "missing B_v derivative CSC slot");
+                }
+            }
+        } else {
+            p_ref_slots_.resize(refs.size());
+            n_ref_slots_.resize(refs.size());
+            for (std::size_t k = 0; k < refs.size(); ++k) {
+                if (!bind_optional(pat, p_, refs[k], p_ref_slots_[k]) ||
+                    !bind_optional(pat, n_, refs[k], n_ref_slots_[k])) {
+                    return Diagnostic::error(StatusCode::InvalidArgument, "missing B_i derivative CSC slot");
+                }
+            }
+        }
+        return Diagnostic::success();
+    }
+
+    Diagnostic evaluate(const EvalContext& ctx, StampTarget& t) override {
+        ExprEvalResult eval{};
+        if (auto d = expr_.evaluate(ctx.x, ctx.time_s, eval); !d.ok()) return d;
+
+        if (is_voltage_) {
+            const double i_b = ctx.x[br_->value];
+            const double f_br = (node_voltage(ctx.x, p_) - node_voltage(ctx.x, n_)) - eval.value;
+            if (!stamp_f_opt(t, p_, i_b) || !stamp_f_opt(t, n_, -i_b) || !t.add_f(*br_, f_br) ||
+                !stamp_df_opt(t, p_br_, 1.0) || !stamp_df_opt(t, n_br_, -1.0) ||
+                !stamp_df_opt(t, br_p_, 1.0) || !stamp_df_opt(t, br_n_, -1.0)) {
+                return Diagnostic::error(StatusCode::NumericalFailure, "B_v stamp failed");
+            }
+            for (std::size_t k = 0; k < eval.partials.size(); ++k) {
+                if (!stamp_df_opt(t, br_ref_slots_[k], -eval.partials[k])) {
+                    return Diagnostic::error(StatusCode::NumericalFailure, "B_v Jacobian stamp failed");
+                }
+            }
+        } else {
+            if (!stamp_f_opt(t, p_, eval.value) || !stamp_f_opt(t, n_, -eval.value)) {
+                return Diagnostic::error(StatusCode::NumericalFailure, "B_i residual stamp failed");
+            }
+            for (std::size_t k = 0; k < eval.partials.size(); ++k) {
+                if (!stamp_df_opt(t, p_ref_slots_[k], eval.partials[k]) ||
+                    !stamp_df_opt(t, n_ref_slots_[k], -eval.partials[k])) {
+                    return Diagnostic::error(StatusCode::NumericalFailure, "B_i Jacobian stamp failed");
+                }
+            }
+        }
+        return Diagnostic::success();
+    }
+
+    void commit_trial() noexcept override {}
+    void rollback_trial() noexcept override {}
+
+private:
+    DeviceDescriptor desc_;
+    std::optional<UnknownId> p_, n_, br_;
+    bool is_voltage_;
+    CompiledExpr expr_;
+    std::optional<SlotId> p_br_, n_br_, br_p_, br_n_;
+    std::vector<std::optional<SlotId>> br_ref_slots_;
+    std::vector<std::optional<SlotId>> p_ref_slots_;
+    std::vector<std::optional<SlotId>> n_ref_slots_;
+};
+
 CscPattern build_csc_pattern(std::uint32_t dim, CoordList& coords) {
     /* Sort by (col, row) and deduplicate to form canonical CSC structure. */
     std::sort(coords.begin(), coords.end(), [](const auto& a, const auto& b) {
@@ -602,12 +872,10 @@ void CompiledPlan::fill_ac_rhs(std::span<std::complex<double>> rhs) const noexce
     std::fill(rhs.begin(), rhs.end(), std::complex<double>{0.0, 0.0});
     for (const auto& elem : circuit.elements) {
         if (const auto* v = std::get_if<core::VoltageSourceSpec>(&elem)) {
-            /* Branch equation: (v_p - v_n) = V_ac -> rhs[br] = +V_ac */
             if (const auto it = branch_unknowns.find(v->id); it != branch_unknowns.end()) {
                 rhs[it->second.value] += v->ac_phasor;
             }
         } else if (const auto* i = std::get_if<core::CurrentSourceSpec>(&elem)) {
-            /* KCL: G*x + I_ac = 0 -> G*x = -I_ac at node p, +I_ac at node n */
             if (auto p = node_unknown(i->p)) rhs[p->value] -= i->ac_phasor;
             if (auto n = node_unknown(i->n)) rhs[n->value] += i->ac_phasor;
         }
@@ -654,6 +922,14 @@ Diagnostic CompiledPlan::set_dc_source_override(
     return Diagnostic::success();
 }
 
+void CompiledPlan::set_source_scale(double scale) noexcept {
+    for (const auto& [_, idx] : source_device_indices) {
+        if (auto* src = dynamic_cast<OverridableSourceDevice*>(devices[idx].get())) {
+            src->set_source_scale(scale);
+        }
+    }
+}
+
 void CompiledPlan::commit_all_trials() noexcept {
     for (auto& dev : devices) dev->commit_trial();
 }
@@ -671,17 +947,67 @@ Diagnostic compile_circuit(
     CompiledPlan plan{};
     plan.circuit = circuit;
 
-    /* 1. Assign non-ground node voltage unknowns. */
+    /* 1. Assign non-ground circuit node voltage unknowns. */
+    std::unordered_map<std::string, std::int32_t> node_name_to_unknown;
+    node_name_to_unknown.emplace("0", -1);
     for (std::size_t i = 1; i < circuit.nodes.size(); ++i) {
+        node_name_to_unknown.emplace(circuit.nodes[i], static_cast<std::int32_t>(i - 1u));
         plan.signals.push_back(core::SignalDescriptor{"v(" + circuit.nodes[i] + ")", "voltage", "V"});
     }
 
-    /* 2. Assign branch current unknowns for V, L, E, H. */
+    /* 1b. Preload OSDI libraries and allocate any internal OSDI node unknowns right after
+     *     external circuit nodes so all node voltages occupy [0 .. node_unknown_count - 1]. */
+    std::unordered_map<std::string, std::shared_ptr<osdi::OsdiLibrary>> loaded_libs;
+    std::unordered_map<std::string, std::vector<UnknownId>> osdi_internal_nodes;
+    std::unordered_map<std::string, double> inductor_henries;
+
     for (const auto& elem : circuit.elements) {
-        if (std::holds_alternative<core::VoltageSourceSpec>(elem) ||
-            std::holds_alternative<core::InductorSpec>(elem) ||
-            std::holds_alternative<core::VcvsSpec>(elem) ||
-            std::holds_alternative<core::CcvsSpec>(elem)) {
+        if (const auto* l = std::get_if<core::InductorSpec>(&elem)) {
+            inductor_henries.emplace(l->id, l->henries);
+        } else if (const auto* o = std::get_if<core::OsdiInstanceSpec>(&elem)) {
+            plan.has_nonlinear = true;
+            plan.has_osdi = true;
+            auto it = loaded_libs.find(o->library_path);
+            if (it == loaded_libs.end()) {
+                std::shared_ptr<osdi::OsdiLibrary> lib;
+                if (auto d = osdi::OsdiLibrary::load(o->library_path, lib); !d.ok()) return d;
+                it = loaded_libs.emplace(o->library_path, std::move(lib)).first;
+            }
+            std::uint32_t n_terms = 0, n_int = 0;
+            if (auto d = osdi::query_osdi_model_topology(*it->second, o->model_name, n_terms, n_int);
+                !d.ok()) {
+                return d;
+            }
+            if (o->terminals.size() != n_terms) {
+                return Diagnostic::error(
+                    StatusCode::InvalidArgument, "OSDI terminal count mismatch", o->id);
+            }
+            std::vector<UnknownId> internals;
+            internals.reserve(n_int);
+            for (std::uint32_t k = 0; k < n_int; ++k) {
+                const auto u = UnknownId{static_cast<std::uint32_t>(plan.signals.size())};
+                internals.push_back(u);
+                plan.signals.push_back(core::SignalDescriptor{
+                    "v(" + o->id + ":int" + std::to_string(k) + ")", "voltage", "V"});
+            }
+            osdi_internal_nodes.emplace(o->id, std::move(internals));
+        } else if (std::holds_alternative<core::DiodeSpec>(elem) ||
+                   std::holds_alternative<core::BehavioralSourceSpec>(elem)) {
+            plan.has_nonlinear = true;
+        }
+    }
+    plan.node_unknown_count = plan.signals.size();
+
+    /* 2. Assign branch current unknowns for V, L, E, H, and voltage behavioral sources B_v. */
+    for (const auto& elem : circuit.elements) {
+        bool has_branch = std::holds_alternative<core::VoltageSourceSpec>(elem) ||
+                          std::holds_alternative<core::InductorSpec>(elem) ||
+                          std::holds_alternative<core::VcvsSpec>(elem) ||
+                          std::holds_alternative<core::CcvsSpec>(elem);
+        if (const auto* b = std::get_if<core::BehavioralSourceSpec>(&elem); b != nullptr && b->is_voltage) {
+            has_branch = true;
+        }
+        if (has_branch) {
             const auto& id = core::element_id(elem);
             const auto br = UnknownId{static_cast<std::uint32_t>(plan.signals.size())};
             plan.branch_unknowns.emplace(id, br);
@@ -690,8 +1016,32 @@ Diagnostic compile_circuit(
     }
 
     const auto dim = static_cast<std::uint32_t>(plan.signals.size());
+    if (dim > max_unknowns) {
+        return Diagnostic::error(StatusCode::ResourceExhausted, "compiled unknowns exceed caller budget");
+    }
+
     CoordList coords;
-    coords.reserve(circuit.elements.size() * 6u);
+    coords.reserve(circuit.elements.size() * 6u + (plan.has_nonlinear ? plan.node_unknown_count : 0u));
+
+    /* Reserve node diagonals when nonlinear so Gmin continuation stamps in O(N) without rebuilding CSC. */
+    if (plan.has_nonlinear) {
+        for (std::size_t u = 0; u < plan.node_unknown_count; ++u) {
+            coords.emplace_back(static_cast<std::uint32_t>(u), static_cast<std::uint32_t>(u));
+        }
+    }
+
+    auto resolve_node = [&](const std::string& name, std::int32_t& out_u) -> bool {
+        const auto it = node_name_to_unknown.find(name);
+        if (it == node_name_to_unknown.end()) return false;
+        out_u = it->second;
+        return true;
+    };
+    auto resolve_branch = [&](const std::string& name, std::uint32_t& out_u) -> bool {
+        const auto it = plan.branch_unknowns.find(name);
+        if (it == plan.branch_unknowns.end()) return false;
+        out_u = it->second.value;
+        return true;
+    };
 
     /* 3. Instantiate DAE devices and collect sparse stencils. */
     for (const auto& elem : circuit.elements) {
@@ -751,11 +1101,70 @@ Diagnostic compile_circuit(
             auto ctrl = plan.branch_unknowns.at(h->control_source_id);
             CcvsDevice::record_stencil(coords, p, n, br, ctrl);
             plan.devices.push_back(std::make_unique<CcvsDevice>(p, n, br, ctrl, h->ohms));
+        } else if (const auto* k = std::get_if<core::MutualInductanceSpec>(&elem)) {
+            const double m_val =
+                k->coupling_k * std::sqrt(inductor_henries.at(k->inductor1_id) * inductor_henries.at(k->inductor2_id));
+            const auto br1 = plan.branch_unknowns.at(k->inductor1_id);
+            const auto br2 = plan.branch_unknowns.at(k->inductor2_id);
+            MutualInductanceDevice::record_stencil(coords, br1, br2);
+            plan.devices.push_back(std::make_unique<MutualInductanceDevice>(br1, br2, m_val));
+        } else if (const auto* d_spec = std::get_if<core::DiodeSpec>(&elem)) {
+            auto p = CompiledPlan::node_unknown(d_spec->p);
+            auto n = CompiledPlan::node_unknown(d_spec->n);
+            DiodeDevice::record_stencil(coords, p, n);
+            plan.devices.push_back(std::make_unique<DiodeDevice>(p, n, *d_spec));
+        } else if (const auto* b = std::get_if<core::BehavioralSourceSpec>(&elem)) {
+            CompiledExpr expr{};
+            if (auto d = CompiledExpr::compile(b->expression, resolve_node, resolve_branch, expr);
+                !d.ok()) {
+                return d;
+            }
+            auto p = CompiledPlan::node_unknown(b->p);
+            auto n = CompiledPlan::node_unknown(b->n);
+            std::optional<UnknownId> br;
+            if (b->is_voltage) br = plan.branch_unknowns.at(b->id);
+            BehavioralSourceDevice::record_stencil(coords, p, n, br, b->is_voltage, expr);
+            plan.devices.push_back(
+                std::make_unique<BehavioralSourceDevice>(p, n, br, b->is_voltage, std::move(expr)));
+        } else if (const auto* o = std::get_if<core::OsdiInstanceSpec>(&elem)) {
+            const auto& lib = loaded_libs.at(o->library_path);
+            std::vector<std::optional<UnknownId>> term_unks;
+            term_unks.reserve(o->terminals.size());
+            for (NodeId nid : o->terminals) term_unks.push_back(CompiledPlan::node_unknown(nid));
+
+            const auto& int_unks = osdi_internal_nodes.at(o->id);
+            std::vector<std::optional<UnknownId>> all_unks = term_unks;
+            for (UnknownId u : int_unks) all_unks.push_back(u);
+
+            if (auto d = osdi::collect_osdi_stencil(*lib, o->model_name, all_unks, coords); !d.ok()) {
+                return d;
+            }
+            osdi::OsdiDeviceConfig cfg{};
+            cfg.instance_id = o->id;
+            cfg.library = lib;
+            cfg.model_name = o->model_name;
+            cfg.terminal_unknowns = std::move(term_unks);
+            cfg.internal_unknowns = int_unks;
+            cfg.model_params = o->model_params;
+            cfg.instance_params = o->instance_params;
+
+            std::unique_ptr<Device> dev;
+            if (auto d = osdi::create_osdi_device(cfg, dev); !d.ok()) return d;
+            plan.devices.push_back(std::move(dev));
         }
     }
 
     plan.pattern = build_csc_pattern(dim, coords);
     if (auto d = plan.pattern.validate(max_unknowns); !d.ok()) return d;
+
+    /* Pre-bind node diagonal slots for O(N) Gmin continuation. */
+    plan.node_diag_slots.resize(plan.node_unknown_count);
+    for (std::size_t u = 0; u < plan.node_unknown_count; ++u) {
+        SlotId slot{};
+        if (plan.pattern.find_slot(static_cast<std::uint32_t>(u), static_cast<std::uint32_t>(u), slot)) {
+            plan.node_diag_slots[u] = slot;
+        }
+    }
 
     /* 4. Pre-bind every DAE device to exact CSC slots once. */
     for (auto& dev : plan.devices) {

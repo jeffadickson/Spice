@@ -61,16 +61,44 @@ if(KLU_FOUND)
     endif()
 endif()
 
-# 4. Built-in linear DAE devices and CSC pre-binding compiler.
+# 4. Generic OSDI 0.3/0.4 dynamic model loader (ARCH-MOD-001, ARCH-MOD-002).
+add_library(spice_osdi STATIC
+    cpp/osdi/osdi_loader.cpp
+)
+target_include_directories(spice_osdi PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cpp>
+)
+target_link_libraries(spice_osdi
+    PUBLIC spice_core spice_dae
+    PRIVATE ${CMAKE_DL_LIBS} spice_v2_warnings
+)
+
+# 5. Built-in linear/nonlinear DAE devices, compiled B-source VM, and CSC pre-binding compiler.
 add_library(spice_devices STATIC
+    cpp/devices/expr_vm.cpp
     cpp/devices/linear_devices.cpp
 )
 target_include_directories(spice_devices PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cpp>
 )
-target_link_libraries(spice_devices PUBLIC spice_core spice_dae PRIVATE spice_v2_warnings)
+target_link_libraries(spice_devices
+    PUBLIC spice_core spice_dae spice_osdi
+    PRIVATE spice_v2_warnings
+)
 
-# 5. Independent physical consistency audits (AUDIT-001 .. AUDIT-005).
+# 6. Dimensioned Newton & continuation controller (ARCH-EQ-002).
+add_library(spice_solver STATIC
+    cpp/solver/newton.cpp
+)
+target_include_directories(spice_solver PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cpp>
+)
+target_link_libraries(spice_solver
+    PUBLIC spice_devices spice_linalg
+    PRIVATE spice_v2_warnings
+)
+
+# 7. Independent physical consistency audits (AUDIT-001 .. AUDIT-005).
 add_library(spice_audit STATIC
     cpp/audit/physical_audit.cpp
 )
@@ -79,7 +107,7 @@ target_include_directories(spice_audit PUBLIC
 )
 target_link_libraries(spice_audit PUBLIC spice_devices PRIVATE spice_v2_warnings)
 
-# 6. Analyses: OP, DC sweep, AC, Transient (BE & Trapezoidal).
+# 8. Analyses: OP, DC sweep, AC, Transient (BE & Trapezoidal).
 add_library(spice_analysis STATIC
     cpp/analysis/analyses.cpp
 )
@@ -87,11 +115,11 @@ target_include_directories(spice_analysis PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cpp>
 )
 target_link_libraries(spice_analysis
-    PUBLIC spice_devices spice_linalg spice_audit
+    PUBLIC spice_devices spice_linalg spice_solver spice_audit
     PRIVATE spice_v2_warnings
 )
 
-# 7. Stable versioned flat C ABI shared library.
+# 9. Stable versioned flat C ABI shared library.
 add_library(spice_capi SHARED
     cpp/capi/capi.cpp
 )
@@ -105,6 +133,26 @@ target_link_libraries(spice_capi PRIVATE spice_analysis spice_v2_warnings)
 if(SPICE_V2_BUILD_TESTS)
     enable_testing()
     find_package(Catch2 3 QUIET)
+
+    # Real compiled OSDI 0.3 C test fixture shared libraries (positive + bad-ABI negative).
+    add_library(test_osdi_diode SHARED
+        tests/fixtures/test_osdi_diode.c
+    )
+    target_include_directories(test_osdi_diode PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+    )
+    target_link_libraries(test_osdi_diode PRIVATE spice_v2_warnings)
+    if(NOT WIN32)
+        target_link_libraries(test_osdi_diode PRIVATE m)
+    endif()
+
+    add_library(test_osdi_bad_abi SHARED
+        tests/fixtures/test_osdi_bad_abi.c
+    )
+    target_include_directories(test_osdi_bad_abi PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+    )
+    target_link_libraries(test_osdi_bad_abi PRIVATE spice_v2_warnings)
 
     add_executable(spice_v2_unit_tests
         tests/capi_and_dae_tests.cpp
@@ -143,4 +191,28 @@ if(SPICE_V2_BUILD_TESTS)
         target_compile_definitions(spice_v2_m2a_tests PRIVATE SPICE_V2_USE_CATCH2=1)
     endif()
     add_test(NAME spice_v2_m2a_tests COMMAND spice_v2_m2a_tests)
+
+    add_executable(spice_v2_m2b_tests
+        tests/m2b_nonlinear_osdi_tests.cpp
+    )
+    target_include_directories(spice_v2_m2b_tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+    target_compile_definitions(spice_v2_m2b_tests PRIVATE
+        SPICE_TEST_OSDI_DIODE_PATH="$<TARGET_FILE:test_osdi_diode>"
+        SPICE_TEST_OSDI_BAD_ABI_PATH="$<TARGET_FILE:test_osdi_bad_abi>"
+    )
+    target_link_libraries(spice_v2_m2b_tests PRIVATE
+        spice_analysis
+        spice_capi
+        spice_v2_warnings
+    )
+    add_dependencies(spice_v2_m2b_tests test_osdi_diode test_osdi_bad_abi)
+    if(Catch2_FOUND)
+        target_link_libraries(spice_v2_m2b_tests PRIVATE Catch2::Catch2WithMain)
+        target_compile_definitions(spice_v2_m2b_tests PRIVATE SPICE_V2_USE_CATCH2=1)
+    endif()
+    add_test(NAME spice_v2_m2b_tests COMMAND spice_v2_m2b_tests)
 endif()

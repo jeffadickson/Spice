@@ -110,8 +110,8 @@ Implement CSC sparse assembly with pre-bound device slots, SuiteSparse KLU share
 COMMENT: >>>
 Phase: M2
 Depends-on: PLAN-V2-001, PLAN-V2-002
-Deliverables: cpp/linalg (SparseLu + DenseLu + KLU adapter), cpp/devices (R/C/L/V/I/E/F/G/H + waveforms), cpp/analysis (OP/DC sweep/AC/TRAN BE & Trap + UIC + breakpoints), cpp/audit (DC/AC/TRAN physical audits), cpp/capi, NativeCppBackend in Spice.Sdk.
-Verification: GCC 12 and Clang 14 C++20 -Werror builds pass all unit, analytic, controlled-source, breakpoint, audit fault-injection, C ABI, and 1,000-node RC ladder (~28.5-29.8 ms compile+OP+50-pt AC+200-step TRAN) tests. Remaining to close M2a: coupled mutual inductor (K), vcpkg SuiteSparse KLU link test, dotnet build/test of NativeCppBackend, and head-to-head XyceBackend/ngspice SANDLER8/SANDLER9 comparison.
+Deliverables: cpp/linalg (SparseLu + DenseLu + KLU adapter), cpp/devices (R/C/L/K/V/I/E/F/G/H + waveforms), cpp/analysis (OP/DC sweep/AC/TRAN BE & Trap + UIC + breakpoints), cpp/audit (DC/AC/TRAN physical audits), cpp/capi, NativeCppBackend in Spice.Sdk.
+Verification: GCC 12 and Clang 14 C++20 -Werror builds pass all unit, analytic, mutual-inductance, controlled-source, breakpoint, audit fault-injection, C ABI, and 1,000-node RC ladder (~29 ms GCC) tests. Remaining to close M2a: vcpkg SuiteSparse KLU link test, dotnet build/test of NativeCppBackend, and head-to-head XyceBackend/ngspice SANDLER8/SANDLER9 comparison.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -123,7 +123,7 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: PLAN-V2-006
-STATUS: Proposed
+STATUS: InProgress
 TITLE: M2b - Nonlinear DAE solver, autodiff B-sources and generic OSDI 0.3/0.4 loader
 STATEMENT: >>>
 Implement dimensioned Newton with voltage limiting and source/Gmin continuation (mandatory final Gmin removal), adaptive BE/Trapezoidal/BDF2 integration with breakpoints, compiled B-source expression VM with dual-number autodiff, and one generic OSDI 0.3/0.4 dynamic loader running OpenVAF-compiled Diode, VBIC/BJT, BSIM3, BSIM4, JFET, and EKV models, plus the native canonical SPICE3f5 parser/elaborator.
@@ -131,8 +131,8 @@ Implement dimensioned Newton with voltage limiting and source/Gmin continuation 
 COMMENT: >>>
 Phase: M2
 Depends-on: PLAN-V2-005
-Deliverables: cpp/solver, cpp/devices (B-source VM, switches), cpp/osdi, cpp/parser (SPICE3f5), curated 50-deck Xyce/ngspice differential benchmark suite.
-Verification: NativeCppBackend runs transistor/op-amp/filter decks natively in-process faster than ngspice and matches XyceBackend/ngspice with passing physical audits.
+Deliverables: cpp/solver (dimensioned Newton + step limiting + Gmin/source continuation with mandatory gmin=0 final solve), cpp/devices (Shockley+charge Diode, MutualInductance K, compiled autodiff expr_vm B_v/B_i), cpp/osdi (generic OSDI 0.3/0.4 dlopen/LoadLibrary loader + OsdiDevice), tests/fixtures/test_osdi_{diode,bad_abi}.c, tests/m2b_nonlinear_osdi_tests.cpp.
+Verification: GCC 12 and Clang 14 -O3 -Werror builds pass all M2b tests (mutual inductance AC, compiled B-source autodiff vs finite-diff & nonlinear OP, SPICE diode OP+audit/DC sweep/AC capacitance/BE+Trap rectifier/50V continuation with final_gmin=0, and real dlopen OSDI 0.3 diode OP/AC/TRAN + 6 fail-closed negative tests). Remaining to close M2b: adaptive LTE transient step control + BDF2, native canonical SPICE3f5 parser/elaborator, and OpenVAF-compiled BSIM/VBIC/JFET/EKV .osdi differential qualification against Xyce/ngspice.
 <<<
 RELATIONS:
 - TYPE: Parent

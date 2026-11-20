@@ -26,6 +26,10 @@ struct CompiledPlan {
     std::vector<core::SignalDescriptor> signals;
     std::unordered_map<std::string, core::UnknownId> branch_unknowns;
     std::vector<std::unique_ptr<dae::Device>> devices;
+    std::size_t node_unknown_count{0};
+    bool has_nonlinear{false};
+    bool has_osdi{false};
+    std::vector<std::optional<core::SlotId>> node_diag_slots;
 
     [[nodiscard]] std::uint32_t unknown_count() const noexcept { return pattern.dimension; }
 
@@ -51,10 +55,13 @@ struct CompiledPlan {
         const std::string& source_id,
         std::optional<double> value);
 
+    /* Scale all independent sources temporarily during source-stepping continuation. */
+    void set_source_scale(double scale) noexcept;
+
     void commit_all_trials() noexcept;
     void rollback_all_trials() noexcept;
 
-    /* Indices into `devices` for independent sources (used by DC sweeps). */
+    /* Indices into `devices` for independent sources (used by DC sweeps and continuation). */
     std::unordered_map<std::string, std::size_t> source_device_indices;
 };
 

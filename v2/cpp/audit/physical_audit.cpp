@@ -164,6 +164,11 @@ AuditReport audit_dc(
             const double actual_v = node_v(x, h->p) - node_v(x, h->n);
             max_v_err = std::max(max_v_err, std::abs(actual_v - target_v));
             max_v_scale = std::max(max_v_scale, std::abs(actual_v) + std::abs(target_v));
+        } else if (const auto* d_spec = std::get_if<core::DiodeSpec>(&elem)) {
+            const double vd = node_v(x, d_spec->p) - node_v(x, d_spec->n);
+            const double nvt = d_spec->n_emission * d_spec->vt_volts;
+            const double id = d_spec->is_amps * std::expm1(vd / nvt) + d_spec->gmin_siemens * vd;
+            accum_branch(d_spec->p, d_spec->n, id);
         }
     }
 
