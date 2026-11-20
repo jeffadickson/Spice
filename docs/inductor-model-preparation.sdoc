@@ -1,0 +1,40 @@
+[DOCUMENT]
+TITLE: Requested linear inductor model preparation
+
+[REQUIREMENT]
+UID: FRONTEND-INDUCTOR-MODEL-001
+STATUS: Draft
+TITLE: Resolve one constant positive flux coefficient without dropping companions
+STATEMENT: >>>
+Requested preparation shall resolve a scalar or L model-backed inductor into the
+existing constant-inductance element. An explicit positional or named instance
+inductance overrides model IND. Model L is a marker, not a multiplier. Effective
+henries shall equal nominal inductance times
+(1 + TC1 * deltaC + TC2 * deltaC * deltaC) times SCALE divided by M, with M and
+SCALE positive and the final coefficient finite and positive. Instance TC1 and
+TC2 override model coefficients. Explicit TEMP overrides DTEMP; otherwise DTEMP
+is added to the circuit temperature. TNOM defaults to 27 Celsius. Temperatures
+shall be physically valid. Initial current shall retain its authored amperes
+without multiplicity scaling, and apply only under the existing UIC contract.
+Unknown, duplicate, ambiguous or unsupported fields shall refuse atomically.
+Geometry-derived, magnetic saturation and runtime-dependent inductance are not
+part of this contract. Strict legacy lowering shall retain its existing profile.
+<<<
+COMMENT: >>>
+Design reuses the generated complete StorageParameters metadata, lexical model
+lookup and ParameterEvaluator, following the existing capacitor adapter boundary.
+No parser, lexer, solver stamp or device kernel replacement is needed. RSpice
+29c28a022625fd7cc2c56ead1cce2d3066663074 passive/inductor.rs and storage/inductors.rs
+were inspected for the distinction between resolved parameters and companion
+history. Independent formula/precedence guidance: ngspice indtemp.c, indmpar.c,
+ind.c and indparam.c, retrieved from its primary repository on 2026-11-19;
+source and hashes retained in E:/Artifacts/Spice-next-fifty-20261119T233347Z.
+Ngspice treats model L as a marker; do not silently substitute Xyce's multiplier
+interpretation when comparing original inputs with default ngspice.
+Verification: InductorModelTests and docs/inductor-model-results.md. Authored
+OP/AC/transient fixture agrees with ngspice on LU and Intel. Final affected
+suite54 passed;64 FsCheck cases, seed2191,20261119. Focused Stryker23=19killed
+and four reviewed public-caller equivalences. Helper coverage54/54lines and
+96/112branches measured on the earlier20-test snapshot. Twelve originals still
+have explicit later blockers; zero newly agreeing originals at this checkpoint.
+<<<

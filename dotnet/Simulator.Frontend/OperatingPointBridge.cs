@@ -185,7 +185,7 @@ public static class OperatingPointBridge
                         elements.Add(new BehavioralResistor(wire,rp,rn,Node(resistance.Cp.Text),Node(resistance.Cn.Text),resistance.Expression));
                         origins.Add(new(wire,primitive.Name,path,primitive.Range));continue;
                     }
-                    double value;double? acOhms=null;var dcOpen=false;double magnitude=0,phase=0;SourceWaveformSyntax? waveformSyntax=null;ImmutableArray<double> waveformValues=[];
+                    double value;double? acOhms=null,inductorInitial=null;var dcOpen=false;double magnitude=0,phase=0;SourceWaveformSyntax? waveformSyntax=null;ImmutableArray<double> waveformValues=[];
                     if(selected&&primitive.Family is ("V" or "I")&&primitive.Excitation is {} excitation)
                     {
                         double initial=0;
@@ -205,6 +205,12 @@ public static class OperatingPointBridge
                         var storage=CapacitorModelLowering.Prepare(catalog,primitive,environment,limits.TemperatureCelsius);
                         if(storage.Error is {} error)throw new BridgeFailure(error.Code,error.Range);
                         value=storage.Farads!.Value;
+                    }
+                    else if(requested&&primitive.Family=="L"&&!primitive.StorageParameters.IsEmpty)
+                    {
+                        var storage=InductorModelLowering.Prepare(catalog,primitive,environment,limits.TemperatureCelsius);
+                        if(storage.Error is {} error)throw new BridgeFailure(error.Code,error.Range);
+                        value=storage.Henries!.Value;inductorInitial=storage.InitialAmps;
                     }
                     else if(selected&&primitive.Family=="R")
                     {
@@ -247,6 +253,7 @@ public static class OperatingPointBridge
                         if(initial.Value is not {} amps)throw new BridgeFailure(initial.Diagnostics[0].Code,initialCurrent.Range);
                         initialCurrents.Add(id,amps);
                     }
+                    else if(inductorInitial is {} amps)initialCurrents.Add(id,amps);
                     if(acOhms is {} acValue)acResistances.Add(id,acValue);
                     if(primitive.Family is "F" or "H")
                     {

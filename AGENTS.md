@@ -1,5 +1,7 @@
 # Project instructions
 
+- Stryker.NET mutate spans such as `File.cs{start..end}` use source character offsets, not line numbers. Derive offsets from the exact frozen source, retain its hash/configuration, and inspect the native report to confirm that the intended candidates were actually tested. A run with every candidate ignored or compile-invalid supplies no mutation score.
+
 - Keep Cargo mutation snapshots and normal qualification builds in separate mutable target directories. Restoring source text does not establish that a cached library/executable is unmutated. After an accidentally shared cache, invalidate the owned package with Cargo, rebuild, and run negative contracts against the final linked executable before collecting evidence. Retain failed/cache-contaminated attempts as unavailable source-correspondence evidence rather than passing qualification.
 
 - Before each separate targeted cargo-mutants invocation, invalidate the owned package in that replay target with `cargo clean --package circuit-simulator --profile mutants` (or the selected profile), even if the previous mutation command completed. A restored snapshot can leave the previous mutant's rlib reusable by a newly compiled integration target. Confirm the fresh unmutated baseline actually rebuilds the owned library and executes positive/negative contracts. Keep all replay targets separate from the active campaign and ordinary qualification targets.
