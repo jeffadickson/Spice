@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "authoritative_source": "v2/docs/requirements/implementation-plan.sdoc",
   "generated_date": "2026-11-20",
-  "implementation_status": "Slice 0 + M2a/M2b/M2c C++20 engine (25 tests on GCC 12 & Clang 14) + M1a-c .NET 11 platform & live libspice_capi bridge (5 xUnit tests) verified on branch v2",
+  "implementation_status": "Slice 0 + M2a/M2b/M2c + M3 RF (.HB/.PSS) C++20 engine (31 tests on GCC 12 & Clang 14) + M1a-c .NET 11 platform & live libspice_capi bridge (5 xUnit tests) verified on branch v2",
   "work_packages": [
     {
       "id": "PLAN-V2-001",
@@ -112,7 +112,7 @@
     {
       "id": "PLAN-V2-008",
       "title": "M3 - RF steady-state and periodic analyses over universal DAE",
-      "status": "Proposed",
+      "status": "InProgress",
       "phase": "M3",
       "depends_on": [
         "PLAN-V2-007"

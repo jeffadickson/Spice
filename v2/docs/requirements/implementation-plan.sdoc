@@ -154,8 +154,8 @@ Complete core analog RSpice parity in NativeCppBackend: .NOISE, .PZ, .TF, .SENS,
 COMMENT: >>>
 Phase: M2
 Depends-on: PLAN-V2-006
-Deliverables: cpp/analysis/m2c_analyses.{hpp,cpp} (.TF transfer gain/Rin/Rout, .NOISE adjoint Johnson-Nyquist thermal + diode shot noise PSD & integrated RMS, .SENS single-adjoint-solve DC sensitivity, .SP N-port S-parameters + Touchstone v1.1 .sNp export, .FOUR harmonics + THD%, .FFT Radix-2 spectral analysis, .MC deterministic seeded Monte Carlo), smooth voltage-controlled SwitchSpec/SwitchDevice (S element + .MODEL SW), tests/m2c_core_analog_tests.cpp.
-Verification: GCC 12 and Clang 14 -O3 -Werror builds pass all 5 CTest binaries (25 C++20 tests, 0.07 s) plus .NET 11.0.100 Release build & 5/5 xUnit tests against libspice_capi.so. Remaining to close M2c: .PZ, .STB, .DCMATCH, TRNOISE, transmission lines (T/LTRA/TXL/CPL), saturable core, dialect profiles (SPEF/Spectre), Arrow/HDF5/RAW/VCD exporters, and Xyce/ngspice differential qualification.
+Deliverables: cpp/analysis/m2c_analyses.{hpp,cpp} (.TF, .NOISE thermal+shot+kT/C, .SENS adjoint, .DCMATCH adjoint mismatch, .SP N-port + Touchstone v1.1, .STB Tian loop gain/PM/GM, .PZ shift-invert Francis-QR real/complex poles & zeros, .FOUR + THD%, .FFT Radix-2, .MC seeded Monte Carlo, SPICE3f5 RAW ASCII/binary & IEEE-1364 VCD exporters), SwitchSpec/SwitchDevice (S), ideal lossless TransmissionLineSpec/Device (T: Bergeron transient + exact quarter-wave AC/.SP), spice_v2_cli --raw/--vcd export, tests/m2c_core_analog_tests.cpp (11 tests).
+Verification: GCC 12 and Clang 14 -O3 -Werror builds pass all 6 CTest binaries (31 C++20 tests) plus .NET 11.0.100 5/5 xUnit tests against libspice_capi.so. Remaining to close M2c: TRNOISE, lossy/coupled transmission lines (LTRA/TXL/CPL), saturable core, SPEF/Spectre dialect profiles, Arrow/HDF5 exporters, and live Xyce/ngspice differential qualification.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -172,7 +172,7 @@ TITLE: 3. M3 RF steady-state and M4 mixed-signal / ecosystem
 
 [REQUIREMENT]
 UID: PLAN-V2-008
-STATUS: Proposed
+STATUS: InProgress
 TITLE: M3 - RF steady-state and periodic analyses over universal DAE
 STATEMENT: >>>
 Implement .DISTO (Volterra), .HB (Harmonic Balance), .ENVELOPE, .PSS (driven/autonomous shooting), .PAC, .PXF, .PNOISE (Floquet/PPV phase noise), .PSTB, and quasi-periodic .QPSS/.QPAC/.QPXF/.QPNOISE reusing the universal DAE and OSDI model interfaces.
@@ -180,8 +180,8 @@ Implement .DISTO (Volterra), .HB (Harmonic Balance), .ENVELOPE, .PSS (driven/aut
 COMMENT: >>>
 Phase: M3
 Depends-on: PLAN-V2-007
-Deliverables: cpp/analysis RF/periodic solvers and oscillator/mixer/PA qualification suite.
-Verification: Analytic and Xyce HB/shooting comparisons with fail-closed checks on devices lacking HB/noise metadata.
+Deliverables: cpp/analysis/rf_steady_state.{hpp,cpp} (.HB spectral collocation with exact analytical Fourier-Newton Jacobian and .PSS driven shooting with exact analytical monodromy tangent propagation + backtracking line search), tests/m3_rf_steady_state_tests.cpp.
+Verification: GCC 12 and Clang 14 -O3 -Werror builds verify .HB linear AC phasors (<1e-11), nonlinear diode .HB vs .PSS harmonic parity (<2 mV), slow-RC (tau=20T) peak detector shooting convergence, real dlopen OSDI 0.3 diode execution in both .HB and .PSS, and fail-closed Unsupported diagnostics on delay T-lines. Remaining to close M3: autonomous oscillator .PSS, .PAC/.PXF/.PNOISE/.PSTB, .DISTO, .ENVELOPE, quasi-periodic .QPSS, and Xyce HB differential checks.
 <<<
 RELATIONS:
 - TYPE: Parent
