@@ -834,6 +834,87 @@ private:
     std::vector<std::optional<SlotId>> n_ref_slots_;
 };
 
+class SwitchDevice final : public Device {
+public:
+    SwitchDevice(
+        std::optional<UnknownId> p,
+        std::optional<UnknownId> n,
+        std::optional<UnknownId> cp,
+        std::optional<UnknownId> cn,
+        const core::SwitchSpec& spec)
+        : p_(p),
+          n_(n),
+          cp_(cp),
+          cn_(cn),
+          vt_(spec.vt_volts),
+          vh_(spec.vh_volts),
+          ln_gon_(std::log(1.0 / spec.ron_ohms)),
+          ln_goff_(std::log(1.0 / spec.roff_ohms)) {
+        desc_.kind_id = "spice.switch";
+        desc_.display_name = "Voltage-Controlled Switch";
+        desc_.pins = {{"p", "passive"}, {"n", "passive"}, {"cp", "ctrl_pos"}, {"cn", "ctrl_neg"}};
+    }
+
+    static void record_stencil(
+        CoordList& coords,
+        std::optional<UnknownId> p,
+        std::optional<UnknownId> n,
+        std::optional<UnknownId> cp,
+        std::optional<UnknownId> cn) {
+        add_if_present(coords, p, p);
+        add_if_present(coords, p, n);
+        add_if_present(coords, n, p);
+        add_if_present(coords, n, n);
+        add_if_present(coords, p, cp);
+        add_if_present(coords, p, cn);
+        add_if_present(coords, n, cp);
+        add_if_present(coords, n, cn);
+    }
+
+    const DeviceDescriptor& descriptor() const noexcept override { return desc_; }
+
+    Diagnostic bind_slots(const CscPattern& pat) override {
+        if (!bind_optional(pat, p_, p_, pp_) || !bind_optional(pat, p_, n_, pn_) ||
+            !bind_optional(pat, n_, p_, np_) || !bind_optional(pat, n_, n_, nn_) ||
+            !bind_optional(pat, p_, cp_, pcp_) || !bind_optional(pat, p_, cn_, pcn_) ||
+            !bind_optional(pat, n_, cp_, ncp_) || !bind_optional(pat, n_, cn_, ncn_)) {
+            return Diagnostic::error(StatusCode::InvalidArgument, "missing switch CSC slot");
+        }
+        return Diagnostic::success();
+    }
+
+    Diagnostic evaluate(const EvalContext& ctx, StampTarget& t) override {
+        const double vd = node_voltage(ctx.x, p_) - node_voltage(ctx.x, n_);
+        const double vc = node_voltage(ctx.x, cp_) - node_voltage(ctx.x, cn_);
+        const double u = std::clamp((vc - vt_) / vh_, -30.0, 30.0);
+        const double th = std::tanh(u);
+        const double sigma = 0.5 * (1.0 + th);
+        const double dsigma_dvc = 0.5 * (1.0 - th * th) / vh_;
+        const double g = std::exp((1.0 - sigma) * ln_goff_ + sigma * ln_gon_);
+        const double i = g * vd;
+        const double dg_dvc = g * (ln_gon_ - ln_goff_) * dsigma_dvc;
+        const double di_dvc = vd * dg_dvc;
+
+        if (!stamp_f_opt(t, p_, i) || !stamp_f_opt(t, n_, -i) ||
+            !stamp_df_opt(t, pp_, g) || !stamp_df_opt(t, pn_, -g) ||
+            !stamp_df_opt(t, np_, -g) || !stamp_df_opt(t, nn_, g) ||
+            !stamp_df_opt(t, pcp_, di_dvc) || !stamp_df_opt(t, pcn_, -di_dvc) ||
+            !stamp_df_opt(t, ncp_, -di_dvc) || !stamp_df_opt(t, ncn_, di_dvc)) {
+            return Diagnostic::error(StatusCode::NumericalFailure, "switch stamp failed");
+        }
+        return Diagnostic::success();
+    }
+
+    void commit_trial() noexcept override {}
+    void rollback_trial() noexcept override {}
+
+private:
+    DeviceDescriptor desc_;
+    std::optional<UnknownId> p_, n_, cp_, cn_;
+    double vt_, vh_, ln_gon_, ln_goff_;
+    std::optional<SlotId> pp_, pn_, np_, nn_, pcp_, pcn_, ncp_, ncn_;
+};
+
 CscPattern build_csc_pattern(std::uint32_t dim, CoordList& coords) {
     /* Sort by (col, row) and deduplicate to form canonical CSC structure. */
     std::sort(coords.begin(), coords.end(), [](const auto& a, const auto& b) {
@@ -992,7 +1073,8 @@ Diagnostic compile_circuit(
             }
             osdi_internal_nodes.emplace(o->id, std::move(internals));
         } else if (std::holds_alternative<core::DiodeSpec>(elem) ||
-                   std::holds_alternative<core::BehavioralSourceSpec>(elem)) {
+                   std::holds_alternative<core::BehavioralSourceSpec>(elem) ||
+                   std::holds_alternative<core::SwitchSpec>(elem)) {
             plan.has_nonlinear = true;
         }
     }
@@ -1126,6 +1208,13 @@ Diagnostic compile_circuit(
             BehavioralSourceDevice::record_stencil(coords, p, n, br, b->is_voltage, expr);
             plan.devices.push_back(
                 std::make_unique<BehavioralSourceDevice>(p, n, br, b->is_voltage, std::move(expr)));
+        } else if (const auto* sw = std::get_if<core::SwitchSpec>(&elem)) {
+            auto p = CompiledPlan::node_unknown(sw->p);
+            auto n = CompiledPlan::node_unknown(sw->n);
+            auto cp = CompiledPlan::node_unknown(sw->cp);
+            auto cn = CompiledPlan::node_unknown(sw->cn);
+            SwitchDevice::record_stencil(coords, p, n, cp, cn);
+            plan.devices.push_back(std::make_unique<SwitchDevice>(p, n, cp, cn, *sw));
         } else if (const auto* o = std::get_if<core::OsdiInstanceSpec>(&elem)) {
             const auto& lib = loaded_libs.at(o->library_path);
             std::vector<std::optional<UnknownId>> term_unks;

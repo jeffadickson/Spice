@@ -146,7 +146,7 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: PLAN-V2-007
-STATUS: Proposed
+STATUS: InProgress
 TITLE: M2c - Full core analog analysis parity, dialects, formats and CLI contract
 STATEMENT: >>>
 Complete core analog RSpice parity in NativeCppBackend: .NOISE, .PZ, .TF, .SENS, .DCMATCH, .FOUR, .FFT, .MC, --corners, .SP (Touchstone), .STB, TRNOISE, checkpoint/resume, transmission lines (ideal/LTRA/TXL/CPL), saturable core, dialect profiles (ngspice/xyce/best, SPEF, Spectre subset), Arrow/HDF5/RAW/CSV/VCD exports, and the full CLI subcommand/exit-code contract.
@@ -154,8 +154,8 @@ Complete core analog RSpice parity in NativeCppBackend: .NOISE, .PZ, .TF, .SENS,
 COMMENT: >>>
 Phase: M2
 Depends-on: PLAN-V2-006
-Deliverables: cpp/analysis (complete core analog), cpp/parser (dialect/SPEF/Spectre), export writers, native CLI subcommands and exit-code tests.
-Verification: End-to-end differential verification against Xyce/ngspice and round-trip export/CLI contract suites.
+Deliverables: cpp/analysis/m2c_analyses.{hpp,cpp} (.TF transfer gain/Rin/Rout, .NOISE adjoint Johnson-Nyquist thermal + diode shot noise PSD & integrated RMS, .SENS single-adjoint-solve DC sensitivity, .SP N-port S-parameters + Touchstone v1.1 .sNp export, .FOUR harmonics + THD%, .FFT Radix-2 spectral analysis, .MC deterministic seeded Monte Carlo), smooth voltage-controlled SwitchSpec/SwitchDevice (S element + .MODEL SW), tests/m2c_core_analog_tests.cpp.
+Verification: GCC 12 and Clang 14 -O3 -Werror builds pass all 5 CTest binaries (25 C++20 tests, 0.07 s) plus .NET 11.0.100 Release build & 5/5 xUnit tests against libspice_capi.so. Remaining to close M2c: .PZ, .STB, .DCMATCH, TRNOISE, transmission lines (T/LTRA/TXL/CPL), saturable core, dialect profiles (SPEF/Spectre), Arrow/HDF5/RAW/VCD exporters, and Xyce/ngspice differential qualification.
 <<<
 RELATIONS:
 - TYPE: Parent

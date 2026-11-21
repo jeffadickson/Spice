@@ -107,9 +107,10 @@ target_include_directories(spice_audit PUBLIC
 )
 target_link_libraries(spice_audit PUBLIC spice_devices PRIVATE spice_v2_warnings)
 
-# 8. Analyses: OP, DC sweep, AC, Transient (BE & Trapezoidal).
+# 8. Analyses: OP, DC sweep, AC, Transient (BE/Trap/BDF2 + LTE), M2c (.TF/.NOISE/.SENS/.SP/.FOUR/.FFT/.MC).
 add_library(spice_analysis STATIC
     cpp/analysis/analyses.cpp
+    cpp/analysis/m2c_analyses.cpp
 )
 target_include_directories(spice_analysis PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cpp>
@@ -264,4 +265,23 @@ if(SPICE_V2_BUILD_TESTS)
         target_compile_definitions(spice_v2_m2b_parser_lte_tests PRIVATE SPICE_V2_USE_CATCH2=1)
     endif()
     add_test(NAME spice_v2_m2b_parser_lte_tests COMMAND spice_v2_m2b_parser_lte_tests)
+
+    add_executable(spice_v2_m2c_tests
+        tests/m2c_core_analog_tests.cpp
+    )
+    target_include_directories(spice_v2_m2c_tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+    target_link_libraries(spice_v2_m2c_tests PRIVATE
+        spice_parser
+        spice_analysis
+        spice_v2_warnings
+    )
+    if(Catch2_FOUND)
+        target_link_libraries(spice_v2_m2c_tests PRIVATE Catch2::Catch2WithMain)
+        target_compile_definitions(spice_v2_m2c_tests PRIVATE SPICE_V2_USE_CATCH2=1)
+    endif()
+    add_test(NAME spice_v2_m2c_tests COMMAND spice_v2_m2c_tests)
 endif()

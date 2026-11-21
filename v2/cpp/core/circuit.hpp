@@ -168,6 +168,19 @@ struct BehavioralSourceSpec {
     std::string expression;
 };
 
+/* Smooth C-infinity voltage-controlled switch (S element) with log-conductance tanh transition. */
+struct SwitchSpec {
+    std::string id;
+    NodeId p;
+    NodeId n;
+    NodeId cp;
+    NodeId cn;
+    double vt_volts{0.5};    /* Threshold control voltage */
+    double vh_volts{0.1};    /* Smooth transition half-width (> 0) */
+    double ron_ohms{1.0};    /* On-state resistance (> 0) */
+    double roff_ohms{1.0e9}; /* Off-state resistance (> 0) */
+};
+
 /* Dynamically loaded OSDI 0.3/0.4 compiled Verilog-A model instance (ARCH-MOD-001). */
 struct OsdiInstanceSpec {
     std::string id;
@@ -191,6 +204,7 @@ using ElementSpec = std::variant<
     MutualInductanceSpec,
     DiodeSpec,
     BehavioralSourceSpec,
+    SwitchSpec,
     OsdiInstanceSpec>;
 
 struct SignalDescriptor {

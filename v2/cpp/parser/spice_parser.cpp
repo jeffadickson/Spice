@@ -470,9 +470,10 @@ Diagnostic eval_value(
 }
 
 struct ModelDef {
-    enum class Kind { Diode, Osdi };
+    enum class Kind { Diode, Switch, Osdi };
     Kind kind{Kind::Diode};
     core::DiodeSpec diode_template{};
+    core::SwitchSpec switch_template{};
     std::string osdi_library_path;
     std::string osdi_model_name;
     std::vector<std::pair<std::string, double>> osdi_model_params;
@@ -796,6 +797,29 @@ Diagnostic parse_model_directive(
         return Diagnostic::success();
     }
 
+    if (type_low == "sw" || type_low == "vswitch") {
+        ModelDef def{};
+        def.kind = ModelDef::Kind::Switch;
+        for (const auto& kv : kv_tokens) {
+            const std::size_t eq = kv.find('=');
+            if (eq == std::string::npos) {
+                return line_err(line_no, StatusCode::InvalidArgument, "expected key=value in .MODEL SW");
+            }
+            const std::string k = to_lower(kv.substr(0, eq));
+            double v = 0.0;
+            if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
+            if (k == "vt") def.switch_template.vt_volts = v;
+            else if (k == "vh") def.switch_template.vh_volts = v;
+            else if (k == "ron") def.switch_template.ron_ohms = v;
+            else if (k == "roff") def.switch_template.roff_ohms = v;
+            else {
+                return line_err(line_no, StatusCode::InvalidArgument, "unsupported SW .MODEL parameter '" + k + "'");
+            }
+        }
+        state.models[model_name] = std::move(def);
+        return Diagnostic::success();
+    }
+
     if (type_low == "osdi") {
         ModelDef def{};
         def.kind = ModelDef::Kind::Osdi;
@@ -1053,6 +1077,22 @@ Diagnostic elaborate_element_line(
                 state.resolve_node(tokens[2], scope_prefix, port_map),
                 is_voltage,
                 std::move(rhs_expr)});
+            return Diagnostic::success();
+        }
+        case 'S': {
+            if (auto d = req_tokens(6u, "Voltage-controlled switch"); !d.ok()) return d;
+            const std::string mname = to_lower(tokens[5]);
+            const auto mit = state.models.find(mname);
+            if (mit == state.models.end() || mit->second.kind != ModelDef::Kind::Switch) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "unresolved switch .MODEL '" + tokens[5] + "'");
+            }
+            core::SwitchSpec spec = mit->second.switch_template;
+            spec.id = elem_id;
+            spec.p = state.resolve_node(tokens[1], scope_prefix, port_map);
+            spec.n = state.resolve_node(tokens[2], scope_prefix, port_map);
+            spec.cp = state.resolve_node(tokens[3], scope_prefix, port_map);
+            spec.cn = state.resolve_node(tokens[4], scope_prefix, port_map);
+            state.circuit.elements.push_back(std::move(spec));
             return Diagnostic::success();
         }
         case 'X': {

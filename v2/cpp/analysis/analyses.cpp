@@ -25,6 +25,7 @@ struct OverrideGuard {
 bool plan_supports_dc_audit(const devices::CompiledPlan& plan) noexcept {
     for (const auto& e : plan.circuit.elements) {
         if (std::holds_alternative<core::BehavioralSourceSpec>(e) ||
+            std::holds_alternative<core::SwitchSpec>(e) ||
             std::holds_alternative<core::OsdiInstanceSpec>(e)) {
             return false;
         }

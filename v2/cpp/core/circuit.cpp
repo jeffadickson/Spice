@@ -387,6 +387,20 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
                     }
                     return Diagnostic::success();
                 },
+                [&](const SwitchSpec& s) -> Diagnostic {
+                    if (auto x = check_node(s.p, s.id); !x.ok()) return x;
+                    if (auto x = check_node(s.n, s.id); !x.ok()) return x;
+                    if (auto x = check_node(s.cp, s.id); !x.ok()) return x;
+                    if (auto x = check_node(s.cn, s.id); !x.ok()) return x;
+                    if (s.p == s.n || !std::isfinite(s.vt_volts) ||
+                        !std::isfinite(s.vh_volts) || s.vh_volts <= 0.0 ||
+                        !std::isfinite(s.ron_ohms) || s.ron_ohms <= 0.0 ||
+                        !std::isfinite(s.roff_ohms) || s.roff_ohms <= 0.0) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid switch parameters or terminals", s.id);
+                    }
+                    return Diagnostic::success();
+                },
                 [&](const OsdiInstanceSpec& o) -> Diagnostic {
                     if (o.library_path.empty() || o.model_name.empty() || o.terminals.empty()) {
                         return Diagnostic::error(
