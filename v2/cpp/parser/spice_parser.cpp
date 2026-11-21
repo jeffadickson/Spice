@@ -5,6 +5,8 @@
 #include <cmath>
 #include <complex>
 #include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <limits>
 #include <numbers>
 #include <sstream>
@@ -470,10 +472,13 @@ Diagnostic eval_value(
 }
 
 struct ModelDef {
-    enum class Kind { Diode, Switch, Osdi };
+    enum class Kind { Diode, Switch, Mosfet, Bjt, Jfet, Osdi };
     Kind kind{Kind::Diode};
     core::DiodeSpec diode_template{};
     core::SwitchSpec switch_template{};
+    core::MosfetSpec mosfet_template{};
+    core::BjtSpec bjt_template{};
+    core::JfetSpec jfet_template{};
     std::string osdi_library_path;
     std::string osdi_model_name;
     std::vector<std::pair<std::string, double>> osdi_model_params;
@@ -489,13 +494,16 @@ struct SubcktDef {
 struct ElaboratorState {
     Circuit circuit;
     std::vector<AnalysisCommand> analyses;
+    std::vector<MeasCommand> measurements;
     DeckOptions options;
     ParamMap global_params;
+    std::unordered_set<std::string> global_nodes;
     std::unordered_map<std::string, ModelDef> models;
     std::unordered_map<std::string, SubcktDef> subckts;
     std::vector<std::string> registered_osdi_libs;
     ParseOptions parse_opts;
     std::vector<std::string> subckt_stack;
+    std::vector<std::string> include_stack;
 
     NodeId resolve_node(
         const std::string& raw_node,
@@ -503,6 +511,9 @@ struct ElaboratorState {
         const std::unordered_map<std::string, NodeId>& port_map) {
         const std::string low = to_lower(raw_node);
         if (low == "0" || low == "gnd") return NodeId{0};
+        if (global_nodes.find(low) != global_nodes.end()) {
+            return circuit.get_or_add_node(low);
+        }
         if (!port_map.empty()) {
             const auto it = port_map.find(low);
             if (it != port_map.end()) return it->second;
@@ -640,6 +651,35 @@ Diagnostic parse_waveform_spec(
         out_wf = std::move(pwl);
         return Diagnostic::success();
     }
+    if (wf_kind_low == "exp") {
+        if (vals.size() < 2u || vals.size() > 6u) {
+            return line_err(line_no, StatusCode::InvalidArgument, "EXP requires 2..6 parameters");
+        }
+        core::ExpWaveform e{};
+        e.v1 = vals[0];
+        e.v2 = vals[1];
+        if (vals.size() > 2u) e.td1_s = vals[2];
+        if (vals.size() > 3u) e.tau1_s = vals[3];
+        if (vals.size() > 4u) e.td2_s = vals[4];
+        else e.td2_s = e.td1_s + 10.0 * e.tau1_s;
+        if (vals.size() > 5u) e.tau2_s = vals[5];
+        else e.tau2_s = e.tau1_s;
+        out_wf = e;
+        return Diagnostic::success();
+    }
+    if (wf_kind_low == "sffm") {
+        if (vals.size() < 3u || vals.size() > 5u) {
+            return line_err(line_no, StatusCode::InvalidArgument, "SFFM requires 3..5 parameters");
+        }
+        core::SffmWaveform s{};
+        s.offset = vals[0];
+        s.amplitude = vals[1];
+        s.carrier_hz = vals[2];
+        if (vals.size() > 3u) s.mod_index = vals[3];
+        if (vals.size() > 4u) s.signal_hz = vals[4];
+        out_wf = s;
+        return Diagnostic::success();
+    }
     return line_err(line_no, StatusCode::Unsupported, "unsupported transient waveform '" + wf_kind_low + "'");
 }
 
@@ -691,10 +731,10 @@ Diagnostic parse_independent_source_tail(
             continue;
         }
 
-        /* Check waveform: PULSE(...), SIN(...), PWL(...) either attached or followed by (...) */
+        /* Check waveform: PULSE(...), SIN(...), PWL(...), EXP(...), SFFM(...) */
         const std::size_t lp = tok.find('(');
         std::string wf_name = (lp == std::string::npos) ? low : to_lower(tok.substr(0, lp));
-        if (wf_name == "pulse" || wf_name == "sin" || wf_name == "pwl") {
+        if (wf_name == "pulse" || wf_name == "sin" || wf_name == "pwl" || wf_name == "exp" || wf_name == "sffm") {
             std::string arg_str;
             if (lp != std::string::npos) {
                 if (tok.back() != ')') {
@@ -814,6 +854,171 @@ Diagnostic parse_model_directive(
             else if (k == "roff") def.switch_template.roff_ohms = v;
             else {
                 return line_err(line_no, StatusCode::InvalidArgument, "unsupported SW .MODEL parameter '" + k + "'");
+            }
+        }
+        state.models[model_name] = std::move(def);
+        return Diagnostic::success();
+    }
+
+    if (type_low == "nmos" || type_low == "pmos") {
+        ModelDef def{};
+        def.kind = ModelDef::Kind::Mosfet;
+        def.mosfet_template.is_pmos = (type_low == "pmos");
+        def.mosfet_template.vth0_volts = def.mosfet_template.is_pmos ? -0.7 : 0.7;
+        def.mosfet_template.u0_m2_per_vs = def.mosfet_template.is_pmos ? 0.015 : 0.045;
+        bool vth_explicit = false;
+        for (const auto& kv : kv_tokens) {
+            const std::size_t eq = kv.find('=');
+            if (eq == std::string::npos) {
+                return line_err(line_no, StatusCode::InvalidArgument, "expected key=value in .MODEL " + type_tok);
+            }
+            const std::string k = to_lower(kv.substr(0, eq));
+            double v = 0.0;
+            if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
+            if (k == "level") {
+                const int lvl = static_cast<int>(std::llround(v));
+                if (lvl != 1 && lvl != 49 && lvl != 54) {
+                    return line_err(
+                        line_no,
+                        StatusCode::Unsupported,
+                        "unsupported MOSFET LEVEL=" + std::to_string(lvl) +
+                            " in .MODEL '" + model_name +
+                            "' (supported native levels: 1, 49/BSIM3v3, 54/BSIM4; or use .OSDI)");
+                }
+                def.mosfet_template.level = lvl;
+            } else if (k == "vto" || k == "vth0") {
+                def.mosfet_template.vth0_volts = v;
+                vth_explicit = true;
+            } else if (k == "kp") {
+                def.mosfet_template.kp_a_per_v2 = v;
+            } else if (k == "gamma") {
+                def.mosfet_template.gamma_v12 = v;
+            } else if (k == "phi") {
+                def.mosfet_template.phi_volts = v;
+            } else if (k == "lambda") {
+                def.mosfet_template.lambda_per_v = v;
+            } else if (k == "tox" || k == "toxe") {
+                def.mosfet_template.tox_m = v;
+            } else if (k == "u0" || k == "uo") {
+                /* Standard SPICE BSIM/MOS decks specify U0 in cm^2/(V*s) (e.g. 450); accept SI <= 1.0 too. */
+                def.mosfet_template.u0_m2_per_vs = (v > 1.0) ? (v * 1.0e-4) : v;
+            } else if (k == "vsat") {
+                def.mosfet_template.vsat_m_per_s = v;
+            } else if (k == "k1") {
+                def.mosfet_template.k1_v12 = v;
+            } else if (k == "k2") {
+                def.mosfet_template.k2 = v;
+            } else if (k == "ua") {
+                def.mosfet_template.ua_m_per_v = v;
+            } else if (k == "ub") {
+                def.mosfet_template.ub_m2_per_v2 = v;
+            } else if (k == "uc") {
+                def.mosfet_template.uc_m_per_v2 = v;
+            } else if (k == "eta0") {
+                def.mosfet_template.eta0 = v;
+            } else if (k == "pclm") {
+                def.mosfet_template.pclm = v;
+            } else if (k == "voff") {
+                def.mosfet_template.voff_volts = v;
+            } else if (k == "nfactor") {
+                def.mosfet_template.nfactor = v;
+            } else if (k == "rdsw") {
+                def.mosfet_template.rdsw_ohm_um = v;
+            } else if (k == "delta") {
+                def.mosfet_template.delta_vds = v;
+            } else if (k == "cgso") {
+                def.mosfet_template.cgso_f_per_m = v;
+            } else if (k == "cgdo") {
+                def.mosfet_template.cgdo_f_per_m = v;
+            } else if (k == "cgbo") {
+                def.mosfet_template.cgbo_f_per_m = v;
+            } else if (k == "cbd") {
+                def.mosfet_template.cbd_farads = v;
+            } else if (k == "cbs") {
+                def.mosfet_template.cbs_farads = v;
+            } else if (k == "is" || k == "js") {
+                def.mosfet_template.js_amps = v;
+            } else if (k == "version") {
+                /* Accept BSIM3/BSIM4 version metadata stamp (e.g. VERSION=3.3 or 4.8). */
+            } else {
+                return line_err(
+                    line_no, StatusCode::InvalidArgument,
+                    "unsupported MOSFET .MODEL parameter '" + k + "'");
+            }
+        }
+        if (!vth_explicit && (def.mosfet_template.level == 49 || def.mosfet_template.level == 54)) {
+            def.mosfet_template.vth0_volts = def.mosfet_template.is_pmos ? -0.4 : 0.4;
+        }
+        state.models[model_name] = std::move(def);
+        return Diagnostic::success();
+    }
+
+    if (type_low == "npn" || type_low == "pnp") {
+        ModelDef def{};
+        def.kind = ModelDef::Kind::Bjt;
+        def.bjt_template.is_pnp = (type_low == "pnp");
+        for (const auto& kv : kv_tokens) {
+            const std::size_t eq = kv.find('=');
+            if (eq == std::string::npos) {
+                return line_err(line_no, StatusCode::InvalidArgument, "expected key=value in .MODEL " + type_tok);
+            }
+            const std::string k = to_lower(kv.substr(0, eq));
+            double v = 0.0;
+            if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
+            if (k == "is") def.bjt_template.is_amps = v;
+            else if (k == "bf") def.bjt_template.bf = v;
+            else if (k == "br") def.bjt_template.br = v;
+            else if (k == "nf") def.bjt_template.nf = v;
+            else if (k == "nr") def.bjt_template.nr = v;
+            else if (k == "vaf" || k == "va") def.bjt_template.vaf_volts = v;
+            else if (k == "var") def.bjt_template.var_volts = v;
+            else if (k == "ikf") def.bjt_template.ikf_amps = v;
+            else if (k == "ikr") def.bjt_template.ikr_amps = v;
+            else if (k == "ise") def.bjt_template.ise_amps = v;
+            else if (k == "ne") def.bjt_template.ne = v;
+            else if (k == "isc") def.bjt_template.isc_amps = v;
+            else if (k == "nc") def.bjt_template.nc = v;
+            else if (k == "cje") def.bjt_template.cje_farads = v;
+            else if (k == "vje") def.bjt_template.vje_volts = v;
+            else if (k == "mje") def.bjt_template.mje = v;
+            else if (k == "tf") def.bjt_template.tf_s = v;
+            else if (k == "cjc") def.bjt_template.cjc_farads = v;
+            else if (k == "vjc") def.bjt_template.vjc_volts = v;
+            else if (k == "mjc") def.bjt_template.mjc = v;
+            else if (k == "tr") def.bjt_template.tr_s = v;
+            else {
+                return line_err(
+                    line_no, StatusCode::InvalidArgument,
+                    "unsupported BJT .MODEL parameter '" + k + "'");
+            }
+        }
+        state.models[model_name] = std::move(def);
+        return Diagnostic::success();
+    }
+
+    if (type_low == "njf" || type_low == "pjf") {
+        ModelDef def{};
+        def.kind = ModelDef::Kind::Jfet;
+        def.jfet_template.is_pjf = (type_low == "pjf");
+        for (const auto& kv : kv_tokens) {
+            const std::size_t eq = kv.find('=');
+            if (eq == std::string::npos) {
+                return line_err(line_no, StatusCode::InvalidArgument, "expected key=value in .MODEL " + type_tok);
+            }
+            const std::string k = to_lower(kv.substr(0, eq));
+            double v = 0.0;
+            if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
+            if (k == "vto") def.jfet_template.vto_volts = v;
+            else if (k == "beta") def.jfet_template.beta_a_per_v2 = v;
+            else if (k == "lambda") def.jfet_template.lambda_per_v = v;
+            else if (k == "is") def.jfet_template.is_amps = v;
+            else if (k == "cgs") def.jfet_template.cgs_farads = v;
+            else if (k == "cgd") def.jfet_template.cgd_farads = v;
+            else if (k == "pb") def.jfet_template.pb_volts = v;
+            else {
+                return line_err(
+                    line_no, StatusCode::InvalidArgument,
+                    "unsupported JFET .MODEL parameter '" + k + "'");
             }
         }
         state.models[model_name] = std::move(def);
@@ -1128,6 +1333,173 @@ Diagnostic elaborate_element_line(
             state.circuit.elements.push_back(std::move(spec));
             return Diagnostic::success();
         }
+        case 'M': {
+            if (auto d = req_tokens(6u, "MOSFET"); !d.ok()) return d;
+            const std::string mname = to_lower(tokens[5]);
+            const auto mit = state.models.find(mname);
+            if (mit == state.models.end()) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "unresolved MOSFET .MODEL '" + tokens[5] + "'");
+            }
+            const auto nd = state.resolve_node(tokens[1], scope_prefix, port_map);
+            const auto ng = state.resolve_node(tokens[2], scope_prefix, port_map);
+            const auto ns = state.resolve_node(tokens[3], scope_prefix, port_map);
+            const auto nb = state.resolve_node(tokens[4], scope_prefix, port_map);
+
+            if (mit->second.kind == ModelDef::Kind::Osdi) {
+                core::OsdiInstanceSpec inst{};
+                inst.id = elem_id;
+                inst.library_path = mit->second.osdi_library_path;
+                inst.model_name = mit->second.osdi_model_name;
+                inst.model_params = mit->second.osdi_model_params;
+                inst.terminals = {nd, ng, ns, nb};
+                for (std::size_t i = 6u; i < tokens.size(); ++i) {
+                    const std::size_t eq = tokens[i].find('=');
+                    if (eq == std::string::npos) {
+                        return line_err(line.line_no, StatusCode::InvalidArgument, "expected key=value in M instance");
+                    }
+                    double v = 0.0;
+                    if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                    inst.instance_params.emplace_back(to_lower(tokens[i].substr(0, eq)), v);
+                }
+                state.circuit.elements.push_back(std::move(inst));
+                return Diagnostic::success();
+            }
+            if (mit->second.kind != ModelDef::Kind::Mosfet) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "model '" + tokens[5] + "' is not a MOSFET/OSDI model");
+            }
+            core::MosfetSpec spec = mit->second.mosfet_template;
+            spec.id = elem_id;
+            spec.d = nd;
+            spec.g = ng;
+            spec.s = ns;
+            spec.b = nb;
+            for (std::size_t i = 6u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq == std::string::npos) {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, "expected key=value in M instance");
+                }
+                const std::string k = to_lower(tokens[i].substr(0, eq));
+                double v = 0.0;
+                if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                if (k == "w") spec.w_m = v;
+                else if (k == "l") spec.l_m = v;
+                else if (k == "m" || k == "nf") spec.m_mult *= v;
+                else if (k == "ad" || k == "as" || k == "pd" || k == "ps" || k == "nrd" || k == "nrs") {
+                    /* Accept standard SPICE MOSFET diffusion geometry attributes. */
+                } else {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, "unsupported MOSFET instance parameter '" + k + "'");
+                }
+            }
+            state.circuit.elements.push_back(std::move(spec));
+            return Diagnostic::success();
+        }
+        case 'Q': {
+            if (auto d = req_tokens(5u, "BJT"); !d.ok()) return d;
+            /* Support both 3-terminal Q c b e model [area/kv...] and 4-terminal Q c b e ns model [...]. */
+            std::size_t model_idx = 4u;
+            if (tokens.size() >= 6u && state.models.find(to_lower(tokens[4])) == state.models.end() &&
+                state.models.find(to_lower(tokens[5])) != state.models.end()) {
+                model_idx = 5u;
+            }
+            const std::string mname = to_lower(tokens[model_idx]);
+            const auto mit = state.models.find(mname);
+            if (mit == state.models.end()) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "unresolved BJT .MODEL '" + tokens[model_idx] + "'");
+            }
+            const auto nc = state.resolve_node(tokens[1], scope_prefix, port_map);
+            const auto nb = state.resolve_node(tokens[2], scope_prefix, port_map);
+            const auto ne = state.resolve_node(tokens[3], scope_prefix, port_map);
+            if (mit->second.kind == ModelDef::Kind::Osdi) {
+                core::OsdiInstanceSpec inst{};
+                inst.id = elem_id;
+                inst.library_path = mit->second.osdi_library_path;
+                inst.model_name = mit->second.osdi_model_name;
+                inst.model_params = mit->second.osdi_model_params;
+                inst.terminals = {nc, nb, ne};
+                if (model_idx == 5u) inst.terminals.push_back(state.resolve_node(tokens[4], scope_prefix, port_map));
+                for (std::size_t i = model_idx + 1u; i < tokens.size(); ++i) {
+                    const std::size_t eq = tokens[i].find('=');
+                    if (eq == std::string::npos) {
+                        double area_v = 1.0;
+                        if (auto d = eval_value(line.line_no, tokens[i], params, area_v); !d.ok()) return d;
+                        inst.instance_params.emplace_back("area", area_v);
+                    } else {
+                        double v = 0.0;
+                        if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                        inst.instance_params.emplace_back(to_lower(tokens[i].substr(0, eq)), v);
+                    }
+                }
+                state.circuit.elements.push_back(std::move(inst));
+                return Diagnostic::success();
+            }
+            if (mit->second.kind != ModelDef::Kind::Bjt) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "model '" + tokens[model_idx] + "' is not a BJT/OSDI model");
+            }
+            core::BjtSpec spec = mit->second.bjt_template;
+            spec.id = elem_id;
+            spec.c = nc;
+            spec.b = nb;
+            spec.e = ne;
+            for (std::size_t i = model_idx + 1u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq == std::string::npos) {
+                    if (auto d = eval_value(line.line_no, tokens[i], params, spec.area); !d.ok()) return d;
+                } else {
+                    const std::string k = to_lower(tokens[i].substr(0, eq));
+                    double v = 0.0;
+                    if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                    if (k == "area") spec.area = v;
+                    else if (k == "m") spec.m_mult = v;
+                    else return line_err(line.line_no, StatusCode::InvalidArgument, "unsupported BJT instance parameter '" + k + "'");
+                }
+            }
+            state.circuit.elements.push_back(std::move(spec));
+            return Diagnostic::success();
+        }
+        case 'J': {
+            if (auto d = req_tokens(5u, "JFET"); !d.ok()) return d;
+            const std::string mname = to_lower(tokens[4]);
+            const auto mit = state.models.find(mname);
+            if (mit == state.models.end()) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "unresolved JFET .MODEL '" + tokens[4] + "'");
+            }
+            const auto nd = state.resolve_node(tokens[1], scope_prefix, port_map);
+            const auto ng = state.resolve_node(tokens[2], scope_prefix, port_map);
+            const auto ns = state.resolve_node(tokens[3], scope_prefix, port_map);
+            if (mit->second.kind == ModelDef::Kind::Osdi) {
+                core::OsdiInstanceSpec inst{};
+                inst.id = elem_id;
+                inst.library_path = mit->second.osdi_library_path;
+                inst.model_name = mit->second.osdi_model_name;
+                inst.model_params = mit->second.osdi_model_params;
+                inst.terminals = {nd, ng, ns};
+                state.circuit.elements.push_back(std::move(inst));
+                return Diagnostic::success();
+            }
+            if (mit->second.kind != ModelDef::Kind::Jfet) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "model '" + tokens[4] + "' is not a JFET/OSDI model");
+            }
+            core::JfetSpec spec = mit->second.jfet_template;
+            spec.id = elem_id;
+            spec.d = nd;
+            spec.g = ng;
+            spec.s = ns;
+            for (std::size_t i = 5u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq == std::string::npos) {
+                    if (auto d = eval_value(line.line_no, tokens[i], params, spec.area); !d.ok()) return d;
+                } else {
+                    const std::string k = to_lower(tokens[i].substr(0, eq));
+                    double v = 0.0;
+                    if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                    if (k == "area") spec.area = v;
+                    else if (k == "m") spec.m_mult = v;
+                    else return line_err(line.line_no, StatusCode::InvalidArgument, "unsupported JFET instance parameter '" + k + "'");
+                }
+            }
+            state.circuit.elements.push_back(std::move(spec));
+            return Diagnostic::success();
+        }
         case 'X': {
             if (auto d = req_tokens(3u, "Subcircuit/OSDI instance"); !d.ok()) return d;
             /* Separate optional PARAMS: or trailing key=value overrides. */
@@ -1219,32 +1591,32 @@ Diagnostic elaborate_element_line(
     }
 }
 
-Diagnostic parse_ac_directive(
+Diagnostic parse_frequency_grid(
     std::size_t line_no,
-    const std::vector<std::string>& tokens,
+    const std::string& kind_tok,
+    const std::string& n_tok,
+    const std::string& fstart_tok,
+    const std::string& fstop_tok,
     const ParamMap& params,
-    AcCommand& out_ac) {
-    if (tokens.size() != 5u) {
-        return line_err(line_no, StatusCode::InvalidArgument, ".AC requires <LIN|DEC|OCT> <n> <fstart> <fstop>");
-    }
-    const std::string kind = to_lower(tokens[1]);
+    std::vector<double>& out_freqs) {
+    const std::string kind = to_lower(kind_tok);
     double n_dbl = 0.0, fstart = 0.0, fstop = 0.0;
-    if (auto d = eval_value(line_no, tokens[2], params, n_dbl); !d.ok()) return d;
-    if (auto d = eval_value(line_no, tokens[3], params, fstart); !d.ok()) return d;
-    if (auto d = eval_value(line_no, tokens[4], params, fstop); !d.ok()) return d;
+    if (auto d = eval_value(line_no, n_tok, params, n_dbl); !d.ok()) return d;
+    if (auto d = eval_value(line_no, fstart_tok, params, fstart); !d.ok()) return d;
+    if (auto d = eval_value(line_no, fstop_tok, params, fstop); !d.ok()) return d;
     const auto n_pts = static_cast<std::size_t>(std::llround(n_dbl));
     if (n_pts == 0u || fstart <= 0.0 || fstop < fstart) {
-        return line_err(line_no, StatusCode::InvalidArgument, "invalid .AC frequency range or point count");
+        return line_err(line_no, StatusCode::InvalidArgument, "invalid frequency range or point count");
     }
 
-    out_ac.frequencies_hz.clear();
+    out_freqs.clear();
     if (kind == "lin") {
         if (n_pts == 1u) {
-            out_ac.frequencies_hz.push_back(fstart);
+            out_freqs.push_back(fstart);
         } else {
             for (std::size_t i = 0; i < n_pts; ++i) {
                 const double t = static_cast<double>(i) / static_cast<double>(n_pts - 1u);
-                out_ac.frequencies_hz.push_back(fstart + t * (fstop - fstart));
+                out_freqs.push_back(fstart + t * (fstop - fstart));
             }
         }
         return Diagnostic::success();
@@ -1252,18 +1624,133 @@ Diagnostic parse_ac_directive(
     if (kind == "dec" || kind == "oct") {
         const double base = (kind == "dec") ? 10.0 : 2.0;
         const double span = std::log(fstop / fstart) / std::log(base);
-        const std::size_t total = std::max<std::size_t>(1u, static_cast<std::size_t>(std::ceil(span * static_cast<double>(n_pts))));
+        const std::size_t total =
+            std::max<std::size_t>(1u, static_cast<std::size_t>(std::ceil(span * static_cast<double>(n_pts))));
         for (std::size_t i = 0; i <= total; ++i) {
             const double f = fstart * std::pow(base, static_cast<double>(i) / static_cast<double>(n_pts));
             if (f > fstop * (1.0 + 1.0e-12)) break;
-            out_ac.frequencies_hz.push_back(std::min(f, fstop));
+            out_freqs.push_back(std::min(f, fstop));
         }
-        if (out_ac.frequencies_hz.empty() || out_ac.frequencies_hz.back() < fstop * (1.0 - 1.0e-12)) {
-            out_ac.frequencies_hz.push_back(fstop);
+        if (out_freqs.empty() || out_freqs.back() < fstop * (1.0 - 1.0e-12)) {
+            out_freqs.push_back(fstop);
         }
         return Diagnostic::success();
     }
-    return line_err(line_no, StatusCode::InvalidArgument, "unsupported .AC sweep type '" + tokens[1] + "'");
+    return line_err(line_no, StatusCode::InvalidArgument, "unsupported frequency sweep type '" + kind_tok + "'");
+}
+
+/* Parse v(out) or v(out_p, out_n) or bare node name into (out_p, out_n). */
+Diagnostic parse_voltage_port_token(
+    std::size_t line_no,
+    const std::string& tok,
+    const std::string& scope_prefix,
+    const std::unordered_map<std::string, NodeId>& port_map,
+    ElaboratorState& state,
+    NodeId& out_p,
+    NodeId& out_n) {
+    const std::string low = to_lower(tok);
+    if (low.size() >= 4u && low[0] == 'v' && low[1] == '(' && low.back() == ')') {
+        const std::string inner = low.substr(2u, low.size() - 3u);
+        const std::size_t comma = inner.find(',');
+        if (comma == std::string::npos) {
+            out_p = state.resolve_node(trim(inner), scope_prefix, port_map);
+            out_n = NodeId{0};
+            return Diagnostic::success();
+        }
+        out_p = state.resolve_node(trim(inner.substr(0, comma)), scope_prefix, port_map);
+        out_n = state.resolve_node(trim(inner.substr(comma + 1u)), scope_prefix, port_map);
+        return Diagnostic::success();
+    }
+    if (!low.empty()) {
+        out_p = state.resolve_node(low, scope_prefix, port_map);
+        out_n = NodeId{0};
+        return Diagnostic::success();
+    }
+    return line_err(line_no, StatusCode::InvalidArgument, "invalid output port expression '" + tok + "'");
+}
+
+/* Preprocess included file lines (does NOT swallow line 1 as a deck title). */
+void preprocess_included_lines(const std::string& text, std::vector<LogicalLine>& out_lines) {
+    std::istringstream iss(text);
+    std::string raw;
+    std::size_t line_no = 0;
+    while (std::getline(iss, raw)) {
+        ++line_no;
+        if (!raw.empty() && raw.back() == '\r') raw.pop_back();
+        const std::string trimmed = trim(raw);
+        if (trimmed.empty() || trimmed[0] == '*') continue;
+        if (trimmed[0] == '+' && !out_lines.empty()) {
+            out_lines.back().text.push_back(' ');
+            out_lines.back().text += trim(trimmed.substr(1u));
+        } else {
+            out_lines.push_back(LogicalLine{line_no, trimmed});
+        }
+    }
+}
+
+Diagnostic load_include_file(
+    std::size_t line_no,
+    const std::string& raw_path,
+    const std::optional<std::string>& lib_section,
+    const std::string& scope_prefix,
+    const std::unordered_map<std::string, NodeId>& port_map,
+    ParamMap& local_params,
+    ElaboratorState& state) {
+    namespace fs = std::filesystem;
+    fs::path p = unquote(raw_path);
+    if (p.is_relative() && !state.parse_opts.base_dir.empty()) {
+        p = fs::path(state.parse_opts.base_dir) / p;
+    }
+    const std::string norm = p.lexically_normal().string();
+    if (state.include_stack.size() >= state.parse_opts.max_include_depth) {
+        return line_err(line_no, StatusCode::ResourceExhausted, ".INCLUDE/.LIB nesting depth exceeded");
+    }
+    if (std::find(state.include_stack.begin(), state.include_stack.end(), norm) != state.include_stack.end()) {
+        return line_err(line_no, StatusCode::InvalidArgument, "cyclic .INCLUDE/.LIB of '" + norm + "'");
+    }
+    std::ifstream ifs(p);
+    if (!ifs) {
+        return line_err(line_no, StatusCode::InvalidArgument, "cannot open .INCLUDE/.LIB file '" + norm + "'");
+    }
+    std::ostringstream oss;
+    oss << ifs.rdbuf();
+    std::vector<LogicalLine> inc_lines;
+    preprocess_included_lines(oss.str(), inc_lines);
+
+    if (lib_section.has_value()) {
+        const std::string want = to_lower(*lib_section);
+        std::vector<LogicalLine> sec_lines;
+        bool in_sec = false;
+        bool found = false;
+        for (const auto& l : inc_lines) {
+            const auto toks = tokenize_spice_line(l.text);
+            if (!toks.empty() && to_lower(toks[0]) == ".lib" && toks.size() >= 2u) {
+                if (to_lower(toks[1]) == want) {
+                    in_sec = true;
+                    found = true;
+                }
+                continue;
+            }
+            if (!toks.empty() && to_lower(toks[0]) == ".endl") {
+                if (in_sec) in_sec = false;
+                continue;
+            }
+            if (in_sec) sec_lines.push_back(l);
+        }
+        if (!found) {
+            return line_err(line_no, StatusCode::InvalidArgument,
+                            ".LIB section '" + *lib_section + "' not found in '" + norm + "'");
+        }
+        inc_lines = std::move(sec_lines);
+    }
+
+    const std::string prev_base = state.parse_opts.base_dir;
+    state.parse_opts.base_dir = p.parent_path().string();
+    state.include_stack.push_back(norm);
+    const auto d = elaborate_lines(inc_lines, scope_prefix, port_map, local_params, state);
+    state.include_stack.pop_back();
+    state.parse_opts.base_dir = prev_base;
+    return d;
 }
 
 Diagnostic elaborate_lines(
@@ -1272,7 +1759,7 @@ Diagnostic elaborate_lines(
     const std::unordered_map<std::string, NodeId>& port_map,
     ParamMap local_params,
     ElaboratorState& state) {
-    /* First pass in scope: process .PARAM and .MODEL directives so order inside a deck is flexible. */
+    /* First pass in scope: process .INCLUDE, .LIB, .GLOBAL, .PARAM, .OSDI, .MODEL, and .SUBCKT. */
     std::vector<LogicalLine> remaining;
     remaining.reserve(lines.size());
 
@@ -1284,8 +1771,38 @@ Diagnostic elaborate_lines(
         if (tokens[0][0] == '.') {
             const std::string cmd = to_lower(tokens[0]);
             if (cmd == ".end") break;
+            if (cmd == ".include" || cmd == ".inc") {
+                if (tokens.size() < 2u) {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, ".INCLUDE requires file path");
+                }
+                if (auto d = load_include_file(line.line_no, tokens[1], std::nullopt, scope_prefix, port_map, local_params, state);
+                    !d.ok()) {
+                    return d;
+                }
+                continue;
+            }
+            if (cmd == ".lib") {
+                if (tokens.size() < 2u) {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, ".LIB requires file path [section]");
+                }
+                const std::optional<std::string> sec = (tokens.size() >= 3u) ? std::optional<std::string>{tokens[2]} : std::nullopt;
+                if (auto d = load_include_file(line.line_no, tokens[1], sec, scope_prefix, port_map, local_params, state);
+                    !d.ok()) {
+                    return d;
+                }
+                continue;
+            }
+            if (cmd == ".global") {
+                for (std::size_t i = 1u; i < tokens.size(); ++i) {
+                    state.global_nodes.insert(to_lower(tokens[i]));
+                }
+                continue;
+            }
             if (cmd == ".param") {
                 if (auto d = parse_param_assignments(line.line_no, tokens, 1u, local_params); !d.ok()) return d;
+                if (scope_prefix.empty()) {
+                    for (const auto& [k, v] : local_params) state.global_params[k] = v;
+                }
                 continue;
             }
             if (cmd == ".osdi") {
@@ -1353,75 +1870,346 @@ Diagnostic elaborate_lines(
         }
     }
 
-    /* Second pass: elaborate elements and top-level analysis directives. */
+    /* Second pass: elaborate elements first, then top-level analysis & control directives. */
+    std::vector<LogicalLine> control_lines;
     for (const auto& line : remaining) {
         const auto tokens = tokenize_spice_line(line.text);
         if (tokens.empty()) continue;
-
         if (tokens[0][0] == '.') {
-            const std::string cmd = to_lower(tokens[0]);
-            if (!scope_prefix.empty()) {
-                return line_err(line.line_no, StatusCode::InvalidArgument, "analysis/control directive '" + cmd + "' not allowed inside .SUBCKT");
-            }
-            if (cmd == ".op") {
-                state.analyses.push_back(OpCommand{});
-            } else if (cmd == ".dc") {
-                if (tokens.size() != 5u) {
-                    return line_err(line.line_no, StatusCode::InvalidArgument, ".DC requires <src> <start> <stop> <step>");
-                }
-                DcCommand dc{};
-                dc.source_id = tokens[1];
-                if (auto d = eval_value(line.line_no, tokens[2], local_params, dc.start); !d.ok()) return d;
-                if (auto d = eval_value(line.line_no, tokens[3], local_params, dc.stop); !d.ok()) return d;
-                if (auto d = eval_value(line.line_no, tokens[4], local_params, dc.step); !d.ok()) return d;
-                state.analyses.push_back(std::move(dc));
-            } else if (cmd == ".ac") {
-                AcCommand ac{};
-                if (auto d = parse_ac_directive(line.line_no, tokens, local_params, ac); !d.ok()) return d;
-                state.analyses.push_back(std::move(ac));
-            } else if (cmd == ".tran") {
-                if (tokens.size() < 3u) {
-                    return line_err(line.line_no, StatusCode::InvalidArgument, ".TRAN requires <tstep> <tstop> [tstart [tmax]] [UIC]");
-                }
-                TranCommand tr{};
-                if (auto d = eval_value(line.line_no, tokens[1], local_params, tr.step_s); !d.ok()) return d;
-                if (auto d = eval_value(line.line_no, tokens[2], local_params, tr.stop_s); !d.ok()) return d;
-                int numeric_extras = 0;
-                for (std::size_t i = 3u; i < tokens.size(); ++i) {
-                    if (to_lower(tokens[i]) == "uic") {
-                        tr.uic = true;
-                    } else {
-                        double v = 0.0;
-                        if (auto d = eval_value(line.line_no, tokens[i], local_params, v); !d.ok()) return d;
-                        ++numeric_extras;
-                        if (numeric_extras == 2) tr.max_step_s = v;
-                    }
-                }
-                state.analyses.push_back(std::move(tr));
-            } else if (cmd == ".options") {
-                for (std::size_t i = 1u; i < tokens.size(); ++i) {
-                    const std::size_t eq = tokens[i].find('=');
-                    if (eq == std::string::npos) continue;
-                    const std::string k = to_lower(tokens[i].substr(0, eq));
-                    const std::string v = to_lower(tokens[i].substr(eq + 1u));
-                    if (k == "method") {
-                        if (v == "trap" || v == "trapezoidal") state.options.method = "trap";
-                        else if (v == "be" || v == "euler") state.options.method = "be";
-                        else if (v == "gear" || v == "bdf2") state.options.method = "bdf2";
-                        else return line_err(line.line_no, StatusCode::InvalidArgument, "unsupported .OPTIONS method=" + v);
-                    } else if (k == "reltol") {
-                        double rt = 0.0;
-                        if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), local_params, rt); !d.ok()) return d;
-                        state.options.reltol = rt;
-                    }
-                }
-            } else {
-                return line_err(line.line_no, StatusCode::Unsupported, "unsupported SPICE directive '" + tokens[0] + "'");
-            }
+            control_lines.push_back(line);
         } else {
             if (auto d = elaborate_element_line(line, tokens, scope_prefix, port_map, local_params, state); !d.ok()) {
                 return d;
             }
+        }
+    }
+
+    for (const auto& line : control_lines) {
+        const auto tokens = tokenize_spice_line(line.text);
+        if (tokens.empty()) continue;
+        const std::string cmd = to_lower(tokens[0]);
+        if (!scope_prefix.empty()) {
+            return line_err(line.line_no, StatusCode::InvalidArgument, "analysis/control directive '" + cmd + "' not allowed inside .SUBCKT");
+        }
+
+        if (cmd == ".op") {
+            state.analyses.push_back(OpCommand{});
+        } else if (cmd == ".dc") {
+            if (tokens.size() != 5u && tokens.size() != 9u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".DC requires <src> <start> <stop> <step> [src2 start2 stop2 step2]");
+            }
+            DcCommand dc{};
+            dc.source_id = tokens[1];
+            if (auto d = eval_value(line.line_no, tokens[2], local_params, dc.start); !d.ok()) return d;
+            if (auto d = eval_value(line.line_no, tokens[3], local_params, dc.stop); !d.ok()) return d;
+            if (auto d = eval_value(line.line_no, tokens[4], local_params, dc.step); !d.ok()) return d;
+            if (tokens.size() == 9u) {
+                dc.source2_id = tokens[5];
+                if (auto d = eval_value(line.line_no, tokens[6], local_params, dc.start2); !d.ok()) return d;
+                if (auto d = eval_value(line.line_no, tokens[7], local_params, dc.stop2); !d.ok()) return d;
+                if (auto d = eval_value(line.line_no, tokens[8], local_params, dc.step2); !d.ok()) return d;
+            }
+            state.analyses.push_back(std::move(dc));
+        } else if (cmd == ".ac") {
+            if (tokens.size() != 5u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".AC requires <LIN|DEC|OCT> <n> <fstart> <fstop>");
+            }
+            AcCommand ac{};
+            if (auto d = parse_frequency_grid(line.line_no, tokens[1], tokens[2], tokens[3], tokens[4], local_params, ac.frequencies_hz);
+                !d.ok()) {
+                return d;
+            }
+            state.analyses.push_back(std::move(ac));
+        } else if (cmd == ".tran") {
+            if (tokens.size() < 3u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".TRAN requires <tstep> <tstop> [tstart [tmax]] [UIC]");
+            }
+            TranCommand tr{};
+            if (auto d = eval_value(line.line_no, tokens[1], local_params, tr.step_s); !d.ok()) return d;
+            if (auto d = eval_value(line.line_no, tokens[2], local_params, tr.stop_s); !d.ok()) return d;
+            int numeric_extras = 0;
+            for (std::size_t i = 3u; i < tokens.size(); ++i) {
+                if (to_lower(tokens[i]) == "uic") {
+                    tr.uic = true;
+                } else {
+                    double v = 0.0;
+                    if (auto d = eval_value(line.line_no, tokens[i], local_params, v); !d.ok()) return d;
+                    ++numeric_extras;
+                    if (numeric_extras == 2) tr.max_step_s = v;
+                }
+            }
+            state.analyses.push_back(std::move(tr));
+        } else if (cmd == ".tf") {
+            if (tokens.size() != 3u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".TF requires v(out[,ref]) <input_src>");
+            }
+            TfCommand tf{};
+            if (auto d = parse_voltage_port_token(line.line_no, tokens[1], scope_prefix, port_map, state, tf.out_p, tf.out_n); !d.ok()) return d;
+            tf.input_source_id = tokens[2];
+            state.analyses.push_back(std::move(tf));
+        } else if (cmd == ".noise") {
+            if (tokens.size() != 7u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".NOISE requires v(out[,ref]) <src> <LIN|DEC|OCT> <n> <fstart> <fstop>");
+            }
+            NoiseCommand ns{};
+            if (auto d = parse_voltage_port_token(line.line_no, tokens[1], scope_prefix, port_map, state, ns.out_p, ns.out_n); !d.ok()) return d;
+            ns.input_source_id = tokens[2];
+            if (auto d = parse_frequency_grid(line.line_no, tokens[3], tokens[4], tokens[5], tokens[6], local_params, ns.frequencies_hz);
+                !d.ok()) {
+                return d;
+            }
+            state.analyses.push_back(std::move(ns));
+        } else if (cmd == ".sens") {
+            if (tokens.size() < 2u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".SENS requires v(out[,ref])");
+            }
+            SensCommand sn{};
+            if (auto d = parse_voltage_port_token(line.line_no, tokens[1], scope_prefix, port_map, state, sn.out_p, sn.out_n); !d.ok()) return d;
+            state.analyses.push_back(std::move(sn));
+        } else if (cmd == ".dcmatch") {
+            if (tokens.size() < 2u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".DCMATCH requires v(out[,ref]) [sigma=<val>]");
+            }
+            DcMatchCommand dm{};
+            if (auto d = parse_voltage_port_token(line.line_no, tokens[1], scope_prefix, port_map, state, dm.out_p, dm.out_n); !d.ok()) return d;
+            for (std::size_t i = 2u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq != std::string::npos && to_lower(tokens[i].substr(0, eq)) == "sigma") {
+                    if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), local_params, dm.resistor_rel_sigma); !d.ok()) return d;
+                }
+            }
+            state.analyses.push_back(std::move(dm));
+        } else if (cmd == ".sp") {
+            if (tokens.size() < 6u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".SP requires <LIN|DEC|OCT> <n> <fstart> <fstop> PORT=n1 [PORT=n2] [Z0=50]");
+            }
+            SpCommand sp{};
+            if (auto d = parse_frequency_grid(line.line_no, tokens[1], tokens[2], tokens[3], tokens[4], local_params, sp.frequencies_hz);
+                !d.ok()) {
+                return d;
+            }
+            double z0 = 50.0;
+            for (std::size_t i = 5u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq != std::string::npos) {
+                    const std::string k = to_lower(tokens[i].substr(0, eq));
+                    const std::string val = tokens[i].substr(eq + 1u);
+                    if (k == "z0" || k == "r0") {
+                        if (auto d = eval_value(line.line_no, val, local_params, z0); !d.ok()) return d;
+                    } else if (k == "port" || k == "p") {
+                        NodeId pp{0}, pn{0};
+                        if (auto d = parse_voltage_port_token(line.line_no, val, scope_prefix, port_map, state, pp, pn); !d.ok()) return d;
+                        sp.ports.push_back(SpPortDecl{pp, pn, z0});
+                    }
+                } else {
+                    NodeId pp{0}, pn{0};
+                    if (auto d = parse_voltage_port_token(line.line_no, tokens[i], scope_prefix, port_map, state, pp, pn); !d.ok()) return d;
+                    sp.ports.push_back(SpPortDecl{pp, pn, z0});
+                }
+            }
+            for (auto& pt : sp.ports) pt.z0_ohms = z0;
+            if (sp.ports.empty()) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".SP requires at least one PORT");
+            }
+            state.analyses.push_back(std::move(sp));
+        } else if (cmd == ".stb") {
+            if (tokens.size() != 6u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".STB requires <probe_vsrc> <LIN|DEC|OCT> <n> <fstart> <fstop>");
+            }
+            StbCommand stb{};
+            stb.probe_source_id = tokens[1];
+            if (auto d = parse_frequency_grid(line.line_no, tokens[2], tokens[3], tokens[4], tokens[5], local_params, stb.frequencies_hz);
+                !d.ok()) {
+                return d;
+            }
+            state.analyses.push_back(std::move(stb));
+        } else if (cmd == ".pz") {
+            if (tokens.size() < 5u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".PZ requires <in_p> <in_n> <out_p> <out_n> [VOL|CUR] [PZ|POL|ZER]");
+            }
+            PzCommand pz{};
+            pz.in_p = state.resolve_node(tokens[1], scope_prefix, port_map);
+            pz.in_n = state.resolve_node(tokens[2], scope_prefix, port_map);
+            pz.out_p = state.resolve_node(tokens[3], scope_prefix, port_map);
+            pz.out_n = state.resolve_node(tokens[4], scope_prefix, port_map);
+            for (std::size_t i = 5u; i < tokens.size(); ++i) {
+                const std::string t = to_lower(tokens[i]);
+                if (t == "pol") { pz.compute_poles = true; pz.compute_zeros = false; }
+                else if (t == "zer") { pz.compute_poles = false; pz.compute_zeros = true; }
+                else if (t == "pz") { pz.compute_poles = true; pz.compute_zeros = true; }
+            }
+            state.analyses.push_back(std::move(pz));
+        } else if (cmd == ".four") {
+            if (tokens.size() < 3u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".FOUR requires <freq_hz> <signal> [harmonics]");
+            }
+            FourCommand f{};
+            if (auto d = eval_value(line.line_no, tokens[1], local_params, f.fundamental_hz); !d.ok()) return d;
+            f.signal_id = to_lower(tokens[2]);
+            if (tokens.size() >= 4u) {
+                double nh = 9.0;
+                if (auto d = eval_value(line.line_no, tokens[3], local_params, nh); !d.ok()) return d;
+                f.harmonics = static_cast<std::size_t>(std::max(1.0, std::round(nh)));
+            }
+            state.analyses.push_back(std::move(f));
+        } else if (cmd == ".fft") {
+            if (tokens.size() < 2u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".FFT requires <signal> [N=1024]");
+            }
+            FftCommand f{};
+            f.signal_id = to_lower(tokens[1]);
+            for (std::size_t i = 2u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                const std::string vstr = (eq == std::string::npos) ? tokens[i] : tokens[i].substr(eq + 1u);
+                double n_val = 1024.0;
+                if (auto d = eval_value(line.line_no, vstr, local_params, n_val); !d.ok()) return d;
+                f.n_points = static_cast<std::size_t>(std::llround(n_val));
+            }
+            state.analyses.push_back(std::move(f));
+        } else if (cmd == ".mc") {
+            if (tokens.size() < 2u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".MC requires <runs> [seed=42] [sigma=0.05]");
+            }
+            McCommand mc{};
+            double runs_d = 16.0;
+            if (auto d = eval_value(line.line_no, tokens[1], local_params, runs_d); !d.ok()) return d;
+            mc.runs = static_cast<std::size_t>(std::max(1.0, std::round(runs_d)));
+            for (std::size_t i = 2u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq != std::string::npos) {
+                    const std::string k = to_lower(tokens[i].substr(0, eq));
+                    double v = 0.0;
+                    if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), local_params, v); !d.ok()) return d;
+                    if (k == "seed") mc.seed = static_cast<std::uint64_t>(std::llround(v));
+                    else if (k == "sigma") mc.resistor_rel_sigma = v;
+                }
+            }
+            state.analyses.push_back(std::move(mc));
+        } else if (cmd == ".hb") {
+            if (tokens.size() < 2u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".HB requires <freq_hz> [H=7]");
+            }
+            HbCommand hb{};
+            if (auto d = eval_value(line.line_no, tokens[1], local_params, hb.fundamental_hz); !d.ok()) return d;
+            for (std::size_t i = 2u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                const std::string vstr = (eq == std::string::npos) ? tokens[i] : tokens[i].substr(eq + 1u);
+                double h_val = 7.0;
+                if (auto d = eval_value(line.line_no, vstr, local_params, h_val); !d.ok()) return d;
+                hb.harmonics = static_cast<std::size_t>(std::max(1.0, std::round(h_val)));
+            }
+            state.analyses.push_back(std::move(hb));
+        } else if (cmd == ".pss") {
+            if (tokens.size() < 2u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".PSS requires <freq_hz> [STEPS=64]");
+            }
+            PssCommand pss{};
+            if (auto d = eval_value(line.line_no, tokens[1], local_params, pss.fundamental_hz); !d.ok()) return d;
+            for (std::size_t i = 2u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                const std::string vstr = (eq == std::string::npos) ? tokens[i] : tokens[i].substr(eq + 1u);
+                double s_val = 64.0;
+                if (auto d = eval_value(line.line_no, vstr, local_params, s_val); !d.ok()) return d;
+                pss.steps_per_period = static_cast<std::size_t>(std::max(4.0, std::round(s_val)));
+            }
+            state.analyses.push_back(std::move(pss));
+        } else if (cmd == ".pac") {
+            if (tokens.size() < 3u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".PAC requires <f_small_hz> <input_src>");
+            }
+            PacCommand pac{};
+            if (auto d = eval_value(line.line_no, tokens[1], local_params, pac.small_signal_freq_hz); !d.ok()) return d;
+            pac.input_source_id = tokens[2];
+            state.analyses.push_back(std::move(pac));
+        } else if (cmd == ".pxf") {
+            if (tokens.size() < 3u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".PXF requires <f_small_hz> v(out[,ref]) [SB=0]");
+            }
+            PxfCommand pxf{};
+            if (auto d = eval_value(line.line_no, tokens[1], local_params, pxf.small_signal_freq_hz); !d.ok()) return d;
+            if (auto d = parse_voltage_port_token(line.line_no, tokens[2], scope_prefix, port_map, state, pxf.out_p, pxf.out_n); !d.ok()) return d;
+            if (tokens.size() >= 4u) {
+                const std::size_t eq = tokens[3].find('=');
+                const std::string vstr = (eq == std::string::npos) ? tokens[3] : tokens[3].substr(eq + 1u);
+                double sb_val = 0.0;
+                if (auto d = eval_value(line.line_no, vstr, local_params, sb_val); !d.ok()) return d;
+                pxf.output_sideband = static_cast<int>(std::llround(sb_val));
+            }
+            state.analyses.push_back(std::move(pxf));
+        } else if (cmd == ".pnoise") {
+            if (tokens.size() < 3u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".PNOISE requires <f_small_hz> v(out[,ref]) [SB=0]");
+            }
+            PnoiseCommand pn{};
+            if (auto d = eval_value(line.line_no, tokens[1], local_params, pn.small_signal_freq_hz); !d.ok()) return d;
+            if (auto d = parse_voltage_port_token(line.line_no, tokens[2], scope_prefix, port_map, state, pn.out_p, pn.out_n); !d.ok()) return d;
+            if (tokens.size() >= 4u) {
+                const std::size_t eq = tokens[3].find('=');
+                const std::string vstr = (eq == std::string::npos) ? tokens[3] : tokens[3].substr(eq + 1u);
+                double sb_val = 0.0;
+                if (auto d = eval_value(line.line_no, vstr, local_params, sb_val); !d.ok()) return d;
+                pn.output_sideband = static_cast<int>(std::llround(sb_val));
+            }
+            state.analyses.push_back(std::move(pn));
+        } else if (cmd == ".temp") {
+            if (tokens.size() < 2u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".TEMP requires temperature in Celsius");
+            }
+            if (auto d = eval_value(line.line_no, tokens[1], local_params, state.options.temperature_c); !d.ok()) return d;
+        } else if (cmd == ".ic" || cmd == ".nodeset") {
+            for (std::size_t i = 1u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq == std::string::npos) continue;
+                NodeId np{0}, nn{0};
+                if (auto d = parse_voltage_port_token(line.line_no, tokens[i].substr(0, eq), scope_prefix, port_map, state, np, nn); !d.ok()) return d;
+                double val = 0.0;
+                if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), local_params, val); !d.ok()) return d;
+                if (cmd == ".ic") state.options.initial_conditions.emplace_back(np, val);
+                else state.options.nodesets.emplace_back(np, val);
+            }
+        } else if (cmd == ".save" || cmd == ".probe" || cmd == ".print" || cmd == ".plot") {
+            for (std::size_t i = 1u; i < tokens.size(); ++i) {
+                state.options.saved_signals.push_back(to_lower(tokens[i]));
+            }
+        } else if (cmd == ".meas" || cmd == ".measure") {
+            if (tokens.size() < 5u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".MEAS requires <domain> <name> <MAX|MIN|AVG|PP|FIND> <signal> [AT=<x>]");
+            }
+            MeasCommand mc{};
+            mc.domain = to_lower(tokens[1]);
+            mc.name = tokens[2];
+            mc.func = to_lower(tokens[3]);
+            mc.signal = to_lower(tokens[4]);
+            for (std::size_t i = 5u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq != std::string::npos && to_lower(tokens[i].substr(0, eq)) == "at") {
+                    double at_val = 0.0;
+                    if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), local_params, at_val); !d.ok()) return d;
+                    mc.at_x = at_val;
+                }
+            }
+            state.measurements.push_back(std::move(mc));
+        } else if (cmd == ".options") {
+            for (std::size_t i = 1u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq == std::string::npos) continue;
+                const std::string k = to_lower(tokens[i].substr(0, eq));
+                const std::string v = to_lower(tokens[i].substr(eq + 1u));
+                if (k == "method") {
+                    if (v == "trap" || v == "trapezoidal") state.options.method = "trap";
+                    else if (v == "be" || v == "euler") state.options.method = "be";
+                    else if (v == "gear" || v == "bdf2") state.options.method = "bdf2";
+                    else return line_err(line.line_no, StatusCode::InvalidArgument, "unsupported .OPTIONS method=" + v);
+                } else if (k == "reltol") {
+                    double rt = 0.0;
+                    if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), local_params, rt); !d.ok()) return d;
+                    state.options.reltol = rt;
+                } else if (k == "temp") {
+                    if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), local_params, state.options.temperature_c); !d.ok()) return d;
+                }
+            }
+        } else {
+            return line_err(line.line_no, StatusCode::Unsupported, "unsupported SPICE directive '" + tokens[0] + "'");
         }
     }
     return Diagnostic::success();
@@ -1453,6 +2241,7 @@ Diagnostic parse_spice_deck(
     result.title = std::move(title);
     result.circuit = std::move(state.circuit);
     result.analyses = std::move(state.analyses);
+    result.measurements = std::move(state.measurements);
     result.options = std::move(state.options);
     out_deck = std::move(result);
     return Diagnostic::success();

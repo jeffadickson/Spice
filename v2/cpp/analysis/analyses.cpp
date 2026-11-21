@@ -27,6 +27,9 @@ bool plan_supports_dc_audit(const devices::CompiledPlan& plan) noexcept {
         if (std::holds_alternative<core::BehavioralSourceSpec>(e) ||
             std::holds_alternative<core::SwitchSpec>(e) ||
             std::holds_alternative<core::TransmissionLineSpec>(e) ||
+            std::holds_alternative<core::MosfetSpec>(e) ||
+            std::holds_alternative<core::BjtSpec>(e) ||
+            std::holds_alternative<core::JfetSpec>(e) ||
             std::holds_alternative<core::OsdiInstanceSpec>(e)) {
             return false;
         }

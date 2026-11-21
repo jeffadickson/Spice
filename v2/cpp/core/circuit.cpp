@@ -72,6 +72,24 @@ Diagnostic validate_waveform(const Waveform& wf, const std::string& subject) {
                     }
                 }
                 return Diagnostic::success();
+            },
+            [&](const ExpWaveform& w) -> Diagnostic {
+                if (!std::isfinite(w.v1) || !std::isfinite(w.v2) || !std::isfinite(w.td1_s) ||
+                    !std::isfinite(w.tau1_s) || !std::isfinite(w.td2_s) || !std::isfinite(w.tau2_s) ||
+                    w.td1_s < 0.0 || w.tau1_s <= 0.0 || w.td2_s < w.td1_s || w.tau2_s <= 0.0) {
+                    return Diagnostic::error(
+                        StatusCode::InvalidArgument, "invalid EXP waveform parameters", subject);
+                }
+                return Diagnostic::success();
+            },
+            [&](const SffmWaveform& w) -> Diagnostic {
+                if (!std::isfinite(w.offset) || !std::isfinite(w.amplitude) || !std::isfinite(w.carrier_hz) ||
+                    !std::isfinite(w.mod_index) || !std::isfinite(w.signal_hz) ||
+                    w.carrier_hz < 0.0 || w.signal_hz < 0.0) {
+                    return Diagnostic::error(
+                        StatusCode::InvalidArgument, "invalid SFFM waveform parameters", subject);
+                }
+                return Diagnostic::success();
             }},
         wf);
 }
@@ -122,6 +140,19 @@ double evaluate_waveform(const Waveform& wf, double time_s) noexcept {
                     }
                 }
                 return w.points.back().value;
+            },
+            [time_s](const ExpWaveform& w) noexcept -> double {
+                if (time_s <= w.td1_s) return w.v1;
+                const double rise = (w.v2 - w.v1) * (1.0 - std::exp(-(time_s - w.td1_s) / w.tau1_s));
+                if (time_s <= w.td2_s) return w.v1 + rise;
+                const double fall = (w.v1 - w.v2) * (1.0 - std::exp(-(time_s - w.td2_s) / w.tau2_s));
+                return w.v1 + rise + fall;
+            },
+            [time_s](const SffmWaveform& w) noexcept -> double {
+                const double twopi = 2.0 * std::numbers::pi;
+                return w.offset +
+                       w.amplitude * std::sin(twopi * w.carrier_hz * time_s +
+                                              w.mod_index * std::sin(twopi * w.signal_hz * time_s));
             }},
         wf);
 }
@@ -164,7 +195,12 @@ void collect_waveform_breakpoints(
             },
             [&](const PwlWaveform& w) {
                 for (const auto& pt : w.points) push_if_in_range(pt.time_s);
-            }},
+            },
+            [&](const ExpWaveform& w) {
+                if (w.td1_s > 0.0) push_if_in_range(w.td1_s);
+                if (w.td2_s > w.td1_s) push_if_in_range(w.td2_s);
+            },
+            [](const SffmWaveform&) {}},
         wf);
 }
 
@@ -413,6 +449,55 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
                         !std::isfinite(t.td_s) || t.td_s <= 0.0) {
                         return Diagnostic::error(
                             StatusCode::InvalidArgument, "invalid transmission line parameters or terminals", t.id);
+                    }
+                    return Diagnostic::success();
+                },
+                [&](const MosfetSpec& m) -> Diagnostic {
+                    if (auto x = check_node(m.d, m.id); !x.ok()) return x;
+                    if (auto x = check_node(m.g, m.id); !x.ok()) return x;
+                    if (auto x = check_node(m.s, m.id); !x.ok()) return x;
+                    if (auto x = check_node(m.b, m.id); !x.ok()) return x;
+                    if (m.level != 1 && m.level != 49 && m.level != 54) {
+                        return Diagnostic::error(
+                            StatusCode::Unsupported,
+                            "unsupported native MOSFET LEVEL=" + std::to_string(m.level) +
+                                " (supported built-in levels: 1, 49/BSIM3v3, 54/BSIM4; or load via .OSDI)",
+                            m.id);
+                    }
+                    if (!std::isfinite(m.w_m) || m.w_m <= 0.0 || !std::isfinite(m.l_m) || m.l_m <= 0.0 ||
+                        !std::isfinite(m.m_mult) || m.m_mult <= 0.0 || !std::isfinite(m.tox_m) || m.tox_m <= 0.0 ||
+                        !std::isfinite(m.kp_a_per_v2) || m.kp_a_per_v2 <= 0.0 ||
+                        !std::isfinite(m.u0_m2_per_vs) || m.u0_m2_per_vs <= 0.0 ||
+                        !std::isfinite(m.vsat_m_per_s) || m.vsat_m_per_s <= 0.0 ||
+                        !std::isfinite(m.phi_volts) || m.phi_volts <= 0.0) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid MOSFET physical parameters", m.id);
+                    }
+                    return Diagnostic::success();
+                },
+                [&](const BjtSpec& q) -> Diagnostic {
+                    if (auto x = check_node(q.c, q.id); !x.ok()) return x;
+                    if (auto x = check_node(q.b, q.id); !x.ok()) return x;
+                    if (auto x = check_node(q.e, q.id); !x.ok()) return x;
+                    if (!std::isfinite(q.area) || q.area <= 0.0 || !std::isfinite(q.m_mult) || q.m_mult <= 0.0 ||
+                        !std::isfinite(q.is_amps) || q.is_amps <= 0.0 ||
+                        !std::isfinite(q.bf) || q.bf <= 0.0 || !std::isfinite(q.br) || q.br <= 0.0 ||
+                        !std::isfinite(q.nf) || q.nf <= 0.0 || !std::isfinite(q.nr) || q.nr <= 0.0) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid BJT parameters", q.id);
+                    }
+                    return Diagnostic::success();
+                },
+                [&](const JfetSpec& j) -> Diagnostic {
+                    if (auto x = check_node(j.d, j.id); !x.ok()) return x;
+                    if (auto x = check_node(j.g, j.id); !x.ok()) return x;
+                    if (auto x = check_node(j.s, j.id); !x.ok()) return x;
+                    if (!std::isfinite(j.area) || j.area <= 0.0 || !std::isfinite(j.m_mult) || j.m_mult <= 0.0 ||
+                        !std::isfinite(j.beta_a_per_v2) || j.beta_a_per_v2 <= 0.0 ||
+                        !std::isfinite(j.is_amps) || j.is_amps < 0.0 ||
+                        !std::isfinite(j.pb_volts) || j.pb_volts <= 0.0) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid JFET parameters", j.id);
                     }
                     return Diagnostic::success();
                 },

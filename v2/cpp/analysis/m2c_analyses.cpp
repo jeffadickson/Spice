@@ -341,6 +341,33 @@ Diagnostic run_noise(
                 const double out_psd = std::norm(tf) * si;
                 total_psd += out_psd;
                 pt.contributions.push_back(DeviceNoiseContribution{d->id, "shot", out_psd});
+            } else if (const auto* q = std::get_if<core::BjtSpec>(&elem)) {
+                const double sgn = q->is_pnp ? -1.0 : 1.0;
+                const double vt = kBoltzmann * opts.temperature_k / kElemCharge;
+                const double vbe = sgn * (node_val(x_op, q->b) - node_val(x_op, q->e));
+                const double scale = q->area * q->m_mult;
+                const double ic = scale * q->is_amps * std::expm1(std::min(vbe / (q->nf * vt), 40.0));
+                const double ib = std::abs(ic) / std::max(1.0, q->bf);
+                const Complex tf_ce = node_val_c(z, q->c) - node_val_c(z, q->e);
+                const Complex tf_be = node_val_c(z, q->b) - node_val_c(z, q->e);
+                const double psd_c = std::norm(tf_ce) * (2.0 * kElemCharge * std::abs(ic));
+                const double psd_b = std::norm(tf_be) * (2.0 * kElemCharge * ib);
+                total_psd += psd_c + psd_b;
+                pt.contributions.push_back(DeviceNoiseContribution{q->id, "shot_ic", psd_c});
+                pt.contributions.push_back(DeviceNoiseContribution{q->id, "shot_ib", psd_b});
+            } else if (const auto* m = std::get_if<core::MosfetSpec>(&elem)) {
+                /* Channel thermal noise S_id = (8/3) * k_B * T * gm (saturated long/short-channel estimate). */
+                const double sgn = m->is_pmos ? -1.0 : 1.0;
+                const double vgs = sgn * (node_val(x_op, m->g) - node_val(x_op, m->s));
+                const double vov = std::max(0.0, vgs - std::abs(m->vth0_volts));
+                const double cox = 3.9 * 8.8541878128e-12 / m->tox_m;
+                const double kp = (m->level == 1) ? m->kp_a_per_v2 : (m->u0_m2_per_vs * cox);
+                const double gm = m->m_mult * kp * (m->w_m / m->l_m) * vov;
+                const double si = (8.0 / 3.0) * kBoltzmann * opts.temperature_k * std::max(0.0, gm);
+                const Complex tf_ds = node_val_c(z, m->d) - node_val_c(z, m->s);
+                const double out_psd = std::norm(tf_ds) * si;
+                total_psd += out_psd;
+                pt.contributions.push_back(DeviceNoiseContribution{m->id, "thermal_ch", out_psd});
             }
         }
 

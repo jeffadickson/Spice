@@ -1,5 +1,6 @@
 #include "devices/linear_devices.hpp"
 #include "devices/expr_vm.hpp"
+#include "devices/semiconductor_devices.hpp"
 #include "osdi/osdi_loader.hpp"
 
 #include <algorithm>
@@ -1340,7 +1341,10 @@ Diagnostic compile_circuit(
             osdi_internal_nodes.emplace(o->id, std::move(internals));
         } else if (std::holds_alternative<core::DiodeSpec>(elem) ||
                    std::holds_alternative<core::BehavioralSourceSpec>(elem) ||
-                   std::holds_alternative<core::SwitchSpec>(elem)) {
+                   std::holds_alternative<core::SwitchSpec>(elem) ||
+                   std::holds_alternative<core::MosfetSpec>(elem) ||
+                   std::holds_alternative<core::BjtSpec>(elem) ||
+                   std::holds_alternative<core::JfetSpec>(elem)) {
             plan.has_nonlinear = true;
         }
     }
@@ -1499,6 +1503,25 @@ Diagnostic compile_circuit(
             plan.tline_device_indices.push_back(plan.devices.size());
             plan.devices.push_back(
                 std::make_unique<TransmissionLineDevice>(p1, n1, p2, n2, br1, br2, *tl));
+        } else if (const auto* m = std::get_if<core::MosfetSpec>(&elem)) {
+            auto d = CompiledPlan::node_unknown(m->d);
+            auto g = CompiledPlan::node_unknown(m->g);
+            auto s = CompiledPlan::node_unknown(m->s);
+            auto b = CompiledPlan::node_unknown(m->b);
+            record_mosfet_stencil(coords, d, g, s, b);
+            plan.devices.push_back(create_mosfet_device(d, g, s, b, *m));
+        } else if (const auto* q = std::get_if<core::BjtSpec>(&elem)) {
+            auto c = CompiledPlan::node_unknown(q->c);
+            auto b = CompiledPlan::node_unknown(q->b);
+            auto e = CompiledPlan::node_unknown(q->e);
+            record_bjt_stencil(coords, c, b, e);
+            plan.devices.push_back(create_bjt_device(c, b, e, *q));
+        } else if (const auto* j = std::get_if<core::JfetSpec>(&elem)) {
+            auto d = CompiledPlan::node_unknown(j->d);
+            auto g = CompiledPlan::node_unknown(j->g);
+            auto s = CompiledPlan::node_unknown(j->s);
+            record_jfet_stencil(coords, d, g, s);
+            plan.devices.push_back(create_jfet_device(d, g, s, *j));
         } else if (const auto* o = std::get_if<core::OsdiInstanceSpec>(&elem)) {
             const auto& lib = loaded_libs.at(o->library_path);
             std::vector<std::optional<UnknownId>> term_unks;

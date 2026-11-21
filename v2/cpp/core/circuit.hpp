@@ -47,7 +47,24 @@ struct PwlWaveform {
     std::vector<PwlPoint> points;
 };
 
-using Waveform = std::variant<DcWaveform, PulseWaveform, SineWaveform, PwlWaveform>;
+struct ExpWaveform {
+    double v1{0.0};
+    double v2{0.0};
+    double td1_s{0.0};
+    double tau1_s{1.0e-9};
+    double td2_s{0.0};
+    double tau2_s{1.0e-9};
+};
+
+struct SffmWaveform {
+    double offset{0.0};
+    double amplitude{0.0};
+    double carrier_hz{0.0};
+    double mod_index{0.0};
+    double signal_hz{0.0};
+};
+
+using Waveform = std::variant<DcWaveform, PulseWaveform, SineWaveform, PwlWaveform, ExpWaveform, SffmWaveform>;
 
 [[nodiscard]] Diagnostic validate_waveform(const Waveform& wf, const std::string& subject);
 [[nodiscard]] double evaluate_waveform(const Waveform& wf, double time_s) noexcept;
@@ -192,6 +209,103 @@ struct TransmissionLineSpec {
     double td_s{1.0e-9};
 };
 
+/*
+ * Native MOSFET primitive (M element):
+ *   - level == 1 : Shichman-Hodges + body effect + lambda + Meyer/overlap capacitances
+ *   - level == 49: BSIM3v3 smooth unified subthreshold/strong-inversion/mobility/vsat/DIBL/CLM core
+ *   - level == 54: BSIM4 smooth unified subthreshold/strong-inversion/mobility/vsat/DIBL/CLM/Rdsw core
+ * Unlisted levels fail closed cleanly at validation/compilation (ARCH-CAP-004).
+ */
+struct MosfetSpec {
+    std::string id;
+    NodeId d;
+    NodeId g;
+    NodeId s;
+    NodeId b;
+    bool is_pmos{false};
+    int level{1};
+    double w_m{1.0e-6};
+    double l_m{1.0e-6};
+    double m_mult{1.0};
+    double vth0_volts{0.7};     /* Magnitude threshold voltage (positive for NMOS, negative or abs for PMOS via sign) */
+    double kp_a_per_v2{2.0e-5}; /* Level-1 transconductance parameter (A/V^2) */
+    double gamma_v12{0.0};      /* Level-1 body effect (V^1/2) */
+    double phi_volts{0.6};      /* Surface potential 2*phi_F (V) */
+    double lambda_per_v{0.0};   /* Level-1 channel-length modulation (1/V) */
+    /* BSIM3v3 / BSIM4 physical parameters */
+    double tox_m{4.1e-9};       /* Gate oxide thickness (m) */
+    double u0_m2_per_vs{0.045}; /* Low-field mobility (m^2 / (V*s), i.e. cm^2/Vs * 1e-4) */
+    double vsat_m_per_s{1.0e5}; /* Saturation velocity (m/s) */
+    double k1_v12{0.53};        /* First-order body-bias coefficient (V^1/2) */
+    double k2{0.0};             /* Second-order body-bias coefficient */
+    double ua_m_per_v{1.0e-9};  /* First-order vertical-field mobility degradation */
+    double ub_m2_per_v2{1.0e-18}; /* Second-order mobility degradation */
+    double uc_m_per_v2{0.0};    /* Body-bias mobility degradation */
+    double eta0{0.08};          /* DIBL coefficient */
+    double pclm{1.3};           /* Channel-length modulation factor */
+    double voff_volts{-0.08};   /* Subthreshold offset voltage (V) */
+    double nfactor{1.0};        /* Subthreshold swing factor */
+    double rdsw_ohm_um{200.0};  /* Parasitic S/D resistance per unit width (Ohm*um) */
+    double delta_vds{0.01};     /* Smooth Vds -> Vdsat transition parameter (V) */
+    /* Overlap & junction capacitances and bulk diodes */
+    double cgso_f_per_m{2.0e-10};
+    double cgdo_f_per_m{2.0e-10};
+    double cgbo_f_per_m{0.0};
+    double cbd_farads{0.0};
+    double cbs_farads{0.0};
+    double js_amps{1.0e-14};
+};
+
+/* Native Gummel-Poon BJT primitive (Q element, NPN or PNP). */
+struct BjtSpec {
+    std::string id;
+    NodeId c;
+    NodeId b;
+    NodeId e;
+    bool is_pnp{false};
+    double area{1.0};
+    double m_mult{1.0};
+    double is_amps{1.0e-16};
+    double bf{100.0};
+    double br{1.0};
+    double nf{1.0};
+    double nr{1.0};
+    double vaf_volts{0.0}; /* 0 = infinite Early voltage */
+    double var_volts{0.0}; /* 0 = infinite reverse Early voltage */
+    double ikf_amps{0.0};  /* 0 = infinite high-injection knee */
+    double ikr_amps{0.0};
+    double ise_amps{0.0};
+    double ne{1.5};
+    double isc_amps{0.0};
+    double nc{2.0};
+    double cje_farads{0.0};
+    double vje_volts{0.75};
+    double mje{0.33};
+    double tf_s{0.0};
+    double cjc_farads{0.0};
+    double vjc_volts{0.75};
+    double mjc{0.33};
+    double tr_s{0.0};
+};
+
+/* Native Shichman-Hodges JFET primitive (J element, NJF or PJF). */
+struct JfetSpec {
+    std::string id;
+    NodeId d;
+    NodeId g;
+    NodeId s;
+    bool is_pjf{false};
+    double area{1.0};
+    double m_mult{1.0};
+    double vto_volts{-2.0};
+    double beta_a_per_v2{1.0e-4};
+    double lambda_per_v{0.0};
+    double is_amps{1.0e-14};
+    double cgs_farads{0.0};
+    double cgd_farads{0.0};
+    double pb_volts{1.0};
+};
+
 /* Dynamically loaded OSDI 0.3/0.4 compiled Verilog-A model instance (ARCH-MOD-001). */
 struct OsdiInstanceSpec {
     std::string id;
@@ -217,6 +331,9 @@ using ElementSpec = std::variant<
     BehavioralSourceSpec,
     SwitchSpec,
     TransmissionLineSpec,
+    MosfetSpec,
+    BjtSpec,
+    JfetSpec,
     OsdiInstanceSpec>;
 
 struct SignalDescriptor {
