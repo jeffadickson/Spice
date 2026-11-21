@@ -402,25 +402,21 @@ Diagnostic run_transient(
         return Diagnostic::error(
             StatusCode::InvalidArgument, "transient step_s and stop_s must be finite and positive");
     }
-
-    std::vector<double> breakpoints = plan.collect_breakpoints(0.0, opts.stop_s);
-    std::vector<double> time_grid;
-    time_grid.push_back(0.0);
-    const double eps = 1.0e-12 * std::max(1.0, opts.stop_s);
-    std::size_t bp_idx = 0;
-    double t = 0.0;
-    while (t + eps < opts.stop_s) {
-        if (time_grid.size() > opts.max_steps) {
-            return Diagnostic::error(StatusCode::ResourceExhausted, "transient exceeded max_steps budget");
+    if (opts.adaptive) {
+        if (!std::isfinite(opts.min_step_s) || opts.min_step_s <= 0.0 ||
+            !std::isfinite(opts.max_step_s) || opts.max_step_s < 0.0 ||
+            !std::isfinite(opts.lte_reltol) || opts.lte_reltol <= 0.0 ||
+            !std::isfinite(opts.lte_abstol) || opts.lte_abstol <= 0.0) {
+            return Diagnostic::error(
+                StatusCode::InvalidArgument, "invalid adaptive transient LTE or step bounds");
         }
-        double t_next = std::min(t + opts.step_s, opts.stop_s);
-        while (bp_idx < breakpoints.size() && breakpoints[bp_idx] <= t + eps) ++bp_idx;
-        if (bp_idx < breakpoints.size() && breakpoints[bp_idx] < t_next - eps) {
-            t_next = breakpoints[bp_idx];
-        }
-        time_grid.push_back(t_next);
-        t = t_next;
     }
+
+    const double max_step =
+        (opts.adaptive && opts.max_step_s > 0.0) ? opts.max_step_s : opts.step_s;
+    const double min_step = std::min(opts.min_step_s, max_step);
+    const double eps = 1.0e-12 * std::max(1.0, opts.stop_s);
+    std::vector<double> breakpoints = plan.collect_breakpoints(0.0, opts.stop_s);
 
     const std::uint32_t dim = plan.unknown_count();
     std::vector<double> x_prev;
@@ -443,31 +439,139 @@ Diagnostic run_transient(
 
     TransientResult res{};
     res.backend_name = solver->name();
-    res.samples.reserve(time_grid.size());
     res.samples.push_back(TransientSample{0.0, x_prev});
 
-    const bool can_audit_tran = plan_supports_linear_ac_or_tran_audit(plan);
+    const bool can_audit_tran =
+        plan_supports_linear_ac_or_tran_audit(plan) && opts.method != IntegrationMethod::Bdf2;
     audit::AuditReport merged_audit{};
 
-    std::vector<double> x_curr(dim, 0.0);
+    /* Multi-step state history for BDF2 and Lagrange predictor/LTE estimation. */
+    std::vector<double> x_prev2(dim, 0.0), x_prev3(dim, 0.0);
+    std::vector<double> q_prev2(dim, 0.0);
+    double t_prev = 0.0;
+    double t_prev2 = 0.0;
+    double t_prev3 = 0.0;
+    std::size_t steps_since_restart = 0;
+
+    std::vector<double> x_curr(dim, 0.0), x_pred(dim, 0.0);
     std::vector<double> f_curr(dim, 0.0), q_curr(dim, 0.0);
+    std::vector<double> history(dim, 0.0);
 
-    if (plan.has_nonlinear) {
-        std::vector<double> history(dim, 0.0);
-        for (std::size_t step_idx = 1; step_idx < time_grid.size(); ++step_idx) {
-            const double t_prev = time_grid[step_idx - 1u];
-            const double t_curr = time_grid[step_idx];
-            const double h = t_curr - t_prev;
-            const double alpha =
-                (opts.method == IntegrationMethod::BackwardEuler) ? (1.0 / h) : (2.0 / h);
+    /* Linear fast-path scratch buffers (reuses LU factorization whenever alpha matches). */
+    std::vector<double> x_zero(dim, 0.0);
+    std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
+    std::vector<double> a_vals(plan.pattern.nnz(), 0.0);
+    std::vector<double> rhs(dim, 0.0);
+    bool has_factor = false;
+    double factored_alpha = 0.0;
 
-            if (opts.method == IntegrationMethod::BackwardEuler) {
-                for (std::uint32_t i = 0; i < dim; ++i) history[i] = -alpha * q_prev[i];
-            } else {
-                for (std::uint32_t i = 0; i < dim; ++i) history[i] = f_prev[i] - alpha * q_prev[i];
+    double h_desired = std::min(opts.step_s, max_step);
+    std::size_t bp_idx = 0;
+
+    while (t_prev + eps < opts.stop_s) {
+        if (res.accepted_steps + res.rejected_steps >= opts.max_steps) {
+            return Diagnostic::error(StatusCode::ResourceExhausted, "transient exceeded max_steps budget");
+        }
+
+        while (bp_idx < breakpoints.size() && breakpoints[bp_idx] <= t_prev + eps) {
+            ++bp_idx;
+        }
+        const double next_bp =
+            (bp_idx < breakpoints.size()) ? breakpoints[bp_idx] : opts.stop_s;
+        const double target_t = std::min(next_bp, opts.stop_s);
+        const bool target_is_bp = (bp_idx < breakpoints.size() && next_bp < opts.stop_s - eps);
+
+        double h = opts.adaptive ? std::clamp(h_desired, min_step, max_step) : opts.step_s;
+        bool truncated_to_target = false;
+        bool hit_breakpoint = false;
+        if (t_prev + h >= target_t - eps) {
+            const double rem = target_t - t_prev;
+            if (std::abs(rem - h) > 1.0e-9 * h) {
+                h = rem;
+                truncated_to_target = true;
             }
+            hit_breakpoint = target_is_bp;
+        }
+        if (h <= 0.0) {
+            break;
+        }
+        const double t_curr = (t_prev + h >= target_t - eps) ? target_t : (t_prev + h);
 
-            x_curr = x_prev; /* Predictor: previous accepted solution. */
+        /* Compute integration formula coefficients: F(x_n, t_n) + alpha * Q(x_n, t_n) + history = 0. */
+        double alpha = 0.0;
+        const bool use_bdf2_step =
+            (opts.method == IntegrationMethod::Bdf2 && steps_since_restart >= 1u);
+        const bool use_be_step =
+            (opts.method == IntegrationMethod::BackwardEuler) ||
+            (opts.method == IntegrationMethod::Bdf2 && steps_since_restart == 0u);
+
+        if (use_be_step) {
+            alpha = 1.0 / h;
+            for (std::uint32_t i = 0; i < dim; ++i) {
+                history[i] = -alpha * q_prev[i];
+            }
+        } else if (use_bdf2_step) {
+            const double h_prev = t_prev - t_prev2;
+            const double r = h / h_prev;
+            const double a0 = (1.0 + 2.0 * r) / (h * (1.0 + r));
+            const double a1 = -(1.0 + r) / h;
+            const double a2 = (r * r) / (h * (1.0 + r));
+            alpha = a0;
+            for (std::uint32_t i = 0; i < dim; ++i) {
+                history[i] = a1 * q_prev[i] + a2 * q_prev2[i];
+            }
+        } else {
+            /* Trapezoidal: F_n + (2/h) Q_n + (F_{n-1} - (2/h) Q_{n-1}) = 0. */
+            alpha = 2.0 / h;
+            for (std::uint32_t i = 0; i < dim; ++i) {
+                history[i] = f_prev[i] - alpha * q_prev[i];
+            }
+        }
+
+        /* Compute Lagrange polynomial predictor for Milne LTE estimation. */
+        double lte_scale = 0.0;
+        int order = use_be_step ? 1 : 2;
+        bool can_estimate_lte = false;
+        if (steps_since_restart == 0u) {
+            x_pred = x_prev;
+        } else if (steps_since_restart == 1u || use_be_step) {
+            const double h_prev = t_prev - t_prev2;
+            const double slope_scale = h / h_prev;
+            for (std::uint32_t i = 0; i < dim; ++i) {
+                x_pred[i] = x_prev[i] + slope_scale * (x_prev[i] - x_prev2[i]);
+            }
+            if (use_be_step) {
+                lte_scale = h / (h + h_prev);
+                can_estimate_lte = true;
+            }
+        } else {
+            const double d12 = t_prev - t_prev2;
+            const double d13 = t_prev - t_prev3;
+            const double d23 = t_prev2 - t_prev3;
+            const double dt1 = t_curr - t_prev;
+            const double dt2 = t_curr - t_prev2;
+            const double dt3 = t_curr - t_prev3;
+            const double l1 = (dt2 * dt3) / (d12 * d13);
+            const double l2 = -(dt1 * dt3) / (d12 * d23);
+            const double l3 = (dt1 * dt2) / (d13 * d23);
+            for (std::uint32_t i = 0; i < dim; ++i) {
+                x_pred[i] = l1 * x_prev[i] + l2 * x_prev2[i] + l3 * x_prev3[i];
+            }
+            if (use_bdf2_step) {
+                const double r = h / d12;
+                lte_scale = ((1.0 + r) * (1.0 + r) * h * h) / ((1.0 + 2.0 * r) * dt2 * dt3);
+            } else {
+                lte_scale = (h * h) / (2.0 * dt2 * dt3);
+            }
+            can_estimate_lte = true;
+        }
+
+        bool step_solve_ok = true;
+        Diagnostic solve_diag = Diagnostic::success();
+
+        if (plan.has_nonlinear) {
+            /* Use safe previous accepted state as Newton warm-start to prevent exponential overshoot. */
+            x_curr = x_prev;
             solver::NewtonProblem prob{};
             prob.time_s = t_curr;
             prob.mode = AnalysisMode::Transient;
@@ -475,59 +579,30 @@ Diagnostic run_transient(
             prob.history = history;
 
             solver::NewtonReport nrep{};
-            if (auto d = solver::solve_newton(plan, *solver, prob, opts.common.newton_options, x_curr, nrep);
-                !d.ok()) {
+            solve_diag = solver::solve_newton(plan, *solver, prob, opts.common.newton_options, x_curr, nrep);
+            if (!solve_diag.ok()) {
                 plan.rollback_all_trials();
-                return d;
+                step_solve_ok = false;
+            } else {
+                res.total_newton_iterations += nrep.iterations;
+                res.worst_backward_error = std::max(res.worst_backward_error, nrep.worst_backward_error);
             }
-            res.total_newton_iterations += nrep.iterations;
-            res.worst_backward_error = std::max(res.worst_backward_error, nrep.worst_backward_error);
-
-            EvalContext ctx_curr{t_curr, 300.15, AnalysisMode::Transient, x_curr};
-            StampTarget target_curr{f_curr, q_curr, g_vals, c_vals};
-            if (auto d = plan.evaluate_all(ctx_curr, target_curr); !d.ok()) {
-                plan.rollback_all_trials();
-                return d;
-            }
-            plan.commit_all_trials();
-            res.samples.push_back(TransientSample{t_curr, x_curr});
-            x_prev.swap(x_curr);
-            f_prev.swap(f_curr);
-            q_prev.swap(q_curr);
-        }
-    } else {
-        std::vector<double> x_zero(dim, 0.0);
-        std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
-        std::vector<double> a_vals(plan.pattern.nnz(), 0.0);
-        std::vector<double> rhs(dim, 0.0);
-        bool has_factor = false;
-        double factored_h = 0.0;
-
-        for (std::size_t step_idx = 1; step_idx < time_grid.size(); ++step_idx) {
-            const double t_prev = time_grid[step_idx - 1u];
-            const double t_curr = time_grid[step_idx];
-            const double h = t_curr - t_prev;
-
+        } else {
             EvalContext ctx_zero{t_curr, 300.15, AnalysisMode::Transient, x_zero};
             StampTarget target_zero{f0, q0, g_vals, c_vals};
             if (auto d = plan.evaluate_all(ctx_zero, target_zero); !d.ok()) return d;
 
-            const double alpha =
-                (opts.method == IntegrationMethod::BackwardEuler) ? (1.0 / h) : (2.0 / h);
-
-            if (!has_factor || std::abs(h - factored_h) > 1.0e-14 * std::max(1.0, factored_h)) {
+            if (!has_factor || std::abs(alpha - factored_alpha) > 1.0e-11 * std::max(1.0, std::abs(factored_alpha))) {
                 for (std::size_t k = 0; k < a_vals.size(); ++k) {
                     a_vals[k] = g_vals[k] + alpha * c_vals[k];
                 }
                 if (auto d = solver->factor(a_vals); !d.ok()) return d;
                 has_factor = true;
-                factored_h = h;
+                factored_alpha = alpha;
             }
 
-            if (opts.method == IntegrationMethod::BackwardEuler) {
-                for (std::uint32_t i = 0; i < dim; ++i) rhs[i] = -f0[i] + alpha * q_prev[i];
-            } else {
-                for (std::uint32_t i = 0; i < dim; ++i) rhs[i] = -f0[i] - f_prev[i] + alpha * q_prev[i];
+            for (std::uint32_t i = 0; i < dim; ++i) {
+                rhs[i] = -f0[i] - history[i];
             }
 
             if (auto d = solver->solve(rhs, x_curr); !d.ok()) return d;
@@ -538,43 +613,104 @@ Diagnostic run_transient(
                     StatusCode::NumericalFailure, "transient linear backward error exceeded tolerance");
             }
             res.worst_backward_error = std::max(res.worst_backward_error, berr);
+        }
 
-            EvalContext ctx_curr{t_curr, 300.15, AnalysisMode::Transient, x_curr};
-            StampTarget target_curr{f_curr, q_curr, g_vals, c_vals};
-            if (auto d = plan.evaluate_all(ctx_curr, target_curr); !d.ok()) {
+        if (!step_solve_ok) {
+            if (opts.adaptive && h > min_step * 1.001) {
+                ++res.rejected_steps;
+                h_desired = std::max(min_step, 0.5 * h);
+                continue;
+            }
+            return solve_diag;
+        }
+
+        /* Adaptive LTE acceptance test (ARCH-EQ-004). */
+        double err_norm = 0.0;
+        if (opts.adaptive && can_estimate_lte) {
+            for (std::uint32_t i = 0; i < dim; ++i) {
+                const double lte_i = lte_scale * std::abs(x_curr[i] - x_pred[i]);
+                const double scale_i =
+                    opts.lte_abstol + opts.lte_reltol * std::max(std::abs(x_curr[i]), std::abs(x_prev[i]));
+                err_norm = std::max(err_norm, lte_i / scale_i);
+            }
+            if (err_norm > 1.0 && h > min_step * 1.001) {
                 plan.rollback_all_trials();
-                return d;
+                ++res.rejected_steps;
+                const double factor = std::clamp(
+                    0.85 * std::pow(err_norm, -1.0 / static_cast<double>(order + 1)), 0.1, 0.5);
+                h_desired = std::max(min_step, h * factor);
+                continue;
             }
+        }
 
-            if (opts.common.enable_audits && can_audit_tran) {
-                const auto audit_method =
-                    (opts.method == IntegrationMethod::BackwardEuler)
-                        ? audit::TransientAuditMethod::BackwardEuler
-                        : audit::TransientAuditMethod::Trapezoidal;
-                auto step_audit = audit::audit_transient_step(
-                    plan, x_prev, x_curr, t_prev, t_curr, audit_method, opts.common.audit_options);
-                if (step_audit.any_failed()) {
-                    plan.rollback_all_trials();
-                    return Diagnostic::error(
-                        StatusCode::NumericalFailure, "independent transient physical audit failed");
-                }
-                merged_audit.merge_worst(step_audit);
+        EvalContext ctx_curr{t_curr, 300.15, AnalysisMode::Transient, x_curr};
+        StampTarget target_curr{f_curr, q_curr, g_vals, c_vals};
+        if (auto d = plan.evaluate_all(ctx_curr, target_curr); !d.ok()) {
+            plan.rollback_all_trials();
+            return d;
+        }
+
+        if (opts.common.enable_audits && can_audit_tran) {
+            const auto audit_method =
+                (opts.method == IntegrationMethod::BackwardEuler)
+                    ? audit::TransientAuditMethod::BackwardEuler
+                    : audit::TransientAuditMethod::Trapezoidal;
+            auto step_audit = audit::audit_transient_step(
+                plan, x_prev, x_curr, t_prev, t_curr, audit_method, opts.common.audit_options);
+            if (step_audit.any_failed()) {
+                plan.rollback_all_trials();
+                return Diagnostic::error(
+                    StatusCode::NumericalFailure, "independent transient physical audit failed");
             }
+            merged_audit.merge_worst(step_audit);
+        }
 
-            plan.commit_all_trials();
-            res.samples.push_back(TransientSample{t_curr, x_curr});
-            x_prev.swap(x_curr);
-            f_prev.swap(f_curr);
-            q_prev.swap(q_curr);
+        plan.commit_all_trials();
+        res.samples.push_back(TransientSample{t_curr, x_curr});
+        ++res.accepted_steps;
+        res.min_step_used_s = (res.accepted_steps == 1u) ? h : std::min(res.min_step_used_s, h);
+        res.max_step_used_s = std::max(res.max_step_used_s, h);
+
+        /* Advance step-size proposal only on non-truncated steps so breakpoints don't collapse h. */
+        if (opts.adaptive && can_estimate_lte && !truncated_to_target) {
+            if (err_norm < 1.0e-12) {
+                h_desired = std::min(max_step, 2.0 * h);
+            } else {
+                const double factor = std::clamp(
+                    0.9 * std::pow(err_norm, -1.0 / static_cast<double>(order + 1)), 0.5, 2.0);
+                h_desired = std::clamp(h * factor, min_step, max_step);
+            }
+        }
+
+        /* Rotate multi-step history buffers. */
+        x_prev3.swap(x_prev2);
+        t_prev3 = t_prev2;
+        x_prev2.swap(x_prev);
+        q_prev2.swap(q_prev);
+        t_prev2 = t_prev;
+        x_prev.swap(x_curr);
+        f_prev.swap(f_curr);
+        q_prev.swap(q_curr);
+        t_prev = t_curr;
+
+        if (hit_breakpoint) {
+            steps_since_restart = 0u;
+        } else {
+            ++steps_since_restart;
         }
     }
 
     res.solver_stats = solver->stats();
     if (opts.common.enable_audits) {
-        res.audit = can_audit_tran
-                        ? std::move(merged_audit)
-                        : make_unavailable_audit(
-                              "nonlinear/coupled transient excluded from standalone linear energy audit");
+        if (can_audit_tran) {
+            res.audit = std::move(merged_audit);
+        } else if (opts.method == IntegrationMethod::Bdf2) {
+            res.audit = make_unavailable_audit(
+                "BDF2 multi-step transient excluded from 1-step BE/Trapezoidal discrete energy audit");
+        } else {
+            res.audit = make_unavailable_audit(
+                "nonlinear/coupled transient excluded from standalone linear energy audit");
+        }
     }
     out_result = std::move(res);
     return Diagnostic::success();

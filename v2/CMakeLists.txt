@@ -119,7 +119,19 @@ target_link_libraries(spice_analysis
     PRIVATE spice_v2_warnings
 )
 
-# 9. Stable versioned flat C ABI shared library.
+# 9. Native canonical SPICE3f5 parser and hierarchical elaborator (depends only on spice_core).
+add_library(spice_parser STATIC
+    cpp/parser/spice_parser.cpp
+)
+target_include_directories(spice_parser PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cpp>
+)
+target_link_libraries(spice_parser
+    PUBLIC spice_core
+    PRIVATE spice_v2_warnings
+)
+
+# 10. Stable versioned flat C ABI shared library.
 add_library(spice_capi SHARED
     cpp/capi/capi.cpp
 )
@@ -129,6 +141,19 @@ target_include_directories(spice_capi
     PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cpp>
 )
 target_link_libraries(spice_capi PRIVATE spice_analysis spice_v2_warnings)
+
+# 11. Native standalone CLI binary (spice_v2_cli).
+add_executable(spice_v2_cli
+    cpp/cli/main.cpp
+)
+target_include_directories(spice_v2_cli PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+)
+target_link_libraries(spice_v2_cli PRIVATE
+    spice_parser
+    spice_analysis
+    spice_v2_warnings
+)
 
 if(SPICE_V2_BUILD_TESTS)
     enable_testing()
@@ -215,4 +240,28 @@ if(SPICE_V2_BUILD_TESTS)
         target_compile_definitions(spice_v2_m2b_tests PRIVATE SPICE_V2_USE_CATCH2=1)
     endif()
     add_test(NAME spice_v2_m2b_tests COMMAND spice_v2_m2b_tests)
+
+    add_executable(spice_v2_m2b_parser_lte_tests
+        tests/m2b_parser_lte_cli_tests.cpp
+    )
+    target_include_directories(spice_v2_m2b_parser_lte_tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+    target_compile_definitions(spice_v2_m2b_parser_lte_tests PRIVATE
+        SPICE_TEST_OSDI_DIODE_PATH="$<TARGET_FILE:test_osdi_diode>"
+        SPICE_V2_CLI_PATH="$<TARGET_FILE:spice_v2_cli>"
+    )
+    target_link_libraries(spice_v2_m2b_parser_lte_tests PRIVATE
+        spice_parser
+        spice_analysis
+        spice_v2_warnings
+    )
+    add_dependencies(spice_v2_m2b_parser_lte_tests test_osdi_diode spice_v2_cli)
+    if(Catch2_FOUND)
+        target_link_libraries(spice_v2_m2b_parser_lte_tests PRIVATE Catch2::Catch2WithMain)
+        target_compile_definitions(spice_v2_m2b_parser_lte_tests PRIVATE SPICE_V2_USE_CATCH2=1)
+    endif()
+    add_test(NAME spice_v2_m2b_parser_lte_tests COMMAND spice_v2_m2b_parser_lte_tests)
 endif()

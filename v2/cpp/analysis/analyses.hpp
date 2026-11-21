@@ -72,7 +72,8 @@ struct AcResult {
 
 enum class IntegrationMethod {
     BackwardEuler,
-    Trapezoidal
+    Trapezoidal,
+    Bdf2
 };
 
 enum class StartupMode {
@@ -86,6 +87,12 @@ struct TransientOptions {
     IntegrationMethod method{IntegrationMethod::Trapezoidal};
     StartupMode startup{StartupMode::OperatingPoint};
     std::size_t max_steps{1'000'000};
+    /* Adaptive Local Truncation Error (LTE) step control (ARCH-EQ-004). */
+    bool adaptive{false};
+    double min_step_s{1.0e-15};
+    double max_step_s{0.0}; /* 0 => default to step_s */
+    double lte_reltol{1.0e-3};
+    double lte_abstol{1.0e-6};
     AnalysisCommonOptions common{};
 };
 
@@ -100,6 +107,10 @@ struct TransientResult {
     double worst_backward_error{0.0};
     linalg::SolverStats solver_stats{};
     std::size_t total_newton_iterations{0};
+    std::size_t accepted_steps{0};
+    std::size_t rejected_steps{0};
+    double min_step_used_s{0.0};
+    double max_step_used_s{0.0};
     std::optional<audit::AuditReport> audit;
 };
 
