@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 #define SPICE_CAPI_ABI_MAJOR 2u
-#define SPICE_CAPI_ABI_MINOR 0u
+#define SPICE_CAPI_ABI_MINOR 1u
 
 typedef enum spice_status_t {
     SPICE_STATUS_OK = 0,
@@ -54,7 +54,8 @@ typedef enum spice_backend_t {
 
 typedef enum spice_integration_method_t {
     SPICE_METHOD_BACKWARD_EULER = 0,
-    SPICE_METHOD_TRAPEZOIDAL = 1
+    SPICE_METHOD_TRAPEZOIDAL = 1,
+    SPICE_METHOD_BDF2 = 2
 } spice_integration_method_t;
 
 typedef enum spice_startup_mode_t {
@@ -185,11 +186,39 @@ SPICE_CAPI_EXPORT spice_status_t spice_circuit_add_ccvs(
     const char* control_source_id,
     double ohms);
 
+/* ABI 2.1: Add built-in Shockley + junction/transit charge diode. */
+SPICE_CAPI_EXPORT spice_status_t spice_circuit_add_diode(
+    spice_circuit_t* circuit,
+    const char* id,
+    const char* node_p,
+    const char* node_n,
+    double is_amps,
+    double n_emission,
+    double cjo_farads);
+
+/* ABI 2.1: Parse a full canonical SPICE3f5 / BSIM3 / BSIM4 / BJT / JFET / OSDI deck directly into a circuit handle. */
+SPICE_CAPI_EXPORT spice_status_t spice_circuit_parse_spice(
+    const spice_engine_t* engine,
+    const char* spice_netlist,
+    const char* base_dir,
+    spice_circuit_t** out_circuit);
+
 /* Analysis execution */
 SPICE_CAPI_EXPORT spice_status_t spice_run_op(
     const spice_engine_t* engine,
     const spice_circuit_t* circuit,
     spice_backend_t backend,
+    spice_result_t** out_result);
+
+/* ABI 2.1: DC source sweep (.DC). */
+SPICE_CAPI_EXPORT spice_status_t spice_run_dc_sweep(
+    const spice_engine_t* engine,
+    const spice_circuit_t* circuit,
+    spice_backend_t backend,
+    const char* source_id,
+    double start_val,
+    double stop_val,
+    double step_val,
     spice_result_t** out_result);
 
 SPICE_CAPI_EXPORT spice_status_t spice_run_ac(
@@ -210,8 +239,57 @@ SPICE_CAPI_EXPORT spice_status_t spice_run_transient(
     spice_startup_mode_t startup,
     spice_result_t** out_result);
 
+/* ABI 2.1: Adjoint small-signal noise (.NOISE). Signals: onoise_v_per_sqrt_hz, inoise_v_per_sqrt_hz, transfer_gain_mag. */
+SPICE_CAPI_EXPORT spice_status_t spice_run_noise(
+    const spice_engine_t* engine,
+    const spice_circuit_t* circuit,
+    spice_backend_t backend,
+    const char* out_p,
+    const char* out_n,
+    const char* input_source_id,
+    const double* frequencies_hz,
+    size_t frequency_count,
+    double temperature_k,
+    spice_result_t** out_result);
+
+/* ABI 2.1: Harmonic Balance (.HB). Complex result: axis = [0, f0, 2*f0, ..., H*f0], values = complex phasors. */
+SPICE_CAPI_EXPORT spice_status_t spice_run_hb(
+    const spice_engine_t* engine,
+    const spice_circuit_t* circuit,
+    spice_backend_t backend,
+    double fundamental_hz,
+    size_t harmonics,
+    spice_result_t** out_result);
+
+/* ABI 2.1: Driven Periodic Steady-State Shooting (.PSS). Real result over [0, T]. */
+SPICE_CAPI_EXPORT spice_status_t spice_run_pss(
+    const spice_engine_t* engine,
+    const spice_circuit_t* circuit,
+    spice_backend_t backend,
+    double fundamental_hz,
+    size_t steps_per_period,
+    spice_integration_method_t method,
+    spice_result_t** out_result);
+
+/* ABI 2.1: Multi-port S-parameters (.SP). Complex result with signals S11, S12, ..., Snn. */
+SPICE_CAPI_EXPORT spice_status_t spice_run_sp(
+    const spice_engine_t* engine,
+    const spice_circuit_t* circuit,
+    spice_backend_t backend,
+    const char* const* port_p_nodes,
+    const char* const* port_n_nodes,
+    size_t port_count,
+    double z0_ohms,
+    const double* frequencies_hz,
+    size_t frequency_count,
+    spice_result_t** out_result);
+
 /* Result inspection (contiguous row-major buffers: sample * signal_count + signal_idx). */
 SPICE_CAPI_EXPORT void spice_result_destroy(spice_result_t* result);
+
+SPICE_CAPI_EXPORT spice_status_t spice_result_is_complex(
+    const spice_result_t* result,
+    int* out_is_complex);
 
 SPICE_CAPI_EXPORT spice_status_t spice_result_signal_count(
     const spice_result_t* result,
@@ -226,17 +304,17 @@ SPICE_CAPI_EXPORT spice_status_t spice_result_sample_count(
     const spice_result_t* result,
     size_t* out_count);
 
-/* Borrowed pointer to axis values (time_s for OP/TRAN, frequency_hz for AC). */
+/* Borrowed pointer to axis values (time_s for OP/TRAN/PSS, sweep for DC, frequency_hz for AC/NOISE/HB/SP). */
 SPICE_CAPI_EXPORT spice_status_t spice_result_axis_data(
     const spice_result_t* result,
     const double** out_axis);
 
-/* Borrowed pointer to real values (length = sample_count * signal_count) for OP/TRAN. */
+/* Borrowed pointer to real values (length = sample_count * signal_count) for real results. */
 SPICE_CAPI_EXPORT spice_status_t spice_result_real_data(
     const spice_result_t* result,
     const double** out_values);
 
-/* Borrowed pointer to interleaved (re, im) complex values (2 * sample_count * signal_count) for AC. */
+/* Borrowed pointer to interleaved (re, im) complex values (2 * sample_count * signal_count) for complex results. */
 SPICE_CAPI_EXPORT spice_status_t spice_result_complex_data(
     const spice_result_t* result,
     const double** out_interleaved_re_im);

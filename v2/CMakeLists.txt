@@ -155,7 +155,7 @@ target_include_directories(spice_capi
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cpp>
 )
-target_link_libraries(spice_capi PRIVATE spice_analysis spice_v2_warnings)
+target_link_libraries(spice_capi PRIVATE spice_parser spice_analysis spice_v2_warnings)
 
 # 11. Native standalone CLI binary (spice_v2_cli).
 add_executable(spice_v2_cli

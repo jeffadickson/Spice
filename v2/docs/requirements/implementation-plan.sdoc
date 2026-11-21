@@ -42,8 +42,8 @@ Implement the immutable Canonical IR, fail-closed Unified Device Descriptor regi
 COMMENT: >>>
 Phase: M1
 Depends-on: PLAN-V2-001
-Deliverables: Spice.Ir (CanonicalIr, DeviceRegistry, SpiceNetlistEmitter), Spice.Sdk (ISimulationBackend, GPL-isolated XyceBackend with CSV parser, DifferentialComparer, NativeCppBackend), Spice.Tests/M1PlatformTests.cs.
-Verification: .NET 11.0.100 Release build (TreatWarningsAsErrors=true) passes 5/5 xUnit tests in Spice.Tests with 0 warnings, including mocked XyceBackend deck/CSV/differential verification and live in-process NativeCppBackend OP/AC/TRAN over libspice_capi.so. Remaining: live external Xyce executable differential run on Windows host.
+Deliverables: Spice.Ir (CanonicalIr incl. SParameters, DeviceRegistry incl. spice.mosfet/bjt/jfet, SpiceNetlistEmitter), Spice.Sdk (ISimulationBackend, GPL-isolated XyceBackend with CSV parser, DifferentialComparer, NativeCppBackend ABI v2.1), Spice.Tests/M1PlatformTests.cs.
+Verification: .NET 11.0.100 Release build (TreatWarningsAsErrors=true) passes 6/6 xUnit tests in Spice.Tests with 0 warnings, including mocked XyceBackend deck/CSV/differential verification and live in-process NativeCppBackend ABI v2.1 OP/DC/AC/TRAN(BDF2)/NOISE/HB/PSS/SP + BSIM4 deck + parallel campaign tests over libspice_capi.so. Remaining: live external Xyce executable differential run on Windows host.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -64,7 +64,7 @@ COMMENT: >>>
 Phase: M1
 Depends-on: PLAN-V2-002
 Deliverables: Spice.Starlark (SiUnits dimensional constructors, fail-closed CircuitBuilder over DeviceRegistry, deterministic bounded-concurrency CampaignRunner.RunParallelMapAsync).
-Verification: .NET 11.0.100 Release build and CampaignRunner deterministic parallel_map xUnit tests pass with 0 warnings. Remaining: bind jeffadickson/StarLark-cs script evaluator and SharpUnits package reference.
+Verification: .NET 11.0.100 Release build and CampaignRunner deterministic parallel_map xUnit tests pass with 0 warnings on both XyceBackend and live NativeCppBackend. Remaining: bind jeffadickson/StarLark-cs script evaluator and SharpUnits package reference.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -82,8 +82,8 @@ Build Spice.Schematic (versioned diffable document model, hierarchical subsheets
 COMMENT: >>>
 Phase: M1
 Depends-on: PLAN-V2-002
-Deliverables: Spice.Schematic (SchematicDocument, SchematicCompiler with ERC, hierarchical flattening, Canonical IR emitter, deterministic JSON round-trip, SPICE export, and vector SVG export), Spice.Tests/M1PlatformTests.cs. Remaining: interactive Spice.App desktop GUI + live cross-probing.
-Verification: .NET 11.0.100 Release build and SchematicCompiler ERC/IR/JSON/SPICE/SVG xUnit tests pass with 0 warnings.
+Deliverables: Spice.Schematic (SchematicDocument, SchematicCompiler with ERC, hierarchical flattening, Canonical IR emitter, deterministic JSON round-trip, SPICE export, and vector SVG export), Spice.App runnable .NET 11 workbench host CLI (info/run/schematic/campaign consuming only public Spice.* APIs and libspice_capi ABI v2.1), Spice.Tests/M1PlatformTests.cs. Remaining: interactive desktop GUI canvas + live waveform cross-probing.
+Verification: .NET 11.0.100 Release build, 6/6 xUnit tests (incl. Schematic -> ERC -> Canonical IR -> live NativeCppBackend solve), and live Spice.App info/run/schematic/campaign smoke tests against libspice_capi.so pass with 0 warnings.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -110,8 +110,8 @@ Implement CSC sparse assembly with pre-bound device slots, SuiteSparse KLU share
 COMMENT: >>>
 Phase: M2
 Depends-on: PLAN-V2-001, PLAN-V2-002
-Deliverables: cpp/linalg (SparseLu + DenseLu + KLU adapter), cpp/devices (R/C/L/K/V/I/E/F/G/H + waveforms), cpp/analysis (OP/DC sweep/AC/TRAN BE & Trap + UIC + breakpoints), cpp/audit (DC/AC/TRAN physical audits), cpp/capi, NativeCppBackend in Spice.Sdk (OP/AC/TRAN contiguous buffer marshaling).
-Verification: GCC 12 and Clang 14 C++20 -Werror builds pass all CTest suites (1,000-node RC ladder ~29.6 ms GCC) AND .NET 11.0.100 NativeCppBackend passes live in-process OP/AC/TRAN tests against libspice_capi.so. Remaining to close M2a: vcpkg SuiteSparse KLU link test and head-to-head XyceBackend/ngspice SANDLER8/SANDLER9 comparison.
+Deliverables: cpp/linalg (SparseLu + DenseLu + KLU adapter), cpp/devices (R/C/L/K/V/I/E/F/G/H + waveforms), cpp/analysis (OP/DC sweep/AC/TRAN BE/Trap/BDF2 + UIC + breakpoints), cpp/audit (DC/AC/TRAN physical audits), include/spice/capi.h & cpp/capi/capi.cpp (ABI v2.1: SPICE deck parser, Diode, DC sweep, NOISE, HB, PSS, SP, BDF2, complex result introspection), NativeCppBackend in Spice.Sdk (DllImportResolver for SPICE_V2_CAPI_LIB + RunSpiceDeckAsync + full ABI v2.1 contiguous buffer marshaling).
+Verification: GCC 12 and Clang 14 C++20 -Werror builds pass all 8 CTest binaries (41 C++20 tests, 0.11 s; GCC gcov -b 80.23% lines / 46.23% branches across 18 owned .cpp files) AND .NET 11.0.100 NativeCppBackend passes 6/6 live xUnit tests + Spice.App smoke tests against libspice_capi.so. Remaining to close M2a: vcpkg SuiteSparse KLU link test and head-to-head XyceBackend/ngspice SANDLER8/SANDLER9 comparison.
 <<<
 RELATIONS:
 - TYPE: Parent

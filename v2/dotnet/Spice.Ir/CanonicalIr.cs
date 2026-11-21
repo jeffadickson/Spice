@@ -53,7 +53,8 @@ public enum AnalysisKind
     Transient,
     Noise,
     HarmonicBalance,
-    PeriodicSteadyState
+    PeriodicSteadyState,
+    SParameters
 }
 
 public sealed record SimulationRequestIr(

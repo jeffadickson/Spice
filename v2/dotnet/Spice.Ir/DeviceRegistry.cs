@@ -234,6 +234,37 @@ public sealed class DeviceRegistry
             ],
             "sym.diode"),
         new DeviceDescriptor(
+            "spice.mosfet", "MOSFET (Level 1 / BSIM3 / BSIM4)",
+            [
+                new PinDescriptor("d", "drain"), new PinDescriptor("g", "gate"),
+                new PinDescriptor("s", "source"), new PinDescriptor("b", "bulk")
+            ],
+            [
+                new ParameterDescriptor("w_m", "m", DefaultValue: 1e-6),
+                new ParameterDescriptor("l_m", "m", DefaultValue: 1e-6),
+                new ParameterDescriptor("level", "", DefaultValue: 54.0),
+                new ParameterDescriptor("vth0_volts", "V", DefaultValue: 0.4)
+            ],
+            "sym.mosfet"),
+        new DeviceDescriptor(
+            "spice.bjt", "Gummel-Poon BJT",
+            [new PinDescriptor("c", "collector"), new PinDescriptor("b", "base"), new PinDescriptor("e", "emitter")],
+            [
+                new ParameterDescriptor("area", "", DefaultValue: 1.0),
+                new ParameterDescriptor("bf", "", DefaultValue: 100.0),
+                new ParameterDescriptor("is_amps", "A", DefaultValue: 1e-16)
+            ],
+            "sym.bjt"),
+        new DeviceDescriptor(
+            "spice.jfet", "Shichman-Hodges JFET",
+            [new PinDescriptor("d", "drain"), new PinDescriptor("g", "gate"), new PinDescriptor("s", "source")],
+            [
+                new ParameterDescriptor("area", "", DefaultValue: 1.0),
+                new ParameterDescriptor("vto_volts", "V", DefaultValue: -2.0),
+                new ParameterDescriptor("beta_a_per_v2", "A/V^2", DefaultValue: 1e-4)
+            ],
+            "sym.jfet"),
+        new DeviceDescriptor(
             "spice.osdi", "OSDI Compiled Verilog-A Model",
             [],
             [],

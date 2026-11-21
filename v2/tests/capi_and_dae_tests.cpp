@@ -295,6 +295,98 @@ TEST_CASE("Universal DAE Device stamps F, Q, dF/dx, dQ/dx and enforces trial rol
     REQUIRE(dev.evaluate(ctx, target).code == StatusCode::NumericalFailure);
 }
 
+TEST_CASE("C ABI v2.1 parses BSIM4/RF SPICE decks and executes DC, NOISE, HB, PSS, and SP", "[capi][v21]") {
+    spice_engine_options_t opts{};
+    opts.struct_size = sizeof(spice_engine_options_t);
+    opts.abi_major = SPICE_CAPI_ABI_MAJOR;
+    opts.abi_minor = SPICE_CAPI_ABI_MINOR;
+    opts.enable_audits = 1u;
+    spice_engine_t* engine = nullptr;
+    REQUIRE(spice_engine_create(&opts, &engine) == SPICE_STATUS_OK);
+
+    // 1. Parse BSIM4 CMOS inverter deck and run .DC VTC sweep across C ABI!
+    const char* cmos_deck =
+        "BSIM4 Inverter\n"
+        ".MODEL nch NMOS(LEVEL=54 VTH0=0.35 TOXE=2.2n U0=420 VSAT=1.1e5)\n"
+        ".MODEL pch PMOS(LEVEL=54 VTH0=-0.35 TOXE=2.2n U0=160 VSAT=0.9e5)\n"
+        "Vdd vdd 0 DC 1.2\n"
+        "Vin in 0 DC 0\n"
+        "Mn out in 0 0 nch W=1u L=65n\n"
+        "Mp out in vdd vdd pch W=2.2u L=65n\n"
+        ".END\n";
+    spice_circuit_t* c_cmos = nullptr;
+    REQUIRE(spice_circuit_parse_spice(engine, cmos_deck, nullptr, &c_cmos) == SPICE_STATUS_OK);
+    spice_result_t* r_dc = nullptr;
+    REQUIRE(spice_run_dc_sweep(engine, c_cmos, SPICE_BACKEND_AUTO, "Vin", 0.0, 1.2, 0.2, &r_dc) == SPICE_STATUS_OK);
+    int is_c = 1;
+    REQUIRE(spice_result_is_complex(r_dc, &is_c) == SPICE_STATUS_OK);
+    REQUIRE(is_c == 0);
+    size_t samples = 0, sigs = 0;
+    REQUIRE(spice_result_sample_count(r_dc, &samples) == SPICE_STATUS_OK);
+    REQUIRE(spice_result_signal_count(r_dc, &sigs) == SPICE_STATUS_OK);
+    REQUIRE(samples == 7u && sigs >= 3u);
+    spice_result_destroy(r_dc);
+    spice_circuit_destroy(c_cmos);
+
+    // 2. Parse pumped diode RF detector/mixer and run .HB + .PSS + .NOISE across C ABI!
+    const char* rf_deck =
+        "RF Diode Mixer\n"
+        ".MODEL D1 D(IS=1e-14 CJO=5p)\n"
+        "Vlo in 0 DC 0.4 SIN(0.4 0.8 1Meg)\n"
+        "R1 in out 500\n"
+        "C1 out 0 200p\n"
+        "Dmix out 0 D1\n"
+        ".END\n";
+    spice_circuit_t* c_rf = nullptr;
+    REQUIRE(spice_circuit_parse_spice(engine, rf_deck, nullptr, &c_rf) == SPICE_STATUS_OK);
+
+    spice_result_t* r_hb = nullptr;
+    REQUIRE(spice_run_hb(engine, c_rf, SPICE_BACKEND_AUTO, 1.0e6, 5u, &r_hb) == SPICE_STATUS_OK);
+    REQUIRE(spice_result_is_complex(r_hb, &is_c) == SPICE_STATUS_OK);
+    REQUIRE(is_c == 1);
+    REQUIRE(spice_result_sample_count(r_hb, &samples) == SPICE_STATUS_OK);
+    REQUIRE(samples == 6u);
+    spice_result_destroy(r_hb);
+
+    spice_result_t* r_pss = nullptr;
+    REQUIRE(spice_run_pss(engine, c_rf, SPICE_BACKEND_AUTO, 1.0e6, 64u, SPICE_METHOD_TRAPEZOIDAL, &r_pss) == SPICE_STATUS_OK);
+    REQUIRE(spice_result_sample_count(r_pss, &samples) == SPICE_STATUS_OK);
+    REQUIRE(samples == 65u);
+    spice_result_destroy(r_pss);
+
+    const double freqs[2] = {1.0e3, 1.0e5};
+    spice_result_t* r_ns = nullptr;
+    REQUIRE(spice_run_noise(engine, c_rf, SPICE_BACKEND_AUTO, "out", "0", "Vlo", freqs, 2u, 300.15, &r_ns) == SPICE_STATUS_OK);
+    REQUIRE(spice_result_signal_count(r_ns, &sigs) == SPICE_STATUS_OK);
+    REQUIRE(sigs == 3u);
+    spice_result_destroy(r_ns);
+    spice_circuit_destroy(c_rf);
+
+    // 3. 2-Port lossless T-line .SP S-parameters across C ABI!
+    const char* sp_deck =
+        "Tline SP\n"
+        "T1 p1 0 p2 0 Z0=50 TD=1n\n"
+        ".END\n";
+    spice_circuit_t* c_sp = nullptr;
+    REQUIRE(spice_circuit_parse_spice(engine, sp_deck, nullptr, &c_sp) == SPICE_STATUS_OK);
+    const char* pp[2] = {"p1", "p2"};
+    const char* pn[2] = {"0", "0"};
+    const double sp_freqs[1] = {250.0e6}; /* Quarter wave: S11 = 0, |S21| = 1 */
+    spice_result_t* r_sp = nullptr;
+    REQUIRE(spice_run_sp(engine, c_sp, SPICE_BACKEND_AUTO, pp, pn, 2u, 50.0, sp_freqs, 1u, &r_sp) == SPICE_STATUS_OK);
+    REQUIRE(spice_result_signal_count(r_sp, &sigs) == SPICE_STATUS_OK);
+    REQUIRE(sigs == 4u);
+    const double* cdata = nullptr;
+    REQUIRE(spice_result_complex_data(r_sp, &cdata) == SPICE_STATUS_OK);
+    /* S11 at index 0 -> (0, 0); S21 at index 2 -> |S21| = 1. */
+    REQUIRE(std::hypot(cdata[0], cdata[1]) < 1.0e-10);
+    REQUIRE(std::abs(std::hypot(cdata[4], cdata[5]) - 1.0) < 1.0e-10);
+    spice_result_destroy(r_sp);
+    spice_circuit_destroy(c_sp);
+
+    spice_engine_destroy(engine);
+}
+
 #if !defined(SPICE_V2_USE_CATCH2)
 int main() {
     for (const auto& [name, fn] : test_registry()) {

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AssemblyName>spice-app</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Spice.Ir/Spice.Ir.csproj" />
+    <ProjectReference Include="../Spice.Schematic/Spice.Schematic.csproj" />
+    <ProjectReference Include="../Spice.Starlark/Spice.Starlark.csproj" />
+    <ProjectReference Include="../Spice.Sdk/Spice.Sdk.csproj" />
+  </ItemGroup>
+</Project>
