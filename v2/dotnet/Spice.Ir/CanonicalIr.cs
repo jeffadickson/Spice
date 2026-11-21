@@ -27,6 +27,13 @@ public sealed record DeviceInstanceIr(
     IReadOnlyDictionary<string, double> Parameters,
     string? ModelName = null);
 
+public sealed record ModelDefinitionIr(
+    string Name,
+    string ModelType,
+    IReadOnlyDictionary<string, double> Parameters,
+    string? OsdiLibraryPath = null,
+    string? OsdiModelName = null);
+
 /// <summary>
 /// Immutable frontend-agnostic circuit representation emitted by StarLark-cs,
 /// Spice.Schematic, C#/F# builders, and SPICE parsers (ARCH-API-001).
@@ -35,7 +42,8 @@ public sealed record CircuitIr(
     string Name,
     IReadOnlyList<string> Nodes,
     IReadOnlyList<DeviceInstanceIr> Devices,
-    IReadOnlyDictionary<string, string>? Provenance = null);
+    IReadOnlyDictionary<string, string>? Provenance = null,
+    IReadOnlyList<ModelDefinitionIr>? Models = null);
 
 public enum AnalysisKind
 {
@@ -53,7 +61,8 @@ public sealed record SimulationRequestIr(
     CircuitIr Circuit,
     AnalysisKind Analysis,
     IReadOnlyDictionary<string, double>? Options = null,
-    bool EnablePhysicalAudits = true);
+    bool EnablePhysicalAudits = true,
+    string? SweepSourceId = null);
 
 public enum RunTerminalStatus
 {
@@ -69,6 +78,20 @@ public sealed record SignalDescriptor(
     string SiUnit,
     bool IsComplex);
 
+public sealed record RealSeriesIr(
+    string AxisName,
+    string AxisUnit,
+    IReadOnlyList<double> AxisValues,
+    IReadOnlyDictionary<string, IReadOnlyList<double>> SignalValues);
+
+public sealed record ComplexSample(double Real, double Imaginary);
+
+public sealed record ComplexSeriesIr(
+    string AxisName,
+    string AxisUnit,
+    IReadOnlyList<double> AxisValues,
+    IReadOnlyDictionary<string, IReadOnlyList<ComplexSample>> SignalValues);
+
 public sealed record ResultManifestIr(
     string CaseId,
     string BackendId,
@@ -76,4 +99,6 @@ public sealed record ResultManifestIr(
     bool Complete,
     IReadOnlyList<SignalDescriptor> Signals,
     string? ErrorCode = null,
-    string? ErrorMessage = null);
+    string? ErrorMessage = null,
+    RealSeriesIr? RealData = null,
+    ComplexSeriesIr? ComplexData = null);

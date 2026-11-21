@@ -34,7 +34,7 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: PLAN-V2-002
-STATUS: Proposed
+STATUS: InProgress
 TITLE: M1a - Canonical IR, Unified Device Descriptor and thin XyceBackend
 STATEMENT: >>>
 Implement the immutable Canonical IR, fail-closed Unified Device Descriptor registry, typed ResultManifest schema, and thin external-process XyceBackend (GPL-isolated) in Spice.Ir and Spice.Sdk, plus opt-in independent DC/AC/transient physical audits.
@@ -42,8 +42,8 @@ Implement the immutable Canonical IR, fail-closed Unified Device Descriptor regi
 COMMENT: >>>
 Phase: M1
 Depends-on: PLAN-V2-001
-Deliverables: Spice.Ir, Spice.Sdk (ISimulationBackend, XyceBackend), physical-audit checks, and differential RC/RLC/diode/BJT/MOS reference fixtures running on prebuilt Xyce.
-Verification: Real circuits execute end-to-end via XyceBackend with typed signals/measurements and passing physical audits; zero GPL/Trilinos linkage in core targets.
+Deliverables: Spice.Ir (CanonicalIr, DeviceRegistry, SpiceNetlistEmitter), Spice.Sdk (ISimulationBackend, GPL-isolated XyceBackend with CSV parser, DifferentialComparer, NativeCppBackend), Spice.Tests/M1PlatformTests.cs.
+Verification: Authored with TreatWarningsAsErrors=true and zero GPL linkage; pending dotnet test and live Xyce differential run on Windows host (dotnet SDK and Xyce not installed in Linux VM).
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -55,7 +55,7 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: PLAN-V2-003
-STATUS: Proposed
+STATUS: InProgress
 TITLE: M1b - StarLark-cs DSL frontend and parallel campaign authoring
 STATEMENT: >>>
 Embed StarLark-cs with SharpUnits dimensional constructors in Spice.Starlark so circuits, hierarchical subcircuits, sweeps, corners, Monte Carlo plans, and assertions compile to Canonical IR and run deterministically with parallel_map on XyceBackend.
@@ -63,8 +63,8 @@ Embed StarLark-cs with SharpUnits dimensional constructors in Spice.Starlark so 
 COMMENT: >>>
 Phase: M1
 Depends-on: PLAN-V2-002
-Deliverables: Spice.Starlark host module (@sim/v2), budget enforcement, deterministic parallel_map sweep examples, and IR equivalence tests against C#/F# builders.
-Verification: Identical RC, filter, and corner campaigns authored in StarLark-cs and C# produce identical Canonical IR and pass XyceBackend execution.
+Deliverables: Spice.Starlark (SiUnits dimensional constructors, fail-closed CircuitBuilder over DeviceRegistry, deterministic bounded-concurrency CampaignRunner.RunParallelMapAsync).
+Verification: Authored with unit tests in Spice.Tests/M1PlatformTests.cs; pending StarLark-cs package binding and dotnet test execution on Windows host.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -74,7 +74,7 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: PLAN-V2-004
-STATUS: Proposed
+STATUS: InProgress
 TITLE: M1c - Schematic capture model, ERC and interactive desktop app
 STATEMENT: >>>
 Build Spice.Schematic (versioned diffable document model, hierarchical subsheets, ERC, Unified Device Descriptor binding, Canonical IR emitter, SPICE/StarLark/SVG export) and the initial Spice.App desktop schematic editor and waveform cross-probing viewer backed by ISimulationBackend.
@@ -82,8 +82,8 @@ Build Spice.Schematic (versioned diffable document model, hierarchical subsheets
 COMMENT: >>>
 Phase: M1
 Depends-on: PLAN-V2-002
-Deliverables: Spice.Schematic, Spice.App (schematic editor + live waveform/OP probing), ERC test suite, and round-trip persistence/export tests.
-Verification: Circuits drawn in Spice.Schematic compile cleanly to Canonical IR, run on XyceBackend, and support live node/branch cross-probing.
+Deliverables: Spice.Schematic (SchematicDocument, SchematicCompiler with ERC, hierarchical flattening, Canonical IR emitter, deterministic JSON round-trip, SPICE export, and vector SVG export), Spice.Tests/M1PlatformTests.cs. Remaining: interactive Spice.App desktop GUI + live cross-probing and dotnet test execution on Windows.
+Verification: Authored against DeviceRegistry fail-closed contract; pending dotnet test on Windows host.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -111,7 +111,7 @@ COMMENT: >>>
 Phase: M2
 Depends-on: PLAN-V2-001, PLAN-V2-002
 Deliverables: cpp/linalg (SparseLu + DenseLu + KLU adapter), cpp/devices (R/C/L/K/V/I/E/F/G/H + waveforms), cpp/analysis (OP/DC sweep/AC/TRAN BE & Trap + UIC + breakpoints), cpp/audit (DC/AC/TRAN physical audits), cpp/capi, NativeCppBackend in Spice.Sdk.
-Verification: GCC 12 and Clang 14 C++20 -Werror builds pass all unit, analytic, mutual-inductance, controlled-source, breakpoint, audit fault-injection, C ABI, and 1,000-node RC ladder (~29 ms GCC) tests. Remaining to close M2a: vcpkg SuiteSparse KLU link test, dotnet build/test of NativeCppBackend, and head-to-head XyceBackend/ngspice SANDLER8/SANDLER9 comparison.
+Verification: GCC 12 and Clang 14 C++20 -Werror builds pass all unit, analytic, mutual-inductance, controlled-source, breakpoint, audit fault-injection, C ABI, and 1,000-node RC ladder (~29.6 ms GCC) tests. Remaining to close M2a: vcpkg SuiteSparse KLU link test, dotnet build/test of NativeCppBackend, and head-to-head XyceBackend/ngspice SANDLER8/SANDLER9 comparison.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -131,8 +131,8 @@ Implement dimensioned Newton with voltage limiting and source/Gmin continuation 
 COMMENT: >>>
 Phase: M2
 Depends-on: PLAN-V2-005
-Deliverables: cpp/solver (dimensioned Newton + step limiting + Gmin/source continuation with mandatory gmin=0 final solve), cpp/devices (Shockley+charge Diode, MutualInductance K, compiled autodiff expr_vm B_v/B_i), cpp/osdi (generic OSDI 0.3/0.4 dlopen/LoadLibrary loader + OsdiDevice), tests/fixtures/test_osdi_{diode,bad_abi}.c, tests/m2b_nonlinear_osdi_tests.cpp.
-Verification: GCC 12 and Clang 14 -O3 -Werror builds pass all M2b tests (mutual inductance AC, compiled B-source autodiff vs finite-diff & nonlinear OP, SPICE diode OP+audit/DC sweep/AC capacitance/BE+Trap rectifier/50V continuation with final_gmin=0, and real dlopen OSDI 0.3 diode OP/AC/TRAN + 6 fail-closed negative tests). Remaining to close M2b: adaptive LTE transient step control + BDF2, native canonical SPICE3f5 parser/elaborator, and OpenVAF-compiled BSIM/VBIC/JFET/EKV .osdi differential qualification against Xyce/ngspice.
+Deliverables: cpp/solver (dimensioned Newton + step limiting + Gmin/source continuation with mandatory gmin=0 final solve), cpp/analysis (variable-step BDF2 + adaptive Milne LTE step control with rollback & breakpoint landing), cpp/devices (Shockley+charge Diode, MutualInductance K, compiled autodiff expr_vm B_v/B_i), cpp/osdi (generic OSDI 0.3/0.4 dlopen/LoadLibrary loader + OsdiDevice), cpp/parser (native SPICE3f5 parser & hierarchical .SUBCKT/.PARAM/.MODEL/.OSDI elaborator), cpp/cli (spice_v2_cli with version/check/run, JSON/CSV export, deterministic exit codes), tests/m2b_{nonlinear_osdi,parser_lte_cli}_tests.cpp.
+Verification: GCC 12 and Clang 14 -O3 -Werror builds pass all 4 CTest binaries (18 tests) in 0.06 s, covering nonlinear diode/B-source/OSDI 0.3 dlopen, variable-step BDF2 2nd-order convergence, adaptive LTE step growth & breakpoint landing, hierarchical SPICE3f5 decks (incl. .OSDI), and spice_v2_cli exit codes/outputs. Remaining to close M2b: OpenVAF-compiled BSIM3/BSIM4/VBIC/JFET/EKV .osdi differential qualification against Xyce/ngspice.
 <<<
 RELATIONS:
 - TYPE: Parent

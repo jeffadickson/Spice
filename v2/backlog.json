@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "authoritative_source": "v2/docs/requirements/implementation-plan.sdoc",
   "generated_date": "2026-11-20",
-  "implementation_status": "Slice 0 + M2a linear + M2b nonlinear Newton/B-source/OSDI 0.3-0.4 core in progress on branch v2",
+  "implementation_status": "Slice 0 + M2a/M2b C++20 engine (Newton, BDF2, LTE, OSDI, SPICE3f5 parser, CLI) verified on Linux + M1a-c .NET platform (IR, XyceBackend, Starlark DSL, Schematic ERC/SVG) authored on branch v2",
   "work_packages": [
     {
       "id": "PLAN-V2-001",
@@ -20,7 +20,7 @@
     {
       "id": "PLAN-V2-002",
       "title": "M1a - Canonical IR, Unified Device Descriptor and thin XyceBackend",
-      "status": "Proposed",
+      "status": "InProgress",
       "phase": "M1",
       "depends_on": [
         "PLAN-V2-001"
@@ -35,7 +35,7 @@
     {
       "id": "PLAN-V2-003",
       "title": "M1b - StarLark-cs DSL frontend and parallel campaign authoring",
-      "status": "Proposed",
+      "status": "InProgress",
       "phase": "M1",
       "depends_on": [
         "PLAN-V2-002"
@@ -49,7 +49,7 @@
     {
       "id": "PLAN-V2-004",
       "title": "M1c - Schematic capture model, ERC and interactive desktop app",
-      "status": "Proposed",
+      "status": "InProgress",
       "phase": "M1",
       "depends_on": [
         "PLAN-V2-002"
