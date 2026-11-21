@@ -75,4 +75,105 @@ struct PssResult {
     const PssOptions& opts,
     PssResult& out_result);
 
+/* ----- 3. Periodic Small-Signal AC (.PAC) over Converged .HB Steady State ----- */
+struct PacOptions {
+    double small_signal_freq_hz{0.0}; /* f_s offset frequency (Hz) */
+    std::string input_source_id;      /* Independent V/I source excited with unit tone at f_s */
+    AnalysisCommonOptions common{};
+};
+
+struct PacSideband {
+    int sideband_index{0}; /* k in [-H, +H] */
+    double frequency_hz{0.0}; /* f_s + k * f_0 */
+    std::vector<std::complex<double>> values; /* Per-unknown complex phasor at this sideband */
+};
+
+struct PacResult {
+    double fundamental_hz{0.0};
+    double small_signal_freq_hz{0.0};
+    std::vector<PacSideband> sidebands;
+};
+
+[[nodiscard]] core::Diagnostic run_pac(
+    devices::CompiledPlan& plan,
+    const HbResult& hb_operating_point,
+    const PacOptions& opts,
+    PacResult& out_result);
+
+/* ----- 4. Periodic Transfer Function (.PXF) via Adjoint Conversion Matrix ----- */
+struct PxfOptions {
+    double small_signal_freq_hz{0.0};
+    core::NodeId out_p{0};
+    core::NodeId out_n{0};
+    int output_sideband{0}; /* k_out in [-H, +H] */
+    AnalysisCommonOptions common{};
+};
+
+struct PxfSourceTransfer {
+    std::string source_id;
+    int input_sideband{0};
+    double input_frequency_hz{0.0};
+    std::complex<double> transfer_gain{0.0, 0.0};
+};
+
+struct PxfResult {
+    double output_frequency_hz{0.0};
+    std::vector<PxfSourceTransfer> transfers;
+};
+
+[[nodiscard]] core::Diagnostic run_pxf(
+    devices::CompiledPlan& plan,
+    const HbResult& hb_operating_point,
+    const PxfOptions& opts,
+    PxfResult& out_result);
+
+/* ----- 5. Periodic Cyclostationary Noise (.PNOISE) Folding All Sidebands ----- */
+struct PnoiseOptions {
+    double small_signal_freq_hz{0.0};
+    core::NodeId out_p{0};
+    core::NodeId out_n{0};
+    int output_sideband{0};
+    double temperature_k{300.15};
+    AnalysisCommonOptions common{};
+};
+
+struct PnoiseResult {
+    double output_frequency_hz{0.0};
+    double onoise_v_per_sqrt_hz{0.0};
+    double total_psd_v2_per_hz{0.0};
+};
+
+[[nodiscard]] core::Diagnostic run_pnoise(
+    devices::CompiledPlan& plan,
+    const HbResult& hb_operating_point,
+    const PnoiseOptions& opts,
+    PnoiseResult& out_result);
+
+/* ----- 6. Autonomous Oscillator .PSS (Unknown Period T + Phase Anchor) ----- */
+struct AutonomousPssOptions {
+    double initial_freq_hz{0.0};       /* Initial guess for oscillation frequency f0 = 1/T */
+    std::size_t phase_unknown_index{0}; /* Unknown index anchored to phase_target_value at t = 0 */
+    double phase_target_value{0.0};
+    std::vector<double> initial_state;  /* Optional non-trivial initial state near limit cycle */
+    std::size_t steps_per_period{64};
+    std::size_t max_shooting_iterations{30};
+    double periodic_tol{1.0e-7};
+    IntegrationMethod method{IntegrationMethod::Trapezoidal};
+    AnalysisCommonOptions common{};
+};
+
+struct AutonomousPssResult {
+    bool converged{false};
+    std::size_t shooting_iterations{0};
+    double oscillation_freq_hz{0.0};
+    double period_s{0.0};
+    double periodicity_error{0.0};
+    std::vector<TransientSample> waveform;
+};
+
+[[nodiscard]] core::Diagnostic run_autonomous_pss(
+    devices::CompiledPlan& plan,
+    const AutonomousPssOptions& opts,
+    AutonomousPssResult& out_result);
+
 }  // namespace spice::analysis
