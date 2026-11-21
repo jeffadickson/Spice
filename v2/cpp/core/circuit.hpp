@@ -181,6 +181,17 @@ struct SwitchSpec {
     double roff_ohms{1.0e9}; /* Off-state resistance (> 0) */
 };
 
+/* Ideal lossless transmission line (T element): exact Bergeron delay in TRAN, exact ABCD in AC/SP. */
+struct TransmissionLineSpec {
+    std::string id;
+    NodeId p1;
+    NodeId n1;
+    NodeId p2;
+    NodeId n2;
+    double z0_ohms{50.0};
+    double td_s{1.0e-9};
+};
+
 /* Dynamically loaded OSDI 0.3/0.4 compiled Verilog-A model instance (ARCH-MOD-001). */
 struct OsdiInstanceSpec {
     std::string id;
@@ -205,6 +216,7 @@ using ElementSpec = std::variant<
     DiodeSpec,
     BehavioralSourceSpec,
     SwitchSpec,
+    TransmissionLineSpec,
     OsdiInstanceSpec>;
 
 struct SignalDescriptor {

@@ -1095,6 +1095,39 @@ Diagnostic elaborate_element_line(
             state.circuit.elements.push_back(std::move(spec));
             return Diagnostic::success();
         }
+        case 'T': {
+            if (auto d = req_tokens(6u, "Transmission line"); !d.ok()) return d;
+            core::TransmissionLineSpec spec{};
+            spec.id = elem_id;
+            spec.p1 = state.resolve_node(tokens[1], scope_prefix, port_map);
+            spec.n1 = state.resolve_node(tokens[2], scope_prefix, port_map);
+            spec.p2 = state.resolve_node(tokens[3], scope_prefix, port_map);
+            spec.n2 = state.resolve_node(tokens[4], scope_prefix, port_map);
+            bool has_z0 = false, has_td = false;
+            for (std::size_t i = 5u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq == std::string::npos) {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, "expected Z0=... TD=... in T element");
+                }
+                const std::string k = to_lower(tokens[i].substr(0, eq));
+                double v = 0.0;
+                if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                if (k == "z0" || k == "zo") {
+                    spec.z0_ohms = v;
+                    has_z0 = true;
+                } else if (k == "td") {
+                    spec.td_s = v;
+                    has_td = true;
+                } else {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, "unsupported T parameter '" + k + "'");
+                }
+            }
+            if (!has_z0 || !has_td) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "T element requires both Z0 and TD");
+            }
+            state.circuit.elements.push_back(std::move(spec));
+            return Diagnostic::success();
+        }
         case 'X': {
             if (auto d = req_tokens(3u, "Subcircuit/OSDI instance"); !d.ok()) return d;
             /* Separate optional PARAMS: or trailing key=value overrides. */

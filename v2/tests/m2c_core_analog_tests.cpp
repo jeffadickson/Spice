@@ -431,6 +431,255 @@ TEST_CASE(".MC deterministic seeded Monte Carlo produces reproducible statistics
     REQUIRE(found);
 }
 
+TEST_CASE(".STB Tian loop gain matches exact analytical loop gain, phase margin, and gain margin", "[m2c][stb]") {
+    // 2-pole inverting feedback loop with finite source/input impedances:
+    //   Stage 1: VCVS E1(gain=-100) -> R1(1k) -> n1 -> C1(1/(2*pi*1k*1kHz)) -> 0
+    //   Stage 2: VCVS E2(gain=1)    -> R2(1k) -> n2 -> C2(1/(2*pi*1k*100kHz)) -> 0
+    //   Probe:   Vprobe(n2 -> fb, 0V) closing loop back to E1 input (with R_in = 10k to gnd).
+    //   Exact DC loop gain: T(0) = 100 * (10k / (1k + 10k)) = 1000/11 ~= 90.9090909 (39.17 dB)!
+    //   Poles: fp1 = 1 kHz, fp2 = 1 / (2*pi * (R2||R_in) * C2) = 110 kHz.
+    constexpr double r1 = 1000.0;
+    constexpr double r2 = 1000.0;
+    constexpr double rin = 10000.0;
+    constexpr double c1 = 1.0 / (2.0 * std::numbers::pi * r1 * 1.0e3);
+    constexpr double c2 = 1.0 / (2.0 * std::numbers::pi * r2 * 1.0e5);
+    constexpr double a0 = 100.0;
+
+    core::Circuit c;
+    c.name = "two_pole_stb";
+    const auto n_fb = c.get_or_add_node("fb");
+    const auto n_s1 = c.get_or_add_node("s1");
+    const auto n_n1 = c.get_or_add_node("n1");
+    const auto n_s2 = c.get_or_add_node("s2");
+    const auto n_n2 = c.get_or_add_node("n2");
+    const core::NodeId gnd{0};
+
+    c.elements.push_back(core::VcvsSpec{"E1", n_s1, gnd, n_fb, gnd, -a0});
+    c.elements.push_back(core::ResistorSpec{"R1", n_s1, n_n1, r1});
+    c.elements.push_back(core::CapacitorSpec{"C1", n_n1, gnd, c1, std::nullopt});
+    c.elements.push_back(core::VcvsSpec{"E2", n_s2, gnd, n_n1, gnd, 1.0});
+    c.elements.push_back(core::ResistorSpec{"R2", n_s2, n_n2, r2});
+    c.elements.push_back(core::CapacitorSpec{"C2", n_n2, gnd, c2, std::nullopt});
+    c.elements.push_back(core::VoltageSourceSpec{"Vprobe", n_n2, n_fb, 0.0, {0.0, 0.0}, std::nullopt});
+    c.elements.push_back(core::ResistorSpec{"Rin", n_fb, gnd, rin});
+
+    devices::CompiledPlan plan;
+    REQUIRE(devices::compile_circuit(c, plan).ok());
+
+    analysis::StbOptions opts{};
+    opts.probe_source_id = "Vprobe";
+    for (int i = 0; i <= 200; ++i) {
+        opts.frequencies_hz.push_back(std::pow(10.0, 1.0 + 6.0 * static_cast<double>(i) / 200.0));
+    }
+    analysis::StbResult stb;
+    REQUIRE(analysis::run_stb(plan, opts, stb).ok());
+    REQUIRE(stb.points.size() == opts.frequencies_hz.size());
+
+    const double dc_t = a0 * rin / (r2 + rin);
+    const double wp1 = 1.0 / (r1 * c1);
+    const double r2_par = (r2 * rin) / (r2 + rin);
+    const double wp2 = 1.0 / (r2_par * c2);
+    for (const auto& pt : stb.points) {
+        const double w = 2.0 * std::numbers::pi * pt.frequency_hz;
+        const std::complex<double> t_exact =
+            std::complex<double>{dc_t, 0.0} /
+            (std::complex<double>{1.0, w / wp1} * std::complex<double>{1.0, w / wp2});
+        REQUIRE(std::abs(pt.loop_gain - t_exact) < 1.0e-9 * std::max(1.0, std::abs(t_exact)));
+    }
+
+    REQUIRE(stb.unity_gain_freq_hz.has_value());
+    REQUIRE(stb.phase_margin_deg.has_value());
+    // 2-pole loop with fp1=1kHz, fp2=110kHz, T0=90.9 -> UGB ~78 kHz, PM ~55 deg.
+    REQUIRE(*stb.unity_gain_freq_hz > 60.0e3 && *stb.unity_gain_freq_hz < 95.0e3);
+    REQUIRE(*stb.phase_margin_deg > 45.0 && *stb.phase_margin_deg < 65.0);
+}
+
+TEST_CASE(".PZ extracts exact real poles, finite zeros, and complex conjugate RLC poles", "[m2c][pz]") {
+    const core::NodeId gnd{0};
+
+    // 1. RC lead-lag network: V1 -> (R1 || C1) -> out -> R2 -> 0
+    //    H(s) = R2 / (R2 + R1/(1 + s R1 C1)) = (R2/(R1+R2)) * (1 + s R1 C1) / (1 + s (R1||R2) C1)
+    //    Exact zero: z = -1 / (R1*C1) = -1000 rad/s
+    //    Exact pole: p = -1 / ((R1||R2)*C1) = -2000 rad/s (with R1=R2=1k, C1=1uF)
+    {
+        core::Circuit c;
+        c.name = "pz_lead_lag";
+        const auto n_in = c.get_or_add_node("in");
+        const auto n_out = c.get_or_add_node("out");
+        c.elements.push_back(core::VoltageSourceSpec{"V1", n_in, gnd, 0.0, {1.0, 0.0}, std::nullopt});
+        c.elements.push_back(core::ResistorSpec{"R1", n_in, n_out, 1000.0});
+        c.elements.push_back(core::CapacitorSpec{"C1", n_in, n_out, 1.0e-6, std::nullopt});
+        c.elements.push_back(core::ResistorSpec{"R2", n_out, gnd, 1000.0});
+
+        devices::CompiledPlan plan;
+        REQUIRE(devices::compile_circuit(c, plan).ok());
+        analysis::PzOptions opts{};
+        opts.out_p = n_out;
+        opts.out_n = gnd;
+        opts.input_source_id = "V1";
+        analysis::PzResult pz;
+        REQUIRE(analysis::run_pz(plan, opts, pz).ok());
+        REQUIRE(pz.poles_rad_per_s.size() == 1u);
+        REQUIRE(pz.zeros_rad_per_s.size() == 1u);
+        REQUIRE(approx(pz.poles_rad_per_s[0].real(), -2000.0, 1.0e-7, 1.0e-9));
+        REQUIRE(std::abs(pz.poles_rad_per_s[0].imag()) < 1.0e-7);
+        REQUIRE(approx(pz.zeros_rad_per_s[0].real(), -1000.0, 1.0e-7, 1.0e-9));
+        REQUIRE(std::abs(pz.zeros_rad_per_s[0].imag()) < 1.0e-7);
+    }
+
+    // 2. Underdamped series RLC lowpass: R=100, L=10mH, C=1uF
+    //    Exact complex poles: s = -R/(2L) +/- j*sqrt(1/(LC) - (R/(2L))^2) = -5000 +/- j*sqrt(1e8 - 2.5e7)
+    {
+        core::Circuit rlc;
+        rlc.name = "pz_rlc";
+        const auto n_in = rlc.get_or_add_node("in");
+        const auto n_m1 = rlc.get_or_add_node("m1");
+        const auto n_out = rlc.get_or_add_node("out");
+        rlc.elements.push_back(core::VoltageSourceSpec{"V1", n_in, gnd, 0.0, {1.0, 0.0}, std::nullopt});
+        rlc.elements.push_back(core::ResistorSpec{"R1", n_in, n_m1, 100.0});
+        rlc.elements.push_back(core::InductorSpec{"L1", n_m1, n_out, 10.0e-3, std::nullopt});
+        rlc.elements.push_back(core::CapacitorSpec{"C1", n_out, gnd, 1.0e-6, std::nullopt});
+
+        devices::CompiledPlan plan;
+        REQUIRE(devices::compile_circuit(rlc, plan).ok());
+        analysis::PzOptions opts{};
+        opts.out_p = n_out;
+        opts.out_n = gnd;
+        opts.input_source_id = "V1";
+        analysis::PzResult pz;
+        REQUIRE(analysis::run_pz(plan, opts, pz).ok());
+        REQUIRE(pz.poles_rad_per_s.size() == 2u);
+        const double alpha = 100.0 / (2.0 * 10.0e-3);
+        const double wd = std::sqrt(1.0 / (10.0e-3 * 1.0e-6) - alpha * alpha);
+        REQUIRE(approx(pz.poles_rad_per_s[0].real(), -alpha, 1.0e-6, 1.0e-8));
+        REQUIRE(approx(std::abs(pz.poles_rad_per_s[0].imag()), wd, 1.0e-6, 1.0e-8));
+        REQUIRE(approx(pz.poles_rad_per_s[1].real(), -alpha, 1.0e-6, 1.0e-8));
+        REQUIRE(approx(pz.poles_rad_per_s[0].imag(), -pz.poles_rad_per_s[1].imag(), 1.0e-6, 1.0e-8));
+    }
+}
+
+TEST_CASE(".DCMATCH computes exact adjoint statistical mismatch variance and contributor shares", "[m2c][dcmatch]") {
+    core::Circuit c;
+    c.name = "dcmatch_div";
+    const auto n_in = c.get_or_add_node("in");
+    const auto n_out = c.get_or_add_node("out");
+    const core::NodeId gnd{0};
+    c.elements.push_back(core::VoltageSourceSpec{"V1", n_in, gnd, 10.0, {0.0, 0.0}, std::nullopt});
+    c.elements.push_back(core::ResistorSpec{"R1", n_in, n_out, 1000.0});
+    c.elements.push_back(core::ResistorSpec{"R2", n_out, gnd, 1000.0});
+
+    devices::CompiledPlan plan;
+    REQUIRE(devices::compile_circuit(c, plan).ok());
+    analysis::DcMatchOptions opts{};
+    opts.out_p = n_out;
+    opts.out_n = gnd;
+    opts.mismatches = {
+        {"R1", 0.01, analysis::ToleranceDistribution::Gaussian},
+        {"R2", 0.01, analysis::ToleranceDistribution::Gaussian}};
+    analysis::DcMatchResult dm;
+    REQUIRE(analysis::run_dcmatch(plan, opts, dm).ok());
+    // Exact: dVout/dR1 * 0.01*R1 = -2.5e-2 V, dVout/dR2 * 0.01*R2 = +2.5e-2 V -> sigma = 2.5e-2 * sqrt(2) V.
+    const double expected_sigma = 0.025 * std::sqrt(2.0);
+    REQUIRE(approx(dm.nominal_output_volts, 5.0, 1.0e-12));
+    REQUIRE(approx(dm.total_sigma_volts, expected_sigma, 1.0e-12));
+    REQUIRE(approx(dm.three_sigma_volts, 3.0 * expected_sigma, 1.0e-12));
+    REQUIRE(dm.contributors.size() == 2u);
+    REQUIRE(approx(dm.contributors[0].variance_share_percent, 50.0, 1.0e-9));
+    REQUIRE(approx(dm.contributors[1].variance_share_percent, 50.0, 1.0e-9));
+}
+
+TEST_CASE("Ideal lossless transmission line (T) matches quarter-wave AC, .SP, Bergeron delay/reflection, and RAW/VCD exports", "[m2c][tline][export]") {
+    // 1. SPICE3f5 parsed lossless T-line (Z0=50, TD=1ns):
+    //    At f = 1/(4*TD) = 250 MHz (quarter-wave) with load RL = 100 Ohm,
+    //    exact input impedance Z_in = Z0^2 / RL = 2500 / 100 = 25 Ohm!
+    const std::string tline_deck = R"(Quarter-Wave Transmission Line
+V1 src 0 DC 0 AC 1 0 PULSE(0 2 0 10p 10p 5n 20n)
+Rs src p1 50
+T1 p1 0 p2 0 Z0=50 TD=1n
+Rl p2 0 100
+.END
+)";
+    parser::ParsedDeck parsed;
+    REQUIRE(parser::parse_spice_deck(tline_deck, parsed).ok());
+    devices::CompiledPlan plan;
+    REQUIRE(devices::compile_circuit(parsed.circuit, plan).ok());
+
+    // 1a. Quarter-wave AC impedance inversion: V(p1) = Z_in / (Rs + Z_in) = 25 / (50 + 25) = 1/3!
+    analysis::AcOptions ac_opts{};
+    ac_opts.frequencies_hz = {250.0e6};
+    ac_opts.common.enable_audits = false;
+    analysis::AcResult ac;
+    REQUIRE(analysis::run_ac(plan, ac_opts, ac).ok());
+    const auto v_p1 = ac.points[0].values[find_signal(plan, "v(p1)")];
+    const auto v_p2 = ac.points[0].values[find_signal(plan, "v(p2)")];
+    REQUIRE(std::abs(v_p1 - std::complex<double>{1.0 / 3.0, 0.0}) < 1.0e-12);
+    // At quarter-wave: V2 = -j * (RL / Z0) * V1 = -j * 2 * (1/3) = -j * 2/3!
+    REQUIRE(std::abs(v_p2 - std::complex<double>{0.0, -2.0 / 3.0}) < 1.0e-12);
+
+    // 1b. Matched 2-port .SP on lossless 50-Ohm line: S11 = 0, S21 = exp(-j*omega*TD)!
+    core::Circuit sp_c;
+    sp_c.name = "tline_sp";
+    const auto sp1 = sp_c.get_or_add_node("p1");
+    const auto sp2 = sp_c.get_or_add_node("p2");
+    const core::NodeId gnd{0};
+    sp_c.elements.push_back(core::TransmissionLineSpec{"T1", sp1, gnd, sp2, gnd, 50.0, 1.0e-9});
+    devices::CompiledPlan sp_plan;
+    REQUIRE(devices::compile_circuit(sp_c, sp_plan).ok());
+    analysis::SpOptions sp_opts{};
+    sp_opts.ports = {{sp1, gnd, 50.0}, {sp2, gnd, 50.0}};
+    sp_opts.frequencies_hz = {125.0e6, 250.0e6, 500.0e6};
+    analysis::SpResult sp;
+    REQUIRE(analysis::run_sp(sp_plan, sp_opts, sp).ok());
+    for (const auto& pt : sp.points) {
+        const double th = 2.0 * std::numbers::pi * pt.frequency_hz * 1.0e-9;
+        const std::complex<double> exp_s21{std::cos(th), -std::sin(th)};
+        REQUIRE(std::abs(pt.s_matrix[0]) < 1.0e-12);              /* S11 == 0 */
+        REQUIRE(std::abs(pt.s_matrix[2] - exp_s21) < 1.0e-12);    /* S21 == e^{-jwTd} */
+    }
+
+    // 1c. Bergeron transient delay & reflection:
+    //     Rs = 50, Z0 = 50, RL = 100 (reflection coeff Gamma_L = (100-50)/(100+50) = +1/3).
+    //     Step 2V at t=0 -> incident wave V+ = 1V at p1 for 0 < t < 2ns;
+    //     arrives at p2 at t = 1ns -> V(p2) jumps from 0V to V+*(1 + Gamma_L) = 4/3 V!
+    //     Reflected wave +1/3 V returns to p1 at t = 2ns -> V(p1) jumps from 1V to 4/3 V!
+    analysis::TransientOptions tr_opts{};
+    tr_opts.step_s = 50.0e-12;
+    tr_opts.stop_s = 3.0e-9;
+    tr_opts.method = analysis::IntegrationMethod::Trapezoidal;
+    tr_opts.common.enable_audits = false;
+    analysis::TransientResult tr;
+    REQUIRE(analysis::run_transient(plan, tr_opts, tr).ok());
+    const std::size_t idx_p1 = find_signal(plan, "v(p1)");
+    const std::size_t idx_p2 = find_signal(plan, "v(p2)");
+
+    double vp1_at_05ns = 0.0, vp2_at_05ns = 0.0, vp2_at_15ns = 0.0, vp1_at_25ns = 0.0;
+    for (const auto& s : tr.samples) {
+        if (std::abs(s.time_s - 0.5e-9) < 30.0e-12) { vp1_at_05ns = s.values[idx_p1]; vp2_at_05ns = s.values[idx_p2]; }
+        if (std::abs(s.time_s - 1.5e-9) < 30.0e-12) { vp2_at_15ns = s.values[idx_p2]; }
+        if (std::abs(s.time_s - 2.5e-9) < 30.0e-12) { vp1_at_25ns = s.values[idx_p1]; }
+    }
+    REQUIRE(approx(vp1_at_05ns, 1.0, 1.0e-3));
+    REQUIRE(approx(vp2_at_05ns, 0.0, 1.0e-3));
+    REQUIRE(approx(vp2_at_15ns, 4.0 / 3.0, 1.0e-3));
+    REQUIRE(approx(vp1_at_25ns, 4.0 / 3.0, 1.0e-3));
+
+    // 1d. SPICE3f5 RAW (ASCII & Binary) and IEEE 1364 VCD waveform exporters.
+    const std::string raw_ascii = analysis::format_spice_raw_ascii(plan, tr);
+    REQUIRE(raw_ascii.find("Plotname: Transient Analysis") != std::string::npos);
+    REQUIRE(raw_ascii.find("Values:") != std::string::npos);
+
+    const auto raw_bin = analysis::format_spice_raw_binary(plan, tr);
+    const std::string bin_prefix(raw_bin.begin(), raw_bin.begin() + std::min<std::size_t>(raw_bin.size(), 512u));
+    REQUIRE(bin_prefix.find("Binary:\n") != std::string::npos);
+    const std::size_t expected_payload = tr.samples.size() * (plan.signals.size() + 1u) * sizeof(double);
+    REQUIRE(raw_bin.size() > expected_payload);
+
+    const std::string vcd = analysis::format_vcd(plan, tr, 0.5);
+    REQUIRE(vcd.find("$timescale 1ps $end") != std::string::npos);
+    REQUIRE(vcd.find("$var real 64") != std::string::npos);
+    REQUIRE(vcd.find("$var wire 1") != std::string::npos);
+}
+
 #if !defined(SPICE_V2_USE_CATCH2)
 int main() {
     for (const auto& [name, fn] : test_registry()) {

@@ -26,6 +26,7 @@ bool plan_supports_dc_audit(const devices::CompiledPlan& plan) noexcept {
     for (const auto& e : plan.circuit.elements) {
         if (std::holds_alternative<core::BehavioralSourceSpec>(e) ||
             std::holds_alternative<core::SwitchSpec>(e) ||
+            std::holds_alternative<core::TransmissionLineSpec>(e) ||
             std::holds_alternative<core::OsdiInstanceSpec>(e)) {
             return false;
         }
@@ -36,7 +37,10 @@ bool plan_supports_dc_audit(const devices::CompiledPlan& plan) noexcept {
 bool plan_supports_linear_ac_or_tran_audit(const devices::CompiledPlan& plan) noexcept {
     if (plan.has_nonlinear) return false;
     for (const auto& e : plan.circuit.elements) {
-        if (std::holds_alternative<core::MutualInductanceSpec>(e)) return false;
+        if (std::holds_alternative<core::MutualInductanceSpec>(e) ||
+            std::holds_alternative<core::TransmissionLineSpec>(e)) {
+            return false;
+        }
     }
     return true;
 }
@@ -361,6 +365,7 @@ Diagnostic run_ac(
         for (std::size_t k = 0; k < a_vals.size(); ++k) {
             a_vals[k] = Complex{g_vals[k], omega * c_vals[k]};
         }
+        plan.overwrite_frequency_dependent_ac(omega, a_vals);
         if (auto d = solver->factor(a_vals); !d.ok()) return d;
 
         std::vector<Complex> x(dim);
@@ -413,6 +418,7 @@ Diagnostic run_transient(
         }
     }
 
+    plan.reset_transient_history();
     const double max_step =
         (opts.adaptive && opts.max_step_s > 0.0) ? opts.max_step_s : opts.step_s;
     const double min_step = std::min(opts.min_step_s, max_step);

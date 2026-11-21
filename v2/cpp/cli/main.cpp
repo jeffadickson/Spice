@@ -1,4 +1,5 @@
 #include "analysis/analyses.hpp"
+#include "analysis/m2c_analyses.hpp"
 #include "devices/linear_devices.hpp"
 #include "parser/spice_parser.hpp"
 
@@ -49,7 +50,7 @@ void print_usage() {
         << "  spice_v2_cli version\n"
         << "  spice_v2_cli check <deck.cir>\n"
         << "  spice_v2_cli run <deck.cir> [--json <out.json>] [--csv <out.csv>] "
-           "[--no-audit] [--method trap|be|bdf2] [--adaptive]\n";
+           "[--raw <out.raw>] [--vcd <out.vcd>] [--no-audit] [--method trap|be|bdf2] [--adaptive]\n";
 }
 
 }  // namespace
@@ -81,6 +82,8 @@ int main(int argc, char** argv) {
     const std::string deck_path = argv[2];
     std::string json_out_path;
     std::string csv_out_path;
+    std::string raw_out_path;
+    std::string vcd_out_path;
     bool enable_audits = true;
     bool adaptive = false;
     std::string method_override;
@@ -95,6 +98,10 @@ int main(int argc, char** argv) {
             json_out_path = argv[++i];
         } else if (arg == "--csv" && i + 1 < argc) {
             csv_out_path = argv[++i];
+        } else if (arg == "--raw" && i + 1 < argc) {
+            raw_out_path = argv[++i];
+        } else if (arg == "--vcd" && i + 1 < argc) {
+            vcd_out_path = argv[++i];
         } else if (arg == "--method" && i + 1 < argc) {
             method_override = argv[++i];
             if (method_override != "trap" && method_override != "be" && method_override != "bdf2") {
@@ -265,6 +272,22 @@ int main(int argc, char** argv) {
             json << "    {\"kind\": \"tran\", \"samples\": " << res.samples.size()
                  << ", \"accepted_steps\": " << res.accepted_steps
                  << ", \"rejected_steps\": " << res.rejected_steps << "}";
+            if (!raw_out_path.empty()) {
+                std::ofstream rofs(raw_out_path);
+                if (!rofs) {
+                    std::cerr << "error: failed to write RAW output '" << raw_out_path << "'\n";
+                    return kExitUsage;
+                }
+                rofs << spice::analysis::format_spice_raw_ascii(plan, res);
+            }
+            if (!vcd_out_path.empty()) {
+                std::ofstream vofs(vcd_out_path);
+                if (!vofs) {
+                    std::cerr << "error: failed to write VCD output '" << vcd_out_path << "'\n";
+                    return kExitUsage;
+                }
+                vofs << spice::analysis::format_vcd(plan, res);
+            }
             if (!csv_written && !csv_out_path.empty()) {
                 csv << "time_s";
                 for (const auto& sig : plan.signals) csv << "," << sig.id;

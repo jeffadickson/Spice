@@ -568,6 +568,7 @@ Diagnostic run_sp(
         for (std::size_t k = 0; k < plan.pattern.nnz(); ++k) {
             a_vals[base_to_aug[k]] = Complex{g_vals[k], omega * c_vals[k]};
         }
+        plan.overwrite_frequency_dependent_ac(omega, a_vals, base_to_aug);
         for (const auto& ps : port_slots) {
             if (ps.pp) a_vals[ps.pp->value] += ps.y0;
             if (ps.pn) a_vals[ps.pn->value] -= ps.y0;
@@ -839,6 +840,625 @@ Diagnostic run_monte_carlo_op(
 
     out_result = std::move(res);
     return Diagnostic::success();
+}
+
+/* ==================== 7. .STB (Tian Exact Loop Gain) ==================== */
+Diagnostic run_stb(
+    devices::CompiledPlan& plan,
+    const StbOptions& opts,
+    StbResult& out_result) {
+    if (opts.frequencies_hz.empty()) {
+        return Diagnostic::error(StatusCode::InvalidArgument, ".STB requires at least one frequency");
+    }
+
+    const core::VoltageSourceSpec* probe = nullptr;
+    for (const auto& elem : plan.circuit.elements) {
+        if (const auto* v = std::get_if<core::VoltageSourceSpec>(&elem);
+            v != nullptr && v->id == opts.probe_source_id) {
+            probe = v;
+            break;
+        }
+    }
+    if (probe == nullptr) {
+        return Diagnostic::error(
+            StatusCode::InvalidArgument, ".STB probe source '" + opts.probe_source_id + "' not found (must be a V source)");
+    }
+    const auto probe_br = plan.branch_unknowns.at(probe->id);
+    const auto probe_p = devices::CompiledPlan::node_unknown(probe->p);
+    if (!probe_p.has_value()) {
+        return Diagnostic::error(
+            StatusCode::InvalidArgument, ".STB probe positive terminal must be a non-ground loop node");
+    }
+
+    std::vector<double> x_op, g_vals, c_vals;
+    if (auto d = linearize_at_op(plan, opts.common, 300.15, x_op, g_vals, c_vals); !d.ok()) return d;
+
+    const std::uint32_t dim = plan.unknown_count();
+    std::unique_ptr<linalg::ComplexLinearSolver> solver;
+    if (auto d = linalg::create_complex_solver(opts.common.backend, solver); !d.ok()) return d;
+    if (auto d = solver->analyze(plan.pattern); !d.ok()) return d;
+
+    std::vector<Complex> a_vals(plan.pattern.nnz());
+    std::vector<Complex> rhs_v(dim, Complex{0.0, 0.0});
+    std::vector<Complex> rhs_i(dim, Complex{0.0, 0.0});
+    rhs_v[probe_br.value] = {1.0, 0.0}; /* V_p - V_n = 1 V */
+    rhs_i[probe_p->value] = {1.0, 0.0}; /* 1 A shunt current injected into node p */
+    std::vector<Complex> xv(dim), xi(dim);
+
+    StbResult res{};
+    res.backend_name = solver->name();
+    res.points.reserve(opts.frequencies_hz.size());
+
+    for (double f_hz : opts.frequencies_hz) {
+        if (!std::isfinite(f_hz) || f_hz < 0.0) {
+            return Diagnostic::error(StatusCode::InvalidArgument, ".STB frequencies must be finite and >= 0");
+        }
+        const double omega = 2.0 * std::numbers::pi * f_hz;
+        for (std::size_t k = 0; k < plan.pattern.nnz(); ++k) {
+            a_vals[k] = Complex{g_vals[k], omega * c_vals[k]};
+        }
+        plan.overwrite_frequency_dependent_ac(omega, a_vals);
+        if (auto d = solver->factor(a_vals); !d.ok()) return d;
+        if (auto d = solver->solve(rhs_v, xv); !d.ok()) return d;
+        if (auto d = solver->solve(rhs_i, xi); !d.ok()) return d;
+
+        /* Tian (2001) exact bidirectional loop gain:
+         *   a11 = V_p(vx=1), a12 = V_p(iy=1), a21 = I_br(vx=1), a22 = I_br(iy=1)
+         *   Delta = a11*a22 - a12*a21
+         *   T = (a11 + a22 - 2*Delta) / (1 - a11 - a22 + 2*Delta)
+         */
+        const Complex a11 = xv[probe_p->value];
+        const Complex a12 = xi[probe_p->value];
+        const Complex a21 = xv[probe_br.value];
+        const Complex a22 = xi[probe_br.value];
+        const Complex delta = a11 * a22 - a12 * a21;
+        const Complex num = a11 + a22 - 2.0 * delta;
+        const Complex den = Complex{1.0, 0.0} - num;
+        const Complex t_gain = (std::abs(den) > 1.0e-30) ? (num / den) : Complex{1.0e30, 0.0};
+
+        const double mag = std::abs(t_gain);
+        const double mag_db = 20.0 * std::log10(std::max(mag, 1.0e-30));
+        const double phase_deg = std::arg(t_gain) * 180.0 / std::numbers::pi;
+        res.points.push_back(StbPoint{f_hz, t_gain, mag_db, phase_deg});
+    }
+
+    /* Extract unity-gain frequency (phase margin) and 180-deg phase crossover (gain margin). */
+    for (std::size_t k = 1u; k < res.points.size(); ++k) {
+        const auto& p0 = res.points[k - 1u];
+        const auto& p1 = res.points[k];
+        if (!res.unity_gain_freq_hz.has_value() && p0.magnitude_db >= 0.0 && p1.magnitude_db <= 0.0 &&
+            p0.magnitude_db > p1.magnitude_db) {
+            const double frac = p0.magnitude_db / (p0.magnitude_db - p1.magnitude_db);
+            const double log_f = std::log10(std::max(p0.frequency_hz, 1.0e-30)) +
+                                 frac * (std::log10(std::max(p1.frequency_hz, 1.0e-30)) -
+                                         std::log10(std::max(p0.frequency_hz, 1.0e-30)));
+            res.unity_gain_freq_hz = std::pow(10.0, log_f);
+            double ph0 = p0.phase_deg;
+            double ph1 = p1.phase_deg;
+            if (ph1 - ph0 > 180.0) ph1 -= 360.0;
+            if (ph1 - ph0 < -180.0) ph1 += 360.0;
+            const double ph_ugb = ph0 + frac * (ph1 - ph0);
+            res.phase_margin_deg = 180.0 + ph_ugb;
+        }
+        /* Detect phase crossing -180 deg (wrap from negative toward +180). */
+        if (!res.phase_crossover_freq_hz.has_value()) {
+            const double d0 = p0.phase_deg < 0.0 ? (p0.phase_deg + 180.0) : (p0.phase_deg - 180.0);
+            const double d1 = p1.phase_deg < 0.0 ? (p1.phase_deg + 180.0) : (p1.phase_deg - 180.0);
+            if (p0.phase_deg < -90.0 && p1.phase_deg > 90.0) {
+                const double span = (p0.phase_deg + 180.0) + (180.0 - p1.phase_deg);
+                const double frac = (span > 0.0) ? ((p0.phase_deg + 180.0) / span) : 0.5;
+                const double log_f = std::log10(std::max(p0.frequency_hz, 1.0e-30)) +
+                                     frac * (std::log10(std::max(p1.frequency_hz, 1.0e-30)) -
+                                             std::log10(std::max(p0.frequency_hz, 1.0e-30)));
+                res.phase_crossover_freq_hz = std::pow(10.0, log_f);
+                const double db_pc = p0.magnitude_db + frac * (p1.magnitude_db - p0.magnitude_db);
+                res.gain_margin_db = -db_pc;
+            } else if ((d0 > 0.0 && d1 < 0.0) && std::abs(p0.phase_deg) > 90.0 && std::abs(p1.phase_deg) > 90.0) {
+                const double frac = d0 / (d0 - d1);
+                res.phase_crossover_freq_hz = p0.frequency_hz + frac * (p1.frequency_hz - p0.frequency_hz);
+                const double db_pc = p0.magnitude_db + frac * (p1.magnitude_db - p0.magnitude_db);
+                res.gain_margin_db = -db_pc;
+            }
+        }
+    }
+
+    out_result = std::move(res);
+    return Diagnostic::success();
+}
+
+/* ==================== 8. .PZ (Shift-Invert + Francis Double-Shift QR) ==================== */
+namespace {
+
+bool dense_lu_invert_multiply(
+    std::size_t n,
+    std::vector<double> a,
+    const std::vector<double>& b,
+    std::vector<double>& out_m) {
+    /* Solve A * M = B via partial-pivoting Gaussian elimination (row-major n x n). */
+    out_m = b;
+    for (std::size_t k = 0; k < n; ++k) {
+        std::size_t piv = k;
+        double max_v = std::abs(a[k * n + k]);
+        for (std::size_t i = k + 1u; i < n; ++i) {
+            const double v = std::abs(a[i * n + k]);
+            if (v > max_v) {
+                max_v = v;
+                piv = i;
+            }
+        }
+        if (max_v < 1.0e-15) return false;
+        if (piv != k) {
+            for (std::size_t j = k; j < n; ++j) std::swap(a[k * n + j], a[piv * n + j]);
+            for (std::size_t j = 0; j < n; ++j) std::swap(out_m[k * n + j], out_m[piv * n + j]);
+        }
+        const double diag = a[k * n + k];
+        for (std::size_t i = k + 1u; i < n; ++i) {
+            const double f = a[i * n + k] / diag;
+            a[i * n + k] = 0.0;
+            for (std::size_t j = k + 1u; j < n; ++j) a[i * n + j] -= f * a[k * n + j];
+            for (std::size_t j = 0; j < n; ++j) out_m[i * n + j] -= f * out_m[k * n + j];
+        }
+    }
+    for (std::size_t ii = n; ii-- > 0;) {
+        const double diag = a[ii * n + ii];
+        for (std::size_t j = 0; j < n; ++j) {
+            double s = out_m[ii * n + j];
+            for (std::size_t k = ii + 1u; k < n; ++k) s -= a[ii * n + k] * out_m[k * n + j];
+            out_m[ii * n + j] = s / diag;
+        }
+    }
+    return true;
+}
+
+/* Compute all eigenvalues of a real n x n matrix via Hessenberg reduction + Francis double-shift QR. */
+std::vector<Complex> real_matrix_eigenvalues(std::size_t n, std::vector<double> h) {
+    std::vector<Complex> eigs;
+    if (n == 0u) return eigs;
+    auto at = [&](std::size_t r, std::size_t c) -> double& { return h[r * n + c]; };
+
+    /* 1. Householder reduction to upper Hessenberg form. */
+    for (std::size_t k = 0; k + 2u < n; ++k) {
+        double scale = 0.0;
+        for (std::size_t i = k + 1u; i < n; ++i) scale += std::abs(at(i, k));
+        if (scale < 1.0e-30) continue;
+
+        double sigma = 0.0;
+        for (std::size_t i = k + 1u; i < n; ++i) {
+            at(i, k) /= scale;
+            sigma += at(i, k) * at(i, k);
+        }
+        const double g = (at(k + 1u, k) >= 0.0) ? -std::sqrt(sigma) : std::sqrt(sigma);
+        const double f = at(k + 1u, k) - g;
+        const double beta = sigma - at(k + 1u, k) * g;
+        if (beta <= 0.0) continue;
+        at(k + 1u, k) = f;
+
+        /* Left multiply: H := (I - u u^T / beta) H */
+        for (std::size_t j = k + 1u; j < n; ++j) {
+            double dot = 0.0;
+            for (std::size_t i = k + 1u; i < n; ++i) dot += at(i, k) * at(i, j);
+            const double t = dot / beta;
+            for (std::size_t i = k + 1u; i < n; ++i) at(i, j) -= t * at(i, k);
+        }
+        /* Right multiply: H := H (I - u u^T / beta) */
+        for (std::size_t i = 0; i < n; ++i) {
+            double dot = 0.0;
+            for (std::size_t j = k + 1u; j < n; ++j) dot += at(i, j) * at(j, k);
+            const double t = dot / beta;
+            for (std::size_t j = k + 1u; j < n; ++j) at(i, j) -= t * at(j, k);
+        }
+        at(k + 1u, k) = scale * g;
+        for (std::size_t i = k + 2u; i < n; ++i) at(i, k) = 0.0;
+    }
+
+    /* 2. Francis double-shift implicit QR iteration (EISPACK HQR / Golub-Van Loan). */
+    const double eps = 1.0e-13;
+    std::size_t en = n;
+    std::size_t total_iter = 0;
+    while (en > 0u && total_iter < 60u * n) {
+        if (en == 1u) {
+            eigs.emplace_back(at(0, 0), 0.0);
+            break;
+        }
+        std::size_t iter = 0;
+        while (en > 0u && iter < 60u) {
+            ++iter;
+            ++total_iter;
+            /* Search for small subdiagonal element. */
+            std::size_t l = en - 1u;
+            while (l > 0u) {
+                const double s = std::abs(at(l - 1u, l - 1u)) + std::abs(at(l, l));
+                if (std::abs(at(l, l - 1u)) <= eps * std::max(s, 1.0e-30)) {
+                    at(l, l - 1u) = 0.0;
+                    break;
+                }
+                --l;
+            }
+            if (l == en - 1u) {
+                eigs.emplace_back(at(en - 1u, en - 1u), 0.0);
+                --en;
+                iter = 0;
+                continue;
+            }
+            if (l == en - 2u) {
+                const double a11 = at(en - 2u, en - 2u);
+                const double a12 = at(en - 2u, en - 1u);
+                const double a21 = at(en - 1u, en - 2u);
+                const double a22 = at(en - 1u, en - 1u);
+                const double tr = 0.5 * (a11 + a22);
+                const double disc = 0.25 * (a11 - a22) * (a11 - a22) + a12 * a21;
+                if (disc >= 0.0) {
+                    const double sq = std::sqrt(disc);
+                    eigs.emplace_back(tr + sq, 0.0);
+                    eigs.emplace_back(tr - sq, 0.0);
+                } else {
+                    const double sq = std::sqrt(-disc);
+                    eigs.emplace_back(tr, sq);
+                    eigs.emplace_back(tr, -sq);
+                }
+                en -= 2u;
+                iter = 0;
+                continue;
+            }
+
+            /* Wilkinson / Francis double shift. */
+            double x = at(en - 1u, en - 1u);
+            double y = at(en - 2u, en - 2u);
+            double w = at(en - 1u, en - 2u) * at(en - 2u, en - 1u);
+            if (iter == 10u || iter == 20u) {
+                const double s = std::abs(at(en - 1u, en - 2u)) + std::abs(at(en - 2u, en - 3u));
+                x = 0.75 * s;
+                y = x;
+                w = -0.4375 * s * s;
+            }
+            double p = 0.0, q = 0.0, r = 0.0;
+            std::size_t m = en - 2u;
+            for (; m > l; --m) {
+                const double z = at(m - 1u, m - 1u);
+                const double s = x - z;
+                const double t = y - z;
+                p = (s * t - w) / at(m, m - 1u) + at(m - 1u, m);
+                q = at(m, m) - z - s - t;
+                r = at(m + 1u, m);
+                const double norm = std::abs(p) + std::abs(q) + std::abs(r);
+                p /= norm;
+                q /= norm;
+                r /= norm;
+                if (m - 1u == l) {
+                    --m;
+                    break;
+                }
+                const double lhs = std::abs(at(m - 1u, m - 2u)) * (std::abs(q) + std::abs(r));
+                const double rhs = std::abs(p) * (std::abs(at(m - 2u, m - 2u)) + std::abs(z) + std::abs(at(m, m)));
+                if (lhs <= eps * rhs) {
+                    --m;
+                    break;
+                }
+            }
+            if (m == l) {
+                const double z = at(l, l);
+                const double s = x - z;
+                const double t = y - z;
+                p = (s * t - w) / at(l + 1u, l) + at(l, l + 1u);
+                q = at(l + 1u, l + 1u) - z - s - t;
+                r = at(l + 2u, l + 1u);
+            }
+
+            /* Chase bulge down to en - 1. */
+            for (std::size_t k = m; k + 1u < en; ++k) {
+                const bool not_last = (k + 2u < en);
+                if (k > m) {
+                    p = at(k, k - 1u);
+                    q = at(k + 1u, k - 1u);
+                    r = not_last ? at(k + 2u, k - 1u) : 0.0;
+                }
+                const double norm = std::abs(p) + std::abs(q) + std::abs(r);
+                if (norm < 1.0e-30) continue;
+                p /= norm;
+                q /= norm;
+                r /= norm;
+                double s = std::sqrt(p * p + q * q + r * r);
+                if (p < 0.0) s = -s;
+                if (k > m) at(k, k - 1u) = -s * norm;
+                else if (m > l) at(k, k - 1u) = -at(k, k - 1u);
+                p += s;
+                const double vx = p / s;
+                const double vy = q / s;
+                const double vz = r / s;
+                q /= p;
+                r /= p;
+                /* Row update */
+                for (std::size_t j = k; j < en; ++j) {
+                    double tmp = at(k, j) + q * at(k + 1u, j);
+                    if (not_last) {
+                        tmp += r * at(k + 2u, j);
+                        at(k + 2u, j) -= tmp * vz;
+                    }
+                    at(k + 1u, j) -= tmp * vy;
+                    at(k, j) -= tmp * vx;
+                }
+                /* Column update */
+                const std::size_t lim = std::min(en - 1u, k + 3u);
+                for (std::size_t i = l; i <= lim; ++i) {
+                    double tmp = vx * at(i, k) + vy * at(i, k + 1u);
+                    if (not_last) {
+                        tmp += vz * at(i, k + 2u);
+                        at(i, k + 2u) -= tmp * r;
+                    }
+                    at(i, k + 1u) -= tmp * q;
+                    at(i, k) -= tmp;
+                }
+            }
+        }
+    }
+    return eigs;
+}
+
+}  // namespace
+
+Diagnostic run_pz(
+    devices::CompiledPlan& plan,
+    const PzOptions& opts,
+    PzResult& out_result) {
+    if (opts.out_p.value >= plan.circuit.nodes.size() || opts.out_n.value >= plan.circuit.nodes.size() ||
+        opts.out_p == opts.out_n) {
+        return Diagnostic::error(StatusCode::InvalidArgument, "invalid .PZ output port nodes");
+    }
+    if (plan.unknown_count() > 256u) {
+        return Diagnostic::error(StatusCode::ResourceExhausted, ".PZ dense eigensolver limited to <= 256 unknowns");
+    }
+
+    std::vector<double> x_op, g_vals, c_vals;
+    if (auto d = linearize_at_op(plan, opts.common, 300.15, x_op, g_vals, c_vals); !d.ok()) return d;
+
+    std::vector<double> b_in;
+    bool is_vsrc = false;
+    std::optional<UnknownId> vsrc_br;
+    NodeId in_p{0}, in_n{0};
+    if (auto d = build_source_unit_rhs(plan, opts.input_source_id, b_in, is_vsrc, vsrc_br, in_p, in_n);
+        !d.ok()) {
+        return d;
+    }
+
+    const std::size_t n = plan.unknown_count();
+    std::vector<double> g_dense(n * n, 0.0), c_dense(n * n, 0.0);
+    for (std::uint32_t col = 0; col < plan.unknown_count(); ++col) {
+        for (std::size_t k = plan.pattern.col_ptr[col]; k < plan.pattern.col_ptr[col + 1u]; ++k) {
+            const std::uint32_t row = plan.pattern.row_idx[k];
+            g_dense[row * n + col] = g_vals[k];
+            c_dense[row * n + col] = c_vals[k];
+        }
+    }
+
+    /* Try real shift sigma (fallback shifts if G + sigma*C is singular). */
+    const double candidate_shifts[4] = {opts.shift_rad_per_s, 1.0, 1.0e3, -1.0e3};
+    double sigma_p = 0.0;
+    std::vector<double> m_poles;
+    bool inverted_p = false;
+    for (double sig : candidate_shifts) {
+        std::vector<double> g_sig(n * n);
+        for (std::size_t i = 0; i < n * n; ++i) g_sig[i] = g_dense[i] + sig * c_dense[i];
+        if (dense_lu_invert_multiply(n, std::move(g_sig), c_dense, m_poles)) {
+            sigma_p = sig;
+            inverted_p = true;
+            break;
+        }
+    }
+    if (!inverted_p) {
+        return Diagnostic::error(StatusCode::NumericalFailure, ".PZ matrix pencil (G + s*C) is singular");
+    }
+
+    PzResult res{};
+    for (const Complex& mu : real_matrix_eigenvalues(n, std::move(m_poles))) {
+        if (std::abs(mu) > 1.0e-12) {
+            res.poles_rad_per_s.push_back(Complex{sigma_p, 0.0} - Complex{1.0, 0.0} / mu);
+        }
+    }
+
+    /* Zeros from augmented (n+1) x (n+1) Rosenbrock pencil: [G+sC, b_in; e_out^T, 0]. */
+    const std::size_t np1 = n + 1u;
+    std::vector<double> e_aug(np1 * np1, 0.0);
+    for (std::size_t r = 0; r < n; ++r) {
+        for (std::size_t c = 0; c < n; ++c) {
+            e_aug[r * np1 + c] = c_dense[r * n + c];
+        }
+    }
+    std::vector<double> m_zeros;
+    double sigma_z = 0.0;
+    bool inverted_z = false;
+    for (double sig : candidate_shifts) {
+        std::vector<double> k_sig(np1 * np1, 0.0);
+        for (std::size_t r = 0; r < n; ++r) {
+            for (std::size_t c = 0; c < n; ++c) {
+                k_sig[r * np1 + c] = g_dense[r * n + c] + sig * c_dense[r * n + c];
+            }
+            k_sig[r * np1 + n] = b_in[r];
+        }
+        if (auto u = devices::CompiledPlan::node_unknown(opts.out_p)) k_sig[n * np1 + u->value] = 1.0;
+        if (auto u = devices::CompiledPlan::node_unknown(opts.out_n)) k_sig[n * np1 + u->value] = -1.0;
+        if (dense_lu_invert_multiply(np1, std::move(k_sig), e_aug, m_zeros)) {
+            sigma_z = sig;
+            inverted_z = true;
+            break;
+        }
+    }
+    if (inverted_z) {
+        for (const Complex& mu : real_matrix_eigenvalues(np1, std::move(m_zeros))) {
+            if (std::abs(mu) > 1.0e-12) {
+                res.zeros_rad_per_s.push_back(Complex{sigma_z, 0.0} - Complex{1.0, 0.0} / mu);
+            }
+        }
+    }
+
+    auto sort_complex = [](std::vector<Complex>& v) {
+        std::sort(v.begin(), v.end(), [](const Complex& a, const Complex& b) {
+            if (std::abs(a.real() - b.real()) > 1.0e-9) return a.real() < b.real();
+            return a.imag() < b.imag();
+        });
+    };
+    sort_complex(res.poles_rad_per_s);
+    sort_complex(res.zeros_rad_per_s);
+
+    out_result = std::move(res);
+    return Diagnostic::success();
+}
+
+/* ==================== 9. .DCMATCH (Adjoint Statistical Mismatch) ==================== */
+Diagnostic run_dcmatch(
+    devices::CompiledPlan& plan,
+    const DcMatchOptions& opts,
+    DcMatchResult& out_result) {
+    SensOptions sopts{};
+    sopts.out_p = opts.out_p;
+    sopts.out_n = opts.out_n;
+    sopts.common = opts.common;
+    SensResult sens{};
+    if (auto d = run_sens(plan, sopts, sens); !d.ok()) return d;
+
+    std::unordered_map<std::string, double> rel_tol_map;
+    for (const auto& m : opts.mismatches) {
+        if (!std::isfinite(m.relative_tol) || m.relative_tol < 0.0) {
+            return Diagnostic::error(StatusCode::InvalidArgument, "invalid .DCMATCH tolerance");
+        }
+        rel_tol_map[m.element_id] = m.relative_tol;
+    }
+
+    DcMatchResult res{};
+    res.nominal_output_volts = sens.nominal_output_volts;
+    double total_var = 0.0;
+    for (const auto& e : sens.entries) {
+        const auto it = rel_tol_map.find(e.element_id);
+        if (it == rel_tol_map.end()) continue;
+        const double sigma_p = it->second * std::abs(e.nominal_value);
+        const double sigma_out = std::abs(e.d_out_d_param) * sigma_p;
+        total_var += sigma_out * sigma_out;
+        res.contributors.push_back(DcMatchContributor{e.element_id, e.parameter_name, sigma_out, 0.0});
+    }
+
+    res.total_sigma_volts = std::sqrt(total_var);
+    res.three_sigma_volts = 3.0 * res.total_sigma_volts;
+    for (auto& c : res.contributors) {
+        c.variance_share_percent =
+            (total_var > 1.0e-30) ? (100.0 * (c.sigma_output_volts * c.sigma_output_volts) / total_var) : 0.0;
+    }
+    std::sort(res.contributors.begin(), res.contributors.end(), [](const auto& a, const auto& b) {
+        return a.variance_share_percent > b.variance_share_percent;
+    });
+
+    out_result = std::move(res);
+    return Diagnostic::success();
+}
+
+/* ==================== 10. SPICE3f5 RAW & IEEE 1364 VCD Exporters ==================== */
+std::string format_spice_raw_ascii(
+    const devices::CompiledPlan& plan,
+    const TransientResult& tran) {
+    std::ostringstream oss;
+    oss << std::setprecision(15);
+    oss << "Title: " << plan.circuit.name << "\n"
+        << "Date: Spice V2\n"
+        << "Plotname: Transient Analysis\n"
+        << "Flags: real\n"
+        << "No. Variables: " << (plan.signals.size() + 1u) << "\n"
+        << "No. Points: " << tran.samples.size() << "\n"
+        << "Variables:\n"
+        << "\t0\ttime\ttime\n";
+    for (std::size_t i = 0; i < plan.signals.size(); ++i) {
+        oss << "\t" << (i + 1u) << "\t" << plan.signals[i].id << "\t" << plan.signals[i].quantity << "\n";
+    }
+    oss << "Values:\n";
+    for (std::size_t k = 0; k < tran.samples.size(); ++k) {
+        oss << k << "\t" << tran.samples[k].time_s << "\n";
+        for (double v : tran.samples[k].values) {
+            oss << "\t" << v << "\n";
+        }
+    }
+    return oss.str();
+}
+
+std::vector<std::uint8_t> format_spice_raw_binary(
+    const devices::CompiledPlan& plan,
+    const TransientResult& tran) {
+    std::ostringstream hdr;
+    hdr << "Title: " << plan.circuit.name << "\n"
+        << "Date: Spice V2\n"
+        << "Plotname: Transient Analysis\n"
+        << "Flags: real\n"
+        << "No. Variables: " << (plan.signals.size() + 1u) << "\n"
+        << "No. Points: " << tran.samples.size() << "\n"
+        << "Variables:\n"
+        << "\t0\ttime\ttime\n";
+    for (std::size_t i = 0; i < plan.signals.size(); ++i) {
+        hdr << "\t" << (i + 1u) << "\t" << plan.signals[i].id << "\t" << plan.signals[i].quantity << "\n";
+    }
+    hdr << "Binary:\n";
+    const std::string header_str = hdr.str();
+
+    const std::size_t doubles_per_pt = plan.signals.size() + 1u;
+    std::vector<std::uint8_t> bytes;
+    bytes.reserve(header_str.size() + tran.samples.size() * doubles_per_pt * sizeof(double));
+    bytes.insert(bytes.end(), header_str.begin(), header_str.end());
+
+    auto push_double = [&](double v) {
+        const auto* raw = reinterpret_cast<const std::uint8_t*>(&v);
+        bytes.insert(bytes.end(), raw, raw + sizeof(double));
+    };
+    for (const auto& s : tran.samples) {
+        push_double(s.time_s);
+        for (double v : s.values) push_double(v);
+    }
+    return bytes;
+}
+
+std::string format_vcd(
+    const devices::CompiledPlan& plan,
+    const TransientResult& tran,
+    double logic_threshold_volts) {
+    std::ostringstream oss;
+    oss << std::setprecision(12);
+    oss << "$date Spice V2 $end\n"
+        << "$version Spice V2 IEEE-1364 VCD Exporter $end\n"
+        << "$timescale 1ps $end\n"
+        << "$scope module " << (plan.circuit.name.empty() ? "top" : plan.circuit.name) << " $end\n";
+
+    auto vcd_id = [](std::size_t idx) -> std::string {
+        std::string id;
+        std::size_t v = idx;
+        do {
+            id.push_back(static_cast<char>('!' + (v % 94u)));
+            v /= 94u;
+        } while (v > 0u);
+        return id;
+    };
+
+    const std::size_t n_sig = plan.signals.size();
+    for (std::size_t i = 0; i < n_sig; ++i) {
+        oss << "$var real 64 " << vcd_id(i) << " " << plan.signals[i].id << " $end\n";
+    }
+    for (std::size_t i = 0; i < n_sig; ++i) {
+        if (plan.signals[i].quantity == "voltage") {
+            oss << "$var wire 1 " << vcd_id(n_sig + i) << " logic_" << plan.signals[i].id << " $end\n";
+        }
+    }
+    oss << "$upscope $end\n$enddefinitions $end\n";
+
+    std::vector<int> prev_logic(n_sig, -1);
+    for (std::size_t k = 0; k < tran.samples.size(); ++k) {
+        const auto ps = static_cast<std::uint64_t>(std::llround(std::max(0.0, tran.samples[k].time_s) * 1.0e12));
+        oss << "#" << ps << "\n";
+        for (std::size_t i = 0; i < n_sig; ++i) {
+            const double val = tran.samples[k].values[i];
+            oss << "r" << val << " " << vcd_id(i) << "\n";
+            if (plan.signals[i].quantity == "voltage") {
+                const int bit = (val >= logic_threshold_volts) ? 1 : 0;
+                if (prev_logic[i] != bit) {
+                    oss << bit << vcd_id(n_sig + i) << "\n";
+                    prev_logic[i] = bit;
+                }
+            }
+        }
+    }
+    return oss.str();
 }
 
 }  // namespace spice::analysis

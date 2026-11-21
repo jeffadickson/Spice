@@ -230,6 +230,8 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
         } else if (const auto* b = std::get_if<BehavioralSourceSpec>(&e); b != nullptr && b->is_voltage) {
             ++branch_count;
             branch_source_ids.insert(id);
+        } else if (std::holds_alternative<TransmissionLineSpec>(e)) {
+            branch_count += 2u;
         }
     }
 
@@ -398,6 +400,19 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
                         !std::isfinite(s.roff_ohms) || s.roff_ohms <= 0.0) {
                         return Diagnostic::error(
                             StatusCode::InvalidArgument, "invalid switch parameters or terminals", s.id);
+                    }
+                    return Diagnostic::success();
+                },
+                [&](const TransmissionLineSpec& t) -> Diagnostic {
+                    if (auto x = check_node(t.p1, t.id); !x.ok()) return x;
+                    if (auto x = check_node(t.n1, t.id); !x.ok()) return x;
+                    if (auto x = check_node(t.p2, t.id); !x.ok()) return x;
+                    if (auto x = check_node(t.n2, t.id); !x.ok()) return x;
+                    if (t.p1 == t.n1 || t.p2 == t.n2 ||
+                        !std::isfinite(t.z0_ohms) || t.z0_ohms <= 0.0 ||
+                        !std::isfinite(t.td_s) || t.td_s <= 0.0) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid transmission line parameters or terminals", t.id);
                     }
                     return Diagnostic::success();
                 },

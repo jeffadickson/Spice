@@ -321,7 +321,9 @@ Rbuf buf 0 10k
 
 TEST_CASE("Native spice_v2_cli executes check and run subcommands with JSON/CSV export and exit codes", "[m2b][cli]") {
     namespace fs = std::filesystem;
-    const fs::path tmp_dir = fs::temp_directory_path() / "spice_v2_cli_test";
+    const std::string uniq = std::to_string(reinterpret_cast<std::uintptr_t>(&g_failed_checks)) + "_" +
+                             std::to_string(std::hash<std::string>{}(SPICE_V2_CLI_PATH));
+    const fs::path tmp_dir = fs::temp_directory_path() / ("spice_v2_cli_test_" + uniq);
     fs::create_directories(tmp_dir);
     const fs::path deck_path = tmp_dir / "rc_cli.cir";
     const fs::path bad_path = tmp_dir / "bad_cli.cir";

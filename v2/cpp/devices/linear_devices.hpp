@@ -60,9 +60,18 @@ struct CompiledPlan {
 
     void commit_all_trials() noexcept;
     void rollback_all_trials() noexcept;
+    void reset_transient_history() noexcept;
+
+    /* Stamp frequency-dependent devices (e.g., lossless T-lines) into complex AC/SP matrix. */
+    void overwrite_frequency_dependent_ac(
+        double omega,
+        std::span<std::complex<double>> a_vals,
+        std::span<const std::size_t> slot_remap = {}) const noexcept;
 
     /* Indices into `devices` for independent sources (used by DC sweeps and continuation). */
     std::unordered_map<std::string, std::size_t> source_device_indices;
+    /* Indices into `devices` for lossless transmission lines. */
+    std::vector<std::size_t> tline_device_indices;
 };
 
 /* Compile a Circuit into a pre-bound CompiledPlan with validated CSC sparsity. */

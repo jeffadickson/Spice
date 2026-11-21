@@ -915,6 +915,220 @@ private:
     std::optional<SlotId> pp_, pn_, np_, nn_, pcp_, pcn_, ncp_, ncn_;
 };
 
+/*
+ * 14. Ideal Lossless Transmission Line (T element):
+ *   - DC OP/Sweep: V1 - V2 = 0, I1 + I2 = 0 (zero-loss short)
+ *   - Transient: Exact Bergeron method-of-characteristics with committed delay history & rollback
+ *   - AC / .SP: Exact complex ABCD equations (non-singular at DC and half-wave multiples)
+ */
+class TransmissionLineDevice final : public Device {
+public:
+    TransmissionLineDevice(
+        std::optional<UnknownId> p1,
+        std::optional<UnknownId> n1,
+        std::optional<UnknownId> p2,
+        std::optional<UnknownId> n2,
+        UnknownId br1,
+        UnknownId br2,
+        const core::TransmissionLineSpec& spec)
+        : p1_(p1),
+          n1_(n1),
+          p2_(p2),
+          n2_(n2),
+          br1_(br1),
+          br2_(br2),
+          z0_(spec.z0_ohms),
+          y0_(1.0 / spec.z0_ohms),
+          td_(spec.td_s) {
+        desc_.kind_id = "spice.tline";
+        desc_.display_name = "Ideal Lossless Transmission Line";
+        desc_.pins = {{"p1", "port1_pos"}, {"n1", "port1_neg"}, {"p2", "port2_pos"}, {"n2", "port2_neg"}};
+    }
+
+    static void record_stencil(
+        CoordList& coords,
+        std::optional<UnknownId> p1,
+        std::optional<UnknownId> n1,
+        std::optional<UnknownId> p2,
+        std::optional<UnknownId> n2,
+        UnknownId br1,
+        UnknownId br2) {
+        add_if_present(coords, p1, br1);
+        add_if_present(coords, n1, br1);
+        add_if_present(coords, p2, br2);
+        add_if_present(coords, n2, br2);
+
+        const UnknownId rows[2] = {br1, br2};
+        for (UnknownId r : rows) {
+            add_if_present(coords, r, p1);
+            add_if_present(coords, r, n1);
+            add_if_present(coords, r, p2);
+            add_if_present(coords, r, n2);
+            coords.emplace_back(r.value, br1.value);
+            coords.emplace_back(r.value, br2.value);
+        }
+    }
+
+    const DeviceDescriptor& descriptor() const noexcept override { return desc_; }
+
+    Diagnostic bind_slots(const CscPattern& pat) override {
+        if (!bind_optional(pat, p1_, br1_, p1_br1_) || !bind_optional(pat, n1_, br1_, n1_br1_) ||
+            !bind_optional(pat, p2_, br2_, p2_br2_) || !bind_optional(pat, n2_, br2_, n2_br2_) ||
+            !bind_optional(pat, br1_, p1_, b1_p1_) || !bind_optional(pat, br1_, n1_, b1_n1_) ||
+            !bind_optional(pat, br1_, p2_, b1_p2_) || !bind_optional(pat, br1_, n2_, b1_n2_) ||
+            !bind_optional(pat, br1_, br1_, b1_b1_) || !bind_optional(pat, br1_, br2_, b1_b2_) ||
+            !bind_optional(pat, br2_, p1_, b2_p1_) || !bind_optional(pat, br2_, n1_, b2_n1_) ||
+            !bind_optional(pat, br2_, p2_, b2_p2_) || !bind_optional(pat, br2_, n2_, b2_n2_) ||
+            !bind_optional(pat, br2_, br1_, b2_b1_) || !bind_optional(pat, br2_, br2_, b2_b2_)) {
+            return Diagnostic::error(StatusCode::InvalidArgument, "missing transmission line CSC slot");
+        }
+        return Diagnostic::success();
+    }
+
+    void reset_history() noexcept {
+        history_.clear();
+        has_trial_ = false;
+    }
+
+    Diagnostic evaluate(const EvalContext& ctx, StampTarget& t) override {
+        const double v1 = node_voltage(ctx.x, p1_) - node_voltage(ctx.x, n1_);
+        const double v2 = node_voltage(ctx.x, p2_) - node_voltage(ctx.x, n2_);
+        const double i1 = ctx.x[br1_.value];
+        const double i2 = ctx.x[br2_.value];
+
+        /* KCL port current stamps apply in all modes. */
+        if (!stamp_f_opt(t, p1_, i1) || !stamp_f_opt(t, n1_, -i1) ||
+            !stamp_f_opt(t, p2_, i2) || !stamp_f_opt(t, n2_, -i2) ||
+            !stamp_df_opt(t, p1_br1_, 1.0) || !stamp_df_opt(t, n1_br1_, -1.0) ||
+            !stamp_df_opt(t, p2_br2_, 1.0) || !stamp_df_opt(t, n2_br2_, -1.0)) {
+            return Diagnostic::error(StatusCode::NumericalFailure, "tline KCL stamp failed");
+        }
+
+        if (ctx.mode != AnalysisMode::Transient) {
+            /* DC / AcLinearize baseline: V1 - V2 = 0, I1 + I2 = 0. */
+            if (!t.add_f(br1_, v1 - v2) || !t.add_f(br2_, i1 + i2) ||
+                !stamp_df_opt(t, b1_p1_, 1.0) || !stamp_df_opt(t, b1_n1_, -1.0) ||
+                !stamp_df_opt(t, b1_p2_, -1.0) || !stamp_df_opt(t, b1_n2_, 1.0) ||
+                !stamp_df_opt(t, b2_b1_, 1.0) || !stamp_df_opt(t, b2_b2_, 1.0)) {
+                return Diagnostic::error(StatusCode::NumericalFailure, "tline DC stamp failed");
+            }
+            return Diagnostic::success();
+        }
+
+        /* Transient Bergeron method-of-characteristics:
+         *   I1(t) - Y0*V1(t) + I_h1(t) = 0,  I_h1(t) = Y0*V2(t - Td) + I2(t - Td)
+         *   I2(t) - Y0*V2(t) + I_h2(t) = 0,  I_h2(t) = Y0*V1(t - Td) + I1(t - Td)
+         */
+        double ih1 = 0.0;
+        double ih2 = 0.0;
+        if (history_.empty()) {
+            /* t = 0 startup evaluation: seed steady-state characteristic waves from current x. */
+            ih1 = y0_ * v2 + i2;
+            ih2 = y0_ * v1 + i1;
+        } else {
+            const HistSample delayed = sample_history(ctx.time_s - td_);
+            ih1 = y0_ * delayed.v2 + delayed.i2;
+            ih2 = y0_ * delayed.v1 + delayed.i1;
+        }
+
+        trial_sample_ = HistSample{ctx.time_s, v1, v2, i1, i2};
+        has_trial_ = true;
+
+        if (!t.add_f(br1_, i1 - y0_ * v1 + ih1) ||
+            !t.add_f(br2_, i2 - y0_ * v2 + ih2) ||
+            !stamp_df_opt(t, b1_b1_, 1.0) ||
+            !stamp_df_opt(t, b1_p1_, -y0_) || !stamp_df_opt(t, b1_n1_, y0_) ||
+            !stamp_df_opt(t, b2_b2_, 1.0) ||
+            !stamp_df_opt(t, b2_p2_, -y0_) || !stamp_df_opt(t, b2_n2_, y0_)) {
+            return Diagnostic::error(StatusCode::NumericalFailure, "tline transient Bergeron stamp failed");
+        }
+        return Diagnostic::success();
+    }
+
+    void overwrite_ac_matrix(
+        double omega,
+        std::span<std::complex<double>> a_vals,
+        std::span<const std::size_t> remap) const noexcept {
+        using C = std::complex<double>;
+        const double theta = omega * td_;
+        const double c = std::cos(theta);
+        const double s = std::sin(theta);
+
+        auto set_slot = [&](std::optional<SlotId> sl, C val) {
+            if (!sl) return;
+            const std::size_t idx = remap.empty() ? sl->value : remap[sl->value];
+            a_vals[idx] = val;
+        };
+
+        /* Row br1: V1 - cos(theta)*V2 + j*Z0*sin(theta)*I2 = 0 */
+        set_slot(b1_p1_, C{1.0, 0.0});
+        set_slot(b1_n1_, C{-1.0, 0.0});
+        set_slot(b1_p2_, C{-c, 0.0});
+        set_slot(b1_n2_, C{c, 0.0});
+        set_slot(b1_b1_, C{0.0, 0.0});
+        set_slot(b1_b2_, C{0.0, z0_ * s});
+
+        /* Row br2: I1 - j*Y0*sin(theta)*V2 + cos(theta)*I2 = 0 */
+        set_slot(b2_p1_, C{0.0, 0.0});
+        set_slot(b2_n1_, C{0.0, 0.0});
+        set_slot(b2_p2_, C{0.0, -y0_ * s});
+        set_slot(b2_n2_, C{0.0, y0_ * s});
+        set_slot(b2_b1_, C{1.0, 0.0});
+        set_slot(b2_b2_, C{c, 0.0});
+    }
+
+    void commit_trial() noexcept override {
+        if (!has_trial_) return;
+        if (!history_.empty() && std::abs(history_.back().t - trial_sample_.t) < 1.0e-18) {
+            history_.back() = trial_sample_;
+        } else {
+            history_.push_back(trial_sample_);
+        }
+        has_trial_ = false;
+    }
+
+    void rollback_trial() noexcept override { has_trial_ = false; }
+
+private:
+    struct HistSample {
+        double t{0.0};
+        double v1{0.0};
+        double v2{0.0};
+        double i1{0.0};
+        double i2{0.0};
+    };
+
+    HistSample sample_history(double t_query) const noexcept {
+        if (t_query <= history_.front().t) return history_.front();
+        if (t_query >= history_.back().t) return history_.back();
+        auto it = std::lower_bound(
+            history_.begin(), history_.end(), t_query,
+            [](const HistSample& a, double t) { return a.t < t; });
+        if (it == history_.begin()) return *it;
+        const auto prev = it - 1;
+        const double dt = it->t - prev->t;
+        if (dt <= 0.0) return *it;
+        const double f = (t_query - prev->t) / dt;
+        return HistSample{
+            t_query,
+            prev->v1 + f * (it->v1 - prev->v1),
+            prev->v2 + f * (it->v2 - prev->v2),
+            prev->i1 + f * (it->i1 - prev->i1),
+            prev->i2 + f * (it->i2 - prev->i2)};
+    }
+
+    DeviceDescriptor desc_;
+    std::optional<UnknownId> p1_, n1_, p2_, n2_;
+    UnknownId br1_, br2_;
+    double z0_, y0_, td_;
+    std::optional<SlotId> p1_br1_, n1_br1_, p2_br2_, n2_br2_;
+    std::optional<SlotId> b1_p1_, b1_n1_, b1_p2_, b1_n2_, b1_b1_, b1_b2_;
+    std::optional<SlotId> b2_p1_, b2_n1_, b2_p2_, b2_n2_, b2_b1_, b2_b2_;
+    std::vector<HistSample> history_;
+    HistSample trial_sample_{};
+    bool has_trial_{false};
+};
+
 CscPattern build_csc_pattern(std::uint32_t dim, CoordList& coords) {
     /* Sort by (col, row) and deduplicate to form canonical CSC structure. */
     std::sort(coords.begin(), coords.end(), [](const auto& a, const auto& b) {
@@ -1019,6 +1233,25 @@ void CompiledPlan::rollback_all_trials() noexcept {
     for (auto& dev : devices) dev->rollback_trial();
 }
 
+void CompiledPlan::reset_transient_history() noexcept {
+    for (std::size_t idx : tline_device_indices) {
+        if (auto* tl = dynamic_cast<TransmissionLineDevice*>(devices[idx].get())) {
+            tl->reset_history();
+        }
+    }
+}
+
+void CompiledPlan::overwrite_frequency_dependent_ac(
+    double omega,
+    std::span<std::complex<double>> a_vals,
+    std::span<const std::size_t> slot_remap) const noexcept {
+    for (std::size_t idx : tline_device_indices) {
+        if (const auto* tl = dynamic_cast<const TransmissionLineDevice*>(devices[idx].get())) {
+            tl->overwrite_ac_matrix(omega, a_vals, slot_remap);
+        }
+    }
+}
+
 Diagnostic compile_circuit(
     const core::Circuit& circuit,
     CompiledPlan& out_plan,
@@ -1094,6 +1327,13 @@ Diagnostic compile_circuit(
             const auto br = UnknownId{static_cast<std::uint32_t>(plan.signals.size())};
             plan.branch_unknowns.emplace(id, br);
             plan.signals.push_back(core::SignalDescriptor{"i(" + id + ")", "current", "A"});
+        } else if (const auto* tl = std::get_if<core::TransmissionLineSpec>(&elem)) {
+            const auto br1 = UnknownId{static_cast<std::uint32_t>(plan.signals.size())};
+            plan.branch_unknowns.emplace(tl->id + ":1", br1);
+            plan.signals.push_back(core::SignalDescriptor{"i(" + tl->id + ":1)", "current", "A"});
+            const auto br2 = UnknownId{static_cast<std::uint32_t>(plan.signals.size())};
+            plan.branch_unknowns.emplace(tl->id + ":2", br2);
+            plan.signals.push_back(core::SignalDescriptor{"i(" + tl->id + ":2)", "current", "A"});
         }
     }
 
@@ -1215,6 +1455,17 @@ Diagnostic compile_circuit(
             auto cn = CompiledPlan::node_unknown(sw->cn);
             SwitchDevice::record_stencil(coords, p, n, cp, cn);
             plan.devices.push_back(std::make_unique<SwitchDevice>(p, n, cp, cn, *sw));
+        } else if (const auto* tl = std::get_if<core::TransmissionLineSpec>(&elem)) {
+            auto p1 = CompiledPlan::node_unknown(tl->p1);
+            auto n1 = CompiledPlan::node_unknown(tl->n1);
+            auto p2 = CompiledPlan::node_unknown(tl->p2);
+            auto n2 = CompiledPlan::node_unknown(tl->n2);
+            auto br1 = plan.branch_unknowns.at(tl->id + ":1");
+            auto br2 = plan.branch_unknowns.at(tl->id + ":2");
+            TransmissionLineDevice::record_stencil(coords, p1, n1, p2, n2, br1, br2);
+            plan.tline_device_indices.push_back(plan.devices.size());
+            plan.devices.push_back(
+                std::make_unique<TransmissionLineDevice>(p1, n1, p2, n2, br1, br2, *tl));
         } else if (const auto* o = std::get_if<core::OsdiInstanceSpec>(&elem)) {
             const auto& lib = loaded_libs.at(o->library_path);
             std::vector<std::optional<UnknownId>> term_unks;

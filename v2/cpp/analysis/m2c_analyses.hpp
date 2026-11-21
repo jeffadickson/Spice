@@ -215,4 +215,93 @@ struct MonteCarloResult {
     const MonteCarloOptions& opts,
     MonteCarloResult& out_result);
 
+/* ----- 7. Tian Exact Loop-Gain Stability Analysis (.STB) ----- */
+struct StbOptions {
+    std::string probe_source_id; /* 0 V probe voltage source inserted in feedback loop */
+    std::vector<double> frequencies_hz;
+    AnalysisCommonOptions common{};
+};
+
+struct StbPoint {
+    double frequency_hz{0.0};
+    std::complex<double> loop_gain{0.0, 0.0};
+    double magnitude_db{0.0};
+    double phase_deg{0.0};
+};
+
+struct StbResult {
+    std::string backend_name;
+    std::vector<StbPoint> points;
+    std::optional<double> unity_gain_freq_hz;
+    std::optional<double> phase_margin_deg;
+    std::optional<double> phase_crossover_freq_hz;
+    std::optional<double> gain_margin_db;
+};
+
+[[nodiscard]] core::Diagnostic run_stb(
+    devices::CompiledPlan& plan,
+    const StbOptions& opts,
+    StbResult& out_result);
+
+/* ----- 8. Pole-Zero Analysis (.PZ) via Shift-Invert + Francis Double-Shift QR ----- */
+struct PzOptions {
+    core::NodeId out_p{0};
+    core::NodeId out_n{0};
+    std::string input_source_id;
+    double shift_rad_per_s{1.0}; /* Real shift sigma for nonsingular (G + sigma*C) */
+    AnalysisCommonOptions common{};
+};
+
+struct PzResult {
+    std::vector<std::complex<double>> poles_rad_per_s;
+    std::vector<std::complex<double>> zeros_rad_per_s;
+};
+
+[[nodiscard]] core::Diagnostic run_pz(
+    devices::CompiledPlan& plan,
+    const PzOptions& opts,
+    PzResult& out_result);
+
+/* ----- 9. Adjoint DC Statistical Mismatch Analysis (.DCMATCH) ----- */
+struct DcMatchOptions {
+    core::NodeId out_p{0};
+    core::NodeId out_n{0};
+    /* Per-element 1-sigma fractional mismatch tolerances (e.g. 0.01 = 1% 1-sigma). */
+    std::vector<ElementTolerance> mismatches;
+    AnalysisCommonOptions common{};
+};
+
+struct DcMatchContributor {
+    std::string element_id;
+    std::string parameter_name;
+    double sigma_output_volts{0.0};
+    double variance_share_percent{0.0};
+};
+
+struct DcMatchResult {
+    double nominal_output_volts{0.0};
+    double total_sigma_volts{0.0};
+    double three_sigma_volts{0.0};
+    std::vector<DcMatchContributor> contributors;
+};
+
+[[nodiscard]] core::Diagnostic run_dcmatch(
+    devices::CompiledPlan& plan,
+    const DcMatchOptions& opts,
+    DcMatchResult& out_result);
+
+/* ----- 10. SPICE3f5 RAW (ASCII & Binary) and IEEE 1364 VCD Exporters ----- */
+[[nodiscard]] std::string format_spice_raw_ascii(
+    const devices::CompiledPlan& plan,
+    const TransientResult& tran);
+
+[[nodiscard]] std::vector<std::uint8_t> format_spice_raw_binary(
+    const devices::CompiledPlan& plan,
+    const TransientResult& tran);
+
+[[nodiscard]] std::string format_vcd(
+    const devices::CompiledPlan& plan,
+    const TransientResult& tran,
+    double logic_threshold_volts = 0.5);
+
 }  // namespace spice::analysis
