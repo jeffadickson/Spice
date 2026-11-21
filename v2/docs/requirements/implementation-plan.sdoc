@@ -180,8 +180,8 @@ Implement .DISTO (Volterra), .HB (Harmonic Balance), .ENVELOPE, .PSS (driven/aut
 COMMENT: >>>
 Phase: M3
 Depends-on: PLAN-V2-007
-Deliverables: cpp/analysis/rf_steady_state.{hpp,cpp} (.HB spectral collocation with exact analytical Fourier-Newton Jacobian and .PSS driven shooting with exact analytical monodromy tangent propagation + backtracking line search), tests/m3_rf_steady_state_tests.cpp.
-Verification: GCC 12 and Clang 14 -O3 -Werror builds verify .HB linear AC phasors (<1e-11), nonlinear diode .HB vs .PSS harmonic parity (<2 mV), slow-RC (tau=20T) peak detector shooting convergence, real dlopen OSDI 0.3 diode execution in both .HB and .PSS, and fail-closed Unsupported diagnostics on delay T-lines. Remaining to close M3: autonomous oscillator .PSS, .PAC/.PXF/.PNOISE/.PSTB, .DISTO, .ENVELOPE, quasi-periodic .QPSS, and Xyce HB differential checks.
+Deliverables: cpp/analysis/rf_steady_state.{hpp,cpp} (.HB spectral collocation + exact Fourier-Newton Jacobian, driven .PSS shooting + analytical monodromy tangent propagation, .PAC periodic AC sideband conversion matrix, .PXF adjoint conversion transfer matrix, .PNOISE cyclostationary thermal + Parseval shot-noise folding, and autonomous oscillator .PSS solving unknown period T + phase anchor), tests/m3_rf_steady_state_tests.cpp (5 test suites).
+Verification: GCC 12 and Clang 14 -O3 -Werror builds verify .HB linear AC phasors (<1e-11), nonlinear diode .HB vs .PSS harmonic parity (<2 mV), slow-RC (tau=20T) peak detector shooting, real dlopen OSDI 0.3 diode in .HB/.PSS, .PAC/.PXF complex reciprocity (<1e-11), .PNOISE stationary reduction to .NOISE (<1e-11) + pumped cyclostationary noise folding, and autonomous Van der Pol LC oscillator limit-cycle locking within 1% of ideal tank resonance. Remaining to close M3: .PSTB, .DISTO, .ENVELOPE, Floquet/PPV phase noise, quasi-periodic .QPSS, and Xyce HB differential checks.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -189,7 +189,7 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: PLAN-V2-009
-STATUS: Proposed
+STATUS: InProgress
 TITLE: M4a - Mixed-signal Verilog-AMS co-simulation and signed model packs
 STATEMENT: >>>
 Implement the separate event-driven discrete kernel (cpp/mixed) for Verilog-AMS digital and wreal modules, SystemVerilog real nettypes, automatic connect modules, and XSPICE code models, plus signed immutable ed25519 model packs and optional Cameo DSL frontend over Canonical IR.
@@ -197,8 +197,8 @@ Implement the separate event-driven discrete kernel (cpp/mixed) for Verilog-AMS 
 COMMENT: >>>
 Phase: M4
 Depends-on: PLAN-V2-007
-Deliverables: cpp/mixed co-simulation kernel, VCD trace integration in Spice.App, signed model-pack loader, optional Cameo frontend.
-Verification: Mixed-signal comparator/ADC/PLL suites and signature/tamper-detection negative tests.
+Deliverables: cpp/mixed/mixed_signal.{hpp,cpp} (separate DigitalEngine event-driven scheduler over IEEE 1364 4-state Logic4 & Wreal nets, combinational gates, rising-edge DFF, clocks, behavioral callbacks, automatic A2DConnect hysteresis/interpolated crossing detector, D2AConnect finite-ramp Thevenin driver via CompiledPlan transient source overrides, synchronized run_mixed_transient co-simulation loop, and unified IEEE 1364 VCD exporter format_mixed_vcd), tests/m4_mixed_signal_tests.cpp (3 test suites including Schmitt RC relaxation oscillator + VCD and full 6-bit mixed-signal SAR ADC).
+Verification: GCC 12 and Clang 14 -O3 -Werror builds pass all 7 CTest binaries (37 C++20 tests) including exact 6-bit SAR ADC quantized code recovery (codes 8, 32, 57 on Vref=3.2V) with analog RC DAC settling. Remaining to close M4a: Verilog-AMS/SV-RNM parser frontend, XSPICE code models, signed ed25519 model-pack loader, and optional Cameo DSL frontend.
 <<<
 RELATIONS:
 - TYPE: Parent

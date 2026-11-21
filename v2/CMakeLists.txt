@@ -107,7 +107,7 @@ target_include_directories(spice_audit PUBLIC
 )
 target_link_libraries(spice_audit PUBLIC spice_devices PRIVATE spice_v2_warnings)
 
-# 8. Analyses: OP, DC sweep, AC, Transient (BE/Trap/BDF2 + LTE), M2c, M3 RF (.HB/.PSS).
+# 8. Analyses: OP, DC sweep, AC, Transient (BE/Trap/BDF2 + LTE), M2c, M3 RF (.HB/.PSS/.PAC/.PXF/.PNOISE).
 add_library(spice_analysis STATIC
     cpp/analysis/analyses.cpp
     cpp/analysis/m2c_analyses.cpp
@@ -118,6 +118,18 @@ target_include_directories(spice_analysis PUBLIC
 )
 target_link_libraries(spice_analysis
     PUBLIC spice_devices spice_linalg spice_solver spice_audit
+    PRIVATE spice_v2_warnings
+)
+
+# 8b. M4a Mixed-Signal Event-Driven Co-Simulation Kernel (decoupled from analog DAE hot loop).
+add_library(spice_mixed STATIC
+    cpp/mixed/mixed_signal.cpp
+)
+target_include_directories(spice_mixed PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cpp>
+)
+target_link_libraries(spice_mixed
+    PUBLIC spice_analysis
     PRIVATE spice_v2_warnings
 )
 
@@ -307,4 +319,22 @@ if(SPICE_V2_BUILD_TESTS)
         target_compile_definitions(spice_v2_m3_tests PRIVATE SPICE_V2_USE_CATCH2=1)
     endif()
     add_test(NAME spice_v2_m3_tests COMMAND spice_v2_m3_tests)
+
+    add_executable(spice_v2_m4_mixed_tests
+        tests/m4_mixed_signal_tests.cpp
+    )
+    target_include_directories(spice_v2_m4_mixed_tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+    target_link_libraries(spice_v2_m4_mixed_tests PRIVATE
+        spice_mixed
+        spice_v2_warnings
+    )
+    if(Catch2_FOUND)
+        target_link_libraries(spice_v2_m4_mixed_tests PRIVATE Catch2::Catch2WithMain)
+        target_compile_definitions(spice_v2_m4_mixed_tests PRIVATE SPICE_V2_USE_CATCH2=1)
+    endif()
+    add_test(NAME spice_v2_m4_mixed_tests COMMAND spice_v2_m4_mixed_tests)
 endif()

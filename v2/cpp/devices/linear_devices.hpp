@@ -55,6 +55,11 @@ struct CompiledPlan {
         const std::string& source_id,
         std::optional<double> value);
 
+    /* Override a single independent voltage/current source value during transient co-simulation (e.g. D2A connect). */
+    [[nodiscard]] core::Diagnostic set_transient_source_override(
+        const std::string& source_id,
+        std::optional<double> value);
+
     /* Scale all independent sources temporarily during source-stepping continuation. */
     void set_source_scale(double scale) noexcept;
 

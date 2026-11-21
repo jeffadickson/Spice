@@ -66,6 +66,7 @@ bool stamp_dq_opt(StampTarget& t, std::optional<SlotId> s, double val) noexcept 
 class OverridableSourceDevice : public Device {
 public:
     virtual void set_dc_override(std::optional<double> value) noexcept = 0;
+    virtual void set_transient_override(std::optional<double> value) noexcept = 0;
     virtual void set_source_scale(double scale) noexcept = 0;
 };
 
@@ -268,8 +269,14 @@ public:
 
     Diagnostic evaluate(const EvalContext& ctx, StampTarget& t) override {
         const bool is_tran = (ctx.mode == AnalysisMode::Transient);
-        const double raw_vsrc =
-            dc_override_.has_value() && !is_tran ? *dc_override_ : core::source_value_at(spec_, ctx.time_s, is_tran);
+        double raw_vsrc = 0.0;
+        if (is_tran && tran_override_.has_value()) {
+            raw_vsrc = *tran_override_;
+        } else if (!is_tran && dc_override_.has_value()) {
+            raw_vsrc = *dc_override_;
+        } else {
+            raw_vsrc = core::source_value_at(spec_, ctx.time_s, is_tran);
+        }
         const double vsrc = source_scale_ * raw_vsrc;
         const double i_v = ctx.x[br_.value];
         const double v = node_voltage(ctx.x, p_) - node_voltage(ctx.x, n_);
@@ -283,6 +290,7 @@ public:
     }
 
     void set_dc_override(std::optional<double> value) noexcept override { dc_override_ = value; }
+    void set_transient_override(std::optional<double> value) noexcept override { tran_override_ = value; }
     void set_source_scale(double scale) noexcept override { source_scale_ = scale; }
     void commit_trial() noexcept override {}
     void rollback_trial() noexcept override {}
@@ -293,6 +301,7 @@ private:
     UnknownId br_;
     core::VoltageSourceSpec spec_;
     std::optional<double> dc_override_;
+    std::optional<double> tran_override_;
     double source_scale_{1.0};
     std::optional<SlotId> p_br_, n_br_, br_p_, br_n_;
 };
@@ -318,8 +327,14 @@ public:
 
     Diagnostic evaluate(const EvalContext& ctx, StampTarget& t) override {
         const bool is_tran = (ctx.mode == AnalysisMode::Transient);
-        const double raw_isrc =
-            dc_override_.has_value() && !is_tran ? *dc_override_ : core::source_value_at(spec_, ctx.time_s, is_tran);
+        double raw_isrc = 0.0;
+        if (is_tran && tran_override_.has_value()) {
+            raw_isrc = *tran_override_;
+        } else if (!is_tran && dc_override_.has_value()) {
+            raw_isrc = *dc_override_;
+        } else {
+            raw_isrc = core::source_value_at(spec_, ctx.time_s, is_tran);
+        }
         const double isrc = source_scale_ * raw_isrc;
         if (!stamp_f_opt(t, p_, isrc) || !stamp_f_opt(t, n_, -isrc)) {
             return Diagnostic::error(StatusCode::NumericalFailure, "current source stamp failed");
@@ -328,6 +343,7 @@ public:
     }
 
     void set_dc_override(std::optional<double> value) noexcept override { dc_override_ = value; }
+    void set_transient_override(std::optional<double> value) noexcept override { tran_override_ = value; }
     void set_source_scale(double scale) noexcept override { source_scale_ = scale; }
     void commit_trial() noexcept override {}
     void rollback_trial() noexcept override {}
@@ -337,6 +353,7 @@ private:
     std::optional<UnknownId> p_, n_;
     core::CurrentSourceSpec spec_;
     std::optional<double> dc_override_;
+    std::optional<double> tran_override_;
     double source_scale_{1.0};
 };
 
@@ -1214,6 +1231,22 @@ Diagnostic CompiledPlan::set_dc_source_override(
         return Diagnostic::error(StatusCode::InvalidArgument, "element is not an independent source", source_id);
     }
     src->set_dc_override(value);
+    return Diagnostic::success();
+}
+
+Diagnostic CompiledPlan::set_transient_source_override(
+    const std::string& source_id,
+    std::optional<double> value) {
+    const auto it = source_device_indices.find(source_id);
+    if (it == source_device_indices.end()) {
+        return Diagnostic::error(
+            StatusCode::InvalidArgument, "unknown independent source for transient override", source_id);
+    }
+    auto* src = dynamic_cast<OverridableSourceDevice*>(devices[it->second].get());
+    if (src == nullptr) {
+        return Diagnostic::error(StatusCode::InvalidArgument, "element is not an independent source", source_id);
+    }
+    src->set_transient_override(value);
     return Diagnostic::success();
 }
 
