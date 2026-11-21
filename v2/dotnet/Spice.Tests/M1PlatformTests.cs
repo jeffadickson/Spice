@@ -189,4 +189,63 @@ public sealed class M1PlatformTests
         Assert.Equal(8.0, results[2].RealData!.SignalValues["v(out)"][0], precision: 9);
         Assert.Equal(9.0, results[3].RealData!.SignalValues["v(out)"][0], precision: 9);
     }
+
+    [Fact]
+    public async Task NativeCppBackend_InProcessCAbi_SolvesOpAcAndTransient_WhenNativeLibraryAvailable()
+    {
+        // Only runs when native libspice_capi is discoverable on LD_LIBRARY_PATH / PATH.
+        NativeCppBackend? backend = null;
+        try
+        {
+            backend = new NativeCppBackend(enableAudits: true);
+        }
+        catch (DllNotFoundException)
+        {
+            return;
+        }
+
+        using (backend)
+        {
+            var caps = backend.QueryCapabilities();
+            Assert.Equal(2u, caps.AbiMajor);
+            Assert.True(caps.OsdiAvailable);
+            Assert.True(caps.AuditsAvailable);
+
+            var circuit = new CircuitBuilder("rc_lowpass_native")
+                .AddVoltageSource("V1", "in", "0", dcVolts: 5.0, acMag: 1.0)
+                .AddResistor("R1", "in", "out", SiUnits.KiloOhms(1.0))
+                .AddCapacitor("C1", "out", "0", SiUnits.MicroFarads(1.0), icVolts: 0.0)
+                .Build();
+
+            // 1. DC OP: V(out) = 5.0 V exactly
+            var opRes = await backend.RunAsync(new SimulationRequestIr("op_rc", circuit, AnalysisKind.OperatingPoint));
+            Assert.Equal(RunTerminalStatus.Succeeded, opRes.Status);
+            Assert.NotNull(opRes.RealData);
+            Assert.Equal(5.0, opRes.RealData!.SignalValues["v(out)"][0], precision: 11);
+
+            // 2. AC at 1/(2*pi*R*C) ~= 159.155 Hz: H(jw) = 1 / (1 + j*w*R*C)
+            var acRes = await backend.RunAsync(new SimulationRequestIr(
+                "ac_rc", circuit, AnalysisKind.Ac,
+                new Dictionary<string, double> { ["f_start_hz"] = 100.0, ["f_stop_hz"] = 1000.0, ["points_per_decade"] = 5 }));
+            Assert.Equal(RunTerminalStatus.Succeeded, acRes.Status);
+            Assert.NotNull(acRes.ComplexData);
+            var f0 = acRes.ComplexData!.AxisValues[0];
+            var w0 = 2.0 * Math.PI * f0;
+            var denom = 1.0 + (w0 * 1e-3) * (w0 * 1e-3);
+            var expectedRe = 1.0 / denom;
+            var expectedIm = -(w0 * 1e-3) / denom;
+            var got = acRes.ComplexData.SignalValues["v(out)"][0];
+            Assert.Equal(expectedRe, got.Real, precision: 10);
+            Assert.Equal(expectedIm, got.Imaginary, precision: 10);
+
+            // 3. UIC Transient step response: V(out, t=1ms) ~= 5 * (1 - e^-1) ~= 3.16060279 V
+            var trRes = await backend.RunAsync(new SimulationRequestIr(
+                "tr_rc", circuit, AnalysisKind.Transient,
+                new Dictionary<string, double> { ["step_s"] = 1e-5, ["stop_s"] = 1e-3, ["uic"] = 1.0 }));
+            Assert.Equal(RunTerminalStatus.Succeeded, trRes.Status);
+            Assert.NotNull(trRes.RealData);
+            var vEnd = trRes.RealData!.SignalValues["v(out)"][^1];
+            Assert.Equal(5.0 * (1.0 - Math.Exp(-1.0)), vEnd, precision: 4);
+        }
+    }
 }

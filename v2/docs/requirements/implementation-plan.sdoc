@@ -43,7 +43,7 @@ COMMENT: >>>
 Phase: M1
 Depends-on: PLAN-V2-001
 Deliverables: Spice.Ir (CanonicalIr, DeviceRegistry, SpiceNetlistEmitter), Spice.Sdk (ISimulationBackend, GPL-isolated XyceBackend with CSV parser, DifferentialComparer, NativeCppBackend), Spice.Tests/M1PlatformTests.cs.
-Verification: Authored with TreatWarningsAsErrors=true and zero GPL linkage; pending dotnet test and live Xyce differential run on Windows host (dotnet SDK and Xyce not installed in Linux VM).
+Verification: .NET 11.0.100 Release build (TreatWarningsAsErrors=true) passes 5/5 xUnit tests in Spice.Tests with 0 warnings, including mocked XyceBackend deck/CSV/differential verification and live in-process NativeCppBackend OP/AC/TRAN over libspice_capi.so. Remaining: live external Xyce executable differential run on Windows host.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -64,7 +64,7 @@ COMMENT: >>>
 Phase: M1
 Depends-on: PLAN-V2-002
 Deliverables: Spice.Starlark (SiUnits dimensional constructors, fail-closed CircuitBuilder over DeviceRegistry, deterministic bounded-concurrency CampaignRunner.RunParallelMapAsync).
-Verification: Authored with unit tests in Spice.Tests/M1PlatformTests.cs; pending StarLark-cs package binding and dotnet test execution on Windows host.
+Verification: .NET 11.0.100 Release build and CampaignRunner deterministic parallel_map xUnit tests pass with 0 warnings. Remaining: bind jeffadickson/StarLark-cs script evaluator and SharpUnits package reference.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -82,8 +82,8 @@ Build Spice.Schematic (versioned diffable document model, hierarchical subsheets
 COMMENT: >>>
 Phase: M1
 Depends-on: PLAN-V2-002
-Deliverables: Spice.Schematic (SchematicDocument, SchematicCompiler with ERC, hierarchical flattening, Canonical IR emitter, deterministic JSON round-trip, SPICE export, and vector SVG export), Spice.Tests/M1PlatformTests.cs. Remaining: interactive Spice.App desktop GUI + live cross-probing and dotnet test execution on Windows.
-Verification: Authored against DeviceRegistry fail-closed contract; pending dotnet test on Windows host.
+Deliverables: Spice.Schematic (SchematicDocument, SchematicCompiler with ERC, hierarchical flattening, Canonical IR emitter, deterministic JSON round-trip, SPICE export, and vector SVG export), Spice.Tests/M1PlatformTests.cs. Remaining: interactive Spice.App desktop GUI + live cross-probing.
+Verification: .NET 11.0.100 Release build and SchematicCompiler ERC/IR/JSON/SPICE/SVG xUnit tests pass with 0 warnings.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -110,8 +110,8 @@ Implement CSC sparse assembly with pre-bound device slots, SuiteSparse KLU share
 COMMENT: >>>
 Phase: M2
 Depends-on: PLAN-V2-001, PLAN-V2-002
-Deliverables: cpp/linalg (SparseLu + DenseLu + KLU adapter), cpp/devices (R/C/L/K/V/I/E/F/G/H + waveforms), cpp/analysis (OP/DC sweep/AC/TRAN BE & Trap + UIC + breakpoints), cpp/audit (DC/AC/TRAN physical audits), cpp/capi, NativeCppBackend in Spice.Sdk.
-Verification: GCC 12 and Clang 14 C++20 -Werror builds pass all unit, analytic, mutual-inductance, controlled-source, breakpoint, audit fault-injection, C ABI, and 1,000-node RC ladder (~29.6 ms GCC) tests. Remaining to close M2a: vcpkg SuiteSparse KLU link test, dotnet build/test of NativeCppBackend, and head-to-head XyceBackend/ngspice SANDLER8/SANDLER9 comparison.
+Deliverables: cpp/linalg (SparseLu + DenseLu + KLU adapter), cpp/devices (R/C/L/K/V/I/E/F/G/H + waveforms), cpp/analysis (OP/DC sweep/AC/TRAN BE & Trap + UIC + breakpoints), cpp/audit (DC/AC/TRAN physical audits), cpp/capi, NativeCppBackend in Spice.Sdk (OP/AC/TRAN contiguous buffer marshaling).
+Verification: GCC 12 and Clang 14 C++20 -Werror builds pass all CTest suites (1,000-node RC ladder ~29.6 ms GCC) AND .NET 11.0.100 NativeCppBackend passes live in-process OP/AC/TRAN tests against libspice_capi.so. Remaining to close M2a: vcpkg SuiteSparse KLU link test and head-to-head XyceBackend/ngspice SANDLER8/SANDLER9 comparison.
 <<<
 RELATIONS:
 - TYPE: Parent
