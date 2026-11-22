@@ -165,29 +165,56 @@ public static class SchematicCompiler
 
         var compPositions = sheet.Components.ToDictionary(c => c.InstanceId, StringComparer.Ordinal);
 
-        // Draw nets as crisp polylines connecting component centers.
+        // Draw nets as crisp polylines with cross-probing attributes.
         foreach (var net in sheet.Nets)
         {
             var pts = net.ConnectedPins
                 .Where(p => compPositions.ContainsKey(p.InstanceId))
                 .Select(p => compPositions[p.InstanceId])
                 .ToList();
+            var effectiveNet = net.IsGlobalGround || string.Equals(net.NetName, "0", StringComparison.Ordinal)
+                ? "0"
+                : net.NetName.ToLowerInvariant();
+            var signalAttr = effectiveNet == "0" ? "" : $"v({effectiveNet})";
+            var stroke = net.IsGlobalGround ? "#22c55e" : "#38bdf8";
+            sb.AppendLine($"  <g class=\"spice-net\" data-net=\"{EscapeXml(net.NetName)}\" data-signal=\"{EscapeXml(signalAttr)}\">");
             for (int i = 1; i < pts.Count; ++i)
             {
-                var stroke = net.IsGlobalGround ? "#22c55e" : "#38bdf8";
                 sb.AppendLine(FormattableString.Invariant(
-                    $"  <line x1=\"{pts[i - 1].X:F1}\" y1=\"{pts[i - 1].Y:F1}\" x2=\"{pts[i].X:F1}\" y2=\"{pts[i].Y:F1}\" stroke=\"{stroke}\" stroke-width=\"2\" />"));
+                    $"    <line x1=\"{pts[i - 1].X:F1}\" y1=\"{pts[i - 1].Y:F1}\" x2=\"{pts[i].X:F1}\" y2=\"{pts[i].Y:F1}\" stroke=\"transparent\" stroke-width=\"12\" />"));
+                sb.AppendLine(FormattableString.Invariant(
+                    $"    <line x1=\"{pts[i - 1].X:F1}\" y1=\"{pts[i - 1].Y:F1}\" x2=\"{pts[i].X:F1}\" y2=\"{pts[i].Y:F1}\" stroke=\"{stroke}\" stroke-width=\"2.5\" />"));
             }
+            if (pts.Count >= 2 && !net.IsGlobalGround)
+            {
+                var mx = 0.5 * (pts[0].X + pts[1].X);
+                var my = 0.5 * (pts[0].Y + pts[1].Y) - 6.0;
+                sb.AppendLine(FormattableString.Invariant(
+                    $"    <text x=\"{mx:F1}\" y=\"{my:F1}\" text-anchor=\"middle\" fill=\"#7dd3fc\" font-family=\"monospace\" font-size=\"10\">{EscapeXml(net.NetName)}</text>"));
+            }
+            sb.AppendLine("  </g>");
         }
 
-        // Draw placed components.
+        // Draw placed components with cross-probing instance metadata.
         foreach (var comp in sheet.Components)
         {
+            var currentSig = comp.DeviceKindId is "spice.vsrc" or "spice.inductor"
+                ? $"i({comp.InstanceId})"
+                : "";
             sb.AppendLine(FormattableString.Invariant(
-                $"  <g transform=\"translate({comp.X:F1},{comp.Y:F1})\">"));
-            sb.AppendLine("    <rect x=\"-28\" y=\"-16\" width=\"56\" height=\"32\" rx=\"4\" fill=\"#1e293b\" stroke=\"#e2e8f0\" stroke-width=\"1.5\" />");
-            sb.AppendLine($"    <text x=\"0\" y=\"-22\" text-anchor=\"middle\" fill=\"#f8fafc\" font-family=\"monospace\" font-size=\"11\">{EscapeXml(comp.InstanceId)}</text>");
-            sb.AppendLine($"    <text x=\"0\" y=\"4\" text-anchor=\"middle\" fill=\"#94a3b8\" font-family=\"monospace\" font-size=\"9\">{EscapeXml(comp.DeviceKindId)}</text>");
+                $"  <g class=\"spice-component\" data-instance=\"{EscapeXml(comp.InstanceId)}\" data-kind=\"{EscapeXml(comp.DeviceKindId)}\" data-signal=\"{EscapeXml(currentSig)}\" transform=\"translate({comp.X:F1},{comp.Y:F1})\">"));
+            sb.AppendLine("    <rect x=\"-32\" y=\"-18\" width=\"64\" height=\"36\" rx=\"5\" fill=\"#1e293b\" stroke=\"#e2e8f0\" stroke-width=\"1.5\" />");
+            sb.AppendLine($"    <text x=\"0\" y=\"-24\" text-anchor=\"middle\" fill=\"#f8fafc\" font-family=\"monospace\" font-size=\"11\" font-weight=\"bold\">{EscapeXml(comp.InstanceId)}</text>");
+            var shortKind = comp.DeviceKindId.StartsWith("spice.", StringComparison.Ordinal)
+                ? comp.DeviceKindId["spice.".Length..]
+                : comp.DeviceKindId;
+            sb.AppendLine($"    <text x=\"0\" y=\"-2\" text-anchor=\"middle\" fill=\"#94a3b8\" font-family=\"monospace\" font-size=\"9\">{EscapeXml(shortKind)}</text>");
+            if (comp.Parameters.Count > 0)
+            {
+                var first = comp.Parameters.OrderBy(kv => kv.Key, StringComparer.Ordinal).First();
+                sb.AppendLine(FormattableString.Invariant(
+                    $"    <text x=\"0\" y=\"11\" text-anchor=\"middle\" fill=\"#38bdf8\" font-family=\"monospace\" font-size=\"9\">{first.Value:G4}</text>"));
+            }
             sb.AppendLine("  </g>");
         }
 

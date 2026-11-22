@@ -28,6 +28,7 @@ public static class Program
             return args[0].ToLowerInvariant() switch
             {
                 "info" => RunInfo(),
+                "serve" => await RunServeAsync(args[1..]),
                 "run" => await RunDeckAsync(args[1..]),
                 "schematic" => await RunSchematicAsync(args[1..]),
                 "campaign" => await RunCampaignAsync(args[1..]),
@@ -54,12 +55,36 @@ public static class Program
             Spice V2 .NET 11 Workbench Host (spice-app)
             Usage:
               spice-app info
+              spice-app serve [--port 5180]
               spice-app run <deck.cir> [--analysis op|dc|ac|tran|noise|hb|pss|sp]
                                        [--source V1] [--start 0] [--stop 1.2] [--step 0.1]
                                        [--f0 1e6] [--harmonics 7] [--out-p out]
               spice-app schematic <schematic.json> [--analysis op|ac|tran] [--svg out.svg] [--spice out.cir]
               spice-app campaign [--preset rc-sweep]
             """);
+    }
+
+    private static async Task<int> RunServeAsync(string[] args)
+    {
+        int port = 5180;
+        for (int i = 0; i < args.Length; ++i)
+        {
+            if (args[i] == "--port" && i + 1 < args.Length && int.TryParse(args[++i], out var p) && p >= 0 && p <= 65535)
+            {
+                port = p;
+            }
+        }
+        await using var server = new WorkbenchServer(port);
+        server.Start();
+        Console.WriteLine($"Spice V2 Workbench listening at {server.BaseUrl} (Ctrl+C to stop)");
+        using var stop = new ManualResetEventSlim(false);
+        Console.CancelKeyPress += (_, e) =>
+        {
+            e.Cancel = true;
+            stop.Set();
+        };
+        stop.Wait();
+        return 0;
     }
 
     private static int RunInfo()

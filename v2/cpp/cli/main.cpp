@@ -88,9 +88,9 @@ void print_usage() {
         << "Usage:\n"
         << "  spice_v2_cli version\n"
         << "  spice_v2_cli models\n"
-        << "  spice_v2_cli check <deck.cir>\n"
-        << "  spice_v2_cli run <deck.cir> [--json <out.json>] [--csv <out.csv>] "
-           "[--raw <out.raw>] [--vcd <out.vcd>] [--touchstone <out.sNp>] "
+        << "  spice_v2_cli check <deck.cir> [--dialect auto|ngspice|xyce|best|spectre] [--spef <file.spef>]\n"
+        << "  spice_v2_cli run <deck.cir> [--dialect auto|ngspice|xyce|best|spectre] [--spef <file.spef>] "
+           "[--json <out.json>] [--csv <out.csv>] [--raw <out.raw>] [--vcd <out.vcd>] [--touchstone <out.sNp>] "
            "[--no-audit] [--method trap|be|bdf2] [--adaptive]\n";
 }
 
@@ -104,12 +104,12 @@ int main(int argc, char** argv) {
 
     const std::string cmd = argv[1];
     if (cmd == "version") {
-        std::cout << "spice_v2_cli 0.2.0 (C++20 DAE + SparseLu + BSIM3/4 + BJT + JFET + OSDI 0.3/0.4 + M2c/M3 RF)\n";
+        std::cout << "spice_v2_cli 0.2.1 (C++20 DAE + SparseLu + BSIM3/4 + BJT + JFET + LTRA/TXL/CPL + TRNOISE + Spectre/SPEF + OSDI 0.3/0.4 + M2c/M3 RF)\n";
         return kExitOk;
     }
     if (cmd == "models") {
         std::cout
-            << "Built-in Primitives: R, C, L, K, V, I (DC/AC/PULSE/SIN/PWL/EXP/SFFM), E, F, G, H, B (autodiff), S (SW), T (lossless)\n"
+            << "Built-in Primitives: R, C, L, K, V, I (DC/AC/PULSE/SIN/PWL/EXP/SFFM/TRNOISE), E, F, G, H, B (autodiff), S (SW), T (lossless), O/Y (LTRA/TXL lossy), P (CPL coupled)\n"
             << "Built-in Semiconductors:\n"
             << "  D  - Diode (Shockley + depletion/transit charge)\n"
             << "  M  - MOSFET LEVEL=1 (Shichman-Hodges), LEVEL=49 (BSIM3v3 core), LEVEL=54 (BSIM4 core)\n"
@@ -117,6 +117,7 @@ int main(int argc, char** argv) {
             << "  J  - JFET Shichman-Hodges (NJF/PJF)\n"
             << "External Compiled Verilog-A:\n"
             << "  .OSDI + .MODEL <name> OSDI(lib=... model=...) -> usable from X, M, Q, J cards (OSDI 0.3/0.4 ABI)\n"
+            << "Dialects & Scripting: SPICE3f5/ngspice/Xyce/Spectre subset, .FUNC, .IF/.ELSEIF/.ELSE/.ENDIF, .STEP, IEEE 1481 SPEF\n"
             << "Analyses: .OP, .DC (1D/2D), .AC, .TRAN, .TF, .NOISE, .SENS, .DCMATCH, .SP, .STB, .PZ, .FOUR, .FFT, .MC, .HB, .PSS, .PAC, .PXF, .PNOISE\n";
         return kExitOk;
     }
@@ -139,9 +140,11 @@ int main(int argc, char** argv) {
     std::string raw_out_path;
     std::string vcd_out_path;
     std::string touchstone_out_path;
+    std::string spef_in_path;
     bool enable_audits = true;
     bool adaptive = false;
     std::string method_override;
+    spice::parser::Dialect dialect = spice::parser::Dialect::Auto;
 
     for (int i = 3; i < argc; ++i) {
         const std::string arg = argv[i];
@@ -159,6 +162,19 @@ int main(int argc, char** argv) {
             vcd_out_path = argv[++i];
         } else if (arg == "--touchstone" && i + 1 < argc) {
             touchstone_out_path = argv[++i];
+        } else if (arg == "--spef" && i + 1 < argc) {
+            spef_in_path = argv[++i];
+        } else if (arg == "--dialect" && i + 1 < argc) {
+            const std::string dstr = to_lower_str(argv[++i]);
+            if (dstr == "auto") dialect = spice::parser::Dialect::Auto;
+            else if (dstr == "ngspice") dialect = spice::parser::Dialect::Ngspice;
+            else if (dstr == "xyce") dialect = spice::parser::Dialect::Xyce;
+            else if (dstr == "best") dialect = spice::parser::Dialect::Best;
+            else if (dstr == "spectre") dialect = spice::parser::Dialect::Spectre;
+            else {
+                std::cerr << "error: unsupported --dialect '" << dstr << "'\n";
+                return kExitUsage;
+            }
         } else if (arg == "--method" && i + 1 < argc) {
             method_override = argv[++i];
             if (method_override != "trap" && method_override != "be" && method_override != "bdf2") {
@@ -180,11 +196,24 @@ int main(int argc, char** argv) {
 
     spice::parser::ParseOptions parse_opts{};
     parse_opts.base_dir = std::filesystem::path(deck_path).parent_path().string();
+    parse_opts.dialect = dialect;
 
     spice::parser::ParsedDeck deck;
     if (const auto d = spice::parser::parse_spice_deck(text, deck, parse_opts); !d.ok()) {
         std::cerr << "parse error: " << d.message << "\n";
         return kExitParseOrValidate;
+    }
+
+    if (!spef_in_path.empty()) {
+        std::string spef_text;
+        if (!read_file(spef_in_path, spef_text)) {
+            std::cerr << "error: failed to read SPEF '" << spef_in_path << "'\n";
+            return kExitParseOrValidate;
+        }
+        if (const auto d = spice::parser::parse_spef_and_annotate(spef_text, deck.circuit, deck.spef_summary); !d.ok()) {
+            std::cerr << "SPEF error: " << d.message << "\n";
+            return kExitParseOrValidate;
+        }
     }
 
     spice::devices::CompiledPlan plan;
@@ -198,7 +227,8 @@ int main(int argc, char** argv) {
                   << " elements=" << deck.circuit.elements.size()
                   << " unknowns=" << plan.unknown_count()
                   << " nnz=" << plan.pattern.nnz()
-                  << " analyses=" << deck.analyses.size() << "\n";
+                  << " analyses=" << deck.analyses.size()
+                  << " steps=" << deck.steps.size() << "\n";
         return kExitOk;
     }
 
@@ -715,6 +745,47 @@ int main(int argc, char** argv) {
             }
         }
         json << "}";
+    }
+    if (!deck.steps.empty()) {
+        const auto& st = deck.steps.front();
+        std::vector<double> step_vals;
+        if (auto d = spice::parser::expand_step_values(st, step_vals); !d.ok()) {
+            std::cerr << "STEP error: " << d.message << "\n";
+            return kExitParseOrValidate;
+        }
+        json << ",\n  \"step_target\": \"" << json_escape(st.target_name) << "\",\n"
+             << "  \"steps\": [\n";
+        for (std::size_t si = 0; si < step_vals.size(); ++si) {
+            if (si > 0u) json << ",\n";
+            spice::parser::ParseOptions step_opts = parse_opts;
+            if (st.kind == spice::parser::StepKind::Temp) {
+                step_opts.temp_override_c = step_vals[si];
+            } else {
+                step_opts.param_overrides[st.target_name] = step_vals[si];
+            }
+            spice::parser::ParsedDeck sdeck;
+            if (auto d = spice::parser::parse_spice_deck(text, sdeck, step_opts); !d.ok()) {
+                std::cerr << "STEP parse error: " << d.message << "\n";
+                return kExitParseOrValidate;
+            }
+            spice::devices::CompiledPlan splan;
+            if (auto d = spice::devices::compile_circuit(sdeck.circuit, splan); !d.ok()) {
+                std::cerr << "STEP compile error: " << d.message << "\n";
+                return kExitParseOrValidate;
+            }
+            spice::analysis::OpResult sop;
+            if (auto d = spice::analysis::run_op(splan, common, sop); !d.ok()) {
+                std::cerr << "STEP OP error: " << d.message << "\n";
+                return kExitSolverError;
+            }
+            json << "    {\"value\": " << step_vals[si] << ", \"op_values\": [";
+            for (std::size_t k = 0; k < sop.values.size(); ++k) {
+                if (k > 0u) json << ", ";
+                json << sop.values[k];
+            }
+            json << "]}";
+        }
+        json << "\n  ]";
     }
     json << "\n}\n";
 

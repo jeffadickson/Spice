@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <optional>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -193,20 +194,73 @@ struct DeckOptions {
     std::vector<std::string> saved_signals;                          /* .SAVE / .PROBE / .PRINT */
 };
 
+enum class Dialect : std::uint8_t {
+    Auto = 0,
+    Ngspice = 1,
+    Xyce = 2,
+    Best = 3,
+    Spectre = 4,
+};
+
+enum class StepKind : std::uint8_t {
+    Param = 0,
+    Temp = 1,
+};
+
+enum class StepSweepType : std::uint8_t {
+    Linear = 0,
+    Decade = 1,
+    Octave = 2,
+    List = 3,
+};
+
+struct StepSpec {
+    StepKind kind{StepKind::Param};
+    std::string target_name; /* lowercase parameter name for Param, "temp" for Temp */
+    StepSweepType sweep_type{StepSweepType::Linear};
+    double start{0.0};
+    double stop{0.0};
+    double step_or_points{0.0};
+    std::vector<double> list_values;
+};
+
+struct SpefSummary {
+    std::size_t nets_annotated{0};
+    std::size_t resistors_added{0};
+    std::size_t capacitors_added{0};
+    double total_capacitance_f{0.0};
+    double total_resistance_ohms{0.0};
+};
+
 struct ParsedDeck {
     std::string title;
     core::Circuit circuit;
     std::vector<AnalysisCommand> analyses;
     std::vector<MeasCommand> measurements;
+    std::vector<StepSpec> steps;
     DeckOptions options;
+    SpefSummary spef_summary;
+    Dialect detected_dialect{Dialect::Best};
 };
 
 struct ParseOptions {
     std::size_t max_subckt_depth{32};
     std::size_t max_include_depth{16};
     std::uint64_t max_unknowns{1'000'000};
-    std::string base_dir; /* Optional directory for resolving relative .INCLUDE / .LIB paths */
+    std::string base_dir; /* Optional directory for resolving relative .INCLUDE / .LIB / .SPEF paths */
+    Dialect dialect{Dialect::Auto};
+    std::unordered_map<std::string, double> param_overrides; /* Lowercase param overrides (e.g. from .STEP) */
+    std::optional<double> temp_override_c;                   /* Optional .STEP TEMP override in Celsius */
 };
+
+[[nodiscard]] core::Diagnostic expand_step_values(
+    const StepSpec& step,
+    std::vector<double>& out_values);
+
+[[nodiscard]] core::Diagnostic parse_spef_and_annotate(
+    const std::string& spef_text,
+    core::Circuit& circuit,
+    SpefSummary& out_summary);
 
 [[nodiscard]] core::Diagnostic parse_spice_deck(
     const std::string& netlist_text,

@@ -16,5 +16,6 @@
     <ProjectReference Include="../Spice.Sdk/Spice.Sdk.csproj" />
     <ProjectReference Include="../Spice.Schematic/Spice.Schematic.csproj" />
     <ProjectReference Include="../Spice.Starlark/Spice.Starlark.csproj" />
+    <ProjectReference Include="../Spice.App/Spice.App.csproj" />
   </ItemGroup>
 </Project>

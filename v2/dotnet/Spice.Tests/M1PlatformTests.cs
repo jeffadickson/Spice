@@ -1,3 +1,6 @@
+using System.Net.Http.Json;
+using System.Text.Json;
+using Spice.App;
 using Spice.Ir;
 using Spice.Schematic;
 using Spice.Sdk;
@@ -391,5 +394,129 @@ public sealed class M1PlatformTests
         Assert.Equal(5.0, camp[0].RealData!.SignalValues["v(out)"][0], precision: 11);
         Assert.Equal(7.5, camp[1].RealData!.SignalValues["v(out)"][0], precision: 11);
         Assert.Equal(9.0, camp[2].RealData!.SignalValues["v(out)"][0], precision: 11);
+    }
+
+    [Fact]
+    public async Task WorkbenchServer_ServesInteractiveUi_CrossProbesSchematic_AndRunsSpectreLtraTrnoiseAndCampaign()
+    {
+        using var backend = TryCreateNativeBackend();
+        if (backend is null) return;
+
+        await using var server = new WorkbenchServer(port: 0, backend: backend);
+        server.Start();
+        using var http = new HttpClient { BaseAddress = new Uri(server.BaseUrl) };
+
+        // 1. Interactive HTML workbench SPA + /api/info
+        var html = await http.GetStringAsync("/");
+        Assert.Contains("Spice V2 Workbench", html, StringComparison.Ordinal);
+        Assert.Contains("data-signal", html, StringComparison.Ordinal);
+
+        using var infoDoc = JsonDocument.Parse(await http.GetStringAsync("/api/info"));
+        Assert.Equal("2.1", infoDoc.RootElement.GetProperty("abi").GetString());
+        Assert.True(infoDoc.RootElement.GetProperty("osdi_available").GetBoolean());
+        Assert.True(infoDoc.RootElement.GetProperty("device_kinds").GetArrayLength() >= 9);
+
+        // 2. Schematic -> ERC -> Cross-probable SVG -> Live BDF2 Transient over libspice_capi
+        var schem = new SchematicDocument(
+            SchemaVersion: "2.0",
+            Name: "workbench_rc",
+            RootSheet: new SchematicSheet(
+                SheetId: "root",
+                Title: "RC Filter",
+                Components:
+                [
+                    new PlacedComponent("V1", "spice.vsrc", 60, 100, 0, new Dictionary<string, double> { ["dc_volts"] = 5.0, ["ac_mag"] = 1.0 }),
+                    new PlacedComponent("R1", "spice.resistor", 180, 60, 0, new Dictionary<string, double> { ["ohms"] = 1000.0 }),
+                    new PlacedComponent("C1", "spice.capacitor", 300, 100, 0, new Dictionary<string, double> { ["farads"] = 1e-6, ["ic_volts"] = 0.0 })
+                ],
+                Nets:
+                [
+                    new WireNet("in", [new PinRef("V1", "p"), new PinRef("R1", "p")]),
+                    new WireNet("out", [new PinRef("R1", "n"), new PinRef("C1", "p")]),
+                    new WireNet("GND", [new PinRef("V1", "n"), new PinRef("C1", "n")], IsGlobalGround: true)
+                ]));
+
+        var schemResp = await http.PostAsJsonAsync("/api/schematic/simulate", new
+        {
+            document = schem,
+            analysis = "tran",
+            step = 1e-5,
+            stop = 1e-3
+        });
+        schemResp.EnsureSuccessStatusCode();
+        using var schemJson = JsonDocument.Parse(await schemResp.Content.ReadAsStringAsync());
+        Assert.True(schemJson.RootElement.GetProperty("erc_ok").GetBoolean());
+        Assert.Equal("Succeeded", schemJson.RootElement.GetProperty("status").GetString());
+        var svg = schemJson.RootElement.GetProperty("svg").GetString()!;
+        Assert.Contains("data-signal=\"v(out)\"", svg, StringComparison.Ordinal);
+        Assert.Contains("data-instance=\"R1\"", svg, StringComparison.Ordinal);
+        var voutTrace = schemJson.RootElement.GetProperty("series").GetProperty("v(out)");
+        var vEnd = voutTrace[voutTrace.GetArrayLength() - 1].GetDouble();
+        Assert.InRange(Math.Abs(vEnd - 5.0 * (1.0 - Math.Exp(-1.0))), 0.0, 2e-4);
+
+        // 3. Live Spectre Dialect BSIM4 CMOS Inverter .DC through /api/deck/simulate
+        const string spectreBsim4 = """
+            // Spectre BSIM4 Inverter
+            simulator lang=spectre
+            model nch bsim4 type=n vth0=0.35 toxe=2.2n u0=420 vsat=1.1e5
+            model pch bsim4 type=p vth0=-0.35 toxe=2.2n u0=160 vsat=0.9e5
+            Vdd (vdd 0) vsource dc=1.2
+            Vin (in 0) vsource dc=0
+            Mn (out in 0 0) nch w=1u l=65n
+            Mp (out in vdd vdd) pch w=2.2u l=65n
+            """;
+        var spResp = await http.PostAsJsonAsync("/api/deck/simulate", new
+        {
+            deck = spectreBsim4,
+            analysis = "dc",
+            source = "Vin",
+            start = 0.0,
+            stop = 1.2,
+            step = 0.2
+        });
+        spResp.EnsureSuccessStatusCode();
+        using var spJson = JsonDocument.Parse(await spResp.Content.ReadAsStringAsync());
+        Assert.Equal("Succeeded", spJson.RootElement.GetProperty("status").GetString());
+        var spVout = spJson.RootElement.GetProperty("series").GetProperty("v(out)");
+        Assert.True(spVout[0].GetDouble() > 1.18);
+        Assert.True(spVout[spVout.GetArrayLength() - 1].GetDouble() < 0.02);
+
+        // 4. Live Lossy LTRA Transmission Line .AC through /api/deck/simulate
+        const string ltraDeck = """
+            Lossy LTRA Workbench
+            .MODEL lossy50 LTRA(R=20 L=250n G=0 C=100p LEN=1.0 NSEGS=32)
+            V1 in 0 DC 5 AC 1
+            O1 in 0 out 0 lossy50
+            Rload out 0 50
+            .END
+            """;
+        var ltraResp = await http.PostAsJsonAsync("/api/deck/simulate", new
+        {
+            deck = ltraDeck,
+            analysis = "ac",
+            start = 50.0e6,
+            stop = 50.0e6,
+            step = 1.0
+        });
+        ltraResp.EnsureSuccessStatusCode();
+        using var ltraJson = JsonDocument.Parse(await ltraResp.Content.ReadAsStringAsync());
+        Assert.Equal("Succeeded", ltraJson.RootElement.GetProperty("status").GetString());
+        var ltraMag = ltraJson.RootElement.GetProperty("series").GetProperty("v(out)")[0].GetDouble();
+        Assert.InRange(Math.Abs(ltraMag - Math.Exp(-0.2)), 0.0, 2e-2);
+
+        // 5. Live Parallel Corner Campaign through /api/campaign/run
+        var campResp = await http.PostAsJsonAsync("/api/campaign/run", new
+        {
+            vdd = 10.0,
+            r1 = 1000.0,
+            r2Values = new[] { 1000.0, 3000.0, 9000.0 }
+        });
+        campResp.EnsureSuccessStatusCode();
+        using var campJson = JsonDocument.Parse(await campResp.Content.ReadAsStringAsync());
+        var runs = campJson.RootElement.GetProperty("runs");
+        Assert.Equal(3, runs.GetArrayLength());
+        Assert.Equal(5.0, runs[0].GetProperty("v_out").GetDouble(), precision: 11);
+        Assert.Equal(7.5, runs[1].GetProperty("v_out").GetDouble(), precision: 11);
+        Assert.Equal(9.0, runs[2].GetProperty("v_out").GetDouble(), precision: 11);
     }
 }

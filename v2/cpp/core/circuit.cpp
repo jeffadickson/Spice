@@ -22,6 +22,23 @@ bool is_finite_complex(std::complex<double> z) noexcept {
     return std::isfinite(z.real()) && std::isfinite(z.imag());
 }
 
+std::uint64_t splitmix64(std::uint64_t x) noexcept {
+    x += 0x9e3779b97f4a7c15ULL;
+    x = (x ^ (x >> 30u)) * 0xbf58476d1ce4e5b9ULL;
+    x = (x ^ (x >> 27u)) * 0x94d049bb133111ebULL;
+    return x ^ (x >> 31u);
+}
+
+/* Deterministic zero-mean unit-variance Gaussian sample for (seed, sample_index). */
+double trnoise_sample(std::uint64_t seed, std::uint64_t index) noexcept {
+    const std::uint64_t h1 = splitmix64(seed ^ (index * 0x9e3779b97f4a7c15ULL + 0x243f6a8885a308d3ULL));
+    const std::uint64_t h2 = splitmix64(h1 ^ 0x13198a2e03707344ULL);
+    constexpr double kInv53 = 1.0 / 9007199254740992.0; /* 2^-53 */
+    const double u1 = std::max(1.0e-15, (static_cast<double>(h1 >> 11u) + 0.5) * kInv53);
+    const double u2 = (static_cast<double>(h2 >> 11u) + 0.5) * kInv53;
+    return std::sqrt(-2.0 * std::log(u1)) * std::cos(2.0 * std::numbers::pi * u2);
+}
+
 }  // namespace
 
 Diagnostic validate_waveform(const Waveform& wf, const std::string& subject) {
@@ -90,6 +107,14 @@ Diagnostic validate_waveform(const Waveform& wf, const std::string& subject) {
                         StatusCode::InvalidArgument, "invalid SFFM waveform parameters", subject);
                 }
                 return Diagnostic::success();
+            },
+            [&](const TrNoiseWaveform& w) -> Diagnostic {
+                if (!std::isfinite(w.na_rms) || !std::isfinite(w.nt_s) || !std::isfinite(w.nalpha) ||
+                    !std::isfinite(w.namp) || w.na_rms < 0.0 || w.nt_s <= 0.0 || w.nalpha < 0.0 || w.namp < 0.0) {
+                    return Diagnostic::error(
+                        StatusCode::InvalidArgument, "invalid TRNOISE waveform parameters", subject);
+                }
+                return Diagnostic::success();
             }},
         wf);
 }
@@ -153,6 +178,34 @@ double evaluate_waveform(const Waveform& wf, double time_s) noexcept {
                 return w.offset +
                        w.amplitude * std::sin(twopi * w.carrier_hz * time_s +
                                               w.mod_index * std::sin(twopi * w.signal_hz * time_s));
+            },
+            [time_s](const TrNoiseWaveform& w) noexcept -> double {
+                if (time_s <= 0.0 || w.nt_s <= 0.0 || (w.na_rms == 0.0 && w.namp == 0.0)) {
+                    return 0.0;
+                }
+                const double pos = time_s / w.nt_s;
+                const auto idx = static_cast<std::uint64_t>(std::floor(pos));
+                const double frac = pos - static_cast<double>(idx);
+                const double g0 = w.na_rms * trnoise_sample(w.seed, idx);
+                const double g1 = w.na_rms * trnoise_sample(w.seed, idx + 1u);
+                double val = g0 + (g1 - g0) * frac;
+                if (w.namp > 0.0) {
+                    /* Low-frequency colored noise component via multi-octave random walk sum. */
+                    double pink = 0.0;
+                    double weight = 1.0;
+                    const double decay = std::pow(2.0, -0.5 * std::max(0.0, w.nalpha));
+                    for (std::uint64_t oct = 0; oct < 6u; ++oct) {
+                        const std::uint64_t stride = 1ULL << oct;
+                        const std::uint64_t oi = idx / stride;
+                        const double ofrac = (pos / static_cast<double>(stride)) - static_cast<double>(oi);
+                        const double p0 = trnoise_sample(w.seed ^ (0x517cc1b727220a95ULL * (oct + 1u)), oi);
+                        const double p1 = trnoise_sample(w.seed ^ (0x517cc1b727220a95ULL * (oct + 1u)), oi + 1u);
+                        pink += weight * (p0 + (p1 - p0) * ofrac);
+                        weight *= decay;
+                    }
+                    val += w.namp * (pink / 2.449489742783178); /* / sqrt(6) normalization */
+                }
+                return val;
             }},
         wf);
 }
@@ -200,7 +253,20 @@ void collect_waveform_breakpoints(
                 if (w.td1_s > 0.0) push_if_in_range(w.td1_s);
                 if (w.td2_s > w.td1_s) push_if_in_range(w.td2_s);
             },
-            [](const SffmWaveform&) {}},
+            [](const SffmWaveform&) {},
+            [&](const TrNoiseWaveform& w) {
+                if (w.nt_s <= 0.0) return;
+                std::size_t added = 0;
+                const std::size_t k_start = (t_start > 0.0)
+                                                ? static_cast<std::size_t>(std::floor(t_start / w.nt_s)) + 1u
+                                                : 1u;
+                for (std::size_t k = k_start; added < kMaxBreakpointsPerSource; ++k) {
+                    const double t = static_cast<double>(k) * w.nt_s;
+                    if (t >= t_stop) break;
+                    push_if_in_range(t);
+                    ++added;
+                }
+            }},
         wf);
 }
 

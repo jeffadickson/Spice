@@ -242,14 +242,33 @@ bool parse_spice_number_prefix(std::string_view sv, std::size_t& pos, double& ou
 
 using ParamMap = std::unordered_map<std::string, double>;
 
-/* Compile-time constant expression evaluator for .PARAM and {expr} values. */
+struct UserFuncDef {
+    std::vector<std::string> params;
+    std::string body;
+};
+using UserFuncMap = std::unordered_map<std::string, UserFuncDef>;
+
+thread_local const UserFuncMap* g_active_user_funcs = nullptr;
+
+struct ActiveFuncsGuard {
+    const UserFuncMap* prev;
+    explicit ActiveFuncsGuard(const UserFuncMap* cur) noexcept : prev(g_active_user_funcs) {
+        g_active_user_funcs = cur;
+    }
+    ~ActiveFuncsGuard() noexcept { g_active_user_funcs = prev; }
+};
+
+/* Compile-time constant expression evaluator for .PARAM, .FUNC, .IF, and {expr} values. */
 class ParamExprParser {
 public:
-    ParamExprParser(std::string_view src, const ParamMap& params) : src_(src), params_(params) {}
+    static constexpr int kMaxFuncDepth = 16;
+
+    ParamExprParser(std::string_view src, const ParamMap& params, int depth = 0)
+        : src_(src), params_(params), depth_(depth) {}
 
     bool parse(double& out_val, std::string& out_err) {
         skip_ws();
-        if (!parse_add(out_val, out_err)) return false;
+        if (!parse_ternary(out_val, out_err)) return false;
         skip_ws();
         if (pos_ != src_.size()) {
             out_err = "unexpected trailing characters '" + std::string(src_.substr(pos_)) + "'";
@@ -265,6 +284,99 @@ public:
 private:
     void skip_ws() {
         while (pos_ < src_.size() && std::isspace(static_cast<unsigned char>(src_[pos_]))) ++pos_;
+    }
+
+    bool parse_ternary(double& out, std::string& err) {
+        if (!parse_or(out, err)) return false;
+        skip_ws();
+        if (pos_ < src_.size() && src_[pos_] == '?') {
+            ++pos_;
+            double t_val = 0.0;
+            if (!parse_ternary(t_val, err)) return false;
+            skip_ws();
+            if (pos_ >= src_.size() || src_[pos_] != ':') {
+                err = "expected ':' in ternary expression";
+                return false;
+            }
+            ++pos_;
+            double f_val = 0.0;
+            if (!parse_ternary(f_val, err)) return false;
+            out = (out != 0.0) ? t_val : f_val;
+        }
+        return true;
+    }
+
+    bool parse_or(double& out, std::string& err) {
+        if (!parse_and(out, err)) return false;
+        for (;;) {
+            skip_ws();
+            if (pos_ + 1u < src_.size() && src_[pos_] == '|' && src_[pos_ + 1u] == '|') {
+                pos_ += 2u;
+                double rhs = 0.0;
+                if (!parse_and(rhs, err)) return false;
+                out = ((out != 0.0) || (rhs != 0.0)) ? 1.0 : 0.0;
+            } else {
+                break;
+            }
+        }
+        return true;
+    }
+
+    bool parse_and(double& out, std::string& err) {
+        if (!parse_cmp(out, err)) return false;
+        for (;;) {
+            skip_ws();
+            if (pos_ + 1u < src_.size() && src_[pos_] == '&' && src_[pos_ + 1u] == '&') {
+                pos_ += 2u;
+                double rhs = 0.0;
+                if (!parse_cmp(rhs, err)) return false;
+                out = ((out != 0.0) && (rhs != 0.0)) ? 1.0 : 0.0;
+            } else {
+                break;
+            }
+        }
+        return true;
+    }
+
+    bool parse_cmp(double& out, std::string& err) {
+        if (!parse_add(out, err)) return false;
+        for (;;) {
+            skip_ws();
+            if (pos_ + 1u < src_.size() && src_[pos_] == '=' && src_[pos_ + 1u] == '=') {
+                pos_ += 2u;
+                double rhs = 0.0;
+                if (!parse_add(rhs, err)) return false;
+                out = (out == rhs) ? 1.0 : 0.0;
+            } else if (pos_ + 1u < src_.size() && src_[pos_] == '!' && src_[pos_ + 1u] == '=') {
+                pos_ += 2u;
+                double rhs = 0.0;
+                if (!parse_add(rhs, err)) return false;
+                out = (out != rhs) ? 1.0 : 0.0;
+            } else if (pos_ + 1u < src_.size() && src_[pos_] == '<' && src_[pos_ + 1u] == '=') {
+                pos_ += 2u;
+                double rhs = 0.0;
+                if (!parse_add(rhs, err)) return false;
+                out = (out <= rhs) ? 1.0 : 0.0;
+            } else if (pos_ + 1u < src_.size() && src_[pos_] == '>' && src_[pos_ + 1u] == '=') {
+                pos_ += 2u;
+                double rhs = 0.0;
+                if (!parse_add(rhs, err)) return false;
+                out = (out >= rhs) ? 1.0 : 0.0;
+            } else if (pos_ < src_.size() && src_[pos_] == '<') {
+                ++pos_;
+                double rhs = 0.0;
+                if (!parse_add(rhs, err)) return false;
+                out = (out < rhs) ? 1.0 : 0.0;
+            } else if (pos_ < src_.size() && src_[pos_] == '>') {
+                ++pos_;
+                double rhs = 0.0;
+                if (!parse_add(rhs, err)) return false;
+                out = (out > rhs) ? 1.0 : 0.0;
+            } else {
+                break;
+            }
+        }
+        return true;
     }
 
     bool parse_add(double& out, std::string& err) {
@@ -322,6 +434,12 @@ private:
             out = -out;
             return true;
         }
+        if (pos_ < src_.size() && src_[pos_] == '!') {
+            ++pos_;
+            if (!parse_unary(out, err)) return false;
+            out = (out == 0.0) ? 1.0 : 0.0;
+            return true;
+        }
         return parse_pow(out, err);
     }
 
@@ -350,7 +468,7 @@ private:
         }
         if (src_[pos_] == '(') {
             ++pos_;
-            if (!parse_add(out, err)) return false;
+            if (!parse_ternary(out, err)) return false;
             skip_ws();
             if (pos_ >= src_.size() || src_[pos_] != ')') {
                 err = "missing closing ')' in parameter expression";
@@ -381,7 +499,7 @@ private:
                 if (pos_ < src_.size() && src_[pos_] != ')') {
                     for (;;) {
                         double a = 0.0;
-                        if (!parse_add(a, err)) return false;
+                        if (!parse_ternary(a, err)) return false;
                         args.push_back(a);
                         skip_ws();
                         if (pos_ < src_.size() && src_[pos_] == ',') {
@@ -418,7 +536,7 @@ private:
         return false;
     }
 
-    static bool eval_func(const std::string& fn, const std::vector<double>& a, double& out, std::string& err) {
+    bool eval_func(const std::string& fn, const std::vector<double>& a, double& out, std::string& err) const {
         if (a.size() == 1u) {
             if (fn == "sin") { out = std::sin(a[0]); return true; }
             if (fn == "cos") { out = std::cos(a[0]); return true; }
@@ -440,10 +558,45 @@ private:
                 return true;
             }
             if (fn == "abs") { out = std::abs(a[0]); return true; }
+            if (fn == "sgn") { out = (a[0] > 0.0) ? 1.0 : ((a[0] < 0.0) ? -1.0 : 0.0); return true; }
+            if (fn == "floor") { out = std::floor(a[0]); return true; }
+            if (fn == "ceil") { out = std::ceil(a[0]); return true; }
+            if (fn == "int") { out = std::trunc(a[0]); return true; }
         } else if (a.size() == 2u) {
             if (fn == "pow") { out = std::pow(a[0], a[1]); return std::isfinite(out); }
+            if (fn == "pwr") { out = std::pow(std::abs(a[0]), a[1]); return std::isfinite(out); }
             if (fn == "min") { out = std::min(a[0], a[1]); return true; }
             if (fn == "max") { out = std::max(a[0], a[1]); return true; }
+            if (fn == "atan2") { out = std::atan2(a[0], a[1]); return true; }
+        } else if (a.size() == 3u) {
+            if (fn == "if") { out = (a[0] != 0.0) ? a[1] : a[2]; return true; }
+            if (fn == "limit") {
+                const double lo = std::min(a[1], a[2]);
+                const double hi = std::max(a[1], a[2]);
+                out = std::clamp(a[0], lo, hi);
+                return true;
+            }
+        }
+        /* Check user-defined .FUNC definitions. */
+        if (g_active_user_funcs != nullptr) {
+            if (const auto fit = g_active_user_funcs->find(fn); fit != g_active_user_funcs->end()) {
+                const auto& ufn = fit->second;
+                if (a.size() != ufn.params.size()) {
+                    err = ".FUNC '" + fn + "' expects " + std::to_string(ufn.params.size()) +
+                          " arguments, got " + std::to_string(a.size());
+                    return false;
+                }
+                if (depth_ >= kMaxFuncDepth) {
+                    err = ".FUNC '" + fn + "' exceeded maximum recursion depth (" + std::to_string(kMaxFuncDepth) + ")";
+                    return false;
+                }
+                ParamMap bound = params_;
+                for (std::size_t i = 0; i < ufn.params.size(); ++i) {
+                    bound[ufn.params[i]] = a[i];
+                }
+                ParamExprParser sub(ufn.body, bound, depth_ + 1);
+                return sub.parse(out, err);
+            }
         }
         err = "unknown or wrong-arity function '" + fn + "' in parameter expression";
         return false;
@@ -451,6 +604,7 @@ private:
 
     std::string_view src_;
     const ParamMap& params_;
+    int depth_{0};
     std::size_t pos_{0};
 };
 
@@ -471,14 +625,38 @@ Diagnostic eval_value(
     return Diagnostic::success();
 }
 
+struct LtraModelParams {
+    double r_per_m{0.0};
+    double l_per_m{0.0};
+    double g_per_m{0.0};
+    double c_per_m{0.0};
+    double length_m{1.0};
+    std::size_t nsegs{16};
+};
+
+struct CplModelParams {
+    double r_per_m{0.0};
+    double rm_per_m{0.0};
+    double l_per_m{0.0};
+    double lm_per_m{0.0};
+    double g_per_m{0.0};
+    double gm_per_m{0.0};
+    double c_per_m{0.0};
+    double cm_per_m{0.0};
+    double length_m{1.0};
+    std::size_t nsegs{16};
+};
+
 struct ModelDef {
-    enum class Kind { Diode, Switch, Mosfet, Bjt, Jfet, Osdi };
+    enum class Kind { Diode, Switch, Mosfet, Bjt, Jfet, Osdi, Ltra, Cpl };
     Kind kind{Kind::Diode};
     core::DiodeSpec diode_template{};
     core::SwitchSpec switch_template{};
     core::MosfetSpec mosfet_template{};
     core::BjtSpec bjt_template{};
     core::JfetSpec jfet_template{};
+    LtraModelParams ltra_params{};
+    CplModelParams cpl_params{};
     std::string osdi_library_path;
     std::string osdi_model_name;
     std::vector<std::pair<std::string, double>> osdi_model_params;
@@ -495,12 +673,16 @@ struct ElaboratorState {
     Circuit circuit;
     std::vector<AnalysisCommand> analyses;
     std::vector<MeasCommand> measurements;
+    std::vector<StepSpec> steps;
     DeckOptions options;
+    SpefSummary spef_summary;
     ParamMap global_params;
+    UserFuncMap user_funcs;
     std::unordered_set<std::string> global_nodes;
     std::unordered_map<std::string, ModelDef> models;
     std::unordered_map<std::string, SubcktDef> subckts;
     std::vector<std::string> registered_osdi_libs;
+    std::vector<std::string> pending_spef_files;
     ParseOptions parse_opts;
     std::vector<std::string> subckt_stack;
     std::vector<std::string> include_stack;
@@ -680,6 +862,23 @@ Diagnostic parse_waveform_spec(
         out_wf = s;
         return Diagnostic::success();
     }
+    if (wf_kind_low == "trnoise") {
+        if (vals.size() < 2u || vals.size() > 8u) {
+            return line_err(line_no, StatusCode::InvalidArgument, "TRNOISE requires 2..8 parameters (NA NT [NALPHA NAMP [RTSAM RTSCAPT RTSEMT [SEED]]])");
+        }
+        core::TrNoiseWaveform trn{};
+        trn.na_rms = vals[0];
+        trn.nt_s = vals[1];
+        if (vals.size() > 2u) trn.nalpha = vals[2];
+        if (vals.size() > 3u) trn.namp = vals[3];
+        if (vals.size() == 5u) {
+            trn.seed = static_cast<std::uint64_t>(std::llround(std::max(0.0, vals[4])));
+        } else if (vals.size() == 8u) {
+            trn.seed = static_cast<std::uint64_t>(std::llround(std::max(0.0, vals[7])));
+        }
+        out_wf = trn;
+        return Diagnostic::success();
+    }
     return line_err(line_no, StatusCode::Unsupported, "unsupported transient waveform '" + wf_kind_low + "'");
 }
 
@@ -731,10 +930,11 @@ Diagnostic parse_independent_source_tail(
             continue;
         }
 
-        /* Check waveform: PULSE(...), SIN(...), PWL(...), EXP(...), SFFM(...) */
+        /* Check waveform: PULSE(...), SIN(...), PWL(...), EXP(...), SFFM(...), TRNOISE(...) */
         const std::size_t lp = tok.find('(');
         std::string wf_name = (lp == std::string::npos) ? low : to_lower(tok.substr(0, lp));
-        if (wf_name == "pulse" || wf_name == "sin" || wf_name == "pwl" || wf_name == "exp" || wf_name == "sffm") {
+        if (wf_name == "pulse" || wf_name == "sin" || wf_name == "pwl" || wf_name == "exp" ||
+            wf_name == "sffm" || wf_name == "trnoise") {
             std::string arg_str;
             if (lp != std::string::npos) {
                 if (tok.back() != ')') {
@@ -1050,6 +1250,72 @@ Diagnostic parse_model_directive(
         }
         if (def.osdi_library_path.empty() || def.osdi_model_name.empty()) {
             return line_err(line_no, StatusCode::InvalidArgument, ".MODEL OSDI requires lib and model");
+        }
+        state.models[model_name] = std::move(def);
+        return Diagnostic::success();
+    }
+
+    if (type_low == "ltra" || type_low == "txl") {
+        ModelDef def{};
+        def.kind = ModelDef::Kind::Ltra;
+        for (const auto& kv : kv_tokens) {
+            const std::size_t eq = kv.find('=');
+            if (eq == std::string::npos) {
+                return line_err(line_no, StatusCode::InvalidArgument, "expected key=value in .MODEL " + type_tok);
+            }
+            const std::string k = to_lower(kv.substr(0, eq));
+            double v = 0.0;
+            if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
+            if (k == "r") def.ltra_params.r_per_m = v;
+            else if (k == "l") def.ltra_params.l_per_m = v;
+            else if (k == "g") def.ltra_params.g_per_m = v;
+            else if (k == "c") def.ltra_params.c_per_m = v;
+            else if (k == "len" || k == "length") def.ltra_params.length_m = v;
+            else if (k == "nsegs" || k == "nseg" || k == "sections") {
+                def.ltra_params.nsegs = static_cast<std::size_t>(std::clamp(std::llround(v), 1LL, 256LL));
+            } else {
+                return line_err(line_no, StatusCode::InvalidArgument, "unsupported LTRA/TXL .MODEL parameter '" + k + "'");
+            }
+        }
+        if (def.ltra_params.length_m <= 0.0 || def.ltra_params.r_per_m < 0.0 ||
+            def.ltra_params.l_per_m < 0.0 || def.ltra_params.g_per_m < 0.0 || def.ltra_params.c_per_m < 0.0) {
+            return line_err(line_no, StatusCode::InvalidArgument, "invalid negative/nonpositive LTRA/TXL parameters");
+        }
+        state.models[model_name] = std::move(def);
+        return Diagnostic::success();
+    }
+
+    if (type_low == "cpl") {
+        ModelDef def{};
+        def.kind = ModelDef::Kind::Cpl;
+        for (const auto& kv : kv_tokens) {
+            const std::size_t eq = kv.find('=');
+            if (eq == std::string::npos) {
+                return line_err(line_no, StatusCode::InvalidArgument, "expected key=value in .MODEL CPL");
+            }
+            const std::string k = to_lower(kv.substr(0, eq));
+            double v = 0.0;
+            if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
+            if (k == "r") def.cpl_params.r_per_m = v;
+            else if (k == "rm") def.cpl_params.rm_per_m = v;
+            else if (k == "l") def.cpl_params.l_per_m = v;
+            else if (k == "lm") def.cpl_params.lm_per_m = v;
+            else if (k == "g") def.cpl_params.g_per_m = v;
+            else if (k == "gm") def.cpl_params.gm_per_m = v;
+            else if (k == "c") def.cpl_params.c_per_m = v;
+            else if (k == "cm") def.cpl_params.cm_per_m = v;
+            else if (k == "len" || k == "length") def.cpl_params.length_m = v;
+            else if (k == "nsegs" || k == "nseg" || k == "sections") {
+                def.cpl_params.nsegs = static_cast<std::size_t>(std::clamp(std::llround(v), 1LL, 128LL));
+            } else {
+                return line_err(line_no, StatusCode::InvalidArgument, "unsupported CPL .MODEL parameter '" + k + "'");
+            }
+        }
+        if (def.cpl_params.length_m <= 0.0 || def.cpl_params.r_per_m < 0.0 ||
+            def.cpl_params.l_per_m < 0.0 || def.cpl_params.c_per_m < 0.0 ||
+            std::abs(def.cpl_params.lm_per_m) >= (def.cpl_params.l_per_m > 0.0 ? def.cpl_params.l_per_m : 1.0) ||
+            def.cpl_params.cm_per_m < 0.0 || def.cpl_params.cm_per_m > def.cpl_params.c_per_m) {
+            return line_err(line_no, StatusCode::InvalidArgument, "invalid/non-passive CPL model parameters");
         }
         state.models[model_name] = std::move(def);
         return Diagnostic::success();
@@ -1586,6 +1852,172 @@ Diagnostic elaborate_element_line(
             state.subckt_stack.pop_back();
             return d;
         }
+        case 'O':
+        case 'Y': {
+            /* Lossy transmission line (LTRA/TXL): O<id> p1 n1 p2 n2 <model> [LEN=...] [NSEGS=...] */
+            if (auto d = req_tokens(6u, "Lossy transmission line"); !d.ok()) return d;
+            const NodeId p1 = state.resolve_node(tokens[1], scope_prefix, port_map);
+            const NodeId n1 = state.resolve_node(tokens[2], scope_prefix, port_map);
+            const NodeId p2 = state.resolve_node(tokens[3], scope_prefix, port_map);
+            const NodeId n2 = state.resolve_node(tokens[4], scope_prefix, port_map);
+            (void)n2; /* Reference return node shares n1 for unbalanced lumped RLGC ladder */
+            const auto mit = state.models.find(to_lower(tokens[5]));
+            if (mit == state.models.end() || mit->second.kind != ModelDef::Kind::Ltra) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "model '" + tokens[5] + "' is not an LTRA/TXL model");
+            }
+            LtraModelParams lp = mit->second.ltra_params;
+            for (std::size_t i = 6u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq == std::string::npos) continue;
+                const std::string k = to_lower(tokens[i].substr(0, eq));
+                double v = 0.0;
+                if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                if (k == "len" || k == "length") lp.length_m = v;
+                else if (k == "nsegs" || k == "nseg" || k == "sections") {
+                    lp.nsegs = static_cast<std::size_t>(std::clamp(std::llround(v), 1LL, 256LL));
+                }
+            }
+            const std::size_t nsegs = std::max<std::size_t>(1u, lp.nsegs);
+            const double dx = lp.length_m / static_cast<double>(nsegs);
+            const double r_seg = lp.r_per_m * dx;
+            const double l_seg = lp.l_per_m * dx;
+            const double g_seg = lp.g_per_m * dx;
+            const double c_seg = lp.c_per_m * dx;
+            const NodeId ref = n1;
+
+            auto add_shunt = [&](NodeId nd, double scale, const std::string& tag) {
+                if (c_seg * scale > 0.0) {
+                    state.circuit.elements.push_back(core::CapacitorSpec{elem_id + "_c_" + tag, nd, ref, c_seg * scale, std::nullopt});
+                }
+                if (g_seg * scale > 0.0) {
+                    state.circuit.elements.push_back(core::ResistorSpec{elem_id + "_g_" + tag, nd, ref, 1.0 / (g_seg * scale)});
+                }
+            };
+
+            NodeId prev = p1;
+            add_shunt(prev, 0.5, "s0");
+            for (std::size_t k = 0; k < nsegs; ++k) {
+                const NodeId next = (k + 1u == nsegs)
+                                        ? p2
+                                        : state.circuit.get_or_add_node(elem_id + "_n" + std::to_string(k + 1u));
+                const std::string ks = std::to_string(k);
+                if (r_seg > 0.0 && l_seg > 0.0) {
+                    const NodeId mid = state.circuit.get_or_add_node(elem_id + "_m" + ks);
+                    state.circuit.elements.push_back(core::ResistorSpec{elem_id + "_r" + ks, prev, mid, r_seg});
+                    state.circuit.elements.push_back(core::InductorSpec{elem_id + "_l" + ks, mid, next, l_seg, std::nullopt});
+                } else if (r_seg > 0.0) {
+                    state.circuit.elements.push_back(core::ResistorSpec{elem_id + "_r" + ks, prev, next, r_seg});
+                } else if (l_seg > 0.0) {
+                    state.circuit.elements.push_back(core::InductorSpec{elem_id + "_l" + ks, prev, next, l_seg, std::nullopt});
+                } else {
+                    state.circuit.elements.push_back(core::ResistorSpec{elem_id + "_r" + ks, prev, next, 1.0e-6});
+                }
+                add_shunt(next, (k + 1u == nsegs) ? 0.5 : 1.0, "s" + std::to_string(k + 1u));
+                prev = next;
+            }
+            return Diagnostic::success();
+        }
+        case 'P': {
+            /* Coupled 2-conductor transmission line (CPL):
+             * P<id> in1 in2 ref_in out1 out2 ref_out <model> [LEN=...] [NSEGS=...]
+             * or compact: P<id> in1 in2 out1 out2 ref <model> [LEN=...] [NSEGS=...] */
+            if (auto d = req_tokens(7u, "Coupled transmission line"); !d.ok()) return d;
+            NodeId in1{0}, in2{0}, out1{0}, out2{0}, ref{0};
+            std::size_t model_idx = 0;
+            if (tokens.size() >= 8u && state.models.find(to_lower(tokens[7])) != state.models.end()) {
+                in1 = state.resolve_node(tokens[1], scope_prefix, port_map);
+                in2 = state.resolve_node(tokens[2], scope_prefix, port_map);
+                ref = state.resolve_node(tokens[3], scope_prefix, port_map);
+                out1 = state.resolve_node(tokens[4], scope_prefix, port_map);
+                out2 = state.resolve_node(tokens[5], scope_prefix, port_map);
+                model_idx = 7u;
+            } else {
+                in1 = state.resolve_node(tokens[1], scope_prefix, port_map);
+                in2 = state.resolve_node(tokens[2], scope_prefix, port_map);
+                out1 = state.resolve_node(tokens[3], scope_prefix, port_map);
+                out2 = state.resolve_node(tokens[4], scope_prefix, port_map);
+                ref = state.resolve_node(tokens[5], scope_prefix, port_map);
+                model_idx = 6u;
+            }
+            const auto mit = state.models.find(to_lower(tokens[model_idx]));
+            if (mit == state.models.end() || mit->second.kind != ModelDef::Kind::Cpl) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "model '" + tokens[model_idx] + "' is not a CPL model");
+            }
+            CplModelParams cp = mit->second.cpl_params;
+            for (std::size_t i = model_idx + 1u; i < tokens.size(); ++i) {
+                const std::size_t eq = tokens[i].find('=');
+                if (eq == std::string::npos) continue;
+                const std::string k = to_lower(tokens[i].substr(0, eq));
+                double v = 0.0;
+                if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                if (k == "len" || k == "length") cp.length_m = v;
+                else if (k == "nsegs" || k == "nseg" || k == "sections") {
+                    cp.nsegs = static_cast<std::size_t>(std::clamp(std::llround(v), 1LL, 128LL));
+                }
+            }
+            const std::size_t nsegs = std::max<std::size_t>(1u, cp.nsegs);
+            const double dx = cp.length_m / static_cast<double>(nsegs);
+            const double r_seg = cp.r_per_m * dx;
+            const double l_seg = cp.l_per_m * dx;
+            const double k_mut = (l_seg > 0.0) ? (cp.lm_per_m / cp.l_per_m) : 0.0;
+            const double c_self_seg = (cp.c_per_m - cp.cm_per_m) * dx;
+            const double c_mut_seg = cp.cm_per_m * dx;
+            const double g_self_seg = std::max(0.0, cp.g_per_m - cp.gm_per_m) * dx;
+            const double g_mut_seg = std::max(0.0, cp.gm_per_m) * dx;
+
+            auto add_pair_shunt = [&](NodeId a, NodeId b, double scale, const std::string& tag) {
+                if (c_self_seg * scale > 0.0) {
+                    state.circuit.elements.push_back(core::CapacitorSpec{elem_id + "_c1_" + tag, a, ref, c_self_seg * scale, std::nullopt});
+                    state.circuit.elements.push_back(core::CapacitorSpec{elem_id + "_c2_" + tag, b, ref, c_self_seg * scale, std::nullopt});
+                }
+                if (c_mut_seg * scale > 0.0) {
+                    state.circuit.elements.push_back(core::CapacitorSpec{elem_id + "_cm_" + tag, a, b, c_mut_seg * scale, std::nullopt});
+                }
+                if (g_self_seg * scale > 0.0) {
+                    state.circuit.elements.push_back(core::ResistorSpec{elem_id + "_g1_" + tag, a, ref, 1.0 / (g_self_seg * scale)});
+                    state.circuit.elements.push_back(core::ResistorSpec{elem_id + "_g2_" + tag, b, ref, 1.0 / (g_self_seg * scale)});
+                }
+                if (g_mut_seg * scale > 0.0) {
+                    state.circuit.elements.push_back(core::ResistorSpec{elem_id + "_gm_" + tag, a, b, 1.0 / (g_mut_seg * scale)});
+                }
+            };
+
+            NodeId prev1 = in1, prev2 = in2;
+            add_pair_shunt(prev1, prev2, 0.5, "s0");
+            for (std::size_t k = 0; k < nsegs; ++k) {
+                const NodeId next1 = (k + 1u == nsegs)
+                                         ? out1
+                                         : state.circuit.get_or_add_node(elem_id + "_a" + std::to_string(k + 1u));
+                const NodeId next2 = (k + 1u == nsegs)
+                                         ? out2
+                                         : state.circuit.get_or_add_node(elem_id + "_b" + std::to_string(k + 1u));
+                const std::string ks = std::to_string(k);
+                const std::string l1_id = elem_id + "_l1_" + ks;
+                const std::string l2_id = elem_id + "_l2_" + ks;
+                if (r_seg > 0.0 && l_seg > 0.0) {
+                    const NodeId m1 = state.circuit.get_or_add_node(elem_id + "_ma" + ks);
+                    const NodeId m2 = state.circuit.get_or_add_node(elem_id + "_mb" + ks);
+                    state.circuit.elements.push_back(core::ResistorSpec{elem_id + "_r1_" + ks, prev1, m1, r_seg});
+                    state.circuit.elements.push_back(core::ResistorSpec{elem_id + "_r2_" + ks, prev2, m2, r_seg});
+                    state.circuit.elements.push_back(core::InductorSpec{l1_id, m1, next1, l_seg, std::nullopt});
+                    state.circuit.elements.push_back(core::InductorSpec{l2_id, m2, next2, l_seg, std::nullopt});
+                } else if (l_seg > 0.0) {
+                    state.circuit.elements.push_back(core::InductorSpec{l1_id, prev1, next1, l_seg, std::nullopt});
+                    state.circuit.elements.push_back(core::InductorSpec{l2_id, prev2, next2, l_seg, std::nullopt});
+                } else {
+                    const double r_eff = (r_seg > 0.0) ? r_seg : 1.0e-6;
+                    state.circuit.elements.push_back(core::ResistorSpec{elem_id + "_r1_" + ks, prev1, next1, r_eff});
+                    state.circuit.elements.push_back(core::ResistorSpec{elem_id + "_r2_" + ks, prev2, next2, r_eff});
+                }
+                if (l_seg > 0.0 && std::abs(k_mut) > 0.0) {
+                    state.circuit.elements.push_back(core::MutualInductanceSpec{elem_id + "_k" + ks, l1_id, l2_id, k_mut});
+                }
+                add_pair_shunt(next1, next2, (k + 1u == nsegs) ? 0.5 : 1.0, "s" + std::to_string(k + 1u));
+                prev1 = next1;
+                prev2 = next2;
+            }
+            return Diagnostic::success();
+        }
         default:
             return line_err(line.line_no, StatusCode::Unsupported, "unsupported SPICE element '" + raw_name + "'");
     }
@@ -1753,15 +2185,64 @@ Diagnostic load_include_file(
     return d;
 }
 
+struct IfFrame {
+    bool parent_active{true};
+    bool branch_taken{false};
+    bool cur_active{false};
+    bool saw_else{false};
+};
+
+Diagnostic parse_func_directive(
+    std::size_t line_no,
+    const std::string& raw_line,
+    UserFuncMap& user_funcs) {
+    /* Syntax: .FUNC name(a, b, ...) {expr}  OR  .FUNC name(a, b, ...) = expr */
+    std::string rest = trim(raw_line);
+    /* Strip leading .func */
+    std::size_t sp = 0;
+    while (sp < rest.size() && !std::isspace(static_cast<unsigned char>(rest[sp]))) ++sp;
+    rest = trim(rest.substr(sp));
+    const std::size_t lp = rest.find('(');
+    const std::size_t rp = (lp != std::string::npos) ? rest.find(')', lp + 1u) : std::string::npos;
+    if (lp == std::string::npos || rp == std::string::npos || lp == 0u) {
+        return line_err(line_no, StatusCode::InvalidArgument, ".FUNC requires name(arg1, ...) {expr}");
+    }
+    const std::string fn_name = to_lower(trim(rest.substr(0, lp)));
+    const std::string arg_str = rest.substr(lp + 1u, rp - lp - 1u);
+    std::string body = trim(rest.substr(rp + 1u));
+    if (!body.empty() && body[0] == '=') body = trim(body.substr(1u));
+    if (body.size() >= 2u && body.front() == '{' && body.back() == '}') {
+        body = trim(body.substr(1u, body.size() - 2u));
+    }
+    if (fn_name.empty() || body.empty()) {
+        return line_err(line_no, StatusCode::InvalidArgument, ".FUNC requires non-empty name and body");
+    }
+    UserFuncDef def{};
+    def.body = body;
+    std::istringstream aiss(arg_str);
+    std::string arg;
+    while (std::getline(aiss, arg, ',')) {
+        const std::string a_low = to_lower(trim(arg));
+        if (!a_low.empty()) def.params.push_back(a_low);
+    }
+    user_funcs[fn_name] = std::move(def);
+    return Diagnostic::success();
+}
+
 Diagnostic elaborate_lines(
     const std::vector<LogicalLine>& lines,
     const std::string& scope_prefix,
     const std::unordered_map<std::string, NodeId>& port_map,
     ParamMap local_params,
     ElaboratorState& state) {
-    /* First pass in scope: process .INCLUDE, .LIB, .GLOBAL, .PARAM, .OSDI, .MODEL, and .SUBCKT. */
+    /* First pass in scope: process .IF/.ELSEIF/.ELSE/.ENDIF, .FUNC, .INCLUDE, .LIB, .GLOBAL, .PARAM, .OSDI, .MODEL, and .SUBCKT. */
     std::vector<LogicalLine> remaining;
     remaining.reserve(lines.size());
+    std::vector<IfFrame> if_stack;
+
+    auto is_active = [&]() -> bool {
+        return if_stack.empty() || if_stack.back().cur_active;
+    };
 
     for (std::size_t idx = 0; idx < lines.size(); ++idx) {
         const auto& line = lines[idx];
@@ -1770,7 +2251,60 @@ Diagnostic elaborate_lines(
 
         if (tokens[0][0] == '.') {
             const std::string cmd = to_lower(tokens[0]);
+            if (cmd == ".if") {
+                const bool parent_on = is_active();
+                IfFrame fr{};
+                fr.parent_active = parent_on;
+                if (parent_on) {
+                    std::string expr = trim(line.text.substr(tokens[0].size()));
+                    double cond = 0.0;
+                    if (auto d = eval_value(line.line_no, expr, local_params, cond); !d.ok()) return d;
+                    fr.cur_active = (cond != 0.0);
+                    fr.branch_taken = fr.cur_active;
+                }
+                if_stack.push_back(fr);
+                continue;
+            }
+            if (cmd == ".elseif" || cmd == ".elif") {
+                if (if_stack.empty() || if_stack.back().saw_else) {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, "unexpected .ELSEIF without open .IF");
+                }
+                auto& fr = if_stack.back();
+                if (!fr.parent_active || fr.branch_taken) {
+                    fr.cur_active = false;
+                } else {
+                    std::string expr = trim(line.text.substr(tokens[0].size()));
+                    double cond = 0.0;
+                    if (auto d = eval_value(line.line_no, expr, local_params, cond); !d.ok()) return d;
+                    fr.cur_active = (cond != 0.0);
+                    if (fr.cur_active) fr.branch_taken = true;
+                }
+                continue;
+            }
+            if (cmd == ".else") {
+                if (if_stack.empty() || if_stack.back().saw_else) {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, "unexpected .ELSE without open .IF");
+                }
+                auto& fr = if_stack.back();
+                fr.saw_else = true;
+                fr.cur_active = fr.parent_active && !fr.branch_taken;
+                if (fr.cur_active) fr.branch_taken = true;
+                continue;
+            }
+            if (cmd == ".endif") {
+                if (if_stack.empty()) {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, "unexpected .ENDIF without matching .IF");
+                }
+                if_stack.pop_back();
+                continue;
+            }
+            if (!is_active()) continue;
+
             if (cmd == ".end") break;
+            if (cmd == ".func") {
+                if (auto d = parse_func_directive(line.line_no, line.text, state.user_funcs); !d.ok()) return d;
+                continue;
+            }
             if (cmd == ".include" || cmd == ".inc") {
                 if (tokens.size() < 2u) {
                     return line_err(line.line_no, StatusCode::InvalidArgument, ".INCLUDE requires file path");
@@ -1801,6 +2335,10 @@ Diagnostic elaborate_lines(
             if (cmd == ".param") {
                 if (auto d = parse_param_assignments(line.line_no, tokens, 1u, local_params); !d.ok()) return d;
                 if (scope_prefix.empty()) {
+                    /* Preserve explicit top-level parameter overrides (e.g., from .STEP PARAM). */
+                    for (const auto& [ok, ov] : state.parse_opts.param_overrides) {
+                        local_params[to_lower(ok)] = ov;
+                    }
                     for (const auto& [k, v] : local_params) state.global_params[k] = v;
                 }
                 continue;
@@ -1866,8 +2404,12 @@ Diagnostic elaborate_lines(
             }
             remaining.push_back(line);
         } else {
+            if (!is_active()) continue;
             remaining.push_back(line);
         }
+    }
+    if (!if_stack.empty()) {
+        return Diagnostic::error(StatusCode::InvalidArgument, "unterminated .IF block (missing .ENDIF)");
     }
 
     /* Second pass: elaborate elements first, then top-level analysis & control directives. */
@@ -2208,6 +2750,81 @@ Diagnostic elaborate_lines(
                     if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), local_params, state.options.temperature_c); !d.ok()) return d;
                 }
             }
+        } else if (cmd == ".step") {
+            /*
+             * Supported forms:
+             *   .STEP PARAM <name> <start> <stop> <step>
+             *   .STEP PARAM <name> LIST <v1> [v2 ...]
+             *   .STEP DEC|OCT PARAM <name> <start> <stop> <pts>
+             *   .STEP TEMP <start> <stop> <step>
+             *   .STEP TEMP LIST <t1> [t2 ...]
+             */
+            if (tokens.size() < 4u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".STEP requires PARAM|TEMP and sweep specification");
+            }
+            StepSpec st{};
+            std::size_t idx_tok = 1u;
+            const std::string t1 = to_lower(tokens[idx_tok]);
+            if (t1 == "dec") {
+                st.sweep_type = StepSweepType::Decade;
+                ++idx_tok;
+            } else if (t1 == "oct") {
+                st.sweep_type = StepSweepType::Octave;
+                ++idx_tok;
+            } else if (t1 == "lin") {
+                st.sweep_type = StepSweepType::Linear;
+                ++idx_tok;
+            }
+            if (idx_tok >= tokens.size()) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".STEP missing target");
+            }
+            const std::string kind_tok = to_lower(tokens[idx_tok++]);
+            if (kind_tok == "temp") {
+                st.kind = StepKind::Temp;
+                st.target_name = "temp";
+            } else if (kind_tok == "param") {
+                st.kind = StepKind::Param;
+                if (idx_tok >= tokens.size()) {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, ".STEP PARAM missing parameter name");
+                }
+                st.target_name = to_lower(tokens[idx_tok++]);
+            } else {
+                /* Bare parameter name shorthand: .STEP rload 1k 5k 1k */
+                st.kind = StepKind::Param;
+                st.target_name = kind_tok;
+            }
+            if (idx_tok >= tokens.size()) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".STEP missing sweep values");
+            }
+            if (to_lower(tokens[idx_tok]) == "list") {
+                st.sweep_type = StepSweepType::List;
+                ++idx_tok;
+                for (; idx_tok < tokens.size(); ++idx_tok) {
+                    double v = 0.0;
+                    if (auto d = eval_value(line.line_no, tokens[idx_tok], local_params, v); !d.ok()) return d;
+                    st.list_values.push_back(v);
+                }
+                if (st.list_values.empty()) {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, ".STEP LIST requires at least one value");
+                }
+            } else {
+                if (idx_tok + 2u >= tokens.size()) {
+                    return line_err(line.line_no, StatusCode::InvalidArgument, ".STEP requires <start> <stop> <step|pts>");
+                }
+                if (auto d = eval_value(line.line_no, tokens[idx_tok], local_params, st.start); !d.ok()) return d;
+                if (auto d = eval_value(line.line_no, tokens[idx_tok + 1u], local_params, st.stop); !d.ok()) return d;
+                if (auto d = eval_value(line.line_no, tokens[idx_tok + 2u], local_params, st.step_or_points); !d.ok()) return d;
+            }
+            std::vector<double> check_vals;
+            if (auto d = expand_step_values(st, check_vals); !d.ok()) {
+                return line_err(line.line_no, d.code, d.message);
+            }
+            state.steps.push_back(std::move(st));
+        } else if (cmd == ".spef") {
+            if (tokens.size() < 2u) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, ".SPEF requires file path");
+            }
+            state.pending_spef_files.push_back(unquote(tokens[1]));
         } else {
             return line_err(line.line_no, StatusCode::Unsupported, "unsupported SPICE directive '" + tokens[0] + "'");
         }
@@ -2215,7 +2832,503 @@ Diagnostic elaborate_lines(
     return Diagnostic::success();
 }
 
+/* ==================== Spectre Dialect Subset Translator ==================== */
+bool looks_like_spectre(const std::string& text) {
+    std::istringstream iss(text);
+    std::string line;
+    int checked = 0;
+    while (std::getline(iss, line) && checked < 25) {
+        const std::string low = to_lower(trim(line));
+        if (low.empty() || low.rfind("//", 0) == 0) continue;
+        ++checked;
+        if (low.find("simulator lang=spectre") != std::string::npos ||
+            low.find("simulator lang = spectre") != std::string::npos) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::string strip_spectre_comment(const std::string& line) {
+    bool in_quote = false;
+    for (std::size_t i = 0; i < line.size(); ++i) {
+        if (line[i] == '"') in_quote = !in_quote;
+        else if (!in_quote && line[i] == '/' && i + 1u < line.size() && line[i + 1u] == '/') {
+            return line.substr(0, i);
+        }
+    }
+    return line;
+}
+
+Diagnostic translate_spectre_to_spice(
+    const std::string& text,
+    std::string& out_title,
+    std::vector<LogicalLine>& out_lines) {
+    out_lines.clear();
+    out_title = "spectre_deck";
+
+    /* Step 1: Join backslash-continued lines and strip // comments. */
+    std::vector<LogicalLine> raw_logical;
+    std::istringstream iss(text);
+    std::string raw;
+    std::size_t line_no = 0;
+    bool cont = false;
+    while (std::getline(iss, raw)) {
+        ++line_no;
+        if (!raw.empty() && raw.back() == '\r') raw.pop_back();
+        if (line_no == 1u && raw.rfind("//", 0) == 0) {
+            const std::string t = trim(raw.substr(2u));
+            if (!t.empty()) out_title = t;
+            continue;
+        }
+        std::string cleaned = trim(strip_spectre_comment(raw));
+        if (cleaned.empty() || cleaned[0] == '*') {
+            cont = false;
+            continue;
+        }
+        bool has_bs = false;
+        if (!cleaned.empty() && cleaned.back() == '\\') {
+            has_bs = true;
+            cleaned.pop_back();
+            cleaned = trim(cleaned);
+        }
+        if (cont && !raw_logical.empty()) {
+            raw_logical.back().text.push_back(' ');
+            raw_logical.back().text += cleaned;
+        } else {
+            raw_logical.push_back(LogicalLine{line_no, cleaned});
+        }
+        cont = has_bs;
+    }
+
+    auto extract_kv_map = [](const std::vector<std::string>& toks, std::size_t start) {
+        std::unordered_map<std::string, std::string> kv;
+        for (std::size_t i = start; i < toks.size(); ++i) {
+            const std::size_t eq = toks[i].find('=');
+            if (eq != std::string::npos) {
+                kv[to_lower(toks[i].substr(0, eq))] = toks[i].substr(eq + 1u);
+            }
+        }
+        return kv;
+    };
+
+    auto parse_node_list = [](const std::string& tok) -> std::vector<std::string> {
+        std::string inner = tok;
+        if (inner.size() >= 2u && inner.front() == '(' && inner.back() == ')') {
+            inner = inner.substr(1u, inner.size() - 2u);
+        }
+        return tokenize_spice_line(inner);
+    };
+
+    for (const auto& l : raw_logical) {
+        const auto toks = tokenize_spice_line(l.text);
+        if (toks.empty()) continue;
+        const std::string t0 = to_lower(toks[0]);
+
+        if (t0 == "simulator" || t0 == "global") {
+            if (t0 == "global" && toks.size() >= 2u) {
+                std::string g = ".global";
+                for (std::size_t i = 1u; i < toks.size(); ++i) g += " " + toks[i];
+                out_lines.push_back(LogicalLine{l.line_no, g});
+            }
+            continue;
+        }
+        if (t0 == "include" && toks.size() >= 2u) {
+            out_lines.push_back(LogicalLine{l.line_no, ".include " + toks[1]});
+            continue;
+        }
+        if (t0 == "parameters") {
+            std::string p = ".param";
+            for (std::size_t i = 1u; i < toks.size(); ++i) p += " " + toks[i];
+            out_lines.push_back(LogicalLine{l.line_no, p});
+            continue;
+        }
+        if (t0 == "subckt" && toks.size() >= 3u) {
+            std::string s = ".subckt " + toks[1];
+            for (std::size_t i = 2u; i < toks.size(); ++i) {
+                if (!toks[i].empty() && toks[i].front() == '(') {
+                    for (const auto& nd : parse_node_list(toks[i])) s += " " + nd;
+                } else {
+                    s += " " + toks[i];
+                }
+            }
+            out_lines.push_back(LogicalLine{l.line_no, s});
+            continue;
+        }
+        if (t0 == "ends") {
+            out_lines.push_back(LogicalLine{l.line_no, ".ends"});
+            continue;
+        }
+        if (t0 == "model" && toks.size() >= 3u) {
+            const std::string mname = toks[1];
+            const std::string mtype = to_lower(toks[2]);
+            auto kv = extract_kv_map(toks, 3u);
+            std::string spice_type = mtype;
+            std::string extra;
+            if (mtype == "diode") {
+                spice_type = "D";
+            } else if (mtype == "bsim4" || mtype == "bsim3v3" || mtype == "mos1") {
+                const std::string tp = kv.count("type") ? to_lower(kv["type"]) : "n";
+                spice_type = (tp == "p" || tp == "pmos") ? "PMOS" : "NMOS";
+                kv.erase("type");
+                if (mtype == "bsim4") extra = " level=54";
+                else if (mtype == "bsim3v3") extra = " level=49";
+                else extra = " level=1";
+            } else if (mtype == "bjt") {
+                const std::string tp = kv.count("type") ? to_lower(kv["type"]) : "npn";
+                spice_type = (tp == "pnp") ? "PNP" : "NPN";
+                kv.erase("type");
+            } else if (mtype == "jfet") {
+                const std::string tp = kv.count("type") ? to_lower(kv["type"]) : "n";
+                spice_type = (tp == "p" || tp == "pjf") ? "PJF" : "NJF";
+                kv.erase("type");
+            }
+            std::string mline = ".model " + mname + " " + spice_type + "(" + extra;
+            for (const auto& [k, v] : kv) mline += " " + k + "=" + v;
+            mline += ")";
+            out_lines.push_back(LogicalLine{l.line_no, mline});
+            continue;
+        }
+
+        /* Analysis statements: <name> dc|ac|tran|noise ... */
+        if (toks.size() >= 2u) {
+            const std::string t1 = to_lower(toks[1]);
+            if (t1 == "dc") {
+                auto kv = extract_kv_map(toks, 2u);
+                if (kv.count("dev") && kv.count("start") && kv.count("stop")) {
+                    const std::string step = kv.count("step") ? kv["step"] : "0.1";
+                    out_lines.push_back(LogicalLine{l.line_no, ".dc " + kv["dev"] + " " + kv["start"] + " " + kv["stop"] + " " + step});
+                } else {
+                    out_lines.push_back(LogicalLine{l.line_no, ".op"});
+                }
+                continue;
+            }
+            if (t1 == "ac") {
+                auto kv = extract_kv_map(toks, 2u);
+                const std::string start = kv.count("start") ? kv["start"] : "1";
+                const std::string stop = kv.count("stop") ? kv["stop"] : "1Meg";
+                if (kv.count("dec")) {
+                    out_lines.push_back(LogicalLine{l.line_no, ".ac dec " + kv["dec"] + " " + start + " " + stop});
+                } else {
+                    const std::string lin = kv.count("lin") ? kv["lin"] : "10";
+                    out_lines.push_back(LogicalLine{l.line_no, ".ac lin " + lin + " " + start + " " + stop});
+                }
+                continue;
+            }
+            if (t1 == "tran") {
+                auto kv = extract_kv_map(toks, 2u);
+                const std::string stop = kv.count("stop") ? kv["stop"] : "1u";
+                const std::string step = kv.count("step") ? kv["step"] : (kv.count("maxstep") ? kv["maxstep"] : "10n");
+                out_lines.push_back(LogicalLine{l.line_no, ".tran " + step + " " + stop});
+                continue;
+            }
+        }
+
+        /* Component instance: <inst> (n1 n2 ...) <master> [k=v ...] */
+        if (toks.size() >= 3u && !toks[1].empty() && toks[1].front() == '(') {
+            const std::string inst = toks[0];
+            const auto nodes = parse_node_list(toks[1]);
+            const std::string master = toks[2];
+            const std::string mlow = to_lower(master);
+            auto kv = extract_kv_map(toks, 3u);
+
+            auto ensure_prefix = [](const std::string& id, char pfx) {
+                if (!id.empty() && std::toupper(static_cast<unsigned char>(id[0])) == pfx) return id;
+                return std::string(1u, pfx) + "_" + id;
+            };
+
+            if ((mlow == "resistor" || mlow == "res") && nodes.size() == 2u) {
+                const std::string r = kv.count("r") ? kv["r"] : "1k";
+                out_lines.push_back(LogicalLine{l.line_no, ensure_prefix(inst, 'R') + " " + nodes[0] + " " + nodes[1] + " " + r});
+                continue;
+            }
+            if ((mlow == "capacitor" || mlow == "cap") && nodes.size() == 2u) {
+                const std::string c = kv.count("c") ? kv["c"] : "1p";
+                std::string cline = ensure_prefix(inst, 'C') + " " + nodes[0] + " " + nodes[1] + " " + c;
+                if (kv.count("ic")) cline += " ic=" + kv["ic"];
+                out_lines.push_back(LogicalLine{l.line_no, cline});
+                continue;
+            }
+            if ((mlow == "inductor" || mlow == "ind") && nodes.size() == 2u) {
+                const std::string lv = kv.count("l") ? kv["l"] : "1n";
+                out_lines.push_back(LogicalLine{l.line_no, ensure_prefix(inst, 'L') + " " + nodes[0] + " " + nodes[1] + " " + lv});
+                continue;
+            }
+            if ((mlow == "vsource" || mlow == "isource") && nodes.size() == 2u) {
+                const char pfx = (mlow == "vsource") ? 'V' : 'I';
+                std::string sline = ensure_prefix(inst, pfx) + " " + nodes[0] + " " + nodes[1];
+                if (kv.count("dc")) sline += " DC " + kv["dc"];
+                if (kv.count("mag")) sline += " AC " + kv["mag"];
+                const std::string tp = kv.count("type") ? to_lower(kv["type"]) : "";
+                if (tp == "sine") {
+                    const std::string off = kv.count("sinedc") ? kv["sinedc"] : (kv.count("dc") ? kv["dc"] : "0");
+                    const std::string amp = kv.count("ampl") ? kv["ampl"] : "1";
+                    const std::string freq = kv.count("freq") ? kv["freq"] : "1k";
+                    sline += " SIN(" + off + " " + amp + " " + freq + ")";
+                } else if (tp == "pulse") {
+                    const std::string v0 = kv.count("val0") ? kv["val0"] : "0";
+                    const std::string v1 = kv.count("val1") ? kv["val1"] : "1";
+                    const std::string td = kv.count("delay") ? kv["delay"] : "0";
+                    const std::string tr = kv.count("rise") ? kv["rise"] : "1n";
+                    const std::string tf = kv.count("fall") ? kv["fall"] : "1n";
+                    const std::string pw = kv.count("width") ? kv["width"] : "10n";
+                    const std::string per = kv.count("period") ? kv["period"] : "20n";
+                    sline += " PULSE(" + v0 + " " + v1 + " " + td + " " + tr + " " + tf + " " + pw + " " + per + ")";
+                }
+                out_lines.push_back(LogicalLine{l.line_no, sline});
+                continue;
+            }
+            /* Generic device/subckt instance: emit with inferred SPICE prefix (M/Q/D/X). */
+            std::string line_out;
+            const char p0 = static_cast<char>(std::toupper(static_cast<unsigned char>(inst[0])));
+            if (p0 == 'M' || p0 == 'Q' || p0 == 'J' || p0 == 'D' || p0 == 'X') {
+                line_out = inst;
+            } else {
+                line_out = "X_" + inst;
+            }
+            for (const auto& nd : nodes) line_out += " " + nd;
+            line_out += " " + master;
+            for (std::size_t i = 3u; i < toks.size(); ++i) line_out += " " + toks[i];
+            out_lines.push_back(LogicalLine{l.line_no, line_out});
+            continue;
+        }
+
+        /* Fallback: pass through SPICE-like directives/cards. */
+        out_lines.push_back(l);
+    }
+    return Diagnostic::success();
+}
+
 }  // namespace
+
+Diagnostic expand_step_values(const StepSpec& step, std::vector<double>& out_values) {
+    out_values.clear();
+    constexpr std::size_t kMaxStepPoints = 4096u;
+    if (step.sweep_type == StepSweepType::List) {
+        if (step.list_values.empty()) {
+            return Diagnostic::error(StatusCode::InvalidArgument, ".STEP LIST is empty");
+        }
+        out_values = step.list_values;
+        return Diagnostic::success();
+    }
+    if (!std::isfinite(step.start) || !std::isfinite(step.stop) || !std::isfinite(step.step_or_points)) {
+        return Diagnostic::error(StatusCode::InvalidArgument, "nonfinite .STEP range");
+    }
+    if (step.sweep_type == StepSweepType::Linear) {
+        if (step.step_or_points == 0.0) {
+            return Diagnostic::error(StatusCode::InvalidArgument, ".STEP increment must be non-zero");
+        }
+        const double inc = (step.stop >= step.start) ? std::abs(step.step_or_points) : -std::abs(step.step_or_points);
+        const double span = std::abs(step.stop - step.start);
+        const std::size_t n = static_cast<std::size_t>(std::floor(span / std::abs(inc) + 1.0e-9)) + 1u;
+        if (n > kMaxStepPoints) {
+            return Diagnostic::error(StatusCode::ResourceExhausted, ".STEP point count exceeds limit");
+        }
+        out_values.reserve(n);
+        for (std::size_t i = 0; i < n; ++i) {
+            const double v = step.start + static_cast<double>(i) * inc;
+            if ((inc > 0.0 && v > step.stop + 1.0e-9 * std::abs(inc)) ||
+                (inc < 0.0 && v < step.stop - 1.0e-9 * std::abs(inc))) {
+                break;
+            }
+            out_values.push_back(v);
+        }
+        return Diagnostic::success();
+    }
+    /* Decade or Octave logarithmic step */
+    if (step.start <= 0.0 || step.stop < step.start || step.step_or_points <= 0.0) {
+        return Diagnostic::error(StatusCode::InvalidArgument, ".STEP DEC/OCT requires positive start <= stop and pts > 0");
+    }
+    const double base = (step.sweep_type == StepSweepType::Decade) ? 10.0 : 2.0;
+    const double span = std::log(step.stop / step.start) / std::log(base);
+    const std::size_t total = std::max<std::size_t>(1u, static_cast<std::size_t>(std::ceil(span * step.step_or_points)));
+    if (total + 1u > kMaxStepPoints) {
+        return Diagnostic::error(StatusCode::ResourceExhausted, ".STEP DEC/OCT point count exceeds limit");
+    }
+    for (std::size_t i = 0; i <= total; ++i) {
+        const double v = step.start * std::pow(base, static_cast<double>(i) / step.step_or_points);
+        if (v > step.stop * (1.0 + 1.0e-12)) break;
+        out_values.push_back(std::min(v, step.stop));
+    }
+    return Diagnostic::success();
+}
+
+Diagnostic parse_spef_and_annotate(
+    const std::string& spef_text,
+    core::Circuit& circuit,
+    SpefSummary& out_summary) {
+    /*
+     * IEEE 1481 SPEF parasitic RC extraction back-annotator:
+     * Supports *NAME_MAP, *C_UNIT, *R_UNIT, *D_NET, *CAP (grounded & coupling), *RES, *END.
+     */
+    double c_scale = 1.0e-12; /* Default 1 PF */
+    double r_scale = 1.0;     /* Default 1 OHM */
+    std::unordered_map<std::string, std::string> name_map;
+
+    auto resolve_name = [&](const std::string& raw) -> std::string {
+        if (!raw.empty() && raw[0] == '*') {
+            const std::size_t colon = raw.find(':');
+            const std::string key = (colon == std::string::npos) ? raw : raw.substr(0, colon);
+            const std::string suffix = (colon == std::string::npos) ? "" : raw.substr(colon);
+            if (const auto it = name_map.find(key); it != name_map.end()) {
+                return to_lower(it->second + suffix);
+            }
+        }
+        return to_lower(raw);
+    };
+
+    auto resolve_spef_node = [&](const std::string& spef_nd) -> NodeId {
+        const std::string full = resolve_name(spef_nd);
+        if (full == "0" || full == "gnd" || full == "vss") return NodeId{0};
+        /* If exact node already exists in circuit, use it; otherwise if base net before ':' exists and
+         * this is tap :1 or matches existing net name, attach cleanly. */
+        for (std::uint32_t i = 0; i < circuit.nodes.size(); ++i) {
+            if (to_lower(circuit.nodes[i]) == full) return NodeId{i};
+        }
+        const std::size_t colon = full.find(':');
+        if (colon != std::string::npos) {
+            const std::string base = full.substr(0, colon);
+            const std::string tap = full.substr(colon + 1u);
+            if (tap == "0" || tap == "1") {
+                for (std::uint32_t i = 0; i < circuit.nodes.size(); ++i) {
+                    if (to_lower(circuit.nodes[i]) == base) return NodeId{i};
+                }
+            }
+        }
+        return circuit.get_or_add_node(full);
+    };
+
+    enum class Sec { None, NameMap, DNet, Cap, Res };
+    Sec sec = Sec::None;
+    std::string cur_net;
+    std::size_t elem_counter = 0;
+
+    std::istringstream iss(spef_text);
+    std::string raw;
+    std::size_t line_no = 0;
+    while (std::getline(iss, raw)) {
+        ++line_no;
+        if (!raw.empty() && raw.back() == '\r') raw.pop_back();
+        const std::string cleaned = trim(strip_spectre_comment(raw));
+        if (cleaned.empty()) continue;
+        const auto toks = tokenize_spice_line(cleaned);
+        if (toks.empty()) continue;
+        const std::string t0 = to_lower(toks[0]);
+
+        if (t0 == "*c_unit" && toks.size() >= 3u) {
+            const double mult = std::strtod(toks[1].c_str(), nullptr);
+            const std::string u = to_lower(toks[2]);
+            if (u == "ff") c_scale = mult * 1.0e-15;
+            else if (u == "pf") c_scale = mult * 1.0e-12;
+            else if (u == "nf") c_scale = mult * 1.0e-9;
+            else if (u == "uf") c_scale = mult * 1.0e-6;
+            else if (u == "f") c_scale = mult;
+            else return line_err(line_no, StatusCode::InvalidArgument, "unsupported SPEF *C_UNIT '" + toks[2] + "'");
+            continue;
+        }
+        if (t0 == "*r_unit" && toks.size() >= 3u) {
+            const double mult = std::strtod(toks[1].c_str(), nullptr);
+            const std::string u = to_lower(toks[2]);
+            if (u == "ohm") r_scale = mult;
+            else if (u == "kohm") r_scale = mult * 1.0e3;
+            else if (u == "mohm") r_scale = mult * 1.0e6;
+            else return line_err(line_no, StatusCode::InvalidArgument, "unsupported SPEF *R_UNIT '" + toks[2] + "'");
+            continue;
+        }
+        if (t0 == "*name_map") {
+            sec = Sec::NameMap;
+            continue;
+        }
+        if (t0 == "*d_net" && toks.size() >= 2u) {
+            sec = Sec::DNet;
+            cur_net = resolve_name(toks[1]);
+            ++out_summary.nets_annotated;
+            continue;
+        }
+        if (t0 == "*conn") {
+            sec = Sec::DNet;
+            continue;
+        }
+        if (t0 == "*cap") {
+            sec = Sec::Cap;
+            continue;
+        }
+        if (t0 == "*res") {
+            sec = Sec::Res;
+            continue;
+        }
+        if (t0 == "*end") {
+            sec = Sec::None;
+            cur_net.clear();
+            continue;
+        }
+        if (t0.rfind("*", 0) == 0 && sec != Sec::NameMap) {
+            /* Header metadata such as *SPEF, *DESIGN, *DATE, *T_UNIT, *V_UNIT, *DIVIDER, *DELIMITER. */
+            continue;
+        }
+
+        if (sec == Sec::NameMap) {
+            if (toks.size() >= 2u && !toks[0].empty() && toks[0][0] == '*') {
+                name_map[toks[0]] = toks[1];
+            }
+            continue;
+        }
+        if (sec == Sec::Cap) {
+            if (toks.size() == 3u) {
+                /* Grounded parasitic capacitance: <idx> <node> <val> */
+                const double val = std::strtod(toks[2].c_str(), nullptr) * c_scale;
+                if (!std::isfinite(val) || val < 0.0) {
+                    return line_err(line_no, StatusCode::InvalidArgument, "invalid negative/nonfinite SPEF *CAP value");
+                }
+                if (val > 0.0) {
+                    const NodeId nd = resolve_spef_node(toks[1]);
+                    if (!nd.is_ground()) {
+                        circuit.elements.push_back(core::CapacitorSpec{
+                            "C_spef_" + std::to_string(++elem_counter), nd, NodeId{0}, val, std::nullopt});
+                        ++out_summary.capacitors_added;
+                        out_summary.total_capacitance_f += val;
+                    }
+                }
+            } else if (toks.size() >= 4u) {
+                /* Coupling parasitic capacitance: <idx> <node1> <node2> <val> */
+                const double val = std::strtod(toks[3].c_str(), nullptr) * c_scale;
+                if (!std::isfinite(val) || val < 0.0) {
+                    return line_err(line_no, StatusCode::InvalidArgument, "invalid negative/nonfinite SPEF coupling *CAP value");
+                }
+                if (val > 0.0) {
+                    const NodeId n1 = resolve_spef_node(toks[1]);
+                    const NodeId n2 = resolve_spef_node(toks[2]);
+                    if (n1.value != n2.value) {
+                        circuit.elements.push_back(core::CapacitorSpec{
+                            "C_spef_" + std::to_string(++elem_counter), n1, n2, val, std::nullopt});
+                        ++out_summary.capacitors_added;
+                        out_summary.total_capacitance_f += val;
+                    }
+                }
+            }
+            continue;
+        }
+        if (sec == Sec::Res) {
+            if (toks.size() < 4u) {
+                return line_err(line_no, StatusCode::InvalidArgument, "malformed SPEF *RES entry");
+            }
+            const double val = std::strtod(toks[3].c_str(), nullptr) * r_scale;
+            if (!std::isfinite(val) || val <= 0.0) {
+                return line_err(line_no, StatusCode::InvalidArgument, "invalid nonpositive SPEF *RES value");
+            }
+            const NodeId n1 = resolve_spef_node(toks[1]);
+            const NodeId n2 = resolve_spef_node(toks[2]);
+            if (n1.value != n2.value) {
+                circuit.elements.push_back(core::ResistorSpec{
+                    "R_spef_" + std::to_string(++elem_counter), n1, n2, val});
+                ++out_summary.resistors_added;
+                out_summary.total_resistance_ohms += val;
+            }
+            continue;
+        }
+    }
+    return Diagnostic::success();
+}
 
 Diagnostic parse_spice_deck(
     const std::string& netlist_text,
@@ -2223,16 +3336,58 @@ Diagnostic parse_spice_deck(
     const ParseOptions& opts) {
     ElaboratorState state{};
     state.parse_opts = opts;
+    for (const auto& [k, v] : opts.param_overrides) {
+        state.global_params[to_lower(k)] = v;
+    }
+    if (opts.temp_override_c.has_value()) {
+        state.options.temperature_c = *opts.temp_override_c;
+        state.global_params["temp"] = *opts.temp_override_c;
+    } else {
+        state.global_params["temp"] = state.options.temperature_c;
+    }
+
+    const Dialect detected = (opts.dialect == Dialect::Spectre ||
+                              (opts.dialect == Dialect::Auto && looks_like_spectre(netlist_text)))
+                                 ? Dialect::Spectre
+                                 : ((opts.dialect == Dialect::Auto) ? Dialect::Best : opts.dialect);
 
     std::vector<LogicalLine> lines;
     std::string title;
-    preprocess_lines(netlist_text, title, lines);
+    if (detected == Dialect::Spectre) {
+        if (auto d = translate_spectre_to_spice(netlist_text, title, lines); !d.ok()) return d;
+    } else {
+        preprocess_lines(netlist_text, title, lines);
+    }
     state.circuit.name = title.empty() ? "unnamed_deck" : title;
 
+    ActiveFuncsGuard func_guard(&state.user_funcs);
     std::unordered_map<std::string, NodeId> empty_ports;
     if (auto d = elaborate_lines(lines, "", empty_ports, state.global_params, state); !d.ok()) {
         return d;
     }
+
+    if (opts.temp_override_c.has_value()) {
+        state.options.temperature_c = *opts.temp_override_c;
+    }
+
+    /* Apply any .SPEF parasitic files referenced in the deck. */
+    for (const auto& spath : state.pending_spef_files) {
+        namespace fs = std::filesystem;
+        fs::path p(spath);
+        if (p.is_relative() && !opts.base_dir.empty()) {
+            p = fs::path(opts.base_dir) / p;
+        }
+        std::ifstream ifs(p);
+        if (!ifs) {
+            return Diagnostic::error(StatusCode::InvalidArgument, "cannot open .SPEF file '" + p.string() + "'");
+        }
+        std::ostringstream oss;
+        oss << ifs.rdbuf();
+        if (auto d = parse_spef_and_annotate(oss.str(), state.circuit, state.spef_summary); !d.ok()) {
+            return d;
+        }
+    }
+
     if (auto d = state.circuit.validate(opts.max_unknowns); !d.ok()) {
         return d;
     }
@@ -2242,7 +3397,10 @@ Diagnostic parse_spice_deck(
     result.circuit = std::move(state.circuit);
     result.analyses = std::move(state.analyses);
     result.measurements = std::move(state.measurements);
+    result.steps = std::move(state.steps);
     result.options = std::move(state.options);
+    result.spef_summary = state.spef_summary;
+    result.detected_dialect = detected;
     out_deck = std::move(result);
     return Diagnostic::success();
 }

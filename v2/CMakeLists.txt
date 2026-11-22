@@ -361,4 +361,27 @@ if(SPICE_V2_BUILD_TESTS)
         target_compile_definitions(spice_v2_semiconductor_deck_tests PRIVATE SPICE_V2_USE_CATCH2=1)
     endif()
     add_test(NAME spice_v2_semiconductor_deck_tests COMMAND spice_v2_semiconductor_deck_tests)
+
+    add_executable(spice_v2_dialect_parity_tests
+        tests/m2c_dialect_and_parity_tests.cpp
+    )
+    target_include_directories(spice_v2_dialect_parity_tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+    target_compile_definitions(spice_v2_dialect_parity_tests PRIVATE
+        SPICE_V2_CLI_PATH="$<TARGET_FILE:spice_v2_cli>"
+    )
+    target_link_libraries(spice_v2_dialect_parity_tests PRIVATE
+        spice_parser
+        spice_analysis
+        spice_v2_warnings
+    )
+    add_dependencies(spice_v2_dialect_parity_tests spice_v2_cli)
+    if(Catch2_FOUND)
+        target_link_libraries(spice_v2_dialect_parity_tests PRIVATE Catch2::Catch2WithMain)
+        target_compile_definitions(spice_v2_dialect_parity_tests PRIVATE SPICE_V2_USE_CATCH2=1)
+    endif()
+    add_test(NAME spice_v2_dialect_parity_tests COMMAND spice_v2_dialect_parity_tests)
 endif()

@@ -64,7 +64,27 @@ struct SffmWaveform {
     double signal_hz{0.0};
 };
 
-using Waveform = std::variant<DcWaveform, PulseWaveform, SineWaveform, PwlWaveform, ExpWaveform, SffmWaveform>;
+/*
+ * Deterministic transient Gaussian noise waveform (SPICE TRNOISE(NA NT [NALPHA NAMP [SEED]])).
+ * Evaluates piecewise-linear interpolation between deterministic SplitMix64 + Box-Muller
+ * Gaussian samples N(0, na_rms^2) at grid times t_k = k * nt_s (thread-safe, rollback-safe).
+ */
+struct TrNoiseWaveform {
+    double na_rms{0.0};
+    double nt_s{1.0e-9};
+    double nalpha{0.0};
+    double namp{0.0};
+    std::uint64_t seed{1337u};
+};
+
+using Waveform = std::variant<
+    DcWaveform,
+    PulseWaveform,
+    SineWaveform,
+    PwlWaveform,
+    ExpWaveform,
+    SffmWaveform,
+    TrNoiseWaveform>;
 
 [[nodiscard]] Diagnostic validate_waveform(const Waveform& wf, const std::string& subject);
 [[nodiscard]] double evaluate_waveform(const Waveform& wf, double time_s) noexcept;
