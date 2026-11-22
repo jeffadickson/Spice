@@ -187,14 +187,18 @@ TEST_CASE(".STEP PARAM (linear/LIST/DEC) and .STEP TEMP execute across parser an
 #else
     REQUIRE(std::system(cmd.c_str()) == 0);
 #endif
-    std::ifstream ifs(json_path);
-    std::ostringstream oss;
-    oss << ifs.rdbuf();
-    const std::string js = oss.str();
+    std::string js;
+    {
+        std::ifstream ifs(json_path);
+        std::ostringstream oss;
+        oss << ifs.rdbuf();
+        js = oss.str();
+    }
     REQUIRE(js.find("\"step_target\": \"r2\"") != std::string::npos);
     REQUIRE(js.find("\"steps\": [") != std::string::npos);
     REQUIRE(js.find("7.5") != std::string::npos);
-    fs::remove_all(tmp_dir);
+    std::error_code rm_ec;
+    fs::remove_all(tmp_dir, rm_ec);
 }
 
 TEST_CASE("TRNOISE produces deterministic calibrated Gaussian transient noise attenuated by RC filter", "[m2c][trnoise]") {

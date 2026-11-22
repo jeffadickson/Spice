@@ -150,94 +150,99 @@ TEST_CASE("Mixed-signal Schmitt-trigger RC relaxation oscillator co-simulation a
     REQUIRE(vcd.find("$enddefinitions $end") != std::string::npos);
 }
 
-TEST_CASE("Full 6-bit mixed-signal SAR ADC recovers exact quantized digital codes across input range", "[m4][mixed][sar_adc]") {
+namespace {
+
+struct SarState {
+    int current_bit{5};
+    int code_acc{0};
+    bool done{false};
+};
+
+bool run_sar_conversion_helper(double v_in, double v_ref_val, int n_bits, int& out_code) {
     const core::NodeId gnd{0};
+    // Analog front-end: Vin (input), Vdac (Wreal D2A driver) -> Rdac (1k) -> Cdac (10pF, tau = 10 ns).
+    core::Circuit c;
+    c.name = "sar_adc_6bit";
+    const auto n_vin = c.get_or_add_node("vin");
+    const auto n_dac_src = c.get_or_add_node("dac_src");
+    const auto n_dac = c.get_or_add_node("dac");
+    c.elements.push_back(core::VoltageSourceSpec{"Vin", n_vin, gnd, v_in, {0.0, 0.0}, std::nullopt});
+    c.elements.push_back(core::VoltageSourceSpec{"Vdac", n_dac_src, gnd, 0.5 * v_ref_val, {0.0, 0.0}, std::nullopt});
+    c.elements.push_back(core::ResistorSpec{"Rdac", n_dac_src, n_dac, 1000.0});
+    c.elements.push_back(core::CapacitorSpec{"Cdac", n_dac, gnd, 10.0e-12, std::nullopt});
+
+    devices::CompiledPlan plan;
+    if (!devices::compile_circuit(c, plan).ok()) return false;
+
+    DigitalEngine dig;
+    const auto clk = dig.add_net("clk", Logic4::L0);
+    const auto cmp = dig.add_net("cmp", Logic4::L0);
+    const auto dac_wreal = dig.add_wreal("dac_wreal", 0.5 * v_ref_val);
+    std::vector<NetId> bits;
+    for (int b = 0; b < n_bits; ++b) {
+        bits.push_back(dig.add_net("bit" + std::to_string(b), Logic4::L0));
+    }
+
+    // 1 MHz SAR clock: rising edges at 0.5, 1.5, 2.5, 3.5, 4.5, 5.5 us (500 ns = 50*tau settling per bit).
+    dig.add_clock("SAR_CLK", clk, 1.0e-6, 0.5e-6, Logic4::L0);
+
+    auto st = std::make_shared<SarState>();
+    st->current_bit = n_bits - 1;
+    dig.add_callback("U_SAR_FSM", {clk}, {}, [st, clk, cmp, dac_wreal, bits, v_ref_val](DigitalEngine& eng, double now_s) {
+        if (eng.net_value(clk) != Logic4::L1 || st->done) return;
+        const int bit = st->current_bit;
+        const bool keep = (eng.net_value(cmp) == Logic4::L1);
+        if (keep) {
+            st->code_acc |= (1 << bit);
+            eng.schedule_net(bits[static_cast<std::size_t>(bit)], Logic4::L1, now_s + 2.0e-9);
+        } else {
+            eng.schedule_net(bits[static_cast<std::size_t>(bit)], Logic4::L0, now_s + 2.0e-9);
+        }
+        if (bit == 0) {
+            st->done = true;
+            const double final_dac = (static_cast<double>(st->code_acc) / 64.0) * v_ref_val;
+            eng.schedule_wreal(dac_wreal, final_dac, now_s + 5.0e-9);
+        } else {
+            st->current_bit = bit - 1;
+            const int trial_code = st->code_acc | (1 << st->current_bit);
+            const double next_dac = (static_cast<double>(trial_code) / 64.0) * v_ref_val;
+            eng.schedule_wreal(dac_wreal, next_dac, now_s + 5.0e-9);
+        }
+    });
+
+    // Analog comparator A2D: v(vin) - v(dac) >= 0 -> cmp = '1', < 0 -> cmp = '0'.
+    const std::vector<A2DConnect> a2d = {
+        A2DConnect{"A2D_CMP", n_vin, n_dac, cmp, 0.0, 0.0, 1.0e-9},
+    };
+    // Wreal D2A DAC driver with 5 ns linear slew ramp.
+    const std::vector<D2AConnect> d2a = {
+        D2AConnect{"D2A_DAC", std::nullopt, dac_wreal, "Vdac", 0.0, v_ref_val, 0.5 * v_ref_val, 5.0e-9, 5.0e-9},
+    };
+
+    MixedTransientOptions opts{};
+    opts.t_stop_s = 6.2e-6;
+    opts.max_step_s = 25.0e-9;
+    opts.method = analysis::IntegrationMethod::BackwardEuler;
+
+    MixedTransientResult res;
+    if (!run_mixed_transient(plan, dig, a2d, d2a, opts, res).ok()) return false;
+    if (!st->done) return false;
+
+    int decoded = 0;
+    for (int b = 0; b < n_bits; ++b) {
+        if (dig.net_value(bits[static_cast<std::size_t>(b)]) == Logic4::L1) {
+            decoded |= (1 << b);
+        }
+    }
+    out_code = decoded;
+    return true;
+}
+
+}  // namespace
+
+TEST_CASE("Full 6-bit mixed-signal SAR ADC recovers exact quantized digital codes across input range", "[m4][mixed][sar_adc]") {
     constexpr double v_ref = 3.2; /* 6-bit LSB = 3.2 / 64 = 0.05 V */
     constexpr int n_bits = 6;
-
-    auto run_sar_conversion = [&](double v_in, int& out_code) -> bool {
-        const double v_ref_val = v_ref;
-        // Analog front-end: Vin (input), Vdac (Wreal D2A driver) -> Rdac (1k) -> Cdac (10pF, tau = 10 ns).
-        core::Circuit c;
-        c.name = "sar_adc_6bit";
-        const auto n_vin = c.get_or_add_node("vin");
-        const auto n_dac_src = c.get_or_add_node("dac_src");
-        const auto n_dac = c.get_or_add_node("dac");
-        c.elements.push_back(core::VoltageSourceSpec{"Vin", n_vin, gnd, v_in, {0.0, 0.0}, std::nullopt});
-        c.elements.push_back(core::VoltageSourceSpec{"Vdac", n_dac_src, gnd, 0.5 * v_ref_val, {0.0, 0.0}, std::nullopt});
-        c.elements.push_back(core::ResistorSpec{"Rdac", n_dac_src, n_dac, 1000.0});
-        c.elements.push_back(core::CapacitorSpec{"Cdac", n_dac, gnd, 10.0e-12, std::nullopt});
-
-        devices::CompiledPlan plan;
-        if (!devices::compile_circuit(c, plan).ok()) return false;
-
-        DigitalEngine dig;
-        const auto clk = dig.add_net("clk", Logic4::L0);
-        const auto cmp = dig.add_net("cmp", Logic4::L0);
-        const auto dac_wreal = dig.add_wreal("dac_wreal", 0.5 * v_ref_val);
-        std::vector<NetId> bits;
-        for (int b = 0; b < n_bits; ++b) {
-            bits.push_back(dig.add_net("bit" + std::to_string(b), Logic4::L0));
-        }
-
-        // 1 MHz SAR clock: rising edges at 0.5, 1.5, 2.5, 3.5, 4.5, 5.5 us (500 ns = 50*tau settling per bit).
-        dig.add_clock("SAR_CLK", clk, 1.0e-6, 0.5e-6, Logic4::L0);
-
-        struct SarState {
-            int current_bit{n_bits - 1};
-            int code_acc{0};
-            bool done{false};
-        };
-        auto st = std::make_shared<SarState>();
-        dig.add_callback("U_SAR_FSM", {clk}, {}, [st, clk, cmp, dac_wreal, bits, v_ref_val](DigitalEngine& eng, double now_s) {
-            if (eng.net_value(clk) != Logic4::L1 || st->done) return;
-            const int bit = st->current_bit;
-            const bool keep = (eng.net_value(cmp) == Logic4::L1);
-            if (keep) {
-                st->code_acc |= (1 << bit);
-                eng.schedule_net(bits[static_cast<std::size_t>(bit)], Logic4::L1, now_s + 2.0e-9);
-            } else {
-                eng.schedule_net(bits[static_cast<std::size_t>(bit)], Logic4::L0, now_s + 2.0e-9);
-            }
-            if (bit == 0) {
-                st->done = true;
-                const double final_dac = (static_cast<double>(st->code_acc) / 64.0) * v_ref_val;
-                eng.schedule_wreal(dac_wreal, final_dac, now_s + 5.0e-9);
-            } else {
-                st->current_bit = bit - 1;
-                const int trial_code = st->code_acc | (1 << st->current_bit);
-                const double next_dac = (static_cast<double>(trial_code) / 64.0) * v_ref_val;
-                eng.schedule_wreal(dac_wreal, next_dac, now_s + 5.0e-9);
-            }
-        });
-
-        // Analog comparator A2D: v(vin) - v(dac) >= 0 -> cmp = '1', < 0 -> cmp = '0'.
-        const std::vector<A2DConnect> a2d = {
-            A2DConnect{"A2D_CMP", n_vin, n_dac, cmp, 0.0, 0.0, 1.0e-9},
-        };
-        // Wreal D2A DAC driver with 5 ns linear slew ramp.
-        const std::vector<D2AConnect> d2a = {
-            D2AConnect{"D2A_DAC", std::nullopt, dac_wreal, "Vdac", 0.0, v_ref, 0.5 * v_ref, 5.0e-9, 5.0e-9},
-        };
-
-        MixedTransientOptions opts{};
-        opts.t_stop_s = 6.2e-6;
-        opts.max_step_s = 25.0e-9;
-        opts.method = analysis::IntegrationMethod::BackwardEuler;
-
-        MixedTransientResult res;
-        if (!run_mixed_transient(plan, dig, a2d, d2a, opts, res).ok()) return false;
-        if (!st->done) return false;
-
-        int decoded = 0;
-        for (int b = 0; b < n_bits; ++b) {
-            if (dig.net_value(bits[static_cast<std::size_t>(b)]) == Logic4::L1) {
-                decoded |= (1 << b);
-            }
-        }
-        out_code = decoded;
-        return true;
-    };
 
     // Verify 3 distinct input voltages across the 0..3.2 V range (LSB = 0.05 V).
     const std::vector<std::pair<double, int>> cases = {
@@ -247,7 +252,7 @@ TEST_CASE("Full 6-bit mixed-signal SAR ADC recovers exact quantized digital code
     };
     for (const auto& [vin, expected_code] : cases) {
         int actual_code = -1;
-        REQUIRE(run_sar_conversion(vin, actual_code));
+        REQUIRE(run_sar_conversion_helper(vin, v_ref, n_bits, actual_code));
         REQUIRE(actual_code == expected_code);
     }
 }
