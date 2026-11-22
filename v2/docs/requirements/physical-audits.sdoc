@@ -3,7 +3,7 @@ TITLE: Spice V2 - Independent Physical Consistency Audits
 
 [TEXT]
 STATEMENT: >>>
-Version 2.0, 2026-11-20. Ports the proven independent physical-audit concepts from v1 (CONS-*) into a clean, opt-in C++20 verification layer (v2/cpp/audit) and .NET result contract. Audits evaluate element-level conservation laws independently of solver matrices; passing checks confirm physical consistency within recorded tolerances, never global waveform accuracy or compact-model physical validity.
+Version 2.0, 2026-11-20. Ports the proven independent physical-audit concepts from v1 (``CONS-*``) into a clean, opt-in C++20 verification layer (v2/cpp/audit) and .NET result contract. Audits evaluate element-level conservation laws independently of solver matrices; passing checks confirm physical consistency within recorded tolerances, never global waveform accuracy or compact-model physical validity.
 <<<
 
 [[SECTION]]

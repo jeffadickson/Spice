@@ -82,7 +82,7 @@ Build Spice.Schematic (versioned diffable document model, hierarchical subsheets
 COMMENT: >>>
 Phase: M1
 Depends-on: PLAN-V2-002
-Deliverables: Spice.Schematic (SchematicDocument, SchematicCompiler with ERC, hierarchical flattening, Canonical IR emitter, deterministic JSON round-trip, SPICE export, and cross-probable vector SVG with data-net/data-signal/data-instance metadata), Spice.App runnable .NET 11 workbench host CLI & interactive local HTTP WorkbenchServer SPA (info/serve/run/schematic/campaign with interactive schematic editor, live click-to-probe SVG cross-probing, SPICE3f5/Spectre/BSIM4/RF/LTRA/TRNOISE deck runner, and parallel campaign plotter consuming strictly public Spice.* APIs and libspice_capi ABI v2.1), Spice.Tests/M1PlatformTests.cs.
+Deliverables: Spice.Schematic (SchematicDocument, SchematicCompiler with ERC, hierarchical flattening, Canonical IR emitter, deterministic JSON round-trip, SPICE export, and cross-probable vector SVG with data-net/data-signal/data-instance metadata), Spice.App runnable .NET 11 workbench host CLI & interactive local HTTP WorkbenchServer SPA (info/serve/run/schematic/campaign with interactive schematic editor, live click-to-probe SVG cross-probing, SPICE3f5/Spectre/BSIM4/RF/LTRA/TRNOISE deck runner, and parallel campaign plotter consuming strictly public ``Spice.*`` APIs and libspice_capi ABI v2.1), Spice.Tests/M1PlatformTests.cs.
 Verification: .NET 11.0.100 Release build (TreatWarningsAsErrors=true) passes 7/7 xUnit tests with 0 warnings, including live WorkbenchServer HTTP integration verifying interactive UI HTML, /api/info, schematic ERC + cross-probe SVG + live BDF2 transient, Spectre BSIM4 CMOS inverter .DC, lossy LTRA .AC, and parallel CampaignRunner against libspice_capi.so.
 <<<
 RELATIONS:

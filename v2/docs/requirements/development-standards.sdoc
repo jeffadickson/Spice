@@ -3,7 +3,7 @@ TITLE: Spice V2 - Development Standards and Tiered Verification
 
 [TEXT]
 STATEMENT: >>>
-Version 2.0, 2026-11-20. Adapts the user's standing development standards (DEV-*) cleanly for the Spice V2 C++20 + .NET architecture, preserving honest coverage, meaningful comments, StrictDoc traceability, and adversarial testing while adding explicit verification tiers and anti-bloat guardrails so engineering velocity stays high.
+Version 2.0, 2026-11-20. Adapts the user's standing development standards (``DEV-*``) cleanly for the Spice V2 C++20 + .NET architecture, preserving honest coverage, meaningful comments, StrictDoc traceability, and adversarial testing while adding explicit verification tiers and anti-bloat guardrails so engineering velocity stays high.
 <<<
 
 [[SECTION]]

@@ -3,7 +3,7 @@ TITLE: Spice V2 - Clean C++20 Architecture and Interface Contracts
 
 [TEXT]
 STATEMENT: >>>
-Version 2.0, 2026-11-20. Supersedes v1 Rust prototype architecture for the V2 reset while preserving core ARCH-* UIDs and clean numerical boundaries.
+Version 2.0, 2026-11-20. Supersedes v1 Rust prototype architecture for the V2 reset while preserving core ``ARCH-*`` UIDs and clean numerical boundaries.
 
 Spice V2 is a standalone, modern C++20 analog, RF, and mixed-signal circuit simulator designed to replace ngspice without inheriting SPICE3's global mutable state, C macro preprocessor, or interactive Nutmeg control shell. It adopts a Xyce-inspired universal DAE architecture without Trilinos or MPI build overhead, using SuiteSparse KLU (LGPL-2.1+ shared library) for sparse circuit factorization and a single generic OSDI 0.3/0.4 loader for OpenVAF-compiled Verilog-A compact models.
 
@@ -139,7 +139,7 @@ Canonical IR (immutable circuit, device descriptors, analysis plans, sweeps) com
 All analyses build on one modified-nodal DAE formulation:
 F(x, t, p) + dQ(x, t, p)/dt = 0.
 
-Devices stamp local F, Q, dF/dx, dQ/dx, and optional limiting/noise contributions into pre-bound CSC slots. DC solves F = 0; AC solves (G + j*omega*C) dx = b; TRAN solves F + alpha*Q + history = 0; periodic/RF analyses reuse the same DAE evaluations and derivatives.
+Devices stamp local F, Q, dF/dx, dQ/dx, and optional limiting/noise contributions into pre-bound CSC slots. DC solves ``F = 0``; AC solves ``(G + j*omega*C) dx = b``; TRAN solves ``F + alpha*Q + history = 0``; periodic/RF analyses reuse the same DAE evaluations and derivatives.
 <<<
 
 [REQUIREMENT]
@@ -571,7 +571,7 @@ UID: ARCH-VERIFY-001
 STATUS: Accepted
 TITLE: Multi-oracle and physical-audit verification
 STATEMENT: >>>
-Numerical qualification shall combine analytic closed-form solutions, opt-in independent physical audits (AUDIT-*), and differential comparisons against Xyce and ngspice; no single legacy simulator shall be treated as an infallible oracle.
+Numerical qualification shall combine analytic closed-form solutions, opt-in independent physical audits (``AUDIT-*``), and differential comparisons against Xyce and ngspice; no single legacy simulator shall be treated as an infallible oracle.
 <<<
 COMMENT: >>>
 Verification: Adjudicate oracle discrepancies against circuit equations and independent audits rather than relaxing tolerances.

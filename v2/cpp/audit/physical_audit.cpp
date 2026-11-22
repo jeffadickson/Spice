@@ -145,8 +145,8 @@ AuditReport audit_dc(
         } else if (const auto* i = std::get_if<core::CurrentSourceSpec>(&elem)) {
             accum_branch(i->p, i->n, i->dc_amps);
         } else if (const auto* g = std::get_if<core::VccsSpec>(&elem)) {
-            const double i = g->siemens * (node_v(x, g->cp) - node_v(x, g->cn));
-            accum_branch(g->p, g->n, i);
+            const double i_g = g->siemens * (node_v(x, g->cp) - node_v(x, g->cn));
+            accum_branch(g->p, g->n, i_g);
         } else if (const auto* e = std::get_if<core::VcvsSpec>(&elem)) {
             const double i_e = x[plan.branch_unknowns.at(e->id).value];
             accum_branch(e->p, e->n, i_e);
@@ -155,8 +155,8 @@ AuditReport audit_dc(
             max_v_err = std::max(max_v_err, std::abs(actual_v - target_v));
             max_v_scale = std::max(max_v_scale, std::abs(actual_v) + std::abs(target_v));
         } else if (const auto* f = std::get_if<core::CccsSpec>(&elem)) {
-            const double i = f->gain * x[plan.branch_unknowns.at(f->control_source_id).value];
-            accum_branch(f->p, f->n, i);
+            const double i_f = f->gain * x[plan.branch_unknowns.at(f->control_source_id).value];
+            accum_branch(f->p, f->n, i_f);
         } else if (const auto* h = std::get_if<core::CcvsSpec>(&elem)) {
             const double i_h = x[plan.branch_unknowns.at(h->id).value];
             accum_branch(h->p, h->n, i_h);
