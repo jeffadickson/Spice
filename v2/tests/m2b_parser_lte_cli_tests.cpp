@@ -59,11 +59,18 @@ std::size_t find_signal_index(const devices::CompiledPlan& plan, const std::stri
     return plan.signals.size();
 }
 
-int run_cli_command(const std::string& cmd) {
-    const int rc = std::system(cmd.c_str());
 #if defined(_WIN32)
-    return rc;
+constexpr const char* kNullDev = "NUL";
 #else
+constexpr const char* kNullDev = "/dev/null";
+#endif
+
+int run_cli_command(const std::string& cmd) {
+#if defined(_WIN32)
+    const std::string wrapped = "\"" + cmd + "\"";
+    return std::system(wrapped.c_str());
+#else
+    const int rc = std::system(cmd.c_str());
     return (rc >= 0) ? ((rc >> 8) & 0xFF) : -1;
 #endif
 }
@@ -346,10 +353,10 @@ TEST_CASE("Native spice_v2_cli executes check and run subcommands with JSON/CSV 
     }
 
     const std::string cli = std::string("\"") + SPICE_V2_CLI_PATH + "\"";
-    REQUIRE(run_cli_command(cli + " version > /dev/null") == 0);
-    REQUIRE(run_cli_command(cli + " check \"" + deck_path.string() + "\" > /dev/null") == 0);
+    REQUIRE(run_cli_command(cli + " version > " + kNullDev) == 0);
+    REQUIRE(run_cli_command(cli + " check \"" + deck_path.string() + "\" > " + kNullDev) == 0);
     REQUIRE(run_cli_command(cli + " run \"" + deck_path.string() + "\" --json \"" + json_path.string() +
-                            "\" --csv \"" + csv_path.string() + "\" --method bdf2 --adaptive > /dev/null") == 0);
+                            "\" --csv \"" + csv_path.string() + "\" --method bdf2 --adaptive > " + kNullDev) == 0);
 
     REQUIRE(fs::exists(json_path));
     REQUIRE(fs::exists(csv_path));
@@ -364,8 +371,8 @@ TEST_CASE("Native spice_v2_cli executes check and run subcommands with JSON/CSV 
     }
 
     // Negative exit codes: parse failure => 3, invalid usage => 2.
-    REQUIRE(run_cli_command(cli + " check \"" + bad_path.string() + "\" 2>/dev/null") == 3);
-    REQUIRE(run_cli_command(cli + " bogus_cmd 2>/dev/null") == 2);
+    REQUIRE(run_cli_command(cli + " check \"" + bad_path.string() + "\" 2>" + kNullDev) == 3);
+    REQUIRE(run_cli_command(cli + " bogus_cmd 2>" + kNullDev) == 2);
 
     fs::remove_all(tmp_dir);
 }

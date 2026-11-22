@@ -181,7 +181,12 @@ TEST_CASE(".STEP PARAM (linear/LIST/DEC) and .STEP TEMP execute across parser an
     }
     const std::string cmd = std::string("\"") + SPICE_V2_CLI_PATH + "\" run \"" +
                             cir_path.string() + "\" --json \"" + json_path.string() + "\"";
+#if defined(_WIN32)
+    const std::string win_cmd = "\"" + cmd + "\"";
+    REQUIRE(std::system(win_cmd.c_str()) == 0);
+#else
     REQUIRE(std::system(cmd.c_str()) == 0);
+#endif
     std::ifstream ifs(json_path);
     std::ostringstream oss;
     oss << ifs.rdbuf();

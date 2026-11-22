@@ -312,9 +312,23 @@ TEST_CASE("End-to-end spice_v2_cli runs real SPICE decks with .INCLUDE/.LIB/.GLO
             << ".END\n";
     }
 
+    auto run_cmd = [](const std::string& c) -> int {
+#if defined(_WIN32)
+        const std::string wrapped = "\"" + c + "\"";
+        return std::system(wrapped.c_str());
+#else
+        return std::system(c.c_str());
+#endif
+    };
+#if defined(_WIN32)
+    const std::string null_dev = "NUL";
+#else
+    const std::string null_dev = "/dev/null";
+#endif
+
     const std::string cmd1 =
         std::string("\"") + SPICE_V2_CLI_PATH + "\" run \"" + deck1.string() + "\" --json \"" + json1.string() + "\"";
-    REQUIRE(std::system(cmd1.c_str()) == 0);
+    REQUIRE(run_cmd(cmd1) == 0);
     const std::string j1 = read_all(json1);
     REQUIRE(j1.find("\"kind\": \"op\"") != std::string::npos);
     REQUIRE(j1.find("\"kind\": \"tf\"") != std::string::npos);
@@ -349,7 +363,7 @@ TEST_CASE("End-to-end spice_v2_cli runs real SPICE decks with .INCLUDE/.LIB/.GLO
     }
     const std::string cmd2 =
         std::string("\"") + SPICE_V2_CLI_PATH + "\" run \"" + deck2.string() + "\" --json \"" + json2.string() + "\"";
-    REQUIRE(std::system(cmd2.c_str()) == 0);
+    REQUIRE(run_cmd(cmd2) == 0);
     const std::string j2 = read_all(json2);
     REQUIRE(j2.find("\"kind\": \"hb\"") != std::string::npos);
     REQUIRE(j2.find("\"kind\": \"pac\"") != std::string::npos);
@@ -371,13 +385,13 @@ TEST_CASE("End-to-end spice_v2_cli runs real SPICE decks with .INCLUDE/.LIB/.GLO
     const std::string cmd3 =
         std::string("\"") + SPICE_V2_CLI_PATH + "\" run \"" + deck3.string() + "\" --json \"" + json3.string() +
         "\" --touchstone \"" + s2p_out.string() + "\"";
-    REQUIRE(std::system(cmd3.c_str()) == 0);
+    REQUIRE(run_cmd(cmd3) == 0);
     const std::string s2p = read_all(s2p_out);
     REQUIRE(s2p.find("# HZ S RI R 50") != std::string::npos);
 
     // Subcommand `models` check.
-    const std::string cmd_models = std::string("\"") + SPICE_V2_CLI_PATH + "\" models > /dev/null";
-    REQUIRE(std::system(cmd_models.c_str()) == 0);
+    const std::string cmd_models = std::string("\"") + SPICE_V2_CLI_PATH + "\" models > " + null_dev;
+    REQUIRE(run_cmd(cmd_models) == 0);
 
     fs::remove_all(tmp_dir);
 }

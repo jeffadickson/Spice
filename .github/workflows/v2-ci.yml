@@ -1,0 +1,127 @@
+name: Spice V2 CI (Linux KLU + ngspice + .NET 11 + Fuzz + StrictDoc + Windows MSVC)
+
+on:
+  push:
+    branches: [v2]
+  pull_request:
+    branches: [v2]
+  workflow_dispatch:
+
+concurrency:
+  group: spice-v2-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux-klu-gcc-clang-dotnet:
+    name: Linux (GCC + Clang + KLU + ngspice + .NET 11 + Fuzz + StrictDoc)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install C++20 toolchains, SuiteSparse KLU, ngspice, and Python
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build g++ clang libsuitesparse-dev ngspice python3-pip
+
+      - name: Install .NET 11 SDK
+        run: |
+          curl -fsSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh
+          chmod +x /tmp/dotnet-install.sh
+          /tmp/dotnet-install.sh --channel 11.0 --quality daily --install-dir "$HOME/.dotnet" || \
+            /tmp/dotnet-install.sh --channel 11.0 --install-dir "$HOME/.dotnet"
+          echo "$HOME/.dotnet" >> "$GITHUB_PATH"
+          "$HOME/.dotnet/dotnet" --info
+
+      - name: Build & Test GCC Release with real SuiteSparse KLU
+        run: |
+          cmake -S v2 -B build-gcc -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
+          cmake --build build-gcc -j
+          ctest --test-dir build-gcc --output-on-failure
+
+      - name: Build & Test Clang Release with real SuiteSparse KLU
+        run: |
+          cmake -S v2 -B build-clang -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+          cmake --build build-clang -j
+          ctest --test-dir build-clang --output-on-failure
+
+      - name: Run .NET 11 Live Integration Tests & Verify KLU Active via spice-app
+        working-directory: v2/dotnet
+        env:
+          SPICE_V2_CAPI_LIB: ${{ github.workspace }}/build-gcc/libspice_capi.so
+        run: |
+          dotnet test SpiceV2.slnx -c Release --verbosity normal
+          INFO_JSON=$(dotnet run --project Spice.App -c Release --no-build -- info)
+          echo "$INFO_JSON"
+          echo "$INFO_JSON" | grep -q '"klu_available": true'
+          echo "$INFO_JSON" | grep -q '"abi": "2.1"'
+
+      - name: Run Head-to-Head Differential Qualification vs. Real ngspice
+        run: |
+          ngspice --version | head -n 3
+          python3 v2/scripts/diff_vs_ngspice.py "$PWD/build-gcc/spice_v2_cli"
+
+      - name: Run Clang ASan + UBSan + libFuzzer (15s parser/SPEF fuzzing)
+        run: |
+          cmake -S v2 -B build-fuzz -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
+            -DSPICE_V2_BUILD_TESTS=OFF -DSPICE_V2_BUILD_FUZZER=ON
+          cmake --build build-fuzz --target spice_v2_parser_fuzzer -j
+          ./build-fuzz/spice_v2_parser_fuzzer -max_total_time=15 -max_len=1024 -print_final_stats=1
+
+      - name: Validate StrictDoc 6-File Requirements Set
+        run: |
+          python3 -m pip install --quiet strictdoc
+          strictdoc export --formats=html --output-dir=build-sdoc v2/docs/requirements
+          python3 -c '
+          import json, pathlib, re
+          req_dir = pathlib.Path("v2/docs/requirements")
+          sdocs = sorted(req_dir.glob("*.sdoc"))
+          assert len(sdocs) == 6
+          uids = set()
+          for f in sdocs:
+              for m in re.finditer(r"^UID:\s*(\S+)", f.read_text(), re.M):
+                  assert m.group(1) not in uids
+                  uids.add(m.group(1))
+          bl = json.loads(pathlib.Path("v2/backlog.json").read_text())
+          for wp in bl["work_packages"]:
+              assert wp["id"] in uids
+          print(f"StrictDoc CLI + backlog check passed ({len(uids)} UIDs).")
+          '
+
+  windows-msvc-dotnet:
+    name: Windows (MSVC C++20 /WX + spice_capi.dll + .NET 11)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install .NET 11 SDK
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri https://dot.net/v1/dotnet-install.ps1 -OutFile $env:TEMP\dotnet-install.ps1
+          try {
+            & $env:TEMP\dotnet-install.ps1 -Channel 11.0 -Quality daily -InstallDir "$env:USERPROFILE\.dotnet"
+          } catch {
+            & $env:TEMP\dotnet-install.ps1 -Channel 11.0 -InstallDir "$env:USERPROFILE\.dotnet"
+          }
+          "$env:USERPROFILE\.dotnet" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+          & "$env:USERPROFILE\.dotnet\dotnet.exe" --info
+
+      - name: Configure, Build & Test MSVC C++20 Release (/W4 /WX)
+        shell: pwsh
+        run: |
+          cmake -S v2 -B build-msvc -A x64
+          cmake --build build-msvc --config Release --parallel
+          ctest --test-dir build-msvc -C Release --output-on-failure
+
+      - name: Run .NET 11 Live Tests Against spice_capi.dll
+        shell: pwsh
+        working-directory: v2/dotnet
+        run: |
+          $env:SPICE_V2_CAPI_LIB = "${{ github.workspace }}\build-msvc\Release\spice_capi.dll"
+          dotnet test SpiceV2.slnx -c Release --verbosity normal
+          dotnet run --project Spice.App -c Release --no-build -- info

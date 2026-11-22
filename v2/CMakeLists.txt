@@ -3,6 +3,7 @@ project(spice_v2 VERSION 0.1.0 LANGUAGES C CXX)
 
 option(SPICE_V2_BUILD_TESTS "Build Spice V2 unit, audit, and scale tests" ON)
 option(SPICE_V2_ENABLE_COVERAGE "Enable GCC/Clang coverage instrumentation on owned targets" OFF)
+option(SPICE_V2_BUILD_FUZZER "Build Clang libFuzzer + ASan/UBSan parser target" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -14,6 +15,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_library(spice_v2_warnings INTERFACE)
 if(MSVC)
     target_compile_options(spice_v2_warnings INTERFACE /W4 /WX /permissive-)
+    target_compile_definitions(spice_v2_warnings INTERFACE NOMINMAX _CRT_SECURE_NO_WARNINGS)
 else()
     target_compile_options(spice_v2_warnings INTERFACE -Wall -Wextra -Wpedantic -Werror)
     if(SPICE_V2_ENABLE_COVERAGE)
@@ -22,8 +24,21 @@ else()
     endif()
 endif()
 
-# Optional SuiteSparse KLU discovery (provided via vcpkg on Windows/Linux).
+# Optional SuiteSparse KLU discovery (vcpkg CONFIG or system libsuitesparse-dev fallback).
 find_package(KLU CONFIG QUIET)
+set(SPICE_V2_KLU_FALLBACK OFF)
+if(NOT KLU_FOUND)
+    find_path(SPICE_KLU_INCLUDE_DIR NAMES klu.h PATH_SUFFIXES suitesparse)
+    find_library(SPICE_KLU_LIBRARY NAMES klu)
+    if(SPICE_KLU_INCLUDE_DIR AND SPICE_KLU_LIBRARY)
+        set(SPICE_V2_KLU_FALLBACK ON)
+    endif()
+endif()
+if(KLU_FOUND OR SPICE_V2_KLU_FALLBACK)
+    message(STATUS "Spice V2: SuiteSparse KLU ENABLED")
+else()
+    message(STATUS "Spice V2: SuiteSparse KLU not found (using built-in SparseLu)")
+endif()
 
 # 1. Core layer: typed IDs, validated CSC patterns, immutable Circuit IR.
 add_library(spice_core STATIC
@@ -59,6 +74,10 @@ if(KLU_FOUND)
     elseif(TARGET KLU::KLU)
         target_link_libraries(spice_linalg PRIVATE KLU::KLU)
     endif()
+elseif(SPICE_V2_KLU_FALLBACK)
+    target_compile_definitions(spice_linalg PRIVATE SPICE_V2_HAS_KLU=1)
+    target_include_directories(spice_linalg PRIVATE ${SPICE_KLU_INCLUDE_DIR})
+    target_link_libraries(spice_linalg PRIVATE ${SPICE_KLU_LIBRARY})
 endif()
 
 # 4. Generic OSDI 0.3/0.4 dynamic model loader (ARCH-MOD-001, ARCH-MOD-002).
@@ -384,4 +403,42 @@ if(SPICE_V2_BUILD_TESTS)
         target_compile_definitions(spice_v2_dialect_parity_tests PRIVATE SPICE_V2_USE_CATCH2=1)
     endif()
     add_test(NAME spice_v2_dialect_parity_tests COMMAND spice_v2_dialect_parity_tests)
+
+    add_executable(spice_v2_fuzz_stress_tests
+        tests/fuzz_and_malformed_tests.cpp
+    )
+    target_include_directories(spice_v2_fuzz_stress_tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+    target_link_libraries(spice_v2_fuzz_stress_tests PRIVATE
+        spice_parser
+        spice_analysis
+        spice_capi
+        spice_v2_warnings
+    )
+    if(Catch2_FOUND)
+        target_link_libraries(spice_v2_fuzz_stress_tests PRIVATE Catch2::Catch2WithMain)
+        target_compile_definitions(spice_v2_fuzz_stress_tests PRIVATE SPICE_V2_USE_CATCH2=1)
+    endif()
+    add_test(NAME spice_v2_fuzz_stress_tests COMMAND spice_v2_fuzz_stress_tests)
+endif()
+
+if(SPICE_V2_BUILD_FUZZER)
+    add_executable(spice_v2_parser_fuzzer
+        tests/fuzz_parser_target.cpp
+        cpp/core/types.cpp
+        cpp/core/circuit.cpp
+        cpp/parser/spice_parser.cpp
+    )
+    target_include_directories(spice_v2_parser_fuzzer PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+    )
+    target_compile_options(spice_v2_parser_fuzzer PRIVATE
+        -fsanitize=fuzzer,address,undefined -fno-omit-frame-pointer -Wall -Wextra
+    )
+    target_link_options(spice_v2_parser_fuzzer PRIVATE
+        -fsanitize=fuzzer,address,undefined
+    )
 endif()
