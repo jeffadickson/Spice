@@ -18,16 +18,24 @@ import tempfile
 import time
 
 
-def run_spice_v2(cli_path: str, deck: str, extra_args: list[str] | None = None) -> dict:
+import csv
+
+
+def run_spice_v2(cli_path: str, deck: str, extra_args: list[str] | None = None) -> tuple[dict, list[dict[str, str]]]:
     with tempfile.TemporaryDirectory(prefix="spice_v2_diff_") as td:
         cir = pathlib.Path(td) / "test.cir"
         js = pathlib.Path(td) / "out.json"
+        csv_p = pathlib.Path(td) / "out.csv"
         cir.write_text(deck, encoding="utf-8")
-        cmd = [cli_path, "run", str(cir), "--json", str(js)] + (extra_args or [])
+        cmd = [cli_path, "run", str(cir), "--json", str(js), "--csv", str(csv_p)] + (extra_args or [])
         proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
         if proc.returncode != 0:
             raise RuntimeError(f"spice_v2_cli failed ({proc.returncode}): {proc.stderr}")
-        return json.loads(js.read_text(encoding="utf-8"))
+        rows: list[dict[str, str]] = []
+        if csv_p.exists():
+            with csv_p.open("r", encoding="utf-8", newline="") as f:
+                rows = list(csv.DictReader(f))
+        return json.loads(js.read_text(encoding="utf-8")), rows
 
 
 def run_ngspice(deck: str) -> str:
@@ -88,12 +96,12 @@ Rload out 0 1k
 .END
 """
     d1_ng = d1_v2.replace(".OP", ".control\nop\nprint v(mid) v(out)\n.endc")
-    r1_v2 = run_spice_v2(cli_path, d1_v2)
+    r1_v2, _ = run_spice_v2(cli_path, d1_v2)
     r1_ng = run_ngspice(d1_ng)
     check("Linear+VCVS OP v(mid)", v2_op_signal(r1_v2, "v(mid)"), parse_ngspice_scalar(r1_ng, "v(mid)"), 1e-9)
     check("Linear+VCVS OP v(out)", v2_op_signal(r1_v2, "v(out)"), parse_ngspice_scalar(r1_ng, "v(out)"), 1e-9)
 
-    # 2. Nonlinear Shockley Diode DC Operating Point (exact T=300.15K thermal voltage match)
+    # 2. Nonlinear Shockley Diode DC Operating Point
     d2_v2 = """Nonlinear Diode OP
 .MODEL D1 D(IS=1e-14 N=1)
 V1 in 0 DC 5
@@ -103,11 +111,11 @@ D1 out 0 D1
 .END
 """
     d2_ng = d2_v2.replace(".OP", ".control\nop\nprint v(out)\n.endc")
-    r2_v2 = run_spice_v2(cli_path, d2_v2)
+    r2_v2, _ = run_spice_v2(cli_path, d2_v2)
     r2_ng = run_ngspice(d2_ng)
     check("Nonlinear Diode OP v(out)", v2_op_signal(r2_v2, "v(out)"), parse_ngspice_scalar(r2_ng, "v(out)"), 1e-3)
 
-    # 3. RC Low-Pass AC Magnitude at corner frequency (f = 159.15494 Hz -> |H| = 1/sqrt(2))
+    # 3. RC Low-Pass AC Magnitude at corner frequency (f = 159.154943 Hz -> |H| = 1/sqrt(2))
     d3_v2 = """RC Lowpass AC
 V1 in 0 DC 0 AC 1
 R1 in out 1k
@@ -117,11 +125,9 @@ C1 out 0 1u
 """
     d3_ng = d3_v2.replace(".AC LIN 1 159.154943 159.154943",
                           ".control\nac lin 1 159.154943 159.154943\nlet m = mag(v(out))\nprint m\n.endc")
-    r3_v2 = run_spice_v2(cli_path, d3_v2)
+    _, rows3 = run_spice_v2(cli_path, d3_v2)
     r3_ng = run_ngspice(d3_ng)
-    sigs3 = [s.lower() for s in r3_v2["signals"]]
-    pt3 = r3_v2["analyses"][0]["points"][0]["values"][sigs3.index("v(out)")]
-    v2_mag3 = math.hypot(pt3[0], pt3[1])
+    v2_mag3 = math.hypot(float(rows3[0]["v(out)_re"]), float(rows3[0]["v(out)_im"]))
     check("RC AC |v(out)| at f_c", v2_mag3, parse_ngspice_scalar(r3_ng, "m"), 1e-6)
 
     # 4. Gummel-Poon NPN BJT Common-Emitter DC Operating Point
@@ -136,7 +142,7 @@ Q1 c b e QN
 .END
 """
     d4_ng = d4_v2.replace(".OP", ".control\nop\nprint v(c) v(b) v(e)\n.endc")
-    r4_v2 = run_spice_v2(cli_path, d4_v2)
+    r4_v2, _ = run_spice_v2(cli_path, d4_v2)
     r4_ng = run_ngspice(d4_ng)
     check("Gummel-Poon BJT OP v(c)", v2_op_signal(r4_v2, "v(c)"), parse_ngspice_scalar(r4_ng, "v(c)"), 1.5e-2, 5e-3)
     check("Gummel-Poon BJT OP v(e)", v2_op_signal(r4_v2, "v(e)"), parse_ngspice_scalar(r4_ng, "v(e)"), 1.5e-2, 5e-3)
@@ -152,7 +158,7 @@ M1 d g 0 0 M1 W=20u L=1u
 .END
 """
     d5_ng = d5_v2.replace(".OP", ".control\nop\nprint v(d)\n.endc")
-    r5_v2 = run_spice_v2(cli_path, d5_v2)
+    r5_v2, _ = run_spice_v2(cli_path, d5_v2)
     r5_ng = run_ngspice(d5_ng)
     check("MOSFET Level-1 OP v(d)", v2_op_signal(r5_v2, "v(d)"), parse_ngspice_scalar(r5_ng, "v(d)"), 2e-2, 5e-3)
 
@@ -165,10 +171,9 @@ C1 out 0 1u IC=0
 .END
 """
     d6_ng = d6_v2.replace(".TRAN 10u 1m UIC", ".control\ntran 10u 1m uic\nlet vend = v(out)[length(v(out))-1]\nprint vend\n.endc")
-    r6_v2 = run_spice_v2(cli_path, d6_v2, ["--method", "bdf2"])
+    _, rows6 = run_spice_v2(cli_path, d6_v2, ["--method", "bdf2"])
     r6_ng = run_ngspice(d6_ng)
-    sigs6 = [s.lower() for s in r6_v2["signals"]]
-    v2_vend = float(r6_v2["analyses"][0]["samples"][-1]["values"][sigs6.index("v(out)")])
+    v2_vend = float(rows6[-1]["v(out)"])
     check("RC Step TRAN v(out, 1ms)", v2_vend, parse_ngspice_scalar(r6_ng, "vend"), 5e-3)
 
     # 7. 1,000-node RC Ladder timing benchmark (Spice V2 + KLU vs. ngspice)
@@ -181,7 +186,7 @@ C1 out 0 1u IC=0
     ladder_ng = "\n".join(lines + [".control", "op", "print v(n1000)", ".endc", ".END", ""])
 
     t0 = time.perf_counter()
-    rl_v2 = run_spice_v2(cli_path, ladder_v2)
+    rl_v2, _ = run_spice_v2(cli_path, ladder_v2)
     dt_v2 = (time.perf_counter() - t0) * 1000.0
     t0 = time.perf_counter()
     rl_ng = run_ngspice(ladder_ng)
