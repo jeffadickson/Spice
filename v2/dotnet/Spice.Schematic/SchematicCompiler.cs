@@ -178,23 +178,29 @@ public static class SchematicCompiler
             foreach (var m in document.EmbeddedModels) models[m.ModelName] = m;
         }
 
-        foreach (var comp in document.RootSheet.Components)
+        var allSheets = new List<SchematicSheet> { document.RootSheet };
+        if (document.SubSheets is not null) allSheets.AddRange(document.SubSheets);
+
+        foreach (var sheet in allSheets)
         {
-            if (!string.IsNullOrWhiteSpace(comp.LibraryPartId) &&
-                library.TryGet(comp.LibraryPartId, out var part) && part is not null)
+            foreach (var comp in sheet.Components)
             {
-                parts[part.Id] = part;
-                if (part.AttachedModel is not null)
+                if (!string.IsNullOrWhiteSpace(comp.LibraryPartId) &&
+                    library.TryGet(comp.LibraryPartId, out var part) && part is not null)
                 {
-                    models[part.AttachedModel.ModelName] = part.AttachedModel;
+                    parts[part.Id] = part;
+                    if (part.AttachedModel is not null)
+                    {
+                        models[part.AttachedModel.ModelName] = part.AttachedModel;
+                    }
                 }
-            }
-            else if (!string.IsNullOrWhiteSpace(comp.ModelName) &&
-                     !models.ContainsKey(comp.ModelName) &&
-                     library.TryFindByModelName(comp.ModelName, out var byModel) &&
-                     byModel?.AttachedModel is not null)
-            {
-                models[byModel.AttachedModel.ModelName] = byModel.AttachedModel;
+                else if (!string.IsNullOrWhiteSpace(comp.ModelName) &&
+                         !models.ContainsKey(comp.ModelName) &&
+                         library.TryFindByModelName(comp.ModelName, out var byModel) &&
+                         byModel?.AttachedModel is not null)
+                {
+                    models[byModel.AttachedModel.ModelName] = byModel.AttachedModel;
+                }
             }
         }
 
@@ -204,6 +210,50 @@ public static class SchematicCompiler
             EmbeddedModels = models.Count > 0 ? models.Values.OrderBy(m => m.ModelName, StringComparer.OrdinalIgnoreCase).ToList() : null
         };
     }
+
+    public static SchematicSheet ResolveSheet(SchematicDocument document, string? activeSheetId)
+    {
+        if (!string.IsNullOrWhiteSpace(activeSheetId) && document.SubSheets is not null)
+        {
+            var match = document.SubSheets.FirstOrDefault(s =>
+                string.Equals(s.SheetId, activeSheetId, StringComparison.OrdinalIgnoreCase));
+            if (match is not null) return match;
+        }
+        return document.RootSheet;
+    }
+
+    private static bool IsRootSheet(SchematicDocument document, SchematicSheet sheet) =>
+        ReferenceEquals(sheet, document.RootSheet) ||
+        string.Equals(sheet.SheetId, document.RootSheet.SheetId, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Resolves the canonical circuit net name for a sheet net. Global ground maps to "0";
+    /// nets on subsheets that match a sheet port or an off-sheet net name on the root sheet
+    /// bridge cleanly across sheets, while private subsheet nets are scoped as "{sheetId}_{net}".
+    /// </summary>
+    public static string ResolveNetName(SchematicDocument document, SchematicSheet sheet, WireNet net)
+    {
+        if (net.IsGlobalGround || string.Equals(net.NetName, "0", StringComparison.Ordinal))
+        {
+            return "0";
+        }
+        if (IsRootSheet(document, sheet))
+        {
+            return net.NetName;
+        }
+        bool isSharedPort =
+            (sheet.Ports?.Any(p => string.Equals(p.Name, net.NetName, StringComparison.OrdinalIgnoreCase)) == true) ||
+            (document.RootSheet.Ports?.Any(p => string.Equals(p.Name, net.NetName, StringComparison.OrdinalIgnoreCase)) == true) ||
+            document.RootSheet.Nets.Any(n => !n.IsGlobalGround && string.Equals(n.NetName, net.NetName, StringComparison.OrdinalIgnoreCase));
+        return isSharedPort ? net.NetName : $"{sheet.SheetId}_{net.NetName}";
+    }
+
+    /// <summary>
+    /// Resolves the canonical SPICE instance ID for a component while preserving its leading
+    /// SPICE element prefix letter (e.g., R1 on sheet2 -> R1_sheet2).
+    /// </summary>
+    public static string ResolveInstanceId(SchematicDocument document, SchematicSheet sheet, PlacedComponent comp) =>
+        IsRootSheet(document, sheet) ? comp.InstanceId : $"{comp.InstanceId}_{sheet.SheetId}";
 
     /// <summary>
     /// Deterministic, versioned, Git-diffable JSON persistence (.spice.json) with SHA-256
@@ -312,14 +362,16 @@ public static class SchematicCompiler
 
     /// <summary>
     /// Computes complete DC node voltages and per-component branch currents (passive sign
-    /// convention p -&gt; n) from a solved OperatingPoint ResultManifestIr.
+    /// convention p -&gt; n) across all sheets (and local aliases for the active sheet)
+    /// from a solved OperatingPoint ResultManifestIr.
     /// </summary>
     public static OperatingPointOverlay BuildOperatingPointOverlay(
         SchematicDocument document,
         ResultManifestIr opResult,
         double gridSize = 20.0,
         bool showGrid = true,
-        bool showOperatingPoint = true)
+        bool showOperatingPoint = true,
+        string? activeSheetId = null)
     {
         var voltages = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase) { ["0"] = 0.0 };
         var currents = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
@@ -343,57 +395,72 @@ public static class SchematicCompiler
             }
         }
 
-        // Map (instanceId, pinName) -> effective net name to derive branch currents for R, C, I, D.
-        var pinToNet = new Dictionary<(string Inst, string Pin), string>();
-        foreach (var net in document.RootSheet.Nets)
-        {
-            var eff = net.IsGlobalGround || string.Equals(net.NetName, "0", StringComparison.Ordinal)
-                ? "0"
-                : net.NetName.ToLowerInvariant();
-            foreach (var pr in net.ConnectedPins)
-            {
-                pinToNet[(pr.InstanceId, pr.PinName)] = eff;
-            }
-        }
+        var activeSheet = ResolveSheet(document, activeSheetId);
+        var allSheets = new List<SchematicSheet> { document.RootSheet };
+        if (document.SubSheets is not null) allSheets.AddRange(document.SubSheets);
 
-        double GetNodeV(string inst, string pin)
+        foreach (var sheet in allSheets)
         {
-            if (pinToNet.TryGetValue((inst, pin), out var net) && voltages.TryGetValue(net, out var v))
+            var pinToNet = new Dictionary<(string Inst, string Pin), string>();
+            foreach (var net in sheet.Nets)
             {
-                return v;
+                var eff = ResolveNetName(document, sheet, net).ToLowerInvariant();
+                foreach (var pr in net.ConnectedPins)
+                {
+                    pinToNet[(pr.InstanceId, pr.PinName)] = eff;
+                }
             }
-            return 0.0;
-        }
 
-        foreach (var comp in document.RootSheet.Components)
-        {
-            if (currents.ContainsKey(comp.InstanceId)) continue;
-            switch (comp.DeviceKindId)
+            double GetNodeV(string inst, string pin)
             {
-                case "spice.resistor":
-                    if (comp.Parameters.TryGetValue("ohms", out var r) && r > 0.0)
+                if (pinToNet.TryGetValue((inst, pin), out var net) && voltages.TryGetValue(net, out var v))
+                {
+                    return v;
+                }
+                return 0.0;
+            }
+
+            foreach (var comp in sheet.Components)
+            {
+                var canonId = ResolveInstanceId(document, sheet, comp);
+                if (!currents.TryGetValue(canonId, out var idc))
+                {
+                    switch (comp.DeviceKindId)
                     {
-                        var vp = GetNodeV(comp.InstanceId, "p");
-                        var vn = GetNodeV(comp.InstanceId, "n");
-                        currents[comp.InstanceId] = (vp - vn) / r;
+                        case "spice.resistor":
+                            if (comp.Parameters.TryGetValue("ohms", out var r) && r > 0.0)
+                            {
+                                idc = (GetNodeV(comp.InstanceId, "p") - GetNodeV(comp.InstanceId, "n")) / r;
+                                currents[canonId] = idc;
+                            }
+                            break;
+                        case "spice.capacitor":
+                            idc = 0.0;
+                            currents[canonId] = idc;
+                            break;
+                        case "spice.isrc":
+                            idc = comp.Parameters.TryGetValue("dc_amps", out var dcI) ? dcI : 0.0;
+                            currents[canonId] = idc;
+                            break;
+                        case "spice.diode":
+                        {
+                            var vd = GetNodeV(comp.InstanceId, "p") - GetNodeV(comp.InstanceId, "n");
+                            var isA = comp.Parameters.TryGetValue("is_amps", out var iv) ? iv : 1e-14;
+                            var nEm = comp.Parameters.TryGetValue("n_emission", out var nv) ? nv : 1.0;
+                            var vt = 0.025851991;
+                            var arg = Math.Clamp(vd / (nEm * vt), -80.0, 40.0);
+                            idc = isA * (Math.Exp(arg) - 1.0);
+                            currents[canonId] = idc;
+                            break;
+                        }
                     }
-                    break;
-                case "spice.capacitor":
-                    currents[comp.InstanceId] = 0.0;
-                    break;
-                case "spice.isrc":
-                    currents[comp.InstanceId] = comp.Parameters.TryGetValue("dc_amps", out var dcI) ? dcI : 0.0;
-                    break;
-                case "spice.diode":
-                    {
-                        var vd = GetNodeV(comp.InstanceId, "p") - GetNodeV(comp.InstanceId, "n");
-                        var isA = comp.Parameters.TryGetValue("is_amps", out var iv) ? iv : 1e-14;
-                        var nEm = comp.Parameters.TryGetValue("n_emission", out var nv) ? nv : 1.0;
-                        var vt = 0.025851991;
-                        var arg = Math.Clamp(vd / (nEm * vt), -80.0, 40.0);
-                        currents[comp.InstanceId] = isA * (Math.Exp(arg) - 1.0);
-                        break;
-                    }
+                }
+                if (ReferenceEquals(sheet, activeSheet) &&
+                    !string.Equals(canonId, comp.InstanceId, StringComparison.OrdinalIgnoreCase) &&
+                    currents.TryGetValue(canonId, out var activeVal))
+                {
+                    currents[comp.InstanceId] = activeVal;
+                }
             }
         }
 
@@ -401,20 +468,20 @@ public static class SchematicCompiler
     }
 
     /// <summary>
-    /// Deterministic vector SVG export of the root schematic sheet with configurable snap grid
-    /// (lines/dots/off), alignment snap guides, orthogonal pin-to-pin wiring, IEEE schematic
-    /// symbols (including MOSFET/BJT/JFET/Schottky/Op-Amp/custom IC subcircuits), annotations,
-    /// hierarchical ports, cross-probing metadata, dark/light themes, and live DC operating-point
-    /// voltage/current annotations (ARCH-SCHEM-005).
+    /// Deterministic vector SVG export of the selected schematic sheet (RootSheet by default,
+    /// or any SubSheet via activeSheetId) with configurable snap grid, alignment snap guides,
+    /// orthogonal pin-to-pin wiring, IEEE &amp; custom vector symbols, annotations, ports,
+    /// cross-probing metadata, dark/light themes, and live DC operating-point overlays.
     /// </summary>
     public static string ExportSvg(
         SchematicDocument document,
         OperatingPointOverlay? opOverlay = null,
         ComponentLibraryStore? library = null,
         bool lightTheme = false,
-        string? gridStyle = null)
+        string? gridStyle = null,
+        string? activeSheetId = null)
     {
-        var sheet = document.RootSheet;
+        var sheet = ResolveSheet(document, activeSheetId);
         var grid = opOverlay is { GridSize: > 2.0 } ? opOverlay.GridSize : (sheet.GridPitch > 2.0 ? sheet.GridPitch : 20.0);
         var effectiveGridStyle = (gridStyle ?? sheet.GridStyle ?? "lines").ToLowerInvariant();
         if (opOverlay is { ShowGrid: false }) effectiveGridStyle = "off";
@@ -537,9 +604,7 @@ public static class SchematicCompiler
                 }
             }
 
-            var effectiveNet = net.IsGlobalGround || string.Equals(net.NetName, "0", StringComparison.Ordinal)
-                ? "0"
-                : net.NetName.ToLowerInvariant();
+            var effectiveNet = ResolveNetName(document, sheet, net).ToLowerInvariant();
             var signalAttr = effectiveNet == "0" ? "" : $"v({effectiveNet})";
             var stroke = net.IsGlobalGround ? gndCol : wireCol;
 
@@ -1078,7 +1143,8 @@ public static class SchematicCompiler
             {
                 hasGround = true;
             }
-            if (net.ConnectedPins.Count < 2 && effectiveNet != "0")
+            bool isSheetPort = sheet.Ports?.Any(p => string.Equals(p.Name, net.NetName, StringComparison.OrdinalIgnoreCase)) == true;
+            if (net.ConnectedPins.Count < 2 && effectiveNet != "0" && !isSheetPort)
             {
                 diagnostics.Add(new ErcDiagnostic(
                     ErcSeverity.Warning,
@@ -1182,12 +1248,11 @@ public static class SchematicCompiler
         List<string> directives,
         ComponentLibraryStore? library)
     {
+        _ = prefix;
         var pinMap = new Dictionary<(string Inst, string Pin), string>();
         foreach (var net in sheet.Nets)
         {
-            var effectiveNet = net.IsGlobalGround || string.Equals(net.NetName, "0", StringComparison.Ordinal)
-                ? "0"
-                : $"{prefix}{net.NetName}";
+            var effectiveNet = ResolveNetName(document, sheet, net);
             nodes.Add(effectiveNet);
             foreach (var p in net.ConnectedPins)
             {
@@ -1233,7 +1298,7 @@ public static class SchematicCompiler
                 : null;
 
             devices.Add(new DeviceInstanceIr(
-                Id: $"{prefix}{comp.InstanceId}",
+                Id: ResolveInstanceId(document, sheet, comp),
                 KindId: comp.DeviceKindId,
                 PinConnections: conns,
                 Parameters: new Dictionary<string, double>(comp.Parameters, StringComparer.Ordinal),

@@ -344,11 +344,11 @@ public sealed class WorkbenchServer : IAsyncDisposable
                                 var opSim = await SolveSchematicAsync(req.Document, compiled.Circuit, AnalysisKind.OperatingPoint, new Dictionary<string, double>(), null, ct);
                                 if (opSim.Status == RunTerminalStatus.Succeeded)
                                 {
-                                    opOverlay = SchematicCompiler.BuildOperatingPointOverlay(req.Document, opSim, req.GridSize ?? 20.0, req.ShowGrid ?? true, showOperatingPoint: true);
+                                    opOverlay = SchematicCompiler.BuildOperatingPointOverlay(req.Document, opSim, req.GridSize ?? 20.0, req.ShowGrid ?? true, showOperatingPoint: true, activeSheetId: req.ActiveSheetId);
                                 }
                             }
                         }
-                        content = SchematicCompiler.ExportSvg(req.Document, opOverlay, _library, lightTheme: fmt == "svg_light", gridStyle: req.GridStyle);
+                        content = SchematicCompiler.ExportSvg(req.Document, opOverlay, _library, lightTheme: fmt == "svg_light", gridStyle: req.GridStyle, activeSheetId: req.ActiveSheetId);
                         filename = $"{req.Document.Name}.svg";
                         contentType = "image/svg+xml; charset=utf-8";
                         break;
@@ -383,7 +383,7 @@ public sealed class WorkbenchServer : IAsyncDisposable
                 {
                     erc_ok = compiled.Succeeded,
                     diagnostics = compiled.Diagnostics,
-                    svg = SchematicCompiler.ExportSvg(req.Document, library: _library, gridStyle: req.GridStyle),
+                    svg = SchematicCompiler.ExportSvg(req.Document, library: _library, gridStyle: req.GridStyle, activeSheetId: req.ActiveSheetId),
                     spice = compiled.Succeeded ? SchematicCompiler.ExportSpiceNetlist(req.Document, analysis, library: _library) : ""
                 });
                 return;
@@ -414,7 +414,8 @@ public sealed class WorkbenchServer : IAsyncDisposable
                             ShowOperatingPoint: false),
                         _library,
                         lightTheme: req.LightTheme ?? false,
-                        gridStyle: req.GridStyle);
+                        gridStyle: req.GridStyle,
+                        activeSheetId: req.ActiveSheetId);
                     await WriteJsonAsync(ctx.Response, 200, new
                     {
                         erc_ok = false,
@@ -435,7 +436,7 @@ public sealed class WorkbenchServer : IAsyncDisposable
                     : await SolveSchematicAsync(doc, compiled.Circuit, AnalysisKind.OperatingPoint, new Dictionary<string, double>(), null, ct);
 
                 OperatingPointOverlay overlay = opSim.Status == RunTerminalStatus.Succeeded
-                    ? SchematicCompiler.BuildOperatingPointOverlay(doc, opSim, gridSize, showGrid, showOp)
+                    ? SchematicCompiler.BuildOperatingPointOverlay(doc, opSim, gridSize, showGrid, showOp, activeSheetId: req.ActiveSheetId)
                     : new OperatingPointOverlay(
                         new Dictionary<string, double>(),
                         new Dictionary<string, double>(),
@@ -448,7 +449,8 @@ public sealed class WorkbenchServer : IAsyncDisposable
                     overlay,
                     _library,
                     lightTheme: req.LightTheme ?? false,
-                    gridStyle: req.GridStyle);
+                    gridStyle: req.GridStyle,
+                    activeSheetId: req.ActiveSheetId);
                 var (axis, series) = FlattenResult(sim);
                 var spiceText = SchematicExporter.ExportNetlist(
                     doc,
@@ -719,7 +721,8 @@ public sealed class WorkbenchServer : IAsyncDisposable
         bool? ShowGrid = null,
         bool? ShowOp = null,
         string? GridStyle = null,
-        bool? LightTheme = null);
+        bool? LightTheme = null,
+        string? ActiveSheetId = null);
 
     private sealed record SchematicExportRequest(
         SchematicDocument? Document,
@@ -734,7 +737,8 @@ public sealed class WorkbenchServer : IAsyncDisposable
         bool? IncludeOp = null,
         double? GridSize = null,
         bool? ShowGrid = null,
-        string? GridStyle = null);
+        string? GridStyle = null,
+        string? ActiveSheetId = null);
 
     private sealed record SchematicSaveRequest(
         SchematicDocument? Document,

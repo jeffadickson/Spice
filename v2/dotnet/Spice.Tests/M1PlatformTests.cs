@@ -943,4 +943,140 @@ public sealed class M1PlatformTests
             if (Directory.Exists(tmpDir)) Directory.Delete(tmpDir, recursive: true);
         }
     }
+
+    [Fact]
+    public async Task MultiSheet_OffSheetPorts_BridgeAndSimulateLiveAcrossSheets()
+    {
+        // Sheet 1 (root): V1 (10V) -> R1 (1k) -> mid (off-sheet port) + C1 (1uF)
+        // Sheet 2 (stage2): mid (off-sheet port) -> R1 (500) -> tap (private net -> stage2_tap) -> R2 (500) -> out -> Rload (2k) || C1 (1uF)
+        // Exact DC steady state: I = 10V / 4k = 2.5 mA -> v(mid)=7.50V, v(stage2_tap)=6.25V, v(out)=5.00V.
+        var multiDoc = new SchematicDocument(
+            SchemaVersion: "2.1",
+            Name: "multisheet_cascaded_rc",
+            RootSheet: new SchematicSheet(
+                SheetId: "root",
+                Title: "Stage 1: Input RC",
+                Components:
+                [
+                    new PlacedComponent("V1", "spice.vsrc", 80, 160, 90, new Dictionary<string, double> { ["dc_volts"] = 10.0, ["ac_mag"] = 1.0 }),
+                    new PlacedComponent("R1", "spice.resistor", 220, 80, 0, new Dictionary<string, double> { ["ohms"] = 1000.0 }),
+                    new PlacedComponent("C1", "spice.capacitor", 340, 160, 90, new Dictionary<string, double> { ["farads"] = 1e-6, ["ic_volts"] = 0.0 })
+                ],
+                Nets:
+                [
+                    new WireNet("in", [new PinRef("V1", "p"), new PinRef("R1", "p")]),
+                    new WireNet("mid", [new PinRef("R1", "n"), new PinRef("C1", "p")]),
+                    new WireNet("GND", [new PinRef("V1", "n"), new PinRef("C1", "n")], IsGlobalGround: true)
+                ],
+                Ports:
+                [
+                    new SheetPort("mid", 420, 80, "out")
+                ]),
+            SubSheets:
+            [
+                new SchematicSheet(
+                    SheetId: "stage2",
+                    Title: "Stage 2: Output RC + Load",
+                    Components:
+                    [
+                        new PlacedComponent("R1", "spice.resistor", 140, 80, 0, new Dictionary<string, double> { ["ohms"] = 500.0 }),
+                        new PlacedComponent("R2", "spice.resistor", 260, 80, 0, new Dictionary<string, double> { ["ohms"] = 500.0 }),
+                        new PlacedComponent("C1", "spice.capacitor", 340, 160, 90, new Dictionary<string, double> { ["farads"] = 1e-6, ["ic_volts"] = 0.0 }),
+                        new PlacedComponent("Rload", "spice.resistor", 420, 160, 90, new Dictionary<string, double> { ["ohms"] = 2000.0 })
+                    ],
+                    Nets:
+                    [
+                        new WireNet("mid", [new PinRef("R1", "p")]),
+                        new WireNet("tap", [new PinRef("R1", "n"), new PinRef("R2", "p")]),
+                        new WireNet("out", [new PinRef("R2", "n"), new PinRef("C1", "p"), new PinRef("Rload", "p")]),
+                        new WireNet("GND", [new PinRef("C1", "n"), new PinRef("Rload", "n")], IsGlobalGround: true)
+                    ],
+                    Ports:
+                    [
+                        new SheetPort("mid", 60, 80, "in"),
+                        new SheetPort("out", 480, 80, "out")
+                    ])
+            ]);
+
+        // 1. Compiler check: 0 ERC errors, bridged 'mid', scoped 'stage2_tap', SPICE-safe subsheet IDs
+        var compile = SchematicCompiler.CompileToIr(multiDoc);
+        Assert.True(compile.Succeeded, string.Join("; ", compile.Diagnostics.Select(d => d.Message)));
+        Assert.NotNull(compile.Circuit);
+        Assert.Contains(compile.Circuit!.Devices, i => i.Id == "R1");
+        Assert.Contains(compile.Circuit.Devices, i => i.Id == "R1_stage2");
+        Assert.Contains(compile.Circuit.Devices, i => i.Id == "Rload_stage2");
+        Assert.Contains(compile.Circuit.Nodes, n => n.Equals("mid", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(compile.Circuit.Nodes, n => n.Equals("stage2_tap", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(compile.Circuit.Nodes, n => n.Equals("out", StringComparison.OrdinalIgnoreCase));
+
+        // 2. BOM check: lists components across both sheets with Sheet column
+        var bom = SchematicExporter.ExportBomCsv(multiDoc);
+        Assert.Contains("Designator,Sheet,DeviceKind", bom, StringComparison.Ordinal);
+        Assert.Contains("V1,root,", bom, StringComparison.Ordinal);
+        Assert.Contains("Rload,stage2,", bom, StringComparison.Ordinal);
+
+        // 3. Live WorkbenchServer multi-sheet simulation + active-sheet SVG rendering
+        using var backend = TryCreateNativeBackend();
+        if (backend is null) return;
+
+        var tmpDir = Path.Combine(Path.GetTempPath(), $"spice-v2-multisheet-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tmpDir);
+        try
+        {
+            var store = new ComponentLibraryStore(Path.Combine(tmpDir, "library.json"));
+            await using var server = new WorkbenchServer(port: 0, backend: backend, library: store);
+            server.Start();
+            using var http = new HttpClient { BaseAddress = new Uri(server.BaseUrl) };
+
+            var uiHtml = await http.GetStringAsync("/");
+            Assert.Contains("id=\"sheet-bar\"", uiHtml, StringComparison.Ordinal);
+            Assert.Contains("multisheet_rc", uiHtml, StringComparison.Ordinal);
+
+            // Simulate full 2-sheet circuit while rendering active sheet = 'stage2'
+            var simResp = await http.PostAsJsonAsync("/api/schematic/simulate", new
+            {
+                document = multiDoc,
+                analysis = "tran",
+                showOp = true,
+                activeSheetId = "stage2"
+            });
+            simResp.EnsureSuccessStatusCode();
+            using var simJson = JsonDocument.Parse(await simResp.Content.ReadAsStringAsync());
+            Assert.True(simJson.RootElement.GetProperty("erc_ok").GetBoolean());
+            Assert.Equal("Succeeded", simJson.RootElement.GetProperty("status").GetString());
+
+            var opV = simJson.RootElement.GetProperty("op_voltages");
+            Assert.Equal(7.5, opV.GetProperty("mid").GetDouble(), precision: 6);
+            Assert.Equal(6.25, opV.GetProperty("stage2_tap").GetDouble(), precision: 6);
+            Assert.Equal(5.0, opV.GetProperty("out").GetDouble(), precision: 6);
+
+            var opI = simJson.RootElement.GetProperty("op_currents");
+            Assert.Equal(2.5e-3, Math.Abs(opI.GetProperty("Rload").GetDouble()), precision: 6);
+
+            var stage2Svg = simJson.RootElement.GetProperty("svg").GetString()!;
+            Assert.Contains("data-instance=\"Rload\"", stage2Svg, StringComparison.Ordinal);
+            Assert.DoesNotContain("data-instance=\"V1\"", stage2Svg, StringComparison.Ordinal);
+            Assert.Contains("5.00 V", stage2Svg, StringComparison.Ordinal);
+            Assert.Contains("6.25 V", stage2Svg, StringComparison.Ordinal);
+            Assert.Contains("7.50 V", stage2Svg, StringComparison.Ordinal);
+
+            // Export SVG targeting activeSheetId = 'stage2'
+            var svgExpResp = await http.PostAsJsonAsync("/api/schematic/export", new
+            {
+                document = multiDoc,
+                format = "svg",
+                analysis = "op",
+                activeSheetId = "stage2"
+            });
+            svgExpResp.EnsureSuccessStatusCode();
+            using var svgExpJson = JsonDocument.Parse(await svgExpResp.Content.ReadAsStringAsync());
+            var expSvg = svgExpJson.RootElement.GetProperty("content").GetString()!;
+            Assert.Contains("data-instance=\"Rload\"", expSvg, StringComparison.Ordinal);
+            Assert.DoesNotContain("data-instance=\"V1\"", expSvg, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tmpDir)) Directory.Delete(tmpDir, recursive: true);
+        }
+    }
 }

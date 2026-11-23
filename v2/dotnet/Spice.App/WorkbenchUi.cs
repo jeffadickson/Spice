@@ -154,6 +154,22 @@ public static class WorkbenchUi
     .canvas-stage {
       position: relative; display: flex; flex-direction: column; min-height: 0; background: var(--bg); overflow: hidden;
     }
+    .sheet-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      padding: 4px 10px; background: #0a101e; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .sheet-tabs { display: flex; align-items: center; gap: 4px; overflow-x: auto; }
+    .sheet-tab {
+      background: var(--surface-2); color: var(--muted); border: 1px solid var(--border);
+      border-radius: 5px; padding: 3px 10px; font-size: 11.5px; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+    }
+    .sheet-tab.active {
+      background: rgba(56, 189, 248, 0.16); color: #fff; border-color: var(--accent);
+    }
+    .sheet-tab .sbadge {
+      font-family: var(--mono); font-size: 9.5px; color: var(--dim);
+    }
     #svg-host {
       flex: 1; min-height: 0; width: 100%; display: flex; align-items: stretch; justify-content: stretch;
       overflow: hidden; user-select: none; cursor: default;
@@ -303,6 +319,7 @@ public static class WorkbenchUi
           <select id="schem-preset" title="Load circuit template">
             <option value="divider">Resistive Divider (10V, 1k, 2k)</option>
             <option value="rc">RC Low-Pass Filter (5V, 1k, 1uF)</option>
+            <option value="multisheet_rc">Multi-Sheet: 2-Stage Cascaded RC Filter</option>
             <option value="diode">1N4148 Diode Forward Bias</option>
             <option value="bsim4_inv">BSIM4 65nm CMOS Inverter</option>
             <option value="bjt_amp">2N2222 NPN Common-Emitter Amp</option>
@@ -331,7 +348,7 @@ public static class WorkbenchUi
           <button id="mode-move" class="icon-btn mode-on" title="Select, move with snap lines, or click nets to probe (Esc)">Select / Probe</button>
           <button id="mode-wire" class="icon-btn" title="Click two pins to draw an orthogonal wire (W)">Wire (W)</button>
           <button id="btn-add-directive" class="icon-btn" title="Add SPICE directive / note to sheet (T)">+ Directive</button>
-          <button id="btn-add-port" class="icon-btn" title="Add hierarchical interface port pin (P)">+ Port</button>
+          <button id="btn-add-port" class="icon-btn" title="Add off-sheet / interface port pin (P)">+ Port</button>
         </div>
 
         <div class="rib-group">
@@ -380,12 +397,12 @@ public static class WorkbenchUi
 
             <div id="left-navigator" class="dock-section">
               <div class="sec-title">
-                <span>Active Circuit</span>
-                <button id="btn-sheet-to-part" class="icon-btn primary" style="padding:2px 7px;font-size:10.5px">Save Circuit as .SUBCKT</button>
+                <span>Sheets &amp; Subsheets</span>
+                <button id="btn-sheet-to-part" class="icon-btn primary" style="padding:2px 7px;font-size:10.5px">Save as .SUBCKT</button>
               </div>
               <div id="nav-sheets" class="nav-list"></div>
 
-              <div class="sec-title"><span>Instances</span><span id="nav-inst-count">0</span></div>
+              <div class="sec-title"><span>Instances (Active Sheet)</span><span id="nav-inst-count">0</span></div>
               <div id="nav-instances" class="nav-list"></div>
 
               <div class="sec-title"><span>Nets (Click to Probe)</span><span id="nav-net-count">0</span></div>
@@ -397,8 +414,17 @@ public static class WorkbenchUi
           </div>
         </aside>
 
-        <!-- CENTER STAGE: INTERACTIVE PAN/ZOOM SCHEMATIC CANVAS -->
+        <!-- CENTER STAGE: MULTI-SHEET TAB BAR + INTERACTIVE PAN/ZOOM SCHEMATIC CANVAS -->
         <section class="canvas-stage">
+          <div id="sheet-bar" class="sheet-bar">
+            <div id="sheet-tabs" class="sheet-tabs"></div>
+            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+              <button id="btn-sheet-parent" class="icon-btn" style="padding:2px 7px;font-size:11px;display:none" title="Return to Root Sheet (Shift+H)">&#8592; Root</button>
+              <button id="btn-sheet-add" class="icon-btn" style="padding:2px 7px;font-size:11px" title="Add a new linked subsheet">+ Sheet</button>
+              <button id="btn-sheet-rename" class="icon-btn" style="padding:2px 7px;font-size:11px" title="Rename active sheet">Rename</button>
+              <button id="btn-sheet-del" class="icon-btn danger" style="padding:2px 7px;font-size:11px;display:none" title="Delete active subsheet">Del Sheet</button>
+            </div>
+          </div>
           <div id="svg-host"></div>
           <div class="zoom-hud">
             <button id="zoom-out" title="Zoom out (-)">−</button>
@@ -824,6 +850,42 @@ n_emission=1.85</textarea>
             { netName: 'GND', connectedPins: [{ instanceId: 'Vin', pinName: 'n' }, { instanceId: 'Rg', pinName: 'n' }], isGlobalGround: true }
           ]
         }
+      },
+      multisheet_rc: {
+        schemaVersion: '2.1', formatId: 'spice.schematic.v2', name: 'multisheet_2stage_rc',
+        rootSheet: {
+          sheetId: 'root', title: 'Stage 1: Input RC', gridPitch: 20, gridStyle: 'lines',
+          components: [
+            { instanceId: 'V1', deviceKindId: 'spice.vsrc', x: 80, y: 160, rotationDegrees: 90, parameters: { dc_volts: 10.0, ac_mag: 1.0 } },
+            { instanceId: 'R1', deviceKindId: 'spice.resistor', x: 220, y: 80, rotationDegrees: 0, parameters: { ohms: 1000.0 } },
+            { instanceId: 'C1', deviceKindId: 'spice.capacitor', x: 340, y: 160, rotationDegrees: 90, parameters: { farads: 1e-6, ic_volts: 0.0 } }
+          ],
+          nets: [
+            { netName: 'in', connectedPins: [{ instanceId: 'V1', pinName: 'p' }, { instanceId: 'R1', pinName: 'p' }], isGlobalGround: false },
+            { netName: 'mid', connectedPins: [{ instanceId: 'R1', pinName: 'n' }, { instanceId: 'C1', pinName: 'p' }], isGlobalGround: false },
+            { netName: 'GND', connectedPins: [{ instanceId: 'V1', pinName: 'n' }, { instanceId: 'C1', pinName: 'n' }], isGlobalGround: true }
+          ],
+          ports: [{ name: 'mid', x: 420, y: 80, direction: 'out' }]
+        },
+        subSheets: [
+          {
+            sheetId: 'stage2', title: 'Stage 2: Output RC + Load', gridPitch: 20, gridStyle: 'lines',
+            components: [
+              { instanceId: 'R1', deviceKindId: 'spice.resistor', x: 180, y: 80, rotationDegrees: 0, parameters: { ohms: 1000.0 } },
+              { instanceId: 'C1', deviceKindId: 'spice.capacitor', x: 300, y: 160, rotationDegrees: 90, parameters: { farads: 1e-6, ic_volts: 0.0 } },
+              { instanceId: 'Rload', deviceKindId: 'spice.resistor', x: 400, y: 160, rotationDegrees: 90, parameters: { ohms: 2000.0 } }
+            ],
+            nets: [
+              { netName: 'mid', connectedPins: [{ instanceId: 'R1', pinName: 'p' }], isGlobalGround: false },
+              { netName: 'out', connectedPins: [{ instanceId: 'R1', pinName: 'n' }, { instanceId: 'C1', pinName: 'p' }, { instanceId: 'Rload', pinName: 'p' }], isGlobalGround: false },
+              { netName: 'GND', connectedPins: [{ instanceId: 'C1', pinName: 'n' }, { instanceId: 'Rload', pinName: 'n' }], isGlobalGround: true }
+            ],
+            ports: [
+              { name: 'mid', x: 80, y: 80, direction: 'in' },
+              { name: 'out', x: 480, y: 80, direction: 'out' }
+            ]
+          }
+        ]
       }
     };
 
@@ -837,6 +899,7 @@ n_emission=1.85</textarea>
     };
 
     let currentSchem = structuredClone(SCHEM_PRESETS.divider);
+    let activeSheetId = 'root';
     let undoStack = [];
     let redoStack = [];
     let libraryEntries = [];
@@ -849,6 +912,100 @@ n_emission=1.85</textarea>
     let lastDeckResult = null;
     let deckSelected = new Set();
     let zoomState = { scale: 1.0, vb: null, baseVb: null };
+
+    function allSheets() {
+      currentSchem.subSheets = currentSchem.subSheets || [];
+      return [currentSchem.rootSheet, ...currentSchem.subSheets];
+    }
+    function activeSheet() {
+      const sheets = allSheets();
+      const found = sheets.find(s => s.sheetId === activeSheetId);
+      if (found) return found;
+      activeSheetId = currentSchem.rootSheet.sheetId;
+      return currentSchem.rootSheet;
+    }
+    function resolvedNetSignal(sheet, net) {
+      if (net.isGlobalGround) return '';
+      if (sheet === currentSchem.rootSheet) return `v(${net.netName.toLowerCase()})`;
+      const nameLower = net.netName.toLowerCase();
+      const isPort = (sheet.ports || []).some(p => p.name.toLowerCase() === nameLower) ||
+        (currentSchem.rootSheet.ports || []).some(p => p.name.toLowerCase() === nameLower) ||
+        (currentSchem.rootSheet.nets || []).some(n => !n.isGlobalGround && n.netName.toLowerCase() === nameLower);
+      return isPort ? `v(${nameLower})` : `v(${sheet.sheetId.toLowerCase()}_${nameLower})`;
+    }
+    function setActiveSheet(sheetId) {
+      const sheets = allSheets();
+      const target = sheets.find(s => s.sheetId === sheetId) || currentSchem.rootSheet;
+      activeSheetId = target.sheetId;
+      selectedInstance = null;
+      wireStartPin = null;
+      zoomState = { scale: 1.0, vb: null, baseVb: null };
+      refreshAllSchematicViews();
+      runSchematicSim();
+    }
+    function addSubSheet() {
+      const existing = allSheets();
+      const defaultTitle = `Subsheet ${existing.length}`;
+      const title = prompt('New subsheet title (share net names via Off-Sheet Ports):', defaultTitle);
+      if (!title || !title.trim()) return;
+      pushUndo();
+      let idx = existing.length + 1;
+      let sid = 'sheet' + idx;
+      while (existing.some(s => s.sheetId.toLowerCase() === sid.toLowerCase())) {
+        ++idx; sid = 'sheet' + idx;
+      }
+      currentSchem.subSheets = currentSchem.subSheets || [];
+      currentSchem.subSheets.push({
+        sheetId: sid,
+        title: title.trim(),
+        gridPitch: gridPitch(),
+        gridStyle: gridStyle(),
+        components: [],
+        nets: [{ netName: 'GND', connectedPins: [], isGlobalGround: true }],
+        ports: []
+      });
+      setActiveSheet(sid);
+    }
+    function renameActiveSheet() {
+      const sheet = activeSheet();
+      const next = prompt('Rename sheet:', sheet.title || sheet.sheetId);
+      if (!next || !next.trim()) return;
+      pushUndo();
+      sheet.title = next.trim();
+      refreshAllSchematicViews();
+      runSchematicSim();
+    }
+    function deleteActiveSheet() {
+      const sheet = activeSheet();
+      if (sheet === currentSchem.rootSheet) return;
+      pushUndo();
+      currentSchem.subSheets = (currentSchem.subSheets || []).filter(s => s.sheetId !== sheet.sheetId);
+      setActiveSheet(currentSchem.rootSheet.sheetId);
+    }
+    function renderSheetBar() {
+      const tabsEl = document.getElementById('sheet-tabs');
+      if (!tabsEl) return;
+      const cur = activeSheet();
+      tabsEl.innerHTML = '';
+      allSheets().forEach((s, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'sheet-tab' + (s.sheetId === cur.sheetId ? ' active' : '');
+        const label = idx === 0 ? `Root: ${s.title || s.sheetId}` : `${s.title || s.sheetId}`;
+        btn.innerHTML = `${escapeHtmlAttr(label)} <span class="sheet-badge">${(s.components || []).length}</span>`;
+        btn.title = `Sheet ID: ${s.sheetId} (${(s.components || []).length} components, ${(s.ports || []).length} off-sheet ports)`;
+        btn.onclick = () => setActiveSheet(s.sheetId);
+        tabsEl.appendChild(btn);
+      });
+      const isRoot = cur === currentSchem.rootSheet;
+      const parentBtn = document.getElementById('btn-sheet-parent');
+      const delBtn = document.getElementById('btn-sheet-del');
+      if (parentBtn) parentBtn.disabled = isRoot;
+      if (delBtn) delBtn.disabled = isRoot;
+    }
+    document.getElementById('btn-sheet-parent').addEventListener('click', () => setActiveSheet(currentSchem.rootSheet.sheetId));
+    document.getElementById('btn-sheet-add').addEventListener('click', addSubSheet);
+    document.getElementById('btn-sheet-rename').addEventListener('click', renameActiveSheet);
+    document.getElementById('btn-sheet-del').addEventListener('click', deleteActiveSheet);
 
     function gridPitch() { return Number(document.getElementById('grid-pitch').value) || 20; }
     function gridStyle() { return document.getElementById('grid-style').value || 'lines'; }
@@ -863,6 +1020,7 @@ n_emission=1.85</textarea>
       redoStack.push(JSON.stringify(currentSchem));
       currentSchem = JSON.parse(undoStack.pop());
       selectedInstance = null;
+      activeSheet();
       refreshAllSchematicViews();
       runSchematicSim();
     }
@@ -871,6 +1029,7 @@ n_emission=1.85</textarea>
       undoStack.push(JSON.stringify(currentSchem));
       currentSchem = JSON.parse(redoStack.pop());
       selectedInstance = null;
+      activeSheet();
       refreshAllSchematicViews();
       runSchematicSim();
     }
@@ -911,6 +1070,7 @@ n_emission=1.85</textarea>
           <tr><td><span class="kbd">Ctrl+R</span></td><td>Rotate selected 90°</td><td><span class="kbd">Ctrl+M</span></td><td>Mirror selected horizontally</td></tr>
           <tr><td><span class="kbd">Ctrl+Z / Y</span></td><td>Undo / Redo</td><td><span class="kbd">Del</span></td><td>Delete selected component</td></tr>
           <tr><td><span class="kbd">+ / − / F</span></td><td>Zoom In / Out / Fit Sheet</td><td><span class="kbd">Ctrl+S</span></td><td>Save versioned .spice.json</td></tr>
+          <tr><td><span class="kbd">PgUp / PgDn</span></td><td>Cycle Schematic Sheets</td><td><span class="kbd">Shift+H</span></td><td>Return to Root Sheet</td></tr>
           <tr><td><span class="kbd">F5</span></td><td>Run Native C++20 Simulation</td><td><span class="kbd">Alt+1..4</span></td><td>Switch Workbench Tabs</td></tr>
         </tbody>
       </table>
@@ -968,13 +1128,15 @@ n_emission=1.85</textarea>
 
     function nextInstanceId(prefix) {
       let n = 1;
-      while (currentSchem.rootSheet.components.some(c => c.instanceId.toLowerCase() === (prefix + n).toLowerCase())) ++n;
+      const comps = activeSheet().components || [];
+      while (comps.some(c => c.instanceId.toLowerCase() === (prefix + n).toLowerCase())) ++n;
       return prefix + n;
     }
 
     function autoConnectNewPart(id, pins) {
-      const outNet = currentSchem.rootSheet.nets.find(nt => nt.netName.toLowerCase() === 'out');
-      const gndNet = currentSchem.rootSheet.nets.find(nt => nt.isGlobalGround);
+      const sheet = activeSheet();
+      const outNet = sheet.nets.find(nt => nt.netName.toLowerCase() === 'out') || sheet.nets.find(nt => !nt.isGlobalGround);
+      const gndNet = sheet.nets.find(nt => nt.isGlobalGround);
       if (pins.length === 2 && outNet && gndNet) {
         outNet.connectedPins.push({ instanceId: id, pinName: pins[0] });
         gndNet.connectedPins.push({ instanceId: id, pinName: pins[1] });
@@ -983,12 +1145,13 @@ n_emission=1.85</textarea>
 
     function placePrimitive(kindId, prefix, defaultParams) {
       pushUndo();
+      const sheet = activeSheet();
       const G = gridPitch();
       const id = nextInstanceId(prefix);
-      const count = currentSchem.rootSheet.components.length;
+      const count = sheet.components.length;
       const x = Math.round((160 + (count * 60) % 240) / G) * G;
       const y = Math.round((240) / G) * G;
-      currentSchem.rootSheet.components.push({
+      sheet.components.push({
         instanceId: id, deviceKindId: kindId, x, y, rotationDegrees: 0, parameters: defaultParams,
         mirrorX: false, mirrorY: false
       });
@@ -1002,12 +1165,13 @@ n_emission=1.85</textarea>
 
     function placeLibraryPart(part) {
       pushUndo();
+      const sheet = activeSheet();
       const G = gridPitch();
       const id = nextInstanceId(part.spicePrefix || 'U');
-      const count = currentSchem.rootSheet.components.length;
+      const count = sheet.components.length;
       const x = Math.round((160 + (count * 60) % 240) / G) * G;
       const y = Math.round((240) / G) * G;
-      currentSchem.rootSheet.components.push({
+      sheet.components.push({
         instanceId: id,
         deviceKindId: part.baseDeviceKindId,
         x, y, rotationDegrees: 0,
@@ -1042,7 +1206,8 @@ n_emission=1.85</textarea>
     document.getElementById('btn-redo').addEventListener('click', doRedo);
 
     function rotateSelected() {
-      const target = currentSchem.rootSheet.components.find(c => c.instanceId === selectedInstance) || currentSchem.rootSheet.components[0];
+      const sheet = activeSheet();
+      const target = sheet.components.find(c => c.instanceId === selectedInstance) || sheet.components[0];
       if (!target) return;
       pushUndo();
       target.rotationDegrees = (target.rotationDegrees + 90) % 360;
@@ -1050,7 +1215,8 @@ n_emission=1.85</textarea>
       runSchematicSim();
     }
     function mirrorSelected() {
-      const target = currentSchem.rootSheet.components.find(c => c.instanceId === selectedInstance) || currentSchem.rootSheet.components[0];
+      const sheet = activeSheet();
+      const target = sheet.components.find(c => c.instanceId === selectedInstance) || sheet.components[0];
       if (!target) return;
       pushUndo();
       target.mirrorX = !target.mirrorX;
@@ -1060,11 +1226,12 @@ n_emission=1.85</textarea>
     function deleteSelected() {
       if (!selectedInstance) return;
       pushUndo();
-      currentSchem.rootSheet.components = currentSchem.rootSheet.components.filter(c => c.instanceId !== selectedInstance);
-      currentSchem.rootSheet.nets.forEach(n => {
+      const sheet = activeSheet();
+      sheet.components = sheet.components.filter(c => c.instanceId !== selectedInstance);
+      sheet.nets.forEach(n => {
         n.connectedPins = n.connectedPins.filter(p => p.instanceId !== selectedInstance);
       });
-      currentSchem.rootSheet.nets = currentSchem.rootSheet.nets.filter(n => n.connectedPins.length > 0 || n.isGlobalGround);
+      sheet.nets = sheet.nets.filter(n => n.connectedPins.length > 0 || n.isGlobalGround);
       selectedInstance = null;
       refreshAllSchematicViews();
       runSchematicSim();
@@ -1073,7 +1240,7 @@ n_emission=1.85</textarea>
     document.getElementById('btn-mirror').addEventListener('click', mirrorSelected);
     document.getElementById('btn-delete').addEventListener('click', deleteSelected);
     document.getElementById('btn-align-x').addEventListener('click', () => {
-      const comps = currentSchem.rootSheet.components;
+      const comps = activeSheet().components;
       if (comps.length < 2) return;
       pushUndo();
       const G = gridPitch();
@@ -1085,7 +1252,7 @@ n_emission=1.85</textarea>
     document.getElementById('btn-snap-all').addEventListener('click', () => {
       pushUndo();
       const G = gridPitch();
-      currentSchem.rootSheet.components.forEach(c => {
+      activeSheet().components.forEach(c => {
         c.x = Math.round(c.x / G) * G;
         c.y = Math.round(c.y / G) * G;
       });
@@ -1097,9 +1264,10 @@ n_emission=1.85</textarea>
       const text = prompt('Enter SPICE directive or sheet note (e.g. .PARAM Rload=2k or .TEMP 27):', '.TEMP 27');
       if (!text) return;
       pushUndo();
-      currentSchem.rootSheet.annotations = currentSchem.rootSheet.annotations || [];
-      const idx = currentSchem.rootSheet.annotations.length;
-      currentSchem.rootSheet.annotations.push({
+      const sheet = activeSheet();
+      sheet.annotations = sheet.annotations || [];
+      const idx = sheet.annotations.length;
+      sheet.annotations.push({
         id: 'ann_' + (idx + 1), x: 80, y: 260 + idx * 24, text: text.trim(),
         isSpiceDirective: text.trim().startsWith('.')
       });
@@ -1107,12 +1275,14 @@ n_emission=1.85</textarea>
     });
 
     document.getElementById('btn-add-port').addEventListener('click', () => {
-      const name = prompt('Enter hierarchical interface port name (must match a net name, e.g. in or out):', 'out');
+      const name = prompt('Enter off-sheet / hierarchical port name (shared net name across sheets, e.g. mid or out):', 'mid');
       if (!name) return;
       pushUndo();
-      currentSchem.rootSheet.ports = currentSchem.rootSheet.ports || [];
-      const idx = currentSchem.rootSheet.ports.length;
-      currentSchem.rootSheet.ports.push({ name: name.trim(), x: 420, y: 80 + idx * 32, direction: 'inout' });
+      const sheet = activeSheet();
+      sheet.ports = sheet.ports || [];
+      const idx = sheet.ports.length;
+      sheet.ports.push({ name: name.trim(), x: 420, y: 80 + idx * 32, direction: 'inout' });
+      refreshAllSchematicViews();
       runSchematicSim();
     });
 
@@ -1145,6 +1315,7 @@ n_emission=1.85</textarea>
       }
       pushUndo();
       currentSchem = data.document;
+      activeSheetId = currentSchem.rootSheet?.sheetId || 'root';
       selectedInstance = null;
       refreshAllSchematicViews();
       runSchematicSim();
@@ -1178,6 +1349,7 @@ C1 out 0 100n
         if (data.imported) {
           pushUndo();
           currentSchem = data.document;
+          activeSheetId = currentSchem.rootSheet?.sheetId || 'root';
           selectedInstance = null;
           closeModal();
           refreshAllSchematicViews();
@@ -1205,9 +1377,10 @@ C1 out 0 100n
     // ---- INSPECTOR & NAVIGATOR ----
     function renderInspector() {
       const host = document.getElementById('inspector-host');
-      const comp = currentSchem.rootSheet.components.find(c => c.instanceId === selectedInstance);
+      const sheet = activeSheet();
+      const comp = sheet.components.find(c => c.instanceId === selectedInstance);
       if (!comp) {
-        host.innerHTML = '<div style="font-size:12px;color:var(--dim)">Click any component on the schematic to inspect/edit its refdes, attached model, position, rotation, and parameters.</div>';
+        host.innerHTML = `<div style="font-size:12px;color:var(--dim)">Active sheet: <b>${escapeHtmlAttr(sheet.title || sheet.sheetId)}</b>. Click any component on the schematic to inspect/edit its refdes, attached model, position, rotation, and parameters.</div>`;
       } else {
         const compatModels = libraryEntries.filter(e => e.part.baseDeviceKindId === comp.deviceKindId && e.part.attachedModel);
         const modelOpts = ['<option value="">(Default / Inline Parameters)</option>']
@@ -1240,7 +1413,7 @@ C1 out 0 100n
           pushUndo();
           const oldId = comp.instanceId;
           comp.instanceId = newId;
-          currentSchem.rootSheet.nets.forEach(n => n.connectedPins.forEach(p => { if (p.instanceId === oldId) p.instanceId = newId; }));
+          sheet.nets.forEach(n => n.connectedPins.forEach(p => { if (p.instanceId === oldId) p.instanceId = newId; }));
           selectedInstance = newId;
           refreshAllSchematicViews();
           runSchematicSim();
@@ -1281,13 +1454,13 @@ C1 out 0 100n
         document.getElementById('insp-del').onclick = deleteSelected;
       }
 
-      // Compact live table of all components
+      // Compact live table of all components on active sheet
       const tblHost = document.getElementById('comp-editor');
       tblHost.innerHTML = '';
       const tbl = document.createElement('table');
       tbl.innerHTML = '<thead><tr><th>Part</th><th>Model / Value</th><th>Pos</th></tr></thead>';
       const tb = document.createElement('tbody');
-      currentSchem.rootSheet.components.forEach(c => {
+      sheet.components.forEach(c => {
         const tr = document.createElement('tr');
         tr.style.cursor = 'pointer';
         const summary = c.modelName || Object.entries(c.parameters || {}).map(([k,v]) => `${k}=${v}`).slice(0,1).join('');
@@ -1300,13 +1473,21 @@ C1 out 0 100n
     }
 
     function renderNavigator(diagnostics = []) {
+      const sheet = activeSheet();
       const sheetsEl = document.getElementById('nav-sheets');
-      sheetsEl.innerHTML = `<div class="nav-row active"><span>${currentSchem.rootSheet.title}</span><span style="color:var(--dim)">root</span></div>`;
+      sheetsEl.innerHTML = '';
+      allSheets().forEach((s, idx) => {
+        const row = document.createElement('div');
+        row.className = 'nav-row' + (s.sheetId === sheet.sheetId ? ' active' : '');
+        row.innerHTML = `<span>${idx === 0 ? 'Root: ' : ''}${escapeHtmlAttr(s.title || s.sheetId)}</span><span style="color:var(--dim)">${s.sheetId} (${(s.components || []).length})</span>`;
+        row.onclick = () => setActiveSheet(s.sheetId);
+        sheetsEl.appendChild(row);
+      });
 
       const instEl = document.getElementById('nav-instances');
       instEl.innerHTML = '';
-      document.getElementById('nav-inst-count').textContent = currentSchem.rootSheet.components.length;
-      currentSchem.rootSheet.components.forEach(c => {
+      document.getElementById('nav-inst-count').textContent = sheet.components.length;
+      sheet.components.forEach(c => {
         const row = document.createElement('div');
         row.className = 'nav-row' + (c.instanceId === selectedInstance ? ' active' : '');
         row.innerHTML = `<span><b>${c.instanceId}</b> ${c.modelName || c.deviceKindId.replace('spice.','')}</span><span style="color:var(--dim)">(${c.x},${c.y})</span>`;
@@ -1316,9 +1497,9 @@ C1 out 0 100n
 
       const netEl = document.getElementById('nav-nets');
       netEl.innerHTML = '';
-      document.getElementById('nav-net-count').textContent = currentSchem.rootSheet.nets.length;
-      currentSchem.rootSheet.nets.forEach(n => {
-        const sig = n.isGlobalGround ? '' : `v(${n.netName.toLowerCase()})`;
+      document.getElementById('nav-net-count').textContent = sheet.nets.length;
+      sheet.nets.forEach(n => {
+        const sig = resolvedNetSignal(sheet, n);
         const row = document.createElement('div');
         row.className = 'nav-row' + (sig && schemProbed.has(sig) ? ' active' : '');
         row.innerHTML = `<span>${n.netName}${n.isGlobalGround ? ' (0)' : ''}</span><span style="color:var(--dim)">${n.connectedPins.length} pins</span>`;
@@ -1344,6 +1525,7 @@ C1 out 0 100n
     }
 
     function refreshAllSchematicViews() {
+      renderSheetBar();
       renderInspector();
       renderNavigator(lastSchemResult?.diagnostics || []);
     }
@@ -1388,7 +1570,7 @@ C1 out 0 100n
     function connectPins(pinA, pinB) {
       if (pinA.instanceId === pinB.instanceId && pinA.pinName === pinB.pinName) return;
       pushUndo();
-      const nets = currentSchem.rootSheet.nets;
+      const nets = activeSheet().nets;
       const findNet = (p) => nets.find(n => n.connectedPins.some(cp => cp.instanceId === p.instanceId && cp.pinName === p.pinName));
       const netA = findNet(pinA), netB = findNet(pinB);
       if (netA && netB && netA === netB) return;
@@ -1505,7 +1687,7 @@ C1 out 0 100n
 
         compEl.addEventListener('pointerdown', (e) => {
           if (editMode !== 'move' || e.target.classList.contains('spice-pin')) return;
-          const comp = currentSchem.rootSheet.components.find(c => c.instanceId === instId);
+          const comp = activeSheet().components.find(c => c.instanceId === instId);
           if (!comp) return;
           selectedInstance = instId;
           svg.querySelectorAll('.spice-component').forEach(el => el.classList.toggle('selected', el === compEl));
@@ -1529,7 +1711,7 @@ C1 out 0 100n
           let ny = useGrid ? Math.round((origY + dy) / G) * G : (origY + dy);
 
           let alignedX = false, alignedY = false;
-          for (const other of currentSchem.rootSheet.components) {
+          for (const other of activeSheet().components) {
             if (other.instanceId === instId) continue;
             if (Math.abs(nx - other.x) <= G * 0.6) { nx = other.x; alignedX = true; }
             if (Math.abs(ny - other.y) <= G * 0.6) { ny = other.y; alignedY = true; }
@@ -1548,7 +1730,7 @@ C1 out 0 100n
           if (snapH) snapH.setAttribute('visibility', 'hidden');
           try { compEl.releasePointerCapture(e.pointerId); } catch {}
           if (moved && compEl.dataset.nx !== undefined) {
-            const comp = currentSchem.rootSheet.components.find(c => c.instanceId === instId);
+            const comp = activeSheet().components.find(c => c.instanceId === instId);
             if (comp) {
               pushUndo();
               comp.x = Number(compEl.dataset.nx);
@@ -1736,7 +1918,8 @@ C1 out 0 100n
         body: JSON.stringify({
           document: currentSchem, format, analysis,
           gridSize: gridPitch(), showGrid: gridStyle() !== 'off', gridStyle: gridStyle(),
-          includeOp: document.getElementById('chk-op').checked
+          includeOp: document.getElementById('chk-op').checked,
+          activeSheetId: activeSheet().sheetId
         })
       });
       if (!resp.ok) {
@@ -1760,6 +1943,7 @@ C1 out 0 100n
     // ---- LIVE SCHEMATIC SIMULATION ----
     async function runSchematicSim() {
       const analysis = document.getElementById('schem-analysis').value;
+      const curSheet = activeSheet();
       const resp = await fetch('/api/schematic/simulate', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1768,12 +1952,14 @@ C1 out 0 100n
           gridSize: gridPitch(),
           showGrid: gridStyle() !== 'off',
           gridStyle: gridStyle(),
-          showOp: document.getElementById('chk-op').checked
+          showOp: document.getElementById('chk-op').checked,
+          activeSheetId: curSheet.sheetId
         })
       });
       const data = await resp.json();
       document.getElementById('svg-host').innerHTML = data.svg || '';
       const ercEl = document.getElementById('erc-status');
+      renderSheetBar();
       renderNavigator(data.diagnostics || []);
       if (!data.erc_ok) {
         ercEl.className = 'err';
@@ -1782,7 +1968,9 @@ C1 out 0 100n
         return;
       }
       ercEl.className = data.status === 'Succeeded' ? 'ok' : 'err';
-      ercEl.textContent = `ERC PASS | ${data.status} (${analysis.toUpperCase()}) | Samples=${(data.axis || []).length} | Live DC V/I overlaid`;
+      const sheetCount = allSheets().length;
+      const sheetNote = sheetCount > 1 ? ` | Sheet '${curSheet.title || curSheet.sheetId}' (${sheetCount} sheets)` : '';
+      ercEl.textContent = `ERC PASS | ${data.status} (${analysis.toUpperCase()}) | Samples=${(data.axis || []).length}${sheetNote} | Live DC V/I overlaid`;
       lastSchemResult = data;
       bindSvgInteractions();
       renderOpTables(data);
@@ -2262,6 +2450,21 @@ C1 out 0 100n
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'r') { e.preventDefault(); rotateSelected(); return; }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'm') { e.preventDefault(); mirrorSelected(); return; }
       if (['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)) return;
+      if (e.key === 'PageDown' || e.key === 'PageUp') {
+        const sheets = allSheets();
+        if (sheets.length > 1) {
+          e.preventDefault();
+          const idx = sheets.findIndex(s => s.sheetId === activeSheet().sheetId);
+          const nextIdx = (idx + (e.key === 'PageDown' ? 1 : -1) + sheets.length) % sheets.length;
+          setActiveSheet(sheets[nextIdx].sheetId);
+        }
+        return;
+      }
+      if (e.shiftKey && e.key.toLowerCase() === 'h') {
+        e.preventDefault();
+        setActiveSheet(currentSchem.rootSheet.sheetId);
+        return;
+      }
       const k = e.key.toLowerCase();
       if (k === 'escape') { closeModal(); setMode('move'); }
       else if (k === 'w') setMode('wire');
@@ -2281,10 +2484,13 @@ C1 out 0 100n
     document.getElementById('schem-preset').addEventListener('change', e => {
       pushUndo();
       currentSchem = structuredClone(SCHEM_PRESETS[e.target.value]);
+      activeSheetId = currentSchem.rootSheet?.sheetId || 'root';
       selectedInstance = null;
       zoomState = { scale: 1.0, vb: null, baseVb: null };
       if (e.target.value === 'bsim4_inv' || e.target.value === 'bjt_amp' || e.target.value === 'opamp_buf') {
         document.getElementById('schem-analysis').value = 'op';
+      } else if (e.target.value === 'multisheet_rc') {
+        document.getElementById('schem-analysis').value = 'tran';
       }
       refreshAllSchematicViews();
       runSchematicSim();

@@ -275,26 +275,33 @@ public static class SchematicExporter
         ComponentLibraryStore? library = null)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("Designator,DeviceKind,LibraryPart,ModelName,PrimaryValue,PositionX,PositionY,RotationDeg");
-        foreach (var comp in document.RootSheet.Components.OrderBy(c => c.InstanceId, StringComparer.OrdinalIgnoreCase))
+        sb.AppendLine("Designator,Sheet,DeviceKind,LibraryPart,ModelName,PrimaryValue,PositionX,PositionY,RotationDeg");
+        var sheets = new List<SchematicSheet> { document.RootSheet };
+        if (document.SubSheets is not null) sheets.AddRange(document.SubSheets);
+
+        foreach (var sheet in sheets)
         {
-            var partName = "";
-            if (!string.IsNullOrWhiteSpace(comp.LibraryPartId))
+            foreach (var comp in sheet.Components.OrderBy(c => c.InstanceId, StringComparer.OrdinalIgnoreCase))
             {
-                var found = document.EmbeddedParts?.FirstOrDefault(p => string.Equals(p.Id, comp.LibraryPartId, StringComparison.OrdinalIgnoreCase));
-                if (found is null && library is not null) library.TryGet(comp.LibraryPartId, out found);
-                partName = found?.Name ?? comp.LibraryPartId;
+                var partName = "";
+                if (!string.IsNullOrWhiteSpace(comp.LibraryPartId))
+                {
+                    var found = document.EmbeddedParts?.FirstOrDefault(p => string.Equals(p.Id, comp.LibraryPartId, StringComparison.OrdinalIgnoreCase));
+                    if (found is null && library is not null) library.TryGet(comp.LibraryPartId, out found);
+                    partName = found?.Name ?? comp.LibraryPartId;
+                }
+                var val = comp.DisplayValue ?? FormatBomValue(comp);
+                sb.AppendLine(string.Join(",",
+                    CsvEscape(comp.InstanceId),
+                    CsvEscape(sheet.SheetId),
+                    CsvEscape(comp.DeviceKindId),
+                    CsvEscape(partName),
+                    CsvEscape(comp.ModelName ?? ""),
+                    CsvEscape(val),
+                    Fmt(comp.X),
+                    Fmt(comp.Y),
+                    comp.RotationDegrees.ToString(CultureInfo.InvariantCulture)));
             }
-            var val = comp.DisplayValue ?? FormatBomValue(comp);
-            sb.AppendLine(string.Join(",",
-                CsvEscape(comp.InstanceId),
-                CsvEscape(comp.DeviceKindId),
-                CsvEscape(partName),
-                CsvEscape(comp.ModelName ?? ""),
-                CsvEscape(val),
-                Fmt(comp.X),
-                Fmt(comp.Y),
-                comp.RotationDegrees.ToString(CultureInfo.InvariantCulture)));
         }
         return sb.ToString();
     }
