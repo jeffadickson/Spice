@@ -199,17 +199,24 @@ public static class Program
             return 3;
         }
 
+        using var backend = new NativeCppBackend(enableAudits: true);
+        var res = await backend.RunAsync(new SimulationRequestIr(doc.Name, compiled.Circuit, analysis));
+        var opRes = analysis == AnalysisKind.OperatingPoint
+            ? res
+            : await backend.RunAsync(new SimulationRequestIr(doc.Name + "_op", compiled.Circuit, AnalysisKind.OperatingPoint));
+
         if (!string.IsNullOrWhiteSpace(svgOut))
         {
-            await File.WriteAllTextAsync(svgOut, SchematicCompiler.ExportSvg(doc));
+            var overlay = opRes.Status == RunTerminalStatus.Succeeded
+                ? SchematicCompiler.BuildOperatingPointOverlay(doc, opRes)
+                : null;
+            await File.WriteAllTextAsync(svgOut, SchematicCompiler.ExportSvg(doc, overlay));
         }
         if (!string.IsNullOrWhiteSpace(spiceOut))
         {
             await File.WriteAllTextAsync(spiceOut, SchematicCompiler.ExportSpiceNetlist(doc, analysis));
         }
 
-        using var backend = new NativeCppBackend(enableAudits: true);
-        var res = await backend.RunAsync(new SimulationRequestIr(doc.Name, compiled.Circuit, analysis));
         PrintManifestSummary(res);
         return res.Status == RunTerminalStatus.Succeeded ? 0 : 4;
     }

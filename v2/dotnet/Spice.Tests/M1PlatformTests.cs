@@ -90,7 +90,58 @@ public sealed class M1PlatformTests
 
         var svg = SchematicCompiler.ExportSvg(doc);
         Assert.Contains("<svg ", svg);
+        Assert.Contains("class=\"spice-snap-grid\"", svg);
+        Assert.Contains("id=\"snap-v\"", svg);
+        Assert.Contains("id=\"snap-h\"", svg);
+        Assert.Contains("id=\"wire-preview\"", svg);
+        Assert.Contains("class=\"spice-wire-path\"", svg);
+        Assert.Contains("class=\"spice-pin\"", svg);
         Assert.Contains("R1", svg);
+
+        // OperatingPointOverlay formats DC node voltages and Ohm's-law branch currents directly onto the SVG
+        var dividerDoc = new SchematicDocument(
+            SchemaVersion: "2.0",
+            Name: "divider_op_overlay",
+            RootSheet: new SchematicSheet(
+                SheetId: "root",
+                Title: "Divider DC Overlay",
+                Components:
+                [
+                    new PlacedComponent("V1", "spice.vsrc", 80, 140, 270, new Dictionary<string, double> { ["dc_volts"] = 10.0 }),
+                    new PlacedComponent("R1", "spice.resistor", 180, 80, 0, new Dictionary<string, double> { ["ohms"] = 1000.0 }),
+                    new PlacedComponent("R2", "spice.resistor", 280, 140, 90, new Dictionary<string, double> { ["ohms"] = 2000.0 })
+                ],
+                Nets:
+                [
+                    new WireNet("in", [new PinRef("V1", "p"), new PinRef("R1", "p")]),
+                    new WireNet("out", [new PinRef("R1", "n"), new PinRef("R2", "p")]),
+                    new WireNet("GND", [new PinRef("V1", "n"), new PinRef("R2", "n")], IsGlobalGround: true)
+                ]));
+        var synthOp = new ResultManifestIr(
+            CaseId: "divider_op",
+            BackendId: "synthetic",
+            Status: RunTerminalStatus.Succeeded,
+            Complete: true,
+            Signals: [],
+            RealData: new RealSeriesIr("point", "1", [0.0], new Dictionary<string, IReadOnlyList<double>>
+            {
+                ["v(in)"] = [10.0],
+                ["v(out)"] = [20.0 / 3.0],
+                ["i(V1)"] = [-1.0 / 300.0]
+            }));
+        var overlay = SchematicCompiler.BuildOperatingPointOverlay(dividerDoc, synthOp);
+        Assert.Equal(10.0, overlay.NodeVoltages["in"], precision: 12);
+        Assert.Equal(20.0 / 3.0, overlay.NodeVoltages["out"], precision: 12);
+        Assert.Equal(1.0 / 300.0, overlay.BranchCurrents["R1"], precision: 12);
+        Assert.Equal(1.0 / 300.0, overlay.BranchCurrents["R2"], precision: 12);
+        Assert.Equal(-1.0 / 300.0, overlay.BranchCurrents["V1"], precision: 12);
+
+        var opSvg = SchematicCompiler.ExportSvg(dividerDoc, overlay);
+        Assert.Contains("class=\"spice-op-v\"", opSvg);
+        Assert.Contains("10.00 V", opSvg);
+        Assert.Contains("6.67 V", opSvg);
+        Assert.Contains("class=\"spice-op-i\"", opSvg);
+        Assert.Contains("3.33 mA", opSvg);
 
         // ERC catches missing ground and shorted voltage source fail-closed
         var badDoc = doc with
@@ -410,13 +461,16 @@ public sealed class M1PlatformTests
         var html = await http.GetStringAsync("/");
         Assert.Contains("Spice V2 Workbench", html, StringComparison.Ordinal);
         Assert.Contains("data-signal", html, StringComparison.Ordinal);
+        Assert.Contains("snap-v", html, StringComparison.Ordinal);
+        Assert.Contains("op-v-table", html, StringComparison.Ordinal);
+        Assert.Contains("op-i-table", html, StringComparison.Ordinal);
 
         using var infoDoc = JsonDocument.Parse(await http.GetStringAsync("/api/info"));
         Assert.Equal("2.1", infoDoc.RootElement.GetProperty("abi").GetString());
         Assert.True(infoDoc.RootElement.GetProperty("osdi_available").GetBoolean());
         Assert.True(infoDoc.RootElement.GetProperty("device_kinds").GetArrayLength() >= 9);
 
-        // 2. Schematic -> ERC -> Cross-probable SVG -> Live BDF2 Transient over libspice_capi
+        // 2. Schematic -> ERC -> Cross-probable Snap-Grid + DC V/I SVG -> Live BDF2 Transient over libspice_capi
         var schem = new SchematicDocument(
             SchemaVersion: "2.0",
             Name: "workbench_rc",
@@ -425,9 +479,9 @@ public sealed class M1PlatformTests
                 Title: "RC Filter",
                 Components:
                 [
-                    new PlacedComponent("V1", "spice.vsrc", 60, 100, 0, new Dictionary<string, double> { ["dc_volts"] = 5.0, ["ac_mag"] = 1.0 }),
-                    new PlacedComponent("R1", "spice.resistor", 180, 60, 0, new Dictionary<string, double> { ["ohms"] = 1000.0 }),
-                    new PlacedComponent("C1", "spice.capacitor", 300, 100, 0, new Dictionary<string, double> { ["farads"] = 1e-6, ["ic_volts"] = 0.0 })
+                    new PlacedComponent("V1", "spice.vsrc", 80, 140, 270, new Dictionary<string, double> { ["dc_volts"] = 5.0, ["ac_mag"] = 1.0 }),
+                    new PlacedComponent("R1", "spice.resistor", 180, 80, 0, new Dictionary<string, double> { ["ohms"] = 1000.0 }),
+                    new PlacedComponent("C1", "spice.capacitor", 280, 140, 90, new Dictionary<string, double> { ["farads"] = 1e-6, ["ic_volts"] = 0.0 })
                 ],
                 Nets:
                 [
@@ -441,7 +495,10 @@ public sealed class M1PlatformTests
             document = schem,
             analysis = "tran",
             step = 1e-5,
-            stop = 1e-3
+            stop = 1e-3,
+            gridSize = 20.0,
+            showGrid = true,
+            showOp = true
         });
         schemResp.EnsureSuccessStatusCode();
         using var schemJson = JsonDocument.Parse(await schemResp.Content.ReadAsStringAsync());
@@ -450,9 +507,53 @@ public sealed class M1PlatformTests
         var svg = schemJson.RootElement.GetProperty("svg").GetString()!;
         Assert.Contains("data-signal=\"v(out)\"", svg, StringComparison.Ordinal);
         Assert.Contains("data-instance=\"R1\"", svg, StringComparison.Ordinal);
+        Assert.Contains("class=\"spice-snap-grid\"", svg, StringComparison.Ordinal);
+        Assert.Contains("id=\"snap-v\"", svg, StringComparison.Ordinal);
+        Assert.Contains("id=\"snap-h\"", svg, StringComparison.Ordinal);
+        Assert.Contains("class=\"spice-op-v\"", svg, StringComparison.Ordinal);
+        Assert.Contains("class=\"spice-op-i\"", svg, StringComparison.Ordinal);
+        Assert.Equal(5.0, schemJson.RootElement.GetProperty("op_voltages").GetProperty("in").GetDouble(), precision: 11);
+        Assert.Equal(5.0, schemJson.RootElement.GetProperty("op_voltages").GetProperty("out").GetDouble(), precision: 11);
+        Assert.Equal(0.0, schemJson.RootElement.GetProperty("op_currents").GetProperty("C1").GetDouble(), precision: 11);
         var voutTrace = schemJson.RootElement.GetProperty("series").GetProperty("v(out)");
         var vEnd = voutTrace[voutTrace.GetArrayLength() - 1].GetDouble();
         Assert.InRange(Math.Abs(vEnd - 5.0 * (1.0 - Math.Exp(-1.0))), 0.0, 2e-4);
+
+        // 2b. Resistive divider live DC operating-point voltage & Ohm's-law current overlay
+        var divSchem = new SchematicDocument(
+            SchemaVersion: "2.0",
+            Name: "workbench_divider",
+            RootSheet: new SchematicSheet(
+                SheetId: "root",
+                Title: "Divider",
+                Components:
+                [
+                    new PlacedComponent("V1", "spice.vsrc", 80, 140, 270, new Dictionary<string, double> { ["dc_volts"] = 10.0 }),
+                    new PlacedComponent("R1", "spice.resistor", 180, 80, 0, new Dictionary<string, double> { ["ohms"] = 1000.0 }),
+                    new PlacedComponent("R2", "spice.resistor", 280, 140, 90, new Dictionary<string, double> { ["ohms"] = 2000.0 })
+                ],
+                Nets:
+                [
+                    new WireNet("in", [new PinRef("V1", "p"), new PinRef("R1", "p")]),
+                    new WireNet("out", [new PinRef("R1", "n"), new PinRef("R2", "p")]),
+                    new WireNet("GND", [new PinRef("V1", "n"), new PinRef("R2", "n")], IsGlobalGround: true)
+                ]));
+        var divResp = await http.PostAsJsonAsync("/api/schematic/simulate", new
+        {
+            document = divSchem,
+            analysis = "op"
+        });
+        divResp.EnsureSuccessStatusCode();
+        using var divJson = JsonDocument.Parse(await divResp.Content.ReadAsStringAsync());
+        Assert.Equal("Succeeded", divJson.RootElement.GetProperty("status").GetString());
+        Assert.Equal(10.0, divJson.RootElement.GetProperty("op_voltages").GetProperty("in").GetDouble(), precision: 11);
+        Assert.Equal(20.0 / 3.0, divJson.RootElement.GetProperty("op_voltages").GetProperty("out").GetDouble(), precision: 11);
+        Assert.Equal(1.0 / 300.0, divJson.RootElement.GetProperty("op_currents").GetProperty("R1").GetDouble(), precision: 11);
+        Assert.Equal(1.0 / 300.0, divJson.RootElement.GetProperty("op_currents").GetProperty("R2").GetDouble(), precision: 11);
+        Assert.Equal(-1.0 / 300.0, divJson.RootElement.GetProperty("op_currents").GetProperty("V1").GetDouble(), precision: 11);
+        var divSvg = divJson.RootElement.GetProperty("svg").GetString()!;
+        Assert.Contains("6.67 V", divSvg, StringComparison.Ordinal);
+        Assert.Contains("3.33 mA", divSvg, StringComparison.Ordinal);
 
         // 3. Live Spectre Dialect BSIM4 CMOS Inverter .DC through /api/deck/simulate
         const string spectreBsim4 = """

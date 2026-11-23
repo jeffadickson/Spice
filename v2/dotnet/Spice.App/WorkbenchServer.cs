@@ -151,16 +151,26 @@ public sealed class WorkbenchServer : IAsyncDisposable
                     await WriteJsonAsync(ctx.Response, 400, new { error = "missing document" });
                     return;
                 }
+                var gridSize = req.GridSize is > 2.0 ? req.GridSize.Value : 20.0;
+                var showGrid = req.ShowGrid ?? true;
+                var showOp = req.ShowOp ?? true;
                 var compiled = SchematicCompiler.CompileToIr(req.Document);
                 var analysis = ParseAnalysis(req.Analysis ?? "op");
-                var svg = SchematicCompiler.ExportSvg(req.Document);
                 if (!compiled.Succeeded || compiled.Circuit is null)
                 {
+                    var failSvg = SchematicCompiler.ExportSvg(
+                        req.Document,
+                        new OperatingPointOverlay(
+                            new Dictionary<string, double>(),
+                            new Dictionary<string, double>(),
+                            gridSize,
+                            showGrid,
+                            ShowOperatingPoint: false));
                     await WriteJsonAsync(ctx.Response, 200, new
                     {
                         erc_ok = false,
                         diagnostics = compiled.Diagnostics,
-                        svg,
+                        svg = failSvg,
                         spice = "",
                         status = "ErcFailed"
                     });
@@ -184,6 +194,23 @@ public sealed class WorkbenchServer : IAsyncDisposable
 
                 var sim = await _backend.RunAsync(
                     new SimulationRequestIr(req.Document.Name, compiled.Circuit, analysis, numOpts), ct);
+
+                // Always solve DC Operating Point so live node voltages & branch currents display directly on the schematic!
+                var opSim = analysis == AnalysisKind.OperatingPoint
+                    ? sim
+                    : await _backend.RunAsync(
+                        new SimulationRequestIr(req.Document.Name + "_op", compiled.Circuit, AnalysisKind.OperatingPoint), ct);
+
+                OperatingPointOverlay? overlay = opSim.Status == RunTerminalStatus.Succeeded
+                    ? SchematicCompiler.BuildOperatingPointOverlay(req.Document, opSim, gridSize, showGrid, showOp)
+                    : new OperatingPointOverlay(
+                        new Dictionary<string, double>(),
+                        new Dictionary<string, double>(),
+                        gridSize,
+                        showGrid,
+                        ShowOperatingPoint: false);
+
+                var svg = SchematicCompiler.ExportSvg(req.Document, overlay);
                 var (axis, series) = FlattenResult(sim);
                 await WriteJsonAsync(ctx.Response, 200, new
                 {
@@ -194,6 +221,8 @@ public sealed class WorkbenchServer : IAsyncDisposable
                     status = sim.Status.ToString(),
                     backend = sim.BackendId,
                     error_message = sim.ErrorMessage,
+                    op_voltages = overlay.NodeVoltages,
+                    op_currents = overlay.BranchCurrents,
                     axis,
                     series
                 });
@@ -370,7 +399,10 @@ public sealed class WorkbenchServer : IAsyncDisposable
         string? Analysis,
         double? Start,
         double? Stop,
-        double? Step);
+        double? Step,
+        double? GridSize = null,
+        bool? ShowGrid = null,
+        bool? ShowOp = null);
 
     private sealed record DeckSimRequest(
         string? Deck,
