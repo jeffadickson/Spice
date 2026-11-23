@@ -620,4 +620,300 @@ public sealed class M1PlatformTests
         Assert.Equal(7.5, runs[1].GetProperty("v_out").GetDouble(), precision: 11);
         Assert.Equal(9.0, runs[2].GetProperty("v_out").GetDouble(), precision: 11);
     }
+
+    [Fact]
+    public void SchematicSaveFormat_MultiDialectExport_SpiceImport_AndPersistentCustomComponentLibrary()
+    {
+        var tmpDir = Path.Combine(Path.GetTempPath(), "spice_v2_lib_test_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tmpDir);
+        try
+        {
+            var libPath = Path.Combine(tmpDir, "user.spice-lib.json");
+            var store = new ComponentLibraryStore(libPath);
+
+            // 1. Foundation library ships with realistic diodes, BJTs, BSIM4 MOSFETs, JFET, and Op-Amp .SUBCKT
+            Assert.True(store.ListAll().Count >= 9);
+            Assert.True(store.TryGet("foundation.mos.bsim4_nch65", out var nmos));
+            Assert.NotNull(nmos?.AttachedModel);
+            Assert.Contains("LEVEL=54", nmos!.AttachedModel!.SpiceText);
+
+            // 2. Fail-closed validation rejects malformed attached models
+            var badPart = new CustomComponentDefinition(
+                "user.bad.sub", "Bad Sub", "Custom", "Missing .ENDS", "spice.subckt", "X", "ic_box",
+                [new CustomPinDefinition("in", -40, 0), new CustomPinDefinition("out", 40, 0)],
+                new Dictionary<string, double>(),
+                new AttachedModelDefinition(AttachedModelKind.Subcircuit, "BAD_SUB", ".SUBCKT BAD_SUB in out\nR1 in out 1k"));
+            Assert.Contains(ComponentLibraryStore.Validate(badPart), d => d.Code == "invalid_subckt_definition");
+
+            // 3. Create custom component with attached .SUBCKT model, persist to disk, and reload fresh store
+            var customAtten = new CustomComponentDefinition(
+                "user.subckt.pi_atten_6db",
+                "6dB Pi Attenuator",
+                "Custom RF",
+                "50-Ohm matched 6dB Pi attenuator",
+                "spice.subckt",
+                "X",
+                "ic_box",
+                [
+                    new CustomPinDefinition("in", -40, 0, "input"),
+                    new CustomPinDefinition("out", 40, 0, "output"),
+                    new CustomPinDefinition("gnd", 0, 20, "ground")
+                ],
+                new Dictionary<string, double>(),
+                new AttachedModelDefinition(
+                    AttachedModelKind.Subcircuit,
+                    "PI_ATTEN_6DB",
+                    """
+                    .SUBCKT PI_ATTEN_6DB in out gnd
+                      Rsh1 in gnd 150.47
+                      Rser in out 37.35
+                      Rsh2 out gnd 150.47
+                    .ENDS PI_ATTEN_6DB
+                    """));
+            var savedPart = store.UpsertCustom(customAtten);
+            Assert.False(savedPart.IsBuiltIn);
+            Assert.False(string.IsNullOrWhiteSpace(savedPart.ContentSha256));
+            Assert.True(File.Exists(libPath));
+
+            // Reload from disk into a fresh store instance
+            var reloaded = new ComponentLibraryStore(libPath);
+            Assert.True(reloaded.TryGet("user.subckt.pi_atten_6db", out var fetched));
+            Assert.Equal("PI_ATTEN_6DB", fetched!.AttachedModel!.ModelName);
+
+            // 4. Build schematic using the saved custom library component + directive + port + mirror
+            var doc = new SchematicDocument(
+                SchemaVersion: "2.1",
+                Name: "custom_atten_test",
+                RootSheet: new SchematicSheet(
+                    SheetId: "root",
+                    Title: "Custom Attenuator Test",
+                    Components:
+                    [
+                        new PlacedComponent("V1", "spice.vsrc", 80, 140, 90, new Dictionary<string, double> { ["dc_volts"] = 2.0, ["ac_mag"] = 1.0 }),
+                        new PlacedComponent("Rs", "spice.resistor", 160, 80, 0, new Dictionary<string, double> { ["ohms"] = 50.0 }),
+                        new PlacedComponent("X1", "spice.subckt", 280, 100, 0, new Dictionary<string, double>(), MirrorX: false, ModelName: "PI_ATTEN_6DB", LibraryPartId: "user.subckt.pi_atten_6db"),
+                        new PlacedComponent("Rload", "spice.resistor", 400, 140, 90, new Dictionary<string, double> { ["ohms"] = 50.0 })
+                    ],
+                    Nets:
+                    [
+                        new WireNet("src", [new PinRef("V1", "p"), new PinRef("Rs", "p")]),
+                        new WireNet("in", [new PinRef("Rs", "n"), new PinRef("X1", "in")]),
+                        new WireNet("out", [new PinRef("X1", "out"), new PinRef("Rload", "p")]),
+                        new WireNet("GND", [new PinRef("V1", "n"), new PinRef("X1", "gnd"), new PinRef("Rload", "n")], IsGlobalGround: true)
+                    ],
+                    Annotations: [new SheetAnnotation("a1", 80, 240, ".TEMP 27", IsSpiceDirective: true)],
+                    Ports: [new SheetPort("in", 160, 40, "in"), new SheetPort("out", 400, 40, "out")],
+                    GridPitch: 20.0,
+                    GridStyle: "dots"));
+
+            // 5. Versioned save format round-trip with SHA-256 verification + tamper fail-closed + 2.0->2.1 migration
+            var savedJson = SchematicCompiler.SerializeJson(doc, reloaded);
+            Assert.Contains("\"formatId\": \"spice.schematic.v2\"", savedJson);
+            Assert.Contains("\"contentSha256\":", savedJson);
+            var restored = SchematicCompiler.DeserializeJson(savedJson, verifyChecksum: true);
+            Assert.Equal("2.1", restored.SchemaVersion);
+            Assert.NotNull(restored.EmbeddedParts);
+            Assert.Single(restored.EmbeddedParts!);
+
+            var tampered = savedJson.Replace("custom_atten_test", "tampered_name", StringComparison.Ordinal);
+            Assert.Throws<InvalidDataException>(() => SchematicCompiler.DeserializeJson(tampered, verifyChecksum: true));
+
+            var badVersion = savedJson.Replace("\"schemaVersion\": \"2.1\"", "\"schemaVersion\": \"9.9\"", StringComparison.Ordinal);
+            Assert.Throws<InvalidDataException>(() => SchematicCompiler.DeserializeJson(badVersion, verifyChecksum: false));
+
+            // 6. Multi-dialect netlist, StarLark, BOM, Bundle + SHA-256 manifest, and Light/Dots SVG exports
+            var spice = SchematicExporter.ExportNetlist(doc, new SchematicExportOptions(NetlistDialect.CanonicalSpice3f5, AnalysisKind.OperatingPoint), library: reloaded);
+            Assert.Contains(".SUBCKT PI_ATTEN_6DB in out gnd", spice);
+            Assert.Contains("X1 in out 0 PI_ATTEN_6DB", spice);
+            Assert.Contains(".TEMP 27", spice);
+
+            var ngspice = SchematicExporter.ExportNetlist(doc, new SchematicExportOptions(NetlistDialect.Ngspice, AnalysisKind.OperatingPoint), library: reloaded);
+            Assert.Contains(".SAVE ", ngspice);
+
+            var xyce = SchematicExporter.ExportNetlist(doc, new SchematicExportOptions(NetlistDialect.Xyce, AnalysisKind.OperatingPoint), library: reloaded);
+            Assert.Contains(".PRINT DC FORMAT=CSV", xyce);
+
+            var ltspice = SchematicExporter.ExportNetlist(doc, new SchematicExportOptions(NetlistDialect.Ltspice, AnalysisKind.OperatingPoint), library: reloaded);
+            Assert.Contains(".backanno", ltspice);
+
+            var spectre = SchematicExporter.ExportNetlist(doc, new SchematicExportOptions(NetlistDialect.Spectre, AnalysisKind.OperatingPoint), library: reloaded);
+            Assert.Contains("simulator lang=spectre", spectre);
+            Assert.Contains("Rs (src in) resistor r=50", spectre);
+
+            var starlark = SchematicExporter.ExportStarlarkScript(doc, library: reloaded);
+            Assert.Contains("def build_custom_atten_test():", starlark);
+
+            var bom = SchematicExporter.ExportBomCsv(doc, reloaded);
+            Assert.Contains("6dB Pi Attenuator", bom);
+            Assert.Contains("PI_ATTEN_6DB", bom);
+
+            var bundle = SchematicExporter.ExportBundleJson(doc, new SchematicExportOptions(NetlistDialect.Spectre, AnalysisKind.OperatingPoint), library: reloaded);
+            Assert.Contains("spice.export-bundle.v2", bundle);
+            Assert.Contains("custom_atten_test.models.lib", bundle);
+            Assert.Contains("\"sha256\":", bundle);
+
+            var lightSvg = SchematicCompiler.ExportSvg(doc, library: reloaded, lightTheme: true, gridStyle: "dots");
+            Assert.Contains("data-grid-style=\"dots\"", lightSvg);
+            Assert.Contains("fill=\"#ffffff\"", lightSvg);
+            Assert.Contains("class=\"spice-port\"", lightSvg);
+            Assert.Contains("class=\"spice-annotation\"", lightSvg);
+
+            // 7. SPICE Netlist -> Schematic Importer creates valid ERC-passing schematic
+            const string rawSpice = """
+                Imported Divider
+                V1 in 0 DC 12
+                R1 in out 1k
+                R2 out 0 3k
+                .END
+                """;
+            var imported = SchematicExporter.ImportFromSpiceNetlist(rawSpice);
+            var impCompiled = SchematicCompiler.CompileToIr(imported);
+            Assert.True(impCompiled.Succeeded);
+            Assert.Equal(3, imported.RootSheet.Components.Count);
+
+            // 8. CreateFromSchematic turns a schematic sheet into a saved .SUBCKT library part
+            var createdSub = reloaded.CreateFromSchematic(imported, "user.subckt.imported_div", "Imported Divider Block");
+            Assert.Equal("spice.subckt", createdSub.BaseDeviceKindId);
+            Assert.Contains(".SUBCKT ", createdSub.AttachedModel!.SpiceText);
+            Assert.Contains(".ENDS ", createdSub.AttachedModel.SpiceText);
+        }
+        finally
+        {
+            if (Directory.Exists(tmpDir)) Directory.Delete(tmpDir, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task WorkbenchServer_CustomLibraryParts_SimulateLiveAndExportMultiDialect_OverNativeCppEngine()
+    {
+        using var backend = TryCreateNativeBackend();
+        if (backend is null) return;
+
+        var tmpDir = Path.Combine(Path.GetTempPath(), "spice_v2_srv_lib_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tmpDir);
+        try
+        {
+            var libStore = new ComponentLibraryStore(Path.Combine(tmpDir, "srv.spice-lib.json"));
+            await using var server = new WorkbenchServer(port: 0, backend: backend, library: libStore);
+            server.Start();
+            using var http = new HttpClient { BaseAddress = new Uri(server.BaseUrl) };
+
+            // 1. Save a custom component with an attached .SUBCKT model through POST /api/library
+            var customPart = new
+            {
+                id = "user.subckt.half_div",
+                name = "Precision 2:1 Divider",
+                category = "Custom Blocks",
+                description = "Matched 10k/10k resistive divider subcircuit",
+                baseDeviceKindId = "spice.subckt",
+                spicePrefix = "X",
+                symbolStyle = "ic_box",
+                pins = new[]
+                {
+                    new { name = "in", localX = -40.0, localY = 0.0, role = "input" },
+                    new { name = "out", localX = 40.0, localY = 0.0, role = "output" },
+                    new { name = "gnd", localX = 0.0, localY = 20.0, role = "ground" }
+                },
+                defaultParameters = new Dictionary<string, double>(),
+                attachedModel = new
+                {
+                    kind = "subcircuit",
+                    modelName = "HALF_DIV",
+                    spiceText = ".SUBCKT HALF_DIV in out gnd\n  R1 in out 10k\n  R2 out gnd 10k\n.ENDS HALF_DIV"
+                }
+            };
+            var savePartResp = await http.PostAsJsonAsync("/api/library", customPart);
+            savePartResp.EnsureSuccessStatusCode();
+
+            // Verify GET /api/library lists the saved custom part with preview_svg
+            using var libList = JsonDocument.Parse(await http.GetStringAsync("/api/library"));
+            Assert.Contains(
+                libList.RootElement.GetProperty("components").EnumerateArray(),
+                el => el.GetProperty("part").GetProperty("id").GetString() == "user.subckt.half_div" &&
+                      el.GetProperty("preview_svg").GetString()!.Contains("<svg ", StringComparison.Ordinal));
+
+            // 2. Place the saved custom component on a schematic & simulate LIVE via libspice_capi!
+            var schemWithCustom = new SchematicDocument(
+                SchemaVersion: "2.1",
+                Name: "live_custom_subckt",
+                RootSheet: new SchematicSheet(
+                    SheetId: "root",
+                    Title: "Live Custom Subcircuit",
+                    Components:
+                    [
+                        new PlacedComponent("V1", "spice.vsrc", 80, 140, 90, new Dictionary<string, double> { ["dc_volts"] = 8.0 }),
+                        new PlacedComponent("X1", "spice.subckt", 240, 140, 0, new Dictionary<string, double>(), ModelName: "HALF_DIV", LibraryPartId: "user.subckt.half_div")
+                    ],
+                    Nets:
+                    [
+                        new WireNet("in", [new PinRef("V1", "p"), new PinRef("X1", "in")]),
+                        new WireNet("out", [new PinRef("X1", "out")]),
+                        new WireNet("GND", [new PinRef("V1", "n"), new PinRef("X1", "gnd")], IsGlobalGround: true)
+                    ]));
+
+            var simResp = await http.PostAsJsonAsync("/api/schematic/simulate", new
+            {
+                document = schemWithCustom,
+                analysis = "op"
+            });
+            simResp.EnsureSuccessStatusCode();
+            using var simJson = JsonDocument.Parse(await simResp.Content.ReadAsStringAsync());
+            Assert.True(simJson.RootElement.GetProperty("erc_ok").GetBoolean());
+            Assert.Equal("Succeeded", simJson.RootElement.GetProperty("status").GetString());
+            // 8.0 V through custom 10k/10k HALF_DIV subcircuit -> exact 4.00 V at out!
+            Assert.Equal(4.0, simJson.RootElement.GetProperty("op_voltages").GetProperty("out").GetDouble(), precision: 9);
+            Assert.Contains("4.00 V", simJson.RootElement.GetProperty("svg").GetString()!, StringComparison.Ordinal);
+
+            // 3. Test Ideal Op-Amp Foundation Library .SUBCKT (non-inverting gain = 1 + 20k/10k = 3.0 -> 4.5 V)
+            var opAmpSchem = new SchematicDocument(
+                SchemaVersion: "2.1",
+                Name: "live_opamp_gain3",
+                RootSheet: new SchematicSheet(
+                    SheetId: "root",
+                    Title: "OpAmp Gain 3",
+                    Components:
+                    [
+                        new PlacedComponent("Vin", "spice.vsrc", 80, 140, 90, new Dictionary<string, double> { ["dc_volts"] = 1.5 }),
+                        new PlacedComponent("X1", "spice.subckt", 240, 140, 0, new Dictionary<string, double>(), ModelName: "IDEAL_OPAMP", LibraryPartId: "foundation.subckt.ideal_opamp"),
+                        new PlacedComponent("Rf", "spice.resistor", 340, 220, 0, new Dictionary<string, double> { ["ohms"] = 20000.0 }),
+                        new PlacedComponent("Rg", "spice.resistor", 180, 240, 90, new Dictionary<string, double> { ["ohms"] = 10000.0 })
+                    ],
+                    Nets:
+                    [
+                        new WireNet("in", [new PinRef("Vin", "p"), new PinRef("X1", "inp")]),
+                        new WireNet("fb", [new PinRef("X1", "inn"), new PinRef("Rf", "p"), new PinRef("Rg", "p")]),
+                        new WireNet("out", [new PinRef("X1", "out"), new PinRef("Rf", "n")]),
+                        new WireNet("GND", [new PinRef("Vin", "n"), new PinRef("Rg", "n")], IsGlobalGround: true)
+                    ]));
+            var opAmpResp = await http.PostAsJsonAsync("/api/schematic/simulate", new { document = opAmpSchem, analysis = "op" });
+            opAmpResp.EnsureSuccessStatusCode();
+            using var opAmpJson = JsonDocument.Parse(await opAmpResp.Content.ReadAsStringAsync());
+            Assert.Equal("Succeeded", opAmpJson.RootElement.GetProperty("status").GetString());
+            Assert.InRange(Math.Abs(opAmpJson.RootElement.GetProperty("op_voltages").GetProperty("out").GetDouble() - 4.5), 0.0, 1e-3);
+
+            // 4. Test POST /api/schematic/save, /load, /export (Spectre + Bundle), and DELETE /api/library/{id}
+            var saveResp = await http.PostAsJsonAsync("/api/schematic/save", new { document = schemWithCustom, author = "TestUser" });
+            saveResp.EnsureSuccessStatusCode();
+            using var saveJson = JsonDocument.Parse(await saveResp.Content.ReadAsStringAsync());
+            var savedContent = saveJson.RootElement.GetProperty("content").GetString()!;
+            Assert.Equal("live_custom_subckt.spice.json", saveJson.RootElement.GetProperty("filename").GetString());
+
+            var loadResp = await http.PostAsJsonAsync("/api/schematic/load", new { content = savedContent, verifyChecksum = true });
+            loadResp.EnsureSuccessStatusCode();
+            using var loadJson = JsonDocument.Parse(await loadResp.Content.ReadAsStringAsync());
+            Assert.True(loadJson.RootElement.GetProperty("loaded").GetBoolean());
+
+            var expResp = await http.PostAsJsonAsync("/api/schematic/export", new { document = schemWithCustom, format = "spectre", analysis = "op" });
+            expResp.EnsureSuccessStatusCode();
+            using var expJson = JsonDocument.Parse(await expResp.Content.ReadAsStringAsync());
+            Assert.Contains("simulator lang=spectre", expJson.RootElement.GetProperty("content").GetString()!, StringComparison.Ordinal);
+
+            var delResp = await http.DeleteAsync("/api/library/user.subckt.half_div");
+            delResp.EnsureSuccessStatusCode();
+        }
+        finally
+        {
+            if (Directory.Exists(tmpDir)) Directory.Delete(tmpDir, recursive: true);
+        }
+    }
 }

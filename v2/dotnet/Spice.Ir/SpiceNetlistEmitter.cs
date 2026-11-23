@@ -33,9 +33,15 @@ public static class SpiceNetlistEmitter
         {
             foreach (var m in request.Circuit.Models)
             {
+                if (!emittedModels.Add(m.Name)) continue;
                 if (!string.IsNullOrWhiteSpace(m.OsdiLibraryPath))
                 {
                     sb.AppendLine($".OSDI \"{m.OsdiLibraryPath}\"");
+                }
+                if (!string.IsNullOrWhiteSpace(m.RawSpiceDefinition))
+                {
+                    sb.AppendLine(m.RawSpiceDefinition.Trim());
+                    continue;
                 }
                 var kvs = string.Join(" ", m.Parameters.Select(kv => $"{kv.Key}={Fmt(kv.Value)}"));
                 if (!string.IsNullOrWhiteSpace(m.OsdiModelName))
@@ -44,7 +50,6 @@ public static class SpiceNetlistEmitter
                     kvs = string.IsNullOrWhiteSpace(kvs) ? prefix : $"{prefix} {kvs}";
                 }
                 sb.AppendLine($".MODEL {m.Name} {m.ModelType}({kvs})");
-                emittedModels.Add(m.Name);
             }
         }
 
@@ -95,8 +100,72 @@ public static class SpiceNetlistEmitter
                     sb.AppendLine($"{EnsurePrefix(dev.Id, 'D')} {dev.PinConnections["p"]} {dev.PinConnections["n"]} {modelName}");
                     break;
                 }
+                case "spice.mosfet":
+                {
+                    var modelName = string.IsNullOrWhiteSpace(dev.ModelName) ? $"MOS_{dev.Id}" : dev.ModelName;
+                    if (emittedModels.Add(modelName))
+                    {
+                        var level = (int)Math.Round(dev.Parameters.GetValueOrDefault("level", 54.0));
+                        var vth0 = dev.Parameters.GetValueOrDefault("vth0_volts", 0.4);
+                        var mosType = vth0 < 0.0 ? "PMOS" : "NMOS";
+                        sb.AppendLine($".MODEL {modelName} {mosType}(LEVEL={level} VTH0={Fmt(vth0)} TOXE=2.2n U0=420 VSAT=1.1e5)");
+                    }
+                    var w = dev.Parameters.GetValueOrDefault("w_m", 1e-6);
+                    var l = dev.Parameters.GetValueOrDefault("l_m", 65e-9);
+                    sb.AppendLine($"{EnsurePrefix(dev.Id, 'M')} {dev.PinConnections["d"]} {dev.PinConnections["g"]} {dev.PinConnections["s"]} {dev.PinConnections["b"]} {modelName} W={Fmt(w)} L={Fmt(l)}");
+                    break;
+                }
+                case "spice.bjt":
+                {
+                    var modelName = string.IsNullOrWhiteSpace(dev.ModelName) ? $"BJT_{dev.Id}" : dev.ModelName;
+                    if (emittedModels.Add(modelName))
+                    {
+                        var bf = dev.Parameters.GetValueOrDefault("bf", 100.0);
+                        var isVal = dev.Parameters.GetValueOrDefault("is_amps", 1e-16);
+                        sb.AppendLine($".MODEL {modelName} NPN(BF={Fmt(bf)} IS={Fmt(isVal)})");
+                    }
+                    var area = dev.Parameters.GetValueOrDefault("area", 1.0);
+                    sb.AppendLine($"{EnsurePrefix(dev.Id, 'Q')} {dev.PinConnections["c"]} {dev.PinConnections["b"]} {dev.PinConnections["e"]} {modelName} {Fmt(area)}");
+                    break;
+                }
+                case "spice.jfet":
+                {
+                    var modelName = string.IsNullOrWhiteSpace(dev.ModelName) ? $"JFET_{dev.Id}" : dev.ModelName;
+                    if (emittedModels.Add(modelName))
+                    {
+                        var vto = dev.Parameters.GetValueOrDefault("vto_volts", -2.0);
+                        var beta = dev.Parameters.GetValueOrDefault("beta_a_per_v2", 1e-4);
+                        sb.AppendLine($".MODEL {modelName} NJF(VTO={Fmt(vto)} BETA={Fmt(beta)})");
+                    }
+                    var area = dev.Parameters.GetValueOrDefault("area", 1.0);
+                    sb.AppendLine($"{EnsurePrefix(dev.Id, 'J')} {dev.PinConnections["d"]} {dev.PinConnections["g"]} {dev.PinConnections["s"]} {modelName} {Fmt(area)}");
+                    break;
+                }
+                case "spice.subckt":
+                {
+                    var subName = dev.ModelName ?? throw new InvalidOperationException($"Subcircuit '{dev.Id}' missing ModelName.");
+                    var orderedPins = dev.PinOrder is { Count: > 0 }
+                        ? dev.PinOrder.Select(p => dev.PinConnections[p])
+                        : dev.PinConnections.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => kv.Value);
+                    var paramList = dev.Parameters.Count > 0
+                        ? " " + string.Join(" ", dev.Parameters.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => $"{kv.Key}={Fmt(kv.Value)}"))
+                        : string.Empty;
+                    sb.AppendLine($"{EnsurePrefix(dev.Id, 'X')} {string.Join(" ", orderedPins)} {subName}{paramList}");
+                    break;
+                }
                 default:
                     throw new NotSupportedException($"Netlist emission does not support device kind '{dev.KindId}'.");
+            }
+        }
+
+        if (request.Circuit.Directives is not null)
+        {
+            foreach (var dir in request.Circuit.Directives)
+            {
+                if (!string.IsNullOrWhiteSpace(dir))
+                {
+                    sb.AppendLine(dir.Trim());
+                }
             }
         }
 

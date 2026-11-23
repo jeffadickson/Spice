@@ -51,8 +51,11 @@ public sealed class DeviceRegistry
             return errors;
         }
 
-        // Validate pins fail-closed (except variable-terminal OSDI devices).
-        if (!string.Equals(desc.KindId, "spice.osdi", StringComparison.Ordinal))
+        // Validate pins fail-closed (except variable-terminal OSDI and Subcircuit devices).
+        var isVariableTerminal =
+            string.Equals(desc.KindId, "spice.osdi", StringComparison.Ordinal) ||
+            string.Equals(desc.KindId, "spice.subckt", StringComparison.Ordinal);
+        if (!isVariableTerminal)
         {
             var expectedPins = new HashSet<string>(desc.Pins.Select(p => p.Name), StringComparer.Ordinal);
             foreach (var pin in desc.Pins)
@@ -76,12 +79,23 @@ public sealed class DeviceRegistry
                 }
             }
         }
-        else if (instance.PinConnections.Count == 0)
+        else
         {
-            errors.Add(new ValidationDiagnostic(
-                "missing_pin",
-                $"OSDI device '{instance.Id}' must connect at least one terminal.",
-                instance.Id));
+            if (instance.PinConnections.Count == 0)
+            {
+                errors.Add(new ValidationDiagnostic(
+                    "missing_pin",
+                    $"Device '{instance.Id}' ({desc.KindId}) must connect at least one terminal.",
+                    instance.Id));
+            }
+            if (string.Equals(desc.KindId, "spice.subckt", StringComparison.Ordinal) &&
+                string.IsNullOrWhiteSpace(instance.ModelName))
+            {
+                errors.Add(new ValidationDiagnostic(
+                    "missing_subckt_model",
+                    $"Subcircuit instance '{instance.Id}' must specify a subcircuit ModelName.",
+                    instance.Id));
+            }
         }
 
         // Validate parameters fail-closed (no unknown params, all required present, all finite).
@@ -106,7 +120,7 @@ public sealed class DeviceRegistry
                     $"Device '{instance.Id}' parameter '{paramName}' must be finite.",
                     instance.Id));
             }
-            if (!string.Equals(desc.KindId, "spice.osdi", StringComparison.Ordinal) &&
+            if (!isVariableTerminal &&
                 !paramMeta.ContainsKey(paramName))
             {
                 errors.Add(new ValidationDiagnostic(
@@ -264,6 +278,11 @@ public sealed class DeviceRegistry
                 new ParameterDescriptor("beta_a_per_v2", "A/V^2", DefaultValue: 1e-4)
             ],
             "sym.jfet"),
+        new DeviceDescriptor(
+            "spice.subckt", "Custom Subcircuit / Macro (.SUBCKT)",
+            [],
+            [],
+            "sym.subckt"),
         new DeviceDescriptor(
             "spice.osdi", "OSDI Compiled Verilog-A Model",
             [],

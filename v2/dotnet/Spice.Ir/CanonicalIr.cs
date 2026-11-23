@@ -25,14 +25,16 @@ public sealed record DeviceInstanceIr(
     string KindId,
     IReadOnlyDictionary<string, string> PinConnections,
     IReadOnlyDictionary<string, double> Parameters,
-    string? ModelName = null);
+    string? ModelName = null,
+    IReadOnlyList<string>? PinOrder = null);
 
 public sealed record ModelDefinitionIr(
     string Name,
     string ModelType,
     IReadOnlyDictionary<string, double> Parameters,
     string? OsdiLibraryPath = null,
-    string? OsdiModelName = null);
+    string? OsdiModelName = null,
+    string? RawSpiceDefinition = null);
 
 /// <summary>
 /// Immutable frontend-agnostic circuit representation emitted by StarLark-cs,
@@ -43,7 +45,8 @@ public sealed record CircuitIr(
     IReadOnlyList<string> Nodes,
     IReadOnlyList<DeviceInstanceIr> Devices,
     IReadOnlyDictionary<string, string>? Provenance = null,
-    IReadOnlyList<ModelDefinitionIr>? Models = null);
+    IReadOnlyList<ModelDefinitionIr>? Models = null,
+    IReadOnlyList<string>? Directives = null);
 
 public enum AnalysisKind
 {

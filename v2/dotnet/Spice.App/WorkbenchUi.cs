@@ -1,10 +1,12 @@
 namespace Spice.App;
 
 /// <summary>
-/// Self-contained interactive desktop/browser workbench UI served by <see cref="WorkbenchServer"/>.
-/// Supports in-situ grid snapping, live alignment snap guide lines, orthogonal wire drawing,
-/// live DC node voltage &amp; branch current overlays, cross-probing waveforms, and full
-/// SPICE3f5/Spectre/BSIM4/RF/LTRA/TRNOISE deck execution over libspice_capi ABI v2.1.
+/// Self-contained interactive EDA schematic studio and simulation workbench UI served by
+/// <see cref="WorkbenchServer"/>. Delivers RSpice-parity schematic capture (component shelf,
+/// pan/zoom canvas, snap grids &amp; cyan alignment guides, orthogonal wiring, mirror/rotate/align,
+/// undo/redo, keyboard shortcuts, ERC problems, multi-sheet &amp; subckt-from-sheet, custom
+/// component &amp; attached-model library studio, multi-dialect netlist/bundle/BOM/SVG export,
+/// versioned .spice.json save/load, live DC V/I overlays, and interactive crosshair waveforms).
 /// </summary>
 public static class WorkbenchUi
 {
@@ -14,238 +16,621 @@ public static class WorkbenchUi
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Spice V2 Workbench - Live Native C++20 Engine (.NET 11)</title>
+  <title>Spice V2 Workbench — EDA Schematic Studio &amp; Native C++20 Engine</title>
   <style>
     :root {
-      --bg: #0b1120;
-      --panel: #111827;
-      --panel-2: #1e293b;
-      --border: #334155;
+      --bg: #070b14;
+      --surface: #0f172a;
+      --surface-2: #162033;
+      --surface-3: #1e293b;
+      --border: #263449;
+      --border-hi: #38bdf8;
       --text: #f1f5f9;
       --muted: #94a3b8;
+      --dim: #64748b;
       --accent: #38bdf8;
-      --green: #22c55e;
+      --accent-dark: #0284c7;
+      --green: #10b981;
       --amber: #f59e0b;
       --rose: #f43f5e;
+      --indigo: #818cf8;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
     }
     * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body {
-      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column;
+      margin: 0; font-family: var(--sans); background: var(--bg); color: var(--text);
+      display: flex; flex-direction: column; overflow: hidden;
     }
     header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 18px; background: var(--panel); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 8px 16px; background: linear-gradient(180deg, #111b2e 0%, #0c1322 100%);
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
     }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.02em; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; letter-spacing: 0.02em; }
+    .logo-mark {
+      width: 24px; height: 24px; border-radius: 6px;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      display: grid; place-items: center; font-family: var(--mono); font-size: 12px; color: #fff; font-weight: 800;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+    }
     .badge {
-      font-size: 11px; padding: 3px 8px; border-radius: 999px;
-      background: rgba(56, 189, 248, 0.14); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.35);
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px; padding: 3px 9px; border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3);
+      font-family: var(--mono); white-space: nowrap;
     }
-    .badge.ok { background: rgba(34, 197, 94, 0.14); color: var(--green); border-color: rgba(34, 197, 94, 0.35); }
-    nav { display: flex; gap: 6px; padding: 8px 18px; background: #0f172a; border-bottom: 1px solid var(--border); }
+    .badge.ok { background: rgba(16, 185, 129, 0.14); color: #34d399; border-color: rgba(16, 185, 129, 0.35); }
+    .nav-tabs { display: flex; gap: 4px; align-items: center; }
     .tab-btn {
       background: transparent; color: var(--muted); border: 1px solid transparent;
-      padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;
+      padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12.5px;
+      transition: all 0.15s;
     }
-    .tab-btn.active { background: var(--panel-2); color: var(--text); border-color: var(--border); }
-    main { flex: 1; padding: 14px 18px; display: flex; flex-direction: column; gap: 14px; }
-    .tab-pane { display: none; gap: 14px; }
-    .tab-pane.active { display: grid; grid-template-columns: minmax(380px, 1.15fr) minmax(400px, 1.15fr); }
-    .card {
-      background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
-      padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;
+    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .tab-btn.active { background: var(--surface-3); color: #fff; border-color: var(--border); box-shadow: inset 0 -2px 0 var(--accent); }
+    .icon-btn {
+      background: var(--surface-2); color: var(--text); border: 1px solid var(--border);
+      border-radius: 6px; padding: 5px 9px; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+      transition: all 0.12s; white-space: nowrap;
     }
-    .card h3 { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
-    .toolbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-    select, input, button, textarea {
-      background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
-      border-radius: 6px; padding: 5px 9px; font-size: 12.5px;
+    .icon-btn:hover { background: var(--surface-3); border-color: #475569; }
+    .icon-btn.primary { background: var(--accent-dark); border-color: var(--accent); color: #fff; font-weight: 600; }
+    .icon-btn.primary:hover { background: #0369a1; }
+    .icon-btn.sim-btn { background: #059669; border-color: #34d399; color: #fff; font-weight: 700; padding: 5px 14px; }
+    .icon-btn.sim-btn:hover { background: #047857; }
+    .icon-btn.mode-on { background: #b45309; border-color: var(--amber); color: #fff; font-weight: 600; }
+    .icon-btn.danger { color: #fda4af; border-color: rgba(244, 63, 94, 0.35); }
+    .icon-btn.danger:hover { background: rgba(244, 63, 94, 0.18); }
+
+    select, input, textarea {
+      background: var(--surface-2); color: var(--text); border: 1px solid var(--border);
+      border-radius: 6px; padding: 5px 8px; font-size: 12px; font-family: var(--sans);
     }
-    button { cursor: pointer; }
-    button.primary { background: #0284c7; border-color: #38bdf8; font-weight: 600; }
-    button.primary:hover { background: #0369a1; }
-    button.mode-on { background: #b45309; border-color: #f59e0b; color: #fff; font-weight: 600; }
-    label.chk { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); cursor: pointer; }
-    textarea {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
-      width: 100%; resize: vertical; line-height: 1.45;
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+    textarea { font-family: var(--mono); width: 100%; resize: vertical; line-height: 1.45; }
+
+    main { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .tab-pane { display: none; flex: 1; min-height: 0; overflow: hidden; }
+    .tab-pane.active { display: flex; flex-direction: column; }
+
+    /* ---- RIBBON TOOLBAR ---- */
+    .ribbon {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      padding: 7px 14px; background: var(--surface); border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .rib-group {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding-right: 8px; border-right: 1px solid var(--border);
+    }
+    .rib-group:last-child { border-right: none; padding-right: 0; }
+    label.chk { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--muted); cursor: pointer; }
+
+    /* ---- 3-PANE EDA SCHEMATIC STUDIO ---- */
+    .studio-grid {
+      flex: 1; min-height: 0; display: grid;
+      grid-template-columns: 248px minmax(420px, 1fr) 410px;
+      overflow: hidden;
+    }
+    .dock {
+      background: var(--surface); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; min-height: 0; overflow: hidden;
+    }
+    .dock.right { border-right: none; border-left: 1px solid var(--border); }
+    .dock-tabs {
+      display: flex; background: #0b1220; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .dock-tab {
+      flex: 1; background: transparent; border: none; color: var(--muted);
+      padding: 8px 6px; font-size: 11.5px; font-weight: 600; cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .dock-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(56,189,248,0.06); }
+    .dock-body { flex: 1; min-height: 0; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+    .dock-section { display: none; flex-direction: column; gap: 10px; }
+    .dock-section.active { display: flex; }
+
+    .sec-title {
+      font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--dim); margin: 2px 0; display: flex; justify-content: space-between; align-items: center;
+    }
+
+    /* ---- COMPONENT SHELF ---- */
+    .shelf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .shelf-item {
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 7px;
+      padding: 6px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px;
+      transition: all 0.12s; text-align: center;
+    }
+    .shelf-item:hover { border-color: var(--accent); background: #1a2740; transform: translateY(-1px); }
+    .shelf-item svg { width: 58px; height: 34px; }
+    .shelf-item .sname { font-size: 11px; font-weight: 600; color: var(--text); line-height: 1.2; }
+    .shelf-item .stag { font-size: 9.5px; font-family: var(--mono); color: var(--accent); }
+    .shelf-item.custom-part { border-color: rgba(129, 140, 248, 0.4); }
+    .shelf-item.custom-part .stag { color: #c7d2fe; }
+
+    /* ---- CENTER CANVAS ---- */
+    .canvas-stage {
+      position: relative; display: flex; flex-direction: column; min-height: 0; background: var(--bg); overflow: hidden;
     }
     #svg-host {
-      background: #0b1120; border: 1px solid var(--border); border-radius: 8px;
-      min-height: 340px; display: flex; align-items: center; justify-content: center; overflow: hidden;
-      user-select: none;
+      flex: 1; min-height: 0; width: 100%; display: flex; align-items: stretch; justify-content: stretch;
+      overflow: hidden; user-select: none; cursor: default;
     }
-    #svg-host svg { width: 100%; height: 340px; touch-action: none; }
+    #svg-host svg { width: 100%; height: 100%; touch-action: none; }
     #svg-host .spice-net { cursor: pointer; }
-    #svg-host .spice-net:hover .spice-wire-path { stroke: #f59e0b; stroke-width: 3.5; }
-    #svg-host .spice-net.probed .spice-wire-path { stroke: #f43f5e; stroke-width: 3.5; }
+    #svg-host .spice-net:hover .spice-wire-path { stroke: #f59e0b; stroke-width: 3.6; }
+    #svg-host .spice-net.probed .spice-wire-path { stroke: #f43f5e; stroke-width: 3.6; }
     #svg-host .spice-component { cursor: grab; }
-    #svg-host .spice-component.dragging { cursor: grabbing; opacity: 0.92; }
-    #svg-host .spice-component.selected rect:first-of-type { stroke: #38bdf8; stroke-width: 2; }
+    #svg-host .spice-component.dragging { cursor: grabbing; opacity: 0.9; }
+    #svg-host .spice-component.selected rect:first-of-type { stroke: #38bdf8; stroke-width: 2.2; filter: drop-shadow(0 0 6px rgba(56,189,248,0.45)); }
     #svg-host .spice-pin { cursor: crosshair; transition: r 0.1s; }
-    #svg-host .spice-pin:hover { fill: #f59e0b; stroke: #fef3c7; r: 5.5; }
-    #svg-host .spice-pin.wire-start { fill: #22c55e; stroke: #bbf7d0; r: 6; }
-    canvas { width: 100%; height: 270px; background: #0f172a; border: 1px solid var(--border); border-radius: 8px; }
-    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-    .chip {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px;
-      padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border);
-      background: var(--panel-2); color: var(--muted); cursor: pointer;
+    #svg-host .spice-pin:hover { fill: #f59e0b; stroke: #fef3c7; r: 6; }
+    #svg-host .spice-pin.wire-start { fill: #10b981; stroke: #a7f3d0; r: 6.5; }
+    .zoom-hud {
+      position: absolute; right: 12px; bottom: 38px;
+      display: flex; align-items: center; gap: 3px;
+      background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border); border-radius: 8px; padding: 3px;
+      backdrop-filter: blur(6px);
     }
-    .chip.on { color: #fff; border-color: var(--accent); background: rgba(56, 189, 248, 0.2); }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .zoom-hud button { background: transparent; border: none; color: var(--text); padding: 3px 7px; border-radius: 4px; cursor: pointer; font-family: var(--mono); font-size: 11.5px; }
+    .zoom-hud button:hover { background: var(--surface-3); }
+    .canvas-statusbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 5px 12px; background: #0a101e; border-top: 1px solid var(--border);
+      font-family: var(--mono); font-size: 11px; color: var(--muted); flex-shrink: 0;
+    }
+
+    /* ---- WAVEFORM & TABLES ---- */
+    canvas.plot { width: 100%; height: 225px; background: #080e1a; border: 1px solid var(--border); border-radius: 8px; cursor: crosshair; }
+    .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .chip {
+      font-family: var(--mono); font-size: 11px; padding: 3px 8px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--surface-2); color: var(--muted); cursor: pointer;
+    }
+    .chip.on { color: #fff; border-color: var(--accent); background: rgba(56, 189, 248, 0.22); }
+    table { width: 100%; border-collapse: collapse; font-size: 11.5px; font-family: var(--mono); }
     th, td { border-bottom: 1px solid var(--border); padding: 4px 6px; text-align: left; }
-    th { color: var(--muted); font-weight: 600; }
-    .op-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .status-line { font-size: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
-    .err { color: var(--rose); }
-    .ok { color: var(--green); }
+    th { color: var(--dim); font-weight: 600; font-size: 10.5px; }
+    .op-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .ok { color: #34d399; }
+    .err { color: #fb7185; }
     .amber { color: #fcd34d; }
-    @media (max-width: 960px) { .tab-pane.active, .op-grid { grid-template-columns: 1fr; } }
+    .nav-list { display: flex; flex-direction: column; gap: 3px; }
+    .nav-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 6px;
+      padding: 5px 8px; border-radius: 6px; background: var(--surface-2); border: 1px solid transparent;
+      font-family: var(--mono); font-size: 11.5px; cursor: pointer;
+    }
+    .nav-row:hover { border-color: var(--border-hi); }
+    .nav-row.active { border-color: var(--accent); background: rgba(56,189,248,0.12); }
+
+    /* ---- LIBRARY STUDIO & OTHER WORKSPACES ---- */
+    .split-workspace {
+      flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(380px, 1.05fr) minmax(420px, 1.15fr);
+      gap: 14px; padding: 14px; overflow-y: auto;
+    }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0;
+    }
+    .card h3 { margin: 0; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+    .lib-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; overflow-y: auto; padding-right: 4px; }
+    .lib-card {
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 9px; padding: 10px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .lib-card.user-owned { border-color: rgba(129, 140, 248, 0.55); }
+    .lib-card-head { display: flex; align-items: center; gap: 8px; }
+    .lib-card-head svg { width: 54px; height: 36px; background: #080e1a; border-radius: 6px; border: 1px solid var(--border); flex-shrink: 0; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .field { display: flex; flex-direction: column; gap: 3px; }
+    .field label { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+    /* ---- MODAL ---- */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(2, 6, 23, 0.72); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; z-index: 50;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      width: min(640px, 92vw); max-height: 85vh; overflow-y: auto; padding: 18px;
+      display: flex; flex-direction: column; gap: 12px; box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+    }
+    .kbd {
+      font-family: var(--mono); font-size: 11px; padding: 2px 6px; border-radius: 4px;
+      background: var(--surface-3); border: 1px solid #475569; color: var(--text);
+    }
+    @media (max-width: 1120px) {
+      body { overflow: auto; }
+      .studio-grid { grid-template-columns: 1fr; }
+      .dock { max-height: 360px; border: none; border-bottom: 1px solid var(--border); }
+      .canvas-stage { min-height: 460px; }
+      .split-workspace { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="brand">
+      <div class="logo-mark">S2</div>
       <span>Spice V2 Workbench</span>
       <span id="abi-badge" class="badge">Connecting...</span>
     </div>
-    <div class="status-line" id="runtime-info">Live Native C++20 Engine via .NET 11</div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-tab="schematic">1. Schematic Studio</button>
+      <button class="tab-btn" data-tab="library">2. Component &amp; Model Library</button>
+      <button class="tab-btn" data-tab="deck">3. SPICE / Spectre / RF Deck</button>
+      <button class="tab-btn" data-tab="campaign">4. Parallel Campaign</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span id="runtime-info" class="badge">Native C++20</span>
+      <button id="btn-shortcuts" class="icon-btn" title="Keyboard Shortcuts">? Keys</button>
+    </div>
   </header>
 
-  <nav>
-    <button class="tab-btn active" data-tab="schematic">1. Schematic Capture, Snap Lines &amp; DC V/I</button>
-    <button class="tab-btn" data-tab="deck">2. SPICE3f5 / Spectre / BSIM4 / RF Deck</button>
-    <button class="tab-btn" data-tab="campaign">3. Parallel Corner Campaign</button>
-  </nav>
-
   <main>
-    <!-- TAB 1: SCHEMATIC EDITOR, IN-SITU SNAP LINES, DC VOLTAGE/CURRENT & CROSS-PROBING -->
+    <!-- ========================================================================= -->
+    <!-- TAB 1: EDA SCHEMATIC STUDIO                                               -->
+    <!-- ========================================================================= -->
     <section id="tab-schematic" class="tab-pane active">
-      <div class="card">
-        <h3>Interactive Schematic Sheet (Drag to Snap, Wire Pins, Click to Probe)</h3>
-        <div class="toolbar">
-          <select id="schem-preset">
+      <div class="ribbon">
+        <div class="rib-group">
+          <select id="schem-preset" title="Load circuit template">
             <option value="divider">Resistive Divider (10V, 1k, 2k)</option>
             <option value="rc">RC Low-Pass Filter (5V, 1k, 1uF)</option>
-            <option value="diode">Diode Forward Bias (5V, 1k, D1)</option>
+            <option value="diode">1N4148 Diode Forward Bias</option>
+            <option value="bsim4_inv">BSIM4 65nm CMOS Inverter</option>
+            <option value="bjt_amp">2N2222 NPN Common-Emitter Amp</option>
+            <option value="opamp_buf">Ideal Op-Amp Non-Inverting (Gain=3)</option>
           </select>
-          <select id="schem-analysis">
-            <option value="tran">Transient (BDF2, UIC) + DC OP</option>
-            <option value="ac">AC Sweep (10 Hz - 100 kHz) + DC OP</option>
-            <option value="op">DC Operating Point Only</option>
+        </div>
+
+        <div class="rib-group">
+          <button id="btn-save-schem" class="icon-btn" title="Save versioned .spice.json (Ctrl+S)">Save</button>
+          <button id="btn-open-schem" class="icon-btn" title="Open saved .spice.json file">Open</button>
+          <input id="file-open-schem" type="file" accept=".json,.spice.json" style="display:none" />
+          <button id="btn-import-spice" class="icon-btn" title="Import SPICE netlist onto schematic">Import SPICE</button>
+        </div>
+
+        <div class="rib-group">
+          <button id="btn-undo" class="icon-btn" title="Undo (Ctrl+Z)">Undo</button>
+          <button id="btn-redo" class="icon-btn" title="Redo (Ctrl+Y)">Redo</button>
+          <button id="btn-rotate" class="icon-btn" title="Rotate selected 90° (Ctrl+R)">Rot 90°</button>
+          <button id="btn-mirror" class="icon-btn" title="Mirror horizontal (Ctrl+M)">Mirror</button>
+          <button id="btn-align-x" class="icon-btn" title="Align all components horizontally">Align Y</button>
+          <button id="btn-snap-all" class="icon-btn" title="Snap all components to grid">Snap</button>
+          <button id="btn-delete" class="icon-btn danger" title="Delete selected component (Del)">Del</button>
+        </div>
+
+        <div class="rib-group">
+          <button id="mode-move" class="icon-btn mode-on" title="Select, move with snap lines, or click nets to probe (Esc)">Select / Probe</button>
+          <button id="mode-wire" class="icon-btn" title="Click two pins to draw an orthogonal wire (W)">Wire (W)</button>
+          <button id="btn-add-directive" class="icon-btn" title="Add SPICE directive / note to sheet (T)">+ Directive</button>
+          <button id="btn-add-port" class="icon-btn" title="Add hierarchical interface port pin (P)">+ Port</button>
+        </div>
+
+        <div class="rib-group">
+          <select id="grid-style" title="Grid display style">
+            <option value="lines">Grid: Lines</option>
+            <option value="dots">Grid: Dots</option>
+            <option value="off">Grid: Off</option>
           </select>
-          <button id="schem-run" class="primary">Simulate</button>
+          <select id="grid-pitch" title="Snap grid pitch">
+            <option value="10">10px</option>
+            <option value="20" selected>20px</option>
+            <option value="40">40px</option>
+          </select>
+          <label class="chk"><input id="chk-op" type="checkbox" checked /> DC V/I</label>
         </div>
-        <div class="toolbar">
-          <button id="mode-move" class="mode-on" title="Drag components with live snap lines or click nets to probe">Move / Probe</button>
-          <button id="mode-wire" title="Click two component pins to route an orthogonal snapped wire">Wire Pins</button>
-          <button id="btn-rotate" title="Rotate selected component 90 deg">Rotate 90°</button>
-          <button id="btn-add-r" title="Add snapped Resistor">+ R</button>
-          <button id="btn-add-c" title="Add snapped Capacitor">+ C</button>
-          <button id="btn-snap-all" title="Snap all components to 20px grid">Snap All</button>
-          <label class="chk"><input id="chk-grid" type="checkbox" checked /> Snap Grid (20px)</label>
-          <label class="chk"><input id="chk-op" type="checkbox" checked /> DC V &amp; I Overlay</label>
+
+        <div class="rib-group">
+          <select id="schem-analysis" title="Simulation analysis">
+            <option value="tran">TRAN (BDF2) + DC OP</option>
+            <option value="ac">AC Sweep + DC OP</option>
+            <option value="dc">DC Sweep + DC OP</option>
+            <option value="op">DC Operating Point</option>
+          </select>
+          <button id="schem-run" class="icon-btn sim-btn" title="Run native C++20 simulation (F5)">&#9654; Simulate</button>
         </div>
-        <div id="svg-host"></div>
-        <div id="erc-status" class="status-line">Drag components to see cyan alignment snap lines. Click nets to probe waveforms.</div>
-        <h3>Component Parameters (Live Edit)</h3>
-        <div id="comp-editor"></div>
       </div>
 
-      <div class="card">
-        <h3>Live Cross-Probed Waveform</h3>
-        <div class="chips" id="schem-signals"></div>
-        <canvas id="schem-canvas" width="700" height="270"></canvas>
-        <div id="schem-readout" class="status-line"></div>
+      <div class="studio-grid">
+        <!-- LEFT DOCK: COMPONENT SHELF & NAVIGATOR -->
+        <aside class="dock">
+          <div class="dock-tabs">
+            <button class="dock-tab active" data-dock="left" data-pane="shelf">Component Shelf</button>
+            <button class="dock-tab" data-dock="left" data-pane="navigator">Navigator &amp; ERC</button>
+          </div>
+          <div class="dock-body">
+            <div id="left-shelf" class="dock-section active">
+              <input id="shelf-filter" placeholder="Search parts &amp; models..." />
+              <div class="sec-title"><span>Primitives</span><span>Keys: R C L V I D</span></div>
+              <div id="shelf-primitives" class="shelf-grid"></div>
+              <div class="sec-title">
+                <span>Foundation &amp; Custom Library</span>
+                <button id="btn-jump-lib" class="icon-btn" style="padding:2px 6px;font-size:10.5px">+ Custom</button>
+              </div>
+              <div id="shelf-library" class="shelf-grid"></div>
+            </div>
 
-        <h3>DC Operating Point — Node Voltages &amp; Branch Currents</h3>
-        <div class="op-grid">
-          <table id="op-v-table">
-            <thead><tr><th>Net</th><th>DC Voltage</th></tr></thead>
-            <tbody></tbody>
-          </table>
-          <table id="op-i-table">
-            <thead><tr><th>Element</th><th>DC Current (p→n)</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
+            <div id="left-navigator" class="dock-section">
+              <div class="sec-title">
+                <span>Sheets &amp; Hierarchy</span>
+                <button id="btn-sheet-to-part" class="icon-btn primary" style="padding:2px 7px;font-size:10.5px">Save Sheet as .SUBCKT</button>
+              </div>
+              <div id="nav-sheets" class="nav-list"></div>
 
-        <h3>Generated Canonical SPICE Netlist</h3>
-        <textarea id="schem-spice" rows="6" readonly></textarea>
+              <div class="sec-title"><span>Instances</span><span id="nav-inst-count">0</span></div>
+              <div id="nav-instances" class="nav-list"></div>
+
+              <div class="sec-title"><span>Nets (Click to Probe)</span><span id="nav-net-count">0</span></div>
+              <div id="nav-nets" class="nav-list"></div>
+
+              <div class="sec-title"><span>ERC Diagnostics</span><span id="nav-erc-count">0</span></div>
+              <div id="nav-erc" class="nav-list"></div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- CENTER STAGE: INTERACTIVE PAN/ZOOM SCHEMATIC CANVAS -->
+        <section class="canvas-stage">
+          <div id="svg-host"></div>
+          <div class="zoom-hud">
+            <button id="zoom-out" title="Zoom out (-)">−</button>
+            <button id="zoom-reset" title="Reset 100%">100%</button>
+            <button id="zoom-in" title="Zoom in (+)">+</button>
+            <button id="zoom-fit" title="Fit sheet (F)">Fit</button>
+          </div>
+          <div class="canvas-statusbar">
+            <span id="erc-status">Ready — drag parts to see cyan alignment snap guides, or click nets to cross-probe.</span>
+            <span id="cursor-coords">X: 0  Y: 0  |  Grid: 20px</span>
+          </div>
+        </section>
+
+        <!-- RIGHT DOCK: WAVEFORMS/DC OP, INSPECTOR, MULTI-FORMAT EXPORT -->
+        <aside class="dock right">
+          <div class="dock-tabs">
+            <button class="dock-tab active" data-dock="right" data-pane="results">Results &amp; DC V/I</button>
+            <button class="dock-tab" data-dock="right" data-pane="inspector">Inspector</button>
+            <button class="dock-tab" data-dock="right" data-pane="export">Netlist &amp; Export</button>
+          </div>
+          <div class="dock-body">
+            <!-- RESULTS & WAVEFORMS -->
+            <div id="right-results" class="dock-section active">
+              <div class="sec-title">
+                <span>Live Cross-Probed Waveforms</span>
+                <div style="display:flex;gap:4px">
+                  <button id="btn-bode-toggle" class="icon-btn" style="padding:2px 6px;font-size:10.5px">dB: Off</button>
+                  <button id="btn-csv-wave" class="icon-btn" style="padding:2px 6px;font-size:10.5px">CSV</button>
+                </div>
+              </div>
+              <div class="chips" id="schem-signals"></div>
+              <canvas id="schem-canvas" class="plot" width="700" height="260"></canvas>
+              <div id="schem-readout" style="font-family:var(--mono);font-size:11px;color:var(--muted)">Hover plot for cursor readout. Click schematic nets to probe.</div>
+
+              <div class="sec-title"><span>DC Operating Point (Live Node V &amp; Branch I)</span></div>
+              <div class="op-grid">
+                <table id="op-v-table">
+                  <thead><tr><th>Net</th><th>DC Voltage</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+                <table id="op-i-table">
+                  <thead><tr><th>Element</th><th>DC Current</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- INSPECTOR -->
+            <div id="right-inspector" class="dock-section">
+              <div class="sec-title"><span>Selected Component Properties</span></div>
+              <div id="inspector-host" style="display:flex;flex-direction:column;gap:8px"></div>
+              <div class="sec-title"><span>All Sheet Components</span></div>
+              <div id="comp-editor"></div>
+            </div>
+
+            <!-- MULTI-DIALECT NETLIST & ARTIFACT EXPORT -->
+            <div id="right-export" class="dock-section">
+              <div class="sec-title"><span>Netlist &amp; Publication Export Options</span></div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <select id="export-format" style="flex:1">
+                  <option value="spice">SPICE3f5 Canonical (.cir)</option>
+                  <option value="ngspice">ngspice Dialect (.cir + .SAVE)</option>
+                  <option value="xyce">Xyce Dialect (.cir + .PRINT CSV)</option>
+                  <option value="ltspice">LTspice Compatible (.net + .backanno)</option>
+                  <option value="spectre">Spectre Dialect (.scs)</option>
+                  <option value="starlark">StarLark-cs Script (.star)</option>
+                  <option value="bom">Bill of Materials (.bom.csv)</option>
+                  <option value="bundle">Self-Contained Bundle + SHA-256 (.bundle.json)</option>
+                  <option value="json">Versioned Schematic Save (.spice.json)</option>
+                  <option value="svg">Vector SVG — Dark Studio (.svg)</option>
+                  <option value="svg_light">Publication SVG — Light Print (.svg)</option>
+                </select>
+                <button id="btn-export-copy" class="icon-btn">Copy</button>
+                <button id="btn-export-download" class="icon-btn primary">Download</button>
+              </div>
+              <div id="export-meta" style="font-family:var(--mono);font-size:11px;color:var(--dim)"></div>
+              <textarea id="schem-spice" rows="18" readonly></textarea>
+            </div>
+          </div>
+        </aside>
       </div>
     </section>
 
-    <!-- TAB 2: FULL-ENGINE DECK WORKBENCH -->
+    <!-- ========================================================================= -->
+    <!-- TAB 2: CUSTOM COMPONENT & ATTACHED MODEL LIBRARY STUDIO                   -->
+    <!-- ========================================================================= -->
+    <section id="tab-library" class="tab-pane">
+      <div class="split-workspace">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <h3>Component &amp; Model Library (Foundation + Persistent User Library)</h3>
+            <span id="lib-path-badge" class="badge">library.spice-lib.json</span>
+          </div>
+          <div style="display:flex;gap:6px">
+            <input id="lib-search" placeholder="Filter by name, category, or attached model..." style="flex:1" />
+            <button id="btn-lib-new" class="icon-btn primary">+ New Blank Part</button>
+          </div>
+          <div id="lib-cards" class="lib-cards"></div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <h3>Custom Component Builder (Symbol + Ordered Pins + Attached Model)</h3>
+            <div style="display:flex;gap:4px">
+              <button class="icon-btn" data-tpl="diode">Tpl: Diode</button>
+              <button class="icon-btn" data-tpl="mosfet">Tpl: BSIM4</button>
+              <button class="icon-btn" data-tpl="subckt">Tpl: .SUBCKT</button>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label>Component ID (unique)</label><input id="lib-id" value="user.diode.led_red" /></div>
+            <div class="field"><label>Display Name</label><input id="lib-name" value="Red LED (1.8V)" /></div>
+            <div class="field"><label>Category</label><input id="lib-cat" value="Custom Library" /></div>
+            <div class="field"><label>Base Device Kind</label>
+              <select id="lib-kind">
+                <option value="spice.diode">spice.diode (D)</option>
+                <option value="spice.mosfet">spice.mosfet (M)</option>
+                <option value="spice.bjt">spice.bjt (Q)</option>
+                <option value="spice.jfet">spice.jfet (J)</option>
+                <option value="spice.subckt">spice.subckt (X — Custom Macro)</option>
+                <option value="spice.resistor">spice.resistor (R)</option>
+                <option value="spice.capacitor">spice.capacitor (C)</option>
+                <option value="spice.inductor">spice.inductor (L)</option>
+              </select>
+            </div>
+            <div class="field"><label>Symbol Style</label>
+              <select id="lib-sym">
+                <option value="diode">Diode</option>
+                <option value="schottky">Schottky Diode</option>
+                <option value="nmos">NMOS MOSFET</option>
+                <option value="pmos">PMOS MOSFET</option>
+                <option value="npn">NPN BJT</option>
+                <option value="pnp">PNP BJT</option>
+                <option value="jfet">N-JFET</option>
+                <option value="opamp">Op-Amp Triangle</option>
+                <option value="ic_box">IC / Subcircuit Block</option>
+              </select>
+            </div>
+            <div class="field"><label>Attached Model Kind</label>
+              <select id="lib-mkind">
+                <option value="spiceModelCard">SPICE .MODEL Card</option>
+                <option value="subcircuit">SPICE .SUBCKT Block</option>
+                <option value="osdi">Compiled Verilog-A (.OSDI)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label>Attached Model / Subckt Name</label><input id="lib-mname" value="LED_RED" /></div>
+            <div class="field"><label>Description</label><input id="lib-desc" value="Custom red GaAsP LED with attached SPICE .MODEL card." /></div>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Ordered Pins (name,x,y,role — Netlist Order!)</label>
+              <textarea id="lib-pins" rows="4">p,-36,0,anode
+n,36,0,cathode</textarea>
+            </div>
+            <div class="field">
+              <label>Default Parameters (key=value per line)</label>
+              <textarea id="lib-params" rows="4">is_amps=1e-20
+n_emission=1.85</textarea>
+            </div>
+          </div>
+          <div class="field">
+            <label>Attached SPICE Model / .SUBCKT Definition</label>
+            <textarea id="lib-model-text" rows="6">.MODEL LED_RED D(IS=1e-20 N=1.85 RS=4.0 CJO=15p)</textarea>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="btn-lib-save" class="icon-btn primary">Save Component to Library</button>
+            <button id="btn-lib-save-place" class="icon-btn sim-btn">Save &amp; Place on Schematic</button>
+            <span id="lib-status" style="font-family:var(--mono);font-size:11.5px;color:var(--muted)"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: FULL-ENGINE SPICE3f5 / SPECTRE / BSIM4 / RF DECK WORKBENCH         -->
+    <!-- ========================================================================= -->
     <section id="tab-deck" class="tab-pane">
-      <div class="card">
-        <h3>SPICE3f5 / Spectre / BSIM4 / RF / LTRA / TRNOISE Netlist</h3>
-        <div class="toolbar">
-          <select id="deck-preset">
-            <option value="bsim4">BSIM4 (LEVEL=54) CMOS Inverter (.DC)</option>
-            <option value="spectre">Spectre Dialect CMOS Subckt (.DC)</option>
-            <option value="rf_hb">Pumped Diode RF Mixer (.HB)</option>
-            <option value="rf_pss">Pumped Diode RF Detector (.PSS)</option>
-            <option value="ltra">Lossy 50-Ohm LTRA Line (.AC)</option>
-            <option value="trnoise">TRNOISE RC Low-Pass Filter (.TRAN)</option>
-          </select>
-          <select id="deck-analysis">
-            <option value="dc">DC Sweep</option>
-            <option value="op">DC OP</option>
-            <option value="ac">AC Sweep</option>
-            <option value="tran">Transient</option>
-            <option value="hb">Harmonic Balance (.HB)</option>
-            <option value="pss">Periodic Steady-State (.PSS)</option>
-            <option value="noise">Noise (.NOISE)</option>
-            <option value="sp">S-Parameters (.SP)</option>
-          </select>
-          <button id="deck-run" class="primary">Run Native C++20 Engine</button>
+      <div class="split-workspace">
+        <div class="card">
+          <h3>SPICE3f5 / Spectre / BSIM4 / RF / LTRA / TRNOISE Netlist Studio</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <select id="deck-preset">
+              <option value="bsim4">BSIM4 (LEVEL=54) CMOS Inverter (.DC)</option>
+              <option value="spectre">Spectre Dialect CMOS Subckt (.DC)</option>
+              <option value="rf_hb">Pumped Diode RF Mixer (.HB)</option>
+              <option value="rf_pss">Pumped Diode RF Detector (.PSS)</option>
+              <option value="ltra">Lossy 50-Ohm LTRA Line (.AC)</option>
+              <option value="trnoise">TRNOISE RC Low-Pass Filter (.TRAN)</option>
+            </select>
+            <select id="deck-analysis">
+              <option value="dc">DC Sweep</option>
+              <option value="op">DC OP</option>
+              <option value="ac">AC Sweep</option>
+              <option value="tran">Transient</option>
+              <option value="hb">Harmonic Balance (.HB)</option>
+              <option value="pss">Periodic Steady-State (.PSS)</option>
+              <option value="noise">Noise (.NOISE)</option>
+              <option value="sp">S-Parameters (.SP)</option>
+            </select>
+            <button id="deck-run" class="icon-btn sim-btn">&#9654; Run Native C++20 Engine</button>
+          </div>
+          <textarea id="deck-text" rows="16"></textarea>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px">
+            <label>Source: <input id="deck-src" value="Vin" size="8" /></label>
+            <label>Start: <input id="deck-start" value="0" size="7" /></label>
+            <label>Stop: <input id="deck-stop" value="1.2" size="7" /></label>
+            <label>Step/Pts: <input id="deck-step" value="0.05" size="7" /></label>
+          </div>
+          <div id="deck-status" style="font-family:var(--mono);font-size:11.5px;color:var(--muted)"></div>
         </div>
-        <textarea id="deck-text" rows="16"></textarea>
-        <div class="toolbar" id="deck-params">
-          <label>Source: <input id="deck-src" value="Vin" size="8" /></label>
-          <label>Start: <input id="deck-start" value="0" size="7" /></label>
-          <label>Stop: <input id="deck-stop" value="1.2" size="7" /></label>
-          <label>Step/Pts: <input id="deck-step" value="0.05" size="7" /></label>
+        <div class="card">
+          <h3>Engine Output Waveform</h3>
+          <div class="chips" id="deck-signals"></div>
+          <canvas id="deck-canvas" class="plot" style="height:340px" width="700" height="340"></canvas>
+          <div id="deck-readout" style="font-family:var(--mono);font-size:11.5px;color:var(--muted)"></div>
         </div>
-        <div id="deck-status" class="status-line"></div>
-      </div>
-
-      <div class="card">
-        <h3>Engine Output Plot</h3>
-        <div class="chips" id="deck-signals"></div>
-        <canvas id="deck-canvas" width="700" height="320"></canvas>
-        <div id="deck-readout" class="status-line"></div>
       </div>
     </section>
 
-    <!-- TAB 3: PARALLEL CAMPAIGN -->
+    <!-- ========================================================================= -->
+    <!-- TAB 4: PARALLEL CORNER CAMPAIGN                                           -->
+    <!-- ========================================================================= -->
     <section id="tab-campaign" class="tab-pane">
-      <div class="card">
-        <h3>Parallel Multi-Corner Campaign (CampaignRunner)</h3>
-        <div class="toolbar">
-          <label>Vdd (V): <input id="camp-vdd" value="10" size="6" /></label>
-          <label>R1 (Ohm): <input id="camp-r1" value="1000" size="7" /></label>
-          <label>R2 Corners (comma-sep): <input id="camp-r2" value="500,1000,2000,4000,9000" size="24" /></label>
-          <button id="camp-run" class="primary">Run Parallel Sweep</button>
+      <div class="split-workspace">
+        <div class="card">
+          <h3>Parallel Multi-Corner Campaign (CampaignRunner)</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px">
+            <label>Vdd (V): <input id="camp-vdd" value="10" size="6" /></label>
+            <label>R1 (Ohm): <input id="camp-r1" value="1000" size="7" /></label>
+            <label>R2 Corners: <input id="camp-r2" value="500,1000,2000,4000,9000" size="24" /></label>
+            <button id="camp-run" class="icon-btn sim-btn">&#9654; Run Parallel Sweep</button>
+          </div>
+          <table id="camp-table">
+            <thead><tr><th>Case</th><th>R2 (Ohm)</th><th>Status</th><th>V(out) (V)</th></tr></thead>
+            <tbody></tbody>
+          </table>
         </div>
-        <table id="camp-table">
-          <thead><tr><th>Case</th><th>R2 (Ohm)</th><th>Status</th><th>V(out) (V)</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="card">
-        <h3>Corner Trajectory Plot</h3>
-        <canvas id="camp-canvas" width="700" height="300"></canvas>
+        <div class="card">
+          <h3>Corner Trajectory Plot</h3>
+          <canvas id="camp-canvas" class="plot" style="height:320px" width="700" height="320"></canvas>
+        </div>
       </div>
     </section>
   </main>
 
+  <!-- KEYBOARD SHORTCUTS & IMPORT SPICE MODAL -->
+  <div id="modal-backdrop" class="modal-backdrop">
+    <div class="modal" id="modal-content"></div>
+  </div>
+
   <script>
-    const COLORS = ['#38bdf8', '#f43f5e', '#22c55e', '#f59e0b', '#a855f7', '#14b8a6'];
-    const GRID = 20;
+    const COLORS = ['#38bdf8', '#f43f5e', '#10b981', '#f59e0b', '#a855f7', '#14b8a6'];
 
     function fmtEng(v, unit) {
       if (!Number.isFinite(v)) return 'NaN ' + unit;
@@ -262,33 +647,43 @@ public static class WorkbenchUi
       return (v * 1e15).toFixed(2) + ' f' + unit;
     }
 
+    const PRIMITIVE_SHELF = [
+      { kind: 'spice.resistor', prefix: 'R', name: 'Resistor', tag: 'R (Key: R)', params: { ohms: 1000.0 }, svg: '<svg viewBox="-45 -22 90 44"><polyline points="-38,0 -22,0 -18,-9 -10,9 -2,-9 6,9 14,-9 20,0 38,0" fill="none" stroke="#e2e8f0" stroke-width="2.4"/></svg>' },
+      { kind: 'spice.capacitor', prefix: 'C', name: 'Capacitor', tag: 'C (Key: C)', params: { farads: 1e-6, ic_volts: 0.0 }, svg: '<svg viewBox="-45 -22 90 44"><line x1="-38" y1="0" x2="-5" y2="0" stroke="#e2e8f0" stroke-width="2.4"/><line x1="-5" y1="-13" x2="-5" y2="13" stroke="#e2e8f0" stroke-width="2.8"/><line x1="5" y1="-13" x2="5" y2="13" stroke="#e2e8f0" stroke-width="2.8"/><line x1="5" y1="0" x2="38" y2="0" stroke="#e2e8f0" stroke-width="2.4"/></svg>' },
+      { kind: 'spice.inductor', prefix: 'L', name: 'Inductor', tag: 'L (Key: L)', params: { henries: 1e-3 }, svg: '<svg viewBox="-45 -22 90 44"><path d="M -38 0 L -20 0 A 5 5 0 0 1 -10 0 A 5 5 0 0 1 0 0 A 5 5 0 0 1 10 0 A 5 5 0 0 1 20 0 L 38 0" fill="none" stroke="#e2e8f0" stroke-width="2.4"/></svg>' },
+      { kind: 'spice.vsrc', prefix: 'V', name: 'Voltage Src', tag: 'V (Key: V)', params: { dc_volts: 5.0, ac_mag: 1.0 }, svg: '<svg viewBox="-45 -22 90 44"><circle cx="0" cy="0" r="15" fill="none" stroke="#38bdf8" stroke-width="2.2"/><text x="-6" y="4" fill="#f8fafc" font-size="11" font-family="monospace">+</text><text x="4" y="4" fill="#94a3b8" font-size="11" font-family="monospace">-</text></svg>' },
+      { kind: 'spice.isrc', prefix: 'I', name: 'Current Src', tag: 'I (Key: I)', params: { dc_amps: 1e-3 }, svg: '<svg viewBox="-45 -22 90 44"><circle cx="0" cy="0" r="15" fill="none" stroke="#a855f7" stroke-width="2.2"/><line x1="-8" y1="0" x2="8" y2="0" stroke="#f8fafc" stroke-width="2"/><polyline points="3,-5 9,0 3,5" fill="none" stroke="#f8fafc" stroke-width="2"/></svg>' },
+      { kind: 'spice.diode', prefix: 'D', name: 'Diode', tag: 'D (Key: D)', params: { is_amps: 1e-14, n_emission: 1.0 }, svg: '<svg viewBox="-45 -22 90 44"><line x1="-38" y1="0" x2="-10" y2="0" stroke="#e2e8f0" stroke-width="2.2"/><polygon points="-10,-10 -10,10 10,0" fill="#1e293b" stroke="#f43f5e" stroke-width="2.2"/><line x1="10" y1="-10" x2="10" y2="10" stroke="#f43f5e" stroke-width="2.5"/><line x1="10" y1="0" x2="38" y2="0" stroke="#e2e8f0" stroke-width="2.2"/></svg>' },
+      { kind: 'spice.vcvs', prefix: 'E', name: 'VCVS (E)', tag: 'E-source', params: { gain: 10.0 }, svg: '<svg viewBox="-45 -22 90 44"><polygon points="0,-16 20,0 0,16 -20,0" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/><text x="0" y="4" text-anchor="middle" fill="#f8fafc" font-size="11" font-family="monospace">E</text></svg>' },
+      { kind: 'spice.vccs', prefix: 'G', name: 'VCCS (G)', tag: 'G-source', params: { siemens: 1e-3 }, svg: '<svg viewBox="-45 -22 90 44"><polygon points="0,-16 20,0 0,16 -20,0" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/><text x="0" y="4" text-anchor="middle" fill="#f8fafc" font-size="11" font-family="monospace">G</text></svg>' }
+    ];
+
     const SCHEM_PRESETS = {
       divider: {
-        schemaVersion: '2.0',
-        name: 'divider_workbench',
+        schemaVersion: '2.1', formatId: 'spice.schematic.v2', name: 'resistive_divider',
         rootSheet: {
-          sheetId: 'root', title: 'Resistive Divider',
+          sheetId: 'root', title: 'Resistive Divider', gridPitch: 20, gridStyle: 'lines',
           components: [
-            { instanceId: 'V1', deviceKindId: 'spice.vsrc', x: 80, y: 140, rotationDegrees: 90, parameters: { dc_volts: 10.0, ac_mag: 1.0 } },
-            { instanceId: 'R1', deviceKindId: 'spice.resistor', x: 200, y: 80, rotationDegrees: 0, parameters: { ohms: 1000.0 } },
-            { instanceId: 'R2', deviceKindId: 'spice.resistor', x: 320, y: 140, rotationDegrees: 90, parameters: { ohms: 2000.0 } }
+            { instanceId: 'V1', deviceKindId: 'spice.vsrc', x: 80, y: 160, rotationDegrees: 90, parameters: { dc_volts: 10.0, ac_mag: 1.0 } },
+            { instanceId: 'R1', deviceKindId: 'spice.resistor', x: 220, y: 80, rotationDegrees: 0, parameters: { ohms: 1000.0 } },
+            { instanceId: 'R2', deviceKindId: 'spice.resistor', x: 340, y: 160, rotationDegrees: 90, parameters: { ohms: 2000.0 } }
           ],
           nets: [
             { netName: 'in', connectedPins: [{ instanceId: 'V1', pinName: 'p' }, { instanceId: 'R1', pinName: 'p' }], isGlobalGround: false },
             { netName: 'out', connectedPins: [{ instanceId: 'R1', pinName: 'n' }, { instanceId: 'R2', pinName: 'p' }], isGlobalGround: false },
             { netName: 'GND', connectedPins: [{ instanceId: 'V1', pinName: 'n' }, { instanceId: 'R2', pinName: 'n' }], isGlobalGround: true }
-          ]
+          ],
+          ports: [{ name: 'in', x: 80, y: 60, direction: 'in' }, { name: 'out', x: 420, y: 80, direction: 'out' }]
         }
       },
       rc: {
-        schemaVersion: '2.0',
-        name: 'rc_lowpass_workbench',
+        schemaVersion: '2.1', formatId: 'spice.schematic.v2', name: 'rc_lowpass_filter',
         rootSheet: {
-          sheetId: 'root', title: 'RC Low-Pass Filter',
+          sheetId: 'root', title: 'RC Low-Pass Filter', gridPitch: 20, gridStyle: 'lines',
           components: [
-            { instanceId: 'V1', deviceKindId: 'spice.vsrc', x: 80, y: 140, rotationDegrees: 90, parameters: { dc_volts: 5.0, ac_mag: 1.0 } },
-            { instanceId: 'R1', deviceKindId: 'spice.resistor', x: 200, y: 80, rotationDegrees: 0, parameters: { ohms: 1000.0 } },
-            { instanceId: 'C1', deviceKindId: 'spice.capacitor', x: 320, y: 140, rotationDegrees: 90, parameters: { farads: 1e-6, ic_volts: 0.0 } }
+            { instanceId: 'V1', deviceKindId: 'spice.vsrc', x: 80, y: 160, rotationDegrees: 90, parameters: { dc_volts: 5.0, ac_mag: 1.0 } },
+            { instanceId: 'R1', deviceKindId: 'spice.resistor', x: 220, y: 80, rotationDegrees: 0, parameters: { ohms: 1000.0 } },
+            { instanceId: 'C1', deviceKindId: 'spice.capacitor', x: 340, y: 160, rotationDegrees: 90, parameters: { farads: 1e-6, ic_volts: 0.0 } }
           ],
           nets: [
             { netName: 'in', connectedPins: [{ instanceId: 'V1', pinName: 'p' }, { instanceId: 'R1', pinName: 'p' }], isGlobalGround: false },
@@ -298,14 +693,13 @@ public static class WorkbenchUi
         }
       },
       diode: {
-        schemaVersion: '2.0',
-        name: 'diode_bias_workbench',
+        schemaVersion: '2.1', formatId: 'spice.schematic.v2', name: 'diode_1n4148_bias',
         rootSheet: {
-          sheetId: 'root', title: 'Diode Forward Bias',
+          sheetId: 'root', title: '1N4148 Diode Bias', gridPitch: 20, gridStyle: 'lines',
           components: [
-            { instanceId: 'V1', deviceKindId: 'spice.vsrc', x: 80, y: 140, rotationDegrees: 90, parameters: { dc_volts: 5.0, ac_mag: 0.1 } },
-            { instanceId: 'R1', deviceKindId: 'spice.resistor', x: 200, y: 80, rotationDegrees: 0, parameters: { ohms: 1000.0 } },
-            { instanceId: 'D1', deviceKindId: 'spice.diode', x: 320, y: 140, rotationDegrees: 90, parameters: { is_amps: 1e-14, n_emission: 1.0 } }
+            { instanceId: 'V1', deviceKindId: 'spice.vsrc', x: 80, y: 160, rotationDegrees: 90, parameters: { dc_volts: 5.0, ac_mag: 0.1 } },
+            { instanceId: 'R1', deviceKindId: 'spice.resistor', x: 220, y: 80, rotationDegrees: 0, parameters: { ohms: 1000.0 } },
+            { instanceId: 'D1', deviceKindId: 'spice.diode', x: 340, y: 160, rotationDegrees: 90, parameters: { is_amps: 2.52e-9, n_emission: 1.752 }, modelName: 'D1N4148', libraryPartId: 'foundation.diode.1n4148' }
           ],
           nets: [
             { netName: 'in', connectedPins: [{ instanceId: 'V1', pinName: 'p' }, { instanceId: 'R1', pinName: 'p' }], isGlobalGround: false },
@@ -313,241 +707,617 @@ public static class WorkbenchUi
             { netName: 'GND', connectedPins: [{ instanceId: 'V1', pinName: 'n' }, { instanceId: 'D1', pinName: 'n' }], isGlobalGround: true }
           ]
         }
+      },
+      bsim4_inv: {
+        schemaVersion: '2.1', formatId: 'spice.schematic.v2', name: 'bsim4_cmos_inverter',
+        rootSheet: {
+          sheetId: 'root', title: 'BSIM4 65nm CMOS Inverter', gridPitch: 20, gridStyle: 'lines',
+          components: [
+            { instanceId: 'Vdd', deviceKindId: 'spice.vsrc', x: 80, y: 100, rotationDegrees: 90, parameters: { dc_volts: 1.2 } },
+            { instanceId: 'Vin', deviceKindId: 'spice.vsrc', x: 80, y: 220, rotationDegrees: 90, parameters: { dc_volts: 0.6, ac_mag: 0.01 } },
+            { instanceId: 'Mp', deviceKindId: 'spice.mosfet', x: 260, y: 100, rotationDegrees: 0, parameters: { w_m: 2.2e-6, l_m: 65e-9, level: 54, vth0_volts: -0.35 }, modelName: 'PCH65', libraryPartId: 'foundation.mos.bsim4_pch65' },
+            { instanceId: 'Mn', deviceKindId: 'spice.mosfet', x: 260, y: 220, rotationDegrees: 0, parameters: { w_m: 1e-6, l_m: 65e-9, level: 54, vth0_volts: 0.35 }, modelName: 'NCH65', libraryPartId: 'foundation.mos.bsim4_nch65' },
+            { instanceId: 'Cload', deviceKindId: 'spice.capacitor', x: 400, y: 200, rotationDegrees: 90, parameters: { farads: 10e-15, ic_volts: 0.6 } }
+          ],
+          nets: [
+            { netName: 'vdd', connectedPins: [{ instanceId: 'Vdd', pinName: 'p' }, { instanceId: 'Mp', pinName: 's' }, { instanceId: 'Mp', pinName: 'b' }], isGlobalGround: false },
+            { netName: 'in', connectedPins: [{ instanceId: 'Vin', pinName: 'p' }, { instanceId: 'Mp', pinName: 'g' }, { instanceId: 'Mn', pinName: 'g' }], isGlobalGround: false },
+            { netName: 'out', connectedPins: [{ instanceId: 'Mp', pinName: 'd' }, { instanceId: 'Mn', pinName: 'd' }, { instanceId: 'Cload', pinName: 'p' }], isGlobalGround: false },
+            { netName: 'GND', connectedPins: [{ instanceId: 'Vdd', pinName: 'n' }, { instanceId: 'Vin', pinName: 'n' }, { instanceId: 'Mn', pinName: 's' }, { instanceId: 'Mn', pinName: 'b' }, { instanceId: 'Cload', pinName: 'n' }], isGlobalGround: true }
+          ]
+        }
+      },
+      bjt_amp: {
+        schemaVersion: '2.1', formatId: 'spice.schematic.v2', name: 'bjt_2n2222_ce_amp',
+        rootSheet: {
+          sheetId: 'root', title: '2N2222 NPN Common-Emitter Amp', gridPitch: 20, gridStyle: 'lines',
+          components: [
+            { instanceId: 'Vcc', deviceKindId: 'spice.vsrc', x: 80, y: 100, rotationDegrees: 90, parameters: { dc_volts: 12.0 } },
+            { instanceId: 'Vin', deviceKindId: 'spice.vsrc', x: 80, y: 220, rotationDegrees: 90, parameters: { dc_volts: 0.72, ac_mag: 0.01 } },
+            { instanceId: 'Rc', deviceKindId: 'spice.resistor', x: 240, y: 80, rotationDegrees: 0, parameters: { ohms: 2200.0 } },
+            { instanceId: 'Rb', deviceKindId: 'spice.resistor', x: 180, y: 200, rotationDegrees: 0, parameters: { ohms: 10000.0 } },
+            { instanceId: 'Q1', deviceKindId: 'spice.bjt', x: 340, y: 180, rotationDegrees: 0, parameters: { area: 1.0, bf: 255.9, is_amps: 1.434e-14 }, modelName: 'Q2N2222', libraryPartId: 'foundation.bjt.2n2222' }
+          ],
+          nets: [
+            { netName: 'vcc', connectedPins: [{ instanceId: 'Vcc', pinName: 'p' }, { instanceId: 'Rc', pinName: 'p' }], isGlobalGround: false },
+            { netName: 'in', connectedPins: [{ instanceId: 'Vin', pinName: 'p' }, { instanceId: 'Rb', pinName: 'p' }], isGlobalGround: false },
+            { netName: 'base', connectedPins: [{ instanceId: 'Rb', pinName: 'n' }, { instanceId: 'Q1', pinName: 'b' }], isGlobalGround: false },
+            { netName: 'out', connectedPins: [{ instanceId: 'Rc', pinName: 'n' }, { instanceId: 'Q1', pinName: 'c' }], isGlobalGround: false },
+            { netName: 'GND', connectedPins: [{ instanceId: 'Vcc', pinName: 'n' }, { instanceId: 'Vin', pinName: 'n' }, { instanceId: 'Q1', pinName: 'e' }], isGlobalGround: true }
+          ]
+        }
+      },
+      opamp_buf: {
+        schemaVersion: '2.1', formatId: 'spice.schematic.v2', name: 'opamp_noninv_amp',
+        rootSheet: {
+          sheetId: 'root', title: 'Ideal Op-Amp Non-Inverting (Gain = 3)', gridPitch: 20, gridStyle: 'lines',
+          components: [
+            { instanceId: 'Vin', deviceKindId: 'spice.vsrc', x: 80, y: 140, rotationDegrees: 90, parameters: { dc_volts: 1.5, ac_mag: 1.0 } },
+            { instanceId: 'X1', deviceKindId: 'spice.subckt', x: 240, y: 140, rotationDegrees: 0, parameters: {}, modelName: 'IDEAL_OPAMP', libraryPartId: 'foundation.subckt.ideal_opamp' },
+            { instanceId: 'Rf', deviceKindId: 'spice.resistor', x: 340, y: 220, rotationDegrees: 0, parameters: { ohms: 20000.0 } },
+            { instanceId: 'Rg', deviceKindId: 'spice.resistor', x: 180, y: 240, rotationDegrees: 90, parameters: { ohms: 10000.0 } }
+          ],
+          nets: [
+            { netName: 'in', connectedPins: [{ instanceId: 'Vin', pinName: 'p' }, { instanceId: 'X1', pinName: 'inp' }], isGlobalGround: false },
+            { netName: 'fb', connectedPins: [{ instanceId: 'X1', pinName: 'inn' }, { instanceId: 'Rf', pinName: 'p' }, { instanceId: 'Rg', pinName: 'p' }], isGlobalGround: false },
+            { netName: 'out', connectedPins: [{ instanceId: 'X1', pinName: 'out' }, { instanceId: 'Rf', pinName: 'n' }], isGlobalGround: false },
+            { netName: 'GND', connectedPins: [{ instanceId: 'Vin', pinName: 'n' }, { instanceId: 'Rg', pinName: 'n' }], isGlobalGround: true }
+          ]
+        }
       }
     };
 
     const DECK_PRESETS = {
-      bsim4: {
-        analysis: 'dc', src: 'Vin', start: '0', stop: '1.2', step: '0.05',
-        text: `BSIM4 CMOS Inverter
-.MODEL nch4 NMOS(LEVEL=54 VTH0=0.35 TOXE=2.2n U0=420 VSAT=1.1e5)
-.MODEL pch4 PMOS(LEVEL=54 VTH0=-0.35 TOXE=2.2n U0=160 VSAT=0.9e5)
-Vdd vdd 0 DC 1.2
-Vin in 0 DC 0.0
-Mn out in 0 0 nch4 W=1u L=65n
-Mp out in vdd vdd pch4 W=2.2u L=65n
-.END`
-      },
-      spectre: {
-        analysis: 'dc', src: 'Vin', start: '0', stop: '1.2', step: '0.05',
-        text: `// Spectre Dialect BSIM4 CMOS Inverter
-simulator lang=spectre
-parameters vdd_v=1.2 rload=20k
-model nch bsim4 type=n vth0=0.35 toxe=2.2n u0=420 vsat=1.1e5
-model pch bsim4 type=p vth0=-0.35 toxe=2.2n u0=160 vsat=0.9e5
-subckt inv (in out vdd gnd)
-  Mn (out in gnd gnd) nch w=1u l=65n
-  Mp (out in vdd vdd) pch w=2.2u l=65n
-ends inv
-Vdd (vdd 0) vsource dc=vdd_v
-Vin (in 0) vsource dc=0
-X1 (in out vdd 0) inv
-R1 (out 0) resistor r=rload`
-      },
-      rf_hb: {
-        analysis: 'hb', src: 'Vlo', start: '1e6', stop: '7', step: '1',
-        text: `Pumped Diode RF Mixer (.HB)
-.MODEL D1 D(IS=1e-14 CJO=5p)
-Vlo in 0 DC 0.4 SIN(0.4 0.8 1Meg)
-R1 in out 500
-C1 out 0 200p
-D1 out 0 D1
-.END`
-      },
-      rf_pss: {
-        analysis: 'pss', src: 'Vlo', start: '1e6', stop: '64', step: '1',
-        text: `Pumped Diode RF Detector (.PSS)
-.MODEL D1 D(IS=1e-14 CJO=5p)
-Vlo in 0 DC 0.4 SIN(0.4 0.8 1Meg)
-R1 in out 500
-C1 out 0 200p
-D1 out 0 D1
-.END`
-      },
-      ltra: {
-        analysis: 'ac', src: 'V1', start: '1e6', stop: '1e8', step: '15',
-        text: `Lossy 50-Ohm LTRA Transmission Line
-.MODEL lossy50 LTRA(R=20 L=250n G=0 C=100p LEN=1.0 NSEGS=32)
-V1 in 0 DC 5 AC 1
-O1 in 0 out 0 lossy50
-Rload out 0 50
-.END`
-      },
-      trnoise: {
-        analysis: 'tran', src: 'Vn', start: '0', stop: '2e-4', step: '1e-6',
-        text: `TRNOISE Deterministic Gaussian Noise RC Filter
-Vn in 0 DC 0 TRNOISE(0.5 1u 0 0 42)
-R1 in out 1k
-C1 out 0 10n
-.END`
-      }
+      bsim4: { analysis: 'dc', src: 'Vin', start: '0', stop: '1.2', step: '0.05', text: `BSIM4 CMOS Inverter\n.MODEL nch4 NMOS(LEVEL=54 VTH0=0.35 TOXE=2.2n U0=420 VSAT=1.1e5)\n.MODEL pch4 PMOS(LEVEL=54 VTH0=-0.35 TOXE=2.2n U0=160 VSAT=0.9e5)\nVdd vdd 0 DC 1.2\nVin in 0 DC 0.0\nMn out in 0 0 nch4 W=1u L=65n\nMp out in vdd vdd pch4 W=2.2u L=65n\n.END` },
+      spectre: { analysis: 'dc', src: 'Vin', start: '0', stop: '1.2', step: '0.05', text: `// Spectre Dialect BSIM4 CMOS Inverter\nsimulator lang=spectre\nparameters vdd_v=1.2 rload=20k\nmodel nch bsim4 type=n vth0=0.35 toxe=2.2n u0=420 vsat=1.1e5\nmodel pch bsim4 type=p vth0=-0.35 toxe=2.2n u0=160 vsat=0.9e5\nsubckt inv (in out vdd gnd)\n  Mn (out in gnd gnd) nch w=1u l=65n\n  Mp (out in vdd vdd) pch w=2.2u l=65n\nends inv\nVdd (vdd 0) vsource dc=vdd_v\nVin (in 0) vsource dc=0\nX1 (in out vdd 0) inv\nR1 (out 0) resistor r=rload` },
+      rf_hb: { analysis: 'hb', src: 'Vlo', start: '1e6', stop: '7', step: '1', text: `Pumped Diode RF Mixer (.HB)\n.MODEL D1 D(IS=1e-14 CJO=5p)\nVlo in 0 DC 0.4 SIN(0.4 0.8 1Meg)\nR1 in out 500\nC1 out 0 200p\nD1 out 0 D1\n.END` },
+      rf_pss: { analysis: 'pss', src: 'Vlo', start: '1e6', stop: '64', step: '1', text: `Pumped Diode RF Detector (.PSS)\n.MODEL D1 D(IS=1e-14 CJO=5p)\nVlo in 0 DC 0.4 SIN(0.4 0.8 1Meg)\nR1 in out 500\nC1 out 0 200p\nD1 out 0 D1\n.END` },
+      ltra: { analysis: 'ac', src: 'V1', start: '1e6', stop: '1e8', step: '15', text: `Lossy 50-Ohm LTRA Transmission Line\n.MODEL lossy50 LTRA(R=20 L=250n G=0 C=100p LEN=1.0 NSEGS=32)\nV1 in 0 DC 5 AC 1\nO1 in 0 out 0 lossy50\nRload out 0 50\n.END` },
+      trnoise: { analysis: 'tran', src: 'Vn', start: '0', stop: '2e-4', step: '1e-6', text: `TRNOISE Deterministic Gaussian Noise RC Filter\nVn in 0 DC 0 TRNOISE(0.5 1u 0 0 42)\nR1 in out 1k\nC1 out 0 10n\n.END` }
     };
 
     let currentSchem = structuredClone(SCHEM_PRESETS.divider);
+    let undoStack = [];
+    let redoStack = [];
+    let libraryEntries = [];
     let lastSchemResult = null;
     let schemProbed = new Set(['v(out)']);
-    let editMode = 'move'; // 'move' | 'wire'
+    let editMode = 'move';
     let selectedInstance = null;
     let wireStartPin = null;
+    let bodeDb = false;
     let lastDeckResult = null;
     let deckSelected = new Set();
+    let zoomState = { scale: 1.0, vb: null, baseVb: null };
 
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    function gridPitch() { return Number(document.getElementById('grid-pitch').value) || 20; }
+    function gridStyle() { return document.getElementById('grid-style').value || 'lines'; }
+
+    function pushUndo() {
+      undoStack.push(JSON.stringify(currentSchem));
+      if (undoStack.length > 40) undoStack.shift();
+      redoStack = [];
+    }
+    function doUndo() {
+      if (undoStack.length === 0) return;
+      redoStack.push(JSON.stringify(currentSchem));
+      currentSchem = JSON.parse(undoStack.pop());
+      selectedInstance = null;
+      refreshAllSchematicViews();
+      runSchematicSim();
+    }
+    function doRedo() {
+      if (redoStack.length === 0) return;
+      undoStack.push(JSON.stringify(currentSchem));
+      currentSchem = JSON.parse(redoStack.pop());
+      selectedInstance = null;
+      refreshAllSchematicViews();
+      runSchematicSim();
+    }
+
+    // ---- TOP WORKSPACE & DOCK TABS ----
+    function activateWorkspace(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabName));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tabName));
+    }
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => activateWorkspace(btn.dataset.tab)));
+
+    function activateDockTab(dock, pane) {
+      document.querySelectorAll(`.dock-tab[data-dock="${dock}"]`).forEach(b => b.classList.toggle('active', b.dataset.pane === pane));
+      document.querySelectorAll(`#${dock}-shelf, #${dock}-navigator, #${dock}-results, #${dock}-inspector, #${dock}-export`).forEach(sec => {
+        if (sec.id.startsWith(dock + '-')) sec.classList.toggle('active', sec.id === dock + '-' + pane);
       });
-    });
+    }
+    document.querySelectorAll('.dock-tab').forEach(btn => btn.addEventListener('click', () => activateDockTab(btn.dataset.dock, btn.dataset.pane)));
 
+    // ---- MODAL HELPERS ----
+    function openModal(html) {
+      document.getElementById('modal-content').innerHTML = html;
+      document.getElementById('modal-backdrop').classList.add('open');
+    }
+    function closeModal() { document.getElementById('modal-backdrop').classList.remove('open'); }
+    document.getElementById('modal-backdrop').addEventListener('click', e => { if (e.target.id === 'modal-backdrop') closeModal(); });
+
+    document.getElementById('btn-shortcuts').addEventListener('click', () => openModal(`
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">Spice V2 Schematic Shortcuts (RSpice Parity)</h3>
+        <button class="icon-btn" onclick="closeModal()">Close</button>
+      </div>
+      <table>
+        <thead><tr><th>Key</th><th>Action</th><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><span class="kbd">R / C / L</span></td><td>Place Resistor / Cap / Inductor</td><td><span class="kbd">W</span></td><td>Orthogonal Wire mode</td></tr>
+          <tr><td><span class="kbd">V / I / D</span></td><td>Place V-Src / I-Src / Diode</td><td><span class="kbd">Esc</span></td><td>Return to Select/Probe</td></tr>
+          <tr><td><span class="kbd">Ctrl+R</span></td><td>Rotate selected 90°</td><td><span class="kbd">Ctrl+M</span></td><td>Mirror selected horizontally</td></tr>
+          <tr><td><span class="kbd">Ctrl+Z / Y</span></td><td>Undo / Redo</td><td><span class="kbd">Del</span></td><td>Delete selected component</td></tr>
+          <tr><td><span class="kbd">+ / − / F</span></td><td>Zoom In / Out / Fit Sheet</td><td><span class="kbd">Ctrl+S</span></td><td>Save versioned .spice.json</td></tr>
+          <tr><td><span class="kbd">F5</span></td><td>Run Native C++20 Simulation</td><td><span class="kbd">Alt+1..4</span></td><td>Switch Workbench Tabs</td></tr>
+        </tbody>
+      </table>
+    `));
+
+    // ---- DOWNLOAD HELPER ----
+    function downloadText(filename, text, mime = 'text/plain;charset=utf-8') {
+      const blob = new Blob([text], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    // ---- LIBRARY LOADING & SHELF RENDERING ----
+    async function loadLibrary() {
+      const data = await (await fetch('/api/library')).json();
+      libraryEntries = data.components || [];
+      const pathBadge = document.getElementById('lib-path-badge');
+      if (data.storage_path) pathBadge.textContent = data.storage_path.split(/[\\/]/).pop();
+      renderShelves();
+      renderLibraryStudio();
+    }
+
+    function renderShelves() {
+      const q = (document.getElementById('shelf-filter').value || '').trim().toLowerCase();
+      const primHost = document.getElementById('shelf-primitives');
+      primHost.innerHTML = '';
+      PRIMITIVE_SHELF.filter(p => !q || p.name.toLowerCase().includes(q) || p.kind.includes(q)).forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'shelf-item';
+        el.innerHTML = `${p.svg}<div class="sname">${p.name}</div><div class="stag">${p.tag}</div>`;
+        el.onclick = () => placePrimitive(p.kind, p.prefix, structuredClone(p.params));
+        primHost.appendChild(el);
+      });
+
+      const libHost = document.getElementById('shelf-library');
+      libHost.innerHTML = '';
+      libraryEntries.filter(item => {
+        const p = item.part;
+        return !q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) ||
+          (p.attachedModel?.modelName || '').toLowerCase().includes(q);
+      }).forEach(item => {
+        const p = item.part;
+        const el = document.createElement('div');
+        el.className = 'shelf-item' + (p.isBuiltIn ? '' : ' custom-part');
+        el.title = `${p.description}\nModel: ${p.attachedModel?.modelName || 'none'}`;
+        el.innerHTML = `${item.preview_svg}<div class="sname">${p.name}</div><div class="stag">${p.attachedModel?.modelName || p.spicePrefix}</div>`;
+        el.onclick = () => placeLibraryPart(p);
+        libHost.appendChild(el);
+      });
+    }
+    document.getElementById('shelf-filter').addEventListener('input', renderShelves);
+    document.getElementById('btn-jump-lib').addEventListener('click', () => activateWorkspace('library'));
+
+    function nextInstanceId(prefix) {
+      let n = 1;
+      while (currentSchem.rootSheet.components.some(c => c.instanceId.toLowerCase() === (prefix + n).toLowerCase())) ++n;
+      return prefix + n;
+    }
+
+    function autoConnectNewPart(id, pins) {
+      const outNet = currentSchem.rootSheet.nets.find(nt => nt.netName.toLowerCase() === 'out');
+      const gndNet = currentSchem.rootSheet.nets.find(nt => nt.isGlobalGround);
+      if (pins.length === 2 && outNet && gndNet) {
+        outNet.connectedPins.push({ instanceId: id, pinName: pins[0] });
+        gndNet.connectedPins.push({ instanceId: id, pinName: pins[1] });
+      }
+    }
+
+    function placePrimitive(kindId, prefix, defaultParams) {
+      pushUndo();
+      const G = gridPitch();
+      const id = nextInstanceId(prefix);
+      const count = currentSchem.rootSheet.components.length;
+      const x = Math.round((160 + (count * 60) % 240) / G) * G;
+      const y = Math.round((240) / G) * G;
+      currentSchem.rootSheet.components.push({
+        instanceId: id, deviceKindId: kindId, x, y, rotationDegrees: 0, parameters: defaultParams,
+        mirrorX: false, mirrorY: false
+      });
+      if (['spice.resistor','spice.capacitor','spice.inductor','spice.diode'].includes(kindId)) {
+        autoConnectNewPart(id, ['p', 'n']);
+      }
+      selectedInstance = id;
+      refreshAllSchematicViews();
+      runSchematicSim();
+    }
+
+    function placeLibraryPart(part) {
+      pushUndo();
+      const G = gridPitch();
+      const id = nextInstanceId(part.spicePrefix || 'U');
+      const count = currentSchem.rootSheet.components.length;
+      const x = Math.round((160 + (count * 60) % 240) / G) * G;
+      const y = Math.round((240) / G) * G;
+      currentSchem.rootSheet.components.push({
+        instanceId: id,
+        deviceKindId: part.baseDeviceKindId,
+        x, y, rotationDegrees: 0,
+        parameters: structuredClone(part.defaultParameters || {}),
+        mirrorX: false, mirrorY: false,
+        modelName: part.attachedModel?.modelName || null,
+        libraryPartId: part.id,
+        displayValue: part.attachedModel?.modelName || part.name
+      });
+      if (part.pins && part.pins.length === 2) {
+        autoConnectNewPart(id, [part.pins[0].name, part.pins[1].name]);
+      }
+      selectedInstance = id;
+      activateWorkspace('schematic');
+      refreshAllSchematicViews();
+      runSchematicSim();
+    }
+
+    // ---- MODE, EDIT & ARRANGEMENT COMMANDS ----
     function setMode(m) {
       editMode = m;
       wireStartPin = null;
       document.getElementById('mode-move').classList.toggle('mode-on', m === 'move');
       document.getElementById('mode-wire').classList.toggle('mode-on', m === 'wire');
       document.getElementById('erc-status').textContent = m === 'wire'
-        ? 'WIRE MODE: Click any component pin, then click a target pin to snap an orthogonal wire.'
-        : 'MOVE / PROBE MODE: Drag components with live alignment snap lines, or click wires to cross-probe.';
+        ? 'WIRE MODE: Click any source pin, then click destination pin to snap an orthogonal wire.'
+        : 'SELECT / PROBE MODE: Drag parts with cyan alignment snap guides, or click wires to probe.';
     }
     document.getElementById('mode-move').addEventListener('click', () => setMode('move'));
     document.getElementById('mode-wire').addEventListener('click', () => setMode('wire'));
+    document.getElementById('btn-undo').addEventListener('click', doUndo);
+    document.getElementById('btn-redo').addEventListener('click', doRedo);
 
-    document.getElementById('btn-rotate').addEventListener('click', () => {
-      const target = selectedInstance
-        ? currentSchem.rootSheet.components.find(c => c.instanceId === selectedInstance)
-        : currentSchem.rootSheet.components[0];
+    function rotateSelected() {
+      const target = currentSchem.rootSheet.components.find(c => c.instanceId === selectedInstance) || currentSchem.rootSheet.components[0];
       if (!target) return;
+      pushUndo();
       target.rotationDegrees = (target.rotationDegrees + 90) % 360;
-      runSchematicSim();
-    });
-
-    document.getElementById('btn-snap-all').addEventListener('click', () => {
-      for (const c of currentSchem.rootSheet.components) {
-        c.x = Math.round(c.x / GRID) * GRID;
-        c.y = Math.round(c.y / GRID) * GRID;
-      }
-      runSchematicSim();
-    });
-
-    function addComponent(kindId, prefix, defaultParams) {
-      let n = 1;
-      while (currentSchem.rootSheet.components.some(c => c.instanceId === prefix + n)) ++n;
-      const id = prefix + n;
-      const x = Math.round((160 + (n * 40) % 200) / GRID) * GRID;
-      const y = Math.round((220) / GRID) * GRID;
-      currentSchem.rootSheet.components.push({
-        instanceId: id, deviceKindId: kindId, x, y, rotationDegrees: 0, parameters: defaultParams
-      });
-      // Attach to 'out' and 'GND' by default so ERC stays immediately valid and live DC current shows up!
-      const outNet = currentSchem.rootSheet.nets.find(nt => nt.netName.toLowerCase() === 'out');
-      const gndNet = currentSchem.rootSheet.nets.find(nt => nt.isGlobalGround);
-      if (outNet) outNet.connectedPins.push({ instanceId: id, pinName: 'p' });
-      if (gndNet) gndNet.connectedPins.push({ instanceId: id, pinName: 'n' });
-      selectedInstance = id;
-      renderCompEditor();
+      refreshAllSchematicViews();
       runSchematicSim();
     }
-    document.getElementById('btn-add-r').addEventListener('click', () => addComponent('spice.resistor', 'R', { ohms: 2000.0 }));
-    document.getElementById('btn-add-c').addEventListener('click', () => addComponent('spice.capacitor', 'C', { farads: 1e-6, ic_volts: 0.0 }));
-    document.getElementById('chk-grid').addEventListener('change', runSchematicSim);
-    document.getElementById('chk-op').addEventListener('change', runSchematicSim);
+    function mirrorSelected() {
+      const target = currentSchem.rootSheet.components.find(c => c.instanceId === selectedInstance) || currentSchem.rootSheet.components[0];
+      if (!target) return;
+      pushUndo();
+      target.mirrorX = !target.mirrorX;
+      refreshAllSchematicViews();
+      runSchematicSim();
+    }
+    function deleteSelected() {
+      if (!selectedInstance) return;
+      pushUndo();
+      currentSchem.rootSheet.components = currentSchem.rootSheet.components.filter(c => c.instanceId !== selectedInstance);
+      currentSchem.rootSheet.nets.forEach(n => {
+        n.connectedPins = n.connectedPins.filter(p => p.instanceId !== selectedInstance);
+      });
+      currentSchem.rootSheet.nets = currentSchem.rootSheet.nets.filter(n => n.connectedPins.length > 0 || n.isGlobalGround);
+      selectedInstance = null;
+      refreshAllSchematicViews();
+      runSchematicSim();
+    }
+    document.getElementById('btn-rotate').addEventListener('click', rotateSelected);
+    document.getElementById('btn-mirror').addEventListener('click', mirrorSelected);
+    document.getElementById('btn-delete').addEventListener('click', deleteSelected);
+    document.getElementById('btn-align-x').addEventListener('click', () => {
+      const comps = currentSchem.rootSheet.components;
+      if (comps.length < 2) return;
+      pushUndo();
+      const G = gridPitch();
+      const avgY = Math.round((comps.reduce((s, c) => s + c.y, 0) / comps.length) / G) * G;
+      comps.forEach(c => { c.y = avgY; });
+      refreshAllSchematicViews();
+      runSchematicSim();
+    });
+    document.getElementById('btn-snap-all').addEventListener('click', () => {
+      pushUndo();
+      const G = gridPitch();
+      currentSchem.rootSheet.components.forEach(c => {
+        c.x = Math.round(c.x / G) * G;
+        c.y = Math.round(c.y / G) * G;
+      });
+      refreshAllSchematicViews();
+      runSchematicSim();
+    });
 
-    function drawPlot(canvas, axis, seriesMap, activeKeys, logX = false, barMode = false) {
-      const ctx = canvas.getContext('2d');
-      const W = canvas.width, H = canvas.height;
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(0, 0, W, H);
-      const pad = { l: 58, r: 18, t: 18, b: 30 };
-      const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+    document.getElementById('btn-add-directive').addEventListener('click', () => {
+      const text = prompt('Enter SPICE directive or sheet note (e.g. .PARAM Rload=2k or .TEMP 27):', '.TEMP 27');
+      if (!text) return;
+      pushUndo();
+      currentSchem.rootSheet.annotations = currentSchem.rootSheet.annotations || [];
+      const idx = currentSchem.rootSheet.annotations.length;
+      currentSchem.rootSheet.annotations.push({
+        id: 'ann_' + (idx + 1), x: 80, y: 260 + idx * 24, text: text.trim(),
+        isSpiceDirective: text.trim().startsWith('.')
+      });
+      runSchematicSim();
+    });
 
-      const keys = [...activeKeys].filter(k => seriesMap[k] && seriesMap[k].length > 0);
-      if (!axis || axis.length === 0 || keys.length === 0) {
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = '13px monospace';
-        ctx.fillText('Click a net/signal chip to plot trace.', pad.l + 16, H / 2);
+    document.getElementById('btn-add-port').addEventListener('click', () => {
+      const name = prompt('Enter hierarchical interface port name (must match a net name, e.g. in or out):', 'out');
+      if (!name) return;
+      pushUndo();
+      currentSchem.rootSheet.ports = currentSchem.rootSheet.ports || [];
+      const idx = currentSchem.rootSheet.ports.length;
+      currentSchem.rootSheet.ports.push({ name: name.trim(), x: 420, y: 80 + idx * 32, direction: 'inout' });
+      runSchematicSim();
+    });
+
+    // ---- SAVE / OPEN / IMPORT SPICE / SAVE SHEET AS SUBCKT ----
+    document.getElementById('btn-save-schem').addEventListener('click', async () => {
+      const resp = await fetch('/api/schematic/save', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ document: currentSchem, author: 'Spice V2 Studio' })
+      });
+      const data = await resp.json();
+      if (data.content) {
+        downloadText(data.filename, data.content, 'application/json;charset=utf-8');
+        document.getElementById('erc-status').textContent = `Saved ${data.filename} (schema v${data.schema_version}, sha256=${(data.sha256||'').slice(0,12)}...)`;
+      }
+    });
+
+    document.getElementById('btn-open-schem').addEventListener('click', () => document.getElementById('file-open-schem').click());
+    document.getElementById('file-open-schem').addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const content = await file.text();
+      const resp = await fetch('/api/schematic/load', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, verifyChecksum: true })
+      });
+      const data = await resp.json();
+      if (!data.loaded) {
+        alert('Failed to load schematic (fail-closed): ' + data.error);
         return;
       }
-      const xs = logX ? axis.map(v => Math.log10(Math.max(v, 1e-30))) : axis;
-      let minX = Math.min(...xs), maxX = Math.max(...xs);
-      if (maxX === minX) { minX -= 1; maxX += 1; }
-      let minY = Infinity, maxY = -Infinity;
-      for (const k of keys) {
-        for (const y of seriesMap[k]) {
-          if (Number.isFinite(y)) { minY = Math.min(minY, y); maxY = Math.max(maxY, y); }
+      pushUndo();
+      currentSchem = data.document;
+      selectedInstance = null;
+      refreshAllSchematicViews();
+      runSchematicSim();
+      e.target.value = '';
+    });
+
+    document.getElementById('btn-import-spice').addEventListener('click', () => {
+      openModal(`
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3 style="margin:0">Import SPICE Netlist to Schematic</h3>
+          <button class="icon-btn" onclick="closeModal()">Close</button>
+        </div>
+        <textarea id="import-spice-box" rows="10">* Paste any SPICE deck (R/C/L/V/I/D/M/Q/J + .MODEL)
+V1 in 0 DC 12 AC 1
+R1 in mid 1k
+R2 mid out 2k
+C1 out 0 100n
+.END</textarea>
+        <div style="display:flex;justify-content:flex-end;gap:8px">
+          <button class="icon-btn" onclick="closeModal()">Cancel</button>
+          <button class="icon-btn primary" id="btn-do-import">Import &amp; Layout</button>
+        </div>
+      `);
+      document.getElementById('btn-do-import').onclick = async () => {
+        const spiceText = document.getElementById('import-spice-box').value;
+        const resp = await fetch('/api/schematic/import-spice', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ spiceText })
+        });
+        const data = await resp.json();
+        if (data.imported) {
+          pushUndo();
+          currentSchem = data.document;
+          selectedInstance = null;
+          closeModal();
+          refreshAllSchematicViews();
+          runSchematicSim();
         }
-      }
-      if (!Number.isFinite(minY)) return;
-      if (barMode) minY = Math.min(0, minY);
-      if (maxY === minY) { minY -= 0.5; maxY += 0.5; }
-      const margin = (maxY - minY) * 0.08;
-      minY -= margin; maxY += margin;
+      };
+    });
 
-      const toX = x => pad.l + ((x - minX) / (maxX - minX)) * pw;
-      const toY = y => pad.t + ph - ((y - minY) / (maxY - minY)) * ph;
-
-      ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
-      for (let g = 0; g <= 4; ++g) {
-        const y = pad.t + (ph * g) / 4;
-        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
-        const val = maxY - ((maxY - minY) * g) / 4;
-        ctx.fillStyle = '#94a3b8'; ctx.font = '11px monospace';
-        ctx.fillText(val.toPrecision(3), 4, y + 4);
-      }
-
-      keys.forEach((k, idx) => {
-        const col = COLORS[idx % COLORS.length];
-        const ys = seriesMap[k];
-        ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 2;
-        if (barMode || ys.length === 1) {
-          ys.forEach((y, i) => {
-            const x = toX(xs[i]);
-            const y0 = toY(0), y1 = toY(y);
-            ctx.fillRect(x - 6, Math.min(y0, y1), 12, Math.max(2, Math.abs(y1 - y0)));
-          });
-        } else {
-          ctx.beginPath();
-          ys.forEach((y, i) => {
-            const x = toX(xs[i]), yy = toY(y);
-            if (i === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
-          });
-          ctx.stroke();
-        }
+    document.getElementById('btn-sheet-to-part').addEventListener('click', async () => {
+      const name = prompt('Create reusable .SUBCKT component in library from this schematic.\nComponent Name:', currentSchem.name + '_block');
+      if (!name) return;
+      const resp = await fetch('/api/library/from-schematic', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ document: currentSchem, name, category: 'Custom Subcircuits' })
       });
+      const data = await resp.json();
+      if (!data.saved) {
+        alert('Failed: ' + (data.error || 'unknown error'));
+        return;
+      }
+      await loadLibrary();
+      document.getElementById('erc-status').textContent = `Saved '${data.part.name}' (${data.part.attachedModel.modelName}) to persistent library!`;
+    });
 
-      ctx.fillStyle = '#94a3b8'; ctx.font = '11px monospace';
-      ctx.fillText((logX ? 'log10(' : '') + axis[0].toPrecision(3) + (logX ? ')' : ''), pad.l, H - 8);
-      ctx.fillText(axis[axis.length - 1].toPrecision(3), W - pad.r - 60, H - 8);
-    }
+    // ---- INSPECTOR & NAVIGATOR ----
+    function renderInspector() {
+      const host = document.getElementById('inspector-host');
+      const comp = currentSchem.rootSheet.components.find(c => c.instanceId === selectedInstance);
+      if (!comp) {
+        host.innerHTML = '<div style="font-size:12px;color:var(--dim)">Click any component on the schematic to inspect/edit its refdes, attached model, position, rotation, and parameters.</div>';
+      } else {
+        const compatModels = libraryEntries.filter(e => e.part.baseDeviceKindId === comp.deviceKindId && e.part.attachedModel);
+        const modelOpts = ['<option value="">(Default / Inline Parameters)</option>']
+          .concat(compatModels.map(e => {
+            const m = e.part.attachedModel.modelName;
+            const sel = (comp.modelName === m || comp.libraryPartId === e.part.id) ? 'selected' : '';
+            return `<option value="${e.part.id}" ${sel}>${e.part.name} [${m}]</option>`;
+          })).join('');
+        const paramRows = Object.entries(comp.parameters || {}).map(([k, v]) => `
+          <div class="field"><label>${k}</label><input data-insp-param="${k}" value="${v}" /></div>
+        `).join('');
+        host.innerHTML = `
+          <div class="form-grid">
+            <div class="field"><label>RefDes (ID)</label><input id="insp-id" value="${comp.instanceId}" /></div>
+            <div class="field"><label>Device Kind</label><input value="${comp.deviceKindId}" disabled /></div>
+            <div class="field"><label>X (snapped)</label><input id="insp-x" type="number" step="20" value="${comp.x}" /></div>
+            <div class="field"><label>Y (snapped)</label><input id="insp-y" type="number" step="20" value="${comp.y}" /></div>
+          </div>
+          ${compatModels.length > 0 ? `<div class="field"><label>Attached Library Model</label><select id="insp-model">${modelOpts}</select></div>` : ''}
+          <div class="form-grid">${paramRows}</div>
+          <div style="display:flex;gap:6px">
+            <button id="insp-rot" class="icon-btn">Rotate 90°</button>
+            <button id="insp-mir" class="icon-btn">Mirror X</button>
+            <button id="insp-del" class="icon-btn danger">Delete</button>
+          </div>
+        `;
+        document.getElementById('insp-id').onchange = (e) => {
+          const newId = e.target.value.trim();
+          if (!newId || newId === comp.instanceId) return;
+          pushUndo();
+          const oldId = comp.instanceId;
+          comp.instanceId = newId;
+          currentSchem.rootSheet.nets.forEach(n => n.connectedPins.forEach(p => { if (p.instanceId === oldId) p.instanceId = newId; }));
+          selectedInstance = newId;
+          refreshAllSchematicViews();
+          runSchematicSim();
+        };
+        document.getElementById('insp-x').onchange = (e) => { pushUndo(); comp.x = Number(e.target.value) || comp.x; runSchematicSim(); };
+        document.getElementById('insp-y').onchange = (e) => { pushUndo(); comp.y = Number(e.target.value) || comp.y; runSchematicSim(); };
+        const msel = document.getElementById('insp-model');
+        if (msel) {
+          msel.onchange = () => {
+            pushUndo();
+            const found = libraryEntries.find(x => x.part.id === msel.value)?.part;
+            if (found) {
+              comp.libraryPartId = found.id;
+              comp.modelName = found.attachedModel?.modelName || null;
+              comp.displayValue = found.attachedModel?.modelName || found.name;
+              comp.parameters = structuredClone(found.defaultParameters || comp.parameters);
+            } else {
+              comp.libraryPartId = null;
+              comp.modelName = null;
+              comp.displayValue = null;
+            }
+            refreshAllSchematicViews();
+            runSchematicSim();
+          };
+        }
+        host.querySelectorAll('input[data-insp-param]').forEach(inp => {
+          inp.onchange = () => {
+            const v = Number(inp.value);
+            if (Number.isFinite(v)) {
+              pushUndo();
+              comp.parameters[inp.dataset.inspParam] = v;
+              runSchematicSim();
+            }
+          };
+        });
+        document.getElementById('insp-rot').onclick = rotateSelected;
+        document.getElementById('insp-mir').onclick = mirrorSelected;
+        document.getElementById('insp-del').onclick = deleteSelected;
+      }
 
-    function renderCompEditor() {
-      const host = document.getElementById('comp-editor');
-      host.innerHTML = '';
+      // Compact live table of all components
+      const tblHost = document.getElementById('comp-editor');
+      tblHost.innerHTML = '';
       const tbl = document.createElement('table');
-      tbl.innerHTML = '<thead><tr><th>Instance</th><th>Pos (snapped)</th><th>Parameters</th></tr></thead>';
+      tbl.innerHTML = '<thead><tr><th>Part</th><th>Model / Value</th><th>Pos</th></tr></thead>';
       const tb = document.createElement('tbody');
-      currentSchem.rootSheet.components.forEach((c) => {
+      currentSchem.rootSheet.components.forEach(c => {
         const tr = document.createElement('tr');
-        const pInputs = Object.entries(c.parameters).map(([k, v]) =>
-          `<label style="margin-right:8px">${k}=<input data-inst="${c.instanceId}" data-key="${k}" value="${v}" size="7" /></label>`
-        ).join('');
-        tr.innerHTML = `<td><b>${c.instanceId}</b></td><td>(${c.x}, ${c.y}) ${c.rotationDegrees}°</td><td>${pInputs}</td>`;
+        tr.style.cursor = 'pointer';
+        const summary = c.modelName || Object.entries(c.parameters || {}).map(([k,v]) => `${k}=${v}`).slice(0,1).join('');
+        tr.innerHTML = `<td><b>${c.instanceId}</b></td><td>${summary}</td><td>(${c.x},${c.y}) ${c.rotationDegrees}°</td>`;
+        tr.onclick = () => { selectedInstance = c.instanceId; renderInspector(); };
         tb.appendChild(tr);
       });
       tbl.appendChild(tb);
-      host.appendChild(tbl);
-      host.querySelectorAll('input').forEach(inp => {
-        inp.addEventListener('change', () => {
-          const comp = currentSchem.rootSheet.components.find(c => c.instanceId === inp.dataset.inst);
-          const v = Number(inp.value);
-          if (comp && Number.isFinite(v)) {
-            comp.parameters[inp.dataset.key] = v;
-            runSchematicSim();
-          }
-        });
-      });
+      tblHost.appendChild(tbl);
     }
+
+    function renderNavigator(diagnostics = []) {
+      const sheetsEl = document.getElementById('nav-sheets');
+      sheetsEl.innerHTML = `<div class="nav-row active"><span>${currentSchem.rootSheet.title}</span><span style="color:var(--dim)">root</span></div>`;
+
+      const instEl = document.getElementById('nav-instances');
+      instEl.innerHTML = '';
+      document.getElementById('nav-inst-count').textContent = currentSchem.rootSheet.components.length;
+      currentSchem.rootSheet.components.forEach(c => {
+        const row = document.createElement('div');
+        row.className = 'nav-row' + (c.instanceId === selectedInstance ? ' active' : '');
+        row.innerHTML = `<span><b>${c.instanceId}</b> ${c.modelName || c.deviceKindId.replace('spice.','')}</span><span style="color:var(--dim)">(${c.x},${c.y})</span>`;
+        row.onclick = () => { selectedInstance = c.instanceId; activateDockTab('right', 'inspector'); renderInspector(); renderNavigator(diagnostics); };
+        instEl.appendChild(row);
+      });
+
+      const netEl = document.getElementById('nav-nets');
+      netEl.innerHTML = '';
+      document.getElementById('nav-net-count').textContent = currentSchem.rootSheet.nets.length;
+      currentSchem.rootSheet.nets.forEach(n => {
+        const sig = n.isGlobalGround ? '' : `v(${n.netName.toLowerCase()})`;
+        const row = document.createElement('div');
+        row.className = 'nav-row' + (sig && schemProbed.has(sig) ? ' active' : '');
+        row.innerHTML = `<span>${n.netName}${n.isGlobalGround ? ' (0)' : ''}</span><span style="color:var(--dim)">${n.connectedPins.length} pins</span>`;
+        if (sig) {
+          row.onclick = () => { if (schemProbed.has(sig)) schemProbed.delete(sig); else schemProbed.add(sig); renderSchemPlot(); renderNavigator(diagnostics); };
+        }
+        netEl.appendChild(row);
+      });
+
+      const ercEl = document.getElementById('nav-erc');
+      ercEl.innerHTML = '';
+      document.getElementById('nav-erc-count').textContent = diagnostics.length;
+      if (diagnostics.length === 0) {
+        ercEl.innerHTML = '<div class="nav-row"><span class="ok">0 ERC violations</span></div>';
+      } else {
+        diagnostics.forEach(d => {
+          const row = document.createElement('div');
+          row.className = 'nav-row';
+          row.innerHTML = `<span class="${d.severity === 'error' ? 'err' : 'amber'}">[${d.code}] ${d.message}</span>`;
+          ercEl.appendChild(row);
+        });
+      }
+    }
+
+    function refreshAllSchematicViews() {
+      renderInspector();
+      renderNavigator(lastSchemResult?.diagnostics || []);
+    }
+
+    // ---- PAN / ZOOM & SVG INTERACTIONS ----
+    function applyViewBox(svg) {
+      if (!svg || !zoomState.vb) return;
+      const v = zoomState.vb;
+      svg.setAttribute('viewBox', `${v.x.toFixed(1)} ${v.y.toFixed(1)} ${v.w.toFixed(1)} ${v.h.toFixed(1)}`);
+      document.getElementById('zoom-reset').textContent = Math.round(zoomState.scale * 100) + '%';
+    }
+    function zoomBy(factor) {
+      const svg = document.querySelector('#svg-host svg');
+      if (!svg || !zoomState.vb) return;
+      const cx = zoomState.vb.x + zoomState.vb.w * 0.5;
+      const cy = zoomState.vb.y + zoomState.vb.h * 0.5;
+      zoomState.scale = Math.min(4.0, Math.max(0.35, zoomState.scale * factor));
+      zoomState.vb.w = zoomState.baseVb.w / zoomState.scale;
+      zoomState.vb.h = zoomState.baseVb.h / zoomState.scale;
+      zoomState.vb.x = cx - zoomState.vb.w * 0.5;
+      zoomState.vb.y = cy - zoomState.vb.h * 0.5;
+      applyViewBox(svg);
+    }
+    function fitCanvas() {
+      const svg = document.querySelector('#svg-host svg');
+      if (!svg || !zoomState.baseVb) return;
+      zoomState.scale = 1.0;
+      zoomState.vb = { ...zoomState.baseVb };
+      applyViewBox(svg);
+    }
+    document.getElementById('zoom-in').addEventListener('click', () => zoomBy(1.2));
+    document.getElementById('zoom-out').addEventListener('click', () => zoomBy(1 / 1.2));
+    document.getElementById('zoom-reset').addEventListener('click', fitCanvas);
+    document.getElementById('zoom-fit').addEventListener('click', fitCanvas);
 
     function svgPoint(svg, clientX, clientY) {
       const pt = svg.createSVGPoint();
@@ -557,6 +1327,7 @@ C1 out 0 10n
 
     function connectPins(pinA, pinB) {
       if (pinA.instanceId === pinB.instanceId && pinA.pinName === pinB.pinName) return;
+      pushUndo();
       const nets = currentSchem.rootSheet.nets;
       const findNet = (p) => nets.find(n => n.connectedPins.some(cp => cp.instanceId === p.instanceId && cp.pinName === p.pinName));
       const netA = findNet(pinA), netB = findNet(pinB);
@@ -577,6 +1348,7 @@ C1 out 0 10n
       } else {
         nets.push({ netName: 'n' + (nets.length + 1), connectedPins: [pinA, pinB], isGlobalGround: false });
       }
+      refreshAllSchematicViews();
       runSchematicSim();
     }
 
@@ -584,9 +1356,52 @@ C1 out 0 10n
       const host = document.getElementById('svg-host');
       const svg = host.querySelector('svg');
       if (!svg) return;
+      const vbParts = (svg.getAttribute('viewBox') || '0 0 520 320').split(/\s+/).map(Number);
+      zoomState.baseVb = { x: vbParts[0], y: vbParts[1], w: vbParts[2], h: vbParts[3] };
+      if (!zoomState.vb || Math.abs(zoomState.scale - 1.0) < 0.01) {
+        zoomState.vb = { ...zoomState.baseVb };
+      } else {
+        applyViewBox(svg);
+      }
+
       const snapV = svg.getElementById('snap-v');
       const snapH = svg.getElementById('snap-h');
       const wirePrev = svg.getElementById('wire-preview');
+      const G = gridPitch();
+
+      // Mouse wheel zoom + background drag pan
+      svg.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        zoomBy(e.deltaY < 0 ? 1.12 : 1 / 1.12);
+      }, { passive: false });
+
+      let panning = false, panStart = null, panVb = null;
+      svg.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.spice-component') || e.target.closest('.spice-pin') || e.target.closest('.spice-net')) return;
+        panning = true;
+        panStart = { x: e.clientX, y: e.clientY };
+        panVb = { ...zoomState.vb };
+        svg.style.cursor = 'grabbing';
+      });
+      svg.addEventListener('pointermove', (e) => {
+        const pt = svgPoint(svg, e.clientX, e.clientY);
+        const sx = Math.round(pt.x / G) * G, sy = Math.round(pt.y / G) * G;
+        document.getElementById('cursor-coords').textContent = `X: ${sx}  Y: ${sy}  |  Grid: ${G}px (${gridStyle()})`;
+        if (panning && panStart && panVb) {
+          const rect = svg.getBoundingClientRect();
+          const dx = (e.clientX - panStart.x) * (panVb.w / Math.max(1, rect.width));
+          const dy = (e.clientY - panStart.y) * (panVb.h / Math.max(1, rect.height));
+          zoomState.vb = { x: panVb.x - dx, y: panVb.y - dy, w: panVb.w, h: panVb.h };
+          applyViewBox(svg);
+          return;
+        }
+        if (editMode === 'wire' && wireStartPin && wirePrev) {
+          const midX = Math.round((0.5 * (wireStartPin.sx + sx)) / G) * G;
+          wirePrev.setAttribute('points', `${wireStartPin.sx},${wireStartPin.sy} ${midX},${wireStartPin.sy} ${midX},${sy} ${sx},${sy}`);
+          wirePrev.setAttribute('visibility', 'visible');
+        }
+      });
+      window.addEventListener('pointerup', () => { if (panning) { panning = false; svg.style.cursor = 'default'; } });
 
       // Net click -> toggle waveform cross-probe
       svg.querySelectorAll('.spice-net').forEach(el => {
@@ -598,6 +1413,7 @@ C1 out 0 10n
           e.stopPropagation();
           if (schemProbed.has(sig)) schemProbed.delete(sig); else schemProbed.add(sig);
           renderSchemPlot();
+          renderNavigator(lastSchemResult?.diagnostics || []);
         });
       });
 
@@ -608,9 +1424,8 @@ C1 out 0 10n
           const pin = { instanceId: pinEl.getAttribute('data-instance'), pinName: pinEl.getAttribute('data-pin') };
           if (!wireStartPin) {
             setMode('wire');
-            const c = currentSchem.rootSheet.components.find(x => x.instanceId === pin.instanceId);
             const pt = svgPoint(svg, e.clientX, e.clientY);
-            wireStartPin = { ...pin, sx: Math.round(pt.x / GRID) * GRID, sy: Math.round(pt.y / GRID) * GRID, comp: c };
+            wireStartPin = { ...pin, sx: Math.round(pt.x / G) * G, sy: Math.round(pt.y / G) * G };
             pinEl.classList.add('wire-start');
           } else {
             const start = wireStartPin;
@@ -622,19 +1437,7 @@ C1 out 0 10n
         });
       });
 
-      // Rubber-band snapped wire preview in wire mode
-      svg.addEventListener('pointermove', (e) => {
-        if (editMode === 'wire' && wireStartPin && wirePrev) {
-          const pt = svgPoint(svg, e.clientX, e.clientY);
-          const tx = Math.round(pt.x / GRID) * GRID;
-          const ty = Math.round(pt.y / GRID) * GRID;
-          const midX = Math.round((0.5 * (wireStartPin.sx + tx)) / GRID) * GRID;
-          wirePrev.setAttribute('points', `${wireStartPin.sx},${wireStartPin.sy} ${midX},${wireStartPin.sy} ${midX},${ty} ${tx},${ty}`);
-          wirePrev.setAttribute('visibility', 'visible');
-        }
-      });
-
-      // Component drag with live 20px snap grid + cyan alignment snap guide lines!
+      // Component drag with snap grid + cyan alignment snap guide lines
       svg.querySelectorAll('.spice-component').forEach(compEl => {
         const instId = compEl.getAttribute('data-instance');
         if (instId === selectedInstance) compEl.classList.add('selected');
@@ -646,6 +1449,8 @@ C1 out 0 10n
           if (!comp) return;
           selectedInstance = instId;
           svg.querySelectorAll('.spice-component').forEach(el => el.classList.toggle('selected', el === compEl));
+          renderInspector();
+          renderNavigator(lastSchemResult?.diagnostics || []);
           dragging = true; moved = false;
           startPt = svgPoint(svg, e.clientX, e.clientY);
           origX = comp.x; origY = comp.y;
@@ -659,25 +1464,18 @@ C1 out 0 10n
           const pt = svgPoint(svg, e.clientX, e.clientY);
           const dx = pt.x - startPt.x, dy = pt.y - startPt.y;
           if (Math.hypot(dx, dy) > 3) moved = true;
-          const useGrid = document.getElementById('chk-grid').checked;
-          let nx = useGrid ? Math.round((origX + dx) / GRID) * GRID : (origX + dx);
-          let ny = useGrid ? Math.round((origY + dy) / GRID) * GRID : (origY + dy);
+          const useGrid = gridStyle() !== 'off';
+          let nx = useGrid ? Math.round((origX + dx) / G) * G : (origX + dx);
+          let ny = useGrid ? Math.round((origY + dy) / G) * G : (origY + dy);
 
-          // In-situ alignment snap guide lines against other components!
           let alignedX = false, alignedY = false;
           for (const other of currentSchem.rootSheet.components) {
             if (other.instanceId === instId) continue;
-            if (Math.abs(nx - other.x) <= GRID * 0.6) { nx = other.x; alignedX = true; }
-            if (Math.abs(ny - other.y) <= GRID * 0.6) { ny = other.y; alignedY = true; }
+            if (Math.abs(nx - other.x) <= G * 0.6) { nx = other.x; alignedX = true; }
+            if (Math.abs(ny - other.y) <= G * 0.6) { ny = other.y; alignedY = true; }
           }
-          if (snapV) {
-            snapV.setAttribute('x1', nx); snapV.setAttribute('x2', nx);
-            snapV.setAttribute('visibility', alignedX ? 'visible' : 'hidden');
-          }
-          if (snapH) {
-            snapH.setAttribute('y1', ny); snapH.setAttribute('y2', ny);
-            snapH.setAttribute('visibility', alignedY ? 'visible' : 'hidden');
-          }
+          if (snapV) { snapV.setAttribute('x1', nx); snapV.setAttribute('x2', nx); snapV.setAttribute('visibility', alignedX ? 'visible' : 'hidden'); }
+          if (snapH) { snapH.setAttribute('y1', ny); snapH.setAttribute('y2', ny); snapH.setAttribute('visibility', alignedY ? 'visible' : 'hidden'); }
           compEl.setAttribute('transform', `translate(${nx.toFixed(1)},${ny.toFixed(1)})`);
           compEl.dataset.nx = nx; compEl.dataset.ny = ny;
         });
@@ -689,12 +1487,13 @@ C1 out 0 10n
           if (snapV) snapV.setAttribute('visibility', 'hidden');
           if (snapH) snapH.setAttribute('visibility', 'hidden');
           try { compEl.releasePointerCapture(e.pointerId); } catch {}
-          if (moved) {
+          if (moved && compEl.dataset.nx !== undefined) {
             const comp = currentSchem.rootSheet.components.find(c => c.instanceId === instId);
-            if (comp && compEl.dataset.nx !== undefined) {
+            if (comp) {
+              pushUndo();
               comp.x = Number(compEl.dataset.nx);
               comp.y = Number(compEl.dataset.ny);
-              renderCompEditor();
+              refreshAllSchematicViews();
               runSchematicSim();
             }
           } else {
@@ -706,6 +1505,86 @@ C1 out 0 10n
           }
         });
       });
+    }
+
+    // ---- INTERACTIVE CROSSHAIR WAVEFORM PLOTTER ----
+    function drawPlot(canvas, axis, seriesMap, activeKeys, logX = false, barMode = false, dbMode = false, cursorIdx = -1) {
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#080e1a';
+      ctx.fillRect(0, 0, W, H);
+      const pad = { l: 58, r: 16, t: 16, b: 28 };
+      const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+
+      const keys = [...activeKeys].filter(k => seriesMap[k] && seriesMap[k].length > 0);
+      if (!axis || axis.length === 0 || keys.length === 0) {
+        ctx.fillStyle = '#64748b'; ctx.font = '12.5px monospace';
+        ctx.fillText('Click any net wire or signal chip to plot waveform.', pad.l + 14, H / 2);
+        return null;
+      }
+
+      const txVal = (y) => dbMode ? 20.0 * Math.log10(Math.max(Math.abs(y), 1e-12)) : y;
+      const xs = logX ? axis.map(v => Math.log10(Math.max(v, 1e-30))) : axis;
+      let minX = Math.min(...xs), maxX = Math.max(...xs);
+      if (maxX === minX) { minX -= 1; maxX += 1; }
+      let minY = Infinity, maxY = -Infinity;
+      for (const k of keys) {
+        for (const rawY of seriesMap[k]) {
+          const y = txVal(rawY);
+          if (Number.isFinite(y)) { minY = Math.min(minY, y); maxY = Math.max(maxY, y); }
+        }
+      }
+      if (!Number.isFinite(minY)) return null;
+      if (barMode) minY = Math.min(0, minY);
+      if (maxY === minY) { minY -= 0.5; maxY += 0.5; }
+      const margin = (maxY - minY) * 0.08;
+      minY -= margin; maxY += margin;
+
+      const toX = x => pad.l + ((x - minX) / (maxX - minX)) * pw;
+      const toY = y => pad.t + ph - ((y - minY) / (maxY - minY)) * ph;
+
+      ctx.strokeStyle = '#172235'; ctx.lineWidth = 1;
+      for (let g = 0; g <= 4; ++g) {
+        const y = pad.t + (ph * g) / 4;
+        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
+        const val = maxY - ((maxY - minY) * g) / 4;
+        ctx.fillStyle = '#94a3b8'; ctx.font = '10.5px monospace';
+        ctx.fillText(val.toPrecision(3) + (dbMode ? 'dB' : ''), 4, y + 4);
+      }
+
+      keys.forEach((k, idx) => {
+        const col = COLORS[idx % COLORS.length];
+        const ys = seriesMap[k].map(txVal);
+        ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 2;
+        if (barMode || ys.length === 1) {
+          ys.forEach((y, i) => {
+            const x = toX(xs[i]), y0 = toY(0), y1 = toY(y);
+            ctx.fillRect(x - 6, Math.min(y0, y1), 12, Math.max(2, Math.abs(y1 - y0)));
+          });
+        } else {
+          ctx.beginPath();
+          ys.forEach((y, i) => { const x = toX(xs[i]), yy = toY(y); if (i === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy); });
+          ctx.stroke();
+        }
+      });
+
+      if (cursorIdx >= 0 && cursorIdx < xs.length) {
+        const cx = toX(xs[cursorIdx]);
+        ctx.strokeStyle = 'rgba(248, 250, 252, 0.45)'; ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(cx, pad.t); ctx.lineTo(cx, pad.t + ph); ctx.stroke();
+        ctx.setLineDash([]);
+        keys.forEach((k, idx) => {
+          const y = txVal(seriesMap[k][cursorIdx]);
+          ctx.fillStyle = COLORS[idx % COLORS.length];
+          ctx.beginPath(); ctx.arc(cx, toY(y), 4, 0, Math.PI * 2); ctx.fill();
+        });
+      }
+
+      ctx.fillStyle = '#94a3b8'; ctx.font = '10.5px monospace';
+      ctx.fillText(axis[0].toPrecision(3), pad.l, H - 8);
+      ctx.fillText(axis[axis.length - 1].toPrecision(3), W - pad.r - 58, H - 8);
+      return { xs, minX, maxX, pad, pw };
     }
 
     function renderOpTables(data) {
@@ -720,12 +1599,13 @@ C1 out 0 10n
       for (const [inst, val] of Object.entries(data.op_currents || {})) {
         const tr = document.createElement('tr');
         const arrow = Math.abs(val) < 1e-12 ? '•' : (val >= 0 ? '→' : '←');
-        tr.innerHTML = `<td>i(${inst})</td><td class="amber">${arrow} ${fmtEng(val, 'A')}</td>`;
+        tr.innerHTML = `<td>i(${inst})</td><td class="amber">${arrow} ${fmtEng(Math.abs(val), 'A')}</td>`;
         iBody.appendChild(tr);
       }
     }
 
-    function renderSchemPlot() {
+    let lastPlotMeta = null;
+    function renderSchemPlot(cursorIdx = -1) {
       if (!lastSchemResult) return;
       const host = document.getElementById('svg-host');
       host.querySelectorAll('.spice-net').forEach(el => {
@@ -735,56 +1615,256 @@ C1 out 0 10n
       const chips = document.getElementById('schem-signals');
       chips.innerHTML = '';
       const series = lastSchemResult.series || {};
-      Object.keys(series).forEach(sig => {
+      const keys = Object.keys(series);
+      if (keys.length > 0 && ![...schemProbed].some(k => series[k])) {
+        schemProbed = new Set([keys.includes('v(out)') ? 'v(out)' : keys[0]]);
+      }
+      keys.forEach(sig => {
         const b = document.createElement('button');
         b.className = 'chip' + (schemProbed.has(sig) ? ' on' : '');
         b.textContent = sig;
-        b.onclick = () => {
-          if (schemProbed.has(sig)) schemProbed.delete(sig); else schemProbed.add(sig);
-          renderSchemPlot();
-        };
+        b.onclick = () => { if (schemProbed.has(sig)) schemProbed.delete(sig); else schemProbed.add(sig); renderSchemPlot(); };
         chips.appendChild(b);
       });
       const isAc = document.getElementById('schem-analysis').value === 'ac';
-      drawPlot(document.getElementById('schem-canvas'), lastSchemResult.axis || [], series, schemProbed, isAc, false);
-      const summary = [...schemProbed].filter(s => series[s]).map(s => {
-        const arr = series[s];
-        return `${s}: first=${arr[0].toPrecision(5)}, last=${arr[arr.length - 1].toPrecision(5)}`;
-      }).join('  |  ');
-      document.getElementById('schem-readout').textContent = summary || 'Click any net wire on the schematic to cross-probe.';
+      lastPlotMeta = drawPlot(document.getElementById('schem-canvas'), lastSchemResult.axis || [], series, schemProbed, isAc, false, isAc && bodeDb, cursorIdx);
+      const axis = lastSchemResult.axis || [];
+      if (cursorIdx >= 0 && cursorIdx < axis.length) {
+        const vals = [...schemProbed].filter(s => series[s]).map(s => `${s}=${series[s][cursorIdx].toPrecision(5)}`).join('  |  ');
+        document.getElementById('schem-readout').textContent = `Cursor X=${axis[cursorIdx].toPrecision(5)}  |  ${vals}`;
+      } else {
+        const summary = [...schemProbed].filter(s => series[s]).map(s => {
+          const arr = series[s];
+          return `${s}: ${arr[0].toPrecision(4)} → ${arr[arr.length - 1].toPrecision(4)}`;
+        }).join('  |  ');
+        document.getElementById('schem-readout').textContent = summary || 'Click any net wire on the schematic to cross-probe.';
+      }
     }
 
+    document.getElementById('schem-canvas').addEventListener('pointermove', (e) => {
+      if (!lastPlotMeta || !lastSchemResult?.axis?.length) return;
+      const canvas = e.target;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+      const frac = Math.min(1, Math.max(0, (x - lastPlotMeta.pad.l) / Math.max(1, lastPlotMeta.pw)));
+      const targetX = lastPlotMeta.minX + frac * (lastPlotMeta.maxX - lastPlotMeta.minX);
+      let best = 0, bestD = Infinity;
+      lastPlotMeta.xs.forEach((v, i) => { const d = Math.abs(v - targetX); if (d < bestD) { bestD = d; best = i; } });
+      renderSchemPlot(best);
+    });
+    document.getElementById('schem-canvas').addEventListener('pointerleave', () => renderSchemPlot(-1));
+    document.getElementById('btn-bode-toggle').addEventListener('click', (e) => {
+      bodeDb = !bodeDb;
+      e.target.textContent = 'dB: ' + (bodeDb ? 'On' : 'Off');
+      renderSchemPlot();
+    });
+    document.getElementById('btn-csv-wave').addEventListener('click', () => {
+      if (!lastSchemResult?.axis?.length) return;
+      const cols = Object.keys(lastSchemResult.series || {});
+      const rows = ['axis,' + cols.join(',')];
+      lastSchemResult.axis.forEach((x, i) => rows.push([x, ...cols.map(c => lastSchemResult.series[c][i])].join(',')));
+      downloadText(`${currentSchem.name}_waveforms.csv`, rows.join('\n'), 'text/csv;charset=utf-8');
+    });
+
+    // ---- MULTI-FORMAT EXPORT PREVIEW & DOWNLOAD ----
+    let lastExport = null;
+    async function refreshExportPreview() {
+      const format = document.getElementById('export-format').value;
+      const analysis = document.getElementById('schem-analysis').value;
+      const resp = await fetch('/api/schematic/export', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          document: currentSchem, format, analysis,
+          gridSize: gridPitch(), showGrid: gridStyle() !== 'off', gridStyle: gridStyle(),
+          includeOp: document.getElementById('chk-op').checked
+        })
+      });
+      if (!resp.ok) {
+        const err = await resp.json();
+        document.getElementById('schem-spice').value = `Export unavailable: ${err.error || 'ERC failed'}`;
+        return;
+      }
+      lastExport = await resp.json();
+      document.getElementById('schem-spice').value = lastExport.content || '';
+      document.getElementById('export-meta').textContent = `File: ${lastExport.filename} (${(lastExport.content || '').length} chars)`;
+    }
+    document.getElementById('export-format').addEventListener('change', refreshExportPreview);
+    document.getElementById('btn-export-copy').addEventListener('click', () => {
+      navigator.clipboard?.writeText(document.getElementById('schem-spice').value || '');
+    });
+    document.getElementById('btn-export-download').addEventListener('click', async () => {
+      await refreshExportPreview();
+      if (lastExport?.content) downloadText(lastExport.filename, lastExport.content, lastExport.content_type);
+    });
+
+    // ---- LIVE SCHEMATIC SIMULATION ----
     async function runSchematicSim() {
       const analysis = document.getElementById('schem-analysis').value;
       const resp = await fetch('/api/schematic/simulate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           document: currentSchem,
           analysis,
-          gridSize: GRID,
-          showGrid: document.getElementById('chk-grid').checked,
+          gridSize: gridPitch(),
+          showGrid: gridStyle() !== 'off',
+          gridStyle: gridStyle(),
           showOp: document.getElementById('chk-op').checked
         })
       });
       const data = await resp.json();
       document.getElementById('svg-host').innerHTML = data.svg || '';
-      document.getElementById('schem-spice').value = data.spice || '';
       const ercEl = document.getElementById('erc-status');
+      renderNavigator(data.diagnostics || []);
       if (!data.erc_ok) {
-        ercEl.className = 'status-line err';
-        ercEl.textContent = 'ERC failed: ' + JSON.stringify(data.diagnostics);
+        ercEl.className = 'err';
+        ercEl.textContent = `ERC Failed (${(data.diagnostics || []).length} issue(s)) — check Navigator & ERC tab.`;
         bindSvgInteractions();
         return;
       }
-      ercEl.className = 'status-line ok';
-      ercEl.textContent = `ERC PASS | ${data.status} | Samples=${(data.axis || []).length} | Live DC V & I overlaid on schematic.`;
+      ercEl.className = data.status === 'Succeeded' ? 'ok' : 'err';
+      ercEl.textContent = `ERC PASS | ${data.status} (${analysis.toUpperCase()}) | Samples=${(data.axis || []).length} | Live DC V/I overlaid`;
       lastSchemResult = data;
       bindSvgInteractions();
       renderOpTables(data);
       renderSchemPlot();
+      refreshExportPreview();
     }
 
+    // ---- COMPONENT & MODEL LIBRARY STUDIO ----
+    function renderLibraryStudio() {
+      const q = (document.getElementById('lib-search').value || '').trim().toLowerCase();
+      const host = document.getElementById('lib-cards');
+      host.innerHTML = '';
+      libraryEntries.filter(item => {
+        const p = item.part;
+        return !q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || (p.attachedModel?.modelName || '').toLowerCase().includes(q);
+      }).forEach(item => {
+        const p = item.part;
+        const card = document.createElement('div');
+        card.className = 'lib-card' + (p.isBuiltIn ? '' : ' user-owned');
+        card.innerHTML = `
+          <div class="lib-card-head">
+            ${item.preview_svg}
+            <div>
+              <div style="font-weight:700;font-size:12.5px">${p.name}</div>
+              <div style="font-size:10.5px;color:var(--muted)">${p.category} · ${p.isBuiltIn ? 'Foundation' : 'User Custom'}</div>
+              <div style="font-size:10.5px;font-family:var(--mono);color:var(--accent)">${p.attachedModel?.modelName || p.baseDeviceKindId} (${(p.pins||[]).map(x=>x.name).join(',')})</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--dim)">${p.description || ''}</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:auto">
+            <button class="icon-btn primary btn-place" style="padding:3px 8px;font-size:11px">Place</button>
+            <button class="icon-btn btn-edit" style="padding:3px 8px;font-size:11px">${p.isBuiltIn ? 'Clone' : 'Edit'}</button>
+            ${p.isBuiltIn ? '' : '<button class="icon-btn danger btn-del" style="padding:3px 8px;font-size:11px">Delete</button>'}
+          </div>
+        `;
+        card.querySelector('.btn-place').onclick = () => placeLibraryPart(p);
+        card.querySelector('.btn-edit').onclick = () => loadPartIntoEditor(p, p.isBuiltIn);
+        const delBtn = card.querySelector('.btn-del');
+        if (delBtn) {
+          delBtn.onclick = async () => {
+            await fetch('/api/library/' + encodeURIComponent(p.id), { method: 'DELETE' });
+            await loadLibrary();
+          };
+        }
+        host.appendChild(card);
+      });
+    }
+    document.getElementById('lib-search').addEventListener('input', renderLibraryStudio);
+
+    function loadPartIntoEditor(p, asClone = false) {
+      document.getElementById('lib-id').value = asClone ? 'user.' + p.id.replace(/^foundation\./, '') + '_custom' : p.id;
+      document.getElementById('lib-name').value = asClone ? p.name + ' (Custom)' : p.name;
+      document.getElementById('lib-cat').value = asClone ? 'Custom Library' : p.category;
+      document.getElementById('lib-kind').value = p.baseDeviceKindId;
+      document.getElementById('lib-sym').value = p.symbolStyle || 'ic_box';
+      document.getElementById('lib-mkind').value = p.attachedModel?.kind || 'spiceModelCard';
+      document.getElementById('lib-mname').value = p.attachedModel?.modelName || '';
+      document.getElementById('lib-desc').value = p.description || '';
+      document.getElementById('lib-pins').value = (p.pins || []).map(x => `${x.name},${x.localX},${x.localY},${x.role || 'passive'}`).join('\n');
+      document.getElementById('lib-params').value = Object.entries(p.defaultParameters || {}).map(([k, v]) => `${k}=${v}`).join('\n');
+      document.getElementById('lib-model-text').value = p.attachedModel?.spiceText || '';
+    }
+
+    const LIB_TEMPLATES = {
+      diode: {
+        id: 'user.diode.led_red', name: 'Red LED (1.8V)', cat: 'Custom Diodes', kind: 'spice.diode', sym: 'diode', mkind: 'spiceModelCard', mname: 'LED_RED',
+        desc: 'Custom GaAsP red LED with attached .MODEL card.',
+        pins: 'p,-36,0,anode\nn,36,0,cathode', params: 'is_amps=1e-20\nn_emission=1.85',
+        model: '.MODEL LED_RED D(IS=1e-20 N=1.85 RS=4.0 CJO=15p)'
+      },
+      mosfet: {
+        id: 'user.mos.nch_lv', name: 'Low-Vt BSIM4 NMOS', cat: 'Custom Transistors', kind: 'spice.mosfet', sym: 'nmos', mkind: 'spiceModelCard', mname: 'NCH_LV',
+        desc: 'Custom low-Vt BSIM4 (LEVEL=54) N-channel MOSFET.',
+        pins: 'd,20,-20,drain\ng,-40,0,gate\ns,20,20,source\nb,40,0,bulk', params: 'w_m=2e-6\nl_m=65e-9\nlevel=54\nvth0_volts=0.22',
+        model: '.MODEL NCH_LV NMOS(LEVEL=54 VTH0=0.22 TOXE=2.0n U0=460 VSAT=1.2e5)'
+      },
+      subckt: {
+        id: 'user.subckt.pi_attenuator', name: '6dB Pi Attenuator', cat: 'Custom Subcircuits', kind: 'spice.subckt', sym: 'ic_box', mkind: 'subcircuit', mname: 'PI_ATTEN_6DB',
+        desc: '50-Ohm 6 dB resistive Pi attenuator macro (.SUBCKT).',
+        pins: 'in,-40,0,input\nout,40,0,output\ngnd,0,20,ground', params: '',
+        model: '.SUBCKT PI_ATTEN_6DB in out gnd\n  Rsh1 in gnd 150.5\n  Rser in out 37.35\n  Rsh2 out gnd 150.5\n.ENDS PI_ATTEN_6DB'
+      }
+    };
+    document.querySelectorAll('[data-tpl]').forEach(b => b.addEventListener('click', () => {
+      const t = LIB_TEMPLATES[b.dataset.tpl];
+      document.getElementById('lib-id').value = t.id;
+      document.getElementById('lib-name').value = t.name;
+      document.getElementById('lib-cat').value = t.cat;
+      document.getElementById('lib-kind').value = t.kind;
+      document.getElementById('lib-sym').value = t.sym;
+      document.getElementById('lib-mkind').value = t.mkind;
+      document.getElementById('lib-mname').value = t.mname;
+      document.getElementById('lib-desc').value = t.desc;
+      document.getElementById('lib-pins').value = t.pins;
+      document.getElementById('lib-params').value = t.params;
+      document.getElementById('lib-model-text').value = t.model;
+    }));
+    document.getElementById('btn-lib-new').addEventListener('click', () => document.querySelector('[data-tpl="subckt"]').click());
+
+    async function saveCustomPart(alsoPlace = false) {
+      const pins = document.getElementById('lib-pins').value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+        const [name, x, y, role] = l.split(',').map(s => s.trim());
+        return { name, localX: Number(x) || 0, localY: Number(y) || 0, role: role || 'passive' };
+      });
+      const defaultParameters = {};
+      document.getElementById('lib-params').value.split('\n').map(l => l.trim()).filter(Boolean).forEach(l => {
+        const [k, v] = l.split('=').map(s => s.trim());
+        if (k && Number.isFinite(Number(v))) defaultParameters[k] = Number(v);
+      });
+      const mText = document.getElementById('lib-model-text').value.trim();
+      const mName = document.getElementById('lib-mname').value.trim();
+      const payload = {
+        id: document.getElementById('lib-id').value.trim(),
+        name: document.getElementById('lib-name').value.trim(),
+        category: document.getElementById('lib-cat').value.trim(),
+        description: document.getElementById('lib-desc').value.trim(),
+        baseDeviceKindId: document.getElementById('lib-kind').value,
+        spicePrefix: '',
+        symbolStyle: document.getElementById('lib-sym').value,
+        pins,
+        defaultParameters,
+        attachedModel: mText ? { kind: document.getElementById('lib-mkind').value, modelName: mName, spiceText: mText } : null
+      };
+      const st = document.getElementById('lib-status');
+      const resp = await fetch('/api/library', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        st.className = 'err';
+        st.textContent = 'Validation failed: ' + (data.diagnostics ? data.diagnostics.map(d => d.message).join('; ') : data.error);
+        return;
+      }
+      st.className = 'ok';
+      st.textContent = `Saved '${data.part.name}' to persistent library!`;
+      await loadLibrary();
+      if (alsoPlace) placeLibraryPart(data.part);
+    }
+    document.getElementById('btn-lib-save').addEventListener('click', () => saveCustomPart(false));
+    document.getElementById('btn-lib-save-place').addEventListener('click', () => saveCustomPart(true));
+
+    // ---- DECK & CAMPAIGN TABS ----
     function loadDeckPreset(key) {
       const p = DECK_PRESETS[key];
       document.getElementById('deck-text').value = p.text;
@@ -794,7 +1874,6 @@ C1 out 0 10n
       document.getElementById('deck-stop').value = p.stop;
       document.getElementById('deck-step').value = p.step;
     }
-
     function renderDeckPlot() {
       if (!lastDeckResult) return;
       const chips = document.getElementById('deck-signals');
@@ -804,44 +1883,33 @@ C1 out 0 10n
         const b = document.createElement('button');
         b.className = 'chip' + (deckSelected.has(sig) ? ' on' : '');
         b.textContent = sig;
-        b.onclick = () => {
-          if (deckSelected.has(sig)) deckSelected.delete(sig); else deckSelected.add(sig);
-          renderDeckPlot();
-        };
+        b.onclick = () => { if (deckSelected.has(sig)) deckSelected.delete(sig); else deckSelected.add(sig); renderDeckPlot(); };
         chips.appendChild(b);
       });
       const an = document.getElementById('deck-analysis').value;
       drawPlot(document.getElementById('deck-canvas'), lastDeckResult.axis || [], series, deckSelected, an === 'ac' || an === 'noise', an === 'hb');
     }
-
     async function runDeckSim() {
       const an = document.getElementById('deck-analysis').value;
-      const payload = {
-        deck: document.getElementById('deck-text').value,
-        analysis: an,
-        source: document.getElementById('deck-src').value,
-        start: Number(document.getElementById('deck-start').value),
-        stop: Number(document.getElementById('deck-stop').value),
-        step: Number(document.getElementById('deck-step').value)
-      };
       const resp = await fetch('/api/deck/simulate', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          deck: document.getElementById('deck-text').value, analysis: an,
+          source: document.getElementById('deck-src').value,
+          start: Number(document.getElementById('deck-start').value),
+          stop: Number(document.getElementById('deck-stop').value),
+          step: Number(document.getElementById('deck-step').value)
+        })
       });
       const data = await resp.json();
       const st = document.getElementById('deck-status');
-      if (data.status !== 'Succeeded') {
-        st.className = 'status-line err';
-        st.textContent = `Error: ${data.error_message || data.status}`;
-        return;
-      }
-      st.className = 'status-line ok';
-      st.textContent = `Succeeded (${an.toUpperCase()}) | Samples=${(data.axis || []).length} | Backend=${data.backend}`;
+      if (data.status !== 'Succeeded') { st.className = 'err'; st.textContent = `Error: ${data.error_message || data.status}`; return; }
+      st.className = 'ok'; st.textContent = `Succeeded (${an.toUpperCase()}) | Samples=${(data.axis || []).length} | Backend=${data.backend}`;
       lastDeckResult = data;
       const keys = Object.keys(data.series || {});
       deckSelected = new Set(keys.includes('v(out)') ? ['v(out)'] : keys.slice(0, 2));
       renderDeckPlot();
     }
-
     async function runCampaign() {
       const vdd = Number(document.getElementById('camp-vdd').value);
       const r1 = Number(document.getElementById('camp-r1').value);
@@ -863,14 +1931,52 @@ C1 out 0 10n
       drawPlot(document.getElementById('camp-canvas'), axis, { 'v(out)': vals }, new Set(['v(out)']), false, false);
     }
 
+    // ---- KEYBOARD SHORTCUTS (RSpice Parity) ----
+    window.addEventListener('keydown', (e) => {
+      if (e.altKey && ['1','2','3','4'].includes(e.key)) {
+        e.preventDefault();
+        activateWorkspace(['schematic','library','deck','campaign'][Number(e.key) - 1]);
+        return;
+      }
+      if (e.key === 'F5') { e.preventDefault(); runSchematicSim(); return; }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); document.getElementById('btn-save-schem').click(); return; }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); doUndo(); return; }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); doRedo(); return; }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'r') { e.preventDefault(); rotateSelected(); return; }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'm') { e.preventDefault(); mirrorSelected(); return; }
+      if (['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)) return;
+      const k = e.key.toLowerCase();
+      if (k === 'escape') { closeModal(); setMode('move'); }
+      else if (k === 'w') setMode('wire');
+      else if (k === 'r') placePrimitive('spice.resistor', 'R', { ohms: 1000.0 });
+      else if (k === 'c') placePrimitive('spice.capacitor', 'C', { farads: 1e-6, ic_volts: 0.0 });
+      else if (k === 'l') placePrimitive('spice.inductor', 'L', { henries: 1e-3 });
+      else if (k === 'v') placePrimitive('spice.vsrc', 'V', { dc_volts: 5.0, ac_mag: 1.0 });
+      else if (k === 'i') placePrimitive('spice.isrc', 'I', { dc_amps: 1e-3 });
+      else if (k === 'd') placePrimitive('spice.diode', 'D', { is_amps: 1e-14, n_emission: 1.0 });
+      else if (k === 'f') fitCanvas();
+      else if (k === '+' || k === '=') zoomBy(1.2);
+      else if (k === '-') zoomBy(1 / 1.2);
+      else if (k === 'delete' || k === 'backspace') deleteSelected();
+    });
+
+    // ---- CONTROLS WIRING ----
     document.getElementById('schem-preset').addEventListener('change', e => {
+      pushUndo();
       currentSchem = structuredClone(SCHEM_PRESETS[e.target.value]);
       selectedInstance = null;
-      renderCompEditor();
+      zoomState = { scale: 1.0, vb: null, baseVb: null };
+      if (e.target.value === 'bsim4_inv' || e.target.value === 'bjt_amp' || e.target.value === 'opamp_buf') {
+        document.getElementById('schem-analysis').value = 'op';
+      }
+      refreshAllSchematicViews();
       runSchematicSim();
     });
     document.getElementById('schem-analysis').addEventListener('change', runSchematicSim);
     document.getElementById('schem-run').addEventListener('click', runSchematicSim);
+    document.getElementById('grid-style').addEventListener('change', runSchematicSim);
+    document.getElementById('grid-pitch').addEventListener('change', runSchematicSim);
+    document.getElementById('chk-op').addEventListener('change', runSchematicSim);
     document.getElementById('deck-preset').addEventListener('change', e => { loadDeckPreset(e.target.value); runDeckSim(); });
     document.getElementById('deck-run').addEventListener('click', runDeckSim);
     document.getElementById('camp-run').addEventListener('click', runCampaign);
@@ -878,11 +1984,11 @@ C1 out 0 10n
     async function boot() {
       const info = await (await fetch('/api/info')).json();
       const badge = document.getElementById('abi-badge');
-      badge.textContent = `libspice_capi ABI ${info.abi} | KLU=${info.klu_available} | .NET ${info.dotnet_runtime}`;
+      badge.textContent = `C++20 ABI ${info.abi} | KLU=${info.klu_available} | .NET ${info.dotnet_runtime}`;
       badge.classList.add('ok');
-      document.getElementById('runtime-info').textContent =
-        `OSDI=${info.osdi_available} | Audits=${info.audits_available} | Devices=${info.device_kinds.length}`;
-      renderCompEditor();
+      document.getElementById('runtime-info').textContent = `OSDI=${info.osdi_available} | Lib=${info.library_count} parts`;
+      await loadLibrary();
+      refreshAllSchematicViews();
       loadDeckPreset('bsim4');
       await runSchematicSim();
       await runDeckSim();

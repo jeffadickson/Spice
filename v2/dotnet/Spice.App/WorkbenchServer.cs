@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Spice.Ir;
 using Spice.Schematic;
 using Spice.Sdk;
@@ -12,6 +13,8 @@ namespace Spice.App;
 /// <summary>
 /// Embedded cross-platform HTTP workbench host for Spice.App backed strictly by public
 /// Spice.Ir, Spice.Schematic, Spice.Starlark, and Spice.Sdk (NativeCppBackend) APIs.
+/// Exposes interactive schematic capture, multi-dialect netlist/bundle export, versioned
+/// save/load, and persistent custom component library endpoints.
 /// </summary>
 public sealed class WorkbenchServer : IAsyncDisposable
 {
@@ -19,18 +22,21 @@ public sealed class WorkbenchServer : IAsyncDisposable
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         PropertyNameCaseInsensitive = true,
-        WriteIndented = true
+        WriteIndented = true,
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
     };
 
     private readonly NativeCppBackend _backend;
     private readonly bool _ownsBackend;
+    private readonly ComponentLibraryStore _library;
     private readonly HttpListener _listener;
     private readonly CancellationTokenSource _cts = new();
     private Task? _loopTask;
 
     public string BaseUrl { get; }
+    public ComponentLibraryStore Library => _library;
 
-    public WorkbenchServer(int port = 0, NativeCppBackend? backend = null)
+    public WorkbenchServer(int port = 0, NativeCppBackend? backend = null, ComponentLibraryStore? library = null)
     {
         if (port == 0)
         {
@@ -42,6 +48,7 @@ public sealed class WorkbenchServer : IAsyncDisposable
         BaseUrl = $"http://127.0.0.1:{port}/";
         _ownsBackend = backend is null;
         _backend = backend ?? new NativeCppBackend(enableAudits: true);
+        _library = library ?? new ComponentLibraryStore(ComponentLibraryStore.GetDefaultLibraryPath());
         _listener = new HttpListener();
         _listener.Prefixes.Add(BaseUrl);
     }
@@ -120,10 +127,248 @@ public sealed class WorkbenchServer : IAsyncDisposable
                     osdi_available = caps.OsdiAvailable,
                     audits_available = caps.AuditsAvailable,
                     dotnet_runtime = Environment.Version.ToString(),
+                    library_count = _library.ListAll().Count,
+                    custom_library_count = _library.ListCustom().Count,
                     device_kinds = DeviceRegistry.Default.All.Select(d => d.KindId).OrderBy(k => k, StringComparer.Ordinal).ToArray()
                 });
                 return;
             }
+
+            // ---- COMPONENT & MODEL LIBRARY ENDPOINTS ----
+            if (method == "GET" && path == "/api/library")
+            {
+                var parts = _library.ListAll().Select(p => new
+                {
+                    part = p,
+                    preview_svg = SchematicCompiler.ExportSymbolPreviewSvg(p)
+                }).ToArray();
+                await WriteJsonAsync(ctx.Response, 200, new
+                {
+                    format_id = ComponentLibraryStore.LibraryFormatId,
+                    schema_version = ComponentLibraryStore.CurrentSchemaVersion,
+                    storage_path = _library.StoragePath,
+                    components = parts
+                });
+                return;
+            }
+            if (method == "POST" && path == "/api/library")
+            {
+                var part = await ReadJsonAsync<CustomComponentDefinition>(ctx.Request);
+                if (part is null)
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = "missing custom component payload" });
+                    return;
+                }
+                var errors = ComponentLibraryStore.Validate(part);
+                if (errors.Count > 0)
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = "validation_failed", diagnostics = errors });
+                    return;
+                }
+                var saved = _library.UpsertCustom(part);
+                await WriteJsonAsync(ctx.Response, 200, new
+                {
+                    saved = true,
+                    part = saved,
+                    preview_svg = SchematicCompiler.ExportSymbolPreviewSvg(saved)
+                });
+                return;
+            }
+            if (method == "DELETE" && path.StartsWith("/api/library/", StringComparison.Ordinal))
+            {
+                var id = Uri.UnescapeDataString(path["/api/library/".Length..]);
+                var removed = _library.DeleteCustom(id);
+                await WriteJsonAsync(ctx.Response, removed ? 200 : 404, new { deleted = removed, id });
+                return;
+            }
+            if (method == "POST" && path == "/api/library/from-schematic")
+            {
+                var req = await ReadJsonAsync<CreatePartFromSchematicRequest>(ctx.Request);
+                if (req?.Document is null || string.IsNullOrWhiteSpace(req.Name))
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = "missing document or component name" });
+                    return;
+                }
+                var saved = _library.CreateFromSchematic(
+                    req.Document,
+                    req.PartId ?? "",
+                    req.Name,
+                    req.Category ?? "Custom Subcircuits",
+                    req.Description);
+                await WriteJsonAsync(ctx.Response, 200, new
+                {
+                    saved = true,
+                    part = saved,
+                    preview_svg = SchematicCompiler.ExportSymbolPreviewSvg(saved)
+                });
+                return;
+            }
+
+            // ---- SCHEMATIC SAVE / LOAD / IMPORT / EXPORT ----
+            if (method == "POST" && path == "/api/schematic/save")
+            {
+                var req = await ReadJsonAsync<SchematicSaveRequest>(ctx.Request);
+                if (req?.Document is null)
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = "missing document" });
+                    return;
+                }
+                var stamped = req.Document with
+                {
+                    Metadata = (req.Document.Metadata ?? new SchematicMetadata()) with
+                    {
+                        Author = req.Author ?? req.Document.Metadata?.Author,
+                        Description = req.Description ?? req.Document.Metadata?.Description,
+                        ModifiedUtc = DateTime.UtcNow.ToString("O")
+                    }
+                };
+                var json = SchematicCompiler.SerializeJson(stamped, _library);
+                var parsed = SchematicCompiler.DeserializeJson(json, verifyChecksum: true);
+                await WriteJsonAsync(ctx.Response, 200, new
+                {
+                    filename = $"{parsed.Name}.spice.json",
+                    schema_version = parsed.SchemaVersion,
+                    sha256 = parsed.Metadata?.ContentSha256,
+                    content = json
+                });
+                return;
+            }
+            if (method == "POST" && path == "/api/schematic/load")
+            {
+                var req = await ReadJsonAsync<SchematicLoadRequest>(ctx.Request);
+                if (req is null || string.IsNullOrWhiteSpace(req.Content))
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = "missing file content" });
+                    return;
+                }
+                try
+                {
+                    var doc = SchematicCompiler.DeserializeJson(req.Content, verifyChecksum: req.VerifyChecksum ?? true);
+                    await WriteJsonAsync(ctx.Response, 200, new
+                    {
+                        loaded = true,
+                        document = doc,
+                        schema_version = doc.SchemaVersion,
+                        sha256 = doc.Metadata?.ContentSha256
+                    });
+                }
+                catch (InvalidDataException ex)
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { loaded = false, error = ex.Message });
+                }
+                return;
+            }
+            if (method == "POST" && path == "/api/schematic/import-spice")
+            {
+                var req = await ReadJsonAsync<ImportSpiceRequest>(ctx.Request);
+                if (req is null || string.IsNullOrWhiteSpace(req.SpiceText))
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = "missing spiceText" });
+                    return;
+                }
+                var doc = SchematicExporter.ImportFromSpiceNetlist(req.SpiceText, req.Name);
+                await WriteJsonAsync(ctx.Response, 200, new { imported = true, document = doc });
+                return;
+            }
+            if (method == "POST" && path == "/api/schematic/export")
+            {
+                var req = await ReadJsonAsync<SchematicExportRequest>(ctx.Request);
+                if (req?.Document is null)
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = "missing document" });
+                    return;
+                }
+                var fmt = (req.Format ?? "spice").ToLowerInvariant();
+                var analysis = ParseAnalysis(req.Analysis ?? "op");
+                var numOpts = BuildSchematicAnalysisOptions(analysis, req.Start, req.Stop, req.Step);
+                var exportOpts = new SchematicExportOptions(
+                    Dialect: ParseDialect(fmt),
+                    Analysis: analysis,
+                    AnalysisOptions: numOpts,
+                    SweepSourceId: req.Source,
+                    IncludeComments: req.IncludeComments ?? true,
+                    IncludeProbes: req.IncludeProbes ?? true);
+
+                string content;
+                string filename;
+                string contentType;
+                switch (fmt)
+                {
+                    case "spice":
+                    case "spice3f5":
+                    case "ngspice":
+                    case "xyce":
+                        content = SchematicExporter.ExportNetlist(req.Document, exportOpts, library: _library);
+                        filename = $"{req.Document.Name}.cir";
+                        contentType = "text/plain; charset=utf-8";
+                        break;
+                    case "ltspice":
+                        content = SchematicExporter.ExportNetlist(req.Document, exportOpts, library: _library);
+                        filename = $"{req.Document.Name}.net";
+                        contentType = "text/plain; charset=utf-8";
+                        break;
+                    case "spectre":
+                        content = SchematicExporter.ExportNetlist(req.Document, exportOpts, library: _library);
+                        filename = $"{req.Document.Name}.scs";
+                        contentType = "text/plain; charset=utf-8";
+                        break;
+                    case "starlark":
+                        content = SchematicExporter.ExportStarlarkScript(req.Document, library: _library);
+                        filename = $"{req.Document.Name}.star";
+                        contentType = "text/plain; charset=utf-8";
+                        break;
+                    case "bom":
+                        content = SchematicExporter.ExportBomCsv(req.Document, _library);
+                        filename = $"{req.Document.Name}.bom.csv";
+                        contentType = "text/csv; charset=utf-8";
+                        break;
+                    case "bundle":
+                        content = SchematicExporter.ExportBundleJson(req.Document, exportOpts, library: _library);
+                        filename = $"{req.Document.Name}.bundle.json";
+                        contentType = "application/json; charset=utf-8";
+                        break;
+                    case "json":
+                        content = SchematicCompiler.SerializeJson(req.Document, _library);
+                        filename = $"{req.Document.Name}.spice.json";
+                        contentType = "application/json; charset=utf-8";
+                        break;
+                    case "svg":
+                    case "svg_light":
+                    {
+                        OperatingPointOverlay? opOverlay = null;
+                        if (req.IncludeOp ?? true)
+                        {
+                            var compiled = SchematicCompiler.CompileToIr(req.Document, library: _library);
+                            if (compiled.Succeeded && compiled.Circuit is not null)
+                            {
+                                var opSim = await SolveSchematicAsync(req.Document, compiled.Circuit, AnalysisKind.OperatingPoint, new Dictionary<string, double>(), null, ct);
+                                if (opSim.Status == RunTerminalStatus.Succeeded)
+                                {
+                                    opOverlay = SchematicCompiler.BuildOperatingPointOverlay(req.Document, opSim, req.GridSize ?? 20.0, req.ShowGrid ?? true, showOperatingPoint: true);
+                                }
+                            }
+                        }
+                        content = SchematicCompiler.ExportSvg(req.Document, opOverlay, _library, lightTheme: fmt == "svg_light", gridStyle: req.GridStyle);
+                        filename = $"{req.Document.Name}.svg";
+                        contentType = "image/svg+xml; charset=utf-8";
+                        break;
+                    }
+                    default:
+                        await WriteJsonAsync(ctx.Response, 400, new { error = $"unsupported export format '{fmt}'" });
+                        return;
+                }
+
+                await WriteJsonAsync(ctx.Response, 200, new
+                {
+                    format = fmt,
+                    filename,
+                    content_type = contentType,
+                    content
+                });
+                return;
+            }
+
+            // ---- SCHEMATIC COMPILE & LIVE SIMULATE ----
             if (method == "POST" && path == "/api/schematic/compile")
             {
                 var req = await ReadJsonAsync<SchematicSimRequest>(ctx.Request);
@@ -132,14 +377,14 @@ public sealed class WorkbenchServer : IAsyncDisposable
                     await WriteJsonAsync(ctx.Response, 400, new { error = "missing document" });
                     return;
                 }
-                var compiled = SchematicCompiler.CompileToIr(req.Document);
+                var compiled = SchematicCompiler.CompileToIr(req.Document, library: _library);
                 var analysis = ParseAnalysis(req.Analysis ?? "op");
                 await WriteJsonAsync(ctx.Response, 200, new
                 {
                     erc_ok = compiled.Succeeded,
                     diagnostics = compiled.Diagnostics,
-                    svg = SchematicCompiler.ExportSvg(req.Document),
-                    spice = compiled.Succeeded ? SchematicCompiler.ExportSpiceNetlist(req.Document, analysis) : ""
+                    svg = SchematicCompiler.ExportSvg(req.Document, library: _library, gridStyle: req.GridStyle),
+                    spice = compiled.Succeeded ? SchematicCompiler.ExportSpiceNetlist(req.Document, analysis, library: _library) : ""
                 });
                 return;
             }
@@ -154,18 +399,22 @@ public sealed class WorkbenchServer : IAsyncDisposable
                 var gridSize = req.GridSize is > 2.0 ? req.GridSize.Value : 20.0;
                 var showGrid = req.ShowGrid ?? true;
                 var showOp = req.ShowOp ?? true;
-                var compiled = SchematicCompiler.CompileToIr(req.Document);
+                var doc = SchematicCompiler.EmbedReferencedLibraryAssets(req.Document, _library);
+                var compiled = SchematicCompiler.CompileToIr(doc, library: _library);
                 var analysis = ParseAnalysis(req.Analysis ?? "op");
                 if (!compiled.Succeeded || compiled.Circuit is null)
                 {
                     var failSvg = SchematicCompiler.ExportSvg(
-                        req.Document,
+                        doc,
                         new OperatingPointOverlay(
                             new Dictionary<string, double>(),
                             new Dictionary<string, double>(),
                             gridSize,
                             showGrid,
-                            ShowOperatingPoint: false));
+                            ShowOperatingPoint: false),
+                        _library,
+                        lightTheme: req.LightTheme ?? false,
+                        gridStyle: req.GridStyle);
                     await WriteJsonAsync(ctx.Response, 200, new
                     {
                         erc_ok = false,
@@ -177,32 +426,16 @@ public sealed class WorkbenchServer : IAsyncDisposable
                     return;
                 }
 
-                var numOpts = new Dictionary<string, double>();
-                if (analysis == AnalysisKind.Ac)
-                {
-                    numOpts["f_start_hz"] = req.Start ?? 10.0;
-                    numOpts["f_stop_hz"] = req.Stop ?? 100_000.0;
-                    numOpts["points_per_decade"] = req.Step ?? 10.0;
-                }
-                else if (analysis == AnalysisKind.Transient)
-                {
-                    numOpts["step_s"] = req.Step ?? 2e-5;
-                    numOpts["stop_s"] = req.Stop ?? 5e-3;
-                    numOpts["uic"] = 1.0;
-                    numOpts["method"] = 2.0; // BDF2
-                }
-
-                var sim = await _backend.RunAsync(
-                    new SimulationRequestIr(req.Document.Name, compiled.Circuit, analysis, numOpts), ct);
+                var numOpts = BuildSchematicAnalysisOptions(analysis, req.Start, req.Stop, req.Step);
+                var sim = await SolveSchematicAsync(doc, compiled.Circuit, analysis, numOpts, req.Source, ct);
 
                 // Always solve DC Operating Point so live node voltages & branch currents display directly on the schematic!
                 var opSim = analysis == AnalysisKind.OperatingPoint
                     ? sim
-                    : await _backend.RunAsync(
-                        new SimulationRequestIr(req.Document.Name + "_op", compiled.Circuit, AnalysisKind.OperatingPoint), ct);
+                    : await SolveSchematicAsync(doc, compiled.Circuit, AnalysisKind.OperatingPoint, new Dictionary<string, double>(), null, ct);
 
-                OperatingPointOverlay? overlay = opSim.Status == RunTerminalStatus.Succeeded
-                    ? SchematicCompiler.BuildOperatingPointOverlay(req.Document, opSim, gridSize, showGrid, showOp)
+                OperatingPointOverlay overlay = opSim.Status == RunTerminalStatus.Succeeded
+                    ? SchematicCompiler.BuildOperatingPointOverlay(doc, opSim, gridSize, showGrid, showOp)
                     : new OperatingPointOverlay(
                         new Dictionary<string, double>(),
                         new Dictionary<string, double>(),
@@ -210,14 +443,23 @@ public sealed class WorkbenchServer : IAsyncDisposable
                         showGrid,
                         ShowOperatingPoint: false);
 
-                var svg = SchematicCompiler.ExportSvg(req.Document, overlay);
+                var svg = SchematicCompiler.ExportSvg(
+                    doc,
+                    overlay,
+                    _library,
+                    lightTheme: req.LightTheme ?? false,
+                    gridStyle: req.GridStyle);
                 var (axis, series) = FlattenResult(sim);
+                var spiceText = SchematicExporter.ExportNetlist(
+                    doc,
+                    new SchematicExportOptions(NetlistDialect.CanonicalSpice3f5, analysis, numOpts, req.Source),
+                    library: _library);
                 await WriteJsonAsync(ctx.Response, 200, new
                 {
                     erc_ok = true,
                     diagnostics = compiled.Diagnostics,
                     svg,
-                    spice = SchematicCompiler.ExportSpiceNetlist(req.Document, analysis),
+                    spice = spiceText,
                     status = sim.Status.ToString(),
                     backend = sim.BackendId,
                     error_message = sim.ErrorMessage,
@@ -336,6 +578,69 @@ public sealed class WorkbenchServer : IAsyncDisposable
         }
     }
 
+    private Task<ResultManifestIr> SolveSchematicAsync(
+        SchematicDocument doc,
+        CircuitIr circuit,
+        AnalysisKind analysis,
+        Dictionary<string, double> numOpts,
+        string? sweepSource,
+        CancellationToken ct)
+    {
+        bool needsFullDeckSolver =
+            (circuit.Models is { Count: > 0 }) ||
+            (circuit.Directives is { Count: > 0 }) ||
+            circuit.Devices.Any(d => d.KindId is "spice.mosfet" or "spice.bjt" or "spice.jfet" or "spice.subckt" or "spice.osdi");
+
+        if (!needsFullDeckSolver)
+        {
+            return _backend.RunAsync(
+                new SimulationRequestIr(doc.Name, circuit, analysis, numOpts, SweepSourceId: sweepSource), ct);
+        }
+
+        var deck = SchematicExporter.ExportNetlist(
+            doc,
+            new SchematicExportOptions(NetlistDialect.CanonicalSpice3f5, analysis, numOpts, sweepSource),
+            library: _library);
+
+        return _backend.RunSpiceDeckAsync(
+            doc.Name,
+            deck,
+            analysis,
+            new SpiceDeckExecutionOptions(
+                SweepSourceId: sweepSource ?? circuit.Devices.FirstOrDefault(d => d.KindId == "spice.vsrc")?.Id ?? "V1",
+                NumericOptions: numOpts),
+            ct);
+    }
+
+    private static Dictionary<string, double> BuildSchematicAnalysisOptions(
+        AnalysisKind analysis,
+        double? start,
+        double? stop,
+        double? step)
+    {
+        var numOpts = new Dictionary<string, double>();
+        if (analysis == AnalysisKind.DcSweep)
+        {
+            numOpts["start"] = start ?? 0.0;
+            numOpts["stop"] = stop ?? 5.0;
+            numOpts["step"] = step ?? 0.1;
+        }
+        else if (analysis == AnalysisKind.Ac)
+        {
+            numOpts["f_start_hz"] = start ?? 10.0;
+            numOpts["f_stop_hz"] = stop ?? 100_000.0;
+            numOpts["points_per_decade"] = step ?? 10.0;
+        }
+        else if (analysis == AnalysisKind.Transient)
+        {
+            numOpts["step_s"] = step ?? 2e-5;
+            numOpts["stop_s"] = stop ?? 5e-3;
+            numOpts["uic"] = 1.0;
+            numOpts["method"] = 2.0; // BDF2
+        }
+        return numOpts;
+    }
+
     private static (IReadOnlyList<double> Axis, Dictionary<string, double[]> Series) FlattenResult(ResultManifestIr res)
     {
         var series = new Dictionary<string, double[]>(StringComparer.Ordinal);
@@ -371,6 +676,15 @@ public sealed class WorkbenchServer : IAsyncDisposable
         _ => throw new ArgumentException($"Unsupported analysis '{s}'.")
     };
 
+    private static NetlistDialect ParseDialect(string s) => s.ToLowerInvariant() switch
+    {
+        "ngspice" => NetlistDialect.Ngspice,
+        "xyce" => NetlistDialect.Xyce,
+        "ltspice" => NetlistDialect.Ltspice,
+        "spectre" => NetlistDialect.Spectre,
+        _ => NetlistDialect.CanonicalSpice3f5
+    };
+
     private static async Task<T?> ReadJsonAsync<T>(HttpListenerRequest request)
     {
         using var sr = new StreamReader(request.InputStream, request.ContentEncoding);
@@ -400,9 +714,47 @@ public sealed class WorkbenchServer : IAsyncDisposable
         double? Start,
         double? Stop,
         double? Step,
+        string? Source = null,
         double? GridSize = null,
         bool? ShowGrid = null,
-        bool? ShowOp = null);
+        bool? ShowOp = null,
+        string? GridStyle = null,
+        bool? LightTheme = null);
+
+    private sealed record SchematicExportRequest(
+        SchematicDocument? Document,
+        string? Format,
+        string? Analysis = null,
+        string? Source = null,
+        double? Start = null,
+        double? Stop = null,
+        double? Step = null,
+        bool? IncludeComments = null,
+        bool? IncludeProbes = null,
+        bool? IncludeOp = null,
+        double? GridSize = null,
+        bool? ShowGrid = null,
+        string? GridStyle = null);
+
+    private sealed record SchematicSaveRequest(
+        SchematicDocument? Document,
+        string? Author = null,
+        string? Description = null);
+
+    private sealed record SchematicLoadRequest(
+        string? Content,
+        bool? VerifyChecksum = null);
+
+    private sealed record ImportSpiceRequest(
+        string? SpiceText,
+        string? Name = null);
+
+    private sealed record CreatePartFromSchematicRequest(
+        SchematicDocument? Document,
+        string? PartId,
+        string? Name,
+        string? Category = null,
+        string? Description = null);
 
     private sealed record DeckSimRequest(
         string? Deck,

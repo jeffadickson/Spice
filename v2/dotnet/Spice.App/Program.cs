@@ -31,6 +31,7 @@ public static class Program
                 "serve" => await RunServeAsync(args[1..]),
                 "run" => await RunDeckAsync(args[1..]),
                 "schematic" => await RunSchematicAsync(args[1..]),
+                "library" => RunLibrary(args[1..]),
                 "campaign" => await RunCampaignAsync(args[1..]),
                 _ => UnknownCommand(args[0])
             };
@@ -59,7 +60,11 @@ public static class Program
               spice-app run <deck.cir> [--analysis op|dc|ac|tran|noise|hb|pss|sp]
                                        [--source V1] [--start 0] [--stop 1.2] [--step 0.1]
                                        [--f0 1e6] [--harmonics 7] [--out-p out]
-              spice-app schematic <schematic.json> [--analysis op|ac|tran] [--svg out.svg] [--spice out.cir]
+              spice-app schematic <schematic.spice.json> [--analysis op|dc|ac|tran]
+                                       [--dialect spice|ngspice|xyce|ltspice|spectre]
+                                       [--svg out.svg] [--spice out.cir] [--bom out.csv]
+                                       [--starlark out.star] [--bundle out.bundle.json]
+              spice-app library [list]
               spice-app campaign [--preset rc-sweep]
             """);
     }
@@ -171,27 +176,59 @@ public static class Program
         return res.Status == RunTerminalStatus.Succeeded ? 0 : 4;
     }
 
+    private static int RunLibrary(string[] args)
+    {
+        var lib = new ComponentLibraryStore(ComponentLibraryStore.GetDefaultLibraryPath());
+        var items = lib.ListAll().Select(p => new
+        {
+            id = p.Id,
+            name = p.Name,
+            category = p.Category,
+            kind = p.BaseDeviceKindId,
+            built_in = p.IsBuiltIn,
+            model = p.AttachedModel?.ModelName,
+            model_kind = p.AttachedModel?.Kind.ToString(),
+            pins = p.Pins.Select(x => x.Name).ToArray()
+        });
+        Console.WriteLine(JsonSerializer.Serialize(new
+        {
+            storage_path = lib.StoragePath,
+            count = lib.ListAll().Count,
+            components = items
+        }, JsonOpts));
+        return 0;
+    }
+
     private static async Task<int> RunSchematicAsync(string[] args)
     {
         if (args.Length == 0)
         {
-            Console.Error.WriteLine("error: missing <schematic.json> path");
+            Console.Error.WriteLine("error: missing <schematic.spice.json> path");
             return 2;
         }
         var jsonPath = args[0];
         var analysis = AnalysisKind.OperatingPoint;
+        var dialect = NetlistDialect.CanonicalSpice3f5;
         string? svgOut = null;
         string? spiceOut = null;
+        string? bomOut = null;
+        string? starlarkOut = null;
+        string? bundleOut = null;
 
         for (int i = 1; i < args.Length; ++i)
         {
             if (args[i] == "--analysis" && i + 1 < args.Length) analysis = ParseAnalysisKind(args[++i]);
+            else if (args[i] == "--dialect" && i + 1 < args.Length) dialect = ParseDialect(args[++i]);
             else if (args[i] == "--svg" && i + 1 < args.Length) svgOut = args[++i];
             else if (args[i] == "--spice" && i + 1 < args.Length) spiceOut = args[++i];
+            else if (args[i] == "--bom" && i + 1 < args.Length) bomOut = args[++i];
+            else if (args[i] == "--starlark" && i + 1 < args.Length) starlarkOut = args[++i];
+            else if (args[i] == "--bundle" && i + 1 < args.Length) bundleOut = args[++i];
         }
 
+        var lib = new ComponentLibraryStore(ComponentLibraryStore.GetDefaultLibraryPath());
         var doc = SchematicCompiler.DeserializeJson(await File.ReadAllTextAsync(jsonPath));
-        var compiled = SchematicCompiler.CompileToIr(doc);
+        var compiled = SchematicCompiler.CompileToIr(doc, library: lib);
         if (!compiled.Succeeded || compiled.Circuit is null)
         {
             Console.Error.WriteLine("ERC failed:");
@@ -200,26 +237,55 @@ public static class Program
         }
 
         using var backend = new NativeCppBackend(enableAudits: true);
-        var res = await backend.RunAsync(new SimulationRequestIr(doc.Name, compiled.Circuit, analysis));
+        var exportOpts = new SchematicExportOptions(dialect, analysis);
+        var canonicalDeck = SchematicExporter.ExportNetlist(doc, new SchematicExportOptions(NetlistDialect.CanonicalSpice3f5, analysis), library: lib);
+        var usesFullDeck = (compiled.Circuit.Models is { Count: > 0 }) ||
+                           compiled.Circuit.Devices.Any(d => d.KindId is "spice.mosfet" or "spice.bjt" or "spice.jfet" or "spice.subckt" or "spice.osdi");
+        var res = usesFullDeck
+            ? await backend.RunSpiceDeckAsync(doc.Name, canonicalDeck, analysis)
+            : await backend.RunAsync(new SimulationRequestIr(doc.Name, compiled.Circuit, analysis));
         var opRes = analysis == AnalysisKind.OperatingPoint
             ? res
-            : await backend.RunAsync(new SimulationRequestIr(doc.Name + "_op", compiled.Circuit, AnalysisKind.OperatingPoint));
+            : (usesFullDeck
+                ? await backend.RunSpiceDeckAsync(doc.Name + "_op", canonicalDeck, AnalysisKind.OperatingPoint)
+                : await backend.RunAsync(new SimulationRequestIr(doc.Name + "_op", compiled.Circuit, AnalysisKind.OperatingPoint)));
 
         if (!string.IsNullOrWhiteSpace(svgOut))
         {
             var overlay = opRes.Status == RunTerminalStatus.Succeeded
                 ? SchematicCompiler.BuildOperatingPointOverlay(doc, opRes)
                 : null;
-            await File.WriteAllTextAsync(svgOut, SchematicCompiler.ExportSvg(doc, overlay));
+            await File.WriteAllTextAsync(svgOut, SchematicCompiler.ExportSvg(doc, overlay, lib));
         }
         if (!string.IsNullOrWhiteSpace(spiceOut))
         {
-            await File.WriteAllTextAsync(spiceOut, SchematicCompiler.ExportSpiceNetlist(doc, analysis));
+            await File.WriteAllTextAsync(spiceOut, SchematicExporter.ExportNetlist(doc, exportOpts, library: lib));
+        }
+        if (!string.IsNullOrWhiteSpace(bomOut))
+        {
+            await File.WriteAllTextAsync(bomOut, SchematicExporter.ExportBomCsv(doc, lib));
+        }
+        if (!string.IsNullOrWhiteSpace(starlarkOut))
+        {
+            await File.WriteAllTextAsync(starlarkOut, SchematicExporter.ExportStarlarkScript(doc, library: lib));
+        }
+        if (!string.IsNullOrWhiteSpace(bundleOut))
+        {
+            await File.WriteAllTextAsync(bundleOut, SchematicExporter.ExportBundleJson(doc, exportOpts, library: lib));
         }
 
         PrintManifestSummary(res);
         return res.Status == RunTerminalStatus.Succeeded ? 0 : 4;
     }
+
+    private static NetlistDialect ParseDialect(string s) => s.ToLowerInvariant() switch
+    {
+        "ngspice" => NetlistDialect.Ngspice,
+        "xyce" => NetlistDialect.Xyce,
+        "ltspice" => NetlistDialect.Ltspice,
+        "spectre" => NetlistDialect.Spectre,
+        _ => NetlistDialect.CanonicalSpice3f5
+    };
 
     private static async Task<int> RunCampaignAsync(string[] args)
     {
