@@ -228,6 +228,28 @@ public static class WorkbenchUi
     .field { display: flex; flex-direction: column; gap: 3px; }
     .field label { font-size: 11px; color: var(--muted); font-weight: 600; }
 
+    /* ---- VECTOR SYMBOL DRAWING CANVAS ---- */
+    .sym-studio {
+      background: #080e1a; border: 1px solid var(--border); border-radius: 9px;
+      padding: 8px; display: flex; flex-direction: column; gap: 7px;
+    }
+    .sym-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+    .sym-swatch {
+      width: 18px; height: 18px; border-radius: 4px; border: 2px solid transparent;
+      cursor: pointer; padding: 0;
+    }
+    .sym-swatch.active { border-color: #fff; box-shadow: 0 0 0 1px var(--accent); }
+    #sym-canvas {
+      width: 100%; height: 220px; background: #060a13; border: 1px solid var(--border);
+      border-radius: 7px; cursor: crosshair; user-select: none; touch-action: none;
+    }
+    #sym-canvas .sym-pin-node { cursor: grab; }
+    #sym-canvas .sym-pin-node:hover circle { fill: #f59e0b; r: 4.5; }
+    .sym-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--mono); font-size: 10.5px; color: var(--muted);
+    }
+
     /* ---- MODAL ---- */
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(2, 6, 23, 0.72); backdrop-filter: blur(4px);
@@ -358,8 +380,8 @@ public static class WorkbenchUi
 
             <div id="left-navigator" class="dock-section">
               <div class="sec-title">
-                <span>Sheets &amp; Hierarchy</span>
-                <button id="btn-sheet-to-part" class="icon-btn primary" style="padding:2px 7px;font-size:10.5px">Save Sheet as .SUBCKT</button>
+                <span>Active Circuit</span>
+                <button id="btn-sheet-to-part" class="icon-btn primary" style="padding:2px 7px;font-size:10.5px">Save Circuit as .SUBCKT</button>
               </div>
               <div id="nav-sheets" class="nav-list"></div>
 
@@ -461,7 +483,7 @@ public static class WorkbenchUi
     </section>
 
     <!-- ========================================================================= -->
-    <!-- TAB 2: CUSTOM COMPONENT & ATTACHED MODEL LIBRARY STUDIO                   -->
+    <!-- TAB 2: CUSTOM COMPONENT, VECTOR SYMBOL CANVAS & MODEL LIBRARY STUDIO      -->
     <!-- ========================================================================= -->
     <section id="tab-library" class="tab-pane">
       <div class="split-workspace">
@@ -477,15 +499,52 @@ public static class WorkbenchUi
           <div id="lib-cards" class="lib-cards"></div>
         </div>
 
-        <div class="card">
+        <div class="card" style="overflow-y:auto">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-            <h3>Custom Component Builder (Symbol + Ordered Pins + Attached Model)</h3>
+            <h3>Custom Symbol Canvas &amp; Attached Model Studio</h3>
             <div style="display:flex;gap:4px">
               <button class="icon-btn" data-tpl="diode">Tpl: Diode</button>
               <button class="icon-btn" data-tpl="mosfet">Tpl: BSIM4</button>
               <button class="icon-btn" data-tpl="subckt">Tpl: .SUBCKT</button>
             </div>
           </div>
+
+          <!-- INTERACTIVE VECTOR SYMBOL DRAWING CANVAS -->
+          <div class="sym-studio">
+            <div class="sym-toolbar">
+              <button class="icon-btn mode-on" data-sym-tool="line" title="Draw snapped line">Line</button>
+              <button class="icon-btn" data-sym-tool="rect" title="Draw snapped rectangle">Rect</button>
+              <button class="icon-btn" data-sym-tool="circle" title="Draw snapped circle">Circle</button>
+              <button class="icon-btn" data-sym-tool="polygon" title="Click points, double-click to finish polygon">Poly</button>
+              <button class="icon-btn" data-sym-tool="text" title="Place monospace label on symbol">Text</button>
+              <button class="icon-btn" data-sym-tool="pin" title="Place electrical terminal pin">Pin</button>
+              <button class="icon-btn" data-sym-tool="select" title="Drag pins on 10px grid">Move Pin</button>
+              <span style="width:1px;height:18px;background:var(--border);margin:0 2px"></span>
+              <button class="sym-swatch active" data-sym-color="#38bdf8" style="background:#38bdf8" title="Sky"></button>
+              <button class="sym-swatch" data-sym-color="#e2e8f0" style="background:#e2e8f0" title="White"></button>
+              <button class="sym-swatch" data-sym-color="#10b981" style="background:#10b981" title="Emerald"></button>
+              <button class="sym-swatch" data-sym-color="#f59e0b" style="background:#f59e0b" title="Amber"></button>
+              <button class="sym-swatch" data-sym-color="#f43f5e" style="background:#f43f5e" title="Rose"></button>
+              <label class="chk" style="margin-left:3px"><input id="sym-fill-chk" type="checkbox" /> Fill</label>
+              <span style="width:1px;height:18px;background:var(--border);margin:0 2px"></span>
+              <button id="sym-undo" class="icon-btn" title="Undo last drawn shape">Undo</button>
+              <button id="sym-clear" class="icon-btn danger" title="Clear custom vector shapes (reverts to Symbol Style preset)">Clear</button>
+            </div>
+            <div class="sym-toolbar">
+              <span style="font-size:10.5px;color:var(--dim);font-weight:600">Starters:</span>
+              <button class="icon-btn" data-sym-starter="ic" style="padding:2px 7px;font-size:11px">IC Box</button>
+              <button class="icon-btn" data-sym-starter="opamp" style="padding:2px 7px;font-size:11px">Op-Amp</button>
+              <button class="icon-btn" data-sym-starter="diode" style="padding:2px 7px;font-size:11px">Diode / LED</button>
+              <button class="icon-btn" data-sym-starter="pi" style="padding:2px 7px;font-size:11px">Pi Network</button>
+              <button class="icon-btn" data-sym-starter="xfmr" style="padding:2px 7px;font-size:11px">Buffer / Amp</button>
+            </div>
+            <svg id="sym-canvas" viewBox="-60 -40 120 80" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div class="sym-meta">
+              <span id="sym-status">Draw shapes or place pins on the 10px snap grid (Origin 0,0 marked by crosshair).</span>
+              <span id="sym-counts">0 shapes · 2 pins</span>
+            </div>
+          </div>
+
           <div class="form-grid">
             <div class="field"><label>Component ID (unique)</label><input id="lib-id" value="user.diode.led_red" /></div>
             <div class="field"><label>Display Name</label><input id="lib-name" value="Red LED (1.8V)" /></div>
@@ -502,9 +561,10 @@ public static class WorkbenchUi
                 <option value="spice.inductor">spice.inductor (L)</option>
               </select>
             </div>
-            <div class="field"><label>Symbol Style</label>
+            <div class="field"><label>Fallback Symbol Style</label>
               <select id="lib-sym">
-                <option value="diode">Diode</option>
+                <option value="custom">Custom Vector Canvas</option>
+                <option value="diode" selected>Diode</option>
                 <option value="schottky">Schottky Diode</option>
                 <option value="nmos">NMOS MOSFET</option>
                 <option value="pmos">PMOS MOSFET</option>
@@ -530,18 +590,18 @@ public static class WorkbenchUi
           <div class="form-grid">
             <div class="field">
               <label>Ordered Pins (name,x,y,role — Netlist Order!)</label>
-              <textarea id="lib-pins" rows="4">p,-36,0,anode
-n,36,0,cathode</textarea>
+              <textarea id="lib-pins" rows="3">p,-40,0,anode
+n,40,0,cathode</textarea>
             </div>
             <div class="field">
               <label>Default Parameters (key=value per line)</label>
-              <textarea id="lib-params" rows="4">is_amps=1e-20
+              <textarea id="lib-params" rows="3">is_amps=1e-20
 n_emission=1.85</textarea>
             </div>
           </div>
           <div class="field">
             <label>Attached SPICE Model / .SUBCKT Definition</label>
-            <textarea id="lib-model-text" rows="6">.MODEL LED_RED D(IS=1e-20 N=1.85 RS=4.0 CJO=15p)</textarea>
+            <textarea id="lib-model-text" rows="5">.MODEL LED_RED D(IS=1e-20 N=1.85 RS=4.0 CJO=15p)</textarea>
           </div>
           <div style="display:flex;gap:8px;align-items:center">
             <button id="btn-lib-save" class="icon-btn primary">Save Component to Library</button>
@@ -1772,38 +1832,292 @@ C1 out 0 100n
     }
     document.getElementById('lib-search').addEventListener('input', renderLibraryStudio);
 
+    // ---- INTERACTIVE VECTOR SYMBOL DRAWING CANVAS ----
+    const SYM_GRID = 10;
+    let symPrimitives = [];
+    let symTool = 'line'; // 'line' | 'rect' | 'circle' | 'polygon' | 'text' | 'pin' | 'select'
+    let symColor = '#38bdf8';
+    let symDrag = null;
+    let symPolyPts = [];
+    let symDraggingPinIdx = -1;
+
+    function parseEditorPins() {
+      return document.getElementById('lib-pins').value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+        const [name, x, y, role] = l.split(',').map(s => s.trim());
+        return { name: name || 'p', localX: Number(x) || 0, localY: Number(y) || 0, role: role || 'passive' };
+      });
+    }
+    function writeEditorPins(pins) {
+      document.getElementById('lib-pins').value = pins.map(p => `${p.name},${p.localX},${p.localY},${p.role || 'passive'}`).join('\n');
+    }
+
+    const SYM_STARTERS = {
+      ic: () => [
+        { kind: 'rect', x1: -28, y1: -20, x2: 28, y2: 20, stroke: '#38bdf8', fill: '#172554', strokeWidth: 2 },
+        { kind: 'text', x1: 0, y1: 4, text: 'IC', stroke: '#bfdbfe', strokeWidth: 1.5 }
+      ],
+      opamp: () => [
+        { kind: 'polygon', points: '-24,-22 -24,22 26,0', stroke: '#38bdf8', fill: '#1e293b', strokeWidth: 2 },
+        { kind: 'line', x1: -40, y1: -10, x2: -24, y2: -10, stroke: '#e2e8f0', strokeWidth: 2 },
+        { kind: 'line', x1: -40, y1: 10, x2: -24, y2: 10, stroke: '#e2e8f0', strokeWidth: 2 },
+        { kind: 'line', x1: 26, y1: 0, x2: 40, y2: 0, stroke: '#e2e8f0', strokeWidth: 2 },
+        { kind: 'text', x1: -16, y1: -6, text: '+', stroke: '#e2e8f0', strokeWidth: 1.5 },
+        { kind: 'text', x1: -16, y1: 13, text: '-', stroke: '#e2e8f0', strokeWidth: 1.5 }
+      ],
+      diode: () => [
+        { kind: 'line', x1: -40, y1: 0, x2: -10, y2: 0, stroke: '#e2e8f0', strokeWidth: 2 },
+        { kind: 'polygon', points: '-10,-12 -10,12 12,0', stroke: '#f43f5e', fill: '#1e293b', strokeWidth: 2 },
+        { kind: 'line', x1: 12, y1: -12, x2: 12, y2: 12, stroke: '#f43f5e', strokeWidth: 2.5 },
+        { kind: 'line', x1: 12, y1: 0, x2: 40, y2: 0, stroke: '#e2e8f0', strokeWidth: 2 },
+        { kind: 'line', x1: 4, y1: -18, x2: 14, y2: -26, stroke: '#f59e0b', strokeWidth: 1.6 },
+        { kind: 'line', x1: 12, y1: -16, x2: 22, y2: -24, stroke: '#f59e0b', strokeWidth: 1.6 }
+      ],
+      pi: () => [
+        { kind: 'rect', x1: -28, y1: -18, x2: 28, y2: 18, stroke: '#10b981', fill: '#064e3b', strokeWidth: 2 },
+        { kind: 'line', x1: -40, y1: 0, x2: -28, y2: 0, stroke: '#e2e8f0', strokeWidth: 2 },
+        { kind: 'line', x1: 28, y1: 0, x2: 40, y2: 0, stroke: '#e2e8f0', strokeWidth: 2 },
+        { kind: 'line', x1: 0, y1: 18, x2: 0, y2: 20, stroke: '#e2e8f0', strokeWidth: 2 },
+        { kind: 'text', x1: 0, y1: 4, text: 'PI', stroke: '#a7f3d0', strokeWidth: 1.5 }
+      ],
+      xfmr: () => [
+        { kind: 'polygon', points: '-20,-18 -20,18 22,0', stroke: '#a855f7', fill: '#1e1b4b', strokeWidth: 2 },
+        { kind: 'circle', x1: 26, y1: 0, radius: 4, stroke: '#a855f7', fill: '#080e1a', strokeWidth: 2 },
+        { kind: 'line', x1: -40, y1: 0, x2: -20, y2: 0, stroke: '#e2e8f0', strokeWidth: 2 },
+        { kind: 'line', x1: 30, y1: 0, x2: 40, y2: 0, stroke: '#e2e8f0', strokeWidth: 2 }
+      ]
+    };
+
+    function escapeHtmlAttr(s) {
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function renderSymbolCanvas(previewMarkup = '') {
+      const svg = document.getElementById('sym-canvas');
+      if (!svg) return;
+      const pins = parseEditorPins();
+      let body = `
+        <defs>
+          <pattern id="sym-grid-10" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#152033" stroke-width="0.6" />
+          </pattern>
+        </defs>
+        <rect x="-60" y="-40" width="120" height="80" fill="url(#sym-grid-10)" />
+        <line x1="-60" y1="0" x2="60" y2="0" stroke="#1e293b" stroke-width="0.8" stroke-dasharray="2 2" />
+        <line x1="0" y1="-40" x2="0" y2="40" stroke="#1e293b" stroke-width="0.8" stroke-dasharray="2 2" />
+      `;
+      symPrimitives.forEach((p, idx) => {
+        const stroke = escapeHtmlAttr(p.stroke || '#e2e8f0');
+        const fill = escapeHtmlAttr(p.fill || 'none');
+        const sw = p.strokeWidth || 2;
+        if (p.kind === 'line') {
+          body += `<line data-prim="${idx}" x1="${p.x1}" y1="${p.y1}" x2="${p.x2}" y2="${p.y2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" />`;
+        } else if (p.kind === 'rect') {
+          const rx = Math.min(p.x1, p.x2), ry = Math.min(p.y1, p.y2);
+          body += `<rect data-prim="${idx}" x="${rx}" y="${ry}" width="${Math.abs(p.x2 - p.x1)}" height="${Math.abs(p.y2 - p.y1)}" rx="2" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" />`;
+        } else if (p.kind === 'circle') {
+          body += `<circle data-prim="${idx}" cx="${p.x1}" cy="${p.y1}" r="${p.radius || 8}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" />`;
+        } else if (p.kind === 'polyline') {
+          body += `<polyline data-prim="${idx}" points="${escapeHtmlAttr(p.points)}" fill="none" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round" />`;
+        } else if (p.kind === 'polygon') {
+          body += `<polygon data-prim="${idx}" points="${escapeHtmlAttr(p.points)}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round" />`;
+        } else if (p.kind === 'text') {
+          body += `<text data-prim="${idx}" x="${p.x1}" y="${p.y1}" text-anchor="middle" fill="${stroke}" font-family="monospace" font-size="9" font-weight="bold">${escapeHtmlAttr(p.text)}</text>`;
+        }
+      });
+      if (symPolyPts.length > 0) {
+        body += `<polyline points="${symPolyPts.map(pt => `${pt.x},${pt.y}`).join(' ')}" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 2" />`;
+      }
+      if (previewMarkup) body += previewMarkup;
+      pins.forEach((pin, idx) => {
+        body += `<g class="sym-pin-node" data-pin-idx="${idx}" transform="translate(${pin.localX},${pin.localY})">
+          <circle cx="0" cy="0" r="3.4" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
+          <text x="0" y="-6" text-anchor="middle" fill="#7dd3fc" font-family="monospace" font-size="6.5">${escapeHtmlAttr(pin.name)}</text>
+        </g>`;
+      });
+      svg.innerHTML = body;
+      document.getElementById('sym-counts').textContent = `${symPrimitives.length} shape(s) · ${pins.length} pin(s)`;
+    }
+
+    function symSvgCoords(e) {
+      const svg = document.getElementById('sym-canvas');
+      const pt = svgPoint(svg, e.clientX, e.clientY);
+      return {
+        x: Math.max(-55, Math.min(55, Math.round(pt.x / SYM_GRID) * SYM_GRID)),
+        y: Math.max(-35, Math.min(35, Math.round(pt.y / SYM_GRID) * SYM_GRID))
+      };
+    }
+
+    function setSymTool(tool) {
+      symTool = tool;
+      symPolyPts = [];
+      document.querySelectorAll('[data-sym-tool]').forEach(b => b.classList.toggle('mode-on', b.dataset.symTool === tool));
+      const hints = {
+        line: 'LINE: Drag on 10px grid to draw a vector line segment.',
+        rect: 'RECT: Drag on 10px grid to draw a box/body.',
+        circle: 'CIRCLE: Drag from center outward to set radius.',
+        polygon: 'POLY: Click vertices, then double-click to close polygon.',
+        text: 'TEXT: Click anywhere to place a monospace symbol label.',
+        pin: 'PIN: Click grid point to add a new ordered netlist pin.',
+        select: 'MOVE PIN: Drag any blue pin circle to reposition it on the 10px grid.'
+      };
+      document.getElementById('sym-status').textContent = hints[tool] || '';
+      renderSymbolCanvas();
+    }
+    document.querySelectorAll('[data-sym-tool]').forEach(b => b.addEventListener('click', () => setSymTool(b.dataset.symTool)));
+    document.querySelectorAll('[data-sym-color]').forEach(b => b.addEventListener('click', () => {
+      symColor = b.dataset.symColor;
+      document.querySelectorAll('[data-sym-color]').forEach(s => s.classList.toggle('active', s === b));
+    }));
+    document.getElementById('sym-undo').addEventListener('click', () => {
+      if (symPolyPts.length > 0) symPolyPts.pop();
+      else symPrimitives.pop();
+      renderSymbolCanvas();
+    });
+    document.getElementById('sym-clear').addEventListener('click', () => {
+      symPrimitives = [];
+      symPolyPts = [];
+      renderSymbolCanvas();
+    });
+    document.querySelectorAll('[data-sym-starter]').forEach(b => b.addEventListener('click', () => {
+      symPrimitives = SYM_STARTERS[b.dataset.symStarter]();
+      document.getElementById('lib-sym').value = 'custom';
+      renderSymbolCanvas();
+    }));
+    document.getElementById('lib-pins').addEventListener('input', () => renderSymbolCanvas());
+
+    const symSvgEl = document.getElementById('sym-canvas');
+    symSvgEl.addEventListener('pointerdown', (e) => {
+      const pt = symSvgCoords(e);
+      const fillVal = document.getElementById('sym-fill-chk').checked ? '#172554' : 'none';
+      if (symTool === 'select') {
+        const pinNode = e.target.closest('.sym-pin-node');
+        if (pinNode) {
+          symDraggingPinIdx = Number(pinNode.dataset.pinIdx);
+          symSvgEl.setPointerCapture(e.pointerId);
+        }
+        return;
+      }
+      if (symTool === 'pin') {
+        const pins = parseEditorPins();
+        const name = prompt('New pin name (appended in netlist order):', 'p' + (pins.length + 1));
+        if (!name) return;
+        pins.push({ name: name.trim(), localX: pt.x, localY: pt.y, role: 'passive' });
+        writeEditorPins(pins);
+        renderSymbolCanvas();
+        return;
+      }
+      if (symTool === 'text') {
+        const txt = prompt('Symbol text label (e.g. +, -, CLK, OUT):', '+');
+        if (!txt) return;
+        symPrimitives.push({ kind: 'text', x1: pt.x, y1: pt.y, text: txt.trim(), stroke: symColor, strokeWidth: 1.5 });
+        document.getElementById('lib-sym').value = 'custom';
+        renderSymbolCanvas();
+        return;
+      }
+      if (symTool === 'polygon') {
+        symPolyPts.push(pt);
+        renderSymbolCanvas();
+        return;
+      }
+      symDrag = { x1: pt.x, y1: pt.y, x2: pt.x, y2: pt.y, fill: fillVal };
+      symSvgEl.setPointerCapture(e.pointerId);
+    });
+
+    symSvgEl.addEventListener('pointermove', (e) => {
+      const pt = symSvgCoords(e);
+      if (symDraggingPinIdx >= 0) {
+        const pins = parseEditorPins();
+        if (pins[symDraggingPinIdx]) {
+          pins[symDraggingPinIdx].localX = pt.x;
+          pins[symDraggingPinIdx].localY = pt.y;
+          writeEditorPins(pins);
+          renderSymbolCanvas();
+        }
+        return;
+      }
+      if (!symDrag) return;
+      symDrag.x2 = pt.x; symDrag.y2 = pt.y;
+      let prev = '';
+      if (symTool === 'line') {
+        prev = `<line x1="${symDrag.x1}" y1="${symDrag.y1}" x2="${pt.x}" y2="${pt.y}" stroke="${symColor}" stroke-width="2" stroke-dasharray="3 2" />`;
+      } else if (symTool === 'rect') {
+        prev = `<rect x="${Math.min(symDrag.x1, pt.x)}" y="${Math.min(symDrag.y1, pt.y)}" width="${Math.abs(pt.x - symDrag.x1)}" height="${Math.abs(pt.y - symDrag.y1)}" fill="${symDrag.fill}" stroke="${symColor}" stroke-width="2" stroke-dasharray="3 2" />`;
+      } else if (symTool === 'circle') {
+        const r = Math.max(4, Math.round(Math.hypot(pt.x - symDrag.x1, pt.y - symDrag.y1)));
+        prev = `<circle cx="${symDrag.x1}" cy="${symDrag.y1}" r="${r}" fill="${symDrag.fill}" stroke="${symColor}" stroke-width="2" stroke-dasharray="3 2" />`;
+      }
+      renderSymbolCanvas(prev);
+    });
+
+    symSvgEl.addEventListener('pointerup', (e) => {
+      if (symDraggingPinIdx >= 0) {
+        symDraggingPinIdx = -1;
+        try { symSvgEl.releasePointerCapture(e.pointerId); } catch {}
+        return;
+      }
+      if (!symDrag) return;
+      const d = symDrag; symDrag = null;
+      try { symSvgEl.releasePointerCapture(e.pointerId); } catch {}
+      if (symTool === 'line' && (d.x1 !== d.x2 || d.y1 !== d.y2)) {
+        symPrimitives.push({ kind: 'line', x1: d.x1, y1: d.y1, x2: d.x2, y2: d.y2, stroke: symColor, strokeWidth: 2 });
+      } else if (symTool === 'rect' && (d.x1 !== d.x2 || d.y1 !== d.y2)) {
+        symPrimitives.push({ kind: 'rect', x1: d.x1, y1: d.y1, x2: d.x2, y2: d.y2, stroke: symColor, fill: d.fill, strokeWidth: 2 });
+      } else if (symTool === 'circle') {
+        const r = Math.max(4, Math.round(Math.hypot(d.x2 - d.x1, d.y2 - d.y1)));
+        symPrimitives.push({ kind: 'circle', x1: d.x1, y1: d.y1, radius: r, stroke: symColor, fill: d.fill, strokeWidth: 2 });
+      }
+      if (symPrimitives.length > 0) document.getElementById('lib-sym').value = 'custom';
+      renderSymbolCanvas();
+    });
+
+    symSvgEl.addEventListener('dblclick', () => {
+      if (symTool === 'polygon' && symPolyPts.length >= 3) {
+        const fillVal = document.getElementById('sym-fill-chk').checked ? '#172554' : 'none';
+        symPrimitives.push({
+          kind: 'polygon',
+          points: symPolyPts.map(p => `${p.x},${p.y}`).join(' '),
+          stroke: symColor, fill: fillVal, strokeWidth: 2
+        });
+        symPolyPts = [];
+        document.getElementById('lib-sym').value = 'custom';
+        renderSymbolCanvas();
+      }
+    });
+
     function loadPartIntoEditor(p, asClone = false) {
       document.getElementById('lib-id').value = asClone ? 'user.' + p.id.replace(/^foundation\./, '') + '_custom' : p.id;
       document.getElementById('lib-name').value = asClone ? p.name + ' (Custom)' : p.name;
       document.getElementById('lib-cat').value = asClone ? 'Custom Library' : p.category;
       document.getElementById('lib-kind').value = p.baseDeviceKindId;
-      document.getElementById('lib-sym').value = p.symbolStyle || 'ic_box';
+      document.getElementById('lib-sym').value = p.symbolPrimitives?.length ? 'custom' : (p.symbolStyle || 'ic_box');
       document.getElementById('lib-mkind').value = p.attachedModel?.kind || 'spiceModelCard';
       document.getElementById('lib-mname').value = p.attachedModel?.modelName || '';
       document.getElementById('lib-desc').value = p.description || '';
       document.getElementById('lib-pins').value = (p.pins || []).map(x => `${x.name},${x.localX},${x.localY},${x.role || 'passive'}`).join('\n');
       document.getElementById('lib-params').value = Object.entries(p.defaultParameters || {}).map(([k, v]) => `${k}=${v}`).join('\n');
       document.getElementById('lib-model-text').value = p.attachedModel?.spiceText || '';
+      symPrimitives = structuredClone(p.symbolPrimitives || []);
+      renderSymbolCanvas();
     }
 
     const LIB_TEMPLATES = {
       diode: {
-        id: 'user.diode.led_red', name: 'Red LED (1.8V)', cat: 'Custom Diodes', kind: 'spice.diode', sym: 'diode', mkind: 'spiceModelCard', mname: 'LED_RED',
-        desc: 'Custom GaAsP red LED with attached .MODEL card.',
-        pins: 'p,-36,0,anode\nn,36,0,cathode', params: 'is_amps=1e-20\nn_emission=1.85',
-        model: '.MODEL LED_RED D(IS=1e-20 N=1.85 RS=4.0 CJO=15p)'
+        id: 'user.diode.led_red', name: 'Red LED (1.8V)', cat: 'Custom Diodes', kind: 'spice.diode', sym: 'custom', mkind: 'spiceModelCard', mname: 'LED_RED',
+        desc: 'Custom GaAsP red LED with custom vector symbol & .MODEL card.',
+        pins: 'p,-40,0,anode\nn,40,0,cathode', params: 'is_amps=1e-20\nn_emission=1.85',
+        model: '.MODEL LED_RED D(IS=1e-20 N=1.85 RS=4.0 CJO=15p)', starter: 'diode'
       },
       mosfet: {
         id: 'user.mos.nch_lv', name: 'Low-Vt BSIM4 NMOS', cat: 'Custom Transistors', kind: 'spice.mosfet', sym: 'nmos', mkind: 'spiceModelCard', mname: 'NCH_LV',
         desc: 'Custom low-Vt BSIM4 (LEVEL=54) N-channel MOSFET.',
         pins: 'd,20,-20,drain\ng,-40,0,gate\ns,20,20,source\nb,40,0,bulk', params: 'w_m=2e-6\nl_m=65e-9\nlevel=54\nvth0_volts=0.22',
-        model: '.MODEL NCH_LV NMOS(LEVEL=54 VTH0=0.22 TOXE=2.0n U0=460 VSAT=1.2e5)'
+        model: '.MODEL NCH_LV NMOS(LEVEL=54 VTH0=0.22 TOXE=2.0n U0=460 VSAT=1.2e5)', starter: null
       },
       subckt: {
-        id: 'user.subckt.pi_attenuator', name: '6dB Pi Attenuator', cat: 'Custom Subcircuits', kind: 'spice.subckt', sym: 'ic_box', mkind: 'subcircuit', mname: 'PI_ATTEN_6DB',
+        id: 'user.subckt.pi_attenuator', name: '6dB Pi Attenuator', cat: 'Custom Subcircuits', kind: 'spice.subckt', sym: 'custom', mkind: 'subcircuit', mname: 'PI_ATTEN_6DB',
         desc: '50-Ohm 6 dB resistive Pi attenuator macro (.SUBCKT).',
         pins: 'in,-40,0,input\nout,40,0,output\ngnd,0,20,ground', params: '',
-        model: '.SUBCKT PI_ATTEN_6DB in out gnd\n  Rsh1 in gnd 150.5\n  Rser in out 37.35\n  Rsh2 out gnd 150.5\n.ENDS PI_ATTEN_6DB'
+        model: '.SUBCKT PI_ATTEN_6DB in out gnd\n  Rsh1 in gnd 150.5\n  Rser in out 37.35\n  Rsh2 out gnd 150.5\n.ENDS PI_ATTEN_6DB', starter: 'pi'
       }
     };
     document.querySelectorAll('[data-tpl]').forEach(b => b.addEventListener('click', () => {
@@ -1819,14 +2133,13 @@ C1 out 0 100n
       document.getElementById('lib-pins').value = t.pins;
       document.getElementById('lib-params').value = t.params;
       document.getElementById('lib-model-text').value = t.model;
+      symPrimitives = t.starter ? SYM_STARTERS[t.starter]() : [];
+      renderSymbolCanvas();
     }));
     document.getElementById('btn-lib-new').addEventListener('click', () => document.querySelector('[data-tpl="subckt"]').click());
 
     async function saveCustomPart(alsoPlace = false) {
-      const pins = document.getElementById('lib-pins').value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
-        const [name, x, y, role] = l.split(',').map(s => s.trim());
-        return { name, localX: Number(x) || 0, localY: Number(y) || 0, role: role || 'passive' };
-      });
+      const pins = parseEditorPins();
       const defaultParameters = {};
       document.getElementById('lib-params').value.split('\n').map(l => l.trim()).filter(Boolean).forEach(l => {
         const [k, v] = l.split('=').map(s => s.trim());
@@ -1841,10 +2154,11 @@ C1 out 0 100n
         description: document.getElementById('lib-desc').value.trim(),
         baseDeviceKindId: document.getElementById('lib-kind').value,
         spicePrefix: '',
-        symbolStyle: document.getElementById('lib-sym').value,
+        symbolStyle: symPrimitives.length > 0 ? 'custom' : document.getElementById('lib-sym').value,
         pins,
         defaultParameters,
-        attachedModel: mText ? { kind: document.getElementById('lib-mkind').value, modelName: mName, spiceText: mText } : null
+        attachedModel: mText ? { kind: document.getElementById('lib-mkind').value, modelName: mName, spiceText: mText } : null,
+        symbolPrimitives: symPrimitives.length > 0 ? symPrimitives : null
       };
       const st = document.getElementById('lib-status');
       const resp = await fetch('/api/library', {
@@ -1857,12 +2171,15 @@ C1 out 0 100n
         return;
       }
       st.className = 'ok';
-      st.textContent = `Saved '${data.part.name}' to persistent library!`;
+      st.textContent = `Saved '${data.part.name}' (${symPrimitives.length} vector shapes) to persistent library!`;
       await loadLibrary();
       if (alsoPlace) placeLibraryPart(data.part);
     }
     document.getElementById('btn-lib-save').addEventListener('click', () => saveCustomPart(false));
     document.getElementById('btn-lib-save-place').addEventListener('click', () => saveCustomPart(true));
+    // Initialize canvas with LED starter shapes
+    symPrimitives = SYM_STARTERS.diode();
+    renderSymbolCanvas();
 
     // ---- DECK & CAMPAIGN TABS ----
     function loadDeckPreset(key) {

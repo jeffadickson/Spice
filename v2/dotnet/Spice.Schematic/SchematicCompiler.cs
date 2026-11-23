@@ -827,6 +827,71 @@ public static class SchematicCompiler
             _ => "ic_box"
         };
 
+        if (customPart?.SymbolPrimitives is { Count: > 0 } primitives)
+        {
+            double bx0 = -36.0, by0 = -22.0, bx1 = 36.0, by1 = 22.0;
+            foreach (var (_, px, py) in localPins)
+            {
+                bx0 = Math.Min(bx0, px - 4.0);
+                by0 = Math.Min(by0, py - 4.0);
+                bx1 = Math.Max(bx1, px + 4.0);
+                by1 = Math.Max(by1, py + 4.0);
+            }
+            sb.AppendLine(FormattableString.Invariant(
+                $"      <rect x=\"{bx0:F1}\" y=\"{by0:F1}\" width=\"{bx1 - bx0:F1}\" height=\"{by1 - by0:F1}\" rx=\"6\" fill=\"{symFill}\" fill-opacity=\"0.65\" stroke=\"{symBorder}\" stroke-width=\"1\" />"));
+            sb.AppendLine("      <g class=\"spice-custom-symbol\">");
+            foreach (var prim in primitives)
+            {
+                var stroke = string.IsNullOrWhiteSpace(prim.Stroke) ? symStroke : EscapeXml(prim.Stroke);
+                var fill = string.IsNullOrWhiteSpace(prim.Fill) ? "none" : EscapeXml(prim.Fill);
+                var sw = prim.StrokeWidth > 0.0 ? prim.StrokeWidth : 2.0;
+                switch (prim.Kind.ToLowerInvariant())
+                {
+                    case "line":
+                        sb.AppendLine(FormattableString.Invariant(
+                            $"        <line x1=\"{prim.X1:F1}\" y1=\"{prim.Y1:F1}\" x2=\"{prim.X2:F1}\" y2=\"{prim.Y2:F1}\" stroke=\"{stroke}\" stroke-width=\"{sw:F1}\" stroke-linecap=\"round\" />"));
+                        break;
+                    case "rect":
+                    {
+                        var rx = Math.Min(prim.X1, prim.X2);
+                        var ry = Math.Min(prim.Y1, prim.Y2);
+                        var rw = Math.Abs(prim.X2 - prim.X1);
+                        var rh = Math.Abs(prim.Y2 - prim.Y1);
+                        sb.AppendLine(FormattableString.Invariant(
+                            $"        <rect x=\"{rx:F1}\" y=\"{ry:F1}\" width=\"{rw:F1}\" height=\"{rh:F1}\" rx=\"2\" fill=\"{fill}\" stroke=\"{stroke}\" stroke-width=\"{sw:F1}\" />"));
+                        break;
+                    }
+                    case "circle":
+                        sb.AppendLine(FormattableString.Invariant(
+                            $"        <circle cx=\"{prim.X1:F1}\" cy=\"{prim.Y1:F1}\" r=\"{prim.Radius:F1}\" fill=\"{fill}\" stroke=\"{stroke}\" stroke-width=\"{sw:F1}\" />"));
+                        break;
+                    case "polyline":
+                        if (!string.IsNullOrWhiteSpace(prim.Points))
+                        {
+                            sb.AppendLine(FormattableString.Invariant(
+                                $"        <polyline points=\"{EscapeXml(prim.Points)}\" fill=\"none\" stroke=\"{stroke}\" stroke-width=\"{sw:F1}\" stroke-linejoin=\"round\" stroke-linecap=\"round\" />"));
+                        }
+                        break;
+                    case "polygon":
+                        if (!string.IsNullOrWhiteSpace(prim.Points))
+                        {
+                            sb.AppendLine(FormattableString.Invariant(
+                                $"        <polygon points=\"{EscapeXml(prim.Points)}\" fill=\"{fill}\" stroke=\"{stroke}\" stroke-width=\"{sw:F1}\" stroke-linejoin=\"round\" />"));
+                        }
+                        break;
+                    case "text":
+                        if (!string.IsNullOrWhiteSpace(prim.Text))
+                        {
+                            sb.AppendLine(FormattableString.Invariant(
+                                $"        <text x=\"{prim.X1:F1}\" y=\"{prim.Y1:F1}\" text-anchor=\"middle\" fill=\"{stroke}\" font-family=\"monospace\" font-size=\"10\" font-weight=\"bold\">{EscapeXml(prim.Text)}</text>"));
+                        }
+                        break;
+                }
+            }
+            sb.AppendLine("      </g>");
+            return;
+        }
+
         // Hit box for smooth dragging & selection highlight
         sb.AppendLine($"      <rect x=\"-36\" y=\"-22\" width=\"72\" height=\"44\" rx=\"6\" fill=\"{symFill}\" fill-opacity=\"0.82\" stroke=\"{symBorder}\" stroke-width=\"1\" />");
 

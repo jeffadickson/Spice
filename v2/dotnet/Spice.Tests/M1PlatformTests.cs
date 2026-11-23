@@ -637,15 +637,19 @@ public sealed class M1PlatformTests
             Assert.NotNull(nmos?.AttachedModel);
             Assert.Contains("LEVEL=54", nmos!.AttachedModel!.SpiceText);
 
-            // 2. Fail-closed validation rejects malformed attached models
+            // 2. Fail-closed validation rejects malformed attached models and invalid symbol primitives
             var badPart = new CustomComponentDefinition(
                 "user.bad.sub", "Bad Sub", "Custom", "Missing .ENDS", "spice.subckt", "X", "ic_box",
                 [new CustomPinDefinition("in", -40, 0), new CustomPinDefinition("out", 40, 0)],
                 new Dictionary<string, double>(),
-                new AttachedModelDefinition(AttachedModelKind.Subcircuit, "BAD_SUB", ".SUBCKT BAD_SUB in out\nR1 in out 1k"));
-            Assert.Contains(ComponentLibraryStore.Validate(badPart), d => d.Code == "invalid_subckt_definition");
+                new AttachedModelDefinition(AttachedModelKind.Subcircuit, "BAD_SUB", ".SUBCKT BAD_SUB in out\nR1 in out 1k"),
+                SymbolPrimitives: [new SymbolPrimitive("bogus_shape", X1: 0, Y1: 0, StrokeWidth: -1)]);
+            var badErrs = ComponentLibraryStore.Validate(badPart);
+            Assert.Contains(badErrs, d => d.Code == "invalid_subckt_definition");
+            Assert.Contains(badErrs, d => d.Code == "invalid_symbol_primitive_kind");
+            Assert.Contains(badErrs, d => d.Code == "invalid_symbol_primitive_dimension");
 
-            // 3. Create custom component with attached .SUBCKT model, persist to disk, and reload fresh store
+            // 3. Create custom component with custom vector SymbolPrimitives + attached .SUBCKT model, persist to disk, and reload fresh store
             var customAtten = new CustomComponentDefinition(
                 "user.subckt.pi_atten_6db",
                 "6dB Pi Attenuator",
@@ -653,7 +657,7 @@ public sealed class M1PlatformTests
                 "50-Ohm matched 6dB Pi attenuator",
                 "spice.subckt",
                 "X",
-                "ic_box",
+                "custom",
                 [
                     new CustomPinDefinition("in", -40, 0, "input"),
                     new CustomPinDefinition("out", 40, 0, "output"),
@@ -669,16 +673,26 @@ public sealed class M1PlatformTests
                       Rser in out 37.35
                       Rsh2 out gnd 150.47
                     .ENDS PI_ATTEN_6DB
-                    """));
+                    """),
+                SymbolPrimitives:
+                [
+                    new SymbolPrimitive("rect", X1: -28, Y1: -18, X2: 28, Y2: 18, Stroke: "#10b981", Fill: "#064e3b", StrokeWidth: 2),
+                    new SymbolPrimitive("line", X1: -40, Y1: 0, X2: -28, Y2: 0, Stroke: "#e2e8f0", StrokeWidth: 2),
+                    new SymbolPrimitive("text", X1: 0, Y1: 4, Text: "PI6", Stroke: "#a7f3d0", StrokeWidth: 1.5)
+                ]);
             var savedPart = store.UpsertCustom(customAtten);
             Assert.False(savedPart.IsBuiltIn);
             Assert.False(string.IsNullOrWhiteSpace(savedPart.ContentSha256));
             Assert.True(File.Exists(libPath));
 
-            // Reload from disk into a fresh store instance
+            // Reload from disk into a fresh store instance and verify custom vector symbol rendering
             var reloaded = new ComponentLibraryStore(libPath);
             Assert.True(reloaded.TryGet("user.subckt.pi_atten_6db", out var fetched));
             Assert.Equal("PI_ATTEN_6DB", fetched!.AttachedModel!.ModelName);
+            Assert.Equal(3, fetched.SymbolPrimitives!.Count);
+            var previewSvg = SchematicCompiler.ExportSymbolPreviewSvg(fetched);
+            Assert.Contains("class=\"spice-custom-symbol\"", previewSvg);
+            Assert.Contains(">PI6</text>", previewSvg);
 
             // 4. Build schematic using the saved custom library component + directive + port + mirror
             var doc = new SchematicDocument(
@@ -755,6 +769,8 @@ public sealed class M1PlatformTests
             var lightSvg = SchematicCompiler.ExportSvg(doc, library: reloaded, lightTheme: true, gridStyle: "dots");
             Assert.Contains("data-grid-style=\"dots\"", lightSvg);
             Assert.Contains("fill=\"#ffffff\"", lightSvg);
+            Assert.Contains("class=\"spice-custom-symbol\"", lightSvg);
+            Assert.Contains(">PI6</text>", lightSvg);
             Assert.Contains("class=\"spice-port\"", lightSvg);
             Assert.Contains("class=\"spice-annotation\"", lightSvg);
 
@@ -798,7 +814,10 @@ public sealed class M1PlatformTests
             server.Start();
             using var http = new HttpClient { BaseAddress = new Uri(server.BaseUrl) };
 
-            // 1. Save a custom component with an attached .SUBCKT model through POST /api/library
+            var uiHtml = await http.GetStringAsync("/");
+            Assert.Contains("id=\"sym-canvas\"", uiHtml, StringComparison.Ordinal);
+
+            // 1. Save a custom component with vector SymbolPrimitives & attached .SUBCKT model through POST /api/library
             var customPart = new
             {
                 id = "user.subckt.half_div",
@@ -807,7 +826,7 @@ public sealed class M1PlatformTests
                 description = "Matched 10k/10k resistive divider subcircuit",
                 baseDeviceKindId = "spice.subckt",
                 spicePrefix = "X",
-                symbolStyle = "ic_box",
+                symbolStyle = "custom",
                 pins = new[]
                 {
                     new { name = "in", localX = -40.0, localY = 0.0, role = "input" },
@@ -820,6 +839,11 @@ public sealed class M1PlatformTests
                     kind = "subcircuit",
                     modelName = "HALF_DIV",
                     spiceText = ".SUBCKT HALF_DIV in out gnd\n  R1 in out 10k\n  R2 out gnd 10k\n.ENDS HALF_DIV"
+                },
+                symbolPrimitives = new object[]
+                {
+                    new { kind = "polygon", points = "-26,-16 26,-16 26,16 -26,16", stroke = "#38bdf8", fill = "#172554", strokeWidth = 2.0 },
+                    new { kind = "text", x1 = 0.0, y1 = 4.0, text = "DIV2", stroke = "#e2e8f0", strokeWidth = 1.5 }
                 }
             };
             var savePartResp = await http.PostAsJsonAsync("/api/library", customPart);
@@ -860,9 +884,12 @@ public sealed class M1PlatformTests
             using var simJson = JsonDocument.Parse(await simResp.Content.ReadAsStringAsync());
             Assert.True(simJson.RootElement.GetProperty("erc_ok").GetBoolean());
             Assert.Equal("Succeeded", simJson.RootElement.GetProperty("status").GetString());
-            // 8.0 V through custom 10k/10k HALF_DIV subcircuit -> exact 4.00 V at out!
+            // 8.0 V through custom 10k/10k HALF_DIV subcircuit -> exact 4.00 V at out + custom vector symbol!
             Assert.Equal(4.0, simJson.RootElement.GetProperty("op_voltages").GetProperty("out").GetDouble(), precision: 9);
-            Assert.Contains("4.00 V", simJson.RootElement.GetProperty("svg").GetString()!, StringComparison.Ordinal);
+            var simSvg = simJson.RootElement.GetProperty("svg").GetString()!;
+            Assert.Contains("4.00 V", simSvg, StringComparison.Ordinal);
+            Assert.Contains("class=\"spice-custom-symbol\"", simSvg, StringComparison.Ordinal);
+            Assert.Contains(">DIV2</text>", simSvg, StringComparison.Ordinal);
 
             // 3. Test Ideal Op-Amp Foundation Library .SUBCKT (non-inverting gain = 1 + 20k/10k = 3.0 -> 4.5 V)
             var opAmpSchem = new SchematicDocument(

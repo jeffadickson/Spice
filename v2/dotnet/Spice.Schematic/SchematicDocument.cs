@@ -34,8 +34,26 @@ public sealed record CustomPinDefinition(
     string Role = "passive");
 
 /// <summary>
-/// User-defined or foundation library component binding a symbol, ordered pins,
-/// default parameters, and an attached simulation model (.MODEL, .SUBCKT, or .OSDI).
+/// Structured vector primitive drawn on the interactive Symbol Canvas (Line, Rect, Circle,
+/// Polyline, Polygon, Text) and rendered deterministically into schematic and preview SVGs.
+/// </summary>
+public sealed record SymbolPrimitive(
+    string Kind,
+    double X1 = 0.0,
+    double Y1 = 0.0,
+    double X2 = 0.0,
+    double Y2 = 0.0,
+    double Radius = 0.0,
+    string? Points = null,
+    string? Text = null,
+    string? Stroke = null,
+    string? Fill = null,
+    double StrokeWidth = 2.0);
+
+/// <summary>
+/// User-defined or foundation library component binding a symbol (built-in style or custom
+/// vector primitives), ordered pins, default parameters, and an attached simulation model
+/// (.MODEL, .SUBCKT, or .OSDI).
 /// </summary>
 public sealed record CustomComponentDefinition(
     string Id,
@@ -51,7 +69,8 @@ public sealed record CustomComponentDefinition(
     string? CustomSvgPath = null,
     bool IsBuiltIn = false,
     string SchemaVersion = "2.1",
-    string? ContentSha256 = null);
+    string? ContentSha256 = null,
+    IReadOnlyList<SymbolPrimitive>? SymbolPrimitives = null);
 
 /// <summary>
 /// Free-standing schematic annotation or active SPICE directive card (.PARAM, .TEMP, .OPTIONS, .INCLUDE).

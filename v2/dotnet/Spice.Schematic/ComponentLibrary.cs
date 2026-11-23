@@ -192,6 +192,37 @@ public sealed class ComponentLibraryStore
             }
         }
 
+        if (part.SymbolPrimitives is not null)
+        {
+            foreach (var prim in part.SymbolPrimitives)
+            {
+                var k = (prim.Kind ?? string.Empty).ToLowerInvariant();
+                if (k is not ("line" or "rect" or "circle" or "polyline" or "polygon" or "text"))
+                {
+                    errors.Add(new ValidationDiagnostic(
+                        "invalid_symbol_primitive_kind",
+                        $"Unsupported symbol primitive kind '{prim.Kind}'.",
+                        part.Id));
+                }
+                if (!double.IsFinite(prim.X1) || !double.IsFinite(prim.Y1) ||
+                    !double.IsFinite(prim.X2) || !double.IsFinite(prim.Y2) ||
+                    !double.IsFinite(prim.Radius) || !double.IsFinite(prim.StrokeWidth))
+                {
+                    errors.Add(new ValidationDiagnostic(
+                        "non_finite_symbol_primitive",
+                        "Symbol primitive coordinates, radius, and strokeWidth must be finite.",
+                        part.Id));
+                }
+                if (prim.Radius < 0.0 || prim.StrokeWidth <= 0.0)
+                {
+                    errors.Add(new ValidationDiagnostic(
+                        "invalid_symbol_primitive_dimension",
+                        "Symbol primitive radius must be >= 0 and strokeWidth must be > 0.",
+                        part.Id));
+                }
+            }
+        }
+
         if (part.AttachedModel is not null)
         {
             var m = part.AttachedModel;
