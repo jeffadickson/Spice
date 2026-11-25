@@ -23,7 +23,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            cmake ninja-build g++ clang libsuitesparse-dev ngspice python3-pip
+            cmake ninja-build g++ clang libllvm18 libsuitesparse-dev ngspice python3-pip
 
       - name: Install .NET 11 SDK
         run: |
