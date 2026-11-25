@@ -203,6 +203,76 @@ public sealed class WorkbenchServer : IAsyncDisposable
                 });
                 return;
             }
+            if (method == "POST" && path == "/api/library/import-spice")
+            {
+                var req = await ReadJsonAsync<ImportSpiceLibraryRequest>(ctx.Request);
+                if (req is null || string.IsNullOrWhiteSpace(req.SpiceText))
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = "missing spiceText" });
+                    return;
+                }
+                var report = _library.ImportSpiceLibraryText(
+                    req.SpiceText,
+                    req.DefaultCategory,
+                    overwriteExisting: req.Overwrite ?? false,
+                    dryRun: req.DryRun ?? false);
+                var items = report.Components.Select(p => new
+                {
+                    part = p,
+                    preview_svg = SchematicCompiler.ExportSymbolPreviewSvg(p)
+                }).ToArray();
+                await WriteJsonAsync(ctx.Response, 200, new
+                {
+                    dry_run = report.DryRun,
+                    total_found = report.TotalFound,
+                    imported_count = report.ImportedCount,
+                    skipped_count = report.SkippedCount,
+                    error_count = report.ErrorCount,
+                    components = items,
+                    diagnostics = report.Diagnostics
+                });
+                return;
+            }
+            if (method == "GET" && path == "/api/library/export")
+            {
+                var json = _library.ExportCustomLibraryJson();
+                await WriteTextAsync(ctx.Response, 200, "application/json; charset=utf-8", json);
+                return;
+            }
+            if (method == "POST" && path == "/api/library/import-json")
+            {
+                using var sr = new StreamReader(ctx.Request.InputStream, ctx.Request.ContentEncoding);
+                var rawBody = await sr.ReadToEndAsync();
+                if (string.IsNullOrWhiteSpace(rawBody))
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = "missing library JSON payload" });
+                    return;
+                }
+                string libraryJson = rawBody;
+                try
+                {
+                    var wrapper = JsonSerializer.Deserialize<ImportLibraryJsonRequest>(rawBody, JsonOpts);
+                    if (!string.IsNullOrWhiteSpace(wrapper?.Content))
+                    {
+                        libraryJson = wrapper.Content;
+                    }
+                }
+                catch
+                {
+                    // Treat rawBody directly as ComponentLibraryFile JSON.
+                }
+
+                try
+                {
+                    var imported = _library.ImportCustomLibraryJson(libraryJson);
+                    await WriteJsonAsync(ctx.Response, 200, new { imported });
+                }
+                catch (Exception ex) when (ex is InvalidDataException or InvalidOperationException or JsonException)
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = ex.Message });
+                }
+                return;
+            }
 
             // ---- SCHEMATIC SAVE / LOAD / IMPORT / EXPORT ----
             if (method == "POST" && path == "/api/schematic/save")
@@ -591,7 +661,7 @@ public sealed class WorkbenchServer : IAsyncDisposable
         bool needsFullDeckSolver =
             (circuit.Models is { Count: > 0 }) ||
             (circuit.Directives is { Count: > 0 }) ||
-            circuit.Devices.Any(d => d.KindId is "spice.mosfet" or "spice.bjt" or "spice.jfet" or "spice.subckt" or "spice.osdi");
+            circuit.Devices.Any(d => d.KindId is "spice.mosfet" or "spice.vdmos" or "spice.bjt" or "spice.jfet" or "spice.mesfet" or "spice.switch" or "spice.cswitch" or "spice.core" or "spice.subckt" or "spice.osdi");
 
         if (!needsFullDeckSolver)
         {
@@ -752,6 +822,15 @@ public sealed class WorkbenchServer : IAsyncDisposable
     private sealed record ImportSpiceRequest(
         string? SpiceText,
         string? Name = null);
+
+    private sealed record ImportSpiceLibraryRequest(
+        string? SpiceText,
+        string? DefaultCategory = null,
+        bool? Overwrite = null,
+        bool? DryRun = null);
+
+    private sealed record ImportLibraryJsonRequest(
+        string? Content);
 
     private sealed record CreatePartFromSchematicRequest(
         SchematicDocument? Document,

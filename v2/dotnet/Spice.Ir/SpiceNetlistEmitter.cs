@@ -141,9 +141,89 @@ public static class SpiceNetlistEmitter
                     sb.AppendLine($"{EnsurePrefix(dev.Id, 'J')} {dev.PinConnections["d"]} {dev.PinConnections["g"]} {dev.PinConnections["s"]} {modelName} {Fmt(area)}");
                     break;
                 }
-                case "spice.subckt":
+                case "spice.vdmos":
                 {
-                    var subName = dev.ModelName ?? throw new InvalidOperationException($"Subcircuit '{dev.Id}' missing ModelName.");
+                    var modelName = string.IsNullOrWhiteSpace(dev.ModelName) ? $"VDMOS_{dev.Id}" : dev.ModelName;
+                    if (emittedModels.Add(modelName))
+                    {
+                        var vto = dev.Parameters.GetValueOrDefault("vto_volts", 3.0);
+                        var kp = dev.Parameters.GetValueOrDefault("kp_a_per_v2", 10.0);
+                        var rd = dev.Parameters.GetValueOrDefault("rd_ohms", 0.05);
+                        var rs = dev.Parameters.GetValueOrDefault("rs_ohms", 0.02);
+                        var rg = dev.Parameters.GetValueOrDefault("rg_ohms", 2.0);
+                        sb.AppendLine($".MODEL {modelName} VDMOS(VTO={Fmt(vto)} KP={Fmt(kp)} RD={Fmt(rd)} RS={Fmt(rs)} RG={Fmt(rg)})");
+                    }
+                    var mult = dev.Parameters.GetValueOrDefault("m_mult", 1.0);
+                    var mSuffix = Math.Abs(mult - 1.0) > 1e-12 ? $" M={Fmt(mult)}" : string.Empty;
+                    sb.AppendLine($"{EnsurePrefix(dev.Id, 'M')} {dev.PinConnections["d"]} {dev.PinConnections["g"]} {dev.PinConnections["s"]} {modelName}{mSuffix}");
+                    break;
+                }
+                case "spice.mesfet":
+                {
+                    var modelName = string.IsNullOrWhiteSpace(dev.ModelName) ? $"MES_{dev.Id}" : dev.ModelName;
+                    if (emittedModels.Add(modelName))
+                    {
+                        var level = (int)Math.Round(dev.Parameters.GetValueOrDefault("level", 1.0));
+                        var vto = dev.Parameters.GetValueOrDefault("vto_volts", -1.5);
+                        var beta = dev.Parameters.GetValueOrDefault("beta_a_per_v2", 0.05);
+                        sb.AppendLine($".MODEL {modelName} NMF(LEVEL={level} VTO={Fmt(vto)} BETA={Fmt(beta)})");
+                    }
+                    var area = dev.Parameters.GetValueOrDefault("area", 1.0);
+                    sb.AppendLine($"{EnsurePrefix(dev.Id, 'Z')} {dev.PinConnections["d"]} {dev.PinConnections["g"]} {dev.PinConnections["s"]} {modelName} {Fmt(area)}");
+                    break;
+                }
+                case "spice.switch":
+                {
+                    var modelName = string.IsNullOrWhiteSpace(dev.ModelName) ? $"SW_{dev.Id}" : dev.ModelName;
+                    if (emittedModels.Add(modelName))
+                    {
+                        var vt = dev.Parameters.GetValueOrDefault("vt_volts", 2.5);
+                        var vh = dev.Parameters.GetValueOrDefault("vh_volts", 0.2);
+                        var ron = dev.Parameters.GetValueOrDefault("ron_ohms", 10.0);
+                        var roff = dev.Parameters.GetValueOrDefault("roff_ohms", 1e6);
+                        var hyst = dev.Parameters.GetValueOrDefault("hysteresis", 0.0) > 0.5 ? " HYST=1" : string.Empty;
+                        sb.AppendLine($".MODEL {modelName} SW(VT={Fmt(vt)} VH={Fmt(vh)} RON={Fmt(ron)} ROFF={Fmt(roff)}{hyst})");
+                    }
+                    sb.AppendLine($"{EnsurePrefix(dev.Id, 'S')} {dev.PinConnections["p"]} {dev.PinConnections["n"]} {dev.PinConnections["cp"]} {dev.PinConnections["cn"]} {modelName}");
+                    break;
+                }
+                case "spice.cswitch":
+                {
+                    var modelName = string.IsNullOrWhiteSpace(dev.ModelName) ? $"CSW_{dev.Id}" : dev.ModelName;
+                    if (emittedModels.Add(modelName))
+                    {
+                        var it = dev.Parameters.GetValueOrDefault("it_amps", 5e-3);
+                        var ih = dev.Parameters.GetValueOrDefault("ih_amps", 1e-3);
+                        var ron = dev.Parameters.GetValueOrDefault("ron_ohms", 10.0);
+                        var roff = dev.Parameters.GetValueOrDefault("roff_ohms", 1e6);
+                        var hyst = dev.Parameters.GetValueOrDefault("hysteresis", 0.0) > 0.5 ? " HYST=1" : string.Empty;
+                        sb.AppendLine($".MODEL {modelName} CSW(IT={Fmt(it)} IH={Fmt(ih)} RON={Fmt(ron)} ROFF={Fmt(roff)}{hyst})");
+                    }
+                    var ctrl = string.IsNullOrWhiteSpace(dev.ControlSourceId) ? "Vsense" : dev.ControlSourceId;
+                    sb.AppendLine($"{EnsurePrefix(dev.Id, 'W')} {dev.PinConnections["p"]} {dev.PinConnections["n"]} {ctrl} {modelName}");
+                    break;
+                }
+                case "spice.core":
+                {
+                    var modelName = string.IsNullOrWhiteSpace(dev.ModelName) ? $"CORE_{dev.Id}" : dev.ModelName;
+                    if (emittedModels.Add(modelName))
+                    {
+                        var area = dev.Parameters.GetValueOrDefault("area_m2", 1e-4);
+                        var path = dev.Parameters.GetValueOrDefault("path_m", 0.05);
+                        var gap = dev.Parameters.GetValueOrDefault("gap_m", 0.0);
+                        var rw = dev.Parameters.GetValueOrDefault("r_winding_ohms", 0.1);
+                        var lleak = dev.Parameters.GetValueOrDefault("l_leak_henries", 0.0);
+                        sb.AppendLine($".MODEL {modelName} CORE(MS=4e5 A=80 K=40 C=0.2 ALPHA=1e-4 AREA={Fmt(area)} PATH={Fmt(path)} GAP={Fmt(gap)} RW={Fmt(rw)} LLEAK={Fmt(lleak)})");
+                    }
+                    var turns = dev.Parameters.GetValueOrDefault("turns", 20.0);
+                    var ic = dev.Parameters.TryGetValue("ic_amps", out var ici) ? $" IC={Fmt(ici)}" : string.Empty;
+                    sb.AppendLine($"{EnsurePrefix(dev.Id, 'L')} {dev.PinConnections["p"]} {dev.PinConnections["n"]} {modelName} N={Fmt(turns)}{ic}");
+                    break;
+                }
+                case "spice.subckt":
+                case "spice.osdi":
+                {
+                    var subName = dev.ModelName ?? throw new InvalidOperationException($"Instance '{dev.Id}' missing ModelName.");
                     var orderedPins = dev.PinOrder is { Count: > 0 }
                         ? dev.PinOrder.Select(p => dev.PinConnections[p])
                         : dev.PinConnections.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => kv.Value);

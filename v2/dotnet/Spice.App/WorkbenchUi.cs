@@ -514,14 +514,41 @@ public static class WorkbenchUi
     <section id="tab-library" class="tab-pane">
       <div class="split-workspace">
         <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
             <h3>Component &amp; Model Library (Foundation + Persistent User Library)</h3>
-            <span id="lib-path-badge" class="badge">library.spice-lib.json</span>
+            <div style="display:flex;gap:5px;align-items:center">
+              <button id="btn-lib-export-json" class="icon-btn" title="Export custom library as .spice-lib.json">Export JSON</button>
+              <button id="btn-lib-import-json" class="icon-btn" title="Import .spice-lib.json file">Import JSON</button>
+              <input id="file-lib-import-json" type="file" accept=".json,.spice-lib.json" style="display:none" />
+              <span id="lib-path-badge" class="badge">library.spice-lib.json</span>
+            </div>
           </div>
           <div style="display:flex;gap:6px">
             <input id="lib-search" placeholder="Filter by name, category, or attached model..." style="flex:1" />
             <button id="btn-lib-new" class="icon-btn primary">+ New Blank Part</button>
           </div>
+
+          <!-- BULK .LIB / .MOD / .SUB SPICE LIBRARY IMPORTER -->
+          <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent)">Bulk Import SPICE .LIB / .MOD / .SUB</span>
+              <div style="display:flex;gap:6px;align-items:center">
+                <button id="btn-bulk-load-file" class="icon-btn" style="padding:3px 8px;font-size:11px">Load .LIB/.MOD/.SUB File</button>
+                <input id="file-bulk-spice" type="file" accept=".lib,.mod,.sub,.cir,.sp,.txt" style="display:none" />
+              </div>
+            </div>
+            <textarea id="bulk-spice-text" rows="4" placeholder="Paste vendor .LIB / .MOD / .SUB text containing .MODEL cards (D, NPN, PNP, NMOS, PMOS, VDMOS, NJF, PJF, NMF, SW, CSW, CORE) and .SUBCKT ... .ENDS blocks..."></textarea>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <input id="bulk-spice-cat" value="Vendor Import" placeholder="Default category" style="width:155px" />
+              <label class="chk"><input id="bulk-spice-overwrite" type="checkbox" /> Overwrite existing</label>
+              <button id="btn-bulk-preview" class="icon-btn">Preview (Dry Run)</button>
+              <button id="btn-bulk-import" class="icon-btn sim-btn">Bulk Import All</button>
+            </div>
+            <div id="bulk-import-status" style="font-family:var(--mono);font-size:11px;color:var(--muted)"></div>
+            <div id="bulk-import-preview" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:6px"></div>
+            <div id="bulk-import-diags" style="display:flex;flex-direction:column;gap:3px;font-family:var(--mono);font-size:11px"></div>
+          </div>
+
           <div id="lib-cards" class="lib-cards"></div>
         </div>
 
@@ -578,10 +605,16 @@ public static class WorkbenchUi
             <div class="field"><label>Base Device Kind</label>
               <select id="lib-kind">
                 <option value="spice.diode">spice.diode (D)</option>
-                <option value="spice.mosfet">spice.mosfet (M)</option>
-                <option value="spice.bjt">spice.bjt (Q)</option>
-                <option value="spice.jfet">spice.jfet (J)</option>
+                <option value="spice.mosfet">spice.mosfet (M — BSIM/MOS)</option>
+                <option value="spice.vdmos">spice.vdmos (M — Power VDMOS)</option>
+                <option value="spice.bjt">spice.bjt (Q — Gummel-Poon)</option>
+                <option value="spice.jfet">spice.jfet (J — JFET)</option>
+                <option value="spice.mesfet">spice.mesfet (Z — Statz/Curtice MESFET)</option>
+                <option value="spice.switch">spice.switch (S — Voltage Switch)</option>
+                <option value="spice.cswitch">spice.cswitch (W — Current Switch)</option>
+                <option value="spice.core">spice.core (L+CORE — Saturable Core)</option>
                 <option value="spice.subckt">spice.subckt (X — Custom Macro)</option>
+                <option value="spice.osdi">spice.osdi (X — Compiled Verilog-A)</option>
                 <option value="spice.resistor">spice.resistor (R)</option>
                 <option value="spice.capacitor">spice.capacitor (C)</option>
                 <option value="spice.inductor">spice.inductor (L)</option>
@@ -591,12 +624,20 @@ public static class WorkbenchUi
               <select id="lib-sym">
                 <option value="custom">Custom Vector Canvas</option>
                 <option value="diode" selected>Diode</option>
+                <option value="zener">Zener Diode</option>
+                <option value="led">LED</option>
                 <option value="schottky">Schottky Diode</option>
                 <option value="nmos">NMOS MOSFET</option>
                 <option value="pmos">PMOS MOSFET</option>
+                <option value="vdmos">N-Ch Power VDMOS</option>
+                <option value="pvdmos">P-Ch Power VDMOS</option>
                 <option value="npn">NPN BJT</option>
                 <option value="pnp">PNP BJT</option>
-                <option value="jfet">N-JFET</option>
+                <option value="jfet">JFET</option>
+                <option value="mesfet">RF MESFET</option>
+                <option value="switch">Voltage Switch (SW)</option>
+                <option value="cswitch">Current Switch (CSW)</option>
+                <option value="core">Saturable Core (CORE)</option>
                 <option value="opamp">Op-Amp Triangle</option>
                 <option value="ic_box">IC / Subcircuit Block</option>
               </select>
@@ -2365,6 +2406,107 @@ C1 out 0 100n
     }
     document.getElementById('btn-lib-save').addEventListener('click', () => saveCustomPart(false));
     document.getElementById('btn-lib-save-place').addEventListener('click', () => saveCustomPart(true));
+
+    // ---- BULK .LIB / .MOD / .SUB IMPORTER & JSON EXPORT/IMPORT ----
+    async function runBulkSpiceImport(dryRun) {
+      const spiceText = document.getElementById('bulk-spice-text').value;
+      const defaultCategory = document.getElementById('bulk-spice-cat').value.trim() || 'Vendor Import';
+      const overwrite = document.getElementById('bulk-spice-overwrite').checked;
+      const st = document.getElementById('bulk-import-status');
+      const prev = document.getElementById('bulk-import-preview');
+      const diagsEl = document.getElementById('bulk-import-diags');
+      prev.innerHTML = '';
+      diagsEl.innerHTML = '';
+      if (!spiceText.trim()) {
+        st.className = 'err';
+        st.textContent = 'Paste or load a .LIB / .MOD / .SUB file first.';
+        return;
+      }
+      const resp = await fetch('/api/library/import-spice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ spiceText, defaultCategory, overwrite, dryRun })
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        st.className = 'err';
+        st.textContent = 'Import error: ' + (data.error || resp.statusText);
+        return;
+      }
+      st.className = data.error_count > 0 ? 'amber' : 'ok';
+      st.textContent = `${data.dry_run ? 'Dry-Run Preview' : 'Imported'}: found=${data.total_found} | ${data.dry_run ? 'valid' : 'imported'}=${data.imported_count} | skipped=${data.skipped_count} | errors=${data.error_count}`;
+      (data.components || []).forEach(entry => {
+        const p = entry.part;
+        const card = document.createElement('div');
+        card.className = 'lib-card user-owned';
+        card.style.padding = '6px';
+        card.innerHTML = `
+          <div class="lib-card-head">
+            ${entry.preview_svg || ''}
+            <div>
+              <div style="font-weight:700;font-size:11px">${escapeHtmlAttr(p.name)}</div>
+              <div style="font-size:9.5px;color:var(--accent);font-family:var(--mono)">${escapeHtmlAttr(p.baseDeviceKindId)} · ${(p.pins || []).length} pins</div>
+            </div>
+          </div>`;
+        prev.appendChild(card);
+      });
+      (data.diagnostics || []).forEach(d => {
+        const row = document.createElement('div');
+        row.className = d.severity === 'error' ? 'err' : 'amber';
+        const loc = d.lineNumber ? ` [L${d.lineNumber}]` : '';
+        const item = d.itemName ? ` (${d.itemName})` : '';
+        row.textContent = `${String(d.severity || '').toUpperCase()}${loc}${item} ${d.code}: ${d.message}`;
+        diagsEl.appendChild(row);
+      });
+      if (!dryRun) {
+        await loadLibrary();
+      }
+    }
+    document.getElementById('btn-bulk-load-file').addEventListener('click', () => document.getElementById('file-bulk-spice').click());
+    document.getElementById('file-bulk-spice').addEventListener('change', async (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      document.getElementById('bulk-spice-text').value = await f.text();
+      await runBulkSpiceImport(true);
+      e.target.value = '';
+    });
+    document.getElementById('btn-bulk-preview').addEventListener('click', () => runBulkSpiceImport(true));
+    document.getElementById('btn-bulk-import').addEventListener('click', () => runBulkSpiceImport(false));
+
+    document.getElementById('btn-lib-export-json').addEventListener('click', async () => {
+      const resp = await fetch('/api/library/export');
+      const text = await resp.text();
+      const blob = new Blob([text], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'custom-library.spice-lib.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+    document.getElementById('btn-lib-import-json').addEventListener('click', () => document.getElementById('file-lib-import-json').click());
+    document.getElementById('file-lib-import-json').addEventListener('change', async (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const content = await f.text();
+      const st = document.getElementById('bulk-import-status');
+      const resp = await fetch('/api/library/import-json', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content })
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        st.className = 'err';
+        st.textContent = 'JSON import failed: ' + (data.error || resp.statusText);
+      } else {
+        st.className = 'ok';
+        st.textContent = `Imported ${data.imported} custom component(s) from ${f.name}.`;
+        await loadLibrary();
+      }
+      e.target.value = '';
+    });
+
     // Initialize canvas with LED starter shapes
     symPrimitives = SYM_STARTERS.diode();
     renderSymbolCanvas();

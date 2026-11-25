@@ -196,7 +196,39 @@ public static class SchematicExporter
                     sb.AppendLine($"{dev.Id} ({dev.PinConnections["d"]} {dev.PinConnections["g"]} {dev.PinConnections["s"]}) {mname} area={Fmt(dev.Parameters.GetValueOrDefault("area", 1.0))}");
                     break;
                 }
+                case "spice.vdmos":
+                {
+                    var mname = string.IsNullOrWhiteSpace(dev.ModelName) ? $"VDMOS_{dev.Id}" : dev.ModelName;
+                    sb.AppendLine($"{dev.Id} ({dev.PinConnections["d"]} {dev.PinConnections["g"]} {dev.PinConnections["s"]}) {mname} m={Fmt(dev.Parameters.GetValueOrDefault("m_mult", 1.0))}");
+                    break;
+                }
+                case "spice.mesfet":
+                {
+                    var mname = string.IsNullOrWhiteSpace(dev.ModelName) ? $"MES_{dev.Id}" : dev.ModelName;
+                    sb.AppendLine($"{dev.Id} ({dev.PinConnections["d"]} {dev.PinConnections["g"]} {dev.PinConnections["s"]}) {mname} area={Fmt(dev.Parameters.GetValueOrDefault("area", 1.0))}");
+                    break;
+                }
+                case "spice.switch":
+                {
+                    var mname = string.IsNullOrWhiteSpace(dev.ModelName) ? $"SW_{dev.Id}" : dev.ModelName;
+                    sb.AppendLine($"{dev.Id} ({dev.PinConnections["p"]} {dev.PinConnections["n"]} {dev.PinConnections["cp"]} {dev.PinConnections["cn"]}) {mname}");
+                    break;
+                }
+                case "spice.cswitch":
+                {
+                    var mname = string.IsNullOrWhiteSpace(dev.ModelName) ? $"CSW_{dev.Id}" : dev.ModelName;
+                    var ctrl = string.IsNullOrWhiteSpace(dev.ControlSourceId) ? "Vsense" : dev.ControlSourceId;
+                    sb.AppendLine($"{dev.Id} ({dev.PinConnections["p"]} {dev.PinConnections["n"]}) {mname} probe={ctrl}");
+                    break;
+                }
+                case "spice.core":
+                {
+                    var mname = string.IsNullOrWhiteSpace(dev.ModelName) ? $"CORE_{dev.Id}" : dev.ModelName;
+                    sb.AppendLine($"{dev.Id} ({dev.PinConnections["p"]} {dev.PinConnections["n"]}) {mname} n={Fmt(dev.Parameters.GetValueOrDefault("turns", 20.0))}");
+                    break;
+                }
                 case "spice.subckt":
+                case "spice.osdi":
                 {
                     var orderedPins = dev.PinOrder is { Count: > 0 }
                         ? dev.PinOrder.Select(p => dev.PinConnections[p])

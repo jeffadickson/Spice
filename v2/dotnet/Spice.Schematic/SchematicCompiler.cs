@@ -822,8 +822,8 @@ public static class SchematicCompiler
         {
             "spice.mosfet" => [("d", 20, -20), ("g", -40, 0), ("s", 20, 20), ("b", 40, 0)],
             "spice.bjt" => [("c", 20, -20), ("b", -40, 0), ("e", 20, 20)],
-            "spice.jfet" => [("d", 20, -20), ("g", -40, 0), ("s", 20, 20)],
-            "spice.vcvs" or "spice.vccs" => [("p", 40, -20), ("n", 40, 20), ("cp", -40, -20), ("cn", -40, 20)],
+            "spice.jfet" or "spice.vdmos" or "spice.mesfet" => [("d", 20, -20), ("g", -40, 0), ("s", 20, 20)],
+            "spice.vcvs" or "spice.vccs" or "spice.switch" => [("p", 40, -20), ("n", 40, 20), ("cp", -40, -20), ("cn", -40, 20)],
             _ => [("p", -36, 0), ("n", 36, 0)]
         };
     }
@@ -884,8 +884,13 @@ public static class SchematicCompiler
             "spice.isrc" => "isrc",
             "spice.diode" => "diode",
             "spice.mosfet" => comp.Parameters.GetValueOrDefault("vth0_volts", 0.4) < 0 ? "pmos" : "nmos",
+            "spice.vdmos" => comp.Parameters.GetValueOrDefault("vto_volts", 3.0) < 0 ? "pvdmos" : "vdmos",
             "spice.bjt" => "npn",
             "spice.jfet" => "jfet",
+            "spice.mesfet" => "mesfet",
+            "spice.switch" => "switch",
+            "spice.cswitch" => "cswitch",
+            "spice.core" => "core",
             "spice.vcvs" => "vcvs",
             "spice.vccs" => "vccs",
             "spice.subckt" => "ic_box",
@@ -974,6 +979,11 @@ public static class SchematicCompiler
             case "inductor":
                 sb.AppendLine($"      <path d=\"M -36 0 L -20 0 A 5 5 0 0 1 -10 0 A 5 5 0 0 1 0 0 A 5 5 0 0 1 10 0 A 5 5 0 0 1 20 0 L 36 0\" fill=\"none\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
                 break;
+            case "core":
+                sb.AppendLine($"      <path d=\"M -36 0 L -20 0 A 5 5 0 0 1 -10 0 A 5 5 0 0 1 0 0 A 5 5 0 0 1 10 0 A 5 5 0 0 1 20 0 L 36 0\" fill=\"none\" stroke=\"#10b981\" stroke-width=\"2\" />");
+                sb.AppendLine("      <line x1=\"-20\" y1=\"-11\" x2=\"20\" y2=\"-11\" stroke=\"#f59e0b\" stroke-width=\"2\" />");
+                sb.AppendLine("      <line x1=\"-20\" y1=\"-15\" x2=\"20\" y2=\"-15\" stroke=\"#f59e0b\" stroke-width=\"2\" />");
+                break;
             case "vsrc":
                 sb.AppendLine($"      <line x1=\"-36\" y1=\"0\" x2=\"-16\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
                 sb.AppendLine($"      <line x1=\"16\" y1=\"0\" x2=\"36\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
@@ -994,6 +1004,20 @@ public static class SchematicCompiler
                 sb.AppendLine("      <line x1=\"10\" y1=\"-11\" x2=\"10\" y2=\"11\" stroke=\"#f43f5e\" stroke-width=\"2.4\" />");
                 sb.AppendLine($"      <line x1=\"10\" y1=\"0\" x2=\"36\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
                 break;
+            case "zener":
+                sb.AppendLine($"      <line x1=\"-36\" y1=\"0\" x2=\"-10\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
+                sb.AppendLine("      <polygon points=\"-10,-11 -10,11 10,0\" fill=\"#1e293b\" stroke=\"#ec4899\" stroke-width=\"2\" />");
+                sb.AppendLine("      <polyline points=\"15,-13 10,-10 10,10 5,13\" fill=\"none\" stroke=\"#ec4899\" stroke-width=\"2.4\" />");
+                sb.AppendLine($"      <line x1=\"10\" y1=\"0\" x2=\"36\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
+                break;
+            case "led":
+                sb.AppendLine($"      <line x1=\"-36\" y1=\"0\" x2=\"-10\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
+                sb.AppendLine("      <polygon points=\"-10,-11 -10,11 10,0\" fill=\"#1e293b\" stroke=\"#ef4444\" stroke-width=\"2\" />");
+                sb.AppendLine("      <line x1=\"10\" y1=\"-11\" x2=\"10\" y2=\"11\" stroke=\"#ef4444\" stroke-width=\"2.4\" />");
+                sb.AppendLine("      <line x1=\"0\" y1=\"-10\" x2=\"8\" y2=\"-19\" stroke=\"#fca5a5\" stroke-width=\"1.6\" />");
+                sb.AppendLine("      <line x1=\"7\" y1=\"-7\" x2=\"15\" y2=\"-16\" stroke=\"#fca5a5\" stroke-width=\"1.6\" />");
+                sb.AppendLine($"      <line x1=\"10\" y1=\"0\" x2=\"36\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
+                break;
             case "schottky":
                 sb.AppendLine($"      <line x1=\"-36\" y1=\"0\" x2=\"-10\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
                 sb.AppendLine("      <polygon points=\"-10,-11 -10,11 10,0\" fill=\"#1e293b\" stroke=\"#fb923c\" stroke-width=\"2\" />");
@@ -1002,18 +1026,32 @@ public static class SchematicCompiler
                 break;
             case "nmos":
             case "pmos":
+            case "vdmos":
+            case "pvdmos":
             {
-                var accent = style == "pmos" ? "#c084fc" : "#38bdf8";
+                var isP = style is "pmos" or "pvdmos";
+                var isVdmos = style is "vdmos" or "pvdmos";
+                var accent = isP ? "#c084fc" : (isVdmos ? "#22d3ee" : "#38bdf8");
                 sb.AppendLine($"      <line x1=\"-40\" y1=\"0\" x2=\"-12\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
                 sb.AppendLine($"      <line x1=\"-12\" y1=\"-14\" x2=\"-12\" y2=\"14\" stroke=\"{accent}\" stroke-width=\"2.2\" />");
                 sb.AppendLine($"      <line x1=\"-5\" y1=\"-14\" x2=\"-5\" y2=\"14\" stroke=\"{accent}\" stroke-width=\"2\" stroke-dasharray=\"6 3\" />");
                 sb.AppendLine($"      <polyline points=\"-5,-11 20,-11 20,-20\" fill=\"none\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
                 sb.AppendLine($"      <polyline points=\"-5,11 20,11 20,20\" fill=\"none\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
-                sb.AppendLine($"      <line x1=\"-5\" y1=\"0\" x2=\"40\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"1.6\" />");
-                if (style == "pmos")
+                if (!isVdmos)
+                {
+                    sb.AppendLine($"      <line x1=\"-5\" y1=\"0\" x2=\"40\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"1.6\" />");
+                }
+                else
+                {
+                    sb.AppendLine($"      <polyline points=\"-5,0 10,0 10,11\" fill=\"none\" stroke=\"{symStroke}\" stroke-width=\"1.4\" />");
+                    sb.AppendLine($"      <polygon points=\"15,5 25,5 20,-4\" fill=\"none\" stroke=\"{accent}\" stroke-width=\"1.4\" />");
+                    sb.AppendLine($"      <line x1=\"15\" y1=\"-4\" x2=\"25\" y2=\"-4\" stroke=\"{accent}\" stroke-width=\"1.6\" />");
+                    sb.AppendLine($"      <line x1=\"20\" y1=\"-11\" x2=\"20\" y2=\"11\" stroke=\"{symStroke}\" stroke-width=\"1.2\" />");
+                }
+                if (isP)
                 {
                     sb.AppendLine($"      <circle cx=\"-16\" cy=\"0\" r=\"3.2\" fill=\"{symFill}\" stroke=\"{accent}\" stroke-width=\"1.6\" />");
-                    sb.AppendLine($"      <polygon points=\"8,-4 16,0 8,4\" fill=\"{accent}\" />");
+                    sb.AppendLine($"      <polygon points=\"3,-4 10,0 3,4\" fill=\"{accent}\" />");
                 }
                 else
                 {
@@ -1040,11 +1078,39 @@ public static class SchematicCompiler
                 break;
             }
             case "jfet":
+            case "mesfet":
+            {
+                var accent = style == "mesfet" ? "#38bdf8" : "#fbbf24";
                 sb.AppendLine($"      <line x1=\"-40\" y1=\"0\" x2=\"-10\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
-                sb.AppendLine("      <line x1=\"-6\" y1=\"-14\" x2=\"-6\" y2=\"14\" stroke=\"#fbbf24\" stroke-width=\"2.5\" />");
+                sb.AppendLine($"      <line x1=\"-6\" y1=\"-14\" x2=\"-6\" y2=\"14\" stroke=\"{accent}\" stroke-width=\"2.5\" />");
                 sb.AppendLine($"      <polyline points=\"-6,-11 20,-11 20,-20\" fill=\"none\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
                 sb.AppendLine($"      <polyline points=\"-6,11 20,11 20,20\" fill=\"none\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
-                sb.AppendLine("      <polygon points=\"-15,-4 -7,0 -15,4\" fill=\"#fbbf24\" />");
+                if (style == "mesfet")
+                {
+                    sb.AppendLine($"      <polyline points=\"-13,-9 -10,-9 -10,9 -7,9\" fill=\"none\" stroke=\"{accent}\" stroke-width=\"2\" />");
+                }
+                else
+                {
+                    sb.AppendLine($"      <polygon points=\"-15,-4 -7,0 -15,4\" fill=\"{accent}\" />");
+                }
+                break;
+            }
+            case "switch":
+                sb.AppendLine("      <rect x=\"-22\" y=\"-20\" width=\"44\" height=\"40\" rx=\"4\" fill=\"#1e293b\" stroke=\"#a78bfa\" stroke-width=\"1.8\" />");
+                sb.AppendLine($"      <line x1=\"-40\" y1=\"-20\" x2=\"-22\" y2=\"-12\" stroke=\"{symStroke}\" stroke-width=\"1.8\" />");
+                sb.AppendLine($"      <line x1=\"-40\" y1=\"20\" x2=\"-22\" y2=\"12\" stroke=\"{symStroke}\" stroke-width=\"1.8\" />");
+                sb.AppendLine($"      <line x1=\"40\" y1=\"-20\" x2=\"12\" y2=\"-12\" stroke=\"{symStroke}\" stroke-width=\"1.8\" />");
+                sb.AppendLine($"      <line x1=\"40\" y1=\"20\" x2=\"12\" y2=\"12\" stroke=\"{symStroke}\" stroke-width=\"1.8\" />");
+                sb.AppendLine("      <line x1=\"12\" y1=\"12\" x2=\"2\" y2=\"-10\" stroke=\"#a78bfa\" stroke-width=\"2.2\" />");
+                sb.AppendLine($"      <text x=\"-12\" y=\"4\" text-anchor=\"middle\" fill=\"#c4b5fd\" font-family=\"monospace\" font-size=\"9\">SW</text>");
+                break;
+            case "cswitch":
+                sb.AppendLine($"      <line x1=\"-36\" y1=\"0\" x2=\"-12\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
+                sb.AppendLine($"      <line x1=\"12\" y1=\"0\" x2=\"36\" y2=\"0\" stroke=\"{symStroke}\" stroke-width=\"2\" />");
+                sb.AppendLine("      <circle cx=\"-12\" cy=\"0\" r=\"2.8\" fill=\"#a78bfa\" />");
+                sb.AppendLine("      <circle cx=\"12\" cy=\"0\" r=\"2.8\" fill=\"#a78bfa\" />");
+                sb.AppendLine("      <line x1=\"-10\" y1=\"-1\" x2=\"10\" y2=\"-11\" stroke=\"#a78bfa\" stroke-width=\"2.2\" />");
+                sb.AppendLine($"      <text x=\"0\" y=\"14\" text-anchor=\"middle\" fill=\"#c4b5fd\" font-family=\"monospace\" font-size=\"8\">CSW</text>");
                 break;
             case "opamp":
                 sb.AppendLine("      <polygon points=\"-26,-22 -26,22 28,0\" fill=\"#1e293b\" stroke=\"#38bdf8\" stroke-width=\"2\" />");
@@ -1197,7 +1263,7 @@ public static class SchematicCompiler
             var customPart = ResolveCustomPart(document, comp, library);
 
             var expectedPinNames = customPart is { Pins.Count: > 0 } &&
-                                   string.Equals(comp.DeviceKindId, "spice.subckt", StringComparison.Ordinal)
+                                   comp.DeviceKindId is "spice.subckt" or "spice.osdi"
                 ? customPart.Pins.Select(p => p.Name).ToList()
                 : desc.Pins.Select(p => p.Name).ToList();
 
@@ -1293,7 +1359,7 @@ public static class SchematicCompiler
                 : customPart?.AttachedModel?.ModelName;
 
             IReadOnlyList<string>? pinOrder = customPart is { Pins.Count: > 0 } &&
-                                              string.Equals(comp.DeviceKindId, "spice.subckt", StringComparison.Ordinal)
+                                              comp.DeviceKindId is "spice.subckt" or "spice.osdi"
                 ? customPart.Pins.Select(p => p.Name).ToList()
                 : null;
 
@@ -1303,7 +1369,8 @@ public static class SchematicCompiler
                 PinConnections: conns,
                 Parameters: new Dictionary<string, double>(comp.Parameters, StringComparer.Ordinal),
                 ModelName: effectiveModelName,
-                PinOrder: pinOrder));
+                PinOrder: pinOrder,
+                ControlSourceId: comp.ControlSourceId));
         }
     }
 

@@ -26,7 +26,8 @@ public sealed record DeviceInstanceIr(
     IReadOnlyDictionary<string, string> PinConnections,
     IReadOnlyDictionary<string, double> Parameters,
     string? ModelName = null,
-    IReadOnlyList<string>? PinOrder = null);
+    IReadOnlyList<string>? PinOrder = null,
+    string? ControlSourceId = null);
 
 public sealed record ModelDefinitionIr(
     string Name,

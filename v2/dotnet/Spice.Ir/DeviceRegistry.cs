@@ -241,10 +241,15 @@ public sealed class DeviceRegistry
             [
                 new ParameterDescriptor("is_amps", "A", DefaultValue: 1e-14),
                 new ParameterDescriptor("n_emission", "", DefaultValue: 1.0),
+                new ParameterDescriptor("rs_ohms", "Ohm", DefaultValue: 0.0),
+                new ParameterDescriptor("bv_volts", "V", DefaultValue: 0.0),
+                new ParameterDescriptor("ibv_amps", "A", DefaultValue: 1e-3),
                 new ParameterDescriptor("cjo_farads", "F", DefaultValue: 0.0),
                 new ParameterDescriptor("vj_volts", "V", DefaultValue: 1.0),
                 new ParameterDescriptor("m_grading", "", DefaultValue: 0.5),
-                new ParameterDescriptor("tt_s", "s", DefaultValue: 0.0)
+                new ParameterDescriptor("tt_s", "s", DefaultValue: 0.0),
+                new ParameterDescriptor("area", "", DefaultValue: 1.0),
+                new ParameterDescriptor("m_mult", "", DefaultValue: 1.0)
             ],
             "sym.diode"),
         new DeviceDescriptor(
@@ -261,12 +266,28 @@ public sealed class DeviceRegistry
             ],
             "sym.mosfet"),
         new DeviceDescriptor(
+            "spice.vdmos", "Power VDMOS Transistor",
+            [new PinDescriptor("d", "drain"), new PinDescriptor("g", "gate"), new PinDescriptor("s", "source")],
+            [
+                new ParameterDescriptor("m_mult", "", DefaultValue: 1.0),
+                new ParameterDescriptor("vto_volts", "V", DefaultValue: 3.0),
+                new ParameterDescriptor("kp_a_per_v2", "A/V^2", DefaultValue: 10.0),
+                new ParameterDescriptor("rd_ohms", "Ohm", DefaultValue: 0.05),
+                new ParameterDescriptor("rs_ohms", "Ohm", DefaultValue: 0.02),
+                new ParameterDescriptor("rg_ohms", "Ohm", DefaultValue: 2.0)
+            ],
+            "sym.vdmos"),
+        new DeviceDescriptor(
             "spice.bjt", "Gummel-Poon BJT",
             [new PinDescriptor("c", "collector"), new PinDescriptor("b", "base"), new PinDescriptor("e", "emitter")],
             [
                 new ParameterDescriptor("area", "", DefaultValue: 1.0),
+                new ParameterDescriptor("m_mult", "", DefaultValue: 1.0),
                 new ParameterDescriptor("bf", "", DefaultValue: 100.0),
-                new ParameterDescriptor("is_amps", "A", DefaultValue: 1e-16)
+                new ParameterDescriptor("is_amps", "A", DefaultValue: 1e-16),
+                new ParameterDescriptor("rb_ohms", "Ohm", DefaultValue: 0.0),
+                new ParameterDescriptor("rc_ohms", "Ohm", DefaultValue: 0.0),
+                new ParameterDescriptor("re_ohms", "Ohm", DefaultValue: 0.0)
             ],
             "sym.bjt"),
         new DeviceDescriptor(
@@ -278,6 +299,55 @@ public sealed class DeviceRegistry
                 new ParameterDescriptor("beta_a_per_v2", "A/V^2", DefaultValue: 1e-4)
             ],
             "sym.jfet"),
+        new DeviceDescriptor(
+            "spice.mesfet", "GaAs MESFET (Statz / Curtice)",
+            [new PinDescriptor("d", "drain"), new PinDescriptor("g", "gate"), new PinDescriptor("s", "source")],
+            [
+                new ParameterDescriptor("area", "", DefaultValue: 1.0),
+                new ParameterDescriptor("m_mult", "", DefaultValue: 1.0),
+                new ParameterDescriptor("level", "", DefaultValue: 1.0),
+                new ParameterDescriptor("vto_volts", "V", DefaultValue: -1.5),
+                new ParameterDescriptor("beta_a_per_v2", "A/V^2", DefaultValue: 0.05)
+            ],
+            "sym.mesfet"),
+        new DeviceDescriptor(
+            "spice.switch", "Voltage-Controlled Switch (SW)",
+            [
+                new PinDescriptor("p", "passive"), new PinDescriptor("n", "passive"),
+                new PinDescriptor("cp", "ctrl_pos"), new PinDescriptor("cn", "ctrl_neg")
+            ],
+            [
+                new ParameterDescriptor("vt_volts", "V", DefaultValue: 2.5),
+                new ParameterDescriptor("vh_volts", "V", DefaultValue: 0.2),
+                new ParameterDescriptor("ron_ohms", "Ohm", DefaultValue: 10.0),
+                new ParameterDescriptor("roff_ohms", "Ohm", DefaultValue: 1e6),
+                new ParameterDescriptor("hysteresis", "", DefaultValue: 0.0)
+            ],
+            "sym.switch"),
+        new DeviceDescriptor(
+            "spice.cswitch", "Current-Controlled Switch (CSW)",
+            [new PinDescriptor("p", "passive"), new PinDescriptor("n", "passive")],
+            [
+                new ParameterDescriptor("it_amps", "A", DefaultValue: 5e-3),
+                new ParameterDescriptor("ih_amps", "A", DefaultValue: 1e-3),
+                new ParameterDescriptor("ron_ohms", "Ohm", DefaultValue: 10.0),
+                new ParameterDescriptor("roff_ohms", "Ohm", DefaultValue: 1e6),
+                new ParameterDescriptor("hysteresis", "", DefaultValue: 0.0)
+            ],
+            "sym.cswitch"),
+        new DeviceDescriptor(
+            "spice.core", "Saturable Magnetic Core (Jiles-Atherton / Chan)",
+            [new PinDescriptor("p", "passive"), new PinDescriptor("n", "passive")],
+            [
+                new ParameterDescriptor("turns", "", DefaultValue: 20.0),
+                new ParameterDescriptor("area_m2", "m^2", DefaultValue: 1e-4),
+                new ParameterDescriptor("path_m", "m", DefaultValue: 0.05),
+                new ParameterDescriptor("gap_m", "m", DefaultValue: 0.0),
+                new ParameterDescriptor("r_winding_ohms", "Ohm", DefaultValue: 0.1),
+                new ParameterDescriptor("l_leak_henries", "H", DefaultValue: 0.0),
+                new ParameterDescriptor("ic_amps", "A")
+            ],
+            "sym.core"),
         new DeviceDescriptor(
             "spice.subckt", "Custom Subcircuit / Macro (.SUBCKT)",
             [],

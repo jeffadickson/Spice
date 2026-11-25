@@ -81,7 +81,7 @@ STATEMENT: >>>
 Schematic documents shall persist in a versioned, deterministic, Git-diffable file format and support clean export to canonical SPICE netlists, StarLark-cs scripts, BOMs, and vector/hardcopy graphics (SVG/PDF) derived from the same Unified Device Descriptor.
 <<<
 COMMENT: >>>
-Verification: Round-trip save/load stability tests, schema-version migration/rejection tests, and deterministic SVG/netlist export checks.
+Verification: Round-trip save/load stability tests, schema-version migration/rejection tests, deterministic SVG/netlist export checks, bulk SPICE .LIB/.MOD/.SUB library importer dry-run/persistence/fail-closed diagnostics tests, and live NativeCppBackend simulation across the 34-part curated Foundation library (Spice.Tests/M1PlatformTests.cs, SliceCLibraryAndModelPacksTests.cs).
 <<<
 RELATIONS:
 - TYPE: Parent

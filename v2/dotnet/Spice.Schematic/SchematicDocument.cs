@@ -126,7 +126,8 @@ public sealed record PlacedComponent(
     bool MirrorY = false,
     string? ModelName = null,
     string? LibraryPartId = null,
-    string? DisplayValue = null);
+    string? DisplayValue = null,
+    string? ControlSourceId = null);
 
 public sealed record WireNet(
     string NetName,
