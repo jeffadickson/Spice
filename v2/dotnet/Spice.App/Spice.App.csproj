@@ -8,6 +8,7 @@
     <AssemblyName>spice-app</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../Cameo.Netlist/Cameo.Netlist.csproj" />
     <ProjectReference Include="../Spice.Ir/Spice.Ir.csproj" />
     <ProjectReference Include="../Spice.Schematic/Spice.Schematic.csproj" />
     <ProjectReference Include="../Spice.Starlark/Spice.Starlark.csproj" />

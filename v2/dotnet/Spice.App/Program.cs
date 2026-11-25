@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using Cameo.Netlist;
 using Spice.Ir;
 using Spice.Schematic;
 using Spice.Sdk;
@@ -248,7 +249,7 @@ public static class Program
             trimmed.StartsWith("netlist ", StringComparison.OrdinalIgnoreCase) ||
             trimmed.StartsWith("//", StringComparison.Ordinal))
         {
-            var parsed = FlagshipNetlist.Parse(rawText, lib);
+            var parsed = CameoNetlistBridge.Parse(rawText, lib);
             if (!parsed.Succeeded || parsed.Document is null)
             {
                 Console.Error.WriteLine("Flagship netlist parse failed:");
@@ -256,11 +257,11 @@ public static class Program
                 return 3;
             }
             flagshipSource = parsed.Document;
-            doc = FlagshipNetlist.ToSchematicDocument(parsed.Document, lib);
+            doc = CameoNetlistBridge.ToSchematicDocument(parsed.Document, lib);
         }
         else if (trimmed.StartsWith("<svg", StringComparison.OrdinalIgnoreCase) || trimmed.StartsWith("<?xml", StringComparison.OrdinalIgnoreCase))
         {
-            var parsed = FlagshipNetlist.ExtractFromPolyglotSvg(rawText, lib);
+            var parsed = CameoNetlistBridge.ExtractFromPolyglotSvg(rawText, lib);
             if (!parsed.Succeeded || parsed.Document is null)
             {
                 Console.Error.WriteLine("Polyglot SVG netlist extraction failed:");
@@ -268,11 +269,11 @@ public static class Program
                 return 3;
             }
             flagshipSource = parsed.Document;
-            doc = FlagshipNetlist.ToSchematicDocument(parsed.Document, lib);
+            doc = CameoNetlistBridge.ToSchematicDocument(parsed.Document, lib);
         }
         else if (trimmed.Contains("\"velosim.netlist.v1\"", StringComparison.Ordinal))
         {
-            var parsed = VeloSimIngestion.ImportVeloSimNetlistJson(rawText, lib);
+            var parsed = CameoNetlistBridge.ImportVeloSimNetlistJson(rawText, lib);
             if (!parsed.Succeeded || parsed.Document is null)
             {
                 Console.Error.WriteLine("VeloSim netlist ingestion failed:");
@@ -280,7 +281,7 @@ public static class Program
                 return 3;
             }
             flagshipSource = parsed.Document;
-            doc = FlagshipNetlist.ToSchematicDocument(parsed.Document, lib);
+            doc = CameoNetlistBridge.ToSchematicDocument(parsed.Document, lib);
         }
         else
         {
@@ -312,7 +313,7 @@ public static class Program
         var overlay = opRes.Status == RunTerminalStatus.Succeeded
             ? SchematicCompiler.BuildOperatingPointOverlay(doc, opRes)
             : null;
-        var flagshipOutDoc = flagshipSource ?? FlagshipNetlist.FromSchematic(doc, lib);
+        var flagshipOutDoc = flagshipSource ?? CameoNetlistBridge.FromSchematic(doc, lib);
 
         if (!string.IsNullOrWhiteSpace(svgOut))
         {
@@ -320,7 +321,7 @@ public static class Program
         }
         if (!string.IsNullOrWhiteSpace(polyglotSvgOut))
         {
-            await File.WriteAllTextAsync(polyglotSvgOut, FlagshipNetlist.ExportPolyglotSvg(flagshipOutDoc, overlay, lib));
+            await File.WriteAllTextAsync(polyglotSvgOut, CameoNetlistBridge.ExportPolyglotSvg(flagshipOutDoc, overlay, lib));
         }
         if (!string.IsNullOrWhiteSpace(spicenetOut))
         {
@@ -328,11 +329,11 @@ public static class Program
         }
         if (!string.IsNullOrWhiteSpace(velosimOut))
         {
-            await File.WriteAllTextAsync(velosimOut, VeloSimIngestion.ExportVeloSimNetlistJson(flagshipOutDoc, lib));
+            await File.WriteAllTextAsync(velosimOut, CameoNetlistBridge.ExportVeloSimNetlistJson(flagshipOutDoc, lib));
         }
         if (!string.IsNullOrWhiteSpace(circuitJsonOut))
         {
-            await File.WriteAllTextAsync(circuitJsonOut, VeloSimIngestion.ExportCircuitJson(flagshipOutDoc, lib));
+            await File.WriteAllTextAsync(circuitJsonOut, CameoNetlistBridge.ExportCircuitJson(flagshipOutDoc, lib));
         }
         if (!string.IsNullOrWhiteSpace(spiceOut))
         {

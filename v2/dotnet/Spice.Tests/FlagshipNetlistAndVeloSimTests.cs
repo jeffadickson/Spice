@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
+using Cameo.Netlist;
 using Spice.App;
 using Spice.Ir;
 using Spice.Schematic;
@@ -24,6 +25,49 @@ public sealed class FlagshipNetlistAndVeloSimTests
         {
             return null;
         }
+    }
+
+    [Fact]
+    public void CameoNetlist_StandaloneZeroDependencyAssembly_RoundTripsWithoutSpiceReferences()
+    {
+        // Prove Cameo.Netlist has ZERO references to Spice.* assemblies (safe to consume in VeloSim / FieldworkPCB / PCB projects)
+        var referencedNames = typeof(FlagshipNetlist).Assembly
+            .GetReferencedAssemblies()
+            .Select(a => a.Name ?? "")
+            .ToArray();
+        Assert.DoesNotContain(referencedNames, n => n.StartsWith("Spice.", StringComparison.OrdinalIgnoreCase));
+
+        const string standalone = """
+            netlist "standalone_cameo_rc" format="spice.netlist.v3" {
+              module Rc(r=1k, c=100nF) {
+                ports { in:in, out:out, gnd:power }
+                part R1 "spice.resistor" ohms=$r footprint="0603"
+                part C1 "spice.capacitor" farads=$c footprint="0603"
+                chain in -> R1 -> out -> C1 -> gnd
+              }
+              circuit {
+                part V1 "spice.vsrc" dc_volts=5V
+                use f1 = Rc(r=2.2k, c=47nF)
+                net in  { V1.p; f1.in }
+                net out { f1.out }
+                net GND ground=true { V1.n; f1.gnd }
+              }
+            }
+            """;
+
+        var parsed = FlagshipNetlist.Parse(standalone);
+        Assert.True(parsed.Succeeded, string.Join("; ", parsed.Diagnostics.Select(d => d.Message)));
+        var elab = FlagshipNetlist.Elaborate(parsed.Document!);
+        Assert.True(elab.Succeeded);
+        Assert.Equal(3, elab.Parts.Count);
+
+        var velosim = VeloSimIngestion.ExportVeloSimNetlistJson(parsed.Document!);
+        var reimp = VeloSimIngestion.ImportVeloSimNetlistJson(velosim, verifyModelHashes: true);
+        Assert.True(reimp.Succeeded);
+
+        var circuitJson = VeloSimIngestion.ExportCircuitJson(parsed.Document!);
+        Assert.Contains("\"source_component\"", circuitJson, StringComparison.Ordinal);
+        Assert.Contains("\"pcb_component\"", circuitJson, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -66,20 +110,20 @@ public sealed class FlagshipNetlistAndVeloSimTests
             """;
 
         var lib = new ComponentLibraryStore();
-        var parsed = FlagshipNetlist.Parse(source, lib);
+        var parsed = CameoNetlistBridge.Parse(source, lib);
         Assert.True(parsed.Succeeded, string.Join("; ", parsed.Diagnostics.Select(d => $"{d.Code}: {d.Message}")));
         Assert.NotNull(parsed.Document);
         Assert.False(string.IsNullOrWhiteSpace(parsed.Document!.ElectricalSha256));
         Assert.False(string.IsNullOrWhiteSpace(parsed.Document.LayoutSha256));
 
-        var elab = FlagshipNetlist.Elaborate(parsed.Document, lib);
+        var elab = CameoNetlistBridge.Elaborate(parsed.Document, lib);
         Assert.True(elab.Succeeded, string.Join("; ", elab.Diagnostics.Select(d => d.Message)));
         Assert.Contains(elab.Parts, p => p.Id == "Rser_stage1" && Math.Abs(p.Parameters["ohms"] - 1000.0) < 1e-9);
         Assert.Contains(elab.Parts, p => p.Id == "Rsh_stage1" && Math.Abs(p.Parameters["ohms"] - 10000.0) < 1e-9);
         Assert.Contains(elab.Parts, p => p.Id == "D1" && p.ModelName == "BZX84C5V1");
 
         // Zero-coordinate input synthesizes clean grid-snapped signal-flow layout & valid SVG
-        var schem = FlagshipNetlist.ToSchematicDocument(parsed.Document, lib);
+        var schem = CameoNetlistBridge.ToSchematicDocument(parsed.Document, lib);
         Assert.Equal(4, schem.RootSheet.Components.Count);
         foreach (var comp in schem.RootSheet.Components)
         {
@@ -189,14 +233,14 @@ public sealed class FlagshipNetlistAndVeloSimTests
                     new WireNet("GND", [new PinRef("V1", "n"), new PinRef("C1", "n")], IsGlobalGround: true)
                 ]));
 
-        var original = FlagshipNetlist.FromSchematic(schem, lib);
-        var polySvg = FlagshipNetlist.ExportPolyglotSvg(schem, library: lib);
+        var original = CameoNetlistBridge.FromSchematic(schem, lib);
+        var polySvg = CameoNetlistBridge.ExportPolyglotSvg(schem, library: lib);
 
         Assert.Contains("<svg ", polySvg, StringComparison.Ordinal);
         Assert.Contains("<metadata>", polySvg, StringComparison.Ordinal);
         Assert.Contains("spice.netlist.v3", polySvg, StringComparison.Ordinal);
 
-        var extracted = FlagshipNetlist.ExtractFromPolyglotSvg(polySvg, lib, verifyHashes: true);
+        var extracted = CameoNetlistBridge.ExtractFromPolyglotSvg(polySvg, lib, verifyHashes: true);
         Assert.True(extracted.Succeeded, string.Join("; ", extracted.Diagnostics.Select(d => d.Message)));
         Assert.Equal(original.ElectricalSha256, extracted.Document!.ElectricalSha256);
         Assert.Equal(original.LayoutSha256, extracted.Document.LayoutSha256);
@@ -243,12 +287,12 @@ public sealed class FlagshipNetlistAndVeloSimTests
             """;
 
         var lib = new ComponentLibraryStore();
-        var parsed = FlagshipNetlist.Parse(mixedSource, lib);
+        var parsed = CameoNetlistBridge.Parse(mixedSource, lib);
         Assert.True(parsed.Succeeded, string.Join("; ", parsed.Diagnostics.Select(d => d.Message)));
 
         // 1. Deterministic VeloSim ingestion export (zero timestamps -> identical bytes)
-        var velosimJson1 = VeloSimIngestion.ExportVeloSimNetlistJson(parsed.Document!, lib);
-        var velosimJson2 = VeloSimIngestion.ExportVeloSimNetlistJson(parsed.Document!, lib);
+        var velosimJson1 = CameoNetlistBridge.ExportVeloSimNetlistJson(parsed.Document!, lib);
+        var velosimJson2 = CameoNetlistBridge.ExportVeloSimNetlistJson(parsed.Document!, lib);
         Assert.Equal(velosimJson1, velosimJson2);
 
         using var doc = JsonDocument.Parse(velosimJson1);
@@ -257,7 +301,6 @@ public sealed class FlagshipNetlistAndVeloSimTests
         Assert.Equal("spice.netlist.v3", root.GetProperty("sourceFormat").GetString());
         Assert.Equal(parsed.Document!.ElectricalSha256, root.GetProperty("electricalSha256").GetString());
 
-        // Analog domain checks (VeloSim SchematicLab Kind mapping + node 0 ground + pinned models)
         var analog = root.GetProperty("analog");
         Assert.Equal("0", analog.GetProperty("nodes")[0].GetString());
         var elements = analog.GetProperty("elements").EnumerateArray().ToList();
@@ -266,7 +309,6 @@ public sealed class FlagshipNetlistAndVeloSimTests
         Assert.Contains(elements, e => e.GetProperty("id").GetString() == "L1" && e.GetProperty("velosimKind").GetString() == "SaturableInductor");
         Assert.Contains("IRF540N", analog.GetProperty("spiceDeck").GetString()!, StringComparison.Ordinal);
 
-        // Digital velosim.rtl.v1 domain + mixed-signal bridges
         var digital = root.GetProperty("digital").EnumerateArray().ToList();
         Assert.Single(digital);
         Assert.Equal("velosim.rtl.v1", digital[0].GetProperty("format").GetString());
@@ -277,12 +319,12 @@ public sealed class FlagshipNetlistAndVeloSimTests
 
         // 2. Fail-closed tamper detection on pinned model SHA-256
         var tamperedVelo = velosimJson1.Replace("BV=5.1", "BV=9.1", StringComparison.Ordinal);
-        var badImport = VeloSimIngestion.ImportVeloSimNetlistJson(tamperedVelo, lib, verifyModelHashes: true);
+        var badImport = CameoNetlistBridge.ImportVeloSimNetlistJson(tamperedVelo, lib, verifyModelHashes: true);
         Assert.False(badImport.Succeeded);
         Assert.Contains(badImport.Diagnostics, d => d.Code == "model_sha256_mismatch");
 
         // 3. Valid round-trip import & live C++20 simulation
-        var reimported = VeloSimIngestion.ImportVeloSimNetlistJson(velosimJson1, lib, verifyModelHashes: true);
+        var reimported = CameoNetlistBridge.ImportVeloSimNetlistJson(velosimJson1, lib, verifyModelHashes: true);
         Assert.True(reimported.Succeeded, string.Join("; ", reimported.Diagnostics.Select(d => d.Message)));
         Assert.Single(reimported.Document!.RtlBlocks);
         Assert.Equal(6, reimported.Document.Circuit.Parts.Count);
@@ -290,7 +332,7 @@ public sealed class FlagshipNetlistAndVeloSimTests
         using var backend = TryCreateNativeBackend();
         if (backend is not null)
         {
-            var reSchem = FlagshipNetlist.ToSchematicDocument(reimported.Document, lib);
+            var reSchem = CameoNetlistBridge.ToSchematicDocument(reimported.Document, lib);
             var deck = SchematicExporter.ExportNetlist(
                 reSchem,
                 new SchematicExportOptions(NetlistDialect.CanonicalSpice3f5, AnalysisKind.OperatingPoint),
@@ -300,7 +342,7 @@ public sealed class FlagshipNetlistAndVeloSimTests
         }
 
         // 4. Derived tscircuit-aligned Circuit JSON view
-        var circuitJson = VeloSimIngestion.ExportCircuitJson(parsed.Document!, lib);
+        var circuitJson = CameoNetlistBridge.ExportCircuitJson(parsed.Document!, lib);
         using var cjDoc = JsonDocument.Parse(circuitJson);
         var cjItems = cjDoc.RootElement.EnumerateArray().ToList();
         Assert.Contains(cjItems, x => x.GetProperty("type").GetString() == "pcb_board");
@@ -353,7 +395,6 @@ public sealed class FlagshipNetlistAndVeloSimTests
                 }
                 """;
 
-            // 1. Import hierarchical .spicenet -> auto-laid-out SchematicDocument
             var impResp = await http.PostAsJsonAsync("/api/schematic/import-netlist", new { content = netlist });
             impResp.EnsureSuccessStatusCode();
             using var impJson = JsonDocument.Parse(await impResp.Content.ReadAsStringAsync());
@@ -361,14 +402,12 @@ public sealed class FlagshipNetlistAndVeloSimTests
             Assert.Equal("spice.netlist.v3", impJson.RootElement.GetProperty("format").GetString());
             var docEl = impJson.RootElement.GetProperty("document");
 
-            // 2. Simulate directly on /api/schematic/simulate -> exact 5.0V divider output!
             var simResp = await http.PostAsJsonAsync("/api/schematic/simulate", new { document = docEl, analysis = "op", showOp = true });
             simResp.EnsureSuccessStatusCode();
             using var simJson = JsonDocument.Parse(await simResp.Content.ReadAsStringAsync());
             Assert.Equal("Succeeded", simJson.RootElement.GetProperty("status").GetString());
             Assert.Equal(5.0, simJson.RootElement.GetProperty("op_voltages").GetProperty("out").GetDouble(), precision: 5);
 
-            // 3. Export all 4 new formats: spicenet, polyglot_svg, velosim, circuit_json
             async Task<string> ExportFmt(string fmt)
             {
                 var r = await http.PostAsJsonAsync("/api/schematic/export", new { document = docEl, format = fmt, analysis = "op" });
@@ -387,7 +426,6 @@ public sealed class FlagshipNetlistAndVeloSimTests
             Assert.Contains("\"velosim.netlist.v1\"", velosimOut, StringComparison.Ordinal);
             Assert.Contains("\"source_component\"", circuitJsonOut, StringComparison.Ordinal);
 
-            // 4. Re-import polyglot .spice.svg and .velosim.json back into /api/schematic/import-netlist!
             var polyReimp = await http.PostAsJsonAsync("/api/schematic/import-netlist", new { content = polySvgOut, verifyHashes = true });
             polyReimp.EnsureSuccessStatusCode();
             using var polyJson = JsonDocument.Parse(await polyReimp.Content.ReadAsStringAsync());

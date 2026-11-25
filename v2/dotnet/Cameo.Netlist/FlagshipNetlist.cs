@@ -1,9 +1,8 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
-using Spice.Ir;
 
-namespace Spice.Schematic;
+namespace Cameo.Netlist;
 
 /// <summary>
 /// Diagnostic emitted during parsing, hash verification, or hierarchical elaboration
@@ -15,6 +14,36 @@ public sealed record FlagshipDiagnostic(
     string Message,
     int? LineNumber = null,
     string? SubjectId = null);
+
+/// <summary>
+/// Electrical pin endpoint `(InstanceId, PinName)` independent of schematic geometry.
+/// </summary>
+public sealed record NetlistPinRef(string InstanceId, string PinName);
+
+public enum NetlistModelKind
+{
+    SpiceModelCard,
+    Subcircuit,
+    Osdi
+}
+
+/// <summary>
+/// Standalone pinned SPICE .MODEL, .SUBCKT, or .OSDI definition carried in a netlist.
+/// </summary>
+public sealed record NetlistModelDef(
+    NetlistModelKind Kind,
+    string ModelName,
+    string SpiceText,
+    string? OsdiLibraryPath = null,
+    string? Description = null);
+
+/// <summary>
+/// Optional callback payload returned by an external component library (such as Spice.Schematic)
+/// to resolve default parameters and pinned models for a `lib="..."` part reference.
+/// </summary>
+public sealed record NetlistPartDefaults(
+    IReadOnlyDictionary<string, double> Parameters,
+    NetlistModelDef? Model = null);
 
 public sealed record FlagshipPortDef(
     string Name,
@@ -42,7 +71,7 @@ public sealed record FlagshipUseDef(
 
 public sealed record FlagshipNetDef(
     string Name,
-    IReadOnlyList<PinRef> Pins,
+    IReadOnlyList<NetlistPinRef> Pins,
     bool IsGround = false);
 
 /// <summary>
@@ -130,7 +159,7 @@ public sealed record FlagshipNetlistDocument(
     FlagshipModuleDef Circuit,
     IReadOnlyList<FlagshipModuleDef> Modules,
     IReadOnlyList<FlagshipRtlBlock> RtlBlocks,
-    IReadOnlyList<AttachedModelDefinition> Models,
+    IReadOnlyList<NetlistModelDef> Models,
     FlagshipLayout? Layout = null,
     FlagshipPcbSection? Pcb = null,
     IReadOnlyList<FlagshipVerifyBlock>? Verifications = null,
@@ -150,7 +179,7 @@ public sealed record ElaboratedNetlist(
     IReadOnlyList<FlagshipNetDef> Nets,
     IReadOnlyList<FlagshipPortDef> Ports,
     IReadOnlyList<string> Directives,
-    IReadOnlyList<AttachedModelDefinition> Models,
+    IReadOnlyList<NetlistModelDef> Models,
     IReadOnlyList<FlagshipRtlBlock> RtlBlocks,
     IReadOnlyList<FlagshipMixedBridge> Bridges,
     IReadOnlyList<FlagshipDiagnostic> Diagnostics)
@@ -159,9 +188,9 @@ public sealed record ElaboratedNetlist(
 }
 
 /// <summary>
-/// Parser, canonical formatter, dual-SHA256 hasher, hierarchical elaborator,
-/// signal-flow auto-placer, and polyglot .spice.svg codec for Spice V2's Flagship
-/// Hierarchical Netlist format (spice.netlist.v3 / .spicenet).
+/// Standalone, zero-dependency parser, canonical formatter, dual-SHA256 hasher,
+/// hierarchical elaborator, signal-flow auto-placer, and polyglot .spice.svg metadata
+/// codec for the Flagship Hierarchical Netlist format (spice.netlist.v3 / .spicenet).
 /// </summary>
 public static class FlagshipNetlist
 {
@@ -336,7 +365,7 @@ public static class FlagshipNetlist
     {
         var doc = WithHashes(document);
         var sb = new StringBuilder();
-        sb.AppendLine("// Spice V2 Flagship Hierarchical Netlist (spice.netlist.v3)");
+        sb.AppendLine("// Cameo / Spice V2 Flagship Hierarchical Netlist (spice.netlist.v3)");
         sb.AppendLine($"netlist {Quote(doc.Name)} format={Quote(FormatId)} schema={Quote(CurrentSchemaVersion)} electrical_sha256={Quote(doc.ElectricalSha256!)} layout_sha256={Quote(doc.LayoutSha256!)} {{");
 
         foreach (var mod in doc.Modules.OrderBy(m => m.Name, StringComparer.Ordinal))
@@ -538,7 +567,7 @@ public static class FlagshipNetlist
 
     public static FlagshipParseResult Parse(
         string text,
-        ComponentLibraryStore? library = null,
+        Func<string, NetlistPartDefaults?>? libraryResolver = null,
         bool verifyHashes = false)
     {
         var diags = new List<FlagshipDiagnostic>();
@@ -590,29 +619,31 @@ public static class FlagshipNetlist
             }
         }
 
-        // Resolve library models if referenced without an inline model block
-        if (library is not null)
+        if (libraryResolver is not null)
         {
-            doc = AttachMissingLibraryModels(doc, library);
+            doc = AttachMissingLibraryModels(doc, libraryResolver);
         }
 
         var stamped = WithHashes(doc);
         return new FlagshipParseResult(true, stamped, diags);
     }
 
-    private static FlagshipNetlistDocument AttachMissingLibraryModels(FlagshipNetlistDocument doc, ComponentLibraryStore library)
+    private static FlagshipNetlistDocument AttachMissingLibraryModels(
+        FlagshipNetlistDocument doc,
+        Func<string, NetlistPartDefaults?> libraryResolver)
     {
         var modelMap = doc.Models.ToDictionary(m => m.ModelName, StringComparer.OrdinalIgnoreCase);
         void ScanModule(FlagshipModuleDef m)
         {
             foreach (var p in m.Parts)
             {
-                if (!string.IsNullOrWhiteSpace(p.LibraryPartId) &&
-                    library.TryGet(p.LibraryPartId, out var libPart) &&
-                    libPart?.AttachedModel is not null &&
-                    !modelMap.ContainsKey(libPart.AttachedModel.ModelName))
+                if (!string.IsNullOrWhiteSpace(p.LibraryPartId))
                 {
-                    modelMap[libPart.AttachedModel.ModelName] = libPart.AttachedModel;
+                    var defaults = libraryResolver(p.LibraryPartId);
+                    if (defaults?.Model is not null && !modelMap.ContainsKey(defaults.Model.ModelName))
+                    {
+                        modelMap[defaults.Model.ModelName] = defaults.Model;
+                    }
                 }
             }
         }
@@ -813,7 +844,7 @@ public static class FlagshipNetlist
             var modules = new List<FlagshipModuleDef>();
             var moduleNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var rtlBlocks = new List<FlagshipRtlBlock>();
-            var models = new List<AttachedModelDefinition>();
+            var models = new List<NetlistModelDef>();
             var verifications = new List<FlagshipVerifyBlock>();
             FlagshipModuleDef? topCircuit = null;
             FlagshipLayout? layout = null;
@@ -1106,7 +1137,6 @@ public static class FlagshipNetlist
 
         private FlagshipUseDef? ParseUseStmt()
         {
-            int lineNo = Cur.Line;
             Advance(); // 'use'
             var instId = Advance().Text;
             if (!Expect(TokKind.Eq, $"Expected '=' in 'use {instId} = <Module>'")) return null;
@@ -1157,7 +1187,7 @@ public static class FlagshipNetlist
             }
 
             if (!Expect(TokKind.LBrace, $"Expected '{{' for net '{netName}'")) return null;
-            var pins = new List<PinRef>();
+            var pins = new List<NetlistPinRef>();
             while (Cur.Kind is not (TokKind.RBrace or TokKind.Eof))
             {
                 var raw = Advance().Text;
@@ -1168,7 +1198,7 @@ public static class FlagshipNetlist
                 }
                 else
                 {
-                    pins.Add(new PinRef(raw[..dot], raw[(dot + 1)..]));
+                    pins.Add(new NetlistPinRef(raw[..dot], raw[(dot + 1)..]));
                 }
                 Match(TokKind.Semi);
                 Match(TokKind.Comma);
@@ -1393,19 +1423,19 @@ public static class FlagshipNetlist
             return new FlagshipVerifyBlock(analysis, exprs);
         }
 
-        private AttachedModelDefinition? ParseModelBlock()
+        private NetlistModelDef? ParseModelBlock()
         {
             int lineNo = Cur.Line;
             Advance(); // 'model'
             var mName = Advance().Text;
-            var kind = AttachedModelKind.SpiceModelCard;
+            var kind = NetlistModelKind.SpiceModelCard;
             string? osdiPath = null;
             while (Cur.Kind == TokKind.Word && Peek().Kind == TokKind.Eq)
             {
                 var k = Advance().Text.ToLowerInvariant();
                 Advance();
                 var v = Advance().Text;
-                if (k == "kind" && Enum.TryParse<AttachedModelKind>(v, ignoreCase: true, out var parsedKind))
+                if (k == "kind" && Enum.TryParse<NetlistModelKind>(v, ignoreCase: true, out var parsedKind))
                     kind = parsedKind;
                 else if (k == "osdi")
                     osdiPath = v;
@@ -1416,7 +1446,7 @@ public static class FlagshipNetlist
                 return null;
             }
             var body = Advance().Text;
-            return new AttachedModelDefinition(kind, mName, body.Trim(), OsdiLibraryPath: osdiPath);
+            return new NetlistModelDef(kind, mName, body.Trim(), OsdiLibraryPath: osdiPath);
         }
     }
 
@@ -1429,19 +1459,19 @@ public static class FlagshipNetlist
     /// </summary>
     public static ElaboratedNetlist Elaborate(
         FlagshipNetlistDocument document,
-        ComponentLibraryStore? library = null)
+        Func<string, NetlistPartDefaults?>? libraryResolver = null)
     {
         var diags = new List<FlagshipDiagnostic>();
         var modMap = document.Modules.ToDictionary(m => m.Name, StringComparer.OrdinalIgnoreCase);
         var rtlMap = document.RtlBlocks.ToDictionary(r => r.Name, StringComparer.OrdinalIgnoreCase);
         var flatParts = new List<FlagshipPartDef>();
-        var netBuckets = new Dictionary<string, (bool IsGround, List<PinRef> Pins)>(StringComparer.OrdinalIgnoreCase);
+        var netBuckets = new Dictionary<string, (bool IsGround, List<NetlistPinRef> Pins)>(StringComparer.OrdinalIgnoreCase);
         var directives = new List<string>();
         var modelMap = document.Models.ToDictionary(m => m.ModelName, StringComparer.OrdinalIgnoreCase);
         var bridges = new List<FlagshipMixedBridge>();
         var activeStack = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        void AddNetPin(string netName, PinRef pin, bool isGround = false)
+        void AddNetPin(string netName, NetlistPinRef pin, bool isGround = false)
         {
             var effName = isGround || string.Equals(netName, "0", StringComparison.Ordinal) ||
                           string.Equals(netName, "GND", StringComparison.OrdinalIgnoreCase)
@@ -1450,7 +1480,7 @@ public static class FlagshipNetlist
             bool effGnd = isGround || string.Equals(effName, "GND", StringComparison.OrdinalIgnoreCase);
             if (!netBuckets.TryGetValue(effName, out var bucket))
             {
-                bucket = (effGnd, new List<PinRef>());
+                bucket = (effGnd, new List<NetlistPinRef>());
                 netBuckets[effName] = bucket;
             }
             else if (effGnd && !bucket.IsGround)
@@ -1463,7 +1493,6 @@ public static class FlagshipNetlist
             }
         }
 
-        // Collect all top-level and module RTL bridges
         foreach (var rtl in document.RtlBlocks)
         {
             bridges.AddRange(rtl.Bridges);
@@ -1501,7 +1530,6 @@ public static class FlagshipNetlist
                 return string.IsNullOrEmpty(scopeSuffix) ? localNet : $"{scopeSuffix}_{localNet}";
             }
 
-            // Build local parts (resolving $param expressions & library defaults)
             var localPartIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var localUseMap = mod.Uses.ToDictionary(u => u.InstanceId, StringComparer.OrdinalIgnoreCase);
 
@@ -1509,25 +1537,18 @@ public static class FlagshipNetlist
             {
                 localPartIds.Add(p.Id);
                 var resolvedParams = new Dictionary<string, double>(StringComparer.Ordinal);
-
-                // Seed library defaults first if referenced
                 string? effModel = p.ModelName;
-                if (!string.IsNullOrWhiteSpace(p.LibraryPartId) &&
-                    library is not null &&
-                    library.TryGet(p.LibraryPartId, out var libPart) &&
-                    libPart is not null)
+
+                if (!string.IsNullOrWhiteSpace(p.LibraryPartId) && libraryResolver is not null)
                 {
-                    foreach (var kv in libPart.DefaultParameters)
+                    var defaults = libraryResolver(p.LibraryPartId);
+                    if (defaults is not null)
                     {
-                        resolvedParams[kv.Key] = kv.Value;
-                    }
-                    if (string.IsNullOrWhiteSpace(effModel) && libPart.AttachedModel is not null)
-                    {
-                        effModel = libPart.AttachedModel.ModelName;
-                    }
-                    if (libPart.AttachedModel is not null && !modelMap.ContainsKey(libPart.AttachedModel.ModelName))
-                    {
-                        modelMap[libPart.AttachedModel.ModelName] = libPart.AttachedModel;
+                        foreach (var kv in defaults.Parameters) resolvedParams[kv.Key] = kv.Value;
+                        if (string.IsNullOrWhiteSpace(effModel) && defaults.Model is not null)
+                            effModel = defaults.Model.ModelName;
+                        if (defaults.Model is not null && !modelMap.ContainsKey(defaults.Model.ModelName))
+                            modelMap[defaults.Model.ModelName] = defaults.Model;
                     }
                 }
 
@@ -1538,13 +1559,9 @@ public static class FlagshipNetlist
                     {
                         var varName = expr.TrimStart('$');
                         if (paramEnv.TryGetValue(varName, out var pv))
-                        {
                             resolvedParams[pk] = pv;
-                        }
                         else
-                        {
                             diags.Add(new FlagshipDiagnostic("error", "unresolved_param", $"Unresolved parameter '{expr}' on part '{p.Id}' in '{mod.Name}'.", SubjectId: p.Id));
-                        }
                     }
                 }
 
@@ -1561,8 +1578,6 @@ public static class FlagshipNetlist
 
             foreach (var dir in mod.Directives) directives.Add(dir);
 
-            // Expand signal-flow `chain` statements into local net pin bindings.
-            // Pattern: `netA -> R1 -> netB -> C1 -> gnd` or `V1.p -> R1 -> out`
             var childPortBindings = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
             void BindPinOrChildPort(string netName, bool isGnd, string instId, string pinName)
             {
@@ -1578,11 +1593,10 @@ public static class FlagshipNetlist
                 }
                 else
                 {
-                    AddNetPin(effNet, new PinRef(ScopePartId(instId), pinName), string.Equals(effNet, "GND", StringComparison.OrdinalIgnoreCase));
+                    AddNetPin(effNet, new NetlistPinRef(ScopePartId(instId), pinName), string.Equals(effNet, "GND", StringComparison.OrdinalIgnoreCase));
                 }
             }
 
-            // Explicit `net` statements
             foreach (var net in mod.Nets)
             {
                 foreach (var pr in net.Pins)
@@ -1591,7 +1605,6 @@ public static class FlagshipNetlist
                 }
             }
 
-            // Signal-flow `chain` statements
             int autoNetIdx = 0;
             foreach (var chain in mod.Chains)
             {
@@ -1609,7 +1622,6 @@ public static class FlagshipNetlist
                     }
                     else if (localPartIds.Contains(step))
                     {
-                        // 2-terminal pass-through part in a chain: enters pin `p`, exits pin `n`
                         var inNet = currentNet ?? $"net_{++autoNetIdx}";
                         BindPinOrChildPort(inNet, false, step, "p");
                         if (s + 1 < chain.Steps.Count)
@@ -1619,7 +1631,7 @@ public static class FlagshipNetlist
                             {
                                 BindPinOrChildPort(next, false, step, "n");
                                 currentNet = next;
-                                s++; // consumed next net label
+                                s++;
                             }
                             else
                             {
@@ -1630,20 +1642,14 @@ public static class FlagshipNetlist
                     }
                     else
                     {
-                        // Step is a net name (e.g. `in`, `out`, `gnd`)
                         currentNet = step;
                     }
                 }
             }
 
-            // Recursively elaborate child `use` instances
             foreach (var u in mod.Uses)
             {
-                if (rtlMap.ContainsKey(u.ModuleName))
-                {
-                    // Digital RTL instance — its analog boundary is represented via mixed-signal bridges.
-                    continue;
-                }
+                if (rtlMap.ContainsKey(u.ModuleName)) continue;
                 if (!modMap.TryGetValue(u.ModuleName, out var childMod))
                 {
                     diags.Add(new FlagshipDiagnostic("error", "unknown_module", $"Unknown module '{u.ModuleName}' referenced by 'use {u.InstanceId}'.", SubjectId: u.InstanceId));
@@ -1694,243 +1700,22 @@ public static class FlagshipNetlist
             diags);
     }
 
-    // ==================== SCHEMATIC & IR BRIDGES ====================
+    // ==================== POLYGLOT SVG METADATA CODEC ====================
 
-    /// <summary>
-    /// Converts a FlagshipNetlistDocument into a renderable, simulatable SchematicDocument.
-    /// Uses explicit `layout` placements where provided, and deterministically auto-places
-    /// any unplaced components in left-to-right signal-flow columns snapped to grid.
-    /// </summary>
-    public static SchematicDocument ToSchematicDocument(
-        FlagshipNetlistDocument document,
-        ComponentLibraryStore? library = null)
-    {
-        var elab = Elaborate(document, library);
-        if (!elab.Succeeded)
-        {
-            throw new InvalidOperationException(
-                "Flagship netlist elaboration failed: " +
-                string.Join("; ", elab.Diagnostics.Select(d => $"{d.Code}: {d.Message}")));
-        }
-
-        double grid = document.Layout is { GridPitch: > 2.0 } ? document.Layout.GridPitch : 20.0;
-        string style = document.Layout?.GridStyle ?? "lines";
-        var explicitMap = (document.Layout?.Placements ?? [])
-            .ToDictionary(p => p.InstanceId, StringComparer.OrdinalIgnoreCase);
-
-        // Compute deterministic BFS signal-flow column ranks starting from voltage/current sources
-        var autoCoords = ComputeSignalFlowLayout(elab.Parts, elab.Nets, grid);
-
-        var placed = new List<PlacedComponent>();
-        foreach (var p in elab.Parts)
-        {
-            double x, y;
-            int rot;
-            bool mx = false, my = false;
-            if (explicitMap.TryGetValue(p.Id, out var pl))
-            {
-                x = pl.X;
-                y = pl.Y;
-                rot = pl.RotationDegrees;
-                mx = pl.MirrorX;
-                my = pl.MirrorY;
-            }
-            else
-            {
-                var auto = autoCoords[p.Id];
-                x = auto.X;
-                y = auto.Y;
-                rot = auto.Rot;
-            }
-            placed.Add(new PlacedComponent(
-                InstanceId: p.Id,
-                DeviceKindId: p.KindId,
-                X: x,
-                Y: y,
-                RotationDegrees: rot,
-                Parameters: p.Parameters,
-                MirrorX: mx,
-                MirrorY: my,
-                ModelName: p.ModelName,
-                LibraryPartId: p.LibraryPartId,
-                DisplayValue: p.DisplayValue,
-                ControlSourceId: p.ControlSourceId));
-        }
-
-        var wireNets = elab.Nets
-            .Select(n => new WireNet(n.Name, n.Pins, n.IsGround))
-            .ToList();
-
-        var annotations = elab.Directives.Count > 0
-            ? elab.Directives.Select((d, idx) => new SheetAnnotation($"dir_{idx + 1}", 80.0, 280.0 + idx * 24.0, d, IsSpiceDirective: true)).ToList()
-            : null;
-
-        var ports = elab.Ports.Count > 0
-            ? elab.Ports.Select((pt, idx) => new SheetPort(pt.Name, pt.Direction == "in" ? 40.0 : 480.0, 80.0 + idx * 40.0, pt.Direction)).ToList()
-            : null;
-
-        var doc = new SchematicDocument(
-            SchemaVersion: SchematicCompiler.CurrentSchemaVersion,
-            Name: document.Name,
-            RootSheet: new SchematicSheet(
-                SheetId: "root",
-                Title: document.Name,
-                Components: placed,
-                Nets: wireNets,
-                Annotations: annotations,
-                Ports: ports,
-                GridPitch: grid,
-                GridStyle: style),
-            EmbeddedModels: elab.Models.Count > 0 ? elab.Models : null);
-
-        return SchematicCompiler.EmbedReferencedLibraryAssets(doc, library);
-    }
-
-    public static SchematicCompileResult CompileToIr(
-        FlagshipNetlistDocument document,
-        DeviceRegistry? registry = null,
-        ComponentLibraryStore? library = null)
-    {
-        var elab = Elaborate(document, library);
-        if (!elab.Succeeded)
-        {
-            return new SchematicCompileResult(
-                false,
-                null,
-                elab.Diagnostics.Select(d => new ErcDiagnostic(ErcSeverity.Error, d.Code, d.Message, SubjectId: d.SubjectId)).ToList());
-        }
-        var schem = ToSchematicDocument(document, library);
-        return SchematicCompiler.CompileToIr(schem, registry, library);
-    }
-
-    /// <summary>
-    /// Lifts any single-sheet or multi-sheet SchematicDocument into the canonical
-    /// FlagshipNetlistDocument (spice.netlist.v3), preserving topology, hierarchy,
-    /// pinned SPICE/OSDI models, and visual layout cleanly separated.
-    /// </summary>
-    public static FlagshipNetlistDocument FromSchematic(
-        SchematicDocument document,
-        ComponentLibraryStore? library = null)
-    {
-        var enriched = SchematicCompiler.EmbedReferencedLibraryAssets(document, library);
-        var parts = new List<FlagshipPartDef>();
-        var nets = new Dictionary<string, (bool IsGround, List<PinRef> Pins)>(StringComparer.OrdinalIgnoreCase);
-        var placements = new List<FlagshipPlacement>();
-        var directives = new List<string>();
-        var ports = (enriched.RootSheet.Ports ?? [])
-            .Select(p => new FlagshipPortDef(p.Name, p.Direction, 1))
-            .ToList();
-
-        var sheets = new List<SchematicSheet> { enriched.RootSheet };
-        if (enriched.SubSheets is not null) sheets.AddRange(enriched.SubSheets);
-
-        foreach (var sheet in sheets)
-        {
-            foreach (var c in sheet.Components)
-            {
-                var canonId = SchematicCompiler.ResolveInstanceId(enriched, sheet, c);
-                parts.Add(new FlagshipPartDef(
-                    Id: canonId,
-                    KindId: c.DeviceKindId,
-                    Parameters: new Dictionary<string, double>(c.Parameters, StringComparer.Ordinal),
-                    ModelName: c.ModelName,
-                    LibraryPartId: c.LibraryPartId,
-                    ControlSourceId: c.ControlSourceId,
-                    DisplayValue: c.DisplayValue));
-                placements.Add(new FlagshipPlacement(canonId, c.X, c.Y, c.RotationDegrees, c.MirrorX, c.MirrorY));
-            }
-
-            foreach (var net in sheet.Nets)
-            {
-                var eff = SchematicCompiler.ResolveNetName(enriched, sheet, net);
-                bool isGnd = eff == "0";
-                var key = isGnd ? "GND" : eff;
-                if (!nets.TryGetValue(key, out var bucket))
-                {
-                    bucket = (isGnd, new List<PinRef>());
-                    nets[key] = bucket;
-                }
-                foreach (var pr in net.ConnectedPins)
-                {
-                    var comp = sheet.Components.FirstOrDefault(x => string.Equals(x.InstanceId, pr.InstanceId, StringComparison.OrdinalIgnoreCase));
-                    var instId = comp is not null ? SchematicCompiler.ResolveInstanceId(enriched, sheet, comp) : pr.InstanceId;
-                    var scopedPin = new PinRef(instId, pr.PinName);
-                    if (!bucket.Pins.Contains(scopedPin)) bucket.Pins.Add(scopedPin);
-                }
-            }
-
-            if (sheet.Annotations is not null)
-            {
-                foreach (var ann in sheet.Annotations)
-                {
-                    if (ann.IsSpiceDirective && !string.IsNullOrWhiteSpace(ann.Text))
-                        directives.Add(ann.Text.Trim());
-                }
-            }
-        }
-
-        var circuit = new FlagshipModuleDef(
-            Name: "__circuit__",
-            DefaultParameters: new Dictionary<string, double>(),
-            Ports: ports,
-            Parts: parts,
-            Uses: [],
-            Nets: nets.Select(kv => new FlagshipNetDef(kv.Key, kv.Value.Pins, kv.Value.IsGround)).ToList(),
-            Chains: [],
-            Directives: directives);
-
-        var layout = new FlagshipLayout(enriched.RootSheet.GridPitch, enriched.RootSheet.GridStyle, placements);
-        var models = enriched.EmbeddedModels?.ToList() ?? [];
-
-        return WithHashes(new FlagshipNetlistDocument(
-            Name: enriched.Name,
-            Circuit: circuit,
-            Modules: [],
-            RtlBlocks: [],
-            Models: models,
-            Layout: layout));
-    }
-
-    // ==================== POLYGLOT SELF-VIEWING SVG (.spice.svg) ====================
-
-    /// <summary>
-    /// Exports a polyglot .spice.svg file: renders as a crisp IEEE vector schematic natively
-    /// in any browser or GitHub PR while embedding the lossless canonical spice.netlist.v3
-    /// payload inside SVG &lt;metadata&gt; for round-trip editing and simulation.
-    /// </summary>
-    public static string ExportPolyglotSvg(
-        SchematicDocument document,
-        OperatingPointOverlay? opOverlay = null,
-        ComponentLibraryStore? library = null,
-        bool lightTheme = false,
-        string? gridStyle = null)
-    {
-        var flagship = FromSchematic(document, library);
-        var netlistText = Format(flagship);
-        var svg = SchematicCompiler.ExportSvg(document, opOverlay, library, lightTheme, gridStyle);
-        return EmbedNetlistIntoSvg(svg, netlistText);
-    }
-
-    public static string ExportPolyglotSvg(
-        FlagshipNetlistDocument document,
-        OperatingPointOverlay? opOverlay = null,
-        ComponentLibraryStore? library = null,
-        bool lightTheme = false,
-        string? gridStyle = null)
+    public static string EmbedIntoSvg(string svgText, FlagshipNetlistDocument document)
     {
         var netlistText = Format(document);
-        var schem = ToSchematicDocument(document, library);
-        var svg = SchematicCompiler.ExportSvg(schem, opOverlay, library, lightTheme, gridStyle);
-        return EmbedNetlistIntoSvg(svg, netlistText);
+        var safeCdata = netlistText.Replace("]]>", "]]]]><![CDATA[>", StringComparison.Ordinal);
+        var meta = $"  <metadata>\n    {PolyglotStartMarker}\n{safeCdata}{PolyglotEndMarker}\n  </metadata>\n";
+        var defsIdx = svgText.IndexOf("  <defs>", StringComparison.Ordinal);
+        if (defsIdx >= 0) return svgText.Insert(defsIdx, meta);
+        var closeTag = svgText.IndexOf('>');
+        return closeTag >= 0 ? svgText.Insert(closeTag + 1, "\n" + meta) : svgText + "\n" + meta;
     }
 
-    /// <summary>
-    /// Extracts and parses the canonical spice.netlist.v3 document embedded inside a
-    /// polyglot .spice.svg file.
-    /// </summary>
     public static FlagshipParseResult ExtractFromPolyglotSvg(
         string svgText,
-        ComponentLibraryStore? library = null,
+        Func<string, NetlistPartDefaults?>? libraryResolver = null,
         bool verifyHashes = true)
     {
         if (string.IsNullOrWhiteSpace(svgText))
@@ -1949,25 +1734,15 @@ public static class FlagshipNetlist
             return new FlagshipParseResult(false, null, [new FlagshipDiagnostic("error", "unterminated_embedded_netlist", "Embedded spice.netlist.v3 CDATA block is unterminated.")]);
         }
         var embedded = svgText[payloadStart..end].Replace("]]]]><![CDATA[>", "]]>", StringComparison.Ordinal);
-        return Parse(embedded, library, verifyHashes);
-    }
-
-    private static string EmbedNetlistIntoSvg(string svg, string netlistText)
-    {
-        var safeCdata = netlistText.Replace("]]>", "]]]]><![CDATA[>", StringComparison.Ordinal);
-        var meta = $"  <metadata>\n    {PolyglotStartMarker}\n{safeCdata}{PolyglotEndMarker}\n  </metadata>\n";
-        var defsIdx = svg.IndexOf("  <defs>", StringComparison.Ordinal);
-        if (defsIdx >= 0) return svg.Insert(defsIdx, meta);
-        var closeTag = svg.IndexOf('>');
-        return closeTag >= 0 ? svg.Insert(closeTag + 1, "\n" + meta) : svg + "\n" + meta;
+        return Parse(embedded, libraryResolver, verifyHashes);
     }
 
     // ==================== DETERMINISTIC SIGNAL-FLOW AUTO-PLACER ====================
 
-    private static Dictionary<string, (double X, double Y, int Rot)> ComputeSignalFlowLayout(
+    public static Dictionary<string, FlagshipPlacement> ComputeSignalFlowLayout(
         IReadOnlyList<FlagshipPartDef> parts,
         IReadOnlyList<FlagshipNetDef> nets,
-        double grid)
+        double grid = 20.0)
     {
         var partNetMap = new Dictionary<string, List<(string Net, bool IsGround)>>(StringComparer.OrdinalIgnoreCase);
         var netPartsMap = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
@@ -1983,17 +1758,12 @@ public static class FlagshipNetlist
             foreach (var pr in n.Pins)
             {
                 if (partNetMap.TryGetValue(pr.InstanceId, out var pNets))
-                {
                     pNets.Add((n.Name, n.IsGround));
-                }
                 if (!list.Contains(pr.InstanceId, StringComparer.OrdinalIgnoreCase))
-                {
                     list.Add(pr.InstanceId);
-                }
             }
         }
 
-        // BFS from independent sources (V/I) across non-ground nets
         var rank = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         var queue = new Queue<string>();
         foreach (var p in parts.Where(p => p.KindId is "spice.vsrc" or "spice.isrc").OrderBy(p => p.Id, StringComparer.Ordinal))
@@ -2032,7 +1802,7 @@ public static class FlagshipNetlist
             if (!rank.ContainsKey(p.Id)) rank[p.Id] = 1;
         }
 
-        var result = new Dictionary<string, (double X, double Y, int Rot)>(StringComparer.OrdinalIgnoreCase);
+        var result = new Dictionary<string, FlagshipPlacement>(StringComparer.OrdinalIgnoreCase);
         foreach (var colGroup in parts.GroupBy(p => rank[p.Id]).OrderBy(g => g.Key))
         {
             int col = colGroup.Key;
@@ -2044,7 +1814,7 @@ public static class FlagshipNetlist
                                   (touchesGnd && p.KindId is "spice.resistor" or "spice.capacitor" or "spice.inductor" or "spice.diode" or "spice.core");
                 double x = Snap(80.0 + col * 140.0, grid);
                 double y = Snap(100.0 + row * 120.0, grid);
-                result[p.Id] = (x, y, isVertical ? 90 : 0);
+                result[p.Id] = new FlagshipPlacement(p.Id, x, y, isVertical ? 90 : 0);
                 row++;
             }
         }
@@ -2085,14 +1855,12 @@ public static class FlagshipNetlist
         var suf = s[numEnd..].Trim();
         if (suf.Length == 0) { value = mantissa; return double.IsFinite(value); }
 
-        // Strip trailing SI base unit names (Ohm/Ohms, Hz, V, A, F, H, s, m) while preserving prefix!
         var lower = suf.ToLowerInvariant();
         if (lower.EndsWith("ohms", StringComparison.Ordinal)) lower = lower[..^4];
         else if (lower.EndsWith("ohm", StringComparison.Ordinal)) lower = lower[..^3];
         else if (lower.EndsWith("hz", StringComparison.Ordinal)) lower = lower[..^2];
         else if (lower.Length >= 1 && lower[^1] is 'v' or 'a' or 'f' or 'h' or 's')
         {
-            // Distinguish `10f` (10 femto) vs `10nF` (10 nano-farad) vs `5V` (5 volts)
             if (lower.Length == 1 && lower[0] == 'f') { /* keep femto */ }
             else lower = lower[..^1];
         }
@@ -2123,9 +1891,7 @@ public static class FlagshipNetlist
         mm = 0.0;
         var s = raw.Trim();
         if (s.EndsWith("mm", StringComparison.OrdinalIgnoreCase))
-        {
             return double.TryParse(s[..^2], NumberStyles.Float, CultureInfo.InvariantCulture, out mm) && double.IsFinite(mm);
-        }
         if (s.EndsWith("mil", StringComparison.OrdinalIgnoreCase))
         {
             if (double.TryParse(s[..^3], NumberStyles.Float, CultureInfo.InvariantCulture, out var mils) && double.IsFinite(mils))

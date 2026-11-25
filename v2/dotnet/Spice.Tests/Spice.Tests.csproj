@@ -12,6 +12,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="../Cameo.Netlist/Cameo.Netlist.csproj" />
     <ProjectReference Include="../Spice.Ir/Spice.Ir.csproj" />
     <ProjectReference Include="../Spice.Sdk/Spice.Sdk.csproj" />
     <ProjectReference Include="../Spice.Schematic/Spice.Schematic.csproj" />

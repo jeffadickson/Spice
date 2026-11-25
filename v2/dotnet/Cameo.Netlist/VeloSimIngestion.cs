@@ -2,15 +2,14 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Spice.Ir;
 
-namespace Spice.Schematic;
+namespace Cameo.Netlist;
 
 /// <summary>
-/// Deterministic VeloSim ingestion package (format: velosim.netlist.v1) bridging
-/// Spice V2's Flagship Hierarchical Netlist (spice.netlist.v3) into VeloSim's
-/// SchematicLab analog CircuitJob and VeloSim.Core structural velosim.rtl.v1
-/// digital/mixed-signal runtime, plus a derived tscircuit-aligned Circuit JSON view.
+/// Standalone, zero-dependency VeloSim ingestion codec (format: velosim.netlist.v1)
+/// bridging Cameo.Netlist (spice.netlist.v3 / .spicenet) into VeloSim SchematicLab
+/// analog CircuitJob and VeloSim.Core structural velosim.rtl.v1 digital/mixed-signal
+/// runtime, plus a derived tscircuit-aligned Circuit JSON flat element view.
 /// </summary>
 public static class VeloSimIngestion
 {
@@ -96,10 +95,11 @@ public static class VeloSimIngestion
     /// </summary>
     public static string ExportVeloSimNetlistJson(
         FlagshipNetlistDocument document,
-        ComponentLibraryStore? library = null)
+        Func<string, NetlistPartDefaults?>? libraryResolver = null,
+        string? canonicalSpiceDeck = null)
     {
         var stamped = FlagshipNetlist.WithHashes(document);
-        var elab = FlagshipNetlist.Elaborate(stamped, library);
+        var elab = FlagshipNetlist.Elaborate(stamped, libraryResolver);
         if (!elab.Succeeded)
         {
             throw new InvalidOperationException(
@@ -107,7 +107,6 @@ public static class VeloSimIngestion
                 string.Join("; ", elab.Diagnostics.Select(d => $"{d.Code}: {d.Message}")));
         }
 
-        // Canonical node index table (0 = global ground, matching VeloSim CircuitJob.Nodes)
         var nodeIndex = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) { ["0"] = 0, ["GND"] = 0 };
         var nodes = new List<string> { "0" };
         foreach (var net in elab.Nets.OrderBy(n => n.IsGround ? "" : n.Name, StringComparer.Ordinal))
@@ -124,7 +123,6 @@ public static class VeloSimIngestion
             }
         }
 
-        // Build per-instance pin -> net map
         var pinToNet = new Dictionary<(string Inst, string Pin), string>();
         foreach (var net in elab.Nets)
         {
@@ -173,19 +171,6 @@ public static class VeloSimIngestion
                 OsdiLibraryPath: m.OsdiLibraryPath))
             .ToList();
 
-        // Emit canonical SPICE3f5 deck if the analog section is non-empty and passes ERC
-        var spiceDeck = "";
-        var schem = FlagshipNetlist.ToSchematicDocument(stamped, library);
-        var compile = SchematicCompiler.CompileToIr(schem, library: library);
-        if (compile.Succeeded && compile.Circuit is not null)
-        {
-            spiceDeck = SchematicExporter.ExportNetlist(
-                schem,
-                new SchematicExportOptions(NetlistDialect.CanonicalSpice3f5, AnalysisKind.OperatingPoint),
-                library: library);
-        }
-
-        // Digital RTL modules formatted to match VeloSim.Core RtlDesign velosim.rtl.v1 envelope
         var digital = new List<VeloSimRtlModuleEnvelope>();
         using var emptyArrDoc = JsonDocument.Parse("[]");
         using var emptyBodyDoc = JsonDocument.Parse("{\"kind\":\"block\",\"items\":[]}");
@@ -240,7 +225,7 @@ public static class VeloSimIngestion
             DesignName: stamped.Name,
             ElectricalSha256: stamped.ElectricalSha256!,
             LayoutSha256: stamped.LayoutSha256!,
-            Analog: new VeloSimAnalogDomain(nodes, elements, pinnedModels, elab.Directives, spiceDeck),
+            Analog: new VeloSimAnalogDomain(nodes, elements, pinnedModels, elab.Directives, canonicalSpiceDeck ?? ""),
             Digital: digital,
             Bridges: elab.Bridges,
             Connectivity: connectivity,
@@ -249,18 +234,13 @@ public static class VeloSimIngestion
         return JsonSerializer.Serialize(package, JsonOpts);
     }
 
-    public static string ExportVeloSimNetlistJson(
-        SchematicDocument document,
-        ComponentLibraryStore? library = null) =>
-        ExportVeloSimNetlistJson(FlagshipNetlist.FromSchematic(document, library), library);
-
     /// <summary>
     /// Fail-closed importer reading a velosim.netlist.v1 ingestion package back into a
     /// FlagshipNetlistDocument (with bounded byte size, JSON depth, and model SHA-256 verification).
     /// </summary>
     public static FlagshipParseResult ImportVeloSimNetlistJson(
         string json,
-        ComponentLibraryStore? library = null,
+        Func<string, NetlistPartDefaults?>? libraryResolver = null,
         bool verifyModelHashes = true)
     {
         var diags = new List<FlagshipDiagnostic>();
@@ -297,7 +277,7 @@ public static class VeloSimIngestion
             return new FlagshipParseResult(false, null, diags);
         }
 
-        var models = new List<AttachedModelDefinition>();
+        var models = new List<NetlistModelDef>();
         foreach (var m in pkg.Analog.Models)
         {
             if (verifyModelHashes && !string.IsNullOrWhiteSpace(m.Sha256))
@@ -309,10 +289,10 @@ public static class VeloSimIngestion
                     return new FlagshipParseResult(false, null, diags);
                 }
             }
-            var kind = Enum.TryParse<AttachedModelKind>(m.Kind, ignoreCase: true, out var parsed)
+            var kind = Enum.TryParse<NetlistModelKind>(m.Kind, ignoreCase: true, out var parsed)
                 ? parsed
-                : AttachedModelKind.SpiceModelCard;
-            models.Add(new AttachedModelDefinition(kind, m.Name, m.SpiceText, m.OsdiLibraryPath));
+                : NetlistModelKind.SpiceModelCard;
+            models.Add(new NetlistModelDef(kind, m.Name, m.SpiceText, m.OsdiLibraryPath));
         }
 
         var parts = pkg.Analog.Elements.Select(e => new FlagshipPartDef(
@@ -329,13 +309,13 @@ public static class VeloSimIngestion
         var nets = new List<FlagshipNetDef>();
         foreach (var c in pkg.Connectivity)
         {
-            var pins = new List<PinRef>();
+            var pins = new List<NetlistPinRef>();
             foreach (var pStr in c.Pins)
             {
                 var dot = pStr.IndexOf('.');
                 if (dot > 0 && dot < pStr.Length - 1)
                 {
-                    pins.Add(new PinRef(pStr[..dot], pStr[(dot + 1)..]));
+                    pins.Add(new NetlistPinRef(pStr[..dot], pStr[(dot + 1)..]));
                 }
             }
             nets.Add(new FlagshipNetDef(c.IsGround ? "GND" : c.NetName, pins, c.IsGround));
@@ -367,10 +347,9 @@ public static class VeloSimIngestion
             Layout: null,
             Pcb: pkg.Pcb));
 
-        if (library is not null)
+        if (libraryResolver is not null)
         {
-            // Validate elaboration with library context
-            var elab = FlagshipNetlist.Elaborate(doc, library);
+            var elab = FlagshipNetlist.Elaborate(doc, libraryResolver);
             diags.AddRange(elab.Diagnostics);
             if (!elab.Succeeded) return new FlagshipParseResult(false, null, diags);
         }
@@ -381,21 +360,26 @@ public static class VeloSimIngestion
     /// <summary>
     /// Exports a derived read-only tscircuit-aligned Circuit JSON flat element array
     /// (source_component, source_port, source_net, source_trace, schematic_component,
-    /// pcb_board, pcb_component) for downstream PCB/autorouting interoperability.
+    /// pcb_board, pcb_component) with zero schematic/UI dependencies.
     /// </summary>
     public static string ExportCircuitJson(
         FlagshipNetlistDocument document,
-        ComponentLibraryStore? library = null)
+        Func<string, NetlistPartDefaults?>? libraryResolver = null)
     {
-        var schem = FlagshipNetlist.ToSchematicDocument(document, library);
-        var elab = FlagshipNetlist.Elaborate(document, library);
+        var elab = FlagshipNetlist.Elaborate(document, libraryResolver);
         if (!elab.Succeeded)
         {
             throw new InvalidOperationException("Cannot export Circuit JSON for invalid netlist.");
         }
 
+        var explicitMap = (document.Layout?.Placements ?? [])
+            .ToDictionary(p => p.InstanceId, StringComparer.OrdinalIgnoreCase);
+        var autoLayout = FlagshipNetlist.ComputeSignalFlowLayout(
+            elab.Parts,
+            elab.Nets,
+            document.Layout is { GridPitch: > 2.0 } ? document.Layout.GridPitch : 20.0);
+
         var elements = new List<object>();
-        var partMeta = elab.Parts.ToDictionary(p => p.Id, StringComparer.OrdinalIgnoreCase);
 
         if (document.Pcb is not null)
         {
@@ -411,63 +395,64 @@ public static class VeloSimIngestion
         }
 
         var portIdMap = new Dictionary<(string Inst, string Pin), string>();
-        foreach (var comp in schem.RootSheet.Components.OrderBy(c => c.InstanceId, StringComparer.Ordinal))
+        foreach (var part in elab.Parts.OrderBy(c => c.Id, StringComparer.Ordinal))
         {
-            var srcId = $"source_component_{comp.InstanceId}";
-            partMeta.TryGetValue(comp.InstanceId, out var meta);
+            var srcId = $"source_component_{part.Id}";
+            var place = explicitMap.TryGetValue(part.Id, out var pl) ? pl : autoLayout[part.Id];
 
             elements.Add(new
             {
                 type = "source_component",
                 source_component_id = srcId,
-                name = comp.InstanceId,
-                ftype = MapToCircuitJsonFtype(comp.DeviceKindId),
-                spice_kind_id = comp.DeviceKindId,
-                model_name = comp.ModelName,
-                library_part_id = comp.LibraryPartId,
-                footprint = meta?.Footprint,
-                manufacturer_part_number = meta?.Mpn,
-                supplier_part_numbers = !string.IsNullOrWhiteSpace(meta?.SupplierPartNumber)
-                    ? new Dictionary<string, string[]> { ["jlcpcb"] = [meta.SupplierPartNumber] }
+                name = part.Id,
+                ftype = MapToCircuitJsonFtype(part.KindId),
+                spice_kind_id = part.KindId,
+                model_name = part.ModelName,
+                library_part_id = part.LibraryPartId,
+                footprint = part.Footprint,
+                manufacturer_part_number = part.Mpn,
+                supplier_part_numbers = !string.IsNullOrWhiteSpace(part.SupplierPartNumber)
+                    ? new Dictionary<string, string[]> { ["jlcpcb"] = [part.SupplierPartNumber] }
                     : null,
-                parameters = comp.Parameters
+                parameters = part.Parameters
             });
 
             elements.Add(new
             {
                 type = "schematic_component",
-                schematic_component_id = $"schematic_component_{comp.InstanceId}",
+                schematic_component_id = $"schematic_component_{part.Id}",
                 source_component_id = srcId,
-                center = new { x = comp.X, y = comp.Y },
-                rotation = comp.RotationDegrees
+                center = new { x = place.X, y = place.Y },
+                rotation = place.RotationDegrees
             });
 
-            if (!string.IsNullOrWhiteSpace(meta?.Footprint))
+            if (!string.IsNullOrWhiteSpace(part.Footprint))
             {
                 elements.Add(new
                 {
                     type = "pcb_component",
-                    pcb_component_id = $"pcb_component_{comp.InstanceId}",
+                    pcb_component_id = $"pcb_component_{part.Id}",
                     source_component_id = srcId,
-                    footprint = meta.Footprint,
+                    footprint = part.Footprint,
                     layer = "top"
                 });
             }
         }
 
-        foreach (var net in schem.RootSheet.Nets.OrderBy(n => n.IsGlobalGround ? "" : n.NetName, StringComparer.Ordinal))
+        foreach (var net in elab.Nets.OrderBy(n => n.IsGround ? "" : n.Name, StringComparer.Ordinal))
         {
-            var netId = $"source_net_{(net.IsGlobalGround ? "GND" : net.NetName)}";
+            var netName = net.IsGround ? "GND" : net.Name;
+            var netId = $"source_net_{netName}";
             elements.Add(new
             {
                 type = "source_net",
                 source_net_id = netId,
-                name = net.IsGlobalGround ? "GND" : net.NetName,
-                is_ground = net.IsGlobalGround
+                name = netName,
+                is_ground = net.IsGround
             });
 
             var connectedPortIds = new List<string>();
-            foreach (var pr in net.ConnectedPins.OrderBy(p => p.InstanceId, StringComparer.Ordinal).ThenBy(p => p.PinName, StringComparer.Ordinal))
+            foreach (var pr in net.Pins.OrderBy(p => p.InstanceId, StringComparer.Ordinal).ThenBy(p => p.PinName, StringComparer.Ordinal))
             {
                 if (!portIdMap.TryGetValue((pr.InstanceId, pr.PinName), out var portId))
                 {
@@ -489,7 +474,7 @@ public static class VeloSimIngestion
                 elements.Add(new
                 {
                     type = "source_trace",
-                    source_trace_id = $"source_trace_{(net.IsGlobalGround ? "GND" : net.NetName)}",
+                    source_trace_id = $"source_trace_{netName}",
                     connected_source_port_ids = connectedPortIds,
                     connected_source_net_ids = new[] { netId }
                 });
@@ -499,12 +484,7 @@ public static class VeloSimIngestion
         return JsonSerializer.Serialize(elements, JsonOpts);
     }
 
-    public static string ExportCircuitJson(
-        SchematicDocument document,
-        ComponentLibraryStore? library = null) =>
-        ExportCircuitJson(FlagshipNetlist.FromSchematic(document, library), library);
-
-    private static string MapToVeloSimKind(FlagshipPartDef part, IReadOnlyList<AttachedModelDefinition> models)
+    private static string MapToVeloSimKind(FlagshipPartDef part, IReadOnlyList<NetlistModelDef> models)
     {
         var modelText = models.FirstOrDefault(m =>
             !string.IsNullOrWhiteSpace(part.ModelName) &&

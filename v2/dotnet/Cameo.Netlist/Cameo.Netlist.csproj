@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsPackable>true</IsPackable>
+    <PackageId>Cameo.Netlist</PackageId>
+    <Version>0.1.0</Version>
+    <Description>Standalone zero-dependency flagship hierarchical circuit netlist (spice.netlist.v3 / .spicenet), polyglot .spice.svg metadata codec, VeloSim ingestion (velosim.netlist.v1 / velosim.rtl.v1), and tscircuit-aligned Circuit JSON view.</Description>
+  </PropertyGroup>
+</Project>

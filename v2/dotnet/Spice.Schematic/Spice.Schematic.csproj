@@ -6,6 +6,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../Cameo.Netlist/Cameo.Netlist.csproj" />
     <ProjectReference Include="../Spice.Ir/Spice.Ir.csproj" />
   </ItemGroup>
 </Project>

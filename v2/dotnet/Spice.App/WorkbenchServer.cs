@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Cameo.Netlist;
 using Spice.Ir;
 using Spice.Schematic;
 using Spice.Sdk;
@@ -354,17 +355,17 @@ public sealed class WorkbenchServer : IAsyncDisposable
                 if (trimmed.StartsWith("<svg", StringComparison.OrdinalIgnoreCase) || trimmed.StartsWith("<?xml", StringComparison.OrdinalIgnoreCase))
                 {
                     detected = "polyglot_svg";
-                    parsed = FlagshipNetlist.ExtractFromPolyglotSvg(req.Content, _library, verifyHashes: req.VerifyHashes ?? true);
+                    parsed = CameoNetlistBridge.ExtractFromPolyglotSvg(req.Content, _library, verifyHashes: req.VerifyHashes ?? true);
                 }
                 else if (trimmed.StartsWith('{'))
                 {
                     detected = "velosim.netlist.v1";
-                    parsed = VeloSimIngestion.ImportVeloSimNetlistJson(req.Content, _library, verifyModelHashes: req.VerifyHashes ?? true);
+                    parsed = CameoNetlistBridge.ImportVeloSimNetlistJson(req.Content, _library, verifyModelHashes: req.VerifyHashes ?? true);
                 }
                 else
                 {
                     detected = FlagshipNetlist.FormatId;
-                    parsed = FlagshipNetlist.Parse(req.Content, _library, verifyHashes: req.VerifyHashes ?? false);
+                    parsed = CameoNetlistBridge.Parse(req.Content, _library, verifyHashes: req.VerifyHashes ?? false);
                 }
 
                 if (!parsed.Succeeded || parsed.Document is null)
@@ -379,7 +380,7 @@ public sealed class WorkbenchServer : IAsyncDisposable
                     return;
                 }
 
-                var elab = FlagshipNetlist.Elaborate(parsed.Document, _library);
+                var elab = CameoNetlistBridge.Elaborate(parsed.Document, _library);
                 if (!elab.Succeeded)
                 {
                     await WriteJsonAsync(ctx.Response, 400, new
@@ -392,7 +393,7 @@ public sealed class WorkbenchServer : IAsyncDisposable
                     return;
                 }
 
-                var schem = FlagshipNetlist.ToSchematicDocument(parsed.Document, _library);
+                var schem = CameoNetlistBridge.ToSchematicDocument(parsed.Document, _library);
                 await WriteJsonAsync(ctx.Response, 200, new
                 {
                     imported = true,
@@ -432,7 +433,7 @@ public sealed class WorkbenchServer : IAsyncDisposable
                 {
                     case "spicenet":
                     {
-                        var flagship = FlagshipNetlist.FromSchematic(req.Document, _library);
+                        var flagship = CameoNetlistBridge.FromSchematic(req.Document, _library);
                         content = FlagshipNetlist.Format(flagship);
                         filename = $"{req.Document.Name}.spicenet";
                         contentType = "text/plain; charset=utf-8";
@@ -453,21 +454,21 @@ public sealed class WorkbenchServer : IAsyncDisposable
                                 }
                             }
                         }
-                        content = FlagshipNetlist.ExportPolyglotSvg(req.Document, polyOverlay, _library, lightTheme: false, gridStyle: req.GridStyle);
+                        content = CameoNetlistBridge.ExportPolyglotSvg(req.Document, polyOverlay, _library, lightTheme: false, gridStyle: req.GridStyle);
                         filename = $"{req.Document.Name}.spice.svg";
                         contentType = "image/svg+xml; charset=utf-8";
                         break;
                     }
                     case "velosim":
                     {
-                        content = VeloSimIngestion.ExportVeloSimNetlistJson(req.Document, _library);
+                        content = CameoNetlistBridge.ExportVeloSimNetlistJson(req.Document, _library);
                         filename = $"{req.Document.Name}.velosim.json";
                         contentType = "application/json; charset=utf-8";
                         break;
                     }
                     case "circuit_json":
                     {
-                        content = VeloSimIngestion.ExportCircuitJson(req.Document, _library);
+                        content = CameoNetlistBridge.ExportCircuitJson(req.Document, _library);
                         filename = $"{req.Document.Name}.circuit.json";
                         contentType = "application/json; charset=utf-8";
                         break;

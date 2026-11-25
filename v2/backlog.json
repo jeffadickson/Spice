@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "authoritative_source": "v2/docs/requirements/implementation-plan.sdoc",
   "generated_date": "2026-11-24",
-  "implementation_status": "Slice 0 + M2a/M2b/M2c + Slice A built-in models (15/15 ngspice diff) + Slice B production OSDI 0.3/0.4 hardening (OpenVAF-Reloaded v24.0.2mob 9/9 CI diff vs ngspice; 12 CTest binaries on GCC/Clang/MSVC -Werror) + Slice C Library Studio bulk .LIB/.MOD/.SUB importer & 34-part curated Foundation packs + Flagship Hierarchical Netlist (spice.netlist.v3/.spicenet, polyglot .spice.svg, VeloSim velosim.netlist.v1/velosim.rtl.v1 ingestion, tscircuit Circuit JSON view) + M3 RF + M4a Mixed-Signal + C ABI v2.1 & .NET 11 NativeCppBackend (19/19 xUnit tests) verified on branch v2",
+  "implementation_status": "Slice 0 + M2a/M2b/M2c + Slice A built-in models (15/15 ngspice diff) + Slice B production OSDI 0.3/0.4 hardening (OpenVAF-Reloaded v24.0.2mob 9/9 CI diff vs ngspice; 12 CTest binaries on GCC/Clang/MSVC -Werror) + Slice C Library Studio bulk .LIB/.MOD/.SUB importer & 34-part curated Foundation packs + standalone zero-dependency Cameo.Netlist package (spice.netlist.v3/.spicenet, polyglot .spice.svg, VeloSim velosim.netlist.v1/velosim.rtl.v1 ingestion, tscircuit Circuit JSON view) + M3 RF + M4a Mixed-Signal + C ABI v2.1 & .NET 11 NativeCppBackend (20/20 xUnit tests) verified on branch v2",
   "work_packages": [
     {
       "id": "PLAN-V2-001",
