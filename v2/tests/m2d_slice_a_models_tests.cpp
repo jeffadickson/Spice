@@ -84,9 +84,9 @@ void verify_plan_jacobians_fd(
 
     /* Scatter sparse CSC analytical Jacobians into dense n x n matrices. */
     std::vector<double> g_dense(n * n, 0.0), c_dense(n * n, 0.0);
-    for (std::uint32_t col = 0; col < n; ++col) {
-        for (std::uint32_t k = plan.pattern.col_ptr[col]; k < plan.pattern.col_ptr[col + 1u]; ++k) {
-            const std::uint32_t row = plan.pattern.row_idx[k];
+    for (std::size_t col = 0; col < n; ++col) {
+        for (std::size_t k = plan.pattern.col_ptr[col]; k < plan.pattern.col_ptr[col + 1u]; ++k) {
+            const std::size_t row = plan.pattern.row_idx[k];
             g_dense[row * n + col] += g_vals[k];
             c_dense[row * n + col] += c_vals[k];
         }
