@@ -78,10 +78,10 @@ UID: ARCH-SCHEM-005
 STATUS: Proposed
 TITLE: Versioned persistence and publication exports
 STATEMENT: >>>
-Schematic documents shall persist in a versioned, deterministic, Git-diffable file format and support clean export to canonical SPICE netlists, StarLark-cs scripts, BOMs, and vector/hardcopy graphics (SVG/PDF) derived from the same Unified Device Descriptor.
+Schematic documents shall persist in a versioned, deterministic, Git-diffable file format (including the topology-first hierarchical Flagship Netlist spice.netlist.v3 / .spicenet with independent electrical_sha256 and layout_sha256 hashes, polyglot self-viewing .spice.svg, and VeloSim ingestion velosim.netlist.v1) and support clean export to canonical SPICE netlists, StarLark-cs scripts, BOMs, tscircuit-aligned Circuit JSON views, and vector/hardcopy graphics (SVG/PDF) derived from the same Unified Device Descriptor.
 <<<
 COMMENT: >>>
-Verification: Round-trip save/load stability tests, schema-version migration/rejection tests, deterministic SVG/netlist export checks, bulk SPICE .LIB/.MOD/.SUB library importer dry-run/persistence/fail-closed diagnostics tests, and live NativeCppBackend simulation across the 34-part curated Foundation library (Spice.Tests/M1PlatformTests.cs, SliceCLibraryAndModelPacksTests.cs).
+Verification: Round-trip save/load stability tests, schema-version migration/rejection tests, deterministic SVG/netlist export checks, bulk SPICE .LIB/.MOD/.SUB library importer dry-run/persistence/fail-closed diagnostics tests, Flagship Netlist (.spicenet) hierarchical module elaboration/dual-SHA256-invariance/signal-flow-auto-layout/polyglot .spice.svg tests, VeloSim velosim.netlist.v1 + velosim.rtl.v1 ingestion & tamper-rejection tests, and live NativeCppBackend simulation across the 34-part curated Foundation library (Spice.Tests/{M1PlatformTests,SliceCLibraryAndModelPacksTests,FlagshipNetlistAndVeloSimTests}.cs).
 <<<
 RELATIONS:
 - TYPE: Parent

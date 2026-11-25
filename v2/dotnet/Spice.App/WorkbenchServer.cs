@@ -340,6 +340,72 @@ public sealed class WorkbenchServer : IAsyncDisposable
                 await WriteJsonAsync(ctx.Response, 200, new { imported = true, document = doc });
                 return;
             }
+            if (method == "POST" && path == "/api/schematic/import-netlist")
+            {
+                var req = await ReadJsonAsync<ImportFlagshipNetlistRequest>(ctx.Request);
+                if (req is null || string.IsNullOrWhiteSpace(req.Content))
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = "missing content" });
+                    return;
+                }
+                var trimmed = req.Content.TrimStart();
+                FlagshipParseResult parsed;
+                string detected;
+                if (trimmed.StartsWith("<svg", StringComparison.OrdinalIgnoreCase) || trimmed.StartsWith("<?xml", StringComparison.OrdinalIgnoreCase))
+                {
+                    detected = "polyglot_svg";
+                    parsed = FlagshipNetlist.ExtractFromPolyglotSvg(req.Content, _library, verifyHashes: req.VerifyHashes ?? true);
+                }
+                else if (trimmed.StartsWith('{'))
+                {
+                    detected = "velosim.netlist.v1";
+                    parsed = VeloSimIngestion.ImportVeloSimNetlistJson(req.Content, _library, verifyModelHashes: req.VerifyHashes ?? true);
+                }
+                else
+                {
+                    detected = FlagshipNetlist.FormatId;
+                    parsed = FlagshipNetlist.Parse(req.Content, _library, verifyHashes: req.VerifyHashes ?? false);
+                }
+
+                if (!parsed.Succeeded || parsed.Document is null)
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new
+                    {
+                        imported = false,
+                        format = detected,
+                        error = "Flagship netlist import failed.",
+                        diagnostics = parsed.Diagnostics
+                    });
+                    return;
+                }
+
+                var elab = FlagshipNetlist.Elaborate(parsed.Document, _library);
+                if (!elab.Succeeded)
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new
+                    {
+                        imported = false,
+                        format = detected,
+                        error = "Flagship netlist elaboration failed.",
+                        diagnostics = elab.Diagnostics
+                    });
+                    return;
+                }
+
+                var schem = FlagshipNetlist.ToSchematicDocument(parsed.Document, _library);
+                await WriteJsonAsync(ctx.Response, 200, new
+                {
+                    imported = true,
+                    format = detected,
+                    electrical_sha256 = parsed.Document.ElectricalSha256,
+                    layout_sha256 = parsed.Document.LayoutSha256,
+                    rtl_block_count = parsed.Document.RtlBlocks.Count,
+                    bridge_count = elab.Bridges.Count,
+                    document = schem,
+                    diagnostics = parsed.Diagnostics
+                });
+                return;
+            }
             if (method == "POST" && path == "/api/schematic/export")
             {
                 var req = await ReadJsonAsync<SchematicExportRequest>(ctx.Request);
@@ -364,6 +430,48 @@ public sealed class WorkbenchServer : IAsyncDisposable
                 string contentType;
                 switch (fmt)
                 {
+                    case "spicenet":
+                    {
+                        var flagship = FlagshipNetlist.FromSchematic(req.Document, _library);
+                        content = FlagshipNetlist.Format(flagship);
+                        filename = $"{req.Document.Name}.spicenet";
+                        contentType = "text/plain; charset=utf-8";
+                        break;
+                    }
+                    case "polyglot_svg":
+                    {
+                        OperatingPointOverlay? polyOverlay = null;
+                        if (req.IncludeOp ?? true)
+                        {
+                            var compiled = SchematicCompiler.CompileToIr(req.Document, library: _library);
+                            if (compiled.Succeeded && compiled.Circuit is not null)
+                            {
+                                var opSim = await SolveSchematicAsync(req.Document, compiled.Circuit, AnalysisKind.OperatingPoint, new Dictionary<string, double>(), null, ct);
+                                if (opSim.Status == RunTerminalStatus.Succeeded)
+                                {
+                                    polyOverlay = SchematicCompiler.BuildOperatingPointOverlay(req.Document, opSim, req.GridSize ?? 20.0, req.ShowGrid ?? true, showOperatingPoint: true, activeSheetId: req.ActiveSheetId);
+                                }
+                            }
+                        }
+                        content = FlagshipNetlist.ExportPolyglotSvg(req.Document, polyOverlay, _library, lightTheme: false, gridStyle: req.GridStyle);
+                        filename = $"{req.Document.Name}.spice.svg";
+                        contentType = "image/svg+xml; charset=utf-8";
+                        break;
+                    }
+                    case "velosim":
+                    {
+                        content = VeloSimIngestion.ExportVeloSimNetlistJson(req.Document, _library);
+                        filename = $"{req.Document.Name}.velosim.json";
+                        contentType = "application/json; charset=utf-8";
+                        break;
+                    }
+                    case "circuit_json":
+                    {
+                        content = VeloSimIngestion.ExportCircuitJson(req.Document, _library);
+                        filename = $"{req.Document.Name}.circuit.json";
+                        contentType = "application/json; charset=utf-8";
+                        break;
+                    }
                     case "spice":
                     case "spice3f5":
                     case "ngspice":
@@ -822,6 +930,10 @@ public sealed class WorkbenchServer : IAsyncDisposable
     private sealed record ImportSpiceRequest(
         string? SpiceText,
         string? Name = null);
+
+    private sealed record ImportFlagshipNetlistRequest(
+        string? Content,
+        bool? VerifyHashes = null);
 
     private sealed record ImportSpiceLibraryRequest(
         string? SpiceText,

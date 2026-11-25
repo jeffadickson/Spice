@@ -331,7 +331,8 @@ public static class WorkbenchUi
           <button id="btn-save-schem" class="icon-btn" title="Save versioned .spice.json (Ctrl+S)">Save</button>
           <button id="btn-open-schem" class="icon-btn" title="Open saved .spice.json file">Open</button>
           <input id="file-open-schem" type="file" accept=".json,.spice.json" style="display:none" />
-          <button id="btn-import-spice" class="icon-btn" title="Import SPICE netlist onto schematic">Import SPICE</button>
+          <button id="btn-import-spice" class="icon-btn" title="Import legacy SPICE deck onto schematic">Import SPICE</button>
+          <button id="btn-import-spicenet" class="icon-btn primary" title="Import hierarchical .spicenet, polyglot .spice.svg, or VeloSim JSON (auto-layout)">Import .spicenet</button>
         </div>
 
         <div class="rib-group">
@@ -485,7 +486,11 @@ public static class WorkbenchUi
               <div class="sec-title"><span>Netlist &amp; Publication Export Options</span></div>
               <div style="display:flex;gap:6px;flex-wrap:wrap">
                 <select id="export-format" style="flex:1">
-                  <option value="spice">SPICE3f5 Canonical (.cir)</option>
+                  <option value="spicenet">Flagship Hierarchical Netlist (.spicenet)</option>
+                  <option value="polyglot_svg">Polyglot Self-Viewing Schematic (.spice.svg)</option>
+                  <option value="velosim">VeloSim Ingestion Package (.velosim.json)</option>
+                  <option value="circuit_json">tscircuit-Aligned Circuit JSON (.circuit.json)</option>
+                  <option value="spice" selected>SPICE3f5 Canonical (.cir)</option>
                   <option value="ngspice">ngspice Dialect (.cir + .SAVE)</option>
                   <option value="xyce">Xyce Dialect (.cir + .PRINT CSV)</option>
                   <option value="ltspice">LTspice Compatible (.net + .backanno)</option>
@@ -1396,6 +1401,68 @@ C1 out 0 100n
           refreshAllSchematicViews();
           runSchematicSim();
         }
+      };
+    });
+
+    document.getElementById('btn-import-spicenet').addEventListener('click', () => {
+      openModal(`
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3 style="margin:0">Import Flagship Netlist (.spicenet / .spice.svg / VeloSim JSON)</h3>
+          <button class="icon-btn" onclick="closeModal()">Close</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="icon-btn" id="btn-spicenet-file">Load File (.spicenet / .spice.svg / .velosim.json)</button>
+          <input id="file-spicenet-in" type="file" accept=".spicenet,.svg,.json,.txt" style="display:none" />
+          <span style="font-size:11px;color:var(--muted)">Omit layout{} to auto-place left-to-right!</span>
+        </div>
+        <textarea id="import-spicenet-box" rows="13">// Hierarchical .spicenet example (zero coordinates required!)
+netlist "two_stage_rc" format="spice.netlist.v3" {
+  module RcStage(r=1k, c=1uF) {
+    ports { in:in, out:out, gnd:power }
+    part R1 "spice.resistor" ohms=$r footprint="0603"
+    part C1 "spice.capacitor" farads=$c footprint="0603"
+    chain in -> R1 -> out -> C1 -> gnd
+  }
+  circuit {
+    part V1 "spice.vsrc" dc_volts=5V ac_mag=1V
+    use s1 = RcStage(r=1k, c=1uF)
+    use s2 = RcStage(r=2.2k, c=470nF)
+    net in  { V1.p; s1.in }
+    net mid { s1.out; s2.in }
+    net out { s2.out }
+    net GND ground=true { V1.n; s1.gnd; s2.gnd }
+  }
+}</textarea>
+        <div id="spicenet-import-err" class="err" style="font-family:var(--mono);font-size:11px"></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px">
+          <button class="icon-btn" onclick="closeModal()">Cancel</button>
+          <button class="icon-btn sim-btn" id="btn-do-spicenet">Elaborate, Auto-Layout &amp; Simulate</button>
+        </div>
+      `);
+      document.getElementById('btn-spicenet-file').onclick = () => document.getElementById('file-spicenet-in').click();
+      document.getElementById('file-spicenet-in').onchange = async (e) => {
+        const f = e.target.files?.[0];
+        if (f) document.getElementById('import-spicenet-box').value = await f.text();
+      };
+      document.getElementById('btn-do-spicenet').onclick = async () => {
+        const content = document.getElementById('import-spicenet-box').value;
+        const resp = await fetch('/api/schematic/import-netlist', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content })
+        });
+        const data = await resp.json();
+        if (!resp.ok || !data.imported) {
+          document.getElementById('spicenet-import-err').textContent =
+            (data.diagnostics || []).map(d => `${d.code}: ${d.message}`).join('; ') || data.error || 'Import failed';
+          return;
+        }
+        pushUndo();
+        currentSchem = data.document;
+        activeSheetId = currentSchem.rootSheet?.sheetId || 'root';
+        selectedInstance = null;
+        closeModal();
+        refreshAllSchematicViews();
+        runSchematicSim();
       };
     });
 

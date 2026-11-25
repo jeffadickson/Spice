@@ -60,9 +60,13 @@ public static class Program
               spice-app run <deck.cir> [--analysis op|dc|ac|tran|noise|hb|pss|sp]
                                        [--source V1] [--start 0] [--stop 1.2] [--step 0.1]
                                        [--f0 1e6] [--harmonics 7] [--out-p out]
-              spice-app schematic <schematic.spice.json> [--analysis op|dc|ac|tran]
+              spice-app schematic <file(.spice.json|.spicenet|.spice.svg|.velosim.json)>
+                                       [--analysis op|dc|ac|tran]
                                        [--dialect spice|ngspice|xyce|ltspice|spectre]
-                                       [--svg out.svg] [--spice out.cir] [--bom out.csv]
+                                       [--svg out.svg] [--polyglot-svg out.spice.svg]
+                                       [--spicenet out.spicenet] [--velosim out.velosim.json]
+                                       [--circuit-json out.circuit.json]
+                                       [--spice out.cir] [--bom out.csv]
                                        [--starlark out.star] [--bundle out.bundle.json]
               spice-app library [list]
               spice-app campaign [--preset rc-sweep]
@@ -203,13 +207,17 @@ public static class Program
     {
         if (args.Length == 0)
         {
-            Console.Error.WriteLine("error: missing <schematic.spice.json> path");
+            Console.Error.WriteLine("error: missing schematic/netlist path");
             return 2;
         }
-        var jsonPath = args[0];
+        var inputPath = args[0];
         var analysis = AnalysisKind.OperatingPoint;
         var dialect = NetlistDialect.CanonicalSpice3f5;
         string? svgOut = null;
+        string? polyglotSvgOut = null;
+        string? spicenetOut = null;
+        string? velosimOut = null;
+        string? circuitJsonOut = null;
         string? spiceOut = null;
         string? bomOut = null;
         string? starlarkOut = null;
@@ -220,6 +228,10 @@ public static class Program
             if (args[i] == "--analysis" && i + 1 < args.Length) analysis = ParseAnalysisKind(args[++i]);
             else if (args[i] == "--dialect" && i + 1 < args.Length) dialect = ParseDialect(args[++i]);
             else if (args[i] == "--svg" && i + 1 < args.Length) svgOut = args[++i];
+            else if (args[i] == "--polyglot-svg" && i + 1 < args.Length) polyglotSvgOut = args[++i];
+            else if (args[i] == "--spicenet" && i + 1 < args.Length) spicenetOut = args[++i];
+            else if (args[i] == "--velosim" && i + 1 < args.Length) velosimOut = args[++i];
+            else if (args[i] == "--circuit-json" && i + 1 < args.Length) circuitJsonOut = args[++i];
             else if (args[i] == "--spice" && i + 1 < args.Length) spiceOut = args[++i];
             else if (args[i] == "--bom" && i + 1 < args.Length) bomOut = args[++i];
             else if (args[i] == "--starlark" && i + 1 < args.Length) starlarkOut = args[++i];
@@ -227,7 +239,54 @@ public static class Program
         }
 
         var lib = new ComponentLibraryStore(ComponentLibraryStore.GetDefaultLibraryPath());
-        var doc = SchematicCompiler.DeserializeJson(await File.ReadAllTextAsync(jsonPath));
+        var rawText = await File.ReadAllTextAsync(inputPath);
+        var trimmed = rawText.TrimStart();
+        SchematicDocument doc;
+        FlagshipNetlistDocument? flagshipSource = null;
+
+        if (inputPath.EndsWith(".spicenet", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("netlist ", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("//", StringComparison.Ordinal))
+        {
+            var parsed = FlagshipNetlist.Parse(rawText, lib);
+            if (!parsed.Succeeded || parsed.Document is null)
+            {
+                Console.Error.WriteLine("Flagship netlist parse failed:");
+                foreach (var d in parsed.Diagnostics) Console.Error.WriteLine($"  [{d.Code}] {d.Message}");
+                return 3;
+            }
+            flagshipSource = parsed.Document;
+            doc = FlagshipNetlist.ToSchematicDocument(parsed.Document, lib);
+        }
+        else if (trimmed.StartsWith("<svg", StringComparison.OrdinalIgnoreCase) || trimmed.StartsWith("<?xml", StringComparison.OrdinalIgnoreCase))
+        {
+            var parsed = FlagshipNetlist.ExtractFromPolyglotSvg(rawText, lib);
+            if (!parsed.Succeeded || parsed.Document is null)
+            {
+                Console.Error.WriteLine("Polyglot SVG netlist extraction failed:");
+                foreach (var d in parsed.Diagnostics) Console.Error.WriteLine($"  [{d.Code}] {d.Message}");
+                return 3;
+            }
+            flagshipSource = parsed.Document;
+            doc = FlagshipNetlist.ToSchematicDocument(parsed.Document, lib);
+        }
+        else if (trimmed.Contains("\"velosim.netlist.v1\"", StringComparison.Ordinal))
+        {
+            var parsed = VeloSimIngestion.ImportVeloSimNetlistJson(rawText, lib);
+            if (!parsed.Succeeded || parsed.Document is null)
+            {
+                Console.Error.WriteLine("VeloSim netlist ingestion failed:");
+                foreach (var d in parsed.Diagnostics) Console.Error.WriteLine($"  [{d.Code}] {d.Message}");
+                return 3;
+            }
+            flagshipSource = parsed.Document;
+            doc = FlagshipNetlist.ToSchematicDocument(parsed.Document, lib);
+        }
+        else
+        {
+            doc = SchematicCompiler.DeserializeJson(rawText);
+        }
+
         var compiled = SchematicCompiler.CompileToIr(doc, library: lib);
         if (!compiled.Succeeded || compiled.Circuit is null)
         {
@@ -240,7 +299,7 @@ public static class Program
         var exportOpts = new SchematicExportOptions(dialect, analysis);
         var canonicalDeck = SchematicExporter.ExportNetlist(doc, new SchematicExportOptions(NetlistDialect.CanonicalSpice3f5, analysis), library: lib);
         var usesFullDeck = (compiled.Circuit.Models is { Count: > 0 }) ||
-                           compiled.Circuit.Devices.Any(d => d.KindId is "spice.mosfet" or "spice.bjt" or "spice.jfet" or "spice.subckt" or "spice.osdi");
+                           compiled.Circuit.Devices.Any(d => d.KindId is "spice.mosfet" or "spice.vdmos" or "spice.bjt" or "spice.jfet" or "spice.mesfet" or "spice.switch" or "spice.cswitch" or "spice.core" or "spice.subckt" or "spice.osdi");
         var res = usesFullDeck
             ? await backend.RunSpiceDeckAsync(doc.Name, canonicalDeck, analysis)
             : await backend.RunAsync(new SimulationRequestIr(doc.Name, compiled.Circuit, analysis));
@@ -250,12 +309,30 @@ public static class Program
                 ? await backend.RunSpiceDeckAsync(doc.Name + "_op", canonicalDeck, AnalysisKind.OperatingPoint)
                 : await backend.RunAsync(new SimulationRequestIr(doc.Name + "_op", compiled.Circuit, AnalysisKind.OperatingPoint)));
 
+        var overlay = opRes.Status == RunTerminalStatus.Succeeded
+            ? SchematicCompiler.BuildOperatingPointOverlay(doc, opRes)
+            : null;
+        var flagshipOutDoc = flagshipSource ?? FlagshipNetlist.FromSchematic(doc, lib);
+
         if (!string.IsNullOrWhiteSpace(svgOut))
         {
-            var overlay = opRes.Status == RunTerminalStatus.Succeeded
-                ? SchematicCompiler.BuildOperatingPointOverlay(doc, opRes)
-                : null;
             await File.WriteAllTextAsync(svgOut, SchematicCompiler.ExportSvg(doc, overlay, lib));
+        }
+        if (!string.IsNullOrWhiteSpace(polyglotSvgOut))
+        {
+            await File.WriteAllTextAsync(polyglotSvgOut, FlagshipNetlist.ExportPolyglotSvg(flagshipOutDoc, overlay, lib));
+        }
+        if (!string.IsNullOrWhiteSpace(spicenetOut))
+        {
+            await File.WriteAllTextAsync(spicenetOut, FlagshipNetlist.Format(flagshipOutDoc));
+        }
+        if (!string.IsNullOrWhiteSpace(velosimOut))
+        {
+            await File.WriteAllTextAsync(velosimOut, VeloSimIngestion.ExportVeloSimNetlistJson(flagshipOutDoc, lib));
+        }
+        if (!string.IsNullOrWhiteSpace(circuitJsonOut))
+        {
+            await File.WriteAllTextAsync(circuitJsonOut, VeloSimIngestion.ExportCircuitJson(flagshipOutDoc, lib));
         }
         if (!string.IsNullOrWhiteSpace(spiceOut))
         {
