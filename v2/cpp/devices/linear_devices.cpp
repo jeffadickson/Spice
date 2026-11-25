@@ -1706,6 +1706,9 @@ Diagnostic CompiledPlan::evaluate_all(const EvalContext& ctx, StampTarget& targe
     std::fill(target.q.begin(), target.q.end(), 0.0);
     std::fill(target.df_dx.begin(), target.df_dx.end(), 0.0);
     std::fill(target.dq_dx.begin(), target.dq_dx.end(), 0.0);
+    if (!target.f_lim.empty()) std::fill(target.f_lim.begin(), target.f_lim.end(), 0.0);
+    if (!target.q_lim.empty()) std::fill(target.q_lim.begin(), target.q_lim.end(), 0.0);
+    if (target.step_limited != nullptr) *target.step_limited = false;
     for (const auto& dev : devices) {
         if (auto d = dev->evaluate(ctx, target); !d.ok()) return d;
     }
@@ -1835,6 +1838,7 @@ Diagnostic compile_circuit(
     /* 1b. Preload OSDI libraries and allocate any internal device node unknowns right after
      *     external circuit nodes so all node voltages occupy [0 .. node_unknown_count - 1]. */
     std::unordered_map<std::string, std::shared_ptr<osdi::OsdiLibrary>> loaded_libs;
+    std::unordered_map<std::string, osdi::PreparedOsdiInstance> osdi_prepared;
     std::unordered_map<std::string, std::vector<UnknownId>> osdi_internal_nodes;
     std::unordered_map<std::string, UnknownId> diode_int_nodes;
     struct ThreeIntNodes {
@@ -1865,21 +1869,26 @@ Diagnostic compile_circuit(
                 if (auto d = osdi::OsdiLibrary::load(o->library_path, lib); !d.ok()) return d;
                 it = loaded_libs.emplace(o->library_path, std::move(lib)).first;
             }
-            std::uint32_t n_terms = 0, n_int = 0;
-            if (auto d = osdi::query_osdi_model_topology(*it->second, o->model_name, n_terms, n_int);
+            osdi::PreparedOsdiInstance prep{};
+            if (auto d = osdi::prepare_osdi_instance(
+                    o->id,
+                    it->second,
+                    o->model_name,
+                    static_cast<std::uint32_t>(o->terminals.size()),
+                    o->model_params,
+                    o->instance_params,
+                    300.15,
+                    prep);
                 !d.ok()) {
                 return d;
             }
-            if (o->terminals.size() != n_terms) {
-                return Diagnostic::error(
-                    StatusCode::InvalidArgument, "OSDI terminal count mismatch", o->id);
-            }
             std::vector<UnknownId> internals;
-            internals.reserve(n_int);
-            for (std::uint32_t k = 0; k < n_int; ++k) {
-                internals.push_back(alloc_internal_node(o->id, "int" + std::to_string(k)));
+            internals.reserve(prep.uncollapsed_internal_nodes.size());
+            for (std::size_t k = 0; k < prep.uncollapsed_internal_nodes.size(); ++k) {
+                internals.push_back(alloc_internal_node(o->id, prep.uncollapsed_internal_names[k]));
             }
             osdi_internal_nodes.emplace(o->id, std::move(internals));
+            osdi_prepared.emplace(o->id, std::move(prep));
         } else if (const auto* d_spec = std::get_if<core::DiodeSpec>(&elem)) {
             plan.has_nonlinear = true;
             if (d_spec->rs_ohms > 0.0) {
@@ -2122,29 +2131,17 @@ Diagnostic compile_circuit(
             record_mesfet_stencil(coords, zd, zg, zs, tin.n0, tin.n1);
             plan.devices.push_back(create_mesfet_device(zd, zg, zs, *z, tin.n0, tin.n1));
         } else if (const auto* o = std::get_if<core::OsdiInstanceSpec>(&elem)) {
-            const auto& lib = loaded_libs.at(o->library_path);
             std::vector<std::optional<UnknownId>> term_unks;
             term_unks.reserve(o->terminals.size());
             for (NodeId nid : o->terminals) term_unks.push_back(CompiledPlan::node_unknown(nid));
 
             const auto& int_unks = osdi_internal_nodes.at(o->id);
-            std::vector<std::optional<UnknownId>> all_unks = term_unks;
-            for (UnknownId u : int_unks) all_unks.push_back(u);
-
-            if (auto d = osdi::collect_osdi_stencil(*lib, o->model_name, all_unks, coords); !d.ok()) {
+            std::unique_ptr<Device> dev;
+            if (auto d = osdi::finalize_osdi_instance(
+                    std::move(osdi_prepared.at(o->id)), term_unks, int_unks, coords, dev);
+                !d.ok()) {
                 return d;
             }
-            osdi::OsdiDeviceConfig cfg{};
-            cfg.instance_id = o->id;
-            cfg.library = lib;
-            cfg.model_name = o->model_name;
-            cfg.terminal_unknowns = std::move(term_unks);
-            cfg.internal_unknowns = int_unks;
-            cfg.model_params = o->model_params;
-            cfg.instance_params = o->instance_params;
-
-            std::unique_ptr<Device> dev;
-            if (auto d = osdi::create_osdi_device(cfg, dev); !d.ok()) return d;
             plan.devices.push_back(std::move(dev));
         }
     }

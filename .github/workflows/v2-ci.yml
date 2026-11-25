@@ -64,6 +64,17 @@ jobs:
           ngspice --version | head -n 3
           python3 v2/scripts/diff_vs_ngspice.py "$PWD/build-gcc/spice_v2_cli"
 
+      - name: Run OpenVAF-Reloaded OSDI 0.4 Differential Qualification vs. ngspice
+        run: |
+          mkdir -p /tmp/openvaf-r
+          curl -fsSL -o /tmp/openvaf-r.tar.gz \
+            https://github.com/OpenVAF/OpenVAF-Reloaded/releases/download/v24.0.2mob/openvaf-r-v24.0.2mob-linux-x86_64.tar.gz
+          echo "b12b7b1726d103e18c2588c3a1f91f8475cf03df8a3bde14d919797d221e3110  /tmp/openvaf-r.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/openvaf-r.tar.gz -C /tmp/openvaf-r
+          python3 v2/scripts/diff_osdi_vs_ngspice.py \
+            "$PWD/build-gcc/spice_v2_cli" \
+            /tmp/openvaf-r/openvaf-r-v24.0.2mob-linux-x86_64/bin/openvaf-r
+
       - name: Run Clang ASan + UBSan + libFuzzer (15s parser/SPEF fuzzing)
         run: |
           cmake -S v2 -B build-fuzz -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo \

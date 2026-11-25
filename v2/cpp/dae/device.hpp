@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <cstddef>
+#include <optional>
 #include <span>
 #include <string>
 #include <vector>
@@ -51,9 +52,12 @@ struct DeviceDescriptor {
 
 struct EvalContext {
     double time_s{0.0};
-    double temperature_k{300.15};  /* 27 C nominal SI reference */
+    double temperature_k{300.15};     /* 27 C nominal SI reference */
     AnalysisMode mode{AnalysisMode::OperatingPoint};
-    std::span<const double> x;     /* Full MNA unknown vector (size == dimension) */
+    std::span<const double> x;        /* Full MNA unknown vector (size == dimension) */
+    std::size_t newton_iter{0};       /* Newton iteration index (0 triggers OSDI INIT_LIM) */
+    bool enable_limiting{false};      /* True during Newton iterations; false for AC/FD */
+    bool is_line_search_probe{false}; /* True during backtracking probe (preserve Newton prev_state) */
 };
 
 /*
@@ -62,10 +66,13 @@ struct EvalContext {
  * they never see raw third-party solver types or allocate in the hot loop.
  */
 struct StampTarget {
-    std::span<double> f;      /* Static residual vector F(x, t) */
-    std::span<double> q;      /* Stored charge/flux vector Q(x, t) */
-    std::span<double> df_dx;  /* CSC values for G = dF/dx */
-    std::span<double> dq_dx;  /* CSC values for C = dQ/dx */
+    std::span<double> f;           /* Static residual vector F(x, t) */
+    std::span<double> q;           /* Stored charge/flux vector Q(x, t) */
+    std::span<double> df_dx;       /* CSC values for G = dF/dx */
+    std::span<double> dq_dx;       /* CSC values for C = dQ/dx */
+    std::span<double> f_lim{};     /* Optional OSDI resistive limiting RHS: J_r*(x_solve - x_lim) */
+    std::span<double> q_lim{};     /* Optional OSDI reactive limiting RHS: J_c*(x_solve - x_lim) */
+    bool* step_limited{nullptr};   /* Set true if any device applied voltage limiting ($limit) */
 
     [[nodiscard]] bool add_f(core::UnknownId row, double value) noexcept {
         if (row.value >= f.size() || !std::isfinite(value)) return false;
@@ -79,6 +86,24 @@ struct StampTarget {
         return true;
     }
 
+    [[nodiscard]] bool add_f_lim(core::UnknownId row, double value) noexcept {
+        if (f_lim.empty()) return true;
+        if (row.value >= f_lim.size() || !std::isfinite(value)) return false;
+        f_lim[row.value] += value;
+        return true;
+    }
+
+    [[nodiscard]] bool add_q_lim(core::UnknownId row, double value) noexcept {
+        if (q_lim.empty()) return true;
+        if (row.value >= q_lim.size() || !std::isfinite(value)) return false;
+        q_lim[row.value] += value;
+        return true;
+    }
+
+    void mark_limited() noexcept {
+        if (step_limited != nullptr) *step_limited = true;
+    }
+
     [[nodiscard]] bool add_df(core::SlotId slot, double value) noexcept {
         if (slot.value >= df_dx.size() || !std::isfinite(value)) return false;
         df_dx[slot.value] += value;
@@ -90,6 +115,15 @@ struct StampTarget {
         dq_dx[slot.value] += value;
         return true;
     }
+};
+
+/* Small-signal current noise source between (n1, n2) in A^2/Hz for adjoint .NOISE projection. */
+struct NoiseSourceContribution {
+    std::string device_id;
+    std::string source_name;
+    std::optional<core::UnknownId> n1;
+    std::optional<core::UnknownId> n2;
+    double psd_a2_per_hz{0.0};
 };
 
 /*
@@ -111,6 +145,13 @@ public:
     [[nodiscard]] virtual core::Diagnostic evaluate(
         const EvalContext& ctx,
         StampTarget& target) = 0;
+
+    /* Emit device-internal small-signal current noise PSDs (A^2/Hz) at operating point x_op. */
+    virtual void evaluate_noise(
+        double /*freq_hz*/,
+        double /*temperature_k*/,
+        std::span<const double> /*x_op*/,
+        std::vector<NoiseSourceContribution>& /*out_sources*/) const {}
 
     /* Promote trial state to accepted state after step acceptance. */
     virtual void commit_trial() noexcept = 0;

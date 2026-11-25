@@ -184,31 +184,61 @@ static void diode_load_jac_react(void* inst_v, void* model_v, double alpha) {
 OSDI_EXPORT const uint32_t OSDI_VERSION_MAJOR = 0u;
 OSDI_EXPORT const uint32_t OSDI_VERSION_MINOR = 3u;
 OSDI_EXPORT const uint32_t OSDI_NUM_DESCRIPTORS = 1u;
+OSDI_EXPORT const uint32_t OSDI_DESCRIPTOR_SIZE = (uint32_t)sizeof(SpiceOsdiDescriptor);
 
 OSDI_EXPORT const SpiceOsdiDescriptor OSDI_DESCRIPTORS[1] = {
     {
         "osdi_test_diode",
-        2u,
-        2u,
-        kNodes,
-        4u,
-        kJacEntries,
-        4u,
-        1u,
-        kParams,
+        2u,                                           /* num_nodes */
+        2u,                                           /* num_terminals */
+        kNodes,                                       /* nodes */
+        4u,                                           /* num_jacobian_entries */
+        kJacEntries,                                  /* jacobian_entries */
+        0u,                                           /* num_collapsible */
+        NULL,                                         /* collapsible */
+        0u,                                           /* collapsed_offset */
+        NULL,                                         /* noise_sources */
+        0u,                                           /* num_noise_src */
+        4u,                                           /* num_params */
+        1u,                                           /* num_instance_params */
+        0u,                                           /* num_opvars */
+        kParams,                                      /* param_opvar */
         (uint32_t)offsetof(DiodeInstData, node_mapping),
         (uint32_t)offsetof(DiodeInstData, jac_resist),
-        0u,
-        0u,
+        0u,                                           /* num_states */
+        0u,                                           /* state_idx_off */
+        0u,                                           /* bound_step_offset */
         (uint32_t)sizeof(DiodeInstData),
         (uint32_t)sizeof(DiodeModelData),
         diode_access,
         diode_setup_model,
         diode_setup_instance,
         diode_eval,
+        NULL,                                         /* load_noise */
         diode_load_res_resist,
         diode_load_res_react,
+        NULL,                                         /* load_limit_rhs_resist */
+        NULL,                                         /* load_limit_rhs_react */
+        NULL,                                         /* load_spice_rhs_dc */
+        NULL,                                         /* load_spice_rhs_tran */
         diode_load_jac_resist,
         diode_load_jac_react,
+        NULL,                                         /* load_jacobian_tran */
+        NULL,                                         /* given_flag_model */
+        NULL,                                         /* given_flag_instance */
+        4u,                                           /* num_resistive_jacobian_entries */
+        4u,                                           /* num_reactive_jacobian_entries */
+        NULL,                                         /* write_jacobian_array_resist */
+        NULL,                                         /* write_jacobian_array_react */
+        0u,                                           /* num_inputs */
+        NULL,                                         /* inputs */
+        NULL,                                         /* load_jacobian_with_offset_resist */
+        NULL,                                         /* load_jacobian_with_offset_react */
+        NULL,                                         /* unknown_nature */
+        NULL,                                         /* residual_nature */
+        NULL,                                         /* noise_source_type */
+        NULL,                                         /* load_noise_params */
+        0u,                                           /* absdelay_count */
+        NULL,                                         /* absdelay_info */
     },
 };

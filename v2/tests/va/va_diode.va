@@ -1,0 +1,62 @@
+`include "disciplines.vams"
+`include "constants.vams"
+
+// Qualification Verilog-A Diode for Spice V2 OSDI 0.4 differential testing vs. ngspice.
+// Exercises: collapsible internal RS node, $limit("pnjlim"), depletion/transit ddt(Q),
+// $simparam("gmin"), white_noise (shot + thermal_rs), and flicker_noise.
+module va_diode(a, c);
+  inout a, c;
+  electrical a, c, ai;
+
+  parameter real is  = 1.0e-14 from (0:inf);
+  parameter real n   = 1.0     from (0:inf);
+  parameter real rs  = 0.0     from [0:inf);
+  parameter real cjo = 0.0     from [0:inf);
+  parameter real vj  = 0.7     from (0:inf);
+  parameter real m   = 0.5     from [0:1);
+  parameter real tt  = 0.0     from [0:inf);
+  parameter real kf  = 0.0     from [0:inf);
+  parameter real af  = 1.0     from (0:inf);
+
+  real vd, id, qd, vt, nvt, vcrit, gmin, arg;
+
+  analog begin
+    vt    = $vt;
+    nvt   = n * vt;
+    gmin  = $simparam("gmin", 1.0e-12);
+    vcrit = nvt * ln(nvt / (1.4142135623730951 * is));
+    vd    = $limit(V(ai, c), "pnjlim", nvt, vcrit);
+
+    arg = vd / nvt;
+    if (arg > 40.0)
+      id = is * (exp(40.0) * (1.0 + arg - 40.0) - 1.0);
+    else if (arg < -80.0)
+      id = -is;
+    else
+      id = is * (exp(arg) - 1.0);
+
+    I(ai, c) <+ id + gmin * vd;
+
+    if (cjo > 0.0 || tt > 0.0) begin
+      if (vd < 0.5 * vj)
+        qd = cjo * vj / (1.0 - m) * (1.0 - pow(1.0 - vd / vj, 1.0 - m)) + tt * id;
+      else
+        qd = cjo * vj / (1.0 - m) * (1.0 - pow(0.5, 1.0 - m))
+             + cjo * pow(0.5, -m) * (vd - 0.5 * vj)
+             + 0.5 * cjo * m / vj * pow(0.5, -m - 1.0) * (vd - 0.5 * vj) * (vd - 0.5 * vj)
+             + tt * id;
+      I(ai, c) <+ ddt(qd);
+    end
+
+    if (rs > 0.0) begin
+      I(a, ai) <+ V(a, ai) / rs;
+      I(a, ai) <+ white_noise(4.0 * `P_K * $temperature / rs, "thermal_rs");
+    end else begin
+      V(a, ai) <+ 0.0;
+    end
+
+    I(ai, c) <+ white_noise(2.0 * `P_Q * abs(id), "shot");
+    if (kf > 0.0)
+      I(ai, c) <+ flicker_noise(kf * pow(abs(id), af), 1.0, "flicker");
+  end
+endmodule

@@ -1,0 +1,78 @@
+`include "disciplines.vams"
+`include "constants.vams"
+
+// Qualification Verilog-A Level-1 Shichman-Hodges NMOS for Spice V2 OSDI 0.4 differential testing.
+// Exercises: two collapsible parasitic nodes (rd/rs), $limit("fetlim") & $limit("limvds"),
+// Cgs/Cgd reactive charge, $simparam("gmin"), and channel thermal white_noise.
+module va_mos_sh(d, g, s, b);
+  inout d, g, s, b;
+  electrical d, g, s, b, di, si;
+
+  parameter real vto    = 0.7     from (-inf:inf);
+  parameter real kp     = 1.0e-4  from (0:inf);
+  parameter real lambda = 0.02    from [0:inf);
+  parameter real w      = 20.0e-6 from (0:inf);
+  parameter real l      = 1.0e-6  from (0:inf);
+  parameter real rd     = 0.0     from [0:inf);
+  parameter real rs     = 0.0     from [0:inf);
+  parameter real cgs    = 0.0     from [0:inf);
+  parameter real cgd    = 0.0     from [0:inf);
+
+  real vgs, vds, vov, beta, ids, gm, gmin;
+
+  analog begin
+    gmin = $simparam("gmin", 1.0e-12);
+    vgs  = $limit(V(g, si), "fetlim", vto);
+    vds  = $limit(V(di, si), "limvds");
+    beta = kp * (w / l);
+
+    if (vds >= 0.0) begin
+      vov = vgs - vto;
+      if (vov <= 0.0) begin
+        ids = 0.0;
+        gm  = 0.0;
+      end else if (vds < vov) begin
+        ids = beta * (vov * vds - 0.5 * vds * vds) * (1.0 + lambda * vds);
+        gm  = beta * vds * (1.0 + lambda * vds);
+      end else begin
+        ids = 0.5 * beta * vov * vov * (1.0 + lambda * vds);
+        gm  = beta * vov * (1.0 + lambda * vds);
+      end
+    end else begin
+      vov = (vgs - vds) - vto;
+      if (vov <= 0.0) begin
+        ids = 0.0;
+        gm  = 0.0;
+      end else if (-vds < vov) begin
+        ids = -beta * (vov * (-vds) - 0.5 * vds * vds) * (1.0 - lambda * vds);
+        gm  = beta * (-vds) * (1.0 - lambda * vds);
+      end else begin
+        ids = -0.5 * beta * vov * vov * (1.0 - lambda * vds);
+        gm  = beta * vov * (1.0 - lambda * vds);
+      end
+    end
+
+    I(di, si) <+ ids + gmin * vds;
+    I(di, b)  <+ gmin * V(di, b);
+    I(si, b)  <+ gmin * V(si, b);
+
+    if (cgs > 0.0) I(g, si) <+ ddt(cgs * V(g, si));
+    if (cgd > 0.0) I(g, di) <+ ddt(cgd * V(g, di));
+
+    if (rd > 0.0) begin
+      I(d, di) <+ V(d, di) / rd;
+      I(d, di) <+ white_noise(4.0 * `P_K * $temperature / rd, "thermal_rd");
+    end else begin
+      V(d, di) <+ 0.0;
+    end
+
+    if (rs > 0.0) begin
+      I(s, si) <+ V(s, si) / rs;
+      I(s, si) <+ white_noise(4.0 * `P_K * $temperature / rs, "thermal_rs");
+    end else begin
+      V(s, si) <+ 0.0;
+    end
+
+    I(di, si) <+ white_noise((8.0 / 3.0) * `P_K * $temperature * gm, "thermal_ch");
+  end
+endmodule

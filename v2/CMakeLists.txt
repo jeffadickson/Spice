@@ -213,6 +213,17 @@ if(SPICE_V2_BUILD_TESTS)
     )
     target_link_libraries(test_osdi_bad_abi PRIVATE spice_v2_warnings)
 
+    add_library(test_osdi_v04_full SHARED
+        tests/fixtures/test_osdi_v04_full.c
+    )
+    target_include_directories(test_osdi_v04_full PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+    )
+    target_link_libraries(test_osdi_v04_full PRIVATE spice_v2_warnings)
+    if(NOT WIN32)
+        target_link_libraries(test_osdi_v04_full PRIVATE m)
+    endif()
+
     add_executable(spice_v2_unit_tests
         tests/capi_and_dae_tests.cpp
     )
@@ -442,6 +453,29 @@ if(SPICE_V2_BUILD_TESTS)
         target_compile_definitions(spice_v2_slice_a_models_tests PRIVATE SPICE_V2_USE_CATCH2=1)
     endif()
     add_test(NAME spice_v2_slice_a_models_tests COMMAND spice_v2_slice_a_models_tests)
+
+    add_executable(spice_v2_osdi_v04_tests
+        tests/m2d_osdi_v04_tests.cpp
+    )
+    target_include_directories(spice_v2_osdi_v04_tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+    target_compile_definitions(spice_v2_osdi_v04_tests PRIVATE
+        SPICE_TEST_OSDI_V04_PATH="$<TARGET_FILE:test_osdi_v04_full>"
+    )
+    target_link_libraries(spice_v2_osdi_v04_tests PRIVATE
+        spice_parser
+        spice_analysis
+        spice_v2_warnings
+    )
+    add_dependencies(spice_v2_osdi_v04_tests test_osdi_v04_full)
+    if(Catch2_FOUND)
+        target_link_libraries(spice_v2_osdi_v04_tests PRIVATE Catch2::Catch2WithMain)
+        target_compile_definitions(spice_v2_osdi_v04_tests PRIVATE SPICE_V2_USE_CATCH2=1)
+    endif()
+    add_test(NAME spice_v2_osdi_v04_tests COMMAND spice_v2_osdi_v04_tests)
 endif()
 
 if(SPICE_V2_BUILD_FUZZER)

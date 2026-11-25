@@ -22,6 +22,8 @@ struct SourceScaleGuard {
 struct NewtonScratch {
     std::vector<double> f;
     std::vector<double> q;
+    std::vector<double> f_lim;
+    std::vector<double> q_lim;
     std::vector<double> g;
     std::vector<double> c;
     std::vector<double> jac;
@@ -29,10 +31,13 @@ struct NewtonScratch {
     std::vector<double> rhs;
     std::vector<double> dx;
     std::vector<double> x_cand;
+    bool step_limited{false};
 
     void resize(std::uint32_t dim, std::size_t nnz) {
         f.resize(dim);
         q.resize(dim);
+        f_lim.resize(dim);
+        q_lim.resize(dim);
         g.resize(nnz);
         c.resize(nnz);
         jac.resize(nnz);
@@ -83,9 +88,14 @@ Diagnostic evaluate_residual_and_jacobian(
     const NewtonProblem& problem,
     double gmin,
     std::span<const double> x,
+    std::size_t newton_iter,
+    bool enable_limiting,
+    bool is_line_search_probe,
     NewtonScratch& s) {
-    EvalContext ctx{problem.time_s, problem.temperature_k, problem.mode, x};
-    StampTarget target{s.f, s.q, s.g, s.c};
+    EvalContext ctx{problem.time_s, problem.temperature_k, problem.mode, x,
+                    newton_iter, enable_limiting, is_line_search_probe};
+    s.step_limited = false;
+    StampTarget target{s.f, s.q, s.g, s.c, s.f_lim, s.q_lim, &s.step_limited};
     if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
 
     const std::uint32_t dim = plan.unknown_count();
@@ -133,15 +143,23 @@ Diagnostic run_newton_stage(
     const std::uint32_t dim = plan.unknown_count();
 
     for (std::size_t iter = 0; iter < opts.max_iterations; ++iter) {
-        if (auto d = evaluate_residual_and_jacobian(plan, problem, gmin, x, s); !d.ok()) {
+        if (auto d = evaluate_residual_and_jacobian(
+                plan, problem, gmin, x, iter, plan.has_osdi, false, s);
+            !d.ok()) {
             return d;
         }
+        const bool was_limited = s.step_limited;
         const double res_norm = scaled_residual_norm(plan, s.res, x, opts);
         if (!std::isfinite(res_norm)) {
             return Diagnostic::error(StatusCode::NumericalFailure, "nonfinite scaled residual norm");
         }
 
-        for (std::uint32_t i = 0; i < dim; ++i) s.rhs[i] = -s.res[i];
+        /* Include OSDI limiting RHS: J * dx = -(F(v_lim) + F_lim + alpha*(Q(v_lim) + Q_lim) + hist)
+         * where F_lim = G(v_lim) * (x_solve - v_lim), Q_lim = C(v_lim) * (x_solve - v_lim). */
+        for (std::uint32_t i = 0; i < dim; ++i) {
+            const double lim_corr = problem.f_scale * s.f_lim[i] + problem.alpha * s.q_lim[i];
+            s.rhs[i] = -(s.res[i] + lim_corr);
+        }
         if (auto d = linear_solver.factor(s.jac); !d.ok()) return d;
         if (auto d = linear_solver.solve(s.rhs, s.dx); !d.ok()) return d;
         ++report.linear_solves;
@@ -168,48 +186,62 @@ Diagnostic run_newton_stage(
             }
         }
 
-        /* Backtracking line search on scaled residual norm. */
-        bool accepted = false;
-        double best_cand_norm = std::numeric_limits<double>::infinity();
-        std::vector<double> best_cand;
-
-        double lambda = step_scale;
-        for (int ls = 0; ls < 12; ++ls) {
+        if (was_limited) {
+            /* When OSDI $limit is active, res(x) was evaluated at v_lim != x; apply the limited
+             * Newton step directly and force another iteration before testing convergence. */
             for (std::uint32_t i = 0; i < dim; ++i) {
-                s.x_cand[i] = x[i] + lambda * s.dx[i];
+                x[i] += step_scale * s.dx[i];
             }
-            if (auto d = evaluate_residual_and_jacobian(plan, problem, gmin, s.x_cand, s); d.ok()) {
-                const double cand_norm = scaled_residual_norm(plan, s.res, s.x_cand, opts);
-                if (std::isfinite(cand_norm)) {
-                    if (cand_norm < best_cand_norm) {
-                        best_cand_norm = cand_norm;
-                        best_cand = s.x_cand;
-                    }
-                    if (cand_norm <= res_norm * (1.0 - 1.0e-4 * lambda) || cand_norm <= 1.0) {
-                        x.swap(s.x_cand);
-                        accepted = true;
-                        break;
+        } else {
+            /* Backtracking line search on scaled residual norm. */
+            bool accepted = false;
+            double best_cand_norm = std::numeric_limits<double>::infinity();
+            std::vector<double> best_cand;
+
+            double lambda = step_scale;
+            for (int ls = 0; ls < 12; ++ls) {
+                for (std::uint32_t i = 0; i < dim; ++i) {
+                    s.x_cand[i] = x[i] + lambda * s.dx[i];
+                }
+                if (auto d = evaluate_residual_and_jacobian(
+                        plan, problem, gmin, s.x_cand, iter + 1u, false, true, s);
+                    d.ok()) {
+                    const double cand_norm = scaled_residual_norm(plan, s.res, s.x_cand, opts);
+                    if (std::isfinite(cand_norm)) {
+                        if (cand_norm < best_cand_norm) {
+                            best_cand_norm = cand_norm;
+                            best_cand = s.x_cand;
+                        }
+                        if (cand_norm <= res_norm * (1.0 - 1.0e-4 * lambda) || cand_norm <= 1.0) {
+                            x.swap(s.x_cand);
+                            accepted = true;
+                            break;
+                        }
                     }
                 }
+                lambda *= 0.5;
             }
-            lambda *= 0.5;
-        }
-        if (!accepted) {
-            if (!best_cand.empty()) {
-                x = std::move(best_cand);
-            } else {
-                return Diagnostic::error(
-                    StatusCode::NumericalFailure, "Newton line search failed to find finite candidate");
+            if (!accepted) {
+                if (!best_cand.empty()) {
+                    x = std::move(best_cand);
+                } else {
+                    return Diagnostic::error(
+                        StatusCode::NumericalFailure, "Newton line search failed to find finite candidate");
+                }
             }
         }
 
-        /* Re-verify final residual and update criteria at the updated point x. */
-        if (auto d = evaluate_residual_and_jacobian(plan, problem, gmin, x, s); !d.ok()) return d;
+        /* Re-verify true physical (unlimited) residual and update criteria at updated point x. */
+        if (auto d = evaluate_residual_and_jacobian(
+                plan, problem, gmin, x, iter + 1u, false, true, s);
+            !d.ok()) {
+            return d;
+        }
         const double post_res_norm = scaled_residual_norm(plan, s.res, x, opts);
         report.max_scaled_residual = post_res_norm;
         report.max_scaled_update = upd_norm;
 
-        if (post_res_norm <= 1.0 && upd_norm <= 1.0 && step_scale == 1.0) {
+        if (!was_limited && post_res_norm <= 1.0 && upd_norm <= 1.0 && step_scale == 1.0) {
             return Diagnostic::success();
         }
     }

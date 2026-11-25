@@ -404,6 +404,20 @@ Diagnostic run_noise(
             }
         }
 
+        /* Project universal DAE device noise sources (including OSDI load_noise) through adjoint z. */
+        std::vector<dae::NoiseSourceContribution> dev_noise;
+        for (const auto& dev : plan.devices) {
+            dev_noise.clear();
+            dev->evaluate_noise(f_hz, opts.temperature_k, x_op, dev_noise);
+            for (const auto& ns : dev_noise) {
+                const Complex z1 = ns.n1.has_value() ? z[ns.n1->value] : Complex{0.0, 0.0};
+                const Complex z2 = ns.n2.has_value() ? z[ns.n2->value] : Complex{0.0, 0.0};
+                const double out_psd = std::norm(z1 - z2) * ns.psd_a2_per_hz;
+                total_psd += out_psd;
+                pt.contributions.push_back(DeviceNoiseContribution{ns.device_id, ns.source_name, out_psd});
+            }
+        }
+
         pt.onoise_v_per_sqrt_hz = std::sqrt(std::max(0.0, total_psd));
         pt.inoise_v_per_sqrt_hz =
             (gain_mag > 1.0e-30) ? (pt.onoise_v_per_sqrt_hz / gain_mag) : std::numeric_limits<double>::infinity();
