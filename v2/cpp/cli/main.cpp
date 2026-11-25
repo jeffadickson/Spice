@@ -109,12 +109,13 @@ int main(int argc, char** argv) {
     }
     if (cmd == "models") {
         std::cout
-            << "Built-in Primitives: R, C, L, K, V, I (DC/AC/PULSE/SIN/PWL/EXP/SFFM/TRNOISE), E, F, G, H, B (autodiff), S (SW), T (lossless), O/Y (LTRA/TXL lossy), P (CPL coupled)\n"
+            << "Built-in Primitives: R, C, L, K, V, I (DC/AC/PULSE/SIN/PWL/EXP/SFFM/TRNOISE), E, F, G, H, B (autodiff), S (SW/VSWITCH w/ hysteresis), W (CSW/ISWITCH), T (lossless), O/Y (LTRA/TXL lossy), P (CPL coupled), L+CORE (Jiles-Atherton saturable core)\n"
             << "Built-in Semiconductors:\n"
-            << "  D  - Diode (Shockley + depletion/transit charge)\n"
-            << "  M  - MOSFET LEVEL=1 (Shichman-Hodges), LEVEL=49 (BSIM3v3 core), LEVEL=54 (BSIM4 core)\n"
-            << "  Q  - BJT Gummel-Poon (NPN/PNP with Early effect, high-level injection, depletion/diffusion charge)\n"
+            << "  D  - Diode (Shockley + Zener BV/IBV + Rs + ISR/IKF + depletion/transit charge + temp scaling)\n"
+            << "  M  - MOSFET LEVEL=1 (Shichman-Hodges), LEVEL=49 (BSIM3v3 core), LEVEL=54 (BSIM4 core), VDMOS (Power MOSFET w/ nonlinear Miller Cgd & body diode)\n"
+            << "  Q  - BJT Gummel-Poon (NPN/PNP w/ RC/RB/RBM/IRB/RE parasitics, Early/IKF, XCJC/CJS/XTF, temp scaling)\n"
             << "  J  - JFET Shichman-Hodges (NJF/PJF)\n"
+            << "  Z  - MESFET Statz LEVEL=1 / Curtice LEVEL=2 (NMF/PMF w/ RD/RS & Schottky gate)\n"
             << "External Compiled Verilog-A:\n"
             << "  .OSDI + .MODEL <name> OSDI(lib=... model=...) -> usable from X, M, Q, J cards (OSDI 0.3/0.4 ABI)\n"
             << "Dialects & Scripting: SPICE3f5/ngspice/Xyce/Spectre subset, .FUNC, .IF/.ELSEIF/.ELSE/.ENDIF, .STEP, IEEE 1481 SPEF\n"
@@ -243,6 +244,7 @@ int main(int argc, char** argv) {
         common.newton_options.reltol = *deck.options.reltol;
     }
     const double temp_k = deck.options.temperature_c + 273.15;
+    common.temperature_k = temp_k;
 
     const std::string effective_method =
         !method_override.empty() ? method_override : deck.options.method;
@@ -773,8 +775,10 @@ int main(int argc, char** argv) {
                 std::cerr << "STEP compile error: " << d.message << "\n";
                 return kExitParseOrValidate;
             }
+            spice::analysis::AnalysisCommonOptions scommon = common;
+            scommon.temperature_k = sdeck.options.temperature_c + 273.15;
             spice::analysis::OpResult sop;
-            if (auto d = spice::analysis::run_op(splan, common, sop); !d.ok()) {
+            if (auto d = spice::analysis::run_op(splan, scommon, sop); !d.ok()) {
                 std::cerr << "STEP OP error: " << d.message << "\n";
                 return kExitSolverError;
             }

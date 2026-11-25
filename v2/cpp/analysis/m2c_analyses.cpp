@@ -88,20 +88,12 @@ Diagnostic linearize_at_op(
     std::vector<double>& out_c) {
     const std::uint32_t dim = plan.unknown_count();
     out_x_op.assign(dim, 0.0);
-    if (plan.has_nonlinear) {
-        AnalysisCommonOptions op_opts = common;
-        op_opts.enable_audits = false;
-        OpResult op{};
-        if (auto d = run_op(plan, op_opts, op); !d.ok()) return d;
-        out_x_op = std::move(op.values);
-    } else {
-        /* Still compute exact DC operating point for sensitivities / diode current if needed. */
-        AnalysisCommonOptions op_opts = common;
-        op_opts.enable_audits = false;
-        OpResult op{};
-        if (auto d = run_op(plan, op_opts, op); !d.ok()) return d;
-        out_x_op = std::move(op.values);
-    }
+    AnalysisCommonOptions op_opts = common;
+    op_opts.enable_audits = false;
+    op_opts.temperature_k = temperature_k;
+    OpResult op{};
+    if (auto d = run_op(plan, op_opts, op); !d.ok()) return d;
+    out_x_op = std::move(op.values);
 
     std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
     out_g.assign(plan.pattern.nnz(), 0.0);
@@ -206,7 +198,7 @@ Diagnostic run_tf(
     }
 
     std::vector<double> x_op, g_vals, c_vals;
-    if (auto d = linearize_at_op(plan, opts.common, 300.15, x_op, g_vals, c_vals); !d.ok()) return d;
+    if (auto d = linearize_at_op(plan, opts.common, opts.common.temperature_k, x_op, g_vals, c_vals); !d.ok()) return d;
 
     std::vector<double> rhs_in;
     bool is_vsrc = false;
@@ -333,14 +325,44 @@ Diagnostic run_noise(
                 total_psd += out_psd;
                 pt.contributions.push_back(DeviceNoiseContribution{r->id, "thermal", out_psd});
             } else if (const auto* d = std::get_if<core::DiodeSpec>(&elem)) {
+                const double scale = d->area * d->m_mult;
                 const double vd = node_val(x_op, d->p) - node_val(x_op, d->n);
-                const double nvt = d->n_emission * d->vt_volts;
-                const double id = d->is_amps * std::expm1(std::min(vd / nvt, 80.0));
+                const double tnom_k = d->tnom_c + 273.15;
+                const bool temp_changed = (std::abs(opts.temperature_k - tnom_k) > 1.0e-9);
+                const double vt = (d->vt_explicit || !temp_changed)
+                                      ? d->vt_volts
+                                      : std::max(0.005, kBoltzmann * opts.temperature_k / kElemCharge);
+                const double nvt = d->n_emission * vt;
+                double is_t = d->is_amps;
+                if (temp_changed && is_t > 0.0) {
+                    const double ratio = opts.temperature_k / tnom_k;
+                    const double vt_t = kBoltzmann * opts.temperature_k / kElemCharge;
+                    const double vt_nom = kBoltzmann * tnom_k / kElemCharge;
+                    const double arg = std::clamp(
+                        (d->xti / d->n_emission) * std::log(ratio) +
+                            (d->eg_ev / vt_nom - d->eg_ev / vt_t) / d->n_emission,
+                        -60.0, 60.0);
+                    is_t *= std::exp(arg);
+                }
+                const double id = scale * is_t * std::expm1(std::min(vd / nvt, 80.0));
                 const double si = 2.0 * kElemCharge * std::abs(id);
                 const Complex tf = node_val_c(z, d->p) - node_val_c(z, d->n);
                 const double out_psd = std::norm(tf) * si;
                 total_psd += out_psd;
                 pt.contributions.push_back(DeviceNoiseContribution{d->id, "shot", out_psd});
+                if (d->kf > 0.0 && f_hz > 0.0 && std::abs(id) > 0.0) {
+                    const double sf = d->kf * std::pow(std::abs(id), d->af) / f_hz;
+                    const double fl_psd = std::norm(tf) * sf;
+                    total_psd += fl_psd;
+                    pt.contributions.push_back(DeviceNoiseContribution{d->id, "flicker", fl_psd});
+                }
+                if (d->rs_ohms > 0.0) {
+                    const double rs_eff = d->rs_ohms / scale;
+                    const double si_rs = 4.0 * kBoltzmann * opts.temperature_k / rs_eff;
+                    const double rs_psd = std::norm(tf) * si_rs;
+                    total_psd += rs_psd;
+                    pt.contributions.push_back(DeviceNoiseContribution{d->id, "thermal_rs", rs_psd});
+                }
             } else if (const auto* q = std::get_if<core::BjtSpec>(&elem)) {
                 const double sgn = q->is_pnp ? -1.0 : 1.0;
                 const double vt = kBoltzmann * opts.temperature_k / kElemCharge;
@@ -355,6 +377,17 @@ Diagnostic run_noise(
                 total_psd += psd_c + psd_b;
                 pt.contributions.push_back(DeviceNoiseContribution{q->id, "shot_ic", psd_c});
                 pt.contributions.push_back(DeviceNoiseContribution{q->id, "shot_ib", psd_b});
+                if (q->kf > 0.0 && f_hz > 0.0 && ib > 0.0) {
+                    const double psd_fl = std::norm(tf_be) * (q->kf * std::pow(ib, q->af) / f_hz);
+                    total_psd += psd_fl;
+                    pt.contributions.push_back(DeviceNoiseContribution{q->id, "flicker_ib", psd_fl});
+                }
+                if (q->rb_ohms > 0.0) {
+                    const double rb_eff = q->rb_ohms / scale;
+                    const double psd_rb = std::norm(tf_be) * (4.0 * kBoltzmann * opts.temperature_k / rb_eff);
+                    total_psd += psd_rb;
+                    pt.contributions.push_back(DeviceNoiseContribution{q->id, "thermal_rb", psd_rb});
+                }
             } else if (const auto* m = std::get_if<core::MosfetSpec>(&elem)) {
                 /* Channel thermal noise S_id = (8/3) * k_B * T * gm (saturated long/short-channel estimate). */
                 const double sgn = m->is_pmos ? -1.0 : 1.0;
@@ -411,7 +444,7 @@ Diagnostic run_sens(
     }
 
     std::vector<double> x_op, g_vals, c_vals;
-    if (auto d = linearize_at_op(plan, opts.common, 300.15, x_op, g_vals, c_vals); !d.ok()) return d;
+    if (auto d = linearize_at_op(plan, opts.common, opts.common.temperature_k, x_op, g_vals, c_vals); !d.ok()) return d;
 
     const std::uint32_t dim = plan.unknown_count();
     const TransposeMap tmap = build_csc_transpose(plan.pattern);

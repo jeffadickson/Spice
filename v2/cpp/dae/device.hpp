@@ -117,6 +117,9 @@ public:
 
     /* Discard trial state and restore last accepted state after step rejection. */
     virtual void rollback_trial() noexcept = 0;
+
+    /* Reset any transient history/hysteresis state before starting a fresh transient run. */
+    virtual void reset_history() noexcept {}
 };
 
 }  // namespace spice::dae

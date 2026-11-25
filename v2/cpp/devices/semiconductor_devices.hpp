@@ -32,13 +32,21 @@ void record_bjt_stencil(
     StencilCoords& coords,
     std::optional<core::UnknownId> c,
     std::optional<core::UnknownId> b,
-    std::optional<core::UnknownId> e);
+    std::optional<core::UnknownId> e,
+    std::optional<core::UnknownId> s = std::nullopt,
+    std::optional<core::UnknownId> ci = std::nullopt,
+    std::optional<core::UnknownId> bi = std::nullopt,
+    std::optional<core::UnknownId> ei = std::nullopt);
 
 [[nodiscard]] std::unique_ptr<dae::Device> create_bjt_device(
     std::optional<core::UnknownId> c,
     std::optional<core::UnknownId> b,
     std::optional<core::UnknownId> e,
-    core::BjtSpec spec);
+    core::BjtSpec spec,
+    std::optional<core::UnknownId> s = std::nullopt,
+    std::optional<core::UnknownId> ci = std::nullopt,
+    std::optional<core::UnknownId> bi = std::nullopt,
+    std::optional<core::UnknownId> ei = std::nullopt);
 
 void record_jfet_stencil(
     StencilCoords& coords,
@@ -51,5 +59,39 @@ void record_jfet_stencil(
     std::optional<core::UnknownId> g,
     std::optional<core::UnknownId> s,
     core::JfetSpec spec);
+
+void record_vdmos_stencil(
+    StencilCoords& coords,
+    std::optional<core::UnknownId> d,
+    std::optional<core::UnknownId> g,
+    std::optional<core::UnknownId> s,
+    std::optional<core::UnknownId> di = std::nullopt,
+    std::optional<core::UnknownId> gi = std::nullopt,
+    std::optional<core::UnknownId> si = std::nullopt);
+
+[[nodiscard]] std::unique_ptr<dae::Device> create_vdmos_device(
+    std::optional<core::UnknownId> d,
+    std::optional<core::UnknownId> g,
+    std::optional<core::UnknownId> s,
+    core::VdmosSpec spec,
+    std::optional<core::UnknownId> di = std::nullopt,
+    std::optional<core::UnknownId> gi = std::nullopt,
+    std::optional<core::UnknownId> si = std::nullopt);
+
+void record_mesfet_stencil(
+    StencilCoords& coords,
+    std::optional<core::UnknownId> d,
+    std::optional<core::UnknownId> g,
+    std::optional<core::UnknownId> s,
+    std::optional<core::UnknownId> di = std::nullopt,
+    std::optional<core::UnknownId> si = std::nullopt);
+
+[[nodiscard]] std::unique_ptr<dae::Device> create_mesfet_device(
+    std::optional<core::UnknownId> d,
+    std::optional<core::UnknownId> g,
+    std::optional<core::UnknownId> s,
+    core::MesfetSpec spec,
+    std::optional<core::UnknownId> di = std::nullopt,
+    std::optional<core::UnknownId> si = std::nullopt);
 
 }  // namespace spice::devices

@@ -648,13 +648,17 @@ struct CplModelParams {
 };
 
 struct ModelDef {
-    enum class Kind { Diode, Switch, Mosfet, Bjt, Jfet, Osdi, Ltra, Cpl };
+    enum class Kind { Diode, Switch, CurrentSwitch, Mosfet, Vdmos, Bjt, Jfet, Mesfet, Core, Osdi, Ltra, Cpl };
     Kind kind{Kind::Diode};
     core::DiodeSpec diode_template{};
     core::SwitchSpec switch_template{};
+    core::CurrentSwitchSpec cswitch_template{};
     core::MosfetSpec mosfet_template{};
+    core::VdmosSpec vdmos_template{};
     core::BjtSpec bjt_template{};
     core::JfetSpec jfet_template{};
+    core::MesfetSpec mesfet_template{};
+    core::SaturableCoreSpec core_template{};
     LtraModelParams ltra_params{};
     CplModelParams cpl_params{};
     std::string osdi_library_path;
@@ -1023,11 +1027,30 @@ Diagnostic parse_model_directive(
             if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
             if (k == "is") def.diode_template.is_amps = v;
             else if (k == "n") def.diode_template.n_emission = v;
-            else if (k == "vt") def.diode_template.vt_volts = v;
-            else if (k == "cjo") def.diode_template.cjo_farads = v;
-            else if (k == "vj") def.diode_template.vj_volts = v;
+            else if (k == "vt") {
+                def.diode_template.vt_volts = v;
+                def.diode_template.vt_explicit = true;
+            } else if (k == "rs") def.diode_template.rs_ohms = v;
+            else if (k == "bv") def.diode_template.bv_volts = std::abs(v);
+            else if (k == "ibv") def.diode_template.ibv_amps = std::abs(v);
+            else if (k == "nbv") def.diode_template.nbv = v;
+            else if (k == "cjo" || k == "cj0") def.diode_template.cjo_farads = v;
+            else if (k == "vj" || k == "pb") def.diode_template.vj_volts = v;
             else if (k == "m") def.diode_template.m_grading = v;
+            else if (k == "fc") def.diode_template.fc = v;
             else if (k == "tt") def.diode_template.tt_s = v;
+            else if (k == "isr") def.diode_template.isr_amps = v;
+            else if (k == "nr") def.diode_template.nr = v;
+            else if (k == "ikf") def.diode_template.ikf_amps = v;
+            else if (k == "eg") def.diode_template.eg_ev = v;
+            else if (k == "xti") def.diode_template.xti = v;
+            else if (k == "tnom") def.diode_template.tnom_c = v;
+            else if (k == "trs1" || k == "trs") def.diode_template.trs1 = v;
+            else if (k == "trs2") def.diode_template.trs2 = v;
+            else if (k == "tbv1" || k == "tcv") def.diode_template.tbv1 = v;
+            else if (k == "tbv2") def.diode_template.tbv2 = v;
+            else if (k == "kf") def.diode_template.kf = v;
+            else if (k == "af") def.diode_template.af = v;
             else if (k == "gmin") def.diode_template.gmin_siemens = v;
             else {
                 return line_err(line_no, StatusCode::InvalidArgument, "unsupported diode .MODEL parameter '" + k + "'");
@@ -1040,6 +1063,8 @@ Diagnostic parse_model_directive(
     if (type_low == "sw" || type_low == "vswitch") {
         ModelDef def{};
         def.kind = ModelDef::Kind::Switch;
+        std::optional<double> von;
+        std::optional<double> voff;
         for (const auto& kv : kv_tokens) {
             const std::size_t eq = kv.find('=');
             if (eq == std::string::npos) {
@@ -1049,11 +1074,123 @@ Diagnostic parse_model_directive(
             double v = 0.0;
             if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
             if (k == "vt") def.switch_template.vt_volts = v;
-            else if (k == "vh") def.switch_template.vh_volts = v;
-            else if (k == "ron") def.switch_template.ron_ohms = v;
+            else if (k == "vh") {
+                if (v < 0.0) {
+                    def.switch_template.vh_volts = -v;
+                    def.switch_template.hysteresis = false;
+                } else {
+                    def.switch_template.vh_volts = v;
+                }
+            } else if (k == "ron") def.switch_template.ron_ohms = v;
             else if (k == "roff") def.switch_template.roff_ohms = v;
+            else if (k == "von") von = v;
+            else if (k == "voff") voff = v;
+            else if (k == "hyst" || k == "hysteresis") def.switch_template.hysteresis = (v != 0.0);
             else {
                 return line_err(line_no, StatusCode::InvalidArgument, "unsupported SW .MODEL parameter '" + k + "'");
+            }
+        }
+        if (von.has_value() || voff.has_value()) {
+            const double v_on = von.value_or(1.0);
+            const double v_off = voff.value_or(0.0);
+            def.switch_template.vt_volts = 0.5 * (v_on + v_off);
+            def.switch_template.vh_volts = std::max(1.0e-6, 0.25 * std::abs(v_on - v_off));
+            def.switch_template.invert = (v_on < v_off);
+        }
+        state.models[model_name] = std::move(def);
+        return Diagnostic::success();
+    }
+
+    if (type_low == "csw" || type_low == "iswitch") {
+        ModelDef def{};
+        def.kind = ModelDef::Kind::CurrentSwitch;
+        std::optional<double> ion;
+        std::optional<double> ioff;
+        for (const auto& kv : kv_tokens) {
+            const std::size_t eq = kv.find('=');
+            if (eq == std::string::npos) {
+                return line_err(line_no, StatusCode::InvalidArgument, "expected key=value in .MODEL CSW");
+            }
+            const std::string k = to_lower(kv.substr(0, eq));
+            double v = 0.0;
+            if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
+            if (k == "it") def.cswitch_template.it_amps = v;
+            else if (k == "ih") {
+                if (v < 0.0) {
+                    def.cswitch_template.ih_amps = -v;
+                    def.cswitch_template.hysteresis = false;
+                } else {
+                    def.cswitch_template.ih_amps = v;
+                }
+            } else if (k == "ron") def.cswitch_template.ron_ohms = v;
+            else if (k == "roff") def.cswitch_template.roff_ohms = v;
+            else if (k == "ion") ion = v;
+            else if (k == "ioff") ioff = v;
+            else if (k == "hyst" || k == "hysteresis") def.cswitch_template.hysteresis = (v != 0.0);
+            else {
+                return line_err(line_no, StatusCode::InvalidArgument, "unsupported CSW .MODEL parameter '" + k + "'");
+            }
+        }
+        if (ion.has_value() || ioff.has_value()) {
+            const double i_on = ion.value_or(1.0e-3);
+            const double i_off = ioff.value_or(0.0);
+            def.cswitch_template.it_amps = 0.5 * (i_on + i_off);
+            def.cswitch_template.ih_amps = std::max(1.0e-9, 0.25 * std::abs(i_on - i_off));
+            def.cswitch_template.invert = (i_on < i_off);
+        }
+        state.models[model_name] = std::move(def);
+        return Diagnostic::success();
+    }
+
+    if (type_low == "vdmos") {
+        ModelDef def{};
+        def.kind = ModelDef::Kind::Vdmos;
+        for (const auto& kv : kv_tokens) {
+            const std::string low_tok = to_lower(kv);
+            if (low_tok == "pchan") {
+                def.vdmos_template.is_pchan = true;
+                continue;
+            }
+            if (low_tok == "nchan") {
+                def.vdmos_template.is_pchan = false;
+                continue;
+            }
+            const std::size_t eq = kv.find('=');
+            if (eq == std::string::npos) {
+                return line_err(line_no, StatusCode::InvalidArgument, "expected key=value in .MODEL VDMOS, got '" + kv + "'");
+            }
+            const std::string k = to_lower(kv.substr(0, eq));
+            double v = 0.0;
+            if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
+            if (k == "vto" || k == "vth0") def.vdmos_template.vto_volts = v;
+            else if (k == "kp") def.vdmos_template.kp_a_per_v2 = v;
+            else if (k == "lambda") def.vdmos_template.lambda_per_v = v;
+            else if (k == "theta") def.vdmos_template.theta_per_v = v;
+            else if (k == "ksubthres") def.vdmos_template.ksubthres_volts = v;
+            else if (k == "rd") def.vdmos_template.rd_ohms = v;
+            else if (k == "rs") def.vdmos_template.rs_ohms = v;
+            else if (k == "rg") def.vdmos_template.rg_ohms = v;
+            else if (k == "rb") def.vdmos_template.rb_ohms = v;
+            else if (k == "cgs" || k == "cgso") def.vdmos_template.cgs_farads = v;
+            else if (k == "cgdmax") def.vdmos_template.cgdmax_farads = v;
+            else if (k == "cgdmin") def.vdmos_template.cgdmin_farads = v;
+            else if (k == "a") def.vdmos_template.a_cgd = v;
+            else if (k == "cjo" || k == "cj0") def.vdmos_template.cjo_farads = v;
+            else if (k == "vj" || k == "pb") def.vdmos_template.vj_volts = v;
+            else if (k == "m") def.vdmos_template.m_grading = v;
+            else if (k == "fc") def.vdmos_template.fc = v;
+            else if (k == "is") def.vdmos_template.is_amps = v;
+            else if (k == "n") def.vdmos_template.n_emission = v;
+            else if (k == "tt") def.vdmos_template.tt_s = v;
+            else if (k == "bv") def.vdmos_template.bv_volts = std::abs(v);
+            else if (k == "ibv") def.vdmos_template.ibv_amps = std::abs(v);
+            else if (k == "tnom") def.vdmos_template.tnom_c = v;
+            else if (k == "vtotc") def.vdmos_template.vtotc_v_per_k = v;
+            else if (k == "kptc" || k == "mu") def.vdmos_template.kptc = v;
+            else if (k == "eg") def.vdmos_template.eg_ev = v;
+            else if (k == "xti") def.vdmos_template.xti = v;
+            else {
+                return line_err(line_no, StatusCode::InvalidArgument, "unsupported VDMOS .MODEL parameter '" + k + "'");
             }
         }
         state.models[model_name] = std::move(def);
@@ -1178,14 +1315,33 @@ Diagnostic parse_model_directive(
             else if (k == "ne") def.bjt_template.ne = v;
             else if (k == "isc") def.bjt_template.isc_amps = v;
             else if (k == "nc") def.bjt_template.nc = v;
+            else if (k == "rb") def.bjt_template.rb_ohms = v;
+            else if (k == "rbm") def.bjt_template.rbm_ohms = v;
+            else if (k == "irb") def.bjt_template.irb_amps = v;
+            else if (k == "rc") def.bjt_template.rc_ohms = v;
+            else if (k == "re") def.bjt_template.re_ohms = v;
             else if (k == "cje") def.bjt_template.cje_farads = v;
             else if (k == "vje") def.bjt_template.vje_volts = v;
             else if (k == "mje") def.bjt_template.mje = v;
             else if (k == "tf") def.bjt_template.tf_s = v;
+            else if (k == "xtf") def.bjt_template.xtf = v;
+            else if (k == "vtf") def.bjt_template.vtf_volts = v;
+            else if (k == "itf") def.bjt_template.itf_amps = v;
             else if (k == "cjc") def.bjt_template.cjc_farads = v;
             else if (k == "vjc") def.bjt_template.vjc_volts = v;
             else if (k == "mjc") def.bjt_template.mjc = v;
+            else if (k == "xcjc") def.bjt_template.xcjc = v;
+            else if (k == "cjs") def.bjt_template.cjs_farads = v;
+            else if (k == "vjs") def.bjt_template.vjs_volts = v;
+            else if (k == "mjs") def.bjt_template.mjs = v;
             else if (k == "tr") def.bjt_template.tr_s = v;
+            else if (k == "fc") def.bjt_template.fc = v;
+            else if (k == "eg") def.bjt_template.eg_ev = v;
+            else if (k == "xti") def.bjt_template.xti = v;
+            else if (k == "xtb") def.bjt_template.xtb = v;
+            else if (k == "tnom") def.bjt_template.tnom_c = v;
+            else if (k == "kf") def.bjt_template.kf = v;
+            else if (k == "af") def.bjt_template.af = v;
             else {
                 return line_err(
                     line_no, StatusCode::InvalidArgument,
@@ -1219,6 +1375,98 @@ Diagnostic parse_model_directive(
                 return line_err(
                     line_no, StatusCode::InvalidArgument,
                     "unsupported JFET .MODEL parameter '" + k + "'");
+            }
+        }
+        state.models[model_name] = std::move(def);
+        return Diagnostic::success();
+    }
+
+    if (type_low == "nmf" || type_low == "pmf" || type_low == "mesfet") {
+        ModelDef def{};
+        def.kind = ModelDef::Kind::Mesfet;
+        def.mesfet_template.is_pmf = (type_low == "pmf");
+        for (const auto& kv : kv_tokens) {
+            const std::size_t eq = kv.find('=');
+            if (eq == std::string::npos) {
+                return line_err(line_no, StatusCode::InvalidArgument, "expected key=value in .MODEL " + type_tok);
+            }
+            const std::string k = to_lower(kv.substr(0, eq));
+            double v = 0.0;
+            if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
+            if (k == "level") {
+                const int lvl = static_cast<int>(std::llround(v));
+                if (lvl != 1 && lvl != 2) {
+                    return line_err(
+                        line_no, StatusCode::Unsupported,
+                        "unsupported MESFET LEVEL=" + std::to_string(lvl) + " (supported: 1=Statz, 2=Curtice)");
+                }
+                def.mesfet_template.level = lvl;
+            } else if (k == "vto") def.mesfet_template.vto_volts = v;
+            else if (k == "beta") def.mesfet_template.beta_a_per_v2 = v;
+            else if (k == "b") def.mesfet_template.b_doping = v;
+            else if (k == "alpha") def.mesfet_template.alpha_per_v = v;
+            else if (k == "lambda") def.mesfet_template.lambda_per_v = v;
+            else if (k == "rd") def.mesfet_template.rd_ohms = v;
+            else if (k == "rs") def.mesfet_template.rs_ohms = v;
+            else if (k == "is") def.mesfet_template.is_amps = v;
+            else if (k == "n") def.mesfet_template.n_emission = v;
+            else if (k == "cgs") def.mesfet_template.cgs_farads = v;
+            else if (k == "cgd") def.mesfet_template.cgd_farads = v;
+            else if (k == "pb" || k == "vj") def.mesfet_template.pb_volts = v;
+            else if (k == "fc") def.mesfet_template.fc = v;
+            else if (k == "tnom") def.mesfet_template.tnom_c = v;
+            else {
+                return line_err(
+                    line_no, StatusCode::InvalidArgument,
+                    "unsupported MESFET .MODEL parameter '" + k + "'");
+            }
+        }
+        state.models[model_name] = std::move(def);
+        return Diagnostic::success();
+    }
+
+    if (type_low == "core") {
+        ModelDef def{};
+        def.kind = ModelDef::Kind::Core;
+        bool has_ms = false;
+        std::optional<double> bs, br, hc;
+        for (const auto& kv : kv_tokens) {
+            const std::size_t eq = kv.find('=');
+            if (eq == std::string::npos) {
+                return line_err(line_no, StatusCode::InvalidArgument, "expected key=value in .MODEL CORE");
+            }
+            const std::string k = to_lower(kv.substr(0, eq));
+            double v = 0.0;
+            if (auto d = eval_value(line_no, kv.substr(eq + 1u), params, v); !d.ok()) return d;
+            if (k == "ms") {
+                def.core_template.ms_a_per_m = v;
+                has_ms = true;
+            } else if (k == "a") def.core_template.a_a_per_m = v;
+            else if (k == "k") def.core_template.k_a_per_m = v;
+            else if (k == "c") def.core_template.c_reversibility = v;
+            else if (k == "alpha") def.core_template.alpha_interdomain = v;
+            else if (k == "area") def.core_template.area_m2 = v;
+            else if (k == "path" || k == "len") def.core_template.path_m = v;
+            else if (k == "gap") def.core_template.gap_m = v;
+            else if (k == "rw" || k == "rs") def.core_template.r_winding_ohms = v;
+            else if (k == "lleak") def.core_template.l_leak_henries = v;
+            else if (k == "bs") bs = v;
+            else if (k == "br") br = v;
+            else if (k == "hc") hc = v;
+            else {
+                return line_err(
+                    line_no, StatusCode::InvalidArgument,
+                    "unsupported CORE .MODEL parameter '" + k + "'");
+            }
+        }
+        if (bs.has_value() && !has_ms) {
+            constexpr double kMu0 = 4.0 * std::numbers::pi * 1.0e-7;
+            def.core_template.ms_a_per_m = std::max(1.0, *bs / kMu0);
+            if (hc.has_value()) {
+                def.core_template.k_a_per_m = std::max(0.0, *hc);
+                const double br_ratio = (br.has_value() && *bs > 0.0) ? std::clamp(*br / *bs, 0.0, 0.9) : 0.5;
+                def.core_template.a_a_per_m = std::max(1.0, *hc * (1.0 - br_ratio) + 5.0);
+                def.core_template.alpha_interdomain = 0.0;
             }
         }
         state.models[model_name] = std::move(def);
@@ -1387,6 +1635,49 @@ Diagnostic elaborate_element_line(
         }
         case 'L': {
             if (auto d = req_tokens(4u, "Inductor"); !d.ok()) return d;
+            const auto core_at_3 = state.models.find(to_lower(tokens[3]));
+            const bool is_core_3 = (core_at_3 != state.models.end() && core_at_3->second.kind == ModelDef::Kind::Core);
+            const auto core_at_4 = (tokens.size() >= 5u) ? state.models.find(to_lower(tokens[4])) : state.models.end();
+            const bool is_core_4 = (!is_core_3 && tokens.size() >= 5u && core_at_4 != state.models.end() &&
+                                    core_at_4->second.kind == ModelDef::Kind::Core);
+            if (is_core_3 || is_core_4) {
+                core::SaturableCoreSpec spec = is_core_3 ? core_at_3->second.core_template
+                                                         : core_at_4->second.core_template;
+                spec.id = elem_id;
+                spec.p = state.resolve_node(tokens[1], scope_prefix, port_map);
+                spec.n = state.resolve_node(tokens[2], scope_prefix, port_map);
+                std::size_t opt_start = is_core_3 ? 4u : 5u;
+                if (is_core_4) {
+                    if (auto d = eval_value(line.line_no, tokens[3], params, spec.turns); !d.ok()) return d;
+                }
+                for (std::size_t i = opt_start; i < tokens.size(); ++i) {
+                    const std::size_t eq = tokens[i].find('=');
+                    if (eq == std::string::npos) {
+                        if (is_core_3 && i == opt_start) {
+                            if (auto d = eval_value(line.line_no, tokens[i], params, spec.turns); !d.ok()) return d;
+                            continue;
+                        }
+                        return line_err(line.line_no, StatusCode::InvalidArgument,
+                                        "unexpected saturable core option '" + tokens[i] + "'");
+                    }
+                    const std::string k = to_lower(tokens[i].substr(0, eq));
+                    double v = 0.0;
+                    if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                    if (k == "n" || k == "turns") spec.turns = v;
+                    else if (k == "area") spec.area_m2 = v;
+                    else if (k == "path" || k == "len" || k == "lm") spec.path_m = v;
+                    else if (k == "gap") spec.gap_m = v;
+                    else if (k == "rw" || k == "rs") spec.r_winding_ohms = v;
+                    else if (k == "lleak") spec.l_leak_henries = v;
+                    else if (k == "ic") spec.ic_amps = v;
+                    else {
+                        return line_err(line.line_no, StatusCode::InvalidArgument,
+                                        "unsupported saturable core instance parameter '" + k + "'");
+                    }
+                }
+                state.circuit.elements.push_back(std::move(spec));
+                return Diagnostic::success();
+            }
             double h = 0.0;
             if (auto d = eval_value(line.line_no, tokens[3], params, h); !d.ok()) return d;
             std::optional<double> ic;
@@ -1507,13 +1798,60 @@ Diagnostic elaborate_element_line(
             if (auto d = req_tokens(4u, "Diode"); !d.ok()) return d;
             const std::string mname = to_lower(tokens[3]);
             const auto mit = state.models.find(mname);
-            if (mit == state.models.end() || mit->second.kind != ModelDef::Kind::Diode) {
+            if (mit == state.models.end()) {
                 return line_err(line.line_no, StatusCode::InvalidArgument, "unresolved diode .MODEL '" + tokens[3] + "'");
+            }
+            const auto np = state.resolve_node(tokens[1], scope_prefix, port_map);
+            const auto nn = state.resolve_node(tokens[2], scope_prefix, port_map);
+            if (mit->second.kind == ModelDef::Kind::Osdi) {
+                core::OsdiInstanceSpec inst{};
+                inst.id = elem_id;
+                inst.library_path = mit->second.osdi_library_path;
+                inst.model_name = mit->second.osdi_model_name;
+                inst.model_params = mit->second.osdi_model_params;
+                inst.terminals = {np, nn};
+                for (std::size_t i = 4u; i < tokens.size(); ++i) {
+                    const std::size_t eq = tokens[i].find('=');
+                    if (eq == std::string::npos) {
+                        const std::string low = to_lower(tokens[i]);
+                        if (low == "off" || low == "on") continue;
+                        double area_v = 1.0;
+                        if (auto d = eval_value(line.line_no, tokens[i], params, area_v); !d.ok()) return d;
+                        inst.instance_params.emplace_back("area", area_v);
+                    } else {
+                        double v = 0.0;
+                        if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                        inst.instance_params.emplace_back(to_lower(tokens[i].substr(0, eq)), v);
+                    }
+                }
+                state.circuit.elements.push_back(std::move(inst));
+                return Diagnostic::success();
+            }
+            if (mit->second.kind != ModelDef::Kind::Diode) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "model '" + tokens[3] + "' is not a diode/OSDI model");
             }
             core::DiodeSpec spec = mit->second.diode_template;
             spec.id = elem_id;
-            spec.p = state.resolve_node(tokens[1], scope_prefix, port_map);
-            spec.n = state.resolve_node(tokens[2], scope_prefix, port_map);
+            spec.p = np;
+            spec.n = nn;
+            for (std::size_t i = 4u; i < tokens.size(); ++i) {
+                const std::string low = to_lower(tokens[i]);
+                if (low == "off" || low == "on") continue;
+                const std::size_t eq = tokens[i].find('=');
+                if (eq == std::string::npos) {
+                    if (auto d = eval_value(line.line_no, tokens[i], params, spec.area); !d.ok()) return d;
+                } else {
+                    const std::string k = to_lower(tokens[i].substr(0, eq));
+                    double v = 0.0;
+                    if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                    if (k == "area") spec.area = v;
+                    else if (k == "m") spec.m_mult = v;
+                    else {
+                        return line_err(line.line_no, StatusCode::InvalidArgument,
+                                        "unsupported diode instance parameter '" + k + "'");
+                    }
+                }
+            }
             state.circuit.elements.push_back(std::move(spec));
             return Diagnostic::success();
         }
@@ -1563,6 +1901,40 @@ Diagnostic elaborate_element_line(
             spec.n = state.resolve_node(tokens[2], scope_prefix, port_map);
             spec.cp = state.resolve_node(tokens[3], scope_prefix, port_map);
             spec.cn = state.resolve_node(tokens[4], scope_prefix, port_map);
+            for (std::size_t i = 6u; i < tokens.size(); ++i) {
+                const std::string low = to_lower(tokens[i]);
+                if (low == "on" || low == "ic=on") spec.initial_on = true;
+                else if (low == "off" || low == "ic=off") spec.initial_on = false;
+                else {
+                    return line_err(line.line_no, StatusCode::InvalidArgument,
+                                    "unsupported switch instance option '" + tokens[i] + "'");
+                }
+            }
+            state.circuit.elements.push_back(std::move(spec));
+            return Diagnostic::success();
+        }
+        case 'W': {
+            if (auto d = req_tokens(5u, "Current-controlled switch"); !d.ok()) return d;
+            const std::string mname = to_lower(tokens[4]);
+            const auto mit = state.models.find(mname);
+            if (mit == state.models.end() || mit->second.kind != ModelDef::Kind::CurrentSwitch) {
+                return line_err(line.line_no, StatusCode::InvalidArgument,
+                                "unresolved current switch .MODEL '" + tokens[4] + "'");
+            }
+            core::CurrentSwitchSpec spec = mit->second.cswitch_template;
+            spec.id = elem_id;
+            spec.p = state.resolve_node(tokens[1], scope_prefix, port_map);
+            spec.n = state.resolve_node(tokens[2], scope_prefix, port_map);
+            spec.control_source_id = ElaboratorState::scoped_id(tokens[3], scope_prefix);
+            for (std::size_t i = 5u; i < tokens.size(); ++i) {
+                const std::string low = to_lower(tokens[i]);
+                if (low == "on" || low == "ic=on") spec.initial_on = true;
+                else if (low == "off" || low == "ic=off") spec.initial_on = false;
+                else {
+                    return line_err(line.line_no, StatusCode::InvalidArgument,
+                                    "unsupported current switch instance option '" + tokens[i] + "'");
+                }
+            }
             state.circuit.elements.push_back(std::move(spec));
             return Diagnostic::success();
         }
@@ -1600,15 +1972,53 @@ Diagnostic elaborate_element_line(
             return Diagnostic::success();
         }
         case 'M': {
-            if (auto d = req_tokens(6u, "MOSFET"); !d.ok()) return d;
-            const std::string mname = to_lower(tokens[5]);
+            if (auto d = req_tokens(5u, "MOSFET/VDMOS"); !d.ok()) return d;
+            /* Support 3-terminal VDMOS: M<id> d g s <vdmos_model> [M=...] [AREA=...]
+             * and 4-terminal MOSFET/VDMOS/OSDI: M<id> d g s b <model> [params...] */
+            const auto vdmos_at_4 = state.models.find(to_lower(tokens[4]));
+            const bool is_3t_vdmos = (vdmos_at_4 != state.models.end() &&
+                                      vdmos_at_4->second.kind == ModelDef::Kind::Vdmos);
+            if (!is_3t_vdmos) {
+                if (auto d = req_tokens(6u, "MOSFET"); !d.ok()) return d;
+            }
+            const std::size_t model_idx = is_3t_vdmos ? 4u : 5u;
+            const std::string mname = to_lower(tokens[model_idx]);
             const auto mit = state.models.find(mname);
             if (mit == state.models.end()) {
-                return line_err(line.line_no, StatusCode::InvalidArgument, "unresolved MOSFET .MODEL '" + tokens[5] + "'");
+                return line_err(line.line_no, StatusCode::InvalidArgument,
+                                "unresolved MOSFET/VDMOS .MODEL '" + tokens[model_idx] + "'");
             }
             const auto nd = state.resolve_node(tokens[1], scope_prefix, port_map);
             const auto ng = state.resolve_node(tokens[2], scope_prefix, port_map);
             const auto ns = state.resolve_node(tokens[3], scope_prefix, port_map);
+
+            if (mit->second.kind == ModelDef::Kind::Vdmos) {
+                core::VdmosSpec spec = mit->second.vdmos_template;
+                spec.id = elem_id;
+                spec.d = nd;
+                spec.g = ng;
+                spec.s = ns;
+                for (std::size_t i = model_idx + 1u; i < tokens.size(); ++i) {
+                    const std::string low = to_lower(tokens[i]);
+                    if (low == "off" || low == "on") continue;
+                    const std::size_t eq = tokens[i].find('=');
+                    if (eq == std::string::npos) {
+                        if (auto d = eval_value(line.line_no, tokens[i], params, spec.m_mult); !d.ok()) return d;
+                    } else {
+                        const std::string k = to_lower(tokens[i].substr(0, eq));
+                        double v = 0.0;
+                        if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                        if (k == "m" || k == "area") spec.m_mult *= v;
+                        else {
+                            return line_err(line.line_no, StatusCode::InvalidArgument,
+                                            "unsupported VDMOS instance parameter '" + k + "'");
+                        }
+                    }
+                }
+                state.circuit.elements.push_back(std::move(spec));
+                return Diagnostic::success();
+            }
+
             const auto nb = state.resolve_node(tokens[4], scope_prefix, port_map);
 
             if (mit->second.kind == ModelDef::Kind::Osdi) {
@@ -1631,7 +2041,7 @@ Diagnostic elaborate_element_line(
                 return Diagnostic::success();
             }
             if (mit->second.kind != ModelDef::Kind::Mosfet) {
-                return line_err(line.line_no, StatusCode::InvalidArgument, "model '" + tokens[5] + "' is not a MOSFET/OSDI model");
+                return line_err(line.line_no, StatusCode::InvalidArgument, "model '" + tokens[5] + "' is not a MOSFET/VDMOS/OSDI model");
             }
             core::MosfetSpec spec = mit->second.mosfet_template;
             spec.id = elem_id;
@@ -1686,6 +2096,8 @@ Diagnostic elaborate_element_line(
                 for (std::size_t i = model_idx + 1u; i < tokens.size(); ++i) {
                     const std::size_t eq = tokens[i].find('=');
                     if (eq == std::string::npos) {
+                        const std::string low = to_lower(tokens[i]);
+                        if (low == "off" || low == "on") continue;
                         double area_v = 1.0;
                         if (auto d = eval_value(line.line_no, tokens[i], params, area_v); !d.ok()) return d;
                         inst.instance_params.emplace_back("area", area_v);
@@ -1706,7 +2118,12 @@ Diagnostic elaborate_element_line(
             spec.c = nc;
             spec.b = nb;
             spec.e = ne;
+            if (model_idx == 5u) {
+                spec.s = state.resolve_node(tokens[4], scope_prefix, port_map);
+            }
             for (std::size_t i = model_idx + 1u; i < tokens.size(); ++i) {
+                const std::string low = to_lower(tokens[i]);
+                if (low == "off" || low == "on") continue;
                 const std::size_t eq = tokens[i].find('=');
                 if (eq == std::string::npos) {
                     if (auto d = eval_value(line.line_no, tokens[i], params, spec.area); !d.ok()) return d;
@@ -1751,6 +2168,8 @@ Diagnostic elaborate_element_line(
             spec.g = ng;
             spec.s = ns;
             for (std::size_t i = 5u; i < tokens.size(); ++i) {
+                const std::string low = to_lower(tokens[i]);
+                if (low == "off" || low == "on") continue;
                 const std::size_t eq = tokens[i].find('=');
                 if (eq == std::string::npos) {
                     if (auto d = eval_value(line.line_no, tokens[i], params, spec.area); !d.ok()) return d;
@@ -1761,6 +2180,66 @@ Diagnostic elaborate_element_line(
                     if (k == "area") spec.area = v;
                     else if (k == "m") spec.m_mult = v;
                     else return line_err(line.line_no, StatusCode::InvalidArgument, "unsupported JFET instance parameter '" + k + "'");
+                }
+            }
+            state.circuit.elements.push_back(std::move(spec));
+            return Diagnostic::success();
+        }
+        case 'Z': {
+            if (auto d = req_tokens(5u, "MESFET"); !d.ok()) return d;
+            const std::string mname = to_lower(tokens[4]);
+            const auto mit = state.models.find(mname);
+            if (mit == state.models.end()) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "unresolved MESFET .MODEL '" + tokens[4] + "'");
+            }
+            const auto nd = state.resolve_node(tokens[1], scope_prefix, port_map);
+            const auto ng = state.resolve_node(tokens[2], scope_prefix, port_map);
+            const auto ns = state.resolve_node(tokens[3], scope_prefix, port_map);
+            if (mit->second.kind == ModelDef::Kind::Osdi) {
+                core::OsdiInstanceSpec inst{};
+                inst.id = elem_id;
+                inst.library_path = mit->second.osdi_library_path;
+                inst.model_name = mit->second.osdi_model_name;
+                inst.model_params = mit->second.osdi_model_params;
+                inst.terminals = {nd, ng, ns};
+                for (std::size_t i = 5u; i < tokens.size(); ++i) {
+                    const std::size_t eq = tokens[i].find('=');
+                    if (eq == std::string::npos) {
+                        const std::string low = to_lower(tokens[i]);
+                        if (low == "off" || low == "on") continue;
+                        double area_v = 1.0;
+                        if (auto d = eval_value(line.line_no, tokens[i], params, area_v); !d.ok()) return d;
+                        inst.instance_params.emplace_back("area", area_v);
+                    } else {
+                        double v = 0.0;
+                        if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                        inst.instance_params.emplace_back(to_lower(tokens[i].substr(0, eq)), v);
+                    }
+                }
+                state.circuit.elements.push_back(std::move(inst));
+                return Diagnostic::success();
+            }
+            if (mit->second.kind != ModelDef::Kind::Mesfet) {
+                return line_err(line.line_no, StatusCode::InvalidArgument, "model '" + tokens[4] + "' is not a MESFET/OSDI model");
+            }
+            core::MesfetSpec spec = mit->second.mesfet_template;
+            spec.id = elem_id;
+            spec.d = nd;
+            spec.g = ng;
+            spec.s = ns;
+            for (std::size_t i = 5u; i < tokens.size(); ++i) {
+                const std::string low = to_lower(tokens[i]);
+                if (low == "off" || low == "on") continue;
+                const std::size_t eq = tokens[i].find('=');
+                if (eq == std::string::npos) {
+                    if (auto d = eval_value(line.line_no, tokens[i], params, spec.area); !d.ok()) return d;
+                } else {
+                    const std::string k = to_lower(tokens[i].substr(0, eq));
+                    double v = 0.0;
+                    if (auto d = eval_value(line.line_no, tokens[i].substr(eq + 1u), params, v); !d.ok()) return d;
+                    if (k == "area") spec.area = v;
+                    else if (k == "m") spec.m_mult = v;
+                    else return line_err(line.line_no, StatusCode::InvalidArgument, "unsupported MESFET instance parameter '" + k + "'");
                 }
             }
             state.circuit.elements.push_back(std::move(spec));

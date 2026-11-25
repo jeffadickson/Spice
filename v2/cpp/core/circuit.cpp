@@ -325,6 +325,7 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
         }
         if (std::holds_alternative<VoltageSourceSpec>(e) ||
             std::holds_alternative<InductorSpec>(e) ||
+            std::holds_alternative<SaturableCoreSpec>(e) ||
             std::holds_alternative<VcvsSpec>(e) ||
             std::holds_alternative<CcvsSpec>(e)) {
             ++branch_count;
@@ -476,7 +477,22 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
                         !std::isfinite(d_spec.vj_volts) || d_spec.vj_volts <= 0.0 ||
                         !std::isfinite(d_spec.m_grading) || d_spec.m_grading <= 0.0 || d_spec.m_grading >= 1.0 ||
                         !std::isfinite(d_spec.tt_s) || d_spec.tt_s < 0.0 ||
-                        !std::isfinite(d_spec.gmin_siemens) || d_spec.gmin_siemens < 0.0) {
+                        !std::isfinite(d_spec.gmin_siemens) || d_spec.gmin_siemens < 0.0 ||
+                        !std::isfinite(d_spec.area) || d_spec.area <= 0.0 ||
+                        !std::isfinite(d_spec.m_mult) || d_spec.m_mult <= 0.0 ||
+                        !std::isfinite(d_spec.rs_ohms) || d_spec.rs_ohms < 0.0 ||
+                        !std::isfinite(d_spec.bv_volts) || d_spec.bv_volts < 0.0 ||
+                        !std::isfinite(d_spec.ibv_amps) || d_spec.ibv_amps <= 0.0 ||
+                        !std::isfinite(d_spec.nbv) || d_spec.nbv <= 0.0 ||
+                        !std::isfinite(d_spec.fc) || d_spec.fc <= 0.0 || d_spec.fc >= 1.0 ||
+                        !std::isfinite(d_spec.isr_amps) || d_spec.isr_amps < 0.0 ||
+                        !std::isfinite(d_spec.nr) || d_spec.nr <= 0.0 ||
+                        !std::isfinite(d_spec.ikf_amps) || d_spec.ikf_amps < 0.0 ||
+                        !std::isfinite(d_spec.eg_ev) || d_spec.eg_ev <= 0.0 ||
+                        !std::isfinite(d_spec.xti) || !std::isfinite(d_spec.tnom_c) || d_spec.tnom_c <= -273.0 ||
+                        !std::isfinite(d_spec.trs1) || !std::isfinite(d_spec.trs2) ||
+                        !std::isfinite(d_spec.tbv1) || !std::isfinite(d_spec.tbv2) ||
+                        !std::isfinite(d_spec.kf) || d_spec.kf < 0.0 || !std::isfinite(d_spec.af)) {
                         return Diagnostic::error(
                             StatusCode::InvalidArgument, "invalid diode parameters or terminals", d_spec.id);
                     }
@@ -502,6 +518,19 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
                         !std::isfinite(s.roff_ohms) || s.roff_ohms <= 0.0) {
                         return Diagnostic::error(
                             StatusCode::InvalidArgument, "invalid switch parameters or terminals", s.id);
+                    }
+                    return Diagnostic::success();
+                },
+                [&](const CurrentSwitchSpec& w) -> Diagnostic {
+                    if (auto x = check_node(w.p, w.id); !x.ok()) return x;
+                    if (auto x = check_node(w.n, w.id); !x.ok()) return x;
+                    if (w.p == w.n || !branch_source_ids.contains(w.control_source_id) ||
+                        !std::isfinite(w.it_amps) ||
+                        !std::isfinite(w.ih_amps) || w.ih_amps <= 0.0 ||
+                        !std::isfinite(w.ron_ohms) || w.ron_ohms <= 0.0 ||
+                        !std::isfinite(w.roff_ohms) || w.roff_ohms <= 0.0) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid current-controlled switch W or unknown control source", w.id);
                     }
                     return Diagnostic::success();
                 },
@@ -541,14 +570,65 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
                     }
                     return Diagnostic::success();
                 },
+                [&](const VdmosSpec& m) -> Diagnostic {
+                    if (auto x = check_node(m.d, m.id); !x.ok()) return x;
+                    if (auto x = check_node(m.g, m.id); !x.ok()) return x;
+                    if (auto x = check_node(m.s, m.id); !x.ok()) return x;
+                    if (!std::isfinite(m.m_mult) || m.m_mult <= 0.0 ||
+                        !std::isfinite(m.vto_volts) ||
+                        !std::isfinite(m.kp_a_per_v2) || m.kp_a_per_v2 <= 0.0 ||
+                        !std::isfinite(m.lambda_per_v) || m.lambda_per_v < 0.0 ||
+                        !std::isfinite(m.theta_per_v) || m.theta_per_v < 0.0 ||
+                        !std::isfinite(m.ksubthres_volts) || m.ksubthres_volts <= 0.0 ||
+                        !std::isfinite(m.rd_ohms) || m.rd_ohms < 0.0 ||
+                        !std::isfinite(m.rs_ohms) || m.rs_ohms < 0.0 ||
+                        !std::isfinite(m.rg_ohms) || m.rg_ohms < 0.0 ||
+                        !std::isfinite(m.rb_ohms) || m.rb_ohms < 0.0 ||
+                        !std::isfinite(m.cgs_farads) || m.cgs_farads < 0.0 ||
+                        !std::isfinite(m.cgdmax_farads) || m.cgdmax_farads < 0.0 ||
+                        !std::isfinite(m.cgdmin_farads) || m.cgdmin_farads < 0.0 ||
+                        !std::isfinite(m.a_cgd) || m.a_cgd <= 0.0 ||
+                        !std::isfinite(m.cjo_farads) || m.cjo_farads < 0.0 ||
+                        !std::isfinite(m.vj_volts) || m.vj_volts <= 0.0 ||
+                        !std::isfinite(m.m_grading) || m.m_grading <= 0.0 || m.m_grading >= 1.0 ||
+                        !std::isfinite(m.fc) || m.fc <= 0.0 || m.fc >= 1.0 ||
+                        !std::isfinite(m.is_amps) || m.is_amps < 0.0 ||
+                        !std::isfinite(m.n_emission) || m.n_emission <= 0.0 ||
+                        !std::isfinite(m.tt_s) || m.tt_s < 0.0 ||
+                        !std::isfinite(m.bv_volts) || m.bv_volts < 0.0 ||
+                        !std::isfinite(m.ibv_amps) || m.ibv_amps <= 0.0 ||
+                        !std::isfinite(m.tnom_c) || m.tnom_c <= -273.0) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid VDMOS physical parameters", m.id);
+                    }
+                    return Diagnostic::success();
+                },
                 [&](const BjtSpec& q) -> Diagnostic {
                     if (auto x = check_node(q.c, q.id); !x.ok()) return x;
                     if (auto x = check_node(q.b, q.id); !x.ok()) return x;
                     if (auto x = check_node(q.e, q.id); !x.ok()) return x;
+                    if (auto x = check_node(q.s, q.id); !x.ok()) return x;
                     if (!std::isfinite(q.area) || q.area <= 0.0 || !std::isfinite(q.m_mult) || q.m_mult <= 0.0 ||
                         !std::isfinite(q.is_amps) || q.is_amps <= 0.0 ||
                         !std::isfinite(q.bf) || q.bf <= 0.0 || !std::isfinite(q.br) || q.br <= 0.0 ||
-                        !std::isfinite(q.nf) || q.nf <= 0.0 || !std::isfinite(q.nr) || q.nr <= 0.0) {
+                        !std::isfinite(q.nf) || q.nf <= 0.0 || !std::isfinite(q.nr) || q.nr <= 0.0 ||
+                        !std::isfinite(q.rb_ohms) || q.rb_ohms < 0.0 ||
+                        !std::isfinite(q.rbm_ohms) || q.rbm_ohms < 0.0 ||
+                        !std::isfinite(q.irb_amps) || q.irb_amps < 0.0 ||
+                        !std::isfinite(q.rc_ohms) || q.rc_ohms < 0.0 ||
+                        !std::isfinite(q.re_ohms) || q.re_ohms < 0.0 ||
+                        !std::isfinite(q.fc) || q.fc <= 0.0 || q.fc >= 1.0 ||
+                        !std::isfinite(q.xcjc) || q.xcjc < 0.0 || q.xcjc > 1.0 ||
+                        !std::isfinite(q.cjs_farads) || q.cjs_farads < 0.0 ||
+                        !std::isfinite(q.vjs_volts) || q.vjs_volts <= 0.0 ||
+                        !std::isfinite(q.mjs) || q.mjs < 0.0 || q.mjs >= 1.0 ||
+                        !std::isfinite(q.xtf) || q.xtf < 0.0 ||
+                        !std::isfinite(q.vtf_volts) || q.vtf_volts < 0.0 ||
+                        !std::isfinite(q.itf_amps) || q.itf_amps < 0.0 ||
+                        !std::isfinite(q.eg_ev) || q.eg_ev <= 0.0 ||
+                        !std::isfinite(q.xti) || !std::isfinite(q.xtb) ||
+                        !std::isfinite(q.tnom_c) || q.tnom_c <= -273.0 ||
+                        !std::isfinite(q.kf) || q.kf < 0.0 || !std::isfinite(q.af)) {
                         return Diagnostic::error(
                             StatusCode::InvalidArgument, "invalid BJT parameters", q.id);
                     }
@@ -564,6 +644,62 @@ Diagnostic Circuit::validate(std::uint64_t max_unknowns) const {
                         !std::isfinite(j.pb_volts) || j.pb_volts <= 0.0) {
                         return Diagnostic::error(
                             StatusCode::InvalidArgument, "invalid JFET parameters", j.id);
+                    }
+                    return Diagnostic::success();
+                },
+                [&](const MesfetSpec& z) -> Diagnostic {
+                    if (auto x = check_node(z.d, z.id); !x.ok()) return x;
+                    if (auto x = check_node(z.g, z.id); !x.ok()) return x;
+                    if (auto x = check_node(z.s, z.id); !x.ok()) return x;
+                    if (z.level != 1 && z.level != 2) {
+                        return Diagnostic::error(
+                            StatusCode::Unsupported,
+                            "unsupported MESFET LEVEL=" + std::to_string(z.level) + " (supported: 1=Statz, 2=Curtice)",
+                            z.id);
+                    }
+                    if (!std::isfinite(z.area) || z.area <= 0.0 || !std::isfinite(z.m_mult) || z.m_mult <= 0.0 ||
+                        !std::isfinite(z.vto_volts) ||
+                        !std::isfinite(z.beta_a_per_v2) || z.beta_a_per_v2 <= 0.0 ||
+                        !std::isfinite(z.b_doping) || z.b_doping < 0.0 ||
+                        !std::isfinite(z.alpha_per_v) || z.alpha_per_v <= 0.0 ||
+                        !std::isfinite(z.lambda_per_v) || z.lambda_per_v < 0.0 ||
+                        !std::isfinite(z.rd_ohms) || z.rd_ohms < 0.0 ||
+                        !std::isfinite(z.rs_ohms) || z.rs_ohms < 0.0 ||
+                        !std::isfinite(z.is_amps) || z.is_amps < 0.0 ||
+                        !std::isfinite(z.n_emission) || z.n_emission <= 0.0 ||
+                        !std::isfinite(z.cgs_farads) || z.cgs_farads < 0.0 ||
+                        !std::isfinite(z.cgd_farads) || z.cgd_farads < 0.0 ||
+                        !std::isfinite(z.pb_volts) || z.pb_volts <= 0.0 ||
+                        !std::isfinite(z.fc) || z.fc <= 0.0 || z.fc >= 1.0 ||
+                        !std::isfinite(z.tnom_c) || z.tnom_c <= -273.0) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid MESFET parameters", z.id);
+                    }
+                    return Diagnostic::success();
+                },
+                [&](const SaturableCoreSpec& c) -> Diagnostic {
+                    if (auto x = check_node(c.p, c.id); !x.ok()) return x;
+                    if (auto x = check_node(c.n, c.id); !x.ok()) return x;
+                    if (c.p == c.n ||
+                        !std::isfinite(c.turns) || c.turns <= 0.0 ||
+                        !std::isfinite(c.area_m2) || c.area_m2 <= 0.0 ||
+                        !std::isfinite(c.path_m) || c.path_m <= 0.0 ||
+                        !std::isfinite(c.gap_m) || c.gap_m < 0.0 ||
+                        !std::isfinite(c.ms_a_per_m) || c.ms_a_per_m <= 0.0 ||
+                        !std::isfinite(c.a_a_per_m) || c.a_a_per_m <= 0.0 ||
+                        !std::isfinite(c.k_a_per_m) || c.k_a_per_m < 0.0 ||
+                        !std::isfinite(c.c_reversibility) || c.c_reversibility < 0.0 || c.c_reversibility > 1.0 ||
+                        !std::isfinite(c.alpha_interdomain) || c.alpha_interdomain < 0.0 ||
+                        !std::isfinite(c.r_winding_ohms) || c.r_winding_ohms < 0.0 ||
+                        !std::isfinite(c.l_leak_henries) || c.l_leak_henries < 0.0 ||
+                        (c.ic_amps.has_value() && !std::isfinite(*c.ic_amps))) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "invalid saturable core parameters or terminals", c.id);
+                    }
+                    /* Ensure anhysteretic susceptibility remains strictly positive: alpha*Ms/(3*a) < 0.99. */
+                    if (c.alpha_interdomain * c.ms_a_per_m >= 0.99 * 3.0 * c.a_a_per_m) {
+                        return Diagnostic::error(
+                            StatusCode::InvalidArgument, "saturable core alpha*Ms/(3*a) must be < 0.99", c.id);
                     }
                     return Diagnostic::success();
                 },

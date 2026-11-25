@@ -194,6 +194,85 @@ C1 out 0 1u IC=0
     check("1000-Node Ladder OP v(n1000)", v2_op_signal(rl_v2, "v(n1000)"), parse_ngspice_scalar(rl_ng, "v(n1000)"), 1e-8)
     print(f"  [BENCH] 1000-node ladder CLI wall time: spice_v2_cli={dt_v2:.1f} ms vs ngspice={dt_ng:.1f} ms")
 
+    # 8. Slice A: Zener 5.1V Diode Regulator (RS, BV, IBV)
+    d8_v2 = """Zener 5.1V Regulator
+.MODEL DZ D(IS=1e-14 N=1 RS=4 BV=5.1 IBV=5m)
+Vin in 0 DC 12
+Rser in out 470
+Dz 0 out DZ
+.OP
+.END
+"""
+    d8_ng = d8_v2.replace(".OP", ".control\nop\nprint v(out)\n.endc")
+    r8_v2, _ = run_spice_v2(cli_path, d8_v2)
+    r8_ng = run_ngspice(d8_ng)
+    check("Zener 5.1V (RS/BV) OP v(out)", v2_op_signal(r8_v2, "v(out)"), parse_ngspice_scalar(r8_ng, "v(out)"), 1.5e-2, 5e-3)
+
+    # 9. Slice A: Diode SPICE3f5 Temperature Scaling (.TEMP 85, EG=1.11, XTI=3)
+    d9_v2 = """Diode Temp 85C
+.TEMP 85
+.MODEL D1 D(IS=1e-14 N=1 RS=2 EG=1.11 XTI=3)
+I1 0 out DC 1m
+D1 out 0 D1
+.OP
+.END
+"""
+    d9_ng = d9_v2.replace(".OP", ".control\nop\nprint v(out)\n.endc")
+    r9_v2, _ = run_spice_v2(cli_path, d9_v2)
+    r9_ng = run_ngspice(d9_ng)
+    check("Diode .TEMP 85C OP v(out)", v2_op_signal(r9_v2, "v(out)"), parse_ngspice_scalar(r9_ng, "v(out)"), 5e-3, 5e-3)
+
+    # 10. Slice A: Full Discrete BJT with RB/RC/RE + .TEMP 85 (XTB=1.5)
+    d10_v2 = """BJT Parasitics + Temp 85C
+.TEMP 85
+.MODEL QFULL NPN(IS=1e-14 BF=150 VAF=80 RB=50 RC=5 RE=2 EG=1.11 XTI=3 XTB=1.5)
+Vcc vcc 0 DC 12
+R1 vcc b 47k
+R2 b 0 10k
+Rc vcc c 2.2k
+Re e 0 470
+Q1 c b e QFULL
+.OP
+.END
+"""
+    d10_ng = d10_v2.replace(".OP", ".control\nop\nprint v(c) v(e)\n.endc")
+    r10_v2, _ = run_spice_v2(cli_path, d10_v2)
+    r10_ng = run_ngspice(d10_ng)
+    check("BJT RB/RC/RE 85C OP v(c)", v2_op_signal(r10_v2, "v(c)"), parse_ngspice_scalar(r10_ng, "v(c)"), 5e-2, 1e-2)
+    check("BJT RB/RC/RE 85C OP v(e)", v2_op_signal(r10_v2, "v(e)"), parse_ngspice_scalar(r10_ng, "v(e)"), 2e-2, 1e-2)
+
+    # 11. Slice A: Current-Controlled Switch (W / CSW)
+    d11_v2 = """Current-Controlled Switch W
+.MODEL WMOD CSW(IT=5m IH=1m RON=10 ROFF=1MEG)
+Vdrv in 0 DC 10
+Rctl in s_node 1k
+Vsense s_node 0 DC 0
+Vbus bus 0 DC 10
+Rload bus out 1k
+W1 out 0 Vsense WMOD
+.OP
+.END
+"""
+    d11_ng = d11_v2.replace(".OP", ".control\nop\nprint v(out)\n.endc")
+    r11_v2, _ = run_spice_v2(cli_path, d11_v2)
+    r11_ng = run_ngspice(d11_ng)
+    check("CSW/W Switch ON OP v(out)", v2_op_signal(r11_v2, "v(out)"), parse_ngspice_scalar(r11_ng, "v(out)"), 5e-3, 1e-2)
+
+    # 12. Slice A: Statz GaAs MESFET (Z / NMF LEVEL=1)
+    d12_v2 = """Statz MESFET Amp OP
+.MODEL ZN NMF(LEVEL=1 VTO=-1.2 BETA=0.05 ALPHA=2.0 LAMBDA=0.03 B=0.25 RD=3 RS=2)
+Vdd vdd 0 DC 5
+Rd vdd d 100
+Vgs g 0 DC -0.4
+Z1 d g 0 ZN
+.OP
+.END
+"""
+    d12_ng = d12_v2.replace(".OP", ".control\nop\nprint v(d)\n.endc")
+    r12_v2, _ = run_spice_v2(cli_path, d12_v2)
+    r12_ng = run_ngspice(d12_ng)
+    check("Statz MESFET (Z) OP v(d)", v2_op_signal(r12_v2, "v(d)"), parse_ngspice_scalar(r12_ng, "v(d)"), 5e-2, 2e-2)
+
     print("ALL differential checks vs. ngspice PASSED!")
     return 0
 

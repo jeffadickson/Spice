@@ -423,6 +423,25 @@ if(SPICE_V2_BUILD_TESTS)
         target_compile_definitions(spice_v2_fuzz_stress_tests PRIVATE SPICE_V2_USE_CATCH2=1)
     endif()
     add_test(NAME spice_v2_fuzz_stress_tests COMMAND spice_v2_fuzz_stress_tests)
+
+    add_executable(spice_v2_slice_a_models_tests
+        tests/m2d_slice_a_models_tests.cpp
+    )
+    target_include_directories(spice_v2_slice_a_models_tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+    target_link_libraries(spice_v2_slice_a_models_tests PRIVATE
+        spice_parser
+        spice_analysis
+        spice_v2_warnings
+    )
+    if(Catch2_FOUND)
+        target_link_libraries(spice_v2_slice_a_models_tests PRIVATE Catch2::Catch2WithMain)
+        target_compile_definitions(spice_v2_slice_a_models_tests PRIVATE SPICE_V2_USE_CATCH2=1)
+    endif()
+    add_test(NAME spice_v2_slice_a_models_tests COMMAND spice_v2_slice_a_models_tests)
 endif()
 
 if(SPICE_V2_BUILD_FUZZER)

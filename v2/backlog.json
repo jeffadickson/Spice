@@ -1,8 +1,8 @@
 {
   "schema_version": "2.0",
   "authoritative_source": "v2/docs/requirements/implementation-plan.sdoc",
-  "generated_date": "2026-11-22",
-  "implementation_status": "Slice 0 + M2a/M2b/M2c (BSIM3/BSIM4/BJT/JFET + .FUNC/.IF/.STEP + TRNOISE + LTRA/TXL/CPL + Spectre/SPEF + 19-analysis CLI) + M3 RF (.HB/.PSS/.PAC/.PXF/.PNOISE/Oscillator) + M4a Mixed-Signal Co-Sim (48 C++20 tests across 9 CTest binaries on GCC 12 & Clang 14) + C ABI v2.1 & .NET 11 NativeCppBackend + interactive Spice.App WorkbenchServer UI with live cross-probing (7 live xUnit tests) verified on branch v2",
+  "generated_date": "2026-11-24",
+  "implementation_status": "Slice 0 + M2a/M2b/M2c + Slice A built-in model expansion (full discrete Diode w/ RS/BV/temp, 4-terminal BJT w/ parasitics/temp, Power VDMOS, Statz/Curtice MESFET, S/W switches w/ hysteresis, Jiles-Atherton/Chan saturable magnetic core; 11 CTest binaries on GCC & Clang -Werror + 15/15 ngspice differential checks) + M3 RF + M4a Mixed-Signal + C ABI v2.1 & .NET 11 NativeCppBackend (10/10 xUnit tests) verified on branch v2",
   "work_packages": [
     {
       "id": "PLAN-V2-001",

@@ -19,6 +19,7 @@ struct AnalysisCommonOptions {
     audit::AuditOptions audit_options{};
     solver::NewtonOptions newton_options{};
     double max_backward_error{1.0e-10};
+    double temperature_k{300.15}; /* 27 C nominal SI reference */
 };
 
 struct OpResult {

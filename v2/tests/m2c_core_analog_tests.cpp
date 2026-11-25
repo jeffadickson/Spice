@@ -219,6 +219,7 @@ TEST_CASE(".NOISE matches exact Johnson-Nyquist kT/C thermal noise and diode Sch
     ds.n = gnd;
     ds.is_amps = 1.0e-14;
     ds.vt_volts = 0.025851991;
+    ds.tnom_c = temp_k - 273.15;
     ds.gmin_siemens = 0.0;
     dc.elements.push_back(ds);
 
@@ -227,6 +228,7 @@ TEST_CASE(".NOISE matches exact Johnson-Nyquist kT/C thermal noise and diode Sch
     analysis::OpResult op;
     analysis::AnalysisCommonOptions op_opts{};
     op_opts.enable_audits = false;
+    op_opts.temperature_k = temp_k;
     REQUIRE(analysis::run_op(dplan, op_opts, op).ok());
     const double vd = op.values[find_signal(dplan, "v(d)")];
     const double id = ds.is_amps * std::expm1(vd / ds.vt_volts);

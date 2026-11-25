@@ -22,15 +22,25 @@ struct OverrideGuard {
 };
 
 /* Check whether all elements in `plan` are covered by the standalone physical audit equations. */
-bool plan_supports_dc_audit(const devices::CompiledPlan& plan) noexcept {
+bool plan_supports_dc_audit(const devices::CompiledPlan& plan, double temperature_k) noexcept {
     for (const auto& e : plan.circuit.elements) {
-        if (std::holds_alternative<core::BehavioralSourceSpec>(e) ||
-            std::holds_alternative<core::SwitchSpec>(e) ||
-            std::holds_alternative<core::TransmissionLineSpec>(e) ||
-            std::holds_alternative<core::MosfetSpec>(e) ||
-            std::holds_alternative<core::BjtSpec>(e) ||
-            std::holds_alternative<core::JfetSpec>(e) ||
-            std::holds_alternative<core::OsdiInstanceSpec>(e)) {
+        if (const auto* d = std::get_if<core::DiodeSpec>(&e)) {
+            if (d->rs_ohms > 0.0 || d->bv_volts > 0.0 || d->isr_amps > 0.0 || d->ikf_amps > 0.0 ||
+                d->area != 1.0 || d->m_mult != 1.0 ||
+                std::abs(temperature_k - (d->tnom_c + 273.15)) > 1.0e-9) {
+                return false;
+            }
+        } else if (std::holds_alternative<core::BehavioralSourceSpec>(e) ||
+                   std::holds_alternative<core::SwitchSpec>(e) ||
+                   std::holds_alternative<core::CurrentSwitchSpec>(e) ||
+                   std::holds_alternative<core::TransmissionLineSpec>(e) ||
+                   std::holds_alternative<core::MosfetSpec>(e) ||
+                   std::holds_alternative<core::VdmosSpec>(e) ||
+                   std::holds_alternative<core::BjtSpec>(e) ||
+                   std::holds_alternative<core::JfetSpec>(e) ||
+                   std::holds_alternative<core::MesfetSpec>(e) ||
+                   std::holds_alternative<core::SaturableCoreSpec>(e) ||
+                   std::holds_alternative<core::OsdiInstanceSpec>(e)) {
             return false;
         }
     }
@@ -78,6 +88,7 @@ Diagnostic compute_transient_startup(
             out_x0.assign(dim, 0.0);
             solver::NewtonProblem prob{};
             prob.time_s = 0.0;
+            prob.temperature_k = common.temperature_k;
             prob.mode = AnalysisMode::Transient;
             prob.alpha = 0.0;
             solver::NewtonReport nrep{};
@@ -87,7 +98,7 @@ Diagnostic compute_transient_startup(
         std::vector<double> x_zero(dim, 0.0);
         std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
         std::vector<double> g_vals(plan.pattern.nnz(), 0.0), c_vals(plan.pattern.nnz(), 0.0);
-        EvalContext ctx{0.0, 300.15, AnalysisMode::Transient, x_zero};
+        EvalContext ctx{0.0, common.temperature_k, AnalysisMode::Transient, x_zero};
         StampTarget target{f0, q0, g_vals, c_vals};
         if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
 
@@ -106,7 +117,7 @@ Diagnostic compute_transient_startup(
     }
 
     /* UIC startup (ARCH-EQ-003): replace C with voltage source at ic_volts (default 0)
-     * and L with current source at ic_amps (default 0), evaluate independent sources at t=0. */
+     * and L/SaturableCore with current source at ic_amps (default 0), evaluate independent sources at t=0. */
     core::Circuit uic_ckt{};
     uic_ckt.name = plan.circuit.name + "_uic_t0";
     uic_ckt.nodes = plan.circuit.nodes;
@@ -118,6 +129,9 @@ Diagnostic compute_transient_startup(
         } else if (const auto* l = std::get_if<core::InductorSpec>(&elem)) {
             uic_ckt.elements.push_back(core::CurrentSourceSpec{
                 "__uic_l_" + l->id, l->p, l->n, l->ic_amps.value_or(0.0), {0.0, 0.0}, std::nullopt});
+        } else if (const auto* sc = std::get_if<core::SaturableCoreSpec>(&elem)) {
+            uic_ckt.elements.push_back(core::CurrentSourceSpec{
+                "__uic_sc_" + sc->id, sc->p, sc->n, sc->ic_amps.value_or(0.0), {0.0, 0.0}, std::nullopt});
         } else if (std::holds_alternative<core::MutualInductanceSpec>(elem)) {
             /* Mutual inductance contributes only to dQ/dt, zero in t=0 algebraic UIC network. */
         } else if (const auto* v = std::get_if<core::VoltageSourceSpec>(&elem)) {
@@ -149,6 +163,8 @@ Diagnostic compute_transient_startup(
     for (const auto& elem : plan.circuit.elements) {
         if (const auto* l = std::get_if<core::InductorSpec>(&elem)) {
             out_x0[plan.branch_unknowns.at(l->id).value] = l->ic_amps.value_or(0.0);
+        } else if (const auto* sc = std::get_if<core::SaturableCoreSpec>(&elem)) {
+            out_x0[plan.branch_unknowns.at(sc->id).value] = sc->ic_amps.value_or(0.0);
         } else if (std::holds_alternative<core::VoltageSourceSpec>(elem) ||
                    std::holds_alternative<core::VcvsSpec>(elem) ||
                    std::holds_alternative<core::CcvsSpec>(elem)) {
@@ -181,6 +197,7 @@ Diagnostic run_op(
         std::vector<double> x(dim, 0.0);
         solver::NewtonProblem prob{};
         prob.time_s = 0.0;
+        prob.temperature_k = opts.temperature_k;
         prob.mode = AnalysisMode::OperatingPoint;
         prob.alpha = 0.0;
         solver::NewtonReport nrep{};
@@ -195,7 +212,7 @@ Diagnostic run_op(
         std::vector<double> x_zero(dim, 0.0);
         std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
         std::vector<double> g_vals(plan.pattern.nnz(), 0.0), c_vals(plan.pattern.nnz(), 0.0);
-        EvalContext ctx{0.0, 300.15, AnalysisMode::OperatingPoint, x_zero};
+        EvalContext ctx{0.0, opts.temperature_k, AnalysisMode::OperatingPoint, x_zero};
         StampTarget target{f0, q0, g_vals, c_vals};
         if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
 
@@ -217,7 +234,7 @@ Diagnostic run_op(
     }
 
     if (opts.enable_audits) {
-        if (plan_supports_dc_audit(plan)) {
+        if (plan_supports_dc_audit(plan, opts.temperature_k)) {
             auto report = audit::audit_dc(plan, res.values, opts.audit_options);
             if (report.any_failed()) {
                 return Diagnostic::error(StatusCode::NumericalFailure, "independent DC physical audit failed");
@@ -225,7 +242,7 @@ Diagnostic run_op(
             res.audit = std::move(report);
         } else {
             res.audit = make_unavailable_audit(
-                "opaque OSDI or behavioral devices excluded from standalone DC physical audit");
+                "extended nonlinear, OSDI, or behavioral devices excluded from standalone DC physical audit");
         }
     }
 
@@ -272,6 +289,7 @@ Diagnostic run_dc_sweep(
 
             solver::NewtonProblem prob{};
             prob.time_s = 0.0;
+            prob.temperature_k = opts.common.temperature_k;
             prob.mode = AnalysisMode::DcSweep;
             prob.alpha = 0.0;
             solver::NewtonReport nrep{};
@@ -286,7 +304,7 @@ Diagnostic run_dc_sweep(
         std::vector<double> x_zero(dim, 0.0);
         std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
         std::vector<double> g_vals(plan.pattern.nnz(), 0.0), c_vals(plan.pattern.nnz(), 0.0);
-        EvalContext ctx{0.0, 300.15, AnalysisMode::DcSweep, x_zero};
+        EvalContext ctx{0.0, opts.common.temperature_k, AnalysisMode::DcSweep, x_zero};
         StampTarget target{f0, q0, g_vals, c_vals};
         if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
         if (auto d = solver->factor(g_vals); !d.ok()) return d;
@@ -343,7 +361,7 @@ Diagnostic run_ac(
 
     std::vector<double> f0(dim, 0.0), q0(dim, 0.0);
     std::vector<double> g_vals(plan.pattern.nnz(), 0.0), c_vals(plan.pattern.nnz(), 0.0);
-    EvalContext ctx{0.0, 300.15, AnalysisMode::AcLinearize, x_op};
+    EvalContext ctx{0.0, opts.common.temperature_k, AnalysisMode::AcLinearize, x_op};
     StampTarget target{f0, q0, g_vals, c_vals};
     if (auto d = plan.evaluate_all(ctx, target); !d.ok()) return d;
 
@@ -437,7 +455,7 @@ Diagnostic run_transient(
     std::vector<double> f_prev(dim, 0.0), q_prev(dim, 0.0);
     std::vector<double> g_vals(plan.pattern.nnz(), 0.0), c_vals(plan.pattern.nnz(), 0.0);
     {
-        EvalContext ctx0{0.0, 300.15, AnalysisMode::Transient, x_prev};
+        EvalContext ctx0{0.0, opts.common.temperature_k, AnalysisMode::Transient, x_prev};
         StampTarget target0{f_prev, q_prev, g_vals, c_vals};
         if (auto d = plan.evaluate_all(ctx0, target0); !d.ok()) return d;
         plan.commit_all_trials();
@@ -584,6 +602,7 @@ Diagnostic run_transient(
             x_curr = x_prev;
             solver::NewtonProblem prob{};
             prob.time_s = t_curr;
+            prob.temperature_k = opts.common.temperature_k;
             prob.mode = AnalysisMode::Transient;
             prob.alpha = alpha;
             prob.history = history;
@@ -598,7 +617,7 @@ Diagnostic run_transient(
                 res.worst_backward_error = std::max(res.worst_backward_error, nrep.worst_backward_error);
             }
         } else {
-            EvalContext ctx_zero{t_curr, 300.15, AnalysisMode::Transient, x_zero};
+            EvalContext ctx_zero{t_curr, opts.common.temperature_k, AnalysisMode::Transient, x_zero};
             StampTarget target_zero{f0, q0, g_vals, c_vals};
             if (auto d = plan.evaluate_all(ctx_zero, target_zero); !d.ok()) return d;
 
@@ -653,7 +672,7 @@ Diagnostic run_transient(
             }
         }
 
-        EvalContext ctx_curr{t_curr, 300.15, AnalysisMode::Transient, x_curr};
+        EvalContext ctx_curr{t_curr, opts.common.temperature_k, AnalysisMode::Transient, x_curr};
         StampTarget target_curr{f_curr, q_curr, g_vals, c_vals};
         if (auto d = plan.evaluate_all(ctx_curr, target_curr); !d.ok()) {
             plan.rollback_all_trials();
