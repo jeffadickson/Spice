@@ -676,10 +676,23 @@ public static class SpiceLibraryImporter
                 var vStr = tok[(eq + 1)..].Trim();
                 if (TryParseSpiceNumber(vStr, out var v)) map[k] = v;
             }
-            else if (eq == tok.Length - 1 && i + 1 < parts.Length)
+            else if (eq == tok.Length - 1 && eq > 0 && i + 1 < parts.Length)
             {
                 var k = tok[..eq].Trim();
                 if (TryParseSpiceNumber(parts[++i], out var v)) map[k] = v;
+            }
+            else if (eq < 0 && i + 1 < parts.Length)
+            {
+                if (parts[i + 1] == "=" && i + 2 < parts.Length)
+                {
+                    if (TryParseSpiceNumber(parts[i + 2], out var v)) map[tok] = v;
+                    i += 2;
+                }
+                else if (parts[i + 1].StartsWith('=') && parts[i + 1].Length > 1)
+                {
+                    if (TryParseSpiceNumber(parts[i + 1][1..], out var v)) map[tok] = v;
+                    i += 1;
+                }
             }
         }
         return map;

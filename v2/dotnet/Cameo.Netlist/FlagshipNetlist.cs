@@ -284,9 +284,9 @@ public static class FlagshipNetlist
               .Append('|').AppendLine(doc.Pcb.LayerCount?.ToString(CultureInfo.InvariantCulture) ?? "");
             if (doc.Pcb.Rules is not null)
             {
-                foreach (var rule in doc.Pcb.Rules.OrderBy(x => x.NetName, StringComparer.Ordinal))
+                foreach (var rule in doc.Pcb.Rules.Where(x => x is not null).OrderBy(x => x.NetName ?? "", StringComparer.Ordinal))
                 {
-                    sb.Append("rule|").Append(rule.NetName).Append('|')
+                    sb.Append("rule|").Append(rule.NetName ?? "").Append('|')
                       .Append(rule.ClearanceMm.HasValue ? FmtCanon(rule.ClearanceMm.Value) : "").Append('|')
                       .AppendLine(rule.TraceWidthMm.HasValue ? FmtCanon(rule.TraceWidthMm.Value) : "");
                 }
@@ -783,19 +783,32 @@ public static class FlagshipNetlist
     private sealed class ParserState(List<Token> tokens, List<FlagshipDiagnostic> diags)
     {
         private int _pos;
-        private Token Cur => tokens[_pos];
+        private Token Cur => tokens[Math.Min(_pos, tokens.Count - 1)];
         private Token Peek(int offset = 1) => _pos + offset < tokens.Count ? tokens[_pos + offset] : tokens[^1];
-        private Token Advance() => tokens[_pos++];
+        private Token Advance()
+        {
+            var tok = Cur;
+            if (_pos < tokens.Count - 1) _pos++;
+            return tok;
+        }
 
         private bool Match(TokKind k)
         {
-            if (Cur.Kind == k) { _pos++; return true; }
+            if (Cur.Kind == k)
+            {
+                if (_pos < tokens.Count - 1) _pos++;
+                return true;
+            }
             return false;
         }
 
         private bool Expect(TokKind k, string msg)
         {
-            if (Cur.Kind == k) { _pos++; return true; }
+            if (Cur.Kind == k)
+            {
+                if (_pos < tokens.Count - 1) _pos++;
+                return true;
+            }
             diags.Add(new FlagshipDiagnostic("error", "syntax_error", $"{msg}, got '{Cur.Text}'", Cur.Line));
             return false;
         }
@@ -1861,7 +1874,7 @@ public static class FlagshipNetlist
         else if (lower.EndsWith("hz", StringComparison.Ordinal)) lower = lower[..^2];
         else if (lower.Length >= 1 && lower[^1] is 'v' or 'a' or 'f' or 'h' or 's')
         {
-            if (lower.Length == 1 && lower[0] == 'f') { /* keep femto */ }
+            if (suf.Length == 1 && suf[0] is 'f' or 'a') { /* keep lowercase femto / atto SI prefix */ }
             else lower = lower[..^1];
         }
 

@@ -278,8 +278,13 @@ public static class VeloSimIngestion
         }
 
         var models = new List<NetlistModelDef>();
-        foreach (var m in pkg.Analog.Models)
+        foreach (var m in pkg.Analog.Models ?? [])
         {
+            if (m is null || string.IsNullOrWhiteSpace(m.Name) || m.SpiceText is null)
+            {
+                diags.Add(new FlagshipDiagnostic("error", "malformed_velosim_model", "VeloSim analog model entry is missing name or spiceText."));
+                return new FlagshipParseResult(false, null, diags);
+            }
             if (verifyModelHashes && !string.IsNullOrWhiteSpace(m.Sha256))
             {
                 var actual = Sha256Hex(m.SpiceText.Trim());
@@ -289,29 +294,46 @@ public static class VeloSimIngestion
                     return new FlagshipParseResult(false, null, diags);
                 }
             }
-            var kind = Enum.TryParse<NetlistModelKind>(m.Kind, ignoreCase: true, out var parsed)
+            var kind = Enum.TryParse<NetlistModelKind>(m.Kind ?? "", ignoreCase: true, out var parsed)
                 ? parsed
                 : NetlistModelKind.SpiceModelCard;
             models.Add(new NetlistModelDef(kind, m.Name, m.SpiceText, m.OsdiLibraryPath));
         }
 
-        var parts = pkg.Analog.Elements.Select(e => new FlagshipPartDef(
-            Id: e.Id,
-            KindId: e.KindId,
-            Parameters: e.Parameters,
-            ModelName: e.ModelName,
-            LibraryPartId: e.LibraryPartId,
-            ControlSourceId: e.ControlSourceId,
-            Footprint: e.Footprint,
-            Mpn: e.Mpn,
-            SupplierPartNumber: e.SupplierPartNumber)).ToList();
+        if (pkg.Analog.Elements is null)
+        {
+            diags.Add(new FlagshipDiagnostic("error", "missing_analog_elements", "VeloSim analog domain is missing elements array."));
+            return new FlagshipParseResult(false, null, diags);
+        }
+
+        var parts = new List<FlagshipPartDef>(pkg.Analog.Elements.Count);
+        foreach (var e in pkg.Analog.Elements)
+        {
+            if (e is null || string.IsNullOrWhiteSpace(e.Id) || string.IsNullOrWhiteSpace(e.KindId))
+            {
+                diags.Add(new FlagshipDiagnostic("error", "malformed_velosim_element", "VeloSim analog element is missing id or kindId."));
+                return new FlagshipParseResult(false, null, diags);
+            }
+            parts.Add(new FlagshipPartDef(
+                Id: e.Id,
+                KindId: e.KindId,
+                Parameters: e.Parameters is not null ? new Dictionary<string, double>(e.Parameters, StringComparer.Ordinal) : new Dictionary<string, double>(StringComparer.Ordinal),
+                ModelName: e.ModelName,
+                LibraryPartId: e.LibraryPartId,
+                ControlSourceId: e.ControlSourceId,
+                Footprint: e.Footprint,
+                Mpn: e.Mpn,
+                SupplierPartNumber: e.SupplierPartNumber));
+        }
 
         var nets = new List<FlagshipNetDef>();
-        foreach (var c in pkg.Connectivity)
+        foreach (var c in pkg.Connectivity ?? [])
         {
+            if (c is null || string.IsNullOrWhiteSpace(c.NetName)) continue;
             var pins = new List<NetlistPinRef>();
-            foreach (var pStr in c.Pins)
+            foreach (var pStr in c.Pins ?? [])
             {
+                if (string.IsNullOrEmpty(pStr)) continue;
                 var dot = pStr.IndexOf('.');
                 if (dot > 0 && dot < pStr.Length - 1)
                 {
@@ -321,13 +343,21 @@ public static class VeloSimIngestion
             nets.Add(new FlagshipNetDef(c.IsGround ? "GND" : c.NetName, pins, c.IsGround));
         }
 
-        var rtlBlocks = pkg.Digital.Select(d => new FlagshipRtlBlock(
-            Name: d.Name,
-            Format: d.Format,
-            Clock: d.Clock,
-            Ports: d.Signals.Select(s => new FlagshipPortDef(s.Name, s.Direction, s.Width)).ToList(),
-            Bridges: pkg.Bridges.Where(b => d.Signals.Any(s => string.Equals(s.Name, b.DigitalSignal, StringComparison.OrdinalIgnoreCase))).ToList())).ToList();
+        var allBridges = (pkg.Bridges ?? []).Where(b => b is not null && !string.IsNullOrWhiteSpace(b.Name)).ToList();
+        var rtlBlocks = new List<FlagshipRtlBlock>();
+        foreach (var d in pkg.Digital ?? [])
+        {
+            if (d is null || string.IsNullOrWhiteSpace(d.Name)) continue;
+            var sigs = (d.Signals ?? []).Where(s => s is not null && !string.IsNullOrWhiteSpace(s.Name)).ToList();
+            rtlBlocks.Add(new FlagshipRtlBlock(
+                Name: d.Name,
+                Format: string.IsNullOrWhiteSpace(d.Format) ? "velosim.rtl.v1" : d.Format,
+                Clock: d.Clock,
+                Ports: sigs.Select(s => new FlagshipPortDef(s.Name, string.IsNullOrWhiteSpace(s.Direction) ? "input" : s.Direction, s.Width)).ToList(),
+                Bridges: allBridges.Where(b => sigs.Any(s => string.Equals(s.Name, b.DigitalSignal, StringComparison.OrdinalIgnoreCase))).ToList()));
+        }
 
+        var directives = (pkg.Analog.Directives ?? []).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
         var circuit = new FlagshipModuleDef(
             Name: "__circuit__",
             DefaultParameters: new Dictionary<string, double>(),
@@ -336,7 +366,7 @@ public static class VeloSimIngestion
             Uses: [],
             Nets: nets,
             Chains: [],
-            Directives: pkg.Analog.Directives);
+            Directives: directives);
 
         var doc = FlagshipNetlist.WithHashes(new FlagshipNetlistDocument(
             Name: pkg.DesignName,
