@@ -1,12 +1,12 @@
 using Spice.Ir;
 using Spice.Sdk;
 
-namespace Spice.Starlark;
+namespace Spice.Cameo;
 
 /// <summary>
-/// Dimensional SI quantity constructors for the @sim/v2 authoring DSL (ARCH-DSL-001).
-/// Designed to bind directly to StarLark-cs + SharpUnits on Windows while
-/// guaranteeing zero DSL evaluation inside the native C++20 hot loop (ARCH-DSL-002).
+/// Dimensional SI quantity constructors for programmatic circuit authoring and
+/// Spice.Cameo host bindings (ARCH-DSL-001). Guarantees zero DSL evaluation inside
+/// the native C++20 solver hot loop (ARCH-DSL-002).
 /// </summary>
 public static class SiUnits
 {
@@ -34,8 +34,8 @@ public static class SiUnits
 }
 
 /// <summary>
-/// Deterministic circuit authoring builder backing the @sim/v2 StarLark-cs host
-/// module. Emits validated, frontend-agnostic CircuitIr (ARCH-DSL-001).
+/// Deterministic circuit authoring builder emitting validated, frontend-agnostic CircuitIr
+/// (ARCH-DSL-001).
 /// </summary>
 public sealed class CircuitBuilder
 {
@@ -129,13 +129,13 @@ public sealed class CircuitBuilder
             _name,
             orderedNodes,
             _devices.ToList(),
-            new Dictionary<string, string> { ["source"] = "Spice.Starlark" });
+            new Dictionary<string, string> { ["source"] = "Spice.Cameo" });
 
         var errors = _registry.ValidateCircuit(circuit);
         if (errors.Count > 0)
         {
             throw new InvalidOperationException(
-                "Invalid circuit built via @sim/v2: " +
+                "Invalid circuit built via Spice.Cameo: " +
                 string.Join("; ", errors.Select(e => $"{e.Code}: {e.Message}")));
         }
         return circuit;
@@ -144,7 +144,7 @@ public sealed class CircuitBuilder
 
 /// <summary>
 /// Deterministic bounded-concurrency parallel_map campaign runner backing
-/// StarLark-cs corner/sweep/Monte-Carlo plans (ARCH-DSL-001).
+/// Cameo corner/sweep/Monte-Carlo plans (ARCH-DSL-001).
 /// Preserves exact input order regardless of task completion order.
 /// </summary>
 public static class CampaignRunner

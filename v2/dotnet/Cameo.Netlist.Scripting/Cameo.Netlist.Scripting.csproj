@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsPackable>true</IsPackable>
+    <PackageId>Cameo.Netlist.Scripting</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Jeff Dickson</Authors>
+    <Description>Hermetic Cameo (.cameo) scripting frontend for Cameo.Netlist (spice.netlist.v3), compiling statically typed Cameo scripts with ISO 80000 physical units into immutable, dual-hashed hierarchical netlists, polyglot SVGs, VeloSim ingestion packages, and Circuit JSON. Zero dependency on Spice simulator internals.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Cameo.Netlist/Cameo.Netlist.csproj" />
+    <ProjectReference Include="../../external/Cameo-script/src/Cameo/Cameo.csproj" />
+  </ItemGroup>
+</Project>

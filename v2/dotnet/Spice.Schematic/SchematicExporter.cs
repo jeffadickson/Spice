@@ -271,9 +271,10 @@ public static class SchematicExporter
     }
 
     /// <summary>
-    /// Exports a deterministic StarLark-cs / CircuitBuilder authoring script (ARCH-SCHEM-005).
+    /// Exports a runnable Cameo (.cameo) netlist &amp; simulation script using the
+    /// Cameo.Netlist.Scripting + Spice.Cameo APIs (ARCH-DSL-001, ARCH-SCHEM-005).
     /// </summary>
-    public static string ExportStarlarkScript(
+    public static string ExportCameoScript(
         SchematicDocument document,
         DeviceRegistry? registry = null,
         ComponentLibraryStore? library = null)
@@ -281,21 +282,62 @@ public static class SchematicExporter
         var compiled = SchematicCompiler.CompileToIr(document, registry, library);
         if (!compiled.Succeeded || compiled.Circuit is null)
         {
-            throw new InvalidOperationException("Schematic failed ERC; cannot export StarLark script.");
+            throw new InvalidOperationException("Schematic failed ERC; cannot export Cameo script.");
         }
 
         var sb = new StringBuilder();
-        sb.AppendLine($"# Spice V2 StarLark-cs circuit script exported from schematic '{document.Name}'");
-        sb.AppendLine($"def build_{SanitizeId(document.Name)}():");
-        sb.AppendLine($"    c = circuit(\"{document.Name}\")");
+        sb.AppendLine($"-- Spice V2 Cameo (.cameo) netlist & simulation script exported from schematic '{document.Name}'");
+        sb.AppendLine($"net.design(\"{document.Name}\")");
+        sb.AppendLine();
+
+        if (compiled.Circuit.Models is { Count: > 0 } models)
+        {
+            foreach (var m in models)
+            {
+                if (!string.IsNullOrWhiteSpace(m.RawSpiceDefinition))
+                {
+                    var escaped = m.RawSpiceDefinition.Trim().Replace("\\", "\\\\", StringComparison.Ordinal).Replace("\"", "\\\"", StringComparison.Ordinal).Replace("\r", "", StringComparison.Ordinal).Replace("\n", "\\n", StringComparison.Ordinal);
+                    var kind = m.ModelType.Equals("SUBCKT", StringComparison.OrdinalIgnoreCase) ? "SpiceSubcircuit"
+                             : m.ModelType.Equals("OSDI", StringComparison.OrdinalIgnoreCase) ? "OsdiCompactModel"
+                             : "SpiceModelCard";
+                    sb.AppendLine($"net.model(\"{m.Name}\", \"{escaped}\", \"{kind}\")");
+                }
+            }
+            sb.AppendLine();
+        }
+
         foreach (var dev in compiled.Circuit.Devices)
         {
-            var pins = string.Join(", ", dev.PinConnections.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => $"\"{kv.Key}\": \"{kv.Value}\""));
-            var parms = string.Join(", ", dev.Parameters.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => $"\"{kv.Key}\": {Fmt(kv.Value)}"));
-            var modelArg = string.IsNullOrWhiteSpace(dev.ModelName) ? "" : $", model=\"{dev.ModelName}\"";
-            sb.AppendLine($"    c.add(\"{dev.Id}\", \"{dev.KindId}\", pins={{{pins}}}, params={{{parms}}}{modelArg})");
+            var attrParts = dev.Parameters
+                .OrderBy(kv => kv.Key, StringComparer.Ordinal)
+                .Select(kv => $"{kv.Key}={Fmt(kv.Value)}")
+                .ToList();
+            if (!string.IsNullOrWhiteSpace(dev.ModelName)) attrParts.Add($"model=\"{dev.ModelName}\"");
+            if (!string.IsNullOrWhiteSpace(dev.ControlSourceId)) attrParts.Add($"ctrl=\"{dev.ControlSourceId}\"");
+            var attrStr = string.Join(" ", attrParts).Replace("\"", "\\\"", StringComparison.Ordinal);
+            sb.AppendLine($"net.part(\"{dev.Id}\", \"{dev.KindId}\", \"{attrStr}\")");
+            foreach (var pin in dev.PinConnections.OrderBy(kv => kv.Key, StringComparer.Ordinal))
+            {
+                sb.AppendLine($"net.connect(\"{pin.Value}\", \"{dev.Id}.{pin.Key}\")");
+            }
         }
-        sb.AppendLine("    return c");
+
+        if (compiled.Circuit.Directives is { Count: > 0 } dirs)
+        {
+            sb.AppendLine();
+            foreach (var d in dirs)
+            {
+                if (!string.IsNullOrWhiteSpace(d))
+                {
+                    sb.AppendLine($"net.directive(\"{d.Trim().Replace("\"", "\\\"", StringComparison.Ordinal)}\")");
+                }
+            }
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("-- Run DC operating point via Spice V2 C++20 engine:");
+        sb.AppendLine("let ok = sim.op()");
+        sb.AppendLine("sim.assert_true(\"op_converged\", ok)");
         return sb.ToString();
     }
 
@@ -339,8 +381,8 @@ public static class SchematicExporter
     }
 
     /// <summary>
-    /// Exports a self-contained bundle with schematic, netlist, attached models, BOM, and a
-    /// SHA-256 checksum manifest (RSpice "Export bundle with dependencies and checksum manifest" parity).
+    /// Exports a self-contained bundle with schematic, netlist, Cameo script, attached models,
+    /// BOM, and a SHA-256 checksum manifest (RSpice "Export bundle with dependencies and checksum manifest" parity).
     /// </summary>
     public static string ExportBundleJson(
         SchematicDocument document,
@@ -351,7 +393,7 @@ public static class SchematicExporter
         var opts = options ?? new SchematicExportOptions();
         var schemJson = SchematicCompiler.SerializeJson(document);
         var netlist = ExportNetlist(document, opts, registry, library);
-        var starlark = ExportStarlarkScript(document, registry, library);
+        var cameoScript = ExportCameoScript(document, registry, library);
         var bom = ExportBomCsv(document, library);
 
         var ext = opts.Dialect switch
@@ -365,7 +407,7 @@ public static class SchematicExporter
         {
             [$"{document.Name}.spice.json"] = schemJson,
             [$"{document.Name}.{ext}"] = netlist,
-            [$"{document.Name}.star"] = starlark,
+            [$"{document.Name}.cameo"] = cameoScript,
             [$"{document.Name}.bom.csv"] = bom
         };
 

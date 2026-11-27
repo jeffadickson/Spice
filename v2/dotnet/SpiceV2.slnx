@@ -1,9 +1,10 @@
 <Solution>
   <Project Path="Cameo.Netlist/Cameo.Netlist.csproj" />
+  <Project Path="Cameo.Netlist.Scripting/Cameo.Netlist.Scripting.csproj" />
   <Project Path="Spice.Ir/Spice.Ir.csproj" />
   <Project Path="Spice.Sdk/Spice.Sdk.csproj" />
-  <Project Path="Spice.Starlark/Spice.Starlark.csproj" />
   <Project Path="Spice.Schematic/Spice.Schematic.csproj" />
+  <Project Path="Spice.Cameo/Spice.Cameo.csproj" />
   <Project Path="Spice.App/Spice.App.csproj" />
   <Project Path="Spice.Tests/Spice.Tests.csproj" />
 </Solution>

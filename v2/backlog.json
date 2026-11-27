@@ -34,8 +34,8 @@
     },
     {
       "id": "PLAN-V2-003",
-      "title": "M1b - StarLark-cs DSL frontend and parallel campaign authoring",
-      "status": "InProgress",
+      "title": "M1b - Cameo scripting DSL frontend and parallel simulation control",
+      "status": "Done",
       "phase": "M1",
       "depends_on": [
         "PLAN-V2-002"

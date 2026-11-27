@@ -495,7 +495,7 @@ public static class WorkbenchUi
                   <option value="xyce">Xyce Dialect (.cir + .PRINT CSV)</option>
                   <option value="ltspice">LTspice Compatible (.net + .backanno)</option>
                   <option value="spectre">Spectre Dialect (.scs)</option>
-                  <option value="starlark">StarLark-cs Script (.star)</option>
+                  <option value="cameo">Cameo Script (.cameo)</option>
                   <option value="bom">Bill of Materials (.bom.csv)</option>
                   <option value="bundle">Self-Contained Bundle + SHA-256 (.bundle.json)</option>
                   <option value="json">Versioned Schematic Save (.spice.json)</option>

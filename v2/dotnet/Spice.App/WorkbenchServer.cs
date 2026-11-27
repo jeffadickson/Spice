@@ -4,18 +4,20 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Cameo.Netlist;
+using Cameo.Netlist.Scripting;
+using Spice.Cameo;
 using Spice.Ir;
 using Spice.Schematic;
 using Spice.Sdk;
-using Spice.Starlark;
 
 namespace Spice.App;
 
 /// <summary>
 /// Embedded cross-platform HTTP workbench host for Spice.App backed strictly by public
-/// Spice.Ir, Spice.Schematic, Spice.Starlark, and Spice.Sdk (NativeCppBackend) APIs.
-/// Exposes interactive schematic capture, multi-dialect netlist/bundle export, versioned
-/// save/load, and persistent custom component library endpoints.
+/// Cameo.Netlist, Cameo.Netlist.Scripting, Spice.Cameo, Spice.Ir, Spice.Schematic, and
+/// Spice.Sdk (NativeCppBackend) APIs. Exposes interactive schematic capture, Cameo script
+/// execution, multi-dialect netlist/bundle export, versioned save/load, and persistent
+/// custom component library endpoints.
 /// </summary>
 public sealed class WorkbenchServer : IAsyncDisposable
 {
@@ -341,6 +343,49 @@ public sealed class WorkbenchServer : IAsyncDisposable
                 await WriteJsonAsync(ctx.Response, 200, new { imported = true, document = doc });
                 return;
             }
+            if (method == "POST" && path == "/api/cameo/run")
+            {
+                var req = await ReadJsonAsync<CameoRunRequest>(ctx.Request);
+                if (req is null || string.IsNullOrWhiteSpace(req.Script))
+                {
+                    await WriteJsonAsync(ctx.Response, 400, new { error = "missing script" });
+                    return;
+                }
+                var res = CameoSimulationHost.RunScript(
+                    req.Script,
+                    _backend,
+                    _library,
+                    new CameoNetlistScriptOptions(
+                        MaxSteps: req.MaxSteps is > 0 ? req.MaxSteps.Value : 2_000_000,
+                        FileName: string.IsNullOrWhiteSpace(req.FileName) ? "workbench.cameo" : req.FileName));
+
+                SchematicDocument? schem = null;
+                string? velosimJson = null;
+                string? circuitJson = null;
+                if (res.Document is not null)
+                {
+                    schem = CameoNetlistBridge.ToSchematicDocument(res.Document, _library);
+                    velosimJson = CameoNetlistBridge.ExportVeloSimNetlistJson(res.Document, _library);
+                    circuitJson = CameoNetlistBridge.ExportCircuitJson(res.Document, _library);
+                }
+
+                await WriteJsonAsync(ctx.Response, res.Succeeded ? 200 : 400, new
+                {
+                    succeeded = res.Succeeded,
+                    design = res.Document?.Name,
+                    electrical_sha256 = res.Document?.ElectricalSha256,
+                    layout_sha256 = res.Document?.LayoutSha256,
+                    spicenet = res.FormattedSpicenet,
+                    velosim_json = velosimJson,
+                    circuit_json = circuitJson,
+                    document = schem,
+                    runs = res.Runs,
+                    assertions = res.Assertions,
+                    diagnostics = res.Diagnostics,
+                    stdout = res.Stdout
+                });
+                return;
+            }
             if (method == "POST" && path == "/api/schematic/import-netlist")
             {
                 var req = await ReadJsonAsync<ImportFlagshipNetlistRequest>(ctx.Request);
@@ -361,6 +406,14 @@ public sealed class WorkbenchServer : IAsyncDisposable
                 {
                     detected = "velosim.netlist.v1";
                     parsed = CameoNetlistBridge.ImportVeloSimNetlistJson(req.Content, _library, verifyModelHashes: req.VerifyHashes ?? true);
+                }
+                else if (CameoNetlistScriptHost.LooksLikeCameoNetlistScript(req.Content))
+                {
+                    detected = "cameo.script";
+                    var eval = CameoNetlistScriptHost.Evaluate(
+                        req.Content,
+                        new CameoNetlistScriptOptions(LibraryResolver: CameoNetlistBridge.CreateLibraryResolver(_library)));
+                    parsed = new FlagshipParseResult(eval.Succeeded, eval.Document, eval.Diagnostics);
                 }
                 else
                 {
@@ -491,9 +544,10 @@ public sealed class WorkbenchServer : IAsyncDisposable
                         filename = $"{req.Document.Name}.scs";
                         contentType = "text/plain; charset=utf-8";
                         break;
+                    case "cameo":
                     case "starlark":
-                        content = SchematicExporter.ExportStarlarkScript(req.Document, library: _library);
-                        filename = $"{req.Document.Name}.star";
+                        content = SchematicExporter.ExportCameoScript(req.Document, library: _library);
+                        filename = $"{req.Document.Name}.cameo";
                         contentType = "text/plain; charset=utf-8";
                         break;
                     case "bom":
@@ -935,6 +989,11 @@ public sealed class WorkbenchServer : IAsyncDisposable
     private sealed record ImportFlagshipNetlistRequest(
         string? Content,
         bool? VerifyHashes = null);
+
+    private sealed record CameoRunRequest(
+        string? Script,
+        string? FileName = null,
+        long? MaxSteps = null);
 
     private sealed record ImportSpiceLibraryRequest(
         string? SpiceText,

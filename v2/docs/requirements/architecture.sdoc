@@ -539,12 +539,12 @@ RELATIONS:
 [REQUIREMENT]
 UID: ARCH-DSL-001
 STATUS: Accepted
-TITLE: StarLark-cs primary DSL over Canonical IR
+TITLE: Cameo primary scripting DSL over Flagship Netlist and Canonical IR
 STATEMENT: >>>
-Spice.Starlark shall embed StarLark-cs with SharpUnits-compatible dimensional constructors and bounded host bindings to emit Canonical IR circuits, analyses, sweeps, and assertions; the IR boundary shall remain frontend-agnostic so additional frontends (such as Cameo, F#, or C#) target the exact same IR.
+Cameo.Netlist.Scripting and Spice.Cameo shall embed Cameo (jeffadickson/Cameo-script, CameoEngine.CreateHermetic) with SharpUnits (Cameo.Units) ISO 80000 physical units and typed host bindings (net.* and sim.*) to programmatically generate immutable FlagshipNetlistDocument (.spicenet) hierarchies, Canonical IR circuits, analyses, sweeps, and assertions while keeping the IR boundary frontend-agnostic.
 <<<
 COMMENT: >>>
-Verification: Author identical RC, subcircuit, and sweep circuits in StarLark-cs and C# builders and assert canonical IR equivalence.
+Verification: Author parametric, hierarchical, mixed-signal VeloSim, and simulation-controlled RC/sweep circuits in .cameo scripts and assert deterministic .spicenet, dual-hash, and live C++20 simulation parity.
 <<<
 RELATIONS:
 - TYPE: Parent
@@ -552,13 +552,13 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: ARCH-DSL-002
-STATUS: Proposed
+STATUS: Accepted
 TITLE: Hermetic budgets, parallel campaigns and behavioral separation
 STATEMENT: >>>
-StarLark-cs execution shall enforce step, wall-clock, cancellation, and memory budgets, use deterministic parallel_map/spawn futures for sweep/corner campaigns, and never run inside the C++20 Newton/device hot loop; runtime behavioral equations shall compile to the C++20 autodiff expression VM.
+Cameo script execution shall enforce hermetic FilePolicy.DenyAll sandboxing, deterministic MaxSteps budgets, and static type checking, use bounded-concurrency parallel sweeps (sim.sweep_op / CampaignRunner) preserving exact input order, and never run inside the C++20 Newton/device hot loop; runtime behavioral equations shall compile to the C++20 autodiff expression VM.
 <<<
 COMMENT: >>>
-Verification: Test budget exhaustion, deterministic parallel sweep ordering, and analytical B-source derivatives evaluated purely in C++.
+Verification: Test MaxSteps budget exhaustion on infinite loops, static compile-error rejection, deterministic parallel sweep ordering, zero Spice.* dependency in Cameo.Netlist.Scripting, and analytical B-source derivatives evaluated purely in C++.
 <<<
 RELATIONS:
 - TYPE: Parent

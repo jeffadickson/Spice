@@ -4,7 +4,7 @@ using Spice.App;
 using Spice.Ir;
 using Spice.Schematic;
 using Spice.Sdk;
-using Spice.Starlark;
+using Spice.Cameo;
 using Xunit;
 
 namespace Spice.Tests;
@@ -754,8 +754,9 @@ public sealed class M1PlatformTests
             Assert.Contains("simulator lang=spectre", spectre);
             Assert.Contains("Rs (src in) resistor r=50", spectre);
 
-            var starlark = SchematicExporter.ExportStarlarkScript(doc, library: reloaded);
-            Assert.Contains("def build_custom_atten_test():", starlark);
+            var cameoScript = SchematicExporter.ExportCameoScript(doc, library: reloaded);
+            Assert.Contains("net.design(\"custom_atten_test\")", cameoScript);
+            Assert.Contains("sim.op()", cameoScript);
 
             var bom = SchematicExporter.ExportBomCsv(doc, reloaded);
             Assert.Contains("6dB Pi Attenuator", bom);

@@ -9,9 +9,10 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Cameo.Netlist/Cameo.Netlist.csproj" />
+    <ProjectReference Include="../Cameo.Netlist.Scripting/Cameo.Netlist.Scripting.csproj" />
     <ProjectReference Include="../Spice.Ir/Spice.Ir.csproj" />
     <ProjectReference Include="../Spice.Schematic/Spice.Schematic.csproj" />
-    <ProjectReference Include="../Spice.Starlark/Spice.Starlark.csproj" />
+    <ProjectReference Include="../Spice.Cameo/Spice.Cameo.csproj" />
     <ProjectReference Include="../Spice.Sdk/Spice.Sdk.csproj" />
   </ItemGroup>
 </Project>

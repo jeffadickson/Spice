@@ -1,16 +1,18 @@
 using System.Globalization;
 using System.Text.Json;
 using Cameo.Netlist;
+using Cameo.Netlist.Scripting;
+using Spice.Cameo;
 using Spice.Ir;
 using Spice.Schematic;
 using Spice.Sdk;
-using Spice.Starlark;
 
 namespace Spice.App;
 
 /// <summary>
-/// .NET 11 Spice V2 Workbench Host consuming strictly public Spice.Ir, Spice.Schematic,
-/// Spice.Starlark, and Spice.Sdk APIs over the in-process C++20 libspice_capi ABI (ARCH-API-002).
+/// .NET 11 Spice V2 Workbench Host consuming strictly public Cameo.Netlist,
+/// Cameo.Netlist.Scripting, Spice.Cameo, Spice.Ir, Spice.Schematic, and Spice.Sdk APIs
+/// over the in-process C++20 libspice_capi ABI (ARCH-API-002).
 /// </summary>
 public static class Program
 {
@@ -31,6 +33,7 @@ public static class Program
                 "info" => RunInfo(),
                 "serve" => await RunServeAsync(args[1..]),
                 "run" => await RunDeckAsync(args[1..]),
+                "cameo" => await RunCameoAsync(args[1..]),
                 "schematic" => await RunSchematicAsync(args[1..]),
                 "library" => RunLibrary(args[1..]),
                 "campaign" => await RunCampaignAsync(args[1..]),
@@ -61,14 +64,19 @@ public static class Program
               spice-app run <deck.cir> [--analysis op|dc|ac|tran|noise|hb|pss|sp]
                                        [--source V1] [--start 0] [--stop 1.2] [--step 0.1]
                                        [--f0 1e6] [--harmonics 7] [--out-p out]
-              spice-app schematic <file(.spice.json|.spicenet|.spice.svg|.velosim.json)>
+              spice-app cameo <script.cameo>
+                                       [--max-steps 2000000]
+                                       [--spicenet out.spicenet] [--polyglot-svg out.spice.svg]
+                                       [--velosim out.velosim.json] [--circuit-json out.circuit.json]
+                                       [--spice out.cir]
+              spice-app schematic <file(.cameo|.spicenet|.spice.svg|.velosim.json|.spice.json)>
                                        [--analysis op|dc|ac|tran]
                                        [--dialect spice|ngspice|xyce|ltspice|spectre]
                                        [--svg out.svg] [--polyglot-svg out.spice.svg]
                                        [--spicenet out.spicenet] [--velosim out.velosim.json]
                                        [--circuit-json out.circuit.json]
                                        [--spice out.cir] [--bom out.csv]
-                                       [--starlark out.star] [--bundle out.bundle.json]
+                                       [--cameo out.cameo] [--bundle out.bundle.json]
               spice-app library [list]
               spice-app campaign [--preset rc-sweep]
             """);
@@ -204,6 +212,71 @@ public static class Program
         return 0;
     }
 
+    private static async Task<int> RunCameoAsync(string[] args)
+    {
+        if (args.Length == 0)
+        {
+            Console.Error.WriteLine("error: missing <script.cameo> path");
+            return 2;
+        }
+        var scriptPath = args[0];
+        long maxSteps = 2_000_000;
+        string? spicenetOut = null;
+        string? polyglotSvgOut = null;
+        string? velosimOut = null;
+        string? circuitJsonOut = null;
+        string? spiceOut = null;
+
+        for (int i = 1; i < args.Length; ++i)
+        {
+            if (args[i] == "--max-steps" && i + 1 < args.Length && long.TryParse(args[++i], NumberStyles.Integer, CultureInfo.InvariantCulture, out var ms)) maxSteps = ms;
+            else if (args[i] == "--spicenet" && i + 1 < args.Length) spicenetOut = args[++i];
+            else if (args[i] == "--polyglot-svg" && i + 1 < args.Length) polyglotSvgOut = args[++i];
+            else if (args[i] == "--velosim" && i + 1 < args.Length) velosimOut = args[++i];
+            else if (args[i] == "--circuit-json" && i + 1 < args.Length) circuitJsonOut = args[++i];
+            else if (args[i] == "--spice" && i + 1 < args.Length) spiceOut = args[++i];
+        }
+
+        var lib = new ComponentLibraryStore(ComponentLibraryStore.GetDefaultLibraryPath());
+        var source = await File.ReadAllTextAsync(scriptPath);
+        using var backend = new NativeCppBackend(enableAudits: true);
+        var res = CameoSimulationHost.RunScript(
+            source,
+            backend,
+            lib,
+            new CameoNetlistScriptOptions(MaxSteps: maxSteps, FileName: Path.GetFileName(scriptPath)));
+
+        if (res.Document is not null)
+        {
+            if (!string.IsNullOrWhiteSpace(spicenetOut))
+                await File.WriteAllTextAsync(spicenetOut, FlagshipNetlist.Format(res.Document));
+            if (!string.IsNullOrWhiteSpace(polyglotSvgOut))
+                await File.WriteAllTextAsync(polyglotSvgOut, CameoNetlistBridge.ExportPolyglotSvg(res.Document, library: lib));
+            if (!string.IsNullOrWhiteSpace(velosimOut))
+                await File.WriteAllTextAsync(velosimOut, CameoNetlistBridge.ExportVeloSimNetlistJson(res.Document, lib));
+            if (!string.IsNullOrWhiteSpace(circuitJsonOut))
+                await File.WriteAllTextAsync(circuitJsonOut, CameoNetlistBridge.ExportCircuitJson(res.Document, lib));
+            if (!string.IsNullOrWhiteSpace(spiceOut))
+            {
+                var schem = CameoNetlistBridge.ToSchematicDocument(res.Document, lib);
+                await File.WriteAllTextAsync(spiceOut, SchematicExporter.ExportNetlist(schem, library: lib));
+            }
+        }
+
+        Console.WriteLine(JsonSerializer.Serialize(new
+        {
+            succeeded = res.Succeeded,
+            design = res.Document?.Name,
+            electrical_sha256 = res.Document?.ElectricalSha256,
+            layout_sha256 = res.Document?.LayoutSha256,
+            runs = res.Runs.Select(r => new { case_id = r.CaseId, status = r.Status.ToString(), signals = r.Signals.Select(s => s.Id).ToArray() }),
+            assertions = res.Assertions,
+            diagnostics = res.Diagnostics,
+            stdout = res.Stdout
+        }, JsonOpts));
+        return res.Succeeded ? 0 : 3;
+    }
+
     private static async Task<int> RunSchematicAsync(string[] args)
     {
         if (args.Length == 0)
@@ -221,7 +294,7 @@ public static class Program
         string? circuitJsonOut = null;
         string? spiceOut = null;
         string? bomOut = null;
-        string? starlarkOut = null;
+        string? cameoOut = null;
         string? bundleOut = null;
 
         for (int i = 1; i < args.Length; ++i)
@@ -235,7 +308,7 @@ public static class Program
             else if (args[i] == "--circuit-json" && i + 1 < args.Length) circuitJsonOut = args[++i];
             else if (args[i] == "--spice" && i + 1 < args.Length) spiceOut = args[++i];
             else if (args[i] == "--bom" && i + 1 < args.Length) bomOut = args[++i];
-            else if (args[i] == "--starlark" && i + 1 < args.Length) starlarkOut = args[++i];
+            else if ((args[i] == "--cameo" || args[i] == "--starlark") && i + 1 < args.Length) cameoOut = args[++i];
             else if (args[i] == "--bundle" && i + 1 < args.Length) bundleOut = args[++i];
         }
 
@@ -245,7 +318,24 @@ public static class Program
         SchematicDocument doc;
         FlagshipNetlistDocument? flagshipSource = null;
 
-        if (inputPath.EndsWith(".spicenet", StringComparison.OrdinalIgnoreCase) ||
+        if (inputPath.EndsWith(".cameo", StringComparison.OrdinalIgnoreCase) ||
+            CameoNetlistScriptHost.LooksLikeCameoNetlistScript(rawText))
+        {
+            var eval = CameoNetlistScriptHost.Evaluate(
+                rawText,
+                new CameoNetlistScriptOptions(
+                    FileName: Path.GetFileName(inputPath),
+                    LibraryResolver: CameoNetlistBridge.CreateLibraryResolver(lib)));
+            if (!eval.Succeeded || eval.Document is null)
+            {
+                Console.Error.WriteLine("Cameo netlist script evaluation failed:");
+                foreach (var d in eval.Diagnostics) Console.Error.WriteLine($"  [{d.Code}] {d.Message}");
+                return 3;
+            }
+            flagshipSource = eval.Document;
+            doc = CameoNetlistBridge.ToSchematicDocument(eval.Document, lib);
+        }
+        else if (inputPath.EndsWith(".spicenet", StringComparison.OrdinalIgnoreCase) ||
             trimmed.StartsWith("netlist ", StringComparison.OrdinalIgnoreCase) ||
             trimmed.StartsWith("//", StringComparison.Ordinal))
         {
@@ -343,9 +433,9 @@ public static class Program
         {
             await File.WriteAllTextAsync(bomOut, SchematicExporter.ExportBomCsv(doc, lib));
         }
-        if (!string.IsNullOrWhiteSpace(starlarkOut))
+        if (!string.IsNullOrWhiteSpace(cameoOut))
         {
-            await File.WriteAllTextAsync(starlarkOut, SchematicExporter.ExportStarlarkScript(doc, library: lib));
+            await File.WriteAllTextAsync(cameoOut, SchematicExporter.ExportCameoScript(doc, library: lib));
         }
         if (!string.IsNullOrWhiteSpace(bundleOut))
         {

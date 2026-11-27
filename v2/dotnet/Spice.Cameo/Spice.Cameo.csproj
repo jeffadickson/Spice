@@ -1,12 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net11.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../Cameo.Netlist/Cameo.Netlist.csproj" />
+    <ProjectReference Include="../Cameo.Netlist.Scripting/Cameo.Netlist.Scripting.csproj" />
     <ProjectReference Include="../Spice.Ir/Spice.Ir.csproj" />
     <ProjectReference Include="../Spice.Sdk/Spice.Sdk.csproj" />
+    <ProjectReference Include="../Spice.Schematic/Spice.Schematic.csproj" />
   </ItemGroup>
 </Project>

@@ -4,14 +4,14 @@ using Spice.App;
 using Spice.Ir;
 using Spice.Schematic;
 using Spice.Sdk;
-using Spice.Starlark;
+using Spice.Cameo;
 using Xunit;
 
 namespace Spice.Tests;
 
 /// <summary>
-/// Rigorous unit, error-path, multi-dialect, differential-comparer, Starlark DSL,
-/// CameoNetlistBridge, and CLI integration tests across Spice.Ir, Spice.Starlark,
+/// Rigorous unit, error-path, multi-dialect, differential-comparer, Spice.Cameo DSL,
+/// CameoNetlistBridge, and CLI integration tests across Spice.Ir, Spice.Cameo,
 /// Spice.Sdk, Spice.Schematic, and Spice.App.
 /// </summary>
 public sealed class SpiceCoreAndCliRigorousTests
@@ -348,10 +348,12 @@ public sealed class SpiceCoreAndCliRigorousTests
 
         var bom = SchematicExporter.ExportBomCsv(multi);
         Assert.Contains("R1", bom, StringComparison.Ordinal);
-        var star = SchematicExporter.ExportStarlarkScript(multi);
-        Assert.Contains("StarLark-cs", star, StringComparison.Ordinal);
+        var cameo = SchematicExporter.ExportCameoScript(multi);
+        Assert.Contains("net.design(\"multi_sheet_divider\")", cameo, StringComparison.Ordinal);
+        Assert.Contains("sim.op()", cameo, StringComparison.Ordinal);
         var bundle = SchematicExporter.ExportBundleJson(multi, new SchematicExportOptions(NetlistDialect.Ngspice, AnalysisKind.OperatingPoint));
         Assert.Contains("spice.export-bundle.v2", bundle, StringComparison.Ordinal);
+        Assert.Contains(".cameo", bundle, StringComparison.Ordinal);
     }
 
     // ==================== 5. SPICE.APP CLI INTEGRATION ====================
@@ -368,6 +370,7 @@ public sealed class SpiceCoreAndCliRigorousTests
             Assert.Equal(2, await Program.Main(["does-not-exist"]));
             Assert.Equal(2, await Program.Main(["run"]));
             Assert.Equal(2, await Program.Main(["schematic"]));
+            Assert.Equal(2, await Program.Main(["cameo"]));
 
             Assert.Equal(0, await Program.Main(["info"]));
             Assert.Equal(0, await Program.Main(["library", "list"]));
@@ -403,7 +406,7 @@ public sealed class SpiceCoreAndCliRigorousTests
             var cjOut = Path.Combine(tmpDir, "out.circuit.json");
             var cirOut = Path.Combine(tmpDir, "out.cir");
             var bomOut = Path.Combine(tmpDir, "out.csv");
-            var starOut = Path.Combine(tmpDir, "out.star");
+            var cameoOut = Path.Combine(tmpDir, "out.cameo");
             var bundleOut = Path.Combine(tmpDir, "out.bundle.json");
 
             Assert.Equal(0, await Program.Main([
@@ -416,7 +419,7 @@ public sealed class SpiceCoreAndCliRigorousTests
                 "--circuit-json", cjOut,
                 "--spice", cirOut,
                 "--bom", bomOut,
-                "--starlark", starOut,
+                "--cameo", cameoOut,
                 "--bundle", bundleOut
             ]));
 
@@ -427,7 +430,7 @@ public sealed class SpiceCoreAndCliRigorousTests
             Assert.True(File.Exists(cjOut));
             Assert.True(File.Exists(cirOut));
             Assert.True(File.Exists(bomOut));
-            Assert.True(File.Exists(starOut));
+            Assert.True(File.Exists(cameoOut));
             Assert.True(File.Exists(bundleOut));
 
             // Now feed the generated polyglot .spice.svg AND .velosim.json BACK into `schematic` CLI!

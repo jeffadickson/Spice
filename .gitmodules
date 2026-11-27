@@ -1,0 +1,3 @@
+[submodule "v2/external/Cameo-script"]
+	path = v2/external/Cameo-script
+	url = https://github.com/jeffadickson/Cameo-script.git
