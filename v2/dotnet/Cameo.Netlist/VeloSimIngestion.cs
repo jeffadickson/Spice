@@ -404,6 +404,8 @@ public static class VeloSimIngestion
 
         var explicitMap = (document.Layout?.Placements ?? [])
             .ToDictionary(p => p.InstanceId, StringComparer.OrdinalIgnoreCase);
+        var pcbPlaceMap = (document.Pcb?.Placements ?? [])
+            .ToDictionary(p => p.InstanceId, StringComparer.OrdinalIgnoreCase);
         var autoLayout = FlagshipNetlist.ComputeSignalFlowLayout(
             elab.Parts,
             elab.Nets,
@@ -413,18 +415,37 @@ public static class VeloSimIngestion
 
         if (document.Pcb is not null)
         {
+            double bw = document.Pcb.BoardWidthMm ?? 50.0;
+            double bh = document.Pcb.BoardHeightMm ?? 30.0;
             elements.Add(new
             {
                 type = "pcb_board",
                 pcb_board_id = $"pcb_board_{document.Name}",
                 name = document.Name,
-                width = document.Pcb.BoardWidthMm ?? 50.0,
-                height = document.Pcb.BoardHeightMm ?? 30.0,
+                center = new { x = bw * 0.5, y = bh * 0.5 },
+                width = bw,
+                height = bh,
                 num_layers = document.Pcb.LayerCount ?? 2
             });
         }
 
         var portIdMap = new Dictionary<(string Inst, string Pin), string>();
+        var padWorldPos = new Dictionary<(string Inst, string Pin), (double X, double Y, string PadId)>();
+        var pinListByPart = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var net in elab.Nets)
+        {
+            foreach (var pr in net.Pins)
+            {
+                if (!pinListByPart.TryGetValue(pr.InstanceId, out var list))
+                {
+                    list = [];
+                    pinListByPart[pr.InstanceId] = list;
+                }
+                if (!list.Contains(pr.PinName, StringComparer.OrdinalIgnoreCase)) list.Add(pr.PinName);
+            }
+        }
+
+        int autoPcbIdx = 0;
         foreach (var part in elab.Parts.OrderBy(c => c.Id, StringComparer.Ordinal))
         {
             var srcId = $"source_component_{part.Id}";
@@ -456,18 +477,79 @@ public static class VeloSimIngestion
                 rotation = place.RotationDegrees
             });
 
-            if (!string.IsNullOrWhiteSpace(part.Footprint))
+            bool hasPcb = pcbPlaceMap.TryGetValue(part.Id, out var pcbPl) || !string.IsNullOrWhiteSpace(part.Footprint);
+            if (hasPcb)
             {
+                var fp = pcbPl?.Footprint ?? part.Footprint ?? "0603";
+                double cx = pcbPl?.XMm ?? (5.0 + (autoPcbIdx % 8) * 6.0);
+                double cy = pcbPl?.YMm ?? (5.0 + (autoPcbIdx / 8) * 6.0);
+                int rotDeg = pcbPl?.RotationDegrees ?? 0;
+                string layer = pcbPl?.Layer ?? "top";
+                autoPcbIdx++;
+
+                var spec = ResolveFootprintSpec(fp, pinListByPart.GetValueOrDefault(part.Id) ?? ["p", "n"]);
+                var pcbCompId = $"pcb_component_{part.Id}";
                 elements.Add(new
                 {
                     type = "pcb_component",
-                    pcb_component_id = $"pcb_component_{part.Id}",
+                    pcb_component_id = pcbCompId,
                     source_component_id = srcId,
-                    footprint = part.Footprint,
-                    layer = "top"
+                    footprint = fp,
+                    center = new { x = cx, y = cy },
+                    width = spec.BodyWidthMm,
+                    height = spec.BodyHeightMm,
+                    rotation = rotDeg,
+                    layer
                 });
+
+                double rad = rotDeg * Math.PI / 180.0;
+                double cosR = Math.Cos(rad), sinR = Math.Sin(rad);
+                foreach (var pad in spec.Pads)
+                {
+                    double wx = Math.Round(cx + pad.Dx * cosR - pad.Dy * sinR, 4);
+                    double wy = Math.Round(cy + pad.Dx * sinR + pad.Dy * cosR, 4);
+                    var padId = $"pcb_pad_{part.Id}_{pad.PinName}";
+                    padWorldPos[(part.Id, pad.PinName)] = (wx, wy, padId);
+
+                    if (pad.IsThroughHole)
+                    {
+                        elements.Add(new
+                        {
+                            type = "pcb_plated_hole",
+                            pcb_plated_hole_id = padId,
+                            pcb_component_id = pcbCompId,
+                            pin_name = pad.PinName,
+                            shape = "circle",
+                            x = wx,
+                            y = wy,
+                            hole_diameter = pad.DrillMm,
+                            outer_diameter = pad.WidthMm,
+                            layers = new[] { "top", "bottom" }
+                        });
+                    }
+                    else
+                    {
+                        elements.Add(new
+                        {
+                            type = "pcb_smtpad",
+                            pcb_smtpad_id = padId,
+                            pcb_component_id = pcbCompId,
+                            pin_name = pad.PinName,
+                            shape = "rect",
+                            x = wx,
+                            y = wy,
+                            width = pad.WidthMm,
+                            height = pad.HeightMm,
+                            layer
+                        });
+                    }
+                }
             }
         }
+
+        var routedNets = new HashSet<string>(
+            (document.Pcb?.Traces ?? []).Where(t => t is not null).Select(t => t.NetName),
+            StringComparer.OrdinalIgnoreCase);
 
         foreach (var net in elab.Nets.OrderBy(n => n.IsGround ? "" : n.Name, StringComparer.Ordinal))
         {
@@ -482,6 +564,7 @@ public static class VeloSimIngestion
             });
 
             var connectedPortIds = new List<string>();
+            var netPads = new List<(double X, double Y, string PadId)>();
             foreach (var pr in net.Pins.OrderBy(p => p.InstanceId, StringComparer.Ordinal).ThenBy(p => p.PinName, StringComparer.Ordinal))
             {
                 if (!portIdMap.TryGetValue((pr.InstanceId, pr.PinName), out var portId))
@@ -497,6 +580,10 @@ public static class VeloSimIngestion
                     });
                 }
                 connectedPortIds.Add(portId);
+                if (padWorldPos.TryGetValue((pr.InstanceId, pr.PinName), out var ppos))
+                {
+                    netPads.Add(ppos);
+                }
             }
 
             if (connectedPortIds.Count >= 2)
@@ -509,9 +596,122 @@ public static class VeloSimIngestion
                     connected_source_net_ids = new[] { netId }
                 });
             }
+
+            // Emit unrouted ratsnest airwires for multi-pad nets without explicit copper traces
+            if (netPads.Count >= 2 && !routedNets.Contains(netName))
+            {
+                for (int k = 1; k < netPads.Count; ++k)
+                {
+                    elements.Add(new
+                    {
+                        type = "pcb_ratsnest",
+                        pcb_ratsnest_id = $"pcb_ratsnest_{netName}_{k}",
+                        source_net_id = netId,
+                        from_pad_id = netPads[k - 1].PadId,
+                        to_pad_id = netPads[k].PadId,
+                        x1 = netPads[k - 1].X,
+                        y1 = netPads[k - 1].Y,
+                        x2 = netPads[k].X,
+                        y2 = netPads[k].Y
+                    });
+                }
+            }
+        }
+
+        if (document.Pcb?.Traces is not null)
+        {
+            int trIdx = 0;
+            foreach (var tr in document.Pcb.Traces)
+            {
+                if (tr is null || tr.Points.Count < 2) continue;
+                elements.Add(new
+                {
+                    type = "pcb_trace",
+                    pcb_trace_id = $"pcb_trace_{tr.NetName}_{++trIdx}",
+                    source_trace_id = $"source_trace_{tr.NetName}",
+                    net_name = tr.NetName,
+                    route = tr.Points.Select(pt => new
+                    {
+                        route_type = "wire",
+                        x = pt.XMm,
+                        y = pt.YMm,
+                        width = tr.WidthMm,
+                        layer = tr.Layer
+                    }).ToArray()
+                });
+            }
+        }
+
+        if (document.Pcb?.Vias is not null)
+        {
+            int viaIdx = 0;
+            foreach (var via in document.Pcb.Vias)
+            {
+                if (via is null) continue;
+                elements.Add(new
+                {
+                    type = "pcb_via",
+                    pcb_via_id = $"pcb_via_{via.NetName}_{++viaIdx}",
+                    source_net_id = $"source_net_{via.NetName}",
+                    x = via.XMm,
+                    y = via.YMm,
+                    hole_diameter = via.DrillMm,
+                    outer_diameter = via.OuterDiameterMm,
+                    layers = new[] { via.FromLayer, via.ToLayer }
+                });
+            }
         }
 
         return JsonSerializer.Serialize(elements, JsonOpts);
+    }
+
+    private sealed record PadSpec(string PinName, double Dx, double Dy, double WidthMm, double HeightMm, bool IsThroughHole = false, double DrillMm = 0.0);
+    private sealed record FootprintSpec(double BodyWidthMm, double BodyHeightMm, IReadOnlyList<PadSpec> Pads);
+
+    private static FootprintSpec ResolveFootprintSpec(string footprint, IReadOnlyList<string> pins)
+    {
+        var fp = footprint.Trim().ToUpperInvariant();
+        string p0 = pins.Count > 0 ? pins[0] : "p";
+        string p1 = pins.Count > 1 ? pins[1] : "n";
+        string p2 = pins.Count > 2 ? pins[2] : "3";
+
+        if (fp.Contains("0402", StringComparison.Ordinal))
+            return new(1.6, 0.7, [new(p0, -0.5, 0.0, 0.6, 0.6), new(p1, 0.5, 0.0, 0.6, 0.6)]);
+        if (fp.Contains("0603", StringComparison.Ordinal))
+            return new(2.4, 1.0, [new(p0, -0.8, 0.0, 0.8, 0.9), new(p1, 0.8, 0.0, 0.8, 0.9)]);
+        if (fp.Contains("0805", StringComparison.Ordinal))
+            return new(3.0, 1.4, [new(p0, -1.0, 0.0, 1.0, 1.3), new(p1, 1.0, 0.0, 1.0, 1.3)]);
+        if (fp.Contains("1206", StringComparison.Ordinal))
+            return new(4.2, 1.8, [new(p0, -1.5, 0.0, 1.1, 1.6), new(p1, 1.5, 0.0, 1.1, 1.6)]);
+        if (fp.Contains("SOT-23", StringComparison.Ordinal) || fp.Contains("SOT23", StringComparison.Ordinal))
+            return new(3.0, 2.6, [new(p0, -0.95, -1.1, 0.6, 0.9), new(p1, 0.95, -1.1, 0.6, 0.9), new(p2, 0.0, 1.1, 0.6, 0.9)]);
+        if (fp.Contains("SOIC-8", StringComparison.Ordinal) || fp.Contains("SOIC8", StringComparison.Ordinal))
+        {
+            var pads = new List<PadSpec>(8);
+            for (int i = 0; i < 4; ++i) pads.Add(new(i < pins.Count ? pins[i] : $"{i + 1}", -2.7, -1.905 + i * 1.27, 1.5, 0.6));
+            for (int i = 0; i < 4; ++i) pads.Add(new(4 + i < pins.Count ? pins[4 + i] : $"{5 + i}", 2.7, 1.905 - i * 1.27, 1.5, 0.6));
+            return new(6.0, 5.0, pads);
+        }
+        if (fp.Contains("DIP-8", StringComparison.Ordinal) || fp.Contains("DIP8", StringComparison.Ordinal))
+        {
+            var pads = new List<PadSpec>(8);
+            for (int i = 0; i < 4; ++i) pads.Add(new(i < pins.Count ? pins[i] : $"{i + 1}", -3.81, -3.81 + i * 2.54, 1.6, 1.6, true, 0.8));
+            for (int i = 0; i < 4; ++i) pads.Add(new(4 + i < pins.Count ? pins[4 + i] : $"{5 + i}", 3.81, 3.81 - i * 2.54, 1.6, 1.6, true, 0.8));
+            return new(9.2, 9.6, pads);
+        }
+        if (fp.Contains("TO-220", StringComparison.Ordinal) || fp.Contains("TO220", StringComparison.Ordinal))
+            return new(10.0, 4.5, [new(p0, -2.54, 0.0, 1.8, 1.8, true, 1.0), new(p1, 0.0, 0.0, 1.8, 1.8, true, 1.0), new(p2, 2.54, 0.0, 1.8, 1.8, true, 1.0)]);
+
+        // Generic dual-row fallback for arbitrary N-pin packages
+        int n = Math.Max(2, pins.Count);
+        var gen = new List<PadSpec>(n);
+        for (int i = 0; i < n; ++i)
+        {
+            string nm = i < pins.Count ? pins[i] : $"pin{i + 1}";
+            double dx = (i - (n - 1) * 0.5) * 1.27;
+            gen.Add(new(nm, dx, 0.0, 0.8, 1.0));
+        }
+        return new(Math.Max(2.5, n * 1.27 + 1.0), 2.0, gen);
     }
 
     private static string MapToVeloSimKind(FlagshipPartDef part, IReadOnlyList<NetlistModelDef> models)

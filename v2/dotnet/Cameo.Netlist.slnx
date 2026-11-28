@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Cameo.Netlist/Cameo.Netlist.csproj" />
+  <Project Path="Cameo.Netlist.Scripting/Cameo.Netlist.Scripting.csproj" />
+</Solution>

@@ -3,8 +3,92 @@ using System.Text;
 using Cameo;
 using Cameo.Runtime;
 using Cameo.Runtime.Interop;
+using Cameo.Runtime.Vm;
 
 namespace Cameo.Netlist.Scripting;
+
+/// <summary>
+/// Resolves physical values passed from .cameo scripts accepting either:
+/// (1) a SharpUnits.Quantity userdata (converted to <c>expectedSiUnit</c> via SharpUnits'
+///     own ISO 80000 <c>in_unit</c> check, failing closed on dimensional mismatches),
+/// (2) a raw finite numeric value already expressed in <c>expectedSiUnit</c>, or
+/// (3) an SI engineering string (e.g., <c>"2.2kOhm"</c>, <c>"47nF"</c>, <c>"0.25mm"</c>).
+/// </summary>
+public static class CameoPhysicalUnits
+{
+    public static double Resolve(LuaState state, Value raw, string expectedSiUnit, string paramLabel)
+    {
+        if (raw.TryToDouble(out double num))
+        {
+            if (!double.IsFinite(num))
+                throw new ArgumentException($"{paramLabel}: numeric value must be finite.");
+            return num;
+        }
+
+        if (raw.Kind == ValueKind.String)
+        {
+            var text = raw.ToText().Trim();
+            if (expectedSiUnit == "mm")
+            {
+                if (TryParseMm(text, out double mm)) return mm;
+                throw new ArgumentException($"{paramLabel}: invalid millimeter literal '{text}'.");
+            }
+            if (FlagshipNetlist.TryParseQuantity(text, out double parsed)) return parsed;
+            throw new ArgumentException($"{paramLabel}: invalid SI literal '{text}'.");
+        }
+
+        if (raw.Kind == ValueKind.Userdata && raw.O is IUserdata ud &&
+            string.Equals(ud.TypeName, "SharpUnits.Quantity", StringComparison.Ordinal))
+        {
+            Value inUnitFn = state.Index(raw, Value.FromText("in_unit"), null);
+            if (inUnitFn.IsNil)
+                throw new ArgumentException($"{paramLabel}: SharpUnits.Quantity missing in_unit method.");
+
+            Value[] converted;
+            try
+            {
+                converted = state.Call(inUnitFn, [raw, Value.FromText(expectedSiUnit)]);
+            }
+            catch (LuaException ex)
+            {
+                throw new ArgumentException($"Dimensional mismatch on {paramLabel}: expected unit '{expectedSiUnit}' ({ex.Message}).");
+            }
+
+            if (converted.Length == 0)
+                throw new ArgumentException($"{paramLabel}: SharpUnits in_unit returned no value.");
+
+            Value scalar = state.Index(converted[0], Value.FromText("value"), null);
+            if (scalar.TryToDouble(out double d) && double.IsFinite(d)) return d;
+            throw new ArgumentException($"{paramLabel}: converted SharpUnits.Quantity value is not finite.");
+        }
+
+        throw new ArgumentException($"{paramLabel}: expected number, SharpUnits.Quantity ('{expectedSiUnit}'), or SI string.");
+    }
+
+    public static double ResolveOptional(LuaState state, Value raw, string expectedSiUnit, string paramLabel, double defaultValue) =>
+        raw.IsNil ? defaultValue : Resolve(state, raw, expectedSiUnit, paramLabel);
+
+    private static bool TryParseMm(string raw, out double mm)
+    {
+        mm = 0.0;
+        var s = raw.Trim();
+        if (s.EndsWith("mm", StringComparison.OrdinalIgnoreCase))
+            return double.TryParse(s[..^2], NumberStyles.Float, CultureInfo.InvariantCulture, out mm) && double.IsFinite(mm);
+        if (s.EndsWith("mil", StringComparison.OrdinalIgnoreCase) &&
+            double.TryParse(s[..^3], NumberStyles.Float, CultureInfo.InvariantCulture, out var mils) && double.IsFinite(mils))
+        {
+            mm = mils * 0.0254;
+            return true;
+        }
+        if (s.EndsWith("in", StringComparison.OrdinalIgnoreCase) &&
+            double.TryParse(s[..^2], NumberStyles.Float, CultureInfo.InvariantCulture, out var inches) && double.IsFinite(inches))
+        {
+            mm = inches * 25.4;
+            return true;
+        }
+        return double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out mm) && double.IsFinite(mm);
+    }
+}
 
 /// <summary>
 /// Options controlling hermetic Cameo script evaluation for flagship netlist generation.
@@ -71,7 +155,7 @@ public static class CameoNetlistScriptHost
         using var engine = CameoEngine.CreateHermetic(maxSteps: opts.MaxSteps, typeCheck: opts.TypeCheck);
         engine.State.Stdout = stdoutWriter;
 
-        var builder = new NetlistScriptBuilder(diags, opts.LibraryResolver);
+        var builder = new NetlistScriptBuilder(engine.State, diags, opts.LibraryResolver);
         engine.Expose("net", builder);
         configureEngine?.Invoke(engine, builder);
 
@@ -209,6 +293,7 @@ public sealed class NetlistScriptBuilder
         public FlagshipRtlBlock Freeze() => new(Name, Format, Clock, Ports.ToList(), Bridges.ToList(), RawRtlJson);
     }
 
+    private readonly LuaState _state;
     private readonly List<FlagshipDiagnostic> _diags;
     private readonly Func<string, NetlistPartDefaults?>? _libraryResolver;
     private string _designName = "untitled_cameo_design";
@@ -226,12 +311,17 @@ public sealed class NetlistScriptBuilder
     private double? _pcbHeightMm;
     private int? _pcbLayers;
     private readonly List<FlagshipPcbRule> _pcbRules = [];
+    private readonly List<FlagshipPcbPlacement> _pcbPlacements = [];
+    private readonly List<FlagshipPcbTrace> _pcbTraces = [];
+    private readonly List<FlagshipPcbVia> _pcbVias = [];
     private readonly List<FlagshipVerifyBlock> _verifications = [];
 
     internal NetlistScriptBuilder(
+        LuaState state,
         List<FlagshipDiagnostic> diags,
         Func<string, NetlistPartDefaults?>? libraryResolver)
     {
+        _state = state;
         _diags = diags;
         _libraryResolver = libraryResolver;
     }
@@ -385,36 +475,43 @@ public sealed class NetlistScriptBuilder
     }
 
     [Expose("resistor")]
-    public void Resistor(string id, string nodeP, string nodeN, double ohms, string footprint = "")
+    public void Resistor(string id, string nodeP, string nodeN, Value ohms, string footprint = "")
     {
-        AddTwoPinPart(id, "spice.resistor", nodeP, nodeN, new Dictionary<string, double> { ["ohms"] = ohms }, footprint: footprint);
+        double r = CameoPhysicalUnits.Resolve(_state, ohms, "Ohm", $"resistor '{id}' ohms");
+        AddTwoPinPart(id, "spice.resistor", nodeP, nodeN, new Dictionary<string, double> { ["ohms"] = r }, footprint: footprint);
     }
 
     [Expose("capacitor")]
-    public void Capacitor(string id, string nodeP, string nodeN, double farads, string footprint = "")
+    public void Capacitor(string id, string nodeP, string nodeN, Value farads, string footprint = "")
     {
-        AddTwoPinPart(id, "spice.capacitor", nodeP, nodeN, new Dictionary<string, double> { ["farads"] = farads }, footprint: footprint);
+        double c = CameoPhysicalUnits.Resolve(_state, farads, "F", $"capacitor '{id}' farads");
+        AddTwoPinPart(id, "spice.capacitor", nodeP, nodeN, new Dictionary<string, double> { ["farads"] = c }, footprint: footprint);
     }
 
     [Expose("inductor")]
-    public void Inductor(string id, string nodeP, string nodeN, double henries, string footprint = "")
+    public void Inductor(string id, string nodeP, string nodeN, Value henries, string footprint = "")
     {
-        AddTwoPinPart(id, "spice.inductor", nodeP, nodeN, new Dictionary<string, double> { ["henries"] = henries }, footprint: footprint);
+        double l = CameoPhysicalUnits.Resolve(_state, henries, "H", $"inductor '{id}' henries");
+        AddTwoPinPart(id, "spice.inductor", nodeP, nodeN, new Dictionary<string, double> { ["henries"] = l }, footprint: footprint);
     }
 
     [Expose("vsrc")]
-    public void VoltageSource(string id, string nodeP, string nodeN, double dcVolts, double acMag = 0.0)
+    public void VoltageSource(string id, string nodeP, string nodeN, Value dcVolts, Value acMag = default)
     {
-        var p = new Dictionary<string, double> { ["dc_volts"] = dcVolts };
-        if (acMag != 0.0) p["ac_mag"] = acMag;
+        double dc = CameoPhysicalUnits.Resolve(_state, dcVolts, "V", $"vsrc '{id}' dc_volts");
+        double ac = CameoPhysicalUnits.ResolveOptional(_state, acMag, "V", $"vsrc '{id}' ac_mag", 0.0);
+        var p = new Dictionary<string, double> { ["dc_volts"] = dc };
+        if (ac != 0.0) p["ac_mag"] = ac;
         AddTwoPinPart(id, "spice.vsrc", nodeP, nodeN, p);
     }
 
     [Expose("isrc")]
-    public void CurrentSource(string id, string nodeP, string nodeN, double dcAmps, double acMag = 0.0)
+    public void CurrentSource(string id, string nodeP, string nodeN, Value dcAmps, Value acMag = default)
     {
-        var p = new Dictionary<string, double> { ["dc_amps"] = dcAmps };
-        if (acMag != 0.0) p["ac_mag"] = acMag;
+        double dc = CameoPhysicalUnits.Resolve(_state, dcAmps, "A", $"isrc '{id}' dc_amps");
+        double ac = CameoPhysicalUnits.ResolveOptional(_state, acMag, "A", $"isrc '{id}' ac_mag", 0.0);
+        var p = new Dictionary<string, double> { ["dc_amps"] = dc };
+        if (ac != 0.0) p["ac_mag"] = ac;
         AddTwoPinPart(id, "spice.isrc", nodeP, nodeN, p);
     }
 
@@ -612,20 +709,84 @@ public sealed class NetlistScriptBuilder
     }
 
     [Expose("pcb_board")]
-    public void PcbBoard(double widthMm, double heightMm, int layers = 2)
+    public void PcbBoard(Value widthMm, Value heightMm, int layers = 2)
     {
-        _pcbWidthMm = widthMm;
-        _pcbHeightMm = heightMm;
+        _pcbWidthMm = CameoPhysicalUnits.Resolve(_state, widthMm, "mm", "pcb_board width");
+        _pcbHeightMm = CameoPhysicalUnits.Resolve(_state, heightMm, "mm", "pcb_board height");
         _pcbLayers = layers;
     }
 
     [Expose("pcb_rule")]
-    public void PcbRule(string netName, double clearanceMm, double traceWidthMm = 0.0)
+    public void PcbRule(string netName, Value clearanceMm, Value traceWidthMm = default)
     {
+        double clr = CameoPhysicalUnits.Resolve(_state, clearanceMm, "mm", $"pcb_rule '{netName}' clearance");
+        double tw = CameoPhysicalUnits.ResolveOptional(_state, traceWidthMm, "mm", $"pcb_rule '{netName}' width", 0.0);
         _pcbRules.Add(new FlagshipPcbRule(
             netName.Trim(),
-            clearanceMm > 0.0 ? clearanceMm : null,
-            traceWidthMm > 0.0 ? traceWidthMm : null));
+            clr > 0.0 ? clr : null,
+            tw > 0.0 ? tw : null));
+    }
+
+    [Expose("pcb_place")]
+    public void PcbPlace(string instanceId, Value xMm, Value yMm, string layer = "top", int rotationDegrees = 0, string footprint = "")
+    {
+        double x = CameoPhysicalUnits.Resolve(_state, xMm, "mm", $"pcb_place '{instanceId}' x");
+        double y = CameoPhysicalUnits.Resolve(_state, yMm, "mm", $"pcb_place '{instanceId}' y");
+        _pcbPlacements.Add(new FlagshipPcbPlacement(
+            instanceId.Trim(),
+            x,
+            y,
+            string.IsNullOrWhiteSpace(layer) ? "top" : layer.Trim(),
+            rotationDegrees,
+            string.IsNullOrWhiteSpace(footprint) ? null : footprint.Trim()));
+    }
+
+    [Expose("pcb_trace")]
+    public void PcbTrace(string netName, string layer, Value widthMm, double[] flatXyPairsMm)
+    {
+        double w = CameoPhysicalUnits.Resolve(_state, widthMm, "mm", $"pcb_trace '{netName}' width");
+        if (flatXyPairsMm.Length < 4 || (flatXyPairsMm.Length & 1) != 0)
+        {
+            _diags.Add(new FlagshipDiagnostic("error", "invalid_pcb_trace_points", $"net.pcb_trace('{netName}') requires an even array of at least 4 coordinates [x1,y1,x2,y2,...]."));
+            return;
+        }
+        var pts = new List<FlagshipPcbPoint>(flatXyPairsMm.Length / 2);
+        for (int i = 0; i < flatXyPairsMm.Length; i += 2)
+        {
+            pts.Add(new FlagshipPcbPoint(flatXyPairsMm[i], flatXyPairsMm[i + 1]));
+        }
+        _pcbTraces.Add(new FlagshipPcbTrace(
+            netName.Trim(),
+            string.IsNullOrWhiteSpace(layer) ? "top" : layer.Trim(),
+            w,
+            pts));
+    }
+
+    [Expose("pcb_via")]
+    public void PcbVia(string netName, Value xMm, Value yMm, Value drillMm, Value outerMm, string fromLayer = "top", string toLayer = "bottom")
+    {
+        double x = CameoPhysicalUnits.Resolve(_state, xMm, "mm", $"pcb_via '{netName}' x");
+        double y = CameoPhysicalUnits.Resolve(_state, yMm, "mm", $"pcb_via '{netName}' y");
+        double d = CameoPhysicalUnits.Resolve(_state, drillMm, "mm", $"pcb_via '{netName}' drill");
+        double o = CameoPhysicalUnits.Resolve(_state, outerMm, "mm", $"pcb_via '{netName}' outer");
+        _pcbVias.Add(new FlagshipPcbVia(
+            netName.Trim(),
+            x,
+            y,
+            d,
+            o,
+            string.IsNullOrWhiteSpace(fromLayer) ? "top" : fromLayer.Trim(),
+            string.IsNullOrWhiteSpace(toLayer) ? "bottom" : toLayer.Trim()));
+    }
+
+    [Expose("pcb_drc")]
+    public string[] PcbDrc()
+    {
+        var snap = BuildSnapshot();
+        if (snap is null) return ["pcb_drc: netlist snapshot is incomplete or empty"];
+        return FlagshipNetlist.CheckPcbDrc(snap, _libraryResolver)
+            .Select(d => $"[{d.Severity}:{d.Code}] {d.Message}")
+            .ToArray();
     }
 
     [Expose("directive")]
@@ -644,13 +805,27 @@ public sealed class NetlistScriptBuilder
     }
 
     [Expose("qty")]
-    public double Qty(string siLiteral)
+    public double Qty(Value siLiteralOrQuantity, string targetUnit = "")
     {
-        if (!FlagshipNetlist.TryParseQuantity(siLiteral, out var v))
+        if (!string.IsNullOrWhiteSpace(targetUnit))
         {
-            throw new ArgumentException($"Invalid SI quantity literal '{siLiteral}'.");
+            return CameoPhysicalUnits.Resolve(_state, siLiteralOrQuantity, targetUnit.Trim(), $"qty({targetUnit})");
         }
-        return v;
+        if (siLiteralOrQuantity.Kind == ValueKind.String)
+        {
+            var lit = siLiteralOrQuantity.ToText();
+            if (!FlagshipNetlist.TryParseQuantity(lit, out var v))
+                throw new ArgumentException($"Invalid SI quantity literal '{lit}'.");
+            return v;
+        }
+        if (siLiteralOrQuantity.TryToDouble(out double d) && double.IsFinite(d)) return d;
+        if (siLiteralOrQuantity.Kind == ValueKind.Userdata && siLiteralOrQuantity.O is IUserdata ud &&
+            string.Equals(ud.TypeName, "SharpUnits.Quantity", StringComparison.Ordinal))
+        {
+            Value siVal = _state.Index(siLiteralOrQuantity, Value.FromText("si_value"), null);
+            if (siVal.TryToDouble(out double sv) && double.IsFinite(sv)) return sv;
+        }
+        throw new ArgumentException("net.qty expects an SI literal string, number, or SharpUnits.Quantity.");
     }
 
     [Expose("from_spicenet")]
@@ -720,8 +895,17 @@ public sealed class NetlistScriptBuilder
         }
 
         FlagshipLayout? layout = _hasLayout ? new FlagshipLayout(_gridPitch, _gridStyle, _placements.ToList()) : null;
-        FlagshipPcbSection? pcb = (_pcbWidthMm.HasValue || _pcbHeightMm.HasValue || _pcbLayers.HasValue || _pcbRules.Count > 0)
-            ? new FlagshipPcbSection(_pcbWidthMm, _pcbHeightMm, _pcbLayers, _pcbRules.Count > 0 ? _pcbRules.ToList() : null)
+        bool hasPcb = _pcbWidthMm.HasValue || _pcbHeightMm.HasValue || _pcbLayers.HasValue ||
+                      _pcbRules.Count > 0 || _pcbPlacements.Count > 0 || _pcbTraces.Count > 0 || _pcbVias.Count > 0;
+        FlagshipPcbSection? pcb = hasPcb
+            ? new FlagshipPcbSection(
+                _pcbWidthMm,
+                _pcbHeightMm,
+                _pcbLayers,
+                _pcbRules.Count > 0 ? _pcbRules.ToList() : null,
+                _pcbPlacements.Count > 0 ? _pcbPlacements.ToList() : null,
+                _pcbTraces.Count > 0 ? _pcbTraces.ToList() : null,
+                _pcbVias.Count > 0 ? _pcbVias.ToList() : null)
             : null;
 
         return FlagshipNetlist.WithHashes(new FlagshipNetlistDocument(

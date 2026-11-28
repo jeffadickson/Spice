@@ -302,6 +302,7 @@ public static class WorkbenchUi
       <button class="tab-btn" data-tab="library">2. Component &amp; Model Library</button>
       <button class="tab-btn" data-tab="deck">3. SPICE / Spectre / RF Deck</button>
       <button class="tab-btn" data-tab="campaign">4. Parallel Campaign</button>
+      <button class="tab-btn" data-tab="cameo">5. Cameo Studio</button>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
       <span id="runtime-info" class="badge">Native C++20</span>
@@ -751,6 +752,48 @@ n_emission=1.85</textarea>
         <div class="card">
           <h3>Corner Trajectory Plot</h3>
           <canvas id="camp-canvas" class="plot" style="height:320px" width="700" height="320"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 5: CAMEO SCRIPT STUDIO (HERMETIC .CAMEO + SHARPUNITS + LIVE SIM)      -->
+    <!-- ========================================================================= -->
+    <section id="tab-cameo" class="tab-pane">
+      <div class="split-workspace">
+        <div class="card">
+          <h3>Cameo Netlist &amp; Simulation Studio (.cameo + SharpUnits)</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+            <select id="cameo-preset" style="flex:1;min-width:200px">
+              <option value="rc_units">RC Low-Pass Filter + SharpUnits + Live AC/TRAN</option>
+              <option value="velosim_pcb">Mixed-Signal VeloSim + PCB Layout + DRC</option>
+              <option value="corner_sweep">4-Corner Parallel Divider Sweep</option>
+            </select>
+            <button id="cameo-run" class="icon-btn sim-btn">&#9654; Run .cameo Live</button>
+            <button id="cameo-load-schem" class="icon-btn primary" disabled>Load into Schematic</button>
+          </div>
+          <textarea id="cameo-editor" rows="20" style="font-family:var(--mono);font-size:12px;line-height:1.45"></textarea>
+          <div id="cameo-status" style="font-family:var(--mono);font-size:11.5px;color:var(--muted)">Ready — edit Cameo script and click Run .cameo Live.</div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <h3>Assertions, Provenance &amp; Generated Artifacts</h3>
+            <span id="cameo-hashes" class="badge" style="font-family:var(--mono);font-size:10.5px">Hashes: —</span>
+          </div>
+          <table id="cameo-assert-table">
+            <thead><tr><th>Assertion</th><th>Status</th><th>Detail</th></tr></thead>
+            <tbody><tr><td colspan="3" style="color:var(--muted)">Run a .cameo script to see live simulation assertions.</td></tr></tbody>
+          </table>
+          <div style="display:flex;gap:6px;align-items:center">
+            <select id="cameo-out-view" style="flex:1">
+              <option value="spicenet">Generated Flagship Netlist (.spicenet)</option>
+              <option value="velosim">VeloSim Ingestion Package (velosim.netlist.v1)</option>
+              <option value="circuit_json">tscircuit / FieldworkPCB Circuit JSON</option>
+              <option value="stdout">Stdout &amp; Diagnostics</option>
+            </select>
+            <button id="cameo-copy-out" class="icon-btn">Copy</button>
+          </div>
+          <textarea id="cameo-output" rows="12" readonly style="font-family:var(--mono);font-size:11.5px"></textarea>
         </div>
       </div>
     </section>
@@ -2713,12 +2756,152 @@ netlist "two_stage_rc" format="spice.netlist.v3" {
     document.getElementById('deck-run').addEventListener('click', runDeckSim);
     document.getElementById('camp-run').addEventListener('click', runCampaign);
 
+    // ---- CAMEO STUDIO ----
+    const CAMEO_PRESETS = {
+      rc_units: `-- First-order RC low-pass filter with ISO 80000 SharpUnits
+net.design("cameo_rc_filter")
+net.vsrc("V1", "in", "GND", units.qty(5.0, "V"), units.qty(1.0, "V"))
+net.resistor("R1", "in", "out", units.qty(1.0, "kOhm"), "0603")
+net.capacitor("C1", "out", "GND", units.qty(159.155, "nF"), "0603")
+
+let op_ok = sim.op()
+sim.assert_true("op_converged", op_ok)
+sim.assert_near("dc_pass", sim.v("out"), 5.0, 1e-6, 1e-4)
+
+let ac_ok = sim.ac(units.qty(10.0, "Hz"), units.qty(100.0, "kHz"), 40)
+sim.assert_true("ac_converged", ac_ok)
+let fc = sim.cutoff_hz("v(out)", -3.0)
+sim.assert_near("cutoff_1kHz", fc, 1000.0, 15.0, 0.02)
+
+let tr_ok = sim.tran(units.qty(5.0, "us"), units.qty(1.0, "ms"), true)
+sim.assert_true("tran_converged", tr_ok)
+print($"Measured -3 dB cutoff: {fc} Hz")`,
+      velosim_pcb: `-- Mixed-signal VeloSim RTL + PCB geometry + DRC check
+net.design("mixed_signal_board")
+net.vsrc("V1", "in", "GND", units.qty(3.3, "V"))
+net.resistor("R1", "in", "out", units.qty(2.2, "kOhm"), "0603")
+net.capacitor("C1", "out", "GND", units.qty(47.0, "nF"), "0603")
+
+net.rtl("pwm_ctrl", "clk", "velosim.rtl.v1")
+net.rtl_port("clk", "input", 1)
+net.rtl_port("pwm_out", "output", 1)
+net.bridge("b_dac", "dac", "pwm_out", "in", 0.0, 3.3, 1.65, 0.05, 50.0)
+net.end_rtl()
+
+net.pcb_board(units.qty(40.0, "mm"), units.qty(25.0, "mm"), 4)
+net.pcb_rule("in", units.qty(0.2, "mm"), units.qty(0.25, "mm"))
+net.pcb_place("R1", units.qty(12.0, "mm"), units.qty(12.0, "mm"), "top", 0, "0603")
+net.pcb_place("C1", units.qty(20.0, "mm"), units.qty(12.0, "mm"), "top", 90, "0603")
+net.pcb_trace("in", "top", units.qty(0.25, "mm"), { 6.0, 12.0, 11.2, 12.0 })
+net.pcb_via("GND", units.qty(20.0, "mm"), units.qty(16.0, "mm"), units.qty(0.3, "mm"), units.qty(0.6, "mm"))
+
+let drc = net.pcb_drc()
+sim.assert_true("pcb_drc_clean", #drc == 0)
+sim.op()
+sim.assert_near("v_out_3v3", sim.v("out"), 3.3, 1e-6, 1e-4)`,
+      corner_sweep: `-- Deterministic 4-corner parallel sweep on Spice V2 C++20 engine
+net.design("cameo_divider_sweep")
+net.vsrc("V1", "in", "GND", units.qty(10.0, "V"))
+net.resistor("R1", "in", "out", units.qty(1.0, "kOhm"), "0603")
+net.resistor("R2", "out", "GND", units.qty(1.0, "kOhm"), "0603")
+
+let corners = { 1000.0, 3000.0, 9000.0, 19000.0 }
+let v_outs = sim.sweep_op("R2", "ohms", corners, "out", 4)
+sim.assert_near("corner_1k_5V", v_outs[1], 5.0, 1e-5, 1e-4)
+sim.assert_near("corner_3k_7p5V", v_outs[2], 7.5, 1e-5, 1e-4)
+sim.assert_near("corner_9k_9V", v_outs[3], 9.0, 1e-5, 1e-4)
+sim.assert_near("corner_19k_9p5V", v_outs[4], 9.5, 1e-5, 1e-4)
+print($"Corners: {v_outs[1]}, {v_outs[2]}, {v_outs[3]}, {v_outs[4]} V")`
+    };
+
+    let lastCameoResult = null;
+
+    function renderCameoOutput() {
+      const view = document.getElementById('cameo-out-view').value;
+      const outEl = document.getElementById('cameo-output');
+      if (!lastCameoResult) { outEl.value = ''; return; }
+      if (view === 'spicenet') outEl.value = lastCameoResult.spicenet || '';
+      else if (view === 'velosim') outEl.value = lastCameoResult.velosim_json || '';
+      else if (view === 'circuit_json') outEl.value = lastCameoResult.circuit_json || '';
+      else {
+        const lines = [];
+        if (lastCameoResult.stdout) lines.push('--- stdout ---\n' + lastCameoResult.stdout.trim());
+        if (lastCameoResult.diagnostics?.length) {
+          lines.push('--- diagnostics ---\n' + lastCameoResult.diagnostics.map(d => `[${d.severity}:${d.code}] ${d.message}`).join('\n'));
+        }
+        outEl.value = lines.join('\n\n') || '(no stdout or diagnostics)';
+      }
+    }
+
+    async function runCameoStudio() {
+      const script = document.getElementById('cameo-editor').value;
+      const statusEl = document.getElementById('cameo-status');
+      const loadBtn = document.getElementById('cameo-load-schem');
+      statusEl.textContent = 'Running hermetic Cameo VM + native C++20 engine...';
+      try {
+        const resp = await fetch('/api/cameo/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ script, fileName: 'workbench.cameo' })
+        });
+        const data = await resp.json();
+        lastCameoResult = data;
+        const eHash = data.electrical_sha256 ? data.electrical_sha256.slice(0, 10) : '—';
+        const lHash = data.layout_sha256 ? data.layout_sha256.slice(0, 10) : '—';
+        document.getElementById('cameo-hashes').textContent = `elec:${eHash} | layout:${lHash}`;
+        loadBtn.disabled = !data.document;
+
+        const tbody = document.querySelector('#cameo-assert-table tbody');
+        tbody.innerHTML = '';
+        const asserts = data.assertions || [];
+        if (asserts.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3" style="color:var(--muted)">No assertions recorded.</td></tr>';
+        } else {
+          for (const a of asserts) {
+            const tr = document.createElement('tr');
+            const badge = a.passed
+              ? '<span style="color:#10b981;font-weight:700">PASS</span>'
+              : '<span style="color:#f43f5e;font-weight:700">FAIL</span>';
+            tr.innerHTML = `<td style="font-family:var(--mono)">${a.label}</td><td>${badge}</td><td style="font-family:var(--mono);font-size:11px">${a.detail || ''}</td>`;
+            tbody.appendChild(tr);
+          }
+        }
+        renderCameoOutput();
+        statusEl.textContent = data.succeeded
+          ? `Succeeded: design="${data.design || 'deck'}" | ${data.runs?.length || 0} sim run(s) | ${asserts.length} assertion(s) passed.`
+          : `Failed: ${(data.diagnostics || []).map(d => `[${d.code}] ${d.message}`).join(' ; ') || data.error || 'unknown error'}`;
+      } catch (err) {
+        statusEl.textContent = `Error: ${err.message}`;
+      }
+    }
+
+    document.getElementById('cameo-preset').addEventListener('change', e => {
+      document.getElementById('cameo-editor').value = CAMEO_PRESETS[e.target.value] || '';
+    });
+    document.getElementById('cameo-run').addEventListener('click', runCameoStudio);
+    document.getElementById('cameo-out-view').addEventListener('change', renderCameoOutput);
+    document.getElementById('cameo-copy-out').addEventListener('click', () => {
+      navigator.clipboard?.writeText(document.getElementById('cameo-output').value || '');
+    });
+    document.getElementById('cameo-load-schem').addEventListener('click', () => {
+      if (!lastCameoResult?.document) return;
+      pushUndo();
+      currentSchem = structuredClone(lastCameoResult.document);
+      activeSheetId = currentSchem.rootSheet?.sheetId || 'root';
+      selectedInstance = null;
+      zoomState = { scale: 1.0, vb: null, baseVb: null };
+      refreshAllSchematicViews();
+      document.querySelector('.tab-btn[data-tab="schematic"]')?.click();
+      runSchematicSim();
+    });
+
     async function boot() {
       const info = await (await fetch('/api/info')).json();
       const badge = document.getElementById('abi-badge');
       badge.textContent = `C++20 ABI ${info.abi} | KLU=${info.klu_available} | .NET ${info.dotnet_runtime}`;
       badge.classList.add('ok');
       document.getElementById('runtime-info').textContent = `OSDI=${info.osdi_available} | Lib=${info.library_count} parts`;
+      document.getElementById('cameo-editor').value = CAMEO_PRESETS.rc_units;
       await loadLibrary();
       refreshAllSchematicViews();
       loadDeckPreset('bsim4');

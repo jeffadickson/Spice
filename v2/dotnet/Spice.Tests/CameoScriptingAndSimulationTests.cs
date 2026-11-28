@@ -465,4 +465,205 @@ public sealed class CameoScriptingAndSimulationTests
         Assert.False(noRun.Succeeded);
         Assert.Contains(noRun.Diagnostics, d => d.Code == "cameo_runtime_error");
     }
+
+    [Fact]
+    public void CameoSharpUnits_DirectDimensionCheckedQuantitiesOnNetAndSim_PassValidAndRejectMismatches()
+    {
+        const string unitsScript = """
+            net.design("sharpunits_direct_rc")
+            net.vsrc("V1", "in", "GND", units.qty(5.0, "V"), units.qty(1.0, "V"))
+            net.resistor("R1", "in", "out", units.qty(1.0, "kOhm"), "0603")
+            net.capacitor("C1", "out", "GND", units.qty(159.155, "nF"), "0603")
+            net.inductor("L1", "aux", "GND", units.qty(10.0, "uH"), "0805")
+            net.resistor("R_aux", "aux", "GND", units.qty(100.0, "Ohm"), "0603")
+            net.isrc("I1", "aux", "GND", units.qty(2.0, "mA"))
+
+            let r_check = net.qty(units.qty(2.2, "kOhm"), "Ohm")
+            sim.assert_near("qty_2k2", r_check, 2200.0, 1e-6, 1e-6)
+            let q_si = net.qty(units.qty(100.0, "mV"))
+            sim.assert_near("qty_100mv_si", q_si, 0.1, 1e-9, 1e-6)
+
+            sim.assert_true("op_ok", sim.op())
+            sim.assert_near("v_out_5v", sim.v("out"), 5.0, 1e-6, 1e-4)
+            sim.assert_true("ac_ok", sim.ac(units.qty(10.0, "Hz"), units.qty(100.0, "kHz"), 40))
+            sim.assert_near("fc_1khz", sim.cutoff_hz("v(out)", -3.0), 1000.0, 15.0, 0.02)
+            sim.assert_true("dc_ok", sim.dc("V1", units.qty(0.0, "V"), units.qty(10.0, "V"), units.qty(5.0, "V")))
+            sim.assert_true("tran_ok", sim.tran(units.qty(5.0, "us"), units.qty(1.0, "ms"), true))
+            """;
+
+        using var backend = new NativeCppBackend(enableAudits: true);
+        var ok = CameoSimulationHost.RunScript(unitsScript, backend);
+        Assert.True(ok.Succeeded, string.Join("; ", ok.Diagnostics.Select(d => d.Message)));
+        Assert.All(ok.Assertions, a => Assert.True(a.Passed, $"{a.Label}: {a.Detail}"));
+
+        // Dimensional mismatches MUST fail closed cleanly via SharpUnits ISO 80000 checks!
+        var voltsToResistor = CameoNetlistScriptHost.Evaluate("""
+            net.design("bad_dim_r")
+            net.resistor("R1", "in", "GND", units.qty(5.0, "V"))
+            """);
+        Assert.False(voltsToResistor.Succeeded);
+        Assert.Contains(voltsToResistor.Diagnostics, d => d.Message.Contains("Dimensional mismatch", StringComparison.OrdinalIgnoreCase));
+
+        var ohmsToAc = CameoSimulationHost.RunScript("""
+            net.design("bad_dim_ac")
+            net.vsrc("V1", "in", "GND", 5.0, 1.0)
+            net.resistor("R1", "in", "GND", 1000.0)
+            sim.ac(units.qty(10.0, "Ohm"), units.qty(100.0, "Hz"), 10)
+            """, backend);
+        Assert.False(ohmsToAc.Succeeded);
+        Assert.Contains(ohmsToAc.Diagnostics, d => d.Message.Contains("Dimensional mismatch", StringComparison.OrdinalIgnoreCase));
+
+        var ohmsToPcb = CameoNetlistScriptHost.Evaluate("""
+            net.design("bad_dim_pcb")
+            net.resistor("R1", "in", "GND", 1000.0)
+            net.pcb_board(units.qty(10.0, "Ohm"), units.qty(20.0, "mm"), 2)
+            """);
+        Assert.False(ohmsToPcb.Succeeded);
+        Assert.Contains(ohmsToPcb.Diagnostics, d => d.Message.Contains("Dimensional mismatch", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void PcbGeometryPadstacksTracesViasRatsnestDrcAndDualHashInvariance_WorkEndToEnd()
+    {
+        const string pcbCameo = """
+            net.design("fieldwork_pcb_demo")
+            net.vsrc("V1", "in", "GND", units.qty(5.0, "V"))
+            net.resistor("R1", "in", "mid", units.qty(1.0, "kOhm"), "0603")
+            net.capacitor("C1", "mid", "GND", units.qty(100.0, "nF"), "0805")
+            net.part("Q1", "spice.bjt", "footprint=\"SOT-23\" model=\"Q2N2222\"")
+            net.connect("mid", "Q1.b")
+            net.connect("in", "Q1.c")
+            net.ground("Q1.e")
+            net.part("U1", "spice.subckt", "footprint=\"DIP-8\" model=\"OPAMP\"")
+            net.connect("mid", "U1.p1")
+            net.connect("GND", "U1.p2")
+            net.part("M1", "spice.vdmos", "footprint=\"TO-220\"")
+            net.connect("in", "M1.d")
+            net.connect("mid", "M1.g")
+            net.ground("M1.s")
+
+            net.pcb_board(units.qty(60.0, "mm"), units.qty(40.0, "mm"), 4)
+            net.pcb_rule("in", units.qty(0.2, "mm"), units.qty(0.25, "mm"))
+            net.pcb_place("R1", units.qty(12.0, "mm"), units.qty(18.0, "mm"), "top", 0, "0603")
+            net.pcb_place("C1", units.qty(20.0, "mm"), units.qty(18.0, "mm"), "top", 90, "0805")
+            net.pcb_place("Q1", units.qty(30.0, "mm"), units.qty(18.0, "mm"), "top", 0, "SOT-23")
+            net.pcb_place("U1", units.qty(42.0, "mm"), units.qty(20.0, "mm"), "top", 0, "DIP-8")
+            net.pcb_place("M1", units.qty(50.0, "mm"), units.qty(28.0, "mm"), "top", 0, "TO-220")
+            net.pcb_trace("in", "top", units.qty(0.3, "mm"), { 6.0, 18.0, 11.2, 18.0 })
+            net.pcb_via("GND", units.qty(20.0, "mm"), units.qty(22.0, "mm"), units.qty(0.3, "mm"), units.qty(0.6, "mm"), "top", "bottom")
+            """;
+
+        var eval = CameoNetlistScriptHost.Evaluate(pcbCameo);
+        Assert.True(eval.Succeeded, string.Join("; ", eval.Diagnostics.Select(d => d.Message)));
+        var doc = eval.Document!;
+
+        // 1. Format -> Parse(verifyHashes:true) -> Format is strictly idempotent for full pcb { place / trace / via }
+        var fmt1 = FlagshipNetlist.Format(doc);
+        Assert.Contains("place R1 at=(12mm, 18mm)", fmt1, StringComparison.Ordinal);
+        Assert.Contains("trace net=\"in\" layer=\"top\" width=0.3mm", fmt1, StringComparison.Ordinal);
+        Assert.Contains("via net=\"GND\" at=(20mm, 22mm) drill=0.3mm outer=0.6mm", fmt1, StringComparison.Ordinal);
+        var reparsed = FlagshipNetlist.Parse(fmt1, verifyHashes: true);
+        Assert.True(reparsed.Succeeded, string.Join("; ", reparsed.Diagnostics.Select(d => d.Message)));
+        Assert.Equal(fmt1, FlagshipNetlist.Format(reparsed.Document!));
+
+        // 2. Moving a PCB part changes layout_sha256 ONLY — electrical_sha256 is 100% invariant!
+        var movedPcb = doc.Pcb! with
+        {
+            Placements = doc.Pcb.Placements!.Select(p => p.InstanceId == "R1" ? p with { XMm = 15.0 } : p).ToList()
+        };
+        var movedDoc = FlagshipNetlist.WithHashes(doc with { Pcb = movedPcb });
+        Assert.Equal(doc.ElectricalSha256, movedDoc.ElectricalSha256);
+        Assert.NotEqual(doc.LayoutSha256, movedDoc.LayoutSha256);
+
+        // 3. Clean PCB passes DRC with 0 diagnostics
+        Assert.Empty(FlagshipNetlist.CheckPcbDrc(doc));
+
+        // 4. Circuit JSON emits pcb_board, pcb_component, pcb_smtpad, pcb_plated_hole, pcb_trace, pcb_via, and unrouted pcb_ratsnest
+        var cj = VeloSimIngestion.ExportCircuitJson(doc);
+        using var cjDoc = JsonDocument.Parse(cj);
+        var types = cjDoc.RootElement.EnumerateArray().Select(e => e.GetProperty("type").GetString()).ToList();
+        Assert.Contains("pcb_board", types);
+        Assert.Contains("pcb_component", types);
+        Assert.Contains("pcb_smtpad", types);
+        Assert.Contains("pcb_plated_hole", types);
+        Assert.Contains("pcb_trace", types);
+        Assert.Contains("pcb_via", types);
+        Assert.Contains("pcb_ratsnest", types); // "mid" / "GND" have unrouted pads -> ratsnest airwires emitted
+
+        // 5. DRC catches every single violation cleanly
+        var badPcb = new FlagshipPcbSection(
+            BoardWidthMm: 20.0,
+            BoardHeightMm: 20.0,
+            LayerCount: 2,
+            Rules: [new FlagshipPcbRule("in", 0.2, 0.3)],
+            Placements:
+            [
+                new FlagshipPcbPlacement("R1", 25.0, 10.0), // out of bounds
+                new FlagshipPcbPlacement("GHOST", 5.0, 5.0) // unknown part warning
+            ],
+            Traces:
+            [
+                new FlagshipPcbTrace("in", "top", 0.15, [new FlagshipPcbPoint(1.0, 1.0), new FlagshipPcbPoint(25.0, 1.0)]) // width violation + OOB
+            ],
+            Vias:
+            [
+                new FlagshipPcbVia("GND", 5.0, 5.0, 0.5, 0.4),   // invalid drill >= outer
+                new FlagshipPcbVia("GND", 22.0, 5.0, 0.3, 0.35) // annular ring < 0.05 + OOB
+            ]);
+        var drcDiags = FlagshipNetlist.CheckPcbDrc(doc with { Pcb = badPcb });
+        Assert.Contains(drcDiags, d => d.Code == "pcb_placement_out_of_bounds");
+        Assert.Contains(drcDiags, d => d.Code == "pcb_unknown_component");
+        Assert.Contains(drcDiags, d => d.Code == "pcb_trace_width_violation");
+        Assert.Contains(drcDiags, d => d.Code == "pcb_trace_out_of_bounds");
+        Assert.Contains(drcDiags, d => d.Code == "pcb_via_invalid_geometry");
+        Assert.Contains(drcDiags, d => d.Code == "pcb_via_annular_ring");
+        Assert.Contains(drcDiags, d => d.Code == "pcb_via_out_of_bounds");
+    }
+
+    [Fact]
+    public async Task WorkbenchUi_ServesCameoStudioTabAndAllCameoPresetsPassLive()
+    {
+        var tmpDir = Path.Combine(Path.GetTempPath(), $"spice_cameo_ui_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tmpDir);
+        try
+        {
+            await using var server = new WorkbenchServer(0, library: new ComponentLibraryStore(Path.Combine(tmpDir, "lib.json")));
+            server.Start();
+            using var http = new HttpClient { BaseAddress = new Uri(server.BaseUrl) };
+
+            var html = await http.GetStringAsync("/");
+            Assert.Contains("data-tab=\"cameo\"", html, StringComparison.Ordinal);
+            Assert.Contains("id=\"cameo-editor\"", html, StringComparison.Ordinal);
+            Assert.Contains("id=\"cameo-assert-table\"", html, StringComparison.Ordinal);
+            Assert.Contains("/api/cameo/run", html, StringComparison.Ordinal);
+
+            // Verify mixed-signal VeloSim + PCB + DRC script executes live via /api/cameo/run
+            const string mixedPcbScript = """
+                net.design("mixed_signal_board")
+                net.vsrc("V1", "in", "GND", units.qty(3.3, "V"))
+                net.resistor("R1", "in", "out", units.qty(2.2, "kOhm"), "0603")
+                net.capacitor("C1", "out", "GND", units.qty(47.0, "nF"), "0603")
+                net.pcb_board(units.qty(40.0, "mm"), units.qty(25.0, "mm"), 4)
+                net.pcb_rule("in", units.qty(0.2, "mm"), units.qty(0.25, "mm"))
+                net.pcb_place("R1", units.qty(12.0, "mm"), units.qty(12.0, "mm"), "top", 0, "0603")
+                net.pcb_place("C1", units.qty(20.0, "mm"), units.qty(12.0, "mm"), "top", 90, "0603")
+                net.pcb_trace("in", "top", units.qty(0.25, "mm"), { 6.0, 12.0, 11.2, 12.0 })
+                net.pcb_via("GND", units.qty(20.0, "mm"), units.qty(16.0, "mm"), units.qty(0.3, "mm"), units.qty(0.6, "mm"))
+                let drc = net.pcb_drc()
+                sim.assert_true("pcb_drc_clean", #drc == 0)
+                sim.op()
+                sim.assert_near("v_out_3v3", sim.v("out"), 3.3, 1e-6, 1e-4)
+                """;
+            var resp = await http.PostAsJsonAsync("/api/cameo/run", new { script = mixedPcbScript });
+            Assert.Equal(HttpStatusCode.OK, resp.StatusCode);
+            using var json = JsonDocument.Parse(await resp.Content.ReadAsStringAsync());
+            Assert.True(json.RootElement.GetProperty("succeeded").GetBoolean());
+            Assert.Contains("pcb_smtpad", json.RootElement.GetProperty("circuit_json").GetString()!, StringComparison.Ordinal);
+            Assert.Contains("pcb_via", json.RootElement.GetProperty("circuit_json").GetString()!, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(tmpDir)) Directory.Delete(tmpDir, recursive: true);
+        }
+    }
 }

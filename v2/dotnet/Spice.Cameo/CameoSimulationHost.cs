@@ -1,6 +1,7 @@
 using Cameo.Netlist;
 using Cameo.Netlist.Scripting;
 using Cameo.Runtime.Interop;
+using Cameo.Runtime.Vm;
 using Spice.Ir;
 using Spice.Schematic;
 using Spice.Sdk;
@@ -60,7 +61,7 @@ public static class CameoSimulationHost
             opts,
             configureEngine: (engine, netBuilder) =>
             {
-                var controller = new SpiceSimulationController(netBuilder, backend, library, runs, assertions);
+                var controller = new SpiceSimulationController(engine.State, netBuilder, backend, library, runs, assertions);
                 engine.Expose("sim", controller);
             });
 
@@ -100,6 +101,7 @@ public static class CameoSimulationHost
 /// </summary>
 public sealed class SpiceSimulationController
 {
+    private readonly LuaState _state;
     private readonly NetlistScriptBuilder _netBuilder;
     private readonly ISimulationBackend _backend;
     private readonly ComponentLibraryStore? _library;
@@ -108,12 +110,14 @@ public sealed class SpiceSimulationController
     private ResultManifestIr? _lastRun;
 
     internal SpiceSimulationController(
+        LuaState state,
         NetlistScriptBuilder netBuilder,
         ISimulationBackend backend,
         ComponentLibraryStore? library,
         List<ResultManifestIr> runs,
         List<CameoAssertionResult> assertions)
     {
+        _state = state;
         _netBuilder = netBuilder;
         _backend = backend;
         _library = library;
@@ -127,38 +131,52 @@ public sealed class SpiceSimulationController
     public bool Op() => RunCurrentCircuit(AnalysisKind.OperatingPoint);
 
     [Expose("dc")]
-    public bool Dc(string sourceId, double start, double stop, double step) =>
-        RunCurrentCircuit(
+    public bool Dc(string sourceId, Value start, Value stop, Value step)
+    {
+        string unit = sourceId.StartsWith('I') || sourceId.StartsWith('i') ? "A" : "V";
+        double s0 = CameoPhysicalUnits.Resolve(_state, start, unit, $"sim.dc({sourceId}) start");
+        double s1 = CameoPhysicalUnits.Resolve(_state, stop, unit, $"sim.dc({sourceId}) stop");
+        double ds = CameoPhysicalUnits.Resolve(_state, step, unit, $"sim.dc({sourceId}) step");
+        return RunCurrentCircuit(
             AnalysisKind.DcSweep,
             sweepSourceId: sourceId,
             options: new Dictionary<string, double>
             {
-                ["start"] = start,
-                ["stop"] = stop,
-                ["step"] = step
+                ["start"] = s0,
+                ["stop"] = s1,
+                ["step"] = ds
             });
+    }
 
     [Expose("ac")]
-    public bool Ac(double fStartHz, double fStopHz, int pointsPerDecade = 10) =>
-        RunCurrentCircuit(
+    public bool Ac(Value fStartHz, Value fStopHz, int pointsPerDecade = 10)
+    {
+        double f0 = CameoPhysicalUnits.Resolve(_state, fStartHz, "Hz", "sim.ac fStartHz");
+        double f1 = CameoPhysicalUnits.Resolve(_state, fStopHz, "Hz", "sim.ac fStopHz");
+        return RunCurrentCircuit(
             AnalysisKind.Ac,
             options: new Dictionary<string, double>
             {
-                ["f_start_hz"] = fStartHz,
-                ["f_stop_hz"] = fStopHz,
+                ["f_start_hz"] = f0,
+                ["f_stop_hz"] = f1,
                 ["points_per_decade"] = Math.Max(1, pointsPerDecade)
             });
+    }
 
     [Expose("tran")]
-    public bool Tran(double stepSeconds, double stopSeconds, bool uic = false) =>
-        RunCurrentCircuit(
+    public bool Tran(Value stepSeconds, Value stopSeconds, bool uic = false)
+    {
+        double dt = CameoPhysicalUnits.Resolve(_state, stepSeconds, "s", "sim.tran stepSeconds");
+        double tStop = CameoPhysicalUnits.Resolve(_state, stopSeconds, "s", "sim.tran stopSeconds");
+        return RunCurrentCircuit(
             AnalysisKind.Transient,
             options: new Dictionary<string, double>
             {
-                ["step_s"] = stepSeconds,
-                ["stop_s"] = stopSeconds,
+                ["step_s"] = dt,
+                ["stop_s"] = tStop,
                 ["uic"] = uic ? 1.0 : 0.0
             });
+    }
 
     [Expose("run_spice_deck")]
     public bool RunSpiceDeck(string name, string deckText, string analysis = "op")

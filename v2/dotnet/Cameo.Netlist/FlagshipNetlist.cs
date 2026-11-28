@@ -139,11 +139,39 @@ public sealed record FlagshipPcbRule(
     double? ClearanceMm = null,
     double? TraceWidthMm = null);
 
+public sealed record FlagshipPcbPoint(double XMm, double YMm);
+
+public sealed record FlagshipPcbPlacement(
+    string InstanceId,
+    double XMm,
+    double YMm,
+    string Layer = "top",
+    int RotationDegrees = 0,
+    string? Footprint = null);
+
+public sealed record FlagshipPcbTrace(
+    string NetName,
+    string Layer,
+    double WidthMm,
+    IReadOnlyList<FlagshipPcbPoint> Points);
+
+public sealed record FlagshipPcbVia(
+    string NetName,
+    double XMm,
+    double YMm,
+    double DrillMm,
+    double OuterDiameterMm,
+    string FromLayer = "top",
+    string ToLayer = "bottom");
+
 public sealed record FlagshipPcbSection(
     double? BoardWidthMm = null,
     double? BoardHeightMm = null,
     int? LayerCount = null,
-    IReadOnlyList<FlagshipPcbRule>? Rules = null);
+    IReadOnlyList<FlagshipPcbRule>? Rules = null,
+    IReadOnlyList<FlagshipPcbPlacement>? Placements = null,
+    IReadOnlyList<FlagshipPcbTrace>? Traces = null,
+    IReadOnlyList<FlagshipPcbVia>? Vias = null);
 
 public sealed record FlagshipVerifyBlock(
     string Analysis,
@@ -289,6 +317,35 @@ public static class FlagshipNetlist
                     sb.Append("rule|").Append(rule.NetName ?? "").Append('|')
                       .Append(rule.ClearanceMm.HasValue ? FmtCanon(rule.ClearanceMm.Value) : "").Append('|')
                       .AppendLine(rule.TraceWidthMm.HasValue ? FmtCanon(rule.TraceWidthMm.Value) : "");
+                }
+            }
+            if (doc.Pcb.Placements is not null)
+            {
+                foreach (var pl in doc.Pcb.Placements.Where(x => x is not null).OrderBy(x => x.InstanceId ?? "", StringComparer.Ordinal))
+                {
+                    sb.Append("pcbplace|").Append(pl.InstanceId ?? "").Append('|')
+                      .Append(FmtCanon(pl.XMm)).Append(',').Append(FmtCanon(pl.YMm)).Append('|')
+                      .Append(pl.Layer ?? "top").Append('|').Append(pl.RotationDegrees.ToString(CultureInfo.InvariantCulture))
+                      .Append('|').AppendLine(pl.Footprint ?? "");
+                }
+            }
+            if (doc.Pcb.Traces is not null)
+            {
+                foreach (var tr in doc.Pcb.Traces.Where(x => x is not null))
+                {
+                    var pts = string.Join(";", (tr.Points ?? []).Where(p => p is not null).Select(p => $"{FmtCanon(p.XMm)},{FmtCanon(p.YMm)}"));
+                    sb.Append("pcbtrace|").Append(tr.NetName ?? "").Append('|').Append(tr.Layer ?? "top")
+                      .Append('|').Append(FmtCanon(tr.WidthMm)).Append('|').AppendLine(pts);
+                }
+            }
+            if (doc.Pcb.Vias is not null)
+            {
+                foreach (var via in doc.Pcb.Vias.Where(x => x is not null).OrderBy(x => x.NetName ?? "", StringComparer.Ordinal).ThenBy(x => x.XMm).ThenBy(x => x.YMm))
+                {
+                    sb.Append("pcbvia|").Append(via.NetName ?? "").Append('|')
+                      .Append(FmtCanon(via.XMm)).Append(',').Append(FmtCanon(via.YMm)).Append('|')
+                      .Append(FmtCanon(via.DrillMm)).Append('|').Append(FmtCanon(via.OuterDiameterMm)).Append('|')
+                      .Append(via.FromLayer ?? "top").Append(':').AppendLine(via.ToLayer ?? "bottom");
                 }
             }
         }
@@ -438,6 +495,35 @@ public static class FlagshipNetlist
                     if (r.ClearanceMm.HasValue) attrs.Add($"clearance={FmtCanon(r.ClearanceMm.Value)}mm");
                     if (r.TraceWidthMm.HasValue) attrs.Add($"width={FmtCanon(r.TraceWidthMm.Value)}mm");
                     sb.AppendLine("    rule " + string.Join(" ", attrs));
+                }
+            }
+            if (doc.Pcb.Placements is not null)
+            {
+                foreach (var pl in doc.Pcb.Placements.OrderBy(x => x.InstanceId, StringComparer.Ordinal))
+                {
+                    var attrs = new List<string>
+                    {
+                        $"at=({FmtCanon(pl.XMm)}mm, {FmtCanon(pl.YMm)}mm)",
+                        $"layer={Quote(pl.Layer)}"
+                    };
+                    if (pl.RotationDegrees != 0) attrs.Add($"rot={pl.RotationDegrees}");
+                    if (!string.IsNullOrWhiteSpace(pl.Footprint)) attrs.Add($"footprint={Quote(pl.Footprint)}");
+                    sb.AppendLine($"    place {pl.InstanceId} " + string.Join(" ", attrs));
+                }
+            }
+            if (doc.Pcb.Traces is not null)
+            {
+                foreach (var tr in doc.Pcb.Traces)
+                {
+                    var pts = string.Join(", ", tr.Points.Select(p => $"({FmtCanon(p.XMm)}mm, {FmtCanon(p.YMm)}mm)"));
+                    sb.AppendLine($"    trace net={Quote(tr.NetName)} layer={Quote(tr.Layer)} width={FmtCanon(tr.WidthMm)}mm points=[{pts}]");
+                }
+            }
+            if (doc.Pcb.Vias is not null)
+            {
+                foreach (var via in doc.Pcb.Vias.OrderBy(x => x.NetName, StringComparer.Ordinal).ThenBy(x => x.XMm).ThenBy(x => x.YMm))
+                {
+                    sb.AppendLine($"    via net={Quote(via.NetName)} at=({FmtCanon(via.XMm)}mm, {FmtCanon(via.YMm)}mm) drill={FmtCanon(via.DrillMm)}mm outer={FmtCanon(via.OuterDiameterMm)}mm from={Quote(via.FromLayer)} to={Quote(via.ToLayer)}");
                 }
             }
             sb.AppendLine("  }");
@@ -1370,6 +1456,9 @@ public static class FlagshipNetlist
             double? bw = null, bh = null;
             int? layers = null;
             var rules = new List<FlagshipPcbRule>();
+            var placements = new List<FlagshipPcbPlacement>();
+            var traces = new List<FlagshipPcbTrace>();
+            var vias = new List<FlagshipPcbVia>();
             while (Cur.Kind is not (TokKind.RBrace or TokKind.Eof))
             {
                 var kw = Cur.Text.ToLowerInvariant();
@@ -1404,13 +1493,130 @@ public static class FlagshipNetlist
                     Match(TokKind.Semi);
                     if (!string.IsNullOrWhiteSpace(netName)) rules.Add(new FlagshipPcbRule(netName, clr, w));
                 }
+                else if (kw == "place")
+                {
+                    Advance();
+                    var instId = Advance().Text;
+                    double px = 0.0, py = 0.0;
+                    string layer = "top";
+                    int rot = 0;
+                    string? fp = null;
+                    while (Cur.Kind == TokKind.Word && Peek().Kind == TokKind.Eq)
+                    {
+                        var k = Advance().Text.ToLowerInvariant();
+                        Advance();
+                        if (k == "at" && Match(TokKind.LParen))
+                        {
+                            if (TryParseMillimeters(Advance().Text, out var xVal)) px = xVal;
+                            Match(TokKind.Comma);
+                            if (TryParseMillimeters(Advance().Text, out var yVal)) py = yVal;
+                            Expect(TokKind.RParen, "Expected ')' after pcb place coordinates");
+                        }
+                        else
+                        {
+                            var v = Advance().Text;
+                            if (k == "layer") layer = v;
+                            else if (k == "rot" && int.TryParse(v, NumberStyles.Integer, CultureInfo.InvariantCulture, out var r)) rot = r;
+                            else if (k == "footprint") fp = v;
+                        }
+                    }
+                    Match(TokKind.Semi);
+                    if (!string.IsNullOrWhiteSpace(instId))
+                    {
+                        placements.Add(new FlagshipPcbPlacement(instId, px, py, layer, rot, fp));
+                    }
+                }
+                else if (kw == "trace")
+                {
+                    Advance();
+                    string netName = "", layer = "top";
+                    double width = 0.25;
+                    var pts = new List<FlagshipPcbPoint>();
+                    while (Cur.Kind == TokKind.Word && Peek().Kind == TokKind.Eq)
+                    {
+                        var k = Advance().Text.ToLowerInvariant();
+                        Advance();
+                        if (k == "points" && Match(TokKind.LBracket))
+                        {
+                            while (Cur.Kind is not (TokKind.RBracket or TokKind.Eof))
+                            {
+                                if (Match(TokKind.LParen))
+                                {
+                                    double tx = 0.0, ty = 0.0;
+                                    if (TryParseMillimeters(Advance().Text, out var xv)) tx = xv;
+                                    Match(TokKind.Comma);
+                                    if (TryParseMillimeters(Advance().Text, out var yv)) ty = yv;
+                                    Expect(TokKind.RParen, "Expected ')' in trace point");
+                                    pts.Add(new FlagshipPcbPoint(tx, ty));
+                                }
+                                else
+                                {
+                                    Advance();
+                                }
+                                Match(TokKind.Comma);
+                            }
+                            Expect(TokKind.RBracket, "Expected ']' after trace points");
+                        }
+                        else
+                        {
+                            var v = Advance().Text;
+                            if (k == "net") netName = v;
+                            else if (k == "layer") layer = v;
+                            else if (k == "width" && TryParseMillimeters(v, out var tw)) width = tw;
+                        }
+                    }
+                    Match(TokKind.Semi);
+                    if (!string.IsNullOrWhiteSpace(netName) && pts.Count >= 2)
+                    {
+                        traces.Add(new FlagshipPcbTrace(netName, layer, width, pts));
+                    }
+                }
+                else if (kw == "via")
+                {
+                    Advance();
+                    string netName = "", fromLayer = "top", toLayer = "bottom";
+                    double vx = 0.0, vy = 0.0, drill = 0.3, outer = 0.6;
+                    while (Cur.Kind == TokKind.Word && Peek().Kind == TokKind.Eq)
+                    {
+                        var k = Advance().Text.ToLowerInvariant();
+                        Advance();
+                        if (k == "at" && Match(TokKind.LParen))
+                        {
+                            if (TryParseMillimeters(Advance().Text, out var xv)) vx = xv;
+                            Match(TokKind.Comma);
+                            if (TryParseMillimeters(Advance().Text, out var yv)) vy = yv;
+                            Expect(TokKind.RParen, "Expected ')' after pcb via coordinates");
+                        }
+                        else
+                        {
+                            var v = Advance().Text;
+                            if (k == "net") netName = v;
+                            else if (k == "drill" && TryParseMillimeters(v, out var d)) drill = d;
+                            else if (k == "outer" && TryParseMillimeters(v, out var o)) outer = o;
+                            else if (k == "from") fromLayer = v;
+                            else if (k == "to") toLayer = v;
+                        }
+                    }
+                    Match(TokKind.Semi);
+                    if (!string.IsNullOrWhiteSpace(netName))
+                    {
+                        vias.Add(new FlagshipPcbVia(netName, vx, vy, drill, outer, fromLayer, toLayer));
+                    }
+                }
                 else
                 {
                     Advance();
                 }
             }
             Expect(TokKind.RBrace, "Expected '}' for pcb block");
-            return new FlagshipPcbSection(bw, bh, layers, rules.Count > 0 ? rules : null);
+            return new FlagshipPcbSection(
+                bw,
+                bh,
+                layers,
+                rules.Count > 0 ? rules : null,
+                placements.Count > 0 ? placements : null,
+                traces.Count > 0 ? traces : null,
+                vias.Count > 0 ? vias : null);
         }
 
         private FlagshipVerifyBlock? ParseVerifyBlock()
@@ -1711,6 +1917,102 @@ public static class FlagshipNetlist
             document.RtlBlocks,
             bridges,
             diags);
+    }
+
+    // ==================== PCB DESIGN-RULE CHECK (DRC) ====================
+
+    /// <summary>
+    /// Runs deterministic geometric and electrical-rule DRC checks on the optional
+    /// <c>pcb { ... }</c> section (board dimensions, placement/via/trace bounds,
+    /// via annular ring &gt;= 0.05 mm, net minimum trace widths, and part reference validity).
+    /// </summary>
+    public static IReadOnlyList<FlagshipDiagnostic> CheckPcbDrc(
+        FlagshipNetlistDocument document,
+        Func<string, NetlistPartDefaults?>? libraryResolver = null)
+    {
+        var diags = new List<FlagshipDiagnostic>();
+        var pcb = document.Pcb;
+        if (pcb is null) return diags;
+
+        double? bw = pcb.BoardWidthMm;
+        double? bh = pcb.BoardHeightMm;
+        if (bw.HasValue && bw.Value <= 0.0)
+            diags.Add(new FlagshipDiagnostic("error", "pcb_invalid_board_width", $"PCB board width must be > 0 mm, got {bw.Value}."));
+        if (bh.HasValue && bh.Value <= 0.0)
+            diags.Add(new FlagshipDiagnostic("error", "pcb_invalid_board_height", $"PCB board height must be > 0 mm, got {bh.Value}."));
+        if (pcb.LayerCount.HasValue && pcb.LayerCount.Value < 1)
+            diags.Add(new FlagshipDiagnostic("error", "pcb_invalid_layer_count", $"PCB layer count must be >= 1, got {pcb.LayerCount.Value}."));
+
+        var elab = Elaborate(document, libraryResolver);
+        var validParts = elab.Parts.Select(p => p.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var ruleMap = (pcb.Rules ?? [])
+            .Where(r => r is not null && !string.IsNullOrWhiteSpace(r.NetName))
+            .GroupBy(r => r.NetName, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+        bool OutOfBounds(double x, double y) =>
+            (bw.HasValue && (x < 0.0 || x > bw.Value)) ||
+            (bh.HasValue && (y < 0.0 || y > bh.Value));
+
+        foreach (var pl in pcb.Placements ?? [])
+        {
+            if (pl is null) continue;
+            if (validParts.Count > 0 && !validParts.Contains(pl.InstanceId))
+            {
+                diags.Add(new FlagshipDiagnostic("warning", "pcb_unknown_component", $"PCB placement references unknown elaborated part '{pl.InstanceId}'.", SubjectId: pl.InstanceId));
+            }
+            if (OutOfBounds(pl.XMm, pl.YMm))
+            {
+                diags.Add(new FlagshipDiagnostic("error", "pcb_placement_out_of_bounds", $"PCB placement '{pl.InstanceId}' at ({pl.XMm}mm, {pl.YMm}mm) lies outside board ({bw}x{bh}mm).", SubjectId: pl.InstanceId));
+            }
+        }
+
+        foreach (var via in pcb.Vias ?? [])
+        {
+            if (via is null) continue;
+            if (via.DrillMm <= 0.0 || via.OuterDiameterMm <= via.DrillMm)
+            {
+                diags.Add(new FlagshipDiagnostic("error", "pcb_via_invalid_geometry", $"Via on net '{via.NetName}' has invalid drill/outer diameter ({via.DrillMm}mm / {via.OuterDiameterMm}mm).", SubjectId: via.NetName));
+            }
+            else if ((via.OuterDiameterMm - via.DrillMm) * 0.5 < 0.05)
+            {
+                diags.Add(new FlagshipDiagnostic("error", "pcb_via_annular_ring", $"Via on net '{via.NetName}' annular ring {(via.OuterDiameterMm - via.DrillMm) * 0.5:F3}mm is below 0.05mm minimum.", SubjectId: via.NetName));
+            }
+            if (OutOfBounds(via.XMm, via.YMm))
+            {
+                diags.Add(new FlagshipDiagnostic("error", "pcb_via_out_of_bounds", $"Via on net '{via.NetName}' at ({via.XMm}mm, {via.YMm}mm) lies outside board bounds.", SubjectId: via.NetName));
+            }
+        }
+
+        foreach (var tr in pcb.Traces ?? [])
+        {
+            if (tr is null) continue;
+            if (tr.WidthMm <= 0.0)
+            {
+                diags.Add(new FlagshipDiagnostic("error", "pcb_trace_invalid_width", $"Trace on net '{tr.NetName}' must have width > 0 mm.", SubjectId: tr.NetName));
+            }
+            if (ruleMap.TryGetValue(tr.NetName, out var rule) && rule.TraceWidthMm.HasValue && tr.WidthMm + 1e-9 < rule.TraceWidthMm.Value)
+            {
+                diags.Add(new FlagshipDiagnostic("error", "pcb_trace_width_violation", $"Trace on net '{tr.NetName}' width {tr.WidthMm}mm violates net rule minimum {rule.TraceWidthMm.Value}mm.", SubjectId: tr.NetName));
+            }
+            if (tr.Points is null || tr.Points.Count < 2)
+            {
+                diags.Add(new FlagshipDiagnostic("error", "pcb_trace_too_short", $"Trace on net '{tr.NetName}' requires at least 2 route points.", SubjectId: tr.NetName));
+            }
+            else
+            {
+                foreach (var pt in tr.Points)
+                {
+                    if (OutOfBounds(pt.XMm, pt.YMm))
+                    {
+                        diags.Add(new FlagshipDiagnostic("error", "pcb_trace_out_of_bounds", $"Trace point ({pt.XMm}mm, {pt.YMm}mm) on net '{tr.NetName}' lies outside board bounds.", SubjectId: tr.NetName));
+                        break;
+                    }
+                }
+            }
+        }
+
+        return diags;
     }
 
     // ==================== POLYGLOT SVG METADATA CODEC ====================

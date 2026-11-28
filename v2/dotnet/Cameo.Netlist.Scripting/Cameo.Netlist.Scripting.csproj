@@ -10,8 +10,10 @@
     <Version>0.1.0</Version>
     <Authors>Jeff Dickson</Authors>
     <Description>Hermetic Cameo (.cameo) scripting frontend for Cameo.Netlist (spice.netlist.v3), compiling statically typed Cameo scripts with ISO 80000 physical units into immutable, dual-hashed hierarchical netlists, polyglot SVGs, VeloSim ingestion packages, and Circuit JSON. Zero dependency on Spice simulator internals.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="../Cameo.Netlist/README.md" Pack="true" PackagePath="\" />
     <ProjectReference Include="../Cameo.Netlist/Cameo.Netlist.csproj" />
     <ProjectReference Include="../../external/Cameo-script/src/Cameo/Cameo.csproj" />
   </ItemGroup>
